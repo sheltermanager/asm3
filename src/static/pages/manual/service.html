@@ -68,6 +68,7 @@
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Service API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#animal-datasets">Animal Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sensitive-personal-info">Sensitive/Personal Info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-image">animal_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-thumbnail">animal_thumbnail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-view">animal_view</a></li>
@@ -105,7 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-changes-and-xml-recent-changes">json_recent_changes and xml_recent_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-stray-animals-and-xml-stray-animals">json_stray_animals and xml_stray_animals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#media-file">media_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#media-file-and-media-image">media_file and media_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#online-form-html-and-online-form-json">online_form_html and online_form_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rss-timeline">rss_timeline</a></li>
 </ul>
@@ -157,23 +158,22 @@ sheltermanager.com, the URL will start <a class="reference external" href="https
 <p>If you are using sheltermanager.com, or have enabled the option
 CACHE_SERVICE_RESPONSES in your sitedefs.py, please be aware that some service
 call responses are cached for performance. The cache time is indicated with the
-call below.</p>
+call below, along with whether credentials are needed and any permissions.</p>
 <p>While the examples here show passing the parameters with HTTP GET requests, you
 can POST the parameters too if you prefer.</p>
-<p>The service requires the following parameters:</p>
+<p>The service requires at least the following parameters:</p>
 <ul class="simple">
 <li><p>account: If this is a sheltermanager.com service call, the user’s account
 number. Can be omitted for other installations.</p></li>
-<li><p>username: A valid ASM user. For the majority of calls, this user must
-have the “View Animal” permission.</p></li>
-<li><p>password: A valid ASM password. From a security standpoint, it’s better to
-create at least one ASM user dedicated to calling the service to assist with
-audit trails and to lock it down so an attacker with the URL cannot change
-your data or view anything you don’t want them to.</p></li>
-<li><p>method: A service method to call</p></li>
-<li><p>animalid / title: An animal ID or title depending on the service method
-called.</p></li>
+<li><p>method: A service method to call.</p></li>
+<li><p>username: A valid ASM user. Not all methods need a username and password.</p></li>
+<li><p>password: A valid ASM password.</p></li>
 </ul>
+<p>From a security standpoint, it’s better to create at least one ASM user
+dedicated to calling the service to assist with audit trails and to lock it
+down so an attacker with the URL cannot change your data or view anything you
+don’t want them to. You can also set “Can Login” to NO in the user account to
+prevent it logging in to the UI, but still use it to access the service.</p>
 <section id="animal-datasets">
 <h2>Animal Datasets<a class="headerlink" href="#animal-datasets" title="Link to this heading">¶</a></h2>
 <p>Many of the json and xml service calls return a dataset of animals, a sample animal
@@ -474,9 +474,30 @@ JSON result looks like this:</p>
 </pre></div>
 </div>
 </section>
+<section id="sensitive-personal-info">
+<h2>Sensitive/Personal Info<a class="headerlink" href="#sensitive-personal-info" title="Link to this heading">¶</a></h2>
+<p>Some methods, such as json_adopted_animals, json_lost_animals, etc. will
+include sensitive or personal information in some object properties in the
+returned data. By default, all sensitive/personal information will be stripped
+from these properties in the resultsets returned.</p>
+<p>If you do want personal/sensitive data included, you need to pass an extra
+parameter “sensitive=1” to your calls. If the user account being used to access
+this data does not have the VIEW_PERSON permission, sensitive=1 will be
+overridden and personal data removed anyway.</p>
+<p>The following properties contain personal data that will be stripped:</p>
+<ul class="simple">
+<li><p>OWNER*</p></li>
+<li><p>CURRENTOWNER*</p></li>
+<li><p>ORIGINALOWNER*</p></li>
+<li><p>BROUGHTINBY*</p></li>
+<li><p>RESERVEDOWNER*</p></li>
+</ul>
+</section>
 <section id="animal-image">
 <h2>animal_image<a class="headerlink" href="#animal-image" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns an animal’s preferred image. Send the id of the animal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520&amp;seq=1
 </pre></div>
@@ -491,6 +512,8 @@ to programatically grab all the images for a particular animal.</p>
 <section id="animal-thumbnail">
 <h2>animal_thumbnail<a class="headerlink" href="#animal-thumbnail" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns an animal’s preferred image as a thumbnail. Send the id of the animal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_thumbnail&amp;animalid=520
 </pre></div>
@@ -502,6 +525,8 @@ size under <span class="menuselection">Publishing -&gt; Set Publishing Options -
 <section id="animal-view">
 <h2>animal_view<a class="headerlink" href="#animal-view" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a webpage with information for one adoptable animal, constructed from the
 animalview HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
 Edit HTML publishing templates</span>). Pass the id of the animal:</p>
@@ -522,6 +547,8 @@ than animalview:</p>
 <section id="animal-view-adoptable-js">
 <h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call. It
 is most useful as the src attribute for a &lt;script&gt; tag.</p>
@@ -805,6 +832,8 @@ iframes.</p>
 <section id="animal-view-adoptable-html">
 <h2>animal_view_adoptable_html<a class="headerlink" href="#animal-view-adoptable-html" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
 “animalviewadoptable” and falls back to a basic internal template if it does
@@ -815,6 +844,8 @@ not exist:</p>
 </section>
 <section id="csv-import">
 <h2>csv_import<a class="headerlink" href="#csv-import" title="Link to this heading">¶</a></h2>
+<p class="rubric">Permissions required: IMPORT_CSV_FILE</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>The CSV import endpoint can be used to send CSV data to the system. GET or POST
 can be used and it accepts the following parameters:</p>
 <ul class="simple">
@@ -827,8 +858,7 @@ amounts of data - that should be done with the asynchronous screen at
 small amounts of data and individual records being sent by other systems for integration
 purposes.</p>
 <p>Unlike the Import a CSV File screen, you cannot set any of the CSV import options. When
-importing via this method, “Merge Duplicates” will be on, but all other options will
-be off.</p>
+importing via this method.</p>
 <p>The return value is a JSON document containing the success count, the number of rows in
 the CSV data and details of errors from any rows that failed to be imported:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="n">rows</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
@@ -843,6 +873,8 @@ the CSV data and details of errors from any rows that failed to be imported:</p>
 <section id="csv-mail-and-csv-report">
 <h2>csv_mail and csv_report<a class="headerlink" href="#csv-mail-and-csv-report" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: VIEW_REPORT</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a CSV file containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
 you can pass those too just like with html_report:</p>
@@ -853,6 +885,8 @@ you can pass those too just like with html_report:</p>
 <section id="json-mail-and-json-report">
 <h2>json_mail and json_report<a class="headerlink" href="#json-mail-and-json-report" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: VIEW_REPORT</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
 you can pass those too just like with html_report:</p>
@@ -863,6 +897,8 @@ you can pass those too just like with html_report:</p>
 <section id="extra-image">
 <h2>extra_image<a class="headerlink" href="#extra-image" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns an extra image (see <span class="menuselection">Settings ‣ Reports ‣ Extra
 Images</span>).  Pass the name of the image in the title parameter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
@@ -872,6 +908,8 @@ Images</span>).  Pass the name of the image in the title parameter:</p>
 <section id="html-adoptable-animals">
 <h2>html_adoptable_animals<a class="headerlink" href="#html-adoptable-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document containing an HTML page of adoptable animals.</p>
 <p>You can pass an HTML template name in an optional “template” parameter (leaving
 it off will cause animalview to be used). It is also possible extra parameters:</p>
@@ -897,6 +935,8 @@ http://localhost:5000/service?method=html_adoptable_animals
 <section id="html-adopted-animals">
 <h2>html_adopted_animals<a class="headerlink" href="#html-adopted-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document containing an HTML page of recently adopted
 animals.</p>
 <p>You can pass an HTML template name in an optional “template” parameter (leaving
@@ -928,6 +968,8 @@ http://localhost:5000/service?method=html_adopted_animals&amp;order=adopted_asc
 <section id="html-deceased-animals">
 <h2>html_deceased_animals<a class="headerlink" href="#html-deceased-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document containing an HTML page of recently deceased
 animals.</p>
 <p>You can pass an HTML template name in an optional “template” parameter (leaving
@@ -947,6 +989,8 @@ http://localhost:5000/service?method=html_deceased_animals&amp;order=deceased_de
 <section id="html-events">
 <h2>html_events<a class="headerlink" href="#html-events" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document of shelter fundraising/adoption events
 from <span class="menuselection">ASM ‣ Events ‣ Edit Events</span></p>
 <p>Looks for an HTML template called “events” to use. A basic template will be
@@ -981,6 +1025,8 @@ and a “template” parameter can set the name of the template to use.</p>
 <section id="html-flagged-animals">
 <h2>html_flagged_animals<a class="headerlink" href="#html-flagged-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document containing an HTML page of shelter animals
 that have a particular flag.</p>
 <p>You can pass an HTML template name in an optional “template” parameter (leaving
@@ -1001,6 +1047,8 @@ http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk&amp;o
 <section id="html-held-animals">
 <h2>html_held_animals<a class="headerlink" href="#html-held-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document containing an HTML page of current held animals.</p>
 <p>An “order” parameter can be passed to indicate the sort order (see
 html_adopted_animals). The default is entered date descending.</p>
@@ -1016,6 +1064,8 @@ http://localhost:5000/service?method=html_held_animals
 <section id="html-report">
 <h2>html_report<a class="headerlink" href="#html-report" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: VIEW_REPORT</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
 too. VAR parameters are just their name, ASK parameters are ASKn where n is the
@@ -1028,6 +1078,8 @@ see the parameters it requires in the address bar:</p>
 <section id="html-stray-animals">
 <h2>html_stray_animals<a class="headerlink" href="#html-stray-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document containing an HTML page of current stray animals.</p>
 <p>An “order” parameter can be passed to indicate the sort order (see
 html_adopted_animals). The default is entered date descending.</p>
@@ -1043,6 +1095,8 @@ http://localhost:5000/service?method=html_stray_animals
 <section id="json-adoptable-animal-and-xml-adoptable-animal">
 <h2>json_adoptable_animal and xml_adoptable_animal<a class="headerlink" href="#json-adoptable-animal-and-xml-adoptable-animal" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing a single animal record from the list of animals
 available for adoption. The method determines whether the format returned is
 JSON or XML:</p>
@@ -1057,6 +1111,8 @@ JSON or XML:</p>
 <section id="json-adoptable-animals-and-xml-adoptable-animals">
 <h2>json_adoptable_animals and xml_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-and-xml-adoptable-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
@@ -1066,6 +1122,8 @@ determines whether the format returned is JSON or XML:</p>
 <section id="json-adopted-animals-and-xml-adopted-animals">
 <h2>json_adopted_animals and xml_adopted_animals<a class="headerlink" href="#json-adopted-animals-and-xml-adopted-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing animals adopted between two dates as passed in the
 “fromdate” and “todate” parameters. The dates themselves should be formatted
 for the current database locale (eg: M/D/Y for US locales, D/M/Y for European,
@@ -1079,6 +1137,8 @@ Y/M/D for some Asian locales, etc).</p>
 <section id="json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals">
 <h2>json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals<a class="headerlink" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_LOST_ANIMAL, VIEW_FOUND_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all lost or found animals reported in the last 90
 days that are still active.  The method determines whether the format returned
 is JSON or XML:</p>
@@ -1089,6 +1149,8 @@ is JSON or XML:</p>
 <section id="json-held-animals-and-xml-held-animals">
 <h2>json_held_animals and xml_held_animals<a class="headerlink" href="#json-held-animals-and-xml-held-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all animals currently held. The method
 determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=json_held_animals&amp;username=user&amp;password=letmein
@@ -1098,6 +1160,8 @@ determines whether the format returned is JSON or XML:</p>
 <section id="json-recent-adoptions-and-xml-recent-adoptions">
 <h2>json_recent_adoptions and xml_recent_adoptions<a class="headerlink" href="#json-recent-adoptions-and-xml-recent-adoptions" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all recently adopted animals with their new owner
 information. The method name determines whether the format returned is JSON or
 XML:</p>
@@ -1108,6 +1172,8 @@ XML:</p>
 <section id="json-recent-changes-and-xml-recent-changes">
 <h2>json_recent_changes and xml_recent_changes<a class="headerlink" href="#json-recent-changes-and-xml-recent-changes" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all animals who have been modified in the last
 month. The method determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_recent_changes&amp;username=user&amp;password=letmein
@@ -1117,6 +1183,8 @@ month. The method determines whether the format returned is JSON or XML:</p>
 <section id="json-shelter-animals-and-xml-shelter-animals">
 <h2>json_shelter_animals and xml_shelter_animals<a class="headerlink" href="#json-shelter-animals-and-xml-shelter-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all animals currently in the care of the shelter.
 The method determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein
@@ -1132,24 +1200,31 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
 <section id="json-stray-animals-and-xml-stray-animals">
 <h2>json_stray_animals and xml_stray_animals<a class="headerlink" href="#json-stray-animals-and-xml-stray-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all stray animals in the care of the shelter. The method
 determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=json_stray_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </section>
-<section id="media-file">
-<h2>media_file<a class="headerlink" href="#media-file" title="Link to this heading">¶</a></h2>
+<section id="media-file-and-media-image">
+<h2>media_file and media_image<a class="headerlink" href="#media-file-and-media-image" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Responds with media file data for the mediaid given. The content type is set to
 the correct MIME type for the data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=media_file&amp;username=user&amp;password=letmein&amp;mediaid=52
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=media_file&amp;mediaid=52
+http://localhost:5000/service?method=media_image&amp;mediaid=28
 </pre></div>
 </div>
 </section>
 <section id="online-form-html-and-online-form-json">
 <h2>online_form_html and online_form_json<a class="headerlink" href="#online-form-html-and-online-form-json" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
 <p>Responds with the online form HTML or JSON for the id given.</p>
 <blockquote>
 <div><p><a class="reference external" href="http://localhost:5000/service?method=online_form_html&amp;id=1">http://localhost:5000/service?method=online_form_html&amp;id=1</a></p>
@@ -1158,6 +1233,8 @@ the correct MIME type for the data:</p>
 <section id="rss-timeline">
 <h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
+<p class="rubric">Permissions required: VIEW_ANIMAL</p>
+<p class="rubric">Requires username/password: YES</p>
 <p>Returns an RSS feed of the timeline for use with feed aggregators:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=rss_timeline&amp;username=user&amp;password=letmein
 </pre></div>

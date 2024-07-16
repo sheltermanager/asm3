@@ -1,6 +1,8 @@
 49
 ================
 
+16/07/24 Strip person info from all service calls by default, use sensitive=1
+16/07/24 New service permissions, require VIEW_MOVEMENT for json_recent_adoptions
 15/07/24 Fix bug that meant cloning a form with null string fields failed
 15/07/24 Hide mobile menus that do not have visible elements #1505
 15/07/24 Enforce permissions on mobile UI navbar by hiding elements #1505

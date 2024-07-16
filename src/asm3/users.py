@@ -253,6 +253,14 @@ def check_permission_map(l: str, superuser: int, securitymap: str, flag: str) ->
     if superuser == 1: return
     if not has_security_flag(securitymap, flag):
         raise asm3.utils.ASMPermissionError(asm3.i18n._("Forbidden", l))
+    
+def check_permission_map_bool(superuser: int, securitymap: str, flag: str) -> bool:
+    """
+    Returns True if a user has permission in securitymap.
+    """
+    if superuser == 1: return True
+    if has_security_flag(securitymap, flag): return True
+    return False
 
 def has_security_flag(securitymap: str, flag: str) -> bool:
     """
