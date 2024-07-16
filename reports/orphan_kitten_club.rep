@@ -74,7 +74,7 @@ HEADER$$
 
 $$BODY
 <p><b>Please provide your 2023 intake and live release rate for kittens (under 6 months) and cats (over 6 months)</b><br>
-<i>(calculated as kittens under and over 6 months old at intake with live outomces within $Year)</i></p>
+<i>(calculated as kittens under and over 6 months old at intake with live outcomes within $Year)</i></p>
 <p>Intakes under 6 months: <b>$IntakeUnder6</b> - Live release rate: <b>$ReleaseUnder6</b></p> 
 <p>Intakes over 6 months: <b>$IntakeOver6</b> - Live release rate: <b>$ReleaseOver6</b></p>
 
