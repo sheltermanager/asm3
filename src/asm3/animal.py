@@ -79,7 +79,8 @@ class LocationFilter(object):
                     internallocs.append(l)
             # Internal locations
             if len(internallocs) > 0:
-                clauses.append(f'({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({",".join(internallocs)}))') 
+                clauses.append(f'({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({",".join(internallocs)}) ' \
+                    f'AND ({tablequalifier}.ActiveMovementType Is Null OR {tablequalifier}.ActiveMovementType=0))') 
             # Active movement types
             if len(movetypes) > 0:
                 clauses.append(f'{tablequalifier}.ActiveMovementType IN ({",".join(movetypes)})')
