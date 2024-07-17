@@ -14,7 +14,7 @@ $(document).ready(function() {
         ie9:    navigator.userAgent.match(/MSIE 9/i) != null
     };
 
-    const html5_required = !browser_is.ios && !browser_is.ie9;
+    const html5_required = !browser_is.ie9;
 
     // Loads and scales an image into an image form field for upload
     const process_image = function(field) {
@@ -222,7 +222,7 @@ $(document).ready(function() {
     const validate_required = function() {
         let rv = true;
         if (!html5_required) {
-            $(".asm-onlineform-adoptableanimal, .asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-yesno, .asm-onlineform-notes").each(function() {
+            $(".asm-onlineform-adoptableanimal, .asm-onlineform-date, .asm-onlineform-email, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-yesno, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
                     let v = String($(this).val()).trim(); // Throw away whitespace before checking
                     if (!v) {
