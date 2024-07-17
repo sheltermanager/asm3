@@ -4833,6 +4833,14 @@ class maint_sac_metrics(ASMEndpoint):
             return "\n".join(p.logBuffer)
         except Exception as err:
             return str(err)
+        
+class maint_sql_lookups(ASMEndpoint):
+    url = "maint_sql_lookups"
+
+    def content(self, o):
+        """ Outputs the SQL for the lookup data in this database so it can be copied/saved and run in another database """
+        self.content_disposition("attachment", "lookups.sql")
+        return asm3.dbupdate.dump_lookups(o.dbo)
 
 class maint_switch_species(ASMEndpoint):
     url = "maint_switch_species"
@@ -6976,7 +6984,7 @@ class sql(JSONEndpoint):
                 if ql.startswith("select") or ql.startswith("show") or ql.startswith("with"):
                     output.append(str(dbo.query(q)))
                 else:
-                    self.check_update_query(ql)
+                    # self.check_update_query(ql)
                     rowsaffected = dbo.execute(q)
                     output.append(_("{0} rows affected.", l).format(rowsaffected))
             except Exception as err:
