@@ -757,7 +757,7 @@ def execute(dbo: Database, customreportid: int, username: str = "system", params
     r.toolbar = toolbar
     return r.Execute(customreportid, username, params)
 
-def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None):
+def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:
     """
     Executes a custom report query by its ID. 'params' is a tuple of 
     parameters. username is the name of the user running the 
@@ -1503,6 +1503,7 @@ class Report:
         """
         Executes the query portion of a report only and then returns
         the query results and column order.
+        If the query fails to execute
         """
         self.user = username
         self.params = params
@@ -1528,6 +1529,7 @@ class Report:
             cols = self.dbo.query_columns(self.sql)
         except Exception as e:
             self._p(e)
+            raise asm3.utils.ASMError(str(e))
         return (rs, cols)
 
     def _GenerateGraph(self) -> str:
