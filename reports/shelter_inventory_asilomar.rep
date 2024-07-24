@@ -1,0 +1,95 @@
+Detailed Shelter Inventory with Asilomar Category
+###
+Inventories
+###
+34501/Any rev01
+###
+Detailed current shelter inventory, with breed, microchip and asilomar category.
+###
+en
+### 
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.ID AS AID,
+a.MostRecentEntryDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' 
+WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' 
+WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
+ELSE i.LocationName END AS LocationName,
+CASE WHEN a.Adoptable=1 THEN 'Yes' ELSE 'No' END AS Adoptable,
+CASE WHEN AsilomarIntakeCategory = 0 THEN 'Healthy' 
+WHEN AsilomarIntakeCategory = 1 THEN 'Treatable - Rehabilitatable. ' 
+WHEN AsilomarIntakeCategory = 2 THEN 'Treatable - Manageable. '
+WHEN AsilomarIntakeCategory = 3 THEN 'Unhealthy and Untreatable. '
+END AS AsilomarCategory,
+CASE WHEN AsilomarIsTransferExternal = 1 THEN 'External Transfer' ELSE '' END AS AsilomarTransfer,
+CASE WHEN AsilomarOwnerRequestedEuthanasia = 1 THEN 'Owner requested euthanasia' ELSE '' END AS AsilomarOwnerRequest
+FROM animal a
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.Archived = 0
+ORDER BY LocationName, s.SpeciesName, DateBroughtIn
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+$$FOOT
+<p><b>Total $LocationName: {COUNT.LocationName}</b></p>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Asilomar</b></th>
+<th><b>Microchip</b></th>
+<th><b>Type</b></th>
+<th><b>Age</b></th>
+<th><b>Breed</b></th>
+<th><b>Sex</b></th>
+<th><b>Date Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Adoptable</b></th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$sheltercode</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
+<td>$ASILOMARCATEGORY $ASILOMARTRANSFER $ASILOMAROWNERREQUEST</td>
+<td>$identichipnumber</td>
+<td>$animaltype</td>
+<td>$animalage</td>
+<td>$breedname</td>
+<td>$sex</td>
+<td>$mostrecententrydate</td>
+<td>$timeonshelter</td>
+<td>$adoptable</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
