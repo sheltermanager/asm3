@@ -456,7 +456,11 @@ def strip_personal_data(rows: Results) -> Results:
     for r in rows:
         for k in r.keys():
             for x in prefixes:
-                if k.startswith(x): r[k] = ""
+                if k.startswith(x):
+                    if k.endswith("ID"):
+                        r[k] = 0
+                    else:
+                        r[k] = ""
     return rows
 
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str) -> ServiceResponse:

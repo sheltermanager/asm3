@@ -1,6 +1,7 @@
 49
 ================
 
+25/07/24 When stripping personal data, retain integer types for ID fields
 25/07/24 Fix error using advanced find animal with location filter 
 23/07/24 Handle broken report queries when exporting to CSV/Excel
 17/07/24 iOS: online forms, use browser built in support for required attribute
