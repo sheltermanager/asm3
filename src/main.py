@@ -1819,7 +1819,7 @@ class animal(JSONEndpoint):
             "events": asm3.event.get_events_by_animal(dbo, a.ID),
             "flags": asm3.lookups.get_animal_flags(dbo, a.ADDITIONALFLAGS),
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, a.ID),
-            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
+            "internallocations": asm3.lookups.get_internal_locations(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
