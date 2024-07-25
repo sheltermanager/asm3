@@ -801,7 +801,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_id("shelterlocation", "a.ShelterLocation")
     # If we have a location filter and no location has been given, use the filter
     if lf is not None and lf.locationfilter != "" and post.integer("shelterlocation") == -1:
-        ss.ands.append(lf.clause())
+        ss.ands.append(lf.clause(tablequalifier="a"))
     ss.add_str_pair("microchip", "a.IdentichipNumber", "a.Identichip2Number")
     ss.add_str("tattoo", "a.TattooNumber")
     ss.add_str("pickupaddress", "a.PickupAddress")
