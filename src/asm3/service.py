@@ -451,7 +451,7 @@ def sign_document_page(dbo: Database, mid: int, email: str) -> str:
 def strip_personal_data(rows: Results) -> Results:
     """ Removes any personal data from animal and movement rows 
     """
-    prefixes = ( "OWNER", "CURRENTOWNER", "ORIGINALOWNER", "BROUGHTINBY", "RESERVEDOWNER", 
+    prefixes = ( "OWNER", "ADOPTIONCOORDINATOR", "CURRENTOWNER", "ORIGINALOWNER", "BROUGHTINBY", "RESERVEDOWNER", 
         "EMAILADDRESS", "HOMETELEPHONE", "WORKTELEPHONE", "MOBILETELEPHONE" )
     for r in rows:
         for k in r.keys():
