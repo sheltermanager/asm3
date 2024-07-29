@@ -49,15 +49,15 @@ Weight History (Shelter Animals)
 ###
 Auditing
 ###
-Any rev04
+Any rev05
 ###
 Weight history for all shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, a.ID AS AID, a.BreedName, a.AnimalAge, 
-t.AnimalType, s.SpeciesName, sx.Sex, 
+a.ShelterCode || a.AnimalName AS animalgroup, a.ID AS AID, a.BreedName, a.AnimalAge, 
+t.AnimalType, s.SpeciesName, sx.Sex, a.ShelterCode, a.AnimalName,
 il.LocationName, l.Date, l.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -66,14 +66,14 @@ INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN log l ON l.LinkID = a.ID AND l.LinkType = 0
 INNER JOIN lksex sx ON sx.ID = a.Sex
 WHERE a.Archived = 0 AND l.LogTypeID = 4
-ORDER BY a.AnimalName, l.Date DESC
+ORDER BY animalgroup, l.Date DESC
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_AnimalName
+$$GROUP_AnimalGroup
 $$HEAD
-<h2>$SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a>
+<h2><a target="_blank" href="animal?id=$AID">$SHELTERCODE</a> - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a>
  ($SEX $BREEDNAME $SPECIESNAME aged $ANIMALAGE) </h2>
 <table border=1>
 <thead>
