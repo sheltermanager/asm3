@@ -186,20 +186,8 @@ $(function() {
                 },
                 { id: "bulk", text: _("Bulk Transport"), icon: "transport", enabled: "always", perm: "atr", 
                     hideif: function() { return controller.animal; }, 
-                    click: async function() { 
-                        $("#animal").closest("tr").hide();
-                        $("#animals").closest("tr").show();
-                        $("#animals").animalchoosermulti("clear");
-                        $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-                        await tableform.dialog_show_add(dialog);
-                        try {
-                            await tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
-                            common.route_reload();
-                        }
-                        catch(err) {
-                            log.error(err, err);
-                            tableform.dialog_enable_buttons();   
-                        }
+                    click: function() { 
+                        transport.new_bulk_transport();
                     }
                 },
                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "atr",
@@ -297,6 +285,29 @@ $(function() {
                     }
                     $("#animal").closest("tr").show();
                     $("#animals").closest("tr").hide();
+                    $("#type").select("value", config.str("AFDefaultTransportType"));
+                }
+            });
+        },
+
+        new_bulk_transport: function() {
+            let dialog = transport.dialog;
+            tableform.dialog_show_add(dialog, {
+                onadd: async function() {
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
+                        common.route_reload();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();   
+                    }
+                },
+                onload: function() {
+                    $("#animal").closest("tr").hide();
+                    $("#animals").closest("tr").show();
+                    $("#animals").animalchoosermulti("clear");
+                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultTransportType"));
                 }
             });
