@@ -1,6 +1,7 @@
 49
 ================
 
+29/07/24 Add default transport option
 25/07/24 When editing animals, do not filter location list by user loc filter
 25/07/24 When stripping personal data, strip coordinator, retain integer for ID fields
 25/07/24 Fix error using advanced find animal with location filter 

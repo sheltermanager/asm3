@@ -93,6 +93,7 @@ DEFAULTS = {
     "AFDefaultSpecies": "2",
     "AFDefaultType": "11",
     "AFDefaultTestType": "1",
+    "AFDefaultTransportType": "1",
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
     "AKCRegisterAll": "No",

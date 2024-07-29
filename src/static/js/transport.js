@@ -180,31 +180,8 @@ $(function() {
 
             const buttons = [
                 { id: "new", text: _("New Transport"), icon: "transport", enabled: "always", perm: "atr",
-                    click: async function() { 
-                        $("#driver").personchooser("clear");
-                        $("#pickup").personchooser("clear");
-                        $("#dropoff").personchooser("clear");
-                        $("#animal").animalchooser("clear");
-                        if (controller.animal) {
-                            $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                        }
-                        $("#animal").closest("tr").show();
-                        $("#animals").closest("tr").hide();
-                        await tableform.dialog_show_add(dialog);
-                        try {
-                            let response = await tableform.fields_post(dialog.fields, "mode=create", "transport");
-                            let row = {};
-                            row.ID = response;
-                            tableform.fields_update_row(dialog.fields, row);
-                            transport.set_extra_fields(row);
-                            controller.rows.push(row);
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        }
-                        catch(err) {
-                            log.error(err, err);
-                            tableform.dialog_enable_buttons();
-                        }
+                    click: function() { 
+                        transport.new_transport();
                     } 
                 },
                 { id: "bulk", text: _("Bulk Transport"), icon: "transport", enabled: "always", perm: "atr", 
@@ -289,6 +266,40 @@ $(function() {
             this.dialog = dialog;
             this.table = table;
             this.buttons = buttons;
+        },
+
+        new_transport: function() {
+            let table = transport.table, dialog = transport.dialog;
+            tableform.dialog_show_add(dialog, {
+                onadd: async function() {
+                    try {
+                        let response = await tableform.fields_post(dialog.fields, "mode=create", "transport");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        transport.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
+                },
+                onload: function() {
+                    $("#driver").personchooser("clear");
+                    $("#pickup").personchooser("clear");
+                    $("#dropoff").personchooser("clear");
+                    $("#animal").animalchooser("clear");
+                    if (controller.animal) {
+                        $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                    }
+                    $("#animal").closest("tr").show();
+                    $("#animals").closest("tr").hide();
+                    $("#type").select("value", config.str("AFDefaultTransportType"));
+                }
+            });
         },
 
         /**

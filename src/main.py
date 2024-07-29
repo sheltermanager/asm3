@@ -5788,6 +5788,7 @@ class options(JSONEndpoint):
             "templatesclinic": asm3.template.get_document_templates(dbo, "clinic"),
             "templateslicence": asm3.template.get_document_templates(dbo, "licence"),
             "testtypes": asm3.lookups.get_test_types(dbo),
+            "transporttypes": asm3.lookups.get_transport_types(dbo),
             "types": asm3.lookups.get_animal_types(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
