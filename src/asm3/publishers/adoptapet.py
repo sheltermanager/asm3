@@ -78,6 +78,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Belgian Shepherd Tervuren=Belgian Tervuren\n" \
             "Belgian Shepherd Malinois=Belgian Malinois\n" \
             "Black Labrador Retriever=Labrador Retriever\n" \
+            "Blue Lacy=Blue Lacy/Texas Lacy\n" \
             "Brittany Spaniel=Brittany\n" \
             "Cane Corso Mastiff=Cane Corso\n" \
             "Chinese Crested Dog=Chinese Crested\n" \
