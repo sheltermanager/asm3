@@ -1,6 +1,7 @@
 49
 ================
 
+31/07/24 Refactor get_animals_brief to use separate, faster query for performance
 30/07/24 AdoptAPet: Add mapping for Blue Lacy -> Blue Lacy/Texas Lacy
 29/07/24 Add default transport option
 25/07/24 When editing animals, do not filter location list by user loc filter

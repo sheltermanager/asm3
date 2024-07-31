@@ -37,6 +37,7 @@ class TestAnimal(unittest.TestCase):
 
     def test_get_animal_find_simple(self):
         self.assertNotEqual(0, len(asm3.animal.get_animal_find_simple(base.get_dbo(), "Testio")))
+        self.assertNotEqual(0, len(asm3.animal.get_animal_find_simple(base.get_dbo(), "Testio", brief=True)))
 
     def test_get_animal_find_advanced(self):
         self.assertNotEqual(0, len(asm3.animal.get_animal_find_advanced(base.get_dbo(), { "animalname": "Testio" })))

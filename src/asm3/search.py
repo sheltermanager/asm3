@@ -265,7 +265,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     if q == "onshelter" or q == "os":
         explain = _("All animals on the shelter.", l)
         if viewanimal:
-            ar(asm3.animal.get_animal_find_simple(dbo, "", limit=limit, lf=o.lf), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animal_find_simple(dbo, "", limit=limit, lf=o.lf, brief=True), "ANIMAL", animalsort)
 
     elif q == "notforadoption":
         explain = _("All animals who are flagged as not for adoption.", l)
@@ -480,7 +480,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     # No special tokens, search everything and collate
     else:
         if viewanimal:
-            ar( asm3.animal.get_animal_find_simple(dbo, q, limit=limit, lf=o.lf), "ANIMAL", animalsort )
+            ar( asm3.animal.get_animal_find_simple(dbo, q, limit=limit, lf=o.lf, brief=True), "ANIMAL", animalsort )
         if cp(asm3.users.VIEW_INCIDENT):
             ar( asm3.animalcontrol.get_animalcontrol_find_simple(dbo, q, user, limit=limit, siteid=siteid), "ANIMALCONTROL", acsort )
         if viewperson:

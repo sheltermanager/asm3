@@ -164,6 +164,8 @@ def get_animal_query(dbo: Database) -> str:
     """
     Returns a select for animal rows with resolved lookups
     """
+    today = dbo.sql_today()
+    twodaysago = dbo.sql_date(dbo.today(offset=-2))
     return "SELECT a.*, " \
         "at.AnimalType AS AnimalTypeName, " \
         "ba1.AnimalName AS BondedAnimal1Name, " \
@@ -371,17 +373,17 @@ def get_animal_query(dbo: Database) -> str:
         "doc.Date AS DocMediaDate, " \
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
-        "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
+        f"CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > {today}) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "fo.OwnerName AS FutureOwnerName, " \
         "fo.EmailAddress AS FutureOwnerEmailAddress, " \
         "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
-        "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
-        "CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= %(today)s AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
+        f"(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= {twodaysago} AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
+        f"CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= {today} AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
         "CASE WHEN ab.ID Is Not Null THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "ab.InDateTime AS ActiveBoardingInDate, " \
         "ab.OutDateTime AS ActiveBoardingOutDate, " \
         "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
-        "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Null AND DateRequired < %(today)s) AS VaccOutstandingCount, " \
+        f"(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Null AND DateRequired < {today}) AS VaccOutstandingCount, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \
@@ -445,7 +447,7 @@ def get_animal_query(dbo: Database) -> str:
         "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
         "LEFT OUTER JOIN jurisdiction cj ON cj.ID = co.JurisdictionID " \
-        "LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding abi WHERE abi.AnimalID = a.ID AND InDateTime <= %(today)s AND OutDateTime >= %(today)s) " \
+        f"LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding abi WHERE abi.AnimalID = a.ID AND InDateTime <= {today} AND OutDateTime >= {today}) " \
         "LEFT OUTER JOIN animaldiet adi ON adi.ID = (SELECT MAX(ID) FROM animaldiet sadi WHERE sadi.AnimalID = a.ID) " \
         "LEFT OUTER JOIN diet ON diet.ID = adi.DietID " \
         "LEFT OUTER JOIN animalcontrolanimal aca ON a.ID=aca.AnimalID and aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
@@ -454,12 +456,126 @@ def get_animal_query(dbo: Database) -> str:
         "LEFT OUTER JOIN adoption ar ON ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
         "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID " \
-        "LEFT OUTER JOIN adoption fa ON fa.ID = (SELECT MAX(far.ID) FROM adoption far WHERE far.AnimalID = a.ID AND far.MovementType = 1 AND far.MovementDate Is Not Null AND far.MovementDate > %(today)s AND far.ReturnDate Is Null) " \
+        f"LEFT OUTER JOIN adoption fa ON fa.ID = (SELECT MAX(far.ID) FROM adoption far WHERE far.AnimalID = a.ID AND far.MovementType = 1 AND far.MovementDate Is Not Null AND far.MovementDate > {today} AND far.ReturnDate Is Null) " \
         "LEFT OUTER JOIN owner fo ON fo.ID = fa.OwnerID " \
-        "LEFT OUTER JOIN jurisdiction rj ON rj.ID = ro.JurisdictionID " % {
-            "today": dbo.sql_today(),
-            "twodaysago":  dbo.sql_date(dbo.today(offset=-2))
-        }
+        "LEFT OUTER JOIN jurisdiction rj ON rj.ID = ro.JurisdictionID "
+
+def get_animal_brief_query(dbo: Database) -> str:
+    today = dbo.sql_today()
+    return "SELECT a.AcceptanceNumber, a.ActiveMovementID, a.ActiveMovementType, " \
+        "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
+        "a.AdditionalFlags, " \
+        "a.AdoptionCoordinatorID, " \
+        "ao.OwnerName AS AdoptionCoordinatorName, " \
+        "a.AgeGroup, " \
+        "a.AnimalComments, " \
+        "a.AnimalAge, " \
+        "a.AnimalName, " \
+        "t.AnimalType AS AnimalTypeName, " \
+        "a.Archived, " \
+        "bc.BaseColour AS BaseColourName, " \
+        "a.BondedAnimalID, " \
+        "a.BondedAnimal2ID, " \
+        "a.BreedName, " \
+        "CASE " \
+            "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
+            "THEN a.ShortCode ELSE a.ShelterCode " \
+        "END AS Code, " \
+        "a.CombiTested, " \
+        "a.CombiTestResult, " \
+        "a.CrueltyCase, " \
+        "co.ID AS CurrentOwnerID, " \
+        "co.OwnerName AS CurrentOwnerName, " \
+        "a.DateOfBirth, " \
+        "a.DaysOnShelter, " \
+        "a.DeceasedDate, " \
+        "CASE " \
+            "WHEN a.Archived = 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 1 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
+            "WHEN a.Archived = 0 AND a.ActiveMovementType = 2 AND a.HasPermanentFoster = 1 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
+            "WHEN a.Archived = 1 AND a.ActiveMovementType = 7 AND a.SpeciesID = 2 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+            "WHEN a.Archived = 0 AND a.ActiveMovementType IN (2, 8) THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) " \
+            "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null THEN " \
+            "(SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID) " \
+            "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN " \
+            "(SELECT MovementType FROM lksmovementtype WHERE ID=a.ActiveMovementType) " \
+            "ELSE " \
+            "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
+        "END AS DisplayLocationName, " \
+        "er.ReasonName AS EntryReasonName, " \
+        "et.EntryTypeName AS EntryTypeName, " \
+        "a.FLVResult, " \
+        "CASE WHEN ab.ID Is Not Null THEN 1 ELSE 0 END AS HasActiveBoarding, " \
+        "a.HasActiveReserve, " \
+        f"CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > {today}) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
+        "a.HasSpecialNeeds, " \
+        "a.HasTrialAdoption, " \
+        "a.HasPermanentFoster, " \
+        "a.HeartwormTested, " \
+        "a.HeartwormTestResult, " \
+        "a.HiddenAnimalDetails, " \
+        "a.HoldUntilDate, " \
+        "a.ID, " \
+        "a.Identichipped, " \
+        "a.IsCourtesy, " \
+        "a.IsGoodWithCats, " \
+        "a.IsGoodWithChildren, " \
+        "a.IsGoodWithDogs, " \
+        "a.IsHouseTrained, " \
+        "a.IsHold, " \
+        "a.IsNotAvailableForAdoption, " \
+        "a.IsPickup, " \
+        "a.IsQuarantine, " \
+        "j.JurisdictionName, " \
+        "a.LastChangedDate, " \
+        "a.LastChangedBy, " \
+        "a.Markings, " \
+        "a.MostRecentEntryDate, " \
+        "a.Neutered, " \
+        "a.NonShelterAnimal, " \
+        "a.OriginalOwnerID, " \
+        "oo.OwnerName AS OriginalOwnerName, " \
+        "a.OwnerID, " \
+        "co.OwnerName, " \
+        "pl.LocationName AS PickupLocationName, " \
+        "a.PopupWarning, " \
+        "a.RabiesTag, " \
+        "a.Sex, " \
+        "sx.Sex AS SexName, " \
+        "a.ShelterCode, " \
+        "a.ShelterLocation, " \
+        "il.LocationName AS ShelterLocationName, " \
+        "a.ShelterLocationUnit, " \
+        "a.ShortCode, " \
+        "se.SiteName, " \
+        "a.SpeciesID, " \
+        "sp.SpeciesName, " \
+        "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
+        "web.ID AS WebsiteMediaID, " \
+        "web.MediaName AS WebsiteMediaName, " \
+        "web.Date AS WebsiteMediaDate, " \
+        "web.MediaNotes AS WebsiteMediaNotes " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
+        "LEFT OUTER JOIN species sp ON sp.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN entryreason er ON er.ID = a.EntryReasonID " \
+        "LEFT OUTER JOIN lksentrytype et ON et.ID = a.EntryTypeID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN site se ON se.ID = il.SiteID " \
+        "LEFT OUTER JOIN pickuplocation pl ON pl.ID = a.PickupLocationID " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = a.JurisdictionID " \
+        "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media WHERE LinkID = a.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) " \
+        "LEFT OUTER JOIN owner ao ON ao.ID = a.AdoptionCoordinatorID " \
+        "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
+        "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
+        "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
+        f"LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= {today} AND OutDateTime >= {today}) "
 
 def get_animal_entry_query(dbo: Database) -> str:
     return "SELECT ae.*, " \
@@ -504,6 +620,7 @@ def get_animal_entry_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner ac ON ac.ID = ae.AdoptionCoordinatorID "
 
 def get_animal_status_query(dbo: Database) -> str:
+    today = dbo.sql_today()
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.AnimalComments, " \
         "a.DeceasedDate, a.DateOfBirth, a.DiedOffShelter, a.PutToSleep, a.Neutered, a.Identichipped, a.SpeciesID, " \
         "dr.ReasonName AS PTSReasonName, " \
@@ -515,16 +632,14 @@ def get_animal_status_query(dbo: Database) -> str:
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation, " \
         "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
-        "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
-        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= %(today)s AND OutDateTime >= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
+        f"CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > {today}) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
+        f"CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= {today} AND OutDateTime >= {today}) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
         "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media sweb WHERE sweb.LinkID = a.ID AND sweb.LinkTypeID = 0 AND sweb.WebsitePhoto = 1) " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % {
-            "today": dbo.sql_today(),
-        }
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_animal_movement_status_query(dbo: Database) -> str:
     return "SELECT m.ID, m.MovementType, m.MovementDate, m.ReturnDate, " \
@@ -592,11 +707,26 @@ def get_animals_ids(dbo: Database, sort: str, q: str, limit: int = 5, cachetime:
     rows = dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime, distincton="ID")
     return calc_ages(dbo, rows)
 
+def get_animals_ids_brief(dbo: Database, sort: str, q: str, limit: int = 5, cachetime: int = 60) -> Results:
+    """
+    Given a recordset of animal IDs, goes and gets the brief animal records (eg: for shelterview or animal links).
+    The idea is that we write the simplest possible animal queries to get the
+    ID before feeding the list of IDs into the full animal_query. This performs
+    a lot better than doing the full SELECT with ORDER BY/LIMIT
+    """
+    aids = []
+    for aid in dbo.query(q, limit=limit):
+        aids.append(aid["ID"])
+    if len(aids) == 0: return [] # Return empty recordset if no results
+    rows = dbo.query_cache(get_animal_brief_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime, distincton="ID")
+    return calc_ages(dbo, rows)
+
 def get_animals_brief(animals: Results) -> Results:
     """
     For any method that returns a list of animals from the get_animal_query 
     selector, this will strip them down and return shorter records for passing
-    as json to things like search, shelterview and animal links screens.
+    as json to things like search, shelterview and animal links on the homepage.
+    There is a get_animal_brief_query that is quicker and better for large datasets.
     """
     r = []
     for a in animals:
@@ -652,6 +782,7 @@ def get_animals_brief(animals: Results) -> Results:
             "ISNOTAVAILABLEFORADOPTION": a["ISNOTAVAILABLEFORADOPTION"],
             "ISPICKUP": a["ISPICKUP"], 
             "ISQUARANTINE": a["ISQUARANTINE"],
+            "JURISDICTIONNAME": a["JURISDICTIONNAME"],
             "LASTCHANGEDDATE": a["LASTCHANGEDDATE"],
             "LASTCHANGEDBY": a["LASTCHANGEDBY"],
             "MARKINGS": a["MARKINGS"],
@@ -682,7 +813,7 @@ def get_animals_brief(animals: Results) -> Results:
         })
     return r
 
-def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, lf: LocationFilter = None) -> Results:
+def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, lf: LocationFilter = None, brief: bool = False) -> Results:
     """
     Returns rows for simple animal searches.
     query: The search criteria
@@ -715,8 +846,9 @@ def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", 
         classfilter = ""
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(tablequalifier="a", andsuffix=True)
+    query = brief and get_animal_brief_query(dbo) or get_animal_query(dbo)
     sql = "%s WHERE %s %s (%s) ORDER BY a.Archived, a.AnimalName" % ( \
-        get_animal_query(dbo),
+        query,
         classfilter,
         locationfilter,
         " OR ".join(ss.ors))
@@ -965,10 +1097,10 @@ def get_animals_owned_by(dbo: Database, personid: int) -> Results:
     1. Animals that have an open adoption, foster, transter, reclaim or retailer movement to this person (nonshelter=0)
     2. Animals where originalownerid = personid (nonshelter=1)
     """
-    sa = dbo.query("%s WHERE a.NonShelterAnimal = 0 AND a.ActiveMovementType IN (1,2,3,5,8) AND a.DeceasedDate Is Null " \
-        "AND EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND OwnerID = ? AND MovementType IN (1,2,3,5,8) AND ReturnDate Is Null)" % get_animal_query(dbo), [personid])
-    nsa = dbo.query("%s WHERE a.NonShelterAnimal = 1 AND a.DeceasedDate Is Null AND a.OriginalOwnerID = ?" % get_animal_query(dbo), [personid])
-    return get_animals_brief(sa + nsa)
+    sa = dbo.query(get_animal_brief_query(dbo) + " WHERE a.NonShelterAnimal = 0 AND a.ActiveMovementType IN (1,2,3,5,8) AND a.DeceasedDate Is Null " \
+        "AND EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND OwnerID = ? AND MovementType IN (1,2,3,5,8) AND ReturnDate Is Null)", [personid])
+    nsa = dbo.query(get_animal_brief_query(dbo) + " WHERE a.NonShelterAnimal = 1 AND a.DeceasedDate Is Null AND a.OriginalOwnerID = ?", [personid])
+    return sa + nsa
 
 def get_animals_quarantine(dbo: Database) -> Results:
     """
@@ -2121,7 +2253,7 @@ def get_links_adoptable(dbo: Database, lf: LocationFilter = None, limit: int = 5
     """
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(andprefix=True)
-    return get_animals_ids(dbo, "a.AnimalName", 
+    return get_animals_ids_brief(dbo, "a.AnimalName", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Adoptable = 1 %s ORDER BY AnimalName" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
@@ -2131,7 +2263,7 @@ def get_links_recently_adopted(dbo: Database, lf: LocationFilter = None, limit: 
     """
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
+    return get_animals_ids_brief(dbo, "a.ActiveMovementDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
@@ -2141,7 +2273,7 @@ def get_links_recently_fostered(dbo: Database, lf: LocationFilter = None, limit:
     """
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
+    return get_animals_ids_brief(dbo, "a.ActiveMovementDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
@@ -2151,7 +2283,7 @@ def get_links_recently_changed(dbo: Database, lf: LocationFilter = None, limit: 
     """
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(whereprefix=True)
-    return get_animals_ids(dbo, "a.LastChangedDate DESC", 
+    return get_animals_ids_brief(dbo, "a.LastChangedDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
@@ -2161,7 +2293,7 @@ def get_links_recently_entered(dbo: Database, lf: LocationFilter = None, limit: 
     """
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", 
+    return get_animals_ids_brief(dbo, "a.MostRecentEntryDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
@@ -2171,7 +2303,7 @@ def get_links_longest_on_shelter(dbo: Database, lf: LocationFilter = None, limit
     """
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate", 
+    return get_animals_ids_brief(dbo, "a.MostRecentEntryDate", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
@@ -2448,7 +2580,7 @@ def get_shelterview_animals(dbo: Database, lf: LocationFilter = None) -> Results
     limit = asm3.configuration.record_search_limit(dbo)
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(andprefix=True)
-    animals = get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal " \
+    animals = get_animals_ids_brief(dbo, "a.AnimalName", "SELECT animal.ID FROM animal " \
         "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
         f"WHERE Archived = 0 {locationfilter} ORDER BY HasPermanentFoster, animal.ID DESC", limit=limit)
     return calc_age_group_rows(dbo, animals)

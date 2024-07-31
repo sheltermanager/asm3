@@ -1469,7 +1469,7 @@ class main(JSONEndpoint):
             "overview": overview,
             "recent": timeline,
             "stats": stats,
-            "animallinks": asm3.animal.get_animals_brief(animallinks),
+            "animallinks": animallinks,
             "diary": dm,
             "mess": mess 
         }
@@ -6878,7 +6878,7 @@ class shelterview(JSONEndpoint):
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("got %d animals for shelterview" % (len(animals)), "main.shelterview", dbo)
         return {
-            "animals": asm3.animal.get_animals_brief(animals),
+            "animals": animals,
             "flags": asm3.lookups.get_animal_flags(dbo),
             "fosterers": asm3.person.get_shelterview_fosterers(dbo, o.siteid),
             "locations": asm3.lookups.get_internal_locations(dbo, o.lf),
