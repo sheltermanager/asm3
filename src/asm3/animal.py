@@ -851,6 +851,7 @@ def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", 
     idsql = 'SELECT DISTINCT a.ID FROM animal a LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ' \
         f"{classfilter} {locationfilter} ({ors})"
     idrows = dbo.query_list(idsql, ss.values, limit=limit)
+    idrows = [ "0" ] + dbo.query_list(idsql, ss.values, limit=limit)
     idin = ",".join([ str(x) for x in idrows ])
     # then get them
     sql = brief and get_animal_brief_query(dbo) or get_animal_query(dbo)
@@ -1055,7 +1056,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)
     # run the query to retrieve the list of rows with matching IDs
     idsql = f"SELECT DISTINCT a.ID FROM animal a LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation {where}"
-    idrows = dbo.query_list(idsql, ss.values, limit=limit)
+    idrows = [ "0" ] + dbo.query_list(idsql, ss.values, limit=limit)
     idin = ",".join([ str(x) for x in idrows ])
     # then get them
     sql = f"{get_animal_query(dbo)} WHERE a.ID IN ({idin}) ORDER BY a.Archived, a.AnimalName" 
