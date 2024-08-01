@@ -4282,10 +4282,12 @@ class litters(JSONEndpoint):
         else:
             litters = asm3.animal.get_litters(dbo, offset)
         littermates = asm3.animal.get_litter_animals(dbo, litters)
+        mothers = asm3.animal.get_litter_mothers(dbo, litters)
         asm3.al.debug("got %d litters" % len(litters), "main.litters", dbo)
         return {
             "rows": litters,
             "littermates": littermates,
+            "mothers": mothers,
             "species": asm3.lookups.get_species(dbo)
         }
 

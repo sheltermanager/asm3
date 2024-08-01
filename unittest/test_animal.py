@@ -115,7 +115,9 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.get_links_longest_on_shelter(base.get_dbo())
 
     def test_get_active_litters(self):
-        asm3.animal.get_active_litters(base.get_dbo())
+        litters = asm3.animal.get_active_litters(base.get_dbo())
+        asm3.animal.get_litter_animals(base.get_dbo(), litters)
+        asm3.animal.get_litter_mothers(base.get_dbo(), litters)
         asm3.animal.update_active_litters(base.get_dbo())
 
     def test_get_publish_history(self):

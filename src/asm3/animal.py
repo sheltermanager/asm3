@@ -2423,7 +2423,15 @@ def get_litter_animals(dbo: Database, litters: Results = []) -> Results:
     for l in litters:
         litterids.append(dbo.sql_value(l.ACCEPTANCENUMBER.replace("'", "`")))
     if len(litterids) == 0: return []
-    return dbo.query(get_animal_query(dbo) + " WHERE a.AcceptanceNumber IN ( " + ",".join(litterids) + ") ORDER BY a.ID")
+    return dbo.query(get_animal_brief_query(dbo) + " WHERE a.AcceptanceNumber IN ( " + ",".join(litterids) + ") ORDER BY a.ID")
+
+def get_litter_mothers(dbo: Database, litters: Results = []) -> Results:
+    """ Returns all mothers from the active litters """
+    motherids = []
+    for l in litters:
+        motherids.append(dbo.sql_value(l.PARENTANIMALID))
+    if len(motherids) == 0: return []
+    return dbo.query(get_animal_brief_query(dbo) + " WHERE a.ID IN ( " + ",".join(motherids) + ") ORDER BY a.ID")
 
 def get_satellite_counts(dbo: Database, animalid: int) -> Results:
     """

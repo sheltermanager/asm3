@@ -51,7 +51,8 @@ $(function() {
                     { field: "ACCEPTANCENUMBER", display: _("Litter Ref") },
                     { field: "PARENTANIMALID", display: _("Parent"), formatter: function(row) {
                         if (row.PARENTANIMALID) {
-                            return '<a href="animal?id=' + row.PARENTANIMALID + '">' + row.MOTHERNAME + ' - ' + row.MOTHERCODE + '</a>';
+                            let mother = common.get_row(controller.mothers, row.PARENTANIMALID, "ID");
+                            if (mother) { return html.animal_link(mother); }
                         }
                         return "";
                     }},
