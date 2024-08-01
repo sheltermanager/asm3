@@ -6163,7 +6163,7 @@ def update_34803(dbo: Database) -> None:
         dbo.ddl_add_table_column("FromUnit", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("ToLocationID", dbo.type_integer, False),
         dbo.ddl_add_table_column("ToUnit", dbo.type_shorttext, False),
-        dbo.ddl_add_table_column("By", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("MovedBy", dbo.type_shorttext, False), # 2024-08-01 changed By to MovedBy as it breaks the update path for MySQL
         dbo.ddl_add_table_column("Description", dbo.type_shorttext, False)
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("animallocation", fields) )
