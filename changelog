@@ -1,6 +1,7 @@
 49
 ================
 
+01/08/24 Add ANIMALLITTER csv import field
 01/08/24 Update 34803: By->MovedBy so it doesn't break the update path on MySQL
 01/08/24 PetFinder: Omit cruelty case flagged animals from Stray/Hold uploads
 01/08/24 Streamline advanced find animal query so diet/originalowner joins not needed

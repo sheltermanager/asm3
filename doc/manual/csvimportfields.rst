@@ -37,6 +37,8 @@ the caller.
 
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
+ANIMALLITTER
+    A litter reference for the animal. Animals with the same reference can be viewed together with the "littermates" button on animal records.
 ANIMALNAME
     The animal's name
 ANIMALIMAGE

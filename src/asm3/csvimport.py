@@ -23,7 +23,7 @@ import sys
 
 VALID_FIELDS = [
     "ANIMALCODE", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", "ANIMALBREED2", "ANIMALDOB", 
-    "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
+    "ANIMALLITTER", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
     "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALDECEASEDDATE", "ANIMALDECEASEDREASON", "ANIMALDECEASEDNOTES", "ANIMALEUTHANIZED", 
     "ANIMALCOMMENTS", "ANIMALDESCRIPTION", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
@@ -400,6 +400,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             a["animalname"] = gks(row, "ANIMALNAME")
             a["sheltercode"] = animalcode
             a["shortcode"] = animalcode
+            a["litterid"] = gks(row, "ANIMALLITTER")
             if gks(row, "ANIMALSEX") == "": 
                 a["sex"] = "2" # Default unknown if not set
             else:
