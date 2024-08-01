@@ -2104,7 +2104,7 @@ class animal_embed(ASMEndpoint):
     def post_multiselect(self, o):
         self.content_type("application/json")
         dbo = o.dbo
-        rows = asm3.animal.get_animal_find_simple(dbo, "", classfilter="all", limit=asm3.configuration.record_search_limit(dbo), lf=o.lf)
+        rows = asm3.animal.get_animal_find_simple(dbo, "", classfilter="all", limit=asm3.configuration.record_search_limit(dbo), lf=o.lf, brief=True)
         locations = asm3.lookups.get_internal_locations(dbo, o.lf)
         species = asm3.lookups.get_species(dbo)
         litters = asm3.animal.get_litters(dbo)
