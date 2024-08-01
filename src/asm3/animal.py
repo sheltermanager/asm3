@@ -1052,7 +1052,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     idin = ",".join([ str(x) for x in idrows ])
     # then get them
     sql = f"{get_animal_query(dbo)} WHERE a.ID IN ({idin}) ORDER BY a.Archived, a.AnimalName" 
-    rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    rows = dbo.query(sql, limit=limit, distincton="ID")
     rows = calc_ages(dbo, rows)
     return rows
 
