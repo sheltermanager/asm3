@@ -985,7 +985,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
         ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweento")))
         ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweenfrom")))
 
-    if post["diet"] != "-1":
+    if post["diet"] != "-1" and post["diet"] != "":
         dietid = post["diet"]
         ss.ands.append(f"EXISTS (SELECT ID FROM animaldiet WHERE DietID={dietid} AND AnimalID = a.ID)")
 
