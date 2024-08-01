@@ -2097,7 +2097,7 @@ class animal_embed(ASMEndpoint):
     def post_find(self, o):
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.animal.get_animal_find_simple(o.dbo, q, classfilter=o.post["filter"], limit=100, lf=o.lf)
+        rows = asm3.animal.get_animal_find_simple(o.dbo, q, classfilter=o.post["filter"], limit=100, lf=o.lf, brief=True)
         asm3.al.debug("got %d results for '%s'" % (len(rows), self.query()), "main.animal_embed", o.dbo)
         return asm3.utils.json(rows)
 

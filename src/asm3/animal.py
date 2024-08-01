@@ -846,13 +846,16 @@ def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", 
         classfilter = ""
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(tablequalifier="a", andsuffix=True)
-    query = brief and get_animal_brief_query(dbo) or get_animal_query(dbo)
-    sql = "%s WHERE %s %s (%s) ORDER BY a.Archived, a.AnimalName" % ( \
-        query,
-        classfilter,
-        locationfilter,
-        " OR ".join(ss.ors))
-    rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    # run the query to retrieve the list of rows with matching IDs
+    ors = " OR ".join(ss.ors)
+    idsql = 'SELECT DISTINCT a.ID FROM animal a LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ' \
+        f"{classfilter} {locationfilter} ({ors})"
+    idrows = dbo.query_list(idsql, ss.values, limit=limit)
+    idin = ",".join([ str(x) for x in idrows ])
+    # then get them
+    sql = brief and get_animal_brief_query(dbo) or get_animal_query(dbo)
+    sql = f"{sql} WHERE a.ID IN ({idin}) ORDER BY a.Archived, a.AnimalName" 
+    rows = dbo.query(sql, limit=limit, distincton="ID")
     rows = calc_ages(dbo, rows)
     return rows
 
@@ -1043,7 +1046,12 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
 
     where = ""
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)
-    sql = "%s %s ORDER BY a.AnimalName" % (get_animal_query(dbo), where)
+    # run the query to retrieve the list of rows with matching IDs
+    idsql = f"SELECT DISTINCT a.ID FROM animal a LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID {where}"
+    idrows = dbo.query_list(idsql, ss.values, limit=limit)
+    idin = ",".join([ str(x) for x in idrows ])
+    # then get them
+    sql = f"{get_animal_query(dbo)} WHERE a.ID IN ({idin}) ORDER BY a.Archived, a.AnimalName" 
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     rows = calc_ages(dbo, rows)
     return rows

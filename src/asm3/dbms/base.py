@@ -848,8 +848,11 @@ class Database(object):
         except:
             return float(0)
 
-    def query_list(self, sql: str, params: List = None) -> List:
+    def query_list(self, sql: str, params: List = None, limit: int = 0) -> List:
         """ Runs a query and returns the first column of all rows as a list """
+        # Add limit clause if set
+        if limit > 0:
+            sql = "%s %s" % (sql, self.sql_limit(limit))
         rows = self.query_tuple(sql, params=params)
         l = []
         for r in rows:
