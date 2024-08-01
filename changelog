@@ -1,6 +1,7 @@
 49
 ================
 
+01/08/24 PetFinder: Omit cruelty case flagged animals from Stray/Hold uploads
 01/08/24 Streamline advanced find animal query so diet/originalowner joins not needed
 01/08/24 Refactor find animal to use the 2 step ID->record trick like shelterview
 01/08/24 Use brief records for embedded animal searches

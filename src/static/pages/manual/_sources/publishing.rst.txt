@@ -323,7 +323,8 @@ You can also opt to have your shelter animals with the "Hold" flag sent with
 the PetFinder H status, and shelter animals who have the word "Stray" in
 their entry category sent with an F status. This will put those animals into
 PetFinder's lost and found database to help with reuniting stray pets with
-their owners.
+their owners. Animals who have the "Cruelty Case" flag will be omitted
+from these uploads.
 
 Finally, you can choose to send previously adopted animals with
 status X. This helps PetFinder keep track of your adopted animals and can be

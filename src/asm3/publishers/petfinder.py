@@ -259,7 +259,7 @@ class PetFinderPublisher(FTPPublisher):
 
         # Is the option to send strays on?
         if asm3.configuration.petfinder_send_strays(self.dbo):
-            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND a.EntryTypeID=2" % self.pfAnimalQuery())
+            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND a.EntryTypeID=2" % self.pfAnimalQuery())
             straycikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_STRAY_ANIMALS)
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
@@ -270,7 +270,7 @@ class PetFinderPublisher(FTPPublisher):
 
         # Is the option to send holds on?
         if asm3.configuration.petfinder_send_holds(self.dbo):
-            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.IsHold=1" % self.pfAnimalQuery())
+            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.IsHold=1" % self.pfAnimalQuery())
             heldcikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_HELD_ANIMALS)
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
