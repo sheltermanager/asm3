@@ -943,7 +943,6 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_id("sex", "a.Sex")
     ss.add_id("size", "a.Size")
     ss.add_id("colour", "a.BaseColourID")
-    ss.add_id("diet", "adi.DietID")
     ss.add_id("entryreason", "a.EntryReasonID")
     ss.add_id("entrytype", "a.EntryTypeID")
     ss.add_id("pickuplocation", "a.PickupLocationID")
@@ -968,7 +967,6 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_words("hiddencomments", "a.HiddenAnimalDetails")
     ss.add_words("features", "a.Markings")
     ss.add_words("reasonforentry", "a.ReasonForEntry")
-    ss.add_str("originalowner", "oo.OwnerName")
     if post.integer("agegroup") != -1:
         ss.add_str("agegroup", "a.AgeGroup")
     ss.add_date("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
@@ -986,6 +984,10 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
         ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweento")))
         ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweenfrom")))
 
+    if post["diet"] != "-1":
+        dietid = post["diet"]
+        ss.ands.append(f"EXISTS (SELECT ID FROM animaldiet WHERE DietID={dietid} AND AnimalID = a.ID)")
+
     if post["insuranceno"] != "":
         ilike = dbo.sql_ilike("InsuranceNumber", "?")
         ss.ands.append(f"EXISTS (SELECT InsuranceNumber FROM adoption WHERE {ilike} AND AnimalID = a.ID)")
@@ -995,6 +997,11 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
         ilike = dbo.sql_ilike("MediaNotes", "?")
         ss.ands.append(f"EXISTS (SELECT ID FROM media WHERE {ilike} AND LinkID = a.ID AND LinkTypeID = 0)")
         ss.values.append( "%%%s%%" % post["medianotes"].lower() )
+
+    if post["originalowner"] != "":
+        ilike = dbo.sql_ilike("OwnerName", "?")
+        ss.ands.append(f"EXISTS (SELECT ID FROM owner WHERE {ilike} AND ID = a.OriginalOwnerID)")
+        ss.values.append( "%%%s%%" % post["originalowner"].lower() )
 
     if post["adoptionno"] != "":
         ilike = dbo.sql_ilike("AdoptionNumber", "?")
@@ -1047,7 +1054,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     where = ""
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)
     # run the query to retrieve the list of rows with matching IDs
-    idsql = f"SELECT DISTINCT a.ID FROM animal a LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID {where}"
+    idsql = f"SELECT DISTINCT a.ID FROM animal a LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation {where}"
     idrows = dbo.query_list(idsql, ss.values, limit=limit)
     idin = ",".join([ str(x) for x in idrows ])
     # then get them
