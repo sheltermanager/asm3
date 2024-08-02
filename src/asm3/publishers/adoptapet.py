@@ -200,7 +200,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "Lop Eared=Lop-Eared\n" \
             "Mini-Lop=Mini Lop\n" \
             "Bunny Rabbit=Other/Unknown\n" \
-            "Chinchilla=Chinchilla, Standard\n" \
             "Pot Bellied=Pig (Potbellied)\n" \
             "Budgie/Budgerigar=Budgie\n" \
             "Parakeet (Other)=Parakeet - Other\n"
