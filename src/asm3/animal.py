@@ -165,6 +165,7 @@ def get_animal_query(dbo: Database) -> str:
     Returns a select for animal rows with resolved lookups
     """
     today = dbo.sql_today()
+    endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
     twodaysago = dbo.sql_date(dbo.today(offset=-2))
     return "SELECT a.*, " \
         "at.AnimalType AS AnimalTypeName, " \
@@ -447,7 +448,7 @@ def get_animal_query(dbo: Database) -> str:
         "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
         "LEFT OUTER JOIN jurisdiction cj ON cj.ID = co.JurisdictionID " \
-        f"LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding abi WHERE abi.AnimalID = a.ID AND InDateTime <= {today} AND OutDateTime >= {today}) " \
+        f"LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding abi WHERE abi.AnimalID = a.ID AND InDateTime <= {endoftoday} AND OutDateTime >= {today}) " \
         "LEFT OUTER JOIN animaldiet adi ON adi.ID = (SELECT MAX(ID) FROM animaldiet sadi WHERE sadi.AnimalID = a.ID) " \
         "LEFT OUTER JOIN diet ON diet.ID = adi.DietID " \
         "LEFT OUTER JOIN animalcontrolanimal aca ON a.ID=aca.AnimalID and aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
@@ -462,6 +463,7 @@ def get_animal_query(dbo: Database) -> str:
 
 def get_animal_brief_query(dbo: Database) -> str:
     today = dbo.sql_today()
+    endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
     return "SELECT a.AcceptanceNumber, a.ActiveMovementID, a.ActiveMovementType, " \
         "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
         "a.AdditionalFlags, " \
@@ -575,7 +577,7 @@ def get_animal_brief_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
         "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
-        f"LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= {today} AND OutDateTime >= {today}) "
+        f"LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= {endoftoday} AND OutDateTime >= {today}) "
 
 def get_animal_entry_query(dbo: Database) -> str:
     return "SELECT ae.*, " \
@@ -621,6 +623,7 @@ def get_animal_entry_query(dbo: Database) -> str:
 
 def get_animal_status_query(dbo: Database) -> str:
     today = dbo.sql_today()
+    endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.AnimalComments, " \
         "a.DeceasedDate, a.DateOfBirth, a.DiedOffShelter, a.PutToSleep, a.Neutered, a.Identichipped, a.SpeciesID, " \
         "dr.ReasonName AS PTSReasonName, " \
@@ -633,7 +636,7 @@ def get_animal_status_query(dbo: Database) -> str:
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation, " \
         "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
         f"CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > {today}) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
-        f"CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= {today} AND OutDateTime >= {today}) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
+        f"CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= {endoftoday} AND OutDateTime >= {endoftoday}) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
