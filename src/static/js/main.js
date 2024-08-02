@@ -85,7 +85,7 @@ $(function() {
                         _("{plural3} vaccinations have expired")
                     ]));
             }
-            if (alerts.NOTRAB > 0 && common.has_permission("va") && config.bool("EmblemRabies") ) {
+            if (alerts.NOTRAB > 0 && common.has_permission("va") && common.has_permission("vav") && config.bool("EmblemRabies") ) {
                 totalalerts += alerts.NOTRAB;
                 oa("search?q=norabies", "rabies", 
                     common.ntranslate(alerts.NOTRAB, [
@@ -95,7 +95,7 @@ $(function() {
                         _("{plural3} animals have not had a rabies vaccination")
                     ]));
             }
-            if (alerts.NEVERVACC > 0 && common.has_permission("va") && config.bool("EmblemNeverVacc") ) {
+            if (alerts.NEVERVACC > 0 && common.has_permission("va") && common.has_permission("vav") && config.bool("EmblemNeverVacc") ) {
                 totalalerts += alerts.NEVERVACC;
                 oa("search?q=nevervacc", "novaccination",
                     common.ntranslate(alerts.NEVERVACC, [
