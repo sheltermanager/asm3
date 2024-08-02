@@ -47,7 +47,7 @@ $(document).ready(function() {
         display_location: function(a) {
             let displaylocation = a.DISPLAYLOCATION;
             if (a.ACTIVEMOVEMENTTYPE > 0 && !common.has_permission("vo") && displaylocation.indexOf("::") != -1) { 
-                displaylocation = displaylocation.substring(0, displaylocation.indexOf("::"));
+                displaylocation = a.DISPLAYLOCATIONNAME;
             }
             return displaylocation;
         },

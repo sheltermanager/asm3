@@ -491,6 +491,7 @@ def get_animal_brief_query(dbo: Database) -> str:
         "a.DateOfBirth, " \
         "a.DaysOnShelter, " \
         "a.DeceasedDate, " \
+        "a.DisplayLocation, " \
         "CASE " \
             "WHEN a.Archived = 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 1 THEN " \
             "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
@@ -760,6 +761,7 @@ def get_animals_brief(animals: Results) -> Results:
             "DATEOFBIRTH": a["DATEOFBIRTH"],
             "DAYSONSHELTER": a["DAYSONSHELTER"],
             "DECEASEDDATE": a["DECEASEDDATE"],
+            "DISPLAYLOCATION": a["DISPLAYLOCATION"],
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
             "ENTRYTYPENAME": a["ENTRYTYPENAME"],
