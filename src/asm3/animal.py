@@ -1212,7 +1212,8 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "av1.DateExpires  >= %(oneyear)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
             "0 = (SELECT COUNT(*) FROM animalvaccination av2 WHERE av2.AnimalID = av1.AnimalID AND " \
             "av2.ID <> av1.ID AND av2.DateRequired >= av1.DateOfVaccination AND av2.VaccinationID = av1.VaccinationID)) AS expvacc," \
-        "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND SpeciesID IN ( %(alertnevervacc)s ) AND " \
+        "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
+            "WHERE Archived=0 %(locfilter)s AND SpeciesID IN ( %(alertnevervacc)s ) AND " \
             "NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=animal.ID AND DateOfVaccination Is Not Null)) AS nevervacc," \
         "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
@@ -1250,7 +1251,8 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s AND SpeciesID IN ( %(alertchip)s ) ) AS notchip, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND IsNotAvailableForAdoption = 1 %(locfilter)s) AS notadopt, " \
-        "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s) AS holdtoday, " \
+        "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
+            "WHERE Archived = 0 %(locfilter)s AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s) AS holdtoday, " \
         "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming) AS inform, " \
         "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null) AS acunfine, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null) AS acundisp, " \
