@@ -1064,48 +1064,80 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     rows = calc_ages(dbo, rows)
     return rows
 
-def get_animals_never_vacc(dbo: Database) -> Results:
+def get_animals_never_vacc(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have never received a vacc of any type
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.Archived = 0 AND a.SpeciesID IN (" + asm3.configuration.alert_species_never_vacc(dbo) + ") " \
-        "AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null)")
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    speciesin = asm3.configuration.alert_species_never_vacc(dbo)
+    sql = f"{query} WHERE a.Archived=0 {locationfilter} " \
+        f"AND a.SpeciesID IN ({speciesin})" \
+        "AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null)"
+    return dbo.query(sql)
 
-def get_animals_no_rabies(dbo: Database) -> Results:
+def get_animals_no_rabies(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have no rabies tag
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.RabiesTag = '' AND a.Archived = 0 AND a.SpeciesID IN (" + asm3.configuration.alert_species_rabies(dbo) + ")")
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    speciesin = asm3.configuration.alert_species_rabies(dbo)
+    sql = f"{query} WHERE a.RabiesTag = '' AND a.Archived=0 {locationfilter} AND a.SpeciesID IN ({speciesin})"
+    return dbo.query(sql)
 
-def get_animals_not_for_adoption(dbo: Database) -> Results:
+def get_animals_not_for_adoption(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have the not for adoption flag set
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsNotAvailableForAdoption = 1 AND a.Archived = 0")
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.IsNotAvailableForAdoption = 1 AND a.Archived=0 {locationfilter}"
+    return dbo.query(sql)
 
-def get_animals_not_microchipped(dbo: Database) -> Results:
+def get_animals_not_microchipped(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have not been microchipped
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.Identichipped = 0 AND a.Archived = 0 AND a.SpeciesID IN (" + asm3.configuration.alert_species_microchip(dbo) + ")")
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    speciesin = asm3.configuration.alert_species_microchip(dbo)
+    sql = f"{query} WHERE a.Identichipped=0 AND a.Archived=0 {locationfilter} AND a.SpeciesID IN ({speciesin})"
+    return dbo.query(sql)
 
-def get_animals_hold(dbo: Database) -> Results:
+def get_animals_hold(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have the hold flag set
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.Archived = 0 ORDER BY DateBroughtIn")
+    query = get_animal_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.IsHold=1 AND a.Archived=0 {locationfilter} ORDER BY DateBroughtIn"
+    return dbo.query(sql)
 
-def get_animals_hold_today(dbo: Database) -> Results:
+def get_animals_hold_today(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have the hold flag set and the hold ends tomorrow (ie. this is the last day of hold)
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.today(offset=1)], distincton="ID")
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.IsHold=1 AND a.HoldUntilDate=? AND a.Archived=0 {locationfilter}"
+    return dbo.query(sql, [dbo.today(offset=1)], distincton="ID")
 
-def get_animals_long_term(dbo: Database) -> Results:
+def get_animals_long_term(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have been on the shelter for 6 months or more
     """
-    return dbo.query("%s WHERE a.DaysOnShelter > ? AND a.Archived = 0" % get_animal_query(dbo), [asm3.configuration.long_term_days(dbo)])
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.DaysOnShelter>? AND a.Archived = 0 {locationfilter}"
+    return dbo.query(sql, [asm3.configuration.long_term_days(dbo)])
 
 def get_animals_owned_by(dbo: Database, personid: int) -> Results:
     """
@@ -1118,26 +1150,35 @@ def get_animals_owned_by(dbo: Database, personid: int) -> Results:
     nsa = dbo.query(get_animal_brief_query(dbo) + " WHERE a.NonShelterAnimal = 1 AND a.DeceasedDate Is Null AND a.OriginalOwnerID = ?", [personid])
     return sa + nsa
 
-def get_animals_quarantine(dbo: Database) -> Results:
+def get_animals_quarantine(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have the quarantine flag set
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsQuarantine = 1 AND a.Archived = 0")
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.IsQuarantine=1 AND a.Archived=0 {locationfilter}"
+    return dbo.query(sql)
 
-def get_animals_recently_deceased(dbo: Database) -> Results:
+def get_animals_recently_deceased(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who are recently deceased
     """
-    return dbo.query(get_animal_query(dbo) + " " \
-        "WHERE a.DeceasedDate Is Not Null " \
-        "AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
-        "AND a.DeceasedDate > ?", [dbo.today(offset=-30)])
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.DeceasedDate Is Not Null AND a.NonShelterAnimal=0 AND a.DiedOffShelter=0 AND a.DeceasedDate>? {locationfilter}"
+    return dbo.query(sql, [dbo.today(offset=-30)])
 
-def get_animals_stray(dbo: Database) -> Results:
+def get_animals_stray(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who are strays
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.EntryTypeID = 2 AND a.Archived = 0 ORDER BY DateBroughtIn")
+    query = get_animal_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.EntryTypeID=2 AND a.Archived=0 {locationfilter} ORDER BY DateBroughtIn"
+    return dbo.query(sql)
 
 def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Results:
     """
@@ -1204,7 +1245,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "WHERE Neutered = 0 AND ActiveMovementType = 1 AND " \
             "ActiveMovementDate > %(onemonth)s %(locfilter)s AND SpeciesID IN ( %(alertneuter)s ) ) AS notneu," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 AND RabiesTag = '' AND SpeciesID IN ( %(alertrabies)s ) ) AS notrab," \
+            "WHERE Archived = 0 %(locfilter)s AND RabiesTag = '' AND SpeciesID IN ( %(alertrabies)s ) ) AS notrab," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s AND SpeciesID IN ( %(alertchip)s ) ) AS notchip, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \

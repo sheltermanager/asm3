@@ -1,6 +1,7 @@
 49
 ================
 
+02/08/24 location filters now apply to all animal search keywords eg: hold, etc.
 02/08/24 Hide never vacc/no rabies vacc alerts for users with no view vacc permission
 01/08/24 Display emblems for mother on edit litters screen #1513
 01/08/24 Add ANIMALLITTER csv import field

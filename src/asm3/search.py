@@ -270,47 +270,47 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     elif q == "notforadoption":
         explain = _("All animals who are flagged as not for adoption.", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_not_for_adoption(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_not_for_adoption(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "longterm":
         explain = _("All animals who have been on the shelter longer than {0} months.", l).format(int(asm3.configuration.long_term_days(dbo) / 30))
         if viewanimal:
-            ar(asm3.animal.get_animals_long_term(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_long_term(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "nevervacc":
         explain = _("All animals who do not have a vaccination of any type", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_never_vacc(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_never_vacc(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "notmicrochipped":
         explain = _("All animals who have not been microchipped", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_not_microchipped(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_not_microchipped(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "norabies":
         explain = _("All animals who have not received a rabies vaccination", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_no_rabies(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_no_rabies(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "hold":
         explain = _("All animals who are currently held in case of reclaim.", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_hold(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_hold(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "holdtoday":
         explain = _("All animals where the hold ends today.", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_hold_today(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_hold_today(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "quarantine":
         explain = _("All animals who are currently quarantined.", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_quarantine(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_quarantine(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "deceased":
         explain = _("Recently deceased shelter animals (last 30 days).", l)
         if viewanimal:
-            ar(asm3.animal.get_animals_recently_deceased(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_recently_deceased(dbo, lf=o.lf), "ANIMAL", animalsort)
 
     elif q == "forpublish":
         explain = _("All animals matching current publishing options.", l)
