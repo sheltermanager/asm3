@@ -523,6 +523,7 @@ def get_animal_brief_query(dbo: Database) -> str:
         "a.HoldUntilDate, " \
         "a.ID, " \
         "a.Identichipped, " \
+        "a.IdentichipNumber, " \
         "a.IsCourtesy, " \
         "a.IsGoodWithCats, " \
         "a.IsGoodWithChildren, " \
@@ -778,6 +779,7 @@ def get_animals_brief(animals: Results) -> Results:
             "HOLDUNTILDATE": a["HOLDUNTILDATE"],
             "ID": a["ID"], 
             "IDENTICHIPPED": a["IDENTICHIPPED"],
+            "IDENTICHIPNUMBER": a["IDENTICHIPNUMBER"],
             "ISCOURTESY": a["ISCOURTESY"],
             "ISGOODWITHCATS": a["ISGOODWITHCATS"],
             "ISGOODWITHCHILDREN": a["ISGOODWITHCHILDREN"],
