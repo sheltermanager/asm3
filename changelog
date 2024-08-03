@@ -1,6 +1,7 @@
 49
 ================
 
+03/08/24 Do not hide transports with null type
 02/08/24 Bad comparison brought boarding animals on shelter tomorrow
 02/08/24 Redundant adoptapet mapping for Chinchilla removed
 02/08/24 location filters now apply to all animal search keywords eg: hold, etc.
