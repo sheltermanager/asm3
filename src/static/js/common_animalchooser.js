@@ -164,17 +164,17 @@ $.widget("asm.animalchooser", {
     },
 
     find: function() {
-        var self = this;
-        var dialog = this.options.dialog, node = this.options.node;
+        let self = this;
+        let dialog = this.options.dialog, node = this.options.node;
         dialog.find(".animalchooser-spinner").show();
         dialog.find("button").button("disable");
-        var formdata = "mode=find&filter=" + encodeURIComponent(this.options.filter) + "&q=" + encodeURIComponent(dialog.find("input").val());
-        $.ajax({
-            type: "POST",
-            url:  "animal_embed",
-            data: formdata,
-            dataType: "text",
-            success: function(data, textStatus, jqXHR) {
+        let formdata = {
+            "mode":     "find",
+            "filter":   this.options.filter, 
+            "q":        dialog.find("input").val()
+        };
+        common.ajax_post("animal_embed", formdata, 
+            function(data) {
                 var h = "";
                 var animal = jQuery.parseJSON(data);
                 // Create the table content from the results
@@ -197,18 +197,23 @@ $.widget("asm.animalchooser", {
                 // Use delegation to bind to the name column and select
                 // the animal once clicked. Triggers the change callback
                 dialog.on("click", "a", function(e) {
-                    var rec = animal[$(this).attr("data")];
-                    self.element.val(rec.ID);
-                    self.options.rec = rec;
-                    var disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
-                    self.options.display.html(disp);
-                    node.find(".animalchooser-oopostcode").val(rec.ORIGINALOWNERPOSTCODE);
-                    node.find(".animalchooser-bipostcode").val(rec.BROUGHTINBYOWNERPOSTCODE);
-                    try { validate.dirty(true); } catch(ex) { }
+                    let rec = animal[$(this).attr("data")];
                     dialog.dialog("close");
-                    self._trigger("change", null, rec);
-                    self.selected = rec;
-                    common.inject_target();
+                    // Retrieve the full selected record, since the resultset only
+                    // contains brief records.
+                    common.ajax_post("animal_embed", "mode=id&id=" + rec.ID, function(data) {
+                        let rec = jQuery.parseJSON(data)[0];
+                        self.element.val(rec.ID);
+                        self.options.rec = rec;
+                        var disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+                        self.options.display.html(disp);
+                        node.find(".animalchooser-oopostcode").val(rec.ORIGINALOWNERPOSTCODE);
+                        node.find(".animalchooser-bipostcode").val(rec.BROUGHTINBYOWNERPOSTCODE);
+                        try { validate.dirty(true); } catch(ex) { }
+                        self._trigger("change", null, rec);
+                        self.selected = rec;
+                        common.inject_target();
+                    });
                     return false;
                 });
                 // Force the table to update itself and remove the spinner
@@ -216,13 +221,12 @@ $.widget("asm.animalchooser", {
                 dialog.find(".animalchooser-spinner").hide();
                 dialog.find("button").button("enable");
             },
-            error: function(jqxhr, textstatus, response) {
+            function(jqxhr, textstatus, response) {
                 dialog.dialog("close");
                 log.error(response);
                 dialog.find(".animalchooser-spinner").hide();
                 dialog.find("button").button("enable");
-            }
-        });
+            });
     },
 
     get_selected: function() {

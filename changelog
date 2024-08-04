@@ -1,6 +1,8 @@
 49
 ================
 
+04/08/24 Fix performance bug with onshelter simple search
+04/08/24 animal_embed: retrieve full record on click
 03/08/24 Do not hide transports with null type
 02/08/24 Bad comparison brought boarding animals on shelter tomorrow
 02/08/24 Redundant adoptapet mapping for Chinchilla removed

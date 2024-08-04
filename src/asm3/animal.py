@@ -832,7 +832,8 @@ def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", 
     if query == "" and (classfilter == "all" or classfilter == "shelter"):
         locationfilter = ""
         if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
-        sql = "%s WHERE a.Archived=0 %s ORDER BY a.AnimalName" % (get_animal_query(dbo), locationfilter)
+        sql = brief and get_animal_brief_query(dbo) or get_animal_query(dbo)
+        sql = f"{sql} WHERE a.Archived=0 {locationfilter} ORDER BY a.AnimalName"
         return calc_ages(dbo, dbo.query(sql, limit=limit, distincton="ID"))
     ss = asm3.utils.SimpleSearchBuilder(dbo, query)
     ss.add_fields([ "a.AnimalName", "a.ShelterCode", "a.ShortCode", "a.AcceptanceNumber", "a.BreedName",
