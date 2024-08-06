@@ -60,6 +60,7 @@ $(function() {
                                 tableform.dialog_error(_("Markup should be HTML fragments, not a full document."));
                                 return false;
                             }
+                            return true;
                         },
                         callout: _("Additional text to be shown with the label to help the user complete this form field") }
                 ]
