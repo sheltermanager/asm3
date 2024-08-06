@@ -631,8 +631,13 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 if checkduplicates:
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
                     if dup is not None:
+                        # We already have an animal record with this code, update it
                         animalid = dup.ID
-                        # The animal is a duplicate. Overwrite fields if they are present and have a value
+                        # The code above will set internallocation to the default if not supplied, assuming we're going to create
+                        # a new animal. If no actual location was given in the file, we remove that default location
+                        # value now to prevent merge_animal_details overwriting the existing value on the record. #1516
+                        if gks(row, "ANIMALLOCATION") == "": a["internallocation"] = "0"
+                        # Overwrite newly supplied fields if they are present and have a value
                         asm3.animal.merge_animal_details(dbo, user, dup.ID, a, force=True)
                         # Update flags if present
                         if a["flags"] != "":
