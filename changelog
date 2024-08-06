@@ -1,6 +1,7 @@
 49
 ================
 
+06/08/24 Validate against full HTML documents in online form markup fields
 04/08/24 Fix performance bug with onshelter simple search
 04/08/24 animal_embed: retrieve full record on click
 03/08/24 Do not hide transports with null type

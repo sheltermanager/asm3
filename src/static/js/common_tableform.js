@@ -996,7 +996,7 @@ const tableform = {
      *        justwidget: false, (output tr/td/label)
      *        defaultval: expression or function to evaluate.
      *        height/width/margintop: "css expr",
-     *        validation: "notblank|notzero|validemail",
+     *        validation: "notblank|notzero|validemail" or a function to call, return false for validate failure
      *        maxlength: (omit or number of chars limit for text/textarea),
      *        min|max: min/max number for number and intnumber fields
      *        classes: "extraclass anotherone",
@@ -1039,7 +1039,7 @@ const tableform = {
             if (v.hideif && v.hideif()) {
                 return;
             }
-            if (v.validation && v.validation.indexOf("not") == 0) {
+            if (v.validation && v.validation instanceof String && v.validation.indexOf("not") == 0) {
                 labelx += '&nbsp;<span class="asm-has-validation">*</span>';
             }
             if (v.callout) {
@@ -1552,12 +1552,14 @@ const tableform = {
     /**
      * Validates the fields against their rules. Returns false if there
      * was a problem or true for ok.
+     * Also does the job of highlighting the failed field.
      *
      * fields: (see fields_render) 
      * row: The json row to use
      */
     fields_validate: function(fields) {
-        var nbids = [], nzids = [], veids = [], vtids = [];
+        let nbids = [], nzids = [], veids = [], vtids = [];
+        let rv = true;
         $.each(fields, function(i, v) {
             $("label[for='" + v.post_field + "']").removeClass(validate.ERROR_LABEL_CLASS);
             if (v.validation == "notblank") {
@@ -1572,11 +1574,16 @@ const tableform = {
             if (v.validation == "validemail") {
                 veids.push(v.post_field);
             }
+            if (v.validation instanceof Function) {
+                rv = v.validation($("#" + v.post_field).val());
+                validate.highlight(v.post_field);
+                if (!rv) { return false; }// stop iterating
+            }
             if (v.type == "time") {
                 vtids.push(v.post_field);
             }
         });
-        var rv = true;
+        if (!rv) { return rv; } // If one of the fields failed, stop now
         if (nbids.length > 0) {
             rv = validate.notblank(nbids);
             if (!rv) { return rv; }

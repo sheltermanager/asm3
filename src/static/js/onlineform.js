@@ -55,7 +55,13 @@ $(function() {
                     { json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", options: {
                         valuefield: "ID", displayfield: "SPECIESNAME", rows: species } }, 
                     { json_field: "TOOLTIP", post_field: "tooltip", label: _("Additional"), type: "textarea", 
-                      callout: _("Additional text to be shown with the label to help the user complete this form field") }
+                        validation: function(v) {
+                            if (v.indexOf("<!DOCTYPE") != -1 || v.indexOf("<html") != -1 || v.indexOf("<body") != -1) {
+                                tableform.dialog_error(_("Markup should be HTML fragments, not a full document."));
+                                return false;
+                            }
+                        },
+                        callout: _("Additional text to be shown with the label to help the user complete this form field") }
                 ]
             };
 
