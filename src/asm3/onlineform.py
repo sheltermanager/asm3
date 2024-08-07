@@ -749,6 +749,7 @@ def clone_onlineform(dbo: Database, username: str, formid: int) -> int:
             "Mandatory":        ff.MANDATORY,
             "VisibleIf":        ff.VISIBLEIF,
             "Lookups":          ff.LOOKUPS,
+            "SpeciesID":        ff.SPECIESID,
             "*Tooltip":         asm3.utils.nulltostr(ff.TOOLTIP)
         })
     return nfid
