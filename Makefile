@@ -40,6 +40,8 @@ clean:
 	rm -f src/asm3/publishers/*.pyc
 	rm -rf src/asm3/publishers/__pycache__
 	rm -f scripts/schema/schema.db
+	rm -f scripts/unittestdb/base.db
+	rm -f scripts/unittestdb/test.db
 
 version:
 	# Include me in any release target to stamp the 
