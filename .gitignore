@@ -19,3 +19,5 @@ scripts/ansible/roles
 scripts/ansible/*.retry
 scripts/jsmin/jsmin
 scripts/schema/schema.db
+scripts/unittestdb/base.db
+scripts/unittestdb/test.db

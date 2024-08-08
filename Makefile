@@ -128,8 +128,15 @@ test: version
 	@echo "[test] ========================="
 	cd src && python3 main.py 5000
 
-tests:
+scripts/unittestdb/base.db:
+	# Updates the base.db sqlite database used for running unit tests against. 
+	# The suite.py file copies base.db to test.db for speed when re-running tests
+	@echo "[unittestdb/base.db] =========================="
+	scripts/unittestdb/make_db.py
+
+tests: scripts/unittestdb/base.db
 	@echo "[tests] ========================"
+	cp scripts/unittestdb/base.db scripts/unittestdb/test.db
 	cd unittest && python3 suite.py
 	rm -f unittest/*.pyc && rm -rf unittest/__pycache__
 

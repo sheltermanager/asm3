@@ -1,6 +1,7 @@
 49
 ================
 
+08/08/24 Performance: Snapshot unit test db and copy it instead of regenerating 
 08/08/24 Performance: When building schema.db, there is no need to install default data
 07/08/24 Make sure to clone species setting when cloning online form fields
 06/08/24 When merging animals from csv, don't overwrite location if not given #1516

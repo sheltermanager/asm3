@@ -82,9 +82,6 @@ fullsuite = [
 # fullsuite = [ lt(test_checkmicrochip) ]
 
 if __name__ == "__main__":
-    base.reset_db()
-    import asm3.dbupdate
-    asm3.dbupdate.install(base.get_dbo())
     s = unittest.TestSuite(fullsuite)
     runner = unittest.TextTestRunner()
     runner.run(s)
