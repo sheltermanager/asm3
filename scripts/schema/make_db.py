@@ -21,5 +21,6 @@ except:
 dbo = asm3.db.get_dbo("SQLITE")
 dbo.database = DB_PATH
 dbo.installpath = SRC_PATH
-asm3.dbupdate.install(dbo)
+asm3.dbupdate.install_db_structure(dbo)
+asm3.dbupdate.install_db_views(dbo)
 
