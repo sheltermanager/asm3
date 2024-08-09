@@ -2,7 +2,7 @@ Location and Units with Animals
 ###
 Inventories
 ###
-33506/PostgreSQL rev02
+33506/PostgreSQL rev03
 ###
 Shows locations and units with the occupants names
 ###
@@ -36,7 +36,7 @@ $$HEAD
 $$FOOT
 </tbody>
 </table> 
-<p><b>Unoccupied at $LocationName: {SUM.Unoccupied.ROUND.2}, Occupied at $LocationName: {SUM.Occupied.ROUND.2}, Percentage Occupied : {PCT.Occupied.1.ROUND.2}%</b></p>
+<p><b>Unoccupied at $LocationName: {SUM.Unoccupied.0}, Occupied at $LocationName: {SUM.Occupied.0}, Percentage Occupied : {PCT.Occupied.1.2}%</b></p>
 GROUP$$
 
 $$BODY
