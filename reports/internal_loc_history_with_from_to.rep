@@ -1,0 +1,49 @@
+Internal Location History with From and To
+###
+Auditing
+###
+34901/Any rev01
+###
+Internal location changes with from and to locations for all animals between two dates.
+###
+en
+###
+SELECT l.Date, l.ToUnit, l.FromUnit, l.AnimalID, a.ShelterCode, a.AnimalName,
+(SELECT LocationName FROM internallocation WHERE ID = l.FromLocationID) AS FromLocation,
+(SELECT LocationName FROM internallocation WHERE ID = l.ToLocationID) AS ToLocation
+FROM animallocation l
+INNER JOIN animal a ON a.ID = l.AnimalID 
+WHERE Date >= '$ASK DATE Location changes between$' AND Date <= '$ASK DATE and$' 
+ORDER BY AnimalName, Date
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AnimalName
+$$HEAD
+<h2>$AnimalName</h2>
+<table border=1>
+<thead>
+<tr>
+<th>Location Change</th>
+<th>Date</th>
+<th>Animal</th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+GROUP$$
+
+
+$$BODY
+<tr>
+<td>$FROMLOCATION: $FROMUNIT &#8594; $TOLOCATION: $TOUNIT </td>
+<td>$DATE</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a> - $SHELTERCODE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
