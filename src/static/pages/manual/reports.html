@@ -395,6 +395,8 @@ then 150x150 is used. Eg: {QR.$ID.200x200}</p></li>
 where field &lt;field&gt; matches value &lt;value&gt;. Optionally, you can specify a
 number of decimal places to round to. Eg: {PCT.Sex.1.2} Would show the
 percentage of male animals in the group, rounded to 2 decimal places.</p></li>
+<li><p>{PCTG.&lt;field&gt;[.round]} - Returns the number of rows in the group as
+a percentage of all the rows in the report.</p></li>
 <li><p>{SQL.&lt;sql command&gt;} - executes the SQL and outputs the value of the first
 field. Eg: {SQL.SELECT COUNT(*) FROM animal}. This tag is also available in
 the $$BODY block and can be used in conjunction with the field tags to

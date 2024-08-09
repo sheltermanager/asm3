@@ -344,6 +344,9 @@ $$FOOT blocks and the main $$FOOTER block. These are:
   number of decimal places to round to. Eg: {PCT.Sex.1.2} Would show the
   percentage of male animals in the group, rounded to 2 decimal places. 
 
+* {PCTG.<field>[.round]} - Returns the number of rows in the group as
+  a percentage of all the rows in the report. 
+
 * {SQL.<sql command>} - executes the SQL and outputs the value of the first
   field. Eg: {SQL.SELECT COUNT(*) FROM animal}. This tag is also available in
   the $$BODY block and can be used in conjunction with the field tags to

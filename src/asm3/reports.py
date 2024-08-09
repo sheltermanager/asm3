@@ -1053,6 +1053,22 @@ class Report:
                 fstr = "%0." + str(roundto) + "f"
                 value = fstr % ((matched / outof) * 100)
 
+            # {PCTG.field[.round]}
+            if key.lower().startswith("pctg."):
+                valid = True
+                fields = key.lower().split(".")
+                calcfield = fields[1].upper()
+                
+                # rounding
+                roundto = 2
+                if len(fields) > 2:
+                    roundto = abs(asm3.utils.cint(fields[2]))
+
+                matched = gd.lastGroupEndPosition - gd.lastGroupStartPosition + 1
+                outof = len(rs)
+                fstr = "%0." + str(roundto) + "f"
+                value = fstr % ((matched / outof) * 100)
+
             # {MIN.field}
             if key.lower().startswith("min."):
                 valid = True
