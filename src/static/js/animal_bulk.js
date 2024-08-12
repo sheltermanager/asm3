@@ -132,7 +132,7 @@ $(function() {
                 '</td>',
                 '</tr>',
 
-                '<tr>',
+                '<tr class="goodwith">',
                 '<td>',
                 '<label for="goodwithcats">' + _("Good with cats") + '</label>',
                 '</td>',
@@ -143,7 +143,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr class="goodwith">',
                 '<td>',
                 '<label for="goodwithdogs">' + _("Good with dogs") + '</label>',
                 '</td>',
@@ -154,7 +154,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr class="goodwith">',
                 '<td>',
                 '<label for="goodwithkids">' + _("Good with kids") + '</label>',
                 '</td>',
@@ -165,7 +165,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr class="goodwith">',
                 '<td>',
                 '<label for="housetrained">' + _("Housetrained") + '</label>',
                 '</td>',
@@ -358,6 +358,20 @@ $(function() {
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
+
+            // Remove any fields that were disabled in the options
+            if (config.bool("DontShowLitterID")) { $("#litteridrow").hide(); }
+            if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
+            if (config.bool("DontShowLocationUnit")) { $("#unitrow").hide(); }
+            if (config.bool("DontShowNeutered")) { $("#neuteredrow, #neuteringvetrow").hide(); }
+            if (config.bool("DontShowAdoptionCoordinator")) { $("#coordinatorrow").hide(); }
+            if (config.bool("DontShowGoodWith")) { $(".goodwith").hide(); }
+            if (config.bool("DisableMovements")) { $("#moverow, #movetorow").hide(); }
+
+            // Remove sections that add records if the user doesn't have permissions
+            if (!common.has_permission("aamv")) { $("#moverow, #movetorow").hide(); }
+            if (!common.has_permission("adn")) { $("#diaryrow, #diarysubjectrow, #diarynotesrow").hide(); }
+            if (!common.has_permission("ale")) { $("#logrow, #lognotesrow").hide(); }
 
         },
 

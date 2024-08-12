@@ -575,8 +575,9 @@ $(document).ready(function() {
 
         // Returns the HTML for rendering an animal record
         render_animal: async function(a, selector) {
-            const i = function(label, value) {
+            const i = function(label, value, cfg) {
                 if (!value) { value = ""; }
+                if (cfg && config.bool(cfg)) { return; } // Hide if this config element is true, eg: DontShowLocationUnit
                 return '<div class="row align-items-start"><div class="col">' + label + '</div><div class="col">' + value + '</div></div>';
             };
             const col3 = function(c1, c2, c3) {
@@ -640,37 +641,37 @@ $(document).ready(function() {
                     i(_("Type"), a.ANIMALTYPENAME),
                     i(_("Location"), mobile.display_location(a)),
                     i(_("Color"), a.BASECOLOURNAME),
-                    i(_("Coat Type"), a.COATTYPENAME),
-                    i(_("Size"), a.SIZENAME),
+                    i(_("Coat Type"), a.COATTYPENAME, "DontShowCoatType"),
+                    i(_("Size"), a.SIZENAME, "DontShowSize"),
                     i(_("DOB"), format.date(a.DATEOFBIRTH) + " (" + a.ANIMALAGE + ")"),
                     
                     i(_("Markings"), a.MARKINGS),
                     i(_("Hidden Comments"), a.HIDDENANIMALDETAILS),
                     i(_("Description"), a.ANIMALCOMMENTS),
                     
-                    i(_("Cats"), a.ISGOODWITHCATSNAME),
-                    i(_("Dogs"), a.ISGOODWITHDOGSNAME),
-                    i(_("Children"), a.ISGOODWITHCHILDRENNAME),
-                    i(_("Housetrained"), a.ISHOUSETRAINEDNAME)
+                    i(_("Cats"), a.ISGOODWITHCATSNAME, "DontShowGoodWith"),
+                    i(_("Dogs"), a.ISGOODWITHDOGSNAME, "DontShowGoodWith"),
+                    i(_("Children"), a.ISGOODWITHCHILDRENNAME, "DontShowGoodWith"),
+                    i(_("Housetrained"), a.ISHOUSETRAINEDNAME, "DontShowGoodWith")
                 ].join("\n"), "show"),
             
                 aci("entry", _("Entry"), [
                     i(_("Date Brought In"), format.date(a.DATEBROUGHTIN)),
-                    i(_("Entry Type"), a.ENTRYTYPENAME),
+                    i(_("Entry Type"), a.ENTRYTYPENAME, "DontShowEntryType"),
                     i(_("Entry Category"), a.ENTRYREASONNAME),
                     i(_("Entry Reason"), a.REASONFORENTRY),
                     common.has_permission("vo") ? i(_("Original Owner"), a.ORIGINALOWNERNAME) : "",
                     common.has_permission("vo") ? i(_("Brought In By"), a.BROUGHTINBYOWNERNAME) : "",
-                    i(_("Bonded With"), n(a.BONDEDANIMAL1CODE) + " " + n(a.BONDEDANIMAL1NAME) + " " + n(a.BONDEDANIMAL2CODE) + " " + n(a.BONDEDANIMAL2NAME))
+                    i(_("Bonded With"), n(a.BONDEDANIMAL1CODE) + " " + n(a.BONDEDANIMAL1NAME) + " " + n(a.BONDEDANIMAL2CODE) + " " + n(a.BONDEDANIMAL2NAME), "DontShowBonded")
                 ].join("\n")),
 
                 aci("health", _("Health and Identification"), [
-                    i(_("Microchipped"), format.date(a.IDENTICHIPDATE) + " " + a.IDENTICHIPPED==1 ? a.IDENTICHIPNUMBER : ""),
-                    i(_("Tattoo"), format.date(a.TATTOODATE) + " " + a.TATTOO==1 ? a.TATTOONUMBER : ""),
-                    i(_("Neutered"), a.NEUTEREDNAME + " " + format.date(a.NEUTEREDDATE)),
-                    i(_("Declawed"), a.DECLAWEDNAME),
-                    i(_("Heartworm Tested"), format.date(a.HEARTWORMTESTDATE) + " " + a.HEARTWORMTESTED==1 ? a.HEARTWORMTESTRESULTNAME : ""),
-                    i(_("FIV/L Tested"), format.date(a.COMBITESTDATE) + " " + a.COMBITESTED==1 ? a.COMBITESTRESULTNAME + " " + a.FLVRESULTNAME : ""),
+                    i(_("Microchipped"), format.date(a.IDENTICHIPDATE) + " " + a.IDENTICHIPPED==1 ? a.IDENTICHIPNUMBER : "", "DontShowMicrochip"),
+                    i(_("Tattoo"), format.date(a.TATTOODATE) + " " + a.TATTOO==1 ? a.TATTOONUMBER : "", "DontShowTattoo"),
+                    i(_("Neutered"), a.NEUTEREDNAME + " " + format.date(a.NEUTEREDDATE), "DontShowNeutered"),
+                    i(_("Declawed"), a.DECLAWEDNAME, "DontShowDeclawed"),
+                    i(_("Heartworm Tested"), format.date(a.HEARTWORMTESTDATE) + " " + a.HEARTWORMTESTED==1 ? a.HEARTWORMTESTRESULTNAME : "", "DontShowHeartworm"),
+                    i(_("FIV/L Tested"), format.date(a.COMBITESTDATE) + " " + a.COMBITESTED==1 ? a.COMBITESTRESULTNAME + " " + a.FLVRESULTNAME : "", "DontShowCombi"),
                     i(_("Health Problems"), a.HEALTHPROBLEMS),
                     i(_("Rabies Tag"), a.RABIESTAG),
                     i(_("Special Needs"), a.HASSPECIALNEEDSNAME),

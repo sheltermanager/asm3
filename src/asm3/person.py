@@ -998,7 +998,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     # Update the flags
     update_flags(dbo, username, pid, post["flags"].split(","))
 
-    # Save any asm3.additional.field values given
+    # Save any additional field values given
     asm3.additional.save_values_for_link(dbo, post, username, pid, "person", True)
 
     # If the option is on, record any GDPR contact options in the log

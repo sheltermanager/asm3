@@ -1,6 +1,8 @@
 49
 ================
 
+12/08/24 Mobile UI: Hide disabled fields #1521
+12/08/24 Bulk change animals: Hide disabled fields and areas without permission #1520
 12/08/24 Online forms: Creating reserves, set additional field values form the form #1523
 08/08/24 Performance: Snapshot unit test db and copy it instead of regenerating 
 08/08/24 Performance: When building schema.db, there is no need to install default data
