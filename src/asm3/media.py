@@ -332,7 +332,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
             # Browser escaping turns base64 pluses back into spaces, so switch back
             filedata = filedata.replace(" ", "+")
         filedata = asm3.utils.base64decode(filedata)
-        asm3.al.debug("received data URI '%s' (%d bytes, transformed=%s)" % (filename, len(filedata), transformed), "media.attach_file_from_form", dbo)
+        asm3.al.debug(f"received data URI '{filename}' ({len(filedata)} bytes, name={filename}, transformed={transformed})", "media.attach_file_from_form", dbo)
         if ext == "":
             msg = "could not determine extension from file.type '%s', abandoning" % filetype
             asm3.al.error(msg, "media.attach_file_from_form", dbo)
