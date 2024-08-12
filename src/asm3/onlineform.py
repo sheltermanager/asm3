@@ -1544,7 +1544,12 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         # a reservation if there's no value.
         if k == "reserveanimalname" or (k.startswith("reserveanimalname") and v != ""):
             try:
-                asm3.movement.insert_reserve(dbo, username, personid, get_animal_id_from_field(dbo, v), formreceived)
+                # Create the reservation. Note that a list of ids comes back because
+                # reserving a bonded animal reserves its bondmates
+                reserveids = asm3.movement.insert_reserve(dbo, username, personid, get_animal_id_from_field(dbo, v), formreceived)
+                # Save any movement additional field values given for the reservations
+                for reserveid in reserveids:
+                    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, reserveid, "movement")
             except Exception as err:
                 asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500
