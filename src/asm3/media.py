@@ -322,8 +322,8 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
     transformed = post.integer("transformed") == 1
     if filedata != "":
         filetype = post["filetype"]
-        if filetype.startswith("image") or filename.lower().endswith(".jpg"): ext = ".jpg"
-        elif filetype.startswith("image") or filename.lower().endswith(".png"): ext = ".png"
+        if filetype.startswith("image") or filename.lower().endswith(".jpg") or filename.lower().endswith(".jpeg"): ext = ".jpg"
+        elif filename.lower().endswith(".png"): ext = ".png"
         elif filetype.find("pdf") != -1 or filename.lower().endswith(".pdf"): ext = ".pdf"
         elif filetype.find("html") != -1 or filename.lower().endswith(".html"): ext = ".html"
         # Strip the data:mime prefix so we just have base64 data
@@ -332,7 +332,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
             # Browser escaping turns base64 pluses back into spaces, so switch back
             filedata = filedata.replace(" ", "+")
         filedata = asm3.utils.base64decode(filedata)
-        asm3.al.debug(f"received data URI '{filename}' ({len(filedata)} bytes, name={filename}, transformed={transformed})", "media.attach_file_from_form", dbo)
+        asm3.al.debug(f"received data URI '{filename}' ({len(filedata)} bytes, mimetype={filetype}, transformed={transformed})", "media.attach_file_from_form", dbo)
         if ext == "":
             msg = "could not determine extension from file.type '%s', abandoning" % filetype
             asm3.al.error(msg, "media.attach_file_from_form", dbo)
