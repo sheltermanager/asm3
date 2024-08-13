@@ -27,10 +27,9 @@ $(function() {
                 '<div id="asm-details-accordion">',
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<table width="100%">',
-                '<tr>',
+                '<div class="row">',
                 // left column
-                '<td class="asm-nested-table-td">',
+                '<div class="col-sm">',
                 '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
@@ -118,9 +117,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</td>',
+                '</div>', // col-sm
                 // right column 
-                '<td class="asm-nested-table-td">',
+                '<div class="col-sm">',
                 '<table width="100%" class="additionaltarget" data="to14">',
                 '<tr>',
                 '<td></td>',
@@ -147,10 +146,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>',
+                '</div>', // col-sm
+                '</div>', // row
+                '</div>', // end accordion section
                 '<h3><a href="#">' + _("Removal") + '</a></h3>',
                 '<div>',
                 '<table width="100%" class="additionaltarget" data="to15">',

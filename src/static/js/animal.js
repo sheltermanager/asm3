@@ -8,7 +8,8 @@ $(function() {
 
         render_death: function() {
             return [
-                '<h3><a href="#">' + _("Death") + ' <span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3><div>',
+                '<h3><a href="#">' + _("Death") + ' <span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3>',
+                '<div>',
                 '<table class="additionaltarget" data="to6">',
                 '<tr>',
                 '<td>',
@@ -51,10 +52,9 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<table width="100%">',
-                '<tr>',
-                // left table
-                '<td width="40%" class="asm-nested-table-td">',
+                '<div class="row">',
+                // first column
+                '<div class="col-sm">',
                 '<table>',
                 '<tr>',
                 '<td><label for="sheltercode">' + _("Code") + '</label></td>',
@@ -131,13 +131,10 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                // right table
-                '<td class="asm-nested-table-td">',
-                '<table>',
-                '<tr>',
-                '<td>',
+                '</div>', // col-sm
                 // second column
-                '<table class="additionaltarget asm-nested-table-td" data="to2">',
+                '<div class="col-sm">',
+                '<table class="additionaltarget" data="to2">',
                 '<tr>',
                 '<td><label for="species">' + _("Species") + '</label></td>',
                 '<td><select id="species" data-json="SPECIESID" data-post="species" class="asm-selectbox">',
@@ -216,18 +213,10 @@ $(function() {
                 '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
                 '<td><input id="fee" data-json="FEE" data-post="fee" class="asm-currencybox asm-textbox" /></td>',
                 '</tr>',
-                // end second column
                 '</table>',
-                '</td>',
-                '</tr>',
-                // end right table
-                '</table>',
-                '</td>',
-
-                // end outer table
-                '</tr>',
-                '</table>',
-                '</div>'
+                '</div>', // col-sm
+                '</div>', // row
+                '</div>' // end accordion section
             ].join("\n");
         },
 
@@ -235,11 +224,9 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Entry") + '</a></h3>',
                 '<div>',
-                // outer table
-                '<table width="100%">',
-                '<tr>',
-                '<td width="50%" class="asm-nested-table-td">',
-                // left table
+                '<div class="row">',
+                // left column
+                '<div class="col-sm">',
                 '<table width="100%">',
                 '<tr id="coordinatorrow">',
                 '<td valign="top" class="bottomborder">',
@@ -266,9 +253,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                // right table
-                '</td>',
-                '<td width="50%" class="asm-nested-table-td">',
+                '</div>', // col-sm
+                // right column
+                '<div class="col-sm">',
                 '<table width="100%" class="additionaltarget" data="to4">',
                 '<tr id="datebroughtinrow">',
                 '<td>',
@@ -399,11 +386,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                // end outer table
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>'
+                '</div>', // col-sm
+                '</div>', // row
+                '</div>', // end accordion section
             ].join("\n");
         },
 
@@ -459,11 +444,11 @@ $(function() {
 
         render_health_and_identification: function() {
             return [
-                '<h3><a href="#">' + _("Health and Identification") + ' <span id="tabhealth" style="display: none" class="asm-icon asm-icon-health"></span></a></h3><div>',
-                // outer table
-                '<table width="100%">',
-                '<tr>',
-                '<td class="asm-nested-table-td">',
+                '<h3><a href="#">' + _("Health and Identification") + ' <span id="tabhealth" style="display: none" class="asm-icon asm-icon-health"></span></a></h3>',
+                '<div>',
+                '<div class="row">',
+                // tested flags
+                '<div class="col-sm">',
                 // tested flags
                 '<table>',
                 '<tr id="microchiprow">',
@@ -564,14 +549,12 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-
                 '<tr>',
                 '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="specialneeds" data-json="HASSPECIALNEEDS" data-post="specialneeds" title="' + _("This animal has special needs") + '"  />',
                 '<label for="specialneeds">' + _("Special Needs") + '</label>',
                 '</td>',
                 '</tr>',
-                // end flag table
                 '</table>',
                 // separate table for additional fields
                 '<table class="additionaltarget" data="to5">',
@@ -581,13 +564,11 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                '<td class="asm-nested-table-td">',
+                '</div>', // col-sm
                 // health problems/vet fields
+                '<div class="col-sm">',
                 '<label for="healthproblems">' + _("Health Problems") + '</label><br />',
                 '<textarea id="healthproblems" data-json="HEALTHPROBLEMS" data-post="healthproblems" class="asm-textarea" rows="4"></textarea>',
-                '<table>',
-                '</table>',
                 '<table>',
                 '<tr>',
                 '<td valign="top" class="bottomborder">',
@@ -606,11 +587,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                // end outer table
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>'
+                '</div>', // col-sm
+                '</div>', // row
+                '</div>', // end accordion section
             ].join("\n");
         },
 
@@ -698,11 +677,9 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Notes") + '</a></h3>',
                 '<div>',
-                // outer table
-                '<table width="100%">',
-                '<tr>',
-                '<td class="asm-nested-table-td">',
-                // comments table
+                '<div class="row">',
+                // comments
+                '<div class="col-sm">',
                 '<table>',
                 '<tr id="markingsrow">',
                 '<td>',
@@ -741,9 +718,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                '<td class="asm-nested-table-td">',
-                // good with table
+                '</div>', // col-sm
+                // good with
+                '<div class="col-sm">',
                 '<table class="additionaltarget" data="to3">',
                 '<tr class="goodwith">',
                 '<td>',
@@ -785,13 +762,10 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                // end good with
                 '</table>',
-                // end outer table
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>'
+                '</div>', // col-sm
+                '</div>', // row
+                '</div>', // end accordion section
             ].join("\n");
         },
 

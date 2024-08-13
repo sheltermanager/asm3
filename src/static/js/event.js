@@ -26,10 +26,9 @@ $(function(){
             return [
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<table width="100%">',
-                '<tr>',
-                // left table
-                '<td width="50%" class="asm-nested-table-td">',
+                '<div class="row">',
+                // left column
+                '<div class="col-sm">',
                 '<table class="additionaltarget" data="to21">',
                 '<tr>',
                 '<td ><label for="eventname">' + _("Event Name") + '</label></td>',
@@ -76,20 +75,15 @@ $(function(){
                 '<td><input class="asm-textbox" id="country" data-post="country" data-json="EVENTCOUNTRY" type="text" /></td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                // right table
-                '<td width="50%" class="asm-nested-table-td">',
-                '<div>',
+                '</div>', // col-sm
+                // right column
+                '<div class="col-sm">',
                 '<p><label for="description">' + _("Description") + '</label></p>',
                 '<div id="description" data-post="description" data-height="200px" data-margin-top="0px" data-json="EVENTDESCRIPTION" class="asm-richtextarea"></div>',
-                '</div>',
-                '</table>',
                 additional.additional_fields(controller.additional),
-                '</td>',
-                // end of outer table
-                '</tr>',
-                '</table>',
-                '</div>'
+                '</div>', // col-sm
+                '</div>', // row
+                '</div>', // end accordion section
             ].join("\n");
         },
 

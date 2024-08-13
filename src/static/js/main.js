@@ -768,13 +768,13 @@ $(function() {
 
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
             this.render_animal_links(),
-            '<div class="asm-main-columns">',
-            '<div id="asm-main-diary" class="asm-main-column">',
+            '<div class="row">',
+            '<div id="asm-main-diary" class="col-sm">',
             this.render_overview(),
             this.render_diary(),
             controller.diary.length < 3 ? this.render_timeline() : "",
             '</div>',
-            '<div class="asm-main-column">',
+            '<div class="col-sm">',
             this.render_alerts(),
             this.render_messages(),
             controller.diary.length >= 3 ? this.render_timeline() : "",
@@ -791,8 +791,8 @@ $(function() {
             controller.news,
             '</span>',
             '</div>', // asm-main-section
-            '</div>', // asm-main-column
-            '</div>', // asm-main-columns
+            '</div>', // col-sm
+            '</div>', // row
             this.render_active_users(),
             '</div>'  // asm-content
             ];

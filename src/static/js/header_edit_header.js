@@ -173,8 +173,8 @@ edit_header = {
         }
         var first_column = [
             '<input type="hidden" id="animalid" value="' + a.ID + '" />',
-            '<div class="asm-grid">',
-            '<div class="asm-grid-col-3">',
+            '<div class="row">',
+            '<div class="col-sm">',
                 '<table><tr>',
                 '<td align="center">',
                     '<a target="_blank" href="' + html.img_src(a, "animal") + '">',
@@ -193,7 +193,7 @@ edit_header = {
             '</div>'
         ].join("\n");
         var second_column = [
-            '<div class="asm-grid-col-3">',
+            '<div class="col-sm">',
             '<table>',
             '<tr>',
             '<td id="hloc">' + _("Location") + ':</td><td><b>' + displaylocation + '</b></td>',
@@ -216,7 +216,7 @@ edit_header = {
         ].join("\n");
         if (a.NONSHELTERANIMAL == 1 && !(a.HASACTIVEBOARDING == 1 && a.ARCHIVED == 0)) {
             second_column = [ 
-                '<div class="asm-grid-col-3">',
+                '<div class="col-sm">',
                 '<table>',
                 '<tr>',
                 animalcontrol,
@@ -226,9 +226,8 @@ edit_header = {
             ].join("\n");
         }
         var third_column = [
-            '<div class="asm-grid-col-3">',
-            _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + '<br />',
-            _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>") + '<br />',
+            '<div class="col-sm">',
+            edit_header.audit_banner(a),
             available,
             '</div>',
             '</div>'
@@ -280,6 +279,20 @@ edit_header = {
     },
 
     /**
+     * Outputs the banner with auditing info (added/last changed) for object o
+     */
+    audit_banner: function(o) {
+        let h = [
+            '<div class="asm-auditbanner">',
+            _("Added by {0} on {1}").replace("{0}", "<b>" + o.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(o.CREATEDDATE) + "</b>"),
+            ' <br/>',
+            _("Last changed by {0} on {1}").replace("{0}", "<b>" + o.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(o.LASTCHANGEDDATE) + "</b>"),
+            '</div>'
+        ];
+        return h.join("\n");
+    },
+
+    /**
      * Returns a bunch of <li> tags with links to run diary tasks.
      * tasks: A set of diary task records
      * mode: ANIMAL or PERSON
@@ -326,12 +339,12 @@ edit_header = {
         var h = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="eventid" value="' + e.ID + '" />',
-            '<div class="asm-grid">',
-            '<div class="asm-grid-col-3">',
+            '<div class="row">',
+            '<div class="col-sm">',
             '<h2>' + html.icon("event", _("Event")) + ' ' + eventName + '</h2>',
             '<p>' + html.truncate(e.EVENTDESCRIPTION, 100) + '</p>', 
             '</div>',
-            '<div class="asm-grid-col-3">',
+            '<div class="col-sm">',
             '<table>',
             '<td></td>',
             '<td><b>',
@@ -353,11 +366,11 @@ edit_header = {
             '</b></td></tr>',
             '</table>',
             '</div>',
-            '<div class="asm-grid-col-3">',
-            _("Added by {0} on {1}").replace("{0}", "<b>" + e.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(e.CREATEDDATE) + "</b>") + ' <br/>',
-            _("Last changed by {0} on {1}").replace("{0}", "<b>" + e.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(e.LASTCHANGEDDATE) + "</b>"),
+            '<div class="col-sm">',
+            edit_header.audit_banner(e),
             '</div>',
-            '</div></div>',
+            '</div>', // row
+            '</div>', // asm-banner
             '<div class="asm-tabbar">',
             '<ul class="asm-tablist">'
         ];
@@ -403,8 +416,8 @@ edit_header = {
         var h = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="incidentid" value="' + a.ACID + '" />',
-            '<div class="asm-grid">',
-            '<div class="asm-grid-col-3">',
+            '<div class="row">',
+            '<div class="col-sm">',
             '<h2>' + html.icon("call", _("Incident")) + ' ' +
                 format.padleft(controller.incident.ACID, 6) + ' ' + a.INCIDENTNAME +
                 (a.OWNERNAME1 ? ' - ' + a.OWNERNAME1 : "") + 
@@ -413,7 +426,7 @@ edit_header = {
                 '</h2>',
             '<p>' + html.truncate(a.CALLNOTES) + '</p>',
             '</div>',
-            '<div class="asm-grid-col-3">',
+            '<div class="col-sm">',
             '<table>',
             '<tr>',
             '<td>' + _("Call") + ':</td><td><b>' + format.date(a.CALLDATETIME) + ' ' + format.time(a.CALLDATETIME) + ' ' + 
@@ -432,14 +445,13 @@ edit_header = {
             '</tr>',
             '</table>',
             '</div>',
-            '<div class="asm-grid-col-3">',
-            _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + ' <br/>',
-            _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>"),
+            '<div class="col-sm">',
+            edit_header.audit_banner(a),
             '<br />',
             fine,
-            '</div>',
-            '</div>',
-            '</div>',
+            '</div>', // col-sm
+            '</div>', // row
+            '</div>', // asm-banner
             '<div class="asm-tabbar">',
             '<ul class="asm-tablist">'
         ];
@@ -500,13 +512,13 @@ edit_header = {
         var h = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="lfid" value="' + a.LFID + '" />',
-            '<div class="asm-grid">',
-            '<div class="asm-grid-col-3">',
+            '<div class="row">',
+            '<div class="col-sm">',
             '<h2>' + html.icon(icon, lf) + a.OWNERNAME + '</h2>',
             '<p>' + lf + ': ' + a.AGEGROUP + ' ' + a.SPECIESNAME + ' / ' + html.truncate(area) + '<br>',
             html.truncate(a.DISTFEAT) + '</p>',
             '</div>',
-            '<div class="asm-grid-col-3">',
+            '<div class="col-sm">',
             '<table>',
             '<tr>',
             '<td>' + dl + ':</td><td><b>' + dlv + '</b></td>',
@@ -517,12 +529,11 @@ edit_header = {
             '</tr>',
             '</table>',
             '</div>',
-            '<div class="asm-grid-col-3">',
-            _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + ' <br/>',
-            _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>"),
-            '</div>',
-            '</div>',
-            '</div>',
+            '<div class="col-sm">',
+            edit_header.audit_banner(a),
+            '</div>', // col-sm
+            '</div>', // row
+            '</div>', // asm-banner
             '<div class="asm-tabbar">',
             '<ul class="asm-tablist">'
         ];
@@ -570,8 +581,8 @@ edit_header = {
         let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="personid" value="' + p.ID + '" />',
-            '<div class="asm-grid">',
-            '<div class="asm-grid-col-3">',
+            '<div class="row">',
+            '<div class="col-sm">',
             '<table><tr>',
             '<td>',
             '<a href="' + html.img_src(p, "person") + '">',
@@ -585,7 +596,7 @@ edit_header = {
             '</td>',
             '</tr></table>',
             '</div>',
-            '<div class="asm-grid-col-3">',
+            '<div class="col-sm">',
             '<table>',
             latestmove,
             '<tr>',
@@ -598,13 +609,11 @@ edit_header = {
             '</tr>',
             '</table>',
             '</div>',
-            '<div class="asm-grid-col-3">',
-            _("Added by {0} on {1}").replace("{0}", "<b>" + p.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(p.CREATEDDATE) + "</b>"),
-            '<br />',
-            _("Last changed by {0} on {1}").replace("{0}", "<b>" + p.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(p.LASTCHANGEDDATE) + "</b>"),
-            '</div>',
-            '</div>',
-            '</div>',
+            '<div class="col-sm">',
+            edit_header.audit_banner(p),
+            '</div>', // col-sm
+            '</div>', // row
+            '</div>', // asm-banner
             '<div class="asm-tabbar">',
             '<ul class="asm-tablist">'
         ];
@@ -841,12 +850,12 @@ edit_header = {
         var h = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="waitinglistid" value="' + a.WLID + '" />',
-            '<div class="asm-grid ' + hclass + '">',
-            '<div class="asm-grid-col-3">',
+            '<div class="row ' + hclass + '">',
+            '<div class="col-sm">',
             '<h2>' + html.icon("waitinglist", _("Waiting List")) + a.OWNERNAME + '</h2>',
             '<p>' + a.SPECIESNAME + ': ' + html.truncate(a.ANIMALDESCRIPTION) + '</p>',
             '</div>',
-            '<div class="asm-grid-col-3">',
+            '<div class="col-sm">',
             '<table>',
             '<tr>',
             '<td>' + _("Rank") + ':</td><td><b>' + a.RANK + '</b></td>',
@@ -860,12 +869,11 @@ edit_header = {
             removal,
             '</table>',
             '</div>',
-            '<div class="asm-grid-col-3">',
-            _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + ' <br/>',
-            _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>"),
-            '</div>',
-            '</div>',
-            '</div>',
+            '<div class="col-sm">',
+            edit_header.audit_banner(a),
+            '</div>', // col-sm
+            '</div>', // row
+            '</div>', // asm-banner
             '<div class="asm-tabbar">',
             '<ul class="asm-tablist">'
         ];

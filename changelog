@@ -1,6 +1,7 @@
 49
 ================
 
+13/08/24 Use bootstrap grids to make a start on fix mobile layout #1103
 12/08/24 Fix for iPhone 17.3+ uploading images with no mimetype
 12/08/24 Querybuilder: Add additional field date range criteria
 12/08/24 Mobile UI: Hide disabled fields #1521

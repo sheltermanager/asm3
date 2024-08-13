@@ -35,10 +35,9 @@ $(function() {
                 '<div id="asm-details-accordion">',
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<table width="100%">',
-                '<tr>',
+                '<div class="row">',
                 // left column
-                '<td class="asm-nested-table-td">',
+                '<div class="col-sm">',
                 '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
@@ -117,9 +116,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</td>',
+                '</div>', // col-sm
                 // right column
-                '<td class="asm-nested-table-td">',
+                '<div class="col-sm">',
                 mode == "lost" ? '<table width="100%" class="additionaltarget" data="to10">' : "",
                 mode == "found" ? '<table width="100%" class="additionaltarget" data="to12">' : "",
                 '<tr>',
@@ -154,16 +153,15 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>',
+                '</div>', // col-sm
+                '</div>', // row
+                '</div>', // accordion section
                 '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
                 '<div>',
                 additional.additional_fields(controller.additional),
                 '</div>',
                 html.audit_trail_accordion(controller),
-                '</div> <!-- accordion -->',
+                '</div>', // accordion
                 html.content_footer()
             ].join("\n");
         },

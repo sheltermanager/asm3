@@ -253,6 +253,8 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** MAIN =========================== */
+
+/* retired - use bootstrap grid
 .asm-main-columns {
     display: block;
     width: 100%;
@@ -264,6 +266,7 @@ select:disabled, input:disabled, textarea:disabled {
     width: 49%;
     min-width: 330px;
 }
+*/
 
 .asm-main-section {
     border-radius: 8px;
@@ -719,6 +722,9 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** GRIDS ============================= */
+
+/*
+retired - use bootstrap-grid
 .asm-grid {
     display: block;
     width: 100%;
@@ -754,6 +760,7 @@ select:disabled, input:disabled, textarea:disabled {
     width: 150px;
     text-align: right;
 }
+*/
 
 /** FORMS =========================== */
 #asm-content {
@@ -781,6 +788,15 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 .asm-additional-fields-container {
+}
+
+.asm-auditbanner {
+    border-radius: 8px;
+    border: 1px dotted #999;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    padding: 5px;
 }
 
 .asm-textarea {
