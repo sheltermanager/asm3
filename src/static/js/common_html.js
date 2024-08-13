@@ -693,6 +693,52 @@ const html = {
         return warn;
     },
 
+    search_field: function(labelhtml, widgethtml) {
+        return [
+            '<tr>',
+                '<td>',
+                labelhtml,
+                '</td>',
+                '<td>',
+                widgethtml,
+                '</td>',
+            '</tr>'
+        ].join("\n");
+    },
+
+    /**
+     * Used by the search screens to output a date search field
+     */
+    search_field_date: function(id, label) {
+        let labelhtml = '<label for="' + id + '">' + label + '</label>';
+        let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox asm-datebox" />';
+        return html.search_field(labelhtml, widgethtml);
+    },
+
+    /**
+     * Used by the advanced find screens to output a select search field
+     */
+    search_field_select: function(id, label, options, includeall) {
+        let labelhtml = '<label for="' + id + '">' + label + '</label>';
+        let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-selectbox">';
+        if (includeall === undefined || includeall) {
+            widgethtml += '<option value="-1">' + _("(all)") + '</option>';
+        }
+        widgethtml += options;
+        widgethtml += '</select>';
+        return html.search_field(labelhtml, widgethtml);
+    },
+
+    /**
+     * Used by the advanced find screens to output a text search field
+     */
+    search_field_text: function(id, label) {
+        let labelhtml = '<label for="' + id + '">' + label + '</label>';
+        let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox" />';
+        return html.search_field(labelhtml, widgethtml);
+    },
+
+
     /**
      * Returns the different shelter view modes as a string of HTML options.
      */

@@ -1338,7 +1338,7 @@ const tableform = {
                 d += '</table><td><td class="asm-nested-table-td"><table>';
             }
             else if (v.type == "additional_fields") {
-                // Special fake widget that causes rendering to move to the next column
+                // div placeholder for additional fields
                 d += additional_fields_placeholder;
             }
         });
