@@ -137,10 +137,11 @@ $.widget("asm.table", {
     
     options: {
         css:        'asm-table',
-        filter:     false,
-        row_hover:  true,
-        row_select: true,
-        sticky_header: true
+        filter:     false,  // whether filters are available
+        reflow:     true,   // whether to reflow the table on portrait smartphones < 480px wide
+        row_hover:  true,   // highlight the row being hovered over with a mouse
+        row_select: true,   // allow selection with a checkbox in the first column
+        sticky_header: true // keep headers at the top of the screen when scrolling
     },
 
     _create: function() {
@@ -165,8 +166,26 @@ $.widget("asm.table", {
             });
         }
         tbl.addClass("tablesorter");
-        let tablewidgets = [];
-        if (options.filter) { tablewidgets.push("filter"); }
+        let tablewidgets = [ ];
+        if (options.filter) { 
+            tablewidgets.push("filter"); 
+        }
+        if (options.reflow) { 
+            tbl.addClass("asm-table-reflow"); 
+            tablewidgets.push("reflow");
+            // Read the table headers and copy their text values to the
+            // data-title attribute of every column/cell. This allows the
+            // reflow widget to show the column name to the left of the
+            // value when reflowed.
+            let hd = tbl.find("thead th");
+            console.log(hd);
+            for (let i=0; i < hd.length; i++) {
+                // Look for a span.columntext value in the th. If it's not found, just use the whole th.
+                let columntext = $(hd[i]).find("span").text();
+                if (!columntext) { columntext = hd[i].innerText; } 
+                tbl.find("tbody td:nth-child(" + (i+1) + ")").attr("data-title", columntext + ":");
+            }
+        }
         if (options.sticky_header && config.bool("StickyTableHeaders")) { 
             //tablewidgets.push("stickyHeaders"); //Use native browser support via position: sticky instead
             tbl.find("th").addClass("asm-table-sticky-header");
@@ -180,7 +199,10 @@ $.widget("asm.table", {
                 filter_columnFilters: options.filter,
                 filter_cssFilter: "tablesorter-filter",
                 filter_ignoreCase: true,
-                filter_searchDelay: 500
+                filter_searchDelay: 500,
+                reflow_className: "ui-table-reflow",
+                reflow_headerAttrib: "data-name",
+                reflow_dataAttrib: "data-title"
             },
             textExtraction: function(node, table, cellIndex) {
                 // this function controls how text is extracted from cells for

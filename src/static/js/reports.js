@@ -906,7 +906,7 @@ $(function() {
         },
 
         bind_browse_smcom: function() {
-            $("#table-smcom").table({ sticky_header: false, filter: true, sortList: [[1, 0]] });
+            $("#table-smcom").table({ sticky_header: false, reflow: false, filter: true, sortList: [[1, 0]] });
             $("#dialog-browse").dialog({
                 autoOpen: false,
                 resizable: true,

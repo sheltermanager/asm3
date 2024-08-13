@@ -610,6 +610,31 @@ select:disabled, input:disabled, textarea:disabled {
 #tableform-select-all, #tableform-toggle-filter { float: left; margin-top: -4px; }
 #tableform .filtered { display: none !important; } /* also applied by .tablesorter .filtered css but without !important does not work for elements that have changed display */
 
+/** This CSS handles reflowing of tables on portrait mobiles */
+@media screen and (max-device-width:480px) {
+    /* uncomment out the line below if you don't want the sortable headers to show */
+    /* .asm-table-reflow thead { display: none; } */
+    .asm-table-reflow td,
+    .asm-table-reflow th {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        float: right;
+        width: 100%;
+    }
+    .asm-table-reflow tbody td[data-title]:before {
+      content: attr(data-title);
+      float: left;
+      width: 50%;
+      white-space: pre-wrap;
+      text-align: bottom;
+      display: inline-block;
+    }
+    /* add zebra stripes on mobile so you can see the difference between results */
+    .asm-table tr:nth-child(even) { background-color: #eee; }
+    .asm-table tr:nth-child(odd) { background-color: #fff; }
+}
+
 /** WAITING LIST ==================== */
 .asm-wl-highlight { color: #000; background-color: #fff284; }
 .asm-wl-highlight a { color: #000; background-color: #fff284; }

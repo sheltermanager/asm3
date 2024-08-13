@@ -218,7 +218,7 @@ const tableform = {
                     t.push('<th>');
                     t.push('<button id="tableform-select-all">' + _("Select all") + '</button>');
                     t.push('<button id="tableform-toggle-filter">' + _("Filter") + '</button>');
-                    t.push(' ' + v.display + '</th>');
+                    t.push(' <span>' + v.display + '</span></th>');
                 }
                 else {
                     t.push("<th>" + v.display + "</th>");
