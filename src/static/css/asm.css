@@ -254,20 +254,6 @@ select:disabled, input:disabled, textarea:disabled {
 
 /** MAIN =========================== */
 
-/* retired - use bootstrap grid
-.asm-main-columns {
-    display: block;
-    width: 100%;
-}
-
-.asm-main-column {
-    display: inline-block;
-    vertical-align: top;
-    width: 49%;
-    min-width: 330px;
-}
-*/
-
 .asm-main-section {
     border-radius: 8px;
     border: 1px dotted #999;
@@ -761,45 +747,16 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** GRIDS ============================= */
-
-/*
-retired - use bootstrap-grid
-.asm-grid {
+.asm-row {
     display: block;
-    width: 100%;
+    text-align: center;
 }
 
-.asm-grid-col-2 {
+.asm-col {
     display: inline-block;
-    vertical-align: middle;
-    min-width: 300px;
-    width: 50%;
+    vertical-align: top;
+    text-align: start;
 }
-
-.asm-grid-col-3 {
-    display: inline-block;
-    vertical-align: middle;
-    min-width: 300px;
-    width: 33%;
-}
-
-.asm-grid-col-4 {
-    display: inline-block;
-    vertical-align: middle;
-    min-width: 300px;
-    width: 25%;
-}
-
-.asm-grid-field {
-    width: 100%;
-}
-
-.asm-grid-field label {
-    display: inline;
-    width: 150px;
-    text-align: right;
-}
-*/
 
 /** FORMS =========================== */
 #asm-content {

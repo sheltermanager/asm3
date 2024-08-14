@@ -10,65 +10,19 @@ $(function() {
             return [
                 html.content_header(_("Find Event")),
                 '<div id="eventsearchform">',
-                '<table class="asm-table-layout">',
-
-                '<tr>',
-                '<td>',
-                '<label for="name">' + _("Name") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="name" data="name" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr>',
-                '<td><label for="eventfrom">' + _("Event Between") + '</label></td>',
-                '<td><input id="eventfrom" data="eventfrom" class="asm-textbox asm-datebox" /></td>',
-                '<td><label for="eventto">' + _("and") + '</label></td>',
-                '<td><input id="eventto" data="eventto" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-
-                '<tr>',
-                '<td><label for="location">' + _("Location") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="location" data="location" class="asm-textbox" />',
-                '</td>',
-
-                '<tr>',
-                '<td>',
-                '<label for="address">' + _("Address") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="address" data="address" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr>',
-                '<td>',
-                '<label for="city">' + _("City") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="city" data="city" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="statecounty">',
-                '<td><label for="county">' + _("State") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="county" data="county" type="text" /></td>',
-                '</tr>',
-
-                '<tr>',
-                '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="text" /></td>',
-                '</tr>',
-
-                '<tr id="countryrow">',
-                '<td><label for="country">' + _("Country") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="country" data="country" type="text" /></td>',
-                '</tr>',
-
-                '</table>',
+                '<div class="asm-search-criteriacolumns">',
+                html.search_column([
+                    html.search_field_text("name", _("Name")),
+                    html.search_field_daterange("eventfrom", "eventto", _("Event Between")),
+                    html.search_field_text("location", _("Location")),
+                    html.search_field_text("address", _("Address")),
+                    html.search_field_text("city", _("City")),
+                    html.search_field_text("county", _("State")),
+                    html.search_field_text("postcode", _("Zipcode")),
+                    html.search_field_text("country", _("Country")),
+                ].join("\n")),
+                '</div>',
+                '</div>',
                 '<p class="centered">',
                 '<button type="submit" id="searchbutton">' + _("Search") + '</button>',
                 '</p>',
@@ -78,7 +32,6 @@ $(function() {
         },
 
         bind: function() {
-
             $("#searchbutton").button().click(function() {
                 common.route("event_find_results?" + $("#eventsearchform input, #eventsearchform select").toPOST());
             });
@@ -90,10 +43,8 @@ $(function() {
                 }
             });
 
-            $("#countryrow").toggle( !config.bool("HideCountry") );
-            $("#statecounty").toggle( !config.bool("HideTownCounty") );
-
-
+            $("#country").closest("tr").toggle( !config.bool("HideCountry") );
+            $("#county").closest("tr").toggle( !config.bool("HideTownCounty") );
         },
 
         name: "event_find",
