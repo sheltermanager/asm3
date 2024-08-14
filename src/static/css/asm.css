@@ -403,6 +403,20 @@ select:disabled, input:disabled, textarea:disabled {
     font-weight: bold;
 }
 
+.asm-search-criteriacolumn {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.asm-search-criteriacolumn td {
+    text-align: start;
+}
+
+.asm-search-criteriacolumns {
+    display: block;
+    text-align: center;
+}
+
 .asm-search-name {
     font-size: 150%;
     font-weight: bold;

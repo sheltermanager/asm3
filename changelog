@@ -1,6 +1,8 @@
 49
 ================
 
+14/08/24 Mobile friendly layout for find animal, find lost/found #1103
+14/08/24 Use 3 col layout for animal details with 3rd for additional #1103
 13/08/24 Use table reflow widget for portrait smartphone browsers #1103
 13/08/24 Use bootstrap grids to make a start on fix mobile layout #1103
 12/08/24 Fix for iPhone 17.3+ uploading images with no mimetype

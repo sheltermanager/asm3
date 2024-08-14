@@ -693,6 +693,16 @@ const html = {
         return warn;
     },
 
+    search_column: function(fields) {
+        return [
+            '<div class="asm-search-criteriacolumn">',
+            '<table class="asm-table-layout">',
+            fields,
+            '</table>',
+            '</div>'
+        ].join("\n");
+    },
+
     search_field: function(labelhtml, widgethtml) {
         return [
             '<tr>',
@@ -706,18 +716,32 @@ const html = {
         ].join("\n");
     },
 
-    /**
-     * Used by the search screens to output a date search field
-     */
     search_field_date: function(id, label) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
         let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox asm-datebox" />';
         return html.search_field(labelhtml, widgethtml);
     },
 
-    /**
-     * Used by the advanced find screens to output a select search field
-     */
+    search_field_daterange: function(id1, id2, label) {
+        let labelhtml = '<label for="' + id1 + '">' + label + '</label>';
+        let widgethtml = '<input id="' + id1 + '" data="' + id1 + '" class="asm-halftextbox asm-datebox" /> ' +
+            '<input id="' + id2 + '" data="' + id2 + '" class="asm-halftextbox asm-datebox" />';
+        return html.search_field(labelhtml, widgethtml);
+    },
+
+    search_field_number: function(id, label) {
+        let labelhtml = '<label for="' + id + '">' + label + '</label>';
+        let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox asm-numberbox" />';
+        return html.search_field(labelhtml, widgethtml);
+    },
+
+    search_field_numberrange: function(id1, id2, label) {
+        let labelhtml = '<label for="' + id1 + '">' + label + '</label>';
+        let widgethtml = '<input id="' + id1 + '" data="' + id1 + '" class="asm-halftextbox asm-numberbox" /> ' +
+            '<input id="' + id2 + '" data="' + id2 + '" class="asm-halftextbox asm-numberbox" />';
+        return html.search_field(labelhtml, widgethtml);
+    },
+
     search_field_select: function(id, label, options, includeall) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
         let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-selectbox">';
@@ -729,9 +753,14 @@ const html = {
         return html.search_field(labelhtml, widgethtml);
     },
 
-    /**
-     * Used by the advanced find screens to output a text search field
-     */
+    search_field_mselect: function(id, label, options) {
+        let labelhtml = '<label for="' + id + '">' + label + '</label>';
+        let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-bsmselect" multiple="multiple">';
+        widgethtml += options;
+        widgethtml += '</select>';
+        return html.search_field(labelhtml, widgethtml);
+    },
+
     search_field_text: function(id, label) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
         let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox" />';

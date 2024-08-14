@@ -183,7 +183,8 @@ $.widget("asm.table", {
                 // Look for a span.columntext value in the th. If it's not found, just use the whole th.
                 let columntext = $(hd[i]).find("span").text();
                 if (!columntext) { columntext = hd[i].innerText; } 
-                tbl.find("tbody td:nth-child(" + (i+1) + ")").attr("data-title", columntext + ":");
+                if (columntext) { columntext += ":"; } else { columntext = " "; } // show text:, but if it was blank make it a space for layout
+                tbl.find("tbody td:nth-child(" + (i+1) + ")").attr("data-title", columntext);
             }
         }
         if (options.sticky_header && config.bool("StickyTableHeaders")) { 
