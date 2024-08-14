@@ -630,9 +630,6 @@ select:disabled, input:disabled, textarea:disabled {
       text-align: bottom;
       display: inline-block;
     }
-    /* add zebra stripes on mobile so you can see the difference between results */
-    .asm-table tr:nth-child(even) { background-color: #eee; }
-    .asm-table tr:nth-child(odd) { background-color: #fff; }
 }
 
 /** WAITING LIST ==================== */
