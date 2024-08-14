@@ -1201,6 +1201,7 @@ $(document).ready(function() {
                 let formdata = {
                     "mode": "addanimal",
                     "animalname": $("#animalname").val(),
+                    "sheltercode": $("#sheltercode").val(),
                     "estimatedage": $("#estimatedage").val(),
                     "sex": $("#sex").val(),
                     "type": $("#type").val(),
