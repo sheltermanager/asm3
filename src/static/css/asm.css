@@ -394,8 +394,13 @@ select:disabled, input:disabled, textarea:disabled {
     vertical-align: top;
 }
 
-.asm-search-criteriacolumn td {
-    text-align: start;
+.asm-search-criteriacolumn td:nth-child(1) {
+    text-align: end;
+}
+
+.asm-search-criteriacolumn label {
+    width: 150px;
+    display: inline-block;
 }
 
 .asm-search-criteriacolumns {
@@ -763,10 +768,6 @@ select:disabled, input:disabled, textarea:disabled {
 #asm-content table {
     margin-left: auto;
     margin-right: auto;
-}
-
-#asm-content label {
-    text-align: right;
 }
 
 .asm-error-text {

@@ -42,7 +42,7 @@ $(function() {
                 html.search_field_daterange("respondedfrom", "respondedto", _("Responded Between")),
                 html.search_field_daterange("followupfrom", "followupto", _("Followup Between")),
                 html.search_field_daterange("completedfrom", "completedto", _("Completed Between")),
-                html.search_field_select("filter", _("Filter"), incident_find.options_filter),
+                html.search_field_select("filter", _("Filter"), incident_find.options_filter, false),
             ].join("\n");
             return [
                 html.content_header(_("Find Incident")),
