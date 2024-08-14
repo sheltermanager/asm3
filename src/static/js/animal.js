@@ -134,7 +134,7 @@ $(function() {
                 '</div>', // col-sm
                 // second column
                 '<div class="col-sm">',
-                '<table class="additionaltarget" data="to2">',
+                '<table>',
                 '<tr>',
                 '<td><label for="species">' + _("Species") + '</label></td>',
                 '<td><select id="species" data-json="SPECIESID" data-post="species" class="asm-selectbox">',
@@ -213,6 +213,12 @@ $(function() {
                 '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
                 '<td><input id="fee" data-json="FEE" data-post="fee" class="asm-currencybox asm-textbox" /></td>',
                 '</tr>',
+                '</table>',
+                '</div>', // col-sm
+                // third column (additional fields)
+                '<div class="col-sm">',
+                '&nbsp;',
+                '<table class="additionaltarget" data="to2">',
                 '</table>',
                 '</div>', // col-sm
                 '</div>', // row
