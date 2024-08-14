@@ -1,0 +1,21 @@
+People with Flag and Zipcode (mail)
+###
+People
+###
+34701/Any rev01
+###
+Person info for all people with the selected person flag and zip code.
+###
+en
+###
+$VAR flag PERSONFLAG$
+$VAR zipcode STRING Zipcode $
+SELECT DISTINCT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND (o.AdditionalFlags LIKE '$@flag$|%' OR o.AdditionalFlags LIKE '%|$@flag$|%')
+AND o.OwnerPostcode LIKE '$@zipcode$'
+ORDER BY o.OwnerSurname
+###
+MAIL
