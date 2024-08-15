@@ -320,7 +320,7 @@ $(function() {
                 '<thead>',
                 '<tr>',
                 '<th>' + _("Date") + '</th>',
-                '<th>' + _("Type") + '</th>',
+                config.bool("DontShowEntryType") ? "" : '<th>' + _("Type") + '</th>',
                 '<th>' + _("Code") + '</th>',
                 '<th>' + _("Category") + '</th>',
                 '<th>' + _("Coordinator") + '</th>',
@@ -339,7 +339,7 @@ $(function() {
                 h.push('<td><span class="nowrap">');
                 h.push('<button type="button" class="deleteentryhistory" data-id="' + v.ID + '">' + _("Delete") + '</button>');
                 h.push(format.date(v.ENTRYDATE) + '</span></td>');
-                h.push('<td>' + v.ENTRYTYPENAME + (v.ASILOMARISTRANSFEREXTERNAL == 1 ? _('External') : '') + '</td>');
+                if (!config.bool("DontShowEntryType")) { h.push('<td>' + v.ENTRYTYPENAME + (v.ASILOMARISTRANSFEREXTERNAL == 1 ? _('External') : '') + '</td>'); }
                 h.push('<td>' + v.SHELTERCODE + '</td>');
                 h.push('<td>' + v.ENTRYREASONNAME + '</td>');
                 h.push('<td>' + html.person_link(v.ADOPTIONCOORDINATORID, v.COORDINATOROWNERNAME) + '</td>');
