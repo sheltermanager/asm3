@@ -447,7 +447,8 @@ $(function() {
                 '<div>',
                 tableform.fields_render([
                     { post_field: "markings", json_field: "MARKINGS", label: _("Markings"), type: "textarea", rows: 3 },
-                    { post_field: "hiddencomments", json_field: "HIDDENANIMALDETAILS", label: _("Hidden Comments"), type: "textarea", rows: 3 },
+                    { post_field: "hiddencomments", json_field: "HIDDENANIMALDETAILS", label: _("Hidden Comments"), type: "textarea", rows: 3,
+                        callout: _("Hidden comments are for staff information only and will never be used on any adoption websites") },
                     { post_field: "comments", json_field: "ANIMALCOMMENTS", label: _("Description"), type: "textarea", rows: 3,
                         callout: _("The description is used for the animal's bio on adoption websites"),
                         xlabel: '<button id="button-commentstomedia">' + _('Copy description to the notes field of the web preferred media for this animal') + '</button>' },
