@@ -30,7 +30,7 @@ $(function() {
                     { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
                     { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" }
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 '<table class="asm-table-layout">',
                 additional.additional_new_fields(controller.additional),
                 '</table>',
@@ -42,7 +42,7 @@ $(function() {
                 '<input id="costtype" data="costtype" type="hidden" />',
                 tableform.fields_render([
                     { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 html.content_footer(),
                 html.content_header(_("Signed Adoption Paperwork"), true),
                 tableform.fields_render([
@@ -52,7 +52,7 @@ $(function() {
                     { post_field: "sigemailaddress", label: _("Adopter email address"), type: "text" },
                     { post_field: "sigemailtemplateid", label: _("Email template"), type: "select", 
                         options: edit_header.template_list_options(controller.templatesemail) },
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 html.content_footer(),
                 html.content_header(_("Adoption Checkout"), true),
                 tableform.fields_render([
@@ -64,7 +64,7 @@ $(function() {
                     { post_field: "emailaddress", label: _("Adopter email address"), type: "text" },
                     { post_field: "emailtemplateid", label: _("Email template"), type: "select", 
                         options: edit_header.template_list_options(controller.templatesemail) },
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 html.content_footer(),
                 html.box(5),
                 '<button id="adopt">' + html.icon("movement") + ' ' + _("Adopt") + '</button>',

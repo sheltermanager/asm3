@@ -25,7 +25,7 @@ $(function() {
                     { post_field: "reservationstatus", label: _("Status"), type: "select", 
                         options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 '<table class="asm-table-layout">',
                 additional.additional_new_fields(controller.additional),
                 '</table>',

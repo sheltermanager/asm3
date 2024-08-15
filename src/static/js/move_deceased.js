@@ -18,7 +18,7 @@ $(function() {
                     { post_field: "puttosleep", label: _("Euthanized"), type: "check" },
                     { post_field: "deadonarrival", label: _("Dead on arrival"), type: "check" },
                     { post_field: "ptsreason", label: _("Notes"), type: "textarea", rows: 8 },
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 html.content_footer(),
                 html.content_header(_("Stock"), true),
                 html.textbar(_("These fields allow you to deduct stock for any euthanasia administered."), { maxwidth: "600px" }),
@@ -30,7 +30,7 @@ $(function() {
                         options: { displayfield: "USAGETYPENAME", valuefield: "ID", rows: controller.stockusagetypes }},
                     { post_field: "usagedate", label: _("Usage Date"), type: "date" },
                     { post_field: "usagecomments", label: _("Comments"), type: "textarea" }
-                ], 1, { full_width: false, id: "stocktable" }),
+                ], { full_width: false, id: "stocktable" }),
                 html.content_footer(),
                 html.box(5),
                 '<button id="deceased">' + html.icon("death") + ' ' + _("Mark Deceased") + '</button>',

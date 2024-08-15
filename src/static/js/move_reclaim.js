@@ -23,7 +23,7 @@ $(function() {
                         callout: _("A unique number to identify this movement") },
                     { post_field: "movementdate", label: _("Date"), type: "date" },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 '<table class="asm-table-layout">',
                 additional.additional_new_fields(controller.additional),
                 '</table>',

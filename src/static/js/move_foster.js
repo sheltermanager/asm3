@@ -22,7 +22,7 @@ $(function() {
                     { post_field: "returndate", label: _("Returning"), type: "date", 
                         callout: _("The date the foster animal will be returned if known") },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
-                ], 1, { full_width: false }),
+                ], { full_width: false }),
                 '<table class="asm-table-layout">',
                 additional.additional_new_fields(controller.additional),
                 '</table>',

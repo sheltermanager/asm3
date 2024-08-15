@@ -602,7 +602,6 @@ const tableform = {
      *      hide_read_only: false, // whether or not to hide read only fields in editing
      *      use_default_values: false,
      *      focusfirst: true,
-     *      columns: 1,
      *      delete_button: false,
      *      delete_perm: 'da',
      *      edit_perm: 'ca',
@@ -613,9 +612,8 @@ const tableform = {
      *      html_form_enctype: enctype
      *      fields: (see fields_render)
      *  }
-     *  additionalfields = string containing rendered additionalfields
      */
-    dialog_render: function(dialog, additionalfields) {
+    dialog_render: function(dialog) {
         var d =[];
         d.push("<div id=\"dialog-tableform\" style=\"display: none\">");
         if (dialog.helper_text) {
@@ -635,7 +633,7 @@ const tableform = {
         if (dialog.focusfirst === false) {
             d.push(html.capture_autofocus());
         }
-        d.push(this.fields_render(dialog.fields, dialog.columns, undefined, additionalfields));
+        d.push(this.fields_render(dialog.fields));
         if (dialog.html_form_action) {
             d.push("</form>");
         }
@@ -989,7 +987,7 @@ const tableform = {
      *        post_field: "name", 
      *        label: "label", 
      *        labelpos: "left", (or above, only really valid for textareas)
-     *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol", 
+     *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol|addcol", 
      *        rowid: "thisrow", ( id for the row containing the label/field)
      *        readonly: false, (read only for editing, ok for creating)
      *        halfsize: false, (use the asm-halftextbox class)
@@ -1017,23 +1015,24 @@ const tableform = {
      *        blur: function(blurevent),
      *        xbutton: "text" (render an extra button to the right of the widget with id button-post_field and inner text)
      *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
+     *        addtarget: use in conjunction with type=="addcol" to specify the data attribute/target, eg: to2
      *      } ]
-     * columns: number of cols to render (1 if undefined)
      * options: - if undefined: { render_container: true; full_width: true; id="" }
      */
-    fields_render: function(fields, columns, coptions, additionalfields) {
-        let d = "", 
-            options = { render_container: true, full_width: true };
-        let additional_fields_placeholder = '<div id="additionalfieldsplaceholder"></div>';
-        if (columns === undefined) { columns = 1; }
+    fields_render: function(fields, coptions) {
+        let d = "", startcol = "", startcoladd = "", endcol = "", colclasses = "",
+            options = { render_container: true, full_width: true, id: "" };
         if (coptions !== undefined) { options = common.copy_object(options, coptions); }
         if (options.render_container) {
-            if (options.id === undefined) { options.id = ""; }
-            d = '<table id="' + options.id + '" class="asm-table-layout' + (options.full_width ? " asm-table-fullwidth" : "" ) + (columns == 1 ? " asm-dialog-fields-container" : "" ) +  '">';
-        }
-        if (columns > 1) {
-            // We have multiple columns, start the first one
-            d += '<tr><td class="asm-nested-table-td' + (columns > 1 ? " asm-dialog-fields-container" : "" ) + '"><table>';
+            d = '<div class="asm-fields-container row" ';
+            if (options.id) { d+= 'id="' + options.id + '"'; }
+            d += '>';
+            colclasses = "asm-table-layout";
+            if (options.full_width) { colclasses += " asm-table-fullwidth"; }
+            startcol = '<div class="col"><table class="' + colclasses + '">';
+            startcoladd = '<div class="col"><table class="' + colclasses + ' {classes}" data="{data}" >';
+            endcol = '</table></div>';
+            d += startcol; 
         }
         $.each(fields, function(i, v) {
             let labelx = "", tr = "<tr>";
@@ -1062,7 +1061,7 @@ const tableform = {
                 if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx; }
                 if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
                 if (v.xmarkup) { d += v.xmarkup; }
-                if (!v.justwidget) { "</td></tr>"; }
+                if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "text") {
                 if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
@@ -1284,6 +1283,7 @@ const tableform = {
                 }
                 else if (v.options && v.options.rows) {
                     if (v.options.prepend) { d += v.options.prepend; }
+                    if (!v.options.valuefield) { v.options.valuefield = "ID"; } // assume ID if not given - is for most things
                     d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 d += "</select>";
@@ -1316,6 +1316,7 @@ const tableform = {
                 if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-personchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                if (v.brief) { d += " data-mode=\"brief\" "; }
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
                 if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
@@ -1355,28 +1356,23 @@ const tableform = {
             }
             else if (v.type == "raw") {
                 // Special widget that allows custom markup instead
-                if (!v.justwidget) { d += "<tr id=\"" + v.post_field + "\"><td><label>" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label>" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += v.markup;
                 if (!v.justwidget) { d += "</td></tr>"; } 
             }
             else if (v.type == "nextcol") {
                 // Special fake widget that causes rendering to move to the next column
-                d += '</table><td><td class="asm-nested-table-td"><table>';
+                d += endcol + startcol;
             }
-            else if (v.type == "additional_fields") {
-                // div placeholder for additional fields
-                d += additional_fields_placeholder;
+            else if (v.type == "addcol") {
+                // Outputs a container for additional fields in a new column
+                d += endcol + startcoladd.replace("{classes}", "additionaltarget").replace("{data}", v.addtarget);
             }
+
         });
-        if (columns > 1) {
-            // Close out the current column for multi column layouts
-            d += "</table></td></tr>";
-        }
         if (options.render_container) {
-            d += "</table>";
-        }
-        if (additionalfields !== undefined) {
-            d = d.replace(additional_fields_placeholder, additionalfields);
+            d += endcol;
+            d += "</div>";
         }
         return d;
     },
