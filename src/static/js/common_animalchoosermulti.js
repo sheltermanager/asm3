@@ -95,8 +95,8 @@ $.widget("asm.animalchoosermulti", {
         acbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
         dialog.dialog({
             autoOpen: false,
-            height: 600,
-            width: 875,
+            height: common.vheight(600),
+            width: common.vwidth(875),
             modal: true,
             dialogClass: "dialogshadow",
             show: dlgfx.edit_show,

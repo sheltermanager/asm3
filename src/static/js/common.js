@@ -341,6 +341,16 @@ const common = {
         return String(s).trim();
     },
 
+    /** Used for containers, returns the min of h and the viewport height */
+    vheight: function(h) {
+        return Math.min(h, $(window).height());
+    },
+
+    /** Used for containers, returns the min of w and the viewport width */
+    vwidth: function(w) {
+        return Math.min(w, $(window).width());
+    },
+
     /** 
      * Used for reading the error message from an AJAX response. 
      * We have this because Safari seems to end up with "Internal Server Error"

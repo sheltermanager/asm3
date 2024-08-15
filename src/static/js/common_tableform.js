@@ -993,7 +993,7 @@ const tableform = {
      *        rowid: "thisrow", ( id for the row containing the label/field)
      *        readonly: false, (read only for editing, ok for creating)
      *        halfsize: false, (use the asm-halftextbox class)
-     *        justwidget: false, (output tr/td/label)
+     *        justwidget: false, (if true only output the widget itself, no label)
      *        defaultval: expression or function to evaluate.
      *        height/width/margintop: "css expr",
      *        validation: "notblank|notzero|validemail" or a function to call, return false for validate failure
@@ -1006,7 +1006,7 @@ const tableform = {
      *        tooltip: _("Text"), 
      *        callout: _("Text"), mixed markup allowed
      *        hideif: function() { return true; // should hide },
-     *        markup: "<input type='text' value='raw' />",
+     *        markup: "<input type='text' value='raw' />", // used in conjunction with type==raw to supply markup instead
      *        options: [ "Item 1", "Item 2" ] // options only used by select and selectmulti
      *        options: "<option>test</option>"
      *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
@@ -1015,7 +1015,8 @@ const tableform = {
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), 
      *        blur: function(blurevent),
-     *        xbutton: "text" (render an extra button to the right of the item with id button-post_field and inner text)
+     *        xbutton: "text" (render an extra button to the right of the widget with id button-post_field and inner text)
+     *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
      *      } ]
      * columns: number of cols to render (1 if undefined)
      * options: - if undefined: { render_container: true; full_width: true; id="" }
@@ -1045,7 +1046,12 @@ const tableform = {
             if (v.callout) {
                 labelx += '&nbsp;<span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
             }
-            if (v.rowid) { tr = '<tr id="' + v.rowid + '">'; }
+            if (v.rowid) { 
+                tr = '<tr id="' + v.rowid + '">'; 
+            }
+            else if (v.post_field) {
+                tr = '<tr id="' + v.post_field + 'row' + '">';
+            }
             if (v.type == "check") {
                 if (!v.justwidget) { d += tr + "<td></td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"checkbox\" class=\"asm-checkbox\" ";
@@ -1053,7 +1059,10 @@ const tableform = {
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
-                if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td></tr>"; }
+                if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx; }
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
+                if (!v.justwidget) { "</td></tr>"; }
             }
             else if (v.type == "text") {
                 if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
@@ -1067,6 +1076,7 @@ const tableform = {
                 if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                 d += "/>";
                 if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "textarea") {
@@ -1087,6 +1097,8 @@ const tableform = {
                 if (!v.tooltip) { d += "title=\"" + html.title(v.label) + "\" "; } // use the label if a title wasn't given
                 if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                 d += "></textarea>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "richtextarea") {
@@ -1164,6 +1176,8 @@ const tableform = {
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "time") {
@@ -1177,6 +1191,8 @@ const tableform = {
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "datetime") {
@@ -1195,6 +1211,8 @@ const tableform = {
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 d += "</span>";
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
@@ -1209,6 +1227,8 @@ const tableform = {
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "intnumber") {
@@ -1224,6 +1244,8 @@ const tableform = {
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "number") {
@@ -1239,6 +1261,8 @@ const tableform = {
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "select") {
@@ -1263,6 +1287,8 @@ const tableform = {
                     d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 d += "</select>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+                if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "selectmulti") {

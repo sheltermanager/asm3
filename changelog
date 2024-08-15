@@ -1,6 +1,7 @@
 49
 ================
 
+15/08/24 Support xbutton/xmarkup in all widgets, size choosers on mobile #1103
 15/08/24 Querybuilder: Vaccination expiry date in animal reports
 15/08/24 Querybuilder: Include DateExpires in medical reports
 15/08/24 Fix bulk change animals layout #1103
