@@ -1063,7 +1063,7 @@ const tableform = {
             tr = '<tr ' + rowid + rowclasses + '>'; 
             if (v.type == "check") {
                 if (!v.justwidget) { d += tr + "<td></td><td>"; }
-                if (v.labelpos && v.labelpos == "before" && !v.justwidget) { "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx; }
+                if (v.labelpos && v.labelpos == "before" && !v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx; }
                 d += "<input id=\"" + v.post_field + "\" type=\"checkbox\" class=\"asm-checkbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
