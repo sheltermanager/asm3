@@ -532,6 +532,9 @@ $(function() {
             else if (viewmode == "coordinatorfosterer") {
                 this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,SPECIESNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "datebroughtin") {
+                this.render_view("RECENTENTERED", "", "-RECENTENTERED,ANIMALNAME", false, false);
+            }
             else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
             }
@@ -552,6 +555,9 @@ $(function() {
             }
             else if (viewmode == "goodwith") {
                 this.render_goodwith();
+            }
+            else if (viewmode == "lastchanged") {
+                this.render_view("RECENTCHANGED", "", "-RECENTCHANGED,ANIMALNAME", false, false);
             }
             else if (viewmode == "litter") {
                 this.render_view("ACCEPTANCENUMBER", "", "ACCEPTANCENUMBER,SPECIESNAME,ANIMALNAME", false, false, function(a) { return a.ACCEPTANCENUMBER && a.ACCEPTANCENUMBER != ""; });
@@ -588,12 +594,6 @@ $(function() {
             }
             else if (viewmode == "pickuplocation") {
                 this.render_view("PICKUPLOCATIONNAME", "", "PICKUPLOCATIONNAME,ANIMALNAME", false, false, function(a) { return a.ISPICKUP == 1; });
-            }
-            else if (viewmode == "recentchanged") {
-                this.render_view("RECENTCHANGED", "", "-RECENTCHANGED,ANIMALNAME", false, false);
-            }
-            else if (viewmode == "recententered") {
-                this.render_view("RECENTENTERED", "", "-RECENTENTERED,ANIMALNAME", false, false);
             }
             else if (viewmode == "retailer") {
                 this.render_view("CURRENTOWNERNAME", "", "CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 8; });
