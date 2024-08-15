@@ -987,7 +987,7 @@ const tableform = {
      *        post_field: "name", 
      *        label: "label", 
      *        labelpos: "left", (or above, only really valid for textareas)
-     *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol|addcol", 
+     *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol", 
      *        rowid: "thisrow", ( id for the row containing the label/field)
      *        readonly: false, (read only for editing, ok for creating)
      *        halfsize: false, (use the asm-halftextbox class)
@@ -1015,12 +1015,12 @@ const tableform = {
      *        blur: function(blurevent),
      *        xbutton: "text" (render an extra button to the right of the widget with id button-post_field and inner text)
      *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
-     *        addtarget: use in conjunction with type=="addcol" to specify the data attribute/target, eg: to2
+     *        coldata: use in conjunction with type=="nextcol" to specify the data attribute for the next column
      *      } ]
      * options: - if undefined: { render_container: true; full_width: true; id="" }
      */
     fields_render: function(fields, coptions) {
-        let d = "", startcol = "", startcoladd = "", endcol = "", colclasses = "",
+        let d = "", startcol = "", endcol = "", colclasses = "",
             options = { render_container: true, full_width: true, id: "" };
         if (coptions !== undefined) { options = common.copy_object(options, coptions); }
         if (options.render_container) {
@@ -1029,10 +1029,9 @@ const tableform = {
             d += '>';
             colclasses = "asm-table-layout";
             if (options.full_width) { colclasses += " asm-table-fullwidth"; }
-            startcol = '<div class="col"><table class="' + colclasses + '">';
-            startcoladd = '<div class="col"><table class="' + colclasses + ' {classes}" data="{data}" >';
+            startcol = '<div class="col"><table class="' + colclasses + ' {classes}" data="{data}">';
             endcol = '</table></div>';
-            d += startcol; 
+            d += startcol.replace("{data}", "").replace("{classes}", ""); 
         }
         $.each(fields, function(i, v) {
             let labelx = "", tr = "<tr>";
@@ -1362,13 +1361,8 @@ const tableform = {
             }
             else if (v.type == "nextcol") {
                 // Special fake widget that causes rendering to move to the next column
-                d += endcol + startcol;
+                d += endcol + startcol.replace("{data}", v.coldata).replace("{classes}", v.classes);
             }
-            else if (v.type == "addcol") {
-                // Outputs a container for additional fields in a new column
-                d += endcol + startcoladd.replace("{classes}", "additionaltarget").replace("{data}", v.addtarget);
-            }
-
         });
         if (options.render_container) {
             d += endcol;

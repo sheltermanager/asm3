@@ -126,7 +126,7 @@ $(function() {
                         _("Estimate") ].join("\n") },
                     { post_field: "fee", json_field: "FEE", label: _("Adoption Fee"), type: "currency" },
 
-                    { type: "addcol", addtarget: "to2" }  // additional field column for details
+                    { type: "nextcol", classes: "additionaltarget", coldata: "to2" }  // additional field column for details
 
                 ], { full_width: false }),
                 '</div>' // end accordion section
