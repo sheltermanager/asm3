@@ -1016,6 +1016,7 @@ const tableform = {
      *        change: function(changeevent), 
      *        blur: function(blurevent),
      *        xbutton: "text" (render an extra button after the widget with id button-post_field and inner text)
+     *        xlabel: "<span>whatever</span>" (render extra markup after the label)
      *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
      *        coldata: use in conjunction with type "nextcol" to specify the data attribute for the next column
      *      } ]
@@ -1050,6 +1051,9 @@ const tableform = {
             }
             if (v.callout) {
                 labelx += '&nbsp;<span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
+            }
+            if (v.xlabel) {
+                labelx += v.xlabel;
             }
             if (v.rowid) { 
                 rowid = ' id="' + v.rowid + '" ';
@@ -1093,7 +1097,7 @@ const tableform = {
             else if (v.type == "textarea") {
                 if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
+                        d += tr + "<td colspan=\"2\"><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
                         d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";

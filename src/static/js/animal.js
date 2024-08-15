@@ -10,40 +10,17 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Death") + ' <span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3>',
                 '<div>',
-                '<table class="additionaltarget" data="to6">',
-                '<tr>',
-                '<td>',
-                '<label for="deceaseddate">' + _("Deceased Date") + '</label>',
-                '</td>',
-                '<td>',
-                '<input class="asm-textbox asm-datebox" id="deceaseddate" data-json="DECEASEDDATE" data-post="deceaseddate" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="deathcategory">' + _("Category") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="deathcategory" data-json="PTSREASONID" data-post="deathcategory">',
-                html.list_to_options(controller.deathreasons, "ID", "REASONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
-                '<td>',
-                '<input class="asm-checkbox" type="checkbox" id="puttosleep" data-json="PUTTOSLEEP" data-post="puttosleep" />',
-                '<label for="puttosleep">' + _("Euthanized") + '</label>',
-                '<br>',
-                '<input class="asm-checkbox" type="checkbox" id="deadonarrival" data-json="ISDOA" data-post="deadonarrival" />',
-                '<label for="deadonarrival">' + _("Dead on arrival") + '</label>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '<div>',
-                _("Notes") + '<br />',
-                '<textarea class="asm-textarea" title="' + html.title(_("Notes")) + '" id="ptsreason" data-json="PTSREASON" data-post="ptsreason" rows="8"></textarea>',
-                '</div>',
+                tableform.fields_render([
+                    { post_field: "deceaseddate", json_field: "DECEASEDDATE", label: _("Deceased Date"), type: "date" },
+                    { post_field: "deathcategory", json_field: "PTSREASONID", label: _("Category"), type: "select", 
+                        options: { displayfield: "REASONNAME", rows: controller.deathreasons }},
+                    { post_field: "puttosleep", json_field: "PUTTOSLEEP", label: _("Euthanized"), type: "check" },
+                    { post_field: "deadonarrival", json_field: "ISDOA", label: _("Dead on arrival"), type: "check" },
+                    // TODO: will break when tableform stops using tables
+                    { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><table class="additionaltarget" data="to6"></table></td></tr>' }, 
+                    { type: "nextcol" },
+                    { post_field: "ptsreason", json_field: "PTSREASON", label: _("Notes"), type: "textarea", labelpos: "above" },
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -468,95 +445,27 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Notes") + '</a></h3>',
                 '<div>',
-                '<div class="row">',
-                // comments
-                '<div class="col-sm">',
-                '<table>',
-                '<tr id="markingsrow">',
-                '<td>',
-                '<label for="markings">' + _("Markings") + '</label>',
-                '</td>',
-                '<td width="80%">',
-                '<textarea class="asm-textarea" id="markings" data-json="MARKINGS" data-post="markings" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr id="hiddencommentsrow">',
-                '<td>',
-                '<label for="hiddencomments">' + _("Hidden Comments") + '</label>',
-                '<span id="callout-hiddencomments" class="asm-callout">' + _("Hidden comments are for staff information only and will never be used on any adoption websites") + '</span>',
-                '</td>',
-                '<td>',
-                '<textarea class="asm-textarea" title="' + html.title(_("Hidden Comments")) + '" id="hiddencomments" data-json="HIDDENANIMALDETAILS" data-post="hiddencomments" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr id="commentsrow">',
-                '<td>',
-                '<label for="comments">' + _("Description") + '</label>',
-                '<span id="callout-comments" class="asm-callout">' + _("The description is used for the animal's bio on adoption websites") + '</span>',
-                '<br/><button id="button-commentstomedia">' + _('Copy description to the notes field of the web preferred media for this animal') + '</button>',
-                '</td>',
-                '<td>',
-                '<textarea class="asm-textarea" title="' + html.title(_("Description")) + '" id="comments" data-json="ANIMALCOMMENTS" data-post="comments" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr id="popupwarningrow">',
-                '<td>',
-                '<label for="popupwarning">' + _("Warning") + '</label>',
-                '<span id="callout-popupwarning" class="asm-callout">' + _("Show a warning when viewing this animal") + '</span>',
-                '</td>',
-                '<td>',
-                '<textarea class="asm-textarea" title="' + html.title(_("Warning")) + '" id="popupwarning" data-json="POPUPWARNING" data-post="popupwarning" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col
-                // good with
-                '<div class="col-sm">',
-                '<table class="additionaltarget" data="to3">',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithcats">' + _("Good with cats") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithcats" data-json="ISGOODWITHCATS" data-post="goodwithcats">',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithdogs">' + _("Good with dogs") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithdogs" data-json="ISGOODWITHDOGS" data-post="goodwithdogs">',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithkids">' + _("Good with children") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithkids" data-json="ISGOODWITHCHILDREN" data-post="goodwithkids">',
-                html.list_to_options(controller.ynunk, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="housetrained">' + _("Housetrained") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="housetrained" data-json="ISHOUSETRAINED" data-post="housetrained">',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col
-                '</div>', // row
-                '</div>', // end accordion section
+                tableform.fields_render([
+                    { post_field: "markings", json_field: "MARKINGS", label: _("Markings"), type: "textarea", rows: 3 },
+                    { post_field: "hiddencomments", json_field: "HIDDENANIMALDETAILS", label: _("Hidden Comments"), type: "textarea", rows: 3 },
+                    { post_field: "comments", json_field: "ANIMALCOMMENTS", label: _("Description"), type: "textarea", rows: 3,
+                        callout: _("The description is used for the animal's bio on adoption websites"),
+                        xlabel: '<button id="button-commentstomedia">' + _('Copy description to the notes field of the web preferred media for this animal') + '</button>' },
+                    { post_field: "popupwarning", json_field: "POPUPWARNING", label: _("Warning"), type: "textarea", rows: 3, 
+                        callout: _("Show a warning when viewing this animal") },
+
+                    { type: "nextcol", classes: "additionaltarget", coldata: "to3" },
+
+                    { post_field: "goodwithcats", json_field: "ISGOODWITHCATS", label: _("Good with cats"), type: "select", 
+                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
+                    { post_field: "goodwithdogs", json_field: "ISGOODWITHDOGS", label: _("Good with dogs"), type: "select", 
+                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
+                    { post_field: "goodwithkids", json_field: "ISGOODWITHCHILDREN", label: _("Good with children"), type: "select", 
+                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynunk }},
+                    { post_field: "housetrained", json_field: "ISHOUSETRAINED", label: _("Housetrained"), type: "select", 
+                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
+                ]),
+               '</div>', // end accordion section
             ].join("\n");
         },
 
@@ -819,14 +728,16 @@ $(function() {
             
             // Show/hide death fields based on deceased date
             if ($("#deceaseddate").val() == "") {
-                $("#deathcategory").closest("tr").fadeOut();
-                $("#puttosleep").closest("tr").fadeOut();
-                $("#ptsreason").closest("div").fadeOut();
+                $("#deathcategoryrow").fadeOut();
+                $("#puttosleeprow").fadeOut();
+                $("#deadonarrivalrow").fadeOut();
+                $("#ptsreasonrow").fadeOut();
             }
             else {
-                $("#deathcategory").closest("tr").fadeIn();
-                $("#puttosleep").closest("tr").fadeIn();
-                $("#ptsreason").closest("div").fadeIn();
+                $("#deathcategoryrow").fadeIn();
+                $("#puttosleeprow").fadeIn();
+                $("#deadonarrivalrow").fadeIn();
+                $("#ptsreasonrow").fadeIn();
             }
 
             // If we're a US shelter and this is a cat or a dog, show the asilomar categories
