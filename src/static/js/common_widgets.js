@@ -178,7 +178,6 @@ $.widget("asm.table", {
             // reflow widget to show the column name to the left of the
             // value when reflowed.
             let hd = tbl.find("thead th");
-            console.log(hd);
             for (let i=0; i < hd.length; i++) {
                 // Look for a span.columntext value in the th. If it's not found, just use the whole th.
                 let columntext = $(hd[i]).find("span").text();

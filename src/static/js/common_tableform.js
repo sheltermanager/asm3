@@ -986,26 +986,28 @@ const tableform = {
      *      { json_field: "name", 
      *        post_field: "name", 
      *        label: "label", 
-     *        labelpos: "left", (or above, only really valid for textareas)
-     *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol", 
-     *        rowid: "thisrow", ( id for the row containing the label/field)
-     *        readonly: false, (read only for editing, ok for creating)
+     *        labelpos: "before|after|above", (only valid for textarea (before|above) and check (before|after))
+     *        type: "check|text|textarea|richtextarea|date|time|currency|number|select|animal|person|raw|nextcol", 
+     *        rowid: "thisrow", (id for the row containing the label/field)
+     *        readonly: false, (shown in dialog_show_add, hidden in dialog_show_edit)
      *        halfsize: false, (use the asm-halftextbox class)
-     *        justwidget: false, (if true only output the widget itself, no label)
-     *        defaultval: expression or function to evaluate.
-     *        height/width/margintop: "css expr",
-     *        validation: "notblank|notzero|validemail" or a function to call, return false for validate failure
-     *        maxlength: (omit or number of chars limit for text/textarea),
-     *        min|max: min/max number for number and intnumber fields
-     *        classes: "extraclass anotherone",
+     *        doublesize: false, (use the asm-doubletextbox class)
+     *        justwidget: false, (if true only output the widget itself, no label or row container)
+     *        hideif: function() { return true; }, if true, omits the widget from the output
+     *        defaultval: expression or function to evaluate (note: done in dialog_show_x/fields_default, not here)
+     *        validation: "notblank|notzero|validemail" or a function to call (note: done after dialog_show_x/fields_validate, not here)
+     *        height/width/margintop: "css expr", (only used by sqleditor/htmleditor)
+     *        maxlength: (number of chars limit for text/textarea),
+     *        min|max: min/max number for number fields
+     *        classes: "extraclass anotherone", extra classes to apply to the widget
+     *        rowclasses: "extraclass anotherone", extra classes to apply to the row container
      *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
      *        date_nofuture: true|false, (for datepicker fields)
      *        date_nopast: true| false, (for datepicker fields)
-     *        tooltip: _("Text"), 
-     *        callout: _("Text"), mixed markup allowed
-     *        hideif: function() { return true; // should hide },
-     *        markup: "<input type='text' value='raw' />", // used in conjunction with type==raw to supply markup instead
-     *        options: [ "Item 1", "Item 2" ] // options only used by select and selectmulti
+     *        tooltip: _("Text"), sets the title attribute of the widget
+     *        callout: _("Text"), mixed markup allowed, shows a callout button next to the widget label
+     *        markup: "<input type='text' value='raw' />", // used in conjunction with type raw to supply markup instead
+     *        options: [ "Item 1", "Item 2" ] // options for use with type select and selectmulti
      *        options: "<option>test</option>"
      *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
@@ -1013,11 +1015,16 @@ const tableform = {
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), 
      *        blur: function(blurevent),
-     *        xbutton: "text" (render an extra button to the right of the widget with id button-post_field and inner text)
+     *        xbutton: "text" (render an extra button after the widget with id button-post_field and inner text)
      *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
-     *        coldata: use in conjunction with type=="nextcol" to specify the data attribute for the next column
+     *        coldata: use in conjunction with type "nextcol" to specify the data attribute for the next column
      *      } ]
-     * options: - if undefined: { render_container: true; full_width: true; id="" }
+     * options: modifiers for the container holding the columns of fields. If undefined, defaults are: 
+     *      { 
+     *          render_container: true; 
+     *          full_width: true; 
+     *          id: "" 
+     *      }
      */
     fields_render: function(fields, coptions) {
         let d = "", startcol = "", endcol = "", colclasses = "",
@@ -1034,7 +1041,7 @@ const tableform = {
             d += startcol.replace("{data}", "").replace("{classes}", ""); 
         }
         $.each(fields, function(i, v) {
-            let labelx = "", tr = "<tr>";
+            let labelx = "", tr = "<tr>", rowid = "", rowclasses = "";
             if (v.hideif && v.hideif()) {
                 return;
             }
@@ -1045,19 +1052,24 @@ const tableform = {
                 labelx += '&nbsp;<span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
             }
             if (v.rowid) { 
-                tr = '<tr id="' + v.rowid + '">'; 
+                rowid = ' id="' + v.rowid + '" ';
             }
             else if (v.post_field) {
-                tr = '<tr id="' + v.post_field + 'row' + '">';
+                rowid = ' id="' + v.post_field + "row" + '" ';
             }
+            if (v.rowclasses) {
+                rowclasses = ' class="' + rowclasses + '" ';
+            }
+            tr = '<tr ' + rowid + rowclasses + '>'; 
             if (v.type == "check") {
                 if (!v.justwidget) { d += tr + "<td></td><td>"; }
+                if (v.labelpos && v.labelpos == "before" && !v.justwidget) { "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx; }
                 d += "<input id=\"" + v.post_field + "\" type=\"checkbox\" class=\"asm-checkbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
-                if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx; }
+                if ((!v.labelpos || v.labelpos == "after") && !v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx; }
                 if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
                 if (v.xmarkup) { d += v.xmarkup; }
                 if (!v.justwidget) { d += "</td></tr>"; }
@@ -1066,6 +1078,7 @@ const tableform = {
                 if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox " + v.classes;
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1165,6 +1178,7 @@ const tableform = {
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 if (v.date_onlydays) { d += "data-onlydays=\"" + v.onlydays + "\" "; }
                 if (v.date_nofuture) { d+= "data-nofuture=\"true\" "; }
@@ -1183,6 +1197,7 @@ const tableform = {
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-timebox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1219,6 +1234,7 @@ const tableform = {
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1234,6 +1250,7 @@ const tableform = {
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-intbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
@@ -1251,6 +1268,7 @@ const tableform = {
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-numberbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
@@ -1268,6 +1286,7 @@ const tableform = {
                 d += "<select id=\"" + v.post_field + "\" class=\"asm-selectbox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1295,6 +1314,7 @@ const tableform = {
                 d += "<select id=\"" + v.post_field + "\" multiple=\"multiple\" class=\"asm-bsmselect";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
+                if (v.doublesize) { d += " asm-doubletextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1315,7 +1335,6 @@ const tableform = {
                 if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-personchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                if (v.brief) { d += " data-mode=\"brief\" "; }
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
                 if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
@@ -1360,7 +1379,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; } 
             }
             else if (v.type == "nextcol") {
-                // Special fake widget that causes rendering to move to the next column
+                // Special widget that causes rendering to move to a new column
                 d += endcol + startcol.replace("{data}", v.coldata).replace("{classes}", v.classes);
             }
         });
