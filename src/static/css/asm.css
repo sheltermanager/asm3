@@ -730,7 +730,7 @@ select:disabled, input:disabled, textarea:disabled {
     font-weight: normal;
 }
 
-/** GRIDS ============================= */
+/** FORM LAYOUTS ============================= */
 .asm-row {
     display: block;
     text-align: center;
@@ -741,6 +741,7 @@ select:disabled, input:disabled, textarea:disabled {
     vertical-align: top;
 }
 
+/** this is going to go away when we stop using tables for form field layout */
 .asm-col td:nth-child(1) label {
     width: 150px;
     display: inline-block;
@@ -754,7 +755,12 @@ select:disabled, input:disabled, textarea:disabled {
     text-align: start;
 }
 
-/** FORMS =========================== */
+/* Stop multi-selects using up all the horizontal space when in columns */
+.asm-col .asmContainer {
+    max-width: 300px;
+}
+
+/** WIDGETS =========================== */
 #asm-content {
     display: none;
 }
@@ -906,9 +912,6 @@ select:disabled, input:disabled, textarea:disabled {
 
 .asm-table-layout {
     border-spacing: 5px 1px;
-}
-
-.asm-row {
 }
 
 .asm-thumbnail {

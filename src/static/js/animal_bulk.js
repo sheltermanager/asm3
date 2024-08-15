@@ -22,12 +22,10 @@ $(function() {
             });
             return [
                 html.content_header(_("Bulk change animals")),
-                '<table width="100%" class="asm-table-layout" style="padding-bottom: 5px;">',
-                '<tr>',
-                '<td class="asm-nested-table-td">',
-                
-                // left table
-                '<table width="60%" class="asm-table-layout">',
+                '<div class="asm-row">',
+                // left column
+                '<div class="asm-col">',
+                '<table class="asm-table-layout">',
                 '<tr>',
                 '<td>',
                 '<label for="animals">' + _("Animals") + '</label>',
@@ -36,7 +34,6 @@ $(function() {
                 '<input id="animals" data="animals" type="hidden" class="asm-animalchoosermulti" value=\'\' />',
                 '</td>',
                 '</tr>',
-
                 '<tr id="litteridrow">',
                 '<td>',
                 '<label for="litterid">' + _("Litter") + '</label></td>',
@@ -177,14 +174,10 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-
-                // end left table
-                '</td>',
-                '<td class="asm-nested-table-td">',
-
-                // right table
+                '</div>', // col
+                // right column
+                '<div class="asm-col">',
                 '<table>',
-
                 '<tr id="neuteredrow">',
                 '<td>',
                 '<label for="neutereddate">' + _("Altered") + '</label>',
@@ -245,13 +238,13 @@ $(function() {
 
                 '<tr id="diarysubjectrow">',
                 '<td><label for="diarysubject">' + _("Subject") + '</label></td><td>',
-                '<input id="diarysubject" data-post="diarysubject" class="asm-textbox asm-doubletextbox" />',
+                '<input id="diarysubject" data-post="diarysubject" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
 
                 '<tr id="diarynotesrow">',
                 '<td colspan="2" class="bottomborder">',
-                '<textarea id="diarynotes" data-post="diarynotes" rows=3 class="asm-textarea"></textarea>',
+                '<textarea id="diarynotes" data-post="diarynotes" rows="3" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
 
@@ -269,7 +262,7 @@ $(function() {
 
                 '<tr id="lognotesrow">',
                 '<td colspan="2" class="bottomborder">',
-                '<textarea id="lognotes" data-post="lognotes" rows=3 class="asm-textarea"></textarea>',
+                '<textarea id="lognotes" data-post="lognotes" rows="3" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
 
@@ -293,15 +286,9 @@ $(function() {
                 '<input id="moveto" data-post="moveto" type="hidden" data-filter="all" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
-
-
-                // end right table
                 '</table>',
-
-                // end outer table
-                '</td>',
-                '</tr>',
-                '</table>',
+                '</div>', // col
+                '</div>', // row
 
                 '<div class="centered">',
                 '<button id="button-update">' + html.icon("animal") + ' ' + _("Update") + '</button> ',
