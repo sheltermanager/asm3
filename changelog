@@ -1,6 +1,7 @@
 49
 ================
 
+15/08/24 Shelterview: Add recently changed and entered modes #1512
 15/08/24 Hide entry type column from entry history if disabled #1525
 15/08/24 Support xbutton/xmarkup in all widgets, size choosers on mobile #1103
 15/08/24 Querybuilder: Vaccination expiry date in animal reports

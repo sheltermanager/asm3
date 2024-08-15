@@ -589,6 +589,12 @@ $(function() {
             else if (viewmode == "pickuplocation") {
                 this.render_view("PICKUPLOCATIONNAME", "", "PICKUPLOCATIONNAME,ANIMALNAME", false, false, function(a) { return a.ISPICKUP == 1; });
             }
+            else if (viewmode == "recentchanged") {
+                this.render_view("RECENTCHANGED", "", "-RECENTCHANGED,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "recententered") {
+                this.render_view("RECENTENTERED", "", "-RECENTENTERED,ANIMALNAME", false, false);
+            }
             else if (viewmode == "retailer") {
                 this.render_view("CURRENTOWNERNAME", "", "CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 8; });
             }
@@ -675,6 +681,20 @@ $(function() {
                 a.SITEFOSTER = a.SITENAME;
                 // Copy the displaylocationname to use instead of site, eg Foster/Trial Adoption/Retailer/etc
                 if (a.ARCHIVED == 0 && a.ACTIVEMOVEMENTTYPE) { a.SITEFOSTER = a.DISPLAYLOCATIONNAME; }
+            });
+        },
+
+        /** Adds the RECENTCHANGED column */
+        add_recent_changed: function() {
+            $.each(controller.animals, function(i, a) {
+                a.RECENTCHANGED = a.LASTCHANGEDDATE.substring(0, a.LASTCHANGEDDATE.indexOf("T"));
+            });
+        },
+
+        /** Adds the RECENTENTERED column */
+        add_recent_entered: function() {
+            $.each(controller.animals, function(i, a) {
+                a.RECENTENTERED = a.MOSTRECENTENTRYDATE.substring(0, a.MOSTRECENTENTRYDATE.indexOf("T"));
             });
         },
 
@@ -801,6 +821,8 @@ $(function() {
             shelterview.add_first_letter();
             shelterview.add_neutered_status();
             shelterview.add_site_foster();
+            shelterview.add_recent_changed();
+            shelterview.add_recent_entered();
             // Clean up any null fields that we might want to group on later
             $.each(controller.animals, function(i, v) {
                 if (!v.CURRENTOWNERNAME) {
