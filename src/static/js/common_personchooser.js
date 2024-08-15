@@ -72,7 +72,7 @@ $.widget("asm.personchooser", {
             '<table class="personchooser-perm" style="margin-left: 0px; margin-right: 0px; width: 100%">',
             '<tr>',
             '<td class="personchooser-display"></td>',
-            '<td valign="top" align="right">',
+            '<td valign="top" style="text-align: end">',
             '<button class="personchooser-link-find">' + _("Select a person") + '</button>',
             '<button class="personchooser-link-new">' + _("Add a person") + '</button>',
             '<button class="personchooser-link-clear">' + _("Clear") + '</button>',

@@ -47,7 +47,7 @@ $(function() {
             return [
                 html.content_header(_("Find Incident")),
                 '<div id="incidentsearchform">',
-                '<div class="asm-search-criteriacolumns">',
+                '<div class="asm-row">',
                 html.search_column(col1),
                 html.search_column(col2),
                 html.search_column(col3),

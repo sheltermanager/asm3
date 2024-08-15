@@ -35,7 +35,7 @@ $.widget("asm.animalchooser", {
             '<tr>',
             '<td class="animalchooser-display">',
             '</td>',
-            '<td valign="top" align="right">',
+            '<td valign="top" style="text-align: end">',
             '<button class="animalchooser-link-find">' + _("Select an animal") + '</button>',
             '<button class="animalchooser-link-clear">' + _("Clear") + '</button>',
             '</td>',

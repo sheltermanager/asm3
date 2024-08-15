@@ -80,8 +80,8 @@ input:focus, textarea:focus, select:focus {
 }
 /* add zebra stripes to reflowed tables on mobile so you can see the difference between results */
 @media screen and (max-device-width:480px) {
-    .asm-table tr:nth-child(even) { background-color: #eee; }
-    .asm-table tr:nth-child(odd) { background-color: #fff; }
+    .asm-table tr:nth-child(odd) { background-color: #eee; }
+    .asm-table tr:nth-child(even) { background-color: #fff; }
 }
 /** --- END MANUAL ADDITIONS --- */
 

@@ -107,7 +107,7 @@ $(function() {
                 '</table>',
                 '</div>',
                 '<div id="asm-criteria-advanced">',
-                '<div class="asm-search-criteriacolumns">',
+                '<div class="asm-row">',
                 html.search_column(col1),
                 html.search_column(col2),
                 html.search_column(col3),

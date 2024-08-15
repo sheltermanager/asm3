@@ -30,7 +30,7 @@ $(function() {
                 controller.mode == "lost" ? html.content_header(_("Find Lost Animal")) : "",
                 controller.mode == "found" ? html.content_header(_("Find Found Animal")) : "",
                 '<div id="lostfoundsearchform">',
-                '<div class="asm-search-criteriacolumns">',
+                '<div class="asm-row">',
                 html.search_column(col1),
                 html.search_column(col2),
                 html.search_column(additional.additional_search_fields(controller.additionalfields, 1)),

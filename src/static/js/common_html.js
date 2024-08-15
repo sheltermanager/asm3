@@ -695,7 +695,7 @@ const html = {
 
     search_column: function(fields) {
         return [
-            '<div class="asm-search-criteriacolumn">',
+            '<div class="asm-col">',
             '<table class="asm-table-layout">',
             fields,
             '</table>',

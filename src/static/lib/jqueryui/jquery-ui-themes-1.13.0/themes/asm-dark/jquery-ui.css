@@ -99,8 +99,8 @@ input:focus, textarea:focus, select:focus {
 
 /* add zebra stripes to reflowed tables on mobile so you can see the difference between results */
 @media screen and (max-device-width:480px) {
-    .asm-table tr:nth-child(even) { background-color: #111; }
-    .asm-table tr:nth-child(odd) { background-color: #222; }
+    .asm-table tr:nth-child(odd) { background-color: #111; }
+    .asm-table tr:nth-child(even) { background-color: #222; }
 }
 
 /* Make dropshadows look a little less weird */

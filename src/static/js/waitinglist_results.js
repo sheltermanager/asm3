@@ -10,7 +10,7 @@ $(function() {
             return [
                 html.content_header(_("Waiting List") + ' ' + '(' + controller.rows.length + ')'),
                 '<div id="waitinglistcriteria">',
-                '<div class="asm-search-criteriacolumns">',
+                '<div class="asm-row">',
                 html.search_column([
                     html.search_field_select("priorityfloor", _("Priority Floor"), html.list_to_options(controller.urgencies, "ID", "URGENCY")),
                     html.search_field_select("species", _("Species"), html.list_to_options(controller.species, "ID", "SPECIESNAME")),

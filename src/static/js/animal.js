@@ -63,8 +63,6 @@ $(function() {
                 '<input type="text" id="shortcode" data-json="SHORTCODE" data-post="shortcode" class="asm-halftextbox" />',
                 '<input type="hidden" id="yearcode" data-json="YEARCODEID" data-post="yearcode" />',
                 '<input type="hidden" id="uniquecode" data-json="UNIQUECODEID" data-post="uniquecode" />',
-                '</td>',
-                '<td>',
                 '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
                 '</td>',
                 '</tr>',
@@ -77,8 +75,6 @@ $(function() {
                 '<tr>',
                 '<td><label for="animalname">' + _("Name") + '</label></td>',
                 '<td><input type="text" id="animalname" data-json="ANIMALNAME" data-post="animalname" maxlength="255" class="asm-textbox" />',
-                '</td>',
-                '<td>',
                 '<button id="button-randomname">' + _("Generate a random name for this animal") + '</button>',
                 '</td>',
                 '</tr>',
@@ -116,7 +112,7 @@ $(function() {
                 '<td><label for="weight">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
                 '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
-                '<label id="kglabel">' + _("kg") + '</label>',
+                '<span id="kglabel">' + _("kg") + '</span>',
                 '</span>',
                 '</td>',
                 '</tr>',
@@ -124,14 +120,14 @@ $(function() {
                 '<td><label for="weightlb">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
                 '<input id="weightlb" class="asm-textbox asm-intbox" style="width: 70px" />',
-                '<label id="lblabel">' + _("lb") + '</label>',
+                '<span id="lblabel">' + _("lb") + '</span>',
                 '<input id="weightoz" class="asm-textbox asm-intbox" style="width: 70px" />',
-                '<label id="ozlabel">' + _("oz") + '</label>',
+                '<span id="ozlabel">' + _("oz") + '</span>',
                 '</span>',
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 // second column
                 '<div class="col-sm">',
                 '<table>',
@@ -214,13 +210,13 @@ $(function() {
                 '<td><input id="fee" data-json="FEE" data-post="fee" class="asm-currencybox asm-textbox" /></td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 // third column (additional fields)
                 '<div class="col-sm">',
                 '&nbsp;',
                 '<table class="additionaltarget" data="to2">',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 '</div>', // row
                 '</div>' // end accordion section
             ].join("\n");
@@ -259,7 +255,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 // right column
                 '<div class="col-sm">',
                 '<table width="100%" class="additionaltarget" data="to4">',
@@ -392,7 +388,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 '</div>', // row
                 '</div>', // end accordion section
             ].join("\n");
@@ -570,7 +566,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 // health problems/vet fields
                 '<div class="col-sm">',
                 '<label for="healthproblems">' + _("Health Problems") + '</label><br />',
@@ -593,7 +589,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 '</div>', // row
                 '</div>', // end accordion section
             ].join("\n");
@@ -724,7 +720,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 // good with
                 '<div class="col-sm">',
                 '<table class="additionaltarget" data="to3">',
@@ -769,7 +765,7 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>', // col-sm
+                '</div>', // col
                 '</div>', // row
                 '</div>', // end accordion section
             ].join("\n");

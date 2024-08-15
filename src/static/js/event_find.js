@@ -10,7 +10,7 @@ $(function() {
             return [
                 html.content_header(_("Find Event")),
                 '<div id="eventsearchform">',
-                '<div class="asm-search-criteriacolumns">',
+                '<div class="asm-row">',
                 html.search_column([
                     html.search_field_text("name", _("Name")),
                     html.search_field_daterange("eventfrom", "eventto", _("Event Between")),
