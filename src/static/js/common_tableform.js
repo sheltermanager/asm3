@@ -1013,8 +1013,8 @@ const tableform = {
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
      *        personfilter: "all",   (only valid for person type)
      *        personmode: "full",    (only valid for person type)
-     *        change: function(changeevent), 
-     *        blur: function(blurevent),
+     *        change: function(changeevent), (note: done in fields_bind, not here)
+     *        blur: function(blurevent), (note: done in fields_bind, not here)
      *        xbutton: "text" (render an extra button after the widget with id button-post_field and inner text)
      *        xlabel: "<span>whatever</span>" (render extra markup after the label)
      *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
