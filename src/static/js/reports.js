@@ -680,6 +680,12 @@ $(function() {
                         "(SELECT MAX(ID) FROM animalvaccination WHERE DateOfVaccination Is Not Null AND AnimalID=v_animal.ID " + 
                         "AND VaccinationID=" + v.substring(9) + ")) AS " + v);
                     }
+                    else if (v.indexOf("vaccexp") == 0) {
+                        // Date vacc given
+                        o.push("(SELECT DateExpires FROM animalvaccination WHERE animalvaccination.ID = " +
+                        "(SELECT MAX(ID) FROM animalvaccination WHERE DateOfVaccination Is Not Null AND AnimalID=v_animal.ID " + 
+                        "AND VaccinationID=" + v.substring(9) + ")) AS " + v);
+                    }
                     else { o.push(v); }
                 });
                 return o;
@@ -1087,6 +1093,7 @@ $(function() {
                 });
                 $.each(controller.vaccinationtypes, function(i, v) {
                     f.push("vaccdate_" + v.ID + "|" + _("{0} vaccination given date").replace("{0}", v.VACCINATIONTYPE));
+                    f.push("vaccexp_" + v.ID + "|" + _("{0} vaccination expiry date").replace("{0}", v.VACCINATIONTYPE));
                 });
                 return f;
             };

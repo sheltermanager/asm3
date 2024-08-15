@@ -1,6 +1,7 @@
 49
 ================
 
+15/08/24 Querybuilder: Vaccination expiry date in animal reports
 15/08/24 Querybuilder: Include DateExpires in medical reports
 15/08/24 Fix bulk change animals layout #1103
 14/08/24 Mobile friendly layout for find event, person waitinglist, incident #1103
