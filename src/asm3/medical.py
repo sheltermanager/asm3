@@ -119,7 +119,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
         "am.TreatmentName, '' AS TreatmentResult, am.Dosage, amt.TreatmentNumber, " \
-        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments " \
+        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, NULL AS DateExpires, am.Comments " \
         "FROM animal a " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
@@ -142,7 +142,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
         "v.VaccinationType AS TreatmentName, '' AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments " \
+        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.DateExpires, av.Comments " \
         "FROM animal a " \
         "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
         "INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID " \
@@ -165,7 +165,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
         "tt.TestName AS TreatmentName, tr.ResultName AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments " \
+        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, NULL AS DateExpires, at.Comments " \
         "FROM animal a " \
         "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
         "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
