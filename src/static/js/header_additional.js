@@ -56,7 +56,7 @@ additional = {
             // If this field is going to the additional tab on animal, animalcontrol, owner, lostanimal, foundanimal or waitinglist
             // then add it to the next column in our 3 column output (we do it like this so that they stack on mobile)
             if (f.LINKTYPE == 0 || f.LINKTYPE == 1 || f.LINKTYPE == 9 || f.LINKTYPE == 11 || f.LINKTYPE == 13 || f.LINKTYPE == 20) {
-                let fm = additional.render_field(f, includeids, classes);
+                let fm = '<tr>' + additional.render_field(f, includeids, classes) + '</tr>';
                 if (addidx == 1) { col1.push(fm); }
                 else if (addidx == 2) { col2.push(fm); }
                 else if (addidx == 3) { col3.push(fm); }
