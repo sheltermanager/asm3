@@ -115,11 +115,11 @@ $(function() {
                 '<h3><a href="#">' + _("Entry") + '</a></h3>',
                 '<div>',
                 tableform.fields_render([
-                    { row_id: "coordinatorrow", post_field: "adoptioncoordinator", json_field: "ADOPTIONCOORDINATORID", 
+                    { rowid: "coordinatorrow", post_field: "adoptioncoordinator", json_field: "ADOPTIONCOORDINATORID", 
                         label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator" },
                     { post_field: "originalowner", json_field: "ORIGINALOWNERID", 
                         label: _("Original Owner"), type: "person" },
-                    { row_id: "broughtinbyownerrow", post_field: "broughtinby", json_field: "BROUGHTINBYOWNERID", 
+                    { rowid: "broughtinbyownerrow", post_field: "broughtinby", json_field: "BROUGHTINBYOWNERID", 
                         label: _("BroughtInBy"), type: "person" },
 
                     { type: "nextcol", classes: "additionaltarget", coldata: "to4" },
