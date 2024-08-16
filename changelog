@@ -1,6 +1,7 @@
 49
 ================
 
+16/08/24 Refactor fields_render into separate render_widget methods #1103
 16/08/24 Fix layout of additional sliders for mobile #1103
 15/08/24 Shelterview: Add "date brought in" and "last change date" modes #1512
 15/08/24 Hide entry type column from entry history if disabled #1525
