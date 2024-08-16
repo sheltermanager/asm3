@@ -16,7 +16,7 @@ $(function() {
                         options: { displayfield: "REASONNAME", rows: controller.deathreasons }},
                     { post_field: "puttosleep", json_field: "PUTTOSLEEP", label: _("Euthanized"), type: "check" },
                     { post_field: "deadonarrival", json_field: "ISDOA", label: _("Dead on arrival"), type: "check" },
-                    // TODO: will break when tableform stops using tables
+                    // TODO: this will break when tableform stops using tables
                     { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><table class="additionaltarget" data="to6"></table></td></tr>' }, 
                     { type: "nextcol" },
                     { post_field: "ptsreason", json_field: "PTSREASON", label: _("Notes"), type: "textarea", labelpos: "above" },

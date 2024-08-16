@@ -47,28 +47,31 @@ additional = {
      */
     additional_fields: function(fields, includeids, classes) {
         if (fields.length == 0) { return; }
-        var add = [], other = [], addidx = 0;
-        add.push('<table class="asm-additional-fields-container" width=\"100%\">\n<tr>\n');
-        other.push('<table class=\"additionalmove\" style=\"display: none\"><tr>\n');
+        let colm = [], addidx = 1,
+            col_start = '<div class="col"><table class="asm-additional-fields-container" width=\"100%\">',
+            col_end = '</table></div>',
+            col1 = [ col_start ], col2 = [ col_start ], col3 = [ col_start ];
+        colm.push('<table class="additionalmove" style="display: none"><tr>');
         $.each(fields, function(i, f) {
             // If this field is going to the additional tab on animal, animalcontrol, owner, lostanimal, foundanimal or waitinglist
-            // then add it to our 3 column add table.
+            // then add it to the next column in our 3 column output (we do it like this so that they stack on mobile)
             if (f.LINKTYPE == 0 || f.LINKTYPE == 1 || f.LINKTYPE == 9 || f.LINKTYPE == 11 || f.LINKTYPE == 13 || f.LINKTYPE == 20) {
-                add.push(additional.render_field(f, includeids, classes));
+                let fm = additional.render_field(f, includeids, classes);
+                if (addidx == 1) { col1.push(fm); }
+                else if (addidx == 2) { col2.push(fm); }
+                else if (addidx == 3) { col3.push(fm); }
                 addidx += 1;
-                // Every 3rd column, drop a row
-                if (addidx == 3) {
-                    add.push("</tr><tr>");
-                    addidx = 0;
-                }
+                if (addidx == 4) { addidx = 1; }
             }
             else {
-                other.push(additional.render_field(f));
+                colm.push(additional.render_field(f));
             }
         });
-        add.push("</tr></table>");
-        other.push("</tr></table>");
-        return add.join("\n") + other.join("\n");
+        col1.push(col_end);
+        col2.push(col_end);
+        col3.push(col_end);
+        colm.push("</tr></table>");
+        return '<div class="row">' + col1.join("\n") + col2.join("\n") + col3.join("\n") + '</div><div>' + colm.join("\n") + '</div>';
     },
 
     /**
@@ -78,22 +81,17 @@ additional = {
         if (!fields || fields.length == 0) { return; }
         if (additionalfieldtype === undefined) { additionalfieldtype = -1; }
         var add = [], other = [], addidx = 0;
-        //add.push('<table class="asm-additional-fields-container" width=\"100%\">\n<tr>\n');
         add.push('<tr>');
         $.each(fields, function(i, f) {
             if (f.FIELDTYPE == additionalfieldtype || additionalfieldtype == -1)
             {
                 add.push(additional.render_field(f, includeids, classes));
                 addidx += 1;
-                // Every 3rd column, drop a row
-                // if (addidx == 3) {
-                    add.push("</tr><tr>");
-                    addidx = 0;
-                // }
+                add.push("</tr><tr>");
+                addidx = 0;
             }
         });
         add.push("</tr>");
-        //add.push("</tr></table>");
         return add.join("\n");
     },
 

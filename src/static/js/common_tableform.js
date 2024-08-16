@@ -774,16 +774,10 @@ const tableform = {
             deferred.reject("dialog cancelled");
         };
 
-        var dw = dialog.width || "auto";
-        if (common.browser_is.mobile) {
-            dw = dialog.width || 1024;
-            dw = Math.min(dw, $(window).width());
-        }
-
         $("#dialog-tableform").dialog({
             resizable: (dialog.resizable || false),
-            width: dw,
-            height: (dialog.height || "auto"),
+            width: common.vwidth(dialog.width || 1024), // use smaller of requested width and viewport width
+            height: common.vheight(dialog.height || 800), // use smaller of requested height and viewport height
             modal: true,
             dialogClass: "dialogshadow",
             autoOpen: false,

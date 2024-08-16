@@ -1,6 +1,7 @@
 49
 ================
 
+16/08/24 Fix layout of additional sliders for mobile #1103
 15/08/24 Shelterview: Add "date brought in" and "last change date" modes #1512
 15/08/24 Hide entry type column from entry history if disabled #1525
 15/08/24 Support xbutton/xmarkup in all widgets, size choosers on mobile #1103
