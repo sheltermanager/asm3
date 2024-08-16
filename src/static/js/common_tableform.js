@@ -1107,7 +1107,7 @@ const tableform = {
             rowid = ' id="' + v.post_field + "row" + '" ';
         }
         if (v.rowclasses) {
-            rowclasses = ' class="' + rowclasses + '" ';
+            rowclasses = ' class="' + v.rowclasses + '" ';
         }
         tr = '<tr ' + rowid + rowclasses + '>'; 
         if (v.type == "check") {
