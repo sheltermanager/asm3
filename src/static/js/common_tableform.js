@@ -988,7 +988,8 @@ const tableform = {
      *        doublesize: false, (use the asm-doubletextbox class)
      *        justwidget: false, (if true only output the widget itself, no label or row container)
      *        hideif: function() { return true; }, if true, omits the widget from the output
-     *        defaultval: expression or function to evaluate (note: done in dialog_show_x/fields_default, not here)
+     *        defaultval: expression or function to evaluate (note: done in dialog_show_add/edit->fields_default, not here)
+     *        value: "123" value to assign to the widget
      *        validation: "notblank|notzero|validemail" or a function to call (note: done after dialog_show_x/fields_validate, not here)
      *        height/width/margintop: "css expr", (only used by sqleditor/htmleditor)
      *        maxlength: (number of chars limit for text/textarea),
@@ -1131,6 +1132,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.animalfilter) { d += "data-filter=\"" + v.animalfilter + "\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         return tableform._render_formfield(v, d);
     },
@@ -1142,6 +1144,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.animalfilter) { d += "data-filter=\"" + v.animalfilter + "\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         return tableform._render_formfield(v, d);
     },
@@ -1153,6 +1156,7 @@ const tableform = {
         d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.value && (v.value !== "0")) { d += "checked=\"checked\" "; }
         d += "/>";
         if (!v.labelpos || v.labelpos == "after") { d += label; }
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
@@ -1171,6 +1175,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
@@ -1191,6 +1196,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
@@ -1212,6 +1218,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
@@ -1240,7 +1247,9 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
-        d += "></textarea>";
+        d += ">";
+        if (v.value) { d += v.value; }
+        d += "</textarea>";
         return tableform._render_formfield(v, d);
     },
 
@@ -1257,6 +1266,7 @@ const tableform = {
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
@@ -1280,6 +1290,7 @@ const tableform = {
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
@@ -1294,6 +1305,7 @@ const tableform = {
         if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
         if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         return tableform._render_formfield(v, d);
     },
@@ -1375,7 +1387,9 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
-        d += "></textarea>";
+        d += ">";
+        if (v.value) { d += v.value; }
+        d += "</textarea>";
         return tableform._render_formfield(v, d);
     },
 
@@ -1390,6 +1404,7 @@ const tableform = {
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
         if (v.maxlength) { d += "maxlength=" + v.maxlength; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
@@ -1407,6 +1422,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
@@ -1423,7 +1439,9 @@ const tableform = {
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
         if (!v.tooltip) { d += "title=\"" + html.title(v.label) + "\" "; } // use the label if a title wasn't given
         if (v.maxlength) { d += "maxlength=" + v.maxlength; }
-        d += "></textarea>";
+        d += ">";
+        if (v.value) { d += v.value; }
+        d += "</textarea>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
