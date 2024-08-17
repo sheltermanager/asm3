@@ -4812,6 +4812,7 @@ class maint_ping(ASMEndpoint):
     def content(self, o):
         self.content_type("text/plain")
         self.cache_control(0)
+        self.header("Access-Control-Allow-Origin", "*") # CORS
         return "PONG"
 
 class maint_sac_metrics(ASMEndpoint):
