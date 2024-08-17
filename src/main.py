@@ -4806,6 +4806,14 @@ class maint_petfinder(ASMEndpoint):
         except Exception as err:
             return str(err)
 
+class maint_ping(ASMEndpoint):
+    check_logged_in = False
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return "PONG"
+
 class maint_sac_metrics(ASMEndpoint):
     url = "maint_sac_metrics"
 
