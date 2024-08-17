@@ -365,6 +365,7 @@ DEFAULTS = {
     "SACTNRCategory": "14",
     "SystemLogType": "3",
     "TableHeadersVisible": "Yes",
+    "TablesReflow": "Yes",
     "TemplatesForNonShelter": "No",
     "ThumbnailSize": "150x150",
     "Timezone": "-5",

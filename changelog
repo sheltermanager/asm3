@@ -1,6 +1,7 @@
 49
 ================
 
+17/08/24 Allow table reflow to be disabled, fix for filters  when reflowed #1103
 16/08/24 Refactor fields_render into separate render_widget methods #1103
 16/08/24 Fix layout of additional sliders for mobile #1103
 15/08/24 Shelterview: Add "date brought in" and "last change date" modes #1512

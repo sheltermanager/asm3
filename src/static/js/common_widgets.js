@@ -138,7 +138,7 @@ $.widget("asm.table", {
     options: {
         css:        'asm-table',
         filter:     false,  // whether filters are available
-        reflow:     true,   // whether to reflow the table on portrait smartphones < 480px wide
+        reflow:     config.bool("TablesReflow"),  // whether to reflow the table on portrait smartphones < 480px wide
         row_hover:  true,   // highlight the row being hovered over with a mouse
         row_select: true,   // allow selection with a checkbox in the first column
         sticky_header: true // keep headers at the top of the screen when scrolling
@@ -234,6 +234,20 @@ $.widget("asm.table", {
                 return s;
             }
         });
+        // Loading the tablesorter will add the filter row. Add a data-title
+        // attribute to each of the filters so that the reflow plugin
+        // can show what you're filtering on when reflowed
+        if (options.filter && options.reflow) { 
+            let hd = tbl.find("thead th");
+            for (let i=0; i < hd.length; i++) {
+                // Look for a span.columntext value in the th. If it's not found, just use the whole th.
+                let columntext = $(hd[i]).find("span").text();
+                if (!columntext) { columntext = hd[i].innerText; } 
+                if (columntext) { columntext += ":"; } else { columntext = " "; } // show text:, but if it was blank make it a space for layout
+                tbl.find(".tablesorter-filter-row td:nth-child(" + (i+1) + ")").attr("data-title", columntext);
+            }
+        }
+
     },
     
     /** Loads and sets the table filters in the object filters */

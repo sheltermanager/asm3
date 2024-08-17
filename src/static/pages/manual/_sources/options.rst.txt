@@ -556,6 +556,11 @@ Display
   long tables their headers will float at the top of the screen to remind you
   of the column headings.
 
+* Tables stack vertically on portrait smartphones: If selected, tables will
+  will stack all of their columns vertically for each row and devices with
+  a viewport < 480px (portrait smartphones). This allows tables to be 
+  viewed without them overflowing off to the right.
+
 * Open records in a new browser tab: Open all records in their own browser
   tabs.
 

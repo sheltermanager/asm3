@@ -609,6 +609,7 @@ select:disabled, input:disabled, textarea:disabled {
         float: right;
         width: 100%;
     }
+    /* this shows the headers to the left of each row */
     .asm-table-reflow tbody td[data-title]:before {
       content: attr(data-title);
       float: left;
@@ -617,6 +618,16 @@ select:disabled, input:disabled, textarea:disabled {
       text-align: bottom;
       display: inline-block;
     }
+    /* this shows the headers to the left of the filters */
+    .asm-table-reflow .tablesorter-filter-row td[data-title]:before {
+      content: attr(data-title);
+      float: left;
+      width: 50%;
+      white-space: pre-wrap;
+      text-align: bottom;
+      display: inline-block;
+    }
+
 }
 
 /** WAITING LIST ==================== */

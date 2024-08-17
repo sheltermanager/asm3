@@ -958,6 +958,7 @@ $(function() {
                 '<input data="ShowViewsInAuditTrail" id="showviewsaudittrail" class="asm-checkbox" type="checkbox" /> <label for="showviewsaudittrail">' + _("Show record views in the audit trail") + '</label><br />',
                 '<input data="ShowLookupDataID" id="showlookupdataid" class="asm-checkbox" type="checkbox" /> <label for="showlookupdataid">' + _("Show ID numbers when editing lookup data") + '</label><br />',
                 '<input data="StickyTableHeaders" id="floatingheaders" class="asm-checkbox" type="checkbox" /> <label for="floatingheaders">' + _("Keep table headers visible when scrolling") + '</label><br />',
+                '<input data="TablesReflow" id="tablesreflow" class="asm-checkbox" type="checkbox" /> <label for="tablesreflow">' + _("Tables stack vertically on portrait smartphones") + '</label><br />',
                 '<input data="RecordNewBrowserTab" id="recordnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="recordnewbrowsertab">' + _("Open records in a new browser tab") + '</label><br />',
                 '<input data="ReportNewBrowserTab" id="reportnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="reportnewbrowsertab">' + _("Open reports in a new browser tab") + '</label><br />',
                 '<input data="LocationFiltersEnabled" id="locationfilters" class="asm-checkbox" type="checkbox" /> <label for="locationfilters">' + _("Enable location filters") + '</label><br />',
