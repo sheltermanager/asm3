@@ -4807,6 +4807,7 @@ class maint_petfinder(ASMEndpoint):
             return str(err)
 
 class maint_ping(ASMEndpoint):
+    url = "maint_ping"
     check_logged_in = False
 
     def content(self, o):
