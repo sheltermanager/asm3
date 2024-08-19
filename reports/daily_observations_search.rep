@@ -1,0 +1,45 @@
+Daily Observations Search
+###
+Auditing
+###
+List of selected daily observations for selected animal between two dates
+###
+34800/PostgreSQL rev01
+###
+en
+###
+$VAR observation STRING Enter observation$
+
+SELECT Date, '$@observation$' AS Observation,
+(regexp_match(comments, '$@observation$=(.+?),'))[1]
+FROM log l
+INNER JOIN animal a ON a.ID = l.LinKID
+WHERE comments LIKE '%$@observation$=%'
+AND a.ID = $ASK ANIMAL$
+AND l.date >= '$ASK DATE Enter the from date$'
+AND l.date <= '$ASK DATE Enter the to date$ 23:59:59'
+ORDER BY Date
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>DATE</th>
+<th>$OBSERVATION</th>
+</tr>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATE</td>
+<td>$REGEXP_MATCH</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</tbody>
+</table>
+<p>Total: {COUNT.DATE}</p>
+FOOTER$$
