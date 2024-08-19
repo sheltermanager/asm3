@@ -62,6 +62,7 @@ class LocationFilter(object):
         tablequalifier: The animal table name in the query
         """
         locationfilter = self.locationfilter
+        if locationfilter is None: locationfilter = ""
         siteid = self.siteid
         visibleanimalids = self.visibleanimalids
         if locationfilter == "" and siteid == 0 and visibleanimalids == "": return ""
