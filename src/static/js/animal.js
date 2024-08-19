@@ -34,6 +34,8 @@ $(function() {
                         '<span style="white-space: nowrap;">',
                         '<input type="text" id="sheltercode" data-json="SHELTERCODE" data-post="sheltercode" class="asm-halftextbox" />',
                         '<input type="text" id="shortcode" data-json="SHORTCODE" data-post="shortcode" class="asm-halftextbox" />',
+                        '<input type="hidden" id="uniquecode" data-json="UNIQUECODEID" data-post="uniquecode" />',
+                        '<input type="hidden" id="yearcode" data-json="YEARCODEID" data-post="yearcode" />',
                         '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
                         '</span>' ].join("\n") },
                     { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "text" },
@@ -1079,6 +1081,8 @@ $(function() {
             let codes = response.split("||");
             $("#sheltercode").val(html.decode(codes[0]));
             $("#shortcode").val(html.decode(codes[1]));
+            $("#uniquecode").val(codes[2]);
+            $("#yearcode").val(codes[3]);
             validate.dirty(true);
         },
 
