@@ -695,14 +695,14 @@ $(document).ready(function() {
             if (common.has_permission("vav") && o.vaccinations.length > 0) {
                 x = [];
                 $.each(o.vaccinations, function(d, v) {
-                    x.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFVACCINATION), v.VACCINATIONTYPE));
+                    x.push(col3(format.date(v.DATEOFVACCINATION) || _("Due {0}").replace("{0}", format.date(v.DATEREQUIRED)), v.VACCINATIONTYPE, v.COMMENTS));
                 });
                 h.push(aci("vacc", _("Vaccination"), x.join("\n")));
             }
             if (common.has_permission("vat") && o.tests.length > 0) {
                 x = [];
                 $.each(o.tests, function(d, v) {
-                    x.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFTEST), v.TESTNAME + " " + (v.DATEOFTEST ? v.RESULTNAME : "")));
+                    x.push(col3(format.date(v.DATEOFTEST) || _("Due {0}").replace("{0}", format.date(v.DATEREQUIRED)), v.TESTNAME, v.RESULTNAME || ""));
                 });
                 h.push(aci("test", _("Test"), x.join("\n")));
             }
