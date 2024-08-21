@@ -119,6 +119,12 @@ def go_smcom_my(dbo: Database) -> None:
     """
     raise web.seeother(smcom_client.get_my_url(dbo.database))
 
+def iptables_rules() -> str:
+    try:
+        return asm3.utils.bytes2str(asm3.utils.cmd("/root/asmdb/iptables_rules", shell=True)[1])
+    except:
+        return ""
+
 def vacuum_full(dbo: Database) -> None:
     """ Performs a full vacuum on the database via command line (transaction problems via db.py) """
     os.system("psql -U %s -c \"VACUUM FULL;\"" % dbo.database)
