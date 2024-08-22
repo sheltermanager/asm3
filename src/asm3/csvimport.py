@@ -1275,7 +1275,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
     
     ids = dbo.query(q)
 
-    keys = [ "ANIMALCODE", "ANIMALLITTER", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
+    keys = [ "ANIMALID", "ANIMALCODE", "ANIMALLITTER", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALDESCRIPTION", "ANIMALWARNING", 
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", 
@@ -1331,6 +1331,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
 
         asm3.asynctask.increment_progress_value(dbo)
 
+        row["ANIMALID"] = aid
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALLITTER"] = a["ACCEPTANCENUMBER"]
         row["ANIMALNAME"] = a["ANIMALNAME"]

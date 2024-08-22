@@ -1,6 +1,7 @@
 49
 ================
 
+22/08/24 Export animals as CSV: Include ANIMALID column for cross referencing
 22/08/24 FindPet microchip registration initial implementation #1500
 20/08/24 Fix ambiguous vacc/test dates in mobile UI
 20/08/24 Disable table reflow by default after large number of complaints #1103
