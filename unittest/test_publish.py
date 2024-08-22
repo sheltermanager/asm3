@@ -110,6 +110,14 @@ class TestPublish(unittest.TestCase):
         self.assertIsNotNone(asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).processAnimal(a, "C00000"))
         asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).validate(a)
 
+    # findpet
+    def test_findpet(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        self.assertIsNotNone(asm3.publishers.findpet.FindPetPublisher(base.get_dbo(), pc).processReport(a, "fakeorg"))
+        self.assertIsNotNone(asm3.publishers.findpet.FindPetPublisher(base.get_dbo(), pc).processTransfer(a))
+        asm3.publishers.findpet.FindPetPublisher(base.get_dbo(), pc).validate(a)
+
     # foundanimals
     def test_foundanimals(self):
         pc = asm3.publishers.base.PublishCriteria()

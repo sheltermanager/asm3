@@ -67,7 +67,7 @@ class AnibaseUKPublisher(AbstractPublisher):
 
         animals = get_microchip_data(self.dbo, ['972055', '978102', '9851', '9861'], "anibaseuk")
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.setLastError("No microchips found to register.")
             return
 
         anCount = 0

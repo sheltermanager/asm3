@@ -386,6 +386,12 @@ def get_microchip_data(dbo: Database, patterns: List[str], publishername: str,
     except Exception as err:
         asm3.al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
 
+    return calc_microchip_data_addresses(dbo, rows, organisation_email)
+
+def calc_microchip_data_addresses(dbo: Database, rows: Results, organisation_email: str = "") -> Results:
+    """ Given a list of animal microchip rows, 
+        updates the addresses and adds additional rows for animals with multiple microchips """
+    
     organisation = asm3.configuration.organisation(dbo)
     orgaddress = asm3.configuration.organisation_address(dbo)
     orgtown = asm3.configuration.organisation_town(dbo)
@@ -395,6 +401,7 @@ def get_microchip_data(dbo: Database, patterns: List[str], publishername: str,
     orgtelephone = asm3.configuration.organisation_telephone(dbo)
     email = asm3.configuration.email(dbo)
     if organisation_email != "": email = organisation_email
+    movementtypes = asm3.configuration.microchip_register_movements(dbo)
     extras = []
 
     for r in rows:

@@ -69,7 +69,7 @@ class PetLinkPublisher(AbstractPublisher):
 
         animals = get_microchip_data(self.dbo, chipprefix, "petlink", organisation_email = plowneremail)
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.setLastError("No microchips found to register.")
             return
 
         cutoffdays = asm3.configuration.petlink_cutoff_days(self.dbo)

@@ -41,7 +41,7 @@ class BuddyIDPublisher(AbstractPublisher):
 
         animals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "buddyid", allowintake=True)
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.setLastError("No microchips found to register.")
             return
 
         # Authenticate to get our bearer token

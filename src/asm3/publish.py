@@ -10,6 +10,7 @@ import asm3.publishers.adoptapet
 import asm3.publishers.akcreunite
 import asm3.publishers.anibaseuk
 import asm3.publishers.buddyid
+import asm3.publishers.findpet
 import asm3.publishers.foundanimals
 import asm3.publishers.homeagain
 import asm3.publishers.petfbi
@@ -99,49 +100,55 @@ PUBLISHER_LIST["rg"] = {
     "sub24hour": True
 }
 PUBLISHER_LIST["ak"] = {
-    "label":    "Register animals with AKC Reunite Microchips",
+    "label":    "Register microchips with AKC Reunite",
     "class":    asm3.publishers.akcreunite.AKCReunitePublisher,
     "locales":  "en",
     "sub24hour": False
 }
 PUBLISHER_LIST["bd"] = {
-    "label":    "Register animal microchips with BuddyID",
+    "label":    "Register microchips with BuddyID",
     "class":    asm3.publishers.buddyid.BuddyIDPublisher,
     "locales":  "en",
     "sub24hour": False
 }
+PUBLISHER_LIST["fip"] = {
+    "label":    "Register microchips with FindPet",
+    "class":    asm3.publishers.findpet.FindPetPublisher,
+    "locales":  "en",
+    "sub24hour": False
+}
 PUBLISHER_LIST["abuk"] = {
-    "label":    "Register animals with Identibase UK Microchips",
+    "label":    "Register microchips with Identibase UK",
     "class":    asm3.publishers.anibaseuk.AnibaseUKPublisher,
     "locales":  "en_GB",
     "sub24hour": False
 }
 PUBLISHER_LIST["ptuk"] = {
-    "label":    "Register animals with AVID UK Microchips",
+    "label":    "Register microchips with AVID UK",
     "class":    asm3.publishers.pettracuk.PETtracUKPublisher,
     "locales":  "en_GB",
     "sub24hour": False
 }
 PUBLISHER_LIST["fa"] = {
-    "label":    "Register animal microchips with FoundAnimals/24Pet",
+    "label":    "Register microchips with FoundAnimals/24Pet",
     "class":    asm3.publishers.foundanimals.FoundAnimalsPublisher,
     "locales":  "en",
     "sub24hour": False
 }
 PUBLISHER_LIST["ha"] = {
-    "label":    "Register animals with HomeAgain Microchips",
+    "label":    "Register microchips with HomeAgain",
     "class":    asm3.publishers.homeagain.HomeAgainPublisher,
     "locales":  "en",
     "sub24hour": False
 }
 PUBLISHER_LIST["pl"] = {
-    "label":    "Register animals with PetLink Microchips",
+    "label":    "Register microchips with PetLink",
     "class":    asm3.publishers.petlink.PetLinkPublisher,
     "locales":  "en en_CA en_MX es_MX",
     "sub24hour": False
 }
 PUBLISHER_LIST["st"] = {
-    "label":    "Register animals with SmartTag Pet ID",
+    "label":    "Register microchips with SmartTag Pet ID",
     "class":    asm3.publishers.smarttag.SmartTagPublisher,
     "locales":  "en",
     "sub24hour": False

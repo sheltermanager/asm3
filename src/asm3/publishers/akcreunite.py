@@ -55,7 +55,7 @@ class AKCReunitePublisher(AbstractPublisher):
 
         animals = get_microchip_data(self.dbo, self.microchipPatterns, self.publisherKey)
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.setLastError("No microchips found to register.")
             return
 
         anCount = 0

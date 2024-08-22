@@ -98,7 +98,7 @@ class PETtracUKPublisher(AbstractPublisher):
 
         animals = get_microchip_data(self.dbo, chipprefix, "pettracuk", allowintake = False or registeroverseas)
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.setLastError("No microchips found to register.")
             return
 
         anCount = 0
