@@ -325,7 +325,7 @@ $(function() {
                 '<td><input id="rabiestag" data-json="RABIESTAG" data-post="rabiestag" class="asm-textbox" maxlength="20" />',
                 '</td>',
                 '</tr>',
-                additional.additional_fields_linktype(controller.additional, 6),
+                additional.additional_fields_linktype(controller.additional, 5),
                 '</table>',
                 '</div>', // col
                 // health problems/vet fields
