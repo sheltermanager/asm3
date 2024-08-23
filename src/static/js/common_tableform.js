@@ -999,6 +999,7 @@ const tableform = {
      *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
      *        date_nofuture: true|false, (for datepicker fields)
      *        date_nopast: true| false, (for datepicker fields)
+     *        placeholder: _("Text"), sets the placeholder attribute of the widget
      *        tooltip: _("Text"), sets the title attribute of the widget
      *        callout: _("Text"), mixed markup allowed, shows a callout button next to the widget label
      *        markup: "<input type='text' value='raw' />", // used in conjunction with type raw to supply markup instead
@@ -1181,6 +1182,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
@@ -1202,6 +1204,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
@@ -1217,6 +1220,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         d += "/>";
         d += "<input id=\"" + v.post_field + "time\" type=\"text\" class=\"asm-textbox asm-timebox asm-halftextbox";
         d += "\" ";
@@ -1272,6 +1276,7 @@ const tableform = {
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
@@ -1296,6 +1301,7 @@ const tableform = {
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
@@ -1409,6 +1415,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.maxlength) { d += "maxlength=" + v.maxlength; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
@@ -1428,6 +1435,7 @@ const tableform = {
         if (v.readonly) { d += " data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
         if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
@@ -1445,6 +1453,7 @@ const tableform = {
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
         if (!v.tooltip) { d += "title=\"" + html.title(v.label) + "\" "; } // use the label if a title wasn't given
         if (v.maxlength) { d += "maxlength=" + v.maxlength; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         d += ">";
         if (v.value) { d += v.value; }
         d += "</textarea>";
