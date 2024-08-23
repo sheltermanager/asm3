@@ -149,6 +149,9 @@ class TestPublish(unittest.TestCase):
     # petfbi
     def test_petfbi(self):
         pc = asm3.publishers.base.PublishCriteria()
+        fbi = asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc)
+        fbi.fbiGetFound()
+        fbi.fbiGetStrayHold()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         self.assertIsNotNone(asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc).processAnimal(a))
 

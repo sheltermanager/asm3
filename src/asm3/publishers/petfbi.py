@@ -5,7 +5,7 @@ import asm3.lostfound
 
 from .base import FTPPublisher
 from asm3.sitedefs import PETFBI_FTP_HOST
-from asm3.typehints import Database, PublishCriteria, ResultRow
+from asm3.typehints import Database, PublishCriteria, ResultRow, Results
 
 import os
 import sys
@@ -24,6 +24,31 @@ class PetFBIPublisher(FTPPublisher):
             PETFBI_FTP_HOST, asm3.configuration.petfbi_user(dbo), 
             asm3.configuration.petfbi_password(dbo), ftptls=True)
         self.initLog("petfbi", asm3.i18n._("PetFBI Publisher", l))
+
+    def fbiGetFound(self) -> Results:
+        return asm3.lostfound.get_foundanimal_find_simple(self.dbo)
+    
+    def fbiGetStrayHold(self) -> Results:
+        return self.dbo.query("%s WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.HasPermanentFoster=0 " \
+            "AND a.HasTrialAdoption=0 AND (a.EntryTypeID=2 OR a.IsHold=1)" % self.fbiQuery())
+
+    def fbiQuery(self) -> str:
+        return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, x.Sex AS SexName, a.Size, " \
+            "a.DateOfBirth, a.MostRecentEntryDate, a.Fee, a.LastChangedDate, " \
+            "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, s.SpeciesName, c.BaseColour AS BaseColourName, " \
+            "a.EntryTypeID, et.EntryTypeName AS EntryTypeName, er.ReasonName AS EntryReasonName, " \
+            "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, a.HealthProblems, a.IsNotAvailableForAdoption, " \
+            "a.Neutered, a.IsGoodWithDogs, a.IsGoodWithCats, a.IsGoodWithChildren, a.IsHouseTrained, a.IsCourtesy, a.Declawed, a.CrueltyCase, a.HasSpecialNeeds, " \
+            "web.ID AS WebsiteMediaID, web.MediaName AS WebsiteMediaName, web.Date AS WebsiteMediaDate " \
+            "FROM animal a " \
+            "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
+            "INNER JOIN breed b2 ON a.Breed2ID = b2.ID " \
+            "INNER JOIN species s ON a.SpeciesID = s.ID " \
+            "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
+            "INNER JOIN lksex x ON a.Sex = x.ID " \
+            "LEFT OUTER JOIN lksentrytype et ON a.EntryTypeID = et.ID " \
+            "LEFT OUTER JOIN entryreason er ON a.EntryReasonID = er.ID " \
+            "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media sweb WHERE sweb.LinkID = a.ID AND sweb.LinkTypeID = 0 AND sweb.WebsitePhoto = 1) "
 
     def fbiYesNo(self, condition: bool) -> str:
         """
@@ -45,8 +70,10 @@ class PetFBIPublisher(FTPPublisher):
         if shelterid == "":
             self.setLastError("No petfbi.org organisation ID has been set.")
             return
-        foundanimals = asm3.lostfound.get_foundanimal_find_simple(self.dbo)
-        animals = self.getMatchingAnimals()
+        
+        animals = self.fbiGetStrayHold()
+        foundanimals = self.fbiGetFound()
+
         if len(animals) == 0 and len(foundanimals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup()
@@ -88,7 +115,7 @@ class PetFBIPublisher(FTPPublisher):
         for an in animals:
             try:
                 anCount += 1
-                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.log("Processing Stray/Hold: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
                 # If the user cancelled, stop now
@@ -103,7 +130,7 @@ class PetFBIPublisher(FTPPublisher):
                 csv.append( self.processAnimal(an, shelterid) )
 
                 # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.logSuccess("Processed Stray/Hold: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -182,7 +209,7 @@ class PetFBIPublisher(FTPPublisher):
         # PetID
         line.append("\"A%d\"" % an["ID"])
         # Status
-        line.append("\"Adoptable\"")
+        line.append("\"Stray\"")
         # Name
         line.append("\"%s\"" % an["ANIMALNAME"])
         # Species

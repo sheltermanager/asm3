@@ -303,8 +303,8 @@ petfbi.org
 -------------------
 
 ASM can send data to www.petfbi.org, a map-based website that
-publishes adoptable and found animals. Your ASM found animal data will also be
-published as well as adoptable animals. You will need an organisation ID, FTP
+publishes stray and found animals. Your ASM stray/hold animal data will also be
+published as well as found reports. You will need an organisation ID, FTP
 username and password and to enter the postal/zipcode of your shelter.
 
 petfbi.org works with shelters in the US and Canada.
