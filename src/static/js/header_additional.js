@@ -36,62 +36,70 @@ additional = {
 
     /**
      * Renders and lays out additional fields from data from the backend 
-     * additional.get_additional_fields call as HTML controls. 
+     * additional.get_additional_fields call as HTML controls for an 
+     * additional slider section on a details screen.
      * If there are no fields, an empty string is returned.
-     * The output is a string containing a pair of tables to be rendered to the additional
-     * section of a details page. One of the tables has a class of
-     * additionalmove and its contents will be relocated to other
-     * sections according to config later by the screen itself.
+     * The output is a string containing the 3 column layout of the fields.
      * includeids: if undefined or true, output id attributes for rendered fields
      * classes: classes to give rendered fields. undefined === "additional"
      */
     additional_fields: function(fields, includeids, classes) {
         if (fields.length == 0) { return; }
-        let colm = [], addidx = 1,
+        let addidx = 1,
             col_start = '<div class="col"><table class="asm-additional-fields-container" width=\"100%\">',
             col_end = '</table></div>',
             col1 = [ col_start ], col2 = [ col_start ], col3 = [ col_start ];
-        colm.push('<table class="additionalmove" style="display: none"><tr>');
         $.each(fields, function(i, f) {
             // If this field is going to the additional tab on animal, animalcontrol, owner, lostanimal, foundanimal or waitinglist
             // then add it to the next column in our 3 column output (we do it like this so that they stack on mobile)
             if (f.LINKTYPE == 0 || f.LINKTYPE == 1 || f.LINKTYPE == 9 || f.LINKTYPE == 11 || f.LINKTYPE == 13 || f.LINKTYPE == 20) {
-                let fm = '<tr>' + additional.render_field(f, includeids, classes) + '</tr>';
+                let fm = additional.render_field(f, includeids, classes);
                 if (addidx == 1) { col1.push(fm); }
                 else if (addidx == 2) { col2.push(fm); }
                 else if (addidx == 3) { col3.push(fm); }
                 addidx += 1;
                 if (addidx == 4) { addidx = 1; }
             }
-            else {
-                colm.push(additional.render_field(f));
-            }
         });
         col1.push(col_end);
         col2.push(col_end);
         col3.push(col_end);
-        colm.push("</tr></table>");
-        return '<div class="row">' + col1.join("\n") + col2.join("\n") + col3.join("\n") + '</div><div>' + colm.join("\n") + '</div>';
+        return '<div class="row">' + col1.join("\n") + col2.join("\n") + col3.join("\n") + '</div>';
+    },
+
+    /**
+     * Renders and lays out additional fields from data from the backend 
+     * additional.get_additional_fields call as HTML controls. 
+     * If there are no fields, an empty string is returned.
+     * The output is a set of rows for the current column of fields
+     * being output.
+     * linktype: only output fields that match the linktype given
+     * includeids: if undefined or true, output id attributes for rendered fields
+     * classes: extra classes to give rendered fields. undefined === "additional"
+     */
+    additional_fields_linktype: function(fields, linktype, includeids, classes) {
+        if (fields.length == 0) { return; }
+        let add = [];
+        $.each(fields, function(i, f) {
+            if (f.LINKTYPE == linktype) {
+                add.push(additional.render_field(f, includeids, classes));
+            }
+        });
+        return add.join("\n");
     },
 
     /**
      * Renders additional fields in tableform dialogs (see tableform.fields_render)
      */
-    tableform_additional_fields: function(fields, additionalfieldtype, includeids, classes) {
+    additional_fields_tableform: function(fields, additionalfieldtype, includeids, classes) {
         if (!fields || fields.length == 0) { return; }
         if (additionalfieldtype === undefined) { additionalfieldtype = -1; }
-        var add = [], other = [], addidx = 0;
-        add.push('<tr>');
+        let add = [];
         $.each(fields, function(i, f) {
-            if (f.FIELDTYPE == additionalfieldtype || additionalfieldtype == -1)
-            {
+            if (f.FIELDTYPE == additionalfieldtype || additionalfieldtype == -1) {
                 add.push(additional.render_field(f, includeids, classes));
-                addidx += 1;
-                add.push("</tr><tr>");
-                addidx = 0;
             }
         });
-        add.push("</tr>");
         return add.join("\n");
     },
 
@@ -168,9 +176,7 @@ additional = {
         var add = [], addidx = 0;
         $.each(fields, function(i, f) {
             if (f.NEWRECORD == 1) {
-                add.push("<tr>");
                 add.push(additional.render_field(f, includeids, classes, true));
-                add.push("</tr>");
             }
         });
         return add.join("\n");
@@ -218,33 +224,6 @@ additional = {
      */
     is_person_type: function(t) {
         return t == additional.PERSON_LOOKUP || t == additional.PERSON_SPONSOR || t == additional.PERSON_VET || t == additional.PERSON_ADOPTIONCOORDINATOR;
-    },
-
-
-    /**
-     * On multi-slider pages, additional fields can be relocated to different
-     * sections according to their type. When rendered, these fields will have
-     * a toX class on their td tags. There will be a corresponding
-     * section with an additionaltarget class and a data attribute with the
-     * number that corresponds to toX.
-     * This method should be called by bind later on when the fields have
-     * been placed in the DOM.
-     */
-    relocate_fields: function() {
-        $(".additionaltarget").each(function() {
-            var target = $(this);
-            var targetname = target.attr("data");
-            $(".additionalmove ." + targetname).each(function() {
-                // $(this) is the td containing the label
-                var label = $(this);
-                var item = $(this).next();
-                // For some reason, jquery gets confused if we reparent the row, so
-                // we have to add a new row to the table and then move our cells in.
-                target.append("<tr></tr>");
-                target.find("tr:last").append(label);
-                target.find("tr:last").append(item);
-            });
-        });
     },
 
     /**
@@ -397,10 +376,8 @@ additional = {
     },
 
     /**
-     * Renders a field. Fields are always output as a pair of
-     * table cells, so its upto the caller to handle table rows.
-     * If a VALUE attribute is present, the field is rendered with
-     * the correct value in place.
+     * Renders a field.  
+     * If a VALUE column is present, the field is rendered with the correct value in place.
      * The data-post value will be set to a.(1 if mandatory).fieldid
      * f: A combined row from the additionalfield and additional tables
      * includeids: undefined or true - output an id attribute with the field
@@ -415,10 +392,10 @@ additional = {
             fieldlabel = '<label for="' + fieldid + '">' + f.FIELDLABEL + '</label>',
             postattr = "a." + f.MANDATORY + "." + fieldname,
             mi = "",
-            fh = [],
-            td1open = '<td class="to' + f.LINKTYPE + '">',
+            fh = [ ],
+            td1open = '<td>', 
             td2open = '<td>';
-        if (f.HIDDEN == 1) { td1open = '<td class="to' + f.LINKTYPE + '" style="display: none;" >'; td2open = '<td style="display: none">'; }
+        if (f.HIDDEN == 1) { fh.push('<tr style="display: none">'); } else { fh.push('<tr>'); }
         if (classes === undefined) { classes = "additional"; }
         if (usedefault === undefined) { usedefault = false; }
         if (usedefault) { fieldval = f.DEFAULTVALUE; }
@@ -522,49 +499,18 @@ additional = {
             fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
             fh.push('value="' + html.title(fieldval) + '" data-filter="coordinator"/></td>');
         }
-
+        fh.push('</tr>');
         return fh.join("\n");
     },
 
     /**
-     * Validates all additional fields in a dialog and checks to
-     * see if they are mandatory and if so whether or not they
-     * are blank. Returns true if all is ok, or false if a field
-     * fails a check.
-     *
-     * Deliberately ignores fields with the chooser class as this 
-     * function is aimed at additional fields only.
-     *
-     * additional_field_class: class that all additional fields should have ("additional" by default)
-     * linktype: named additional field link type constant, eg: animal, movement, etc.
-     *
-     * If a field fails the manadatory check its label is highlighted and an error is 
-     * returned. { valid: false, message: "X cannot be blank" }
+     * Reset additional fields to their default values
      */
-    validate_mandatory_dialog: function(additional_field_class, linktype) {
-        var valid = true, message="";
-        $("." + additional_field_class).not(".chooser").each(function() {
-            // only validate visible additional fields
-            if ($(this).data('linktype') === linktype) {
-                var t = $(this), 
-                    label = $("label[for='" + t.attr("id") + "']");
-                // ignore checkboxes
-                if (t.attr("type") != "checkbox") {
-                    var d = String(t.attr("data-post"));
-                    // mandatory additional fields have a post attribute prefixed with a.1
-                    if (d.indexOf("a.1") != -1) {
-                        if (common.trim(t.val()) == "") {
-                            label.addClass(validate.ERROR_LABEL_CLASS);
-                            t.focus();
-                            valid = false;
-                            message = _("{0} cannot be blank").replace("{0}", label.html());
-                            return false;
-                        }
-                    }
-                }
-            }
+    reset_default: function(fields) {
+        $.each(fields, function(i, v){
+            $("#add_" + v.ID).val(v.DEFAULTVALUE);
+            if(v.FIELDTYPE == additional.MONEY) { $("#add_" + v.ID).val(format.currency(v.DEFAULTVALUE)); }
         });
-        return {"valid": valid, "message": message};
     },
 
     /**
@@ -608,12 +554,43 @@ additional = {
         return valid;
     },
 
-    reset: function(){
-        $.each(controller.additional, function(i, v){
-            $("#add_" + v.ID).val(v.DEFAULTVALUE);
-            if(v.FIELDTYPE == additional.MONEY)
-                $("#add_" + v.ID).val($("#add_" + v.ID).attr("value"));
+    /**
+     * Validates all additional fields in a dialog and checks to
+     * see if they are mandatory and if so whether or not they
+     * are blank. Returns true if all is ok, or false if a field
+     * fails a check.
+     *
+     * Deliberately ignores fields with the chooser class as this 
+     * function is aimed at additional fields only.
+     *
+     * additionalclass: class that all additional fields should have ("additional" by default)
+     * linktype: named additional field link type constant, eg: animal, movement, etc.
+     */
+    validate_mandatory_dialog: function(additionalclass) {
+        var valid = true, message="";
+        $("." + additionalclass).not(".chooser").each(function() {
+            // only validate visible additional fields
+            if ($(this).is(":visible")) {
+                var t = $(this), 
+                    label = $("label[for='" + t.attr("id") + "']");
+                // ignore checkboxes
+                if (t.attr("type") != "checkbox") {
+                    var d = String(t.attr("data-post"));
+                    // mandatory additional fields have a post attribute prefixed with a.1
+                    if (d.indexOf("a.1") != -1) {
+                        if (common.trim(t.val()) == "") {
+                            label.addClass(validate.ERROR_LABEL_CLASS);
+                            t.focus();
+                            valid = false;
+                            message = _("{0} cannot be blank").replace("{0}", label.html());
+                            tableform.dialog_error(message);
+                            return false;
+                        }
+                    }
+                }
+            }
         });
+        return valid;
     },
 
     /**

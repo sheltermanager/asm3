@@ -13,7 +13,7 @@ $(function() {
                 '<div class="row">',
                 '<div class="col-sm">',
                 // first col
-                '<table width="100%" class="additionaltarget" data="to16">',
+                '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
                 '<td><span class="asm-waitinglist-number">',
@@ -68,6 +68,7 @@ $(function() {
                 html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME"),
                 '</td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 16), 
                 '</table>',
                 '</div>', // col-sm
                 // second col
@@ -162,7 +163,7 @@ $(function() {
                 '</table>',
                 '</div>', // col-sm
                 '<div class="col-sm">',
-                '<table width="100%" class="additionaltarget" data="to17">',
+                '<table width="100%">',
                 '<tr>',
                 '<td><label for="dispatchedaco">' + _("Dispatched ACO") + '</label></td>',
                 '<td><select id="dispatchedaco" data-json="DISPATCHEDACO" data-post="dispatchedaco" class="asm-bsmselect" multiple="multiple">',
@@ -205,6 +206,7 @@ $(function() {
                 '<input id="followupcomplete3" data-json="FOLLOWUPCOMPLETE3" data-post="followupcomplete3" class="asm-checkbox" type="checkbox" title="' + html.title(_("Complete")) + '" /></span>',
                 '</td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 17), 
                 '</table>',
                 '</div>', // col-sm
                 // Third column, embedded map placeholder
@@ -223,7 +225,7 @@ $(function() {
                 '<div class="row">',
                 // left column 
                 '<div class="col-sm">',
-                '<table width="100%" class="additionaltarget" data="to18">',
+                '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Suspect 1") + '</td>',
                 '<input id="owner" data-json="OWNERID" data-post="owner" type="hidden" class="asm-personchooser" />',
@@ -239,6 +241,7 @@ $(function() {
                 '<input id="owner3" data-json="OWNER3ID" data-post="owner3" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 18), 
                 '</table>',
                 '</div>', // col-sm
                 // right column
@@ -578,8 +581,6 @@ $(function() {
                     controller.animallinks.push(a);
                     incident.load_animallinks();
                 });
-
-            additional.relocate_fields();
 
         },
 

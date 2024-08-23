@@ -171,10 +171,8 @@ $(function() {
             $(".asm-textbox").val("").change();
             $("#address").val("").change();
             $(".asm-personchooser").personchooser("clear");
-
             //init additional fields
-            additional.reset();
-
+            additional.reset_default(controller.additional);
         },
 
         name: "event_new",

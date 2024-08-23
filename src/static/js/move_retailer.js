@@ -18,11 +18,9 @@ $(function() {
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", rowid: "movementnumberrow", 
                         callout: _("A unique number to identify this movement") },
                     { post_field: "retailerdate", label: _("Date"), type: "date", callout: _("The date the retailer movement is effective from") },
-                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 },
+                    { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
-                '<table class="asm-table-layout">',
-                additional.additional_new_fields(controller.additional),
-                '</table>',
                 html.content_footer(),
                 html.box(5),
                 '<button id="retailer">' + html.icon("movement") + ' ' + _("Move") + '</button>',

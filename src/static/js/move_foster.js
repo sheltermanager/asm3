@@ -21,11 +21,9 @@ $(function() {
                     { post_field: "permanentfoster", label: _("Permanent Foster"), type: "check" },
                     { post_field: "returndate", label: _("Returning"), type: "date", 
                         callout: _("The date the foster animal will be returned if known") },
-                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 },
+                    { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
-                '<table class="asm-table-layout">',
-                additional.additional_new_fields(controller.additional),
-                '</table>',
                 html.content_footer(),
                 html.box(5),
                 '<button id="foster">' + html.icon("movement") + ' ' + _("Foster") + '</button>',

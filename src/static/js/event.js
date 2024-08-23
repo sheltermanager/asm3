@@ -29,7 +29,7 @@ $(function(){
                 '<div class="row">',
                 // left column
                 '<div class="col-sm">',
-                '<table class="additionaltarget" data="to21">',
+                '<table>',
                 '<tr>',
                 '<td ><label for="eventname">' + _("Event Name") + '</label></td>',
                 '<td><input id="eventname" data-post="eventname" type="text" data-json="EVENTNAME" class="asm-textbox"  /></td>',
@@ -74,13 +74,13 @@ $(function(){
                 '<td><label for="country">' + _("Country") + '</label></td>',
                 '<td><input class="asm-textbox" id="country" data-post="country" data-json="EVENTCOUNTRY" type="text" /></td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 21),
                 '</table>',
                 '</div>', // col-sm
                 // right column
                 '<div class="col-sm">',
                 '<p><label for="description">' + _("Description") + '</label></p>',
                 '<div id="description" data-post="description" data-height="200px" data-margin-top="0px" data-json="EVENTDESCRIPTION" class="asm-richtextarea"></div>',
-                additional.additional_fields(controller.additional),
                 '</div>', // col-sm
                 '</div>', // row
                 '</div>', // end accordion section
@@ -136,8 +136,6 @@ $(function(){
             $(".asm-personchooser").personchooser().bind("personchoosercleared", function(event) {
                 validate.dirty(true);
             });
-
-            additional.relocate_fields();
 
         },
 

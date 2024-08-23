@@ -979,7 +979,7 @@ const tableform = {
      * fields: [
      *      { json_field: "name", 
      *        post_field: "name", 
-     *        label: "label", 
+     *        label: "label", // if label contains <label markup, overrides generation and uses supplied value instead
      *        labelpos: "before|after|above", (only valid for textarea (before|above) and check (before|after))
      *        type: "check|text|textarea|richtextarea|date|time|currency|number|select|animal|person|raw|nextcol", 
      *        rowid: "thisrow", (id for the row containing the label/field)
@@ -1056,6 +1056,7 @@ const tableform = {
             else if (v.type == "text") { d += tableform.render_text(v); }
             else if (v.type == "textarea") { d += tableform.render_textarea(v); }
             else if (v.type == "time") { d += tableform.render_time(v); }
+            else if (v.type == "additional") { v.justwidget = true; d += tableform.render_markup(v); }
             else if (v.type == "nextcol") {
                 // Special widget that causes rendering to move to a new column
                 d += endcol + startcol.replace("{data}", v.coldata).replace("{classes}", v.classes);
@@ -1083,7 +1084,12 @@ const tableform = {
         if (v.xlabel) {
             labelx += v.xlabel;
         }
-        label = '<label for="' + v.post_field + '">' + v.label + "</label>" + labelx;
+        if (v.label && v.label.indexOf("<label") != -1) {
+            label = v.label; // label already contains markup, let it override our generated label
+        }
+        else {
+            label = '<label for="' + v.post_field + '">' + v.label + "</label>" + labelx;
+        }
         return label;
     },
 
@@ -1587,7 +1593,7 @@ const tableform = {
 
     /**
      * Updates a row with the field contents
-     * fields: (see render_fields)
+     * fields: (see fields_render)
      * row: The row to update
      */
     fields_update_row: function(fields, row) {

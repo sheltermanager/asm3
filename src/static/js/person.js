@@ -38,7 +38,7 @@ $(function() {
                 '<div class="row">',
                 // left column
                 '<div class="col-sm">',
-                '<table class="additionaltarget" data="to7">',
+                '<table>',
                 '<tr>',
                 '<td><label for="code">' + _("Code") + '</label></td>',
                 '<td>',
@@ -156,6 +156,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 7), 
                 '</table>',
                 '</div>', // col-sm
                 // right column
@@ -217,7 +218,7 @@ $(function() {
                 '<div class="row">',
                 // left column
                 '<div class="col-sm">',
-                '<table class="additionaltarget" data="to8">',
+                '<table>',
                 '<tr>',
                 '<td><label for="flags">' + _("Flags") + '</label></td>',
                 '<td>',
@@ -247,6 +248,7 @@ $(function() {
                 '<td><label for="fostercapacity">' + _("Foster Capacity") + '</label></td>',
                 '<td><input type="text" id="fostercapacity" data-json="FOSTERCAPACITY" data-post="fostercapacity" title="' + html.title(_("If this person is a fosterer, the maximum number of animals they can care for.")) + '" class="asm-textbox asm-numberbox" /></td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 8), 
                 '</table>',
                 '</div>', // col-sm
                 // Right column
@@ -707,8 +709,6 @@ $(function() {
                     $("#county").val(controller.towncounties[$("#town").val()]);
                 }
             });
-
-            additional.relocate_fields();
 
             // Controls that update the screen when changed
             $("#ownertype").change(person.enable_widgets);

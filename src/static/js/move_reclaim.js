@@ -22,11 +22,9 @@ $(function() {
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", rowid: "movementnumberrow", 
                         callout: _("A unique number to identify this movement") },
                     { post_field: "movementdate", label: _("Date"), type: "date" },
-                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 },
+                    { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
-                '<table class="asm-table-layout">',
-                additional.additional_new_fields(controller.additional),
-                '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),

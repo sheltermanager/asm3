@@ -24,11 +24,9 @@ $(function() {
                     { post_field: "reservationdate", label: _("Date"), type: "date" },
                     { post_field: "reservationstatus", label: _("Status"), type: "select", 
                         options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
-                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 },
+                    { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
-                '<table class="asm-table-layout">',
-                additional.additional_new_fields(controller.additional),
-                '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.box(5),

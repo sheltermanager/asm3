@@ -45,7 +45,7 @@ $(function() {
                         options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
                     { json_field: "RESERVATIONCANCELLEDDATE", post_field: "reservationcancelled", label: _("Reservation Cancelled"), type: "date" },
                     { type: "raw", justwidget: true, markup: 
-                        additional.tableform_additional_fields(additional.merge_definitions_and_values(controller.additional, {}),  -1, true, "additionaldialog")},
+                        additional.additional_fields_tableform(additional.merge_definitions_and_values(controller.additional, {}),  -1, true, "additionaldialog")},
 
                     { type: "nextcol" },
 
@@ -764,10 +764,7 @@ $(function() {
                 }
             }
             // mandatory additional fields
-            let additional_validation = additional.validate_mandatory_dialog("additionaldialog", controller.movementtypes_additionalfieldtypes[mt]);
-            if (!additional_validation.valid)
-            {
-                tableform.dialog_error(additional_validation.message);
+            if (!additional.validate_mandatory_dialog("additionaldialog")) {
                 return false;
             }
 

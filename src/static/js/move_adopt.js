@@ -29,11 +29,9 @@ $(function() {
                     { post_field: "trial", label: _("Trial adoption"), type: "check", rowid: "trialrow1" },
                     { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
                     { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
-                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" }
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" },
+                    { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
-                '<table class="asm-table-layout">',
-                additional.additional_new_fields(controller.additional),
-                '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),

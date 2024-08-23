@@ -119,8 +119,9 @@ $(function() {
                 '</div>', // col-sm
                 // right column
                 '<div class="col-sm">',
-                mode == "lost" ? '<table width="100%" class="additionaltarget" data="to10">' : "",
-                mode == "found" ? '<table width="100%" class="additionaltarget" data="to12">' : "",
+                '<table>',
+                mode == "lost" ? additional.additional_fields_linktype(controller.additional, 10) : "", 
+                mode == "found" ? additional.additional_fields_linktype(controller.additional, 12) : "",
                 '<tr>',
                 '<td><label for="areapostcode">' + _("Zipcode") + '</label></td>',
                 '<td><input id="areapostcode" data-json="AREAPOSTCODE" data-post="areapostcode" type="text" class="asm-textbox" /></td>',
@@ -333,8 +334,6 @@ $(function() {
             $('#species').change(function() {
                 lostfound.updatebreedselect();
             });
-            
-            additional.relocate_fields();
 
         },
 

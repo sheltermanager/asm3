@@ -120,7 +120,7 @@ $(function() {
                 '</div>', // col-sm
                 // right column 
                 '<div class="col-sm">',
-                '<table width="100%" class="additionaltarget" data="to14">',
+                '<table>',
                 '<tr>',
                 '<td></td>',
                 '<td><input type="checkbox" id="canafforddonation" data-json="CANAFFORDDONATION" data-post="canafforddonation" class="asm-checkbox" />',
@@ -145,13 +145,14 @@ $(function() {
                 '<input id="owner" data-json="OWNERID" data-post="owner" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 14), 
                 '</table>',
                 '</div>', // col-sm
                 '</div>', // row
                 '</div>', // end accordion section
                 '<h3><a href="#">' + _("Removal") + '</a></h3>',
                 '<div>',
-                '<table width="100%" class="additionaltarget" data="to15">',
+                '<table width="100%">',
                 '<tr>',
                 '<td><label for="dateoflastownercontact">' + _("Date of last owner contact") + '</label></td>',
                 '<td><input type="text" id="dateoflastownercontact" data-json="DATEOFLASTOWNERCONTACT" data-post="dateoflastownercontact" class="asm-textbox asm-datebox" /></td>',
@@ -185,6 +186,7 @@ $(function() {
                 '<textarea id="reasonforremoval" data-json="REASONFORREMOVAL" data-post="reasonforremoval" rows="5" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 15), 
                 '</table>',
                 '</div>',
                 '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
@@ -336,8 +338,6 @@ $(function() {
                 await common.ajax_post("waitinglist", formdata);
                 common.route("main");
             });
-
-            additional.relocate_fields();
 
         },
 

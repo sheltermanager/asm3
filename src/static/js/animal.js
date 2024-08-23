@@ -16,8 +16,7 @@ $(function() {
                         options: { displayfield: "REASONNAME", rows: controller.deathreasons }},
                     { post_field: "puttosleep", json_field: "PUTTOSLEEP", label: _("Euthanized"), type: "check" },
                     { post_field: "deadonarrival", json_field: "ISDOA", label: _("Dead on arrival"), type: "check" },
-                    // TODO: this will break when tableform stops using tables
-                    { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><table class="additionaltarget" data="to6"></table></td></tr>' }, 
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 6) },
                     { type: "nextcol" },
                     { post_field: "ptsreason", json_field: "PTSREASON", label: _("Notes"), type: "textarea", labelpos: "above" },
                 ]),
@@ -73,19 +72,10 @@ $(function() {
                         xmarkup: ['<select id="breedp" class="asm-selectbox" style="display:none;">',
                             html.list_to_options_breeds(controller.breeds),
                             '</select>'].join("\n") },
-                    // TODO: This needs to be fixed when fields_render stops outputting tables
-                    { type: "raw", justwidget: true, markup: [
-                        '<tr id="secondbreedrow">',
-                        '<td>',
-                        '<span style="white-space: nowrap">',
-                        '<label for="crossbreed">' + _("Crossbreed") + '</label>',
-                        '<input type="checkbox" class="asm-checkbox" id="crossbreed" data-json="CROSSBREED" data-post="crossbreed" /></td>',
-                        '</span>',
-                        '<td><select id="breed2" data-json="BREED2ID" data-post="breed2" class="asm-selectbox">',
-                        html.list_to_options_breeds(controller.breeds),
-                        '</select></td>',
-                        '</tr>'
-                        ].join("\n") },
+                    { post_field: "breed2", json_field: "BREED2ID", rowid: "secondbreedrow",
+                        type: "select", options: html.list_to_options_breeds(controller.breeds),
+                        label:  '<label for="crossbreed">' + _("Crossbreed") + '</label>' + 
+                            '<input type="checkbox" class="asm-checkbox" id="crossbreed" data-json="CROSSBREED" data-post="crossbreed" />' },
                     { post_field: "location", json_field: "SHELTERLOCATION", label: _("Location"), type: "select", 
                         callout: _("Where this animal is located within the shelter"),
                         options: { displayfield: "LOCATIONNAME", rows: controller.internallocations }},
@@ -105,7 +95,8 @@ $(function() {
                         _("Estimate") ].join("\n") },
                     { post_field: "fee", json_field: "FEE", label: _("Adoption Fee"), type: "currency" },
 
-                    { type: "nextcol", classes: "additionaltarget", coldata: "to2" }  // final column holds additional fields
+                    { type: "nextcol" },  
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 2) },
 
                 ], { full_width: false }),
                 '</div>' // end accordion section
@@ -124,7 +115,8 @@ $(function() {
                     { rowid: "broughtinbyownerrow", post_field: "broughtinby", json_field: "BROUGHTINBYOWNERID", 
                         label: _("BroughtInBy"), type: "person" },
 
-                    { type: "nextcol", classes: "additionaltarget", coldata: "to4" },
+                    { type: "nextcol" },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 4) },
 
                     { post_field: "datebroughtin", json_field: "DATEBROUGHTIN", label: _("Date Brought In"), type: "date",
                         xmarkup: '<input id="mostrecententrydate" class="asm-textbox" style="display: none" />' },
@@ -327,12 +319,13 @@ $(function() {
                 '</tr>',
                 '</table>',
                 // separate table for additional fields
-                '<table class="additionaltarget" data="to5">',
+                '<table>',
                 '<tr id="rabiestagrow" class="cats dogs">',
                 '<td><label for="rabiestag">' + _("Rabies Tag") + '</label></td>',
                 '<td><input id="rabiestag" data-json="RABIESTAG" data-post="rabiestag" class="asm-textbox" maxlength="20" />',
                 '</td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 6),
                 '</table>',
                 '</div>', // col
                 // health problems/vet fields
@@ -457,7 +450,8 @@ $(function() {
                     { post_field: "popupwarning", json_field: "POPUPWARNING", label: _("Warning"), type: "textarea", rows: 3, 
                         callout: _("Show a warning when viewing this animal") },
 
-                    { type: "nextcol", classes: "additionaltarget", coldata: "to3" },
+                    { type: "nextcol" },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) },
 
                     { post_field: "goodwithcats", json_field: "ISGOODWITHCATS", label: _("Good with cats"), type: "select", 
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
@@ -1212,8 +1206,6 @@ $(function() {
             // display it
             $("#microchipnumber").change(animal.show_microchip_supplier);
             $("#microchipnumber2").change(animal.show_microchip_supplier);
-
-            additional.relocate_fields();
 
             // If the animal type changes, or the date brought in, we may need to
             // generate a new code

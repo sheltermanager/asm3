@@ -1,6 +1,7 @@
 49
 ================
 
+23/08/24 Refactor/simplify rendering of additional fields #1103
 22/08/24 Export animals as CSV: Include ANIMALID column for cross referencing
 22/08/24 FindPet microchip registration initial implementation #1500
 20/08/24 Fix ambiguous vacc/test dates in mobile UI
