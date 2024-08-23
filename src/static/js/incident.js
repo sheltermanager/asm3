@@ -241,7 +241,6 @@ $(function() {
                 '<input id="owner3" data-json="OWNER3ID" data-post="owner3" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
-                additional.additional_fields_linktype(controller.additional, 18), 
                 '</table>',
                 '</div>', // col-sm
                 // right column
@@ -275,6 +274,7 @@ $(function() {
                 '<td><label for="animaldescription">' + _("Description") + '</label></td>',
                 '<td><textarea id="animaldescription" data-json="ANIMALDESCRIPTION" data-post="animaldescription" class="asm-textarea"></textarea></td>',
                 '</tr>',
+                additional.additional_fields_linktype(controller.additional, 18), 
                 '</table>',
                 '<p class="asm-menu-category">' + _("Animals") + ' <button id="button-linkanimal">' + _("Link an animal") + '</button></p>',
                 '<div id="animallist">',

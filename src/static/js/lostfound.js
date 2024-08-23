@@ -120,8 +120,6 @@ $(function() {
                 // right column
                 '<div class="col-sm">',
                 '<table>',
-                mode == "lost" ? additional.additional_fields_linktype(controller.additional, 10) : "", 
-                mode == "found" ? additional.additional_fields_linktype(controller.additional, 12) : "",
                 '<tr>',
                 '<td><label for="areapostcode">' + _("Zipcode") + '</label></td>',
                 '<td><input id="areapostcode" data-json="AREAPOSTCODE" data-post="areapostcode" type="text" class="asm-textbox" /></td>',
@@ -153,6 +151,8 @@ $(function() {
                 '<input id="owner" data-json="OWNERID" data-post="owner" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
+                mode == "lost" ? additional.additional_fields_linktype(controller.additional, 10) : "", 
+                mode == "found" ? additional.additional_fields_linktype(controller.additional, 12) : "",
                 '</table>',
                 '</div>', // col-sm
                 '</div>', // row

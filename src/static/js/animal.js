@@ -116,7 +116,6 @@ $(function() {
                         label: _("BroughtInBy"), type: "person" },
 
                     { type: "nextcol" },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 4) },
 
                     { post_field: "datebroughtin", json_field: "DATEBROUGHTIN", label: _("Date Brought In"), type: "date",
                         xmarkup: '<input id="mostrecententrydate" class="asm-textbox" style="display: none" />' },
@@ -148,7 +147,8 @@ $(function() {
                     { post_field: "bonded1", json_field: "BONDEDANIMALID", label: _("Bonded With"), type: "animal", rowclasses: "bondedwith" },
                     { post_field: "bonded2", json_field: "BONDEDANIMAL2ID", label: "", type: "animal", rowclasses: "bondedwith" },
                     { post_field: "reasonnotfromowner", json_field: "REASONNO", label: _("Reason not from Owner"), type: "textarea", rows: 3},
-                    { post_field: "reasonforentry", json_field: "REASONFORENTRY", label: _("Reason for Entry"), type: "textarea", rows: 3}
+                    { post_field: "reasonforentry", json_field: "REASONFORENTRY", label: _("Reason for Entry"), type: "textarea", rows: 3},
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 4) }
                 ]),
                 '</div>', // end accordion section
             ].join("\n");
@@ -451,7 +451,6 @@ $(function() {
                         callout: _("Show a warning when viewing this animal") },
 
                     { type: "nextcol" },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) },
 
                     { post_field: "goodwithcats", json_field: "ISGOODWITHCATS", label: _("Good with cats"), type: "select", 
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
@@ -461,6 +460,8 @@ $(function() {
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynunk }},
                     { post_field: "housetrained", json_field: "ISHOUSETRAINED", label: _("Housetrained"), type: "select", 
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
+
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) }
                 ]),
                '</div>', // end accordion section
             ].join("\n");
