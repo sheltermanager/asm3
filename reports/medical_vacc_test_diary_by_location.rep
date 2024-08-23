@@ -1,0 +1,107 @@
+Medical, Vaccination and Test Diary by Location
+###
+Diary
+###
+33012/Any rev01
+###
+The medical, vaccination and test diary for today in one report grouped by locations.
+###
+en
+###
+SELECT * FROM
+(
+
+SELECT
+'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, s.SpeciesName, a.ShelterLocationUnit,
+am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
+amt.TotalTreatments, amt.DateRequired, am.Comments,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName  
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE amt.DateGiven Is Null 
+AND amt.DateRequired <= '$CURRENT_DATE$'
+AND a.Archived = 0
+
+UNION SELECT
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.ShelterLocationUnit,
+v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, av.DateRequired, av.Comments,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animalvaccination av ON a.ID = av.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE av.DateOfVaccination Is Null
+AND av.DateRequired <= '$CURRENT_DATE$'
+AND a.Archived = 0
+
+UNION SELECT
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.ShelterLocationUnit, 
+tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, at.DateRequired, at.Comments,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE at.DateOfTest Is Null
+AND at.DateRequired <= '$CURRENT_DATE$'
+AND a.Archived = 0
+
+) dummy
+ORDER BY LocationName, ShelterLocationUnit, AnimalName DESC
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+<table border=1>
+<thead>
+<tr>
+<th><b>Unit</b></th>  
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Required</b></th>
+<th><b>Comments</b></th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERLOCATIONUNIT</td>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td><b>$MTYPE: $TREATMENTNAME</b></td>
+<td>$DOSAGE</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEREQUIRED</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+
+FOOTER$$
