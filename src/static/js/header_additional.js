@@ -92,7 +92,7 @@ additional = {
      * Renders additional fields in tableform dialogs (see tableform.fields_render)
      */
     additional_fields_tableform: function(fields, additionalfieldtype, includeids, classes) {
-        if (!fields || fields.length == 0) { return; }
+        if (!fields || fields.length == 0) { return ""; }
         if (additionalfieldtype === undefined) { additionalfieldtype = -1; }
         let add = [];
         $.each(fields, function(i, f) {
