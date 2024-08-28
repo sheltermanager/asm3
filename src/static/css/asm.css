@@ -73,6 +73,10 @@ select:disabled, input:disabled, textarea:disabled {
     text-align: end;
 }
 
+.topvalign {
+    vertical-align: top;
+}
+
 .floatright {
     float: right;
 }
