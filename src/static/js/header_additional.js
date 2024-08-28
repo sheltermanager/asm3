@@ -44,7 +44,7 @@ additional = {
      * classes: classes to give rendered fields. undefined === "additional"
      */
     additional_fields: function(fields, includeids, classes) {
-        if (fields.length == 0) { return; }
+        if (fields.length == 0) { return ""; }
         let addidx = 1,
             col_start = '<div class="col"><table class="asm-additional-fields-container" width=\"100%\">',
             col_end = '</table></div>',
@@ -78,7 +78,7 @@ additional = {
      * classes: extra classes to give rendered fields. undefined === "additional"
      */
     additional_fields_linktype: function(fields, linktype, includeids, classes) {
-        if (fields.length == 0) { return; }
+        if (fields.length == 0) { return ""; }
         let add = [];
         $.each(fields, function(i, f) {
             if (f.LINKTYPE == linktype) {
@@ -172,7 +172,7 @@ additional = {
      * The output is a series of 2 column table rows with label/field
      */
     additional_new_fields: function(fields, includeids, classes) {
-        if (fields.length == 0) { return; }
+        if (fields.length == 0) { return ""; }
         var add = [], addidx = 0;
         $.each(fields, function(i, f) {
             if (f.NEWRECORD == 1) {
@@ -189,7 +189,7 @@ additional = {
      * columns: number of columns per row, 2 if not supplied
      */
     additional_search_fields: function(fields, columns) {
-        if (fields.length == 0) { return; }
+        if (fields.length == 0) { return ""; }
         if (!columns) { columns = 2; }
         let col = 0, h = [ '<tr class="asm3-search-additional-row">' ];
         $.each(fields, function(i, f) {
