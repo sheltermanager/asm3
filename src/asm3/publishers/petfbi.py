@@ -30,7 +30,7 @@ class PetFBIPublisher(FTPPublisher):
     
     def fbiGetStrayHold(self) -> Results:
         return self.dbo.query("%s WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.HasPermanentFoster=0 " \
-            "AND a.HasTrialAdoption=0 AND (a.EntryTypeID=2 OR a.IsHold=1)" % self.fbiQuery())
+            "AND a.HasTrialAdoption=0 AND a.EntryTypeID=2 AND a.IsHold=1" % self.fbiQuery())
 
     def fbiQuery(self) -> str:
         return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, x.Sex AS SexName, a.Size, " \
