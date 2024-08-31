@@ -1,6 +1,7 @@
 49
 ================
 
+31/08/24 Found->Animal, don't assign original owner, copy found area to entry
 31/08/24 New lost/found animal not using default colour
 28/08/24 Fix "undefined" appearing when no additional fields present #1103
 28/08/24 Refactor health and identification #1103
