@@ -239,6 +239,7 @@ $(function() {
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             // Set select box default values
+            $("#colour").val(config.str("AFDefaultColour"));
             $("#species").val(config.str("AFDefaultSpecies"));
             lostfound_new.update_breed_select();
             $("#breed").val(config.str("AFDefaultBreed"));
