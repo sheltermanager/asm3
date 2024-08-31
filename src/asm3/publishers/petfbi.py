@@ -138,7 +138,7 @@ class PetFBIPublisher(FTPPublisher):
         # Mark published
         self.markAnimalsPublished(animals)
 
-        header = "OrgID, PetID, Status, Name, Species, Sex, PrimaryBreed, SecondaryBreed, Age, Altered, Size, ZipPostal, Description, Photo, Colour, MedicalConditions, LastUpdated\n"
+        header = "OrgID,PetID,Status,Name,Species,Sex,PrimaryBreed,SecondaryBreed,Age,Altered,Size,ZipPostal,Description,Photo,Colour,MedicalConditions,IntakeDate,PickupAddress,LastUpdated\n"
         filename = shelterid + ".txt"
         self.saveFile(os.path.join(self.publishDir, filename), header + "\n".join(csv))
         self.log("Uploading datafile %s" % filename)
@@ -158,31 +158,31 @@ class PetFBIPublisher(FTPPublisher):
         """
         line = []
         # OrgID
-        line.append("\"%s\"" % shelterid)
+        line.append(shelterid)
         # PetID
-        line.append("\"F%d\"" % an["ID"])
+        line.append("F%s" % an.ID)
         # Status
-        line.append("\"Found\"")
+        line.append("Found")
         # Name
-        line.append("\"%d\"" % an["ID"])
+        line.append(str(an.ID))
         # Species
-        line.append("\"%s\"" % an["SPECIESNAME"])
+        line.append(an.SPECIESNAME)
         # Sex
-        line.append("\"%s\"" % an["SEXNAME"])
+        line.append(an.SEXNAME)
         # PrimaryBreed
-        line.append("\"%s\"" % an["BREEDNAME"])
+        line.append(an.BREEDNAME)
         # SecondaryBreed
-        line.append("\"\"")
+        line.append("")
         # Age, one of Baby, Young, Adult, Senior - just happens to match our default age groups
-        line.append("\"%s\"" % an["AGEGROUP"])
+        line.append(an.AGEGROUP)
         # Altered - don't have
-        line.append("\"\"")
+        line.append("")
         # Size, one of Small, Medium or Large or X-Large - also don't have
-        line.append("\"\"")
+        line.append("")
         # ZipPostal
-        line.append("\"%s\"" % an["AREAPOSTCODE"])
+        line.append(an.AREAPOSTCODE)
         # Description
-        notes = str(an["DISTFEAT"]) + "\n" + str(an["COMMENTS"]) + "\n" + str(an["AREAFOUND"])
+        notes = str(an.DISTFEAT) + "\n" + str(an.COMMENTS)
         # Strip carriage returns
         notes = notes.replace("\r\n", "<br />")
         notes = notes.replace("\r", "<br />")
@@ -190,68 +190,76 @@ class PetFBIPublisher(FTPPublisher):
         notes = notes.replace("\"", "&ldquo;")
         notes = notes.replace("'", "&lsquo;")
         notes = notes.replace("`", "&lsquo;")
-        line.append("\"%s\"" % notes)
+        line.append(notes)
         # Photo
-        line.append("\"\"")
+        line.append("")
         # Colour
-        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        line.append(an.BASECOLOURNAME)
         # MedicalConditions
-        line.append("\"\"")
+        line.append("")
+        # IntakeDate
+        line.append(str(asm3.i18n.python2unix(an.FOUNDDATE)))
+        # PickupAddress
+        line.append(an.FOUNDAREA)
         # LastUpdated
-        line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
+        line.append(str(asm3.i18n.python2unix(an.LASTCHANGEDDATE)))
         return ",".join(line)
 
     def processAnimal(self, an: ResultRow, shelterid: str = "") -> str:
         """ Process an animal record and return a CSV line """
         line = []
         # OrgID
-        line.append("\"%s\"" % shelterid)
+        line.append(shelterid)
         # PetID
-        line.append("\"A%d\"" % an["ID"])
+        line.append("A%s" % an.ID)
         # Status
-        line.append("\"Stray\"")
+        line.append("Stray")
         # Name
-        line.append("\"%s\"" % an["ANIMALNAME"])
+        line.append(an.ANIMALNAME)
         # Species
-        line.append("\"%s\"" % an["SPECIESNAME"])
+        line.append(an.SPECIESNAME)
         # Sex
-        line.append("\"%s\"" % an["SEXNAME"])
+        line.append(an.SEXNAME)
         # PrimaryBreed
-        line.append("\"%s\"" % an["BREEDNAME1"])
+        line.append(an.BREEDNAME1)
         # SecondaryBreed
-        if an["CROSSBREED"] == 1:
-            line.append("\"%s\"" % an["BREEDNAME2"])
+        if an.CROSSBREED == 1:
+            line.append(an.BREEDNAME2)
         else:
-            line.append("\"\"")
+            line.append("")
         # Age, one of Baby, Young, Adult, Senior
-        ageinyears = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
+        ageinyears = asm3.i18n.date_diff_days(an.DATEOFBIRTH, asm3.i18n.now(self.dbo.timezone))
         ageinyears /= 365.0
         agename = "Adult"
         if ageinyears < 0.5: agename = "Baby"
         elif ageinyears < 2: agename = "Young"
         elif ageinyears < 9: agename = "Adult"
         else: agename = "Senior"
-        line.append("\"%s\"" % agename)
+        line.append(agename)
         # Altered
-        line.append("%s" % self.fbiYesNo(an["NEUTERED"] == 1))
+        line.append(self.fbiYesNo(an.NEUTERED == 1))
         # Size, one of Small, Medium or Large or X-Large
         ansize = "Medium"
-        if an["SIZE"] == 0 : ansize = "X-Large"
-        elif an["SIZE"] == 1: ansize = "Large"
-        elif an["SIZE"] == 2: ansize = "Medium"
-        elif an["SIZE"] == 3: ansize = "Small"
-        line.append("\"%s\"" % ansize)
+        if an.SIZE == 0 : ansize = "X-Large"
+        elif an.SIZE == 1: ansize = "Large"
+        elif an.SIZE == 2: ansize = "Medium"
+        elif an.SIZE == 3: ansize = "Small"
+        line.append(ansize)
         # ZipPostal
-        line.append("\"%s\"" % asm3.configuration.organisation_postcode(self.dbo))
+        line.append(asm3.configuration.organisation_postcode(self.dbo))
         # Description
-        line.append("\"%s\"" % self.getDescription(an, True))
+        line.append(self.getDescription(an, True))
         # Photo
-        line.append("\"%s.jpg\"" % an["SHELTERCODE"])
+        line.append(an.SHELTERCODE)
         # Colour
-        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        line.append(an.BASECOLOURNAME)
         # MedicalConditions
-        line.append("\"%s\"" % an["HEALTHPROBLEMS"])
+        line.append(an.HEALTHPROBLEMS)
+        # IntakeDate
+        line.append(str(asm3.i18n.python2unix(an.MOSTRECENTENTRYDATE)))
+        # PickupAddress
+        line.append(an.PICKUPADDRESS)
         # LastUpdated
-        line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
+        line.append(str(asm3.i18n.python2unix(an.LASTCHANGEDDATE)))
         return self.csvLine(line)
 
