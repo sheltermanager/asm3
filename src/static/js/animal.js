@@ -218,7 +218,7 @@ $(function() {
                     ].join("\n") },
                     { rowid: "microchiprow2", type: "raw", label: "", markup: [
                         '<input id="microchipdate" data-json="IDENTICHIP2DATE" data-post="microchipdate2" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
-                        '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" />',
+                        '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" />',
                         '<span id="microchipbrand2"></span> <button id="button-microchipcheck2">' + microchip.check_site_name() + '</button>'
                     ].join("\n") },
                     { rowid: "tattoorow", type: "raw", 
