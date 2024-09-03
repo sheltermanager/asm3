@@ -34,7 +34,7 @@ class PetFBIPublisher(FTPPublisher):
 
     def fbiQuery(self) -> str:
         return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, x.Sex AS SexName, a.Size, " \
-            "a.DateOfBirth, a.MostRecentEntryDate, a.Fee, a.LastChangedDate, " \
+            "a.DateOfBirth, a.MostRecentEntryDate, a.Fee, a.PickupAddress, a.LastChangedDate, " \
             "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, s.SpeciesName, c.BaseColour AS BaseColourName, " \
             "a.EntryTypeID, et.EntryTypeName AS EntryTypeName, er.ReasonName AS EntryReasonName, " \
             "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, a.HealthProblems, a.IsNotAvailableForAdoption, " \
@@ -198,7 +198,7 @@ class PetFBIPublisher(FTPPublisher):
         # MedicalConditions
         line.append("")
         # IntakeDate
-        line.append(str(asm3.i18n.python2unix(an.FOUNDDATE)))
+        line.append(str(asm3.i18n.python2unix(an.DATEFOUND)))
         # PickupAddress
         line.append(an.FOUNDAREA)
         # LastUpdated
