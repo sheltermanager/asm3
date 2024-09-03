@@ -203,7 +203,7 @@ class PetFBIPublisher(FTPPublisher):
         line.append(an.AREAFOUND)
         # LastUpdated
         line.append(str(asm3.i18n.python2unix(an.LASTCHANGEDDATE)))
-        return ",".join(line)
+        return self.csvLine(line)
 
     def processAnimal(self, an: ResultRow, shelterid: str = "") -> str:
         """ Process an animal record and return a CSV line """
