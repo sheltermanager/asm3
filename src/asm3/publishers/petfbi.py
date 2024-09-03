@@ -200,7 +200,7 @@ class PetFBIPublisher(FTPPublisher):
         # IntakeDate
         line.append(str(asm3.i18n.python2unix(an.DATEFOUND)))
         # PickupAddress
-        line.append(an.FOUNDAREA)
+        line.append(an.AREAFOUND)
         # LastUpdated
         line.append(str(asm3.i18n.python2unix(an.LASTCHANGEDDATE)))
         return ",".join(line)
