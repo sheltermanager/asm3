@@ -1024,6 +1024,9 @@ def email_licence_reminder_template(dbo: Database) -> int:
 def email_messages(dbo: Database) -> bool:
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
 
+def findpet_org_id(dbo: Database) -> str:
+    return cstring(dbo, "FindPetOrgID")
+
 def flag_change_log(dbo: Database) -> bool:
     return cboolean(dbo, "FlagChangeLog", DEFAULTS["FlagChangeLog"] == "Yes")
 

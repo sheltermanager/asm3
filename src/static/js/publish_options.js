@@ -26,6 +26,7 @@ $(function() {
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
                 '<li class="localeus hasbuddyid"><a href="#tab-buddyid">BuddyID Microchips</a></li>',
+                '<li class="localeus hasfindpet"><a href="#tab-findpet">FindPet Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">Found/24Pet Microchips</a></li>',
                 '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
@@ -884,6 +885,22 @@ $(function() {
             ].join("\n");
         },
 
+        render_findpet: function() {
+            return [
+                '<div id="tab-findpet">',
+                html.info('Find out more at ' + 
+                    '<a target="_blank" href="https://findpet.com/">https://findpet.com/</a>'),
+                '<p><input id="enabledbd" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledbd">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="fporgid">FindPet Organization ID</label></td>',
+                '<td><input id="fporgid" type="text" class="asm-textbox cfg" disabled="disabled" data="FindPetOrgID" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_foundanimals: function() {
             return [
                 '<div id="tab-foundanimals">',
@@ -1117,6 +1134,7 @@ $(function() {
                 this.render_adoptapet(),
                 this.render_akcreunite(),
                 this.render_buddyid(),
+                this.render_findpet(),
                 this.render_foundanimals(),
                 this.render_homeagain(),
                 this.render_maddiesfund(),
@@ -1245,6 +1263,7 @@ $(function() {
             // Disable services that require sitedef setup
             if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
             if (!controller.hasbuddyid) { $(".hasbuddyid").hide(); }
+            if (!controller.hasfindpet) { $(".hasfindpet").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
             if (!controller.hashtmlftp) { $(".hashtmlftp").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
