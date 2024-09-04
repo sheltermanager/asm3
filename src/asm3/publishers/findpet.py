@@ -61,7 +61,7 @@ class FindPetPublisher(AbstractPublisher):
         # Go through our list of shelter animals first, send any shelter animals
         # that have a microchip number, but don't already have a FindPet report_id
         shanimals = asm3.animal.get_shelter_animals(self.dbo)
-        shanimals = calc_microchip_data_addresses(self.dbo, animals) # We do this so that we have the shelter address for reports
+        shanimals = calc_microchip_data_addresses(self.dbo, shanimals) # We do this so that we have the shelter address for reports
 
         for an in shanimals:
 
