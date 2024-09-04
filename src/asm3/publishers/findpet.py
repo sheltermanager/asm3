@@ -60,10 +60,10 @@ class FindPetPublisher(AbstractPublisher):
         
         # Go through our list of shelter animals first, send any shelter animals
         # that have a microchip number, but don't already have a FindPet report_id
-        animals = asm3.animal.get_shelter_animals(self.dbo)
-        animals = calc_microchip_data_addresses(self.dbo, animals) # We do this so that we have the shelter address for reports
+        shanimals = asm3.animal.get_shelter_animals(self.dbo)
+        shanimals = calc_microchip_data_addresses(self.dbo, animals) # We do this so that we have the shelter address for reports
 
-        for an in animals:
+        for an in shanimals:
 
             findpet_report_id = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_FINDPET)
             if findpet_report_id != "": 
@@ -129,7 +129,7 @@ class FindPetPublisher(AbstractPublisher):
                 url = f"{FINDPET_BASE_URL}/api/pet-transfer"
                 self.log("Sending POST to %s to create transfer: %s" % (url, jsondata))
                 r = asm3.utils.post_json(url, jsondata)
-                j = asm3.utils.json(r["response"])
+                j = asm3.utils.json_parse(r["response"])
 
                 # Success is returned as { "result": { "status": "Passed", details: {transfer_id} } }
                 # Error codes are returned as { "reason": "message", "details": {transfer_id} }
@@ -144,6 +144,58 @@ class FindPetPublisher(AbstractPublisher):
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Get a list of all animals that we sent to FindPet recently (last 6 months)
+        prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='findpet'", [self.dbo.today(offset=-182)])
+        
+        # Build a list of IDs we just sent, along with a list of ids for animals
+        # that we previously sent and are not in the current sent list.
+        # This identifies the listings we need to cancel
+        animalids_just_sent = set([ x.ID for x in animals + shanimals ])
+        animalids_to_cancel = set([ str(x.ANIMALID) for x in prevsent if x.ANIMALID not in animalids_just_sent])
+
+        # Get the animal records for listings that we need to consider for removal
+        # (or report deactivation as FindPet call it)
+        if len(animalids_to_cancel) > 0:
+
+            animals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + "WHERE a.ID IN (%s)" % ",".join(animalids_to_cancel))
+            
+            anCount = 0
+            for an in animals:
+                anCount += 1
+                try:
+                    # If this animal is dead or has left the shelter via any method but adoption, remove the listing
+                    if an.DECEASEDDATE is not None or an.ACTIVEMOVEMENTTYPE in (2,3,4,5,6,7): continue
+
+                    # If we already deactivated this report, don't do anything
+                    laststatus = self.dbo.query_string("SELECT Extra FROM animalpublished WHERE AnimalID=? AND PublishedTo='findpet'", [an.ID])
+                    if laststatus == "Deactivated Report": continue
+                    
+                    # The findpet reportid
+                    findpet_report_id = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_FINDPET)
+
+                    # If there isn't a reportid, stop now because we can't do anything
+                    if findpet_report_id == "": continue
+
+                    # Send the Delete
+                    url = f"{FINDPET_BASE_URL}/api/deactivate_report"
+                    self.log("Sending POST to %s to remove report: %s" % (url, jsondata))
+                    r = asm3.utils.post_json(url, asm3.utils.json({ "token": FINDPET_API_KEY, "report_id": findpet_report_id }))
+                    j = asm3.utils.json_parse(r["response"])
+                    if r["status"] != 200:
+                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    else:
+                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
+                        # Update animalpublished for this animal with the status we just sent in the Extra field
+                        # so that it can be picked up next time and we won't do this again.
+                        self.markAnimalPublished(an.ID, extra = "Deactivated Report")
+
+                        # Clear the report_id since the listing has been deleted
+                        asm3.animal.set_extra_id(self.dbo, "pub::findpet", an, IDTYPE_FINDPET, "")
+                except Exception as err:
+                    self.logError("Failed updating listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
 
         # Mark sent animals published
         if len(processed_animals) > 0:
