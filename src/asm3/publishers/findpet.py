@@ -165,7 +165,7 @@ class FindPetPublisher(AbstractPublisher):
                 anCount += 1
                 try:
                     # If this animal is dead or has left the shelter via any method but adoption, remove the listing
-                    if an.DECEASEDDATE is not None or an.ACTIVEMOVEMENTTYPE in (2,3,4,5,6,7): continue
+                    if an.DECEASEDDATE is not None or an.ACTIVEMOVEMENTTYPE in (3,4,5,6,7): continue
 
                     # If we already deactivated this report, don't do anything
                     laststatus = self.dbo.query_string("SELECT Extra FROM animalpublished WHERE AnimalID=? AND PublishedTo='findpet'", [an.ID])
