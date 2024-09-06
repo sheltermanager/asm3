@@ -1,6 +1,7 @@
 49
 ================
 
+06/09/24 FindPet: Register a report before transfer if no report_id exists #1500
 04/09/24 FindPet: Add config screen #1500
 04/09/24 FindPet: Add support for deactivating reports for non-adoptions/death #1500
 04/09/24 Bad ID for microchipdate2

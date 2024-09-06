@@ -26,7 +26,7 @@ $(function() {
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
                 '<li class="localeus hasbuddyid"><a href="#tab-buddyid">BuddyID Microchips</a></li>',
-                '<li class="localeus hasfindpet"><a href="#tab-findpet">FindPet Microchips</a></li>',
+                '<li class="localeus hasfindpet"><a href="#tab-findpet">FindPet.com Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">Found/24Pet Microchips</a></li>',
                 '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
@@ -890,7 +890,7 @@ $(function() {
                 '<div id="tab-findpet">',
                 html.info('Find out more at ' + 
                     '<a target="_blank" href="https://findpet.com/">https://findpet.com/</a>'),
-                '<p><input id="enabledbd" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledbd">' + _("Enabled") + '</label></p>',
+                '<p><input id="enabledfip" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledbd">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
                 '<td><label for="fporgid">FindPet Organization ID</label></td>',

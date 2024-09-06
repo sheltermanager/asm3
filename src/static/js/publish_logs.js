@@ -11,6 +11,7 @@ $(function() {
             "akcreunite":       "AKC Reunite",
             "anibaseuk":        "Anibase UK",
             "buddyid":          "Buddy ID",
+            "findpet":          "FindPet.com",
             "foundanimals":     "Found/24Pet",
             "homeagain":        "HomeAgain",
             "maddiesfund":      "Maddies Pet Assistant",

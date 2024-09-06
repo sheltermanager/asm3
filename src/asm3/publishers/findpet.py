@@ -33,8 +33,8 @@ class FindPetPublisher(AbstractPublisher):
         lat = 0
         lon = 0
         if len(latlon) > 1: 
-            lat = asm3.utils.cint(latlon[0])
-            lon = asm3.utils.cint(latlon[1])
+            lat = asm3.utils.cfloat(latlon[0])
+            lon = asm3.utils.cfloat(latlon[1])
         return [ lon, lat ]
     
     def fpE164(self, pn):
@@ -58,12 +58,21 @@ class FindPetPublisher(AbstractPublisher):
             self.cleanup()
             return
         
-        # Go through our list of shelter animals first, send any shelter animals
-        # that have a microchip number, but don't already have a FindPet report_id
+        # Get the list of shelter animals
         shanimals = asm3.animal.get_shelter_animals(self.dbo)
         shanimals = calc_microchip_data_addresses(self.dbo, shanimals) # We do this so that we have the shelter address for reports
 
-        for an in shanimals:
+        # Get the list of animals that need their chips transferring
+        tranimals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
+
+        # send any shelter animals or animals that need their chip transferring that
+        # that have a microchip number, but don't already have a FindPet report_id
+        self.log("Processing animal reports ...")
+        anCount = 0
+        for an in shanimals + tranimals:
+
+            anCount += 1
+            self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(shanimals + tranimals)))
 
             findpet_report_id = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_FINDPET)
             if findpet_report_id != "": 
@@ -82,10 +91,17 @@ class FindPetPublisher(AbstractPublisher):
             try:
                 jsondata = asm3.utils.json(self.processReport(an, orgid))
                 url = f"{FINDPET_BASE_URL}/api/report"
-                self.log(f"Reporting {an.SHELTERCODE} {an.ANIMALNAME} to FindPet as \"in_shelter\"")
+                self.log(f"Reporting {an.SHELTERCODE} {an.ANIMALNAME} to FindPet.com as \"in_shelter\"")
                 self.log("Sending POST to %s to create listing: %s" % (url, jsondata))
 
                 r = asm3.utils.post_json(url, jsondata)
+                j = {}
+                try:
+                    j = asm3.utils.json_parse(r["response"])
+                except Exception as jerr:
+                    self.logError("Could not parse JSON response '%s', HTTP %s, headers: %s" % (r["response"], r["status"], r["headers"]))
+                    continue
+
                 self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
 
                 # store the report_id
@@ -94,8 +110,6 @@ class FindPetPublisher(AbstractPublisher):
             except Exception as err:
                 self.logError("Failed sending /report for animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
-        # Now, we can go through the list of microchips that need to be registered
-        # and transfer any that have a findpet report_id
         animals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
@@ -104,6 +118,8 @@ class FindPetPublisher(AbstractPublisher):
         processed_animals = []
         failed_animals = []
 
+        # Now, we can go through the list of microchips that need to be registered
+        self.log("Processing microchip registrations ...")
         anCount = 0
         for an in animals:
             try:
@@ -118,8 +134,12 @@ class FindPetPublisher(AbstractPublisher):
                     self.cleanup()
                     return
 
-                # We need a FindPet report_id
+                # This shouldn't happen, since we register transfer animals for a report_id above
+                # if they don't have one. But if that process failed, we can't do anything here
                 findpet_report_id = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_FINDPET)
+                if findpet_report_id == "":
+                    self.logError(f"No findpet_report_id for {an.SHELTERCODE}, cannot send pet-transfer")
+                    continue
 
                 if not self.validate(an): continue
                 data = self.processTransfer(an)
@@ -129,7 +149,12 @@ class FindPetPublisher(AbstractPublisher):
                 url = f"{FINDPET_BASE_URL}/api/pet-transfer"
                 self.log("Sending POST to %s to create transfer: %s" % (url, jsondata))
                 r = asm3.utils.post_json(url, jsondata)
-                j = asm3.utils.json_parse(r["response"])
+                j = {}
+                try:
+                    j = asm3.utils.json_parse(r["response"])
+                except Exception as jerr:
+                    self.logError("Could not parse JSON response '%s', HTTP %s, headers: %s" % (r["response"], r["status"], r["headers"]))
+                    continue
 
                 # Success is returned as { "result": { "status": "Passed", details: {transfer_id} } }
                 # Error codes are returned as { "reason": "message", "details": {transfer_id} }
@@ -217,7 +242,7 @@ class FindPetPublisher(AbstractPublisher):
             "colors": [ an.BASECOLOURNAME ],
             "address": {
                 "full": f"{an.CURRENTOWNERADDRESS}, {an.CURRENTOWNERTOWN}, {an.CURRENTOWNERCOUNTY}, US",
-                "addressline_1": an.CURRENTOWNERNAME,
+                "addressline_1": an.CURRENTOWNERADDRESS,
                 "addressline_2": "",
                 "city": an.CURRENTOWNERTOWN,
                 "county": "",
@@ -254,7 +279,7 @@ class FindPetPublisher(AbstractPublisher):
             "token": FINDPET_API_KEY,
             "address": {   
                 "full": f"{an.CURRENTOWNERADDRESS}, {an.CURRENTOWNERTOWN}, {an.CURRENTOWNERCOUNTY}, US",
-                "addressline_1": an.CURRENTOWNERNAME,
+                "addressline_1": an.CURRENTOWNERADDRESS,
                 "addressline_2": "",
                 "city": an.CURRENTOWNERTOWN,
                 "county": "",
