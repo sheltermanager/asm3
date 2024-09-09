@@ -227,6 +227,10 @@ def append_to_results(dbo: Database, rows: Results, linktype: str = "animal") ->
                 r[tn] = af.VALUE
     return rows
 
+def sanitise_lookup_values(s):
+    """ Remove unwanted chars from lookup values """
+    return s.replace(",", " ").replace("\n", " ")
+
 def insert_field_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates an additional field
@@ -236,7 +240,7 @@ def insert_field_from_form(dbo: Database, username: str, post: PostedData) -> in
         "FieldName":        post["name"],
         "FieldLabel":       post["label"],
         "ToolTip":          post["tooltip"],
-        "LookupValues":     post["lookupvalues"],
+        "LookupValues":     sanitise_lookup_values(post["lookupvalues"]),
         "DefaultValue":     post["defaultvalue"],
         "Mandatory":        post.boolean("mandatory"),
         "NewRecord":        post.boolean("newrecord"),
@@ -258,7 +262,7 @@ def update_field_from_form(dbo: Database, username: str, post: PostedData) -> No
         "FieldName":        post["name"],
         "FieldLabel":       post["label"],
         "ToolTip":          post["tooltip"],
-        "LookupValues":     post["lookupvalues"],
+        "LookupValues":     sanitise_lookup_values(post["lookupvalues"]),
         "DefaultValue":     post["defaultvalue"],
         "Mandatory":        post.boolean("mandatory"),
         "NewRecord":        post.boolean("newrecord"),
