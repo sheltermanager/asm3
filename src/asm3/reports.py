@@ -1472,9 +1472,9 @@ class Report:
                 if dv is not None:
                     year = dv.year
                     month = dv.month
-                elif iv > 1990:
+                elif iv > 1980 and iv < 2100:
                     year = iv
-                elif iv <= 12:
+                elif iv > 0 and iv <= 12:
                     month = iv
         if self.sql.find("animalfigures") != -1 and year > 0 and month > 0:
             asm3.animal.update_animal_figures(self.dbo, month, year)

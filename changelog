@@ -1,6 +1,7 @@
 49
 ================
 
+09/09/24 Prevent errors caused by figures reports with invalid years/months
 09/09/24 Querybuilder: Add "Date of birth after" criteria for animals
 09/09/24 Additional fields, strip breaking chars from lookup values
 06/09/24 FindPet: Register a report before transfer if no report_id exists #1500
