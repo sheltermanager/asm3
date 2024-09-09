@@ -2086,13 +2086,13 @@ def get_animals_on_shelter_namecode(dbo: Database, remove_units: bool = False, r
     """
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(andprefix=True)
-    rows = dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, ActiveMovementType, DisplayLocation, " \
+    rows = dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, s.SpeciesName, ActiveMovementType, DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
-        "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
-        "WHERE Archived = 0 " \
-        f"{locationfilter}" \
+        "LEFT OUTER JOIN species s ON s.ID = animal.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
+        f"WHERE Archived = 0 {locationfilter} " \
         "ORDER BY AnimalName, ShelterCode")
     for r in rows:
         if r.DISPLAYLOCATION is None: r.DISPLAYLOCATION = ""
