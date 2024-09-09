@@ -73,6 +73,7 @@ $(function() {
                     "DateBroughtIn>='$ASK DATE {0}$' AND DateBroughtIn<='$ASK DATE {1}$'"
                     .replace("{0}", _("Entered the shelter between"))
                     .replace("{1}", _("and")) ],
+                [ _("Date of birth after"), "dobafter", "DateOfBirth > '$ASK DATE Date of birth after$'"],
                 [ _("Date of birth between two dates"), "dobtwodates", 
                     "DateOfBirth>='$ASK DATE {0}$' AND DateOfBirth<='$ASK DATE {1}$'"
                     .replace("{0}", _("Date of birth between"))
