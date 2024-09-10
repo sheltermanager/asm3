@@ -32,7 +32,6 @@ import uuid
 import zipfile
 
 import _thread as thread
-import urllib.request as urllib2
 import urllib.parse
 from io import BytesIO, StringIO
 from html.parser import HTMLParser
@@ -1366,21 +1365,27 @@ def get_url_bytes(url: str, headers: Dict = {}, cookies: Dict = {}, timeout: flo
         b.write(chunk) # default from requests is 128 byte chunks
     return { "cookies": r.cookies, "headers": r.headers, "response": b.getvalue(), "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
-def post_data(url: str, data: bytes, contenttype: str = "", httpmethod: str = "", headers: Dict = {}) -> Dict:
+def post_data(url: str, data: bytes, contenttype: str = "", httpmethod: str = "POST", headers: Dict = {}, cookies: Dict = {}, exceptions: bool = True) -> Dict:
     """
     Posts data (str or bytes) to a URL as the body
-    httpmethod: POST by default.
+    httpmethod: POST by default, but also supports PUT and PATCH
     Returns dict of requestheaders (dict), requestbody (bytes), headers (str), response (str) and status (int)
     """
     try:
         if contenttype != "": headers["Content-Type"] = contenttype
         if isinstance(data, str): data = str2bytes(data)
-        req = urllib2.Request(url, data, headers)
-        if httpmethod != "": req.get_method = lambda: httpmethod
-        resp = urllib2.urlopen(req)
-        return { "requestheaders": headers, "requestbody": data, "headers": resp.info().as_string(), "response": bytes2str(resp.read()), "status": resp.getcode() }
-    except urllib2.HTTPError as e:
-        return { "requestheaders": headers, "requestbody": data, "headers": e.info().as_string(), "response": bytes2str(e.read()), "status": e.getcode() }
+        if httpmethod == "POST":
+            r = requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
+        elif httpmethod == "PATCH":
+            r = requests.patch(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
+        elif httpmethod == "PUT":
+            r = requests.put(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
+        else:
+            raise NotImplementedError(f"Unsupported HTTP method {httpmethod}")
+    except Exception as err:
+        if exceptions: raise err
+        return { "status": 599, "response": str(err), "cookies": {}, "headers": {}, "requestheaders": {}, "requestbody": "" }
+    return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def post_form(url: str, fields: Dict, headers: Dict = {}, cookies: Dict = {}) -> Dict:
     """

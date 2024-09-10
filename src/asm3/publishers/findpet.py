@@ -99,13 +99,16 @@ class FindPetPublisher(AbstractPublisher):
                 try:
                     j = asm3.utils.json_parse(r["response"])
                 except Exception as jerr:
-                    self.logError("Could not parse JSON response '%s', HTTP %s, headers: %s" % (r["response"], r["status"], r["headers"]))
+                    self.logError("Could not parse JSON response '%s' (%s), HTTP %s, headers: %s" % (r["response"], jerr, r["status"], r["headers"]))
                     continue
 
                 self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
 
+                if r["status"] > 400: 
+                    self.logError("Validation or other errors found, skipping")
+                    continue
+
                 # store the report_id
-                j = asm3.utils.json_parse(r["response"])
                 asm3.animal.set_extra_id(self.dbo, "system", an, IDTYPE_FINDPET, j["result"])
             except Exception as err:
                 self.logError("Failed sending /report for animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -153,7 +156,7 @@ class FindPetPublisher(AbstractPublisher):
                 try:
                     j = asm3.utils.json_parse(r["response"])
                 except Exception as jerr:
-                    self.logError("Could not parse JSON response '%s', HTTP %s, headers: %s" % (r["response"], r["status"], r["headers"]))
+                    self.logError("Could not parse JSON response '%s' (%s), HTTP %s, headers: %s" % (r["response"], jerr, r["status"], r["headers"]))
                     continue
 
                 # Success is returned as { "result": { "status": "Passed", details: {transfer_id} } }
