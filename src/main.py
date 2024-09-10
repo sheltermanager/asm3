@@ -3402,9 +3402,11 @@ class document_media_edit(ASMEndpoint):
 
     def post_save(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
-        post = o.post
-        asm3.media.update_file_content(o.dbo, o.user, post.integer("mediaid"), post["document"])
-        raise self.redirect(post["redirecturl"])
+        try:
+            asm3.media.update_file_content(o.dbo, o.user, o.post.integer("mediaid"), o.post["document"])
+        except Exception as err:
+            raise asm3.utils.ASMError(str(err)) # see a lot of errors where mediaid is 0 for some reason
+        raise self.redirect(o.post["redirecturl"])
 
     def post_pdf(self, o):
         self.check(asm3.users.VIEW_MEDIA)

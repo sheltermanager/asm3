@@ -1,6 +1,7 @@
 49
 ================
 
+10/09/24 Squash the frequent mediaid=0 errors from document_media_edit.save
 10/09/24 Rewrite post_data to use requests module instead #1500
 09/09/24 Fix: Using multi-site broke mobile photo uploader
 09/09/24 Prevent errors caused by figures reports with invalid years/months
