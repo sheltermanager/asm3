@@ -1235,7 +1235,7 @@ $(function() {
             $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                let formdata = "mode=save&" + $(".cfg").toPOST();
+                let formdata = "mode=save&" + $(".cfg").toPOST(true);
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
                 header.show_loading(_("Saving..."));

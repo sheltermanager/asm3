@@ -1,6 +1,7 @@
 49
 ================
 
+11/09/24 Fix saving blank values in publish_options
 11/09/24 Fix bad performance clicking adoptable search from home page overview
 11/09/24 Fix bad performance with multiple adoptable animal form fields
 10/09/24 Squash the frequent mediaid=0 errors from document_media_edit.save
