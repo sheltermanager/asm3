@@ -2,7 +2,7 @@ ADCH Annual Survey
 ###
 Figures
 ###
-33600/Any rev01
+33600/Any rev02
 ###
 Figures needed to complete the annual ADCH member questionnaire.
 ###
@@ -99,9 +99,9 @@ SELECT
  AND NonShelterAnimal = 0 AND Neutered = 1 AND NeuteredDate >= DateBroughtIn) AS DogsNeuteredInCare,
 
 (SELECT COUNT(*) FROM animal 
- WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ WHERE NeuteredDate >= '$@year$-01-01' AND NeuteredDate <= '$@year$-12-31'
  AND SpeciesID = 1
- AND NonShelterAnimal = 1 AND Neutered = 1 AND NeuteredDate >= DateBroughtIn) AS DogsNeuteredOutreach,
+ AND NonShelterAnimal = 1 AND Neutered = 1) AS DogsNeuteredOutreach,
  
 (SELECT COUNT(*) FROM animal 
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
@@ -109,10 +109,15 @@ SELECT
  AND NonShelterAnimal = 0 AND Neutered = 1 AND NeuteredDate >= DateBroughtIn) AS CatsNeuteredInCare,
 
 (SELECT COUNT(*) FROM animal 
- WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ WHERE NeuteredDate >= '$@year$-01-01' AND NeuteredDate <= '$@year$-12-31'
  AND SpeciesID = 2
- AND NonShelterAnimal = 1 AND Neutered = 1 AND NeuteredDate >= DateBroughtIn) AS CatsNeuteredOutreach,
+ AND NonShelterAnimal = 1 AND Neutered = 1) AS CatsNeuteredOutreach,
 
+(SELECT COUNT(*) FROM animal 
+ WHERE NeuteredDate >= '$@year$-01-01' AND NeuteredDate <= '$@year$-12-31'
+ AND SpeciesID = 2
+ AND NonShelterAnimal = 0 AND Neutered = 1 AND NeuteredDate >= DateBroughtIn 
+ AND entrytypeID = 4) AS CatsNeuteredTNR,
 
 (SELECT COUNT(*) FROM animal 
  WHERE ActiveMovementDate >= '$@year$-01-01' AND ActiveMovementDate <= '$@year$-12-31'
@@ -255,16 +260,19 @@ $$BODY
 <th></th>
 <th>In our care</th>
 <th>As part of outreach programme</th>
+<th>As part of TNR scheme</th>  
 </tr>
 <tr>
 <td>How many dogs were neutered in $YEAR ?</td>
 <td>$DOGSNEUTEREDINCARE</td>
 <td>$DOGSNEUTEREDOUTREACH</td>
+<td>N/A</td>
 </tr>
 <tr>
 <td>How many cats were neutered in $YEAR ?</td>
 <td>$CATSNEUTEREDINCARE</td>
 <td>$CATSNEUTEREDOUTREACH</td>
+<td>$CATSNEUTEREDTNR</td>  
 </tr>
 
 <tr>
