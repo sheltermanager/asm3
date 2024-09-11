@@ -1078,7 +1078,7 @@ def get_animals_adoptable(dbo: Database) -> Results:
     Returns all adoptable animals
     """
     query = get_animal_brief_query(dbo)
-    sql = f"{query} WHERE a.Adoptable=1 ORDER BY AnimalName"
+    sql = f"{query} WHERE a.Adoptable=1 AND a.Archived=0 ORDER BY AnimalName"
     return dbo.query(sql)
 
 def get_animals_never_vacc(dbo: Database, lf: LocationFilter = None) -> Results:
@@ -2117,7 +2117,7 @@ def get_animals_adoptable_namecode(dbo: Database) -> Results:
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
         "LEFT OUTER JOIN species s ON s.ID = animal.SpeciesID " \
-        "WHERE Adoptable = 1 " \
+        "WHERE Adoptable=1 AND Archived=0 " \
         "ORDER BY AnimalName, ShelterCode")
     return rows
 
