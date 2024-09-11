@@ -1,6 +1,7 @@
 49
 ================
 
+11/09/24 Fix bad performance clicking adoptable search from home page overview
 11/09/24 Fix bad performance with multiple adoptable animal form fields
 10/09/24 Squash the frequent mediaid=0 errors from document_media_edit.save
 10/09/24 Rewrite post_data to use requests module instead #1500

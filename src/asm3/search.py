@@ -315,7 +315,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     elif q == "forpublish":
         explain = _("All animals matching current publishing options.", l)
         if viewanimal:
-            ar(asm3.publishers.base.get_animal_data(dbo), "ANIMAL", animalsort)
+            ar(asm3.animal.get_animals_adoptable(dbo), "ANIMAL", animalsort)
 
     elif q == "people":
         ar(asm3.person.get_person_find_simple(dbo, "", classfilter="all", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)

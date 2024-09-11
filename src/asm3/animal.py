@@ -1073,6 +1073,14 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     rows = calc_ages(dbo, rows)
     return rows
 
+def get_animals_adoptable(dbo: Database) -> Results:
+    """
+    Returns all adoptable animals
+    """
+    query = get_animal_brief_query(dbo)
+    sql = f"{query} WHERE a.Adoptable=1 ORDER BY AnimalName"
+    return dbo.query(sql)
+
 def get_animals_never_vacc(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have never received a vacc of any type

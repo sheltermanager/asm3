@@ -43,6 +43,7 @@ class TestAnimal(unittest.TestCase):
         self.assertNotEqual(0, len(asm3.animal.get_animal_find_advanced(base.get_dbo(), { "animalname": "Testio" })))
 
     def test_get_animals_flag(self):
+        asm3.animal.get_animals_adoptable(base.get_dbo())
         asm3.animal.get_animals_long_term(base.get_dbo())
         asm3.animal.get_animals_never_vacc(base.get_dbo())
         asm3.animal.get_animals_no_rabies(base.get_dbo())
