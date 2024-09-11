@@ -181,6 +181,8 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
     h.append('<table class="asm-onlineform-table">')
+    shelteranimals = None
+    adoptableanimals = None
     for f in formfields:
         fname = "%s_%s" % (f.FIELDNAME, f.ID)
         cname = asm3.html.escape(fname)
@@ -260,19 +262,20 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
-            rs = asm3.animal.get_animals_on_shelter_namecode(dbo)
-            rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
-            for a in rs:
+            if shelteranimals is None:
+                shelteranimals = asm3.animal.get_animals_on_shelter_namecode(dbo)
+                shelteranimals = sorted(shelteranimals, key=lambda k: k["ANIMALNAME"])
+            for a in shelteranimals:
                 if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
                 h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_ADOPTABLEANIMAL:
             h.append('<select class="asm-onlineform-adoptableanimal" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option data-id="" value=""></option>')
-            pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(dbo))
-            rs = asm3.publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
-            rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
-            for a in rs:
+            if adoptableanimals is None:
+                adoptableanimals = asm3.animal.get_animals_adoptable_namecode(dbo)
+                adoptableanimals = sorted(adoptableanimals, key=lambda k: k["ANIMALNAME"])
+            for a in adoptableanimals:
                 if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
                 h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
             h.append('</select>')

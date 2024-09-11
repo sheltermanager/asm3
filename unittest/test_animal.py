@@ -92,6 +92,7 @@ class TestAnimal(unittest.TestCase):
         self.assertNotEqual(0, len(asm3.animal.get_animals_namecode(base.get_dbo())))
         self.assertNotEqual(0, len(asm3.animal.get_animals_on_shelter_namecode(base.get_dbo())))
         self.assertNotEqual(0, len(asm3.animal.get_animals_on_shelter_foster_namecode(base.get_dbo())))
+        asm3.animal.get_animals_adoptable_namecode(base.get_dbo())
 
     def test_get_breedname(self):
         self.assertNotEqual(asm3.animal.get_breedname(base.get_dbo(), 1, 2).find("/"), -1)
