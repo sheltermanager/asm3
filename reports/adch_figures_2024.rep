@@ -2,7 +2,7 @@ ADCH Annual Survey (2024)
 ###
 Figures
 ###
-34801/Any rev01
+34801/Any rev02
 ###
 Figures needed to complete the annual ADCH member questionnaire.
 ###
@@ -18,7 +18,7 @@ SELECT
  INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
  AND SpeciesID = 1 
- AND NonShelterAnimal = 0 AND entrytypeID = 2) AS DogsIntakeStrayPublic,
+ AND NonShelterAnimal = 0 AND EntryTypeID = 2) AS DogsIntakeStrayPublic,
 
 (SELECT COUNT(*) FROM animal
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
@@ -36,7 +36,9 @@ SELECT
  AND NonShelterAnimal = 0 AND Archived = 0) AS DogsIntakeTotal,
  
 (SELECT COUNT(*) FROM animal WHERE
-NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@year$-12-31' AND (ReturnDate Is Null OR ReturnDate > '$@year$-12-31') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@year$-12-31' 
+AND (ReturnDate Is Null OR ReturnDate > '$@year$-12-31') 
+AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
 AND DateBroughtIn <= '$@year$-12-31 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
@@ -63,7 +65,9 @@ AND (DeceasedDate Is Null OR DeceasedDate > '$@year$-12-31')) AS DogsAtDate,
  AND NonShelterAnimal = 0 AND Archived = 0) AS CatsIntakeTotal,
  
 (SELECT COUNT(*) FROM animal WHERE
-NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@year$-12-31' AND (ReturnDate Is Null OR ReturnDate > '$@year$-12-31') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@year$-12-31' 
+AND (ReturnDate Is Null OR ReturnDate > '$@year$-12-31') 
+AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
 AND DateBroughtIn <= '$@year$-12-31 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
@@ -222,57 +226,59 @@ HEADER$$
 $$BODY
 <h2>Dogs</h2>
 <p></p>
-<p>10a. On 31 December $YEAR how many dogs did you have in your care?: $DOGSATDATE</p>
+<p>10a. On 31 December $YEAR how many dogs did you have in your care?: <b>$DOGSATDATE</b></p>
 <p></p>
-<p>10c. On 31 December $YEAR what was your waiting list for dog intake?: $WAITINGLISTDOGS</p>
+<p>10c. On 31 December $YEAR what was your waiting list for dog intake?: <b>$WAITINGLISTDOGS</b></p>
+<p></p> 
+<p>11b. How many dogs came into your care in $YEAR as strays brought in by the public?: <b>$DOGSINTAKESTRAYPUBLIC</b></p>
 <p></p>
-<p>11c. How many dogs came into your care in $YEAR relinquished by owners?: $DOGSINTAKESURRENDER</p>
+<p>11c. How many dogs came into your care in $YEAR relinquished by owners?: <b>$DOGSINTAKESURRENDER</b></p>
 <p></p>
-<p>11d. How many dogs came into your care in $YEAR from other sources?: $DOGSINTAKEOTHER</p>
+<p>11d. How many dogs came into your care in $YEAR from other sources?: <b>$DOGSINTAKEOTHER</b></p>
 <p></p>
-<p>11c. How many dogs entering your care were microchipped on arrival?: $DOGSALREADYCHIPPED</p>
+<p>12a. How many dogs in your care have you neutered in $YEAR: <b>$DOGSNEUTEREDINCARE</b></p>
 <p></p>
-<p>12a. How many dogs in your care have you neutered in $YEAR: $DOGSNEUTEREDINCARE</p>
+<p>12b. How many dogs have you neutered in $YEAR as part of a community outreach programme?: <b>$DOGSNEUTEREDOUTREACH</b><p/>
 <p></p>
-<p>13. How many dogs did you reunite in $YEAR ?: $DOGSREUNITED</p>
+<p>13. How many dogs did you reunite in $YEAR ?: <b>$DOGSREUNITED</b></p>
 <p></p>
-<p>14. How many dogs did you rehome in $YEAR ?: $DOGSADOPTED</p>
+<p>14. How many dogs did you rehome in $YEAR ?: <b>$DOGSADOPTED</b></p>
 <p></p>
-<p>15a. How many banned breeds were put to sleep in $YEAR ?: $DOGSPTSBANNED</p>
+<p>15a. How many banned breeds were put to sleep in $YEAR ?: <b>$DOGSPTSBANNED</b></p>
 <p></p>
-<p>15b. How many dogs were put to sleep for medical reasons in $YEAR ?: $DOGSPTSMEDICAL</p>
+<p>15b. How many dogs were put to sleep for medical reasons in $YEAR ?: <b>$DOGSPTSMEDICAL</b></p>
 <p></p>
-<p>15c. How many dogs were put to sleep for behavioural reasons in $YEAR ?: $DOGSPTSBEHAVIOUR</p>
+<p>15c. How many dogs were put to sleep for behavioural reasons in $YEAR ?: <b>$DOGSPTSBEHAVIOUR</b></p>
 <p></p>
-<p>15d. How many dogs were put to sleep for other reasons in $YEAR ?: $DOGSPTSOTHER</p>
+<p>15d. How many dogs were put to sleep for other reasons in $YEAR ?: <b>$DOGSPTSOTHER</b></p>
 <p></p>
 <h2>Cats</h2>
 <p></p>
-<p>16a. On 31 December $YEAR how many cats did you have in your care?: $CATSATDATE</p>
+<p>16a. On 31 December $YEAR how many cats did you have in your care?: <b>$CATSATDATE</b></p>
 <p></p>
-<p>16c. On 31 December $YEAR what was your waiting list for cat intake?: $WAITINGLISTCATS</p>
+<p>16c. On 31 December $YEAR what was your waiting list for cat intake?: <b>$WAITINGLISTCATS</b></p>
 <p></p>
-<p>17a. How many cats came into your care in $YEAR as strays?: $CATSINTAKESTRAYPUBLIC</p>
+<p>17a. How many cats came into your care in $YEAR as strays?: <b>$CATSINTAKESTRAYPUBLIC</b></p>
 <p></p>
-<p>17b. How many cats came into your care in $YEAR relinquished by owners?: $CATSINTAKESURRENDER</p>
+<p>17b. How many cats came into your care in $YEAR relinquished by owners?: <b>$CATSINTAKESURRENDER</b></p>
 <p></p>
-<p>17c. How many cats came into your care in $YEAR from other sources?: $CATSINTAKEOTHER</p>
+<p>17c. How many cats came into your care in $YEAR from other sources?: <b>$CATSINTAKEOTHER</b></p>
 <p></p>
-<p>17d . How many cats entering our care were microchipped on arrival?: $CATSALREADYCHIPPED</p>
+<p>18a. How many cats in your care have you neutered in $YEAR ?: <b>$CATSNEUTEREDINCARE</b></p>
 <p></p>
-<p>18a. How many cats in your care have you neutered in $YEAR ?:$CATSNEUTEREDINCARE</p>
+<p>18b. How many cats have you neutered in $YEAR as part of a community outreach programme?: <b>$CATSNEUTEREDOUTREACH</b><p/> 
 <p></p>
-<p>18c. How many cats have you neutered as part of a TNR scheme in $YEAR ?: $CATSNEUTEREDTNR </p>
+<p>18c. How many cats have you neutered as part of a TNR scheme in $YEAR ?: <b>$CATSNEUTEREDTNR</b></p>
 <p></p>
-<p>19. How many cats did you reunite in $YEAR ?: $CATSREUNITED</p>
+<p>19. How many cats did you reunite in $YEAR ?: <b>$CATSREUNITED</b></p>
 <p></p>
-<p>20. How many cats did you rehome in $YEAR ?: $CATSADOPTED</p>
+<p>20. How many cats did you rehome in $YEAR ?: <b>$CATSADOPTED</b></p>
 <p></p>
-<p>21a. How many cats were put to sleep for medical reasons in $YEAR ?: $CATSPTSMEDICAL</p>
+<p>21a. How many cats were put to sleep for medical reasons in $YEAR ?: <b>$CATSPTSMEDICAL</b></p>
 <p></p>
-<p>21b. How many cats were put to sleep for behavioural reasons in $YEAR ?: $CATSPTSBEHAVIOUR</p>
+<p>21b. How many cats were put to sleep for behavioural reasons in $YEAR ?: <b>$CATSPTSBEHAVIOUR</b></p>
 <p></p>
-<p>21c. How many cats were put to sleep for other reasons in $YEAR ?: $CATSPTSOTHER</p>
+<p>21c. How many cats were put to sleep for other reasons in $YEAR ?: <b>$CATSPTSOTHER</b></p>
 BODY$$
 
 $$FOOTER
