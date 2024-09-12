@@ -1,6 +1,7 @@
 49
 ================
 
+12/09/24 Fix animal type not being set to default by online forms with no type field
 11/09/24 Fix saving blank values in publish_options
 11/09/24 Fix bad performance clicking adoptable search from home page overview
 11/09/24 Fix bad performance with multiple adoptable animal form fields

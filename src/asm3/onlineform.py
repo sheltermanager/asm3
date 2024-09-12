@@ -1394,11 +1394,11 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
     if "species" not in d: d["species"] = str(guess_species(dbo, "nomatchesusedefault"))
     if "breed1" not in d: d["breed1"] = str(guess_breed(dbo, "nomatchesusedefault"))
+    if "animaltype" not in d: d["animaltype"] = str(guess_animaltype(dbo, "nomatchesusedefault"))
     if "entryreason" not in d: d["entryreason"] = str(guess_entryreason(dbo, "nomatchesusedefault"))
     if "entrytype" not in d: d["entrytype"] = str(guess_entrytype(dbo, "nomatchesusedefault"))
     if "basecolour" not in d: d["basecolour"] = str(guess_colour(dbo, "nomatchesusedefault"))
     if "size" not in d: d["size"] = str(guess_size(dbo, "nomatchesusedefault"))
-    if "type" not in d: d["type"] = str(guess_animaltype(dbo, "nomatchesusedefault"))
     # Set the crossbreed based on the incoming breed values
     d["crossbreed"] = "0"
     if breed1 != breed2 and breed2.strip() != "": d["crossbreed"] = "1"
