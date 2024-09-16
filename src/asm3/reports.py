@@ -241,6 +241,8 @@ def get_criteria_params(dbo: Database, customreportid: int, post: PostedData) ->
             p.append( ( name, asm3.i18n._("Person", l), post[name], asm3.person.get_person_name(dbo, post[name])) )
         elif rtype == "PERSONFLAG":
             p.append( ( name, asm3.i18n._("Flag", l), post[name], post[name] ) )
+        elif rtype == "SITE":
+            p.append( ( name, asm3.i18n._("Site", l), post[name], asm3.lookups.get_site_name(dbo, post.integer(name) )) )
         elif rtype == "SPECIES":
             p.append( ( name, asm3.i18n._("Species", l), post[name], asm3.lookups.get_species_name(dbo, post.integer(name) )) )
         elif rtype == "TYPE":

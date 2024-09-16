@@ -216,6 +216,8 @@ The types are outlined below:
 
 * $ASK PERSONFLAG$ - requests a person flag.
 
+* $ASK SITE$ - request a site.
+
 * $ASK SPECIES$ - requests a species from the user. A popup is displayed
   containing a dropdown of all species on the system.
 
