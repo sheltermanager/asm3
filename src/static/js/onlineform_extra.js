@@ -422,9 +422,11 @@ $(document).ready(function() {
         // so that the name or the sheltercode can be passed
         $(".asm-onlineform-adoptableanimal, .asm-onlineform-shelteranimal").each(function() {
             if ($(this).attr("name").indexOf(k) == 0) {
+                var dd = $(this);
                 $(this).find("option").each(function() {
                     if ($(this).prop("value").indexOf(v) >= 0) {
                         $(this).prop("selected", true);
+                        update_thumbnail(dd);
                         return false;
                     }
                 });

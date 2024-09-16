@@ -1,6 +1,7 @@
 49
 ================
 
+16/09/24 Online form: Set adoptable animal from querystring should set thumbnail
 12/09/24 Fix animal type not being set to default by online forms with no type field
 11/09/24 Fix saving blank values in publish_options
 11/09/24 Fix bad performance clicking adoptable search from home page overview
