@@ -833,7 +833,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             return
 
     # Look for junk in firstname. A lot of bot submitted junk is just random upper and lower case letters. 
-    # If we have 2 or more upper and lower case letters in the firstname and no spaces, it's very likely bot junk.
+    # If we have 3 or more upper and lower case letters in the firstname and no spaces, it's very likely bot junk.
     # We have javascript that title cases name fields, so a mix of cases, or all one case also indicates the form has been filled out by
     # an automated process instead of a browser.
     # This test does nothing if there's no firstname field in the form.
@@ -850,7 +850,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                         sp += 1
                     else:
                         lc += 1
-                if lc >= 2 and uc >= 2 and sp == 0:
+                if lc >= 3 and uc >= 3 and sp == 0:
                     asm3.al.error("blocked spambot (mixed caps, firstname=%s, uc=%s, lc=%s, sp=%s): %s" % (v, uc, lc, sp, post.data), "insert_onlineformincoming_from_form", dbo)
                     return
                 if v.find("@") != -1 and v.find(".") != -1:
