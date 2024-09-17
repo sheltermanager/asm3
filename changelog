@@ -1,6 +1,8 @@
 49
 ================
 
+16/09/24 Publish options: exclude under should only allow integer weeks
+16/09/24 ASK/VAR SITE missing from manual, and did not output as criteria
 16/09/24 Online form: Set adoptable animal from querystring should set thumbnail
 12/09/24 Fix animal type not being set to default by online forms with no type field
 11/09/24 Fix saving blank values in publish_options
