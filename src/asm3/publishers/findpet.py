@@ -25,7 +25,7 @@ class FindPetPublisher(AbstractPublisher):
     def fpDate(self, d):
         """ Returns a date in the format FindPet want """
         if d is None: return ""
-        return asm3.i18n.format_date(d)
+        return asm3.i18n.format_date(d, "%Y-%m-%d %H:%M:%S")
 
     def fpLonLat(self, an):
         """ Returns a FindPet [ Lon, Lat ] value """
@@ -38,9 +38,8 @@ class FindPetPublisher(AbstractPublisher):
         return [ lon, lat ]
     
     def fpE164(self, pn):
-        """ Makes sure a US phone number is formatted to E164 (000-0000) - this should possibly live in base.py """
-        # TODO:
-        return pn
+        """ Makes sure a US phone number is formatted to E164 +1XXXYYYZZZZ """
+        return "+1%s" % asm3.utils.atoi(pn)
 
     def run(self) -> None:
         
@@ -160,15 +159,23 @@ class FindPetPublisher(AbstractPublisher):
                     continue
 
                 # Success is returned as { "result": { "status": "Passed", details: {transfer_id} } }
-                # Error codes are returned as { "reason": "message", "details": {transfer_id} }
-                if "result" not in j:
+                # Validation/fail returned as { "result": { "status": "Failed", details: "error message" } }
+                # Error codes are supposed to be returned as { "reason": "message", "details": {transfer_id} }
+                if "result" in j and "status" in j["result"] and j["result"]["status"] == "Passed":
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    processed_animals.append(an)
+                elif "result" in j and "status" in j["result"] and j["result"]["status"] == "Failed":
+                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    an.FAILMESSAGE = j["result"]["details"]
+                    failed_animals.append(an)
+                elif "result" not in j and "reason" in j:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     an.FAILMESSAGE = j["reason"]
                     failed_animals.append(an)
                 else:
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                    processed_animals.append(an)
+                    self.logError("did not understand the response (no { \"result\": or { \"reason\": ")
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
