@@ -90,7 +90,7 @@ class FindPetPublisher(AbstractPublisher):
             try:
                 jsondata = asm3.utils.json(self.processReport(an, orgid))
                 url = f"{FINDPET_BASE_URL}/api/report"
-                self.log(f"Reporting {an.SHELTERCODE} {an.ANIMALNAME} to FindPet.com as \"in_shelter\"")
+                self.log(f"Reporting {an.SHELTERCODE} {an.ANIMALNAME} to FindPet.com as \"Adopt\"")
                 self.log("Sending POST to %s to create listing: %s" % (url, jsondata))
 
                 r = asm3.utils.post_json(url, jsondata)
@@ -113,9 +113,6 @@ class FindPetPublisher(AbstractPublisher):
                 self.logError("Failed sending /report for animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         animals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
-        if len(animals) == 0:
-            self.setLastError("No microchips found to register.")
-            return
 
         processed_animals = []
         failed_animals = []
@@ -161,7 +158,7 @@ class FindPetPublisher(AbstractPublisher):
                 # Success is returned as { "result": { "status": "Passed", details: {transfer_id} } }
                 # Validation/fail returned as { "result": { "status": "Failed", details: "error message" } }
                 # Error codes are supposed to be returned as { "reason": "message", "details": {transfer_id} }
-                if "result" in j and "status" in j["result"] and j["result"]["status"] == "Passed":
+                if "result" in j and "status" in j["result"] and j["result"]["status"] == "Registered":
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed_animals.append(an)
@@ -193,14 +190,17 @@ class FindPetPublisher(AbstractPublisher):
         # (or report deactivation as FindPet call it)
         if len(animalids_to_cancel) > 0:
 
+            self.log("Processing listing removals ...")
             animals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + "WHERE a.ID IN (%s)" % ",".join(animalids_to_cancel))
             
             anCount = 0
             for an in animals:
                 anCount += 1
                 try:
-                    # If this animal is dead or has left the shelter via any method but adoption, remove the listing
-                    if an.DECEASEDDATE is not None or an.ACTIVEMOVEMENTTYPE in (3,4,5,6,7): continue
+                    # We only remove the listing for dead animals, and those that left via 
+                    # any movement that wasn't an adoption. So if the animal is alive, or is adopted, do nothing.
+                    if an.DECEASEDDATE is None: continue
+                    if an.ACTIVEMOVEMENTTYPE == 1: continue
 
                     # If we already deactivated this report, don't do anything
                     laststatus = self.dbo.query_string("SELECT Extra FROM animalpublished WHERE AnimalID=? AND PublishedTo='findpet'", [an.ID])
@@ -213,13 +213,14 @@ class FindPetPublisher(AbstractPublisher):
                     if findpet_report_id == "": continue
 
                     # Send the Delete
+                    jsondata = asm3.utils.json({ "token": FINDPET_API_KEY, "report_id": findpet_report_id })
                     url = f"{FINDPET_BASE_URL}/api/deactivate_report"
                     self.log("Sending POST to %s to remove report: %s" % (url, jsondata))
                     r = asm3.utils.post_json(url, asm3.utils.json({ "token": FINDPET_API_KEY, "report_id": findpet_report_id }))
-                    j = asm3.utils.json_parse(r["response"])
                     if r["status"] != 200:
                         self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     else:
+                        j = asm3.utils.json_parse(r["response"])
                         self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                         self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
@@ -244,7 +245,7 @@ class FindPetPublisher(AbstractPublisher):
         """ Processes an animal record and returns a data dictionary for upload to /api/report as JSON """
         return {
             "token": FINDPET_API_KEY,
-            "report_type": "in_shelter", # seems to be the value they want irrespective of whether it's nonshelter or not
+            "report_type": "Adopt", # seems to be the value they want irrespective of whether it's nonshelter or not
             "photos": [ self.getPhotoUrl(an.ID) ],
             "videos": [],  # not used
             "adt_markings": [], # not used 
