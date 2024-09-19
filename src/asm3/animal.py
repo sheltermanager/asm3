@@ -1326,8 +1326,8 @@ def get_stats(dbo: Database, age: int = 120) -> Results:
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = 3) AS Transferred, " \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType IN (1,3,5,7)) AS LiveRelease, " \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType IN (4,6)) AS LostStolen, " \
-        "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID <> 2 AND MovementDate >= :from AND MovementType = 7) AS Released, " \
-        "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID = 2 AND MovementDate >= :from AND MovementType = 7) AS TNR, " \
+        "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID NOT IN (1,2) AND MovementDate >= :from AND MovementType = 7) AS Released, " \
+        "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID IN (1,2) AND MovementDate >= :from AND MovementType = 7) AS TNR, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 1) AS PTS, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 0) AS Died, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 1) AS DOA, " \

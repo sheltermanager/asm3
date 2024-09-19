@@ -1,6 +1,7 @@
 49
 ================
 
+19/09/24 Show TNR for released dogs as well as cats #1240
 19/09/24 Use stronger random passwords when resetting #1539
 18/09/24 FindPet: tweaks based on API responses #1500
 18/09/24 Add locale for Saudi Arabia

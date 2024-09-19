@@ -832,10 +832,10 @@ $(function() {
         },
 
         /** When the animal changes, set the name of the "Release to Wild" movement 
-         *  to "TNR" instead if the species we've been given is a cat.
+         *  to "TNR" instead if the species we've been given is a cat or a dog (some African nations do CNR for dogs).
          */
         set_release_name: function(speciesid) {
-            if (speciesid == 2) {
+            if (speciesid == 1 || speciesid == 2) {
                 $("#type option[value='7']").html(_("TNR"));
             }
             else {

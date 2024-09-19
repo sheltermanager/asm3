@@ -31,7 +31,7 @@ RESERVATION_TEXT = 9            # NO_MOVEMENT + ReservationDate set
 CANCELLED_RESERVATION_TEXT = 10 # NO_MOVEMENT + ReservationCancelledDate set
 TRIAL_ADOPTION_TEXT = 11        # ADOPTION + IsTrial=1
 PERMANENT_FOSTER_TEXT = 12      # FOSTER + IsPermanentFoster=1
-TNR_TEXT = 13                   # RELEASED + animal.SpeciesID=2 (Cat)
+TNR_TEXT = 13                   # RELEASED + animal.SpeciesID IN (1,2) (Dog,Cat)
 
 def get_movement_query(dbo: Database) -> str:
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
@@ -53,7 +53,7 @@ def get_movement_query(dbo: Database) -> str:
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
         "CASE WHEN m.EventID > 0 THEN 1 ELSE 0 END AS IsEventLinked, " \
         "CASE " \
-        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID IN (1,2) THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
         "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
@@ -65,7 +65,7 @@ def get_movement_query(dbo: Database) -> str:
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
         "ELSE l.MovementType END AS MovementName, " \
         "CASE " \
-        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID IN (1,2) THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
         "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
