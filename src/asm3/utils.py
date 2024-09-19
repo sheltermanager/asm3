@@ -857,7 +857,7 @@ def totp(secret: str) -> bytes:
 
 def random_password(length: int) -> str:
     """ Returns a random password of length """
-    password = secrets.token_urlsafe(length)
+    return secrets.token_urlsafe(length)
 
 def regex_delete(pattern: str, findin: str) -> str:
     return re.sub(pattern, '', findin, flags=re.I)
