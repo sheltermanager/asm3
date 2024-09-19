@@ -20,6 +20,7 @@ import os
 import random
 import re
 import requests
+import secrets
 import shutil
 import smtplib
 import string
@@ -853,6 +854,10 @@ def totp(secret: str) -> bytes:
     o = h[19] & 15
     h = (struct.unpack(">I", h[o:o+4])[0] & 0x7fffffff) % 1000000
     return h
+
+def random_password(length: int) -> str:
+    """ Returns a random password of length """
+    password = secrets.token_urlsafe(length)
 
 def regex_delete(pattern: str, findin: str) -> str:
     return re.sub(pattern, '', findin, flags=re.I)

@@ -1655,7 +1655,7 @@ class reset_password(ASMEndpoint):
         if dbo.database in asm3.db.ERROR_VALUES: raise asm3.utils.ASMValidationError("bad database")
         # Reset their password to something random and send an email with the new password
         l = dbo.locale
-        newpass = asm3.animalname.get_random_single_word_name()
+        newpass = asm3.utils.random_password(10)
         asm3.users.reset_password(dbo, rinfo["userid"], newpass)
         asm3.al.info("reset password for %s to %s" % (rinfo["username"], newpass), "main.reset_password", dbo)
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), rinfo["email"], "", "", 
