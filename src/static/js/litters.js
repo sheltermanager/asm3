@@ -18,7 +18,7 @@ $(function() {
                 columns: 1,
                 fields: [
                     { json_field: "ACCEPTANCENUMBER", post_field: "litterref", label: _("Litter Reference"), type: "text",
-                        tooltip: _("A unique reference for this litter"), validation: "notblank" },
+                        tooltip: _("A unique reference for this litter"), validation: "notblank", readonly: true },
                     { json_field: "PARENTANIMALID", post_field: "animal", label: _("Mother"), type: "animal", animalfilter: "female" },
                     { json_field: "ANIMALS", post_field: "animals", label: _("Littermates"), type: "animalmulti", readonly: true },
                     { json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", 
