@@ -1,0 +1,76 @@
+Neutering by Date for Site
+###
+Site
+###
+34019/PostgreSQL rev03
+###
+All animals neutered/spayed between two dates at selected site.
+###
+en
+###
+$VAR site SITE$ 
+
+SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, st.SiteName,  
+NeuteredDate, AnimalComments, x.Sex, nv.OwnerName, animal.ID AS AID, nv.ID AS OID,
+age(NeuteredDate, animal.DateOfBirth)::varchar AS AgeAtNeutering
+FROM animal
+INNER JOIN lksex x ON x.ID = animal.Sex 
+INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
+INNER JOIN species s ON s.ID = animal.SpeciesID
+INNER JOIN internallocation il ON il.ID = animal.ShelterLocation
+INNER JOIN site st ON st.ID = il.SiteID
+LEFT OUTER JOIN owner nv ON nv.ID = animal.NeuteredByVetID
+WHERE Neutered = 1 AND 
+NeuteredDate BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
+AND il.SiteID = $@site$ 
+ORDER BY s.SpeciesName, x.Sex, NeuteredDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+$$FOOT
+<h2>Total $SpeciesName: {COUNT.ShelterCode}</h2>
+GROUP$$
+
+$$GROUP_Sex
+$$HEAD
+<h3>$Sex</h3>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>At Age</b></th>
+<th><b>Date</b></th>
+<th><b>By</b></th>
+<th><b>Comments</b></th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+<h3>Total $Sex $SpeciesName: {COUNT.ShelterCode}</h3>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$AGEATNEUTERING</td>
+<td>$NEUTEREDDATE</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h1>Total: {COUNT.ShelterCode}</h1>
+FOOTER$$
