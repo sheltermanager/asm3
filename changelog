@@ -1,6 +1,7 @@
 49
 ================
 
+23/09/24 html_flagged_animals using wrong param name for order
 21/09/24 Should not allow litter reference to be changed after creation
 19/09/24 Show TNR for released dogs as well as cats #1240
 19/09/24 Use stronger random passwords when resetting #1539

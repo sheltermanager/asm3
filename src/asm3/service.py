@@ -667,7 +667,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
             asm3.publishers.html.get_flagged_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"], 
-                allanimals=post.integer("all"), orderby=post["orderby"]))
+                allanimals=post.integer("all"), orderby=post["order"]))
 
     elif method == "html_held_animals":
         return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
