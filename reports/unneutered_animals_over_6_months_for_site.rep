@@ -1,0 +1,53 @@
+Non-Neutered/Spayed Animals Aged Over 6 Months For Site (On Shelter)
+###
+Site
+###
+Any rev01
+###
+Shelter animals aged over 6 months at selected site who have not been neutered/spayed.
+###
+en
+###
+$VAR site SITE$ 
+
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, i.LocationName, s.Sex, p.SpeciesName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species p ON p.ID = a.SpeciesID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN lksex s ON s.ID = a.Sex
+WHERE a.Archived = 0 AND a.Neutered = 0 AND a.DateOfBirth <= '$CURRENT_DATE-182$'
+AND a.SpeciesID IN (1,2)
+AND i.SiteID = $@site$ 
+ORDER BY t.AnimalType, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Species</th>
+<th>Sex</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$SEX</td>
+<td>$LOCATIONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</tbody>
+</table>
+FOOTER$$
