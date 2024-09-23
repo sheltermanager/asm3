@@ -1,0 +1,91 @@
+Vaccinations of type administered between two dates for site
+###
+Site
+###
+34409/Any rev01
+###
+List of all vaccinations of a type administered between two dates at a selected site.
+###
+en
+###
+$VAR site SITE$ 
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+$VAR vt STRING Vaccination type$
+
+SELECT animal.id as aid, animal.animalname, animal.sheltercode, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer, animalvaccination.rabiestag, animalvaccination.cost, animal.breedname, animal.displaylocation
+FROM animalvaccination
+INNER JOIN animal ON animalvaccination.animalid=animal.id
+INNER JOIN vaccinationtype ON animalvaccination.vaccinationid=vaccinationtype.id
+INNER JOIN internallocation il ON il.ID = animal.ShelterLocation
+INNER JOIN site st ON st.ID = il.SiteID
+LEFT JOIN owner ON owner. id=animalvaccination.administeringvetid
+WHERE dateofvaccination >= '$@from$' AND dateofvaccination <= '$@to$'
+AND UPPER(vaccinationtype.vaccinationtype) like UPPER('%$@vt$%')
+AND il.SiteID = $@site$ 
+ORDER BY vaccinationtype, animalname
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_VaccinationType
+$$HEAD
+<h2>$VaccinationType</h2>
+<table border="1">
+<thead>
+<tr>
+<th>Animal</th>
+<th>Breed</th>
+<th>Location</th>
+<th>Vet Name</th>
+<th>License Number</th>  
+<th>Type</th>
+<th>Date</th>
+<th>Expires</th>
+<th>Batch</th>
+<th>Manufacturer</th>
+<th>Rabies Tag</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+<tr>
+<td></td> 
+<td></td>
+<td></td> 
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><b> {SUM.Cost}</b></td>
+</tr>
+</tbody>
+</table>
+<p><b>Total $VaccinationType: {COUNT.VaccinationType}</b></p>
+GROUP$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE - $ANIMALNAME</a></td>
+<td>$BREEDNAME</td>
+<td>$DISPLAYLOCATION</td>
+<td>$OWNERNAME</td>
+<td>$MEMBERSHIPNUMBER</td>
+<td>$VACCINATIONTYPE</td>
+<td>$DATEOFVACCINATION</td>
+<td>$DATEEXPIRES</td>
+<td>$BATCHNUMBER</td>
+<td>$MANUFACTURER</td>
+<td>$RABIESTAG</td>
+<td>$COST</td>
+<tr/>
+BODY$$
+
+$$FOOTER
+<h3>Total: {COUNT.VaccinationType}</h3>
+FOOTER$$
