@@ -1177,6 +1177,16 @@ def get_animals_quarantine(dbo: Database, lf: LocationFilter = None) -> Results:
     sql = f"{query} WHERE a.IsQuarantine=1 AND a.Archived=0 {locationfilter}"
     return dbo.query(sql)
 
+def get_animals_recently_adopted(dbo: Database, lf: LocationFilter = None) -> Results:
+    """
+    Returns all recently adopted animals
+    """
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.ActiveMovementType=1 AND a.NonShelterAnimal=0 AND a.ActiveMovementDate>? {locationfilter}"
+    return dbo.query(sql, [dbo.today(offset=-30)])
+
 def get_animals_recently_deceased(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who are recently deceased
@@ -1185,6 +1195,16 @@ def get_animals_recently_deceased(dbo: Database, lf: LocationFilter = None) -> R
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     sql = f"{query} WHERE a.DeceasedDate Is Not Null AND a.NonShelterAnimal=0 AND a.DiedOffShelter=0 AND a.DeceasedDate>? {locationfilter}"
+    return dbo.query(sql, [dbo.today(offset=-30)])
+
+def get_animals_recently_entered(dbo: Database, lf: LocationFilter = None) -> Results:
+    """
+    Returns all recently entered animals
+    """
+    query = get_animal_brief_query(dbo)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
+    sql = f"{query} WHERE a.NonShelterAnimal=0 AND a.MostRecentEntryDate>? {locationfilter}"
     return dbo.query(sql, [dbo.today(offset=-30)])
 
 def get_animals_stray(dbo: Database, lf: LocationFilter = None) -> Results:

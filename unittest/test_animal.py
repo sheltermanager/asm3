@@ -52,7 +52,9 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.get_animals_hold(base.get_dbo())
         asm3.animal.get_animals_hold_today(base.get_dbo())
         asm3.animal.get_animals_quarantine(base.get_dbo())
+        asm3.animal.get_animals_recently_adopted(base.get_dbo())
         asm3.animal.get_animals_recently_deceased(base.get_dbo())
+        asm3.animal.get_animals_recently_entered(base.get_dbo())
 
     def test_get_alerts(self):
         self.assertNotEqual(0, len(asm3.animal.get_alerts(base.get_dbo())))

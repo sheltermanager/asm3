@@ -84,7 +84,9 @@ header = {
         62: ["boarding", "asm-icon-boarding", _("Boarding book")],
         63: ["calendarview?ev=b", "asm-icon-calendar", _("Boarding calendar")],
         64: ["clinic_consultingroom", "asm-icon-users", _("Consulting Room")],
-        65: ["clinic_waitingroom", "asm-icon-person", _("Waiting Room")]
+        65: ["clinic_waitingroom", "asm-icon-person", _("Waiting Room")],
+        66: ["search?q=adopted", "asm-icon-movement", _("Recently adopted")],
+        67: ["search?q=entered", "asm-icon-animal", _("Recently entered")]
     },
 
     show_error: function(text, duration) {

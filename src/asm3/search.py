@@ -312,6 +312,16 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         if viewanimal:
             ar(asm3.animal.get_animals_recently_deceased(dbo, lf=o.lf), "ANIMAL", animalsort)
 
+    elif q == "adopted":
+        explain = _("Recently adopted shelter animals (last 30 days).", l)
+        if viewanimal:
+            ar(asm3.animal.get_animals_recently_adopted(dbo, lf=o.lf), "ANIMAL", animalsort)
+
+    elif q == "entered":
+        explain = _("Recently entered shelter animals (last 30 days).", l)
+        if viewanimal:
+            ar(asm3.animal.get_animals_recently_entered(dbo, lf=o.lf), "ANIMAL", animalsort)
+
     elif q == "forpublish":
         explain = _("All animals matching current publishing options.", l)
         if viewanimal:
