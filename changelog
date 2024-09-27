@@ -1,6 +1,7 @@
 49
 ================
 
+27/09/24 Fix CHIPMANUFACTURER token breaking with chips containing letters
 25/09/24 Search keywords for recently adopted and entered #1526
 23/09/24 html_flagged_animals using wrong param name for order
 21/09/24 Should not allow litter reference to be changed after creation

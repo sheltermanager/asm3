@@ -1162,7 +1162,7 @@ class Report:
             # manufacturer for the chip number specified
             if key.lower().startswith("chipmanufacturer."):
                 valid = True
-                fields = key.lower().split(".")
+                fields = key.split(".")
                 chipno = fields[1]
                 value = asm3.lookups.get_microchip_manufacturer(self.dbo.locale, chipno)
 
@@ -2052,7 +2052,7 @@ class Report:
                 # manufacturer for the chip number specified
                 if key.lower().startswith("chipmanufacturer."):
                     valid = True
-                    fields = key.lower().split(".")
+                    fields = key.split(".")
                     chipno = fields[1]
                     value = asm3.lookups.get_microchip_manufacturer(self.dbo.locale, chipno)
 
