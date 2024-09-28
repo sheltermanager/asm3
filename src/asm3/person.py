@@ -1244,6 +1244,7 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
     merge("idnumber2", "IDENTIFICATIONNUMBER2")
     merge("dateofbirth", "DATEOFBIRTH")
     merge("dateofbirth2", "DATEOFBIRTH2")
+    merge("membershipnumber", "MEMBERSHIPNUMBER")
     merge("comments", "COMMENTS")
     uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", "", \
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
