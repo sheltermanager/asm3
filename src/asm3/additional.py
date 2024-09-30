@@ -229,7 +229,12 @@ def append_to_results(dbo: Database, rows: Results, linktype: str = "animal") ->
 
 def sanitise_lookup_values(s):
     """ Remove unwanted chars from lookup values """
-    return s.replace(",", " ").replace("\n", " ")
+    s = s.replace(",", " ")
+    s = s.replace("\n", " ")
+    s = s.replace(" |", "|")
+    s = s.replace("| ", "|")
+    s = asm3.utils.strip_duplicate_spaces(s)
+    return s
 
 def insert_field_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
