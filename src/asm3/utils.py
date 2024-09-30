@@ -1110,7 +1110,11 @@ def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = T
     def writerow(rowdata: List[Any], rownumber: int, isheader: bool = False):
         """ Outputs the cells for a row. isheader can be used for formatting in future """
         for i, r in enumerate(rowdata, 1):
-            ws.cell(row=rownumber, column=i, value=r)
+            c = ws.cell(row=rownumber, column=i, value=r)
+            # force text to be interpreted as such - this fixes problems with 15 digit ISO
+            # microchip numbers being displayed in scientific notation by Excel with "General" format
+            # It excludes strings with 2 / characters assuming they are dates
+            if isinstance(r, str) and r.count("/") != 2: c.number_format = "@" 
     if cols is None:
         cols = []
         for k in rows[0].keys():
