@@ -1,0 +1,63 @@
+Grey Muzzles Grant 
+###
+Figures
+###
+3000/PostgreSQL rev01
+###
+Figures needed to complete the grey muzzle grant application
+###
+en
+###
+$VAR year NUMBER Enter the year, eg: 2016$
+
+SELECT
+
+'$@year$' AS year,
+
+(SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND NonShelterAnimal = 0 AND Archived = 0) AS IntakeTotal,
+
+(SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 1 
+ AND NonShelterAnimal = 0 AND Archived = 0) AS DogsIntakeTotal,
+ 
+ (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 1 
+ AND DateOfBirth < DateBroughtIn - INTERVAL '7 years'
+ AND NonShelterAnimal = 0 AND Archived = 0) AS SeniorDogsIntake,
+ 
+ (SELECT COUNT(*) FROM animal
+ WHERE SpeciesID = 1 
+ AND Archived = 0) AS CurrentDogs,
+ 
+ (SELECT COUNT(*) FROM animal
+ WHERE SpeciesID = 1 
+ AND DateOfBirth < '$CURRENT_DATE-2555$'
+ AND Archived = 0) AS CurrentSeniorDogs
+ ###
+ $$HEADER
+HEADER$$
+
+$$BODY
+<h3>Animal Statistics</h3>
+<p></p>
+<p>Please provide the following information for the previous year (<b> $YEAR </b>):
+<p></p>
+<p>Total number of animals: <b>$INTAKETOTAL</b>
+<p></p>
+<p>Total number of dogs: <b>$DOGSINTAKETOTAL</b>
+<p></p>
+<p>Total number of senior (age 7 and up) dogs: <b>$SENIORDOGSINTAKE</b>
+<p></p>
+<p>Please provide the following information for dogs currently in your care:</p>  
+<p></p>
+<p>Number of dogs currently in your care: <b>$CURRENTDOGS</b>
+<p></p>
+<p>Number of senior (age 7 and up) dogs currently in your care: <b>$CURRENTSENIORDOGS
+BODY$$
+
+$$FOOTER
+FOOTER$$
