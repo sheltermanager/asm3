@@ -2,7 +2,7 @@ Grey Muzzles Grant
 ###
 Figures
 ###
-3000/PostgreSQL rev01
+3000/PostgreSQL rev02
 ###
 Figures needed to complete the grey muzzle grant application
 ###
@@ -38,7 +38,7 @@ SELECT
  AND DateOfBirth < '$CURRENT_DATE-2555$'
  AND Archived = 0) AS CurrentSeniorDogs
  ###
- $$HEADER
+$$HEADER
 HEADER$$
 
 $$BODY
@@ -56,7 +56,7 @@ $$BODY
 <p></p>
 <p>Number of dogs currently in your care: <b>$CURRENTDOGS</b>
 <p></p>
-<p>Number of senior (age 7 and up) dogs currently in your care: <b>$CURRENTSENIORDOGS
+<p>Number of senior (age 7 and up) dogs currently in your care: <b>$CURRENTSENIORDOGS</b></p>
 BODY$$
 
 $$FOOTER
