@@ -1,0 +1,98 @@
+Site Adoptions by Species with Addresses
+###
+Site
+###
+Any rev01
+###
+Adoptions between two dates by species with the names/addresses of original owners and adopters for the current site (requires multi-site capability).
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT ShelterCode, AnimalName, animal.ID AS AID, MostRecentEntryDate, MovementDate, 
+species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+oo.OwnerName AS OOName, oo.ID AS OID, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
+oo.EmailAddress AS OOEmail,
+no.OwnerName, no.ID AS NOID, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation 
+LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+AND (no.SiteID = $SITE$ OR internallocation.SiteID = $SITE$)
+ORDER BY SpeciesName, MovementDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SPECIESNAME</h2>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Came From</b></th>
+<th><b>Adoption Date</b></th>
+<th><b>Adopted To</b></th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Average: {AVG.DaysOnShelter.2} days</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>Total $SpeciesName: {COUNT.SpeciesName}</h3>
+GROUP$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$MostRecentEntryDate</td>
+<td>$TimeOnShelter ($DaysOnShelter days)</td>
+<td><i><a target="_blank" href="person?id=$OID">$OONAME</a></i><br/>
+$OOAddress<br/>
+$OOTown<br/>
+$OOCounty<br/>
+$OOPostcode<br/>
+$OOEmail</td>
+<td>$MOVEMENTDATE</td>
+<td><i><a target="_blank" href="person?id=$NOID">$OWNERNAME</a></i><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
