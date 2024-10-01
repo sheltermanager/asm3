@@ -787,21 +787,21 @@ $(function() {
                         [_("Additional field {0} is between two dates").replace("{0}", v.FIELDNAME), "daf" + v.ID,
                             "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " " +
                             "AND LinkID=v_animal.ID AND asm_to_date(Value, " + dformat + ") >= '$ASK DATE From date $' " +
-                            "AND asm_to_date(Value, " + dformat + ") >= '$ASK DATE To date $')" ]);
+                            "AND asm_to_date(Value, " + dformat + ") <= '$ASK DATE To date $')" ]);
                 }
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_WAITINGLIST) && v.FIELDTYPE == 4) { 
                     reports.qb_waitinglist_criteria.push(
                         [_("Additional field {0} is between two dates").replace("{0}", v.FIELDNAME), "daf" + v.ID,
                             "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " " +
                             "AND LinkID=v_animalwaitinglist.ID AND asm_to_date(Value, " + dformat + ") >= '$ASK DATE From date $' " +
-                            "AND asm_to_date(Value, " + dformat + ") >= '$ASK DATE To date $')" ]);
+                            "AND asm_to_date(Value, " + dformat + ") <= '$ASK DATE To date $')" ]);
                 }
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_PERSON) && v.FIELDTYPE == 4) { 
                     reports.qb_person_criteria.push(
                         [_("Additional field {0} is between two dates").replace("{0}", v.FIELDNAME), "daf" + v.ID,
                             "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " " +
                             "AND LinkID=v_owner.ID AND asm_to_date(Value, " + dformat + ") >= '$ASK DATE From date $' " +
-                            "AND asm_to_date(Value, " + dformat + ") >= '$ASK DATE To date $')" ]);
+                            "AND asm_to_date(Value, " + dformat + ") <= '$ASK DATE To date $')" ]);
                 }
             });
             $.each(controller.entryreasons, function(i, v) {
