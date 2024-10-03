@@ -43,6 +43,8 @@ idnumber / idnumber2
     The person's ID number (passport, driving license, national ID card, etc)
 excludefrombulkemail
     If this field is supplied and not a blank or "No" in your language, the exclude from bulk email flag will be set for the created person
+gdprcontactoptin
+    The person's GDPR contact preference (Declined, Email, Post, SMS, Phone)   
 comments
     The comments field for the animal (for historical reasons, comments populates the animal's description field), person, lost, found or waiting list animal
 description
