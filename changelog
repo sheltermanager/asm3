@@ -1,6 +1,7 @@
 49
 ================
 
+04/10/24 Prevent extra auditing when deleting already deleted forms
 01/10/24 Querybuilder: Bad comparison in additional field between two dates
 30/09/24 Set text format for cells correctly when exporting to Excel #1542
 30/09/24 Strip extra spaces when validating additional field lookups #1543

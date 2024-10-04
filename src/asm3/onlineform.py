@@ -1151,6 +1151,8 @@ def delete_onlineformincoming(dbo: Database, username: str, collationid: int) ->
     # This is a special case because onlineformincoming does not have an ID field, 
     # so the generic deletions handling in audit.delete_rows and dbms.base.delete cannot do it.
     rows = dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=%s ORDER BY DisplayIndex" % collationid)
+    # Don't audit if there was nothing to delete
+    if len(rows) == 0: return
     sql = []
     values = {}
     preview = ""
