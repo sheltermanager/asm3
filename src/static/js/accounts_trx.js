@@ -9,74 +9,39 @@ $(function() {
         render: function() {
             return [
                 '<div id="dialog-edit" style="display: none" title="' + html.title(_("Edit transaction")) + '">',
-                '<input type="hidden" id="trxid" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="description">' + _("Description") + '</label></td>',
-                '<td><input id="description" data="description" class="asm-textbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="trxdate">' + _("Date") + '</label></td>',
-                '<td><input id="trxdate" data="trxdate" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="reconciled">' + _("Reconciled") + '</label></td>',
-                '<td><select id="reconciled" data="reconciled" class="asm-selectbox">',
-                '<option value="0">' + _("Not reconciled") + '</option>',
-                '<option value="1">' + _("Reconciled") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>' + _("Account") + '</td>',
-                '<td><span id="thisaccount">' + controller.accountcode + '</span></td>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="otheraccount">' + _("Other Account") + '</label></td>',
-                '<td><input id="otheraccount" data="otheraccount" class="asm-textbox" /></td>',
-                '</tr>',
-                '<tr id="paymentrow">',
-                '<td><label for="person">' + _("Payment From") + '</label></td>',
-                '<td>',
-                '<a id="personlink" class="asm-embed-name" href="#"></a> ' + html.icon("right"),
-                '<a id="animallink" class="asm-embed-name" href="#"></a>',
-                '[<span id="receiptno"></span>]',
-                '</td>',
-                '</tr>',
-                '<tr id="costrow">',
-                '<td><label for="costanimallink">' + _("Cost For") + '</label></td>',
-                '<td>',
-                '<a id="costanimallink" class="asm-embed-name" href="#"></a>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="deposit">' + _("Credit") + '</label></td>',
-                '<td><input id="deposit" data="deposit" class="asm-textbox asm-currencybox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="withdrawal">' + _("Debit") + '</label></td>',
-                '<td><input id="withdrawal" data="withdrawal" class="asm-textbox asm-currencybox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "description", label: _("Description"), type: "text", doublesize: true, 
+                        xmarkup: '<input type="hidden" id="trxid" />' },
+                    { post_field: "trxdate", label: _("Date"), type: "date" },
+                    { post_field: "reconciled", label: _("Reconciled"), type: "select", 
+                        options: '<option value="0">' + _("Not reconciled") + '</option>' +
+                                    '<option value="1">' + _("Reconciled") + '</option>' },
+                    { post_field: "thisaccount", label: _("Account"), type: "raw",
+                        markup: '<span id="thisaccount">' + controller.accountcode + '</span>' },
+                    { post_field: "otheraccount", label: _("Other Account"), type: "text"},
+                    { rowid: "paymentrow", label: _("Payment From"), 
+                        type: "raw", markup: ['<a id="personlink" class="asm-embed-name" href="#"></a> ' + html.icon("right"),
+                        '<a id="animallink" class="asm-embed-name" href="#"></a>',
+                        '[<span id="receiptno"></span>]' ].join("\n") },
+                    { rowid: "costrow", label: _("Cost For"), 
+                        type: "raw", markup: '<a id="costanimallink" class="asm-embed-name" href="#"></a>' },
+                    { post_field: "deposit", label: _("Credit"), type: "currency" },
+                    { post_field: "withdrawal", label: _("Debit"), type: "currency" },
+                ]),
                 '</div>',
                 html.content_header(_("Transactions") + " - " + controller.accountcode),
+                '<p class="centered">' + _("Show transactions from"),
                 '<input type="hidden" id="accountid" data="accountid" value="' + controller.accountid + '" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td>' + _("Show transactions from") + '</td>',
-                '<td><input id="fromdate" data="fromdate" type="text" class="asm-textbox asm-datebox" /></td>',
-                '<td>' + _("to") + '</td>',
-                '<td><input id="todate" data="todate" type="text" class="asm-textbox asm-datebox" /></td>',
-                '<td>' + _("Reconciled") + '</td>',
-                '<td><select id="recfilter" data="recfilter" class="asm-selectbox">',
-                '<option value="0">' + _("Both") + '</option>',
-                '<option value="1">' + _("Reconciled") + '</option>',
-                '<option value="2">' + _("Not Reconciled") + '</option>',
-                '</select></td>',
-                '<td><button id="button-refresh">' + html.icon("refresh") + ' ' + _("Refresh") + '</button></td>',
-                '</tr>',
-                '</table>',
+                tableform.render_date({ post_field: "fromdate", type: "date", justwidget: true }),
+                _("to"),
+                tableform.render_date({ post_field: "todate", type: "date", justwidget: true }),
+                _("Reconciled"),
+                tableform.render_select({ post_field: "recfilter", type: "select", justwidget: true, 
+                    options: [ '<option value="0">' + _("Both") + '</option>',
+                    '<option value="1">' + _("Reconciled") + '</option>',
+                    '<option value="2">' + _("Not Reconciled") + '</option>' ].join("\n") }),
+                '<button id="button-refresh">' + html.icon("refresh") + ' ' + _("Refresh") + '</button>',
+                '</p>',
                 tableform.buttons_render([
                     { id: "delete", text: _("Delete"), icon: "delete" },
                     { id: "reconcile", text: _("Reconcile"), icon: "transactions" }
@@ -207,19 +172,23 @@ $(function() {
             validate.indicator(["trxdate", "otheraccount", "description", "deposit", "withdrawal"]);
 
             let editbuttons = { };
-            editbuttons[_("Save")] = async function() {
-                validate.reset();
-                if (!validate_account("#otheraccount")) { return; }
-                if (!validate.notblank([ "trxdate", "otheraccount", "description", "deposit", "withdrawal" ])) { return; }
-                let formdata = "mode=update&trxid=" + $("#trxid").val() + "&accountid=" + controller.accountid + "&" +
-                    $("#dialog-edit input, #dialog-edit select").toPOST();
-                $("#dialog-edit").disable_dialog_buttons();
-                try {
-                    await common.ajax_post("accounts_trx", formdata);
-                    accounts_trx.reload();
-                }
-                finally {
-                    $("#dialog-edit").dialog("close");
+            editbuttons[_("Save")] = {
+                text: _("Save"),
+                "class": 'asm-dialog-actionbutton',
+                click: async function() {
+                    validate.reset();
+                    if (!validate_account("#otheraccount")) { return; }
+                    if (!validate.notblank([ "trxdate", "otheraccount", "description", "deposit", "withdrawal" ])) { return; }
+                    let formdata = "mode=update&trxid=" + $("#trxid").val() + "&accountid=" + controller.accountid + "&" +
+                        $("#dialog-edit input, #dialog-edit select").toPOST();
+                    $("#dialog-edit").disable_dialog_buttons();
+                    try {
+                        await common.ajax_post("accounts_trx", formdata);
+                        accounts_trx.reload();
+                    }
+                    finally {
+                        $("#dialog-edit").dialog("close");
+                    }
                 }
             };
             editbuttons[_("Cancel")] = function() {
@@ -287,8 +256,14 @@ $(function() {
                 else {
                     $("#personlink").html(row.PERSONNAME);
                     $("#personlink").prop("href", "person_donations?id=" + row.PERSONID);
-                    $("#animallink").html(row.DONATIONANIMALCODE + " " + row.DONATIONANIMALNAME);
-                    $("#animallink").prop("href", "animal_donations?id=" + row.DONATIONANIMALID);
+                    if (row.DONATIONANIMALID) {
+                        $("#animallink").html(row.DONATIONANIMALCODE + " " + row.DONATIONANIMALNAME);
+                        $("#animallink").prop("href", "animal_donations?id=" + row.DONATIONANIMALID);
+                    }
+                    else {
+                        $("#animallink").html("");
+                        $("#animallink").prop("href", "#");
+                    }
                     $("#receiptno").html(row.DONATIONRECEIPTNUMBER);
                     $("#paymentrow").show();
                 }
