@@ -39,6 +39,7 @@ class FindPetPublisher(AbstractPublisher):
     
     def fpE164(self, pn):
         """ Makes sure a US phone number is formatted to E164 +1XXXYYYZZZZ """
+        if pn is None: return ""
         return "+1%s" % asm3.utils.atoi(pn)
 
     def run(self) -> None:
