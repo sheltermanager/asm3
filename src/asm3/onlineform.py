@@ -437,7 +437,7 @@ def get_onlineform_header(dbo: Database) -> str:
         "/* phones and smaller devices */\n" \
         "@media screen and (max-device-width:480px) {\n" \
         "    body { font-family: sans-serif; }\n" \
-        "    * { font-size: 110%; }\n" \
+        "    * { font-size: 105%; }\n" \
         "    h2 { font-size: 200%; }\n" \
         "    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }\n" \
         "    label, input[type='file'], input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }\n" \
