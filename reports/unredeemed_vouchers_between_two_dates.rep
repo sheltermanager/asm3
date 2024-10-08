@@ -1,0 +1,66 @@
+Unredeemed Vouchers Issued Between Two Dates
+###
+Financial
+###
+34304/Any rev02
+###
+Unredeemed Vouchers issued between two dates.
+###
+en
+###
+SELECT o.OwnerName, o.ID AS OID, v.VoucherName, 
+o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
+ov.ID AS VoucherNumber, ov.VoucherCode, 
+ov.DateIssued, ov.DateExpired, ov.Value AS Amount,
+ov.Comments
+FROM owner o
+INNER JOIN ownervoucher ov ON ov.OwnerID = o.ID
+INNER JOIN voucher v ON ov.VoucherID = v.ID
+WHERE ov.DateIssued >= '$ASK DATE Vouchers issued between$' 
+AND ov.DateIssued <= '$ASK DATE and $'
+AND DatePresented Is Null
+ORDER BY v.VoucherName, ov.DateIssued
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_VoucherName
+$$HEAD
+<h2>$VoucherName</h2>
+<table border=1>
+<thead>
+<tr>
+<th><b>Number</b></th>
+<th><b>Code</b></th>
+<th><b>Owner</b></th>
+<th><b>Issued</b></th>
+<th><b>Expires</b></th>
+<th><b>Value</b></th>
+<th><b>Comments</b></th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+<p><b>{COUNT.VoucherName}</b> vouchers, value <b>{SUM.Amount.2}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$VOUCHERNUMBER</td>
+<td>$VOUCHERCODE</td>
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY<br/>
+$OWNERPOSTCODE<br/>
+$HOMETELEPHONE $MOBILETELEPHONE</td>
+<td>$DATEISSUED</td>
+<td>$DATEEXPIRED</td>
+<td>$AMOUNT</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
