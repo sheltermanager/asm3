@@ -2936,13 +2936,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         asm3.movement.insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
 
     # If a weight was specified and we're logging, mark it in the log
-    if asm3.configuration.weight_change_log(dbo) and post.floating("weight") > 0:
-        weight = str(post.floating("weight"))
-        units = ""
-        if asm3.configuration.show_weight_units_in_log(dbo):
-            units = (asm3.configuration.show_weight_in_lbs(dbo) or asm3.configuration.show_weight_in_lbs_fraction(dbo)) and " lb" or " kg"
-        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, nextid, asm3.configuration.weight_change_log_type(dbo),
-            "%s%s" % (weight, units))
+    insert_weight_log(dbo, username, nextid, post.floating("weight"), 0)
 
     # If the animal is held and we're logging it, mark it in the log
     if asm3.configuration.hold_change_log(dbo) and post.boolean("hold"):
@@ -3010,14 +3004,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
                 _("Hold until {0}", l).format(post["holduntil"]))
 
     # If the option is on and the weight has changed, log it
-    if asm3.configuration.weight_change_log(dbo):
-        if post.floating("weight") != prerow.WEIGHT:
-            weight = str(post.floating("weight"))
-            units = ""
-            if asm3.configuration.show_weight_units_in_log(dbo):
-                units = (asm3.configuration.show_weight_in_lbs(dbo) or asm3.configuration.show_weight_in_lbs_fraction(dbo)) and " lb" or " kg"
-            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.weight_change_log_type(dbo),
-                "%s%s" % (weight, units))
+    insert_weight_log(dbo, username, aid, post.floating("weight"), prerow.WEIGHT)
 
     # If the animal is newly deceased, mark any diary notes completed
     if post.date("deceaseddate") is not None and asm3.configuration.diary_complete_on_death(dbo):
@@ -3397,6 +3384,20 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
     if asm3.configuration.location_change_log(dbo):
         asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.location_change_log_type(dbo), msg)
     return alid
+
+def insert_weight_log(dbo: Database, username: str, animalid: int, newweight: float = 0, oldweight: float = -1) -> None:
+    """ Writes an entry to the log when an animal's weight changes. 
+        This should be called before the weight on the animal record is updated so it can check if the weight changed. """
+    # If the option is on and the weight has changed, log it
+    if asm3.configuration.weight_change_log(dbo) and newweight > 0:
+        if oldweight < 0: 
+            oldweight = dbo.query_float("SELECT Weight FROM animal WHERE ID = ?", [animalid])
+        if newweight != oldweight:
+            units = ""
+            if asm3.configuration.show_weight_units_in_log(dbo):
+                units = (asm3.configuration.show_weight_in_lbs(dbo) or asm3.configuration.show_weight_in_lbs_fraction(dbo)) and " lb" or " kg"
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.weight_change_log_type(dbo),
+                "%s%s" % (newweight, units))
 
 def update_location_unit(dbo: Database, username: str, animalid: int, newlocationid: int, newunit: str = "", returnactivemovement: bool = True) -> None:
     """

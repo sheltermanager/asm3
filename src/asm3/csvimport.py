@@ -633,6 +633,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                     if dup is not None:
                         # We already have an animal record with this code, update it
                         animalid = dup.ID
+                        # If the weight has been changed, it may need to be logged if the
+                        # option is on. We run it here before merge_animal_details updates it so that
+                        # it can check the previous weight to see if it is different 
+                        if gks(row, "ANIMALWEIGHT") != "": 
+                            asm3.animal.insert_weight_log(dbo, user, animalid, asm3.utils.cfloat(gks(row, "ANIMALWEIGHT")), dup.WEIGHT)
                         # The code above will set internallocation to the default if not supplied, assuming we're going to create
                         # a new animal. If no actual location was given in the file, we remove that default location
                         # value now to prevent merge_animal_details overwriting the existing value on the record. #1516
