@@ -34,20 +34,22 @@ class PetRescuePublisher(AbstractPublisher):
         Ensures that if sname == "Cat" or "Dog" that the bname is one from our
         list 
         """
-        maps = {
-            "Cat":  ( "Domestic Short Hair", CAT_BREEDS ),
-            "Dog":  ( "Mixed Breed", DOG_BREEDS ),
-            "Horse": ( "Horse", HORSE_BREEDS ),
-            "Rabbit": ( "Bunny", RABBIT_BREEDS )
+        default_breeds = {
+            "Cat":  "Domestic Short Hair (DSH)",
+            "Dog":  "Mixed breed",
+            "Horse": "Standardbred",
+            "Rabbit": "Bunny Rabbit"
         }
-        if sname not in maps: 
+        if sname not in default_breeds: 
             self.log("No mappings for species '%s'" % sname)
             return bname
-        default_breed, breed_list = maps[sname]
-        for d in breed_list:
+        default_breed = default_breeds[sname]
+        fname = f"{self.dbo.installpath}static/publishers/petrescue/{sname}.json"
+        prbreeds = asm3.utils.json_parse(asm3.utils.read_text_file(fname))
+        for d in prbreeds:
             if d["name"] == bname:
                 return bname
-        self.log("'%s' is not a valid PetRescue breed, using default '%s'" % (bname, default_breed))
+        self.log(f"'{bname}' is not a valid PetRescue breed, using default '{default_breed}'")
         return default_breed
 
     def run(self) -> None:

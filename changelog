@@ -1,6 +1,7 @@
 49
 ================
 
+09/10/24 PetRescue: Update breed list + defaults, move to external files
 08/10/24 Online forms: mobile font size a bit too large by default
 08/10/24 Log weight changes when imported from CSV file
 07/10/24 Refactor accounting transactions screen #1103
