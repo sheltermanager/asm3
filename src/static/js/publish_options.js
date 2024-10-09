@@ -888,13 +888,25 @@ $(function() {
         render_findpet: function() {
             return [
                 '<div id="tab-findpet">',
-                html.info('Find out more at ' + 
-                    '<a target="_blank" href="https://findpet.com/">https://findpet.com/</a>'),
+                html.info('Find out more at <a target="_blank" href="https://findpet.com">www.findpet.com</a> ' +
+                    'or contact hello@findpet.com for more information.<br>' +
+                    'Sign up by filling out form <a target="_blank" href="https://forms.gle/EA4jbPZEK1UKWWdy8">https://forms.gle/EA4jbPZEK1UKWWdy8</a> ' +
+                    'to get a Findpet Organization ID for:<br>' +
+                    '<ul><li>automatic microchip registration</li>' +
+                    '<li>automatic pet tag activation</li>' +
+                    '<li>to report your pets as found to facilitate lost pet reunification</li></ul>'),
                 '<p><input id="enabledfip" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledbd">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
                 '<td><label for="fporgid">FindPet Organization ID</label></td>',
                 '<td><input id="fporgid" type="text" class="asm-textbox cfg" disabled="disabled" data="FindPetOrgID" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="fpintlevel">Integration Level</label></td>',
+                '<td><select id="fpintlevel" class="asm-selectbox asm-doubleselectbox cfg" disabled="disabled" data="FindPetIntLevel">',
+                '<option value="0">Send shelter animals and register microchips to adopters</option>',
+                '<option value="1">Send shelter animals only</option>',
+                '</select></td>',
                 '</tr>',
                 '</table>',
                 '</div>'

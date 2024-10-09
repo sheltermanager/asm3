@@ -63,7 +63,9 @@ class FindPetPublisher(AbstractPublisher):
         shanimals = calc_microchip_data_addresses(self.dbo, shanimals) # We do this so that we have the shelter address for reports
 
         # Get the list of animals that need their chips transferring
-        tranimals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
+        tranimals = []
+        if asm3.configuration.findpet_int_level(self.dbo) == 0:
+            tranimals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
 
         # send any shelter animals or animals that need their chip transferring that
         # that have a microchip number, but don't already have a FindPet report_id
@@ -113,19 +115,21 @@ class FindPetPublisher(AbstractPublisher):
             except Exception as err:
                 self.logError("Failed sending /report for animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
-        animals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
-
         processed_animals = []
         failed_animals = []
+        
+        # We reload the list of animals to transfer so that the extra IDs have been set above
+        if asm3.configuration.findpet_int_level(self.dbo) == 0:
+            tranimals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
+            # Now, we can go through the list of microchips that need to be registered
+            self.log("Processing microchip registrations ...")
 
-        # Now, we can go through the list of microchips that need to be registered
-        self.log("Processing microchip registrations ...")
         anCount = 0
-        for an in animals:
+        for an in tranimals:
             try:
                 anCount += 1
-                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(tranimals)))
+                self.updatePublisherProgress(self.getProgress(anCount, len(tranimals)))
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
@@ -161,7 +165,7 @@ class FindPetPublisher(AbstractPublisher):
                 # Error codes are supposed to be returned as { "reason": "message", "details": {transfer_id} }
                 if "result" in j and "status" in j["result"] and j["result"]["status"] == "Registered":
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(tranimals)))
                     processed_animals.append(an)
                 elif "result" in j and "status" in j["result"] and j["result"]["status"] == "Failed":
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
@@ -184,7 +188,7 @@ class FindPetPublisher(AbstractPublisher):
         # Build a list of IDs we just sent, along with a list of ids for animals
         # that we previously sent and are not in the current sent list.
         # This identifies the listings we need to cancel
-        animalids_just_sent = set([ x.ID for x in animals + shanimals ])
+        animalids_just_sent = set([ x.ID for x in tranimals + shanimals ])
         animalids_to_cancel = set([ str(x.ANIMALID) for x in prevsent if x.ANIMALID not in animalids_just_sent])
 
         # Get the animal records for listings that we need to consider for removal
@@ -192,16 +196,18 @@ class FindPetPublisher(AbstractPublisher):
         if len(animalids_to_cancel) > 0:
 
             self.log("Processing listing removals ...")
-            animals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + "WHERE a.ID IN (%s)" % ",".join(animalids_to_cancel))
+            deanimals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + "WHERE a.ID IN (%s)" % ",".join(animalids_to_cancel))
             
             anCount = 0
-            for an in animals:
+            for an in deanimals:
                 anCount += 1
                 try:
                     # We only remove the listing for dead animals, and those that left via 
                     # any movement that wasn't an adoption. So if the animal is alive, or is adopted, do nothing.
+                    # The latter is only if we are registering microchips, if we aren't we should delete the
+                    # listings for adopted animals too.
                     if an.DECEASEDDATE is None: continue
-                    if an.ACTIVEMOVEMENTTYPE == 1: continue
+                    if an.ACTIVEMOVEMENTTYPE == 1 and asm3.configuration.findpet_int_level(self.dbo) == 0: continue
 
                     # If we already deactivated this report, don't do anything
                     laststatus = self.dbo.query_string("SELECT Extra FROM animalpublished WHERE AnimalID=? AND PublishedTo='findpet'", [an.ID])
@@ -223,7 +229,7 @@ class FindPetPublisher(AbstractPublisher):
                     else:
                         j = asm3.utils.json_parse(r["response"])
                         self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(deanimals)))
 
                         # Update animalpublished for this animal with the status we just sent in the Extra field
                         # so that it can be picked up next time and we won't do this again.

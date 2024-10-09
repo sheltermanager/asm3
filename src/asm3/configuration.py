@@ -1024,6 +1024,9 @@ def email_licence_reminder_template(dbo: Database) -> int:
 def email_messages(dbo: Database) -> bool:
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
 
+def findpet_int_level(dbo: Database) -> str:
+    return cint(dbo, "FindPetIntLevel")
+
 def findpet_org_id(dbo: Database) -> str:
     return cstring(dbo, "FindPetOrgID")
 
