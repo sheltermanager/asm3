@@ -178,7 +178,11 @@ class TestPublish(unittest.TestCase):
     def test_petrescue(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        self.assertIsNotNone(asm3.publishers.petrescue.PetRescuePublisher(base.get_dbo(), pc).processAnimal(a))
+        pr = asm3.publishers.petrescue.PetRescuePublisher(base.get_dbo(), pc)
+        pr.load_breeds()
+        self.assertIsNotNone(pr.breeds)
+        self.assertTrue(len(pr.breeds["Dog"]) > 0)
+        self.assertIsNotNone(pr.processAnimal(a))
 
     # petslocateduk
     def test_petslocateduk(self):

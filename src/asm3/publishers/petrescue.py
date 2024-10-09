@@ -14,6 +14,7 @@ class PetRescuePublisher(AbstractPublisher):
     """
     Handles publishing to petrescue.com.au
     """
+    breeds = None
     def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
@@ -44,13 +45,18 @@ class PetRescuePublisher(AbstractPublisher):
             self.log("No mappings for species '%s'" % sname)
             return bname
         default_breed = default_breeds[sname]
-        fname = f"{self.dbo.installpath}static/publishers/petrescue/{sname}.json"
-        prbreeds = asm3.utils.json_parse(asm3.utils.read_text_file(fname))
-        for d in prbreeds:
+        for d in self.breeds[sname]:
             if d["name"] == bname:
                 return bname
         self.log(f"'{bname}' is not a valid PetRescue breed, using default '{default_breed}'")
         return default_breed
+    
+    def load_breeds(self):
+        """ Loads PetRescue breeds from static json files into a dictionary for get_breed_name """
+        self.breeds = {}
+        for sp in [ "Cat", "Dog", "Horse", "Rabbit" ]:
+            fname = f"{self.dbo.installpath}static/publishers/petrescue/{sp}.json"
+            self.breeds[sp] = asm3.utils.json_parse(asm3.utils.read_text_file(fname))
 
     def run(self) -> None:
         
@@ -97,6 +103,8 @@ class PetRescuePublisher(AbstractPublisher):
             self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
             self.cleanup()
             return
+
+        self.load_breeds()
 
         animals = self.getMatchingAnimals(includeAdditionalFields=True)
         processed = []
