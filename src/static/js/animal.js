@@ -109,9 +109,9 @@ $(function() {
                 '<div>',
                 tableform.fields_render([
                     { rowid: "coordinatorrow", post_field: "adoptioncoordinator", json_field: "ADOPTIONCOORDINATORID", 
-                        label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator" },
+                        label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator", colclasses: "bottomborder" },
                     { post_field: "originalowner", json_field: "ORIGINALOWNERID", 
-                        label: _("Original Owner"), type: "person" },
+                        label: _("Original Owner"), type: "person", colclasses: "bottomborder" },
                     { rowid: "broughtinbyownerrow", post_field: "broughtinby", json_field: "BROUGHTINBYOWNERID", 
                         label: _("BroughtInBy"), type: "person" },
 

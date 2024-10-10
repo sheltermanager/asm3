@@ -996,6 +996,7 @@ const tableform = {
      *        min|max: min/max number for number fields
      *        classes: "extraclass anotherone", extra classes to apply to the widget
      *        rowclasses: "extraclass anotherone", extra classes to apply to the row container
+     *        colclasses: "extraclass", extra classes to apply to the column containers within the row
      *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
      *        date_nofuture: true|false, (for datepicker fields)
      *        date_nopast: true| false, (for datepicker fields)
@@ -1100,7 +1101,7 @@ const tableform = {
      *  h: The generated widget HTML being passed from a render_text/check/etc method.
      */
     _render_formfield: function(v, h) {
-        let tr = "<tr>", rowid = "", rowclasses = "", label = tableform._render_label(v);
+        let tr = "<tr>", td = "<td>", rowid = "", rowclasses = "", colclasses = "", label = tableform._render_label(v);
         if (v.hideif && v.hideif()) {
             return "";
         }
@@ -1116,9 +1117,13 @@ const tableform = {
         if (v.rowclasses) {
             rowclasses = ' class="' + v.rowclasses + '" ';
         }
+        if (v.colclasses) {
+            colclasses = ' class="' + v.colclasses + '" ';
+        }
         tr = '<tr ' + rowid + rowclasses + '>'; 
+        td = '<td ' + colclasses + '>';
         if (v.type == "check") {
-            return tr + '<td></td><td>' + h + '</td></tr>';
+            return tr + td + '</td>' + td + h + '</td></tr>';
         }
         else if ((v.type == "textarea" || 
                     v.type == "richtextarea" || 
@@ -1128,7 +1133,7 @@ const tableform = {
             return tr + '<td colspan="2">' + label + '<br>' + h + '</td></tr>';
         }
         else {
-            return tr + '<td>' + label + '</td><td>' + h + '</td></tr>';
+            return tr + td + label + '</td>' + td + h + '</td></tr>';
         }
     },
 
