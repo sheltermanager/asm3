@@ -87,9 +87,7 @@ class SmartTagPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # Upload one image for this animal with the name shelterid_animalid-1.jpg

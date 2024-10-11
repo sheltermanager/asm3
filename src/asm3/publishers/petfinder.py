@@ -234,9 +234,7 @@ class PetFinderPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 if PETFINDER_SEND_PHOTOS_BY_FTP:

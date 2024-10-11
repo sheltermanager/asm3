@@ -362,9 +362,7 @@ class AdoptAPetPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # Upload images for this animal

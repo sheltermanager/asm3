@@ -76,6 +76,11 @@ class FindPetPublisher(AbstractPublisher):
             anCount += 1
             self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(shanimals + tranimals)))
 
+            # If the user cancelled, stop now
+            if self.shouldStopPublishing(): 
+                self.stopPublishing()
+                return
+
             findpet_report_id = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_FINDPET)
             if findpet_report_id != "": 
                 self.log(f"Skipping {an.SHELTERCODE} {an.ANIMALNAME} - already reported to FindPet")
@@ -133,9 +138,7 @@ class FindPetPublisher(AbstractPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # This shouldn't happen, since we register transfer animals for a report_id above
@@ -204,6 +207,12 @@ class FindPetPublisher(AbstractPublisher):
             anCount = 0
             for an in deanimals:
                 anCount += 1
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.stopPublishing()
+                    return
+
                 try:
                     # We only remove the listing for dead animals, and those that left via 
                     # any movement that wasn't an adoption. So if the animal is alive, or is adopted, do nothing.

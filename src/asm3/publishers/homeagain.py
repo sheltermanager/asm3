@@ -89,8 +89,7 @@ class HomeAgainPublisher(AbstractPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
+                    self.stopPublishing()
                     return
 
                 # Construct the XML document

@@ -125,9 +125,7 @@ class PetRescuePublisher(AbstractPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
       
                 data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, 

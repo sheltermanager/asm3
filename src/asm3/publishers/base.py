@@ -765,6 +765,14 @@ class AbstractPublisher(threading.Thread):
         Returns True if we need to stop publishing
         """
         return asm3.asynctask.get_cancel(self.dbo)
+    
+    def stopPublishing(self) -> None:
+        """
+        Call when shouldStopPublishing is True to log that the user cancelled, save the log, cleanup etc
+        """
+        self.log("***===--- User cancelled publishing ---===***")
+        self.resetPublisherProgress()
+        self.cleanup()
 
     def setStartPublishing(self) -> None:
         """

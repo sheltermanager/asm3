@@ -456,9 +456,7 @@ class HTMLPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # upload images for this animal to our current FTP
@@ -522,9 +520,7 @@ class HTMLPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # upload images for this animal to our current FTP
@@ -645,9 +641,7 @@ class HTMLPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # upload all images for this animal to our current FTP
@@ -766,9 +760,7 @@ class HTMLPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # upload all images for this animal to our current FTP
@@ -883,9 +875,7 @@ class HTMLPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # Images already uploaded by Page/Species publisher
@@ -959,9 +949,7 @@ class HTMLPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    self.cleanup()
+                    self.stopPublishing()
                     return
 
                 # upload all images for this animal to our current FTP

@@ -310,8 +310,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
                     # If the user cancelled, stop now
                     if self.shouldStopPublishing(): 
-                        self.log("User cancelled publish. Stopping.")
-                        self.resetPublisherProgress()
+                        self.stopPublishing()
                         return
 
                     csv.append( self.processLostAnimal(an, customerid) )
@@ -331,8 +330,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
+                    self.stopPublishing()
                     return
 
                 csv.append( self.processFoundAnimal(an, customerid) )
@@ -354,8 +352,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
                     # If the user cancelled, stop now
                     if self.shouldStopPublishing(): 
-                        self.log("User cancelled publish. Stopping.")
-                        self.resetPublisherProgress()
+                        self.stopPublishing()
                         return
 
                     # Upload one image for this animal
