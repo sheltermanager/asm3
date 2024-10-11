@@ -2743,7 +2743,7 @@ class change_user_settings(JSONEndpoint):
         realname = post["realname"]
         email = post["email"]
         signature = post["signature"]
-        quicklinks = post["quicklinks"]
+        quicklinks = post["quicklinksid"]
         twofavalidcode = post["twofavalidcode"]
         twofavalidpassword = post["twofavalidpassword"]
         asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "main.change_password", o.dbo)

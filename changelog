@@ -1,6 +1,7 @@
 49
 ================
 
+11/10/24 Refactor change_user_settings screen #1103
 11/10/24 Standardise "stop publishing" behaviour, ensure log written
 11/10/24 Backend work for enforcing 2FA on all users #1538
 11/10/24 Remove mobileapp/login_jsonp as redundant for almost 12 months
