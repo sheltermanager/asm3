@@ -235,8 +235,7 @@ def page(dbo, o, username):
     h.append(header(l))
 
     logoutlink = ""
-    if not o.session.mobileapp: 
-        logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b", ajax="false")
+    logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b", ajax="false")
 
     h.append(jqm_page_header("home", "%s : %s" % (username, _("ASM", l)), logoutlink , False))
     items = []

@@ -213,6 +213,7 @@ DEFAULTS = {
     "FirstDayOfWeek": "1",
     "FlagChangeLog": "Yes",
     "FlagChangeLogType": "3",
+    "Force2FA": "No",
     "FormatPhoneNumbers": "Yes",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
@@ -1035,6 +1036,9 @@ def flag_change_log(dbo: Database) -> bool:
 
 def flag_change_log_type(dbo: Database) -> int:
     return cint(dbo, "FlagChangeLogType", DEFAULTS["FlagChangeLogType"])
+
+def force_2fa(dbo: Database) -> bool:
+    return cboolean(dbo, "Force2FA", DEFAULTS["Force2FA"] == "Yes")
 
 def foster_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")

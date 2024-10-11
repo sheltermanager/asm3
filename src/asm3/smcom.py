@@ -31,6 +31,13 @@ def active() -> bool:
     """
     return MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "smcom"
 
+def is_master_user(user: str, dbname: str) -> bool:
+    """
+    Returns True if user is the master user 
+    """
+    if not active(): return False
+    return user == dbname
+
 def get_account(alias: str) -> Dict:
     """
     Returns the smcom account object for alias/db

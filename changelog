@@ -1,6 +1,8 @@
 49
 ================
 
+11/10/24 Backend work for enforcing 2FA on all users #1538
+11/10/24 Remove mobileapp/login_jsonp as redundant for almost 12 months
 11/10/24 When processing payments, load the timezone for timestamping
 10/10/24 Add underlines back between people on entry slider #1103
 09/10/24 Findpet: Change info header, add option for found listing only

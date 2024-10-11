@@ -1009,7 +1009,7 @@ def thumbnail_img_src(dbo: Database, row: ResultRow, mode: str) -> str:
         return uri
 
 # All of the option functions below are redundant once the old mobile
-# interface is removed (mobile.py / session.mobileapp)
+# interface is removed (mobile.py)
 # Have not bothered adding type hints to code that is to be removed
 # ==================================================================
 

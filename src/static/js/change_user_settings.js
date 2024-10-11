@@ -68,6 +68,7 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Change User Settings")),
+                html.warn(_("Your administrator requires all users to enable 2FA below in order to use the system."), "force2fa"),
                 '<table class="asm-table-layout">',
                 '<tr>',
                     '<td>' + _("Username") + '</td>',
@@ -152,7 +153,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                     '<td>',
-                    '<label>' + _("Two factor authentication (2FA)") + '</label>',
+                    '<label for="button-enable2fa">' + _("Two factor authentication (2FA)") + '</label>',
                     '</td>',
                     '<td>',
                     '<input id="enabletotp" data="enabletotp" type="hidden" val="0" />',
@@ -258,6 +259,13 @@ $(function() {
 
         sync: function() {
             let u = controller.user;
+            if (common.querystring_param("force2fa") == "1") { 
+                $("#force2fa").show(); 
+                validate.highlight("button-enable2fa");
+            }
+            else {
+                $("#force2fa").hide();
+            }
             $("#realname").val(html.decode(u.REALNAME));
             $("#email").val(u.EMAILADDRESS);
             $("#olocale").select("value", u.LOCALEOVERRIDE);

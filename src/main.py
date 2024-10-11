@@ -263,6 +263,7 @@ class ASMEndpoint(object):
             session.send_cookie = False # Stop the session object calling setcookie
         if self.check_logged_in:
             self.check_loggedin(session, web, self.login_url)
+            self.check_2fa(session, web)
         if isinstance(permissions, str):
             asm3.users.check_permission(session, permissions)
         else:
@@ -299,6 +300,16 @@ class ASMEndpoint(object):
         elif self.user_activity:
             # update the last user activity if logged in
             asm3.users.update_user_activity(session.dbo, session.user)
+
+    def check_2fa(self, session: Session, web: Any) -> None:
+        """
+        Checks if the force2fa flag has been set in the session, and if so
+        redirects to the change_user_settings page for the user to enable 2FA.
+        force2fa is only set if the cfg option Force2FA is on, and the user logged
+        in without using 2FA.
+        """
+        if "force2fa" in session and session.force2fa:
+            raise web.seeother("%s/change_user_settings?force2fa=1" % BASE_URL)
 
     def check_mode(self, mode: str) -> bool:
         """
@@ -982,9 +993,7 @@ class mobile(ASMEndpoint):
     login_url = "mobile_login"
 
     def content(self, o):
-        # this endpoint will be deprecated at some point probably replaced by mobile2
-        if o.session.mobileapp:
-            self.redirect(f"https://sheltermanager.com/site/en_mobileretire.html?k={BUILD}")
+        # this endpoint will be deprecated 1 Nov 2024
         self.content_type("text/html")
         return asm3.mobile.page(o.dbo, o, o.user)
 
@@ -1380,8 +1389,6 @@ class main(JSONEndpoint):
     url = "main"
 
     def controller(self, o):
-        if o.session.mobileapp:
-            self.redirect(f"https://sheltermanager.com/site/en_mobileretire.html?k={BUILD}")
         dbo = o.dbo
         # If a b (build) parameter was passed to indicate the client wants to
         # get the latest js files, invalidate the config so that the
@@ -1618,15 +1625,6 @@ class login(ASMEndpoint):
             _("To reset your ASM password, please follow this link:", l) + "\n\n" + resetlink + "\n\n" +
             _("This link will remain active for 10 minutes.", l))
         return "OK"
-
-class login_jsonp(ASMEndpoint):
-    url = "login_jsonp"
-    check_logged_in = False
-
-    def content(self, o):
-        asm3.al.warn("login_jsonp hit from %s" % self.remote_ip(), "main.login_jsonp", o.dbo)
-        self.content_type("text/javascript")
-        return "%s({ response: '%s' })" % (o.post["callback"], asm3.users.web_login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH))
 
 class logout(ASMEndpoint):
     url = "logout"
@@ -2750,6 +2748,9 @@ class change_user_settings(JSONEndpoint):
         twofavalidpassword = post["twofavalidpassword"]
         asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "main.change_password", o.dbo)
         asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword)
+        # If the user now has 2FA enabled, and force2fa session flag is on, we can turn it off
+        if "force2fa" in o.session and o.session.force2fa and asm3.users.get_user(o.dbo, o.user).ENABLETOTP == 1:
+            o.session.force2fa = False
         # If the user's quicklinks are the same as the global ones, set to a blank instead
         if quicklinks == asm3.configuration.quicklinks_id(o.dbo):
             asm3.configuration.cset(o.dbo, "%s_QuicklinksID" % o.user, "")

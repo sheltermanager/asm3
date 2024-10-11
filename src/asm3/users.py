@@ -837,7 +837,6 @@ def web_login(post: PostedData, session: Session, remoteip: str, useragent: str,
     username = post["username"]
     password = post["password"]
     onetimepass = post["onetimepass"]
-    mobileapp = post["mobile"] == "true"
     rememberme = post["rememberme"] == "on"
     nologconnection = post["nologconnection"] == "true"
     if len(username) > 100:
@@ -882,7 +881,7 @@ def web_login(post: PostedData, session: Session, remoteip: str, useragent: str,
         dbo.installpath = path
         dbo.locale = asm3.configuration.locale(dbo)
         session.nologconnection = nologconnection
-        session.mobileapp = mobileapp 
+        session.force2fa = not asm3.smcom.is_master_user(user.USERNAME, dbo.database) and asm3.configuration.force_2fa(dbo) and onetimepass != ""
         update_session(dbo, session, user.USERNAME)
     except:
         asm3.al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
