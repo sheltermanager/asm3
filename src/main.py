@@ -2707,7 +2707,7 @@ class change_password(JSONEndpoint):
     def controller(self, o):
         asm3.al.debug("%s change password screen" % o.user, "main.change_password", o.dbo)
         return {
-            "ismaster": asm3.smcom.active() and o.dbo.database == o.user,
+            "ismaster": asm3.smcom.is_master_user(o.user, o.dbo.database),
             "username": o.user
         }
 
