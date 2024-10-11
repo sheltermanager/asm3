@@ -9,17 +9,15 @@ Import script for ARK DBF databases, covers people, animals, payments, events, l
 Last changed: 2nd Feb, 2023
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_mg2903"
+PATH = "/home/robin/tmp/asm3_import_data/ark_dn2494"
 START_ID = 100
 PICTURE_IMPORT = False
 SKIP_BLANK_NAME_ADDRESS = True # Don't create people if they don't have a lastname and address
 SKIP_BLANK_ANIMAL_NAME = True # Don't create animals if they don't have a name
 
 # Set these to 0 if the target database does not have them
-ADDITIONAL_PERSON_DOB = 1 # ID of additional field in the target database to hold date of birth
-ADDITIONAL_PERSON_DRIVERS_LIC = 2 # ID of additional field in the target database to hold drivers licence
-ADDITIONAL_ANIMAL_EUTH_BY = 4 # ID of additional field in the target database to hold euth by field
-ADDITIONAL_ANIMAL_EUTH_USD = 3 # ID of additional field in the target database to hold euth amount used
+ADDITIONAL_ANIMAL_EUTH_BY = 0 # ID of additional field in the target database to hold euth by field
+ADDITIONAL_ANIMAL_EUTH_USD = 0 # ID of additional field in the target database to hold euth amount used
 
 BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses, incidents and dispositions when the date was blank in ARK
 
@@ -119,14 +117,11 @@ for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o.HomeTelephone = p["H_PHONE"]
     o.MobileTelephone = p["C_PHONE"]
     o.WorkTelephone = p["W_PHONE"]
-    comments = "ID: %s, DL#: %s, DOB: %s" % (p["ID"], p["DRIVERSLIC"], asm.format_date(p["DOB"], "%m/%d/%Y"))
+    o.IdentificationNumber = p["DRIVERSLIC"]
+    o.DateOfBirth = asm.todatetime(p["DOB"])
+    comments = "ID: %s, DOB: %s" % (p["ID"], asm.format_date(p["DOB"], "%m/%d/%Y"))
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
-    if p["DRIVERSLIC"] != "" and ADDITIONAL_PERSON_DRIVERS_LIC != 0:
-        asm.additional_field_id(ADDITIONAL_PERSON_DRIVERS_LIC, o.ID, p["DRIVERSLIC"])
-    if p["DOB"] is not None and ADDITIONAL_PERSON_DOB != 0:
-        #asm.stderr("DOB: %s %s %s %s" % (p["DOB"], type(p["DOB"]), p["DOB"].strftime("%m/%d/%Y"), asm.format_date(p["DOB"], "%m/%d/%Y")))
-        asm.additional_field_id(ADDITIONAL_PERSON_DOB, o.ID, asm.format_date(p["DOB"], "%m/%d/%Y"))
 
 for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     if SKIP_BLANK_ANIMAL_NAME and d["NAME"] == "": continue
