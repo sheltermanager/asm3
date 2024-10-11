@@ -168,6 +168,9 @@ class FindPetPublisher(AbstractPublisher):
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(tranimals)))
                     processed_animals.append(an)
                 elif "result" in j and "status" in j["result"] and j["result"]["status"] == "Failed":
+                    # TODO: If the error message is relating to the pet already being transferred,
+                    # we need to put through a "cancel transfer" or "transfer back" depending on whether
+                    # the owner accepted the transfer.
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     an.FAILMESSAGE = j["result"]["details"]
                     failed_animals.append(an)
