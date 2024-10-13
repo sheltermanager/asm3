@@ -1326,7 +1326,10 @@ def get_asm_news(dbo: Database) -> str:
         else:
             s = get_url(URL_NEWS, timeout=10)["response"]
             asm3.al.debug("Retrieved ASM news from %s, got %d bytes" % (URL_NEWS, len(s)), "utils.get_asm_news", dbo)
-            write_text_file(NEWS_FILE, s)
+            if s.find("<DOCTYPE") != -1 or s.find("<html") != -1 or s.find("<body") != -1:
+                asm3.al.error(f"does not appear to be a news fragment document, not storing '{s}'", "utils.get_asm_news", dbo)
+            else:
+                write_text_file(NEWS_FILE, s)
             return s
     except Exception as err:
         asm3.al.error("Failed reading ASM news: %s" % err, "utils.get_asm_news", dbo)
