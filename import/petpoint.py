@@ -33,7 +33,7 @@ cat *CaseCaseDetailExtended*csv.0 > cases.csv
 cat *MedicalVaccineExpress*csv.1 > vacc.csv
 cat *MedicalTestsExpress*csv.1 > tests.csv
 cat *PersonByAssociationExtended*csv.0 > people.csv
-cat *PersonMemoHistory*csv.1 > personmemo.csv
+cat *PersonMemoHistory*csv.0 > personmemo.csv
 
 If the vaccine and tests are in the two row format, there will be some header
 junk that needs to be removed so that the first line has Animal # in it. The second
@@ -45,7 +45,7 @@ header will also need to be removed or odd/even will be thrown out.
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 START_ID = 100
-ACCOUNT = "ch2801"
+ACCOUNT = "cw3343"
 
 INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
 CASES_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/cases.csv" % ACCOUNT
