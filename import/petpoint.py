@@ -45,6 +45,7 @@ header will also need to be removed or odd/even will be thrown out.
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 START_ID = 100
+LOOKUP_START_ID = 100
 ACCOUNT = "cw3343"
 
 INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
@@ -97,8 +98,14 @@ asm.setid("log", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("adoption", START_ID)
 
+asm.setid("internallocation", LOOKUP_START_ID)
+asm.setid("incidenttype", LOOKUP_START_ID)
+asm.setid("jurisdiction", LOOKUP_START_ID)
+
 print("\\set ON_ERROR_STOP\nBEGIN;")
-print("DELETE FROM internallocation;")
+print("DELETE FROM incidenttype WHERE ID >= %s;" % LOOKUP_START_ID)
+print("DELETE FROM internallocation WHERE ID >= %s;" % LOOKUP_START_ID)
+print("DELETE FROM jurisdiction WHERE ID >= %s;" % LOOKUP_START_ID)
 print("DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM animalcontrol WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
@@ -430,8 +437,7 @@ if CASES_FILENAME != "" and asm.file_exists(CASES_FILENAME):
         c = d["Case ID"]
         ac.CallDateTime = getdatetime(d["Case Date/Time"]) or getdate(d["Case Date/Time"], True)
         ac.IncidentDateTime = ac.CallDateTime
-        ac.IncidentTypeID = 1
-        if d["Case Type"] in ctmap: ac.IncidentTypeID = ctmap[d["Case Type"]]
+        ac.IncidentTypeID = asm.incidenttype_id_for_name(d["Case Type"])
         ac.DispatchDateTime = ac.CallDateTime
         ac.CompletedDate = getdatetime(d["Result Date/Time"])
         if ac.CompletedDate is None:
@@ -444,6 +450,7 @@ if CASES_FILENAME != "" and asm.file_exists(CASES_FILENAME):
         ac.DispatchPostcode = d["Zip Code"]
         ac.JurisdictionID = asm.jurisdiction_id_for_name(d["Jurisdiction"])
         c += "\nCaller info: %s" % d["Person Reporting Info"]
+        c += "\nCase type: %s" % d["Case Type"]
         c += "\nAdditional: %s" % d["Additional Information"]
         c += "\n%s" % d["Comments"]
         ac.CallNotes = c
@@ -583,10 +590,10 @@ asm.adopt_older_than(animals, movements, uo.ID, 365)
 # Now that everything else is done, output stored records
 for k,v in asm.locations.items():
     print(v)
-if len(asm.jurisdictions.keys()) > 0:
-    print("DELETE FROM jurisdiction;")
-    for k,v in asm.jurisdictions.items():
-        print(v)
+for k,v in asm.incidenttypes.items():
+    print(v)
+for k,v in asm.jurisdictions.items():
+    print(v)
 for a in animals:
     print(a)
 for at in animaltests:

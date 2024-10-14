@@ -79,6 +79,9 @@ nextyearcode = 1
 # Dictionary of tables and next ID
 ids = {}
 
+# Dictionary of incident types
+incidenttypes = {}
+
 # Dictionary of jurisdictions
 jurisdictions = {}
 
@@ -1050,6 +1053,15 @@ def incidenttype_from_db(name, default = 1):
     """ Looks up the type in the db when the conversion is run, assign to IncidentTypeID """
     return "COALESCE((SELECT ID FROM incidenttype WHERE lower(IncidentName) LIKE lower(%s) LIMIT 1), %d)" % (ds(name.strip()), default)
 
+def incidenttype_id_for_name(name, createIfNotExist = True):
+    global incidenttypes
+    if name.strip() == "": return 1
+    if name in incidenttypes:
+        return incidenttypes[name].ID
+    else:
+        incidenttypes[name] = IncidentType(Name=name)
+        return incidenttypes[name].ID
+
 def incident_animal(incidentid, animalid):
     print(f"INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES ({incidentid}, {animalid});")
 
@@ -1856,6 +1868,23 @@ class EntryReason:
             ( "ReasonDescription", ds(self.Description) )
             )
         return makesql("entryreason", s)
+
+class IncidentType:
+    ID = 0
+    Name = ""
+    Description = None
+    def __init__(self, ID = 0, Name = "", Description = ""):
+        self.ID = ID
+        if ID == 0: self.ID = getid("incidenttype")
+        self.Name = Name
+        self.Description = Description
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "IncidentName", ds(self.Name) ),
+            ( "IncidentDescription", ds(self.Description) )
+            )
+        return makesql("incidenttype", s)
 
 class Jurisdiction:
     ID = 0
