@@ -17,6 +17,10 @@ AnimalLocationHistory
 Can optionally import cases:
 CaseCaseDetailExtended
 
+Note that PetPoint will only allow reports to be run for a maximum of
+2 years at a time, so they will need to be run multiple times to cover
+the full period of data.
+
 Use this script to convert xls(x) files from PetPoint to CSV and merge
 them into single CSV files for import:
 
