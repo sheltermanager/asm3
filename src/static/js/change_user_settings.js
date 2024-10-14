@@ -68,7 +68,7 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Change User Settings")),
-                html.warn(_("Your administrator requires all users to enable 2FA below in order to use the system."), "force2fa"),
+                html.error(_("Your administrator requires all users to enable 2FA below in order to use the system."), "force2fa"),
                 tableform.fields_render([
                     { label: _("Username"), type: "raw", markup: asm.user },
                     { post_field: "realname", label: _("Real name"), type: "text", doublesize: true },
@@ -94,7 +94,7 @@ $(function() {
                     { rowclasses: "enable2fa", type: "raw", label: "", 
                         markup: '<div id="qr2fa" style="padding: 10px; background: #fff; display: inline-block"></div>' },
                     { rowclasses: "enable2fa", post_field: "twofavalidcode", type: "text", label: _("Enter the code from your app") },
-                    { rowclasses: "disable2fa", post_field: "twofavalidpassword", type: "text", label: _("Confirm Password") }
+                    { rowclasses: "disable2fa", post_field: "twofavalidpassword", type: "password", label: _("Confirm Password") }
                 ], { full_width: false }),
                 '<p class="centered">',
                     '<button id="save">' + html.icon("save") + ' ' + _("Save") + '</button>',

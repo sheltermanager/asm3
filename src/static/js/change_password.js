@@ -68,6 +68,20 @@ $(function() {
                     return false;
                 }
 
+                // Test strength if option on
+                if (config.bool("ForceStrongPasswords")) {
+                    let np = $("#newpassword").val(), passok = true;
+                    if (np.match(/[a-z]+/)) {}
+                    if (!np.match(/[$@#&!]+/)) { }
+                    if (!np.match(/[A-Z]+/)) { passok = false; }
+                    if (!np.match(/[0-9]+/)) { passok = false; }
+                    if (np.length < 8) { passok = false; }
+                    if (!passok) {
+                        header.show_error(_("Passwords must be longer than 8 characters and include at least one upper case character and number"));
+                        return false;
+                    }
+                }
+
                 return true;
             };
 

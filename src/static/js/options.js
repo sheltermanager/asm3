@@ -108,6 +108,7 @@ $(function() {
                 '<li><a href="#tab-unwanted">' + _("Remove") + '</a></li>',
                 '<li><a href="#tab-reports">' + _("Reports") + '</a></li>',
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
+                '<li><a href="#tab-security">' + _("Security") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
                 '<li><a href="#tab-watermark">' + _("Watermark") + '</a></li>',
@@ -1732,6 +1733,17 @@ $(function() {
             ].join("\n");
         },
 
+        render_security: function() {
+            return [
+                '<div id="tab-security">',
+                '<p>',
+                '<input data="Force2FA" id="force2fa" class="asm-checkbox" type="checkbox" /> <label for="force2fa">' + _("Force users to enable 2 factor authentication") + '</label><br />',
+                '<input data="ForceStrongPasswords" id="forcestrongpasswords" class="asm-checkbox" type="checkbox" /> <label for="forcestrongpasswords">' + _("Force users to set strong passwords (8+ characters of mixed case and numbers)") + '</label><br />',
+                '</p>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_waitinglist: function() {
             return [
                 '<div id="tab-waitinglist">',
@@ -1871,6 +1883,7 @@ $(function() {
                 this.render_shelterview(),
                 this.render_unwanted(),
                 this.render_reports(),
+                this.render_security(),
                 this.render_waitinglist(),
                 this.render_watermark(),
                 '</div>',

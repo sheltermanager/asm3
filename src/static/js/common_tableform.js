@@ -1049,6 +1049,7 @@ const tableform = {
             else if (v.type == "htmleditor") { d += tableform.render_htmleditor(v); }
             else if (v.type == "intnumber") { d += tableform.render_intnumber(v); }
             else if (v.type == "number") { d += tableform.render_number(v); }
+            else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
             else if (v.type == "raw") { d += tableform.render_markup(v); }
             else if (v.type == "richtextarea") { d += tableform.render_richtextarea(v); }
@@ -1412,7 +1413,7 @@ const tableform = {
 
     render_text: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox " + v.classes;
+        d += "<input id=\"" + v.post_field + "\" type=\"" + v.type + "\" class=\"asm-textbox " + v.classes;
         if (v.halfsize) { d += " asm-halftextbox"; }
         if (v.doublesize) { d += " asm-doubletextbox"; }
         d += "\" ";

@@ -214,6 +214,7 @@ DEFAULTS = {
     "FlagChangeLog": "Yes",
     "FlagChangeLogType": "3",
     "Force2FA": "No",
+    "ForceStrongPasswords": "No",
     "FormatPhoneNumbers": "Yes",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
@@ -1039,6 +1040,9 @@ def flag_change_log_type(dbo: Database) -> int:
 
 def force_2fa(dbo: Database) -> bool:
     return cboolean(dbo, "Force2FA", DEFAULTS["Force2FA"] == "Yes")
+
+def force_strong_passwords(dbo: Database) -> bool:
+    return cboolean(dbo, "ForceStrongPasswords", DEFAULTS["ForceStrongPasswords"] == "Yes")
 
 def foster_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
