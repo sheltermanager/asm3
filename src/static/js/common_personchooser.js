@@ -64,15 +64,15 @@ $.widget("asm.personchooser", {
         }
 
         let h = [
-            '<div class="personchooser">',
+            '<div class="personchooser asm-chooser-container">',
             '<input class="personchooser-banned" type="hidden" value="" />',
             '<input class="personchooser-postcode" type="hidden" value = "" />',
             '<input class="personchooser-idcheck" type="hidden" value = "" />',
             '<div class="personchooser-noperm" style="display: none">' + _("Forbidden") + '</div>',
-            '<table class="personchooser-perm" style="margin-left: 0px; margin-right: 0px; width: 100%">',
+            '<table class="personchooser-perm" style="margin-left: 0px; margin-right: 0px; width: 100%; ">',
             '<tr>',
             '<td class="personchooser-display"></td>',
-            '<td valign="top" style="text-align: end">',
+            '<td valign="top" style="text-align: end; white-space: nowrap">',
             '<button class="personchooser-link-find">' + _("Select a person") + '</button>',
             '<button class="personchooser-link-new">' + _("Add a person") + '</button>',
             '<button class="personchooser-link-clear">' + _("Clear") + '</button>',

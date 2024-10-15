@@ -1,6 +1,7 @@
 49
 ================
 
+15/10/24 Refactor add animal #1103
 14/10/24 Options to enforce strong passwords and 2FA #1538
 13/10/24 Do not cache CDN error pages when fetching news
 11/10/24 Refactor change_user_settings screen #1103

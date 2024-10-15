@@ -7,8 +7,7 @@
 const tableform = {
 
     /**
-     * Renders a toolbar button set. If notoolbar is true, just renders the button tags, otherwise
-     * wraps them in a toolbar div.
+     * Renders a toolbar button set. 
      *
      * buttons: [
      *      { id: "new", text: _("Text"), tooltip: _("Tooltip"), icon: "iconname", enabled: "always|multi|one", perm: "va", hideif: function() {}, click: tableform.click_delete }
@@ -17,11 +16,19 @@ const tableform = {
      *      { id: "dropdownfilter", type: "dropdownfilter", options: [ "value1|text1", "value2|text2" ] }
      *      { type: "raw", markup: "<span>" }
      * ]
+     * options: 
+     *      centered: false, // whether to center buttons within the container
+     *      render_container: true, // whether to render the toolbar container
+     *      id: "tb", // id attribute of the toolbar container 
      */
-    buttons_render: function(buttons, notoolbar) {
-        var b = "";
-        if (!notoolbar) {
-            b += "<div class=\"asm-toolbar no-print\">";
+    buttons_render: function(buttons, coptions) {
+        let b = "", toolbarid = "", centered = "", 
+            options = { centered: false, render_container: true, id: "" };
+        if (coptions !== undefined) { options = common.copy_object(options, coptions); }
+        if (options.render_container) {
+            if (options.id) { toolbarid = 'id="' + options.id + '"'; } 
+            if (options.centered) { centered = "centered"; }
+            b += '<div ' + toolbarid + ' class="asm-toolbar no-print ' + centered + '">';
         }
         $.each(buttons, function(i, v) {
             if (v.hideif && v.hideif()) { return; }
@@ -75,7 +82,7 @@ const tableform = {
             }
             b += " ";
         });
-        if (!notoolbar) {
+        if (options.render_container) {
             b += "</div>";
         }
         return b;
@@ -1091,7 +1098,7 @@ const tableform = {
             label = v.label; // label already contains markup, let it override our generated label
         }
         else {
-            label = '<label for="' + v.post_field + '">' + v.label + "</label>" + labelx;
+            label = '<label for="' + v.post_field + '">' + (v.label || "") + "</label>" + labelx;
         }
         return label;
     },
@@ -1413,7 +1420,7 @@ const tableform = {
 
     render_text: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"" + v.type + "\" class=\"asm-textbox " + v.classes;
+        d += "<input id=\"" + v.post_field + "\" type=\"" + (v.type || "text") + "\" class=\"asm-textbox " + v.classes;
         if (v.halfsize) { d += " asm-halftextbox"; }
         if (v.doublesize) { d += " asm-doubletextbox"; }
         d += "\" ";

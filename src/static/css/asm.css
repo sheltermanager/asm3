@@ -929,6 +929,7 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 .asm-table-layout {
+    border-collapse: collapse;
     border-spacing: 5px 1px;
 }
 

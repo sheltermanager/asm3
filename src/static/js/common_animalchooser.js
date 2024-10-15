@@ -28,14 +28,14 @@ $.widget("asm.animalchooser", {
 
     _create: function() {
         var h = [
-            '<div class="animalchooser">',
+            '<div class="animalchooser asm-chooser-container">',
             '<input class="animalchooser-oopostcode" type="hidden" value="" />',
             '<input class="animalchooser-bipostcode" type="hidden" value = "" />',
-            '<table style="margin-left: 0px; margin-right: 0px; width: 100%">',
+            '<table style="margin-left: 0px; margin-right: 0px; width: 100%; ">',
             '<tr>',
             '<td class="animalchooser-display">',
             '</td>',
-            '<td valign="top" style="text-align: end">',
+            '<td valign="top" style="text-align: end; white-space: nowrap">',
             '<button class="animalchooser-link-find">' + _("Select an animal") + '</button>',
             '<button class="animalchooser-link-clear">' + _("Clear") + '</button>',
             '</td>',

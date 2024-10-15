@@ -31,12 +31,12 @@ $.widget("asm.animalchoosermulti", {
     _create: function() {
 
         var h = [
-            '<div class="animalchoosermulti">',
-            '<table style="margin-left: 0px; margin-right: 0px; width: 100%">',
+            '<div class="animalchoosermulti asm-chooser-container">',
+            '<table style="margin-left: 0px; margin-right: 0px; width: 100%; ">',
             '<tr>',
             '<td class="animalchoosermulti-display">',
             '</td>',
-            '<td valign="top" style="text-align: end">',
+            '<td valign="top" style="text-align: end; white-space: nowrap">',
             '<button type="button" class="animalchoosermulti-link-find">' + _("Select animals") + '</button>',
             '<button type="button" class="animalchoosermulti-link-clear">' + _("Clear") + '</button>',
             '</td>',
