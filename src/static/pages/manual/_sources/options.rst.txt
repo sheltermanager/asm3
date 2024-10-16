@@ -1199,6 +1199,18 @@ Reports
   installed, this option allows you to just show the categories in the reports
   menu. Clicking a category expands it.
 
+Security
+--------
+
+* Force users to enable 2 factor authentication: If set, users will be forced
+  to enable 2fa next time they login.
+
+* Force users to set strong passwords (8+ characters of mixed case and numbers):
+  If set, users will be forced to set stronger passwords when they next change
+  their password under the Change Password screen. You can't force the user
+  to change their password, but you can reset it to something stronger on 
+  the user administration screen and notify them of their new password.
+
 Shelter View
 ------------
 

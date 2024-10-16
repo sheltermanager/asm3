@@ -133,12 +133,22 @@ The syntax for show if is::
 to only show if the form field with fieldname currently has the value X.
 
 You can also use ! instead of = to only show if the field does NOT have
-the value and < or > to use lesser than or greater than comparisons
-with a fixed value. Eg::
+the value::
 
    fieldname!notthis
+
+You can use < or > to use lesser than or greater than comparisons
+with a fixed value. Eg::
+
    fieldname>0
    fieldname<20
+
+Also, you can use * to test for partial matches, where the value
+given is present somewhere in the value of the field. This is
+very useful when dealing with multi-select type fields that can
+hold multiple values::
+
+    fieldname*email
 
 If a value is not supplied, the system will compare against an empty
 string, so you can test that a field is or isn't empty::

@@ -221,11 +221,21 @@ enter the condition in the “Show If” box.</p>
 </div>
 <p>to only show if the form field with fieldname currently has the value X.</p>
 <p>You can also use ! instead of = to only show if the field does NOT have
-the value and &lt; or &gt; to use lesser than or greater than comparisons
-with a fixed value. Eg:</p>
+the value:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fieldname!notthis
-fieldname&gt;0
-fieldname&lt;20
+</pre></div>
+</div>
+<p>You can use &lt; or &gt; to use lesser than or greater than comparisons
+with a fixed value. Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fieldname</span><span class="o">&gt;</span><span class="mi">0</span>
+<span class="n">fieldname</span><span class="o">&lt;</span><span class="mi">20</span>
+</pre></div>
+</div>
+<p>Also, you can use * to test for partial matches, where the value
+given is present somewhere in the value of the field. This is
+very useful when dealing with multi-select type fields that can
+hold multiple values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fieldname</span><span class="o">*</span><span class="n">email</span>
 </pre></div>
 </div>
 <p>If a value is not supplied, the system will compare against an empty
