@@ -357,6 +357,10 @@ def today():
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
+def stderr_allanimals(animals=[]):
+    for a in animals:
+        stderr(a.infoLine())
+
 def stderr_onshelter(animals=[]):
     for a in animals:
         if a.Archived == 0:
@@ -2471,7 +2475,7 @@ class Animal:
             ( "LastChangedBy", ds(self.LastChangedBy) ),
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
-        stderr(self.infoLine())
+        #stderr(self.infoLine())
         return makesql("animal", s)
 
 class Log:

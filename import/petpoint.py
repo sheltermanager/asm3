@@ -609,6 +609,8 @@ for l in logs:
 for ac in animalcontrol:
     print(ac)
 
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, animalcontrol=animalcontrol, animaltests=animaltests, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")

@@ -188,6 +188,8 @@ for o in owners:
 for m in movements:
     print m
 
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"

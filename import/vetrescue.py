@@ -361,8 +361,9 @@ for od in ownerdonations:
 for m in movements:
     print(m)
 
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements)
-asm.stderr_onshelter(animals)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")

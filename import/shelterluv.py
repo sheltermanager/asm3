@@ -468,6 +468,8 @@ for at in animaltests:
 for am in animalmedicals:
     print (am)
 
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, owners=owners, movements=movements, animalvaccinations=animalvaccinations, animaltests=animaltests, animalmedicals=animalmedicals)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")

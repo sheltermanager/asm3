@@ -451,6 +451,8 @@ for l in stocklevels:
 for wl in waitinglists:
     print(wl)
 
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements, stocklevels=stocklevels, waitinglists=waitinglists)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")

@@ -545,7 +545,8 @@ for ac in animalcontrol:
 for aca in animalcontrolanimals:
     print aca
 
-
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, ownerlicences=ownerlicences, movements=movements, animalcontrol=animalcontrol)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"

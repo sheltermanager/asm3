@@ -10,7 +10,7 @@ Last changed: 2nd Feb, 2023
 """
 
 PATH = "/home/robin/tmp/asm3_import_data/ark_dn2494"
-START_ID = 100
+START_ID = 1000
 PICTURE_IMPORT = False
 SKIP_BLANK_NAME_ADDRESS = True # Don't create people if they don't have a lastname and address
 SKIP_BLANK_ANIMAL_NAME = True # Don't create animals if they don't have a name
@@ -316,7 +316,7 @@ for c in asm.read_dbf("%s/AN_EVNTS.DBF" % PATH):
 # asm.adopt_older_than(animals, movements, uo.ID, 0)
 
 # Mark animals remaining on shelter as escaped instead
-asm.escaped_older_than(animals, movements, 0)
+#asm.escaped_older_than(animals, movements, 0)
 
 for a in animals:
     print(a)
@@ -333,6 +333,8 @@ for ac in animalcontrol:
 for l in logs:
     print(l)
 
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, ownerdonations=ownerdonations, animalcontrol=animalcontrol)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")

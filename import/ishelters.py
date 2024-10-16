@@ -398,6 +398,8 @@ for k, v in asm.vaccinationtypes.items():
 for k, v in asm.testtypes.items():
     if v.ID >= START_ID: print(v)
 
+#asm.stderr_allanimals(animals)
+#asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animaltests=animaltests, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerdonations=ownerdonations)
 
 print("DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';")
