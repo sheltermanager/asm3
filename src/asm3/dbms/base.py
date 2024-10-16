@@ -1022,10 +1022,19 @@ class Database(object):
     def stats(self) -> ResultRow:
         return self.first_row(self.query("select " \
             "(select count(*) from animal where archived=0) as shelteranimals, " \
-            "(select count(*) from animal) as totalanimals, " \
             "(select min(createddate) from animal) as firstrecord, " \
+            "(select count(*) from animal) as totalanimals, " \
+            "(select count(*) from animalvaccination) as totalvacc, " \
+            "(select count(*) from animalmedicaltreatment) as totaltreatments, " \
             "(select count(*) from owner) as totalpeople, " \
             "(select count(*) from adoption) as totalmovements, " \
+            "(select count(*) from animalcontrol) as totalincidents, "
+            "(select max(id) from animal) as maxidanimal, " \
+            "(select max(id) from owner) as maxidowner, " \
+            "(select max(id) from adoption) as maxidadoption, " \
+            "(select max(id) from animalmedicaltreatment) as maxidanimalmedicaltreatment, " \
+            "(select max(id) from animalvaccination) as maxidanimalvaccination, " \
+            "(select max(id) from animalcontrol) as maxidanimalcontrol, " \
             "(select count(*) from media) as totalmedia, " \
             "(select sum(mediasize) / 1024.0 / 1024.0 from media) as mediasize, " \
             "(select count(*) from media where mediamimetype='image/jpeg') as totaljpg, " \

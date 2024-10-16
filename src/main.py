@@ -4755,23 +4755,17 @@ class maint_db_stats(ASMEndpoint):
         self.content_type("text/plain")
         self.cache_control(0)
         s = o.dbo.stats()
-        return "first record added on %s\n" \
-            "%s shelter animals\n" \
-            "%s animals\n" \
-            "%s people\n" \
-            "%s movements\n" \
-            "%s media (%s MB)\n" \
-            "%s jpg (%s MB)\n" \
-            "%s pdf (%s MB)\n" % (
-                s.firstrecord,
-                s.shelteranimals,
-                s.totalanimals,
-                s.totalpeople,
-                s.totalmovements,
-                s.totalmedia, s.mediasize,
-                s.totaljpg, s.jpgsize,
-                s.totalpdf, s.pdfsize
-            )
+        return f"first record added on {s.firstrecord}\n" \
+            f"{s.shelteranimals} shelter animals\n" \
+            f"{s.totalanimals} animals (max id {s.maxidanimal})\n" \
+            f"{s.totalvacc} vaccinations (max id {s.maxidanimalvaccination})\n" \
+            f"{s.totaltreatments} treatments (max id {s.maxidanimalmedicaltreatment})\n" \
+            f"{s.totalpeople} people (max id {s.maxidowner})\n" \
+            f"{s.totalmovements} movements (max id {s.maxidadoption})\n" \
+            f"{s.totalincidents} incidents (max id {s.maxidanimalcontrol})\n" \
+            f"{s.totalmedia} media ({s.mediasize} MB)\n" \
+            f"{s.totaljpg} jpg ({s.jpgsize} MB)\n" \
+            f"{s.totalpdf} pdf ({s.pdfsize} MB)\n"
 
 class maint_deps(ASMEndpoint):
     url = "maint_deps"
