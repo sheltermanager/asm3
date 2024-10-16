@@ -268,7 +268,7 @@ $(document).ready(function() {
             let andshow = true, orshow = false; // evaluate all clauses for or/and, only one can be used
             $.each(clauses, function(ci, cv) {
                 // Separate condition into field, operator (=!<>), value
-                let m = cv.trim().match(new RegExp("(.*)([=!<>])(.*)"));
+                let m = cv.trim().match(new RegExp("(.*)([=!<>\*])(.*)"));
                 let field = "", cond = "=", value = "";
                 if (!m) { return; } // The condition does not match our regex and is invalid, skip
                 if (m.length >= 2) { field = m[1]; }
@@ -439,6 +439,12 @@ $(document).ready(function() {
 
     // Watch text input fields for change so we can fix bad case/etc
     $("body").on("change", "input", fix_case_on_change);
+
+    // Multi-lookup fields should copy their values into the corresponding hidden field when changed
+    // so that showif pattern matching on them still works
+    $("body").on("change", ".asm-onlineform-lookupmulti", function() {
+        $("input[name='" + $(this).attr("data-name") + "']").val($(this).val());
+    });
 
     // Watch all fields for change and determine whether we need to hide or display rows
     $("body").on("change", "input, select", show_visibleif);
