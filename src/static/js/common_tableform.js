@@ -1179,7 +1179,7 @@ const tableform = {
         if (v.value && (v.value !== "0")) { d += "checked=\"checked\" "; }
         d += "/>";
         if (!v.labelpos || v.labelpos == "after") { d += label; }
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1198,7 +1198,7 @@ const tableform = {
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1220,7 +1220,7 @@ const tableform = {
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1243,7 +1243,7 @@ const tableform = {
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         d += "</span>";
         return tableform._render_formfield(v, d);
@@ -1292,7 +1292,7 @@ const tableform = {
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1317,7 +1317,7 @@ const tableform = {
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1374,7 +1374,7 @@ const tableform = {
             d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
         }
         d += "</select>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1432,7 +1432,7 @@ const tableform = {
         if (v.maxlength) { d += "maxlength=" + v.maxlength; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1451,7 +1451,7 @@ const tableform = {
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.value) { d += "value=\"" + v.value + "\" "; }
         d += "/>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1470,7 +1470,7 @@ const tableform = {
         d += ">";
         if (v.value) { d += v.value; }
         d += "</textarea>";
-        if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
