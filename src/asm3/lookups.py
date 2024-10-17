@@ -1155,9 +1155,9 @@ def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str
         dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag, "IsRetired": retired }, username, setLastChanged=False)
         # Update the text in flags fields where appropriate
         if lookup == "lkownerflags":
-            dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
+            dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (f"{oldflag}|", f"{newflag}|", f"%{oldflag}|%"))
         elif lookup == "lkanimalflags":
-            dbo.execute("UPDATE animal SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
+            dbo.execute("UPDATE animal SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (f"{oldflag}|", f"{newflag}|", f"%{oldflag}|%"))
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
