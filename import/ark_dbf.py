@@ -113,7 +113,7 @@ for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o.OwnerTown = p["CITY"].title()
     o.OwnerCounty = p["STATE"]
     o.OwnerPostcode = p["ZIP"]
-    o.EmailAddress = ["EMAIL"]
+    o.EmailAddress = p["EMAIL"]
     o.HomeTelephone = p["H_PHONE"]
     o.MobileTelephone = p["C_PHONE"]
     o.WorkTelephone = p["W_PHONE"]
@@ -316,7 +316,7 @@ for c in asm.read_dbf("%s/AN_EVNTS.DBF" % PATH):
 # asm.adopt_older_than(animals, movements, uo.ID, 0)
 
 # Mark animals remaining on shelter as escaped instead
-#asm.escaped_older_than(animals, movements, 0)
+asm.escaped_older_than(animals, movements, 0)
 
 for a in animals:
     print(a)
