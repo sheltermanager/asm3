@@ -41,6 +41,18 @@ class FindPetPublisher(AbstractPublisher):
         """ Makes sure a US phone number is formatted to E164 +1XXXYYYZZZZ """
         if pn is None: return ""
         return "+1%s" % asm3.utils.atoi(pn)
+    
+    def fpPOST(self, url, jsondata):
+        """ Sends the jsondata to url and returns the parsed json response or None for a failure """
+        r = asm3.utils.post_json(url, jsondata)
+        j = {}
+        try:
+            j = asm3.utils.json_parse(r["response"])
+            self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+            return (r["status"], j)
+        except Exception as jerr:
+            self.logError("Could not parse JSON response '%s' (%s), HTTP %s, headers: %s" % (r["response"], jerr, r["status"], r["headers"]))
+            return (r["status"], None)
 
     def run(self) -> None:
         
@@ -101,17 +113,8 @@ class FindPetPublisher(AbstractPublisher):
                 self.log(f"Reporting {an.SHELTERCODE} {an.ANIMALNAME} to FindPet.com as \"Adopt\"")
                 self.log("Sending POST to %s to create listing: %s" % (url, jsondata))
 
-                r = asm3.utils.post_json(url, jsondata)
-                j = {}
-                try:
-                    j = asm3.utils.json_parse(r["response"])
-                except Exception as jerr:
-                    self.logError("Could not parse JSON response '%s' (%s), HTTP %s, headers: %s" % (r["response"], jerr, r["status"], r["headers"]))
-                    continue
-
-                self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-
-                if r["status"] > 400: 
+                status, j = self.fpPOST(url, jsondata)
+                if status > 400 or j is None: 
                     self.logError("Validation or other errors found, skipping")
                     continue
 
@@ -155,34 +158,35 @@ class FindPetPublisher(AbstractPublisher):
                 # Send the transfer
                 url = f"{FINDPET_BASE_URL}/api/pet-transfer"
                 self.log("Sending POST to %s to create transfer: %s" % (url, jsondata))
-                r = asm3.utils.post_json(url, jsondata)
-                j = {}
-                try:
-                    j = asm3.utils.json_parse(r["response"])
-                except Exception as jerr:
-                    self.logError("Could not parse JSON response '%s' (%s), HTTP %s, headers: %s" % (r["response"], jerr, r["status"], r["headers"]))
-                    continue
+                status, j = self.fpPOST(url, jsondata)
+                if j is None: continue
 
                 # Success is returned as { "result": { "status": "Passed", details: {transfer_id} } }
                 # Validation/fail returned as { "result": { "status": "Failed", details: "error message" } }
                 # Error codes are supposed to be returned as { "reason": "message", "details": {transfer_id} }
                 if "result" in j and "status" in j["result"] and j["result"]["status"] == "Registered":
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(tranimals)))
                     processed_animals.append(an)
                 elif "result" in j and "status" in j["result"] and j["result"]["status"] == "Failed":
-                    # TODO: If the error message is relating to the pet already being transferred,
+                    # If the error message is relating to the pet already being transferred,
                     # we need to put through a "cancel transfer" or "transfer back" depending on whether
                     # the owner accepted the transfer.
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    an.FAILMESSAGE = j["result"]["details"]
-                    failed_animals.append(an)
+                    if j["result"]["details"].startswith("Report type does not support transfer"):
+                        # Send both cancel and transfer back post to undo the previous registration
+                        # regardless of whether the transfer was accepted or not.
+                        self.log("Found 'Report type does not support transfer', cancelling previous transfer for next publisher run")
+                        jsondata = asm3.utils.json({ "token": FINDPET_API_KEY, "report_id": findpet_report_id })
+                        url = f"{FINDPET_BASE_URL}/api/transfer-back"
+                        status, j = self.fpPOST(url, jsondata)
+                        url = f"{FINDPET_BASE_URL}/api/cancel-back"
+                        status, j = self.fpPOST(url, jsondata)
+                    else:
+                        an.FAILMESSAGE = j["result"]["details"]
+                        failed_animals.append(an)
                 elif "result" not in j and "reason" in j:
-                    self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     an.FAILMESSAGE = j["reason"]
                     failed_animals.append(an)
                 else:
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logError("did not understand the response (no { \"result\": or { \"reason\": ")
 
             except Exception as err:
@@ -235,20 +239,19 @@ class FindPetPublisher(AbstractPublisher):
                     jsondata = asm3.utils.json({ "token": FINDPET_API_KEY, "report_id": findpet_report_id })
                     url = f"{FINDPET_BASE_URL}/api/deactivate_report"
                     self.log("Sending POST to %s to remove report: %s" % (url, jsondata))
-                    r = asm3.utils.post_json(url, asm3.utils.json({ "token": FINDPET_API_KEY, "report_id": findpet_report_id }))
-                    if r["status"] != 200:
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    else:
-                        j = asm3.utils.json_parse(r["response"])
-                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(deanimals)))
+                    jsondata = asm3.utils.json({ "token": FINDPET_API_KEY, "report_id": findpet_report_id })
+                    status, j = self.fpPOST(url, jsondata)
+                    if j is None: continue
 
-                        # Update animalpublished for this animal with the status we just sent in the Extra field
-                        # so that it can be picked up next time and we won't do this again.
-                        self.markAnimalPublished(an.ID, extra = "Deactivated Report")
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(deanimals)))
 
-                        # Clear the report_id since the listing has been deleted
-                        asm3.animal.set_extra_id(self.dbo, "pub::findpet", an, IDTYPE_FINDPET, "")
+                    # Update animalpublished for this animal with the status we just sent in the Extra field
+                    # so that it can be picked up next time and we won't do this again.
+                    self.markAnimalPublished(an.ID, extra = "Deactivated Report")
+
+                    # Clear the report_id since the listing has been deleted
+                    asm3.animal.set_extra_id(self.dbo, "pub::findpet", an, IDTYPE_FINDPET, "")
+
                 except Exception as err:
                     self.logError("Failed updating listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
 
