@@ -111,7 +111,7 @@ additional = {
             var id = f.ID;
             var fieldid = "add_" + id;
             var fieldval = f.VALUE;
-            var element = $("#" + fieldid); //document.getElementById(fieldid);
+            var element = $("#" + fieldid); 
             if (element) {
                 if (f.FIELDTYPE == additional.YESNO) {
                     element.prop("checked", (fieldval && fieldval == "1"));
@@ -186,36 +186,23 @@ additional = {
      * Renders and lays out additional fields for the advanced search screens.
      * This call expects the backend to have already filtered and returned the
      * appropriate class (animal, etc).
-     * columns: number of columns per row, 2 if not supplied
      */
-    additional_search_fields: function(fields, columns) {
+    additional_search_fields: function(fields) {
         if (fields.length == 0) { return ""; }
         if (!columns) { columns = 2; }
-        let col = 0, h = [ '<tr class="asm3-search-additional-row">' ];
+        let col = 0, h = [];
         $.each(fields, function(i, f) {
             if (!f.SEARCHABLE) { return; }
             if (f.HIDDEN) { return; } 
             // Text/Notes/Number fields
             if (f.FIELDTYPE == 1 || f.FIELDTYPE == 2 || f.FIELDTYPE == 3) {
-                h.push('<td><label for="af_' + f.ID + '">' + f.FIELDLABEL + '</label></td>');
-                h.push('<td><input type="text" id="af_' + f.ID + '" data="af_' + f.ID + '" class="asm-textbox" /></td>');
+                h.push(html.search_field_text("af_" + f.ID, f.FIELDLABEL));
             }
             // Lookup/Multilookup fields
             if (f.FIELDTYPE == 6 || f.FIELDTYPE == 7) {
-                h.push('<td><label for="af_' + f.ID + '">' + f.FIELDLABEL + '</label></td>');
-                h.push('<td><select id="af_' + f.ID + '" data="af_' + f.ID + '" class="asm-selectbox">');
-                h.push('<option value="">' + _("(all)") + '</option>');
-                h.push( html.list_to_options(f.LOOKUPVALUES.split("|")) );
-                h.push('</select></td>');
-            }
-            // Drop a row at each column boundary
-            col += 1;
-            if (col == columns) { 
-                h.push('</tr><tr class="asm3-search-additional-row">'); 
-                col = 0; 
+                h.push(html.search_field_select("af_" + f.ID, f.FIELDLABEL, html.list_to_options(f.LOOKUPVALUES.split("|"))));
             }
         });
-        h.push("</tr>");
         return h.join("\n");
     },
 
@@ -223,7 +210,8 @@ additional = {
      * Returns true if the additional field type t is a person ID
      */
     is_person_type: function(t) {
-        return t == additional.PERSON_LOOKUP || t == additional.PERSON_SPONSOR || t == additional.PERSON_VET || t == additional.PERSON_ADOPTIONCOORDINATOR;
+        return t == additional.PERSON_LOOKUP || t == additional.PERSON_SPONSOR || 
+            t == additional.PERSON_VET || t == additional.PERSON_ADOPTIONCOORDINATOR;
     },
 
     /**
@@ -265,9 +253,8 @@ additional = {
         fields.forEach(function(f) {
             var id = f.ID;
             var fieldid = "add_" + id;
-            if (f.LINKTYPE==linktype)
-            {
-                var element = $("#" + fieldid); //document.getElementById(fieldid);
+            if (f.LINKTYPE==linktype) {
+                var element = $("#" + fieldid); 
                 if (element) {
                     var fid = element.attr('data-post');
                     if (f.FIELDTYPE == additional.YESNO) {
@@ -282,7 +269,7 @@ additional = {
                     else if (f.FIELDTYPE == additional.TIME) {
                         var ts = element.val();
                         if (!ts) { ts = "00:00:00"; }
-                        row[f.FIELDNAME.toUpperCase()] = ts; //format.date_iso_settime(row[f.FIELDNAME.toUpperCase()], ts);
+                        row[f.FIELDNAME.toUpperCase()] = ts; 
                     }
                     else if (f.FIELDTYPE == additional.MONEY) {
                         row[f.FIELDNAME.toUpperCase()] = element.currency("value");
@@ -334,7 +321,7 @@ additional = {
             let id = f.ID;
             let fieldid = "add_" + id;
             if (f.LINKTYPE==linktype) {
-                let element = $("#" + fieldid); //document.getElementById(fieldid);
+                let element = $("#" + fieldid); 
                 if (element) {
                     let fid = element.attr('data-post');
                     if (f.FIELDTYPE == additional.YESNO) {
@@ -348,11 +335,6 @@ additional = {
                     }                    
                     else if (f.FIELDTYPE == additional.LOOKUP || f.FIELDTYPE == additional.MULTI_LOOKUP) {
                         return_string += "&" + fid + "=" + element.val();
-                        // for (var i = 0; i < element.options.length; i++) {
-                        //     if (element.options[i].selected) {
-                        //         return_string += element.options[i].value + ',';
-                        //     }
-                        // }
                     }
                     else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) {
                         return_string += "&" + fid + '=' + element.val();
@@ -383,8 +365,13 @@ additional = {
      * includeids: undefined or true - output an id attribute with the field
      * classes: one or more classes to give fields - undefined="additional" 
      * usedefault: if true, outputs the default value instead of the actual value
-     */
-    render_field: function(f, includeids, classes, usedefault) {
+     * 
+     * This is the original version of this method, that didn't use the abstractions
+     * in tableform. The code has been left here for now in case
+     * of compatibility issues with the new version of render_field so we can check
+     * what the old behaviour was.
+     * 
+    render_field_old: function(f, includeids, classes, usedefault) {
         var fieldname = f.ID,
             fieldid = "add_" + fieldname,
             fieldattr = 'id="' + fieldid + '" ' + 'data-linktype="' + f.LINKTYPE + '" ',
@@ -501,6 +488,73 @@ additional = {
         }
         fh.push('</tr>');
         return fh.join("\n");
+    },
+    */
+
+    /**
+     * Renders an additional field.  
+     * If a VALUE column is present in f, the field is rendered with the correct value in place.
+     * The data-post value will be set to a.(1 if mandatory).fieldid
+     * f: A combined row from the additionalfield and additional tables
+     * includeids: undefined or true - output an id attribute with the field
+     *             (generally this is only false for special situations like when outputting
+     *              additional new fields for the embedded add person on a person record so the
+     *              id attributes don't clash as they aren't necessary for its operation)
+     * classes: one or more classes to give fields - undefined="additional" 
+     * usedefault: if true, outputs the default value instead of the actual value
+     */
+    render_field: function(f, includeids, classes, usedefault) {
+        let v = {
+            id: (includeids === undefined || includeids == true) ? "add_" + f.ID : "",
+            post_field: "a." + f.MANDATORY + "." + f.ID,
+            label: f.FIELDLABEL,
+            classes: classes || "additional",
+            rowclasses: f.HIDDEN ? "hidden" : "",
+            value: usedefault ? f.DEFAULTVALUE : f.VALUE,
+            xlabel: f.MANDATORY ? '&nbsp;<span class="asm-has-validation">*</span>' : "",
+            callout: f.TOOLTIP,
+            xattr: 'data-linktype="' + f.LINKTYPE + '"'
+        };
+        if (f.FIELDTYPE == additional.YESNO) { return tableform.render_check(v); }
+        else if (f.FIELDTYPE == additional.TEXT) { return tableform.render_text(v); }
+        else if (f.FIELDTYPE == additional.DATE) { return tableform.render_date(v); }
+        else if (f.FIELDTYPE == additional.TIME) { return tableform.render_time(v); }
+        else if (f.FIELDTYPE == additional.NOTES) { v.classes += " asm-textareafixed"; return tableform.render_textarea(v); }
+        else if (f.FIELDTYPE == additional.NUMBER) { return tableform.render_number(v); }
+        else if (f.FIELDTYPE == additional.MONEY) { return tableform.render_currency(v); }
+        else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) { return tableform.render_animal(v); }
+        else if (f.FIELDTYPE == additional.PERSON_LOOKUP) { return tableform.render_person(v); }
+        else if (f.FIELDTYPE == additional.PERSON_SPONSOR) { v.personfilter = "sponsor"; return tableform.render_person(v); }
+        else if (f.FIELDTYPE == additional.PERSON_VET) { v.personfilter = "vet"; return tableform.render_person(v); }
+        else if (f.FIELDTYPE == additional.PERSON_ADOPTIONCOORDINATOR) { v.personfilter = "coordinator"; return tableform.render_person(v); }
+        else if (f.FIELDTYPE == additional.LOOKUP) { 
+            let opts = [], cv = common.trim(common.nulltostr(v.value));
+            $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
+                vo = common.trim(vo);
+                if (cv == vo) {
+                    opts.push('<option selected="selected">' + vo + '</option>');
+                }
+                else {
+                    opts.push('<option>' + vo + '</option>');
+                }
+            });
+            v.options = opts.join("\n");
+            return tableform.render_select(v); 
+        }
+        else if (f.FIELDTYPE == additional.MULTI_LOOKUP) {
+            var mopts = [], mcv = common.trim(common.nulltostr(v.value)).split(",");
+            $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
+                vo = common.trim(vo);
+                if ($.inArray(vo, mcv) != -1) {
+                    mopts.push('<option selected="selected">' + vo + '</option>');
+                }
+                else {
+                    mopts.push('<option>' + vo + '</option>');
+                }
+            });
+            v.options = opts.join("\n");
+            return tableform.render_selectmulti(v); 
+        }
     },
 
     /**

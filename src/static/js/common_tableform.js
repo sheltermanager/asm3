@@ -986,6 +986,7 @@ const tableform = {
      * fields: [
      *      { json_field: "name", 
      *        post_field: "name", 
+     *        id: "name", // id attribute for the widget - if not supplied, post_field is used
      *        label: "label", // if label contains <label markup, overrides generation and uses supplied value instead
      *        labelpos: "before|after|above", (only valid for textarea (before|above) and check (before|after))
      *        type: "check|text|textarea|richtextarea|date|time|currency|number|select|animal|person|raw|nextcol", 
@@ -996,7 +997,7 @@ const tableform = {
      *        justwidget: false, (if true only output the widget itself, no label or row container)
      *        hideif: function() { return true; }, if true, omits the widget from the output
      *        defaultval: expression or function to evaluate (note: done in dialog_show_add/edit->fields_default, not here)
-     *        value: "123" value to assign to the widget
+     *        value: "123" value to assign to the widget during rendering
      *        validation: "notblank|notzero|validemail" or a function to call (note: done after dialog_show_x/fields_validate, not here)
      *        height/width/margintop: "css expr", (only used by sqleditor/htmleditor)
      *        maxlength: (number of chars limit for text/textarea),
@@ -1019,6 +1020,7 @@ const tableform = {
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), (note: done in fields_bind, not here)
      *        blur: function(blurevent), (note: done in fields_bind, not here)
+     *        xattr: ' data-linktype="2" ' (add extra attributes to the widget)
      *        xbutton: "text" (render an extra button after the widget with id button-post_field and inner text)
      *        xlabel: "<span>whatever</span>" (render extra markup after the label)
      *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
@@ -1079,17 +1081,44 @@ const tableform = {
         return d;
     },
 
+    /** Sanitises values being output for HTML attributes */
+    _attr_value: function(s) {
+        return html.title(s);
+    },
+
+    /**
+     * Sets the id attribute to post_field if it is undefined
+     */
+    _check_id: function(v) {
+        if (v.id === undefined && v.post_field !== undefined) { v.id = v.post_field; }
+        if (v.id === undefined && v.post_field === undefined) { v.id = ""; }
+        return v;
+    },
+
+    /**
+     * Renders the widget class attribute 
+     * v: the widget object
+     * c: The mandatory classes, eg: asm-textarea asm-textareafixed
+     */
+    _render_class: function(v, c) {
+        if (c === undefined || c === null) { c = ""; }
+        if (v.classes) { c += " " + v.classes; }
+        if (v.halfsize) { c += " asm-halftextbox"; }
+        if (v.doublesize) { c += " asm-doubletextbox"; }
+        return ' class="' + c + '" ';
+    },
+
     /**
      * renders the label for a form field, including callout and validation indicator
      * v: field definition
      */
     _render_label: function(v) {
-        let label = "", labelx = "";
+        let label = "", labelx = "", labelfor = "";
         if (v.validation && v.validation instanceof String && v.validation.indexOf("not") == 0) {
             labelx += '&nbsp;<span class="asm-has-validation">*</span>';
         }
         if (v.callout) {
-            labelx += '&nbsp;<span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
+            labelx += '&nbsp;<span id="callout-' + v.id + '" class="asm-callout">' + v.callout + '</span>';
         }
         if (v.xlabel) {
             labelx += v.xlabel;
@@ -1098,7 +1127,8 @@ const tableform = {
             label = v.label; // label already contains markup, let it override our generated label
         }
         else {
-            label = '<label for="' + v.post_field + '">' + (v.label || "") + "</label>" + labelx;
+            if (v.id) { labelfor = 'for="' + v.id + '"'; }
+            label = '<label ' + labelfor + '>' + (v.label || "") + "</label>" + labelx;
         }
         return label;
     },
@@ -1119,8 +1149,8 @@ const tableform = {
         if (v.rowid) { 
             rowid = ' id="' + v.rowid + '" ';
         }
-        else if (v.post_field) {
-            rowid = ' id="' + v.post_field + "row" + '" ';
+        else if (v.id) {
+            rowid = ' id="' + v.id + "row" + '" ';
         }
         if (v.rowclasses) {
             rowclasses = ' class="' + v.rowclasses + '" ';
@@ -1147,103 +1177,130 @@ const tableform = {
 
     render_animal: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchooser\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "asm-animalchooser");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.animalfilter) { d += "data-filter=\"" + v.animalfilter + "\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
         return tableform._render_formfield(v, d);
     },
 
     render_animalmulti: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchoosermulti\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "asm-animalchoosermulti");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.extraattributes)
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.animalfilter) { d += "data-filter=\"" + v.animalfilter + "\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
         return tableform._render_formfield(v, d);
     },
 
     render_check: function(v) {
-        let d = "", label = tableform._render_label(v);
+        let d = "";
+        tableform._check_id(v);
+        let label = tableform._render_label(v);
         if (v.labelpos && v.labelpos == "before") { d += label; }
-        d += "<input id=\"" + v.post_field + "\" type=\"checkbox\" class=\"asm-checkbox\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        d += "<input type=\"checkbox\" ";
+        d += tableform._render_class(v, "asm-checkbox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.value && (v.value !== "0")) { d += "checked=\"checked\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
         if (!v.labelpos || v.labelpos == "after") { d += label; }
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
     render_currency: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
-        if (v.classes) { d += " " + v.classes; }
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-currencybox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
     render_date: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox";
-        if (v.classes) { d += " " + v.classes; }
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-datebox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.date_onlydays) { d += "data-onlydays=\"" + v.onlydays + "\" "; }
         if (v.date_nofuture) { d+= "data-nofuture=\"true\" "; }
         if (v.date_nopast) { d+= "data-nopast=\"true\" "; }
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
     render_datetime: function(v) {
         let d = "";
+        tableform._check_id(v);
         d += "<span style=\"white-space: nowrap\">";
-        d += "<input id=\"" + v.post_field + "date\" type=\"text\" class=\"asm-textbox asm-datebox asm-halftextbox\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "date\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-datebox asm-halftextbox");
+        if (v.id) { d += "id=\"" + v.id + "date\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "date\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        d += "<input id=\"" + v.post_field + "time\" type=\"text\" class=\"asm-textbox asm-timebox asm-halftextbox";
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "time\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-timebox asm-halftextbox");
+        if (v.id) { d += "id=\"" + v.id + "time\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "time\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         d += "</span>";
         return tableform._render_formfield(v, d);
@@ -1251,25 +1308,35 @@ const tableform = {
 
     render_file: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" name=\"" + v.post_field + "\" type=\"file\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<input type=\"file\" ";
+        d += tableform._render_class(v, "asm-filechooser");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" name=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
         return tableform._render_formfield(v, d);
     },
 
     render_htmleditor: function(v) {
         let d = "";
+        tableform._check_id(v);
         if (!v.width) { v.width = "100%"; }
         if (!v.height) { v.height = "150px"; }
-        d += "<textarea id=\"" + v.post_field + "\" class=\"asm-htmleditor " + v.classes + "\" ";
-        d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        d += "<textarea ";
+        d += tableform._render_class(v, "asm-htmleditor");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.width && v.height) { d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += ">";
         if (v.value) { d += v.value; }
         d += "</textarea>";
@@ -1278,21 +1345,22 @@ const tableform = {
 
     render_intnumber: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-intbox ";
-        if (v.classes) { d += " " + v.classes; }
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-intbox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
         if (v.max) { d += "data-max=\"" + v.max + "\" " ;}
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
@@ -1303,64 +1371,75 @@ const tableform = {
 
     render_number: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-numberbox ";
-        if (v.classes) { d += " " + v.classes; }
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-numberbox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
         if (v.max) { d += "data-max=\"" + v.max + "\" " ;}
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
     render_person: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-personchooser\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "asm-personchooser");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
         if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
         return tableform._render_formfield(v, d);
     },
 
     render_richtextarea: function(v) {
         let d = "";
+        tableform._check_id(v);
         if (!v.width) { v.width = "100%"; }
         if (!v.height) { v.height = "64px"; }
         if (!v.margintop) { v.margintop = "24px"; }
-        d += "<div id=\"" + v.post_field + "\" class=\"asm-richtextarea " + v.classes + "\" ";
+        d += "<div id=\"" + v.id + "\" ";
+        d += tableform._render_class(v, "asm-richtextarea");
         d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" data-margin-top=\"" + v.margintop + "\" " ;
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "></div>";
         return tableform._render_formfield(v, d);
     },
 
     render_select: function(v) {
         let d = "";
-        d += "<select id=\"" + v.post_field + "\" class=\"asm-selectbox";
-        if (v.classes) { d += " " + v.classes; }
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<select ";
+        d += tableform._render_class(v, "asm-selectbox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += ">";
         if (common.is_array(v.options)) {
             d += html.list_to_options_array(v.options); 
@@ -1374,22 +1453,23 @@ const tableform = {
             d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
         }
         d += "</select>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
     render_selectmulti: function(v) {
         let d = "";
-        d += "<select id=\"" + v.post_field + "\" multiple=\"multiple\" class=\"asm-bsmselect";
-        if (v.classes) { d += " " + v.classes; }
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<select multiple=\"multiple\" ";
+        d += tableform._render_class(v, "asm-bsmselect");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += ">";
         if (v.options && v.options.rows) {
             if (v.options.prepend) { d += v.options.prepend; }
@@ -1404,14 +1484,19 @@ const tableform = {
 
     render_sqleditor: function(v) {
         let d = "";
+        tableform._check_id(v);
         if (!v.width) { v.width = "100%"; }
         if (!v.height) { v.height = "150px"; }
-        d += "<textarea id=\"" + v.post_field + "\" class=\"asm-sqleditor " + v.classes + "\" ";
-        d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        d += "<textarea ";
+        d += tableform._render_class(v, "asm-sqleditor");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.width && v.height) { d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += ">";
         if (v.value) { d += v.value; }
         d += "</textarea>";
@@ -1420,57 +1505,66 @@ const tableform = {
 
     render_text: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"" + (v.type || "text") + "\" class=\"asm-textbox " + v.classes;
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<input type=\"" + (v.type || "text") + "\" ";
+        d += tableform._render_class(v, "asm-textbox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
         if (v.maxlength) { d += "maxlength=" + v.maxlength; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
     render_time: function(v) {
         let d = "";
-        d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-timebox ";
-        if (v.classes) { d += " " + v.classes; }
-        if (v.halfsize) { d += " asm-halftextbox"; }
-        if (v.doublesize) { d += " asm-doubletextbox"; }
-        d += "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-timebox");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
-        if (v.value) { d += "value=\"" + v.value + "\" "; }
+        if (v.value) { d += "value=\"" + tableform.attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
     render_textarea: function(v) {
         let d = "";
+        tableform._check_id(v);
         if (!v.rows) { v.rows = 5; }
-        d += "<textarea id=\"" + v.post_field + "\" class=\"asm-textarea " + v.classes + "\" rows=\"" + v.rows + "\" ";
-        d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-        if (v.readonly) { d += " data-noedit=\"true\" "; }
+        d += "<textarea "; 
+        d += tableform._render_class(v, "asm-textarea");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.rows) { d += "rows=\"" + v.rows + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
         if (!v.tooltip) { d += "title=\"" + html.title(v.label) + "\" "; } // use the label if a title wasn't given
         if (v.maxlength) { d += "maxlength=" + v.maxlength; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
         d += ">";
         if (v.value) { d += v.value; }
         d += "</textarea>";
-        if (v.xbutton) { d += " <button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
