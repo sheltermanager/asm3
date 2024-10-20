@@ -2,7 +2,7 @@ Quality Control
 ###
 Auditing
 ###
-34702/PostgreSQL rev15
+34702/PostgreSQL rev16
 ###
 [Karen Waldroff] QC report, checks for common keying mistakes like adopting to rescues instead of transfers, bad state codes, etc. Customization Required.
 ###
@@ -23,6 +23,14 @@ en
 --                   A020 changed from REVIEW_DATE to CURRENT_DATE-1; A023 Added LastChangedDate check; A026 Changed 'Original Owner' to 'Owner' & 30 day check; 
 --                   A032 changed from entrytypeID <> 1 to entrytypeID NOT IN (1,7); A053 changed from REVIEW_DATE to CURRENT_DATE-1; A060 changed REVIEW_DATE to 
 --                   Lastchanged -30 and added NonShelterAnimal = 0; P024 Missing < on /font>; P029 text updated to reflect check.
+-- 2024-10-19 (16) - A015 Updated to include '$USE_INCIDENT_COMPLETION_TIME$' Check and '$USE_INCIDENT_COMPLETION_TIME$' added to CONST section.
+--                   A053, A054, A055 Modified the date checked from using DateOfVaccination to LastChangedDate.
+--                   A061 Added.  Compares cost values in Vaccination Type tables against those in Animal Templates to make sure they match.
+--                   P005 Updated to exclude ownerforenames < 3 characters.
+--                   P010 Updated to exclude '$CITY_ALLOWED$' in all checks.
+--                   P020, P022, P031, P032 Updated to check for Deceased flag.
+--                   P031 Modified to exclude addresses under 8 characters to avoid matching blanks, "None", and other non-address text.
+--                   P033 Modified to exclude entries under 5 characters.
 --
 -- ******************************************** INSTRUCTIONS **********************************************************
 -- 1.  Clone this report and change name to "Quality Control (Custom) (Version)". MAKE CHANGES TO CLONED VERSION ONLY!
@@ -94,7 +102,8 @@ $CONST MEMBERSHIP_EXPIRATION='No'$ -- Do you record a Membership Expiration date
 $CONST COUPLE_WARN='No'$ -- Do you want to provide a 1 day warning when a person type of "Couple" is selected?  Organizations who assign citations/incidents might not want to use this due to needing to assign citations/incidents to individual people not as a Couple.
 $CONST VOUCHER_ANIMAL='No'$ -- Do you want to be alerted when a voucher is created without an animal attached?
 $CONST ADDITIONAL_FIELDS=0$ -- Have you added any additionalfields that link to person records?  If so enter the Additional Fields IDs. If none, enter 0.
-$CONST USE_ENTRY_TYPE='Yes'$ -- Do you have 'Show the entry type field' selected in Settings > Options > Add Animal?  
+$CONST USE_ENTRY_TYPE='Yes'$ -- Do you have 'Show the entry type field' selected in Settings > Options > Add Animal?
+$CONST USE_INCIDENT_COMPLETION_TIME='Yes'$ -- Do you want incidents with missing completion times to show on report?
 -- DO NOT MODIFY PAST THIS POINT UNLESS YOU ARE FAMILIAR WITH SQL.
 
 SELECT * FROM
@@ -310,7 +319,8 @@ UNION SELECT
 FROM animalcontrol ac
 LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
-WHERE ac.CompletedDate::time = '00:00:00'
+WHERE $USE_INCIDENT_COMPLETION_TIME$ = 'Yes'
+  AND ac.CompletedDate::time = '00:00:00'
   AND date_trunc('day', ac.CompletedDate) = current_date -1  
   
 --#A016. Reports when AC Incident Completion Type is not entered.
@@ -931,7 +941,7 @@ FROM animal
   INNER JOIN animalvaccination av ON animal.ID = av.AnimalID
   INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
   INNER JOIN species ON species.ID = animal.SpeciesID
-WHERE date_trunc('day', av.DateOfVaccination) = '$CURRENT_DATE-1$'
+WHERE date_trunc('day', av.LastChangedDate) = '$CURRENT_DATE-1$'
   AND ((Species.SpeciesName='Dog' AND v.id NOT IN ($DOGVACCINES$)) OR (Species.SpeciesName='Cat' AND v.id NOT IN ($CATVACCINES$)))
   AND v.IsRetired = 0
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')  
@@ -945,7 +955,7 @@ UNION SELECT
 FROM animal
 INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
 WHERE substring(animalvaccination.Manufacturer,1,1) in ('0','1','2','3','4','5','6','7','8','9')
-  AND date_trunc('day', animalvaccination.DateOfVaccination) = '$CURRENT_DATE-1$'
+  AND date_trunc('day', animalvaccination.LastChangedDate) = '$CURRENT_DATE-1$'
 
 --#A055. Checks to see if Rabies Tag is missing.  Added 8/12/2021
 UNION SELECT
@@ -959,7 +969,7 @@ WHERE $RECORD_RABIES_NUM$ = 'Yes'
   AND animalvaccination.vaccinationid IN ($RABIES_IDS$)
   AND animalvaccination.DateofVaccination IS NOT NULL
   AND animalvaccination.RabiesTag = ''
-  AND date_trunc('day', animalvaccination.DateOfVaccination) = '$CURRENT_DATE-1$'
+  AND date_trunc('day', animalvaccination.LastChangedDate) = '$CURRENT_DATE-1$'
   AND animal.nonshelteranimal = 0
   
 --#A056. Checks to see if required vaccination is missing.  Added 6/30/2023
@@ -1040,6 +1050,20 @@ WHERE animal.LastChangedDate  > '$CURRENT_DATE-30$'
   AND (animal.IsDOA = 1 AND animal.EntryTypeID <> 9
   OR animal.IsDOA = 0 AND animal.EntryTypeID = 9)
 
+--#A061. Compares cost values in Vaccination Type tables against those in Animal Templates to make sure they match.
+UNION SELECT
+  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS name,
+  animal.ShelterCode as code,
+  date(av.LastChangedDate) as issuedate,
+  '<font color = "red">Vaccination cost issue.  Vaccination cost in <i>Settings>Lookup data>Vaccination Types</i> do not match costs in Template Animal. Alerts Only Once.</font> (A061)' AS issue
+FROM animalvaccination av
+  INNER JOIN animal ON animal.ID = av.AnimalID
+  INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+WHERE av.VaccinationID = vt.ID
+  AND av.Cost <> vt.DefaultCost
+  AND date_trunc('day', av.LastChangedDate) = '$CURRENT_DATE-1$'
+  AND animal.AnimalName like 'Template%'
+
 --****************************************************************************************************************************************************************************************
 --***  PERSON SECTION  *******************************************************************************************************************************************************************
 --****************************************************************************************************************************************************************************************
@@ -1097,10 +1121,10 @@ UNION SELECT
 FROM owner
 WHERE $CAPITALIZATION_RULES$ = 'Yes'
   AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
-  AND ((LOWER(ownerforenames) = ownerforenames AND ownerforenames <> '')
-       OR (UPPER(ownerforenames) = ownerforenames AND ownerforenames <> '')
-       OR (LOWER(ownerforenames2) = ownerforenames2 AND ownerforenames2 <> '')
-       OR (UPPER(ownerforenames2) = ownerforenames2 AND ownerforenames2 <> '')
+AND ((LOWER(ownerforenames) = ownerforenames AND LENGTH(NULLIF(regexp_replace(ownerforenames, '[^a-zA-Z]','','g'), '')) <> 2)
+       OR (UPPER(ownerforenames) = ownerforenames AND LENGTH(NULLIF(regexp_replace(ownerforenames, '[^a-zA-Z]','','g'), '')) <> 2)
+       OR (LOWER(ownerforenames2) = ownerforenames2 AND LENGTH(NULLIF(regexp_replace(ownerforenames2, '[^a-zA-Z]','','g'), '')) <> 2)
+       OR (UPPER(ownerforenames2) = ownerforenames2 AND LENGTH(NULLIF(regexp_replace(ownerforenames2, '[^a-zA-Z]','','g'), '')) <> 2)
        OR (LOWER(ownersurname) = ownersurname AND ownersurname <> '')
        OR (UPPER(ownersurname) = ownersurname AND ownersurname <> '')
        OR (LOWER(ownersurname2) = ownersurname2 AND ownersurname2 <> '')
@@ -1166,11 +1190,13 @@ UNION SELECT
   '<a href="'||$SERVER_URL$||'/person?id='||owner.ID||'" target="_'||$OPEN_IN_TAB$||'">'||owner.OwnerName||'</a>' AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
-  'City capitalization invalid. (P010)' AS issue
+  '<font color = "Red">City capitalization invalid. Alerts Only Once. (P010)</font>' AS issue  
 FROM owner
 WHERE ownertown <> ''
+  AND ownertown NOT IN ($CITY_ALLOWED$)
   AND ((upper(ownertown) = ownertown OR lower(ownertown) = ownertown)
-   OR (SUBSTR(split_part(ownertown, ' ', 2),1,1) ~ '[a-z]' AND ownertown NOT IN ($CITY_ALLOWED$))) 
+  OR SUBSTR(split_part(ownertown, ' ', 2),1,1) ~ '[a-z]')
+    AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$' 
  AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --#P011. Checks for common misspellings of city.
@@ -1311,6 +1337,7 @@ UNION SELECT
   '<font color = "Red">Phone number duplication - (' || ow.ownercode || ').  Alerts Only Once. (P020)</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE)  = '$CURRENT_DATE-1$'
+  AND ow.IsDeceased = 0
   AND o.id <> ow.id
 AND ((regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),$PHONE_DIGITS$) LIKE RIGHT(regexp_replace(ow.hometelephone, '\D','','g'),$PHONE_DIGITS$) AND ow.hometelephone <> '')
    OR (regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),$PHONE_DIGITS$) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),$PHONE_DIGITS$) AND ow.mobiletelephone <> '')
@@ -1341,8 +1368,9 @@ UNION SELECT
  '<font color = "Red">Email address duplication (' || ow.ownercode || ').  Alerts Only Once. (P022)</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
-AND o.ID <> ow.ID
-AND ((o.emailaddress <> '' AND lower(o.emailaddress) LIKE lower(ow.emailaddress))
+  AND ow.IsDeceased = 0
+  AND o.ID <> ow.ID
+  AND ((o.emailaddress <> '' AND lower(o.emailaddress) LIKE lower(ow.emailaddress))
       OR (o.emailaddress <> '' AND lower(o.emailaddress) LIKE lower(ow.emailaddress2))
       OR (o.emailaddress2 <> '' AND lower(o.emailaddress2) LIKE lower(ow.emailaddress))
       OR (o.emailaddress2 <> '' AND lower(o.emailaddress2) LIKE lower(ow.emailaddress2)))
@@ -1488,8 +1516,9 @@ UNION SELECT
  '<font color = "Red">Possible duplicate Person record - (' || ow.ownercode || ').  Partial address and last or first name match. Alerts Only Once. (P031)</font>' AS issue
 FROM owner o, owner ow
 where date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
+  AND ow.IsDeceased = 0
 AND LOWER(REGEXP_REPLACE(ow.owneraddress, '[^0-9A-Za-z]', '','g')) LIKE SUBSTR(LOWER(REGEXP_REPLACE(o.owneraddress, '[^0-9A-Za-z]', '','g')),1,8) || '%'
-AND o.owneraddress <> ''
+AND LENGTH(o.owneraddress) > 8
 AND ((LOWER(o.ownersurname) = LOWER(ow.ownersurname) AND ow.ownersurname <> '')
    OR (LOWER(o.ownersurname) = LOWER(ow.ownersurname2) AND ow.ownersurname2 <> '')
    OR (LOWER(o.ownersurname2) = LOWER(ow.ownersurname) AND ow.ownersurname <> '')
@@ -1509,6 +1538,7 @@ UNION SELECT
   '<font color = "Red">Possible duplicate Person record - (' || ow.ownercode || ').  First and Last Name Match. Alerts Only Once. (P032)</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
+  AND ow.IsDeceased = 0
   AND o.id <> ow.id
   AND ((LOWER(o.ownersurname) = LOWER(ow.ownersurname) AND (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames) AND ow.ownerforenames <> ''))
    OR (LOWER(o.ownersurname) = LOWER(ow.ownersurname2) AND (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames2) AND ow.ownerforenames2 <> ''))
@@ -1524,8 +1554,9 @@ UNION SELECT
   'ID Number duplicate (' ||  ow.ownercode || '). (P033)' as issue
 FROM owner o, owner ow
 WHERE o.id <> ow.id
-AND date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
-AND ((o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g') AND ow.IdentificationNumber <> '')
+  AND date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
+  AND LENGTH(o.IdentificationNumber) > 5
+  AND ((o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g') AND ow.IdentificationNumber <> '')
       OR (o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber2, '\D','','g') AND ow.IdentificationNumber2 <> '')
       OR (o.identificationnumber2 <> '' AND regexp_replace(o.IdentificationNumber2, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g') AND ow.IdentificationNumber <> '')
       OR (o.identificationnumber2 <> '' AND regexp_replace(o.IdentificationNumber2, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber2, '\D','','g') AND ow.IdentificationNumber2 <> ''))
