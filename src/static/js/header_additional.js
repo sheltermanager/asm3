@@ -542,7 +542,7 @@ additional = {
             return tableform.render_select(v); 
         }
         else if (f.FIELDTYPE == additional.MULTI_LOOKUP) {
-            var mopts = [], mcv = common.trim(common.nulltostr(v.value)).split(",");
+            let mopts = [], mcv = common.trim(common.nulltostr(v.value)).split(",");
             $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
                 vo = common.trim(vo);
                 if ($.inArray(vo, mcv) != -1) {
@@ -552,7 +552,7 @@ additional = {
                     mopts.push('<option>' + vo + '</option>');
                 }
             });
-            v.options = opts.join("\n");
+            v.options = mopts.join("\n");
             return tableform.render_selectmulti(v); 
         }
     },
