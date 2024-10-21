@@ -386,7 +386,7 @@ $(function() {
 
         bind: function() {
 
-            validate.indicator(["animalname", "dateofbirth"]);
+            validate.indicator(["animalname", "sheltercode", "dateofbirth"]);
 
             let similarbuttons = {};
             similarbuttons[_("Close")] = function() { 
