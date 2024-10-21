@@ -742,11 +742,12 @@ const html = {
         return html.search_field(labelhtml, widgethtml);
     },
 
-    search_field_select: function(id, label, options, includeall) {
+    search_field_select: function(id, label, options, includeall, allvalue) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
         let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-selectbox">';
-        if (includeall === undefined || includeall) {
-            widgethtml += '<option value="-1">' + _("(all)") + '</option>';
+        if (includeall === undefined || includeall === true) {
+            if (allvalue === undefined) { allvalue = "-1"; }
+            widgethtml += '<option value="' + allvalue + '">' + _("(all)") + '</option>';
         }
         widgethtml += options;
         widgethtml += '</select>';

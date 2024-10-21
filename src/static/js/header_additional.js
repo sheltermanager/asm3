@@ -199,7 +199,7 @@ additional = {
             }
             // Lookup/Multilookup fields
             if (f.FIELDTYPE == 6 || f.FIELDTYPE == 7) {
-                h.push(html.search_field_select("af_" + f.ID, f.FIELDLABEL, html.list_to_options(f.LOOKUPVALUES.split("|"))));
+                h.push(html.search_field_select("af_" + f.ID, f.FIELDLABEL, html.list_to_options(f.LOOKUPVALUES.split("|")), true, ""));
             }
         });
         return h.join("\n");

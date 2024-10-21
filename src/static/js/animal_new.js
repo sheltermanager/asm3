@@ -29,7 +29,7 @@ $(function() {
                     { post_field: "sheltercode", label: _("Code"), halfsize: true, rowid: "coderow", 
                         xmarkup: tableform.render_text({ post_field: "shortcode", halfsize: true, justwidget: true }) }, 
                     { post_field: "animalname", label: _("Name"), type: "text", xbutton: _("Generate a random name for this animal") },
-                    { post_field: "dateofbirth", label: _("Date of Birth"), type: "text" },
+                    { post_field: "dateofbirth", label: _("Date of Birth"), type: "date" },
                     { post_field: "estimatedage", label: _("or estimated age in years"), type: "number" },
                     { post_field: "sex", label: _("Sex"), type: "select", 
                         options: { displayfield: "SEX", rows: controller.sexes }},
