@@ -189,8 +189,7 @@ additional = {
      */
     additional_search_fields: function(fields) {
         if (fields.length == 0) { return ""; }
-        if (!columns) { columns = 2; }
-        let col = 0, h = [];
+        let h = [];
         $.each(fields, function(i, f) {
             if (!f.SEARCHABLE) { return; }
             if (f.HIDDEN) { return; } 
