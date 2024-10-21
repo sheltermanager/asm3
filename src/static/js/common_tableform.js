@@ -1,5 +1,5 @@
 /*global $, jQuery, Mousetrap */
-/*global asm, common, config, dlgfx, format, html, validate, header, _, escape, unescape */
+/*global asm, common, config, dlgfx, format, html, log, validate, header, _, escape, unescape */
 /*global tableform: true */
 
 "use strict";
@@ -1065,13 +1065,16 @@ const tableform = {
             else if (v.type == "select") { d += tableform.render_select(v); } 
             else if (v.type == "selectmulti") { d += tableform.render_selectmulti(v); }
             else if (v.type == "sqleditor") { d += tableform.render_sqleditor(v); }
-            else if (v.type == "text") { d += tableform.render_text(v); }
+            else if (v.type == "text" || v.type === undefined) { d += tableform.render_text(v); }
             else if (v.type == "textarea") { d += tableform.render_textarea(v); }
             else if (v.type == "time") { d += tableform.render_time(v); }
             else if (v.type == "additional") { v.justwidget = true; d += tableform.render_markup(v); }
             else if (v.type == "nextcol") {
                 // Special widget that causes rendering to move to a new column
                 d += endcol + startcol.replace("{data}", v.coldata).replace("{classes}", v.classes);
+            }
+            else {
+                log.warn("tableform.fields_render: invalid widget type '" + v.type + "'");
             }
         });
         if (options.render_container) {
