@@ -1,6 +1,7 @@
 49
 ================
 
+21/10/24 Add "Left Shelter" criteria to querybuilder
 20/10/24 Refactor additional fields to use tableform widgets #1103
 18/10/24 FindPet: call cancel/transfer-back when registrations fail
 17/10/24 When updating flag names via lookups, add a pipe to prevent collisions

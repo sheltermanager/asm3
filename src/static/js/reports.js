@@ -110,6 +110,7 @@ $(function() {
                 [ _("Heartworm Tested"), "heartwormtest", "HeartwormTested=1" ],
                 [ _("Held"), "held", "IsHold=1" ],
                 [ _("Housetrained"), "housetrained", "IsHouseTrained=0" ],
+                [ _("Left shelter"), "leftshelter", "Archived=1" ],
                 [ _("Left the shelter today"), "lefttoday", "Archived=1 AND ActiveMovementDate = '$CURRENT_DATE$'" ],
                 [ _("Left the shelter between two dates"), "lefttwodates", 
                     "ActiveMovementType NOT IN (2,8) AND ActiveMovementDate Is Not Null AND " +
