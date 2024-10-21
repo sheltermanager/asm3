@@ -1215,6 +1215,7 @@ const tableform = {
 
     render_check: function(v) {
         let d = "";
+        v.type = "check"; // this is necessary because _render_formfield relies on it
         tableform._check_id(v);
         let label = tableform._render_label(v);
         if (v.labelpos && v.labelpos == "before") { d += label; }
