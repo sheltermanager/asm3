@@ -1105,6 +1105,7 @@ def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = T
     renameheader: A comma separated list of find=replace values to rewrite column headers
     """
     from openpyxl import Workbook
+    from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
     wb = Workbook()
     ws = wb.active
     def writerow(rowdata: List[Any], rownumber: int, isheader: bool = False):
@@ -1158,7 +1159,7 @@ def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = T
                     dateportion = "%s %s" % (dateportion, timeportion)
                 rd.append(dateportion)
             elif is_str(r[c]):
-                rd.append(r[c])
+                rd.append(ILLEGAL_CHARACTERS_RE.sub(r"", r[c])) # filter out bad chars for openpyxl
             else:
                 rd.append(r[c])
         writerow(rd, rownumber)
