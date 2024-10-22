@@ -1655,7 +1655,7 @@ def calc_days_on_shelter(dbo: Database, animalid: int, a: ResultRow = None) -> i
         if len(a) == 0: return
         a = a[0]
 
-    mre = a.mostrecententrydate
+    mre = remove_time(a.mostrecententrydate)
 
     # If the animal is dead, or has left the shelter
     # use that date as our cutoff instead
@@ -1679,7 +1679,7 @@ def calc_total_days_on_shelter(dbo: Database, animalid: int, a: ResultRow = None
         if len(a) == 0: return 0
         a = a[0]
 
-    start = a.datebroughtin
+    start = remove_time(a.datebroughtin)
 
     # If the animal is dead, or is off the shelter
     # use that date as our final date instead
