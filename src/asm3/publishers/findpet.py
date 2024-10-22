@@ -70,8 +70,9 @@ class FindPetPublisher(AbstractPublisher):
             self.cleanup()
             return
         
-        # Get the list of shelter animals
-        shanimals = asm3.animal.get_shelter_animals(self.dbo)
+        # Get the list of stray/hold animals
+        shanimals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + " WHERE " \
+            "Archived=0 AND (EntryTypeID=2 OR IsHold=1) ORDER BY DateBroughtIn")
         shanimals = calc_microchip_data_addresses(self.dbo, shanimals) # We do this so that we have the shelter address for reports
 
         # Get the list of animals that need their chips transferring
