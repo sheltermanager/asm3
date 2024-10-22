@@ -1247,7 +1247,7 @@ const tableform = {
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
-        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(format.currency(v.value)) + "\" "; }
         if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
         if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
