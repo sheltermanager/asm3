@@ -6786,6 +6786,7 @@ class reports(JSONEndpoint):
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "locations": asm3.lookups.get_internal_locations(dbo),
+            "medicalprofiles": asm3.medical.get_profiles(o.dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personflags": asm3.lookups.get_person_flags(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),

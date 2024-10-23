@@ -663,6 +663,14 @@ $(function() {
                         o.push("(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
                             ".ID AND AdditionalFieldID=" + v.substring(3) + ") AS " + v);
                     }
+                    else if (v.indexOf("meddate_") == 0) {
+                        // Date medical profile given
+                        o.push("(SELECT DateGiven FROM animalmedicaltreatment WHERE animalmedicaltreatment.ID = " +
+                        "(SELECT MAX(animalmedicaltreatment.ID) FROM animalmedicaltreatment " +
+                        "INNER JOIN animalmedical ON animalmedical.ID = animalmedicaltreatment.AnimalMedicalID " +
+                        "WHERE DateGiven Is Not Null AND animalmedical.AnimalID=v_animal.ID " + 
+                        "AND MedicalProfileID=" + v.substring(8) + ")) AS " + v);
+                    }
                     else if (v.indexOf("testdate_") == 0) {
                         // Date test given
                         o.push("(SELECT DateOfTest FROM animaltest WHERE animaltest.ID = " +
@@ -683,7 +691,7 @@ $(function() {
                         "AND VaccinationID=" + v.substring(9) + ")) AS " + v);
                     }
                     else if (v.indexOf("vaccexp") == 0) {
-                        // Date vacc given
+                        // Date vacc expires
                         o.push("(SELECT DateExpires FROM animalvaccination WHERE animalvaccination.ID = " +
                         "(SELECT MAX(ID) FROM animalvaccination WHERE DateOfVaccination Is Not Null AND AnimalID=v_animal.ID " + 
                         "AND VaccinationID=" + v.substring(9) + ")) AS " + v);
@@ -1089,6 +1097,9 @@ $(function() {
             const get_animal_medical = function() {
                 // Returns a list of extra animal medical values for the fields dropdown
                 let f = [];
+                $.each(controller.medicalprofiles, function(i, v) {
+                    f.push("meddate_" + v.ID + "|" + _("{0} medical profile administered").replace("{0}", v.PROFILENAME));
+                });
                 $.each(controller.testtypes, function(i, v) {
                     f.push("testdate_" + v.ID + "|" + _("{0} test performed date").replace("{0}", v.TESTNAME));
                     f.push("testresult_" + v.ID + "|" + _("{0} test result").replace("{0}", v.TESTNAME));
