@@ -1944,8 +1944,9 @@ $.fn.currency = function(cmd, newval) {
     if (cmd === undefined) {
         const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
         this.each(function() {
-            disable_autocomplete($(this));
-            $(this).keypress(function(e) {
+            let t = $(this);
+            disable_autocomplete(t);
+            t.keypress(function(e) {
                 let k = e.charCode || e.keyCode;
                 let ch = String.fromCharCode(k);
                 // Backspace, tab, ctrl, delete, arrow keys ok
@@ -1955,6 +1956,11 @@ $.fn.currency = function(cmd, newval) {
                 if ($.inArray(ch, allowed) == -1) {
                     e.preventDefault();
                 }
+            });
+            t.blur(function(e) {
+                // reformat the value when focus leaves the field
+                let i = format.currency_to_int(t.val());
+                t.val(format.currency(i));
             });
             reset(this);
         });
@@ -1967,16 +1973,9 @@ $.fn.currency = function(cmd, newval) {
     else if (cmd == "value") {
         if (newval === undefined) {
             // Get the value
-            let v = this.val(), f;
-            if (!v) {
-                return 0;
-            }
-            // Extract only the numbers, sign and decimal point
-            f = format.currency_to_float(v) * 100;
-            // Adding 0.5 corrects IEEE rounding errors in multiplication
-            if (f > 0) { f += 0.5; }
-            if (f < 0) { f -= 0.5; }
-            return parseInt(f, 10);
+            let v = this.val();
+            if (!v) { return 0; }
+            return format.currency_to_int(v);
         }
         // We're setting the value
         this.each(function() {

@@ -1410,8 +1410,11 @@ const format = {
     },
 
     currency_to_int: function(c) {
-        var i = format.currency_to_float(c);
-        return Math.floor(i * 100);
+        var f = format.currency_to_float(c) * 100;
+        // Adding 0.5 corrects IEEE rounding errors in multiplication
+        if (f > 0) { f += 0.5; }
+        if (f < 0) { f -= 0.5; }
+        return parseInt(f, 10);
     },
 
     /**
