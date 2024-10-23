@@ -112,7 +112,7 @@ PUBLISHER_LIST["bd"] = {
     "sub24hour": False
 }
 PUBLISHER_LIST["fip"] = {
-    "label":    "Register microchips with FindPet.com",
+    "label":    "Register found pets and microchips with FindPet.com",
     "class":    asm3.publishers.findpet.FindPetPublisher,
     "locales":  "en",
     "sub24hour": False
