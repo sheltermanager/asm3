@@ -72,7 +72,7 @@ class FindPetPublisher(AbstractPublisher):
         
         # Get the list of stray/hold animals
         shanimals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + " WHERE " \
-            "Archived=0 AND (EntryTypeID=2 OR IsHold=1) ORDER BY DateBroughtIn")
+            "a.Archived=0 AND (a.EntryTypeID=2 OR a.IsHold=1) ORDER BY a.MostRecentEntryDate")
         shanimals = calc_microchip_data_addresses(self.dbo, shanimals) # We do this so that we have the shelter address for reports
 
         # Get the list of animals that need their chips transferring
