@@ -748,28 +748,35 @@ select:disabled, input:disabled, textarea:disabled {
 /** FORM LAYOUTS ============================= */
 .asm-row {
     display: block;
-    text-align: center;
 }
 
 .asm-col {
     display: inline-block;
     vertical-align: top;
+    margin-right: 5px; 
 }
 
-/** this is going to go away when we stop using tables for form field layout 
-    we really should have an asm-formlabel class
-*/
-.asm-col td:nth-child(1) label {
-    width: 150px;
-    display: inline-block;
+/** TODO: the following rules need to change when we stop using tables for form field layouts */
+.asm-table-fullwidth {
+    width: 100%;
 }
 
-.asm-col td:nth-child(1) {
-    text-align: end;
+.asm-table-layout {
+    border-collapse: collapse;
+    border-spacing: 5px 1px;
+}
+
+.asm-table-layout td:nth-child(1) label {
+    vertical-align: middle;
+}
+
+.asm-table-layout td:nth-child(1) {
+    text-align: start;
 }
 
 .asm-col td:nth-child(2), .asm-col td:nth-child(3) {
     text-align: start;
+    vertical-align: middle;
 }
 
 /* Stop multi-selects using up all the horizontal space when in columns */
@@ -922,15 +929,6 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-more-link:hover {
     border: 1px solid #000;
     cursor: pointer;
-}
-
-.asm-table-fullwidth {
-    width: 100%;
-}
-
-.asm-table-layout {
-    border-collapse: collapse;
-    border-spacing: 5px 1px;
 }
 
 .asm-thumbnail {

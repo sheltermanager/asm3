@@ -47,12 +47,12 @@ $(function() {
             return [
                 html.content_header(_("Find Incident")),
                 '<div id="incidentsearchform">',
-                '<div class="asm-row">',
-                html.search_column(col1),
-                html.search_column(col2),
-                html.search_column(col3),
-                html.search_column(additional.additional_search_fields(controller.additionalfields, 1)),
-                '</div>',
+                html.search_row([
+                    html.search_column(col1),
+                    html.search_column(col2),
+                    html.search_column(col3),
+                    html.search_column(additional.additional_search_fields(controller.additionalfields, 1)),
+                ]),
                 '</div>',
                 '<p class="centered">',
                 '<button type="submit" id="searchbutton">' + _("Search") + '</button>',

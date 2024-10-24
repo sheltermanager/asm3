@@ -693,6 +693,10 @@ const html = {
         return warn;
     },
 
+    search_row: function(h) {
+        return '<div class="asm-row centered">' + h.join("\n") + '</div>';
+    },
+
     search_column: function(fields) {
         return [
             '<div class="asm-col">',

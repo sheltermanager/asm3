@@ -1034,17 +1034,20 @@ const tableform = {
      *      }
      */
     fields_render: function(fields, coptions) {
-        let d = "", startcol = "", endcol = "", colclasses = "",
-            options = { render_container: true, full_width: true, id: "" };
+        let d = "", startcol = "", endcol = "", colclasses = "", id = "", 
+            options = { render_container: true, full_width: true, centered: true, id: "" };
         if (coptions !== undefined) { options = common.copy_object(options, coptions); }
         if (options.render_container) {
-            d = '<div class="asm-fields-container row" ';
-            if (options.id) { d+= 'id="' + options.id + '"'; }
-            d += '>';
+            let colc = "col"; // row and column classes to use, bootstrap grid by default
+            let rowc = "row";
+            if (options.id) { id = 'id="' + options.id + '"'; }
             colclasses = "asm-table-layout";
             if (options.full_width) { colclasses += " asm-table-fullwidth"; }
-            startcol = '<div class="col"><table class="' + colclasses + ' {classes}" data="{data}">';
+            if (!options.full_width) { colc = "asm-col"; rowc = "asm-row"; }
+            if (!options.full_width && options.centered) { rowc += " centered"; }
+            startcol = '<div class="' + colc + '"><table class="' + colclasses + ' {classes}" data="{data}">';
             endcol = '</table></div>';
+            d = '<div class="asm-fields-container ' + rowc + '" ' + id + '>';
             d += startcol.replace("{data}", "").replace("{classes}", ""); 
         }
         $.each(fields, function(i, v) {

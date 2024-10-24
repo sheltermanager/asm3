@@ -98,7 +98,7 @@ $(function() {
                     { type: "nextcol" },  
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 2) },
 
-                ], { full_width: false }),
+                ], { full_width: true }),
                 '</div>' // end accordion section
             ].join("\n");
         },

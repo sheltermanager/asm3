@@ -10,19 +10,20 @@ $(function() {
             return [
                 html.content_header(_("Waiting List") + ' ' + '(' + controller.rows.length + ')'),
                 '<div id="waitinglistcriteria">',
-                '<div class="asm-row">',
-                html.search_column([
-                    html.search_field_select("priorityfloor", _("Priority Floor"), html.list_to_options(controller.urgencies, "ID", "URGENCY")),
-                    html.search_field_select("species", _("Species"), html.list_to_options(controller.species, "ID", "SPECIESNAME")),
-                    html.search_field_text("namecontains", _("Name Contains")),
-                    html.search_field_text("descriptioncontains", _("Description Contains")),
-                ].join("\n")),
-                html.search_column([
-                    html.search_field_select("includeremoved", _("Include Removed"), html.list_to_options(controller.yesno, "ID", "NAME")),
-                    html.search_field_select("size", _("Size"), html.list_to_options(controller.sizes, "ID", "SIZE")),
-                    html.search_field_text("addresscontains", _("Address Contains")),
-                    html.search_field("", '<button id="button-refresh">' + html.icon("refresh") + ' ' + _("Refresh") + '</button>')
-                ].join("\n")),
+                html.search_row([
+                    html.search_column([
+                        html.search_field_select("priorityfloor", _("Priority Floor"), html.list_to_options(controller.urgencies, "ID", "URGENCY")),
+                        html.search_field_select("species", _("Species"), html.list_to_options(controller.species, "ID", "SPECIESNAME")),
+                        html.search_field_text("namecontains", _("Name Contains")),
+                        html.search_field_text("descriptioncontains", _("Description Contains"))
+                    ].join("\n")),
+                    html.search_column([
+                        html.search_field_select("includeremoved", _("Include Removed"), html.list_to_options(controller.yesno, "ID", "NAME")),
+                        html.search_field_select("size", _("Size"), html.list_to_options(controller.sizes, "ID", "SIZE")),
+                        html.search_field_text("addresscontains", _("Address Contains")),
+                        html.search_field("", '<button id="button-refresh">' + html.icon("refresh") + ' ' + _("Refresh") + '</button>')
+                    ].join("\n")),
+                ]),
                 '</div>',
                 '<div class="asm-toolbar">',
                 '<button id="button-new">' + html.icon("new") + ' ' + _("New Waiting List Entry") + '</button>',
