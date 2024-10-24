@@ -119,6 +119,10 @@ class FindPetPublisher(AbstractPublisher):
                     self.logError("Validation or other errors found, skipping")
                     continue
 
+                if j["result"].find(" ") != -1 or j["result"].find("Wrong") != -1:
+                    self.logError("Got invalid report_id value '%s', skipping" % j["result"])
+                    continue
+
                 # store the report_id
                 asm3.animal.set_extra_id(self.dbo, "system", an, IDTYPE_FINDPET, j["result"])
             except Exception as err:
