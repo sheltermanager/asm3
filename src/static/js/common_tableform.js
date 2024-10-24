@@ -1042,7 +1042,7 @@ const tableform = {
             let rowc = "row";
             if (options.id) { id = 'id="' + options.id + '"'; }
             colclasses = "asm-table-layout";
-            if (options.full_width) { colclasses += " asm-table-fullwidth"; }
+            if (options.full_width) { colclasses += " asm-table-layout-fullwidth"; }
             if (!options.full_width) { colc = "asm-col"; rowc = "asm-row"; }
             if (!options.full_width && options.centered) { rowc += " centered"; }
             startcol = '<div class="' + colc + '"><table class="' + colclasses + ' {classes}" data="{data}">';

@@ -757,7 +757,7 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** TODO: the following rules need to change when we stop using tables for form field layouts */
-.asm-table-fullwidth {
+.asm-table-layout-fullwidth {
     width: 100%;
 }
 
@@ -774,13 +774,13 @@ select:disabled, input:disabled, textarea:disabled {
     text-align: start;
 }
 
-.asm-col td:nth-child(2), .asm-col td:nth-child(3) {
+.asm-table-layout td:nth-child(2), .asm-table-layout td:nth-child(3) {
     text-align: start;
     vertical-align: middle;
 }
 
 /* Stop multi-selects using up all the horizontal space when in columns */
-.asm-col .asmContainer {
+.asm-table-layout .asmContainer {
     max-width: 300px;
 }
 
