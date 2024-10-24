@@ -22,278 +22,79 @@ $(function() {
             });
             return [
                 html.content_header(_("Bulk change animals")),
-                '<div class="asm-row">',
-                // left column
-                '<div class="asm-col">',
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="animals">' + _("Animals") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="animals" data="animals" type="hidden" class="asm-animalchoosermulti" value=\'\' />',
-                '</td>',
-                '</tr>',
-                '<tr id="litteridrow">',
-                '<td>',
-                '<label for="litterid">' + _("Litter") + '</label></td>',
-                '<td><input type="text" id="litterid" data-post="litterid" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="animaltype">' + _("Type") + '</label></td>',
-                '<td><select id="animaltype" data-post="animaltype" class="asm-selectbox">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.animaltypes, "ID", "ANIMALTYPE"),
-                '</select></td>',
-                '</tr>',
-                '<tr id="locationrow">',
-                '<td><label for="location">' + _("Location") + '</label></td>',
-                '<td>',
-                '<select id="location" data-post="location" class="asm-selectbox" >',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr id="unitrow">',
-                '<td><label for="unit">' + _("Unit") + '</label></td>',
-                '<td>',
-                '<select id="unit" data-post="unit" class="asm-selectbox">',
-                '</select></td>',
-                '</tr>',
-                '<tr id="entryreasonrow">',
-                '<td><label for="entryreason">' + _("Entry Category") + '</label></td>',
-                '<td>',
-                '<select id="entryreason" data-post="entryreason" class="asm-selectbox" title="' + html.title(_("The entry reason for this animal")) + '">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
-                '</select></td>',
-                '</tr>',
+                tableform.fields_render([
+                    { post_field: "animals", label: _("Animals"), type: "animalmulti" },
+                    { post_field: "litterid", label: _("Litter"), type: "text" },
+                    { post_field: "animaltype", label: _("Type"), type: "select", 
+                        options: animal_bulk.options(controller.animaltypes, "ID", "ANIMALTYPE") },
+                    { post_field: "location", label: _("Location"), type: "select", 
+                        options: animal_bulk.options(controller.internallocations, "ID", "LOCATIONNAME") },
+                    { post_field: "unit", label: _("Unit"), type: "select", options: "" },
+                    { post_field: "entryreason", label: _("Entry Category"), type: "select", 
+                        options: animal_bulk.options(controller.entryreasons, "ID", "REASONNAME") },
+                    { post_field: "holduntil", label: _("Hold until"), type: "date" },
+                    { post_field: "fee", label: _("Adoption Fee"), type: "currency" },
+                    { post_field: "boardingcost", label: _("Daily Boarding Cost"), type: "currency" },
+                    { post_field: "addflag", label: _("Add Flag"), type: "select", 
+                        options: animal_bulk.options(controller.flags, "FLAG", "FLAG", 2) },
+                    { post_field: "removeflag", label: _("Remove Flag"), type: "select", 
+                        options: animal_bulk.options(controller.flags, "FLAG", "FLAG", 2) },
+                    { post_field: "notforadoption", label: _("Not For Adoption"), type: "select", 
+                        options: '<option value="-1">' + _("(no change)") + '</option>' +
+                            '<option value="0">' + _("Adoptable") + '</option>' +
+                            '<option value="1">' + _("Not For Adoption") + '</option>' },
+                    { post_field: "notforregistration", label: _("Do Not Register Microchip"), type: "select", 
+                        options: '<option value="-1">' + _("(no change)") + '</option>' +
+                            '<option value="0">' + _("Register Microchip") + '</option>' +
+                            '<option value="1">' + _("Do Not Register Microchip") + '</option>' },
+                    { post_field: "goodwithcats", label: _("Good with cats"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME", 2) },
+                    { post_field: "goodwithdogs", label: _("Good with dogs"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME", 2) },
+                    { post_field: "goodwithkids", label: _("Good with kids"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynunk, "ID", "NAME", 2) },
+                    { post_field: "housetrained", label: _("Housetrained"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME", 2) },
 
-                '<tr id="holdrow">',
-                '<td>',
-                '<label for="holduntil">' + _("Hold until") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="holduntil" data-post="holduntil" class="asm-textbox asm-datebox" />',
-                '</td>',
-                '</tr>',
-                
-                '<tr id="feerow">',
-                '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
-                '<td><input id="fee" data-post="fee" class="asm-currencybox asm-textbox" /></td>',
-                '</tr>',
+                    { type: "nextcol" },
 
-                '<tr id="boardingcostrow">',
-                '<td><label for="boardingcost">' + _("Daily Boarding Cost") + '</label></td>',
-                '<td><input id="boardingcost" data-post="boardingcost" class="asm-currencybox asm-textbox" /></td>',
-                '</tr>',
+                    { post_field: "neutereddate", label: _("Altered"), type: "date" },
+                    { post_field: "neuteringvet", label: _("By"), type: "person", personfilter: "vet", colclasses: "bottomborder" },
+                    { post_field: "coordinator", label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator", colclasses: "bottomborder" },
+                    { post_field: "currentvet", label: _("Current Vet"), type: "person", personfilter: "vet", colclasses: "bottomborder" },
+                    { post_field: "ownersvet", label: _("Owners Vet"), type: "person", personfilter: "vet" },
 
-                '<tr id="addflagrow">',
-                '<td><label for="addflag">' + _("Add Flag") + '</label></td>',
-                '<td>',
-                '<select id="addflag" data-post="addflag" class="asm-selectbox">',
-                '<option value=""></option>',
-                html.list_to_options(controller.flags, "FLAG", "FLAG"),
-                '</select>',
-                '</td>',
-                '</tr>',
+                    { post_field: "diaryfor", label: _("Add Diary"), type: "select", halfsize: true, 
+                        options: animal_bulk.options(controller.forlist, "USERNAME", "USERNAME", 3),
+                        xmarkup: [ " ", _("on"), 
+                            tableform.render_date({ post_field: "diarydate", halfsize: true, justwidget: true}),
+                            tableform.render_time({ post_field: "diarytime", halfsize: true, justwidget: true }) 
+                            ].join("\n")
+                    },
+                    { post_field: "diarysubject", label: _("Subject"), type: "text" },
+                    { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" },
 
-                '<tr id="removeflagrow">',
-                '<td><label for="removeflag">' + _("Remove Flag") + '</label></td>',
-                '<td>',
-                '<select id="removeflag" data-post="removeflag" class="asm-selectbox">',
-                '<option value=""></option>',
-                html.list_to_options(controller.flags, "FLAG", "FLAG"),
-                '</select>',
-                '</td>',
-                '</tr>',
+                    { post_field: "logtype", label: _("Add Log"), type: "select", halfsize: true, 
+                        options: animal_bulk.options(controller.logtypes, "ID", "LOGTYPENAME", 3),
+                        xmarkup: [ " ", _("on"), 
+                            tableform.render_date({ post_field: "logdate", halfsize: true, justwidget: true}),
+                            ].join("\n")
+                    },
+                    { post_field: "lognotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" },
 
-                '<tr>',
-                '<td><label for="notforadoption">' + _("Not For Adoption") + '</label></td>',
-                '<td><select id="notforadoption" data-post="notforadoption" class="asm-selectbox">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                '<option value="0">' + _("Adoptable") + '</option>',
-                '<option value="1">' + _("Not For Adoption") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
+                    { post_field: "movementtype", label: _("Add Movement"), type: "select", halfsize: true, 
+                        options: animal_bulk.options(controller.choosetypes, "ID", "MOVEMENTTYPE", 3),
+                        xmarkup: [ " ", _("on"), 
+                            tableform.render_date({ post_field: "movementdate", halfsize: true, justwidget: true}),
+                            ].join("\n")
+                    },
+                    { post_field: "moveto", label: _("to"), type: "person" },
 
-                '<tr>',
-                '<td><label for="notforregistration">' + _("Do Not Register Microchip") + '</label></td>',
-                '<td><select id="notforregistration" data-post="notforregistration" class="asm-selectbox">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                '<option value="0">' + _("Register Microchip") + '</option>',
-                '<option value="1">' + _("Do Not Register Microchip") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithcats">' + _("Good with cats") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithcats" data-post="goodwithcats">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithdogs">' + _("Good with dogs") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithdogs" data-post="goodwithdogs">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithkids">' + _("Good with kids") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithkids" data-post="goodwithkids">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.ynunk, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="housetrained">' + _("Housetrained") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="housetrained" data-post="housetrained">',
-                '<option value="-1">' + _("(no change)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col
-                // right column
-                '<div class="asm-col">',
-                '<table>',
-                '<tr id="neuteredrow">',
-                '<td>',
-                '<label for="neutereddate">' + _("Altered") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="neutereddate" data-post="neutereddate" class="asm-textbox asm-datebox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="neuteringvetrow">',
-                '<td class="bottomborder">',
-                '<label for="neuteringvet">' + _("By") + '</label>',
-                '</td>',
-                '<td class="bottomborder">',
-                '<input id="neuteringvet" data-post="neuteringvet" data-mode="brief" data-filter="vet" type="hidden" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="coordinatorrow">',
-                '<td>',
-                '<label for="coordinator">' + _("Adoption Coordinator") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="coordinator" data-post="adoptioncoordinator" type="hidden" data-filter="coordinator" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="currentvetrow">',
-                '<td>',
-                '<label for="currentvet">' + _("Current Vet") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="currentvet" data-post="currentvet" type="hidden" data-filter="vet" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="ownersvetrow">',
-                '<td class="bottomborder">',
-                '<label for="ownersvet">' + _("Owners Vet") + '</label>',
-                '</td>',
-                '<td class="bottomborder">',
-                '<input id="ownersvet" data-post="ownersvet" type="hidden" data-filter="vet" class="asm-personchooser"  />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="diaryrow">',
-                '<td><label for="diaryfor">' + _("Add Diary") + '</label></td>',
-                '<td>',
-                '<select id="diaryfor" data-post="diaryfor" class="asm-halfselectbox">',
-                '<option value="-1"></option>',
-                html.list_to_options(controller.forlist, "USERNAME", "USERNAME"),
-                '</select> ',
-                _("on"),
-                ' <input id="diarydate" data-post="diarydate" type="text" class="asm-datebox asm-halftextbox" />',
-                ' <input id="diarytime" data-post="diarytime" type="text" class="asm-timebox asm-halftextbox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="diarysubjectrow">',
-                '<td><label for="diarysubject">' + _("Subject") + '</label></td><td>',
-                '<input id="diarysubject" data-post="diarysubject" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="diarynotesrow">',
-                '<td colspan="2" class="bottomborder">',
-                '<textarea id="diarynotes" data-post="diarynotes" rows="3" class="asm-textarea"></textarea>',
-                '</td>',
-                '</tr>',
-
-                '<tr id="logrow">',
-                '<td><label for="logtype">' + _("Add Log") + '</label></td>',
-                '<td>',
-                '<select id="logtype" data-post="logtype" class="asm-halfselectbox">',
-                '<option value="-1"></option>',
-                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                '</select> ',
-                _("on"),
-                ' <input id="logdate" data-post="logdate" type="text" class="asm-datebox asm-halftextbox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="lognotesrow">',
-                '<td colspan="2" class="bottomborder">',
-                '<textarea id="lognotes" data-post="lognotes" rows="3" class="asm-textarea"></textarea>',
-                '</td>',
-                '</tr>',
-
-                '<tr id="moverow">',
-                '<td><label for="movementtype">' + _("Add Movement") + '</label></td>',
-                '<td>',
-                '<select id="movementtype" data-post="movementtype" class="asm-halfselectbox">',
-                '<option value="-1"></option>',
-                html.list_to_options(choosetypes, "ID", "MOVEMENTTYPE"),
-                '</select> ',
-                _("on"),
-                ' <input id="movementdate" data-post="movementdate" type="text" class="asm-datebox asm-halftextbox" />',
-                '</td>',
-                '</tr>',
-
-                '<tr id="movetorow">',
-                '<td class="bottomborder">',
-                '<label for="moveto">' + _("to") + '</label>',
-                '</td>',
-                '<td class="bottomborder">',
-                '<input id="moveto" data-post="moveto" type="hidden" data-filter="all" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col
-                '</div>', // row
-
-                '<div class="centered">',
-                '<button id="button-update">' + html.icon("animal") + ' ' + _("Update") + '</button> ',
-                '<button id="button-delete">' + html.icon("delete") + ' ' + _("Delete") + '</button>',
-                '</div>',
+                ], { full_width: false }),
+                tableform.buttons_render([
+                    { id: "update", text: _("Update"), icon: "save" },
+                    { id: "delete", text: _("Delete"), icon: "delete" }
+                ], { centered: true}),
                 html.content_footer()
             ].join("\n");
         },
@@ -350,16 +151,34 @@ $(function() {
             if (config.bool("DontShowLitterID")) { $("#litteridrow").hide(); }
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
             if (config.bool("DontShowLocationUnit")) { $("#unitrow").hide(); }
-            if (config.bool("DontShowNeutered")) { $("#neuteredrow, #neuteringvetrow").hide(); }
+            if (config.bool("DontShowNeutered")) { $("#neutereddaterow, #neuteringvetrow").hide(); }
             if (config.bool("DontShowAdoptionCoordinator")) { $("#coordinatorrow").hide(); }
             if (config.bool("DontShowGoodWith")) { $(".goodwith").hide(); }
-            if (config.bool("DisableMovements")) { $("#moverow, #movetorow").hide(); }
+            if (config.bool("DisableMovements")) { $("#movementtyperow, #movetorow").hide(); }
 
             // Remove sections that add records if the user doesn't have permissions
-            if (!common.has_permission("aamv")) { $("#moverow, #movetorow").hide(); }
-            if (!common.has_permission("adn")) { $("#diaryrow, #diarysubjectrow, #diarynotesrow").hide(); }
-            if (!common.has_permission("ale")) { $("#logrow, #lognotesrow").hide(); }
+            if (!common.has_permission("aamv")) { $("#movementtyperow, #movetorow").hide(); }
+            if (!common.has_permission("adn")) { $("#diaryforrow, #diarysubjectrow, #diarynotesrow").hide(); }
+            if (!common.has_permission("ale")) { $("#logtyperow, #lognotesrow").hide(); }
 
+        },
+
+        /**
+         * Wrapper for html.list_to_options
+         * if firstval is undefined or 1, include a "no change" option at the top
+         * if firstval == 2, show a blank value at the top
+         * if firstval == 3, show a blank but with a value of -1
+         */
+        options: function(rows, idcol, displaycol, firstval) {
+            const nochange = '<option value="-1">' + _("(no change)") + '</option>';
+            const blankrow = '<option value=""></option>';
+            const mrow = '<option value="-1"></option>';
+            let s = "";
+            if (firstval === undefined || firstval == 1) { s += nochange; }
+            if (firstval == 2) { s += blankrow; }
+            if (firstval == 3) { s += mrow; }
+            s += html.list_to_options(rows, idcol, displaycol);
+            return s;
         },
 
         // Update the units available for the selected location

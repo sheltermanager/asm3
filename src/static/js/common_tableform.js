@@ -1106,8 +1106,8 @@ const tableform = {
     _render_class: function(v, c) {
         if (c === undefined || c === null) { c = ""; }
         if (v.classes) { c += " " + v.classes; }
-        if (v.halfsize) { c += " asm-halftextbox"; }
-        if (v.doublesize) { c += " asm-doubletextbox"; }
+        if (v.halfsize) { c += v.type == "select" ? " asm-halfselectbox" : " asm-halftextbox"; }
+        if (v.doublesize) { c += v.type == "select" ? " asm-doubleselectbox" : " asm-doubletextbox"; }
         return ' class="' + c + '" ';
     },
 
@@ -1171,7 +1171,7 @@ const tableform = {
                     v.type == "htmleditor" || 
                     v.type == "sqleditor") && 
                     v.labelpos && v.labelpos == "above") {
-            return tr + '<td colspan="2">' + label + '<br>' + h + '</td></tr>';
+            return tr + '<td colspan="2">' + label + (v.label ? '<br>' : '') + h + '</td></tr>';
         }
         else {
             return tr + td + label + '</td>' + td + h + '</td></tr>';
@@ -1436,6 +1436,7 @@ const tableform = {
         let d = "";
         tableform._check_id(v);
         d += "<select ";
+        v.type = "select";
         d += tableform._render_class(v, "asm-selectbox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }

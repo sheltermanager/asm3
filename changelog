@@ -1,6 +1,7 @@
 49
 ================
 
+24/10/24 Refactor bulk change animals #1103
 23/10/24 Querybuilder: Option to output date of last medical profile
 23/10/24 Currency fields should reformat when they lose the focus #1103
 22/10/24 Prevent time part of datebroughtin messing up days on shelter calc
