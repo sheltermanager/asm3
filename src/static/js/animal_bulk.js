@@ -83,7 +83,7 @@ $(function() {
                     { post_field: "lognotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" },
 
                     { post_field: "movementtype", label: _("Add Movement"), type: "select", halfsize: true, 
-                        options: animal_bulk.options(controller.choosetypes, "ID", "MOVEMENTTYPE", 3),
+                        options: animal_bulk.options(choosetypes, "ID", "MOVEMENTTYPE", 3),
                         xmarkup: [ " ", _("on"), 
                             tableform.render_date({ post_field: "movementdate", halfsize: true, justwidget: true}),
                             ].join("\n")
