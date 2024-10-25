@@ -114,7 +114,6 @@ $(function() {
                     html.search_column(additional.additional_search_fields(controller.additionalfields, 1)),
                 ]),
                 '</div>', 
-                '</div>', 
                 '<p class="centered">',
                 '<button type="button" id="searchbutton">' + _("Search") + '</button>',
                 '</p>',
