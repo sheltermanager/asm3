@@ -108,10 +108,10 @@ class LocationFilter(object):
                 clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.DiedOffShelter=1)")
             # All Dogs
             if "-31" in locs:
-                clauses.append(f"({tablequalifier}.SpeciesID = 1)")
+                clauses.append(f"({tablequalifier}.SpeciesID = 1 AND {tablequalifier}.Archived=0)")
             # All Cats
             if "-32" in locs:
-                clauses.append(f"({tablequalifier}.SpeciesID = 2)")
+                clauses.append(f"({tablequalifier}.SpeciesID = 2 AND {tablequalifier}.Archived=0)")
         if siteid != 0:
             clauses.append("il.SiteID = %s" % siteid)
         c = "(" + " OR ".join(clauses) + ")"
@@ -153,8 +153,8 @@ class LocationFilter(object):
             if a.deceaseddate and a.isdoa == 1 and a.puttosleep == 0 and a.diedoffshelter == 0 and "-22" in locs: return True
             if a.deceaseddate and a.isdoa == 0 and a.puttosleep == 1 and a.diedoffshelter == 0 and "-23" in locs: return True
             if a.deceaseddate and a.diedoffshelter == 1 and "-24" in locs: return True
-            if a.speciesid == 1 and "-31" in locs: return True
-            if a.speciesid == 2 and "-32" in locs: return True
+            if a.archived == 0 and a.speciesid == 1 and "-31" in locs: return True
+            if a.archived == 0 and a.speciesid == 2 and "-32" in locs: return True
             if a.archived == 0 and str(a.shelterlocation) in locs: return True
         if visibleanimalids != "":
             if str(a.ID) in visibleanimalids.split(","): return True
