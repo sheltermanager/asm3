@@ -48,13 +48,13 @@ $(function() {
                             '<option value="0">' + _("Register Microchip") + '</option>' +
                             '<option value="1">' + _("Do Not Register Microchip") + '</option>' },
                     { post_field: "goodwithcats", label: _("Good with cats"), type: "select", rowclasses: "goodwith",
-                        options: animal_bulk.options(controller.ynun, "ID", "NAME", 2) },
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME") },
                     { post_field: "goodwithdogs", label: _("Good with dogs"), type: "select", rowclasses: "goodwith",
-                        options: animal_bulk.options(controller.ynun, "ID", "NAME", 2) },
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME") },
                     { post_field: "goodwithkids", label: _("Good with kids"), type: "select", rowclasses: "goodwith",
-                        options: animal_bulk.options(controller.ynunk, "ID", "NAME", 2) },
+                        options: animal_bulk.options(controller.ynunk, "ID", "NAME") },
                     { post_field: "housetrained", label: _("Housetrained"), type: "select", rowclasses: "goodwith",
-                        options: animal_bulk.options(controller.ynun, "ID", "NAME", 2) },
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME") },
 
                     { type: "nextcol" },
 
