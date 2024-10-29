@@ -72,9 +72,11 @@ $(function() {
                             tableform.render_date({ post_field: "neutereddate", justwidget: true }) },
                     { type: "raw", rowid: "microchiprow", label: _("Microchipped"), 
                         markup: tableform.render_check({ post_field: "microchipped", justwidget: true }) +
+                            tableform.render_date({ post_field: "microchipdate", halfsize: true, justwidget: true, placeholder: _("Date") }) + 
                             tableform.render_text({ post_field: "microchipnumber", maxlength: 15, justwidget: true, placeholder: _("Number") }) },
                     { type: "raw", rowid: "tattoorow", label: _("Tattoo"), 
                         markup: tableform.render_check({ post_field: "tattoo", label: "", justwidget: true }) +
+                            tableform.render_date({ post_field: "tattoodate", halfsize: true, justwidget: true, placeholder: _("Date") }) + 
                             tableform.render_text({ post_field: "tattoonumber", justwidget: true, placeholder: _("Number") }) },
                     { post_field: "litterid", label: _("Litter"), type: "text", rowid: "litterrow" },
                     { post_field: "entrytype", label: _("Entry Type"), type: "select", 

@@ -1,6 +1,7 @@
 49
 ================
 
+29/10/24 Accidentally removed tattoo/chip date fields from animal_new #1103
 25/10/24 New location filters "All Dogs", "All Cats" 
 24/10/24 FindPet: Validate we didn't get an error in the report_id
 24/10/24 Refactor bulk change animals #1103
