@@ -43,6 +43,9 @@ class BuddyIDPublisher(AbstractPublisher):
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
             return
+        
+        # Make sure we don't try to register too many chips
+        if self.checkMicrochipLimit(animals): return
 
         # Authenticate to get our bearer token
         url = f"{BUDDYID_BASE_URL}/login"

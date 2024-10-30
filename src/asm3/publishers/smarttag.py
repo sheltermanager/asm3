@@ -59,6 +59,9 @@ class SmartTagPublisher(FTPPublisher):
             self.setLastError("No microchips found to register.")
             self.cleanup(save_log=False)
             return
+        
+        # Make sure we don't try to register too many chips
+        if self.checkMicrochipLimit(animals): return
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed to open FTP socket.")

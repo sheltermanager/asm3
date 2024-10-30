@@ -71,6 +71,9 @@ class PetLinkPublisher(AbstractPublisher):
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
             return
+        
+        # Make sure we don't try to register too many chips
+        if self.checkMicrochipLimit(animals): return
 
         cutoffdays = asm3.configuration.petlink_cutoff_days(self.dbo)
         if cutoffdays == 0: cutoffdays = -1095 # default cutoff is 3 years, note that it's a negative number

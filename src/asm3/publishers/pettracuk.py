@@ -100,6 +100,9 @@ class PETtracUKPublisher(AbstractPublisher):
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
             return
+        
+        # Make sure we don't try to register too many chips
+        if self.checkMicrochipLimit(animals): return
 
         anCount = 0
         processed_animals = []

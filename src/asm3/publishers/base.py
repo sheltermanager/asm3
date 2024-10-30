@@ -633,6 +633,19 @@ class AbstractPublisher(threading.Thread):
             "WHERE ID IN (SELECT BaseColourID FROM animal WHERE Archived=0) AND " \
             "(AdoptAPetColour Is Null OR AdoptAPetColour = '')")
 
+
+    def checkMicrochipLimit(self, animals) -> bool:
+        """
+        Returns True if the publisher should not go ahead because we are about to
+        try and register too many microchips
+        """
+        nochips = len(animals)
+        if nochips > 250:
+            self.setLastError(f"Refusing to register {nochips} microchips (>250). " \
+                "Choose a later 'register microchips from' date in the publishing options to reduce this number and try again.")
+            return True
+        return False
+
     def csvLine(self, items: List[str]) -> str:
         """
         Takes a list of CSV line items and returns them as a comma 

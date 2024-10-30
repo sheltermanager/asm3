@@ -13,6 +13,7 @@ import sys
 # ID type keys used in the ExtraIDs column
 IDTYPE_FINDPET = "findpet"
 
+# TODO: Make this the base class and have two publishers, one for found pets fpf, one for microchips fpc
 class FindPetPublisher(AbstractPublisher):
     """
     Handles sending found pets and microchip registrations to findpet.com
@@ -79,6 +80,9 @@ class FindPetPublisher(AbstractPublisher):
         tranimals = []
         if asm3.configuration.findpet_int_level(self.dbo) == 0:
             tranimals = get_microchip_data(self.dbo, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "findpet", allowintake=False)
+
+        # Make sure we don't try to register too many chips
+        if self.checkMicrochipLimit(tranimals): return
 
         # send any shelter animals or animals that need their chip transferring that
         # that have a microchip number, but don't already have a FindPet report_id
