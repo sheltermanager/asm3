@@ -99,24 +99,26 @@ class B64DBStorage(DBFSStorage):
 class FileStorage(DBFSStorage):
     """ Storage class for putting media on disk """
     dbo = None
+    dbname = ""
     
     def __init__(self, dbo: Database):
         self.dbo = dbo
+        self.dbname = dbo.database.replace("/", "").replace(".", "")
 
     def get(self, dbfsid: int, url: str) -> bytes:
         """ Returns the file data for url """
-        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
+        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbname, url.replace("file:", ""))
         return asm3.utils.read_binary_file(filepath)
 
     def put(self, dbfsid: int, filename: str, filedata: bytes) -> str:
         """ Stores the file data (clearing the Content column) and returns the URL """
         try:
-            path = "%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database)
+            path = "%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbname)
             os.mkdir(path)
         except OSError:
             pass # Directory already exists - ignore
         extension = self._extension_from_filename(filename)
-        filepath = "%s/%s/%s%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid, extension)
+        filepath = "%s/%s/%s%s" % (DBFS_FILESTORAGE_FOLDER, self.dbname, dbfsid, extension)
         url = "file:%s%s" % (dbfsid, extension)
         asm3.utils.write_binary_file(filepath, filedata)
         os.chmod(filepath, 0o666) # Make the file world read/write
@@ -125,7 +127,7 @@ class FileStorage(DBFSStorage):
 
     def delete(self, url: str) -> None:
         """ Deletes the file data """
-        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
+        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbname, url.replace("file:", ""))
         try:
             os.unlink(filepath)
         except Exception as err:
@@ -137,6 +139,7 @@ class FileStorage(DBFSStorage):
 class S3Storage(DBFSStorage):
     """ Storage class for putting media in Amazon S3 """
     dbo = None
+    dbname = ""
     access_key_id = ""
     secret_access_key = ""
     endpoint_url = ""
@@ -144,6 +147,7 @@ class S3Storage(DBFSStorage):
     
     def __init__(self, dbo: Database, access_key_id: str = "", secret_access_key: str = "", endpoint_url: str = "", bucket: str = "") -> None:
         self.dbo = dbo
+        self.dbname = dbo.database.replace(".", "").replace("/", "")
         self.access_key_id = DBFS_S3_ACCESS_KEY_ID
         self.secret_access_key = DBFS_S3_SECRET_ACCESS_KEY
         self.endpoint_url = DBFS_S3_ENDPOINT_URL
@@ -156,7 +160,7 @@ class S3Storage(DBFSStorage):
 
     def _cache_key(self, url: str) -> str:
         """ Calculates a cache key for url """
-        return "%s:%s" % (self.dbo.database, url)
+        return "%s:%s" % (self.dbname, url)
 
     def _cache_ttl(self, name: str) -> int:
         """ Gets the cache ttl for a file based on its name/extension """
@@ -189,16 +193,16 @@ class S3Storage(DBFSStorage):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachettl = self._cache_ttl(url)
-        cachedata = asm3.cachedisk.touch(cachekey, self.dbo.database, cachettl) # Use touch so accessed items stay in the cache longer
+        cachedata = asm3.cachedisk.touch(cachekey, self.dbname, cachettl) # Use touch so accessed items stay in the cache longer
         if cachedata is not None:
             return cachedata
-        object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
+        object_key = "%s/%s" % (self.dbname, url.replace("s3:", ""))
         try:
             x = time.time()
             response = self._s3client().get_object(Bucket=self.bucket, Key=object_key)
             body = response["Body"].read()
             asm3.al.debug("get_object(s3://%s/%s), %s bytes in %0.2fs" % (self.bucket, object_key, len(body), time.time() - x), "dbfs.S3Storage.get", self.dbo)
-            asm3.cachedisk.put(cachekey, self.dbo.database, body, cachettl)
+            asm3.cachedisk.put(cachekey, self.dbname, body, cachettl)
             return body
         except Exception as err:
             # We couldn't retrieve the object. Retrieve it from S3 migrate credentials if we have them.
@@ -216,10 +220,10 @@ class S3Storage(DBFSStorage):
     def put(self, dbfsid: int, filename: str, filedata: bytes) -> str:
         """ Stores the file data (clearing the Content column) and returns the URL """
         extension = self._extension_from_filename(filename)
-        object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
+        object_key = "%s/%s%s" % (self.dbname, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
         try:
-            asm3.cachedisk.put(self._cache_key(url), self.dbo.database, filedata, self._cache_ttl(filename))
+            asm3.cachedisk.put(self._cache_key(url), self.dbname, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
             # If a backup S3 has been set, store the file there too
@@ -233,9 +237,9 @@ class S3Storage(DBFSStorage):
 
     def delete(self, url: str) -> None:
         """ Deletes the file data """
-        object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
+        object_key = "%s/%s" % (self.dbname, url.replace("s3:", ""))
         try:
-            asm3.cachedisk.delete(self._cache_key(url), self.dbo.database)
+            asm3.cachedisk.delete(self._cache_key(url), self.dbname)
             threading.Thread(target=self._s3_delete_object, args=[self.bucket, object_key]).start()
         except Exception as err:
             asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.delete", self.dbo)
