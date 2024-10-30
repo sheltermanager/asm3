@@ -14,6 +14,9 @@ import sys
 IDTYPE_FINDPET = "findpet"
 
 # TODO: Make this the base class and have two publishers, one for found pets fpf, one for microchips fpc
+# We also need to get a geocode for the shelter address as part of the base publisher
+# and store it in the config so it can be set by the code that switches currentowner for the
+# shelter
 class FindPetPublisher(AbstractPublisher):
     """
     Handles sending found pets and microchip registrations to findpet.com
