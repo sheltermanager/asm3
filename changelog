@@ -1,6 +1,7 @@
 49
 ================
 
+31/10/24 Force movementtypes > 8 to be unadoptable
 30/10/24 Prevent SQLite paths breaking file DBFS storage #1559
 30/10/24 Place a hard limit of >250 microchips to register in one go
 29/10/24 Accidentally removed tattoo/chip date fields from animal_new #1103
