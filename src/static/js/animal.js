@@ -405,6 +405,7 @@ $(function() {
                 else if (p == "html") { t = html.icon("web") + " " + _("Published to Website"); }
                 else if (p == "petfinder") { t = "Published to petfinder.com"; }
                 else if (p == "adoptapet") { t = "Published to adoptapet.com"; }
+                else if (p == "petfbi") { t = "Published to petfbi.com"; }
                 else if (p == "rescuegroups") { t = "Published to rescuegroups.org"; }
                 else if (p == "meetapet") { t = "Published to meetapet.com"; }
                 else if (p == "helpinglostpets") { t = "Published to helpinglostpets.com"; }
@@ -419,6 +420,8 @@ $(function() {
                 else if (p == "smarttag") { t = html.icon("microchip") + " Microchip/Tag registered with SmartTag"; }
                 else if (p == "akcreunite") { t = html.icon("microchip") + " Microchip registered with AKC Reunite"; }
                 else if (p == "buddyid") { t = html.icon("microchip") + " Microchip registered with BuddyID"; }
+                else if (p == "findpet") { t = html.icon("microchip") + " Microchip registered with FindPet.com"; }
+                else if (p == "findpetr") { t = html.icon("animal-found") + " Reported as a found pet with FindPet.com"; }
                 else if (p == "homeagain") { t = html.icon("microchip") + " Microchip registered with HomeAgain"; }
                 else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with Found/24Pet"; }
 

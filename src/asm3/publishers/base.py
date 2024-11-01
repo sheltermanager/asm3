@@ -1005,14 +1005,16 @@ class AbstractPublisher(threading.Thread):
         """
         self.dbo.delete("animalpublished", "AnimalID=%d AND PublishedTo='%s'" % (animalid, self.publisherKey))
 
-    def markAnimalsPublished(self, animals: Results, first: bool = False) -> None:
+    def markAnimalsPublished(self, animals: Results, first: bool = False, publisherkey = "") -> None:
         """
         Marks all animals in the set as published at the current date/time
         for the current publisher.
         first: This is an adoptable animal publisher, mark the animal first published for adoption
+        publisherkey: The publisher to marked publishedto, if not supplied or "" uses the current publisher
         """
         batch = []
         inclause = []
+        if publisherkey == "": publisherkey = self.publisherKey
         # build a list of IDs and deduplicate them
         for a in animals:
             inclause.append( str(a["ID"]) )
@@ -1020,10 +1022,10 @@ class AbstractPublisher(threading.Thread):
         # build a batch for inserting animalpublished entries into the table
         # and check/mark animals first published
         for i in inclause:
-            batch.append( ( int(i), self.publisherKey, self.dbo.now() ) )
+            batch.append( ( int(i), publisherkey, self.dbo.now() ) )
             if first: self.markAnimalFirstPublished(int(i))
         if len(inclause) == 0: return
-        self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
+        self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (publisherkey, ",".join(inclause)))
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (?,?,?)", batch)
 
     def markAnimalsPublishFailed(self, animals: Results) -> None:

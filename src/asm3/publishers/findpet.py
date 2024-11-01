@@ -91,6 +91,8 @@ class FindPetPublisher(AbstractPublisher):
         # that have a microchip number, but don't already have a FindPet report_id
         self.log("Processing animal reports ...")
         anCount = 0
+        processed_animals = []
+
         for an in shanimals + tranimals:
 
             anCount += 1
@@ -132,8 +134,14 @@ class FindPetPublisher(AbstractPublisher):
 
                 # store the report_id
                 asm3.animal.set_extra_id(self.dbo, "system", an, IDTYPE_FINDPET, j["result"])
+                processed_animals.append(an)
+
             except Exception as err:
                 self.logError("Failed sending /report for animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Mark the reports processed but with a different publisher code so
+        # that the report can be displayed/managed separately from the microchip
+        self.markAnimalsPublished(processed_animals, publisherkey = "findpetr")
 
         processed_animals = []
         failed_animals = []
