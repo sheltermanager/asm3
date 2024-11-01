@@ -1093,12 +1093,12 @@ const tableform = {
     },
 
     /**
-     * Sets the id attribute to post_field if it is undefined
+     * Sets the id attribute to post_field or name if it is undefined
      */
     _check_id: function(v) {
         if (v.id === undefined && v.post_field !== undefined) { v.id = v.post_field; }
-        if (v.id === undefined && v.name !== undefined) { v.id = v.name; }
-        if (v.id === undefined && v.post_field === undefined) { v.id = ""; }
+        else if (v.id === undefined && v.name !== undefined) { v.id = v.name; }
+        else if (v.id === undefined) { v.id = ""; }
         return v;
     },
 
