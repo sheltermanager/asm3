@@ -575,6 +575,7 @@ def is_animal_adoptable(dbo: Database, a: ResultRow) -> bool:
     if a.ACTIVEMOVEMENTTYPE == 8 and not p.includeRetailerAnimals: return False
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 1 and not p.includeTrial: return False
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 0: return False
+    if a.ACTIVEMOVEMENTTYPE and a.ACTIVEMOVEMENTTYPE > 8: return False # exclude any custom movement types, assuming they're exit movements
     if a.ACTIVEMOVEMENTTYPE and a.ACTIVEMOVEMENTTYPE >= 3 and a.ACTIVEMOVEMENTTYPE <= 7: return False
     if not p.includeWithoutImage and a.WEBSITEMEDIANAME is None: return False
     if not p.includeWithoutDescription and asm3.configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
