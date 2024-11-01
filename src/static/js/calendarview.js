@@ -26,49 +26,26 @@ $(function() {
         },
 
         render: function() {
+            const chk = function(id, data, icon, label) {
+                return '<span class="asm-calendar-legend">' + 
+                    html.icon(icon) + 
+                    '<input id="' + id + '" data="' + data + '" type="checkbox" class="asm-checkbox" /> ' +
+                    '<label for="' + id + '">' + label + '</label>' +
+                    '</span> ';
+            };
             return [
                 html.content_header(_("Calendar View")),
                 '<p id="toggles" class="asm-calendar-legends centered">',
-                '<span class="asm-calendar-legend">',
-                html.icon("diary") + '<input id="toggle-diary" data="d" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-diary">' + _("Diary") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend">',
-                html.icon("vaccination") + '<input id="toggle-vacc" data="v" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-vacc">' + _("Vaccination") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend">',
-                html.icon("medical") + '<input id="toggle-medical" data="m" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-medical">' + _("Medical") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend">',
-                html.icon("test") + '<input id="toggle-test" data="t" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-test">' + _("Test") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend tagboarding">',
-                html.icon("boarding") + '<input id="toggle-boarding" data="b" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-boarding">' + _("Boarding") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend tagclinic">',
-                html.icon("health") + '<input id="toggle-clinic" data="c" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-clinic">' + _("Clinic") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend">',
-                html.icon("donation") + '<input id="toggle-donation" data="p" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-donation">' + _("Payment") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend taganimalcontrol">',
-                html.icon("call") + '<input id="toggle-incident" data="o" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-incident">' + _("Incident followup") + '</label>',
-                '</span> ',
-                '<span class="asm-calendar-legend tagtransport">',
-                html.icon("transport") + '<input id="toggle-transport" data="r" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-transport">' + _("Transport") + '</label>',
-                '</span>',
-                '<span class="asm-calendar-legend tagtraploan">',
-                html.icon("traploan") + '<input id="toggle-traploan" data="l" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-traploan">' + _("Equipment loan") + '</label>',
-                '</span>',
+                chk("toggle-diary", "d", "diary", _("Diary")),
+                chk("toggle-vacc", "v", "vaccination", _("Vaccination")),
+                chk("toggle-medical", "m", "medical", _("Medical")),
+                chk("toggle-test", "t", "test", _("Test")),
+                chk("toggle-boarding", "b", "boarding", _("Boarding")),
+                chk("toggle-clinic", "c", "health", _("Clinic")),
+                chk("toggle-donation", "p", "donation", _("Payment")),
+                chk("toggle-incident", "o", "call", _("Incident followup")),
+                chk("toggle-transport", "r", "transport", _("Transport")),
+                chk("toggle-traploan", "l", "traploan", _("Equipment loan")),
                 '</p>',
                 '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;"></div>',
                 html.content_footer()

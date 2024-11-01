@@ -12,39 +12,15 @@ $(function() {
                 html.error(_("The sheltermanager.com admin account password cannot be changed here, please visit {0}").replace("{0}", 
                     "<a href=\"https://sheltermanager.com/my/\">https://sheltermanager.com/my/</a>"), "mastererror"),
                 '<div id="changepassword">',
-                '<table class="asm-table-layout">',
-                '<tr>',
-                    '<td>' + _("Username") + '</td>',
-                    '<td>' + controller.username + '</td>',
-                '</tr>',
-                '<tr>',
-                    '<td>',
-                    '<label for="oldpassword">' + _("Old Password") + '</label>',
-                    '</td>',
-                    '<td>',
-                    '<input id="oldpassword" data="oldpassword" class="asm-textbox" type="password" autocomplete="current-password"/>',
-                    '</td>',
-                '</tr>',
-                '<tr>',
-                    '<td>',
-                    '<label for="newpassword">' + _("New Password") + '</label>',
-                    '</td>',
-                    '<td>',
-                    '<input id="newpassword" data="newpassword" class="asm-textbox" type="password" autocomplete="new-password" />',
-                    '</td>',
-                '</tr>',
-                '<tr>',
-                    '<td>',
-                    '<label for="confirmpassword">' + _("Confirm Password") + '</label>',
-                    '</td>',
-                    '<td>',
-                    '<input id="confirmpassword" data="confirmpassword" class="asm-textbox" type="password" autocomplete="new-password" />',
-                    '</td>',
-                '</tr>',
-                '</table>',
-                '<div class="centered">',
-                    '<button id="change">' + html.icon("auth") + ' ' + _("Change Password") + '</button>',
-                '</div>',
+                tableform.fields_render([
+                    { type: "raw", label: _("Username"), markup: controller.username },
+                    { type: "password", post_field: "oldpassword", autocomplete: "current-password", label: _("Old Password") },
+                    { type: "password", post_field: "newpassword", autocomplete: "new-password", label: _("New Password") },
+                    { type: "password", post_field: "confirmpassword", autocomplete: "new-password", label: _("Confirm Password") },
+                ], { full_width: false }),
+                tableform.buttons_render([
+                   { id: "change", icon: "auth", text: _("Change Password") }
+                ], { centered: true }),
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -88,23 +64,23 @@ $(function() {
             const change_password = async function(mode) {
                 if (!validation()) { return; }
 
-                $("#change").button("disable");
+                $("#button-change").button("disable");
                 header.show_loading();
                 try {
                     let formdata = $("input").toPOST();
                     await common.ajax_post("change_password", formdata);
                     header.show_info(_("Password successfully changed."));
-                    $("#change").button("enable");
+                    $("#button-change").button("enable");
                     $("#oldpassword, #newpassword, #confirmpassword").val("");
                 }
                 finally {
                     header.hide_loading();
-                    $("#change").button("enable");
+                    $("#button-change").button("enable");
                 }
             };
 
             // Buttons
-            $("#change").button().click(function() {
+            $("#button-change").button().click(function() {
                 change_password();
             });
 

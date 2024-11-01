@@ -96,9 +96,9 @@ $(function() {
                     { rowclasses: "enable2fa", post_field: "twofavalidcode", type: "text", label: _("Enter the code from your app") },
                     { rowclasses: "disable2fa", post_field: "twofavalidpassword", type: "password", label: _("Confirm Password") }
                 ], { full_width: false }),
-                '<p class="centered">',
-                    '<button id="save">' + html.icon("save") + ' ' + _("Save") + '</button>',
-                '</p>',
+                tableform.buttons_render([
+                   { id: "save", icon: "save", text: _("Save") }
+                ], { centered: true }),
                 html.content_footer()
             ].join("\n");
         },
@@ -119,7 +119,7 @@ $(function() {
                 log.error("failed creating signature canvas");   
             }
 
-            $("#save").button().click(async function() {
+            $("#button-save").button().click(async function() {
                 $(".asm-content button").button("disable");
                 header.show_loading();
                 let formdata = $("input, select").toPOST();

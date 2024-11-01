@@ -1097,6 +1097,7 @@ const tableform = {
      */
     _check_id: function(v) {
         if (v.id === undefined && v.post_field !== undefined) { v.id = v.post_field; }
+        if (v.id === undefined && v.name !== undefined) { v.id = v.name; }
         if (v.id === undefined && v.post_field === undefined) { v.id = ""; }
         return v;
     },
@@ -1187,6 +1188,7 @@ const tableform = {
         d += "<input type=\"hidden\" ";
         d += tableform._render_class(v, "asm-animalchooser");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1204,6 +1206,7 @@ const tableform = {
         d += "<input type=\"hidden\" ";
         d += tableform._render_class(v, "asm-animalchoosermulti");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.extraattributes)
@@ -1225,6 +1228,7 @@ const tableform = {
         d += "<input type=\"checkbox\" ";
         d += tableform._render_class(v, "asm-checkbox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1244,6 +1248,7 @@ const tableform = {
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-currencybox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1264,6 +1269,7 @@ const tableform = {
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-datebox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.date_onlydays) { d += "data-onlydays=\"" + v.onlydays + "\" "; }
         if (v.date_nofuture) { d+= "data-nofuture=\"true\" "; }
         if (v.date_nopast) { d+= "data-nopast=\"true\" "; }
@@ -1288,6 +1294,7 @@ const tableform = {
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-datebox asm-halftextbox");
         if (v.id) { d += "id=\"" + v.id + "date\" "; }
+        if (v.name) { d += "name=\"" + v.name + "date\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "date\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1300,6 +1307,7 @@ const tableform = {
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-timebox asm-halftextbox");
         if (v.id) { d += "id=\"" + v.id + "time\" "; }
+        if (v.name) { d += "name=\"" + v.name + "time\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "time\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1319,6 +1327,7 @@ const tableform = {
         d += "<input type=\"file\" ";
         d += tableform._render_class(v, "asm-filechooser");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" name=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1337,6 +1346,7 @@ const tableform = {
         d += "<textarea ";
         d += tableform._render_class(v, "asm-htmleditor");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.width && v.height) { d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
@@ -1356,6 +1366,7 @@ const tableform = {
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-intbox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
@@ -1382,6 +1393,7 @@ const tableform = {
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-numberbox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
@@ -1404,6 +1416,7 @@ const tableform = {
         d += "<input type=\"hidden\" ";
         d += tableform._render_class(v, "asm-personchooser");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1442,6 +1455,7 @@ const tableform = {
         v.type = "select";
         d += tableform._render_class(v, "asm-selectbox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1472,6 +1486,7 @@ const tableform = {
         d += "<select multiple=\"multiple\" ";
         d += tableform._render_class(v, "asm-bsmselect");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1498,6 +1513,7 @@ const tableform = {
         d += "<textarea ";
         d += tableform._render_class(v, "asm-sqleditor");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.width && v.height) { d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
@@ -1517,6 +1533,8 @@ const tableform = {
         d += "<input type=\"" + (v.type || "text") + "\" ";
         d += tableform._render_class(v, "asm-textbox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.autocomplete) { d += "autocomplete=\"" + v.autocomplete + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1538,6 +1556,7 @@ const tableform = {
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-timebox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1559,6 +1578,7 @@ const tableform = {
         d += "<textarea "; 
         d += tableform._render_class(v, "asm-textarea");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.rows) { d += "rows=\"" + v.rows + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }

@@ -1336,7 +1336,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
 
         asm3.asynctask.increment_progress_value(dbo)
 
-        row["ANIMALID"] = aid
+        row["ANIMALID"] = aid.ID
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALLITTER"] = a["ACCEPTANCENUMBER"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
