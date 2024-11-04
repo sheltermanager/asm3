@@ -138,7 +138,7 @@ edit_header = {
             chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
         }
         let rabiesinfo = "";
-        if (a.RABIESTAG) {
+        if (a.VACCRABIESTAG) {
             rabiesinfo = '<tr><td>' + _("Rabies") + ':</td><td><b>' + format.date(a.VACCRABIESDATE) + " " + 
                 a.VACCRABIESTAG + " (" + a.VACCRABIESNAME + ')</b></td></tr>';
         }
