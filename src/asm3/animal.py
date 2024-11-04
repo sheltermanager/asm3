@@ -396,6 +396,9 @@ def get_animal_query(dbo: Database) -> str:
         "ab.OutDateTime AS ActiveBoardingOutDate, " \
         "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
         f"(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Null AND DateRequired < {today}) AS VaccOutstandingCount, " \
+        "rvac.DateOfVaccination AS VaccRabiesDate, " \
+        "rvact.VaccinationType AS VaccRabiesName, " \
+        "rvac.RabiesTag AS VaccRabiesTag, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \
@@ -426,6 +429,9 @@ def get_animal_query(dbo: Database) -> str:
         "(SELECT SentDate FROM animalpublished WHERE PublishedTo='first' AND AnimalID=a.ID) AS DateAvailableForAdoption " \
         "FROM animal a " \
         "LEFT OUTER JOIN animal ba1 ON ba1.ID = a.BondedAnimalID " \
+        "LEFT OUTER JOIN animalvaccination rvac ON rvac.ID = (SELECT MAX(ID) FROM animalvaccination rvaci WHERE rvaci.AnimalID = a.ID AND " \
+            "rvaci.RabiesTag Is Not Null AND rvaci.RabiesTag <> '' AND rvaci.DateOfVaccination Is Not Null) " \
+        "LEFT OUTER JOIN vaccinationtype rvact ON rvact.ID = rvac.VaccinationID " \
         "LEFT OUTER JOIN animal ba2 ON ba2.ID = a.BondedAnimal2ID " \
         "LEFT OUTER JOIN animaltype at ON at.ID = a.AnimalTypeID " \
         "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
@@ -2887,7 +2893,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "OwnerID":          post.integer("nsowner"), # only set for non-shelter
         "OriginalOwnerID":  originalowner,
         "BroughtInByOwnerID": dbb,
-        "AdoptionCoordinatorID": post.integer("adoptioncoordinator"),
+        "AdoptionCoordinatorID": post.integer("coordinator"),
         "ReasonNO":         "",
         "ReasonForEntry":   post["reasonforentry"],
         "EntryReasonID":    post.integer("entryreason"),

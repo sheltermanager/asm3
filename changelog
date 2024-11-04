@@ -1,6 +1,8 @@
 49
 ================
 
+04/11/24 Fix bug with adoption coordinator not being set from add animal
+04/11/24 Show rabies info in banner #1561
 01/11/24 Refactor calendarview, csvexport, change_password #1103
 01/11/24 FindPet: Record separately when a found report is made #1500
 31/10/24 Force movementtypes > 8 to be unadoptable

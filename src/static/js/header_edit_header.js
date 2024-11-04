@@ -137,6 +137,11 @@ edit_header = {
         if (a.IDENTICHIPPED == 1) {
             chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
         }
+        let rabiesinfo = "";
+        if (a.RABIESTAG) {
+            rabiesinfo = '<tr><td>' + _("Rabies") + ':</td><td><b>' + format.date(a.VACCRABIESDATE) + " " + 
+                a.VACCRABIESTAG + " (" + a.VACCRABIESNAME + ')</b></td></tr>';
+        }
         let timeonshelter = a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')';
         let entershelterdate = "";
         if (a.ARCHIVED == 0 && a.HASACTIVEBOARDING == 1) {
@@ -202,6 +207,7 @@ edit_header = {
             coordinator,
             animalcontrol,
             chipinfo,
+            rabiesinfo,
             '<tr>',
             '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + entershelterdate + '</b></td>',
             '</tr>',
