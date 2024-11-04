@@ -1,6 +1,7 @@
 49
 ================
 
+04/11/24 Add locale for Egypt
 04/11/24 Fix bug with adoption coordinator not being set from add animal
 04/11/24 Show rabies info in banner #1561
 01/11/24 Refactor calendarview, csvexport, change_password #1103
