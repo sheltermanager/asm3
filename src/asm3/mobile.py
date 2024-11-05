@@ -210,6 +210,8 @@ def page(dbo, o, username):
     Generates the main mobile web page
     dbo: Database info
     """
+    if 1 == 1: 
+        return ("<html><body><p>This UI was deprecated and has been removed.</p></body></html>")
     l = dbo.locale
     nsa = asm3.animal.get_number_animals_on_shelter_now(dbo)
     osa = nsa > 0

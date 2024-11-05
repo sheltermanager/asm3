@@ -162,7 +162,7 @@ $(document).ready(function() {
                         '</div>',
                     '</div>',
                     // TODO: remove 1/11/24
-                    '<p class="mt-3"><button id="oldui" class="btn btn-outline-danger" type="button">Switch to old Mobile UI</button></p>',
+                    // '<p class="mt-3"><button id="oldui" class="btn btn-outline-danger" type="button">Switch to old Mobile UI</button></p>',
                 '</div>',
 
                 '<div id="content-reports" class="container" style="display: none">',
