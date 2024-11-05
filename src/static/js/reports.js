@@ -50,7 +50,7 @@ $(function() {
 
     const reports = {
 
-        qb: common.modules.reports_querybuilder, // reference to the querybuilder code
+        qb: null, // reference to the querybuilder code
 
         model: function() {
             const dialog = {
@@ -281,6 +281,7 @@ $(function() {
 
         render: function() {
             let s = "";
+            reports.qb = common.modules.reports_querybuilder; // by assigning here, we make sure all the modules are loaded
             this.model();
             s += this.render_headfoot();
             s += reports.qb.render();
