@@ -13,6 +13,7 @@ import asm3.publishers.buddyid
 import asm3.publishers.foundanimals
 import asm3.publishers.homeagain
 import asm3.publishers.maddiesfund
+import asm3.publishers.mypetuk
 import asm3.publishers.petcademy
 import asm3.publishers.petfbi
 import asm3.publishers.petfinder
@@ -138,6 +139,13 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         self.assertIsNotNone(asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).getData(214))
         self.assertIsNotNone(asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).processAnimal(a))
+
+    # mypetuk
+    def test_mypetuk(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        self.assertIsNotNone(asm3.publishers.mypetuk.MyPetUKPublisher(base.get_dbo(), pc).processAnimal(a))
+        asm3.publishers.mypetuk.MyPetUKPublisher(base.get_dbo(), pc).validate(a)
 
     # petcademy
     def test_petcademy(self):
