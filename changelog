@@ -1,6 +1,7 @@
 49
 ================
 
+06/11/24 Fix adoption coordinator not updating from bulk change animal
 06/11/24 New microchip registry "MyPet" for UK and NI
 05/11/24 Disable deprecated mobile UI
 05/11/24 Refactory querybuilder into a separate js file for maintainability

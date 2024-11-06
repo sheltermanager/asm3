@@ -3252,9 +3252,9 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
     if post["ownersvet"] != "" and post["ownersvet"] != "0":
         dbo.execute("UPDATE animal SET OwnersVetID = %d WHERE ID IN (%s)" % (post.integer("ownersvet"), post["animals"]))
         aud.append("OwnersVetID = %s" % post["ownersvet"])
-    if post["adoptioncoordinator"] != "" and post["adoptioncoordinator"] != "0":
-        dbo.execute("UPDATE animal SET AdoptionCoordinatorID = %d WHERE ID IN (%s)" % (post.integer("adoptioncoordinator"), post["animals"]))
-        aud.append("AdoptionCoordinatorID = %s" % post["adoptioncoordinator"])
+    if post["coordinator"] != "" and post["coordinator"] != "0":
+        dbo.execute("UPDATE animal SET AdoptionCoordinatorID = %d WHERE ID IN (%s)" % (post.integer("coordinator"), post["animals"]))
+        aud.append("AdoptionCoordinatorID = %s" % post["coordinator"])
     if post["addflag"] != "":
         animals = dbo.query("SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % post["animals"])
         for a in animals:
