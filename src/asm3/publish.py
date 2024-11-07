@@ -16,6 +16,7 @@ import asm3.publishers.homeagain
 import asm3.publishers.petfbi
 import asm3.publishers.html
 import asm3.publishers.maddiesfund
+import asm3.publishers.mypetuk
 import asm3.publishers.petcademy 
 import asm3.publishers.petfinder
 import asm3.publishers.petlink
@@ -120,6 +121,12 @@ PUBLISHER_LIST["fip"] = {
 PUBLISHER_LIST["abuk"] = {
     "label":    "Register microchips with Identibase UK",
     "class":    asm3.publishers.anibaseuk.AnibaseUKPublisher,
+    "locales":  "en_GB",
+    "sub24hour": False
+}
+PUBLISHER_LIST["mpuk"] = {
+    "label":    "Register microchips with MyPet UK",
+    "class":    asm3.publishers.mypetuk.MyPetUKPublisher,
     "locales":  "en_GB",
     "sub24hour": False
 }

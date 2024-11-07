@@ -25,6 +25,7 @@ $(function() {
                 '<li class="localeus localeca hassac"><a href="#tab-sac">ShelterAnimalsCount.org</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
+                '<li class="localegb"><a href="#tab-mypet">MyPet UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
                 '<li class="localeus hasbuddyid"><a href="#tab-buddyid">BuddyID Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">Found/24Pet Microchips</a></li>',
@@ -978,6 +979,22 @@ $(function() {
             ].join("\n");
         },
 
+        render_mypet: function() {
+            return [
+                '<div id="tab-mypet">',
+                html.info('These settings are for uploading new owner information to the MyPet UK microchip database. <br/>' + 
+                    'Find out more at <a target="_blank" href="http://www.mypethq.io">www.mypethq.io</a>'),
+                '<p><input id="enabledmpuk" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledmpuk">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>', 
+                '<td><label for="mypetpracticeid">Practice ID</label></td>',
+                '<td><input data="MyPetUKPracticeID" id="mypetpracticeid" type="text" class="asm-doubletextbox cfg" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_petcademy: function() {
             return [
                 '<div id="tab-petcademy">',
@@ -1134,6 +1151,7 @@ $(function() {
                 this.render_animalselection(),
                 this.render_allpublishers(),
                 this.render_anibase(),
+                this.render_mypet(),
                 this.render_pettrac(),
                 this.render_petlink(),
                 this.render_htmlftp(),

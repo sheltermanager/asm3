@@ -11,7 +11,7 @@ import sys
 
 class MyPetUKPublisher(AbstractPublisher):
     """
-    Handles updating UK microchips with the MyPet web service
+    Handles updating UK microchips with the MyPet web service at mypethq.io
     (which uses VetXML)
     """
     def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
@@ -58,11 +58,9 @@ class MyPetUKPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        practiceid = "" # asm3.configuration.mypet_practice_id(self.dbo)
-        pinno = "" # asm3.configuration.mypet_pin_no(self.dbo)
-
-        if pinno == "":
-            self.setLastError("MyPet vet code must be set")
+        practiceid = asm3.configuration.mypetuk_practice_id(self.dbo)
+        if practiceid == "":
+            self.setLastError("MyPet practice ID must be set")
             return
 
         animals = get_microchip_data(self.dbo, ['956', '968'], "mypetuk")
@@ -87,7 +85,7 @@ class MyPetUKPublisher(AbstractPublisher):
                     return
 
                 if not self.validate(an): continue
-                x = self.processAnimal(an, practiceid, pinno)
+                x = self.processAnimal(an, practiceid)
 
                 # Build our auth headers
                 authheaders = {
@@ -149,7 +147,7 @@ class MyPetUKPublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processAnimal(self, an: ResultRow, practiceid: str = "", pinno: str = "") -> str:
+    def processAnimal(self, an: ResultRow, practiceid: str = "") -> str:
         """ Generates a VetXML document (str) from the animal """
 
         def xe(s: str) -> str: 
@@ -165,7 +163,7 @@ class MyPetUKPublisher(AbstractPublisher):
             '<MicrochipRegistration>' \
             '<Identification>' \
             ' <PracticeID>' + practiceid + '</PracticeID>' \
-            ' <PinNo>' + pinno + '</PinNo>' \
+            ' <PinNo></PinNo>' \
             ' <Source></Source>' \
             '</Identification>' \
             '<OwnerDetails>' \

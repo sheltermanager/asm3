@@ -1253,6 +1253,9 @@ def movement_person_only_reserves(dbo: Database) -> bool:
 def multi_site_enabled(dbo: Database) -> bool:
     return cboolean(dbo, "MultiSiteEnabled", DEFAULTS["MultiSiteEnabled"] == "Yes")
 
+def mypetuk_practice_id(dbo: Database) -> str:
+    return cstring(dbo, "MyPetUKPracticeID")
+
 def non_shelter_type(dbo: Database) -> int:
     return cint(dbo, "AFNonShelterType", 40)
 
