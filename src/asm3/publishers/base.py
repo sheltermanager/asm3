@@ -320,8 +320,9 @@ def get_animal_data_query(dbo: Database, pc: PublishCriteria, animalid: int = 0,
     sql = asm3.animal.get_animal_query(dbo)
     # Always include non-dead courtesy listings
     sql += " WHERE (a.DeceasedDate Is Null AND a.IsCourtesy = 1) OR (a.ID > 0"
+    # If an animalid has been given, we can write a much simpler/quicker query
     if animalid != 0:
-        sql += " AND a.ID = " + str(animalid)
+        return "%s WHERE a.ID = %s" % (asm3.animal.get_animal_query(dbo), animalid)
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
