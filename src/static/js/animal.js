@@ -1057,7 +1057,7 @@ $(function() {
 
             // Facebook
             $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
-                "&u=" + enc_share_url);
+                "u=" + enc_share_url);
 
             // Twitter
             $("#button-twitter a").attr("href", "https://twitter.com/share?" +
@@ -1066,7 +1066,7 @@ $(function() {
 
             // Google Plus
             $("#button-gplus a").attr("href", "https://plus.google.com/share?" +
-                "&url=" + enc_share_url);
+                "url=" + enc_share_url);
 
             // Pinterest
             $("#button-pinterest a").attr("href", "http://pinterest.com/pin/create/button/?" +
