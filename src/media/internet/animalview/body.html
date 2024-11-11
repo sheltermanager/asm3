@@ -15,7 +15,7 @@
 <p>$$SEX$$ $$SPECIESNAME$$ aged $$DISPLAYAGE$$.</p>
 <p>
 <script>
-var u = encodeURIComponent(window.location.href);
+var u = encodeURIComponent("https://service.sheltermanager.com/asmservice?method=animal_view&animalid=$$ANIMALID$$&account=$$DATABASE$$");
 document.write('<i class="fa fa-fw fa-facebook"></i><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + u + '">Share on Facebook</a>');
 document.write("<br/>");
 document.write('<i class="fa fa-fw fa-twitter"></i><a target="_blank" href="https://twitter.com/share?url=' + u + '">Share on Twitter</a>');
