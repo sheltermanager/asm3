@@ -1,6 +1,7 @@
 49
 ================
 
+11/11/24 Fix animal observations to use a delimiter with fewer collisions ^^
 11/11/24 Some share links broken with extra &
 08/11/24 Optimise get_animal_data when calling animalview through the service
 06/11/24 Fix adoption coordinator not updating from bulk change animal

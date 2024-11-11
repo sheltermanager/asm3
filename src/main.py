@@ -2362,9 +2362,9 @@ class animal_observations(JSONEndpoint):
     def post_save(self, o):
         self.check(asm3.users.ADD_LOG)
         nocreated = 0
-        for row in o.post["logs"].split("||"):
+        for row in o.post["logs"].split("^^"):
             animalid, msg = row.split("==")
-            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, int(animalid), o.post.integer("logtype"), msg)
+            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, asm3.utils.atoi(animalid), o.post.integer("logtype"), msg)
             nocreated += 1
         return str(nocreated)
 

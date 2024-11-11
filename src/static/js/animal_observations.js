@@ -92,9 +92,9 @@ $(function() {
 
             $("#button-save").button().click(async function() {
                 // Send the logs to the backend in the format:
-                //    ANIMALID==FIELD1=VALUE1, FIELD2=VALUE2||ANIMALID==FIELD1=VALUE1,
+                //    ANIMALID==FIELD1=VALUE1, FIELD2=VALUE2^^ANIMALID==FIELD1=VALUE1,
                 //    52==Wet food=Mostly, Pen state=Dirty
-                // means the backend can split by || to get animals, then by == to get 
+                // means the backend can split by ^^ to get animals, then by == to get 
                 // animalid and value string for the log.
                 let formdata = { "mode": "save", "logtype": config.str("BehaveLogType") }, logs = [];
                 $(".asm-daily-observations tbody tr").each(function() {
@@ -106,7 +106,7 @@ $(function() {
                     });
                     logs.push( animalid + "==" + avs.join(", ") );
                 });
-                formdata.logs = logs.join("||");
+                formdata.logs = logs.join("^^");
                 if (formdata.logs == "") { return; }
                 header.show_loading(_("Saving..."));
                 let response = await common.ajax_post("animal_observations", formdata);
