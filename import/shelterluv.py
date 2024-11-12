@@ -37,7 +37,7 @@ ssconvert "Events - Treatments Completed.xlsx" medical.csv
 ssconvert "Events - Vaccines Administered.xlsx" vaccinations.csv
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/sluv_jt3180"
+PATH = "/home/jon/tmp/shelterluv_cs3353"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
@@ -307,7 +307,7 @@ if asm.file_exists("%s/nonshelter.csv" % PATH):
         linkperson = ppo[d["Intake From Name"]].ID
         a.OriginalOwnerID = linkperson
 
-for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
+for d in asm.csv_to_list("%s/outcome.csv" % PATH):
     if d["Animal ID"] == "Animal ID": continue # skip repeated headers
     o = None
     if d["Assoc. Person Name"] in ppo: o = ppo[d["Assoc. Person Name"]]
