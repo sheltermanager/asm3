@@ -25,16 +25,16 @@ The following files are needed:
 """
 #!/bin/sh
 # script to generate CSV files from xlsx, requires apt install gnumeric
-ssconvert "Entities - Animals.xlsx" > animals.csv
-ssconvert "Entities - Persons.xlsx" > people.csv
-ssconvert "Events - Intake.xlsx" > intake.csv
-ssconvert "Events - Intake Non Shelter.xlsx" > nonshelter.csv
-ssconvert "Events - Outcome.xlsx" > outcome.csv
-ssconvert "Events - Foster (out to).xlsx" > fosters.csv
-ssconvert "Events - Diagnostic Tests.xlsx" > tests.csv
-ssconvert "Events - Procedures and Surgeries.xlsx" > procedures.csv
-ssconvert "Events - Treatments Completed.xlsx" > medical.csv
-ssconvert "Events - Vaccines Administered.xlsx" > vaccinations.csv
+ssconvert "Entities - Animals.xlsx" animals.csv
+ssconvert "Entities - Persons.xlsx" people.csv
+ssconvert "Events - Intake.xlsx" intake.csv
+ssconvert "Events - Intake Non Shelter.xlsx" nonshelter.csv
+ssconvert "Events - Outcome.xlsx" outcome.csv
+ssconvert "Events - Foster (out to).xlsx" fosters.csv
+ssconvert "Events - Diagnostic Tests.xlsx" tests.csv
+ssconvert "Events - Procedures and Surgeries.xlsx" procedures.csv
+ssconvert "Events - Treatments Completed.xlsx" medical.csv
+ssconvert "Events - Vaccines Administered.xlsx" vaccinations.csv
 """
 
 PATH = "/home/robin/tmp/asm3_import_data/sluv_jt3180"
