@@ -227,6 +227,9 @@ const html = {
         if (config.bool("EmblemFutureAdoption") && a.HASFUTUREADOPTION == 1) {
             s.push(html.icon("movement", _("Future Adoption")));
         }
+        if (config.bool("EmblemFutureIntake") && format.date_js(a.MOSTRECENTENTRYDATE) > common.today_no_time()) {
+            s.push(html.icon("animal-add", _("Future Intake")));
+        }
         if (config.bool("EmblemCrueltyCase") && a.CRUELTYCASE == 1) {
             s.push(html.icon("case", _("Cruelty Case")));
         }

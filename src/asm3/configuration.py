@@ -194,6 +194,7 @@ DEFAULTS = {
     "EmblemCourtesy": "Yes",
     "EmblemCrueltyCase": "Yes",
     "EmblemDeceased": "Yes",
+    "EmblemFutureIntake": "Yes",
     "EmblemFutureAdoption": "Yes",
     "EmblemHold": "Yes",
     "EmblemLongTerm": "Yes",

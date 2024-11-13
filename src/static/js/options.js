@@ -600,6 +600,8 @@ $(function() {
                     html.icon("case") + ' <label for="showcrueltycase">' + _("Cruelty Case") + '</label><br />',
                 '<input data="EmblemDeceased" type="checkbox" id="showdeceased" class="asm-checkbox" type="checkbox" />',
                     html.icon("death") + ' <label for="showdeceased">' + _("Deceased") + '</label><br />',
+                '<input data="EmblemFutureIntake" type="checkbox" id="showfutureintake" class="asm-checkbox" type="checkbox" />',
+                    html.icon("animal-add") + ' <label for="showfutureintake">' + _("Future Intake") + '</label><br />',
                 '<input data="EmblemFutureAdoption" type="checkbox" id="showfutureadoption" class="asm-checkbox" type="checkbox" />',
                     html.icon("movement") + ' <label for="showfutureadoption">' + _("Future Adoption") + '</label><br />',
                 '<input data="EmblemHold" type="checkbox" id="showhold" class="asm-checkbox" type="checkbox" />',
