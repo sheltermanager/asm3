@@ -20,6 +20,10 @@ class MyPetUKPublisher(AbstractPublisher):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("mypetuk", "MyPet Publisher")
 
+    def mpDate(self, d) -> str:
+        """ Converts a python date to the string format required by mypet """
+        return asm3.i18n.format_date(d, "%Y-%m-%d")
+    
     def get_vetxml_species(self, asmspeciesid: int) -> str:
         SPECIES_MAP = {
             1:  "Canine",
@@ -122,7 +126,7 @@ class MyPetUKPublisher(AbstractPublisher):
                     # If we saw an account not found message, there's no point sending 
                     # anything else as they will all trigger the same error
                     if str(r["headers"]).find("54101") != -1:
-                        self.logError("received Anibase 54101 'sender not recognised' response header - abandoning run")
+                        self.logError("received 54101 'sender not recognised' response header - abandoning run")
                         break
 
                     if not wassuccess:
@@ -155,7 +159,7 @@ class MyPetUKPublisher(AbstractPublisher):
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
         implantdate = ""
-        if an["IDENTICHIPDATE"] is not None: implantdate = asm3.i18n.format_date(an["IDENTICHIPDATE"], "%d/%m/%Y")
+        if an.IDENTICHIPDATE is not None: implantdate = self.mpDate(an.IDENTICHIPDATE)
         address = self.splitAddress(an.CURRENTOWNERADDRESS)
 
         # Construct the XML document
@@ -167,40 +171,40 @@ class MyPetUKPublisher(AbstractPublisher):
             ' <Source></Source>' \
             '</Identification>' \
             '<OwnerDetails>' \
-            ' <Salutation>' + xe(an["CURRENTOWNERTITLE"]) + '</Salutation>' \
-            ' <Initials>' + xe(an["CURRENTOWNERINITIALS"]) + '</Initials>' \
-            ' <Forenames>' + xe(an["CURRENTOWNERFORENAMES"]) + '</Forenames>' \
-            ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
+            ' <Salutation>' + xe(an.CURRENTOWNERTITLE) + '</Salutation>' \
+            ' <Initials>' + xe(an.CURRENTOWNERINITIALS) + '</Initials>' \
+            ' <Forenames>' + xe(an.CURRENTOWNERFORENAMES) + '</Forenames>' \
+            ' <Surname>' + xe(an.CURRENTOWNERSURNAME) + '</Surname>' \
             ' <Address>' \
             '  <Line1>'+ xe(address["csv"]) + '</Line1>' \
-            '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
-            '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
-            '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
+            '  <LineOther></LineOther>' \
+            '  <County_State>'+ xe(an.CURRENTOWNERTOWN) + '</County_State>' \
+            '  <PostalCode>' + xe(an.CURRENTOWNERPOSTCODE) + '</PostalCode>' \
             '  <Country>United Kingdom</Country>' \
             ' </Address>' \
-            ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
-            ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
-            ' <MobilePhone><Number>' + xe(an["CURRENTOWNERMOBILETELEPHONE"]) + '</Number><Note/></MobilePhone>' \
+            ' <DaytimePhone><Number>' + xe(an.CURRENTOWNERWORKTELEPHONE) + '</Number><Note/></DaytimePhone>' \
+            ' <EveningPhone><Number>' + xe(an.CURRENTOWNERHOMETELEPHONE) + '</Number><Note/></EveningPhone>' \
+            ' <MobilePhone><Number>' + xe(an.CURRENTOWNERMOBILETELEPHONE) + '</Number><Note/></MobilePhone>' \
             ' <EmergencyPhone><Number/><Note/></EmergencyPhone>' \
             ' <OtherPhone><Number/><Note/></OtherPhone>' \
-            ' <EmailAddress>' + xe(an["CURRENTOWNEREMAILADDRESS"]) + '</EmailAddress>' \
+            ' <EmailAddress>' + xe(an.CURRENTOWNEREMAILADDRESS) + '</EmailAddress>' \
             ' <Fax />' \
             '</OwnerDetails>' \
             '<PetDetails>' \
-            '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
-            '  <Species>' + self.get_vetxml_species(an["SPECIESID"]) + '</Species>' \
-            '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
-            '  <DateOfBirth>' + asm3.i18n.format_date(an["DATEOFBIRTH"], "%d/%m/%Y")  + '</DateOfBirth>' \
-            '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
-            '  <Colour>' + xe(an["BASECOLOURNAME"]) + '</Colour>' \
-            '  <Markings>' + xe(an["MARKINGS"]) + '</Markings>' \
-            '  <Neutered>' + (an["NEUTERED"] == 1 and "true" or "false") + '</Neutered>' \
-            '  <NotableConditions>' + xe(an["HEALTHPROBLEMS"]) + '</NotableConditions>' \
+            '  <Name>' + xe(an.ANIMALNAME) + '</Name>' \
+            '  <Species>' + self.get_vetxml_species(an.SPECIESID) + '</Species>' \
+            '  <Breed><FreeText>' + xe(an.BREEDNAME) + '</FreeText><Code/></Breed>' \
+            '  <DateOfBirth>' + self.mpDate(an.DATEOFBIRTH) + '</DateOfBirth>' \
+            '  <Gender>' + an.SEXNAME[0:1] + '</Gender>' \
+            '  <Colour>' + xe(an.BASECOLOURNAME) + '</Colour>' \
+            '  <Markings>' + xe(an.MARKINGS) + '</Markings>' \
+            '  <Neutered>' + (an.NEUTERED == 1 and "true" or "false") + '</Neutered>' \
+            '  <NotableConditions>' + xe(an.HEALTHPROBLEMS) + '</NotableConditions>' \
             '</PetDetails>' \
             '<MicrochipDetails>' \
-            '  <MicrochipNumber>' + xe(an["IDENTICHIPNUMBER"]) + '</MicrochipNumber>' \
+            '  <MicrochipNumber>' + xe(an.IDENTICHIPNUMBER) + '</MicrochipNumber>' \
             '  <ImplantDate>' + implantdate + '</ImplantDate>' \
-            '  <ImplanterName>' + xe(an["CREATEDBY"]) + '</ImplanterName>' \
+            '  <ImplanterName>' + xe(an.CREATEDBY) + '</ImplanterName>' \
             '</MicrochipDetails>' \
             '<ThirdPartyDisclosure>true</ThirdPartyDisclosure>' \
             '<ReceiveMail>true</ReceiveMail>' \
