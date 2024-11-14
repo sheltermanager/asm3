@@ -133,7 +133,7 @@ Return button).
 
 .. image:: images/move_return_animal.png
 
-Adoption Coordindators
+Adoption Coordinators
 ----------------------
 
 The adoption coordinator feature allows animals to be assigned to a staff member 
