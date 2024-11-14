@@ -1,3 +1,5 @@
+.. _onlineform:
+
 Online Forms
 ============
 

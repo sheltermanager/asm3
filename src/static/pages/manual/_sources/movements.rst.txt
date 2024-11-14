@@ -133,4 +133,38 @@ Return button).
 
 .. image:: images/move_return_animal.png
 
+Adoption Coordindators
+----------------------
 
+The adoption coordinator feature allows animals to be assigned to a staff member 
+to handle the adoption process. Person records should first be created for these 
+members of staff with the "Adoption Coordinator"flag.
+
+.. image:: images/adoption_coordinator_flag.png
+
+Animals can then be assigned an adoption coordinator within the entry section of 
+their record.
+
+.. image:: images/adoption_coordinator_animal.png
+
+In shelterview the adoption coordinator view displays animals grouped by their
+adoption coordinatoors. 
+
+.. image:: images/adoption_coordinator_shelterview.png
+
+Online form applications which contain an animalname or reserveanimalname field 
+can be emailed automatically to the adoption coordinator responsible for the 
+selected animal. This option can be enabled by clicking the pencil icon next to
+the form, then checking the "Email adoption coordinator" box. For more information
+on using online forms, see :ref:`onlineform`     
+
+.. image:: images/adoption_coordinator_online_form.png
+
+The reservation book contains a column for the adoption coordinator, clicking 
+on the column header will sort the reservations by coordinator to help them 
+work through reservations for their animals.  
+
+.. image:: images/adoption_coordinator_reservation.png
+
+The adoption coordinator can be added to document templates using the Coordinator 
+wordkeys. For a full list of wordkeys, see :ref:`wordkeys`
