@@ -68,10 +68,9 @@ $(document).ready(function() {
                 '<div id="spinner" class="spinner-border" role="status" style="display: none"><span class="visually-hidden">Loading...</span></div>',
             '</div>',
             '<div>',
-                '<img id="thumbnail" style="display: none; height: 200px; margin-top: 10px; margin-left: auto; margin-right: auto;" />',
-                '<i id="check" style="display: none" class="bi-check2-circle"></i>',
+                '<div id="thumbnails" style="margin-top: 10px; margin-left: auto; margin-right: auto;"></div>',
                 '<input id="take-camera" type="file" capture="environment" accept="image/*" style="display: none" />',
-                '<input id="take-gallery" type="file" accept="image/*" style="display: none" />',
+                '<input id="take-gallery" type="file" accept="image/*" multiple="multiple" style="display: none" />',
                 '<input id="take-paperwork" type="file" capture="environment" accept="image/*" style="display: none" />',
             '</div>',
         '</form>',
@@ -81,12 +80,11 @@ $(document).ready(function() {
     $("body").html(h);
 
     /** Handles processing the file and uploading to the backend */
-    const upload_image = function(file, uploadtype) {
-        let reader = new FileReader();
+    const upload_image = function(file, idx, uploadtype) {
+        let reader = new FileReader(), id = "thumb" + idx, checkid = "check" + idx;
         reader.addEventListener("load", function() {
-            $("#thumbnail").prop("src", reader.result);
-            $("#thumbnail").show();
-            $("#check").hide();
+            $("#thumbnails").append('<img id="' + id + '" style="height: 200px;" src="' + reader.result + '" />');
+            $("#thumbnails").append('<i id="' + checkid + '" style="display: none" class="bi-check2-circle"></i>');
             $("#spinner").show();
             let formdata = "animalid=" + $("#animal").val() + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
             $.ajax({
@@ -96,11 +94,11 @@ $(document).ready(function() {
                 dataType: "text/plain",
                 error: function() {
                     $("#spinner").hide();
-                    $("#check").show();
+                    $("#" + checkid).show();
                 },
                 success: function() {
                     $("#spinner").hide();
-                    $("#check").show();
+                    $("#" + checkid).show();
                     $("input[type='file']").val(""); // clear down file inputs so the same file can be chosen again if the user wants
                 }
             });
@@ -162,15 +160,20 @@ $(document).ready(function() {
     });
 
     $("#take-camera").change(function() {
-        upload_image($("#take-camera")[0].files[0], "camera");
+        $("#thumbnails").empty();
+        upload_image($("#take-camera")[0].files[0], 0, "camera");
     });
 
     $("#take-gallery").change(function() {
-        upload_image($("#take-gallery")[0].files[0], "gallery");
+        $("#thumbnails").empty();
+        $.each($("#take-gallery")[0].files, function(i, f) {
+            upload_image(f, i, "gallery");
+        });
     });
 
     $("#take-paperwork").change(function() {
-        upload_image($("#take-paperwork")[0].files[0], "paperwork");
+        $("#thumbnails").empty();
+        upload_image($("#take-paperwork")[0].files[0], 0, "paperwork");
     });
 
 });
