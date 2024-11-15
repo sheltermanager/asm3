@@ -1,0 +1,97 @@
+Detailed Shelter Inventory with Location Information
+###
+Inventories
+###
+34501/Any rev01
+###
+Detailed shelter inventory with internal location and time in that location
+###
+en
+###
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.ID AS AID,
+a.MostRecentEntryDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+al.Date,
+a.ShelterLocationUnit,
+EXTRACT(DAYS FROM CURRENT_DATE - al.Date)::integer AS DaysInLocation,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' 
+WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' 
+WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
+ELSE i.LocationName END AS LocationName,
+CASE WHEN a.Adoptable=1 THEN 'Yes' ELSE 'No' END AS Adoptable
+FROM animal a
+INNER JOIN animallocation al ON al.ID = (SELECT MAX(ID) FROM animallocation 
+WHERE animallocation.AnimalID = a.ID AND animallocation.ToLocationID = a.ShelterLocation) 
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.Archived = 0
+ORDER BY LocationName, s.SpeciesName, DateBroughtIn
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+$$FOOT
+<p><b>Total $LocationName: {COUNT.LocationName}</b></p>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1>
+<thead>
+<tr>
+<th><b>Unit</b></th>  
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Microchip</b></th>
+<th><b>Type</b></th>
+<th><b>Age</b></th>
+<th><b>Breed</b></th>
+<th><b>Sex</b></th>
+<th><b>Date Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Date Entered Location</b></th>
+<th><b>Days In Location</b></th>
+<th><b>Adoptable</b></th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$shelterlocationunit</td>  
+<td>$sheltercode</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
+<td>$identichipnumber</td>
+<td>$animaltype</td>
+<td>$animalage</td>
+<td>$breedname</td>
+<td>$sex</td>
+<td>$mostrecententrydate</td>
+<td>$timeonshelter</td>
+<td>$date</td>
+<td>$daysinlocation</td>
+<td>$adoptable</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
