@@ -123,7 +123,7 @@ $(function() {
                 // Output the location
                 let loclink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + l.ID;
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
-                    l.LOCATIONNAME + '</a></p>');
+                    l.LOCATIONNAME + ' (' + shelterview.location_animal_count(l.ID) + ')</a></p>');
                 // If the location has no units, just output a single unit for the location
                 if (!common.trim(common.nulltostr(l.UNITS))) { 
                     let boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
@@ -482,6 +482,17 @@ $(function() {
         /** Returns a location object for the id given */
         location_name_for_id: function(id) {
             return common.get_row(controller.locations, id, "ID").LOCATIONNAME;
+        },
+
+        /** Returns the number of animals in location */
+        location_animal_count: function(id) {
+            let count = 0;
+            $.each(controller.animals, function(ia, a) {
+                if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == id) {
+                    count++;
+                }
+            });
+            return count;
         },
 
         /** Returns true if location id has no animals in it */

@@ -1,6 +1,7 @@
 49
 ================
 
+18/11/24 shelterview: Include location totals on location and unit #1572
 18/11/24 Add "additionalfield contains" option to querybuilder
 15/11/24 mobile photo uploader: gallery can upload multiple images #1564
 13/11/24 Emblem to indicate animal is future intake
