@@ -436,6 +436,23 @@ $(function() {
                 }
             });
             $.each(controller.additionalfields, function(i, v) {
+                if (common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { 
+                    reports_querybuilder.qb_animal_criteria.push(
+                        [_("Additional field {0} matches string").replace("{0}", v.FIELDNAME), "straf" + v.ID,
+                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animal.ID AND Value LIKE '%$ASK STRING " + v.FIELDNAME + " contains $%')" ]);
+                }
+                if (common.array_in(v.LINKTYPE, ADDITIONAL_WAITINGLIST)) { 
+                    reports_querybuilder.qb_waitinglist_criteria.push(
+                        [_("Additional field {0} matches string").replace("{0}", v.FIELDNAME), "straf" + v.ID,
+                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animalwaitinglist.ID AND Value LIKE '%$ASK STRING " + v.FIELDNAME + " contains $%')" ]);
+                }
+                if (common.array_in(v.LINKTYPE, ADDITIONAL_PERSON)) { 
+                    reports_querybuilder.qb_person_criteria.push(
+                        [_("Additional field {0} matches string").replace("{0}", v.FIELDNAME), "straf" + v.ID,
+                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_owner.ID AND Value LIKE '%$ASK STRING " + v.FIELDNAME + " contains $%')" ]);
+                }
+            });
+            $.each(controller.additionalfields, function(i, v) {
                 // date format to use with asm_to_date
                 let dformat = asm.dateformat.replace("%Y", "YYYY").replace("%m", "MM").replace("%d", "DD");
                 dformat = "'" + dformat + "'";
