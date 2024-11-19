@@ -195,7 +195,7 @@ class PetLinkPublisher(AbstractPublisher):
                         # this will force this publisher to put it through as a transfer
                         # next time since we'll find a previous published record.
                         if message.find("has already been registered") != -1:
-                            self.markAnimalPublished(an.ID, an.DATEBROUGHTIN)
+                            self.markAnimalPublished(an.ID, an.DATEBROUGHTIN, "chip already registered, sending as transfer on next publish")
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
                                 (an.SHELTERCODE, an.ANIMALNAME, an.IDENTICHIPNUMBER))
                             continue
