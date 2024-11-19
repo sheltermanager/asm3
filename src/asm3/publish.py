@@ -49,25 +49,25 @@ PUBLISHER_LIST["ap"] = {
 PUBLISHER_LIST["fbi"] = {
     "label":    "Publish to PetFBI.org",
     "class":    asm3.publishers.petfbi.PetFBIPublisher,
-    "locales":  "en en_CA",
+    "locales":  "en en_CA fr_CA",
     "sub24hour": False
 }
 PUBLISHER_LIST["mf"] = {
     "label":    "Publish to Maddie's Pet Assistant",
     "class":    asm3.publishers.maddiesfund.MaddiesFundPublisher,
-    "locales":  "en en_GB en_CA en_AU",
+    "locales":  "en en_GB en_CA fr_CA en_AU",
     "sub24hour": True
 }
 PUBLISHER_LIST["pc"] = {
     "label":    "Publish to Petcademy",
     "class":    asm3.publishers.petcademy.PetcademyPublisher,
-    "locales":  "en en_GB en_CA en_AU",
+    "locales":  "en en_GB en_CA fr_CA en_AU",
     "sub24hour": True
 }
 PUBLISHER_LIST["pf"] = {
     "label":    "Publish to PetFinder.com",
     "class":    asm3.publishers.petfinder.PetFinderPublisher,
-    "locales":  "en en_CA en_MX es_MX",
+    "locales":  "en en_CA fr_CA en_MX es_MX",
     "sub24hour": True
 }
 PUBLISHER_LIST["pr"] = {
@@ -139,7 +139,7 @@ PUBLISHER_LIST["ptuk"] = {
 PUBLISHER_LIST["fa"] = {
     "label":    "Register microchips with FoundAnimals/24Pet",
     "class":    asm3.publishers.foundanimals.FoundAnimalsPublisher,
-    "locales":  "en",
+    "locales":  "en en_CA fr_CA",
     "sub24hour": False
 }
 PUBLISHER_LIST["ha"] = {
@@ -151,7 +151,7 @@ PUBLISHER_LIST["ha"] = {
 PUBLISHER_LIST["pl"] = {
     "label":    "Register microchips with PetLink",
     "class":    asm3.publishers.petlink.PetLinkPublisher,
-    "locales":  "en en_CA en_MX es_MX",
+    "locales":  "en en_CA fr_CA en_MX es_MX",
     "sub24hour": False
 }
 PUBLISHER_LIST["st"] = {

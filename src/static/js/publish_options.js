@@ -28,7 +28,7 @@ $(function() {
                 '<li class="localegb"><a href="#tab-mypet">MyPet UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
                 '<li class="localeus hasbuddyid"><a href="#tab-buddyid">BuddyID Microchips</a></li>',
-                '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">Found/24Pet Microchips</a></li>',
+                '<li class="localeus localeca hasfoundanimals"><a href="#tab-foundanimals">Found/24Pet Microchips</a></li>',
                 '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
                 '<li class="localeus hassmarttag"><a href="#tab-smarttag">SmartTag Tags/Microchips</a></li>',
