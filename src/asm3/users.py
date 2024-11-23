@@ -683,6 +683,7 @@ def update_user_settings(dbo: Database, username: str, email: str = "", realname
     elif twofavalidpassword != "" and verify_password(twofavalidpassword, user.PASSWORD):
         asm3.al.debug(f"{user}: valid password given, disabling 2FA/TOTP", "users.update_user_settings", dbo)
         values["EnableTOTP"] = 0
+        values["OTPSecret"] = "" # Secret will be regenerated next time 2fa is enabled
     if signature != "":
         asm3.al.debug(f"{user}: updated signature given", "users.update_user_settings", dbo)
         values["Signature"] = signature
