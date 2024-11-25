@@ -72,7 +72,7 @@ rollup: compat
 	npm --silent run minify_compat
 	rm -f src/static/js/bundle/rollup.js src/static/js/bundle/rollup_compat.js
 
-schema: scripts/schema/schema.db
+schema: scripts/schema/schema.db version
 	# Generate a JSON schema of the database for use when editing
 	# SQL within the program
 	@echo "[schema] ============================="
@@ -144,7 +144,7 @@ tests: scripts/unittestdb/base.db
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2
+	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-webpy
 	apt-get install python3-memcache python3-requests python3-reportlab python3-xhtml2pdf python3-lxml
 	apt-get install python3-qrcode python3-openpyxl
 	apt-get install python3-boto3 python3-stripe
