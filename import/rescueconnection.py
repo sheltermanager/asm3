@@ -3,21 +3,22 @@
 import asm, os
 
 """
-Import script for RescueConnection animal files exported as CSV
+Import script for RescueConnection file exports. RC give people a zip file containing .xls files of the data.
 
-A customer did this, so I don't know how close it is to what RescueConnection
-actually give out (so we shouldn't advertise as being able to necessarily do RC).
+Run this script to convert:
+
+#!/bin/sh
+for i in *.xls; do ssconvert $i $i.csv; done
 
 27th January, 2020
 """
 
-# The shelter's petfinder ID for grabbing animal images for adoptable animals
 START_ID = 200
 
-ANIMALS = "/home/robin/tmp/asm3_import_data/rc_li2142/animals.csv"
+PATH = "/home/robin/tmp/asm3_import_data/rc_li2142"
 
-PICTURE_IMPORT = True
-PICTURES = "/home/robin/tmp/asm3_import_data/rc_li2142/photos/final"
+PICTURE_IMPORT = False
+PICTURES = f"{PATH}/photos/final"
 
 def getdate(d, noblanks=False):
     rv = asm.getdate_guess(d)
@@ -36,12 +37,12 @@ asm.setid("adoption", START_ID)
 if PICTURE_IMPORT: asm.setid("media", START_ID)
 if PICTURE_IMPORT: asm.setid("dbfs", START_ID)
 
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-if PICTURE_IMPORT: print "DELETE FROM media WHERE ID >= %d;" % START_ID
-if PICTURE_IMPORT: print "DELETE FROM dbfs WHERE ID >= %d;" % START_ID
+print("\\set ON_ERROR_STOP\nBEGIN;")
+print(f"DELETE FROM animal WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM owner WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM adoption WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+if PICTURE_IMPORT: print(f"DELETE FROM media WHERE ID >= {START_ID};")
+if PICTURE_IMPORT: print(f"DELETE FROM dbfs WHERE ID >= {START_ID};")
 
 # Create an unknown owner
 uo = asm.Owner()
@@ -49,7 +50,12 @@ owners.append(uo)
 uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
-for d in asm.csv_to_list(ANIMALS, strip=True, remove_non_ascii=True):
+# People
+for d in asm.csv_to_list(f"{PATH}/People.xls.csv", strip=True, remove_non_ascii=True):
+    pass
+
+# Animals
+for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii=True):
     a = asm.Animal()
     animals.append(a)
     if d["Species"] == "Cat":
@@ -183,16 +189,15 @@ for d in asm.csv_to_list(ANIMALS, strip=True, remove_non_ascii=True):
 
 # Now that everything else is done, output stored records
 for a in animals:
-    print a
+    print(a)
 for o in owners:
-    print o
+    print(o)
 for m in movements:
-    print m
+    print(m)
 
 #asm.stderr_allanimals(animals)
 #asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, owners=owners, movements=movements)
 
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
-
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
