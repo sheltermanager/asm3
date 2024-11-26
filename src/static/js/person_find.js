@@ -111,13 +111,21 @@ $(function() {
             // the bsmselect widget craps extra values into the form and 
             // breaks filtering by flag
             $("#searchbutton").button().click(function() {
-                common.route("person_find_results?" + $("#personsearchform input, #personsearchform select").toPOST());
+                if (config.bool("PersonSearchResultsNewTab")) {
+                    window.open("person_find_results?" + $("#personsearchform input, #personsearchform select").toPOST(), "_blank");
+                } else {
+                    common.route("person_find_results?" + $("#personsearchform input, #personsearchform select").toPOST());
+                }
             });
 
             // We need to re-enable the return key submitting the form
             $("#personsearchform").keypress(function(e) {
                 if (e.keyCode == 13) {
-                    common.route("person_find_results?" + $("#personsearchform input, #personsearchform select").toPOST());
+                    if (config.bool("PersonSearchResultsNewTab")) {
+                        window.open("person_find_results?" + $("#personsearchform input, #personsearchform select").toPOST(), "_blank");
+                    } else {
+                        common.route("person_find_results?" + $("#personsearchform input, #personsearchform select").toPOST());
+                    }
                 }
             });
 

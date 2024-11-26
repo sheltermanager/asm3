@@ -163,13 +163,21 @@ $(function() {
             // the bsmselect widget craps extra values into the form and 
             // breaks the filter
             $("#searchbutton").button().click(function() {
-                common.route("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST());
+                if (config.bool("AnimalSearchResultsNewTab")) {
+                    window.open("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST(), "_blank");
+                } else {
+                    common.route("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST());
+                }
             });
 
             // We need to re-enable the return key submitting the form
             $("#animalsearchform").keypress(function(e) {
                 if (e.keyCode == 13) {
-                    common.route("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST());
+                    if (config.bool("AnimalSearchResultsNewTab")) {
+                        window.open("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST(), "_blank");
+                    } else {
+                        common.route("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST());
+                    }
                 }
             });
 
