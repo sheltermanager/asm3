@@ -1157,6 +1157,10 @@ $(function() {
                 '<input data="AdvancedFindOwner" id="advancedfindperson" type="checkbox" class="asm-checkbox" /> <label for="advancedfindperson">' + _("Default to advanced find person screen") + '</label>',
                 '<br />',
                 '<input data="AdvancedFindIncidentIncomplete" id="aficomplete" type="checkbox" class="asm-checkbox" /> <label for="aficomplete">' + _("Find an incident screen defaults to incomplete incidents") + '</label>',
+                '<br />',
+                '<input data="AnimalSearchResultsNewTab" id="animalsearchnewtab" type="checkbox" class="asm-checkbox" /> <label for="animalsearchnewtab">' + _("Open animal find screens in a new tab") + '</label>',
+                '<br />',
+                '<input data="PersonSearchResultsNewTab" id="personsearchnewtab" type="checkbox" class="asm-checkbox" /> <label for="personsearchnewtab">' + _("Open person find screens in a new tab") + '</label>',
                 '</p>',
                 '</div>'
             ].join("\n");
@@ -1619,10 +1623,6 @@ $(function() {
                 html.info(_("These options change the behaviour of the search box at the top of the page.")),
                 '<p>',
                 '<input data="ShowSearchGo" id="showsearchgo" class="asm-checkbox" type="checkbox" /> <label for="showsearchgo">' + _("Display a search button at the right side of the search box") + '</label>',
-                '<br />',
-                '<input data="AnimalSearchResultsNewTab" id="animalsearchnewtab" type="checkbox" class="asm-checkbox" /> <label for="animalsearchnewtab">' + _("Open animal find screens in a new tab") + '</label>',
-                '<br />',
-                '<input data="PersonSearchResultsNewTab" id="personsearchnewtab" type="checkbox" class="asm-checkbox" /> <label for="personsearchnewtab">' + _("Open person find screens in a new tab") + '</label>',
                 '</p>',
                 '<table>',
                 '<tr>',
