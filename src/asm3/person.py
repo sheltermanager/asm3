@@ -900,9 +900,10 @@ def insert_address_change_log(dbo: Database, username: str, personid: int, newad
     """ Writes an entry to the log when a persons's address changes. 
         This should be called before the person record is updated so it can check if the address changed. """
     # If the option is on and the address has changed, log it
+    l = dbo.locale
     if asm3.configuration.address_change_log(dbo) and newaddress != oldaddress:
         asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.address_change_log_type(dbo),
-            _("Address changed from '{0}' to '{1}'").format(oldaddress, newaddress).replace("\n", ", ")
+            _("Address changed from '{0}' to '{1}'", l).format(oldaddress, newaddress).replace("\n", ", ")
         )
 
 def insert_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
@@ -1025,7 +1026,6 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     """
     Updates an existing person record from incoming form data
     """
-
     l = dbo.locale
     if not dbo.optimistic_check("owner", post.integer("id"), post.integer("recordversion")):
         raise asm3.utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
@@ -1035,21 +1035,20 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
 
     pid = post.integer("id")
 
+    # Look up the row pre-change so that we can see if any log messages need to be triggered
+    prerow = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerPostcode, OwnerTown, OwnerCounty, " \
+        "OwnerCountry, GDPRContactOptIn FROM owner WHERE ID=?", [pid]))
+
     # If the option is on and the gdpr contact info has changed, log it
     if asm3.configuration.show_gdpr_contact_optin(dbo) and asm3.configuration.gdpr_contact_change_log(dbo):
-        oldvalue = dbo.query_string("SELECT GDPRContactOptIn FROM owner WHERE ID=?", [pid])
-        if post["gdprcontactoptin"] != oldvalue:
-            newvalue = post["gdprcontactoptin"]
+        if post["gdprcontactoptin"] != prerow.GDPRCONTACTOPTIN:
             asm3.log.add_log(dbo, username, asm3.log.PERSON, pid, asm3.configuration.gdpr_contact_change_log_type(dbo),
-                "%s" % (newvalue))
+                _("GDPR opt-in changed from '{0}' to '{1}'", l).format(prerow.GDPRCONTACTOPTIN, post["gdprcontactoptin"]))
 
     # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
     if asm3.configuration.show_gdpr_contact_optin(dbo):
         if post["gdprcontactoptin"].find("email") == -1 and post["flags"].find("excludefrombulkemail") == -1:
             post["flags"] += ",excludefrombulkemail"
-
-    # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerPostcode, OwnerTown, OwnerCounty, OwnerCountry FROM owner WHERE ID=?", [pid]))
 
     # If the option is on and the address has changed, log it
     newaddress = post["address"]
@@ -1057,13 +1056,11 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     if post["county"] != "": newaddress += "\n" + post["county"]
     if post["postcode"] != "": newaddress += "\n" + post["postcode"]
     if post["country"] != "": newaddress += "\n" + post["country"]
-    
     oldaddress = prerow.OWNERADDRESS
     if prerow.OWNERTOWN != "": oldaddress += "\n" + prerow.OWNERTOWN
     if prerow.OWNERCOUNTY != "": oldaddress += "\n" + prerow.OWNERCOUNTY
     if prerow.OWNERPOSTCODE != "": oldaddress += "\n" + prerow.OWNERPOSTCODE
     if prerow.OWNERCOUNTRY != "": oldaddress += "\n" + prerow.OWNERCOUNTRY
-
     insert_address_change_log(dbo, username, pid, newaddress, oldaddress)
 
     dbo.update("owner", pid, {

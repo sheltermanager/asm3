@@ -1,6 +1,9 @@
 49
 ================
 
+26/11/24 Optimise update_person_from_form to save a query after #1556
+26/11/24 Option to record person address changes in the log #1556
+25/11/24 Option to open find animal/person in a new tab #1571
 23/11/24 Regenerate the secret for a user account when 2FA is disabled
 19/11/24 24Pet: Enable for Canadian locales
 19/11/24 PetLink: include transfer message on publishing record
