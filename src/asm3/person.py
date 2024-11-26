@@ -901,10 +901,9 @@ def insert_address_change_log(dbo: Database, username: str, personid: int, newad
         This should be called before the person record is updated so it can check if the address changed. """
     # If the option is on and the address has changed, log it
     if asm3.configuration.address_change_log(dbo) and newaddress != oldaddress:
-    #if newaddress != oldaddress:
         asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.address_change_log_type(dbo),
-                         _("Address changed from '{0}' to '{1}'").format(oldaddress, newaddress).replace("\n", ", ")
-                        )
+            _("Address changed from '{0}' to '{1}'").format(oldaddress, newaddress).replace("\n", ", ")
+        )
 
 def insert_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
@@ -1053,18 +1052,17 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     prerow = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerPostcode, OwnerTown, OwnerCounty, OwnerCountry FROM owner WHERE ID=?", [pid]))
 
     # If the option is on and the address has changed, log it
-    #insert_address_change_log(dbo: Database, username: str, personid: int, newaddress: str, oldaddress: str)
     newaddress = post["address"]
     if post["town"] != "": newaddress += "\n" + post["town"]
     if post["county"] != "": newaddress += "\n" + post["county"]
-    if post["country"] != "": newaddress += "\n" + post["country"]
     if post["postcode"] != "": newaddress += "\n" + post["postcode"]
+    if post["country"] != "": newaddress += "\n" + post["country"]
     
     oldaddress = prerow.OWNERADDRESS
     if prerow.OWNERTOWN != "": oldaddress += "\n" + prerow.OWNERTOWN
     if prerow.OWNERCOUNTY != "": oldaddress += "\n" + prerow.OWNERCOUNTY
-    if prerow.OWNERCOUNTRY != "": oldaddress += "\n" + prerow.OWNERCOUNTRY
     if prerow.OWNERPOSTCODE != "": oldaddress += "\n" + prerow.OWNERPOSTCODE
+    if prerow.OWNERCOUNTRY != "": oldaddress += "\n" + prerow.OWNERCOUNTRY
 
     insert_address_change_log(dbo, username, pid, newaddress, oldaddress)
 
