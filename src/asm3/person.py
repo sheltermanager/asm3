@@ -896,6 +896,16 @@ def update_owner_names(dbo: Database) -> str:
     asm3.al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
     return "OK %d" % len(own)
 
+def insert_address_change_log(dbo: Database, username: str, personid: int, newaddress: str, oldaddress: str) -> None:
+    """ Writes an entry to the log when a persons's address changes. 
+        This should be called before the person record is updated so it can check if the address changed. """
+    # If the option is on and the address has changed, log it
+    if asm3.configuration.address_change_log(dbo) and newaddress != oldaddress:
+    #if newaddress != oldaddress:
+        asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.address_change_log_type(dbo),
+                         _("Address changed from '{0}' to '{1}'").format(oldaddress, newaddress).replace("\n", ", ")
+                        )
+
 def insert_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
     Creates a new person record from incoming form data
@@ -1038,6 +1048,25 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     if asm3.configuration.show_gdpr_contact_optin(dbo):
         if post["gdprcontactoptin"].find("email") == -1 and post["flags"].find("excludefrombulkemail") == -1:
             post["flags"] += ",excludefrombulkemail"
+
+    # Look up the row pre-change so that we can see if any log messages need to be triggered
+    prerow = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerPostcode, OwnerTown, OwnerCounty, OwnerCountry FROM owner WHERE ID=?", [pid]))
+
+    # If the option is on and the address has changed, log it
+    #insert_address_change_log(dbo: Database, username: str, personid: int, newaddress: str, oldaddress: str)
+    newaddress = post["address"]
+    if post["town"] != "": newaddress += "\n" + post["town"]
+    if post["county"] != "": newaddress += "\n" + post["county"]
+    if post["country"] != "": newaddress += "\n" + post["country"]
+    if post["postcode"] != "": newaddress += "\n" + post["postcode"]
+    
+    oldaddress = prerow.OWNERADDRESS
+    if prerow.OWNERTOWN != "": oldaddress += "\n" + prerow.OWNERTOWN
+    if prerow.OWNERCOUNTY != "": oldaddress += "\n" + prerow.OWNERCOUNTY
+    if prerow.OWNERCOUNTRY != "": oldaddress += "\n" + prerow.OWNERCOUNTRY
+    if prerow.OWNERPOSTCODE != "": oldaddress += "\n" + prerow.OWNERPOSTCODE
+
+    insert_address_change_log(dbo, username, pid, newaddress, oldaddress)
 
     dbo.update("owner", pid, {
         "OwnerType":        post.integer("ownertype"),

@@ -11,6 +11,8 @@ from asm3.typehints import Any, Database, Dict, List, PostedData, Tuple
 # Default configuration values for unset items. This is so they
 # still get shown correctly in the options screens.
 DEFAULTS = {
+    "AddressChangeLog": "No",
+    "AddressChangeLogType": "3",
     "AdvancedFindAnimalOnShelter": "Yes",
     "AdvancedFindIncidentIncomplete": "Yes",
     "AgeGroup1": "0.5",
@@ -552,6 +554,12 @@ def get_map(dbo: Database) -> Dict[str, str]:
 
 def invalidate_config_cache(dbo: Database) -> None:
     asm3.cachedisk.delete("config", dbo.database)
+
+def address_change_log(dbo: Database) -> bool:
+    return cboolean(dbo, "AddressChangeLog", DEFAULTS["AddressChangeLog"] == "Yes")
+
+def address_change_log_type(dbo: Database) -> int:
+    return cint(dbo, "AddressChangeLogType", DEFAULTS["AddressChangeLogType"])
 
 def account_period_totals(dbo: Database) -> bool:
     return cboolean(dbo, "AccountPeriodTotals")

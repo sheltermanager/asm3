@@ -918,6 +918,11 @@ $(function() {
                 '<select data="WeightChangeLogType" id="weightchangelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
+                '<br />',
+                '<input data="AddressChangeLog" id="addresschangelog" type="checkbox" class="asm-checkbox" /> <label for="addresschangelog">' + _("When I change the address of a person, make a note of it in the log with this type") + '</label>',
+                '<select data="AddressChangeLogType" id="addresschangelogtype" class="asm-selectbox">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select>',
                 '</p>',
                 '</div>'
             ].join("\n");
