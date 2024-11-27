@@ -1057,10 +1057,10 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     if post["postcode"] != "": newaddress += "\n" + post["postcode"]
     if post["country"] != "": newaddress += "\n" + post["country"]
     oldaddress = prerow.OWNERADDRESS
-    if prerow.OWNERTOWN != "": oldaddress += "\n" + prerow.OWNERTOWN
-    if prerow.OWNERCOUNTY != "": oldaddress += "\n" + prerow.OWNERCOUNTY
-    if prerow.OWNERPOSTCODE != "": oldaddress += "\n" + prerow.OWNERPOSTCODE
-    if prerow.OWNERCOUNTRY != "": oldaddress += "\n" + prerow.OWNERCOUNTRY
+    if prerow.OWNERTOWN: oldaddress += "\n" + prerow.OWNERTOWN
+    if prerow.OWNERCOUNTY: oldaddress += "\n" + prerow.OWNERCOUNTY
+    if prerow.OWNERPOSTCODE: oldaddress += "\n" + prerow.OWNERPOSTCODE
+    if prerow.OWNERCOUNTRY: oldaddress += "\n" + prerow.OWNERCOUNTRY
     insert_address_change_log(dbo, username, pid, newaddress, oldaddress)
 
     dbo.update("owner", pid, {
