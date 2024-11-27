@@ -1292,7 +1292,7 @@ $(function() {
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
                 '<br />',
-                '<input data="LogEmailByDefault" id="logemailbydefault" type="checkbox" class="asm-checkbox" /> <label for="logemailbydefault">' + _("Check the log email checkbox by default, make a note of it in the log with this type as default") + '</label>',
+                '<input data="LogEmailByDefault" id="logemailbydefault" type="checkbox" class="asm-checkbox" /> <label for="logemailbydefault">' + _("When I send an email, record it in the log with this type") + '</label>',
                 '<select data="EmailLogType" id="emaillogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
