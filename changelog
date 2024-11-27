@@ -1,6 +1,7 @@
 49
 ================
 
+27/11/24 Added option to change default log type for logging emails #1546
 27/11/24 Added option to change default for logging emails #1546
 27/11/24 Added option for diary tasks to generate diary notes addressed to the user that executed the task #1565
 26/11/24 Optimise update_person_from_form to save a query after #1556

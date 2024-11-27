@@ -1124,6 +1124,7 @@ $.widget("asm.emailform", {
         } else {
             $("#em-addtolog").prop("checked", false);
         }
+        $("#em-logtype").val(config.integer("EmailLogType"));
         $("#em-subject").focus();
     }
 });
