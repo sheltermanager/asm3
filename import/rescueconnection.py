@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import asm, os
 
@@ -15,7 +15,7 @@ for i in *.xls; do ssconvert $i $i.csv; done
 
 START_ID = 200
 
-PATH = "/home/robin/tmp/asm3_import_data/rc_li2142"
+PATH = "/home/robin/tmp/asm3_import_data/rc_kd3359"
 
 PICTURE_IMPORT = False
 PICTURES = f"{PATH}/photos/final"
@@ -25,11 +25,54 @@ def getdate(d, noblanks=False):
     if noblanks and rv is None: rv = asm.now()
     return rv
 
+def getelements(s):
+    """ 
+    Parses the encoded strings from rescueconnection
+    These use asterisk as a separator and have a label first followed by a colon:
+    * Home: Address1, Address2, Address3 * Work: Address1, Address2, Address3
+    becomes [ [ "Address1", "Address2", "Address3" ], [ "Address1", "Address2", "Address3" ] ]
+    * Primary: (123) 1234-209 * Work: (321) 0912-093
+    becomes [ [ "(123) 1234-209" ], [ "(321) 0912-093" ]]
+    """
+    if s is None: return []
+    outer = []
+    for i in s.split("*"):
+        s = s[s.find(":")+1:] # only interested in elements after the colon
+        inner = []
+        for x in s.split(","):
+            inner.append(x.strip())
+        outer.append(inner)
+    return outer
+
+def getaddress(s):
+    """
+    Gets the first address from s and returns address, city, state, zipcode as a tuple
+    """
+    addresses = getelements(s)
+    if len(addresses) == 0: return ("", "", "", "")
+    a = addresses[0]
+    if len(a) < 3: return ("", "", "", "")
+    lastone = a[-1]
+    lv = lastone.split(" ", 1)
+    state = ""
+    zipcode = ""
+    if len(lv) == 2:
+        state = lv[0]
+        zipcode = lv[1]
+    elif len(lv) == 1:
+        state = lv[0]
+    city = a[-2]
+    add = a[-3]
+    return (add, city, state, zipcode)
+
 # --- START OF CONVERSION ---
 
 owners = []
 movements = []
 animals = []
+
+ppa = {}
+ppo = {}
 
 asm.setid("animal", START_ID)
 asm.setid("owner", START_ID)
@@ -52,84 +95,118 @@ uo.OwnerName = uo.OwnerSurname
 
 # People
 for d in asm.csv_to_list(f"{PATH}/People.xls.csv", strip=True, remove_non_ascii=True):
-    pass
+    # Each row contains a person
+    o = asm.Owner()
+    owners.append(o)
+    name = d["FullName"].split(",")
+    o.OwnerSurname = name[0]
+    if len(name) > 1:
+        o.OwnerForeNames = name[1]
+        o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
+    if d["Type"] == "Company":
+        o.OwnerType = 1
+        o.OwnerName = o.OwnerSurname
+    ppo[o.OwnerName] = o
+    o.IdentificationNumber = d["IDNumber"]
+    address, city, state, zipcode = getaddress(d["CurrentAddresses"])
+    phones = getelements(d["CurrentPhones"])
+    emails = getelements(d["CurrentEMails"])
+    o.OwnerAddress = address
+    o.OwnerTown = city
+    o.OwnerCounty = state
+    o.OwnerPostcode = zipcode
+    if len(emails) > 0: o.EmailAddress = emails[0][0]
+    if len(phones) > 0: o.MobileTelephone = phones[0][0]
 
 # Animals
 for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii=True):
     a = asm.Animal()
     animals.append(a)
+    stray = False
+    if "Entry Category" in d and d["Entry Category"] == "Stray": stray = True
+    if "LatestIntake" in d and (d["LatestIntake"].find("Stray") != -1 or d["LatestIntake"].find("Impound") != -1): stray = True
     if d["Species"] == "Cat":
         a.AnimalTypeID = 11 # Unwanted Cat
-        if d["Entry Category"] == "Stray":
+        if stray:
             a.AnimalTypeID = 12 # Stray Cat
     elif d["Species"] == "Dog":
         a.AnimalTypeID = 2 # Unwanted Dog
-        if d["Entry Category"] == "Stray":
+        if stray:
             a.AnimalTypeID = 10 # Stray Dog
     else:
         a.AnimalTypeID = 40 # Misc
     a.SpeciesID = asm.species_id_for_name(d["Species"])
-    a.AnimalName = d["Animal name"]
+    a.AnimalName = d["Name"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
-    a.ShelterCode = d["ID number"].strip()
+    a.ShelterCode = d["ID"].strip()
     a.ShortCode = a.ShelterCode
-    a.IdentichipNumber = d["Microchip"].strip()
+    a.IdentichipNumber = d["Chip"].strip()
     if a.IdentichipNumber != "": a.Identichipped = 1
     a.Sex = asm.getsex_mf(d["Gender"])
-    asm.breed_ids(a, d["Breeds"], d["CrossBreed"])
+    asm.breed_ids(a, d["PrimaryBreed"], d["SecondaryBreed"])
     a.Neutered = d["Altered"] == "Yes" and 1 or 0
-    a.BaseColourID = asm.colour_id_for_name(d["Color"])
+    a.IdentichipNumber = d["Chip"]
+    if a.IdentichipNumber != "": a.Identichipped = 1
+    a.BaseColourID = asm.colour_id_for_name(d["PrimaryColor"])
     a.Size = 2 
-    if d["Size"] == "L": a.Size = 1
-    if d["Size"] == "XL": a.Size = 0
-    if d["Size"] == "S": a.Size = 3
-    a.Weight = asm.cfloat(d["Weight"])
-    a.Declawed = d["Declawed"] == "Yes" and 1 or 0
-    a.HouseTrained = d["Housetrained"] == "Yes" and 2 or 1
-    a.HasSpecialNeeds = d["Special needs"] == "Yes" and 1 or 0
-    a.GoodWithChildren = d["Needs home without small children"] == "Yes" and 1 or 0
-    a.GoodWithCats = d["Needs home without cats"] == "Yes" and 1 or 0
-    a.GoodWithDogs = d["Needs home without dogs"] == "Yes" and 1 or 0
-
-    a.HealthProblems = d["Known issues"]
-    ec = d["Entry Category"].strip().lower()
-    if ec.startswith("stray"):
+    if d["AnimalSize"] == "Large": a.Size = 1
+    if d["AnimalSize"] == "Extra-large": a.Size = 0
+    if d["AnimalSize"] == "Small": a.Size = 3
+    a.Weight = asm.atof(d["Weight"])
+    if "Declawed" in d: a.Declawed = d["Declawed"] == "Yes" and 1 or 0
+    if "Housetrained" in d: a.HouseTrained = d["Housetrained"] == "Yes" and 2 or 1
+    if "SpecialNeeds" in d: a.HasSpecialNeeds = d["SpecialNeeds"] == "Yes" and 1 or 0
+    if "Needs home without small children" in d: a.GoodWithChildren = d["Needs home without small children"] == "Yes" and 1 or 0
+    if "Needs home without cats" in d: a.GoodWithCats = d["Needs home without cats"] == "Yes" and 1 or 0
+    if "Needs home without dogs" in d: a.GoodWithDogs = d["Needs home without dogs"] == "Yes" and 1 or 0
+    if "Known issues" in d: a.HealthProblems = d["Known issues"]
+    ec = ""
+    if "Entry Category" in d: ec = d["Entry Category"].strip().lower()
+    if "LatestIntake" in d: ec = d["LatestIntake"].strip().lower()
+    if ec.find("stray") != -1:
         a.EntryReasonID = 7
         a.EntryTypeID = 2
-    elif ec.startswith("surrender"):
+    elif ec.find("surrender") != -1:
         a.EntryReasonID = 17
         a.EntryTypeID = 1
-    elif ec.startswith("born"):
+    elif ec.find("born") != -1:
         a.EntryReasonID = 13
         a.EntryTypeID = 5
-    elif ec.startswith("transfer"):
+    elif ec.find("transfer") != -1:
         a.EntryReasonID = 15
         a.EntryTypeID = 3
         a.TransferIn = 1
-    a.ReasonForEntry = d["Source/origin"]
-    a.AnimalComments = d["Full description"]
+    if "Source/origin" in d: a.ReasonForEntry = d["Source/origin"]
+    if "Full description" in d: a.AnimalComments = d["Full description"]
+    if "Description" in d: a.AnimalComments = d["Description"]
 
-    a.DateBroughtIn = getdate(d["Arrival"]) or asm.today()
-    a.DateOfBirth = getdate(d["Date of birth"])
+    a.DateBroughtIn = getdate(d["LatestIntake"]) or asm.today()
+    age = d["Age"]
+    if age.find("/") != -1 and age.find("DOB: ") != -1:
+        age = age[age.find("DOB: ")+5:]
+        age = age.replace(")", "")
+        a.DateOfBirth = getdate(age)
     if a.DateOfBirth is None:
         a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365)
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
 
-    hcomments = d["Internal notes"]
-    hcomments = "\nEntry category: " + d["Entry Category"]
-    hcomments += "\nBreed: " + d["Breeds"] + "/" + d["CrossBreed"]
-    hcomments += "\nColor: " + d["Color"]
-    hcomments += "\nDisposition: " + d["Disposition"]
+    hcomments = "\nLatestIntake: " + d["LatestIntake"]
+    hcomments += "\nBreed: " + d["PrimaryBreed"] + "/" + d["SecondaryBreed"]
+    hcomments += "\nColor: " + d["PrimaryColor"]
+    hcomments += "\nLatestOutcome: " + d["LatestOutcome"]
     a.HiddenAnimalDetails = hcomments
 
-    dd = getdate(d["Disposition date"])
-    di = d["Disposition"].strip()
+    dd = a.DateBroughtIn
+    if "Disposition date" in d: getdate(d["Disposition date"])
+    di = d["LatestOutcome"].strip()
+    o = uo
+    if d["CurrentGuardian"] in ppo: o = ppo[d["CurrentGuardian"]]
     if di.startswith("Adopted"):
         m = asm.Movement()
         m.AnimalID = a.ID
-        m.OwnerID = uo.ID
+        m.OwnerID = o.ID
         m.MovementType = 1
         m.MovementDate = dd
         a.Archived = 1
@@ -138,10 +215,10 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
-    elif di.startswith("Released") or di.startswith("Returned to owner"):
+    elif di.startswith("Released") or di.startswith("Returned to owner") or di.startswith("Redemption"):
         m = asm.Movement()
         m.AnimalID = a.ID
-        m.OwnerID = uo.ID
+        m.OwnerID = o.ID
         m.MovementType = 5
         m.MovementDate = dd
         a.Archived = 1
@@ -150,10 +227,10 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
-    elif di.startswith("Moved/transferred"):
+    elif di.startswith("Transfer"):
         m = asm.Movement()
         m.AnimalID = a.ID
-        m.OwnerID = uo.ID
+        m.OwnerID = o.ID
         m.MovementType = 3
         m.MovementDate = dd
         a.Archived = 1
@@ -167,7 +244,7 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.PTSReasonID = 2
         a.DeceasedDate = dd
         a.Archived = 1
-    elif di.startswith("Euthanized"):
+    elif di.startswith("Euthanasia"):
         a.PutToSleep = 1
         a.PTSReasonID = 2
         a.DeceasedDate = dd
