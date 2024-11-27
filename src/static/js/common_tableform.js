@@ -265,10 +265,7 @@ const tableform = {
                     var linktext = tableform.format_string(vr, vr[vc.field]);
                     if (table.truncatelink) { linktext = html.truncate(html.decode(linktext), table.truncatelink); }
                     if (linktext == "") { linktext = _("(blank)"); }
-                    t.push("<span style=\"white-space: nowrap\">");
-                    t.push("<input type=\"checkbox\" data-id=\"" + rowid + "\" title=\"" + html.title(_("Select")) + "\" />");
-                    t.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + rowid + "\">" + linktext + "</a>");
-                    t.push("</span>");
+                    t.push( tableform.table_render_edit_link(rowid, linktext) );
                 }
                 else {
                     if (formatter === undefined) { formatter = tableform.format_string; }
@@ -282,6 +279,18 @@ const tableform = {
             t.push("</tbody></table>");
         }
         return t.join("\n");
+    },
+
+    /**
+     * Renders the edit link in a table cell
+     */
+    table_render_edit_link: function(rowid, linktext, afterlink) {
+        if (linktext == "") { linktext = _("(blank)"); }
+        if (afterlink === undefined) { afterlink = ""; }
+        return '<span style="white-space: nowrap">' + 
+            '<input type="checkbox" data-id="' + rowid + '" title="' + html.title(_("Select")) + '" />' + 
+            '<a href="#" class="link-edit" data-id="' + rowid + '">' + linktext + '</a>' + 
+            afterlink + '</span>';
     },
 
     /**

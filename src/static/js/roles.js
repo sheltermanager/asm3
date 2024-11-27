@@ -260,10 +260,7 @@ $(function() {
             $.each(controller.rows, function(i, r) {
                 h.push('<tr id="rolerow-' + r.ID + '">');
                 h.push('<td>');
-                h.push('<span style="white-space: nowrap">');
-                h.push('<input type="checkbox" data="' + r.ID + '" title="' + html.title(_('Select')) + '" />');
-                h.push('<a href="#" class="role-edit-link" data="' + r.ID + '">' + r.ROLENAME + '</a>');
-                h.push('</span>');
+                h.push(tableform.table_render_edit_link(r.ID, r.ROLENAME));
                 h.push('<input class="role-name" type="hidden" value="' + html.title(r.ROLENAME) + '" />');
                 h.push('<input class="role-map" type="hidden" value="' + r.SECURITYMAP + '" />');
                 h.push('</td>');

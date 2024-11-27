@@ -92,10 +92,7 @@ $(function() {
                         let invlink = "<button data-icon=\"cart\" " + 
                             "data-uri=\"clinic_invoice?appointmentid=" + row.ID + "\">" + 
                             _("Edit invoice") + '</button>';
-                        return '<span style="white-space: nowrap">' +
-                            '<input type="checkbox" data-id="' + row.ID + '" title="' + html.title(_("Select")) + '" />' +
-                            '<a href="#" data-id="' + row.ID + '" class="link-edit">' + row.CLINICSTATUSNAME + '</a> ' + 
-                            invlink + '</span>';
+                        return tableform.table_render_edit_link(row.ID, row.CLINICSTATUSNAME, invlink);
                     }},
                     { field: "APPTFOR", display: _("For") },
                     { field: "CLINICTYPENAME", display: _("Type") },

@@ -121,19 +121,11 @@ $(function() {
                 },
                 columns: [
                     { field: "CATEGORY", display: _("Type"), formatter: function(row) {
-                        let t = "<span style=\"white-space: nowrap\">" +
-                            "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">{val}</a></span>";
-                        if (row.HTMLBODY.indexOf("GRAPH") == 0) {
-                            return t.replace("{val}", _("Chart"));
-                        }
-                        if (row.HTMLBODY.indexOf("MAIL") == 0) {
-                            return t.replace("{val}", _("Mail Merge"));
-                        }
-                        if (row.HTMLBODY.indexOf("MAP") == 0) {
-                            return t.replace("{val}", _("Map"));
-                        }
-                        return t.replace("{val}", _("Report"));
+                        let rtype = _("Report");
+                        if (row.HTMLBODY.indexOf("GRAPH") == 0) { rtype = _("Chart"); }
+                        if (row.HTMLBODY.indexOf("MAIL") == 0) { rtype = _("Mail Merge"); }
+                        if (row.HTMLBODY.indexOf("MAP") == 0) { rtype = _("Map"); }
+                        return tableform.table_render_edit_link(row.ID, rtype);
                     }},
                     { field: "CATEGORY", display: _("Category") },
                     { field: "VIEWROLES", display: _("Roles"), formatter: function(row) {

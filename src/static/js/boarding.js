@@ -67,10 +67,7 @@ $(function() {
                 columns: [
                     /*
                     { field: "ID", display: _("Number"), formatter: function (row) { 
-                        return "<span style=\"white-space: nowrap\">" +
-                            "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + format.padleft(row.ID, 6) + "</a>" +
-                            "</span>";
+                        return tableform.table_render_edit_link(row.ID, format.padleft(row.ID, 6));
                     }},
                     */
                     { field: "BOARDINGTYPENAME", display: _("Type") },

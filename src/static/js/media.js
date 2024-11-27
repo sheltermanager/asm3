@@ -132,10 +132,8 @@ $(function() {
                         h.push(media.render_preview_thumbnail(m, true, false));
                         h.push("<br/>");
                         if (m.MEDIAMIMETYPE != "image/jpeg") { h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); }
-                        h.push("<span style=\"white-space: nowrap\">");
-                        h.push("<input type=\"checkbox\" data-id=\"" + m.ID + "\" title=\"" + html.title(_("Select")) + "\" />");
-                        h.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + m.ID + "\">" + format.date(m.DATE) + "</a>");
-                        h.push("</span><br/>");
+                        h.push(tableform.table_render_edit_link(m.ID, format.date(m.DATE)));
+                        h.push("<br/>");
                         h.push(media.render_mods(m));
                         h.push("</div>");
                         return h.join("");

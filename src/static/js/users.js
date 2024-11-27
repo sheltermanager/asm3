@@ -96,10 +96,7 @@ $(function() {
                             if (row.USERNAME == asm.useraccount) {
                                 return row.USERNAME;
                             }
-                            return "<span style=\"white-space: nowrap\">" +
-                                "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                                "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + row.USERNAME + "</a>" +
-                                "</span>";
+                            return tableform.table_render_edit_link(row.ID, row.USERNAME);
                         }},
                     { field: "REALNAME", display: _("Real name"), formatter: function(row) {
                             if (row.USERNAME == asm.useraccount) { 
