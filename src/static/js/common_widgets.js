@@ -1119,7 +1119,11 @@ $.widget("asm.emailform", {
         if (o.subject) {
             $("#em-subject").val(o.subject); 
         }
-        $("#em-addtolog").prop("checked", true);
+        if ( config.bool("LogEmailByDefault") ) {
+            $("#em-addtolog").prop("checked", true);
+        } else {
+            $("#em-addtolog").prop("checked", false);
+        }
         $("#em-subject").focus();
     }
 });
