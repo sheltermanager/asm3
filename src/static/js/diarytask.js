@@ -21,7 +21,7 @@ $(function() {
                     { json_field: "DAYPIVOT", post_field: "pivot", label: _("Day Pivot"), type: "number", 
                         callout: _("Create note this many days from today, or 9999 to ask"), validation: "notblank" },
                     { json_field: "WHOFOR", post_field: "for", label: _("For"), type: "select", 
-                        options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
+                        options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME", prepend: ('<option value="taskcreator">' + _("(task creator)") + '</option>') }},
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
                     { json_field: "NOTE", label: _("Note"), post_field: "note", validation: "notblank", type: "textarea" }
                 ]
@@ -38,7 +38,13 @@ $(function() {
                     tableform.dialog_close();
                 },
                 columns: [
-                    { field: "WHOFOR", display: _("For") },
+                    { field: "WHOFOR", display: _("For"), formatter: function(row) {
+                        let whofor = row.WHOFOR;
+                        if ( whofor == 'taskcreator') {
+                            whofor = _("(task creator)");
+                        }
+                        return tableform.table_render_edit_link(row.ID, whofor);
+                    } },
                     { field: "ORDERINDEX", display: _("Index"), initialsort: true },
                     { field: "DAYPIVOT", display: _("Day Pivot") },
                     { field: "SUBJECT", display: _("Subject") },

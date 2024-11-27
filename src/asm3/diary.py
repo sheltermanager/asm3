@@ -467,6 +467,8 @@ def execute_diary_task(dbo: Database, username: str, tasktype: int, taskid: int,
             rollingdate = selecteddate
         else:
             rollingdate = asm3.i18n.add_days(rollingdate, int(d.DAYPIVOT))
+        if d.WHOFOR == asm3.i18n._("taskcreator"):
+            d.WHOFOR = username
         insert_diary(dbo, username, linktype, linkid, rollingdate, \
             d.WHOFOR, \
             asm3.wordprocessor.substitute_tags(d.SUBJECT, tags), \
@@ -502,6 +504,7 @@ def insert_diarytaskdetail_from_form(dbo: Database, username: str, post: PostedD
     """
     Creates a diary task detail from form data
     """
+
     return dbo.insert("diarytaskdetail", {
         "DiaryTaskHeadID":      post.integer("taskid"),
         "OrderIndex":           post.integer("orderindex"),
