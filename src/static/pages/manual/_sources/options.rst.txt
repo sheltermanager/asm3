@@ -755,6 +755,7 @@ Logs
 * When I send an email, record it in the log: If this option is on, when sending 
   an email the option to record that email in the log will be on by default.
   
+
 Lost and Found
 --------------
 
