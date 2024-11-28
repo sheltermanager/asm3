@@ -393,12 +393,12 @@ $(function() {
                 common.route_reload(); 
             });
 
-            $(".role-edit-link")
+            $(".link-edit")
             .click(function() {
-                let rid = $(this).attr("data");
+                let rid = $(this).attr("data-id");
                 let rrow = "#rolerow-" + rid + " ";
                 validate.reset("dialog-add");
-                $("#roleid").val($(this).attr("data"));
+                $("#roleid").val($(this).attr("data-id"));
                 $("#rolename").val($(rrow + ".role-name").val());
                 let perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
                 $(".token").prop("checked", false);
