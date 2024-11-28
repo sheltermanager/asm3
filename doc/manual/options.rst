@@ -752,9 +752,9 @@ Logs
   this option is on, a log record detailing what was changed is created every 
   time you change a person's address. 
 
-* When I send an email, record it in the log: If this option is on, a log 
-  record is created containing the text content of the email and the recipients 
-  email address.   
+* When I send an email, record it in the log: If this option is on, when sending 
+  an email the option to record that email in the log will be on by default.
+  
 
 Lost and Found
 --------------
