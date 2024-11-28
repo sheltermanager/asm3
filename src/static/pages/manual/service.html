@@ -95,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#html-events">html_events</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-flagged-animals">html_flagged_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-held-animals">html_held_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-permfoster-animals">html_permfoster_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-stray-animals">html_stray_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
@@ -1058,6 +1059,24 @@ speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1&amp;order=holduntildate_desc
 http://localhost:5000/service?method=html_held_animals
+</pre></div>
+</div>
+</section>
+<section id="html-permfoster-animals">
+<h2>html_permfoster_animals<a class="headerlink" href="#html-permfoster-animals" title="Link to this heading">¶</a></h2>
+<p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
+<p>Returns a complete HTML document containing an HTML page of animals in permanent
+foster care.</p>
+<p>An “order” parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.</p>
+<p>You can pass an HTML template name in an optional “template” parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_permfoster_animals&amp;template=littlebox&amp;speciesid=1&amp;order=name_asc
+http://localhost:5000/service?method=html_permfoster_animals
 </pre></div>
 </div>
 </section>
