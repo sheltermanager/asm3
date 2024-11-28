@@ -986,6 +986,27 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
     http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1&order=holduntildate_desc
     http://localhost:5000/service?method=html_held_animals
 
+html_permfoster_animals
+-------------------------
+
+.. rubric:: Cache time: 30 minutes
+.. rubric:: Permissions required: None
+.. rubric:: Requires username/password: NO
+
+Returns a complete HTML document containing an HTML page of animals in permanent 
+foster care.
+
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
+
+    http://localhost:5000/service?method=html_permfoster_animals&template=littlebox&speciesid=1&order=name_asc
+    http://localhost:5000/service?method=html_permfoster_animals
+
 html_report
 -----------
 
