@@ -677,6 +677,17 @@ screens and in which order they are displayed.
 * Default to advanced find person screen: If ticked, the find person screen
   will appear in advanced mode by default. 
 
+* Find an incident screen defaults to incomplete incidents: If ticked, the find
+  incident screen will automatically select the "Incomplete incidents" filter 
+  when the screen is opened.
+
+* Open animal find screens in a new tab: If ticked, search results in the find 
+  animal screen will be opened in their own tab.  
+
+* Open person find screens in a new tab: If ticked, search results in the find
+  person screen will be opened in their own tab. 
+
+
 Home page
 ---------
 
