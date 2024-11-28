@@ -1,7 +1,8 @@
 49
 ================
 
-28/11/24 Added prefix to address change log to allow the data to be managed for GDPR compliance
+28/11/24 Added prefix to address change log to allow the data to be managed for GDPR compliance #1578
+28/11/24 html_permfoster_animals service method
 27/11/24 Added option to change default log type for logging emails #1546
 27/11/24 Added option to change default for logging emails #1546
 27/11/24 Added option for diary tasks to generate diary notes addressed to the user that executed the task #1565

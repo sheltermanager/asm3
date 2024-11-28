@@ -75,6 +75,7 @@ CACHE_PROTECT_METHODS = {
     "html_events": [ "count", "template" ],
     "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all", "order" ],
     "html_held_animals": [ "template", "speciesid", "animaltypeid", "order" ],
+    "html_permfoster_animals": [ "template", "speciesid", "animaltypeid", "order" ],
     "html_stray_animals": [ "template", "speciesid", "animaltypeid", "order" ],
     "json_adoptable_animals": [ "sensitive" ],
     "json_adoptable_animals_xp": [ "sensitive" ],
@@ -672,6 +673,11 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     elif method == "html_held_animals":
         return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
             asm3.publishers.html.get_held_animals(dbo, style=post["template"], \
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
+    
+    elif method == "html_permfoster_animals":
+        return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
+            asm3.publishers.html.get_permfoster_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
     
     elif method == "html_stray_animals":
