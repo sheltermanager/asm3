@@ -903,7 +903,7 @@ def insert_address_change_log(dbo: Database, username: str, personid: int, newad
     l = dbo.locale
     if asm3.configuration.address_change_log(dbo) and newaddress != oldaddress:
         asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.address_change_log_type(dbo),
-            _("Address changed from '{0}' to '{1}'", l).format(oldaddress, newaddress).replace("\n", ", ")
+            _("AD00:Address changed from '{0}' to '{1}'", l).format(oldaddress, newaddress).replace("\n", ", ")
         )
 
 def insert_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:

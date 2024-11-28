@@ -102,7 +102,7 @@ $(function() {
 
         /** Returns true if this is a system log message */
         is_system_message: function(row) {
-            let prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0"], rv = false;
+            let prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0", "AD0"], rv = false;
             $.each(prefixes, function(i, p) {
                 if (row.COMMENTS.indexOf(p) == 0 && row.COMMENTS.indexOf(":") == 4) {
                     rv = true;
