@@ -190,6 +190,7 @@ DEFAULTS = {
     "EmailLicenceReminder": "No",
     "EmailLicenceReminderDays": "30",
     "EmailLicenceReminderTemplate": "0",
+    "EmailLogType": "3",
     "EmailMessages": "Yes", 
     "EmblemAdoptable": "Yes",
     "EmblemAlwaysLocation": "No",
