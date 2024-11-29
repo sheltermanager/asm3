@@ -903,7 +903,7 @@ def insert_address_change_log(dbo: Database, username: str, personid: int, newad
     l = dbo.locale
     if asm3.configuration.address_change_log(dbo) and newaddress != oldaddress:
         asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.address_change_log_type(dbo),
-            _("AD00:Address changed from '{0}' to '{1}'", l).format(oldaddress, newaddress).replace("\n", ", ")
+            "AD00:" + _("Address changed from '{0}' to '{1}'", l).format(oldaddress, newaddress).replace("\n", ", ")
         )
 
 def insert_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
@@ -2020,10 +2020,7 @@ def update_anonymise_personal_data(dbo: Database, years: int = None, username: s
         asm3.al.debug("set to retain personal data indefinitely, abandoning.", "person.update_anonymise_personal_data", dbo)
         return
     cutoff = dbo.today(offset = -365 * retainyears)
-    affected = dbo.execute_named_params("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
-        "OwnerSurname = :anonymised, OwnerSurname2 = :anonymised, OwnerName = :anonymised, OwnerAddress = '', EmailAddress = '', " \
-        "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', EmailAddress2 = '', WorkTelephone2 = '', MobileTelephone2 = '', " \
-        "LastChangedDate = :now, LastChangedBy = :username " \
+    people = dbo.query_named_params("SELECT ID FROM owner " \
         "WHERE OwnerSurname <> :anonymised AND CreatedDate <= :cutoff " \
         "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
         f"AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 {adopterclause} " \
@@ -2036,7 +2033,15 @@ def update_anonymise_personal_data(dbo: Database, years: int = None, username: s
         "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID AND DateIssued > :cutoff) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > :cutoff) " \
         "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LinkType = 1 AND Date > :cutoff) ", 
-        { "anonymised": anonymised, "now": dbo.now(), "username": username, "cutoff": cutoff })
-    asm3.al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
-    return "OK %d" % affected
+        { "anonymised": anonymised, "now": dbo.now(), "cutoff": cutoff })
+    inclause = dbo.sql_in(people)
+    dbo.execute("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
+        "OwnerSurname = ?, OwnerSurname2 = ?, OwnerName = ?, OwnerAddress = '', EmailAddress = '', " \
+        "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', EmailAddress2 = '', WorkTelephone2 = '', MobileTelephone2 = '', " \
+        "LastChangedDate = ?, LastChangedBy = ? " \
+        f"WHERE ID IN ({inclause})",
+        [anonymised, anonymised, anonymised, dbo.now(), username])
+    dbo.execute(f"DELETE FROM log WHERE LinkType = 1 AND Comments LIKE 'AD00:%%' AND LinkID IN ({inclause})")
+    asm3.al.debug("anonymised %s expired person records outside of retention period (%s years)." % (len(people), retainyears), "person.update_anonymise_personal_data", dbo)
+    return "OK %d" % len(people)
 

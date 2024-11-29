@@ -1,6 +1,7 @@
 49
 ================
 
+29/11/24 Modified update_anonymise_personal_data function to include removal of address change logs #1578
 28/11/24 Added prefix to address change log to allow the data to be managed for GDPR compliance #1578
 28/11/24 html_permfoster_animals service method
 27/11/24 Added option to change default log type for logging emails #1546
