@@ -445,24 +445,6 @@ records.
   added is not an image and the notes are blank, use the original filename as
   the notes.
 
-* When I change the flags on an animal/person, make a note of it in the log
-  with this type:  If this option is on a log record is created when you add
-  or remove a person or animal flag. 
-
-* When I mark an animal held, make a note of it in the log: If this option is on,
-  a log record is created when you mark an animal held along with the hold
-  until date.
-
-* When I change the location of an animal, make a note of it in the log: If
-  this option is on, a log record is created every time you change an animal's
-  internal location with the new location so you can track the history of where
-  the animal has moved within your shelter.
-
-* When I change the weight of an animal, make a note of it in the log: If
-  this option is on, a log record is created every time you change an animal's
-  weight so you can track the history of an animal's wieght with reports and
-  graphs.
-
 Diary and Messages
 ------------------
 
@@ -677,6 +659,17 @@ screens and in which order they are displayed.
 * Default to advanced find person screen: If ticked, the find person screen
   will appear in advanced mode by default. 
 
+* Find an incident screen defaults to incomplete incidents: If ticked, the find
+  incident screen will automatically select the "Incomplete incidents" filter 
+  when the screen is opened.
+
+* Open animal find screens in a new tab: If ticked, search results in the find 
+  animal screen will be opened in their own tab.  
+
+* Open person find screens in a new tab: If ticked, search results in the find
+  person screen will be opened in their own tab. 
+
+
 Home page
 ---------
 
@@ -733,6 +726,35 @@ Simply fill in the start/end/next values and tick the box to ensure you are
 using automatic numbers. When you next adopt an animal, a button will appear at
 the side of the insurance number on the movement screen, allowing you to assign
 an insurance number to that adoption. 
+
+Logs
+----
+
+* When I change the flags on an animal/person, make a note of it in the log
+  with this type:  If this option is on a log record is created when you add
+  or remove a person or animal flag. 
+
+* When I mark an animal held, make a note of it in the log: If this option is on,
+  a log record is created when you mark an animal held along with the hold
+  until date.
+
+* When I change the location of an animal, make a note of it in the log: If
+  this option is on, a log record is created every time you change an animal's
+  internal location with the new location so you can track the history of where
+  the animal has moved within your shelter.
+
+* When I change the weight of an animal, make a note of it in the log: If
+  this option is on, a log record is created every time you change an animal's
+  weight so you can track the history of an animal's weight with reports and
+  graphs.  
+
+* When I change the address of a person, make a note of it in the log: If 
+  this option is on, a log record detailing what was changed is created every 
+  time you change a person's address. 
+
+* When I send an email, record it in the log: If this option is on, when sending 
+  an email the option to record that email in the log will be on by default.
+  
 
 Lost and Found
 --------------
