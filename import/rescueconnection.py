@@ -10,7 +10,7 @@ Run this script to convert:
 #!/bin/sh
 for i in *.xls; do ssconvert $i $i.csv; done
 
-27th January, 2020
+29th November, 2024
 """
 
 START_ID = 200
@@ -67,21 +67,35 @@ def getaddress(s):
 
 # --- START OF CONVERSION ---
 
+logs = []
 owners = []
 movements = []
 animals = []
+animalcontrol = []
+animalmedicals = []
 
 ppa = {}
+ppac = {}
 ppo = {}
 
 asm.setid("animal", START_ID)
+asm.setid("animalcontrol", START_ID)
+asm.setid("animalmedical", START_ID)
+asm.setid("animalmedicaltreatment", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("adoption", START_ID)
+asm.setid("incidenttype", START_ID)
+asm.setid("log", START_ID)
 if PICTURE_IMPORT: asm.setid("media", START_ID)
 if PICTURE_IMPORT: asm.setid("dbfs", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
 print(f"DELETE FROM animal WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM animalcontrol WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM animalmedical WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM animalmedicaltreatment WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM incidenttype WHERE ID >= {START_ID}")
+print(f"DELETE FROM log WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
 print(f"DELETE FROM owner WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
 print(f"DELETE FROM adoption WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
 if PICTURE_IMPORT: print(f"DELETE FROM media WHERE ID >= {START_ID};")
@@ -203,7 +217,7 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
     di = d["LatestOutcome"].strip()
     o = uo
     if d["CurrentGuardian"] in ppo: o = ppo[d["CurrentGuardian"]]
-    if di.startswith("Adopted"):
+    if di.startswith("Adopt"):
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -215,7 +229,7 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
-    elif di.startswith("Released") or di.startswith("Returned to owner") or di.startswith("Redemption"):
+    elif di.startswith("Release") or di.startswith("Returned to owner") or di.startswith("Redemption"):
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -227,7 +241,7 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
-    elif di.startswith("Transfer"):
+    elif di.startswith("Transfer") or di.startswith("Move"):
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -239,6 +253,12 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
+    elif di.startswith("N/A"):
+        a.NonShelterAnimal = 1
+        a.Archived = 1
+        if o: 
+            a.OriginalOwnerID = o.ID
+            a.OwnerID = a.OriginalOwnerID
     elif di.startswith("Died"):
         a.PutToSleep = 0
         a.PTSReasonID = 2
@@ -249,7 +269,8 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.PTSReasonID = 2
         a.DeceasedDate = dd
         a.Archived = 1
-
+    else:
+        asm.stderr(f"unrecognised outcome: {di}")
     # Does this animal have an image? If so, add media/dbfs entries for it
     if PICTURE_IMPORT:
         imdata = None
@@ -259,14 +280,77 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
                 with open(fname, "rb") as f:
                     asm.animal_image(a.ID, f.read())
 
+# Medications
+for d in asm.csv_to_list(f"{PATH}/Medications.xls.csv", strip=True, remove_non_ascii=True):
+    animalmedicals.append( asm.animal_regimen_single(a.ID, getdate(d["BeginDate"]), d["Drug"], d["Dose"], d["Instructions"]) )
+
+# Incidents
+for d in asm.csv_to_list(f"{PATH}/Legal_AllItems.xls.csv", strip=True, remove_non_ascii=True):
+    ac = asm.AnimalControl()
+    animalcontrol.append(ac)
+    ppac[d["IDNumber"]] = ac
+    ac.IncidentTypeID = asm.incidenttype_id_for_name(d["ItemType"], True)
+    calldate = getdate(d["Opened"])
+    if calldate is None: calldate = asm.now()
+    ac.CallDateTime = calldate
+    ac.IncidentDateTime = calldate
+    ac.DispatchDateTime = calldate
+    ac.CompletedDate = getdate(d["Closed"])
+    if ac.CompletedDate is None: ac.CompletedDate = calldate
+    ac.IncidentCompletedID = 5
+    comments = "case: %s\n" % d["AssociatedCase"]
+    comments += "\n%s" % d["DescriptionOrNotes"]
+    ac.CallNotes = comments
+    ac.Sex = 2
+    """
+    if "ANIMALKEY" in row:
+        if row["ANIMALKEY"] in ppa:
+            a = ppa[row["ANIMALKEY"]]
+            animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%s, %s);" % (ac.ID, a.ID))
+    """
+
+# Incident logs
+for d in asm.csv_to_list(f"{PATH}/Legal_Cases_History.xls.csv", strip=True, remove_non_ascii=True):
+    if d["CaseNumber"] not in ppac: continue
+    ac = ppac[d["CaseNumber"]]
+    l = asm.Log()
+    logs.append(l)
+    l.LogTypeID = 3
+    l.LinkID = ac.ID
+    l.LinkType = 6
+    l.Date = getdate(d["LogDate"])
+    if l.Date is None:
+        l.Date = asm.now()
+    l.Comments = d["Description"]
+for d in asm.csv_to_list(f"{PATH}/Legal_Cases_Statements.xls.csv", strip=True, remove_non_ascii=True):
+    if d["CaseNumber"] not in ppac: continue
+    ac = ppac[d["CaseNumber"]]
+    l = asm.Log()
+    logs.append(l)
+    l.LogTypeID = 3
+    l.LinkID = ac.ID
+    l.LinkType = 6
+    l.Date = getdate(d["StatementDate"])
+    if l.Date is None:
+        l.Date = asm.now()
+    statement = "Statement taken by %s [%s]: %s" % (d["StatementTakenBy"], d["Notes"], d["StatementText"] )
+    l.Comments = statement
 
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
 # asm.adopt_older_than(animals, movements, uo.ID, 365)
 
 # Now that everything else is done, output stored records
+for k, v in asm.incidenttypes.items():
+    if v.ID >= START_ID: print(v)
 for a in animals:
     print(a)
+for ac in animalcontrol:
+    print(ac)
+for am in animalmedicals:
+    print(am)
+for l in logs:
+    print(l)
 for o in owners:
     print(o)
 for m in movements:
@@ -274,7 +358,7 @@ for m in movements:
 
 #asm.stderr_allanimals(animals)
 #asm.stderr_onshelter(animals)
-asm.stderr_summary(animals=animals, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animalcontrol=animalcontrol, animalmedicals=animalmedicals, logs=logs, owners=owners, movements=movements)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
