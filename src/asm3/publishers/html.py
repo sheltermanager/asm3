@@ -245,24 +245,8 @@ def get_animal_view_adoptable_html(dbo: Database) -> str:
         a template called animalviewadoptable if it exists. 
     """
     head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptable")
-    if head == "":
-        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title>\n" \
-            "<meta charset='utf-8'>\n" \
-            "<style>\n" \
-            ".asm3-adoptable-item { max-width: 200px; font-family: sans-serif; }\n" \
-            ".asm3-adoptable-link { font-weight: bold; }\n" \
-            ".asm3-adoptable-tag-agegroup, .asm3-adoptable-tag-size { display: none; }\n" \
-            "</style>\n" \
-            "</head>\n<body>\n"
-        body = "<div id=\"asm3-adoptables\"></div>\n" \
-            "<script>\n" \
-            "asm3_adoptable_filters = \"sex breed agegroup size species goodwith where\";\n" \
-            "asm3_adoptable_iframe = true;\n" \
-            "asm3_adoptable_iframe_fixed = false; // fixed == true does not work with multi-photos/scrolling\n" \
-            "asm3_adoptable_iframe_closeonback = true; // close the popup pane when the user navigates back\n" \
-            "</script>\n" \
-            "<script src=\"$$ADOPTABLEJSURL$$\"></script>"
-        foot = "</body>\n</html>"
+    # Template doesn't exist, read it from the file system instead
+    if head == "": head, body, foot = asm3.template.get_html_template_from_file(dbo, "animalviewadoptable")
     body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.database))
     return "%s\n%s\n%s" % (head, body, foot)
 
