@@ -413,6 +413,13 @@ than animalview::
 
     http://localhost:5000/service?method=animal_view&animalid=520&style=animalviewcarousel
 
+It is also possible to specify a ustyle parameter to choose a template to use if the
+animal is not available for adoption. If you don't specify one, the default of 
+"animalviewnotforadoption" is used. If that template does not exist, a simple error
+message is returned instead::
+
+    http://localhost:5000/service?method=animal_view&animalid=520&style=animalviewcarousel&ustyle=animalviewnotforadoption
+
 
 animal_view_adoptable_js
 ------------------------

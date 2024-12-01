@@ -11,6 +11,13 @@ def get_html_template(dbo: Database, name: str) -> Tuple[str, str, str]:
         return ("", "", "")
     else:
         return (rows[0].header, rows[0].body, rows[0].footer)
+    
+def get_html_template_from_file(dbo: Database, name: str) -> Tuple[str, str, str]:
+    """ Reads one of our default html publishing templates from the file system """
+    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/head.html" % name)
+    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/foot.html" % name)
+    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/body.html" % name)
+    return ( head, body, foot)
 
 def get_html_templates(dbo: Database) -> Results:
     """ Returns all available HTML publishing templates (excluding built ins) """

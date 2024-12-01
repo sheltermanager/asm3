@@ -207,25 +207,21 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
         bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
     return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
     
-def get_animal_view(dbo: Database, animalid: int, style="animalview") -> str:
+def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str = "") -> str:
     """ Constructs the animal view page to the animalview (or another specified) style/template. """
+    if style == "": style = "animalview" # default template to use if the animal is adoptable
+    if ustyle == "": ustyle = "animalviewnotadoptable" # default template to use if the animal is not adoptable
     a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=False))
-    # The animal is adoptable, use the specified template
+    # The animal is adoptable
     if a is not None and is_animal_adoptable(dbo, a):
         head, body, foot = asm3.template.get_html_template(dbo, style)
-        if head == "":
-            head, body, foot = get_animal_view_template(dbo)
+        # Fall back to animalview if the template given doesn't exist
+        if head == "": head, body, foot = get_animal_view_template(dbo)
     else:
         # The animal is not adoptable. 
         # If there is no animalviewnotadoptable template, produce an error
-        head, body, foot = asm3.template.get_html_template(dbo, "animalviewnotadoptable")
+        head, body, foot = asm3.template.get_html_template(dbo, ustyle)
         if head == "": raise asm3.utils.ASMPermissionError("animal is not adoptable")
-        # Otherwise, load the animal record so we can generate the animalviewnotadoptable page
-        a = asm3.animal.get_animal(dbo, animalid)
-    if head == "":
-        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
-        body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
-        foot = "</body>\n</html>"
     if asm3.smcom.active():
         a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, animalid)
     else:
@@ -288,10 +284,8 @@ def get_animal_view_adoptable_js(dbo: Database) -> str:
 def get_animal_view_template(dbo: Database) -> str:
     """ Returns a tuple of the header, body and footer for the animalview template """
     head, body, foot = asm3.template.get_html_template(dbo, "animalview")
-    if head == "":
-        head = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset='utf-8'>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
-        body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
-        foot = "</body>\n</html>"
+    # Something has gone wrong and we don't have an animalview template in the DB, read it from the filesystem instead
+    if head == "": head, body, foot = asm3.template.get_html_template_from_file(dbo, "animalview")
     return ( head, body, foot )
 
 class HTMLPublisher(FTPPublisher):
