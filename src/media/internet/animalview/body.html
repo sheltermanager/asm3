@@ -1,8 +1,50 @@
-<img id="mainpic" src="$$WEBMEDIAFILENAME$$" />
-<div id="otherpics">
-  <img id="other1" src="$$WEBMEDIAFILENAME2$$" onError="blankImage(this.id)"/>
-  <img id="other2" src="$$WEBMEDIAFILENAME3$$" onError="blankImage(this.id)"/>
-  <img id="other3" src="$$WEBMEDIAFILENAME4$$" onError="blankImage(this.id)"/>
+<div id=header>
+  <img id=logoimage src=service?account=$$DATABASE$$&method=dbfs_image&title=logo.jpg align=middle onError="blankImage(this.id)">
+  <div id=companyname>$$ORGANISATION$$</div>
+  <div style='clear: left;'></div>
+</div>
+
+<h1 id=title>$$ANIMALNAME$$ $$SHELTERCODE$$</h1>
+
+<p id=animaldetails>
+  $$SEX$$ $$SPECIESNAME$$ aged $$DISPLAYAGE$$
+</p>
+
+<p id=goodwiths>
+<script>
+    if ('$$GoodWithCats$$' == 'Yes') document.write("<span class='gw green'>Good with cats</span>");
+  	if ('$$GoodWithCats$$' == 'No') document.write("<span class='gw red'>NOT Good with cats</span>");
+  
+    if ('$$GoodWithDogs$$' == 'Yes') document.write("<span class='gw green'>Good with dogs</span>");
+  	if ('$$GoodWithDogs$$' == 'No') document.write("<span class='gw red'>NOT Good with dogs</span>");
+  	
+    if ('$$GoodWithChildren$$' == 'Yes') document.write("<span class='gw green'>Good with children</span>");
+    if ('$$GoodWithChildren$$' == 'Over 5') document.write("<span class='gw green'>Good with children over 5</span>");
+    if ('$$GoodWithChildren$$' == 'Over 12') document.write("<span class='gw green'>Good with children over 12</span>");
+  	if ('$$GoodWithChildren$$' == 'No') document.write("<span class='gw red'>NOT Good with children</li>");
+    
+  	if ('$$HouseTrained$$' == 'Yes') document.write("<span class='gw green'>Housetrained</span>");
+    if ('$$HouseTrained$$' == 'No') document.write("<span class='gw red'>NOT Housetrained</span>");
+</script>
+</p>
+
+<center><div id=images><script>
+    if ( "$$WEBMEDIAFILENAME2$$" + "$$WEBMEDIAFILENAME2$$" + "$$WEBMEDIAFILENAME2$$" == "" ) {
+      document.write('<img class="fullwidthimage" id="mainpic" src="$$WEBMEDIAFILENAME$$" onError="blankImage(this.id)"/>');
+    } else {
+      document.write('<img class="partialwidthimage" id="mainpic" src="$$WEBMEDIAFILENAME$$" onError="blankImage(this.id)"/>');
+    }
+</script><div id="otherpics"><img id="other1" src="$$WEBMEDIAFILENAME2$$" onError="blankImage(this.id)"/><img id="other2" src="$$WEBMEDIAFILENAME3$$" onError="blankImage(this.id)"/><img id="other3" src="$$WEBMEDIAFILENAME4$$" onError="blankImage(this.id)"/></div>
+    
+  <div style='clear: both;'></div>
+</div></center>
+
+<div id=animalcommentscontainer>
+
+  <div id=animalcomments></div>
+
+  <div id=additionalanimalcomments></div>
+
 </div>
 
 <script type="text/javascript">
@@ -11,39 +53,34 @@
         }
 </script>
 
-<h2>$$ANIMALNAME$$ - $$SHELTERCODE$$</h2>
-<p>$$SEX$$ $$SPECIESNAME$$ aged $$DISPLAYAGE$$.</p>
 <p>
 <script>
-var u = encodeURIComponent("https://service.sheltermanager.com/asmservice?method=animal_view&animalid=$$ANIMALID$$&account=$$DATABASE$$");
-document.write('<i class="fa fa-fw fa-facebook"></i><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + u + '">Share on Facebook</a>');
-document.write("<br/>");
-document.write('<i class="fa fa-fw fa-twitter"></i><a target="_blank" href="https://twitter.com/share?url=' + u + '">Share on Twitter</a>');
+var u = encodeURIComponent(window.location.href);
+document.write('<center><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + u + '"><i class="bi bi-facebook"></i></a>');
+document.write(" ");
+document.write('<a target="_blank" href="https://twitter.com/share?url=' + u + '"><i class="bi bi-twitter"></i></a></center>');
 </script>
 </p>
 
-<p>
-<ul>
 <script>
-    if ('$$GoodWithCats$$' == 'Yes') document.write("<li>Good with cats</li>");
-    if ('$$GoodWithDogs$$' == 'Yes') document.write("<li>Good with dogs</li>");
-    if ('$$GoodWithChildren$$' == 'Yes') document.write("<li>Good with children</li>");
-    if ('$$GoodWithChildren$$' == 'Over 5') document.write("<li>Good with children over 5</li>");
-    if ('$$GoodWithChildren$$' == 'Over 12') document.write("<li>Good with children over 12</li>");
-    if ('$$HouseTrained$$' == 'Yes') document.write("<li>Housetrained</li>");
-    if ('$$GoodWithCats$$' == 'No') document.write("<li>NOT Good with cats</li>");
-    if ('$$GoodWithDogs$$' == 'No') document.write("<li>NOT Good with dogs</li>");
-    if ('$$GoodWithChildren$$' == 'No') document.write("<li>NOT Good with children</li>");
-    if ('$$HouseTrained$$' == 'No') document.write("<li>NOT Housetrained</li>");
+  function showAllComments() {
+    document.getElementById("additionalanimalcomments").style.display = 'block';
+    document.getElementById("morebutton").style.display = 'none';
+  }
+  let rawanimalcomments = '$$ANIMALCOMMENTS$$'.split("<br>");
+  let additionalcomments = '';
+  let initialanimalcomments = '';
+  if ( rawanimalcomments.length > 1 ) {
+  	initialanimalcomments = "<p>" + rawanimalcomments[0] + " <span id=morebutton onclick='showAllComments()'>more</span></p>";
+    for ( let a = 1; a < rawanimalcomments.length; a++ ) {
+    	 additionalcomments += "<p>" + rawanimalcomments[a] + "<p>";
+    }
+  } else {
+    initialanimalcomments = "<p>" + rawanimalcomments[0] + "</p>";
+  }
+  
+  document.getElementById("animalcomments").innerHTML = initialanimalcomments;
+  document.getElementById("additionalanimalcomments").innerHTML = additionalcomments;
+  document.getElementById("animalcomments").display = 'block';
+  
 </script>
-</ul>
-</p>
-
-<!-- Uncomment below if you want to link to an online adoption form in your database. Substitute [ONLINE FORM ID] for the real one. -->
-<!--
-<p><a class="adopt-button" href="https://service.sheltermanager.com/asmservice?account=$$DATABASE$$&method=online_form_html&formid=[ONLINE FORM ID]&reserveanimalname=$$ANIMALNAME$$::$$SHELTERCODE$$">Submit an Adoption Application</a></p>
--->
-
-<p>$$DESCRIPTIONBR$$</p>
-
-

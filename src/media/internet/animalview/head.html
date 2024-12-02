@@ -2,19 +2,141 @@
 <html>
 <head>
 <title>$$ANIMALNAME$$ - $$SHELTERCODE$$</title>
-<link type="text/css" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
-<link type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="static/lib/bootstrap-icons/1.5.0/bootstrap-icons.css"  />
 <style>
-body { font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif; text-align: center}
-#mainpic { padding: 10px; margin-right: 15px; width: 50%; max-width: 600px; border: 1px solid #555; background-color: #fff; box-shadow: 3px 3px 5px #888; border-radius: 2px; }
-#otherpics img { padding: 2px; width: 16%; max-width: 195px; border: 1px solid #555; background-color: #fff; box-shadow: 3px 3px 5px #888; border-radius: 2px; }
-.adopt-button { display: inline-block; padding: 12px 20px; background-color: #282896; color: #fff; text-decoration: none; font-weight: bold; border-radius: 10px; transition: background-color 0.3s ease; }
-.adopt-button:hover { background-color: #131386; }
+	html {
+    	font-family: sans-serif;
+    	background-color: #efefef;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+    	max-width: 800px;
+        margin: 0;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0;
+        background-color: white;
+    }
+    
+    #header, #footer {
+    	background-color: #dfdfdf;
+        padding: 10px;
+    }
+    
+	#logoimage {
+        max-width: 200px;
+        max-height: 200px;
+        margin-right: 10px;
+    }
+    
+    #companyname {
+    	display: inline-block;
+        vertical-align: middle;
+        padding: 10px;
+    }
+    
+    #title, #animaldetails, #goodwiths {
+    	text-align: center;
+    }
+    
+    #title, #animaldetails, #goodwiths, #images, #animalcommentscontainer {
+    	margin-left: 10px;
+        margin-right: 10px;
+    }
+    
+    #images {
+    	display: inline-block;
+    }
+    
+    #animaldetails {
+    	text-transform: lowercase;
+    }
+    
+	#mainpic {
+    	display: inline-block;
+    }
+    
+    .partialwidthimage {
+    	max-width: calc(100% - 100px);
+    }
+    
+    .fullwidthimage {
+    	max-width: 100%;
+    }
+    
+    #otherpics {
+    	vertical-align: top;
+        display: inline-block;
+    }
+    
+	#otherpics img {
+    	display: block;
+    	width: 100px;
+        height: auto;
+        margin-right: 10px;
+        margin: 0;
+        cursor: pointer;
+    }
+    
+    #animalcommentscontainer {
+        clear: left;
+    }
+    
+    #additionalanimalcomments {
+    	display: none;
+    }
+    
+    .gw {
+    	display: inline-block;
+    	border: 1 black;
+        background-color: yellow;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 10px;
+        color: white;
+        opacity: 0.6;
+    }
+    
+    .green {
+    	background-color: green;
+        
+    }
+    
+    .red {
+    	background-color: red;
+    }
+    
+    #morebutton {
+    	cursor: pointer;
+        font-weight: bold;
+    }
+    
+    @media screen and (max-width: 800px) {
+
+        #mainpic {
+			max-width: 100% !important;
+        }
+        
+		#otherpics {
+			display: block;
+		}
+        
+        #otherpics img {
+        	display: inline-block;
+            height: 70px;
+            width: auto;
+        }
+        
+        .gw {
+        	font-size: 0.7rem;
+        }
+
+    }
 </style>
 <meta property="og:title" content="$$ANIMALNAME$$" />
-<meta property="og:description" content="$$DESCRIPTIONATTR$$" />
+<meta property="og:description" content="$$ANIMALCOMMENTS$$" />
 <meta property="og:image" content="$$WEBMEDIAFILENAME$$" />
 <script type="text/javascript">
 function blankImage(imgid) {
