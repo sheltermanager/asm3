@@ -15,7 +15,7 @@ for i in *.xls; do ssconvert $i $i.csv; done
 
 START_ID = 200
 
-PATH = "/home/robin/tmp/asm3_import_data/rc_kd3359"
+PATH = "/home/jon/tmp/rc_kd3359"
 
 PICTURE_IMPORT = False
 PICTURES = f"{PATH}/photos/final"
