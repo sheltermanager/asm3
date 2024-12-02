@@ -94,7 +94,7 @@ print(f"DELETE FROM animal WHERE ID >= {START_ID} AND CreatedBy = 'conversion';"
 print(f"DELETE FROM animalcontrol WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
 print(f"DELETE FROM animalmedical WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
 print(f"DELETE FROM animalmedicaltreatment WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
-print(f"DELETE FROM incidenttype WHERE ID >= {START_ID}")
+print(f"DELETE FROM incidenttype WHERE ID >= {START_ID};")
 print(f"DELETE FROM log WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
 print(f"DELETE FROM owner WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
 print(f"DELETE FROM adoption WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
@@ -113,9 +113,9 @@ for d in asm.csv_to_list(f"{PATH}/People.xls.csv", strip=True, remove_non_ascii=
     o = asm.Owner()
     owners.append(o)
     name = d["FullName"].split(",")
-    o.OwnerSurname = name[0]
+    o.OwnerSurname = name[0].strip()
     if len(name) > 1:
-        o.OwnerForeNames = name[1]
+        o.OwnerForeNames = name[1].strip()
         o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
     if d["Type"] == "Company":
         o.OwnerType = 1
