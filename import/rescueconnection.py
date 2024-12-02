@@ -214,10 +214,11 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
 
     dd = a.DateBroughtIn
     if "Disposition date" in d: getdate(d["Disposition date"])
-    di = d["LatestOutcome"].strip()
+    latestin = d["LatestIntake"].strip()
+    latestout = d["LatestOutcome"].strip()
     o = uo
     if d["CurrentGuardian"] in ppo: o = ppo[d["CurrentGuardian"]]
-    if di.startswith("Adopt"):
+    if latestout.startswith("Adopt"):
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -229,7 +230,7 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
-    elif di.startswith("Release") or di.startswith("Returned to owner") or di.startswith("Redemption"):
+    elif latestout.startswith("Release") or latestout.startswith("Returned to owner") or latestout.startswith("Redemption"):
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -241,7 +242,7 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
-    elif di.startswith("Transfer") or di.startswith("Move"):
+    elif latestout.startswith("Transfer") or latestout.startswith("Move"):
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -253,22 +254,24 @@ for d in asm.csv_to_list(f"{PATH}/Animals.xls.csv", strip=True, remove_non_ascii
         a.ActiveMovementType = m.MovementType
         a.LastChangedDate = dd
         movements.append(m)
-    elif di.startswith("N/A"):
+    elif latestout.startswith("Died"):
+        a.PutToSleep = 0
+        a.PTSReasonID = 2
+        a.DeceasedDate = dd
+        a.Archived = 1
+    elif latestout.startswith("Euthanasia"):
+        a.PutToSleep = 1
+        a.PTSReasonID = 2
+        a.DeceasedDate = dd
+        a.Archived = 1
+    elif latestin.startswith("N/A"):
         a.NonShelterAnimal = 1
         a.Archived = 1
         if o: 
             a.OriginalOwnerID = o.ID
             a.OwnerID = a.OriginalOwnerID
-    elif di.startswith("Died"):
-        a.PutToSleep = 0
-        a.PTSReasonID = 2
-        a.DeceasedDate = dd
-        a.Archived = 1
-    elif di.startswith("Euthanasia"):
-        a.PutToSleep = 1
-        a.PTSReasonID = 2
-        a.DeceasedDate = dd
-        a.Archived = 1
+    elif latestout.startswith("N/A"):
+        a.Archived = 0
     else:
         asm.stderr(f"unrecognised outcome: {di}")
     # Does this animal have an image? If so, add media/dbfs entries for it
