@@ -1119,12 +1119,15 @@ $.widget("asm.emailform", {
         if (o.subject) {
             $("#em-subject").val(o.subject); 
         }
-        if ( config.bool("LogEmailByDefault") ) {
+        if (config.bool("LogEmailByDefault")) {
             $("#em-addtolog").prop("checked", true);
         } else {
             $("#em-addtolog").prop("checked", false);
         }
-        $("#em-logtype").val(config.integer("EmailLogType"));
+        // If a default email log type has been chosen and exists in the list, select it 
+        if ($("#em-logtype option[value='" + config.integer("EmailLogType") + "']").length > 0) {
+            $("#em-logtype").val(config.integer("EmailLogType"));
+        }
         $("#em-subject").focus();
     }
 });
