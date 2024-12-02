@@ -1057,13 +1057,14 @@ def incidenttype_from_db(name, default = 1):
     """ Looks up the type in the db when the conversion is run, assign to IncidentTypeID """
     return "COALESCE((SELECT ID FROM incidenttype WHERE lower(IncidentName) LIKE lower(%s) LIMIT 1), %d)" % (ds(name.strip()), default)
 
-def incidenttype_id_for_name(name, createIfNotExist = True):
+def incidenttype_id_for_name(name, createIfNotExist = True, createRetired = True):
     global incidenttypes
     if name.strip() == "": return 1
     if name in incidenttypes:
         return incidenttypes[name].ID
     else:
         incidenttypes[name] = IncidentType(Name=name)
+        if createRetired: incidenttypes[name].IsRetired = 1
         return incidenttypes[name].ID
 
 def incident_animal(incidentid, animalid):
@@ -1877,6 +1878,7 @@ class IncidentType:
     ID = 0
     Name = ""
     Description = None
+    IsRetired = 0
     def __init__(self, ID = 0, Name = "", Description = ""):
         self.ID = ID
         if ID == 0: self.ID = getid("incidenttype")
@@ -1886,7 +1888,8 @@ class IncidentType:
         s = (
             ( "ID", di(self.ID) ),
             ( "IncidentName", ds(self.Name) ),
-            ( "IncidentDescription", ds(self.Description) )
+            ( "IncidentDescription", ds(self.Description) ),
+            ( "IsRetired", di(self.IsRetired) )
             )
         return makesql("incidenttype", s)
 

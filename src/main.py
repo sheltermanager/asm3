@@ -7327,7 +7327,7 @@ class test(JSONEndpoint):
 
 class timeline(JSONEndpoint):
     url = "timeline"
-    get_permissions = asm3.users.VIEW_ANIMAL
+    get_permissions = asm3.users.VIEW_TIMELINE
 
     def controller(self, o):
         dbo = o.dbo

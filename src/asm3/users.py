@@ -24,6 +24,7 @@ DELETE_ANIMAL                   = "da"
 CLONE_ANIMAL                    = "cloa"
 MERGE_ANIMAL                    = "ma"
 RESERVESPONSOR_UNIT             = "rsu"
+VIEW_TIMELINE                   = "vti"
 
 GENERATE_DOCUMENTS              = "gaf"
 MODIFY_NAME_DATABASE            = "mand"

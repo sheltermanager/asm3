@@ -1477,7 +1477,7 @@ $(document).ready(function() {
             });
 
             // Hide the timeline if disabled or no permission
-            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) {
+            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("vti")) {
                 $("#hp-timeline").hide();
             }
 
