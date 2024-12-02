@@ -448,6 +448,7 @@ $(function() {
         },
 
         render_diary: function() {
+            if (!common.has_permission("vdn")) { return ""; }
             let s = ['<div class="asm-main-section">'];
             s.push('<p class="asm-menu-category"><a href="diary_edit_my">' + common.substitute(_("Diary for {0}"), {"0": asm.user }) + '</a> ');
             s.push('<button id="button-adddiary">' + _("Add a diary note") + '</button>');
@@ -769,7 +770,7 @@ $(function() {
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
             this.render_animal_links(),
             '<div class="row">',
-            '<div id="asm-main-diary" class="col-sm">',
+            '<div class="col-sm">',
             this.render_overview(),
             this.render_diary(),
             controller.diary.length < 3 ? this.render_timeline() : "",
@@ -814,8 +815,6 @@ $(function() {
                         .replace("{0}", asm.smcomexpirydisplay).replace("{1}", asm.smcompaymentlink), 20000);
                 }
             }
-
-            if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
 
             let message_buttons = {}; 
             message_buttons[_("Create this message")] = {
