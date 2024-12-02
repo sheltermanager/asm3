@@ -619,6 +619,7 @@ const tableform = {
      *      use_default_values: false,
      *      focusfirst: true,
      *      delete_button: false,
+     *      delete_button_text: _("Delete"),
      *      delete_perm: 'da',
      *      edit_perm: 'ca',
      *      width: 500,
@@ -882,8 +883,8 @@ const tableform = {
         var b = {}; 
         if (dialog.delete_button && dialog.delete_perm && common.has_permission(dialog.delete_perm)) {
             b[_("Delete")] = {
-                text: _("Delete"),
-                "class": 'asm-redbutton',
+                text: dialog.delete_button_text || _("Delete"),
+                "class": 'asm-redbutton asm-dialog-deletebutton',
                 click: function() {
                     tableform.dialog_disable_buttons();
                     if (o && o.ondelete) {

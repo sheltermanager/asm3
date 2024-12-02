@@ -3961,7 +3961,22 @@ class htmltemplates(JSONEndpoint):
     def controller(self, o):
         templates = asm3.template.get_html_templates(o.dbo)
         asm3.al.debug("editing %d html templates" % len(templates), "main.htmltemplates", o.dbo)
+        #animalviewhead, animalviewbody, animalviewfoot = asm3.template.get_html_template_from_file(o.dbo, "animalview")
+        templatedata = {}
+        for a in ("animalview", "animalviewadoptable", "animalviewcarousel", "littlebox", "plain", "responsive", "rss", "slideshow", "sm.com"):
+                templatedata[a] = asm3.template.get_html_template_from_file(o.dbo, a)
         return {
+            "templates": {
+                "animalview": {"head": templatedata["animalview"][0], "body": templatedata["animalview"][1], "foot": templatedata["animalview"][2]},
+                "animalviewadoptable": {"head": templatedata["animalviewadoptable"][0], "body": templatedata["animalviewadoptable"][1], "foot": templatedata["animalviewadoptable"][2]},
+                "animalviewcarousel": {"head": templatedata["animalviewcarousel"][0], "body": templatedata["animalviewcarousel"][1], "foot": templatedata["animalviewcarousel"][2]},
+                "littlebox": {"head": templatedata["littlebox"][0], "body": templatedata["littlebox"][1], "foot": templatedata["littlebox"][2]},
+                "plain": {"head": templatedata["plain"][0], "body": templatedata["plain"][1], "foot": templatedata["plain"][2]},
+                "responsive": {"head": templatedata["responsive"][0], "body": templatedata["responsive"][1], "foot": templatedata["responsive"][2]},
+                "rss": {"head": templatedata["rss"][0], "body": templatedata["rss"][1], "foot": templatedata["rss"][2]},
+                "slideshow": {"head": templatedata["slideshow"][0], "body": templatedata["slideshow"][1], "foot": templatedata["slideshow"][2]},
+                "sm.com": {"head": templatedata["sm.com"][0], "body": templatedata["sm.com"][1], "foot": templatedata["sm.com"][2]}
+            },
             "rows": templates
         }
 
