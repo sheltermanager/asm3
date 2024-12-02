@@ -112,6 +112,21 @@
     	cursor: pointer;
         font-weight: bold;
     }
+
+    .adopt-button {
+        display: inline-block;
+        padding: 12px 20px;
+        background-color: #57C9E7;
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .adopt-button:hover {
+      background-color: #FDCC76;
+    }
     
     @media screen and (max-width: 800px) {
 
@@ -136,12 +151,17 @@
     }
 </style>
 <meta property="og:title" content="$$ANIMALNAME$$" />
-<meta property="og:description" content="$$ANIMALCOMMENTS$$" />
+<meta property="og:description" content="$$DESCRIPTIONATTR$$" />
 <meta property="og:image" content="$$WEBMEDIAFILENAME$$" />
 <script type="text/javascript">
 function blankImage(imgid) {
     var img = document.getElementById(imgid);
     img.style.display = "none";
+}
+function setImage(imgid) {
+    var img = document.getElementById(imgid),
+        mainimg = document.getElementById("mainpic");
+    mainimg.src = img.src;
 }
 </script>
 </head>

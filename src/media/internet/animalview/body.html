@@ -1,16 +1,16 @@
-<div id=header>
-  <img id=logoimage src=service?account=$$DATABASE$$&method=dbfs_image&title=logo.jpg align=middle onError="blankImage(this.id)">
-  <div id=companyname>$$ORGANISATION$$</div>
-  <div style='clear: left;'></div>
+<div id="header">
+  <img id="logoimage" src="service?account=$$DATABASE$$&method=dbfs_image&title=logo.jpg" align="middle" onError="blankImage(this.id)">
+  <div id="companyname">$$ORGANISATION$$</div>
+  <div style="clear: left;"></div>
 </div>
 
-<h1 id=title>$$ANIMALNAME$$ $$SHELTERCODE$$</h1>
+<h1 id="title">$$ANIMALNAME$$ $$SHELTERCODE$$</h1>
 
-<p id=animaldetails>
+<p id="animaldetails">
   $$SEX$$ $$SPECIESNAME$$ aged $$DISPLAYAGE$$
 </p>
 
-<p id=goodwiths>
+<p id="goodwiths">
 <script>
     if ('$$GoodWithCats$$' == 'Yes') document.write("<span class='gw green'>Good with cats</span>");
   	if ('$$GoodWithCats$$' == 'No') document.write("<span class='gw red'>NOT Good with cats</span>");
@@ -28,23 +28,26 @@
 </script>
 </p>
 
-<center><div id=images><script>
+<center><div id="images"><script>
     if ( "$$WEBMEDIAFILENAME2$$" + "$$WEBMEDIAFILENAME2$$" + "$$WEBMEDIAFILENAME2$$" == "" ) {
       document.write('<img class="fullwidthimage" id="mainpic" src="$$WEBMEDIAFILENAME$$" onError="blankImage(this.id)"/>');
     } else {
       document.write('<img class="partialwidthimage" id="mainpic" src="$$WEBMEDIAFILENAME$$" onError="blankImage(this.id)"/>');
     }
-</script><div id="otherpics"><img id="other1" src="$$WEBMEDIAFILENAME2$$" onError="blankImage(this.id)"/><img id="other2" src="$$WEBMEDIAFILENAME3$$" onError="blankImage(this.id)"/><img id="other3" src="$$WEBMEDIAFILENAME4$$" onError="blankImage(this.id)"/></div>
+</script>
+<div id="otherpics">
+<img id="other0" src="$$WEBMEDIAFILENAME$$" onError="blankImage(this.id)" onClick="setImage(this.id)" />
+<img id="other1" src="$$WEBMEDIAFILENAME2$$" onError="blankImage(this.id)" onClick="setImage(this.id)" />
+<img id="other2" src="$$WEBMEDIAFILENAME3$$" onError="blankImage(this.id)" onClick="setImage(this.id)" />
+<img id="other3" src="$$WEBMEDIAFILENAME4$$" onError="blankImage(this.id)" onClick="setImage(this.id)" />
+</div>
     
-  <div style='clear: both;'></div>
+<div style="clear: both;"></div>
 </div></center>
 
-<div id=animalcommentscontainer>
-
-  <div id=animalcomments></div>
-
-  <div id=additionalanimalcomments></div>
-
+<div id="animalcommentscontainer">
+  <div id="animalcomments"></div>
+  <div id="additionalanimalcomments"></div>
 </div>
 
 <script type="text/javascript">
@@ -61,6 +64,11 @@ document.write(" ");
 document.write('<a target="_blank" href="https://twitter.com/share?url=' + u + '"><i class="bi bi-twitter"></i></a></center>');
 </script>
 </p>
+
+<!-- Uncomment below if you want to link to an online adoption form in your database. Substitute [ONLINE FORM ID] for the real one. -->
+<!--
+<p><a class="adopt-button" href="https://service.sheltermanager.com/asmservice?account=$$DATABASE$$&method=online_form_html&formid=[ONLINE FORM ID]&reserveanimalname=$$ANIMALNAME$$::$$SHELTERCODE$$">Submit an Adoption Application</a></p>
+-->
 
 <script>
   function showAllComments() {
@@ -82,5 +90,4 @@ document.write('<a target="_blank" href="https://twitter.com/share?url=' + u + '
   document.getElementById("animalcomments").innerHTML = initialanimalcomments;
   document.getElementById("additionalanimalcomments").innerHTML = additionalcomments;
   document.getElementById("animalcomments").display = 'block';
-  
 </script>
