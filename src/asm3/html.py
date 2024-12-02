@@ -527,7 +527,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.CHANGE_ANIMAL, "", "", "animal_bulk", "asm-icon-blank", _("Bulk change animals", l) ),
             ( asm3.users.ADD_LOG, "", "taganimalobservations", "animal_observations", "asm-icon-blank", _("Daily observations", l) ),
             ( asm3.users.ADD_LITTER, "", "", "litters", "asm-icon-litter", _("Edit litters", l) ),
-            ( asm3.users.VIEW_ANIMAL, "alt+shift+t", "", "timeline", "asm-icon-calendar", _("Timeline", l) ),
+            ( asm3.users.VIEW_TIMELINE, "alt+shift+t", "", "timeline", "asm-icon-calendar", _("Timeline", l) ),
             ( "", "", "taglostfound", "--cat", "asm-icon-animal-lost", _("Lost/Found", l) ),
             ( asm3.users.VIEW_LOST_ANIMAL, "", "taglostfound", "lostanimal_find", "asm-icon-animal-lost-find", _("Find a lost animal", l) ),
             ( asm3.users.VIEW_FOUND_ANIMAL, "", "taglostfound", "foundanimal_find", "asm-icon-animal-found-find", _("Find a found animal", l) ),

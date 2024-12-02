@@ -661,7 +661,7 @@ $(function() {
 
         render_timeline: function() {
             let h = ['<div class="asm-main-section">'];
-            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) { return ""; }
+            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("vti")) { return ""; }
             h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
                 // Skip this entry if it's for a deceased animal and we aren't showing them
