@@ -3138,6 +3138,9 @@ class document_gen(ASMEndpoint):
         elif linktype == "ANIMALCONTROL":
             loglinktype = asm3.log.ANIMALCONTROL
             content = asm3.wordprocessor.generate_animalcontrol_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "BOARDING":
+            loglinktype = asm3.log.PERSON
+            content = asm3.wordprocessor.generate_boarding_doc(dbo, dtid, post.integer("id"), o.user)
         elif linktype == "CLINIC":
             loglinktype = asm3.log.PERSON
             content = asm3.wordprocessor.generate_clinic_doc(dbo, dtid, post.integer("id"), o.user)
@@ -3210,6 +3213,20 @@ class document_gen(ASMEndpoint):
             tempname += " - " + asm3.utils.padleft(recid, 6)
             asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMALCONTROL, recid, tempname, post["document"])
             self.redirect("incident_media?id=%d" % recid)
+        elif linktype == "BOARDING":
+            m = asm3.movement.get_movement(dbo, recid)
+            if m is None:
+                raise asm3.utils.ASMValidationError("%d is not a valid movement id" % recid)
+            animalid = m["ANIMALID"]
+            ownerid = m["OWNERID"]
+            tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
+            if animalid and ownerid: 
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+            elif ownerid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            elif animalid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "CLINIC":
             c = asm3.clinic.get_appointment(dbo, recid)
             if c is None:

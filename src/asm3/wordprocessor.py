@@ -1139,6 +1139,22 @@ def animalcontrol_tags(dbo: Database, ac: ResultRow) -> Tags:
 
     return tags
 
+def boarding_tags(dbo: Database, b: ResultRow) -> Tags:
+    """
+    Generates a list of tags from a boarding record.
+    b: An boarding record
+    """
+    l = dbo.locale
+    tags = {
+        "BOARDINGFROMDATE":     python2display(l, b["INDATETIME"]),
+        "BOARDINGTODATE":       python2display(l, b["OUTDATETIME"]),
+        "BOARDINGDAYS":         b["DAYS"],
+        "BOARDINGDAILYFEE":     format_currency_no_symbol(l, b["DAILYFEE"]),
+        "TOTALBOARDINGFEE":     format_currency_no_symbol(l, b["DAYS"] * b["DAILYFEE"])
+    }
+
+    return tags
+
 def donation_tags(dbo: Database, donations: Results) -> Tags:
     """
     Generates a list of tags from a donation result.
@@ -2100,6 +2116,24 @@ def generate_animalcontrol_doc(dbo: Database, templateid: int, acid: int, userna
     ac = asm3.animalcontrol.get_animalcontrol(dbo, acid)
     if ac is None: raise asm3.utils.ASMValidationError("%d is not a valid incident ID" % acid)
     tags = animalcontrol_tags(dbo, ac)
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_boarding_doc(dbo: Database, templateid: int, animalboardingid: int, username: str) -> bytes_or_str:
+    """
+    Generates a boarding document from a template
+    templateid: The ID of the template
+    animalboardingid: The boarding to generate for
+    """
+    b = asm3.financial.get_boarding_id(dbo, animalboardingid)
+    tags = {}
+    if b is None:
+        raise asm3.utils.ASMValidationError("%d is not a valid boarding record ID" % animalboardingid)
+    if b.ANIMALID is not None and b.ANIMALID != 0:
+        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, b.ANIMALID))
+    if b.OWNERID is not None and b.OWNERID != 0:
+        tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, b.OWNERID)))
+    tags = append_tags(tags, boarding_tags(dbo, b))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 

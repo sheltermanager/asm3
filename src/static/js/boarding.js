@@ -122,6 +122,8 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
+                { id: "document", text: _("Document"), icon: "document", enabled: "one", tooltip: _("Generate a document from this boarding record"), type: "buttonmenu"
+                },
                 { id: "payment", text: _("Create Payment"), icon: "donation", enabled: "one", perm: "oaod", 
                     click: async function() {
                         let row = tableform.table_selected_row(table);
@@ -212,7 +214,11 @@ $(function() {
             let h = [];
             this.model();
             h.push(tableform.dialog_render(this.dialog));
-            h.push('<div id="createpayment"></div>');
+            h.push('<div id="button-document-body" class="asm-menu-body">' +
+                '<ul class="asm-menu-list">' +
+                edit_header.template_list(controller.templates, "BOARDING", 0) +
+                '</ul></div>' + 
+                '<div id="createpayment"></div>');
             if (controller.name == "animal_boarding") {
                 h.push(edit_header.animal_edit_header(controller.animal, "boarding", controller.tabcounts));
             }
@@ -261,6 +267,14 @@ $(function() {
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
                 boarding.lastperson = rec;
+            });
+
+             // Add click handlers to templates
+             $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
+                let template_name = $(this).attr("data");
+                $(this).prop("href", "document_gen?linktype=BOARDING&id=" + tableform.table_selected_row(boarding.table).ID + "&dtid=" + template_name);
             });
 
         },
