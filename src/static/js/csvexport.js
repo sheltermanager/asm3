@@ -37,7 +37,7 @@ $(function() {
         },
 
         bind: function() {
-            $("#submit").button().click(function() {
+            $("#button-submit").button().click(function() {
                 $("#csvform").submit();
             });
 

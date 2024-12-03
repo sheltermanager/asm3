@@ -11,50 +11,19 @@ $(function() {
                 '<div id="asm-content">',
                 '<input id="donationid" type="hidden" />',
                 html.content_header(_("Receive a payment"), true),
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="animal">' + _("Animal (optional)") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="animal" data="animal" type="hidden" class="asm-animalchooser" value=\'\' />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="person">' + _("Person") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="person" data="person" type="hidden" class="asm-personchooser" value=\'\' />',
-                '</td>',
-                '</tr>',
-                '<tr style="display: none">',
-                '<td><label for="movement">' + _("Movement") + '</label></td>',
-                '<td>',
-                '<select id="movement" data="movement" class="asm-selectbox"></select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="received">' + _("Received") + '</label></td>',
-                '<td>',
-                '<input id="received" data="received" class="asm-textbox asm-datebox" title=\'' + _("The date the payment was received") + '\' />',
-                '</td>',
-                '</tr>',
-                /* NOT EDITABLE - LET BACKEND SUPPLY
-                '<tr>',
-                '<td><label for="receiptnumber">' + _("Receipt No") + '</label></td>',
-                '<td>',
-                '<input id="receiptnumber" data="receiptnumber" class="asm-textbox" type="text" />',
-                '</td>',
-                '</tr>',
-                */
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "animal", type: "animal", label: _("Animal (optional)") },
+                    { post_field: "person", type: "person", label: _("Person") },
+                    { post_field: "movement", type: "select", label: _("Movement"), options: "" },
+                    { post_field: "received", type: "date", label: _("Received") },
+                ], { full_width: false }),
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.box(5),
-                '<button id="receive">' + html.icon("donation") + ' ' + _("Receive") + '</button>',
-                '</div>',
-                '</div>'
+                tableform.buttons_render([
+                    { id: "receive", icon: "donation", text: _("Receive") }
+                ]),
+                '</div></div>'
             ].join("\n");
         },
 
@@ -100,9 +69,9 @@ $(function() {
                 });
             */
 
-            $("#receive").button().click(async function() {
+            $("#button-receive").button().click(async function() {
                 if (!validation()) { return; }
-                $("#receive").button("disable");
+                $("#button-receive").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select").toPOST();
@@ -122,12 +91,14 @@ $(function() {
                     }
                 }
                 finally {
-                    $("#receive").button("enable");
+                    $("#button-receive").button("enable");
                 }
             });
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
+
+            $("#movementrow").hide();
         
         },
 

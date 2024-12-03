@@ -1,6 +1,7 @@
 import asm3.al
 import asm3.audit
 import asm3.cachedisk
+import asm3.geo
 import asm3.i18n
 
 import os
@@ -497,12 +498,18 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
         # Only update the value in the database if it's new or changed
         if k not in cmap or cmap[k] != v: cset(dbo, k, v, sanitiseXSS = sanitiseXSS, invalidateConfigCache = False)
 
+    address_changed = False
+
     for k in post.data.keys():
         if k == "mode" or k == "filechooser": continue
         v = post.string(k, False)
         if k in ("AdoptionCheckoutDonationMsg", "EmailSignature", "FostererEmailsMsg"):
             # It's HTML - don't XSS escape it
             put(k, v, sanitiseXSS = False)
+        if k in ("OrganisationAddress", "OrganisationTown", "OrganisationCounty", "OrganisationPostcode"):
+            if k not in cmap or cmap[k] != v:
+                address_changed = True
+                put(k ,v)
         elif k == "CodingFormat":
             # If there's no valid N, X, O or U tokens in there, it's not valid so reset to
             # the default.
@@ -539,6 +546,9 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
         else:
             # Plain string value
             put(k, v)
+    if address_changed or "OrganisationLatLong" not in cmap: 
+        latlong = asm3.geo.get_lat_long(dbo, post["OrganisationAddress"], post["OrganisationTown"], post["OrganisationCounty"], post["OrganisationPostcode"], post["OrganisationCountry"])
+        organisation_latlong(dbo, latlong)
     asm3.audit.edit(dbo, username, "configuration", 0, "", str(post))
     invalidate_config_cache(dbo)
 
@@ -1300,6 +1310,12 @@ def organisation_postcode(dbo: Database) -> str:
 
 def organisation_country(dbo: Database) -> str:
     return cstring(dbo, "OrganisationCountry")
+
+def organisation_latlong(dbo: Database, newvalue: str = "") -> str:
+    if newvalue == "":
+        return cstring(dbo, "OrganisationLatLong")
+    else:
+        cset(dbo, "OrganisationLatLong", newvalue)
 
 def organisation_telephone(dbo: Database) -> str:
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])

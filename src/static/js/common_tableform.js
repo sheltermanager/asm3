@@ -34,7 +34,7 @@ const tableform = {
             if (v.hideif && v.hideif()) { return; }
             if (v.perm && !common.has_permission(v.perm)) { return; }
             if (!v.type || v.type == "button") {
-                b += "<button id=\"button-" + v.id + "\" title=\"" + html.title(v.tooltip) + "\">" + html.icon(v.icon);
+                b += "<button id=\"button-" + v.id + "\" type=\"button\" title=\"" + html.title(v.tooltip) + "\">" + html.icon(v.icon);
                 if (v.text) {
                     b += " " + v.text;
                 }
@@ -999,6 +999,7 @@ const tableform = {
      *        id: "name", // id attribute for the widget - if not supplied, post_field is used
      *        label: "label", // if label contains <label markup, overrides generation and uses supplied value instead
      *        labelpos: "before|after|above", (only valid for textarea (before|above) and check (before|after))
+     *        labelclasses: "exraclass", extra classes to apply to the label
      *        type: "check|text|textarea|richtextarea|date|time|currency|number|select|animal|person|raw|nextcol", 
      *        rowid: "thisrow", (id for the row containing the label/field)
      *        readonly: false, (shown in dialog_show_add, hidden in dialog_show_edit)
@@ -1130,7 +1131,7 @@ const tableform = {
      * v: field definition
      */
     _render_label: function(v) {
-        let label = "", labelx = "", labelfor = "";
+        let label = "", labelx = "", labelfor = "", labelclass = "";
         if (v.validation && v.validation instanceof String && v.validation.indexOf("not") == 0) {
             labelx += '&nbsp;<span class="asm-has-validation">*</span>';
         }
@@ -1145,7 +1146,8 @@ const tableform = {
         }
         else {
             if (v.id) { labelfor = 'for="' + v.id + '"'; }
-            label = '<label ' + labelfor + '>' + (v.label || "") + "</label>" + labelx;
+            if (v.labelclasses) { labelclass = 'class="' + v.labelclasses + '"'; }
+            label = '<label ' + labelfor + ' ' + labelclass + '>' + (v.label || "") + "</label>" + labelx;
         }
         return label;
     },
