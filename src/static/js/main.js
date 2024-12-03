@@ -730,7 +730,7 @@ $(function() {
             }),
             '</p>',
             '<div id="changelog">',
-                '<textarea class="asm-textarea" readonly="readonly" style="width: 650px; height: 400px;"></textarea>',
+                '<textarea class="asm-textarea" wrap="off" readonly="readonly" style="width: 650px; height: 400px; font-family: courier"></textarea>',
             '</div>',
             '</div>',
 

@@ -48,7 +48,8 @@ changelog.txt:
 	cat VERSION > src/static/pages/changelog.txt
 	echo "======" >> src/static/pages/changelog.txt
 	echo >> src/static/pages/changelog.txt
-	git log --no-merges --date=short --oneline --pretty=format:'%C(auto)%h%d %cd [%cn] %s' `cat VERSION_PREVTAG`..HEAD >> src/static/pages/changelog.txt
+	#git log --no-merges --date=short --oneline --pretty=format:'%C(auto)%h%d %cd [%cn] %s' `cat VERSION_PREVTAG`..HEAD >> src/static/pages/changelog.txt
+	git log --no-merges --date=short --oneline --pretty=format:'%cd %s [%cn] %C(auto)%h%d' `cat VERSION_PREVTAG`..HEAD >> src/static/pages/changelog.txt
 
 changelog: changelog.txt
 	less src/static/pages/changelog.txt
