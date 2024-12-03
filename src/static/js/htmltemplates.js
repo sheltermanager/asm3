@@ -17,7 +17,7 @@ $(function() {
                 delete_perm: "cpo",
                 delete_button_text: _("Revert to default"),
                 fields: [
-                    { json_field: "NAME", post_field: "templatename", readonly: true, label: _("Name"), type: "text", validation: "notblank" },
+                    { json_field: "NAME", post_field: "templatename", readonly: false, label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", validation: "notblank", height: "150px", width: "720px" },
                     { json_field: "BODY", post_field: "body", label: _("Body"), type: "htmleditor", validation: "notblank", height: "150px", width: "720px" },
                     { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", validation: "notblank", height: "150px", width: "720px" }
@@ -47,6 +47,17 @@ $(function() {
                             $("#body").htmleditor("value", controller.templates[row.NAME].body);
                             $("#footer").htmleditor("value", controller.templates[row.NAME].foot);
                             tableform.dialog_enable_buttons();
+                        },
+                        onvalidate: function() {
+                            var valid = true;
+                            $.each(controller.rows, function(i, v) {
+                                if (v.NAME == $("#templatename").val() && v.ID != row.ID) {
+                                    tableform.dialog_error(_("A template with this name already exists"));
+                                    valid = false;
+                                    return false;
+                                }
+                            });
+                            return valid;
                         }
                     });
                 },
