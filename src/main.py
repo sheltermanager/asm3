@@ -3964,7 +3964,7 @@ class htmltemplates(JSONEndpoint):
         #animalviewhead, animalviewbody, animalviewfoot = asm3.template.get_html_template_from_file(o.dbo, "animalview")
         templatedata = {}
         for a in ("animalview", "animalviewadoptable", "animalviewcarousel", "littlebox", "plain", "responsive", "rss", "slideshow", "sm.com"):
-                templatedata[a] = asm3.template.get_html_template_from_file(o.dbo, a)
+            templatedata[a] = asm3.template.get_html_template_from_file(o.dbo, a)
         return {
             "templates": {
                 "animalview": {"head": templatedata["animalview"][0], "body": templatedata["animalview"][1], "foot": templatedata["animalview"][2]},

@@ -9,70 +9,34 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Import a PayPal CSV file")),
-                '<div style="max-width: 900px; margin-left: auto; margin-right: auto">',
                 '<form id="csvform" action="csvimport_paypal" method="post" enctype="multipart/form-data">',
                 html.info(_("The CSV file should be created by PayPal's \"All Activity\" report.")),
-                '<table>',
-                '<tr>',
-                '<td>',
-                '<label for="type">' + _("Type") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="type" name="type" class="asm-selectbox">',
-                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="payment">' + _("Method") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="payment" name="payment" class="asm-selectbox">',
-                html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME"), 
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="mflags">' + _("Flags") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="mflags" name="mflags" class="asm-bsmselect" multiple="multiple">',
-                '</select>',
-                '<input id="flags" name="flags" type="hidden" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="encoding">' + _("Text Encoding") + '</label></td>',
-                '<td>',
-                '<select id="encoding" class="asm-selectbox" name="encoding">',
-                '<option value="utf-8-sig" selected="selected">UTF-8</option>',
-                '<option value="cp1252">Windows cp1252</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
-                '<td>',
-                '<input id="filechooser" name="filechooser" type="file" /><br/>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '<p class="centered">',
-                '<button id="import" type="button">' + _("Import") + '</button>',
-                '</p>',
+                tableform.fields_render([
+                    { name: "type", type: "select", label: _("Type"), 
+                        options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
+                    { name: "payment", type: "select", label: _("Method"), 
+                        options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
+                    { name: "mflags", type: "selectmulti", label: _("Flags"), 
+                        xmarkup: '<input id="flags" name="flags" type="hidden" />', options: "" },
+                    { name: "encoding", type: "select", label: _("Text Encoding"), 
+                        options: '<option value="utf-8-sig" selected="selected">UTF-8</option>' +
+                            '<option value="utf16">UTF-16</option>' +
+                            '<option value="cp1252">cp1252 (Excel USA/Western Europe)</option>' },
+                    { name: "filechooser", type: "file", label: _("File") }
+                ], { full_width: false }),
+                tableform.buttons_render([
+                   { id: "import", icon: "save", text: _("Import") }
+                ], { centered: true }),
                 '</form>',
-                '</div>',
                 html.content_footer()
             ].join("\n");
         },
 
         bind: function() {
-            $("#import").button().click(function() {
-                if (!$("#filechooser").val()) { return; }
+            $("#button-import").button().click(function() {
+                if (!$("#filechooser").val()) { validate.highlight("filechooser"); return; }
                 $("#flags").val($("#mflags").val()); // Copy mflags to flags so a single value for the list is posted
-                $("#import").button("disable");
+                $("#button-import").button("disable");
                 $("#csvform").submit();
             });
         },
