@@ -453,6 +453,8 @@ Here's an example page showing how to inject your adoptable animal list::
     </body>
     </html>
 
+.. warning:: You cannot import the script file more than once, or have more than one asm3-adoptables div inside a single web page.
+
 CSS and Styles
 ^^^^^^^^^^^^^^
 
