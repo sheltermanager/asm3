@@ -6,16 +6,8 @@ $(function() {
 
     const batch = {
 
-        render: function() {
+        options: function() { 
             return [
-                html.content_header(_("Trigger Batch Processes")),
-                '<div class="centered" style="max-width: 800px; margin-left: auto; margin-right: auto">',
-                html.warn(_("These batch processes are run each night by the system and should not need to be run manually.") + '<br/><br/><b>' + 
-                    _("Some batch processes may take a few minutes to run and could prevent other users being able to use the system for a short time.")
-                    + '</b>'),
-                '<div id="tasks">',
-                '<p>',
-                '<select id="task">',
                 '<option value="genshelterpos">' + _("Recalculate on-shelter animal locations") + '</option>',
                 '<option value="genallpos">' + _("Recalculate ALL animal locations") + '</option>',
                 '<option value="genallvariable">' + _("Recalculate ALL animal ages/times") + '</option>',
@@ -28,13 +20,23 @@ $(function() {
                 '<option value="genlostfound">' + _("Regenerate 'Match lost and found animals' report") + '</option>',
                 '<option value="genfigyear">' + _("Regenerate annual animal figures for") + '</option>',
                 '<option value="genfigmonth">' + _("Regenerate monthly animal figures for") + '</option>',
-                '<option value="resetnnncodes">' + _("Reset NNN animal code counts for this year") + '</option>',
-                '</select>',
-                '<input id="taskdate" class="asm-textbox asm-datebox" style="display: none" />',
-                '<button id="button-go">' + _("Go") + '</button>',
-                '</p>',
-                '</div>',
-                '</div>',
+                '<option value="resetnnncodes">' + _("Reset NNN animal code counts for this year") + '</option>'
+            ].join("\n");
+        },
+
+        render: function() {
+            return [
+                html.content_header(_("Trigger Batch Processes")),
+                html.warn(_("These batch processes are run each night by the system and should not need to be run manually.") + '<br/><br/><b>' + 
+                    _("Some batch processes may take a few minutes to run and could prevent other users being able to use the system for a short time.")
+                    + '</b>'),
+                tableform.fields_render([
+                    { id: "task", type: "select", label: "", doublesize: true, options: batch.options() },
+                    { id: "taskdate", type: "date", label: "" }
+                ], { full_width: false }),
+                tableform.buttons_render([
+                   { id: "go", icon: "save", text: _("Go") }
+                ], { centered: true }),
                 html.content_footer()
             ].join("\n");
         },
@@ -49,9 +51,10 @@ $(function() {
                 let task = $("#task").val(), taskdate = $("#taskdate").val();
                 batch.runmode( task, "mode=" + task + "&taskdate=" + taskdate );
             });
+            $("#taskdaterow").hide();
             $("#task").change(function() {
                 let task = $("#task").val();
-                $("#taskdate").toggle(task == "genfigyear" || task == "genfigmonth");
+                $("#taskdaterow").toggle(task == "genfigyear" || task == "genfigmonth");
             });
         },
 
