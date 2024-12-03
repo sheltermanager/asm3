@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-12-03 10:28+0000\n"
+"POT-Creation-Date: 2024-12-03 17:17+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4577,7 +4577,7 @@ msgid "Doberman Pinscher"
 msgstr ""
 
 #: dbupdate.py medical.js movements.js animal.js lostfound.js vouchers.js
-#: incident.js licence.js waitinglist.js transport.js person.js
+#: incident.js licence.js waitinglist.js transport.js person.js boarding.js
 #: clinic_appointment.js
 msgid "Document"
 msgstr ""
@@ -5265,7 +5265,15 @@ msgid "End of year"
 msgstr ""
 
 #: boarding.js
+msgid "Ended in last 12 months"
+msgstr ""
+
+#: boarding.js
 msgid "Ended in last 3 months"
+msgstr ""
+
+#: boarding.js
+msgid "Ended in last 6 months"
 msgstr ""
 
 #: boarding.js
@@ -5873,7 +5881,7 @@ msgstr ""
 msgid "Fila Brasileiro"
 msgstr ""
 
-#: dbupdate.py media.js
+#: dbupdate.py csvimport.js media.js csvimport_stripe.js csvimport_paypal.js
 msgid "File"
 msgstr ""
 
@@ -6452,6 +6460,10 @@ msgstr ""
 
 #: animal.js
 msgid "Generate a document from this animal"
+msgstr ""
+
+#: boarding.js
+msgid "Generate a document from this boarding record"
 msgstr ""
 
 #: incident.js
@@ -10983,7 +10995,7 @@ msgstr ""
 msgid "Receipt"
 msgstr ""
 
-#: donations.js donation_receive.js
+#: donations.js
 msgid "Receipt No"
 msgstr ""
 
@@ -13219,7 +13231,15 @@ msgid "Starts"
 msgstr ""
 
 #: boarding.js
+msgid "Starts in next 12 months"
+msgstr ""
+
+#: boarding.js
 msgid "Starts in next 3 months"
+msgstr ""
+
+#: boarding.js
+msgid "Starts in next 6 months"
 msgstr ""
 
 #: mobile.py html.py event_find_results.js event.js waitinglist_results.js
@@ -13755,10 +13775,6 @@ msgstr ""
 msgid "The date the litter entered the shelter"
 msgstr ""
 
-#: donation_receive.js
-msgid "The date the payment was received"
-msgstr ""
-
 #: move_retailer.js
 msgid "The date the retailer movement is effective from"
 msgstr ""
@@ -14285,12 +14301,6 @@ msgstr ""
 
 #: person.py lostfound.py event.py animalcontrol.py animal.py waitinglist.py
 msgid "This record has been changed by another user, please reload."
-msgstr ""
-
-#: csvimport.js
-msgid ""
-"This removal is permanent and cannot be reversed, are you absolutely sure "
-"you wish to do this?"
 msgstr ""
 
 #: reports.js

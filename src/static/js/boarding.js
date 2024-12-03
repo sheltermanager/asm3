@@ -143,8 +143,12 @@ $(function() {
                     options: [ "active|" + _("Active"),
                         "st|" + _("Starting today"),
                         "p90|" + _("Starts in next 3 months"),
+                        "p182|" + _("Starts in next 6 months"),
+                        "p365|" + _("Starts in next 12 months"),
                         "et|" + _("Ending today"),
-                        "m90|" + _("Ended in last 3 months")
+                        "m90|" + _("Ended in last 3 months"),
+                        "m182|" + _("Ended in last 6 months"),
+                        "m365|" + _("Ended in last 12 months")
                         ],
                     hideif: function() {
                         return controller.name == "animal_boarding" || controller.name == "person_boarding";

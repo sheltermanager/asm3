@@ -1,6 +1,7 @@
 49
 ================
 
+03/12/24 Added options to go forward and back 6 and 12 months in boarding book #1548
 03/12/24 Added document generation/wordkeys to boarding records #1548
 03/12/24 Add OrganisationLatLong config element and minimap to options screen
 03/12/24 Refactor csvimport* screens #1103
