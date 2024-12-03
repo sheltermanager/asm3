@@ -43,14 +43,23 @@ clean:
 	rm -f scripts/unittestdb/base.db
 	rm -f scripts/unittestdb/test.db
 
-version:
+changelog.txt: 
+	@echo "[changelog.txt] =============================="
+	cat VERSION > src/static/pages/changelog.txt
+	echo "======" >> src/static/pages/changelog.txt
+	echo >> src/static/pages/changelog.txt
+	git log --no-merges --date=short --oneline --pretty=format:'%C(auto)%h%d (%cd) [%cn] %s' `cat VERSION_PREVTAG`..HEAD >> src/static/pages/changelog.txt
+
+changelog: changelog.txt
+	less src/static/pages/changelog.txt
+
+version: changelog.txt
 	# Include me in any release target to stamp the 
 	# build date
 	@echo "[version] =========================="
 	echo "#!/usr/bin/env python3" > src/asm3/__version__.py
 	echo "VERSION = \"`cat VERSION` [`date`]\"" >> src/asm3/__version__.py
 	echo "BUILD = \"`date +%m%d%H%M%S`\"" >> src/asm3/__version__.py
-	cp changelog src/static/pages/changelog.txt
 
 compat:
 	# Generate older browser compatible versions of the js files

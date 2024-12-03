@@ -25,5 +25,5 @@
 
 *. In github, go to Releases and add changelog/release info for the new tag
 
-*. Update VERSION, update doc/manual/conf.py to next release number with a u suffix - and commit
+*. Update VERSION and VERSION_PREVTAG, update doc/manual/conf.py to next release number with a u suffix - and commit
 
