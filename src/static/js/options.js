@@ -1,4 +1,4 @@
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, mapping, validate */
 /*global MASK_VALUE */
 
 $(function() {
@@ -120,6 +120,8 @@ $(function() {
         render_shelterdetails: function() {
             return [
                 '<div id="tab-shelterdetails">',
+                '<div class="row">',
+                '<div class="col-sm">',
                 '<table>',
                 '<tr>',
                 '<td><label for="organisation">' + _("Organization") + '</label></td>',
@@ -218,6 +220,12 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
+                '</div>',
+                // second column, embedded map placeholder
+                '<div class="col-sm">',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>',
+                '</div>', // col-sm
+                '</div>', // row
                 '</div>'
             ].join("\n");
         },
@@ -2040,6 +2048,14 @@ $(function() {
                 $("#watermarkfontpreview").prop("src", "options_font_preview?fontfile=" + $("#watermarkfontfile").val());
             });
             $("#watermarkfontfile").change();
+
+            // Show the mini map
+            setTimeout(function() {
+                let latlong = config.str("OrganisationLatLong"), 
+                    popuptext = "<b>" + config.str("Organisation") + "</b><br>" + config.str("OrganisationAddress");
+                mapping.draw_map("embeddedmap", 15, latlong, [{ 
+                    latlong: latlong, popuptext: popuptext, popupactive: true }]);
+            }, 50);
 
             validate.bind_dirty();
 

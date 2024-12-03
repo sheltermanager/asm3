@@ -400,6 +400,7 @@ def calc_microchip_data_addresses(dbo: Database, rows: Results, organisation_ema
     orgpostcode = asm3.configuration.organisation_postcode(dbo)
     orgcountry = asm3.configuration.organisation_country(dbo)
     orgtelephone = asm3.configuration.organisation_telephone(dbo)
+    orglatlong = asm3.configuration.organisation_latlong(dbo)
     email = asm3.configuration.email(dbo)
     if organisation_email != "": email = organisation_email
     movementtypes = asm3.configuration.microchip_register_movements(dbo)
@@ -436,6 +437,7 @@ def calc_microchip_data_addresses(dbo: Database, rows: Results, organisation_ema
             r.CURRENTOWNERCITY = r.ORIGINALOWNERTOWN
             r.CURRENTOWNERSTATE = r.ORIGINALOWNERCOUNTY
             r.CURRENTOWNERZIPCODE = r.ORIGINALOWNERPOSTCODE
+            r.CURRENTOWNERLATLONG = r.ORIGINALOWNERLATLONG
             r.CURRENTOWNERHOMETELEPHONE = r.ORIGINALOWNERHOMETELEPHONE
             r.CURRENTOWNERPHONE = r.ORIGINALOWNERHOMETELEPHONE
             r.CURRENTOWNERWORKTELEPHONE = r.ORIGINALOWNERWORKTELEPHONE
@@ -457,6 +459,7 @@ def calc_microchip_data_addresses(dbo: Database, rows: Results, organisation_ema
             r.CURRENTOWNERCITY = orgtown
             r.CURRENTOWNERSTATE = orgcounty
             r.CURRENTOWNERZIPCODE = orgpostcode
+            r.CURRENTOWNERLATLONG = orglatlong
             r.CURRENTOWNERHOMETELEPHONE = orgtelephone
             r.CURRENTOWNERPHONE = orgtelephone
             r.CURRENTOWNERWORKTELEPHONE = orgtelephone
