@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>$$TITLE$$</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+<style>
+input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }
+.asm-onlineform-title, .asm-onlineform-description { text-align: center; }
+.asm-onlineform-tooltip { display: block; font-size: 75%; overflow-wrap: anywhere; hyphens: auto; }
+input, textarea, select { border: 1px solid #aaa; }
+input[type='submit'] { padding: 10px; cursor: pointer; }
+/* phones and smaller devices */
+@media screen and (max-device-width:480px) {
+    body { font-family: sans-serif; }\
+    * { font-size: 105%; }
+    h2 { font-size: 200%; }
+    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }
+    label, input[type='file'], input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }
+    label { overflow-wrap: anywhere; hypens: auto; }
+    input[type='checkbox'] { float: left; width: auto; position: relative; top: 10px }
+    input[type='submit'] { background-color: #2CBBBB; border: 1px solid #27A0A0; color: #fff; padding: 20px; }
+}
+/* full size computers and tablets */
+@media screen and (min-device-width:481px) {
+	body { background-color: #aaa; font-family: 'Roboto', sans-serif; }
+    #page { 
+        width: 70%; 
+        margin-left: 15%;
+        background-color: #fff; box-shadow: 2px 2px 4px #888;
+        padding-top: 20px; padding-bottom: 20px; }
+    .asm-onlineform-td:first-child { max-width: 400px; }
+    .asm-onlineform-checkboxlabel { max-width: 400px; display: inline-block; }
+    .asm-onlineform-table { margin-left: auto; margin-right: auto }
+    textarea { width: 300px; height: 150px; }
+    input[type='text'], select { width: 300px; }
+    td, input, textarea, select, label { font-size: 110%; }
+    td { padding-bottom: 10px; }
+}
+</style>
+<script>
+    function logohide() { document.getElementById('logo').style.display = 'none'; }
+</script>
+</head>
+<body>
+<div id="page">
+    <p style="text-align: center"><img id="logo" onerror="javascript:logohide()" style="height: 150px" src="$$SERVICEURL$$?account=$$DATABASE$$&method=dbfs_image&title=splash.jpg" /></p>

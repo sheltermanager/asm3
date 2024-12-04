@@ -421,57 +421,16 @@ def import_onlineform_html(dbo: Database, h: str) -> int:
 
 def get_onlineform_header(dbo: Database) -> str:
     header = asm3.template.get_html_template(dbo, "onlineform")[0]
-    if header == "": header = "<!DOCTYPE html>\n" \
-        "<html>\n" \
-        "<head>\n" \
-        "<title>$$TITLE$$</title>\n" \
-        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
-        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0\">\n" \
-        "<link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>\n" \
-        "<style>\n" \
-        "input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }\n" \
-        ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
-        ".asm-onlineform-tooltip { display: block; font-size: 75%; overflow-wrap: anywhere; hyphens: auto; }\n" \
-        "input, textarea, select { border: 1px solid #aaa; }\n" \
-        "input[type='submit'] { padding: 10px; cursor: pointer; }\n" \
-        "/* phones and smaller devices */\n" \
-        "@media screen and (max-device-width:480px) {\n" \
-        "    body { font-family: sans-serif; }\n" \
-        "    * { font-size: 105%; }\n" \
-        "    h2 { font-size: 200%; }\n" \
-        "    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }\n" \
-        "    label, input[type='file'], input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }\n" \
-        "    label { overflow-wrap: anywhere; hypens: auto; }\n" \
-        "    input[type='checkbox'] { float: left; width: auto; position: relative; top: 10px }\n" \
-        "    input[type='submit'] { background-color: #2CBBBB; border: 1px solid #27A0A0; color: #fff; padding: 20px; }\n" \
-        "}\n" \
-        "/* full size computers and tablets */\n" \
-        "@media screen and (min-device-width:481px) {\n" \
-        "	body { background-color: #aaa; font-family: 'Roboto', sans-serif; }\n" \
-        "   #page { width: 70%; margin-left: 15%; " \
-        "       background-color: #fff; box-shadow: 2px 2px 4px #888; " \
-        "       padding-top: 20px; padding-bottom: 20px; }\n" \
-        "    .asm-onlineform-td:first-child { max-width: 400px; }\n" \
-        "    .asm-onlineform-checkboxlabel { max-width: 400px; display: inline-block; }\n" \
-        "    .asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
-        "    textarea { width: 300px; height: 150px; }\n" \
-        "    input[type='text'], select { width: 300px; }\n" \
-        "    td, input, textarea, select, label { font-size: 110%; }\n" \
-        "    td { padding-bottom: 10px; }\n" \
-        "}\n" \
-       "</style>\n" \
-       "<script>\n" \
-       "function logohide() { document.getElementById('logo').style.display = 'none'; }\n" \
-       "</script>\n" \
-       "</head>\n" \
-       "<body>\n" \
-       "    <div id=\"page\">\n" \
-       f"        <p style=\"text-align: center\"><img id=\"logo\" onerror=\"javascript:logohide()\" style=\"height: 150px\" src=\"{SERVICE_URL}?account={dbo.database}&method=dbfs_image&title=splash.jpg\" /></p>" 
+    if header == "": header = asm3.utils.read_text_file(dbo.installpath + "media/onlineform/head.html")
+    header = header.replace("$$DATABASE$$", dbo.database)
+    header = header.replace("$$SERVICEURL$$", SERVICE_URL)
     return header
 
 def get_onlineform_footer(dbo: Database) -> str:
     footer = asm3.template.get_html_template(dbo, "onlineform")[2]
-    if footer == "": footer = "</div>\n</body>\n</html>"
+    if footer == "": footer = asm3.utils.read_text_file(dbo.installpath + "media/onlineform/foot.html")
+    footer = footer.replace("$$DATABASE$$", dbo.database)
+    footer = footer.replace("$$SERVICEURL$$", SERVICE_URL)
     return footer
 
 def set_onlineform_headerfooter(dbo: Database, head: str, foot: str) -> None:

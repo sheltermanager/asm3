@@ -1,18 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>$$TITLE$$</title>
-
+<script src="static/lib/sorttable/1.0.2/sorttable.min.js"></script>
 <style>
-* {
-font-family: Verdana,Arial,Helvetica,Sans-Serif;
-}
+  * {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  table {
+    border: 1px solid black; 
+    border-collapse: collapse;
+    padding: 0;
+  }
+  th, td {
+    padding: 7px 10px; 
+    vertical-align: middle;
+  }
+  thead {
+    background-color: #999; 
+    color: #fff;
+    text-align: start; 
+    font-weight: bold;
+  }
+  tfoot {
+    background-color: #999; 
+    color: #fff; 
+    text-align: center; 
+    font-weight: bold;
+  }
+  tbody {
+    text-align: start;
+  }
+  .header {
+    width: 100%;
+  	display: flex;
+    justify-content: space-between;
+  	align-items: center;
+    margin: 0 0 15px 0;
+  }
+  .content-left {
+    float: left;
+	align-self: center;
+    padding: 0;
+  }
+  .content-right {
+    float: right;
+	align-self: center;
+    padding: 0;
+  }
+  .content {
+    font-size: 1.75em;
+    font-weight: bold;
+  }
 </style>
+<script>
+    function logohide() { document.getElementById('logo').style.display = 'none'; }
+</script>
 </head>
+  
+<body>
+  
+<div class="header">
+    <div class="content-left">
+    </div>
+    <div class="content">
+      <center>$$TITLE$$</center>
+    </div>
+    <div class="content-right">
+        <img id="logo" onerror="javascript:logohide()" src="image?db=$$DATABASE$$&mode=dbfs&id=/reports/logo.jpg" height="42">
+    </div>
+</div>
 
-<body bgcolor="white" text="black">
-<center>
-<h2>$$TITLE$$</h2>
-</center>
-<hr />
