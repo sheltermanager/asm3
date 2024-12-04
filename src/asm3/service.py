@@ -692,26 +692,26 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         else:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
-            rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+            rs = asm3.media.embellish_photo_urls(dbo, rs)
             return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "json_adoptable_animals_xp":
         rs = strip_personal_data(asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
 
     elif method == "json_adoptable_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "xml_adoptable_animal":
@@ -721,14 +721,14 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         else:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
-            rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+            rs = asm3.media.embellish_photo_urls(dbo, rs)
             return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
 
     elif method == "xml_adoptable_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
     
     elif method == "json_adopted_animals":
@@ -741,7 +741,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
                 movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))
             if strip_personal: rs = strip_personal_data(rs)
-            rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+            rs = asm3.media.embellish_photo_urls(dbo, rs)
             return set_cached_response(cache_key, account, "application/json", 1800, 1800, asm3.utils.json(rs))
         
     elif method == "xml_adopted_animals":
@@ -754,7 +754,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
                 movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))
             if strip_personal: rs = strip_personal_data(rs)
-            rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+            rs = asm3.media.embellish_photo_urls(dbo, rs)
             return set_cached_response(cache_key, account, "application/xml", 1800, 1800, asm3.html.xml(rs))
 
     elif method == "json_found_animals":
@@ -782,21 +782,21 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_hold(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "xml_held_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_hold(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "jsonp_held_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_hold(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "json_lost_animals":
@@ -825,7 +825,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
         rs = asm3.movement.get_recent_adoptions(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_recent_adoptions":
@@ -833,7 +833,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
         rs = asm3.movement.get_recent_adoptions(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "xml_recent_adoptions":
@@ -841,7 +841,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
         rs = asm3.movement.get_recent_adoptions(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "html_report":
@@ -896,35 +896,35 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(sa)))
 
     elif method == "json_shelter_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(sa))
 
     elif method == "xml_shelter_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
     
     elif method == "json_stray_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_stray(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "xml_stray_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_stray(dbo)
         if strip_personal: rs = strip_personal_data(rs)
-        rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.ANIMAL)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "rss_timeline":

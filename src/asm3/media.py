@@ -667,7 +667,7 @@ def create_log(dbo: Database, user: str, mid: int, logcode: str = "UK00", messag
     if 0 == dbo.query_int("SELECT COUNT(*) FROM log WHERE LinkID=? AND LinkType=? AND Comments LIKE ?", [ m.LINKID, linktypeid, f"{logcode}:{m.ID}:%"] ):
         asm3.log.add_log(dbo, user, linktypeid, m.LINKID, logtypeid, f"{logcode}:{m.ID}:{message} - {m.MEDIANOTES}")
 
-def embellish_photo_urls(dbo: Database, rows: Results, linktypeid: int) -> Results:
+def embellish_photo_urls(dbo: Database, rows: Results, linktypeid: int = ANIMAL) -> Results:
     """
     Given a set of rows, goes through them and finds all photo media for each ID
     and assigns them as a list with the name PHOTOURLS.
