@@ -876,42 +876,42 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     elif method == "jsonp_recent_changes":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-        sa = asm3.animal.get_recent_changes(dbo)
-        if strip_personal: sa = strip_personal_data(sa)
-        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(sa)))
+        rs = asm3.animal.get_recent_changes(dbo)
+        if strip_personal: rs = strip_personal_data(rs)
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "json_recent_changes":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-        sa = asm3.animal.get_recent_changes(dbo)
-        if strip_personal: sa = strip_personal_data(sa)
-        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(sa))
+        rs = asm3.animal.get_recent_changes(dbo)
+        if strip_personal: rs = strip_personal_data(rs)
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "xml_recent_changes":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-        sa = asm3.animal.get_recent_changes(dbo)
-        if strip_personal: sa = strip_personal_data(sa)
-        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
+        rs = asm3.animal.get_recent_changes(dbo)
+        if strip_personal: rs = strip_personal_data(rs)
+        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "jsonp_shelter_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-        sa = asm3.animal.get_shelter_animals(dbo)
-        if strip_personal: sa = strip_personal_data(sa)
+        rs = asm3.animal.get_shelter_animals(dbo)
+        if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs)
-        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(sa)))
+        return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "json_shelter_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-        sa = asm3.animal.get_shelter_animals(dbo)
-        if strip_personal: sa = strip_personal_data(sa)
+        rs = asm3.animal.get_shelter_animals(dbo)
+        if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs)
-        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(sa))
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "xml_shelter_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-        sa = asm3.animal.get_shelter_animals(dbo)
-        if strip_personal: sa = strip_personal_data(sa)
+        rs = asm3.animal.get_shelter_animals(dbo)
+        if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs)
-        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
+        return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
     
     elif method == "json_stray_animals":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
