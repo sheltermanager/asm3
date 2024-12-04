@@ -45,11 +45,16 @@ VALID_FIELDS = [
     "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "LOGDATE", "LOGTYPE", "LOGCOMMENTS",
+    "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
+    "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
+    "PERSONTITLE2", "PERSONINITIALS2", "PERSONFIRSTNAME2", "PERSONLASTNAME2",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
-    "PERSONFLAGS", "PERSONCOMMENTS", "PERSONWARNING", "PERSONFOSTERCAPACITY", "PERSONHOMEPHONE", "PERSONWORKPHONE",
-    "PERSONCELLPHONE", "PERSONEMAIL", "PERSONGDPRCONTACT", "PERSONCLASS",
+    "PERSONFLAGS", "PERSONCOMMENTS", "PERSONWARNING", "PERSONFOSTERCAPACITY",
+    "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
+    "PERSONHOMEPHONE2", "PERSONWORKPHONE2", "PERSONCELLPHONE2", "PERSONEMAIL2",
+    "PERSONGDPRCONTACT", "PERSONCLASS",
     "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
     "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
     "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
@@ -674,12 +679,18 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasperson and (gks(row, "PERSONLASTNAME") != "" or gks(row, "PERSONNAME") != ""):
             p = {}
             p["ownertype"] = gks(row, "PERSONCLASS")
-            if p["ownertype"] != "1" and p["ownertype"] != "2": 
+            if p["ownertype"] not in ("1", "2", "3"): 
                 p["ownertype"] = "1"
+            if gks(row, "PERSONLASTNAME2") != "":
+                p["ownertype"] = "3"
             p["title"] = gks(row, "PERSONTITLE")
+            p["title2"] = gks(row, "PERSONTITLE2")
             p["initials"] = gks(row, "PERSONINITIALS")
+            p["initials2"] = gks(row, "PERSONINITIALS2")
             p["forenames"] = gks(row, "PERSONFIRSTNAME")
+            p["forenames2"] = gks(row, "PERSONFIRSTNAME2")
             p["surname"] = gks(row, "PERSONLASTNAME")
+            p["surname2"] = gks(row, "PERSONLASTNAME2")
             # If we have a person name, all upto the last space is first names,
             # everything after the last name
             if gks(row, "PERSONNAME") != "":
@@ -689,6 +700,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                     p["surname"] = pname[pname.rfind(" ")+1:]
                 else:
                     p["surname"] = pname
+            p["dateofbirth"] = gks(row, "PERSONDATEOFBIRTH")
+            p["dateofbirth2"] = gks(row, "PERSONDATEOFBIRTH2")
+            p["idnumber"] = gks(row, "PERSONIDNUMBER")
+            p["idnumber2"] = gks(row, "PERSONIDNUMBER2")
             p["address"] = gks(row, "PERSONADDRESS")
             p["town"] = gks(row, "PERSONCITY")
             p["county"] = gks(row, "PERSONSTATE")
@@ -697,9 +712,13 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             if p["jurisdiction"] == "0":
                 p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
             p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
+            p["hometelephone2"] = gks(row, "PERSONHOMEPHONE2")
             p["worktelephone"] = gks(row, "PERSONWORKPHONE")
+            p["worktelephone2"] = gks(row, "PERSONWORKPHONE2")
             p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
+            p["mobiletelephone2"] = gks(row, "PERSONCELLPHONE2")
             p["emailaddress"] = gks(row, "PERSONEMAIL")
+            p["emailaddress2"] = gks(row, "PERSONEMAIL2")
             p["gdprcontactoptin"] = gks(row, "PERSONGDPRCONTACTOPTIN")
             flags = gks(row, "PERSONFLAGS")
             if gkb(row, "PERSONFOSTERER"): flags += ",fosterer"
