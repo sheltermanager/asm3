@@ -544,6 +544,13 @@ than animalview:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view&amp;animalid=520&amp;style=animalviewcarousel
 </pre></div>
 </div>
+<p>It is also possible to specify a ustyle parameter to choose a template to use if the
+animal is not available for adoption. If you don’t specify one, the default of
+“animalviewnotforadoption” is used. If that template does not exist, a simple error
+message is returned instead:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view&amp;animalid=520&amp;style=animalviewcarousel&amp;ustyle=animalviewnotforadoption
+</pre></div>
+</div>
 </section>
 <section id="animal-view-adoptable-js">
 <h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Link to this heading">¶</a></h2>
@@ -572,6 +579,10 @@ found, a popup error message will appear.</p>
 &lt;/body&gt;
 &lt;/html&gt;
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You cannot import the script file more than once, or have more than one asm3-adoptables div inside a single web page.</p>
 </div>
 <section id="css-and-styles">
 <h3>CSS and Styles<a class="headerlink" href="#css-and-styles" title="Link to this heading">¶</a></h3>

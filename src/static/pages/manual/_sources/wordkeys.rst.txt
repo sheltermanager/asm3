@@ -700,6 +700,23 @@ MedicalCost
 MedicalComments
     The medical comments 
 
+Boarding keys
+-------------
+
+Boarding keys are available for use with documents generated from within the 
+boarding tab in animal records.
+
+BoardingFromDate
+    The date the boarding period started
+BoardingToDate
+    The date the boarding period ends
+BoardingDays
+    The number of days in the boarding period 
+BoardingDailyFee
+    The amount of the daily boarding fee 
+TotalBoardingFee
+    The total cost of the boarding period 
+
 Payment Keys
 ------------
 
