@@ -675,6 +675,7 @@ def embellish_photo_urls(dbo: Database, rows: Results, linktypeid: int = ANIMAL)
     appropriate media linktypeid being passed.
     Retrieves all the media for all rows in a single query for performance.
     """
+    if len(rows) == 0: return rows
     ids = ",".join([ str(x.ID) for x in rows ])
     mr = dbo.query("SELECT ID, LinkID, Date FROM media " \
             f"WHERE LinkTypeID = {linktypeid} AND LinkID IN ({ids}) " \
