@@ -667,6 +667,29 @@ def create_log(dbo: Database, user: str, mid: int, logcode: str = "UK00", messag
     if 0 == dbo.query_int("SELECT COUNT(*) FROM log WHERE LinkID=? AND LinkType=? AND Comments LIKE ?", [ m.LINKID, linktypeid, f"{logcode}:{m.ID}:%"] ):
         asm3.log.add_log(dbo, user, linktypeid, m.LINKID, logtypeid, f"{logcode}:{m.ID}:{message} - {m.MEDIANOTES}")
 
+def embellish_photo_urls(dbo: Database, rows: Results, linktypeid: int) -> Results:
+    """
+    Given a set of rows, goes through them and finds all photo media for each ID
+    and assigns them as a list with the name PHOTOURLS.
+    Works for any kind of result row (animal, person, incident, etc) with the
+    appropriate media linktypeid being passed.
+    Retrieves all the media for all rows in a single query for performance.
+    """
+    ids = ",".join([ str(x.ID) for x in rows ])
+    mr = dbo.query("SELECT ID, LinkID, Date FROM media " \
+            f"WHERE LinkTypeID = {linktypeid} AND LinkID IN ({ids}) " \
+            "AND MediaMimeType = 'image/jpeg' " \
+            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "ORDER BY WebsitePhoto DESC, LinkID, ID")
+    for r in rows:
+        r.PHOTOURLS = []
+        for m in mr:
+            if r.ID == m.LINKID: 
+                ts = asm3.i18n.python2unix(m.DATE)
+                url = f"{SERVICE_URL}?account={dbo.database}&method=media_image&mediaid={m.ID}&ts={ts}"
+                r.PHOTOURLS.append(url)
+    return rows
+
 def send_signature_request(dbo: Database, username: str, mid: int, post: PostedData) -> None:
     """
     Sends a request for a document to be signed by email. 

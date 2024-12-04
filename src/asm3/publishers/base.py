@@ -181,7 +181,10 @@ class PublishCriteria(object):
         return s.strip()
 
 def get_animal_data(dbo: Database, pc: PublishCriteria = None, animalid: int = 0, 
-                    include_additional_fields: bool = False, recalc_age_groups: bool = True, strip_personal_data: bool = False, 
+                    include_additional_fields: bool = False, 
+                    include_photo_urls: bool = False,
+                    recalc_age_groups: bool = True, 
+                    strip_personal_data: bool = False, 
                     publisher_key: str = "", limit: int = 0) -> Results:
     """
     Returns a resultset containing the animal info for the criteria given.
@@ -224,6 +227,10 @@ def get_animal_data(dbo: Database, pc: PublishCriteria = None, animalid: int = 0
     # Embellish additional fields if requested
     if include_additional_fields:
         asm3.additional.append_to_results(dbo, rows, "animal")
+
+    # Add a list of photo URLs                    
+    if include_photo_urls:
+        rows = asm3.media.embellish_photo_urls(dbo, rows, asm3.media.ANIMAL)
 
     # Strip any personal data if requested
     if strip_personal_data:
@@ -387,7 +394,9 @@ def get_microchip_data(dbo: Database, patterns: List[str], publishername: str,
     except Exception as err:
         asm3.al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
 
-    return calc_microchip_data_addresses(dbo, rows, organisation_email)
+    rows = calc_microchip_data_addresses(dbo, rows, organisation_email)
+    rows = asm3.media.embellish_photo_urls(dbo, rows, asm3.media.ANIMAL)
+    return rows
 
 def calc_microchip_data_addresses(dbo: Database, rows: Results, organisation_email: str = "") -> Results:
     """ Given a list of animal microchip rows, 
