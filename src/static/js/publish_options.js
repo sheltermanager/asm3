@@ -1013,7 +1013,7 @@ $(function() {
         render_petfbi: function() {
             return [
                 '<div id="tab-petfbi">',
-                html.info('Signup at <a target="_blank" href="https://www.petfbi.org">www.petfbi.org</a>'),
+                html.info('Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>'),
                 '<p><input id="enabledfbi" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfbi">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
