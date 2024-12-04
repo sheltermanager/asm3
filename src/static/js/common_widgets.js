@@ -934,6 +934,7 @@ $.widget("asm.emailform", {
             '</p>',
             '</div>'
         ].join("\n"));
+        if ( config.bool("AuditOnSendEmail"))
         $("#em-body").richtextarea();
         $("#em-docrepo").asmSelect({
             animate: true,
@@ -949,12 +950,14 @@ $.widget("asm.emailform", {
             text: _("Send"),
             "class": "asm-dialog-actionbutton",
             click: function() {
+                console.log("Sending Email....");
                 validate.reset("dialog-email");
                 if (!validate.notblank(["em-from", "em-to"])) { return; }
                 if (!validate.validemail(["em-from", "em-to"])) { return; }
                 if ($("#em-cc").val() != "" && !validate.validemail(["em-cc"])) { return; }
                 if ($("#em-bcc").val() != "" && !validate.validemail(["em-bcc"])) { return; }
                 let o = self.options.o;
+                console.log(o);
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 header.show_loading(_("Sending..."));

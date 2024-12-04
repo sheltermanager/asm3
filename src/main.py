@@ -4051,6 +4051,7 @@ class incident(JSONEndpoint):
             "animallinks": asm3.animalcontrol.get_animalcontrol_animals(dbo, o.post.integer("id")),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
+            "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "roles": asm3.users.get_roles(dbo),
             "species": asm3.lookups.get_species(dbo),
@@ -4081,7 +4082,7 @@ class incident(JSONEndpoint):
 
     def post_email(self, o):
         self.check(asm3.users.EMAIL_PERSON)
-        asm3.person.send_email_from_form(o.dbo, o.user, o.post)
+        asm3.animalcontrol.send_email_from_form(o.dbo, o.user, o.post)
 
     def post_linkanimaladd(self, o):
         self.check(asm3.users.CHANGE_INCIDENT)

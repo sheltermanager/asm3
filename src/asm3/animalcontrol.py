@@ -473,6 +473,27 @@ def get_traploan_two_dates(dbo: Database, start: datetime, end: datetime) -> Res
     return dbo.query(get_traploan_query(dbo) + \
         "WHERE ReturnDate Is Null AND ReturnDueDate >= ? AND ReturnDueDate <= ?", (start, end))
 
+def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool:
+    """
+    Sends an email to a person from a posted form. Attaches it as
+    a log entry if specified.
+    Passes the return value from send_email (a bool for success)
+    """
+    emailfrom = post["from"]
+    emailto = post["to"]
+    emailcc = post["cc"]
+    emailbcc = post["bcc"]
+    subject = post["subject"]
+    addtolog = post.boolean("addtolog")
+    logtype = post.integer("logtype")
+    body = post["body"]
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
+    if addtolog == 1:
+        asm3.log.add_log_email(dbo, username, asm3.log.ANIMALCONTROL, post.integer("incidentid"), logtype, emailto, subject, body)
+    return rv
+
 def update_dispatch_geocode(dbo: Database, incidentid: int, latlon: str = "", address: str = "", town: str = "", county: str = "", postcode: str = "", country: str = "") -> str:
     """
     Looks up the geocode for this incident with the address info given.
