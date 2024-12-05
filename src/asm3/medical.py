@@ -266,7 +266,7 @@ def get_vaccination_query(dbo: Database) -> str:
         "LEFT OUTER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
-def get_vaccinations(dbo: Database, animalid: int, onlygiven: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
+def get_vaccinations(dbo: Database, animalid: int, onlygiven: bool = False, onlydue: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
     """
     Returns a recordset of vaccinations for an animal:
     VACCINATIONTYPE, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, COST
@@ -274,6 +274,8 @@ def get_vaccinations(dbo: Database, animalid: int, onlygiven: bool = False, sort
     dg = ""
     if onlygiven:
         dg = "av.DateOfVaccination Is Not Null AND "
+    if onlydue:
+        dg += "av.DateOfVaccination Is Null AND "
     sql = get_vaccination_query(dbo) + \
         "WHERE %s av.AnimalID = %d " % (dg, animalid)
     if sort == ASCENDING_REQUIRED:
