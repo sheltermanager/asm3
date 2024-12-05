@@ -942,7 +942,32 @@ class Database(object):
             s = "%04d-%02d-%02d" % ( d.year, d.month, d.day )
         if wrapParens: return "'%s'" % s
         return s
+    
+    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+        """
+        Returns an expression that calculates the difference between two dates in days.
+        enddate should be later than start date.
+        """
+        pass # no generic way to do this
 
+    def sql_datexday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the day from a date.
+        """
+        pass # no generic way to do this
+
+    def sql_datexmonth(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the month from a date.
+        """
+        pass # no generic way to do this
+
+    def sql_datexyear(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the year from a date.
+        """
+        pass # no generic way to do this
+    
     def sql_greatest(self, items: List[str]) -> str:
         """ Writes greatest for a list of items """
         return "GREATEST(%s)" % ",".join(items)
@@ -966,7 +991,7 @@ class Database(object):
         """
         Used to add or a subtract a period to/from a date column 
         """
-        return f"{columnname} {sign} INTERVAL '{number} {units}'"
+        return "" # no generic way to do this
 
     def sql_placeholders(self, l: List):
         """ Writes enough ? placeholders for items in l """

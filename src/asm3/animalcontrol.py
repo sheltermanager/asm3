@@ -678,8 +678,6 @@ def insert_animalcontrol_from_form(dbo: Database, post: PostedData, username: st
         "CallerID":             post.integer("caller"),
         "VictimID":             post.integer("victim"),
         "DispatchAddress":      post["dispatchaddress"],
-        "DispatchedACO":        post["dispatchedaco"],
-        "DispatchDateTime":     post["dispatchdate"],
         "DispatchTown":         post["dispatchtown"],
         "DispatchCounty":       post["dispatchcounty"],
         "DispatchPostcode":     post["dispatchpostcode"],

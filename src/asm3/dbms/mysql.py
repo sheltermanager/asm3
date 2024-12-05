@@ -69,7 +69,38 @@ class DatabaseMySQL(Database):
     def sql_cast_char(self, expr: str) -> str:
         """ Writes a database independent cast for expr to a char """
         return self.sql_cast(expr, "CHAR")
+    
+    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+        """
+        Returns an expression that calculates the difference between two dates in days.
+        enddate should be later than start date.
+        """
+        return f"DATEDIFF({enddateexpr}, {startdateexpr})"
+    
+    def sql_datexday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the day from a date.
+        """
+        return f"DAY({dateexpr})"
 
+    def sql_datexmonth(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the month from a date.
+        """
+        return f"MONTH({dateexpr})"
+
+    def sql_datexyear(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the year from a date.
+        """
+        return f"YEAR({dateexpr})"
+    
+    def sql_interval(self, columnname: str, number: int, sign: str = "+", units: str = "months") -> str:
+        """
+        Used to add or a subtract a period to/from a date column 
+        """
+        return f"{columnname} {sign} INTERVAL {number} {units}"
+    
     def sql_regexp_replace(self, fieldexpr: str, pattern: str = "?", replacestr: str = "?") -> str:
         """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """
         if pattern != "?": pattern = "'%s'" % pattern

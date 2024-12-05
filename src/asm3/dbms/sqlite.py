@@ -24,6 +24,31 @@ class DatabaseSQLite3(Database):
             comparisons, just strip spaces and remove the following symbols: - ( )
         """
         return "REPLACE(REPLACE(REPLACE(REPLACE(%s, '-', ''), '(', ''), ')', ''), ' ', '')" % fieldexpr
+    
+    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+        """
+        Returns an expression that calculates the difference between two dates in days.
+        enddate should be later than start date.
+        """
+        return f"julianday({enddateexpr}) - julianday({startdateexpr})"
+    
+    def sql_datexday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the day from a date.
+        """
+        return f"strftime('%d', {dateexpr})"
+
+    def sql_datexmonth(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the month from a date.
+        """
+        return f"strftime('%m', {dateexpr})"
+
+    def sql_datexyear(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the year from a date.
+        """
+        return f"strftime('%Y', {dateexpr})"
 
     def sql_greatest(self, items: List[str]) -> str:
         """ SQLite does not have a GREATEST() function, MAX() should be used instead """

@@ -1327,6 +1327,29 @@ class Report:
             if token.startswith("VAR"):
                 # Just remove it from the SQL altogether
                 value = ""
+            # SQL tag
+            if token.startswith("SQL"):
+                elems = token.split(" ")
+                if len(elems) != 3:
+                    # TODO: how do we report errors?
+                    value = ""
+                else:
+                    stype = elems[1]
+                    sparams = elems[2].split(",")
+                    if stype == "CONCAT":
+                        value = self.dbo.sql_concat(sparams)
+                    elif stype == "INTERVAL":
+                        value = self.dbo.sql_interval(sparams[0],sparams[2], sparams[1], sparams[3])
+                    elif stype == "DATEDIFF":
+                        value = self.dbo.sql_datediff(sparams[0], sparams[1])
+                    elif stype == "DAY":
+                        value = self.dbo.sql_datexday(sparams[0])
+                    elif stype == "MONTH":
+                        value = self.dbo.sql_datexmonth(sparams[0])
+                    elif stype == "YEAR":
+                        value = self.dbo.sql_datexyear(sparams[0])
+                    else:
+                        value = ""
             # Variable replacement
             if token.startswith("@"):
                 vname = token[1:]

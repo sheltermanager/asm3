@@ -108,9 +108,40 @@ class DatabasePostgreSQL(Database):
     def sql_char_length(self, item: str) -> str:
         """ Writes a char length """
         return "char_length(%s)" % item
+    
+    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+        """
+        Returns an expression that calculates the difference between two dates in days.
+        enddate should be later than start date.
+        """
+        return f"EXTRACT(DAY FROM {enddateexpr} - {startdateexpr})::integer"
+    
+    def sql_datexday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the day from a date.
+        """
+        return f"EXTRACT (DAY FROM {dateexpr})::integer"
+
+    def sql_datexmonth(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the month from a date.
+        """
+        return f"EXTRACT (MONTH FROM {dateexpr})::integer"
+
+    def sql_datexyear(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the year from a date.
+        """
+        return f"EXTRACT (YEAR FROM {dateexpr})::integer"
 
     def sql_ilike(self, expr1: str, expr2: str = "?") -> str:
         return "%s ILIKE %s" % (expr1, expr2)
+    
+    def sql_interval(self, columnname: str, number: int, sign: str = "+", units: str = "months") -> str:
+        """
+        Used to add or a subtract a period to/from a date column 
+        """
+        return f"{columnname} {sign} INTERVAL '{number} {units}'"
     
     def sql_md5(self, s: str) -> str:
         """ 
