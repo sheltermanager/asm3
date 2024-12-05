@@ -2,7 +2,7 @@ Detailed Shelter Inventory with Location Information
 ###
 Inventories
 ###
-34501/Any rev01
+34501/Any rev02
 ###
 Detailed shelter inventory with internal location and time in that location
 ###
@@ -21,7 +21,7 @@ t.AnimalType,
 s.SpeciesName,
 al.Date,
 a.ShelterLocationUnit,
-EXTRACT(DAYS FROM CURRENT_DATE - al.Date)::integer AS DaysInLocation,
+$SQL DATEDIFF al.Date,CURRENT_DATE$ AS DaysInLocation,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' 
 WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' 
 WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
