@@ -21,9 +21,16 @@ def execute(sql):
 def query(sql):
     return get_dbo().query(sql)
 
-def today():
+def now():
     return datetime.datetime.today()
 
+def now_display():
+    return time.strftime("%m/%d/%Y %H:%M:%S", now().timetuple())
+
+def today():
+    return datetime.datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+
 def today_display():
-    return time.strftime("%m/%d/%Y", datetime.datetime.today().timetuple())
+    return time.strftime("%m/%d/%Y", today().timetuple())
+
 
