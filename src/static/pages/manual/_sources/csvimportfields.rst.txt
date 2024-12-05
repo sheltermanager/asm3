@@ -194,10 +194,22 @@ DONATIONGIFTAID
     Y / N if the payment should have the giftaid flag set
 INCIDENTDATE
     The date of the incident and call
+INCIDENTCOMPLETEDDATE
+    The date the incident was completed
+INCIDENTCOMPLETEDTYPE
+    The incident completion disposition
+INCIDENTRESPONDEDDATE
+    The date the officer responded to the incident 
+INCIDENTFOLLOWUPDATE
+    The date of follow for the incident 
 INCIDENTTYPE
     The type for the incident (should correspond to an incident type in your database).
 INCIDENTNOTES
     The call notes for the incident
+DISPATCHACO
+    The animal control officer dispatched to the incident 
+DISPATCHDATE
+    The date the officer was dispatched to the incident   
 DISPATCHADDRESS
     The dispatch address for the incident
 DISPATCHCITY
@@ -210,6 +222,8 @@ INCIDENTANIMALSPECIES
     The species of animal involved in the incident
 INCIDENTANIMALSEX
     The sex of the animal involved in the incident
+INCIDENTANIMALDESCRIPTION
+    Description of the animal involved in the incident
 LICENSETYPE
     The license type to use (licenses need at least person info)
 LICENSENUMBER
