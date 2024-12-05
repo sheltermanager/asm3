@@ -41,7 +41,7 @@ VALID_FIELDS = [
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "ORIGINALOWNERWARNING", 
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", "DONATIONGIFTAID",
-    "INCIDENTDATE", "INCIDENTTYPE", "INCIDENTNOTES", "DISPATCHADDRESS", "DISPATCHCITY", "DISPATCHSTATE", "DISPATCHZIPCODE",
+    "INCIDENTDATE", "INCIDENTTYPE", "INCIDENTNOTES", "DISPATCHADDRESS", "DISPATCHCITY", "DISPATCHSTATE", "DISPATCHZIPCODE", "DISPATCHACO", "DISPATCHDATE", "INCIDENTRESPONDEDDATE", "INCIDENTFOLLOWUPDATE", "INCIDENTCOMPLETEDDATE", "INCIDENTCOMPLETEDTYPE"
     "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "LOGDATE", "LOGTYPE", "LOGCOMMENTS",
@@ -700,8 +700,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                     p["surname"] = pname[pname.rfind(" ")+1:]
                 else:
                     p["surname"] = pname
-            p["dateofbirth"] = gks(row, "PERSONDATEOFBIRTH")
-            p["dateofbirth2"] = gks(row, "PERSONDATEOFBIRTH2")
+            p["dateofbirth"] = gkd(dbo, row, "PERSONDATEOFBIRTH")
+            p["dateofbirth2"] = gkd(dbo, row, "PERSONDATEOFBIRTH2")
             p["idnumber"] = gks(row, "PERSONIDNUMBER")
             p["idnumber2"] = gks(row, "PERSONIDNUMBER2")
             p["address"] = gks(row, "PERSONADDRESS")
@@ -870,6 +870,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d = {}
             d["incidentdate"] = gkd(dbo, row, "INCIDENTDATE", True)
             d["incidenttype"] = gkl(dbo, row, "INCIDENTTYPE", "incidenttype", "IncidentName", createmissinglookups)
+            if d["incidenttype"] == "0":
+                d["incidenttype"] = str(asm3.configuration.default_incident(dbo))
             d["calldate"] = d["incidentdate"]
             d["callnotes"] = gks(row, "INCIDENTNOTES")
             d["caller"] = str(personid)
@@ -879,6 +881,12 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["dispatchpostcode"] = gks(row, "DISPATCHZIPCODE")
             d["species"] = gkl(dbo, row, "INCIDENTANIMALSPECIES", "species", "SpeciesName", createmissinglookups)
             d["sex"] = gksx(row, "INCIDENTANIMALSEX")
+            d["dispatchedaco"] = gks(row, "DISPATCHACO")
+            d["dispatchdate"] = gkd(dbo, row, "DISPATCHDATE")
+            d["respondeddate"] = gkd(dbo, row, "INCIDENTRESPONDEDDATE")
+            d["followupdate"] = gkd(dbo, row, "INCIDENTFOLLOWUPDATE")
+            d["completeddate"] = gkd(dbo, row, "INCIDENTCOMPLETEDDATE")
+            d["completedtype"] = gkl(dbo, row, "INCIDENTCOMPLETEDTYPE", "incidentcompleted", "CompletedName", True)
             try:
                 asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
             except Exception as e:
