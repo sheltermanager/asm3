@@ -62,7 +62,7 @@ def substitute(sql):
                 elif stype == "INTERVAL":
                     sub = f"datetime({sparams[0]}, '{sparams[1]}{sparams[2]} {sparams[3]}')"
                 elif stype == "DATEDIFF":
-                    sub = f"julianday({sparams[1]})-julianday({sparams[0]})"
+                    sub = f"julianday({sparams[0]})-julianday({sparams[1]})"
                 elif stype == "DAY":
                     sub = f"strftime('%d', {sparams[0]})"
                 elif stype == "MONTH":

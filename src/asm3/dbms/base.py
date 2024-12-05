@@ -943,10 +943,10 @@ class Database(object):
         if wrapParens: return "'%s'" % s
         return s
     
-    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+    def sql_datediff(self, date1: str, date2: str) -> str:
         """
         Returns an expression that calculates the difference between two dates in days.
-        enddate should be later than start date.
+        date1 should be > date2
         """
         pass # no generic way to do this
 

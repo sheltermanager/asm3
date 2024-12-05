@@ -21,7 +21,7 @@ t.AnimalType,
 s.SpeciesName,
 al.Date,
 a.ShelterLocationUnit,
-$SQL DATEDIFF al.Date,CURRENT_DATE$ AS DaysInLocation,
+$SQL DATEDIFF CURRENT_DATE,al.Date$ AS DaysInLocation,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' 
 WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' 
 WHEN a.ActiveMovementType = 8 THEN 'Retailer' 

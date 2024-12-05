@@ -109,12 +109,12 @@ class DatabasePostgreSQL(Database):
         """ Writes a char length """
         return "char_length(%s)" % item
     
-    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+    def sql_datediff(self, date1: str, date2: str) -> str:
         """
         Returns an expression that calculates the difference between two dates in days.
-        enddate should be later than start date.
+        date1 should be > date2
         """
-        return f"EXTRACT(DAY FROM {enddateexpr} - {startdateexpr})::integer"
+        return f"EXTRACT(DAY FROM {date1} - {date2})::integer"
     
     def sql_datexday(self, dateexpr: str) -> str:
         """
