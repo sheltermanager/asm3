@@ -53,7 +53,7 @@ $(function() {
                 html.search_field_select("breedid", _("Breed"), html.list_to_options_breeds(controller.breeds)),
                 html.search_field_select("sex", _("Sex"), html.list_to_options(controller.sexes, "ID", "SEX")),
                 html.search_field_select("reserved", _("Reserved"), animal_find.options_reserved, false),
-                html.search_field_select("logicallocation", _("Location"), animal_find.options_locations),
+                html.search_field_select("logicallocation", _("Location"), animal_find.options_locations, false),
                 html.search_field_select("shelterlocation", _("Internal Location"), html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME")),
                 html.search_field_select("size", _("Size"), html.list_to_options(controller.sizes, "ID", "SIZE")),
                 html.search_field_select("colour", _("Color"), html.list_to_options(controller.colours, "ID", "BASECOLOUR")),
