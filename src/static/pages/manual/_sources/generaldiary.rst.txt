@@ -37,15 +37,16 @@ they have read the note).
 Viewing my diary notes
 ^^^^^^^^^^^^^^^^^^^^^^
 
-To view all the diary notes for the current user, or created by the current
-user, go to the home screen or navigate to :menuselection:`ASM --> Diary --> View My
+To view the diary notes for the current user, or created by the current user,
+go to the home screen or navigate to :menuselection:`ASM --> Diary --> View My
 Diary Notes`.
 
-You will be given a list of all your diary notes. You may edit them to mark
-diary notes for you completed, or even amend diary notes you have created for
-other people. Diary notes in the future (after today), will be highlighted to
-show they are not yet current. If you choose to show completed notes, they will
-be greyed out to illustrate this.
+A filter in the top right corner of the page will allow you to choose between 
+different groups of notes to be displayed, such as "Incomplete notes upto today". 
+You may edit them to mark diary notes for you completed, or even amend diary 
+notes you have created for other people. If you choose to view "All notes upto 
+today", completed notes will be greyed out and overdue incomplete notes will 
+appear with the date and subject in red.
 
 If you are not a superuser and the diary note was not created by you, you will
 not be permitted to change the subject and note text. Instead, you can add
