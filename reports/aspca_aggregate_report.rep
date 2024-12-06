@@ -2,7 +2,7 @@ ASPCA: Aggregate Report
 ###
 Figures
 ###
-34801/PostgreSQL rev04
+34801/Any rev05
 ###
 Monthly figures for ASPCA initatives such as northern tier grants
 ###
@@ -58,11 +58,11 @@ SUBREPORT_ASPCAAggregateCareCounts
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '6 weeks' THEN 'Puppies'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,5,months$ THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,6,weeks$ THEN 'Puppies'
 WHEN a.SpeciesID = 1 THEN 'Canine neonates'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '6 weeks' THEN 'Kittens'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,5,months$ THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,6,weeks$ THEN 'Kittens'
 WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG2$' AND MovementType IN (2, 8) AND AnimalID = a.ID) THEN 1 ELSE 0 END AS NumberInShelter,
 CASE WHEN EXISTS(SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND MovementType = 2 AND AnimalID = a.ID) THEN 1 ELSE 0 END AS NumberInFoster,
@@ -105,21 +105,21 @@ SUBREPORT_ASPCAAggregateIntakeCounts
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '6 weeks' THEN 'Puppies'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,5,months$ THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,6,weeks$ THEN 'Puppies'
 WHEN a.SpeciesID = 1 THEN 'Canine neonates'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '6 weeks' THEN 'Kittens'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,5,months$ THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,6,weeks$ THEN 'Kittens'
 WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' OR 
   EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID)
   THEN 1 ELSE 0 END AS AllSources,
 CASE WHEN (DateBroughtIn >= '$PARENTARG1$' AND EntryTypeID = 1) OR 
-  EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate <= ReturnDate - INTERVAL '30 days')
+  EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate <= $SQL INTERVAL ReturnDate,-,30,days$)
   THEN 1 ELSE 0 END AS OwnerSurrender,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND EntryTypeID = 2 THEN 1 ELSE 0 END AS Stray,
 CASE WHEN 
-  EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate > ReturnDate - INTERVAL '30 days') 
+  EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate > $SQL INTERVAL ReturnDate,-,30,days$) 
   THEN 1 ELSE 0 END AS Return30Days,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND IsDOA = 1 THEN 1 ELSE 0 END AS DOA,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND EntryTypeID = 5 THEN 1 ELSE 0 END AS BornInCare,
@@ -168,11 +168,11 @@ SUBREPORT_ASPCAAggregateTransferInCounts
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '6 weeks' THEN 'Puppies'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,5,months$ THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,6,weeks$ THEN 'Puppies'
 WHEN a.SpeciesID = 1 THEN 'Canine neonates'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '6 weeks' THEN 'Kittens'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,5,months$ THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL a.DateBroughtIn,-,6,weeks$ THEN 'Kittens'
 WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 1 AS AllSources,
 CASE WHEN AsilomarIsTransferExternal = 0 THEN 1 ELSE 0 END AS FromPartner,
@@ -211,11 +211,11 @@ SUBREPORT_ASPCAAggregateOutcomeCounts
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '6 weeks' THEN 'Puppies'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,5,months$ THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,6,weeks$ THEN 'Puppies'
 WHEN a.SpeciesID = 1 THEN 'Canine neonates'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '6 weeks' THEN 'Kittens'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,5,months$ THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL 'PARENTARG2',-,6,weeks$ THEN 'Kittens'
 WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN ad.MovementType = 5 THEN 1 ELSE 0 END AS ReturnedToOwner,
 CASE WHEN ad.MovementType = 1 THEN 1 ELSE 0 END AS Adopted,
@@ -275,11 +275,11 @@ SUBREPORT_ASPCAAggregateTransferOutCounts
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < ad.MovementDate - INTERVAL '6 weeks' THEN 'Puppies'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL ad.MovementDate,-,5,months$ THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL ad.MovementDate,-,6,weeks$ THEN 'Puppies'
 WHEN a.SpeciesID = 1 THEN 'Canine neonates'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < ad.MovementDate - INTERVAL '6 weeks' THEN 'Kittens'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL ad.MovementDate,-,5,months$ THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL ad.MovementDate,-,6,weeks$ THEN 'Kittens'
 WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN a.AsilomarIsTransferExternal = 0 THEN 1 ELSE 0 END AS ToPartner,
 CASE WHEN a.AsilomarIsTransferExternal = 1 THEN 1 ELSE 0 END AS ToNonPartner
@@ -318,11 +318,11 @@ SUBREPORT_ASPCAAggregateSpayNeuterCounts
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '6 weeks' THEN 'Puppies'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL a.NeuteredDate,-,5,months$ THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL a.NeuteredDate,-,6,weeks$ THEN 'Puppies'
 WHEN a.SpeciesID = 1 THEN 'Canine neonates'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '6 weeks' THEN 'Kittens'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL a.NeuteredDate,-,5,months$ THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL a.NeuteredDate,-,6,weeks$ THEN 'Kittens'
 WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 8 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS OwnedAnimals,
 CASE WHEN SpeciesID = 2 AND NonShelterAnimal = 0 AND er.ReasonName NOT LIKE '%TNR%' AND EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 8 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS ReturnedToField,

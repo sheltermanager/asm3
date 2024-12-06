@@ -2,16 +2,16 @@ Animal Ages at Induction and Adoption
 ###
 Movements
 ###
-3001/PostgreSQL rev02
+3001/Any rev03
 ###
 Ages at induction and adoption for all animals adopted between two dates.
 ###
 en
 ###
 SELECT DISTINCT a.ShelterCode, a.AnimalName, a.ID AS AID,
-CAST(justify_interval(age(a.DateBroughtIn, a.DateOfBirth)) AS VARCHAR) AS InductionAge,
+$SQL AGE a.DateBroughtIn,a.DateOfBirth$ AS InductionAge,
 a.ActiveMovementDate As AdoptionDate,
-CAST(justify_interval(age(a.ActiveMovementDate, a.DateOfBirth)) AS VARCHAR) AS AdoptionAge, 
+$SQL AGE a.ActiveMovementDate,a.DateOfBirth$ AS AdoptionAge, 
 o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress 
 FROM animal a 

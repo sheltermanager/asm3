@@ -2,7 +2,7 @@ Adoptions by Date with Location and Age
 ###
 Movements
 ###
-2870/PostgreSQL rev03
+2870/Any rev04
 ###
 Adoptions between two dates with the names/addresses of original owners and adopters, location and the age at adoption.
 ###
@@ -21,7 +21,7 @@ no.OwnerName, no.OwnerAddress,
 no.ID AS OID,
 no.OwnerTown, no.OwnerCounty,
 internallocation.LocationName, 
-no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, animal.DateOfBirth, age(adoption.MovementDate,animal.DateOfBirth)::varchar AS AgeAtAdoption
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, animal.DateOfBirth, $SQL AGE adoption.MovementDate,animal.DateOfBirth$ AS AgeAtAdoption
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID

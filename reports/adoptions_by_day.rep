@@ -2,19 +2,19 @@ Adoptions By Day of the Week
 ###
 Movement Charts
 ###
-3000/PostgreSQL rev01
+3000/Any rev02
 ###
 The number of adoptions in a period, grouped by day of the week.
 ###
 en
 ###
 SELECT
-TO_CHAR(ad.MovementDate, 'Day') AS DayOfWeek,
+$SQL WEEKDAY ad.MovementDate$ AS DayOfWeek,
 COUNT(ad.ID) AS total
 FROM adoption ad
 WHERE ad.MovementDate >= '$ASK DATE Adopted between$' AND ad.MovementDate <= '$ASK DATE and $'
 AND ad.MovementType = 1
-GROUP BY TO_CHAR(ad.MovementDate, 'Day')
+GROUP BY DayOfWeek
 ORDER BY DayOfWeek 
 ###
 GRAPH BARS
