@@ -8,6 +8,9 @@ class TestAutomail(unittest.TestCase):
 
     def test_adopter_followup_query(self):
         asm3.automail._adopter_followup_query(base.get_dbo(), base.today())
+    
+    def test_vaccination_followup(self):
+        asm3.automail._vaccination_followup_query(base.get_dbo(), base.today())
 
     def test_clinic_reminder_query(self):
         asm3.automail._clinic_reminder_query(base.get_dbo(), base.today())

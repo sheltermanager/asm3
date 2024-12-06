@@ -19,7 +19,9 @@ def send_all(dbo: Database) -> None:
     """
     Single function for the batch to call, checks and sends all automated emails
     """
+    print("Sending all")
     adopter_followup(dbo)
+    vaccination_followup(dbo)
     clinic_reminder(dbo)
     due_payment(dbo)
     fosterer_weekly(dbo)
@@ -95,6 +97,42 @@ def adopter_followup(dbo: Database, user = "system") -> None:
         _send_email_from_template(dbo, r.EMAILADDRESS, asm3.i18n._("Adoption Followup", l), body, loglinkid=r.OWNERID, logmsg=f"AF01:{r.ID}")
 
     asm3.al.info(f"Sent {len(rows)} adopter followup emails.", "automail.adopter_followup", dbo)
+
+def _vaccination_followup_query(dbo: Database, cutoff: datetime) -> Results:
+    return dbo.query("SELECT a.ID, a.OwnerID, o.EmailAddress " \
+        "FROM animal a " \
+        "INNER JOIN owner o ON o.ID = a.OwnerID " \
+        "INNER JOIN animalvaccination v ON v.AnimalID = a.ID " \
+        "WHERE a.ActiveMovementType=1 AND v.DateRequired=? AND " \
+        "a.DeceasedDate Is Null " \
+        "UNION SELECT a.ID, a.OwnerID, o.EmailAddress " \
+        "FROM animal a " \
+        "INNER JOIN owner o ON o.ID = a.OwnerID " \
+        "INNER JOIN animalvaccination v ON v.AnimalID = a.ID " \
+        "WHERE v.DateRequired=? AND a.NonShelterAnimal = 1 " \
+        "AND a.DeceasedDate Is Null " \
+        "ORDER BY a.ID", [ cutoff, cutoff ])
+
+def vaccination_followup(dbo: Database, user = "system") -> None:
+    """
+    Finds all off site animals with a vaccination due in the next X days and sends the owner 
+    a followup email using the configured template.
+    Filters out dead and returned animals.
+    """
+    l = dbo.locale
+    if not asm3.configuration.email_vaccination_followup(dbo): 
+        asm3.al.debug("EmailVaccinationFollowup option set to No", "automail.vaccination_followup", dbo)
+        return
+    days = asm3.configuration.email_vaccination_followup_days(dbo)
+    cutoff = dbo.today(offset = days*-1)
+    dtid = asm3.configuration.email_vaccination_followup_template(dbo)
+    asm3.al.debug(f"vaccination followup: {days} days, email template {dtid}", "automail.vaccination_followup", dbo)
+    if not _valid_template(dbo, dtid): return
+    rows = _vaccination_followup_query(dbo, cutoff)
+    for r in rows:
+        body = asm3.wordprocessor.generate_animal_doc(dbo, dtid, r.ID, user)
+        _send_email_from_template(dbo, r.EMAILADDRESS, asm3.i18n._("Vaccination Followup", l), body, loglinkid=r.OWNERID, logmsg=f"AF01:{r.ID}")
+    asm3.al.info(f"Sent {len(rows)} vaccintion followup emails.", "automail.vaccination_followup", dbo)
 
 def _clinic_reminder_query(dbo: Database, cutoff: datetime) -> Results:
     cutoff2 = asm3.i18n.add_days(cutoff, 1)

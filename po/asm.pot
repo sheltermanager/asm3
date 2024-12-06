@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-12-03 17:17+0000\n"
+"POT-Creation-Date: 2024-12-06 09:42+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -12267,6 +12267,10 @@ msgid "Send a followup email to new adopters after X days"
 msgstr ""
 
 #: options.js
+msgid "Send a reminder email to owners X days before a vaccination is due"
+msgstr ""
+
+#: options.js
 msgid "Send a reminder email to people with clinic appointments in X days"
 msgstr ""
 
@@ -15209,6 +15213,10 @@ msgstr ""
 
 #: vaccination.js
 msgid "Vaccination Book"
+msgstr ""
+
+#: automail.py
+msgid "Vaccination Followup"
 msgstr ""
 
 #: mobile.py
