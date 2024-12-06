@@ -728,7 +728,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
             "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
         }
-        vaccinations = asm3.medical.get_vaccinations(dbo, a["ID"], not iic)
+        vaccinations = asm3.medical.get_vaccinations(dbo, a["ID"], onlygiven=not iic)
         tags.update(table_tags(dbo, d, vaccinations, "VACCINATIONTYPE", "DATEREQUIRED", "DATEOFVACCINATION"))
         tags["ANIMALVACCINATIONS"] = html_table(l, vaccinations, (
             ( "VACCINATIONTYPE", _("Type", l) ),
@@ -739,6 +739,24 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             ( "RABIESTAG", _("Rabies Tag", l) ),
             ( "MANUFACTURER", _("Manufacturer", l)),
             ( "BATCHNUMBER", _("Batch", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
+        givenvaccinations = asm3.medical.get_vaccinations(dbo, a["ID"], onlygiven=True)
+        tags["GIVENANIMALVACCINATIONS"] = html_table(l, givenvaccinations, (
+            ( "VACCINATIONTYPE", _("Type", l) ),
+            ( "DATEREQUIRED", _("Due", l)),
+            ( "DATEOFVACCINATION", _("Given", l)),
+            ( "DATEEXPIRES", _("Expires", l)),
+            ( "ADMINISTERINGVETNAME", _("Vet", l)),
+            ( "RABIESTAG", _("Rabies Tag", l) ),
+            ( "MANUFACTURER", _("Manufacturer", l)),
+            ( "BATCHNUMBER", _("Batch", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
+        duevaccinations = asm3.medical.get_vaccinations(dbo, a["ID"], onlydue=True)
+        tags["DUEANIMALVACCINATIONS"] = html_table(l, duevaccinations, (
+            ( "VACCINATIONTYPE", _("Type", l) ),
+            ( "DATEREQUIRED", _("Due", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
 

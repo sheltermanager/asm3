@@ -70,12 +70,12 @@ class DatabaseMySQL(Database):
         """ Writes a database independent cast for expr to a char """
         return self.sql_cast(expr, "CHAR")
     
-    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+    def sql_datediff(self, date1: str, date2: str) -> str:
         """
         Returns an expression that calculates the difference between two dates in days.
-        enddate should be later than start date.
+        date1 should be > date2
         """
-        return f"DATEDIFF({enddateexpr}, {startdateexpr})"
+        return f"DATEDIFF({date1}, {date2})"
     
     def sql_datexday(self, dateexpr: str) -> str:
         """

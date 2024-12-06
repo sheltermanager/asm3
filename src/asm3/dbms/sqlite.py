@@ -25,12 +25,12 @@ class DatabaseSQLite3(Database):
         """
         return "REPLACE(REPLACE(REPLACE(REPLACE(%s, '-', ''), '(', ''), ')', ''), ' ', '')" % fieldexpr
     
-    def sql_datediff(self, startdateexpr: str, enddateexpr: str) -> str:
+    def sql_datediff(self, date1: str, date2: str) -> str:
         """
         Returns an expression that calculates the difference between two dates in days.
-        enddate should be later than start date.
+        date1 should be > date2
         """
-        return f"julianday({enddateexpr}) - julianday({startdateexpr})"
+        return f"julianday({date1}) - julianday({date2})"
     
     def sql_datexday(self, dateexpr: str) -> str:
         """

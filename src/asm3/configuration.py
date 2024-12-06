@@ -469,6 +469,7 @@ def cset(dbo, key: str, value: str = "", ignoreDBLock: bool = False, sanitiseXSS
     """
     Update a configuration item in the table.
     """
+    if value is None: value = ""
     dbo.execute("DELETE FROM configuration WHERE ItemName LIKE ?", [key], override_lock=ignoreDBLock)
     if sanitiseXSS: value = dbo.escape_xss(value)
     dbo.execute("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", (key, value), override_lock=ignoreDBLock)

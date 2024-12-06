@@ -1559,6 +1559,10 @@ there are.  Records are output in ascending order of date.
 
 AnimalVaccinations
    Inserts a table containing all the animal's vaccinations into the document
+DueAnimalVaccinations
+   Inserts a table containing all due vacinations for this animal into the document
+GivenAnimalVaccinations
+   Inserts a table containing all given vacinations for this animal into the document
 AnimalTests
    Inserts a table containing all of the animal's tests into the document
 AnimalMedicals

@@ -27,7 +27,7 @@ Non-Returned Adoptions (Puppies)
 ###
 Movements
 ###
-34701/PostgreSQL rev03
+34701/Any rev04
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of puppies between two dates
 ###
@@ -43,7 +43,7 @@ WHERE adoption.ReturnDate Is Null AND adoption.MovementDate >= '$ASK DATE Enter 
 AND adoption.MovementDate <= '$ASK DATE Enter to date$' 
 AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
-AND animal.SpeciesID = 1 AND animal.DateOfBirth >= adoption.MovementDate - INTERVAL '6 months'
+AND animal.SpeciesID = 1 AND animal.DateOfBirth >= $SQL INTERVAL adoption.MovementDate,-,6,months$
 AND owner.ExcludeFromBulkEmail = 0
 ORDER BY owner.OwnerSurname
 ###

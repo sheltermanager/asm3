@@ -52,6 +52,23 @@ def substitute(sql):
             sub = "2001"
         elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
+        elif token.startswith("SQL"):
+            elems = token.split(" ")
+            if len(elems) == 3:
+                stype = elems[1]
+                sparams = elems[2].split(",")
+                if stype == "CONCAT":
+                    sub = "||".join(sparams)
+                elif stype == "INTERVAL":
+                    sub = f"datetime({sparams[0]}, '{sparams[1]}{sparams[2]} {sparams[3]}')"
+                elif stype == "DATEDIFF":
+                    sub = f"julianday({sparams[0]})-julianday({sparams[1]})"
+                elif stype == "DAY":
+                    sub = f"strftime('%d', {sparams[0]})"
+                elif stype == "MONTH":
+                    sub = f"strftime('%m', {sparams[0]})"
+                elif stype == "YEAR":
+                    sub = f"strftime('%y', {sparams[0]})"
         else:
             sub = "0"
         sql = sql[0:i] + sub + sql[end+1:]
