@@ -61,6 +61,10 @@ class DatabaseMySQL(Database):
         # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
         s = s.replace("'", "`")
         return s
+        
+    def sql_age(self, date1: str, date2: str) -> str:
+        """ Writes an age diff function, date1 should be later than date2 """
+        return f"CONCAT(DATEDIFF({date1}, {date2}), ' days')"
 
     def sql_concat(self, items: List[str]) -> str:
         """ Writes concat for a list of items """

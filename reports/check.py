@@ -57,7 +57,9 @@ def substitute(sql):
             if len(elems) == 3:
                 stype = elems[1]
                 sparams = elems[2].split(",")
-                if stype == "CONCAT":
+                if stype == "AGE":
+                    sub = f"julianday({sparams[0]})-julianday({sparams[1]}) || ' days'"
+                elif stype == "CONCAT":
                     sub = "||".join(sparams)
                 elif stype == "INTERVAL":
                     sub = f"datetime({sparams[0]}, '{sparams[1]}{sparams[2]} {sparams[3]}')"

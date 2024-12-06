@@ -913,6 +913,10 @@ class Database(object):
                 continue
             x += 1
         return queries
+    
+    def sql_age(self, date1: str, date2: str) -> str:
+        """ Writes an age diff function, date1 should be later than date2 """
+        pass # no generic way to do this
 
     def sql_atoi(self, fieldexpr: str) -> str:
         """ Removes all but the numbers from fieldexpr """

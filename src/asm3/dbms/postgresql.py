@@ -100,6 +100,10 @@ class DatabasePostgreSQL(Database):
             "WHEN OTHERS THEN r_float = 0.0;\n" \
             "END;\n" \
             "$$")
+        
+    def sql_age(self, date1: str, date2: str) -> str:
+        """ Writes an age diff function, date1 should be later than date2 """
+        return f"age({date1}, {date2})::varchar"
 
     def sql_cast(self, expr: str, newtype: str) -> str:
         """ Writes a database independent cast for expr to newtype """

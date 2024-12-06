@@ -17,6 +17,10 @@ class DatabaseSQLite3(Database):
    
     def connect(self) -> Any:
         return sqlite3.connect(self.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
+    
+    def sql_age(self, date1: str, date2: str) -> str:
+        """ Writes an age diff function, date1 should be later than date2 """
+        return f"julianday({date1}) - julianday({date2}) || ' days'"
 
     def sql_atoi(self, fieldexpr: str) -> str:
         """ Removes all but the numbers from fieldexpr 
