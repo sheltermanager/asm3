@@ -56,6 +56,7 @@ def substitute(sql):
             elems = token.split(" ")
             if len(elems) == 3:
                 stype = elems[1]
+                elems[2] = elems[2].replace("PARENTARGS1", "2024-01-01").replace("PARENTARGS2", "2024-01-01").replace("PARENTARGS3", "2024-01-01").replace("PARENTARGS4", "2024-01-01")
                 sparams = elems[2].split(",")
                 if stype == "AGE":
                     sub = f"julianday({sparams[0]})-julianday({sparams[1]}) || ' days'"

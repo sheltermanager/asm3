@@ -1330,11 +1330,13 @@ class Report:
             # SQL tag
             if token.startswith("SQL"):
                 elems = token.split(" ")
-                if len(elems) != 3:
-                    # TODO: how do we report errors?
-                    value = ""
-                else:
+                if len(elems) == 3:
                     stype = elems[1]
+                    # Substitute any PARENTARGX values in our parameters
+                    # since they are frequently used to pass dates
+                    for p in params:
+                        if p[0].startswith("PARENTARG") and elems[2].find("PARENTARG") != -1: 
+                            elems[2] = elems[2].replace(p[0], p[2])
                     sparams = elems[2].split(",")
                     if stype == "AGE":
                         value = self.dbo.sql_age(sparams[0], sparams[1])
