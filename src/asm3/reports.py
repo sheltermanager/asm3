@@ -1346,6 +1346,8 @@ class Report:
                         value = self.dbo.sql_interval(sparams[0], sparams[2], sparams[1], sparams[3])
                     elif stype == "DATEDIFF":
                         value = self.dbo.sql_datediff(sparams[0], sparams[1])
+                    elif stype == "DATETOCHAR":
+                        value = self.dbo.sql_tochar(sparams[1], sparams[0])
                     elif stype == "DAY":
                         value = self.dbo.sql_datexday(sparams[0])
                     elif stype == "MONTH":

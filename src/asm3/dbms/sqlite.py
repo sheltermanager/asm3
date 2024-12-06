@@ -36,6 +36,16 @@ class DatabaseSQLite3(Database):
         """
         return f"julianday({date1}) - julianday({date2})"
     
+    def sql_datetochar(self, fieldexpr: str, formatstr: str) -> str:
+        """ Writes an expression that formats a date, valid format tokens YYYY MM DD HH NN SS """
+        formatstr = formatstr.replace("YYYY", "%Y")
+        formatstr = formatstr.replace("MM", "%m")
+        formatstr = formatstr.replace("DD", "%d")
+        formatstr = formatstr.replace("HH", "%H")
+        formatstr = formatstr.replace("NN", "%M")
+        formatstr = formatstr.replace("SS", "%S")
+        return f"strftime('{formatstr}', {fieldexpr})"
+    
     def sql_datexday(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the day from a date.

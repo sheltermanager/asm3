@@ -66,6 +66,15 @@ def substitute(sql):
                     sub = f"datetime({sparams[0]}, '{sparams[1]}{sparams[2]} {sparams[3]}')"
                 elif stype == "DATEDIFF":
                     sub = f"julianday({sparams[0]})-julianday({sparams[1]})"
+                elif stype == "DATETOCHAR":
+                    formatstr = sparams[1]
+                    formatstr = formatstr.replace("YYYY", "%Y")
+                    formatstr = formatstr.replace("MM", "%m")
+                    formatstr = formatstr.replace("DD", "%d")
+                    formatstr = formatstr.replace("HH", "%H")
+                    formatstr = formatstr.replace("NN", "%M")
+                    formatstr = formatstr.replace("SS", "%S")
+                    sub = f"datetime('{formatstr}', {sparams[0]})"
                 elif stype == "DAY":
                     sub = f"strftime('%d', {sparams[0]})"
                 elif stype == "MONTH":

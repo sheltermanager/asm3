@@ -1034,6 +1034,10 @@ class Database(object):
     def sql_substring(self, fieldexpr: str, pos: int, chars: int) -> str:
         """ SQL substring function from pos for chars """
         return "SUBSTR(%s, %s, %s)" % (fieldexpr, pos, chars)
+    
+    def sql_tochar(self, fieldexpr: str, formatstr: str) -> str:
+        """ Writes an expression that formats a date, valid format tokens YYYY MM DD HH NN SS """
+        return f"TO_CHAR({fieldexpr}, '{formatstr}')"
 
     def sql_today(self, wrapParens: bool = True, includeTime: bool = True) -> str:
         """ Writes today as an SQL date """
