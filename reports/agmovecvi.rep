@@ -2,7 +2,7 @@ AgMove CVI Export (AgView)
 ###
 Figures
 ###
-PostgreSQL rev01
+Any rev02
 ###
 Produce a CSV of transport records for the AgMove CVI platform
 ###
@@ -14,7 +14,7 @@ SELECT
     a.AnimalName AS Name,
     a.BreedName AS Breed,
     tt.TransportTypeName AS MovementPurpose,
-    (EXTRACT(DAYS FROM CURRENT_DATE - a.DateOfBirth)::integer / 365.0)::integer AS Age,
+    $SQL DATEDIFF CURRENT_DATE,a.DateOfBirth$ / 365.0 AS Age, 
     'Years' AS AgeUnits,
     (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex, 
     (SELECT MAX(DateOfVaccination) FROM animalvaccination av 

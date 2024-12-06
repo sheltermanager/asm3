@@ -2,19 +2,19 @@ Adoptions By Year
 ###
 Movement Charts
 ###
-3000/PostgreSQL rev01
+3000/Any rev02
 ###
 The number of adoptions in a period, grouped by year
 ###
 en
 ###
 SELECT
-TO_CHAR(ad.MovementDate, 'YYYY') AS Year,
+$SQL YEAR ad.MovementDate$ AS Year,
 COUNT(ad.ID) AS total
 FROM adoption ad
 WHERE ad.MovementDate >= '$ASK DATE Adopted between$' AND ad.MovementDate <= '$ASK DATE and $'
 AND ad.MovementType = 1
-GROUP BY TO_CHAR(ad.MovementDate, 'YYYY')
+GROUP BY Year 
 ORDER BY Year 
 ###
 GRAPH BARS
