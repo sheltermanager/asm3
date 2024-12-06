@@ -137,6 +137,12 @@ class DatabasePostgreSQL(Database):
         Returns an expression that extracts the year from a date.
         """
         return f"EXTRACT (YEAR FROM {dateexpr})::integer"
+    
+    def sql_datexweekday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the week day from a date.
+        """
+        return f"TO_CHAR({dateexpr}, 'DAY')"
 
     def sql_ilike(self, expr1: str, expr2: str = "?") -> str:
         return "%s ILIKE %s" % (expr1, expr2)

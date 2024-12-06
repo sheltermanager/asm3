@@ -71,6 +71,8 @@ def substitute(sql):
                     sub = f"strftime('%m', {sparams[0]})"
                 elif stype == "YEAR":
                     sub = f"strftime('%y', {sparams[0]})"
+                elif stype == "WEEKDAY":
+                    sub = f"strftime('%w', {sparams[0]})"
         else:
             sub = "0"
         sql = sql[0:i] + sub + sql[end+1:]

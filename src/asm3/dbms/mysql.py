@@ -99,6 +99,12 @@ class DatabaseMySQL(Database):
         """
         return f"YEAR({dateexpr})"
     
+    def sql_datexweekday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the week day from a date.
+        """
+        return f"DAYOFWEEK({dateexpr})"
+    
     def sql_interval(self, columnname: str, number: int, sign: str = "+", units: str = "months") -> str:
         """
         Used to add or a subtract a period to/from a date column 

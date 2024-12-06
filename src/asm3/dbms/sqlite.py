@@ -53,6 +53,12 @@ class DatabaseSQLite3(Database):
         Returns an expression that extracts the year from a date.
         """
         return f"strftime('%Y', {dateexpr})"
+    
+    def sql_datexweekday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the week day from a date.
+        """
+        return f"strftime('%w', {dateexpr})"
 
     def sql_greatest(self, items: List[str]) -> str:
         """ SQLite does not have a GREATEST() function, MAX() should be used instead """

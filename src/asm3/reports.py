@@ -1350,6 +1350,8 @@ class Report:
                         value = self.dbo.sql_datexmonth(sparams[0])
                     elif stype == "YEAR":
                         value = self.dbo.sql_datexyear(sparams[0])
+                    elif stype == "WEEKDAY":
+                        value = self.dbo.sql_datexweekday(sparams[0])
                     else:
                         value = ""
             # Variable replacement

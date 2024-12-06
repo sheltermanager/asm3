@@ -971,6 +971,12 @@ class Database(object):
         Returns an expression that extracts the year from a date.
         """
         pass # no generic way to do this
+
+    def sql_datexweekday(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the week day from a date.
+        """
+        pass # no generic way to do this
     
     def sql_greatest(self, items: List[str]) -> str:
         """ Writes greatest for a list of items """
