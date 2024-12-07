@@ -4,12 +4,10 @@ $(function(){
 
     "use strict";
 
-    const event ={
+    const event = {
 
-
-        render: function(){
+        render: function() {
             return [
-                // console.log(controller),
                 edit_header.event_edit_header(controller.event, "event", []),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this event") },
@@ -26,63 +24,21 @@ $(function(){
             return [
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<div class="row">',
-                // left column
-                '<div class="col-sm">',
-                '<table>',
-                '<tr>',
-                '<td ><label for="eventname">' + _("Event Name") + '</label></td>',
-                '<td><input id="eventname" data-post="eventname" type="text" data-json="EVENTNAME" class="asm-textbox"  /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="startdate">' + _("Start Date") + '</label>',
-                '<span class="asm-has-validation">*</span>',
-                '</td>',
-                '<td><input id="startdate" data-post="startdate" data-json="STARTDATETIME" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="enddate">' + _("End Date") + '</label>',
-                '<span class="asm-has-validation">*</span>',
-                '</td>',
-                '<td><input id="enddate" data-post="enddate" data-json="ENDDATETIME" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="location">' + _("Location") + '</label>',
-                '</td>',
-                '<td><input type="hidden" id="location" class="asm-personchooser" data-type="organization" data-post="event" data-json="EVENTOWNERID" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="address">' + _("Address") +'</label>',
-                '<span class="asm-has-validation">*</span>',
-                '</td>',
-                '<td><textarea class="asm-textareafixed" id="address" data-post="address" data-json="EVENTADDRESS" rows="3"></textarea></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="town">' + _("City") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="100" id="town" data-post="town" data-json="EVENTTOWN" type="text" /></td>',
-                '</tr>',
-                '<tr id="statecounty">',
-                '<td><label for="county">' + _("State") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="100" id="county" data-post="county" data-json="EVENTCOUNTY" type="text" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="postcode" data-post="postcode" data-json="EVENTPOSTCODE" type="text" /></td>',
-                '</tr>',
-                '<tr id="countryrow">',
-                '<td><label for="country">' + _("Country") + '</label></td>',
-                '<td><input class="asm-textbox" id="country" data-post="country" data-json="EVENTCOUNTRY" type="text" /></td>',
-                '</tr>',
-                additional.additional_fields_linktype(controller.additional, 21),
-                '</table>',
-                '</div>', // col-sm
-                // right column
-                '<div class="col-sm">',
-                '<p><label for="description">' + _("Description") + '</label></p>',
-                '<div id="description" data-post="description" data-height="200px" data-margin-top="0px" data-json="EVENTDESCRIPTION" class="asm-richtextarea"></div>',
-                '</div>', // col-sm
-                '</div>', // row
+                tableform.fields_render([
+                    { post_field: "eventname", json_field: "EVENTNAME", type: "text", label: _("Event Name") },
+                    { post_field: "startdate", json_field: "STARTDATETIME", type: "date", label: _("Start Date") },
+                    { post_field: "enddate", json_field: "ENDDATETIME", type: "date", label: _("End Date") },
+                    { post_field: "location", json_field: "EVENTOWNERID", label: _("Location"), type: "person", persontype: "organization" },
+                    { post_field: "address", json_field: "EVENTADDRESS", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },
+                    { post_field: "town", json_field: "EVENTTOWN", label: _("City"), type: "text", maxlength: 100 },
+                    { post_field: "county", json_field: "EVENTCOUNTY", label: _("State"), type: "text", maxlength: 100 },
+                    { post_field: "postcode", json_field: "EVENTPOSTCODE", label: _("Zipcode"), type: "text", maxlength: 100 },
+                    { post_field: "country", json_field: "EVENTCOUNTRY", label: _("Country"), type: "text", maxlength: 100 }, 
+                    { type: "nextcol" },
+                    { post_field: "description", json_field: "EVENTDESCRIPTION", label: _("Description"), type: "richtextarea", 
+                        height: "200px", labelpos: "above" },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 21) },
+                ], { full_width: true }),
                 '</div>', // end accordion section
             ].join("\n");
         },
@@ -183,10 +139,13 @@ $(function(){
 
             // Dirty handling
             validate.bind_dirty([ "event_" ]);
+            validate.indicator(["startdate", "enddate", "address" ]);
+
         },
 
         destroy: function() {
             common.widget_destroy("#description", "richtextarea");
+            common.widget_destroy("#location", "personchooser");
         },
 
         name: "event",

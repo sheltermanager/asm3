@@ -1028,6 +1028,7 @@ const tableform = {
      *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
      *        personfilter: "all",   (only valid for person type)
+     *        persontype: "all",   (only valid for person type, other options individual or organization)
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), (note: done in fields_bind, not here)
      *        blur: function(blurevent), (note: done in fields_bind, not here)
@@ -1433,6 +1434,7 @@ const tableform = {
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
+        if (v.persontype) { d += "data-type=\"" + v.persontype + "\" "; }
         if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
         if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
         if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
@@ -1446,7 +1448,7 @@ const tableform = {
         tableform._check_id(v);
         if (!v.width) { v.width = "100%"; }
         if (!v.height) { v.height = "64px"; }
-        if (!v.margintop) { v.margintop = "24px"; }
+        if (!v.margintop) { v.margintop = "0px"; }
         d += "<div id=\"" + v.id + "\" ";
         d += tableform._render_class(v, "asm-richtextarea");
         d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" data-margin-top=\"" + v.margintop + "\" " ;

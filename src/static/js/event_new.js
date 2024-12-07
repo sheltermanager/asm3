@@ -6,7 +6,7 @@ $(function() {
 
     const event_new = {
 
-        render: function(){
+        render: function() {
             return [
                 '<div id="dialog-similar" style="display: none" title="' + html.title(_("Similar Event")) + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span>',
@@ -16,85 +16,44 @@ $(function() {
                 '</p>',
                 '</div>',
                 html.content_header(_("Add a new event")),
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td><label for="eventname">' + _("Event Name") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="50" id="eventname" data="eventname" type="text" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="description">' + _("Description") + '</label></td>',
-                '<td>',
-                '<div id="description" data="description" data-height="100px" data-margin-top="0px" class="asm-richtextarea"></div>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="startdate">' + _("Start Date") + '</label>',
-                '<span class="asm-has-validation">*</span>',
-                '</td>',
-                '<td><input id="startdate" data="startdate" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="enddate">' + _("End Date") + '</label>',
-                '<span class="asm-has-validation">*</span>',
-                '</td>',
-                '<td><input id="enddate" data="enddate" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="location">' + _("Location") + '</label>',
-                '</td>',
-                '<td><input type="hidden" id="location" class="asm-personchooser" data-type="organization" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="address">' + _("Address") +'</label>',
-                '<span class="asm-has-validation">*</span>',
-                '</td>',
-                '<td><textarea class="asm-textareafixed newform" id="address" data="address" rows="3"></textarea></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="town">' + _("City") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="town" data="town" type="text" /></td>',
-                '</tr>',
-                '<tr id="statecounty">',
-                '<td><label for="county">' + _("State") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="county" data="county" type="text" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="text" /></td>',
-                '</tr>',
-                '<tr id="countryrow">',
-                '<td><label for="country">' + _("Country") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="country" data="country" type="text" /></td>',
-                '</tr>',
-                additional.additional_new_fields(controller.additional),
-                '</table>',
-                '<p></p>',
-                '<div class="centered">',
-                '<button id="addedit">' + _("Create and edit") + '</button>',
-                '<button id="add">' + _("Create") + '</button>',
-                '<button id="reset">' + _("Reset") + '</button>',
-                '</div>',
+                tableform.fields_render([
+                    { post_field: "eventname", label: _("Event Name"), type: "text", maxlength: 50 },
+                    { post_field: "description", label: _("Description"), type: "richtextarea", height: "100px", width: "195px" },
+                    { post_field: "startdate", label: _("Start Date"), type: "date" },
+                    { post_field: "enddate", label: _("End Date"), type: "date" },
+                    { post_field: "location", label: _("Location"), type: "person", persontype: "organization" },
+                    { post_field: "address", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },
+                    { post_field: "town", label: _("City"), type: "text", maxlength: 100 },
+                    { post_field: "county", label: _("State"), type: "text", maxlength: 100 },
+                    { post_field: "postcode", label: _("Zipcode"), type: "text", maxlength: 100 },
+                    { post_field: "country", label: _("Country"), type: "text", maxlength: 100 },
+                    { type: "additional", markup: additional.additional_new_fields(controller.additional) }
+                ], { full_width: false }),
+                tableform.buttons_render([
+                   { id: "addedit", icon: "event-add", text: _("Create and edit") },
+                   { id: "add", icon: "event-add", text: _("Create") },
+                   { id: "reset", icon: "delete", text: _("Reset") }
+                ], { centered: true }),
                 html.content_footer()
             ].join("\n");
         },
 
-        bind: function(){
-            $("#reset").button().click(function(){
+        bind: function() {
+            $("#button-reset").button().click(function() {
                 event_new.reset();
             });
-            $("#add").button().click(function(){
+            $("#button-add").button().click(function() {
                 event_new.create_and_edit = false;
                 $("#asm-content button").button("disable");
                 check_for_similar();
             });
-            $("#addedit").button().click(function(){
+            $("#button-addedit").button().click(function() {
                 event_new.create_and_edit = true;
                 $("#asm-content button").button("disable");
                 check_for_similar();
             });
             //insert values to corresponding fields when a location is selected
-            $("#location").personchooser().bind("personchooserchange", function(event, rec){
+            $("#location").personchooser().bind("personchooserchange", function(event, rec) {
                 $("#address").val(html.decode(rec.OWNERADDRESS));
                 $("#town").val(html.decode(rec.OWNERTOWN));
                 $("#county").val(html.decode(rec.OWNERCOUNTY));
@@ -103,12 +62,12 @@ $(function() {
             });
 
             //insert value to the same date of the chosen Start date if End date field is empty
-            $("#startdate").bind("change", function(){
+            $("#startdate").bind("change", function() {
                 if($("#enddate").val() == "" && $("#startdate").val() != "")
                     $("#enddate").val($("#startdate").val());
             });
 
-            const check_for_similar = async function(){
+            const check_for_similar = async function() {
                 if(!event_new.validation()){
                     $("#asm-content button").button("enable");
                     return;
@@ -117,7 +76,7 @@ $(function() {
                 add_event();
             };
 
-            const add_event = async function(){
+            const add_event = async function() {
                 if(!event_new.validation())
                 {
                     $("#asm-content button").button("enable");
@@ -141,10 +100,13 @@ $(function() {
             $("#countryrow").toggle( !config.bool("HideCountry") );
             $("#statecounty").toggle( !config.bool("HideTownCounty") );
 
-
         },
 
-        validation: function(){
+        sync: function() {
+            validate.indicator(["startdate", "enddate", "address" ]);
+        },
+
+        validation: function() {
             header.hide_error();
             validate.reset();
             if(common.trim($("#startdate").val()) == ""){
@@ -167,12 +129,17 @@ $(function() {
             return true;
         },
 
-        reset: function(){
+        reset: function() {
             $(".asm-textbox").val("").change();
             $("#address").val("").change();
             $(".asm-personchooser").personchooser("clear");
             //init additional fields
             additional.reset_default(controller.additional);
+        },
+
+        destroy: function() {
+            common.widget_destroy("#description", "richtextarea");
+            common.widget_destroy("#location", "personchooser");
         },
 
         name: "event_new",
