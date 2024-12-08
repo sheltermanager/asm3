@@ -2,7 +2,7 @@ ASPCA: Transport Manifest
 ###
 Transport
 ###
-34202/PostgreSQL rev04
+34202/Any rev05
 ###
 Export to CSV for values you can copy into the ASPCA transport manifest spreadsheet
 ###
@@ -45,9 +45,9 @@ AnimalName AS "Animal Name",
 SpeciesName AS Species,
 BreedName as Breed,
 
-EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer / 365 AS "Age (in years)",
-MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer / 30, 12) AS "Age (in months)",
-MOD(EXTRACT(DAY FROM t.PickupDateTime-a.DateOfBirth)::integer, 30) / 7 AS "Age (in weeks)",
+$SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$ / 365 AS "Age (in years)",
+MOD($SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$ / 30, 12) AS "Age (in months)",
+MOD($SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$, 30) / 7 AS "Age (in weeks)",
 
 CASE 
 WHEN a.Sex = 0 AND a.Neutered=0 THEN 'F'
@@ -65,7 +65,7 @@ c.BaseColour AS "Color(s), Pattern, etc.",
 WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
 OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$) 
 ORDER BY DateOfVaccination DESC LIMIT 1) || ' ' ||
-(SELECT TO_CHAR(av.DateOfVaccination, 'MM/DD/YYYY') FROM animalvaccination av 
+(SELECT $SQL DATETOCHAR av.DateOfVaccination,MM/DD/YYYY$ FROM animalvaccination av 
 INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
 WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
 OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$) 
@@ -108,7 +108,7 @@ ELSE NULL END AS "Date Tested",
 (TreatmentName LIKE $HW1$ OR TreatmentName LIKE $HW2$ OR TreatmentName LIKE $HW3$
 OR TreatmentName LIKE $HW4$ OR TreatmentName LIKE $HW5$) 
 ORDER BY StartDate DESC LIMIT 1) || ' ' ||
-(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(SELECT $SQL DATETOCHAR StartDate,MM/DD/YYYY$ FROM animalmedical WHERE AnimalID=a.ID AND
 (TreatmentName LIKE $HW1$ OR TreatmentName LIKE $HW2$ OR TreatmentName LIKE $HW3$
 OR TreatmentName LIKE $HW4$ OR TreatmentName LIKE $HW5$) 
 ORDER BY StartDate DESC LIMIT 1) AS "HW Preventative",
@@ -119,7 +119,7 @@ a.IdentichipNumber AS "Microchip #",
 (TreatmentName LIKE $FLEA1$ OR TreatmentName LIKE $FLEA2$ OR TreatmentName LIKE $FLEA3$
 OR TreatmentName LIKE $FLEA4$ OR TreatmentName LIKE $FLEA5$) 
 ORDER BY StartDate DESC LIMIT 1) || ' ' ||
-(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(SELECT $SQL DATETOCHAR StartDate,MM/DD/YYYY$ FROM animalmedical WHERE AnimalID=a.ID AND
 (TreatmentName LIKE $FLEA1$ OR TreatmentName LIKE $FLEA2$ OR TreatmentName LIKE $FLEA3$
 OR TreatmentName LIKE $FLEA4$ OR TreatmentName LIKE $FLEA5$) 
 ORDER BY StartDate DESC LIMIT 1) AS "Flea/Tick Product",
@@ -127,18 +127,18 @@ ORDER BY StartDate DESC LIMIT 1) AS "Flea/Tick Product",
 (SELECT TreatmentName FROM animalmedical WHERE AnimalID=a.ID AND
 (TreatmentName LIKE $WORM1$ OR TreatmentName LIKE $WORM2$ OR TreatmentName LIKE $WORM3$ OR TreatmentName LIKE $WORM4$ OR TreatmentName LIKE $WORM5$) 
 ORDER BY StartDate DESC LIMIT 1) || ' ' ||
-(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(SELECT $SQL DATETOCHAR StartDate,MM/DD/YYYY$ FROM animalmedical WHERE AnimalID=a.ID AND
 (TreatmentName LIKE $WORM1$ OR TreatmentName LIKE $WORM2$ OR TreatmentName LIKE $WORM3$ OR TreatmentName LIKE $WORM4$ OR TreatmentName LIKE $WORM5$) 
 ORDER BY StartDate DESC LIMIT 1) AS "Primary dewormer",
 
 (SELECT TreatmentName FROM animalmedical WHERE AnimalID=a.ID AND
 (TreatmentName LIKE $OTHERW1$ OR TreatmentName LIKE $OTHERW2$ OR TreatmentName LIKE $OTHERW3$ OR TreatmentName LIKE $OTHERW4$ OR TreatmentName LIKE $OTHERW5$) 
 ORDER BY StartDate DESC LIMIT 1) || ' ' ||
-(SELECT TO_CHAR(StartDate, 'MM/DD/YYYY') FROM animalmedical WHERE AnimalID=a.ID AND
+(SELECT $SQL DATETOCHAR StartDate,MM/DD/YYYY$ FROM animalmedical WHERE AnimalID=a.ID AND
 (TreatmentName LIKE $OTHERW1$ OR TreatmentName LIKE $OTHERW2$ OR TreatmentName LIKE $OTHERW3$ OR TreatmentName LIKE $OTHERW4$ OR TreatmentName LIKE $OTHERW5$) 
 ORDER BY StartDate DESC LIMIT 1) AS "Other internal parasite treatment",
 
-TO_CHAR(CURRENT_DATE, 'MM/DD/YYYY') AS "Health Cert Date",
+$SQL DATETOCHAR CURRENT_DATE,MM/DD/YYYY$ AS "Health Cert Date",
 
 t.Comments AS Notes
 
