@@ -1214,7 +1214,9 @@ def scale_pdf_file(inputfile: str, outputfile: str) -> bool:
     """
     KNOWN_ERRORS = [ 
         # GS produces this with out of date libpoppler and Microsoft Print PDF
-        b"Can't find CMap Identity-UTF16-H building a CIDDecoding resource." 
+        b"Can't find CMap Identity-UTF16-H building a CIDDecoding resource.",
+        b"Error: Couldn't initialise file.",
+        b"circular reference to indirect object"
     ]
     code, output = asm3.utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
     for e in KNOWN_ERRORS:
