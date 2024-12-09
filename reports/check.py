@@ -62,6 +62,8 @@ def substitute(sql):
                     sub = f"julianday({sparams[0]})-julianday({sparams[1]}) || ' days'"
                 elif stype == "CONCAT":
                     sub = "||".join(sparams)
+                elif stype == "ILIKE":
+                    sub = f"LOWER({sparams[0]}) LIKE LOWER({sparams[1]})"
                 elif stype == "INTERVAL":
                     sub = f"datetime({sparams[0]}, '{sparams[1]}{sparams[2]} {sparams[3]}')"
                 elif stype == "DATEDIFF":

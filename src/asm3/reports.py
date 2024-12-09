@@ -1342,6 +1342,8 @@ class Report:
                         value = self.dbo.sql_age(sparams[0], sparams[1])
                     elif stype == "CONCAT":
                         value = self.dbo.sql_concat(sparams)
+                    elif stype == "ILIKE":
+                        value = self.dbo.sql_ilike(sparams[0], sparams[1])
                     elif stype == "INTERVAL":
                         value = self.dbo.sql_interval(sparams[0], sparams[2], sparams[1], sparams[3])
                     elif stype == "DATEDIFF":
