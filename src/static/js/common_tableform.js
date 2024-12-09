@@ -1397,6 +1397,7 @@ const tableform = {
     },
 
     render_markup: function(v) {
+        if (v.fullrow) { return '<tr><td colspan="2">' + v.markup + '</td></tr>'; }
         return tableform._render_formfield(v, v.markup);
     },
 
