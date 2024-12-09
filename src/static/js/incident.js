@@ -48,7 +48,7 @@ $(function() {
                         { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "select", label: _("State"), options: html.states_us_options(), rowclasses: "towncounty" },
                         { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "text", label: _("State"), maxlength: 100, rowclasses: "towncounty" }),
                     { post_field: "dispatchpostcode", json_field: "DISPATCHPOSTCODE", type: "text", label: _("Zipcode") },
-                    { post_field: "dispatchlatlong", json_field: "DISPATCHLATLONG", type: "text", label: _("Latitude/Longitude"),
+                    { post_field: "dispatchlatlong", json_field: "DISPATCHLATLONG", type: "text", label: _("Latitude/Longitude"), classes: "asm-latlong",
                         callout: _("Right-click on the map to change the marker location") },
                     { post_field: "pickuplocation", json_field: "PICKUPLOCATIONID", type: "select", label: _("Pickup Location"), 
                         options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations, prepend: '<option value="0"></option>'}},
