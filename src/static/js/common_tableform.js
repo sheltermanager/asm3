@@ -1510,6 +1510,7 @@ const tableform = {
         d += ">";
         if (v.options && v.options.rows) {
             if (v.options.prepend) { d += v.options.prepend; }
+            if (!v.options.valuefield) { v.options.valuefield = "ID"; } // assume ID if not given - is for most things
             d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
         }
         else if (v.options) {

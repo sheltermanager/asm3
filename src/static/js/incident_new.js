@@ -12,7 +12,7 @@ $(function() {
                 '<div id="incident-warnings"></div>',
                 tableform.fields_render([
                     { post_field: "incidenttype", type: "select", label: _("Type"), options: { displayfield: "INCIDENTNAME", rows: controller.incidenttypes }},
-                    { post_field: "viewroles", type: "select", label: _("View Roles"), 
+                    { post_field: "viewroles", type: "selectmulti", label: _("View Roles"), 
                         callout: _("Only allow users with one of these roles to view this incident"),
                         options: { displayfield: "ROLENAME", rows: controller.roles }},
                     { post_field: "incident", type: "datetime", label: _("Incident Date/Time"), halfsize: true }, 
