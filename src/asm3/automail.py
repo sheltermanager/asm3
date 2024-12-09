@@ -115,12 +115,12 @@ def _vaccination_followup_query(dbo: Database, cutoff: datetime) -> Results:
 
 def vaccination_followup(dbo: Database, user = "system") -> None:
     """
-    Finds all off site animals with a vaccination due in the next X days and sends the owner 
+    Finds all off site animals with a vaccination due in the next X days and sends the owner
     a followup email using the configured template.
     Filters out dead and returned animals.
     """
     l = dbo.locale
-    if not asm3.configuration.email_vaccination_followup(dbo): 
+    if not asm3.configuration.email_vaccination_followup(dbo):
         asm3.al.debug("EmailVaccinationFollowup option set to No", "automail.vaccination_followup", dbo)
         return
     days = asm3.configuration.email_vaccination_followup_days(dbo)

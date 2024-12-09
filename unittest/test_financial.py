@@ -80,7 +80,7 @@ class TestFinancial(unittest.TestCase):
     def test_get_licence(self):
         asm3.financial.get_licence(base.get_dbo(), 1)
 
-    def test_get_licenses(self):
+    def test_get_licences(self):
         asm3.financial.get_licences(base.get_dbo())
 
     def test_get_vouchers(self):
@@ -140,7 +140,7 @@ class TestFinancial(unittest.TestCase):
 
     def test_voucher_crud(self):
         data = {
-            "personid": "1",
+            "person": "1",
             "type": "1",
             "issued": base.today_display(),
             "expires": base.today_display(),

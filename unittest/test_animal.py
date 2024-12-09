@@ -1,7 +1,6 @@
 
 import unittest
 import base
-
 import asm3.animal
 import asm3.utils
 
