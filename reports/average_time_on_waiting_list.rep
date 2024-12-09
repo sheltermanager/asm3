@@ -43,19 +43,19 @@ Average Time On Waiting List
 ###
 Statistics
 ###
-PostgreSQL rev02
+Any rev03
 ###
 Average time animals spend on the waiting list for each year.
 ###
 en
 ###
 SELECT
-CAST(EXTRACT(YEAR FROM DatePutOnList) AS INTEGER) AS biyear,
-CAST(AVG(EXTRACT(DAY FROM DateRemovedFromList - DatePutOnList)) AS INTEGER) AS avtimeonlist
+$SQL YEAR DatePutOnList$ AS biyear,
+ROUND(AVG($SQL DATEDIFF DateRemovedFromList,DatePutOnList$)) AS avtimeonlist
 FROM animalwaitinglist
 WHERE DateRemovedFromList Is Not Null
-GROUP BY EXTRACT(YEAR FROM DatePutOnList)
-ORDER BY CAST(AVG(EXTRACT(DAY FROM DateRemovedFromList - DatePutOnList)) AS INTEGER) DESC
+GROUP BY $SQL YEAR DatePutOnList$
+ORDER BY avtimeonlist DESC
 ###
 $$HEADER
 <table border=1>
