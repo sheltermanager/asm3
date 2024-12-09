@@ -23,7 +23,7 @@ Average Time On Shelter By Breed
 ###
 Movement Charts
 ###
-33018/PostgreSQL rev01
+33018/Any rev02
 ###
 Average time spent on shelter for all animals by year and breed.
 ###
@@ -31,12 +31,12 @@ en
 ###
 SELECT
 BreedName,
-CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
-CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
+$SQL YEAR DateBroughtIn$ AS biyear,
+ROUND(AVG(DaysOnShelter)) AS avtimeonshelter
 FROM animal
 WHERE DaysOnShelter > 0
 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
-GROUP BY BreedName, EXTRACT(YEAR FROM DateBroughtIn)
-ORDER BY BreedName, EXTRACT(YEAR FROM DateBroughtIn)
+GROUP BY BreedName, $SQL YEAR DateBroughtIn$
+ORDER BY BreedName, biyear
 ###
 GRAPH LINES

@@ -1824,7 +1824,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
         sql += role(6, _("System Admin", l), "asm *cso *cpo *maf *mdt *ml *usi *rdbu *rdbd *asu *esu *ccr *vcr *hcr *dcr *tbp *excr *eav *icv *")
         sql += role(7, _("Marketer", l), "uipb *mmeo *emo *mmea *eof *vof *")
         sql += role(8, _("Investigator", l), "aoi *coi *doi *voi *")
-        sql += role(9, _("Animal Control Officer", l), "aaci *caci *vaci *aacc *cacc *dacc *vacc *emo *")
+        sql += role(9, _("Animal Control Officer", l), "aaci *caci *vaci *aacc *cacc *dacc *vacc *emo *cacd *cacr *")
         sql += "INSERT INTO userrole VALUES (2, 1)|=\n"
         sql += config("DBV", str(LATEST_VERSION))
         sql += config("DatabaseVersion", str(LATEST_VERSION))

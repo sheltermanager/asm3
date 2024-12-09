@@ -2,7 +2,7 @@ Average Time On Shelter By Date and Species
 ###
 Statistics
 ###
-33018/PostgreSQL rev02
+33018/Any rev03
 ###
 Average time spent on shelter for all animals by species and date.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT
 SpeciesName,
-CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
+ROUND(AVG(DaysOnShelter)) AS avtimeonshelter
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE DaysOnShelter > 0 

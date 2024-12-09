@@ -24,7 +24,7 @@ Average Time On Shelter By Species
 ###
 Movement Charts
 ###
-33018/PostgreSQL rev01
+33018/Any rev02
 ###
 Average time spent on shelter for all animals by year and species.
 ###
@@ -32,13 +32,13 @@ en
 ###
 SELECT
 SpeciesName,
-CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
-CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
+$SQL YEAR DateBroughtIn$ AS biyear,
+ROUND(AVG(DaysOnShelter)) AS avtimeonshelter
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE DaysOnShelter > 0
 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
-GROUP BY SpeciesName, EXTRACT(YEAR FROM DateBroughtIn)
-ORDER BY SpeciesName, EXTRACT(YEAR FROM DateBroughtIn)
+GROUP BY SpeciesName, $SQL YEAR DateBroughtIn$
+ORDER BY SpeciesName, biyear
 ###
 GRAPH LINES
