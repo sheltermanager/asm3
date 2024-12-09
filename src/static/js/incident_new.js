@@ -10,120 +10,38 @@ $(function() {
             return [
                 html.content_header(_("Report a new incident")),
                 '<div id="incident-warnings"></div>',
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td><label for="incidenttype">' + _("Type") + '</label></td>',
-                '<td><select id="incidenttype" data-post="incidenttype" class="asm-selectbox">',
-                html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME"),
-                '</td>',
-                '</tr>',
-                '<tr id="viewrolesrow">',
-                '<td><label for="viewroles">' + _("View Roles") + '</label>',
-                '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with one of these roles to view this incident") + '</span>',
-                '</td>',
-                '<td><select id="viewroles" data-post="viewroles" class="asm-bsmselect" multiple="multiple">',
-                html.list_to_options(controller.roles, "ID", "ROLENAME"),
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="incidentdate">' + _("Incident Date/Time") + '</label></td>',
-                '<td><input id="incidentdate" data-post="incidentdate" class="asm-halftextbox asm-datebox" />',
-                '<input id="incidenttime" data-post="incidenttime" class="asm-halftextbox asm-timebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="callnotes">' + _("Notes") + '</label></td>',
-                '<td><textarea id="callnotes" data-post="callnotes" class="asm-textarea" rows="3"></textarea></td>',
-                '</tr>',
-                '<tr>',
-                '<tr>',
-                '<td><label for="calldate">' + _("Call Date/Time") + '</label></td>',
-                '<td><input id="calldate" data-post="calldate" class="asm-halftextbox asm-datebox" />',
-                '<input id="calltime" data-post="calltime" class="asm-halftextbox asm-timebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="calltaker">' + _("Taken By") + '</label></td>',
-                '<td><select id="calltaker" data-post="calltaker" class="asm-selectbox">',
-                '<option> </option>',
-                html.list_to_options(controller.users, "USERNAME", "USERNAME"),
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>' + _("Caller") + '</td>',
-                '<td>',
-                '<input id="caller" data-post="caller" type="hidden" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>' + _("Victim") + '</td>',
-                '<td>',
-                '<input id="victim" data-post="victim" type="hidden" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>' + _("Suspect") + '</td>',
-                '<input id="owner" data-post="owner" type="hidden" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="dispatchaddress">' + _("Dispatch Address") + '</label></td>',
-                '<td>',
-                '<textarea id="dispatchaddress" title="' + html.title(_("Address")) + '" data-post="dispatchaddress" rows="5" class="asm-textareafixed"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr class="towncounty">',
-                '<td><label for="dispatchtown">' + _("City") + '</label></td>',
-                '<td>',
-                '<input type="text" id="dispatchtown" data-post="dispatchtown" maxlength="100" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr class="towncounty">',
-                '<td><label for="dispatchcounty">' + _("State") + '</label></td>',
-                '<td>',
-                common.iif(config.bool("USStateCodes"),
-                    '<select id="dispatchcounty" data-post="dispatchcounty" class="asm-selectbox">' +
-                    html.states_us_options(config.str("OrganisationCounty")) + '</select>',
-                    '<input type="text" id="dispatchcounty" data-post="dispatchcounty" maxlength="100" ' + 
-                    'class="asm-textbox" />'),
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="dispatchpostcode">' + _("Zipcode") + '</label></td>',
-                '<td>',
-                '<input type="text" id="dispatchpostcode" data-post="dispatchpostcode" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="pickuplocation">' + _("Pickup Location") + '</label></td>',
-                '<td><select id="pickuplocation" data-post="pickuplocation" class="asm-selectbox">',
-                '<option value="0"></option>',
-                html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr id="jurisdictionrow">',
-                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
-                '<td>',
-                '<select id="jurisdiction" data="jurisdiction" class="asm-selectbox">',
-                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr id="siterow">',
-                '<td><label for="site">' + _("Site") + '</label></td>',
-                '<td>',
-                '<select id="site" data="site" class="asm-selectbox">',
-                '<option value="0">' + _("(all)") + '</option>',
-                html.list_to_options(controller.sites, "ID", "SITENAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                additional.additional_new_fields(controller.additional),
-                '</table>',
-                '<div class="centered">',
-                '<input type="hidden" data-post="species" value="' + config.integer("AFDefaultSpecies") + '" />',
-                '<button id="addedit">' + html.icon("call") + ' ' + _("Create and edit") + '</button>',
-                '<button id="add">' + html.icon("call") + ' ' + _("Create") + '</button>',
-                '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
-                '</div>',
+                tableform.fields_render([
+                    { post_field: "incidenttype", type: "select", label: _("Type"), options: { displayfield: "INCIDENTNAME", rows: controller.incidenttypes }},
+                    { post_field: "viewroles", type: "select", label: _("View Roles"), 
+                        callout: _("Only allow users with one of these roles to view this incident"),
+                        options: { displayfield: "ROLENAME", rows: controller.roles }},
+                    { post_field: "incident", type: "datetime", label: _("Incident Date/Time"), halfsize: true }, 
+                    { post_field: "callnotes", type: "textarea", label: _("Notes"), rows: 3, classes: "asm-textareafixed" },
+                    { post_field: "call", type: "datetime", label: _("Call Date/Time"), halfsize: true }, 
+                    { post_field: "calltaker", type: "select", label: _("Taken By"), options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users}},
+                    { post_field: "caller", type: "person", label: _("Caller"), colclasses: "bottomborder" },
+                    { post_field: "victim", type: "person", label: _("Victim"), colclasses: "bottomborder" },
+                    { post_field: "owner", type: "person", label: _("Suspect") },
+                    { post_field: "dispatchaddress", type: "textarea", label: _("Dispatch Address"), rows: 5, classes: "asm-textareafixed" },
+                    { post_field: "dispatchtown", type: "text", label: _("City"), maxlength: 100 },
+                    common.iif(config.bool("USStateCodes"),
+                        { post_field: "dispatchcounty", type: "select", label: _("State"), options: html.states_us_options(config.str("OrganisationCounty")) },
+                        { post_field: "dispatchcounty", type: "text", label: _("State"), maxlength: 100 }),
+                    { post_field: "dispatchpostcode", type: "text", label: _("Zipcode") },
+                    { post_field: "pickuplocation", type: "select", label: _("Pickup Location"), 
+                        options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations, prepend: '<option value="0"></option>'}},
+                    { post_field: "jurisdiction", type: "select", label: _("Jurisdiction"), 
+                        options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
+                    { post_field: "site", type: "select", label: _("Site"), 
+                        options: { displayfield: "SITENAME", rows: controller.sites, prepend: '<option value="0">' + _("(all)") + '</option>' }},
+                    { type: "additional", markup: additional.additional_new_fields(controller.additional) },
+                    { type: "raw", markup: '<input type="hidden" data-post="species" value="' + config.integer("AFDefaultSpecies") + '" />' }
+                ], { full_width: false }),
+                tableform.buttons_render([
+                   { id: "addedit", icon: "call", text: _("Create and edit") },
+                   { id: "add", icon: "call", text: _("Create") },
+                   { id: "reset", icon: "delete", text: _("Reset") }
+                ], { centered: true }),
                 html.content_footer()
             ].join("\n");
         },
@@ -160,20 +78,28 @@ $(function() {
                 }
             };
 
-            validate.indicator([ "incidentdate", "calldate" ]);
-
-            $("#add").button().click(function() {
+            $("#button-add").button().click(function() {
                 $("#asm-content button").button("disable");
                 add_incident("add");
             });
 
-            $("#addedit").button().click(function() {
+            $("#button-addedit").button().click(function() {
                 $("#asm-content button").button("disable");
                 add_incident("addedit");
             });
 
-            $("#reset").button().click(function() {
+            $("#button-reset").button().click(function() {
                 incident_new.reset();
+            });
+
+            $("#caller").personchooser().bind("personchooserchange", function(event, rec) { 
+                // Default dispatch to the caller address if it's not set
+                if (!$("#dispatchaddress").val()) {
+                    $("#dispatchaddress").val(rec.OWNERADDRESS);
+                    $("#dispatchtown").val(rec.OWNERTOWN);
+                    $("#dispatchcounty").val(rec.OWNERCOUNTY);
+                    $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
+                }
             });
 
             $("#owner").personchooser().bind("personchooserchange", async function(event, rec) {
@@ -181,6 +107,13 @@ $(function() {
                 $("#incident-warnings").empty();
                 if (rec.ISDANGEROUS) {
                     $("#incident-warnings").html(html.error(_("This suspect has been flagged as dangerous")));
+                }
+                // Default dispatch to the suspect address if not set
+                if (!$("#dispatchaddress").val()) {
+                    $("#dispatchaddress").val(rec.OWNERADDRESS);
+                    $("#dispatchtown").val(rec.OWNERTOWN);
+                    $("#dispatchcounty").val(rec.OWNERCOUNTY);
+                    $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
                 }
             });
 
@@ -207,6 +140,7 @@ $(function() {
 
         sync: function() {
             incident_new.reset();
+            validate.indicator([ "incident", "call" ]);
         },
 
         destroy: function() {
