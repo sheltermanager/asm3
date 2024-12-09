@@ -2,7 +2,7 @@ Average Time On Foster By Date and Species
 ###
 Statistics
 ###
-2721/PostgreSQL rev02
+2721/Any rev03
 ###
 Average time spent on foster for all animals by species and date.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT
 SpeciesName,
-CAST(AVG(CASE WHEN ReturnDate is null THEN EXTRACT(DAY from now() - MovementDate) ELSE EXTRACT(DAY from ReturnDate - MovementDate) END) AS INTEGER) AS avtimeonfoster
+ROUND(AVG(CASE WHEN ReturnDate IS NULL THEN $SQL DATEDIFF CURRENT_DATE,MovementDate$ ELSE $SQL DATEDIFF ReturnDate,MovementDate$ END)) AS avTimeonfoster
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN species ON species.ID = animal.SpeciesID
