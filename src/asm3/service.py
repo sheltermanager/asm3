@@ -464,7 +464,7 @@ def strip_personal_data(rows: Results) -> Results:
                         r[k] = ""
     return rows
 
-def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str) -> ServiceResponse:
+def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, dbo: Database = None) -> ServiceResponse:
     """ Handles the various service method types.
     post:        The GET/POST parameters
     path:        The current system path/code.PATH
@@ -472,6 +472,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     referer:     The referer HTTP header
     useragent:   The user-agent HTTP header
     querystring: The complete querystring
+    dbo:         Used by unit test callers in order to bypass authentication and use a known database
     return value is a tuple containing MIME type, clientcachettl, edgecachettl, content
     """
     # Get service parameters
@@ -507,21 +508,22 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     if method in FLOOD_PROTECT_METHODS:
         flood_protect(method, remoteip)
 
-    dbo = asm3.db.get_database(account)
+    if not dbo:
+        dbo = asm3.db.get_database(account)
 
-    if dbo.database in asm3.db.ERROR_VALUES:
-        asm3.al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
-        return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
+        if dbo.database in asm3.db.ERROR_VALUES:
+            asm3.al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
 
-    # If the database has disabled the service API, stop now
-    if not asm3.configuration.service_enabled(dbo):
-        asm3.al.error("Service API is disabled (%s)" % method, "service.handler", dbo)
-        return ("text/plain", 0, 0, "ERROR: Service API is disabled")
+        # If the database has disabled the service API, stop now
+        if not asm3.configuration.service_enabled(dbo):
+            asm3.al.error("Service API is disabled (%s)" % method, "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Service API is disabled")
 
-    # Do any database updates need doing in this db?
-    dbo.installpath = path
-    if asm3.dbupdate.check_for_updates(dbo):
-        asm3.dbupdate.perform_updates(dbo)
+        # Do any database updates need doing in this db?
+        dbo.installpath = path
+        if asm3.dbupdate.check_for_updates(dbo):
+            asm3.dbupdate.perform_updates(dbo)
 
     # Does the method require us to authenticate? If so, do it.
     user = None

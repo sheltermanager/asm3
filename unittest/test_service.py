@@ -73,4 +73,4 @@ class TestService(unittest.TestCase):
             for i in items:
                 k, v = i.split("=")
                 d[k] = v
-            asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla",  q)
+            asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla",  q, dbo)
