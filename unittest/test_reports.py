@@ -1,7 +1,7 @@
 
 import unittest
 import base
-import web
+import web062 as web
 
 import asm3.reports
 import asm3.utils

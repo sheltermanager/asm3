@@ -1,7 +1,7 @@
 
 import unittest
 import base, base64
-import web.utils
+import web062 as web
 
 import asm3.search
 
