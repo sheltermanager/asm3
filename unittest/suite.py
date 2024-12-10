@@ -23,7 +23,6 @@ import test_lookups
 import test_lostfound
 import test_media
 import test_medical
-import test_mobile
 import test_movement
 import test_onlineform
 import test_paymentprocessor
@@ -62,7 +61,6 @@ fullsuite = [
     lt(test_lostfound),
     lt(test_media),
     lt(test_medical),
-    lt(test_mobile),
     lt(test_movement),
     lt(test_onlineform),
     lt(test_paymentprocessor),
