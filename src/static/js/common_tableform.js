@@ -1072,6 +1072,7 @@ const tableform = {
             else if (v.type == "file") { d += tableform.render_file(v); }
             else if (v.type == "htmleditor") { d += tableform.render_htmleditor(v); }
             else if (v.type == "intnumber") { d += tableform.render_intnumber(v); }
+            else if (v.type == "latlong") { d += tableform.render_latlong(v); }
             else if (v.type == "number") { d += tableform.render_number(v); }
             else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
@@ -1392,6 +1393,24 @@ const tableform = {
         if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
         if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
+        if (v.xmarkup) { d += v.xmarkup; }
+        return tableform._render_formfield(v, d);
+    },
+
+    render_latlong: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-latlong");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.autocomplete) { d += "autocomplete=\"" + v.autocomplete + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
