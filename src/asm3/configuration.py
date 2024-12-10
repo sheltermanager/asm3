@@ -510,7 +510,7 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
         if k in ("AdoptionCheckoutDonationMsg", "EmailSignature", "FostererEmailsMsg"):
             # It's HTML - don't XSS escape it
             put(k, v, sanitiseXSS = False)
-        if k in ("OrganisationAddress", "OrganisationTown", "OrganisationCounty", "OrganisationPostcode"):
+        elif k in ("OrganisationAddress", "OrganisationTown", "OrganisationCounty", "OrganisationPostcode"):
             if k not in cmap or cmap[k] != v:
                 address_changed = True
                 put(k ,v)
