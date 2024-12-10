@@ -34,7 +34,6 @@ import asm3.lookups
 import asm3.lostfound
 import asm3.media
 import asm3.medical
-import asm3.mobile
 import asm3.movement
 import asm3.onlineform
 import asm3.paymentprocessor.base
@@ -990,15 +989,6 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             asm3.media.set_excluded(o.dbo, o.user, mid, 1)
 
-class mobile(ASMEndpoint):
-    url = "mobile"
-    login_url = "mobile_login"
-
-    def content(self, o):
-        # this endpoint will be deprecated 1 Nov 2024
-        self.content_type("text/html")
-        return asm3.mobile.page(o.dbo, o, o.user)
-
 class mobile2(ASMEndpoint):
     url = "mobile2"
     login_url = "mobile_login"
@@ -1274,26 +1264,6 @@ class mobile_photo_upload(ASMEndpoint):
             asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
             asm3.media.delete_media(o.dbo, o.user, mid)
         return "OK"
-
-class mobile_post(ASMEndpoint):
-    url = "mobile_post"
-    login_url = "mobile_login"
-
-    def handle(self, o):
-        s = asm3.mobile.handler(o, o.post)
-        if s is None:
-            raise asm3.utils.ASMValidationError("mobile handler failed.")
-        elif s.startswith("GO "):
-            self.redirect(s[3:])
-        else:
-            self.content_type("text/html")
-            return s
-
-    def content(self, o):
-        return self.handle(o)
-
-    def post_all(self, o):
-        return self.handle(o)
 
 class mobile_report(ASMEndpoint):
     url = "mobile_report"
