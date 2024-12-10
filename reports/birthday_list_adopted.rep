@@ -67,7 +67,7 @@ Birthday List (Adopted)
 ###
 Auditing
 ###
-PostgreSQL rev03
+Any rev04
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -93,8 +93,8 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE adoption.ReturnDate Is Not Null
 AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
-AND EXTRACT(MONTH FROM animal.DateOfBirth)::INTEGER = $@monthno$
-ORDER BY EXTRACT(DAY FROM animal.DateOfBirth)::INTEGER
+AND $SQL MONTH animal.DateofBirth$ = $@monthno$
+ORDER BY $SQL MONTH animal.DateofBirth$
 ###
 $$HEADER
 <table border=1>

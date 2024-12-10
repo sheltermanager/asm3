@@ -2,7 +2,7 @@ Boehringer-Ingelheim Adopter List
 ###
 Figures
 ###
-3000/PostgreSQL rev03
+3000/Any rev04
 ###
 BI adopter list for export as CSV
 ###
@@ -24,10 +24,10 @@ a.IdentichipNumber AS microchip_ID,
 (SELECT SpeciesName FROM species WHERE ID=a.SpeciesID) AS species,
 CASE WHEN a.Sex=0 THEN 'F' ELSE 'M' END AS pet_sex,
 CASE WHEN a.Neutered=1 THEN 'Y' ELSE 'N' END AS spay_neuter,
-TO_CHAR(a.DateOfBirth, 'MM/DD/YYYY') AS pet_birthdate,
+$SQL DATETOCHAR a.DateOfBirth,MM/DD/YYYY$ AS pet_birthdate,
 (SELECT BreedName FROM breed WHERE ID=a.BreedID) AS primary_breed,
 (SELECT BreedName FROM breed WHERE ID=a.Breed2ID) AS secondary_breed,
-TO_CHAR(a.ActiveMovementDate, 'MM/DD/YYYY') AS transaction_date,
+$SQL DATETOCHAR a.ActiveMovementDate,MM/DD/YYYY$ AS transaction_date,
 'Y' AS opt_in,
 '1' AS lowercaseheader
 FROM animal a
