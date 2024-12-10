@@ -1329,7 +1329,7 @@ class Report:
                 value = ""
             # SQL tag
             if token.startswith("SQL"):
-                elems = token.split(" ")
+                elems = token.split(" ", 2)
                 if len(elems) == 3:
                     stype = elems[1]
                     # Substitute any PARENTARGX values in our parameters
