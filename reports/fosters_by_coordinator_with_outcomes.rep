@@ -2,7 +2,7 @@ Fosters by Coordinator with Outcomes
 ###
 Movements
 ###
-PostgreSQL rev02
+Any rev03
 ###
 Foster animals between two dates with their final outcomes grouped by adoption coordinator
 ###
@@ -12,8 +12,8 @@ SELECT
 a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth,
 e.ReasonName, o.OwnerName, o.ID AS OID, m.MovementDate, m.ReturnDate, 
 o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
-EXTRACT(DAY FROM m.ReturnDate - m.MovementDate)::integer AS DaysOnFoster,
-age(m.MovementDate, m.ReturnDate)::text AS TimeOnFoster,
+$SQL DATEDIFF m.ReturnDate,m.MovementDate$ AS DaysOnFoster, 
+$SQL AGE m.ReturnDate,m.MovementDate$ AS TimeOnFoster,
 a.NeuteredDate,
 (SELECT OwnerName FROM owner WHERE owner.ID = a.AdoptionCoordinatorID) AS CoordinatorName,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,

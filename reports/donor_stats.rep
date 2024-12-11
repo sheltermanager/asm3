@@ -2,7 +2,7 @@ Donor Stats
 ###
 Financial
 ###
-PostgreSQL rev01
+Any rev02
 ###
 Donor stats, including number of donors, active donors, LYBUNTS, SYBUNTS, avg gift and retention
 ###
@@ -18,17 +18,17 @@ SELECT
 -- Anyone who donated in the last year is an active donor
 
 (SELECT COUNT(ID) FROM owner WHERE IsDonor=1
-AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > CURRENT_DATE - INTERVAL '365 days')) AS ActiveDonors,
+AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > $SQL INTERVAL CURRENT_DATE,-,365,days$)) AS ActiveDonors,
 
 -- LYBUNTS - people who gave last year, but not this year so far
 (SELECT COUNT(ID) FROM owner WHERE IsDonor=1
-AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date >= CURRENT_DATE - INTERVAL '1 year')
-AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date < CURRENT_DATE - INTERVAL '1 year')) AS LYBUNTS,
+AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date >= $SQL INTERVAL CURRENT_DATE,-,1,year$)
+AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date < $SQL INTERVAL CURRENT_DATE,-,1,year$)) AS LYBUNTS,
 
 -- SYBUNTS - people who last donated more than 365 days ago
 (SELECT COUNT(ID) FROM owner WHERE IsDonor=1
 AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID)
-AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date <= CURRENT_DATE - INTERVAL '365 days')) AS SYBUNTS,
+AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date <= $SQL INTERVAL CURRENT_DATE,-,365,days$)) AS SYBUNTS,
 
 -- Average gift
 (SELECT AVG(Donation) FROM ownerdonation INNER JOIN owner ON owner.ID = ownerdonation.OwnerID WHERE IsDonor=1) AS MoneyAverageGift,
@@ -37,13 +37,13 @@ AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date <= CUR
 (SELECT ROUND(
 
  	(SELECT COUNT(ID) FROM owner WHERE IsDonor=1
-		AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > CURRENT_DATE - INTERVAL '365 days'))::real
+		AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > $SQL INTERVAL CURRENT_DATE,-,365,days$))
 
     /
 
     (SELECT COUNT(ID) FROM owner WHERE IsDonor=1
-		AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date >= CURRENT_DATE - INTERVAL '1 year')
-		AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date < CURRENT_DATE - INTERVAL '1 year'))::real
+		AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date >= $SQL INTERVAL CURRENT_DATE,-,1,year$)
+		AND EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date < $SQL INTERVAL CURRENT_DATE,-,1,year$))
 
     * 100.0)) AS Retention
 ###

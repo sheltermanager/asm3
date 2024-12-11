@@ -2,7 +2,7 @@ Grey Muzzles Grant
 ###
 Figures
 ###
-3000/PostgreSQL rev02
+3000/Any rev03
 ###
 Figures needed to complete the grey muzzle grant application
 ###
@@ -26,7 +26,7 @@ SELECT
  (SELECT COUNT(*) FROM animal
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
  AND SpeciesID = 1 
- AND DateOfBirth < DateBroughtIn - INTERVAL '7 years'
+ AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,7,years$
  AND NonShelterAnimal = 0 AND Archived = 0) AS SeniorDogsIntake,
  
  (SELECT COUNT(*) FROM animal
