@@ -971,9 +971,37 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             if token != post["token"]: raise asm3.utils.ASMError("invalid token")
             return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid, post["email"]))
         else:
+            m = asm3.media.get_media_by_id(dbo, formid)
             signdate = "%s %s" % (python2display(l, dbo.now()), format_time(dbo.now()))
             asm3.media.sign_document(dbo, "service", formid, post["sig"], signdate, "signemail")
             asm3.media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
+
+            if asm3.configuration.email_adoptioncoordinator_on_document_signed(dbo):
+                adoptioncoordinator = dbo.query("SELECT owner.EmailAddress FROM media " \
+                    "INNER JOIN animal ON media.LinkID = animal.ID AND media.LinkTypeID = 0 " \
+                    "INNER JOIN owner ON animal.AdoptionCoordinatorID = owner.ID " \
+                    "WHERE media.ID = ? AND owner.EmailAddress != ''", [formid,])
+                if len(adoptioncoordinator) == 1:
+                    content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
+                    contentpdf = asm3.utils.html_to_pdf(dbo, content)
+                    attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
+                    fromaddr = asm3.configuration.email(dbo)
+                    asm3.utils.send_email(dbo, fromaddr, adoptioncoordinator[0].EMAILADDRESS, "", "", _("Signed Document", l), m.MEDIANOTES, "plain", attachments)
+                else:
+                    mediadata = dbo.query("SELECT DBFSID FROM media WHERE ID = " + str(formid))
+                    if len(mediadata) > 0:
+                        dbfsid = mediadata[0].DBFSID
+                        connectedrecords = dbo.query("SELECT owner.EmailAddress FROM media " \
+                            "INNER JOIN animal ON media.LinkID = animal.ID AND media.LinkTypeID = 0 " \
+                            "INNER JOIN owner ON animal.AdoptionCoordinatorID = owner.ID " \
+                            "WHERE media.DBFSID = ? AND owner.EmailAddress != ''", [dbfsid,])
+                        if len(connectedrecords) == 1:
+                            content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
+                            contentpdf = asm3.utils.html_to_pdf(dbo, content)
+                            attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
+                            fromaddr = asm3.configuration.email(dbo)
+                            asm3.utils.send_email(dbo, fromaddr, connectedrecords[0].EMAILADDRESS, "", "", _("Signed Document", l), m.MEDIANOTES, "plain", attachments)
+
             if post.boolean("sendsigned"):
                 m = asm3.media.get_media_by_id(dbo, formid)
                 if m is None: raise asm3.utils.ASMError("cannot find %s" % formid)

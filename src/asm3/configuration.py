@@ -164,6 +164,7 @@ DEFAULTS = {
     "DisableOnlineForms": "No",
     "DisableRetailer": "No",
     "DocumentWordProcessor": "HTML",
+    "DocumentSignedNotifyCoordinator": "No",
     "DonationDateOverride": "No",
     "DonationFees": "Yes",
     "DonationQuantities": "No",
@@ -1009,6 +1010,9 @@ def email_adopter_followup_species(dbo: Database) -> str:
 
 def email_adopter_followup_template(dbo: Database) -> int:
     return cint(dbo, "EmailAdopterFollowupTemplate", DEFAULTS["EmailAdopterFollowupTemplate"])
+
+def email_adoptioncoordinator_on_document_signed(dbo: Database) -> bool:
+    return cboolean(dbo, "DocumentSignedNotifyCoordinator", DEFAULTS["DocumentSignedNotifyCoordinator"])
 
 def email_vaccination_followup(dbo: Database) -> bool:
     return cboolean(dbo, "EmailVaccinationFollowup", DEFAULTS["EmailVaccinationFollowup"] == "Yes")

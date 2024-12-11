@@ -989,6 +989,7 @@ $(function() {
                 '<input data="JSWindowPrint" id="jswprint" class="asm-checkbox" type="checkbox" /> <label for="jswprint">' + _("Printing word processor documents uses hidden iframe and window.print") + '</label><br />',
                 '<input data="PDFInline" id="pdfinline" class="asm-checkbox" type="checkbox" /> <label for="pdfinline">' + _("Show PDF files inline instead of sending them as attachments") + '</label><br />',
                 '<input data="IncludeIncompleteMedicalDoc" id="includeincompletemedical" type="checkbox" class="asm-checkbox" /> <label for="includeincompletemedical">' + _("Include incomplete medical records when generating document templates") + '</label><br />',
+                '<input data="DocumentSignedNotifyCoordinator" id="notifycoordicatorondocsign" type="checkbox" class="asm-checkbox" /> <label for="notifycoordicatorondocsign">' + _("Notify adoption coordinator when documents are signed") + '</label><br />',
                 '<input data="GenerateDocumentLog" id="generatedocumentlog" type="checkbox" class="asm-checkbox" /> <label for="generatedocumentlog">' + _("When I generate a document, make a note of it in the log with this type") + '</label>',
                 '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
