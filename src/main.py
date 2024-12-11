@@ -2334,7 +2334,13 @@ class animal_observations(JSONEndpoint):
         nocreated = 0
         for row in o.post["logs"].split("^^"):
             animalid, msg = row.split("==")
-            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, asm3.utils.atoi(animalid), o.post.integer("logtype"), msg)
+            strippedmsg = ""
+            for ob in msg.split(", "):
+                if ob.split("=")[1] != "":
+                    if strippedmsg != "": strippedmsg += ", "
+                    strippedmsg += ob
+
+            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, asm3.utils.atoi(animalid), o.post.integer("logtype"), strippedmsg)
             nocreated += 1
         return str(nocreated)
 

@@ -784,6 +784,9 @@ $(function() {
                 '<select data="BehaveLogType" id="behavelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select></p>',
+
+                '<p align=center><label for="suppressblankobservationsinlog">' + _("Suppress blank observations in the log") + '</label><input data="SuppressBlankObservationsInLog" id="suppressblankobservationsinlog" class="asm-currencybox asm-checkbox" type="checkbox" /></p>',
+
                 '<table>',
                 '<tr><th>' + _("Name") + '</th><th>' + _("Values") + '</th></tr>',
                 obsrow(1),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-12-11 14:06+0000\n"
+"POT-Creation-Date: 2024-12-11 15:06+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1667,7 +1667,7 @@ msgid ""
 "that aren't already in the database will be created during the import."
 msgstr ""
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js
 msgid "Any information about the animal"
 msgstr ""
 
@@ -1735,11 +1735,11 @@ msgstr ""
 msgid "Area Postcode"
 msgstr ""
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js
 msgid "Area where the animal was found"
 msgstr ""
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js
 msgid "Area where the animal was lost"
 msgstr ""
 
@@ -3428,10 +3428,6 @@ msgstr ""
 msgid "Cost per Treatment"
 msgstr ""
 
-#: move_reclaim.js
-msgid "Cost record"
-msgstr ""
-
 #: roles.js header_edit_header.js options.js
 msgid "Costs"
 msgstr ""
@@ -4633,10 +4629,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Domestic Short Hair"
-msgstr ""
-
-#: move_reclaim.js
-msgid "Don't create a cost record"
 msgstr ""
 
 #: event_animals.js
@@ -13389,6 +13381,10 @@ msgid ""
 "ShelterLocation=2'"
 msgstr ""
 
+#: options.js
+msgid "Suppress blank observations in the log"
+msgstr ""
+
 #: dbupdate.py
 msgid "Surgery"
 msgstr ""
@@ -13709,7 +13705,7 @@ msgid ""
 "progress."
 msgstr ""
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js
 msgid "The date reported to the shelter"
 msgstr ""
 
@@ -13741,11 +13737,11 @@ msgstr ""
 msgid "The date the vaccination was administered"
 msgstr ""
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js
 msgid "The date this animal was found"
 msgstr ""
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js
 msgid "The date this animal was lost"
 msgstr ""
 
@@ -13755,10 +13751,6 @@ msgstr ""
 
 #: movements.js
 msgid "The date this animal was reserved"
-msgstr ""
-
-#: lostfound.js
-msgid "The date this animal was returned to its owner"
 msgstr ""
 
 #: person.js

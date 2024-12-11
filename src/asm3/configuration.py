@@ -376,6 +376,7 @@ DEFAULTS = {
     "SACStrayCategory": "7",
     "SACSurrenderCategory": "17",
     "SACTNRCategory": "14",
+    "SuppressBlankObservationsInLog": "No",
     "SystemLogType": "3",
     "TableHeadersVisible": "Yes",
     "TablesReflow": "No",
