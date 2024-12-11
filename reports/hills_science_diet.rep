@@ -94,7 +94,7 @@ Hills Science Diet Adoption Summary
 ###
 Figures
 ###
-3000/PostgreSQL rev01
+3000/Any rev02
 ###
 The Hills Science Diet adoption figures 
 ###
@@ -105,9 +105,9 @@ $VAR to DATE and$
 
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < m.MovementDate - INTERVAL '1 year' THEN 'Adult Dogs (Adult & Senior)'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < $SQL INTERVAL m.MovementDate,-,1,year$ THEN 'Adult Dogs (Adult & Senior)'
 WHEN a.SpeciesID = 1 THEN 'Puppies (under 1 year)'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < m.MovementDate - INTERVAL '1 year' THEN 'Adult Cats (Adult & Senior)'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < $SQL INTERVAL m.MovementDate,-,1,year$ THEN 'Adult Cats (Adult & Senior)'
 WHEN a.SpeciesID = 2 THEN 'Kittens (under 1 year)'
 ELSE '' END AS AgeGroup,
 1 AS Adopted

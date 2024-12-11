@@ -2,7 +2,7 @@ Payment Breakdown By Date with Type and Method Totals
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments in a given date period, with payment types, methods and totals
 ###
@@ -70,4 +70,73 @@ $$FOOTER
 </div>
 </div>
 <p>&nbsp;</p>
+FOOTER$$
+###
+SUBREPORT_PaymentTypeTotals
++++
+SELECT donationtype.DonationName, SUM(od.Donation) AS MoneyAmount, COUNT(od.Donation) AS NumberOfPayments
+FROM ownerdonation od
+INNER JOIN donationpayment ON donationpayment.ID = od.DonationPaymentID
+INNER JOIN donationtype ON donationtype.ID = od.DonationTypeID 
+WHERE od.Date BETWEEN '$PARENTARG1$' AND '$PARENTARG2$' 
+GROUP BY donationtype.donationname
++++
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Payment Type</th>
+<th>Number of Payments</th> 
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DONATIONNAME</td>
+<td>$NUMBEROFPAYMENTS</td>
+<td>$MONEYAMOUNT</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</tbody>
+</table>
+FOOTER$$
++++
+SUBREPORT_PaymentMethodTotals
++++
+SELECT donationpayment.PaymentName, SUM(od.Donation) AS MoneyAmount, 
+COUNT(od.Donation) AS NumberOfPayments
+FROM ownerdonation od
+INNER JOIN donationpayment ON donationpayment.ID = od.DonationPaymentID
+INNER JOIN donationtype ON donationtype.ID = od.DonationTypeID 
+WHERE od.Date >= '$PARENTARG1$' AND od.Date <= '$PARENTARG2$' 
+GROUP BY donationpayment.PaymentName
++++
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Payment Method</th>
+<th>Number of Payments</th> 
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$PAYMENTNAME</td>
+<td>$NUMBEROFPAYMENTS</td>
+<td>$MONEYAMOUNT</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</tbody>
+</table>
 FOOTER$$

@@ -2,7 +2,7 @@ Intakes by Date with Ages and Outcomes
 ###
 Auditing
 ###
-2870/PostgreSQL rev05
+2870/Any rev06
 ###
 Animals entering between two dates with their age at intake and final outcomes
 ###
@@ -23,9 +23,9 @@ ELSE Null END AS OutcomeDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN (SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID)
 WHEN a.ActiveMovementDate Is Not Null THEN o.OwnerName
 ELSE '' END AS OutcomeQualifier,
-age(DateBroughtIn, a.DateOfBirth)::varchar AS AgeAtIntake,
-CASE WHEN a.DeceasedDate Is Not Null THEN age(DeceasedDate, a.DateOfBirth)::varchar 
-WHEN a.ActiveMovementDate Is Not Null THEN age(ActiveMovementDate, a.DateOfBirth)::varchar
+$SQL AGE DateBroughtIn,a.DateOfBirth$ AS AgeAtIntake,
+CASE WHEN a.DeceasedDate Is Not Null THEN $SQL AGE DeceasedDate,a.DateOfBirth$ 
+WHEN a.ActiveMovementDate Is Not Null THEN $SQL AGE ActiveMovementDate,a.DateOfBirth$
 ELSE '' END AS AgeAtOutcome
 FROM animal a
 INNER JOIN species s ON a.SpeciesID = s.ID

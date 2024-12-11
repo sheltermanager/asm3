@@ -19,13 +19,24 @@ class TestService(unittest.TestCase):
         self.assertNotEqual(0, len(asm3.service.sign_document_page(base.get_dbo(), 0, "test@example.com")))
 
     def test_handler(self):
+        data = {
+            "animalname": "Testio",
+            "estimatedage": "1",
+            "animaltype": "1",
+            "entryreason": "1",
+            "species": "1",
+            "datebroughtin": "01/11/1985"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        aid = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")[0]
+
         TESTS = [
-            "?method=animal_image&animalid=1",
-            "?method=animal_thumbnail&animalid=1",
-            #"?method=animal_view&animalid=1&template=animalview&utemplate=animalview",
+            f"?method=animal_image&animalid={aid}",
+            f"?method=animal_thumbnail&animalid={aid}",
+            f"?method=animal_view&animalid={aid}&template=animalview&utemplate=animalview",
             "?method=animal_view_adoptable_js",
-            #"?method=dbfs_image&title=logo.jpg",
-            #"?method=extra_image&title=logo.jpg",
+            "?method=dbfs_image&title=logo.jpg",
+            "?method=extra_image&title=logo.jpg",
             "?method=media_image&mediaid=1",
             "?method=html_adoptable_animals",
             "?method=html_deceased_animals",
@@ -34,7 +45,7 @@ class TestService(unittest.TestCase):
             "?method=html_held_animals",
             "?method=html_permfoster_animals",
             "?method=html_stray_animals",
-            "?method=json_adoptable_animal&animalid=1&username=user&password=letmein",
+            f"?method=json_adoptable_animal&animalid={aid}&username=user&password=letmein",
             "?method=json_adoptable_animals_xp",
             "?method=json_adoptable_animals&username=user&password=letmein",
             "?method=jsonp_adoptable_animals&username=user&password=letmein",
@@ -75,7 +86,7 @@ class TestService(unittest.TestCase):
                 d[k] = v
             asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", dbo)
     
-    def test_email_notification_of_signature(self):
+    def test_handler_sign_document(self):
 
         # Set email adoption coordinator on form signature to on
         asm3.configuration.cset(base.get_dbo(), "DocumentSignedNotifyCoordinator", "Yes")

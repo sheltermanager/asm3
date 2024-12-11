@@ -2,7 +2,7 @@ Michigan Dept of Agriculture Annual Report
 ###
 Figures
 ###
-33600/PostgreSQL rev02
+33600/Any rev03
 ###
 Information needed to complete the Michigan Dept of Agriculture annual report
 ###
@@ -46,7 +46,7 @@ WHERE IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '6 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,6,months$ 
 AND NonShelterAnimal = 0) AS AdultIntake,
 
 (SELECT COUNT(*) FROM animal 
@@ -54,7 +54,7 @@ WHERE IsTransfer = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '6 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,6,months$
 AND NonShelterAnimal = 0) AS JuniorIntake,
 
 (SELECT COUNT(*) FROM animal 

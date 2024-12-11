@@ -2,7 +2,7 @@ Homechecks performed between two dates with reserve animal
 ###
 Movements
 ###
-2870/PostgreSQL rev01
+2870/Any rev02
 ###
 Homechecks performed between two dates with reserve animal and dates
 ###
@@ -11,7 +11,7 @@ en
 SELECT o.OwnerName, o.ID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.MobileTelephone, o.EmailAddress, o.DateLastHomeChecked,
 a.AnimalName, a.ShelterCode, adoption.ReservationDate, ho.OwnerName AS HomecheckerName, ho.ID AS HOID,
-EXTRACT(DAY FROM o.DateLastHomechecked - adoption.ReservationDate )::integer AS days
+$SQL DATEDIFF o.DateLastHomechecked,adoption.ReservationDate$ AS days
 FROM owner o
 LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy
 LEFT OUTER JOIN adoption ON adoption.ID = (SELECT MAX(ID) FROM adoption 
