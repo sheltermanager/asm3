@@ -158,6 +158,11 @@ selected animal. This option can be enabled by clicking the pencil icon next to
 the form, then checking the "Email adoption coordinator" box. For more information
 on using online forms, see :ref:`onlineform`     
 
+Adoption coordinatoors can also receive automated email notifications when a 
+signing request connected to one of their adoptions has been completed. The 
+feature "Notify adoption coordinator when documents are signed" can be enabled 
+in the :menuselection:`Settings --> Options --> Documents` screen. 
+
 .. image:: images/adoption_coordinator_online_form.png
 
 The reservation book contains a column for the adoption coordinator, clicking 

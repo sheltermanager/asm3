@@ -613,6 +613,10 @@ documents from templates.
 * Include incomplete medical records when generating document templates: If
   set, vaccinations, tests and medical regimens will be included that are incomplete 
   when accessing them via LastX, Due and Recent wordkeys. 
+
+* Notify adoption coordinator when documents are signed: If this option is on,
+  adoption coordinatoors will receive an email notifying them when a signing request
+  connected to one of their adoptions has been completed.
   
 * When I generate a document, make a note of it in the log: If this option is
   on, a log record is created every time you generate a document.
