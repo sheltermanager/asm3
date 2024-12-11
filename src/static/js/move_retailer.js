@@ -22,9 +22,9 @@ $(function() {
                     { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
                 html.content_footer(),
-                html.box(5),
-                '<button id="retailer">' + html.icon("movement") + ' ' + _("Move") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                   { id: "retailer", icon: "movement", text: _("Move") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -48,13 +48,13 @@ $(function() {
               
                 // Hide things before we start
                 $("#notonshelter").fadeOut();
-                $("#retailer").button("enable");
+                $("#button-retailer").button("enable");
 
                 // If the animal is not on the shelter, show that warning
                 // and stop everything else
                 if (rec.ARCHIVED == "1") {
                     $("#notonshelter").fadeIn();
-                    $("#retailer").button("disable");
+                    $("#button-retailer").button("disable");
                     return;
                 }
 
@@ -74,9 +74,9 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
 
-            $("#retailer").button().click(async function() {
+            $("#button-retailer").button().click(async function() {
                 if (!validation()) { return; }
-                $("#retailer").button("disable");
+                $("#button-retailer").button("disable");
                 header.show_loading(_("Creating..."));
                 try { 
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
@@ -91,7 +91,7 @@ $(function() {
                 }
                 finally {
                     header.hide_loading();
-                    $("#retailer").button("enable");
+                    $("#button-retailer").button("enable");
                 }
             });
 

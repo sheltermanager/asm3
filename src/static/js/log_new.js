@@ -9,40 +9,20 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Add a new log")),
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                controller.mode == "animal" ? '<label for="animal">' + _("Animal") + '</label>' : 
-                    '<label for="person">' + _("Person") + '</label>',
-                '</td>',
-                '<td>',
-                controller.mode == "animal" ? '<input id="animal" data="animal" type="hidden" class="asm-animalchooser" value=\'\' />' :
-                    '<input id="person" data="person" type="hidden" class="asm-personchooser" value=\'\' />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="type">' + _("Type") + '</label></td>',
-                '<td><select id="type" data="type" class="asm-selectbox">',
-                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="logdate">' + _("Date") + '</label></td>',
-                '<td><input id="logdate" data="logdate" type="text" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="logtime">' + _("Time") + '</label></td>',
-                '<td><input id="logtime" data="logtime" type="text" class="asm-textbox asm-timebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="entry">' + _("Note") + '</label></td>',
-                '<td><textarea id="entry" data="entry" rows="8" class="asm-textarea"></textarea></td>',
-                '</tr>',
-                '</table>',
-                '<div class="centered">',
-                '<button id="log">' + html.icon("log") + ' ' + _("Create Log") + '</button>',
-                '</div>',
+                tableform.fields_render([
+                    { post_field: "animal", type: "animal", label: _("Animal"), 
+                        hideif: function() { return controller.mode != "animal"; }},
+                    { post_field: "person", type: "person", label: _("Person"), 
+                        hideif: function() { return controller.mode != "person"; }},
+                    { post_field: "type", type: "select", label: _("Type"), 
+                        options: { displayfield: "LOGTYPENAME", rows: controller.logtypes }},
+                    { post_field: "logdate", type: "date", label: _("Date") },
+                    { post_field: "logtime", type: "time", label: _("Time") },
+                    { post_field: "entry", type: "textarea", label: _("Note"), rows: 8 }
+                ], { full_width: false }),
+                tableform.buttons_render([
+                   { id: "log", icon: "log", text: _("Create Log") }
+                ], { centered: true }),
                 html.content_footer()
             ].join("\n");
         },
@@ -87,9 +67,9 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
-            $("#log").button().click(async function() {
+            $("#button-log").button().click(async function() {
                 if (!validation()) { return; }
-                $("#log").button("disable");
+                $("#button-log").button("disable");
                 try {
                     header.show_loading(_("Creating..."));
                     let formdata = $("input, select, textarea").toPOST() + "&mode=" + controller.mode;
@@ -100,7 +80,7 @@ $(function() {
                 }
                 finally {
                     header.hide_loading();
-                    $("#log").button("enable");
+                    $("#button-log").button("enable");
                 }
             });
         },

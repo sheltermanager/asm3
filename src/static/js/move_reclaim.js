@@ -9,7 +9,6 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                '<input id="movementid" type="hidden" />',
                 html.content_header(_("Reclaim an animal"), true),
                 html.textbar(_("This animal is currently fostered, it will be automatically returned first."), { id: "fosterinfo", maxwidth: "600px" }),
                 html.textbar(_("This animal is currently at a retailer, it will be automatically returned first."), { id: "retailerinfo", maxwidth: "600px" }),
@@ -28,29 +27,16 @@ $(function() {
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),
-                '<div id="costdisplay" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
-                '<span id="costdata" class="centered"></span>',
-                '</p>',
-                '</div>',
-                '<table id="costtable" class="asm-table-layout">',
-                '<tr>',
-                '<td><label for="costcreate">' + _("Cost record") + '</label></td>',
-                '<td>',
+                html.info("<span id=\"costdata\"></span>", "costdisplay"),
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
-                '<select id="costcreate" data="costcreate" class="asm-selectbox">',
-                '<option value="0">' + _("Don't create a cost record") + '</option>',
-                '<option value="1" selected="selected">' + _("Create a cost record") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
+                ], { full_width: false }),
                 html.content_footer(),
-                html.box(5),
-                '<button id="reclaim">' + html.icon("movement") + ' ' + _("Reclaim") + '</button>',
-                '</div>',
-                '</div>',
+                tableform.buttons_render([
+                   { id: "reclaim", icon: "movement", text: _("Reclaim") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -70,7 +56,7 @@ $(function() {
             validate.indicator([ "animal", "person", "movementdate" ]);
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
+            $("#animal").animalchooser().bind("animalchooserchange", async function(event, a) {
                 
                 // Hide things before we start
                 $("#costdisplay").closest(".ui-widget").fadeOut();
@@ -78,12 +64,12 @@ $(function() {
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
                 $("#animalwarn").fadeOut();
-                $("#reclaim").button("enable");
+                $("#button-reclaim").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
                 // bail out now because we shouldn't be able to move the animal.
                 if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) {
-                    $("#reclaim").button("disable");
+                    $("#button-reclaim").button("disable");
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == "2") {
@@ -101,14 +87,13 @@ $(function() {
                 // Grab cost information if option is on
                 if (config.bool("CreateBoardingCostOnAdoption")) {
                     let formdata = "mode=cost&id=" + a.ID;
-                    common.ajax_post("move_reclaim", formdata)
-                        .then(function(data) {
-                            let [costamount, costdata] = data.split("||");
-                            $("#costamount").val(format.currency_to_int(costamount));
-                            $("#costdata").html(costdata);
-                            $("#costtype").val(config.str("BoardingCostType"));
-                            $("#costdisplay").closest(".ui-widget").fadeIn();
-                        });
+                    let response = await common.ajax_post("move_adopt", formdata);
+                    const [costamount, costdata] = response.split("||");
+                    $("#costcreate").prop("selected", true);
+                    $("#costdata").html(costdata);
+                    $("#costamount").val(format.currency_to_int(costamount));
+                    $("#costtype").val(config.str("BoardingCostType"));
+                    $("#costdisplay").closest(".ui-widget").fadeIn();
                 }
 
                 let warn = html.animal_movement_warnings(a);
@@ -161,14 +146,13 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
 
-            $("#reclaim").button().click(async function() {
+            $("#button-reclaim").button().click(async function() {
                 if (!validation()) { return; }
-                $("#reclaim").button("disable");
+                $("#button-reclaim").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
                     let data = await common.ajax_post("move_reclaim", formdata);
-                    $("#movementid").val(data);
                     let u = "move_gendoc?" +
                         "linktype=MOVEMENT&id=" + data + 
                         "&message=" + encodeURIComponent(common.base64_encode(_("Reclaim successfully created.") + " " + 
@@ -178,7 +162,7 @@ $(function() {
                 }
                 finally {
                     header.hide_loading();
-                    $("#reclaim").button("enable");
+                    $("#button-reclaim").button("enable");
                 }
             });
         },

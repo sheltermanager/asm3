@@ -11,63 +11,21 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                '<input id="donationid" type="hidden" />',
                 html.content_header(_("Renew license"), true),
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="animal">' + _("Animal (optional)") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="animal" data="animal" type="hidden" class="asm-animalchooser" value=\'\' />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="person">' + _("Person") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="person" data="person" type="hidden" class="asm-personchooser" value=\'\' />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="issuedate">' + _("Issued") + '</label></td>',
-                '<td>',
-                '<input id="issuedate" data="issuedate" type="text" class="asm-textbox asm-datebox" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="expirydate">' + _("Expiry") + '</label></td>',
-                '<td>',
-                '<input id="expirydate" data="expirydate" type="text" class="asm-textbox asm-datebox" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="number">' + _("Number") + '</label></td>',
-                '<td>',
-                '<input id="number" data="number" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="type">' + _("Type") + '</label></td>',
-                '<td>',
-                '<select id="type" data="type" class="asm-selectbox">',
-                html.list_to_options(controller.licencetypes, "ID", "LICENCETYPENAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="fee">' + _("Fee") + '</label></td>',
-                '<td>',
-                '<input id="fee" data="fee" type="text" class="asm-textbox asm-currencybox" />',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "animal", type: "animal", label: _("Animal (optional)") },
+                    { post_field: "person", type: "person", label: _("Person") },
+                    { post_field: "issuedate", type: "date", label: _("Issued") },
+                    { post_field: "expirydate", type: "date", label: _("Expiry") },
+                    { post_field: "number", type: "text", label: _("Number") },
+                    { post_field: "type", type: "select", label: _("Type"), options: { displayfield: "LICENCETYPENAME", rows: controller.licencetypes }},
+                    { post_field: "fee", type: "currency", label: _("Fee") }
+                ], { full_width: false }),
                 html.content_footer(),
                 '<div id="payment"></div>',
-                html.box(5),
-                '<button id="renew">' + html.icon("licence") + ' ' + _("Renew licence") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                   { id: "renew", icon: "licence", text: _("Renew licence") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -127,9 +85,9 @@ $(function() {
             // When type changes, update the fee
             $("#type").change(licence_renewal.type_change);
 
-            $("#renew").button().click(async function() {
+            $("#button-renew").button().click(async function() {
                 if (!validation()) { return; }
-                $("#renew").button("disable");
+                $("#button-renew").button("disable");
                 try {
                     header.show_loading(_("Creating..."));
                     let formdata = $("input, select").toPOST();
@@ -150,7 +108,7 @@ $(function() {
                     }
                 }
                 finally {
-                    $("#renew").button("enable");
+                    $("#button-renew").button("enable");
                 }
             });
         },
@@ -158,6 +116,8 @@ $(function() {
         sync: function() {
             $("#issuedate").date("today");
             licence_renewal.type_change();
+
+            validate.indicator([ "person", "number", "issuedate" ]);
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");

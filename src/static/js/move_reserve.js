@@ -9,7 +9,6 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                '<input id="movementid" type="hidden" />',
                 html.content_header(_("Reserve an animal"), true),
                 html.textbar('<span class="subtext"></span>', { id: "feeinfo", maxwidth: "600px" }),
                 html.textbar('<span id="awarntext"></span>', { id: "animalwarn", state: "error", icon: "alert", maxwidth: "600px" }),
@@ -29,9 +28,9 @@ $(function() {
                 ], { full_width: false }),
                 html.content_footer(),
                 '<div id="payment"></div>',
-                html.box(5),
-                '<button id="reserve">' + html.icon("movement") + ' ' + _("Reserve") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                   { id: "reserve", icon: "movement", text: _("Reserve") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -57,12 +56,12 @@ $(function() {
                 $("#notonshelter").fadeOut();
                 $("#animalwarn").fadeOut();
                 $("#feeinfo").fadeOut();
-                $("#reserve").button("enable");
+                $("#button-reserve").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, show that warning
                 // and prevent the reserve
                 if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) {
-                    $("#reserve").button("disable");
+                    $("#button-reserve").button("disable");
                 }
 
                 // If we have an adoption fee, show it in the info bar
@@ -131,14 +130,13 @@ $(function() {
                 $("#amount1").val("0");
             }
 
-            $("#reserve").button().click(async function() {
+            $("#button-reserve").button().click(async function() {
                 if (!validation()) { return; }
-                $("#reserve").button("disable");
+                $("#button-reserve").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
                     let data = await common.ajax_post("move_reserve", formdata);
-                    $("#movementid").val(data);
                     let u = "move_gendoc?" +
                         "linktype=MOVEMENT&id=" + data + 
                         "&message=" + encodeURIComponent(common.base64_encode(_("Reservation successfully created.") + " " + 
@@ -148,7 +146,7 @@ $(function() {
                 }
                 finally { 
                     header.hide_loading();
-                    $("#reserve").button("enable");
+                    $("#button-reserve").button("enable");
                 }
             });
         },

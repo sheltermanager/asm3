@@ -32,10 +32,9 @@ $(function() {
                     { post_field: "usagecomments", label: _("Comments"), type: "textarea" }
                 ], { full_width: false, id: "stocktable" }),
                 html.content_footer(),
-                html.box(5),
-                '<button id="deceased">' + html.icon("death") + ' ' + _("Mark Deceased") + '</button>',
-                '</div>',
-                html.content_footer(),
+                tableform.buttons_render([
+                   { id: "deceased", icon: "death", text: _("Mark Deceased") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -82,9 +81,9 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
 
-            $("#deceased").button().click(async function() {
+            $("#button-deceased").button().click(async function() {
                 if (!validation()) { return; }
-                $("#deceased").button("disable");
+                $("#button-deceased").button("disable");
                 header.show_loading(_("Updating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
@@ -99,7 +98,7 @@ $(function() {
                 }
                 finally {
                     header.hide_loading();
-                    $("#deceased").button("enable");
+                    $("#button-deceased").button("enable");
                 }
             });
         },
