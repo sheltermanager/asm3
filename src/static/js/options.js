@@ -780,13 +780,14 @@ $(function() {
             return [
                 '<div id="tab-daily-observations">',
                 html.info(_("These are the values that can be recorded for animals on the daily observations screen")),
-                '<p class="centered"><label for="behavelogtype">' + _("Log Type") + '</label> ',
+                '<table><tr><td><label for="behavelogtype">' + _("Log Type") + '</label></td><td>',
                 '<select data="BehaveLogType" id="behavelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                '</select></p>',
-
-                '<p align=center><label for="suppressblankobservationsinlog">' + _("Suppress blank observations in the log") + '</label><input data="SuppressBlankObservationsInLog" id="suppressblankobservationsinlog" class="asm-currencybox asm-checkbox" type="checkbox" /></p>',
-
+                '</select></td></tr>',
+                '<tr><td></td><td>',
+                '<input data="SuppressBlankObservations" id="suppressblankobservations" class="asm-checkbox" type="checkbox" />',
+                '<label for="suppressblankobservations">' + _("Suppress blank observations") + '</label>',
+                '</td></tr></table>',
                 '<table>',
                 '<tr><th>' + _("Name") + '</th><th>' + _("Values") + '</th></tr>',
                 obsrow(1),

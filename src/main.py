@@ -2332,15 +2332,14 @@ class animal_observations(JSONEndpoint):
     def post_save(self, o):
         self.check(asm3.users.ADD_LOG)
         nocreated = 0
+        suppressblanks = asm3.configuration.suppress_blank_observations(o.dbo)
         for row in o.post["logs"].split("^^"):
             animalid, msg = row.split("==")
-            strippedmsg = ""
+            logmsg = []
             for ob in msg.split(", "):
-                if ob.split("=")[1] != "":
-                    if strippedmsg != "": strippedmsg += ", "
-                    strippedmsg += ob
-
-            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, asm3.utils.atoi(animalid), o.post.integer("logtype"), strippedmsg)
+                if ob.split("=")[1] != "" or not suppressblanks:
+                    logmsg.append(ob)
+            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, asm3.utils.atoi(animalid), o.post.integer("logtype"), ", ".join(logmsg))
             nocreated += 1
         return str(nocreated)
 
