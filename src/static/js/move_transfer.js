@@ -9,7 +9,6 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                '<input id="movementid" type="hidden" />',
                 html.content_header(_("Transfer an animal"), true),
                 html.textbar('<span id="awarntext"></span>', { id: "animalwarn", state: "error", icon: "alert", maxwidth: "600px" }),
                 html.textbar('<span id="warntext"></span>', { id: "ownerwarn", state: "error", icon: "alert", maxwidth: "600px" }),
@@ -23,9 +22,9 @@ $(function() {
                     { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
                 html.content_footer(),
-                html.box(5),
-                '<button id="transfer">' + html.icon("movement") + ' ' + _("Transfer") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                   { id: "transfer", icon: "movement", text: _("Transfer") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -52,11 +51,11 @@ $(function() {
             $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
               
                 $("#animalwarn").fadeOut();
-                $("#transfer").button("enable");
+                $("#button-transfer").button("enable");
 
                 // Disable the transfer button if the animal is not in care
                 if ((a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8)) {
-                    $("#transfer").button("disable");
+                    $("#button-transfer").button("disable");
                 }
 
                 let warn = html.animal_movement_warnings(a);
@@ -88,14 +87,13 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
 
-            $("#transfer").button().click(async function() {
+            $("#button-transfer").button().click(async function() {
                 if (!validation()) { return; }
-                $("#transfer").button("disable");
+                $("#button-transfer").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
                     let data = await common.ajax_post("move_transfer", formdata);
-                    $("#movementid").val(data);
                     let u = "move_gendoc?" +
                         "linktype=MOVEMENT&id=" + data + 
                         "&message=" + encodeURIComponent(common.base64_encode(_("Transfer successfully created.") + " " + 
@@ -105,7 +103,7 @@ $(function() {
                 }
                 finally {
                     header.hide_loading();
-                    $("#transfer").button("enable");
+                    $("#button-transfer").button("enable");
                 }
             });
         },

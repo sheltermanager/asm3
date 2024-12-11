@@ -53,7 +53,7 @@ $(function() {
                     { post_field: "pickuplocation", json_field: "PICKUPLOCATIONID", type: "select", label: _("Pickup Location"), 
                         options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations, prepend: '<option value="0"></option>'}},
                     { post_field: "jurisdiction", json_field: "JURISDICTIONID", type: "select", label: _("Jurisidiction"), 
-                        options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations }},
+                        options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
                     { type: "nextcol" },
                     { post_field: "dispatchedaco", json_field: "DISPATCHEDACO", type: "selectmulti", label: _("Dispatched ACO"), 
                         options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},

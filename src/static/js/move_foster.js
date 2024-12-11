@@ -25,9 +25,9 @@ $(function() {
                     { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
                 html.content_footer(),
-                html.box(5),
-                '<button id="foster">' + html.icon("movement") + ' ' + _("Foster") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                   { id: "foster", icon: "movement", text: _("Foster") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -51,13 +51,13 @@ $(function() {
               
                 // Hide things before we start
                 $("#notonshelter").fadeOut();
-                $("#foster").button("enable");
+                $("#button-foster").button("enable");
 
                 // If the animal is not on the shelter and not already fostered, show
                 // that warning and stop everything else
                 if (rec.ARCHIVED == "1" && rec.ACTIVEMOVEMENTTYPE != "2") {
                     $("#notonshelter").fadeIn();
-                    $("#foster").button("disable");
+                    $("#button-foster").button("disable");
                     return;
                 }
 
@@ -77,9 +77,9 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
 
-            $("#foster").button().click(async function() {
+            $("#button-foster").button().click(async function() {
                 if (!validation()) { return; }
-                $("#foster").button("disable");
+                $("#button-foster").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
@@ -94,7 +94,7 @@ $(function() {
                 }
                 finally {
                     header.hide_loading();
-                    $("#foster").button("enable");
+                    $("#button-foster").button("enable");
                 }
             });
         },

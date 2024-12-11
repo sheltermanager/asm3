@@ -19,13 +19,15 @@ const tableform = {
      * options: 
      *      centered: false, // whether to center buttons within the container
      *      render_container: true, // whether to render the toolbar container
+     *      render_box: false, // wrap html.box(5) around the toolbar
      *      id: "tb", // id attribute of the toolbar container 
      */
     buttons_render: function(buttons, coptions) {
         let b = "", toolbarid = "", centered = "", 
-            options = { centered: false, render_container: true, id: "" };
+            options = { centered: false, render_container: true, render_box: false, id: "" };
         if (coptions !== undefined) { options = common.copy_object(options, coptions); }
         if (options.render_container) {
+            if (options.render_box) { b += html.box(5); }
             if (options.id) { toolbarid = 'id="' + options.id + '"'; } 
             if (options.centered) { centered = "centered"; }
             b += '<div ' + toolbarid + ' class="asm-toolbar no-print ' + centered + '">';
@@ -83,6 +85,9 @@ const tableform = {
             b += " ";
         });
         if (options.render_container) {
+            b += "</div>";
+        }
+        if (options.render_box) {
             b += "</div>";
         }
         return b;

@@ -777,8 +777,8 @@ def insert_reclaim_from_form(dbo: Database, username: str, post: PostedData) -> 
     # Then any boarding cost record
     cost_amount = post.integer("costamount")
     cost_type = post["costtype"]
-    cost_create = post.integer("costcreate")
-    if cost_amount > 0 and cost_type != "" and cost_create == 1:
+    cost_create = post.boolean("costcreate")
+    if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
             "animalid"          : post["animal"],
             "type"              : cost_type,

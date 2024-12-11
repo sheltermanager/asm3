@@ -64,9 +64,9 @@ $(function() {
                         options: edit_header.template_list_options(controller.templatesemail) },
                 ], { full_width: false }),
                 html.content_footer(),
-                html.box(5),
-                '<button id="adopt">' + html.icon("movement") + ' ' + _("Adopt") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                   { id: "adopt", icon: "movement", text: _("Adopt") }
+                ], { render_box: true }),
                 '</div>'
             ].join("\n");
         },
@@ -145,13 +145,13 @@ $(function() {
                 $("#retailerinfo").fadeOut();
                 $("#feeinfo").fadeOut();
                 $("#animalwarn").fadeOut();
-                $("#adopt").button("enable");
+                $("#button-adopt").button("enable");
 
                 // Disable the adoption button if the animal cannot be adopted because it isn't
                 // on the shelter or is held, a cruelty case or quarantined
                 if ((a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) ||
                     a.ISHOLD == 1 || a.CRUELTYCASE == 1 || a.ISQUARANTINE == 1) {
-                    $("#adopt").button("disable");
+                    $("#button-adopt").button("disable");
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == 2) {
@@ -187,7 +187,7 @@ $(function() {
                     let formdata = "mode=cost&id=" + a.ID;
                     let response = await common.ajax_post("move_adopt", formdata);
                     const [costamount, costdata] = response.split("||");
-                    $("#costcreate").select("value", "1");
+                    $("#costcreate").prop("selected", true);
                     $("#costdata").html(costdata);
                     $("#costamount").val(format.currency_to_int(costamount));
                     $("#costtype").val(config.str("BoardingCostType"));
@@ -376,9 +376,9 @@ $(function() {
             };
             $("#trial").click(trial_change).keyup(trial_change);
 
-            $("#adopt").button().click(async function() {
+            $("#button-adopt").button().click(async function() {
                 if (!validation()) { return; }
-                $("#adopt").button("disable");
+                $("#button-adopt").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
@@ -403,7 +403,7 @@ $(function() {
                 }
                 catch(err) {
                     log.error(err, err);
-                    $("#adopt").button("enable");
+                    $("#button-adopt").button("enable");
                 }
             });
         },
