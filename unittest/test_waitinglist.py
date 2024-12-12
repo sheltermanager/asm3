@@ -41,6 +41,9 @@ class TestWaitingList(unittest.TestCase):
 
     def test_auto_update_urgencies(self):
         asm3.waitinglist.auto_update_urgencies(base.get_dbo())
+    
+    def test_clone_waitinglist(self):
+        asm3.waitinglist.clone_waitinglist(base.get_dbo(), "test", self.wlid)
 
     def test_create_animal(self):
         aid = asm3.waitinglist.create_animal(base.get_dbo(), "test", self.wlid)

@@ -378,6 +378,103 @@ def insert_waitinglist_from_form(dbo: Database, post: PostedData, username: str)
 
     return nwlid
 
+def clone_waitinglist(dbo: Database, username: str, waitinglistid: int) -> int:
+    """
+    Clones a waiting list record and its satellite records.
+    Returns the ID of the new waiting list record.
+    """
+    l = dbo.locale
+    a = get_waitinglist_by_id(dbo, waitinglistid)
+    nid = dbo.insert("animalwaitinglist", {
+        "BreedID":                  a.breedid,
+        "SpeciesID":                a.speciesid,
+        "Sex":                      a.sex,
+        "Neutered":                 a.neutered,
+        "Size":                     a.size,
+        "DateOfBirth":              a.dateofbirth,
+        "DatePutOnList":            a.dateputonlist,
+        "OwnerID":                  a.ownerid,
+        "AnimalName":               _("Copy of {0}", l).format(a.animalname),
+        "AnimalDescription":        a.animaldescription,
+        "MicrochipNumber":          a.microchipnumber,
+        "ReasonForWantingToPart":   a.reasonforwantingtopart,
+        "CanAffordDonation":        a.canafforddonation,
+        "Urgency":                  a.urgency,
+        "DateRemovedFromList":      a.dateremovedfromlist,
+        "WaitingListRemovalID":     a.waitinglistremovalid,
+        "AutoRemovePolicy":         a.autoremovepolicy,
+        "DateOfLastOwnerContact":   a.dateoflastownercontact,
+        "ReasonForRemoval":         a.reasonforremoval,
+        "Comments":                 a.comments,
+        "UrgencyLastUpdatedDate":   a.urgencylastupdateddate,
+        "UrgencyUpdateDate":        a.urgencyupdatedate
+    }, username, writeAudit=False)
+    # Additional Fields
+    for af in dbo.query("SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (waitinglistid, asm3.additional.WAITINGLIST_IN)):
+        asm3.additional.insert_additional(dbo, af.linktype, nid, af.additionalfieldid, af.value)
+    # Diary
+    for di in dbo.query("SELECT * FROM diary WHERE LinkType = 5 AND LinkID = ?", [waitinglistid]):
+        dbo.insert("diary", {
+            "LinkID":               nid,
+            "LinkType":             asm3.diary.WAITINGLIST,
+            "DiaryDateTime":        di.diarydatetime,
+            "DiaryForName":         di.diaryforname,
+            "Subject":              di.subject,
+            "Note":                 di.note,
+            "DateCompleted":        di.datecompleted,
+            "LinkInfo":             asm3.diary.get_link_info(dbo, asm3.diary.WAITINGLIST, nid)
+        }, username, writeAudit=False)
+    # Media
+    for me in dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ?", (asm3.media.WAITINGLIST, waitinglistid)):
+        ext = me.medianame
+        ext = ext[ext.rfind("."):].lower()
+        mediaid = dbo.get_id("media")
+        medianame = "%d%s" % ( mediaid, ext )
+        dbo.insert("media", {
+            "ID":                   mediaid,
+            "DBFSID":               0,
+            "MediaSize":            0,
+            "MediaName":            medianame,
+            "MediaMimeType":        asm3.media.mime_type(medianame),
+            "MediaType":            me.mediatype,
+            "MediaNotes":           me.medianotes,
+            "WebsitePhoto":         me.websitephoto,
+            "WebsiteVideo":         me.websitevideo,
+            "DocPhoto":             me.docphoto,
+            "ExcludeFromPublish":   me.excludefrompublish,
+            # ASM2_COMPATIBILITY
+            "NewSinceLastPublish":  1,
+            "UpdatedSinceLastPublish": 0,
+            # ASM2_COMPATIBILITY
+            "LinkID":               nid,
+            "LinkTypeID":           asm3.media.WAITINGLIST,
+            "Date":                 me.date,
+            "CreatedDate":          me.createddate,
+            "RetainUntil":          me.retainuntil
+        }, generateID=False)
+        # Now clone the dbfs item pointed to by this media item if it's a file
+        if me.mediatype == asm3.media.MEDIATYPE_FILE:
+            filedata = asm3.dbfs.get_string_id(dbo, me.DBFSID)
+            dbfsid = asm3.dbfs.put_string(dbo, medianame, "/waitinglist/%d" % nid, filedata)
+            dbo.update("media", mediaid, { "DBFSID": dbfsid, "MediaSize": len(filedata) })
+    # Log
+    if asm3.configuration.clone_animal_include_logs(dbo):
+        # Only clone logs if the hidden config switch is on
+        for lo in dbo.query("SELECT * FROM log WHERE LinkType = ? AND LinkID = ?", (asm3.log.WAITINGLIST, waitinglistid)):
+            dbo.insert("log", {
+                "LinkID":           nid,
+                "LinkType":         asm3.log.WAITINGLIST,
+                "LogTypeID":        lo.logtypeid,
+                "Date":             lo.date,
+                "Comments":         lo.comments
+            }, username, writeAudit=False)
+
+    #create(dbo: Database, username: str, tablename: str, linkid: int, parentlinks: str, description: str)  
+    asm3.audit.create(dbo, username, "animalwaitinglist", nid, "", asm3.audit.dump_row(dbo, "animalwaitinglist", nid))
+    #update_animal_status(dbo, nid)
+    #update_variable_animal_data(dbo, nid)
+    return nid
+
 def create_animal(dbo: Database, username: str, wlid: int) -> int:
     """
     Creates an animal record from a waiting list entry with the id given.

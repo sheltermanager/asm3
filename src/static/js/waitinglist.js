@@ -16,9 +16,13 @@ $(function() {
                 edit_header.template_list(controller.templates, "WAITINGLIST", controller.animal.ID),
                 '</ul>',
                 '</div>',
+                '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',
+                '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Clone this waiting list record?") + '</p>',
+                '</div>',
                 edit_header.waitinglist_edit_header(controller.animal, "details", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this waiting list entry") },
+                    { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Clone this waiting list entry") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this waiting list entry") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this record") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") },
@@ -260,7 +264,7 @@ $(function() {
         },
 
         bind: function() {
-
+            
             $(".asm-tabbar").asmtabs();
             $("#asm-details-accordion").accordion({
                 heightStyle: "content"
@@ -307,6 +311,15 @@ $(function() {
                 validate.save(function() {
                     common.route_reload();
                 });
+            });
+
+            $("#button-clone").button().click(async function() {
+                await tableform.show_okcancel_dialog("#dialog-clone-confirm", _("Clone"));
+                let formdata = "mode=clone&waitinglistid=" + $("#waitinglistid").val();
+                header.show_loading(_("Cloning..."));
+                let response = await common.ajax_post("waitinglist", formdata);
+                header.hide_loading();
+                common.route("waitinglist?id=" + response + "&cloned=true");
             });
 
             $("#button-email").button().click(function() {
@@ -377,6 +390,7 @@ $(function() {
             validate.unbind_dirty();
             common.widget_destroy("#owner");
             common.widget_destroy("#emailform");
+            common.widget_destroy("#dialog-clone-confirm");
             this.current_person = null;
         },
 

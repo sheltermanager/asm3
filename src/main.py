@@ -7530,6 +7530,11 @@ class waitinglist(JSONEndpoint):
     def post_save(self, o):
         self.check(asm3.users.CHANGE_WAITING_LIST)
         asm3.waitinglist.update_waitinglist_from_form(o.dbo, o.post, o.user)
+    
+    def post_clone(self, o):
+        self.check(asm3.users.ADD_WAITING_LIST)
+        nid = asm3.waitinglist.clone_waitinglist(o.dbo, o.user, o.post.integer("waitinglistid"))
+        return str(nid)
 
     def post_email(self, o):
         self.check(asm3.users.EMAIL_PERSON)
