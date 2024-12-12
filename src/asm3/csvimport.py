@@ -61,7 +61,7 @@ VALID_FIELDS = [
     "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
     "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
     "PERSONMATCHCOMMENTSCONTAIN",
-    "DIARYDATE", "DIARYSUBJECT", "DIARYNOTE"
+    "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE"
 ]
 
 def gkc(m: Dict, f: str) -> int:
@@ -901,6 +901,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasdiary:
             d = {}
             d["diarydate"] = gkd(dbo, row, "DIARYDATE")
+            d["diaryfor"] = gks(row, "DIARYFOR")
             d["subject"] = gks(row, "DIARYSUBJECT")
             d["note"] = gks(row, "DIARYNOTE")
 
