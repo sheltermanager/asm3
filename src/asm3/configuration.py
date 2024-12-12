@@ -1650,9 +1650,6 @@ def stripe_key(dbo: Database) -> str:
 def stripe_secret_key(dbo: Database) -> str:
     return cstring(dbo, "StripeSecretKey")
 
-def suppress_blank_observations(dbo: Database) -> str:
-    return cboolean(dbo, "SuppressBlankObservations", DEFAULTS["SuppressBlankObservations"] == "Yes")
-
 def system_log_type(dbo: Database) -> int:
     return cint(dbo, "SystemLogType", DEFAULTS["SystemLogType"])
 
