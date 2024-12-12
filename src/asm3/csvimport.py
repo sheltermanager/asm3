@@ -60,7 +60,8 @@ VALID_FIELDS = [
     "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
     "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
     "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
-    "PERSONMATCHCOMMENTSCONTAIN" 
+    "PERSONMATCHCOMMENTSCONTAIN",
+    "DIARYDATE", "DIARYSUBJECT", "DIARYNOTE"
 ]
 
 def gkc(m: Dict, f: str) -> int:
@@ -301,6 +302,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasoriginalownerlastname = False
     hascurrentvet = False
     hascurrentvetlastname = False
+    hasdiary = False
 
     cols = rows[0].keys()
     for col in cols:
@@ -333,6 +335,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "MOVEMENTDATE": hasmovementdate = True
         if col.startswith("DONATION"): hasdonation = True
         if col == "DONATIONAMOUNT": hasdonationamount = True
+        if col == "DIARYDATE": hasdiary = True
 
     rules = [
         ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
@@ -351,6 +354,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         ( hastest and not hasanimal, "Your CSV file has test fields, but no animal to apply them to" ),
         ( hascost and not hasanimal, "Your CSV file has cost fields, but no animal to apply them to" ),
         ( hascost and not hascostamount, "Your CSV file has cost fields, but no COSTAMOUNT column" ),
+        ( hasdiary and not hasanimal and not hasperson and not hasincident, "Your CSV file has diary fields, but no animal, person or incident to apply them to"),
         ( haslog and not hasanimal, "Your CSV file has log fields, but no animal to apply them to" ),
         ( haslog and not haslogcomments, "Your CSV file has log fields, but no LOGCOMMENTS column" ),
         ( hasincident and not hasincidentdate, "Your CSV file has incident fields, but no INCIDENTDATE column" ),
@@ -866,6 +870,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             if movementid != 0: asm3.movement.update_movement_donation(dbo, movementid)
 
         # Incident?
+        incidentid = 0
         if hasincident and personid != 0 and gks(row, "INCIDENTDATE") != "":
             d = {}
             d["incidentdate"] = gkd(dbo, row, "INCIDENTDATE", True)
@@ -888,9 +893,23 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["completeddate"] = gkd(dbo, row, "INCIDENTCOMPLETEDDATE")
             d["completedtype"] = gkl(dbo, row, "INCIDENTCOMPLETEDTYPE", "incidentcompleted", "CompletedName", True)
             try:
-                asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
+                incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
             except Exception as e:
                 row_error(errors, "incident", rowno, row, e, dbo, sys.exc_info())
+        
+        # Diary note
+        if hasdiary:
+            d = {}
+            d["diarydate"] = gkd(dbo, row, "DIARYDATE")
+            d["subject"] = gks(row, "DIARYSUBJECT")
+            d["note"] = gks(row, "DIARYNOTE")
+
+            if animalid != 0:
+                asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMAL, animalid, asm3.utils.PostedData(d, dbo.locale))
+            elif incidentid != 0:
+                asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMALCONTROL, incidentid, asm3.utils.PostedData(d, dbo.locale))
+            else:
+                asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.PERSON, personid, asm3.utils.PostedData(d, dbo.locale))
 
         # Vaccination
         if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
