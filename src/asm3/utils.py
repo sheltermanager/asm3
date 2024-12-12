@@ -987,6 +987,9 @@ def csv_parse(s: str) -> List[Dict]:
                 pos[0] = rpos+1
                 if rpos == len(s): pos[2] = True # EOF
                 return items
+            if inquoted and rpos == len(s): 
+                pos[2] = True # EOF hit while still in quoted string - file format is broken this shouldn't happen
+                return items
             rpos += 1
     # Read the columns from the first row
     cols = readline()

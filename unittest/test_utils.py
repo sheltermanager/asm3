@@ -35,6 +35,9 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertNotEqual(rows[0]["FIELD1"].find("quoted"), -1)
         self.assertEqual(len(rows[0]), 2)
+        data = u"FIELD1,FIELD2\nvalue1,value2\n\"broken quote that never ends"
+        rows = asm3.utils.csv_parse(data)
+        self.assertEqual(len(rows), 1)
 
     def test_html_to_text(self):
         data = "<!DOCTYPE html>" \
