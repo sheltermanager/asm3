@@ -102,6 +102,7 @@ $(function() {
                     let animalid = $(this).attr("data-animalid"), avs = [];
                     // Build a packed set of values for this animal
                     $(this).find(".widget").each(function() {
+                        if (config.bool("SuppressBlankObservations") && !$(this).val()) { return; }
                         avs.push( $(this).attr("data-name") + "=" + $(this).val() );
                     });
                     logs.push( animalid + "==" + avs.join(", ") );
