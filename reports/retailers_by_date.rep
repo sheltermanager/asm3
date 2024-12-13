@@ -2,7 +2,7 @@ Retailer Movements by Date
 ###
 Retailers
 ###
-PostgreSQL rev02
+Any rev03
 ###
 Retailer movements between two dates with average time at retailer
 ###
@@ -15,8 +15,8 @@ SELECT ShelterCode, AnimalName, animal.ID AS AID, MostRecentEntryDate, MovementD
 species.SpeciesName, animal.DaysOnShelter, animal.IdentichipNumber,
 animaltype.AnimalType AS theType,
 animal.BreedName,
-age(ReturnDate, MovementDate) AS TimeAtRetailer,
-extract(day from ReturnDate - MovementDate)::integer AS DaysAtRetailer,
+$SQL AGE ReturnDate,MovementDate$ AS TimeAtRetailer,
+$SQL DATEDIFF ReturnDate,MovementDate$ AS DaysAtRetailer,
 no.OwnerName, no.OwnerAddress, no.ID AS OID,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
