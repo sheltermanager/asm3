@@ -2,7 +2,7 @@ Maddies Fund: Shelter and Organization Rescue Program Survey 2023
 ###
 Figures
 ###
-33600/PostgreSQL rev01
+33600/Any rev02
 ###
 Information needed to complete the Maddies Fund survey
 ###
@@ -38,28 +38,28 @@ AND NonShelterAnimal = 0) AS IntakeCat,
 WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
 AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
 AND SpeciesID = 1
-AND DateOfBirth < DateBroughtIn - INTERVAL '8 weeks' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,8,weeks$ 
 AND NonShelterAnimal = 0) AS DogsSentToFoster,
 
 (SELECT COUNT(*) FROM animal
 WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
 AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
 AND SpeciesID = 1
-AND DateOfBirth >= DateBroughtIn - INTERVAL '8 weeks' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,8,weeks$ 
 AND NonShelterAnimal = 0) AS PuppiesSentToFoster,
 
 (SELECT COUNT(*) FROM animal
 WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
 AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
 AND SpeciesID = 2
-AND DateOfBirth < DateBroughtIn - INTERVAL '8 weeks' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,8,weeks$ 
 AND NonShelterAnimal = 0) AS CatsSentToFoster,
 
 (SELECT COUNT(*) FROM animal
 WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
 AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
 AND SpeciesID = 2
-AND DateOfBirth >= DateBroughtIn - INTERVAL '8 weeks' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,8,weeks$ 
 AND NonShelterAnimal = 0) AS KittensSentToFoster,
 
 (SELECT Average FROM animalfigures 

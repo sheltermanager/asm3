@@ -2,7 +2,7 @@ Time With Fosterer
 ###
 Movements
 ###
-PostgreSQL rev02
+Any rev03
 ###
 All foster movements for a specific fosterer between two dates with total in days
 ###
@@ -10,8 +10,8 @@ en
 ###
 SELECT
 a.AnimalName, a.ID AS AID,
-CASE WHEN m.ReturnDate IS NULL THEN CAST(EXTRACT(DAY FROM CURRENT_DATE - m.MovementDate) AS INTEGER)  
-ElSE CAST(EXTRACT(DAY FROM m.ReturnDate - m.MovementDate) AS INTEGER) END AS DaysInFoster,
+CASE WHEN m.ReturnDate IS NULL THEN $SQL DATEDIFF CURRENT_DATE,m.MovementDate$  
+ELSE $SQL DATEDIFF m.ReturnDate,m.MovementDate$ END AS DaysInFoster,
 a.ShelterCode, a.DateOfBirth, s.SpeciesName, lksex.Sex, a.AnimalAge,
 o.OwnerName, o.ID AS OID, m.MovementDate, m.ReturnDate, 
 o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail

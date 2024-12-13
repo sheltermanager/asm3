@@ -2,7 +2,7 @@ Length of Stay by Age Group (Left Shelter Only)
 ###
 Statistics
 ###
-34022/PostgreSQL rev02
+34022/Any rev03
 ###
 Shows time on shelter by age group for animals entering the shelter between two dates and have left with ages at entry and exit.
 ###
@@ -13,8 +13,8 @@ a.AnimalName, a.ShelterCode, a.ID AS AID,
 s.SpeciesName, e.ReasonName, a.AgeGroupActiveMovement,
 a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit,
-age(a.DateBroughtIn, a.DateOfBirth)::varchar AS AgeEntry,
-age(a.ActiveMovementDate, a.DateOfBirth)::varchar AS AgeExit
+$SQL AGE a.DateBroughtIn,a.DateOfBirth$ AS AgeEntry,
+$SQL AGE a.ActiveMovementDate,a.DateOfBirth$ AS AgeExit
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
