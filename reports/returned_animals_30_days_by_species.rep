@@ -2,7 +2,7 @@ Animals Returned within 30 days by Species
 ###
 Returns
 ###
-PostgreSQL rev03
+Any rev04
 ###
 Animals returned within 30 days where the return was processed between a date range, grouped by species.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, s.SpeciesName, i.LocationName,
 ad.MovementDate, ad.ReturnDate, ad.ReasonForReturn, rr.ReasonName,
-EXTRACT(DAY FROM ad.ReturnDate - ad.MovementDate)::integer AS DaysAdopted
+$SQL DATEDIFF ad.ReturnDate,ad.MovementDate$ AS DaysAdopted
 FROM adoption ad
 INNER JOIN animal a ON a.ID = ad.AnimalID
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -20,7 +20,7 @@ INNER JOIN entryreason rr ON rr.ID = ad.ReturnedReasonID
 WHERE ad.MovementType = 1
 AND ad.ReturnDate >= '$ASK DATE Animals returned between$' 
 AND ad.ReturnDate <= '$ASK DATE and$'
-AND EXTRACT(DAY FROM ad.ReturnDate - ad.MovementDate)::integer < 30
+AND $SQL DATEDIFF ad.ReturnDate,ad.MovementDate$ < 30
 ORDER BY s.SpeciesName, ad.ReturnDate, a.AnimalName
 ###
 $$HEADER

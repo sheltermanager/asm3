@@ -176,6 +176,14 @@ CURRENTVETEMAIL
     The vet's email.
 CURRENTVETADDITIONAL<fieldname> 
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth CURRENTVETADDITIONALDATEOFBIRTH
+DIARYDATE
+    The date of the diary entry
+DIARYFOR
+    The person the diary note is for
+DIARYSUBJECT
+    The subject of the diary note
+DIARYNOTE
+    The diary note section 
 DONATIONDATE
     The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.
 DONATIONAMOUNT

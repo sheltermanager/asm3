@@ -25,7 +25,7 @@ Monthly Adoptions By Location
 ###
 Movement Charts
 ###
-3000/PostgreSQL rev01
+3000/Any rev02
 ###
 The number of adoptions per month, broken down by location.
 ###
@@ -34,13 +34,14 @@ en
 
 SELECT
 i.LocationName, 
-CAST(EXTRACT(MONTH FROM ad.MovementDate) AS INTEGER) AS bimonth,
+$SQL MONTH ad.MovementDate$ AS bimonth,
+
 COUNT(ad.ID) AS total
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-WHERE CAST(EXTRACT(YEAR FROM ad.MovementDate) AS INTEGER) = $ASK STRING Which year to display for?$
+WHERE $SQL YEAR ad.MovementDate$ = $ASK STRING Which year to display for?$
 AND ad.MovementType = 1
-GROUP BY i.LocationName, EXTRACT(MONTH FROM ad.MovementDate)
+GROUP BY i.LocationName, $SQL MONTH ad.MovementDate$
 ###
 GRAPH BARS

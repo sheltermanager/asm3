@@ -2,7 +2,7 @@ Neutering by Date for Site
 ###
 Site
 ###
-34019/PostgreSQL rev01
+34019/Any rev02
 ###
 All animals neutered/spayed between two dates at selected site.
 ###
@@ -12,7 +12,7 @@ $VAR site SITE$
 
 SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, st.SiteName,  
 NeuteredDate, AnimalComments, x.Sex, nv.OwnerName, animal.ID AS AID, nv.ID AS OID,
-age(NeuteredDate, animal.DateOfBirth)::varchar AS AgeAtNeutering
+$SQL AGE NeuteredDate,animal.DateOfBirth$ AS AgeAtNeutering
 FROM animal
 INNER JOIN lksex x ON x.ID = animal.Sex 
 INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
