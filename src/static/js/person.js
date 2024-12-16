@@ -50,8 +50,8 @@ $(function() {
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "worktelephone2", json_field: "WORKTELEPHONE2", classes: "tag-couple" }) },
                     { post_field: "mobiletelephone", json_field: "MOBILETELEPHONE", type: "text", label: _("Cell Phone"), 
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "mobiletelephone2", json_field: "MOBILETELEPHONE2", classes: "tag-couple" }) },
-                    { post_field: "email", json_field: "EMAILADDRESS", type: "text", label: _("Email Address"), classes: "newform",
-                        xmarkup: tableform.render_text({ justwidget: true, post_field: "email2", json_field: "EMAILADDRESS2", classes: "tag-couple" }) },
+                    { post_field: "emailaddress", json_field: "EMAILADDRESS", type: "text", label: _("Email Address"), classes: "newform",
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "emailaddress2", json_field: "EMAILADDRESS2", classes: "tag-couple" }) },
                     { post_field: "dateofbirth", json_field: "DATEOFBIRTH", type: "date", label: _("Date Of Birth"),
                         xmarkup: tableform.render_date({ justwidget: true, post_field: "dateofbirth2", json_field: "DATEOFBIRTH2", classes: "tag-couple" }) },
                     { post_field: "idnumber", json_field: "IDENTIFICATIONNUMBER", type: "text", label: _("ID Number"), 
@@ -380,19 +380,19 @@ $(function() {
             }
 
             // email
-            if (common.trim($("#email").val()) != "") {
-                if (!validate.email($("#email").val())) {
-                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#email").val()));
-                    validate.highlight("email");
+            if (common.trim($("#emailaddress").val()) != "") {
+                if (!validate.email($("#emailaddress").val())) {
+                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#emailaddress").val()));
+                    validate.highlight("emailaddress");
                     return false;
                 }
             }
 
             // email2
-            if (common.trim($("#email2").val()) != "") {
-                if (!validate.email($("#email2").val())) {
-                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#email2").val()));
-                    validate.highlight("email");
+            if (common.trim($("#emailaddress2").val()) != "") {
+                if (!validate.email($("#emailaddress2").val())) {
+                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#emailaddress2").val()));
+                    validate.highlight("emailaddress");
                     return false;
                 }
             }
@@ -524,7 +524,7 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
-                let email = $("#email").val(), email2 = $("#email2").val();
+                let email = $("#emailaddress").val(), email2 = $("#emailaddress2").val();
                 if (email2) { email += ", " + email2; }
                 $("#emailform").emailform("show", {
                     post: "person",
