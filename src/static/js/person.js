@@ -184,7 +184,7 @@ $(function() {
                         options: { displayfield: "NAME", rows: controller.ynunk, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchhousetrained", json_field: "MATCHHOUSETRAINED", type: "select", label: _("Housetrained"), rowclasses: "lfs", 
                         options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
-                    { post_field: "matchflags", json_field: "MATCHFLAGS", type: "selectmulti", label: _("Flags"), 
+                    { post_field: "matchflags", json_field: "MATCHFLAGS", type: "selectmulti", label: _("Flags"), rowclasses: "lfs", 
                         options: { displayfield: "FLAG", valuefield: "FLAG", rows: controller.animalflags }}
                 ]),
                 '</div>'
