@@ -4208,6 +4208,7 @@ class incident_new(JSONEndpoint):
         dbo = o.dbo
         asm3.al.debug("add incident", "main.incident_new", dbo)
         return {
+            "acos": asm3.users.get_users_with_permission(dbo, asm3.users.DISPATCH_INCIDENT),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, 0, "incident"),

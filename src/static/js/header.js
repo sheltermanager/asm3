@@ -17,6 +17,7 @@ if (common.current_url().indexOf("/login") != -1 ||
 /** Functions related to rendering and binding to events for the page
  *  header for all screens (menu, search, etc).
  */
+
 header = {
 
     QUICKLINKS_SET: {
@@ -86,7 +87,8 @@ header = {
         64: ["clinic_consultingroom", "asm-icon-users", _("Consulting Room")],
         65: ["clinic_waitingroom", "asm-icon-person", _("Waiting Room")],
         66: ["search?q=adopted", "asm-icon-movement", _("Recently adopted")],
-        67: ["search?q=entered", "asm-icon-animal", _("Recently entered")]
+        67: ["search?q=entered", "asm-icon-animal", _("Recently entered")],
+        68: ["incident_find_results?dispatchedaco=" + asm.user, "asm-icon-call", _("My Incidents")]
     },
 
     show_error: function(text, duration) {
