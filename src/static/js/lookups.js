@@ -130,7 +130,7 @@ $(function() {
                         hideif: function(row) {
                             return !config.bool("ShowLookupDataID");
                         }, formatter: function(row) {
-                            if (lookups.is_builtin(row)) { return ""; }
+                            if (lookups.is_builtin(row)) { return _("(built in)"); }
                             return row.ID;
                         }},
                     { field: "SPECIESNAME", display: _("Species"), hideif: function(row) {
