@@ -335,6 +335,26 @@ def check_sql(dbo: Database, username: str, sql: str) -> str:
             sub = "2001"
         elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
+        elif token.startswith("SQL AGE"):
+            sub = "''"
+        elif token.startswith("SQL CONCAT"):
+            sub = "''"
+        elif token.startswith("SQL ILIKE"):
+            sub = "''"
+        elif token.startswith("SQL INTERVAL"):
+            sub = "2001-01-01"
+        elif token.startswith("SQL DATEDIFF"):
+            sub = "0"
+        elif token.startswith("SQL DATETOCHAR"):
+            sub = "'2001-01-01'"
+        elif token.startswith("SQL DAY"):
+            sub = "1"
+        elif token.startswith("SQL MONTH"):
+            sub = "1"
+        elif token.startswith("SQL YEAR"):
+            return "2001"
+        elif token.startswith("SQL WEEKDAY"):
+            return "Monday"
         elif token == "":
             # an empty token means $$ was used, it can be used to quote strings in Postgres - leave it alone
             i = sql.find("$", end+1)
@@ -1337,6 +1357,9 @@ class Report:
                     for p in params:
                         if p[0].startswith("PARENTARG") and elems[2].find("PARENTARG") != -1: 
                             elems[2] = elems[2].replace(p[0], p[2])
+                    # Substitute any @ variable values in our parameters
+                    for p in params:
+                        elems[2] = elems[2].replace(f"@{p[0]}", p[2])
                     sparams = elems[2].split(",")
                     if stype == "AGE":
                         value = self.dbo.sql_age(sparams[0], sparams[1])
