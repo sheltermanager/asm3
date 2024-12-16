@@ -9,20 +9,11 @@ $(function() {
         render_dialogs: function() {
             return [
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select person to merge")) + '">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                _("Select a person to merge into this record. The selected person will be removed, and their movements, diary notes, log entries, etc. will be reattached to this record."),
-                '</p>',
-                '</div>',
+                html.info(_("Select a person to merge into this record. The selected person will be removed, and their movements, diary notes, log entries, etc. will be reattached to this record.")),
                 html.capture_autofocus(),
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="mergeperson">' + _("Person") + '</label></td>',
-                '<td>',
-                '<input id="mergeperson" data="mergeperson" type="hidden" class="asm-personchooser" value="" />',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "mergeperson", type: "person", label: _("Person") }
+                ], { full_width: true }),
                 '</div>',
                 '<div id="emailform"></div>',
                 '<div id="dialog-popupwarning" style="display: none" title="' + html.title(_("Warning")) + '">',
@@ -35,179 +26,62 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Name and Address") + '</a></h3>',
                 '<div>',
-                '<div class="row">',
-                // left column
-                '<div class="col-sm">',
-                '<table>',
-                '<tr>',
-                '<td><label for="code">' + _("Code") + '</label></td>',
-                '<td>',
-                '<span class="asm-person-code">' + controller.person.OWNERCODE + '</span>',
-                '</td>',
-                '</tr>',
-                '<tr id="siterow">',
-                '<td><label for="site">' + _("Site") + '</label></td>',
-                '<td>',
-                '<select id="site" data-json="SITEID" data-post="site" class="asm-selectbox">',
-                '<option value="0">' + _("(all)") + '</option>',
-                html.list_to_options(controller.sites, "ID", "SITENAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="ownertype">' + _("Class") + '</label></td>',
-                '<td>',
-                '<select id="ownertype" data-json="OWNERTYPE" data-post="ownertype" class="asm-selectbox">',
-                '<option value="1">' + _("Individual") + '</option>',
-                '<option value="3">' + _("Couple") + '</option>',
-                '<option value="2">' + _("Organization") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="tag-individual">',
-                '<td><label for="title">' + _("Title") + '</label></td>',
-                '<td class="nowrap">',
-                '<input type="text" id="title" data-json="OWNERTITLE" data-post="title" maxlength="50" class="asm-textbox" />',
-                '<input type="text" id="title2" data-json="OWNERTITLE2" data-post="title2" maxlength="50" class="asm-textbox tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr class="tag-individual">',
-                '<td><label for="initials">' + _("Initials") + '</label></td>',
-                '<td class="nowrap">',
-                '<input type="text" id="initials" data-json="OWNERINITIALS" data-post="initials" maxlength="50" class="asm-textbox" />',
-                '<input type="text" id="initials" data-json="OWNERINITIALS2" data-post="initials2" maxlength="50" class="asm-textbox tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr class="tag-individual">',
-                '<td><label for="forenames">' + _("First name(s)") + '</label></td>',
-                '<td class="nowrap">',
-                '<input type="text" id="forenames" data-json="OWNERFORENAMES" data-post="forenames" maxlength="200" class="asm-textbox" />',
-                '<input type="text" id="forenames2" data-json="OWNERFORENAMES2" data-post="forenames2" maxlength="200" class="asm-textbox tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="surname" class="tag-individual">' + _("Last name") + '</label>',
-                '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
-                '<span class="asm-has-validation">*</span>',
-                '</td>',
-                '<td class="nowrap">',
-                '<input type="text" id="surname" data-json="OWNERSURNAME" data-post="surname" maxlength="100" class="asm-textbox" />',
-                '<input type="text" id="surname2" data-json="OWNERSURNAME2" data-post="surname2" maxlength="100" class="asm-textbox tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr class="homeworkphone">',
-                '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
-                '<td>',
-                '<input type="text" id="hometelephone" data-json="HOMETELEPHONE" data-post="hometelephone" class="asm-textbox asm-phone" />',
-                '</td>',
-                '</tr>',
-                '<tr class="homeworkphone">',
-                '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
-                '<td class="nowrap">',
-                '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox asm-phone" />',
-                '<input type="text" id="worktelephone2" data-json="WORKTELEPHONE2" data-post="worktelephone2" class="asm-textbox asm-phone tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
-                '<td class="nowrap">',
-                '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox asm-phone" />',
-                '<input type="text" id="mobiletelephone2" data-json="MOBILETELEPHONE2" data-post="mobiletelephone2" class="asm-textbox asm-phone tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="email">' + _("Email") + '</label></td>',
-                '<td class="nowrap">',
-                '<input type="text" id="email" data-json="EMAILADDRESS" data-post="emailaddress" maxlength="200" class="asm-textbox" />',
-                '<input type="text" id="email2" data-json="EMAILADDRESS2" data-post="emailaddress2" maxlength="200" class="asm-textbox tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr id="dateofbirthrow">',
-                '<td><label for="dateofbirth">' + _("Date Of Birth") + '</label></td>',
-                '<td class="nowrap">',
-                '<input type="text" id="dateofbirth" data-json="DATEOFBIRTH" data-post="dateofbirth" class="asm-textbox asm-datebox" />',
-                '<input type="text" id="dateofbirth2" data-json="DATEOFBIRTH2" data-post="dateofbirth2" class="asm-textbox asm-datebox tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr id="idnumberrow">',
-                '<td><label for="idnumber">' + _("ID Number") + '</label>',
-                '<span id="idnumber-callout" class="asm-callout">',
-                _("Driving license, passport or other identification number"),
-                '</span>',
-                '</td>',
-                '<td class="nowrap">',
-                '<input type="text" id="idnumber" data-json="IDENTIFICATIONNUMBER" data-post="idnumber" maxlength="200" class="asm-textbox" />',
-                '<input type="text" id="idnumber2" data-json="IDENTIFICATIONNUMBER2" data-post="idnumber2" maxlength="200" class="asm-textbox tag-couple" />',
-                '</td>',
-                '</tr>',
-                '<tr id="jurisdictionrow">',
-                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
-                '<td>',
-                '<select id="jurisdiction" data-json="JURISDICTIONID" data-post="jurisdiction" class="asm-selectbox">',
-                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr id="gdprcontactoptinrow">',
-                '<td><label for="gdprcontactoptin">' + _("GDPR Contact Opt-In") + '</label></td>',
-                '<td>',
-                '<select id="gdprcontactoptin" data-json="GDPRCONTACTOPTIN" data-post="gdprcontactoptin" class="asm-bsmselect" multiple="multiple">',
-                edit_header.gdpr_contact_options(),
-                '</select>',
-                '</td>',
-                '</tr>',
-                additional.additional_fields_linktype(controller.additional, 7), 
-                '</table>',
-                '</div>', // col-sm
-                // right column
-                '<div class="col-sm">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="address">' + _("Address") + '</label></td>',
-                '<td>',
-                '<textarea id="address" title="' + html.title(_("Address")) + '" data-json="OWNERADDRESS" data-post="address" rows="5" class="asm-textareafixed"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr class="towncounty">',
-                '<td><label for="town">' + _("City") + '</label></td>',
-                '<td>',
-                '<input type="text" id="town" data-json="OWNERTOWN" data-post="town" maxlength="100" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr class="towncounty">',
-                '<td><label for="county">' + _("State") + '</label></td>',
-                '<td>',
-                common.iif(config.bool("USStateCodes"),
-                    '<select id="county" data-json="OWNERCOUNTY" data-post="county" class="asm-selectbox">' +
-                    html.states_us_options() + '</select>',
-                    '<input type="text" id="county" data-json="OWNERCOUNTY" data-post="county" maxlength="100" ' + 
-                    'class="asm-textbox" />'),
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
-                '<td>',
-                '<input type="text" id="postcode" data-json="OWNERPOSTCODE" data-post="postcode" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr id="countryrow">',
-                '<td><label for="country">' + _("Country") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="country" data-json="OWNERCOUNTRY" data-post="country" type="text" /></td>',
-                '</tr>',
-                '<tr id="latlongrow">',
-                '<td><label for="latlong">' + _("Latitude/Longitude"),
-                '<span class="asm-callout">' + _("Right-click on the map to change the marker location") + '</span>',
-                '</label></td>',
-                '<td><input type="text" class="asm-latlong" id="latlong" data-json="LATLONG" data-post="latlong" /></td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col-sm
-                // Third column, embedded map placeholder
-                '<div class="col-sm">',
-                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>',
-                '</div>', // col-sm
-                '</div>', // row
-                '</div>', // end accordion section
+                tableform.fields_render([
+                    { type: "raw", label: _("Code"), markup: '<span class="asm-person-code">' + controller.person.OWNERCODE + '</span>' },
+                    { post_field: "site", json_field: "SITEID", type: "select", label: _("Site"), 
+                        options: { displayfield: "SITENAME", rows: controller.sites }},
+                    { post_field: "ownertype", json_field: "OWNERTYPE", type: "select", 
+                        options: html.list_to_options([ '1|' + _("Individual"), '3|' + _("Couple"), '2|' + _("Organization") ])},
+                    { post_field: "title", json_field: "OWNERTITLE", type: "text", label: _("Title"), maxlength: 50, 
+                        rowclasses: "tag-individual", 
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "title2", json_field: "OWNERTITLE2", classes: "tag-couple", maxlength: 50 }) },
+                    { post_field: "initials", json_field: "OWNERINITIALS", type: "text", label: _("Initials"), maxlength: 50, 
+                        rowclasses: "tag-individual", 
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "initials2", json_field: "OWNERINITIALS2", classes: "tag-couple", maxlength: 50 }) },
+                    { post_field: "forenames", json_field: "OWNERFORENAMES", type: "text", label: _("First name(s)"), maxlength: 50, 
+                        rowclasses: "tag-individual", 
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "forenames2", json_field: "OWNERFORENAMES2", classes: "tag-couple", maxlength: 50 }) },
+                    { post_field: "surname", json_field: "OWNERSURNAME", type: "text", label: _("Last name"), maxlength: 100,
+                        labelclasses: "tag-individual", classes: "newform", 
+                        xlabel: '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "surname2", json_field: "OWNERSURNAME2", classes: "tag-couple", maxlength: 100 }) },
+                    { post_field: "hometelephone", json_field: "HOMETELEPHONE", type: "text", label: _("Home Phone"), rowclasses: "homeworkphone" },
+                    { post_field: "worktelephone", json_field: "WORKTELEPHONE", type: "text", label: _("Work Phone"), rowclasses: "homeworkphone",
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "worktelephone2", json_field: "WORKTELEPHONE2", classes: "tag-couple" }) },
+                    { post_field: "mobiletelephone", json_field: "MOBILETELEPHONE", type: "text", label: _("Cell Phone"), 
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "mobiletelephone2", json_field: "MOBILETELEPHONE2", classes: "tag-couple" }) },
+                    { post_field: "email", json_field: "EMAILADDRESS", type: "text", label: _("Email Address"), classes: "newform",
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "email2", json_field: "EMAILADDRESS2", classes: "tag-couple" }) },
+                    { post_field: "dateofbirth", json_field: "DATEOFBIRTH", type: "date", label: _("Date Of Birth"),
+                        xmarkup: tableform.render_date({ justwidget: true, post_field: "dateofbirth2", json_field: "DATEOFBIRTH2", classes: "tag-couple" }) },
+                    { post_field: "idnumber", json_field: "IDENTIFICATIONNUMBER", type: "text", label: _("ID Number"), 
+                        callout: _("Driving license, passport or other identification number"),
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "idnumber2", json_field: "IDENTIFICATIONNUMBER2", classes: "tag-couple" }) },
+                    { post_field: "jurisdiction", json_field: "JURISDICTIONID", type: "select", label: _("Jurisdiction"), 
+                        options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
+                    { post_field: "gdprcontactoptin", json_field: "GDPRCONTACTOPTIN", type: "selectmulti", label: _("GDPR Contact Opt-In"), 
+                        options: edit_header.gdpr_contact_options() },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 7) },
+
+                    { type: "nextcol" },
+
+                    { post_field: "address", json_field: "OWNERADDRESS", type: "textarea", label: _("Address"), classes: "asm-textareafixed", rows: 5},
+                    { post_field: "town", json_field: "OWNERTOWN", type: "text", label: _("City"), rowclasses: "towncounty", maxlength: 100 },
+                    common.iif(config.bool("USStateCodes"),
+                        { post_field: "county", json_field: "OWNERCOUNTY", type: "select", label: _("State"), rowclasses: "towncounty", 
+                            options: html.states_us_options(config.str("OrganisationCounty")) },
+                        { post_field: "county", json_field: "OWNERCOUNTY", type: "text", label: _("State"), rowclasses: "towncounty", maxlength: 100 }),
+                    { post_field: "postcode", json_field: "OWNERPOSTCODE", type: "text", label: _("Zipcode") },
+                    { post_field: "country", json_field: "OWNERCOUNTRY", type: "text", label: _("Country") }, 
+                    { post_field: "latlong", json_field: "LATLONG", type: "latlong", label: _("Latitude/Longitude"), 
+                        callout: _("Right-click on the map to change the marker location") },
+
+                    { type: "nextcol" },
+
+                    { type: "raw", fullrow: true, markup: '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>' }
+
+                ], { full_width: true }),
+                '</div>'
             ].join("\n");
         },
 
@@ -215,63 +89,23 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Type") + '</a></h3>',
                 '<div>',
-                '<div class="row">',
-                // left column
-                '<div class="col-sm">',
-                '<table>',
-                '<tr>',
-                '<td><label for="flags">' + _("Flags") + '</label></td>',
-                '<td>',
-                '<select id="flags" data="flags" class="asm-bsmselect" multiple="multiple">',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="homecheckedby">' + _("Homechecked by") + '</label></td>',
-                '<td>',
-                '<input id="homecheckedby" data-json="HOMECHECKEDBY" data-post="homecheckedby" type="hidden" data-filter="homechecker" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="homechecked">' + _("on") + '</label></td>',
-                '<td><input type="text" id="homechecked" data-json="DATELASTHOMECHECKED" data-post="homechecked" title="' + html.title(_("The date this person was homechecked.")) + '" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="membershipnumber">' + _("Membership Number") + '</label></td>',
-                '<td><input type="text" id="membershipnumber" data-json="MEMBERSHIPNUMBER" data-post="membershipnumber" title="' + html.title(_("If this person is a member, their membership number.")) + '" class="asm-textbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="membershipexpires">' + _("Membership Expiry") + '</label></td>',
-                '<td><input type="text" id="membershipexpires" data-json="MEMBERSHIPEXPIRYDATE" data-post="membershipexpires" title="' + html.title(_("If this person is a member, the date that membership expires.")) + '" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="fostercapacity">' + _("Foster Capacity") + '</label></td>',
-                '<td><input type="text" id="fostercapacity" data-json="FOSTERCAPACITY" data-post="fostercapacity" title="' + html.title(_("If this person is a fosterer, the maximum number of animals they can care for.")) + '" class="asm-textbox asm-numberbox" /></td>',
-                '</tr>',
-                additional.additional_fields_linktype(controller.additional, 8), 
-                '</table>',
-                '</div>', // col-sm
-                // Right column
-                '<div class="col-sm">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="comments">' + _("Comments") + '</label></td>',
-                '<td>',
-                '<textarea id="comments" title="' + _("Comments") + '" data-json="COMMENTS" data-post="comments" rows="7" class="asm-textarea"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="popupwarning">' + _("Warning") + '</label>',
-                '<span id="callout-popupwarning" class="asm-callout">' + _("Show a warning when viewing this person") + '</span>',
-                '</td>',
-                '<td>',
-                '<textarea id="popupwarning" title="' + _("Warning") + '" data-json="POPUPWARNING" data-post="popupwarning" rows="2" class="asm-textarea"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col-sm
-                '</div>', // row
-                '</div>', // end accordion section
+                tableform.fields_render([ 
+                    { post_field: "flags", type: "selectmulti", label: _("Flags") },
+                    { post_field: "homecheckedby", json_field: "HOMECHECKEDBY", type: "person", label: _("Homechecked by"), personfilter: "homechecker" },
+                    { post_field: "homechecked", json_field: "DATELASTHOMECHECKED", type: "date", label: _("on") }, 
+                    { post_field: "membershipnumber", json_field: "MEMBERSHIPNUMBER", type: "text", label: _("Membership Number") },
+                    { post_field: "membershipexpires", json_field: "MEMBERSHIPEXPIRYDATE", type: "date", label: _("Membership Expiry") },
+                    { post_field: "fostercapacity", json_field: "FOSTERCAPACITY", type: "number", label: _("Foster Capacity"), 
+                        callout: _("If this person is a fosterer, the maximum number of animals they can care for.") },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 8) },
+
+                    { type: "nextcol" },
+
+                    { post_field: "comments", json_field: "COMMENTS", type: "textarea", label: _("Comments"), rows: 7 },
+                    { post_field: "popupwarning", json_field: "POPUPWARNING", type: "textarea", label: _("Warning"), rows: 2,
+                        callout: _("Show a warning when viewing this person") }
+                ], { full_width: true }),
+                '</div>'
             ].join("\n");
         },
 
@@ -279,29 +113,31 @@ $(function() {
             return [
                 '<h3 id="accordion-homechecker"><a href="#">' + _("Homechecker") + '</a></h3>',
                 '<div>',
-                '<div class="row">',
-                // left column
-                '<div class="col-sm">',
-                '<p class="asm-header"><label for="areas">' + _("Homecheck Areas") + '</label></p>',
-                '<textarea id="areas" class="asm-textarea" data-json="HOMECHECKAREAS" data-post="areas" rows="8" title="' + html.title(_("A list of areas this person will homecheck - eg: S60 S61")) + '"></textarea>',
-                '</div>', // col-sm
-                // right column
-                '<div class="col-sm">',
-                '<p class="asm-header"><label>' + _("Homecheck History") + '</label></p>',
-                '<table id="homecheckhistory" width="100%">',
-                '<thead>',
-                '<tr>',
-                '<th>' + _("Date") + '</th>',
-                '<th>' + _("Person") + '</th>',
-                '<th>' + _("Comments") + '</th>',
-                '</tr>',
-                '</thead>',
-                '<tbody>',
-                '</tbody>',
-                '</table>',
-                '</div>', // col-sm
-                '</div>', // row
-                '</div>', // end accordion section
+                tableform.fields_render([
+                    { post_field: "areas", json_field: "HOMECHECKAREAS", type: "textarea", label: _("Homecheck Areas"),
+                        rows: 8, labelpos: "above", 
+                        callout:_("A list of areas this person will homecheck - eg: S60 S61") },
+                    
+                    { type: "nextcol" },
+
+                    { type: "raw", fullrow: true, 
+                        markup: [
+                            '<p class="asm-header"><label>' + _("Homecheck History") + '</label></p>',
+                            '<table id="homecheckhistory" width="100%">',
+                            '<thead>',
+                            '<tr>',
+                            '<th>' + _("Date") + '</th>',
+                            '<th>' + _("Person") + '</th>',
+                            '<th>' + _("Comments") + '</th>',
+                            '</tr>',
+                            '</thead>',
+                            '<tbody>',
+                            '</tbody>',
+                            '</table>'
+                        ].join("\n")
+                    }
+                ]),
+                '</div>'
             ].join("\n");
         },
 
@@ -309,140 +145,49 @@ $(function() {
             return [
                 '<h3 id="accordion-lookingfor"><a href="#">' + _("Looking for") + ' <span id="tabcriteria" style="display: none" class="asm-icon asm-icon-animal"></span></a></h3>',
                 '<div>',
-                '<div class="row">',
-                // 1st column
-                '<div class="col-sm">',
-                '<table>',
-                '<tr>',
-                '<td><label for="matchactive">' + _("Status") + '</label></td>',
-                '<td><select class="asm-selectbox" id="matchactive" data-json="MATCHACTIVE" data-post="matchactive">',
-                '<option value="0">' + _("Inactive - do not include") + '</option>',
-                '<option value="1">' + _("Active") + '</option>',
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchadded">' + _("Added") + '</label></td>',
-                '<td><input type="text" class="lft asm-textbox asm-datebox" id="matchadded" data-json="MATCHADDED" data-post="matchadded" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchexpires">' + _("Expires") + '</label></td>',
-                '<td><input type="text" class="lft asm-textbox asm-datebox" id="matchexpires" data-json="MATCHEXPIRES" data-post="matchexpires" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchagedfrom">' + _("Aged From") + '</label></td>',
-                '<td><input type="text" class="lft asm-textbox asm-numberbox" id="agedfrom" data-json="MATCHAGEFROM" data-post="agedfrom" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchagedto">' + _("Aged To") + '</label></td>',
-                '<td><input type="text" class="lft asm-textbox asm-numberbox" id="agedto" data-json="MATCHAGETO" data-post="agedto" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchcommentscontain">' + _("Comments Contain") + '</label>',
-                '<span id="callout-commentscontain" class="asm-callout">' + _("Animal comments MUST contain this phrase in order to match."),
-                '<br/>',
-                _("DO NOT use this field to store notes about what the person is looking for.") + '</span>',
-                '</td>',
-                '<td><textarea id="commentscontain" data-json="MATCHCOMMENTSCONTAIN" data-post="commentscontain" rows="5" maxlength="255" class="lft asm-textareafixed"></textarea></td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col-sm
-                // 2nd col
-                '<div class="col-sm">',
-                '<table>',
-                '<tr>',
-                '<td><label for="matchsex">' + _("Sex") + '</label></td>',
-                '<td><select id="matchsex" data-json="MATCHSEX" data-post="matchsex" class="lfs asm-selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.sexes, "ID", "SEX"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchsize">' + _("Size") + '</label></td>',
-                '<td><select id="matchsize" data-json="MATCHSIZE" data-post="matchsize" class="lfs asm-selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.sizes, "ID", "SIZE"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchcolour">' + _("Color") + '</label></td>',
-                '<td><select id="matchcolour" data-json="MATCHCOLOUR" data-post="matchcolour" class="lfs asm-selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.colours, "ID", "BASECOLOUR"),
-                '</select></td>',
-                '</tr>',
+                tableform.fields_render([
+                    { post_field: "matchactive", json_field: "MATCHACTIVE", type: "select", label: _("Status"), 
+                        options: '<option value="0">' + _("Inactive - do not include") + '</option>' +
+                            '<option value="1">' + _("Active") + '</option>' },
+                    { post_field: "matchadded", json_field: "MATCHADDED", type: "date", label: _("Added"), rowclasses: "lft" },
+                    { post_field: "matchexpires", json_field: "MATCHEXPIRES", type: "date", label: _("Expires"), rowclasses: "lft" },
+                    { post_field: "matchagedfrom", json_field: "MATCHAGEFROM", type: "number", label: _("Aged From"), rowclasses: "lft" },
+                    { post_field: "matchagedto", json_field: "MATCHAGETO", type: "number", label: _("Aged To"), rowclasses: "lft" },
+                    { post_field: "matchcommentscontain", json_field: "MATCHCOMMENTSCONTAIN", type: "textarea", 
+                        callout: _("Animal comments MUST contain this phrase in order to match."),
+                        label: _("Comments Contain"), rows: 5, classes: "asm-textareafixed", rowclasses: "lft" },
 
-                '<tr>',
-                '<td><label for="matchtype">' + _("Type") + '</label></td>',
-                '<td><select id="matchtype" data-json="MATCHANIMALTYPE" data-post="matchtype" class="lfs asm-selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.animaltypes, "ID", "ANIMALTYPE"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchspecies">' + _("Species") + '</label></td>',
-                '<td><select id="matchspecies" data-json="MATCHSPECIES" data-post="matchspecies" class="lfs asm-selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.species, "ID", "SPECIESNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchbreed1">' + _("Breed") + '</label></td>',
-                '<td><select id="matchbreed1" data-json="MATCHBREED" data-post="matchbreed1" class="lfs asm-selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options_breeds(controller.breeds, "ID", "BREEDNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchbreed2">' + _("or") + '</label></td>',
-                '<td><select id="matchbreed2" data-json="MATCHBREED2" data-post="matchbreed2" class="lfs asm-selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options_breeds(controller.breeds, "ID", "BREEDNAME"),
-                '</select></td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col-sm
-                // 3rd col
-                '<div class="col-sm">',
-                '<table>',
-                '<tr>',
-                '<td><label for="matchgoodwithcats">' + _("Good with cats") + '</label></td>',
-                '<td><select id="matchgoodwithcats" data-json="MATCHGOODWITHCATS" data-post="matchgoodwithcats" class="lfs asm-halftextbox selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchgoodwithdogs">' + _("Good with dogs") + '</label></td>',
-                '<td><select id="matchgoodwithdogs" data-json="MATCHGOODWITHDOGS" data-post="matchgoodwithdogs" class="lfs asm-halftextbox selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select></td>',
-                '</tr>',
-                '',
-                '<tr>',
-                '<td><label for="matchgoodwithchildren">' + _("Good with children") + '</label></td>',
-                '<td><select id="matchgoodwithchildren" data-json="MATCHGOODWITHCHILDREN" data-post="matchgoodwithchildren" class="lfs asm-halftextbox selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.ynunk, "ID", "NAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchhousetrained">' + _("Housetrained") + '</label></td>',
-                '<td><select id="matchhousetrained" data-json="MATCHHOUSETRAINED" data-post="matchhousetrained" class="lfs asm-halftextbox selectbox">',
-                '<option value="-1">' + _("(any)") + '</option>',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="matchflags">' + _("Flags") + '</label></td>',
-                '<td><select id="matchflags" data-json="MATCHFLAGS" data-post="matchflags" class="lfs asm-bsmselect" multiple="multiple">',
-                html.list_to_options(controller.animalflags, "FLAG", "FLAG"),
-                '</select></td>',
-                '</tr>',
-                '</table>',
-                '</div>', // col-sm
-                '</div>', // row
-                '</div>', // end accordion section
+                    { type: "nextcol" },
+
+                    { post_field: "matchsex", json_field: "MATCHSEX", type: "select", label: _("Sex"), rowclasses: "lfs", 
+                        options: { displayfield: "SEX", rows: controller.sexes, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchsize", json_field: "MATCHSIZE", type: "select", label: _("Size"), rowclasses: "lfs", 
+                        options: { displayfield: "SIZE", rows: controller.sizes, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchcolour", json_field: "MATCHCOLOUR", type: "select", label: _("Color"), rowclasses: "lfs", 
+                        options: { displayfield: "BASECOLOUR", rows: controller.colours, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchtype", json_field: "MATCHANIMALTYPE", type: "select", label: _("Type"), rowclasses: "lfs", 
+                        options: { displayfield: "ANIMALTYPE", rows: controller.colours, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchspecies", json_field: "MATCHSPECIES", type: "select", label: _("Species"), rowclasses: "lfs", 
+                        options: { displayfield: "SPECIESNAME", rows: controller.species, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchbreed1", json_field: "MATCHBREED", type: "select", label: _("Breed"), rowclasses: "lfs", 
+                        options: { displayfield: "BREEDNAME", rows: controller.breeds, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchbreed2", json_field: "MATCHBREED2", type: "select", label: _("or"), rowclasses: "lfs", 
+                        options: { displayfield: "BREEDNAME", rows: controller.breeds, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+
+                    { type: "nextcol" },
+
+                    { post_field: "matchgoodwithcats", json_field: "MATCHGOODWITHCATS", type: "select", label: _("Good with cats"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchgoodwithdogs", json_field: "MATCHGOODWITHDOGS", type: "select", label: _("Good with dogs"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchgoodwithchildren", json_field: "MATCHGOODWITHCHILDREN", type: "select", label: _("Good with children"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynunk, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchhousetrained", json_field: "MATCHHOUSETRAINED", type: "select", label: _("Housetrained"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchflags", json_field: "MATCHFLAGS", type: "selectmulti", label: _("Flags"), 
+                        options: { displayfield: "FLAG", valuefield: "FLAG", rows: controller.animalflags }}
+                ]),
+                '</div>'
             ].join("\n");
         },
 
@@ -497,13 +242,13 @@ $(function() {
 
             // If the looking for status is inactive, disable the fields
             if ($("#matchactive").val() == "0") {
-                $(".lft").closest("tr").fadeOut();
-                $(".lfs").closest("tr").fadeOut();
+                $(".lft").fadeOut();
+                $(".lfs").fadeOut();
                 $("#button-lookingfor").button("option", "disabled", true);
             }
             else {
-                $(".lft").closest("tr").fadeIn();
-                $(".lfs").closest("tr").fadeIn();
+                $(".lft").fadeIn();
+                $(".lfs").fadeIn();
                 $("#button-lookingfor").button("option", "disabled", false);
             }
 
@@ -538,8 +283,8 @@ $(function() {
             if ($("#flags option[value='member']").is(":selected")) {
                 $("label[for='membershipnumber']").html(_("Membership Number"));
                 $("#membershipnumber").prop("title", _("If this person is a member, their membership number"));
-                $("#membershipnumber").closest("tr").fadeIn();
-                $("#membershipexpires").closest("tr").fadeIn();
+                $("#membershipnumberrow").fadeIn();
+                $("#membershipexpiresrow").fadeIn();
             }
 
             // If the vet flag is selected, change the membership number label
@@ -547,33 +292,33 @@ $(function() {
             if ($("#flags option[value='vet']").is(":selected")) {
                 $("label[for='membershipnumber']").html(_("License Number"));
                 $("#membershipnumber").prop("title", _("The veterinary license number."));
-                $("#membershipnumber").closest("tr").fadeIn();
-                $("#membershipexpires").closest("tr").fadeOut();
+                $("#membershipnumberrow").fadeIn();
+                $("#membershipexpiresrow").fadeOut();
             }
 
             // If neither member or vet flag is set, hide the membership number field
             if (!$("#flags option[value='vet']").is(":selected") && !$("#flags option[value='member']").is(":selected")) {
-                $("#membershipnumber").closest("tr").fadeOut();
-                $("#membershipexpires").closest("tr").fadeOut();
+                $("#membershipnumberrow").fadeOut();
+                $("#membershipexpiresrow").fadeOut();
             }
 
             // If the fosterer flag is set, show/hide the fosterer capacity field
             if ($("#flags option[value='fosterer']").is(":selected")) {
-                $("#fostercapacity").closest("tr").fadeIn();
+                $("#fostercapacityrow").fadeIn();
             }
             else {
-                $("#fostercapacity").closest("tr").fadeOut();
+                $("#fostercapacityrow").fadeOut();
             }
 
             // If the homechecked flag is set, or the option is not on to
             // hide them, show/hide the homechecked by/date fields
             if ($("#flags option[value='homechecked']").is(":selected") || !config.bool("HideHomeCheckedNoFlag")) {
-                $("#homecheckedby").closest("tr").fadeIn();
-                $("#homechecked").closest("tr").fadeIn();
+                $("#homecheckedbyrow").fadeIn();
+                $("#homecheckedrow").fadeIn();
             }
             else {
-                $("#homecheckedby").closest("tr").fadeOut();
-                $("#homechecked").closest("tr").fadeOut();
+                $("#homecheckedbyrow").fadeOut();
+                $("#homecheckedrow").fadeOut();
             }
 
             // Hide the homechecker section if this person isn't a homechecker
