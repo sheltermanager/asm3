@@ -6,6 +6,10 @@ $(function() {
 
     let tablelist = [];
 
+    console.log("controller.tablename = " + controller.tablename);
+
+
+
     const lookups = {
 
         // locales where the publisher column/fields appear
@@ -96,6 +100,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
+                    if (lookups.is_built_in(row)) { return; } 
                     await tableform.dialog_show_edit(dialog, row, {
                         onload: function() {
                             // If we don't talk to any third party services in this locale, might as well hide
@@ -121,9 +126,13 @@ $(function() {
                 },
                 columns: [
                     { field: controller.namefield, display: controller.namelabel, initialsort: true },
-                    { field: "ID", display: _("ID"), hideif: function(row) {
-                        return !config.bool("ShowLookupDataID");
-                    }},
+                    { field: "ID", display: _("ID"), 
+                        hideif: function(row) {
+                            return !config.bool("ShowLookupDataID");
+                        }, formatter: function(row) {
+                            if (lookups.is_builtin(row)) { return ""; }
+                            return row.ID;
+                        }},
                     { field: "SPECIESNAME", display: _("Species"), hideif: function(row) {
                         return !controller.hasspecies;
                     }},
@@ -208,10 +217,17 @@ $(function() {
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", hideif: function() { return !controller.candelete; },
-                    click: async function() { 
+                    click: async function() {
+                        if (lookups.is_builtin_selected()) { return; }
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
-                        let ids = tableform.table_ids(table);
+                        let rawids = tableform.table_ids(table);
+                        let ids = []
+                        for ( let a = 0; a < rawids.length; a++ ) {
+                            if ( rawids[a] >= 0 ) {
+                                ids.push(rawids[a])
+                            }
+                        }
                         await common.ajax_post("lookups", "mode=delete&lookup=" + controller.tablename + "&ids=" + ids);
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
@@ -219,6 +235,7 @@ $(function() {
                 },
                 { id: "active", text: _("Active"), icon: "tick", enabled: "multi", hideif: function() { return !controller.canretire; },
                     click: async function() {
+                        if (lookups.is_builtin_selected()) { return; }
                         let ids = tableform.table_ids(table);
                         await common.ajax_post("lookups", "mode=active&lookup=" + controller.tablename + "&ids=" + ids);
                         $.each(tableform.table_selected_rows(table), function(i, v) {
@@ -229,6 +246,7 @@ $(function() {
                 },
                 { id: "inactive", text: _("Inactive"), icon: "cross", enabled: "multi", hideif: function() { return !controller.canretire; },
                     click: async function() {
+                        if (lookups.is_builtin_selected()) { return; }
                         let ids = tableform.table_ids(table);
                         await common.ajax_post("lookups", "mode=inactive&lookup=" + controller.tablename + "&ids=" + ids);
                         $.each(tableform.table_selected_rows(table), function(i, v) {
@@ -248,6 +266,7 @@ $(function() {
 
         render: function() {
             let s = "";
+            this.add_builtin_flags();
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Edit Lookups"));
@@ -277,6 +296,61 @@ $(function() {
             if (!config.bool("MultiSiteEnabled")) {
                 $("#lookup").find("option[value='site']").remove();
             }
+        },
+
+        add_builtin_flags: function() {
+            if ( controller.tablename == "lkanimalflags" ) {
+                console.log(controller.rows);
+                let builtinflagrows = [
+                    { ID: -1, FLAG: _("Courtesy Listing"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Cruelty Case"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Non-Shelter"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Not For Adoption"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Do Not Publish"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Do Not Register Microchip"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Quarantine"), ISRETIRED: 1 }
+                ]
+                controller.rows = controller.rows.concat(builtinflagrows);
+            }
+            if ( controller.tablename == "lkownerflags" ) {
+                console.log(controller.rows);
+                let builtinflagrows = [
+                    { ID: -1, FLAG: _("ACO"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Adopter"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Adoption Coordinator"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Banned"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Dangerous"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Deceased"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Donor"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Driver"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Exclude from bulk email"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Fosterer"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Homechecked"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Homechecker"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Member"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Other Shelter"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Sponsor"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Staff"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Vet"), ISRETIRED: 1 },
+                    { ID: -1, FLAG: _("Volunteer"), ISRETIRED: 1 }
+                ]
+                controller.rows = controller.rows.concat(builtinflagrows);
+            }
+        },
+
+        is_builtin: function(row) {
+            return row.ID < 0;
+        },
+
+        is_builtin_selected: function() {
+            let rows = tableform.table_selected_rows(lookups.table), builtins = false;
+            $.each(rows, function(i, v) {
+                if (lookups.is_builtin(v)) { 
+                    builtins = true; 
+                    return false
+                }
+            });
+            return builtins;
         },
 
         destroy: function() {
