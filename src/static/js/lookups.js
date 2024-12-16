@@ -222,10 +222,10 @@ $(function() {
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
                         let rawids = tableform.table_ids(table);
-                        let ids = []
+                        let ids = [];
                         for ( let a = 0; a < rawids.length; a++ ) {
                             if ( rawids[a] >= 0 ) {
-                                ids.push(rawids[a])
+                                ids.push(rawids[a]);
                             }
                         }
                         await common.ajax_post("lookups", "mode=delete&lookup=" + controller.tablename + "&ids=" + ids);
@@ -309,7 +309,7 @@ $(function() {
                     { ID: -1, FLAG: _("Do Not Publish"), ISRETIRED: 1 },
                     { ID: -1, FLAG: _("Do Not Register Microchip"), ISRETIRED: 1 },
                     { ID: -1, FLAG: _("Quarantine"), ISRETIRED: 1 }
-                ]
+                ];
                 controller.rows = controller.rows.concat(builtinflagrows);
             }
             if ( controller.tablename == "lkownerflags" ) {
@@ -333,7 +333,7 @@ $(function() {
                     { ID: -1, FLAG: _("Staff"), ISRETIRED: 1 },
                     { ID: -1, FLAG: _("Vet"), ISRETIRED: 1 },
                     { ID: -1, FLAG: _("Volunteer"), ISRETIRED: 1 }
-                ]
+                ];
                 controller.rows = controller.rows.concat(builtinflagrows);
             }
         },
@@ -347,7 +347,7 @@ $(function() {
             $.each(rows, function(i, v) {
                 if (lookups.is_builtin(v)) { 
                     builtins = true; 
-                    return false
+                    return false;
                 }
             });
             return builtins;
