@@ -130,7 +130,7 @@ $(function() {
                             if (lookups.is_builtin(row)) {
                                 return row[controller.namefield];
                             }
-                            return tableform.table_render_edit_link(row.ID, row[controller.namefield])
+                            return tableform.table_render_edit_link(row.ID, row[controller.namefield]);
                         }
                      },
                     { field: "ID", display: _("ID"), 
