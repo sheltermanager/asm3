@@ -433,6 +433,8 @@ if LICENCE_IMPORT:
 if PICTURE_IMPORT:
     for row in cimage:
         a = None
+        if row["ANIMALKEY"] == 0:
+            continue
         if not row["ANIMALKEY"] in ppa:
             continue
         a = ppa[row["ANIMALKEY"]]
