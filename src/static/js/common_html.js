@@ -1411,6 +1411,22 @@ const html = {
                 idval = row.ID;
             }
         }
+        else if (mode == "lostanimal") {
+            if (row.hasOwnProperty("LOSTANIMALID")) {
+                idval = row.LOSTANIMALID;
+            }
+            else if (row.hasOwnProperty("ID")) {
+                idval = row.ID;
+            }
+        }
+        else if (mode == "foundanimal") {
+            if (row.hasOwnProperty("FOUNDANIMALID")) {
+                idval = row.FOUNDANIMALID;
+            }
+            else if (row.hasOwnProperty("ID")) {
+                idval = row.ID;
+            }
+        }
         else {
             idval = row.ID;
         }

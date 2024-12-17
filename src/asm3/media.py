@@ -217,13 +217,26 @@ def get_image_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
             return mrec( get_web_preferred(dbo, ANIMAL, iid) )
         else:
             return mrec( get_media_by_seq(dbo, ANIMAL, iid, seq) )
-
     elif mode == "person":
         if seq == 0:
             return mrec( get_web_preferred(dbo, PERSON, iid) )
         else:
             return mrec( get_media_by_seq(dbo, PERSON, iid, seq) )
-
+    if mode == "waitinglist":
+        if seq == 0:
+            return mrec( get_web_preferred(dbo, WAITINGLIST, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, WAITINGLIST, iid, seq) )
+    if mode == "lostanimal":
+        if seq == 0:
+            return mrec( get_web_preferred(dbo, LOSTANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, LOSTANIMAL, iid, seq) )
+    if mode == "foundanimal":
+        if seq == 0:
+            return mrec( get_web_preferred(dbo, FOUNDANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, FOUNDANIMAL, iid, seq) )
     elif mode == "animalthumb":
         return thumb_mrec( get_web_preferred(dbo, ANIMAL, iid) )
 
