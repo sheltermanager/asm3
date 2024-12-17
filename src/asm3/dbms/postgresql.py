@@ -128,25 +128,25 @@ class DatabasePostgreSQL(Database):
         """
         Returns an expression that extracts the day from a date.
         """
-        return f"EXTRACT (DAY FROM {dateexpr})::integer"
+        return f"EXTRACT (DAY FROM {dateexpr}::timestamp)::integer"
 
     def sql_datexmonth(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the month from a date.
         """
-        return f"EXTRACT (MONTH FROM {dateexpr})::integer"
+        return f"EXTRACT (MONTH FROM {dateexpr}::timestamp)::integer"
 
     def sql_datexyear(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the year from a date.
         """
-        return f"EXTRACT (YEAR FROM {dateexpr})::integer"
+        return f"EXTRACT (YEAR FROM {dateexpr}::timestamp)::integer"
     
     def sql_datexweekday(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the week day from a date.
         """
-        return f"TO_CHAR({dateexpr}, 'DAY')"
+        return f"TO_CHAR({dateexpr}::timestamp, 'DAY')"
 
     def sql_ilike(self, expr1: str, expr2: str = "?") -> str:
         return "%s ILIKE %s" % (expr1, expr2)
