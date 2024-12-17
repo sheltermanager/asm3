@@ -352,9 +352,9 @@ def check_sql(dbo: Database, username: str, sql: str) -> str:
         elif token.startswith("SQL MONTH"):
             sub = "1"
         elif token.startswith("SQL YEAR"):
-            return "2001"
+            sub = "2001"
         elif token.startswith("SQL WEEKDAY"):
-            return "Monday"
+            sub = "Monday"
         elif token == "":
             # an empty token means $$ was used, it can be used to quote strings in Postgres - leave it alone
             i = sql.find("$", end+1)
@@ -1372,7 +1372,7 @@ class Report:
                     elif stype == "DATEDIFF":
                         value = self.dbo.sql_datediff(sparams[0], sparams[1])
                     elif stype == "DATETOCHAR":
-                        value = self.dbo.sql_tochar(sparams[1], sparams[0])
+                        value = self.dbo.sql_datetochar(sparams[0], sparams[1])
                     elif stype == "DAY":
                         value = self.dbo.sql_datexday(sparams[0])
                     elif stype == "MONTH":
