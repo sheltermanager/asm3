@@ -229,6 +229,15 @@ def get_image_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
 
     elif mode == "personthumb":
         return thumb_mrec( get_web_preferred(dbo, PERSON, iid) )
+    
+    elif mode == "waitinglistthumb":
+        return thumb_mrec( get_web_preferred(dbo, WAITINGLIST, iid) )
+    
+    elif mode == "lostanimalthumb":
+        return thumb_mrec( get_web_preferred(dbo, LOSTANIMAL, iid) )
+    
+    elif mode == "foundanimalthumb":
+        return thumb_mrec( get_web_preferred(dbo, FOUNDANIMAL, iid) )
 
     elif mode == "media":
         return mrec( get_media_by_id(dbo, iid) )

@@ -790,7 +790,8 @@ def json_personfindcolumns(dbo: Database) -> ColumnList:
         ( "HomeCheckAreas", _("Homecheck Areas", l) ),
         ( "DateLastHomeChecked", _("Homecheck Date", l) ),
         ( "HomeCheckedBy", _("Homechecked By", l) ),
-        ("IsSponsor", _("Sponsor", l) )
+        ("IsSponsor", _("Sponsor", l) ),
+        ( "Image", _("Image", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "person")
     for f in fd:
@@ -867,7 +868,8 @@ def json_foundanimalfindcolumns(dbo: Database) -> ColumnList:
         ("SpeciesName", _("Species", l)),
         ("BreedName", _("Breed", l)),
         ("BaseColourName", _("Color", l)),
-        ("DistFeat", _("Features", l))
+        ("DistFeat", _("Features", l)),
+        ( "Image", _("Image", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "foundanimal")
     for f in fd:
@@ -890,7 +892,8 @@ def json_lostanimalfindcolumns(dbo: Database) -> ColumnList:
         ("SpeciesName", _("Species", l)),
         ("BreedName", _("Breed", l)),
         ("BaseColourName", _("Color", l)),
-        ("DistFeat", _("Features", l))
+        ("DistFeat", _("Features", l)),
+        ( "Image", _("Image", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "lostanimal")
     for f in fd:
@@ -930,7 +933,8 @@ def json_waitinglistcolumns(dbo: Database) -> ColumnList:
         ( "DateRemovedFromList", _("Date Removed", l) ),
         ( "ReasonForRemoval", _("Removal Reason", l) ),
         ( "WaitingListRemovalID", _("Removal Category", l) ),
-        ( "Comments", _("Comments") )
+        ( "Comments", _("Comments") ),
+        ( "Image", _("Image", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "waitinglist")
     for f in fd:

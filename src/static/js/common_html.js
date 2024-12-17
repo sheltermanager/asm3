@@ -157,6 +157,38 @@ const html = {
     },
 
     /**
+     * Renders a bare lostanimal list link thumbnail (just the thumbnail surrounded by a link to the record)
+     */
+    lostanimal_link_thumb_bare: function(a) {
+        var lostanimalid = a.LOSTANIMAL || a.ID;
+        return '<a href="lostanimal?id=' + lostanimalid + '">' + html.lostanimal_thumb(a, {}) + '</a>';
+    },
+
+    /**
+     * Renders a bare foundanimal list link thumbnail (just the thumbnail surrounded by a link to the record)
+     */
+    foundanimal_link_thumb_bare: function(a) {
+        var foundanimalid = a.FOUNDANIMAL || a.ID;
+        return '<a href="foundanimal?id=' + foundanimalid + '">' + html.foundanimal_thumb(a, {}) + '</a>';
+    },
+
+    /**
+     * Renders a bare person list link thumbnail (just the thumbnail surrounded by a link to the record)
+     */
+    person_link_thumb_bare: function(a) {
+        var personid = a.PERSON || a.ID;
+        return '<a href="person?id=' + personid + '">' + html.person_thumb(a, {}) + '</a>';
+    },
+
+    /**
+     * Renders a bare waiting list link thumbnail (just the thumbnail surrounded by a link to the record)
+     */
+    waitinglist_link_thumb_bare: function(a) {
+        var waitinglistid = a.WAITINGLISTID || a.ID;
+        return '<a href="waitinglist?id=' + waitinglistid + '">' + html.waitinglist_thumb(a, {}) + '</a>';
+    },
+
+    /**
      * Returns the classes for animal thumbnails
      */
     animal_link_thumb_classes: function(a) {
@@ -172,6 +204,46 @@ const html = {
         let style = "";
         if (o.style) { style = 'style="' + o.style + '"'; }
         return '<img ' + style + ' src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + html.animal_link_thumb_classes(a) + '" />';
+    },
+
+    /**
+     * Renders the lostanimal thumbnail.
+     * o: options object, style to set a style attribute for the img.
+     */
+    lostanimal_thumb: function(a, o) {
+        let style = "";
+        if (o.style) { style = 'style="' + o.style + '"'; }
+        return '<img ' + style + ' src=' + html.thumbnail_src(a, "lostanimalthumb") + ' class="' + html.animal_link_thumb_classes(a) + '" />';
+    },
+
+    /**
+     * Renders the foundanimal thumbnail.
+     * o: options object, style to set a style attribute for the img.
+     */
+    foundanimal_thumb: function(a, o) {
+        let style = "";
+        if (o.style) { style = 'style="' + o.style + '"'; }
+        return '<img ' + style + ' src=' + html.thumbnail_src(a, "foundanimalthumb") + ' class="' + html.animal_link_thumb_classes(a) + '" />';
+    },
+
+    /**
+     * Renders the person thumbnail.
+     * o: options object, style to set a style attribute for the img.
+     */
+    person_thumb: function(a, o) {
+        let style = "";
+        if (o.style) { style = 'style="' + o.style + '"'; }
+        return '<img ' + style + ' src=' + html.thumbnail_src(a, "personthumb") + ' class="asm-thumbnail thumbnailshadow" />';
+    },
+
+    /**
+     * Renders the waitinglist thumbnail.
+     * o: options object, style to set a style attribute for the img.
+     */
+    waitinglist_thumb: function(a, o) {
+        let style = "";
+        if (o.style) { style = 'style="' + o.style + '"'; }
+        return '<img ' + style + ' src=' + html.thumbnail_src(a, "waitinglistthumb") + ' class="' + html.animal_link_thumb_classes(a) + '" />';
     },
 
     /**
@@ -1331,6 +1403,14 @@ const html = {
                 idval = row.ID;
             }
         }
+        else if (mode == "waitinglist") {
+            if (row.hasOwnProperty("WAITINGLISTID")) {
+                idval = row.WAITINGLISTID;
+            }
+            else if (row.hasOwnProperty("ID")) {
+                idval = row.ID;
+            }
+        }
         else {
             idval = row.ID;
         }
@@ -1348,7 +1428,7 @@ const html = {
      * a max-age on items being served.
      * row: An animal or person json row containing ID, ANIMALID or PERSONID
      *      and WEBSITEMEDIANAME
-     * mode: The mode - aanimalthumb or personthumb
+     * mode: The mode - animalthumb or personthumb
      */
     thumbnail_src: function(row, mode) {
         if (!row.WEBSITEMEDIANAME) {
@@ -1366,6 +1446,14 @@ const html = {
         else if (mode == "personthumb") {
             if (row.hasOwnProperty("PERSONID")) {
                 idval = row.PERSONID;
+            }
+            else if (row.hasOwnProperty("ID")) {
+                idval = row.ID;
+            }
+        }
+        else if (mode == "waitinglistthumb") {
+            if (row.hasOwnProperty("WAITINGLISTID")) {
+                idval = row.WAITINGLISTID;
             }
             else if (row.hasOwnProperty("ID")) {
                 idval = row.ID;

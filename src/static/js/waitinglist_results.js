@@ -236,7 +236,8 @@ $(function() {
                 "Urgency": _("Urgency"),
                 "DateRemovedFromList": _("Removed"),
                 "ReasonForRemoval": _("Removal Reason"),
-                "Comments": _("Comments")
+                "Comments": _("Comments"),
+                "Image": _("Image")
             };
             if (labels.hasOwnProperty(name)) {
                 return labels[name];
@@ -297,6 +298,9 @@ $(function() {
             else if ($.inArray(name, YES_NO_FIELDS) > -1) {
                 if (value == 0) { rv = _("No"); }
                 if (value == 1) { rv = _("Yes"); }
+            }
+            else if ( name == "Image" ) {
+                rv = html.waitinglist_link_thumb_bare(row);
             }
             else if (add) {
                 $.each(add, function(i, v) {

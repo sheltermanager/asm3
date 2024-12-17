@@ -6,10 +6,6 @@ $(function() {
 
     let tablelist = [];
 
-    console.log("controller.tablename = " + controller.tablename);
-
-
-
     const lookups = {
 
         // locales where the publisher column/fields appear

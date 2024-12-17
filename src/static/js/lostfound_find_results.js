@@ -151,6 +151,7 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
+            console.log(row);
             const STRING_FIELDS = [ "MicrochipNumber", "AreaLost", "AreaFound", "AreaPostCode", "AgeGroup", "SexName", "SpeciesName", "BreedName", "BaseColourName", "DistFeat" ];
             const DATE_FIELDS = [ "DateFound", "DateLost" ];
             let rv = "";
@@ -162,6 +163,13 @@ $(function() {
             }
             else if ($.inArray(name, DATE_FIELDS) > -1) {
                 rv = format.date(value);
+            }
+            else if ( name == "Image" ) {
+                if (this.mode  == "lost") {
+                    rv = html.lostanimal_link_thumb_bare(row);
+                } else {
+                    rv = html.foundanimal_link_thumb_bare(row);
+                }
             }
             else if (add) {
                 $.each(add, function(i, v) {

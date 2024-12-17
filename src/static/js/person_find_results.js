@@ -215,6 +215,9 @@ $(function() {
             else if ( name == "Image" ) {
                 rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "personthumb") + "\" />";
             }
+            else if ( name == "Image" ) {
+                rv = html.person_link_thumb_bare(row);
+            }
             else if (add) {
                 $.each(add, function(i, v) {
                     if (v.LINKID == row.ID && v.FIELDNAME.toLowerCase() == name.toLowerCase()) {
