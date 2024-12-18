@@ -124,6 +124,18 @@ class DatabasePostgreSQL(Database):
         """ Writes an expression that formats a date, valid format tokens YYYY MM DD HH NN SS """
         return f"TO_CHAR({fieldexpr}::timestamp, '{formatstr}')"
     
+    def sql_datexhour(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the hour from a datetime.
+        """
+        return f"EXTRACT (HOUR FROM {dateexpr}::timestamp)::integer"
+
+    def sql_datexminute(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the minute from a datetime.
+        """
+        return f"EXTRACT (MINUTE FROM {dateexpr}::timestamp)::integer"
+    
     def sql_datexday(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the day from a date.

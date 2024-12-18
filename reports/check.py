@@ -82,6 +82,10 @@ def substitute(sql):
                     formatstr = formatstr.replace("NN", "%M")
                     formatstr = formatstr.replace("SS", "%S")
                     sub = f"datetime('{formatstr}', {sparams[0]})"
+                elif stype == "HOUR":
+                    sub = f"strftime('%H', {sparams[0]})"
+                elif stype == "MINUTE":
+                    sub = f"strftime('%M', {sparams[0]})"
                 elif stype == "DAY":
                     sub = f"strftime('%d', {sparams[0]})"
                 elif stype == "MONTH":

@@ -347,6 +347,10 @@ def check_sql(dbo: Database, username: str, sql: str) -> str:
             sub = "0"
         elif token.startswith("SQL DATETOCHAR"):
             sub = "'2001-01-01'"
+        elif token.startswith("SQL HOUR"):
+            sub = "1"
+        elif token.startswith("SQL MINUTE"):
+            sub = "1"
         elif token.startswith("SQL DAY"):
             sub = "1"
         elif token.startswith("SQL MONTH"):
@@ -1373,6 +1377,10 @@ class Report:
                         value = self.dbo.sql_datediff(sparams[0], sparams[1])
                     elif stype == "DATETOCHAR":
                         value = self.dbo.sql_datetochar(sparams[0], sparams[1])
+                    elif stype == "HOUR":
+                        value = self.dbo.sql_datexhour(sparams[0])
+                    elif stype == "MINUTE":
+                        value = self.dbo.sql_datexminute(sparams[0])
                     elif stype == "DAY":
                         value = self.dbo.sql_datexday(sparams[0])
                     elif stype == "MONTH":

@@ -954,6 +954,18 @@ class Database(object):
         """
         pass # no generic way to do this
 
+    def sql_datexhour(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the hour from a datetime.
+        """
+        pass # no generic way to do this
+
+    def sql_datexminute(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the minute from a datetime.
+        """
+        pass # no generic way to do this
+
     def sql_datexday(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the day from a date.
