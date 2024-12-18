@@ -397,6 +397,16 @@ $(function() {
                     incident.load_animallinks();
                 });
 
+            $("#completedtype").change(function() {
+                if (!$("#completeddate").val()) {
+                    $("#completeddate").val(format.date(new Date()));
+                    $("#completedtime").val(format.time(new Date()));
+                }
+                if ($("#completedtype").val() == "0") {
+                    $("#completeddate, #completedtime").val("");
+                }
+            });
+
         },
 
         sync: function() {
