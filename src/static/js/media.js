@@ -659,7 +659,10 @@ $(function() {
             media.attach_file(selectedfile, 1, $("#retainfor").val(), $("#addcomments").val())
                 .then(function() {
                     header.hide_loading();
-                    common.route_reload(); 
+                    // Redirect back to this page. Reconstructing the URL removes a 
+                    // newmedia=1 argument if it was present and prevents the attach
+                    // file dialog from appearing again
+                    common.route(controller.name + "?id=" + controller.linkid)
                 })
                 .fail(function() {
                     header.show_error("Failed to process image data");
