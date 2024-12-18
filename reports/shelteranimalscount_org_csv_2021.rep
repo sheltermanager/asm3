@@ -2,7 +2,7 @@ shelteranimalscount.org monthly CSV export 2021
 ###
 Figures
 ###
-33600/PostgreSQL rev11
+33600/Any rev12
 ###
 When run from Export Reports as CSV, produces a file containing one month of data for importing into shelteranimalscount.org
 ###
@@ -31,12 +31,12 @@ $CONST REPTILES=11,12,13$
 
 SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'canine' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -71,7 +71,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -79,7 +79,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -90,14 +90,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -107,14 +107,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -127,7 +127,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -137,7 +137,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -149,7 +149,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -159,7 +159,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$  
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -173,7 +173,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$  
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -182,7 +182,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -192,7 +192,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$  
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -200,7 +200,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$  
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -211,7 +211,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$  
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -220,7 +220,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$  
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -230,7 +230,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -238,7 +238,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -248,7 +248,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -256,7 +256,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -268,7 +268,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -278,7 +278,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -290,7 +290,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -300,7 +300,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -314,7 +314,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -323,7 +323,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -334,7 +334,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -343,7 +343,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -354,7 +354,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -363,7 +363,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -373,14 +373,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -389,14 +389,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -405,14 +405,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($CANINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
@@ -428,12 +428,12 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 UNION SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'feline' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -468,7 +468,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -476,7 +476,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -487,14 +487,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -504,14 +504,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -524,7 +524,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -534,7 +534,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -546,7 +546,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -556,7 +556,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -570,7 +570,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -579,7 +579,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -589,7 +589,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -597,7 +597,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -608,7 +608,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -617,7 +617,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -627,7 +627,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -635,7 +635,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -645,7 +645,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -653,7 +653,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -665,7 +665,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -675,7 +675,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -687,7 +687,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -697,7 +697,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -711,7 +711,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -720,7 +720,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -731,7 +731,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -740,7 +740,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -751,7 +751,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -760,7 +760,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -770,14 +770,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -786,14 +786,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -802,14 +802,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($FELINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
@@ -826,12 +826,12 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 UNION SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'rabbit' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS  "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -866,7 +866,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -874,7 +874,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -885,14 +885,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -902,14 +902,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -922,7 +922,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -932,7 +932,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -944,7 +944,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -954,7 +954,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -968,7 +968,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -977,7 +977,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -987,7 +987,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -995,7 +995,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -1006,7 +1006,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1015,7 +1015,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$  
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -1025,7 +1025,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1033,7 +1033,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -1043,7 +1043,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1051,7 +1051,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -1063,7 +1063,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1073,7 +1073,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -1085,7 +1085,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1095,7 +1095,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -1109,7 +1109,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1118,7 +1118,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -1129,7 +1129,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1138,7 +1138,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -1149,7 +1149,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1158,7 +1158,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -1168,14 +1168,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -1184,14 +1184,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -1200,14 +1200,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($RABBITS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
@@ -1225,12 +1225,12 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 UNION SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'equine' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -1265,7 +1265,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1273,7 +1273,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -1284,14 +1284,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -1301,14 +1301,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -1321,7 +1321,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1331,7 +1331,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -1343,7 +1343,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1353,7 +1353,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -1367,7 +1367,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1376,7 +1376,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -1386,7 +1386,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1394,7 +1394,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -1405,7 +1405,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1414,7 +1414,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -1424,7 +1424,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1432,7 +1432,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -1442,7 +1442,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1450,7 +1450,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -1462,7 +1462,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1472,7 +1472,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -1484,7 +1484,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1494,7 +1494,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -1508,7 +1508,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1517,7 +1517,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -1528,7 +1528,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1537,7 +1537,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -1548,7 +1548,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1557,7 +1557,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -1567,14 +1567,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -1583,14 +1583,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -1599,14 +1599,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($EQUINES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
@@ -1624,12 +1624,12 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 UNION SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'small_mammal' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -1664,7 +1664,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1672,7 +1672,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -1683,14 +1683,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -1700,14 +1700,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -1720,7 +1720,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1730,7 +1730,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -1742,7 +1742,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1752,7 +1752,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -1766,7 +1766,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1775,7 +1775,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -1785,7 +1785,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1793,7 +1793,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -1804,7 +1804,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -1813,7 +1813,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -1823,7 +1823,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1831,7 +1831,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -1841,7 +1841,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1849,7 +1849,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -1861,7 +1861,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1871,7 +1871,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -1883,7 +1883,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1893,7 +1893,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -1907,7 +1907,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1916,7 +1916,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -1927,7 +1927,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1936,7 +1936,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -1947,7 +1947,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1956,7 +1956,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -1966,14 +1966,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -1982,14 +1982,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -1998,14 +1998,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($SMALLMAMMALS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown", 
 
@@ -2022,12 +2022,12 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 UNION SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'farm_animal' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -2062,7 +2062,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2070,7 +2070,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -2081,14 +2081,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -2098,14 +2098,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -2118,7 +2118,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2128,7 +2128,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -2140,7 +2140,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2150,7 +2150,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -2164,7 +2164,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2173,7 +2173,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -2183,7 +2183,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2191,7 +2191,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -2202,7 +2202,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2211,7 +2211,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -2221,7 +2221,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2229,7 +2229,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -2239,7 +2239,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2247,7 +2247,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -2259,7 +2259,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2269,7 +2269,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -2281,7 +2281,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2291,7 +2291,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -2305,7 +2305,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2314,7 +2314,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -2325,7 +2325,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2334,7 +2334,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -2345,7 +2345,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2354,7 +2354,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -2364,14 +2364,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -2380,14 +2380,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -2396,14 +2396,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($FARMANIMALS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown",
 
@@ -2420,12 +2420,12 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 UNION SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'bird' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -2460,7 +2460,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2468,7 +2468,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -2479,14 +2479,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -2496,14 +2496,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -2516,7 +2516,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2526,7 +2526,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -2538,7 +2538,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2548,7 +2548,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -2562,7 +2562,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2571,7 +2571,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -2581,7 +2581,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2589,7 +2589,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -2600,7 +2600,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2609,7 +2609,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -2619,7 +2619,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2627,7 +2627,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -2637,7 +2637,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2645,7 +2645,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -2657,7 +2657,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2667,7 +2667,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -2679,7 +2679,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2689,7 +2689,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -2703,7 +2703,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2712,7 +2712,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -2723,7 +2723,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2732,7 +2732,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -2743,7 +2743,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -2752,7 +2752,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -2762,14 +2762,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -2778,14 +2778,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -2794,14 +2794,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($BIRDS$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown", 
 
@@ -2819,12 +2819,12 @@ AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intende
 
 UNION SELECT 
 
-extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
-extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
+$SQL YEAR '@from'$ AS "Record Year",
+$SQL MONTH '@from'$ AS "Record Month",
 'reptile_or_amphibian' AS Species, 
 
-TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
-TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
+$SQL DATETOCHAR '@from',MM/DD/YYYY$ AS "Beginning Count Date",
+$SQL DATETOCHAR '@to',MM/DD/YYYY$ AS "Ending Count Date",
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@from$' AND (ReturnDate Is Null OR ReturnDate >= '$@from$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
@@ -2859,7 +2859,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2867,7 +2867,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE ReasonName LIKE '%Stray%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Stray At Large Up To 5 Months",
 
 0 AS "Stray At Large Age Unknown",
@@ -2878,14 +2878,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL ReturnDate,-,5,months$ 
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Adult",
 
@@ -2895,14 +2895,14 @@ WHERE ReasonName LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) +
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
 WHERE MovementType IN (1,5)
 AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) 
 AS "Relinquished By Owner Up To 5 Months",
 
@@ -2915,7 +2915,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2925,7 +2925,7 @@ AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Instate Agency Up To 5 Months",
 
 0 AS "Transferred In From Instate Agency Age Unknown",
@@ -2937,7 +2937,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2947,7 +2947,7 @@ AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred In From Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred In From Out Of State Agency Age Unknown",
@@ -2961,7 +2961,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2970,7 +2970,7 @@ WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Intake Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Intake Owner-Intended Euthanasia Age Unknown",
@@ -2980,7 +2980,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -2988,7 +2988,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 0 AS "Seized Or Impounded Age Unknown",
@@ -2999,7 +2999,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
@@ -3008,7 +3008,7 @@ WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 A
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL DateBroughtIn,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Intakes Up To 5 Months",
 
 0 AS "Other Intakes Age Unknown",
@@ -3018,7 +3018,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Adoption Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -3026,7 +3026,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Adoption Up To 5 Months",
 
 0 AS "Adoption Age Unknown",
@@ -3036,7 +3036,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -3044,7 +3044,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Owner Up To 5 Months",
 
 0 AS "Returned To Owner Age Unknown",
@@ -3056,7 +3056,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -3066,7 +3066,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Transferred Out To Instate Agency Up To 5 Months",
 
 0 AS "Transferred Out To Instate Agency Age Unknown",
@@ -3078,7 +3078,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -3088,7 +3088,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Transferred Out To Out Of State Agency Up To 5 Months",
 
 0 AS "Transferred Out To Out Of State Agency Age Unknown",
@@ -3102,7 +3102,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Returned To Field Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -3111,7 +3111,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName NOT LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Returned To Field Up To 5 Months",
 
 0 AS "Returned To Field Age Unknown",
@@ -3122,7 +3122,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$ 
 AND NonShelterAnimal = 0) AS "Other Live Outcome Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -3131,7 +3131,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType = 7 AND ReasonName LIKE '%TNR%'
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Other Live Outcome Up To 5 Months",
 
 0 AS "Other Live Outcome Age Unknown",
@@ -3142,7 +3142,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Lost In Care Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -3151,7 +3151,7 @@ INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= $SQL INTERVAL MovementDate,-,5,months$
 AND NonShelterAnimal = 0) AS "Lost In Care Up To 5 Months",
 
 0 AS "Lost In Care Age Unknown",
@@ -3161,14 +3161,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Died In Care Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0 
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Died In Care Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Died In Care Up To 5 Months",
 
 0 AS "Died In Care Age Unknown",
 
@@ -3177,14 +3177,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Shelter Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Shelter Euthanasia Up To 5 Months",
 
 0 AS "Shelter Euthanasia Age Unknown",
 
@@ -3193,14 +3193,14 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Adult",
+AND DateOfBirth < $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Adult",
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID IN ($REPTILES$)
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
+AND DateOfBirth >= $SQL INTERVAL DeceasedDate,-,5,months$) AS "Outcome Owner-Intended Euthanasia Up To 5 Months",
 
 0 AS "Outcome Owner-Intended Euthanasia Age Unknown", 
 

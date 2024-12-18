@@ -17,21 +17,22 @@ Will also look in PATH/images/IMAGEKEY.[jpg|JPG] for animal photos if available.
 29th December, 2016 - 2nd April 2020
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mm2710"
+#PATH = "/home/jon/asm3_import_data/shelterpro_jj3369"
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_jj3369"
 
 START_ID = 100
 
 INCIDENT_IMPORT = True
-LICENCE_IMPORT = False
-PICTURE_IMPORT = False
+LICENCE_IMPORT = True
+PICTURE_IMPORT = True
 VACCINATION_IMPORT = True
-NOTE_IMPORT = False
+NOTE_IMPORT = True
 SHELTER_IMPORT = True 
 
 SEPARATE_ADDRESS_TABLE = True
 IMPORT_ANIMALS_WITH_NO_NAME = True
 
-FAKE_ADOPTIONS_TO_EMPTY_SHELTER = True
+FAKE_ADOPTIONS_TO_EMPTY_SHELTER = False
 
 """ when faced with a field type it doesn't understand, dbfread can produce an error
     'Unknown field type xx'. This parser returns anything unrecognised as binary data """
@@ -299,8 +300,8 @@ if SHELTER_IMPORT:
             a.ShelterLocationUnit = asm.strip(row["KENNEL"])
             a.NonShelterAnimal = 0
             a.OriginalOwnerID = 0 
-            if row["PERSPREVOWNR"] in ppo:
-                a.OriginalOwnerID = ppo[row["PERSPREVOWNR"]]
+            if row["PERSPREVOW"] in ppo:
+                a.OriginalOwnerID = ppo[row["PERSPREVOW"]].ID
             if arivdate is not None:
                 a.DateBroughtIn = arivdate
                 a.LastChangedDate = a.DateBroughtIn
@@ -430,21 +431,12 @@ if LICENCE_IMPORT:
             if a.Neutered == 1:
                 ol.LicenceTypeID = 1 # Altered dog
 
-if PICTURE_IMPORT:
-    for row in cimage:
-        a = None
-        if not row["ANIMALKEY"] in ppa:
-            continue
-        a = ppa[row["ANIMALKEY"]]
-        imdata = asm.load_image_from_file(PATH + "/images/%s.jpg" % row["IMAGEKEY"])
-        if imdata is not None:
-            asm.animal_image(a.ID, imdata)
-
 # Incidents
 if INCIDENT_IMPORT:
     for row in cincident:
         ac = asm.AnimalControl()
         animalcontrol.append(ac)
+        ppi[row["INCIDENTKE"]] = ac
         calldate = row["DATETIMEAS"]
         if calldate is None: calldate = row["DATETIMEOR"]
         if calldate is None: calldate = asm.now()
@@ -460,7 +452,7 @@ if INCIDENT_IMPORT:
         ac.IncidentCompletedID = 2
         if row["FINALOUTCO"] == "ANIMAL PICKED UP":
             ac.IncidentCompletedID = 2
-        elif row["FINALOUTCOME"] == "ANIMAL NOT FOUND":
+        elif row["FINALOUTCO"] == "ANIMAL NOT FOUND":
             ac.IncidentCompletedID = 4 # Animal not found
         elif row["FINALOUTCO"] == "OTHER":
             ac.IncidentCompletedID = 5 # Other
@@ -477,6 +469,30 @@ if INCIDENT_IMPORT:
             if row["ANIMALKEY"] in ppa:
                 a = ppa[row["ANIMALKEY"]]
                 animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%s, %s);" % (ac.ID, a.ID))
+
+if PICTURE_IMPORT:
+    for row in cimage:
+        linkid = 0
+        linktype = 0
+        if row["ANIMALKEY"] > 0 and row["ANIMALKEY"] in ppa:
+            linkid = ppa[row["ANIMALKEY"]].ID
+            linktype = 0
+        elif row["PERSONKEY"] > 0 and row["PERSONKEY"] in ppo:
+            linkid = ppo[row["PERSONKEY"]].ID
+            linktype = 3 # Person
+        elif row["ANIMALKEY"] == 0 and row["PERSONKEY"] == 0 and row["EVENTTYPE"] in (1, 3, 6) and row["EVENTKEY"] in ppa:
+            linkid = ppa[row["EVENTKEY"]].ID
+            linktype = 0
+        elif row["ANIMALKEY"] == 0 and row["PERSONKEY"] == 0 and row["EVENTTYPE"] in (2,) and row["EVENTKEY"] in ppo:
+            linkid = ppo[row["EVENTKEY"]].ID
+            linktype = 3 # Person
+        elif row["ANIMALKEY"] == 0 and row["PERSONKEY"] == 0 and row["EVENTTYPE"] in (5, 10) and row["EVENTKEY"] in ppi:
+            linkid = ppi[row["EVENTKEY"]].ID
+            linktype = 6 # Animal control
+        filename = "%s.jpg" % row["IMAGEKEY"]
+        imdata = asm.load_image_from_file(f"{PATH}/images/{filename}")
+        if imdata is not None:
+            asm.media_file(linktype, linkid, filename, imdata)
 
 # Notes as log entries
 if NOTE_IMPORT:
@@ -513,7 +529,7 @@ if NOTE_IMPORT:
         elif eventtype in [ 5, 10 ]: # case and incident notes
             if not eventkey in ppi: continue
             linkid = ppi[eventkey].ID
-            ppi[eventkey].CallNotes += "\n" + memo
+            ppi[eventkey].CallNotes += f"\n{memo}"
             l = asm.Log()
             logs.append(l)
             l.LogTypeID = 3

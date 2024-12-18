@@ -45,6 +45,18 @@ class DatabaseSQLite3(Database):
         formatstr = formatstr.replace("NN", "%M")
         formatstr = formatstr.replace("SS", "%S")
         return f"strftime('{formatstr}', {fieldexpr})"
+
+    def sql_datexhour(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the hour from a datetime.
+        """
+        return f"strftime('%H', {dateexpr})"
+
+    def sql_datexminute(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the minute from a datetime.
+        """
+        return f"strftime('%M', {dateexpr})"
     
     def sql_datexday(self, dateexpr: str) -> str:
         """

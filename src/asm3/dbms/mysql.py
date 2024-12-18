@@ -84,7 +84,19 @@ class DatabaseMySQL(Database):
     def sql_datetochar(self, fieldexpr: str, formatstr: str) -> str:
         """ Writes an expression that formats a date, valid format tokens YYYY MM DD HH NN SS """
         return f"TO_CHAR({fieldexpr}, '{formatstr}')"
-    
+
+    def sql_datexhour(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the hour from a datetime.
+        """
+        return f"HOUR({dateexpr})"
+
+    def sql_datexminute(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the minute from a datetime.
+        """
+        return f"MINUTE({dateexpr})"
+
     def sql_datexday(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the day from a date.

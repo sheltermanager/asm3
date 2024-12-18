@@ -30,7 +30,7 @@ $(function() {
                     { type: "raw", label: _("Code"), markup: '<span class="asm-person-code">' + controller.person.OWNERCODE + '</span>' },
                     { post_field: "site", json_field: "SITEID", type: "select", label: _("Site"), 
                         options: { displayfield: "SITENAME", rows: controller.sites }},
-                    { post_field: "ownertype", json_field: "OWNERTYPE", type: "select", 
+                    { post_field: "ownertype", json_field: "OWNERTYPE", type: "select", label: _("Class"), 
                         options: html.list_to_options([ '1|' + _("Individual"), '3|' + _("Couple"), '2|' + _("Organization") ])},
                     { post_field: "title", json_field: "OWNERTITLE", type: "text", label: _("Title"), maxlength: 50, 
                         rowclasses: "tag-individual",  colclasses: "nowrap",

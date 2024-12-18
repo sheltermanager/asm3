@@ -122,31 +122,43 @@ class DatabasePostgreSQL(Database):
     
     def sql_datetochar(self, fieldexpr: str, formatstr: str) -> str:
         """ Writes an expression that formats a date, valid format tokens YYYY MM DD HH NN SS """
-        return f"TO_CHAR({fieldexpr}, '{formatstr}')"
+        return f"TO_CHAR({fieldexpr}::timestamp, '{formatstr}')"
+    
+    def sql_datexhour(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the hour from a datetime.
+        """
+        return f"EXTRACT (HOUR FROM {dateexpr}::timestamp)::integer"
+
+    def sql_datexminute(self, dateexpr: str) -> str:
+        """
+        Returns an expression that extracts the minute from a datetime.
+        """
+        return f"EXTRACT (MINUTE FROM {dateexpr}::timestamp)::integer"
     
     def sql_datexday(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the day from a date.
         """
-        return f"EXTRACT (DAY FROM {dateexpr})::integer"
+        return f"EXTRACT (DAY FROM {dateexpr}::timestamp)::integer"
 
     def sql_datexmonth(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the month from a date.
         """
-        return f"EXTRACT (MONTH FROM {dateexpr})::integer"
+        return f"EXTRACT (MONTH FROM {dateexpr}::timestamp)::integer"
 
     def sql_datexyear(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the year from a date.
         """
-        return f"EXTRACT (YEAR FROM {dateexpr})::integer"
+        return f"EXTRACT (YEAR FROM {dateexpr}::timestamp)::integer"
     
     def sql_datexweekday(self, dateexpr: str) -> str:
         """
         Returns an expression that extracts the week day from a date.
         """
-        return f"TO_CHAR({dateexpr}, 'DAY')"
+        return f"TO_CHAR({dateexpr}::timestamp, 'DAY')"
 
     def sql_ilike(self, expr1: str, expr2: str = "?") -> str:
         return "%s ILIKE %s" % (expr1, expr2)
