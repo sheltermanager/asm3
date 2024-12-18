@@ -204,6 +204,11 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
+                { id: "roles", text: _("Roles"), icon: "auth", enabled: "multi", tooltip: _("Apply roles to reports in bulk"),
+                    click: async function() {
+                        $("#dialog-bulkroleassign").dialog("open");
+                    }
+                },
                 { id: "browse", text: _("Browse sheltermanager.com"), icon: "logo", enabled: "always", tooltip: _("Get more reports from sheltermanager.com"),
                     click: function() {
                         reports.browse_smcom();
@@ -247,6 +252,17 @@ $(function() {
             ].join("\n");
         },
 
+        render_bulkroleassign: function() {
+            return [
+                '<div id="dialog-bulkroleassign" style="display: none" title="' + html.title(_("Bulk assign roles")) + '">',
+                html.info(_("Assign roles to reports in bulk.")),
+                tableform.fields_render([
+                    { post_field: "viewbulkroles", type: "selectmulti", label: _("Roles"), options: { displayfield: "ROLENAME", rows: controller.roles } }
+                ]),
+                '</div>'
+            ].join("\n");
+        },
+
         render_browse_smcom: function() {
             return [
                 '<div id="dialog-browse" style="display: none" title="' + html.title(_("Available sheltermanager.com reports")) + '">',
@@ -276,6 +292,7 @@ $(function() {
             reports.qb = common.modules.reports_querybuilder; // by assigning here, we make sure all the modules are loaded
             this.model();
             s += this.render_headfoot();
+            s += this.render_bulkroleassign();
             s += reports.qb.render();
             s += this.render_browse_smcom();
             s += tableform.dialog_render(this.dialog);
@@ -291,6 +308,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             reports.bind_headfoot();
+            reports.bind_bulkroleassign();
             reports.qb.bind();
             reports.bind_browse_smcom();
             reports.bind_dialogbuttons();
@@ -305,6 +323,33 @@ $(function() {
             if (common.current_url().indexOf("browse=true") != -1) {
                 reports.browse_smcom();
             }
+        },
+
+        bind_bulkroleassign: function() {
+            let bulkroleassignbuttons = {};
+            bulkroleassignbuttons[_("Apply")] = {
+                text: _("Apply"),
+                "class": 'asm-dialog-actionbutton',
+                click: async function() {
+                    //tableform.buttons_default_state(buttons);
+                    let reportids = encodeURIComponent(tableform.table_ids(reports.table));
+                    let roleids = $("#viewbulkroles").toPOST();
+                    await common.ajax_post("reports", "mode=bulkupdateviewroles&reportids=" + reportids + "&" + roleids);
+                    common.route_reload();
+                }
+            };
+            bulkroleassignbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
+            $("#dialog-bulkroleassign").dialog({
+                autoOpen: false,
+                resizable: true,
+                height: "auto",
+                width: 400,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: bulkroleassignbuttons
+            });
         },
 
         bind_headfoot: function() {
@@ -551,6 +596,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-headfoot");
+            common.widget_destroy("#dialog-bulkroleassign");
             common.widget_destroy("#dialog-browse");
             common.widget_destroy("#dialog-qb");
             tableform.dialog_destroy();

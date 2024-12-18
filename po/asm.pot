@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-12-16 11:19+0000\n"
+"POT-Creation-Date: 2024-12-18 11:41+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -35,8 +35,8 @@ msgid "'{0}' is not a valid time"
 msgstr ""
 
 #: log.js onlineform.js incident_find.js person_new.js common_html.js
-#: incident.js options.js stocklevel.js animal_find.js users.js person.js
-#: incident_new.js clinic_appointment.js common_personchooser.js
+#: incident.js options.js stocklevel.js animal_find.js users.js incident_new.js
+#: clinic_appointment.js common_personchooser.js
 msgid "(all)"
 msgstr ""
 
@@ -1683,6 +1683,14 @@ msgstr ""
 msgid "Applehead Siamese"
 msgstr ""
 
+#: reports.js
+msgid "Apply"
+msgstr ""
+
+#: reports.js
+msgid "Apply roles to reports in bulk"
+msgstr ""
+
 #: clinic_appointment.js
 msgid "Appointment"
 msgstr ""
@@ -1805,6 +1813,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Asset::Premises"
+msgstr ""
+
+#: reports.js
+msgid "Assign roles to reports in bulk."
 msgstr ""
 
 #: media.js onlineform_incoming.js
@@ -2403,6 +2415,10 @@ msgstr ""
 
 #: vaccination.js
 msgid "Bulk Vaccination"
+msgstr ""
+
+#: reports.js
+msgid "Bulk assign roles"
 msgstr ""
 
 #: html.py animal_bulk.js
@@ -3006,7 +3022,7 @@ msgstr ""
 msgid "City contains"
 msgstr ""
 
-#: person_new.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js
 msgid "Class"
 msgstr ""
 
@@ -3715,10 +3731,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "DHLPP"
-msgstr ""
-
-#: person.js
-msgid "DO NOT use this field to store notes about what the person is looking for."
 msgstr ""
 
 #: dbupdate.py
@@ -4492,7 +4504,7 @@ msgstr ""
 msgid "Dispatch Between"
 msgstr ""
 
-#: html.py incident_find_results.js mobile2.js incident.js
+#: html.py incident_find_results.js mobile2.js incident.js incident_new.js
 msgid "Dispatch Date/Time"
 msgstr ""
 
@@ -4504,7 +4516,7 @@ msgstr ""
 msgid "Dispatch {0}: {1}"
 msgstr ""
 
-#: incident_find.js mobile2.js incident.js
+#: incident_find.js mobile2.js incident.js incident_new.js
 msgid "Dispatched ACO"
 msgstr ""
 
@@ -5042,7 +5054,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: person_new.js change_user_settings.js common_personchooser.js
+#: person_new.js change_user_settings.js person.js common_personchooser.js
 msgid "Email Address"
 msgstr ""
 
@@ -7085,15 +7097,7 @@ msgid ""
 msgstr ""
 
 #: person.js
-msgid "If this person is a member, the date that membership expires."
-msgstr ""
-
-#: person.js
 msgid "If this person is a member, their membership number"
-msgstr ""
-
-#: person.js
-msgid "If this person is a member, their membership number."
 msgstr ""
 
 #: stocklevel.js
@@ -7130,7 +7134,7 @@ msgstr ""
 msgid "Illyrian Sheepdog"
 msgstr ""
 
-#: html.py onlineform.js animal_find_results.js media.js
+#: html.py onlineform.js animal_find_results.js media.js waitinglist_results.js
 msgid "Image"
 msgstr ""
 
@@ -9053,7 +9057,7 @@ msgstr ""
 msgid "My Fosters"
 msgstr ""
 
-#: mobile2.js
+#: header.js mobile2.js
 msgid "My Incidents"
 msgstr ""
 
@@ -13732,10 +13736,6 @@ msgstr ""
 
 #: movements.js
 msgid "The date this animal was reserved"
-msgstr ""
-
-#: person.js
-msgid "The date this person was homechecked."
 msgstr ""
 
 #: vouchers.js

@@ -297,9 +297,13 @@ def update_report_from_form(dbo: Database, username: str, post: PostedData) -> N
     if prev is not None and (prev.TITLE != post["title"] or prev.CATEGORY != post["category"]): values["Revision"] = 0
     dbo.update("customreport", reportid, values, username, setRecordVersion=False)
 
-    dbo.delete("customreportrole", "ReportID=%d" % reportid)
-    for rid in post.integer_list("viewroles"):
-        dbo.insert("customreportrole", { "ReportID": reportid, "RoleID": rid, "CanView": 1 }, generateID=False, setCreated=False)
+    update_viewreport_roles_from_form(dbo, [reportid,], post.integer_list("viewroles"))
+
+def update_viewreport_roles_from_form(dbo: Database, reportids: list, roleids: list) -> None:
+    for reportid in reportids:
+        dbo.delete("customreportrole", "ReportID=%d" % reportid)
+        for roleid in roleids:
+            dbo.insert("customreportrole", { "ReportID": reportid, "RoleID": roleid, "CanView": 1 }, generateID=False, setCreated=False)
 
 def delete_report(dbo: Database, username: str, rid: int) -> None:
     """
