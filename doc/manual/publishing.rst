@@ -320,8 +320,8 @@ PetFinder panel. Here, you should enter the shelter Id given to you by
 PetFinder.com and the FTP password they have assigned to you.
 
 You can also opt to have your shelter animals with the "Hold" flag sent with
-the PetFinder H status, and shelter animals who have the word "Stray" in
-their entry category sent with an F status. This will put those animals into
+the PetFinder H status, and shelter animals who have "Stray" selected as
+their entry type sent with an F status. This will put those animals into
 PetFinder's lost and found database to help with reuniting stray pets with
 their owners. Animals who have the "Cruelty Case" flag will be omitted
 from these uploads.
