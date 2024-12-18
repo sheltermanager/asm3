@@ -6820,7 +6820,7 @@ class reports(JSONEndpoint):
     
     def post_bulkupdateviewroles(self, o):
         self.check(asm3.users.CHANGE_REPORT)
-        asm3.reports.update_viewreport_roles_from_form(o.dbo, o.post.integer_list("reportids"), o.post.integer_list("viewbulkroles"))
+        asm3.reports.update_report_viewroles_from_form(o.dbo, o.post.integer_list("reportids"), o.post.integer_list("viewbulkroles"))
         self.reload_config()
 
     def post_sql(self, o):
