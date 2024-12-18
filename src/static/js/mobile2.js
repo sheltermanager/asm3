@@ -909,7 +909,7 @@ $(document).ready(function() {
                     $(".btn.respond").parent().append( format.datetime_now() );
                 });
             });
-            $(".form-control.complete").change(function() {
+            $(".form-select.complete").change(function() {
                 $(".btn.complete").prop("disabled", $(".form-control.complete").val() == "");
             });
             $(".btn.complete").click(function() {
