@@ -79,8 +79,8 @@ $(function() {
                 '<div>',
                 tableform.fields_render([
                     { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Suspect 1"), colclasses: "bottomborder" },
-                    { post_field: "owner", json_field: "OWNER2ID", type: "person", label: _("Suspect 2"), colclasses: "bottomborder" },
-                    { post_field: "owner", json_field: "OWNER3ID", type: "person", label: _("Suspect 3") },
+                    { post_field: "owner2", json_field: "OWNER2ID", type: "person", label: _("Suspect 2"), colclasses: "bottomborder" },
+                    { post_field: "owner3", json_field: "OWNER3ID", type: "person", label: _("Suspect 3") },
                     { type: "nextcol" },
                     { post_field: "species", json_field: "SPECIESID", type: "select", label: _("Species"), 
                         options: { displayfield: "SPECIESNAME", rows: controller.species }}, 
