@@ -346,7 +346,7 @@ def check_sql(dbo: Database, username: str, sql: str) -> str:
         elif token.startswith("SQL ILIKE"):
             sub = "''"
         elif token.startswith("SQL INTERVAL"):
-            sub = "2001-01-01"
+            sub = "'2001-01-01'"
         elif token.startswith("SQL DATEDIFF"):
             sub = "0"
         elif token.startswith("SQL DATETOCHAR"):
