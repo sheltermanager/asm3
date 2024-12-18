@@ -255,7 +255,6 @@ $(function() {
         render_bulkroleassign: function() {
             return [
                 '<div id="dialog-bulkroleassign" style="display: none" title="' + html.title(_("Bulk assign roles")) + '">',
-                html.info(_("Assign roles to reports in bulk.")),
                 tableform.fields_render([
                     { post_field: "viewbulkroles", type: "selectmulti", label: _("Roles"), options: { displayfield: "ROLENAME", rows: controller.roles } }
                 ]),
