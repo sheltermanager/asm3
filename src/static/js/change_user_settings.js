@@ -65,6 +65,14 @@ $(function() {
             return s.join("\n");
         },
 
+        theme_list: function() {
+            let s = [];
+            $.each(controller.themes, function(i, v) {
+                s.push('<option value="' + v[0] + '">' + _(v[3]) + '</option>');
+            });
+            return s.join("\n");
+        },
+
         render: function() {
             return [
                 html.content_header(_("Change User Settings")),
@@ -79,6 +87,7 @@ $(function() {
                         options: '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>' + 
                             this.two_pair_options(controller.locales, true) },
                     { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", options: change_user_settings.quicklink_options() },
+                    { post_field: "favouritereportsid", label: _("Favourite Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports} },
                     { post_field: "shelterview", label: _("Shelter view"), type: "select", 
                         options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
                     { post_field: "signature", type: "raw", label: _("Signature"), 
@@ -190,6 +199,13 @@ $(function() {
                 $("#quicklinksid").find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
             });
             $("#quicklinksid").change();
+
+            let fr = config.str(asm.user + "_FavouriteReportsID").split(",");
+            $.each(fr, function(i, v) {
+                $("#favouritereportsid").find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
+            });
+            $("#favouritereportsid").change();
+
             let usersv = config.str(asm.user + "_ShelterView");
             $("#shelterview").select("value", usersv);
             let emaildefault = config.bool(asm.user + "_EmailDefault");

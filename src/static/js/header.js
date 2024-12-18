@@ -353,6 +353,19 @@ header = {
      */
     quicklinks_html:  function() {
         let s = "";
+
+        let favouritereports = config.str(asm.user + "_FavouriteReportsID").split(",");
+        if (favouritereports) {
+            console.log(favouritereports);
+            s += "<a><span class='asm-icon asm-icon-report'></span> <select>";
+            for ( let a = 0; a < favouritereports.length; a++ ) {
+                //get_field(rows, id, field)
+                s += "<option value='" + favouritereports[a].split("=")[0] + "'>" + favouritereports[a].split("=")[1] + "</option>";
+                //s += "href='report_criteria?id=" + favouritereports[0] + "&target=report'>";
+            }
+            s += "</select></a>";
+        }
+
         let qls = config.str(asm.user + "_QuicklinksID");
         if (!qls) { qls = config.str("QuicklinksID"); } 
         if (!qls) { return ""; }
