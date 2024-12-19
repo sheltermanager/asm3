@@ -85,9 +85,9 @@ $(function() {
                     { post_field: "theme", label: _("Visual Theme"), type: "select", options: change_user_settings.theme_list() },
                     { post_field: "locale", label: _("Locale"), type: "select", classes: "asm-iconselectmenu", 
                         options: '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>' + 
-                            this.two_pair_options(controller.locales, true) },
-                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", options: change_user_settings.quicklink_options() },
-                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports} },
+                            this.two_pair_options(controller.locales, true), colclasses: "bottomborder" },
+                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", options: change_user_settings.quicklink_options(), colclasses: "bottomborder" },
+                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
                     { post_field: "shelterview", label: _("Shelter view"), type: "select", 
                         options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
                     { post_field: "signature", type: "raw", label: _("Signature"), 
