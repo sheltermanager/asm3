@@ -65,14 +65,6 @@ $(function() {
             return s.join("\n");
         },
 
-        theme_list: function() {
-            let s = [];
-            $.each(controller.themes, function(i, v) {
-                s.push('<option value="' + v[0] + '">' + _(v[3]) + '</option>');
-            });
-            return s.join("\n");
-        },
-
         render: function() {
             return [
                 html.content_header(_("Change User Settings")),
@@ -199,7 +191,6 @@ $(function() {
                 $("#quicklinksid").find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
             });
             $("#quicklinksid").change();
-
             let fr = config.str(asm.user + "_QuickReportsID").split(",");
             $.each(fr, function(i, v) {
                 $("#quickreportsid").find("option[value='" + common.trim(v.split("=")[0] + "']")).attr("selected", "selected");

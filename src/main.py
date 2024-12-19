@@ -2706,7 +2706,7 @@ class change_user_settings(JSONEndpoint):
             "locales": get_locales(),
             "sigtype": ELECTRONIC_SIGNATURES,
             "themes": asm3.lookups.VISUAL_THEMES,
-            "reports": asm3.reports.get_reports(o.dbo)
+            "reports": asm3.reports.get_all_report_titles(o.dbo)
         }
 
     def post_all(self, o):

@@ -353,7 +353,6 @@ header = {
      */
     quicklinks_html:  function() {
         let s = "";
-
         let rawquickreports = config.str(asm.user + "_QuickReportsID");
         if (rawquickreports) {
             let quickreports = rawquickreports.split(",");
@@ -367,7 +366,6 @@ header = {
             s += '</ul>';
             s += '</div>';
         }
-
         let qls = config.str(asm.user + "_QuicklinksID");
         if (!qls) { qls = config.str("QuicklinksID"); } 
         if (!qls) { return ""; }
