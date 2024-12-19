@@ -2203,8 +2203,9 @@ def get_costs(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER
     """
     sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
-        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate, a.OwnerID, a.InvoiceNumber " \
+        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate, a.OwnerID, a.InvoiceNumber, o.OwnerName " \
         "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
+        "LEFT JOIN owner o ON a.OwnerID = o.ID " \
         "WHERE a.AnimalID = ?"
     if sort == ASCENDING:
         sql += " ORDER BY a.CostDate"
