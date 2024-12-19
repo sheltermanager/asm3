@@ -41,11 +41,11 @@ $(function() {
                     { post_field: "postcode", type: "text", label: _("Zipcode"), classes: "newform",  
                         xmarkup: '<button id="button-postcodelookup">' + _("Lookup Address") + '</button>' },
                     { post_field: "country", type: "text", label: _("Country") }, 
-                    { post_field: "hometelephone", type: "text", label: _("Home Phone"), classes: "newform" },
-                    { post_field: "worktelephone", type: "text", label: _("Work Phone"), classes: "newform",
-                        xmarkup: tableform.render_text({ justwidget: true, post_field: "worktelephone2", classes: "tag-couple newform" }) },
-                    { post_field: "mobiletelephone", type: "text", label: _("Cell Phone"), classes: "newform",
-                        xmarkup: tableform.render_text({ justwidget: true, post_field: "mobiletelephone2", classes: "tag-couple newform" }) },
+                    { post_field: "hometelephone", type: "text", label: _("Home Phone"), classes: "asm-phone newform" },
+                    { post_field: "worktelephone", type: "text", label: _("Work Phone"), classes: "asm-phone newform",
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "worktelephone2", classes: "asm-phone tag-couple newform" }) },
+                    { post_field: "mobiletelephone", type: "text", label: _("Cell Phone"), classes: "asm-phone newform",
+                        xmarkup: tableform.render_text({ justwidget: true, post_field: "mobiletelephone2", classes: "asm-phone tag-couple newform" }) },
                     { post_field: "emailaddress", type: "text", label: _("Email Address"), classes: "newform",
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "emailaddress2", classes: "tag-couple newform" }) },
                     { post_field: "dateofbirth", type: "date", label: _("Date Of Birth"), classes: "newform",
@@ -77,6 +77,14 @@ $(function() {
                 header.hide_error();
                 validate.reset();
                 if (!validate.notblank([ "surname" ])) { return false; }
+                // email
+                if (common.trim($("#emailaddress").val()) != "") {
+                    if (!validate.email($("#emailaddress").val())) {
+                        header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#emailaddress").val()));
+                        validate.highlight("emailaddress");
+                        return false;
+                    }
+                }
                 // mandatory additional fields
                 if (!additional.validate_mandatory()) { return false; }
                 return true;
