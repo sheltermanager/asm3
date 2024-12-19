@@ -354,15 +354,14 @@ header = {
     quicklinks_html:  function() {
         let s = "";
 
-        let quickreports = config.str(asm.user + "_QuickReportsID").split(",");
-        if (quickreports) {
-            console.log(quickreports);
-
+        let rawquickreports = config.str(asm.user + "_QuickReportsID");
+        if (rawquickreports) {
+            let quickreports = rawquickreports.split(",");
             s += "<div id='asm-menu-quickreports' class='asm-menu-icon'>Quick Reports</div>";
-            s += "<div id='asm-menu-quickreports-body' class='asm-menu-body'>Reports";
+            s += "<div id='asm-menu-quickreports-body' class='asm-menu-body'>";
             s += "<ul class='asm-menu-list'>";
             for ( let a = 0; a < quickreports.length; a++ ) {
-                s += "<li class='asm-menu-item'><a href='report?id=" + quickreports[a].split("=")[0] + "'>" + quickreports[a].split("=")[1] + "</a></li>";
+                s += "<li class='asm-menu-item asm-quickreport-menu-item'><a class='asm-quickreports' href='report?id=" + quickreports[a].split("=")[0] + "'>" + quickreports[a].split("=")[1] + "</a></li>";
             }
             s += "</ul>";
             s += "</div>";
