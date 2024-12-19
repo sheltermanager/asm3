@@ -1081,6 +1081,7 @@ const tableform = {
             else if (v.type == "number") { d += tableform.render_number(v); }
             else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
+            else if (v.type == "phone") { d += tableform.render_phone(v); }
             else if (v.type == "raw") { d += tableform.render_markup(v); }
             else if (v.type == "richtextarea") { d += tableform.render_richtextarea(v); }
             else if (v.type == "select") { d += tableform.render_select(v); } 
@@ -1465,6 +1466,29 @@ const tableform = {
         if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
         if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
+        return tableform._render_formfield(v, d);
+    },
+
+    render_phone: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"" + (v.type || "text") + "\" ";
+        d += tableform._render_class(v, "asm-textbox asm-phone");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.autocomplete) { d += "autocomplete=\"" + v.autocomplete + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+        if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
+        if (v.maxlength) { d += "maxlength=" + v.maxlength; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
+        if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
