@@ -357,13 +357,15 @@ header = {
         let quickreports = config.str(asm.user + "_QuickReportsID").split(",");
         if (quickreports) {
             console.log(quickreports);
-            s += "<a><span class='asm-icon asm-icon-report'></span> <select>";
+
+            s += "<div id='asm-menu-quickreports' class='asm-menu-icon'>Quick Reports</div>";
+            s += "<div id='asm-menu-quickreports-body' class='asm-menu-body'>Reports";
+            s += "<ul class='asm-menu-list'>";
             for ( let a = 0; a < quickreports.length; a++ ) {
-                //get_field(rows, id, field)
-                s += "<option value='" + quickreports[a].split("=")[0] + "'>" + quickreports[a].split("=")[1] + "</option>";
-                //s += "href='report_criteria?id=" + favouritereports[0] + "&target=report'>";
+                s += "<li class='asm-menu-item'><a href='report?id=" + quickreports[a].split("=")[0] + "'>" + quickreports[a].split("=")[1] + "</a></li>";
             }
-            s += "</select></a>";
+            s += "</ul>";
+            s += "</div>";
         }
 
         let qls = config.str(asm.user + "_QuicklinksID");

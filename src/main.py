@@ -2719,12 +2719,13 @@ class change_user_settings(JSONEndpoint):
         quicklinks = post["quicklinksid"]
         quickreports = post["quickreportsid"]
         quickreportscfg = []
+        reports = asm3.reports.get_reports(o.dbo)
         if quickreports != "":
             for reportid in quickreports.split(","):
-                for report in asm3.reports.get_reports(o.dbo):
+                for report in reports:
                     if report.ID == int(reportid.split("=")[0]):
                         reporttitle = report.TITLE
-                        quickreportscfg.append(reportid + "=" + reporttitle)
+                        quickreportscfg.append( f"{reportid}={reporttitle}" ) 
                         break
         quickreportscfg = ",".join(quickreportscfg)
         twofavalidcode = post["twofavalidcode"]
