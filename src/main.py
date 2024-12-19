@@ -2717,15 +2717,16 @@ class change_user_settings(JSONEndpoint):
         email = post["email"]
         signature = post["signature"]
         quicklinks = post["quicklinksid"]
-        rawfavouritereports = post["favouritereportsid"]
-        favouritereports = ""
-        for reportid in rawfavouritereports.split(","):
-            for report in asm3.reports.get_reports(o.dbo):
-                if report.ID == int(reportid):
-                    reporttitle = report.TITLE
-            if favouritereports != "":
-                favouritereports += ","
-            favouritereports += reportid + "=" + reporttitle
+        quickreports = post["quickreportsid"]
+        quickreportscfg = []
+        if quickreports != "":
+            for reportid in quickreports.split(","):
+                for report in asm3.reports.get_reports(o.dbo):
+                    if report.ID == int(reportid.split("=")[0]):
+                        reporttitle = report.TITLE
+                        quickreportscfg.append(reportid + "=" + reporttitle)
+                        break
+        quickreportscfg = ",".join(quickreportscfg)
         twofavalidcode = post["twofavalidcode"]
         twofavalidpassword = post["twofavalidpassword"]
         asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "main.change_password", o.dbo)
@@ -2738,7 +2739,7 @@ class change_user_settings(JSONEndpoint):
             asm3.configuration.cset(o.dbo, "%s_QuicklinksID" % o.user, "")
         else:
             asm3.configuration.cset(o.dbo, "%s_QuicklinksID" % o.user, quicklinks)
-        asm3.configuration.cset(o.dbo, "%s_FavouriteReportsID" % o.user, favouritereports)
+        asm3.configuration.cset(o.dbo, "%s_QuickReportsID" % o.user, quickreportscfg)
         asm3.configuration.cset(o.dbo, "%s_ShelterView" % o.user, post["shelterview"])
         asm3.configuration.cset(o.dbo, "%s_EmailDefault" % o.user, asm3.utils.iif(post.boolean("emaildefault"), "Yes", "No"))
         self.reload_config()
