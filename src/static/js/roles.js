@@ -75,16 +75,11 @@ $(function() {
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Add role")) + '">',
                 '<input type="hidden" id="roleid" />',
                 '<input type="hidden" id="rolemap" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="rolename">' + _("Name") + '</label></td>',
-                '<td><input id="rolename" type="text" data="rolename" class="asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '<table width="100%">',
-                '<tr>',
-                '<td width="33%" valign="top">',
+                tableform.fields_render([
+                    { post_field: "rolename", type: "text", label: _("Name") }
+                ]),
+                '<div class="asm-row">',
+                '<div class="asm-col">',
                 '<p>',
                 cl(_("Animals")),
                 cr("aa", _("Add Animals")),
@@ -156,8 +151,8 @@ $(function() {
                 cr("vif", _("View Incoming Forms")),
                 cr("dif", _("Delete Incoming Forms")),
                 '</p>',
-                '</td>',
-                '<td width="33%" valign="top">',
+                '</div>',
+                '<div class="asm-col">',
                 '<p>',
                 cl(_("People")),
                 cr("ao", _("Add Person")),
@@ -227,8 +222,8 @@ $(function() {
                 cr("cea", _("Change Event Animals")),
                 cr("lem", _("Link Event Movement")),
                 '</p>',
-                '</td>',
-                '<td width="33%" valign="top">',
+                '</div>',
+                '<div class="asm-col">',
                 '<p>',
                 cl(_("Animal Control")),
                 cr("aaci", _("Add Incidents")),
@@ -298,31 +293,13 @@ $(function() {
                 cr("excr", _("Export Report")),
                 cr("dcr", _("Delete Report")),
                 '</p>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>'
+                '</div>', // col
+                '</div>', // row
+                '</div>'  // dialog
             ].join("\n");
         },
 
-        render: function() {
-            this.model();
-            return [
-                this.render_dialog(),
-                html.content_header(_("User Roles")),
-                tableform.buttons_render(this.buttons),
-                tableform.table_render(this.table),
-                html.content_footer()
-            ].join("\n");
-
-        },
-
-        bind: function() {
-            tableform.table_bind(this.table, this.buttons);
-            tableform.buttons_bind(this.buttons);
-
-            validate.indicator([ "rolename" ]);
-
+        bind_dialog: function() {
             let addbuttons = { };
             addbuttons[_("Create")] = {
                 text: _("Create"),
@@ -362,8 +339,7 @@ $(function() {
                         if ($(this).is(":checked")) { securitymap += $(this).attr("id") + " *"; }
                     });
                     let formdata = "mode=update&roleid=" + $("#roleid").val() + "&" + 
-                        "securitymap=" + securitymap + "&" +
-                        $("#dialog-add input").toPOST();
+                        "securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
                     $("#dialog-add").disable_dialog_buttons();
                     try {
                         await common.ajax_post("roles", formdata);
@@ -389,7 +365,26 @@ $(function() {
                 hide: dlgfx.add_hide,
                 buttons: roles.addbuttons
             });
+        },
 
+        render: function() {
+            this.model();
+            return [
+                this.render_dialog(),
+                html.content_header(_("User Roles")),
+                tableform.buttons_render(this.buttons),
+                tableform.table_render(this.table),
+                html.content_footer()
+            ].join("\n");
+
+        },
+
+        bind: function() {
+            tableform.table_bind(this.table, this.buttons);
+            tableform.buttons_bind(this.buttons);
+            this.bind_dialog();
+
+            validate.indicator([ "rolename" ]);
         },
 
         destroy: function() {
