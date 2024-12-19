@@ -2032,6 +2032,7 @@ def update_anonymise_personal_data(dbo: Database, years: int = None, username: s
         "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID AND IssueDate > :cutoff) " \
         "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID AND DateIssued > :cutoff) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM animalcost WHERE OwnerID = owner.ID AND CostDate > :cutoff) " \
         "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LinkType = 1 AND Date > :cutoff) ", 
         { "anonymised": anonymised, "now": dbo.now(), "cutoff": cutoff })
     inclause = dbo.sql_in(people)
