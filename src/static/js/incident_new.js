@@ -120,6 +120,13 @@ $(function() {
                 }
             });
 
+            $("#dispatchedaco").change(function() {
+                if ($("#dispatchedaco").val() && !$("#dispatchdate").val()) {
+                    $("#dispatchdate").val(format.date(new Date()));
+                    $("#dispatchtime").val(format.time(new Date()));
+                }
+            });
+
             $("#dispatchtown").autocomplete({ source: controller.towns });
             $("#dispatchtown").blur(function() {
                 if ($("#dispatchcounty").val() == "") {
