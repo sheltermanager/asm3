@@ -975,7 +975,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs", -1),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren", -1),
         "MatchHouseTrained": post.integer("matchhousetrained", -1),
-        "MatchCommentsContain": post["commentscontain"],
+        "MatchCommentsContain": post["matchcommentscontain"],
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
         "ExcludeFromBulkEmail":     0,
@@ -1121,7 +1121,7 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs"),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren"),
         "MatchHouseTrained": post.integer("matchhousetrained"),
-        "MatchCommentsContain": post["commentscontain"]
+        "MatchCommentsContain": post["matchcommentscontain"]
     }, username)
 
     # Update the flags
