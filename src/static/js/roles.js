@@ -6,10 +6,72 @@ $(function() {
 
     const roles = {
 
-        render: function() {
+        model: function() {
+            const table = {
+                rows: controller.rows,
+                idcolumn: "ID",
+                edit: async function(row) {
+                    validate.reset("dialog-add");
+                    $("#roleid").val(row.ID);
+                    $("#rolename").val(row.ROLENAME);
+                    let perms = row.SECURITYMAP.replace(/\*/g, "").split(" ");
+                    $(".token").prop("checked", false);
+                    $.each(perms, function(i, v) {
+                        if (v) { $("#" + v).prop("checked", true); }
+                    });
+                    $("#dialog-add").dialog("option", "buttons", roles.editbuttons);
+                    $("#dialog-add").dialog("option", "title", _("Edit role"));
+                    $("#dialog-add").dialog("open");
+                    return false; // prevents # href
+                },
+                columns: [
+                    { field: "ROLENAME", display: _("Name") }
+                ]
+            };
+            const buttons = [
+                { id: "new", text: _("New Role"), icon: "new", enabled: "always",
+                    click: function() {
+                        validate.reset("dialog-add");
+                        $("#dialog-add .asm-textbox").val("");
+                        $("#dialog-add input:checkbox").prop("checked", false);
+                        $("#dialog-add").dialog("option", "buttons", roles.addbuttons);
+                        $("#dialog-add").dialog("option", "title", _("Add role"));
+                        $("#dialog-add").dialog("open"); 
+                    }
+                },
+                { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
+                    click: function() {
+                        let row = tableform.table_selected_row(roles.table);
+                        $("#dialog-add .asm-textbox").val("");
+                        let perms = row.SECURITYMAP.replace(/\*/g, "").split(" ");
+                        $("#rolename").val(_("Copy of {0}").replace("{0}", row.ROLENAME));
+                        $(".token").prop("checked", false);
+                        $.each(perms, function(i, v) {
+                            if (v) { $("#" + v).prop("checked", true); }
+                        });
+                        validate.reset("dialog-add");
+                        $("#dialog-add").dialog("option", "buttons", roles.addbuttons);
+                        $("#dialog-add").dialog("option", "title", _("Add role"));
+                        $("#dialog-add").dialog("open"); 
+                    }
+                },
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                    click: async function() {
+                        await tableform.delete_dialog(null, _("This will permanently remove the selected roles, are you sure?"));
+                        let formdata = "mode=delete&ids=" + tableform.table_ids(roles.table);
+                        await common.ajax_post("roles", formdata);
+                        common.route_reload(); 
+                    }
+                }
+            ];
+            this.table = table;
+            this.buttons = buttons;
+        },
+
+        render_dialog: function() {
             const cl = function(s) { return "<p class='asm-header'>" + s + "</p>"; };
             const cr = function(token, s) { return "<input id='" + token + "' type='checkbox' class='token' /> <label for='" + token + "'>" + s + "</label><br />"; };
-            let h = [
+            return [
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Add role")) + '">',
                 '<input type="hidden" id="roleid" />',
                 '<input type="hidden" id="rolemap" />',
@@ -239,106 +301,83 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</div>',
+                '</div>'
+            ].join("\n");
+        },
 
+        render: function() {
+            this.model();
+            return [
+                this.render_dialog(),
                 html.content_header(_("User Roles")),
+                tableform.buttons_render(this.buttons),
+                tableform.table_render(this.table),
+                html.content_footer()
+            ].join("\n");
 
-                '<div class="asm-toolbar">',
-                '<button id="button-new">' + html.icon("new") + ' ' +_("New Role") + '</button>',
-                '<button id="button-clone">' + html.icon("copy") + ' ' +_("Clone") + '</button>',
-                '<button id="button-delete">' + html.icon("delete") + ' ' + _("Delete") + '</button>',
-                '</div>',
-
-                '<table id="table-roles">',
-                '<thead>',
-                '<tr>',
-                '<th>' + _("Name") + '</th>',
-                '</tr>',
-                '</thead>',
-                '<tbody>'
-            ];
-
-            $.each(controller.rows, function(i, r) {
-                h.push('<tr id="rolerow-' + r.ID + '">');
-                h.push('<td>');
-                h.push(tableform.table_render_edit_link(r.ID, r.ROLENAME));
-                h.push('<input class="role-name" type="hidden" value="' + html.title(r.ROLENAME) + '" />');
-                h.push('<input class="role-map" type="hidden" value="' + r.SECURITYMAP + '" />');
-                h.push('</td>');
-                h.push('</tr>');
-            });
-
-            h.push('</tbody>');
-            h.push('</table>');
-            h.push(html.content_footer());
-            return h.join("\n");
         },
 
         bind: function() {
-            $("#table-roles").table();
-
-            $("#table-roles input").change(function() {
-                if ($("#table-roles input:checked").length > 0) {
-                    $("#button-delete").button("option", "disabled", false); 
-                }
-                else {
-                    $("#button-delete").button("option", "disabled", true); 
-                }
-                if ($("#table-roles input:checked").length == 1) {
-                    $("#button-clone").button("option", "disabled", false);
-                }
-                else {
-                    $("#button-clone").button("option", "disabled", true);
-                }
-            });
+            tableform.table_bind(this.table, this.buttons);
+            tableform.buttons_bind(this.buttons);
 
             validate.indicator([ "rolename" ]);
 
             let addbuttons = { };
-            addbuttons[_("Create")] = async function() {
-                validate.reset("dialog-add");
-                if (!validate.notblank([ "rolename" ])) { return; }
-                let securitymap = "";
-                $(".token").each(function() {
-                    if ($(this).is(":checked")) { securitymap += $(this).attr("id") + " *"; }
-                });
-                let formdata = "mode=create&securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
-                $("#dialog-add").disable_dialog_buttons();
-                try {
-                    await common.ajax_post("roles", formdata);
-                    common.route_reload(); 
-                }
-                finally {
-                    $("#dialog-add").dialog("close"); 
+            addbuttons[_("Create")] = {
+                text: _("Create"),
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset("dialog-add");
+                    if (!validate.notblank([ "rolename" ])) { return; }
+                    let securitymap = "";
+                    $(".token").each(function() {
+                        if ($(this).is(":checked")) { securitymap += $(this).attr("id") + " *"; }
+                    });
+                    let formdata = "mode=create&securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
+                    $("#dialog-add").disable_dialog_buttons();
+                    try {
+                        await common.ajax_post("roles", formdata);
+                        common.route_reload(); 
+                    }
+                    finally {
+                        $("#dialog-add").dialog("close"); 
+                    }
                 }
             };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
             };
+            this.addbuttons = addbuttons;
 
             let editbuttons = { };
-            editbuttons[_("Save")] = async function() {
-                validate.reset("dialog-add");
-                if (!validate.notblank([ "rolename" ])) { return; }
-                let securitymap = "";
-                $(".token").each(function() {
-                    if ($(this).is(":checked")) { securitymap += $(this).attr("id") + " *"; }
-                });
-                let formdata = "mode=update&roleid=" + $("#roleid").val() + "&" + 
-                    "securitymap=" + securitymap + "&" +
-                    $("#dialog-add input").toPOST();
-                $("#dialog-add").disable_dialog_buttons();
-                try {
-                    await common.ajax_post("roles", formdata);
-                    common.route_reload(); 
-                }
-                finally {
-                    $("#dialog-add").dialog("close"); 
+            editbuttons[_("Save")] = {
+                text: _("Save"),
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset("dialog-add");
+                    if (!validate.notblank([ "rolename" ])) { return; }
+                    let securitymap = "";
+                    $(".token").each(function() {
+                        if ($(this).is(":checked")) { securitymap += $(this).attr("id") + " *"; }
+                    });
+                    let formdata = "mode=update&roleid=" + $("#roleid").val() + "&" + 
+                        "securitymap=" + securitymap + "&" +
+                        $("#dialog-add input").toPOST();
+                    $("#dialog-add").disable_dialog_buttons();
+                    try {
+                        await common.ajax_post("roles", formdata);
+                        common.route_reload(); 
+                    }
+                    finally {
+                        $("#dialog-add").dialog("close"); 
+                    }
                 }
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
             };
+            this.editbuttons = editbuttons;
 
             $("#dialog-add").dialog({
                 autoOpen: false,
@@ -348,68 +387,7 @@ $(function() {
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,
                 hide: dlgfx.add_hide,
-                buttons: addbuttons
-            });
-         
-            $("#button-new").button().click(function() {
-               validate.reset("dialog-add");
-               $("#dialog-add .asm-textbox").val("");
-               $("#dialog-add input:checkbox").prop("checked", false);
-               $("#dialog-add").dialog("option", "buttons", addbuttons);
-               $("#dialog-add").dialog("option", "title", _("Add role"));
-               $("#dialog-add").dialog("open"); 
-            });
-
-            $("#button-clone").button({disabled: true}).click(function() {
-                let rid = "";
-                $("#table-roles :checked").each(function() {
-                    rid = $(this).attr("data");
-                });
-                $("#dialog-add .asm-textbox").val("");
-                let rrow = "#rolerow-" + rid + " ";
-                let rolename = $(rrow + ".role-name").val();
-                let perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
-                $("#rolename").val(_("Copy of {0}").replace("{0}", rolename));
-                $(".token").prop("checked", false);
-                $.each(perms, function(i, v) {
-                    if (v) { $("#" + v).prop("checked", true); }
-                });
-                validate.reset("dialog-add");
-                $("#dialog-add").dialog("option", "buttons", addbuttons);
-                $("#dialog-add").dialog("option", "title", _("Add role"));
-                $("#dialog-add").dialog("open"); 
-            });
-
-            $("#button-delete").button({disabled: true}).click(async function() {
-                await tableform.delete_dialog(null, _("This will permanently remove the selected roles, are you sure?"));
-                let formdata = "mode=delete&ids=";
-                $("#table-roles input").each(function() {
-                    if ($(this).attr("type") == "checkbox") {
-                        if ($(this).is(":checked")) {
-                            formdata += $(this).attr("data") + ",";
-                        }
-                    }
-                });
-                await common.ajax_post("roles", formdata);
-                common.route_reload(); 
-            });
-
-            $(".link-edit")
-            .click(function() {
-                let rid = $(this).attr("data-id");
-                let rrow = "#rolerow-" + rid + " ";
-                validate.reset("dialog-add");
-                $("#roleid").val($(this).attr("data-id"));
-                $("#rolename").val($(rrow + ".role-name").val());
-                let perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");
-                $(".token").prop("checked", false);
-                $.each(perms, function(i, v) {
-                    if (v) { $("#" + v).prop("checked", true); }
-                });
-                $("#dialog-add").dialog("option", "buttons", editbuttons);
-                $("#dialog-add").dialog("option", "title", _("Edit role"));
-                $("#dialog-add").dialog("open");
-                return false; // prevents # href
+                buttons: roles.addbuttons
             });
 
         },
