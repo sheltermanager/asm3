@@ -716,7 +716,7 @@ select:disabled, input:disabled, textarea:disabled {
     margin-top: 10px;
 }
 
-.asm-quicklinks a {
+.asm-quicklink {
     display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;
@@ -725,19 +725,6 @@ select:disabled, input:disabled, textarea:disabled {
     padding: 5px;
     margin: 1px;
     font-weight: normal;
-}
-
-.asm-quickreport-menu-item:hover {
-    color: inherit !important;
-}
-
-.asm-quickreports {
-    border: 0 !important;
-}
-
-.asm-quickreports:hover {
-    border: none !important;
-    background: none !important;
 }
 
 .asm-quicklinks span {

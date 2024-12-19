@@ -45,11 +45,18 @@ input:focus, textarea:focus, select:focus {
     opacity: 0.7 !important;
 }
 /* Use action button styling for quicklinks when hovering */
-.asm-quicklinks a:hover {
+.asm-quicklink:hover {
     border: 1px solid #3a87cd;
     background: #3a87cd;
     color: #fff;
     text-decoration: none;
+}
+/* Use normal menu colours for quick reports */
+a.asm-quickreport { color: #bbb !important; }
+#asm-menu-quickreports .ui-button-text { background-image: url("images/ui-icons_fff_256x240.png"); }
+/* Use normal menu colours for quick reports */
+a.asm-quickreport, #asm-menu-quickreports .ui-button-text {
+    color: #bbb !important;
 }
 /* Change normal input/select background/text colors */
 .asm-selectbox, .asm-halfselectbox, .asm-halftextbox, .asm-textbox, .asm-doubleselectbox, .asm-doubletextbox, 
@@ -107,7 +114,7 @@ input:focus, textarea:focus, select:focus {
 .dialogshadow, .menushadow, .thumbnailshadow, .popupshadow {
     box-shadow: 3px 3px 5px #555 !important;
 }
-.asm-quicklinks a, .asm-calendar-legend {
+.asm-quicklink, .asm-calendar-legend {
     box-shadow: 0 1px 3px #555 !important;
 }
 

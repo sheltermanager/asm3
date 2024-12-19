@@ -357,14 +357,15 @@ header = {
         let rawquickreports = config.str(asm.user + "_QuickReportsID");
         if (rawquickreports) {
             let quickreports = rawquickreports.split(",");
-            s += "<div id='asm-menu-quickreports' class='asm-menu-icon'>Quick Reports</div>";
-            s += "<div id='asm-menu-quickreports-body' class='asm-menu-body'>";
-            s += "<ul class='asm-menu-list'>";
+            s += ' <div id="asm-menu-quickreports" class="asm-menu-icon">' + _("Quick Reports") + '</div>';
+            s += '<div id="asm-menu-quickreports-body" class="asm-menu-body">';
+            s += '<ul class="asm-menu-list">';
             for ( let a = 0; a < quickreports.length; a++ ) {
-                s += "<li class='asm-menu-item asm-quickreport-menu-item'><a class='asm-quickreports' href='report?id=" + quickreports[a].split("=")[0] + "'>" + quickreports[a].split("=")[1] + "</a></li>";
+                s += '<li class="asm-menu-item"><a class="asm-quickreport" href="report?id=' + 
+                    quickreports[a].split("=")[0] + '">' + quickreports[a].split("=")[1] + '</a></li>';
             }
-            s += "</ul>";
-            s += "</div>";
+            s += '</ul>';
+            s += '</div>';
         }
 
         let qls = config.str(asm.user + "_QuicklinksID");
@@ -374,8 +375,7 @@ header = {
             var b = header.QUICKLINKS_SET[parseInt(v, 10)];
             if (!b) { return; }
             var url = b[0], image = b[1], text = b[2];
-            s += "<a ";
-            s += "href='" + url + "'>";
+            s += '<a class="asm-quicklink" href="' + url + '">';
             if (image != "") {
                 s += "<span class='asm-icon " + image + "'></span> ";
             }
@@ -519,10 +519,10 @@ header = {
         if (config.bool("QuicklinksHomeScreen")) {
             $("#linkstips").show();
             $("#quicklinks").show();
-            $("#quicklinks").on("mouseover", "a", function() {
+            $("#quicklinks").on("mouseover", ".asm-quicklink", function() {
                 $(this).addClass("ui-state-hover");
             });
-            $("#quicklinks").on("mouseout", "a", function() {
+            $("#quicklinks").on("mouseout", ".asm-quicklink", function() {
                 $(this).removeClass("ui-state-hover");
             });
             // If there are more than our default items, hide the text to save space
