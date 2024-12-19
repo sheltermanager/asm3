@@ -330,6 +330,7 @@ DEFAULTS = {
     "QuicklinksID": "40,46,25,31,34,19,20",
     "QuicklinksHomeScreen": "Yes",
     "QuicklinksAllScreens": "No",
+    "QuickReportsID": "",
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",

@@ -42,7 +42,7 @@ def get_all_report_titles(dbo: Database):
     include builtin reports since they don't count for ASM3 (and should be
     replaced when viewing available reports)
     """
-    return dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE SQLCommand NOT LIKE '0%' ORDER BY Title")
+    return dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE SQLCommand NOT LIKE '0%' AND SQLCommand NOT LIKE '%$PARENT%' ORDER BY Title")
 
 def get_available_reports(dbo: Database, include_with_criteria: bool = True) -> Results:
     """

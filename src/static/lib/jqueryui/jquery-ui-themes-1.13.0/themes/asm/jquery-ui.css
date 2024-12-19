@@ -35,12 +35,16 @@ input:focus, textarea:focus, select:focus {
     opacity: 0.7 !important;
 }
 /* Use action button styling for quicklinks when hovering */
-.asm-quicklinks a:hover {
+.asm-quicklink:hover {
     border: 1px solid #3a87cd;
     background: #3a87cd;
     color: #fff;
     text-decoration: none;
 }
+/* Use normal menu colours for quick reports */
+a.asm-quickreport { color: #222222 !important; }
+#asm-menu-quickreports .ui-button-text { background-image: url("images/ui-icons_222222_256x240.png"); }
+#asm-menu-quickreports.ui-state-active .ui-button-text { background-image: url("images/ui-icons_fff_256x240.png"); }
 /* Set an appropriate background colour for shelterview animals */
 .asm-shelterview-animal {
     background-color: #eee;

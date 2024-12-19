@@ -713,9 +713,10 @@ select:disabled, input:disabled, textarea:disabled {
 /** QUICKLINKS ========================== */
 .asm-quicklinks {
     font-weight: bold;
+    margin-top: 10px;
 }
 
-.asm-quicklinks a {
+.asm-quicklink {
     display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;

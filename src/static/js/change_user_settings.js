@@ -77,8 +77,9 @@ $(function() {
                     { post_field: "theme", label: _("Visual Theme"), type: "select", options: change_user_settings.theme_list() },
                     { post_field: "locale", label: _("Locale"), type: "select", classes: "asm-iconselectmenu", 
                         options: '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>' + 
-                            this.two_pair_options(controller.locales, true) },
-                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", options: change_user_settings.quicklink_options() },
+                            this.two_pair_options(controller.locales, true), colclasses: "bottomborder" },
+                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", options: change_user_settings.quicklink_options(), colclasses: "bottomborder" },
+                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
                     { post_field: "shelterview", label: _("Shelter view"), type: "select", 
                         options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
                     { post_field: "signature", type: "raw", label: _("Signature"), 
@@ -190,6 +191,12 @@ $(function() {
                 $("#quicklinksid").find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
             });
             $("#quicklinksid").change();
+            let fr = config.str(asm.user + "_QuickReportsID").split(",");
+            $.each(fr, function(i, v) {
+                $("#quickreportsid").find("option[value='" + common.trim(v.split("=")[0] + "']")).attr("selected", "selected");
+            });
+            $("#quickreportsid").change();
+
             let usersv = config.str(asm.user + "_ShelterView");
             $("#shelterview").select("value", usersv);
             let emaildefault = config.bool(asm.user + "_EmailDefault");

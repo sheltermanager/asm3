@@ -353,6 +353,19 @@ header = {
      */
     quicklinks_html:  function() {
         let s = "";
+        let rawquickreports = config.str(asm.user + "_QuickReportsID");
+        if (rawquickreports) {
+            let quickreports = rawquickreports.split(",");
+            s += ' <div id="asm-menu-quickreports" class="asm-menu-icon">' + _("Quick Reports") + '</div>';
+            s += '<div id="asm-menu-quickreports-body" class="asm-menu-body">';
+            s += '<ul class="asm-menu-list">';
+            for ( let a = 0; a < quickreports.length; a++ ) {
+                s += '<li class="asm-menu-item"><a class="asm-quickreport" href="report?id=' + 
+                    quickreports[a].split("=")[0] + '">' + quickreports[a].split("=")[1] + '</a></li>';
+            }
+            s += '</ul>';
+            s += '</div>';
+        }
         let qls = config.str(asm.user + "_QuicklinksID");
         if (!qls) { qls = config.str("QuicklinksID"); } 
         if (!qls) { return ""; }
@@ -360,8 +373,7 @@ header = {
             var b = header.QUICKLINKS_SET[parseInt(v, 10)];
             if (!b) { return; }
             var url = b[0], image = b[1], text = b[2];
-            s += "<a ";
-            s += "href='" + url + "'>";
+            s += '<a class="asm-quicklink" href="' + url + '">';
             if (image != "") {
                 s += "<span class='asm-icon " + image + "'></span> ";
             }
@@ -470,10 +482,10 @@ header = {
                 '</div>',
             '</div>',
             '<div id="linkstips" class="no-print ui-state-highlight ui-corner-all" style="display: none; padding-left: 5px; padding-right: 5px">',
-                '<p id="quicklinks" class="asm-quicklinks" style="display: none"><span class="ui-icon ui-icon-bookmark"></span>',
+                '<div id="quicklinks" class="asm-quicklinks" style="display: none"><span class="ui-icon ui-icon-bookmark"></span>',
                     '<span id="quicklinks-label">' + _("Quick Links") + '</span>',
                     this.quicklinks_html(),
-                '</p>',
+                '</div>',
                 '<p id="tips" style="display: none"><span class="ui-icon ui-icon-lightbulb"></span>',
                     '<span style="font-weight: bold">' + _("Did you know?") + '</span><br/>',
                     '<span id="tip"></span>',
@@ -505,10 +517,10 @@ header = {
         if (config.bool("QuicklinksHomeScreen")) {
             $("#linkstips").show();
             $("#quicklinks").show();
-            $("#quicklinks").on("mouseover", "a", function() {
+            $("#quicklinks").on("mouseover", ".asm-quicklink", function() {
                 $(this).addClass("ui-state-hover");
             });
-            $("#quicklinks").on("mouseout", "a", function() {
+            $("#quicklinks").on("mouseout", ".asm-quicklink", function() {
                 $(this).removeClass("ui-state-hover");
             });
             // If there are more than our default items, hide the text to save space
