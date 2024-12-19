@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-12-18 11:41+0000\n"
+"POT-Creation-Date: 2024-12-19 14:18+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1815,10 +1815,6 @@ msgstr ""
 msgid "Asset::Premises"
 msgstr ""
 
-#: reports.js
-msgid "Assign roles to reports in bulk."
-msgstr ""
-
 #: media.js onlineform_incoming.js
 msgid "Attach"
 msgstr ""
@@ -3022,7 +3018,7 @@ msgstr ""
 msgid "City contains"
 msgstr ""
 
-#: person_new.js common_personchooser.js
+#: person_new.js person.js common_personchooser.js
 msgid "Class"
 msgstr ""
 
@@ -10818,6 +10814,10 @@ msgstr ""
 
 #: header.js
 msgid "Quick Links"
+msgstr ""
+
+#: header.js change_user_settings.js
+msgid "Quick Reports"
 msgstr ""
 
 #: change_user_settings.js options.js
