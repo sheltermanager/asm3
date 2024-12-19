@@ -15,7 +15,7 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
-                    { json_field: "OWNERID", post_field: "ownerid", label: _("Person"), type: "person", validation: "notzero" },
+                    { json_field: "OWNERID", post_field: "ownerid", label: _("Payee"), type: "person" },
                     { json_field: "INVOICENUMBER", post_field: "invoicenumber", label: _("Invoice Number"), type: "text" },
                     { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -45,6 +45,14 @@ $(function() {
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
                     { field: "INVOICENUMBER", display: _("Invoice Number") },
+                    { field: "OWNERNAME", display: _("Payee"),
+                        formatter: function(row) {
+                            if (row.OWNERID) {
+                                return html.person_link(row.OWNERID, row.OWNERNAME);
+                            }
+                            return "";
+                        }
+                    },
                     { field: "DESCRIPTION", display: _("Description"), formatter: tableform.format_comments }
                 ]
             };
