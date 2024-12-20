@@ -268,10 +268,12 @@ def fosterer_weekly(dbo: Database, user = "system") -> None:
             br(lines, asm3.i18n._("{0} {1} {2} aged {3}", l).format(a.SEX, a.BREEDNAME, a.SPECIESNAME, a.ANIMALAGE))
             br(lines, asm3.i18n._("Fostered to {0} since {1}", l).format( f.OWNERNAME, asm3.i18n.python2display(l, a.MOVEMENTDATE) ))
             
-            if a.DATEOFBIRTH < dbo.today(offset=-182) and a.NEUTERED == 0 and a.SPECIESID in (1, 2):
+            if a.DATEOFBIRTH < dbo.today(offset=-182) and a.NEUTERED == 0 \
+                and a.SPECIESID in asm3.configuration.alert_species_neuter(dbo).split(","):
                 brb(lines, asm3.i18n._("WARNING: This animal is over 6 months old and has not been neutered/spayed", l))
 
-            if a.IDENTICHIPPED == 0 or (a.IDENTICHIPPED == 1 and a.IDENTICHIPNUMBER == "") and a.SPECIESID in (1, 2):
+            if a.IDENTICHIPPED == 0 or (a.IDENTICHIPPED == 1 and a.IDENTICHIPNUMBER == "") \
+                and a.SPECIESID in asm3.configuration.alert_species_microchip(dbo).split(","):
                 brb(lines, asm3.i18n._("WARNING: This animal has not been microchipped", l))
             lines.append("</p>")
 
