@@ -662,7 +662,12 @@ $(function() {
                     // Redirect back to this page. Reconstructing the URL removes a 
                     // newmedia=1 argument if it was present and prevents the attach
                     // file dialog from appearing again
-                    common.route(controller.name + "?id=" + controller.linkid);
+                    if (common.current_url().indexOf("newmedia") != -1) {
+                        common.route(controller.name + "?id=" + controller.linkid);
+                    }
+                    else {
+                        common.route_reload();
+                    }
                 })
                 .fail(function() {
                     header.show_error("Failed to process image data");
