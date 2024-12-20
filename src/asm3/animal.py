@@ -2200,11 +2200,12 @@ def get_breedname(dbo: Database, breed1id: int, breed2id: int) -> str:
 def get_costs(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     """
     Returns cost records for the given animal:
-    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION
+    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER
     """
     sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
-        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate " \
+        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate, a.OwnerID, a.InvoiceNumber, o.OwnerName " \
         "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
+        "LEFT JOIN owner o ON a.OwnerID = o.ID " \
         "WHERE a.AnimalID = ?"
     if sort == ASCENDING:
         sql += " ORDER BY a.CostDate"
@@ -4180,7 +4181,9 @@ def insert_cost_from_form(dbo: Database, username: str, post: PostedData) -> int
         "CostDate":         post.date("costdate"),
         "CostPaidDate":     post.date("costpaid"),
         "CostAmount":       post.integer("cost"),
-        "Description":      post["description"]
+        "Description":      post["description"],
+        "OwnerID":          post["person"],
+        "InvoiceNumber":    post["invoicenumber"]
     }, username)
     asm3.financial.update_matching_cost_transaction(dbo, username, ncostid)
     return ncostid
@@ -4195,7 +4198,9 @@ def update_cost_from_form(dbo: Database, username: str, post: PostedData) -> Non
         "CostDate":         post.date("costdate"),
         "CostPaidDate":     post.date("costpaid"),
         "CostAmount":       post.integer("cost"),
-        "Description":      post["description"]
+        "Description":      post["description"],
+        "OwnerID":          post["person"],
+        "InvoiceNumber":    post["invoicenumber"]
     }, username)
     asm3.financial.update_matching_cost_transaction(dbo, username, costid)
 

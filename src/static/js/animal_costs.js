@@ -6,6 +6,8 @@ $(function() {
 
     const animal_costs = {
 
+        lastperson: null,
+
         model: function() {
             const dialog = {
                 add_title: _("Add cost"),
@@ -15,6 +17,8 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
+                    { json_field: "OWNERID", post_field: "person", label: _("Payee"), type: "person" },
+                    { json_field: "INVOICENUMBER", post_field: "invoicenumber", label: _("Invoice Number"), type: "text" },
                     { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
@@ -30,6 +34,7 @@ $(function() {
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                    row.OWNERNAME = animal_costs.lastperson.OWNERNAME;
                     await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
                     tableform.table_update(table);
                     animal_costs.calculate_costtotals();
@@ -41,6 +46,15 @@ $(function() {
                     { field: "COSTAMOUNT", display: _("Cost"), formatter: tableform.format_currency },
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
+                    },
+                    { field: "INVOICENUMBER", display: _("Invoice Number") },
+                    { field: "OWNERNAME", display: _("Payee"),
+                        formatter: function(row) {
+                            if (row.OWNERID) {
+                                return html.person_link(row.OWNERID, row.OWNERNAME);
+                            }
+                            return "";
+                        }
                     },
                     { field: "DESCRIPTION", display: _("Description"), formatter: tableform.format_comments }
                 ]
@@ -55,6 +69,7 @@ $(function() {
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
                         row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                        row.OWNERNAME = animal_costs.lastperson.OWNERNAME;
                         controller.rows.push(row);
                         tableform.table_update(table);
                         animal_costs.calculate_costtotals();
@@ -112,6 +127,19 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+                console.log(rec);
+                animal_costs.lastperson = rec;
+            });
+
+            $("#person").personchooser().bind("personchoosercleared", function(event) {
+                animal_costs.lastperson = null;
+            });
+
+            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
+                animal_costs.lastperson = rec;
+            });
             
             $("#type").change(animal_costs.costtype_change);
 

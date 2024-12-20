@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-12-19 14:18+0000\n"
+"POT-Creation-Date: 2024-12-20 10:13+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -7593,7 +7593,7 @@ msgstr ""
 msgid "Invalid email address"
 msgstr ""
 
-#: report_toolbar.js person.js
+#: person_new.js report_toolbar.js person.js
 msgid "Invalid email address '{0}'"
 msgstr ""
 
@@ -7623,6 +7623,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Investigator"
+msgstr ""
+
+#: animal_costs.js
+msgid "Invoice Number"
 msgstr ""
 
 #: dbupdate.py
@@ -10114,6 +10118,10 @@ msgstr ""
 
 #: options.js
 msgid "PayPal Business Email"
+msgstr ""
+
+#: animal_costs.js
+msgid "Payee"
 msgstr ""
 
 #: common_widgets.js calendarview.js reports_querybuilder.js
