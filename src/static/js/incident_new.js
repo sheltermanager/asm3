@@ -22,6 +22,9 @@ $(function() {
                     { post_field: "caller", type: "person", label: _("Caller"), colclasses: "bottomborder" },
                     { post_field: "victim", type: "person", label: _("Victim"), colclasses: "bottomborder" },
                     { post_field: "owner", type: "person", label: _("Suspect") },
+                    
+                    { type: "nextcol" },
+
                     { post_field: "dispatchaddress", type: "textarea", label: _("Dispatch Address"), rows: 5, classes: "asm-textareafixed" },
                     { post_field: "dispatchtown", type: "text", label: _("City"), maxlength: 100 },
                     common.iif(config.bool("USStateCodes"),
