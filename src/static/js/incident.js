@@ -398,6 +398,7 @@ $(function() {
                 });
 
             $("#completedtype").change(function() {
+                if (!config.bool("AutoDefaultIncidentCompleteDate")) { return; }
                 if (!$("#completeddate").val()) {
                     $("#completeddate").val(format.date(new Date()));
                     $("#completedtime").val(format.time(new Date()));

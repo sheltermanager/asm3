@@ -63,6 +63,7 @@ DEFAULTS = {
     "AuditOnViewReport": "Yes",
     "AuditOnSendEmail": "Yes",
     "AutoCancelReservesDays": "14",
+    "AutoDefaultIncidentCompleteDate": "Yes",
     "AutoDefaultShelterCode": "Yes",
     "AutoDefaultVaccBatch": "Yes",
     "AutoHashProcessedForms": "Yes",
