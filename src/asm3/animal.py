@@ -4186,7 +4186,7 @@ def insert_cost_from_form(dbo: Database, username: str, post: PostedData) -> int
         "CostPaidDate":     post.date("costpaid"),
         "CostAmount":       post.integer("cost"),
         "Description":      post["description"],
-        "OwnerID":          post["ownerid"],
+        "OwnerID":          post["person"],
         "InvoiceNumber":    post["invoicenumber"]
     }, username)
     asm3.financial.update_matching_cost_transaction(dbo, username, ncostid)
@@ -4203,7 +4203,7 @@ def update_cost_from_form(dbo: Database, username: str, post: PostedData) -> Non
         "CostPaidDate":     post.date("costpaid"),
         "CostAmount":       post.integer("cost"),
         "Description":      post["description"],
-        "OwnerID":          post["ownerid"],
+        "OwnerID":          post["person"],
         "InvoiceNumber":    post["invoicenumber"]
     }, username)
     asm3.financial.update_matching_cost_transaction(dbo, username, costid)
