@@ -133,7 +133,7 @@ $(document).ready(function() {
         if ($("#location").val() == _("Litters"))
         {
             $.each(controller.litters, function(i, v) {
-                $("#animal").append('<option value="' + v.ACCEPTANCENUMBER + '" data-type="litter">' + v.ACCEPTANCENUMBER + ' - ' + v.MOTHERNAME + '</option>');
+                $("#animal").append('<option value="' + v.value + '" data-type="litter">' + v.label + '</option>');
                 }
             );            
         }
