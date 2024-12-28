@@ -2529,8 +2529,7 @@ def get_litters(dbo: Database, offset: str = "m365") -> Results:
 def get_litter_animals_by_acceptancenumber(dbo: Database, acceptancenumber: str) -> Results:
     """ Returns all animals who have a litter ID """
     litterids = []
-    for l in litters:
-        litterids.append(dbo.sql_value(acceptancenumber.replace("'", "`")))
+    litterids.append(dbo.sql_value(acceptancenumber.replace("'", "`")))
     if len(litterids) == 0: return []
     return dbo.query(get_animal_brief_query(dbo) + " WHERE a.AcceptanceNumber IN ( " + ",".join(litterids) + ") ORDER BY a.ID")
 
