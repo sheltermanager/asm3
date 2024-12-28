@@ -1270,7 +1270,7 @@ class mobile_photo_upload(ASMEndpoint):
     def post_all(self, o):
         dbo = o.dbo
         if "litterid" in o.post:
-            littermates = asm3.animal.get_litter_animals_by_acceptancenumber(dbo, o.post.integer("litterid"))
+            littermates = asm3.animal.get_litter_animals_by_acceptancenumber(dbo, o.post["litterid"])
             for lm in littermates:
                 self.attach_file(o, lm.ID)
         else: 
