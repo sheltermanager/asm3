@@ -1253,16 +1253,28 @@ class mobile_photo_upload(ASMEndpoint):
         animalsra = []
         if o.lf is not None and o.lf.locationfilter != "" and o.lf.locationfilter.find("-1") == -1:
             animalsra = asm3.animal.get_animals_adopted_namecode(dbo, remove_adopter=True)
+        litters = asm3.animal.get_active_litters_brief(dbo)
         c = {
-            "animals":  animalsos + animalsra
+            "animals":  animalsos + animalsra,
+            "litters":  litters
         }
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 
-    def post_all(self, o):
-        mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, o.post.integer("animalid"), asm3.media.MEDIASOURCE_MOBILEUI, o.post)
+    def attach_file(self, o, animalid):
+        mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_MOBILEUI, o.post)
         if o.post["type"] == "paperwork":
             asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
             asm3.media.delete_media(o.dbo, o.user, mid)
+
+
+    def post_all(self, o):
+        dbo = o.dbo
+        if "litterid" in o.post:
+            littermates = asm3.animal.get_litter_animals_by_acceptancenumber(dbo, o.post["litterid"])
+            for lm in littermates:
+                self.attach_file(o, lm.ID)
+        else: 
+            self.attach_file(o, o.post.integer("animalid"))
         return "OK"
 
 class mobile_report(ASMEndpoint):
@@ -4303,7 +4315,7 @@ class litters(JSONEndpoint):
         if offset == "active":
             litters = asm3.animal.get_active_litters(dbo)
         else:
-            litters = asm3.animal.get_litters(dbo, offset)
+            litters = asm3.animal.b(dbo, offset)
         littermates = asm3.animal.get_litter_animals(dbo, litters)
         mothers = asm3.animal.get_litter_mothers(dbo, litters)
         asm3.al.debug("got %d litters" % len(litters), "main.litters", dbo)
