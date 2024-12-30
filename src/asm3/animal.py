@@ -2526,6 +2526,10 @@ def get_litters(dbo: Database, offset: str = "m365") -> Results:
         "%s" \
         "ORDER BY l.Date DESC" % where, v)
 
+def get_litter_animals_by_id(dbo: Database, litterid: str) -> Results:
+    """ Returns all animals who have litterid """
+    return dbo.query(get_animal_brief_query(dbo) + " WHERE a.AcceptanceNumber = ?", [litterid])
+
 def get_litter_animals(dbo: Database, litters: Results = []) -> Results:
     """ Returns all animals who have a litter ID in set litters """
     litterids = []

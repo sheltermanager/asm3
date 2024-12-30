@@ -86,10 +86,13 @@ $(document).ready(function() {
             $("#thumbnails").append('<img id="' + id + '" style="height: 200px;" src="' + reader.result + '" />');
             $("#thumbnails").append('<i id="' + checkid + '" style="display: none" class="bi-check2-circle"></i>');
             $("#spinner").show();
-            let formdata = "animalid=" + $("#animal").val() + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
+            // handle whether an animal or litter has been selected in the list
+            let idparam = $("#animal option:selected").data("type") == "animal" ? "animalid" : "litterid";
+            let formdata = idparam + "=" + $("#animal").val() + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
+            let targeturl =  "mobile_photo_upload";
             $.ajax({
                 method: "POST",
-                url: "mobile_photo_upload",
+                url: targeturl,
                 data: formdata,
                 dataType: "text/plain",
                 error: function() {
@@ -112,6 +115,7 @@ $(document).ready(function() {
             distlocs.push(v.DISPLAYLOCATION);
         }
     });
+    $("#location").append('<option value="litters">' + _("Litters") + '</option>');
     $.each(distlocs.sort(), function(i, v) {
         $("#location").append('<option>' + v + '</option>');
     });
@@ -119,9 +123,14 @@ $(document).ready(function() {
     const filter_animals_by_location = function() {
         $("#animal").empty();
         $("#animal").append('<option value="">' + _("Select an animal") + '</option>');
+        if ($("#location").val() == "litters") {
+            $.each(controller.litters, function(i, v) {
+                $("#animal").append('<option value="' + v.value + '" data-type="litter">' + v.label + '</option>');
+            });            
+        }
         $.each(controller.animals, function(i, v) {
             if (!$("#location").val() || v.DISPLAYLOCATION == $("#location").val()) {
-                $("#animal").append('<option value="' + v.ID + '">' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</option>');
+                $("#animal").append('<option value="' + v.ID + '" data-type="animal">' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</option>');
             }
         });
         $("#animal").change();
