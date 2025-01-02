@@ -526,8 +526,8 @@ def sql_structure(dbo: Database) -> str:
         fdate("CostDate"),
         fdate("CostPaidDate", True),
         fint("CostAmount"),
-        fint("OwnerID"),
-        fstr("InvoiceNumber"),
+        fint("OwnerID", True),
+        fstr("InvoiceNumber", True),
         flongstr("Description", False) ))
     sql += index("animalcost_AnimalID", "animalcost", "AnimalID")
     sql += index("animalcost_CostTypeID", "animalcost", "CostTypeID")
