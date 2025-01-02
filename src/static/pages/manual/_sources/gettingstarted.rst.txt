@@ -146,4 +146,51 @@ follows:
    using a shared account as it makes it easier to revoke individual permissions
    or remove the account when staff leave without disrupting everyone else.
 
+User Settings
+-------------
+
+The user menu at the top right of the screen shows the currently logged in user.
+In this menu, the user can find:
+
+.. image:: images/user_settings.png
+
+* Switch to Mobile Interface - Change from the desktop user interface to the 
+  mobile user interface.
+
+* Change Password - Choose a new login password.
+
+* Change User Settings - Change settings specific to the user.
+
+* Logout - Log out of the system.    
+
+The option "Change User Settings" contains the following settings:
+
+.. image:: images/change_user_settings.png
+ 
+* Username - Current username (cannot be edited).
+
+* Real Name - The users real name.
+
+* Email Address - The users email address, can optionally be set as the default
+  reply address when the user sends an email.
+
+* Visual Theme - Allows the user to set different coloured themes.
+
+* Locale - Allows the user to choose a different language/currency.
+
+* Quicklinks - Allows the user to create links at the top of the screen to 
+  quickly access the parts of the system they use the most.
+
+* Quick Reports - This will add a dropdown menu of selected reports to the quicklinks 
+  bar, reports will appear in the menu in the order they are selected here.
+  
+* Shelter view - Allows the user to set their own shelter view overiding the system
+  default view if one is set.
+
+* Signature - The users electronic signature to be used in document templates.
+
+* Two-Factor Authentification (2FA) - Users can enable 2FA here using the 
+  Google Authenticator app, see :ref:`Two-Factor Authentification`
+  
+
 

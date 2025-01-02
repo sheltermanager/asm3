@@ -224,6 +224,8 @@ who have a particular exit movement type, those who are marked non-shelter,
 those who the active user is fostering or coordinating adoptions for right 
 now and deceased animals.
 
+.. _Two-Factor Authentification:
+
 Two-Factor Authentication (2FA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
