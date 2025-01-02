@@ -2910,6 +2910,11 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "IsGoodWithDogs":   goodwithdogs,
         "IsGoodWithChildren": goodwithkids,
         "IsHouseTrained":   housetrained,
+        "IsCrateTrained":   cratetrained,
+        "IsGoodWithElderly": goodwithelderly,
+        "IsGoodTraveller":  goodtraveller,
+        "IsGoodOnLead":     goodonlead,
+        "EnergyLevel":      energylevel,
         "OwnerID":          post.integer("nsowner"), # only set for non-shelter
         "OriginalOwnerID":  originalowner,
         "BroughtInByOwnerID": dbb,
@@ -2949,12 +2954,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "Archived":         0,
         "ActiveMovementID": 0,
         "HasActiveReserve": 0,
-        "MostRecentEntryDate": dbo.today(),
-        "IsCrateTrained": cratetrained,
-        "IsGoodWithElderly":   goodwithelderly,
-        "IsGoodTraveller": goodtraveller,
-        "IsGoodOnLead": goodonlead,
-        "EnergyLevel": energylevel
+        "MostRecentEntryDate": dbo.today()
     }, username, generateID=False)
 
     # Save any additional field values given
@@ -3141,6 +3141,11 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "IsGoodWithDogs":       post.integer("goodwithdogs"),
         "IsGoodWithChildren":   post.integer("goodwithkids"),
         "IsHouseTrained":       post.integer("housetrained"),
+        "IsCrateTrained":       post["cratetrained"],
+        "IsGoodWithElderly":    post["goodwithelderly"],
+        "IsGoodTraveller":      post["goodtraveller"],
+        "IsGoodOnLead":         post["goodonlead"],
+        "EnergyLevel":          post["energylevel"],
         "OwnerID":              post.integer("owner"),
         "OriginalOwnerID":      post.integer("originalowner"),
         "BroughtInByOwnerID":   post.integer("broughtinby"),
@@ -3170,12 +3175,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "PTSReasonID":          post.integer("deathcategory"),
         "PutToSleep":           post.boolean("puttosleep"),
         "IsDOA":                post.boolean("deadonarrival"),
-        "PTSReason":            post["ptsreason"],
-        "IsCrateTrained":       post["cratetrained"],
-        "IsGoodWithElderly":    post["goodwithelderly"],
-        "IsGoodTraveller":      post["goodtraveller"],
-        "IsGoodOnLead":         post["goodonlead"],
-        "EnergyLevel":          post["energylevel"]
+        "PTSReason":            post["ptsreason"]
     }, username)
 
     # Save any additional field values given
