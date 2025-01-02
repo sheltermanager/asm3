@@ -17,11 +17,11 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
-                    { json_field: "OWNERID", post_field: "person", label: _("Payee"), type: "person" },
-                    { json_field: "INVOICENUMBER", post_field: "invoicenumber", label: _("Invoice Number"), type: "text" },
                     { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
+                    { json_field: "OWNERID", post_field: "person", label: _("Payee"), type: "person" },
+                    { json_field: "INVOICENUMBER", post_field: "invoicenumber", label: _("Invoice Number"), type: "text" },
                     { json_field: "COSTAMOUNT", post_field: "cost", label: _("Cost"), type: "currency", validation: "notblank" },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" }
                 ]

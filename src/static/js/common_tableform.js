@@ -1140,7 +1140,7 @@ const tableform = {
      */
     _render_label: function(v) {
         let label = "", labelx = "", labelfor = "", labelclass = "";
-        if (v.validation && v.validation instanceof String && v.validation.indexOf("not") == 0) {
+        if (v.validation && typeof v.validation !== "function") {
             labelx += '&nbsp;<span class="asm-has-validation">*</span>';
         }
         if (v.callout) {
