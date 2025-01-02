@@ -526,11 +526,15 @@ def sql_structure(dbo: Database) -> str:
         fdate("CostDate"),
         fdate("CostPaidDate", True),
         fint("CostAmount"),
+        fint("OwnerID"),
+        fstr("InvoiceNumber"),
         flongstr("Description", False) ))
     sql += index("animalcost_AnimalID", "animalcost", "AnimalID")
     sql += index("animalcost_CostTypeID", "animalcost", "CostTypeID")
     sql += index("animalcost_CostDate", "animalcost", "CostDate")
     sql += index("animalcost_CostPaidDate", "animalcost", "CostPaidDate")
+    sql += index("animalcost_OwnerID", "animalcost", "OwnerID")
+    sql += index("animalcost_InvoiceNumber", "animalcost", "InvoiceNumber")
 
     sql += table("animaldiet", (
         fid(),
@@ -6316,4 +6320,6 @@ def update_34902(dbo: Database) -> None:
 def update_34903(dbo: Database) -> None:
     # Add extra fields to facilitate invoice tracking to animalcost table
     add_column(dbo, "animalcost", "OwnerID", dbo.type_integer)
+    add_index(dbo, "animalcost_OwnerID", "animalcost", "OwnerID")
     add_column(dbo, "animalcost", "InvoiceNumber", dbo.type_shorttext)
+    add_index(dbo, "animalcost_InvoiceNumber", "animalcost", "InvoiceNumber")
