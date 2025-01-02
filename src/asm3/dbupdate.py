@@ -340,6 +340,11 @@ def sql_structure(dbo: Database) -> str:
         fint("IsGoodWithDogs"),
         fint("IsGoodWithChildren"),
         fint("IsHouseTrained"),
+        fint("IsCrateTrained", True),
+        fint("IsGoodWithElderly", True),
+        fint("IsGoodTraveller", True),
+        fint("IsGoodOnLead", True),
+        fint("EnergyLevel", True),
         fint("IsNotAvailableForAdoption"),
         fint("IsNotForRegistration", True),
         fint("IsHold", True),
@@ -370,12 +375,7 @@ def sql_structure(dbo: Database) -> str:
         fint("TotalDaysOnShelter", True),
         fstr("AgeGroupActiveMovement", True),
         fint("DailyBoardingCost", True),
-        fstr("AnimalAge", True),
-        fint("IsCrateTrained"),
-        fint("IsGoodWithElderly"),
-        fint("IsGoodTraveller"),
-        fint("IsGoodOnLead"),
-        fint("EnergyLevel") ))
+        fstr("AnimalAge", True) ))
     sql += index("animal_AnimalShelterCode", "animal", "ShelterCode", True)
     sql += index("animal_AnimalExtraIDs", "animal", "ExtraIDs")
     sql += index("animal_AnimalTypeID", "animal", "AnimalTypeID")
@@ -6331,7 +6331,7 @@ def update_34903(dbo: Database) -> None:
     add_index(dbo, "animalcost_InvoiceNumber", "animalcost", "InvoiceNumber")
 
 def update_34904(dbo: Database) -> None:
-    # Add extra fields to facilitate invoice tracking to animalcost table
+    # Add extra fields to animal notes
     add_column(dbo, "animal", "IsCrateTrained", dbo.type_integer)
     add_column(dbo, "animal", "IsGoodWithElderly", dbo.type_integer)
     add_column(dbo, "animal", "IsGoodTraveller", dbo.type_integer)
