@@ -196,7 +196,7 @@
             selwhere = document.getElementById("asm3-select-where").value;
 
         adoptables.forEach(function(item, index, arr) {
-
+            console.log(item.ENERGYLEVEL);
             if (selsite && item.SITEID != selsite) { return; }
             if (selspecies && item.SPECIESID != selspecies) { return; }
             if (selbreed && item.BREEDNAME != decode(selbreed)) { return; }
@@ -206,6 +206,12 @@
             if (selgoodwith && selgoodwith == 1 && item.ISGOODWITHDOGS != 0) { return; }
             if (selgoodwith && selgoodwith == 2 && item.ISGOODWITHCATS != 0) { return; }
             if (selgoodwith && selgoodwith == 3 && item.ISGOODWITHCHILDREN != 0) { return; }
+            if (selgoodwith && selgoodwith == 4 && item.ISCRATETRAINED != 0) { return; }
+            if (selgoodwith && selgoodwith == 5 && item.ISGOODWITHELDERLY != 0) { return; }
+            if (selgoodwith && selgoodwith == 6 && item.ISGOODTRAVELLER != 0) { return; }
+            if (selgoodwith && selgoodwith == 7 && item.ISGOODONLEAD != 0) { return; }
+            if (selgoodwith && selgoodwith == 8 && parseInt(item.ENERGYLEVEL) > 3) { return; }
+            if (selgoodwith && selgoodwith == 9 && parseInt(item.ENERGYLEVEL) < 3) { return; }
             if (selwhere && selwhere == 1 && item.ARCHIVED != 0) { return; }
             if (selwhere && selwhere == 2 && item.ACTIVEMOVEMENTTYPE != 2) { return; }
             if (selwhere && selwhere == 3 && item.ISCOURTESY != 1) { return; }
@@ -303,7 +309,7 @@
             ageoptions: construct_options("(any age)", "AGEGROUP", "AGEGROUP"),
             sizeoptions: construct_options("(any size)", "SIZE", "SIZENAME"),
             sexoptions: construct_options("(any sex)", "SEX", "SEXNAME"),
-            goodwithoptions: list_options([ ["0", "(good with)"], ["1", "Good with dogs"], ["2", "Good with cats"], ["3", "Good with children"] ]),
+            goodwithoptions: list_options([ ["0", "(good with)"], ["1", "Good with dogs"], ["2", "Good with cats"], ["3", "Good with children"], ["4", "Crate trained"], ["5", "Good with elderly"], ["6", "Good traveller"], ["7", "Good on lead"], ["8", "Low energy"], ["9", "High energy"] ]),
             whereoptions: list_options([ ["0", "(anywhere)"], ["1", "On shelter"], ["2", "Fostered"], ["3", "Courtesy listing"] ])
         });
 
