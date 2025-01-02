@@ -419,7 +419,11 @@ def get_animal_query(dbo: Database) -> str:
         "(SELECT Name FROM lksynunk l WHERE l.ID = a.IsGoodWithChildren) AS IsGoodWithChildrenName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithCats) AS IsGoodWithCatsName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithDogs) AS IsGoodWithDogsName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithElderly) AS IsGoodWithElderlyName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsHouseTrained) AS IsHouseTrainedName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsCrateTrained) AS IsCrateTrainedName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodTraveller) AS IsGoodTravellerName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodOnLead) AS IsGoodOnLeadName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotAvailableForAdoption) AS IsNotAvailableForAdoptionName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotForRegistration) AS IsNotForRegistrationName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasSpecialNeeds) AS HasSpecialNeedsName, " \
