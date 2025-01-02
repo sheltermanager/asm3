@@ -4315,7 +4315,7 @@ class litters(JSONEndpoint):
         if offset == "active":
             litters = asm3.animal.get_active_litters(dbo)
         else:
-            litters = asm3.animal.b(dbo, offset)
+            litters = asm3.animal.get_litters(dbo, offset)
         littermates = asm3.animal.get_litter_animals(dbo, litters)
         mothers = asm3.animal.get_litter_mothers(dbo, litters)
         asm3.al.debug("got %d litters" % len(litters), "main.litters", dbo)
