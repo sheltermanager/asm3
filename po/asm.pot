@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-02 09:21+0000\n"
+"POT-Creation-Date: 2025-01-03 09:29+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -128,6 +128,10 @@ msgstr ""
 msgid ".odt templates are not permitted by the system options."
 msgstr ""
 
+#: animal.js
+msgid "1 - Very low"
+msgstr ""
+
 #: medical.py
 msgid "1 treatment"
 msgstr ""
@@ -142,6 +146,10 @@ msgstr ""
 
 #: mobile_photo_uploader.js
 msgid "1. Choose Animal"
+msgstr ""
+
+#: animal.js
+msgid "2 - Low"
 msgstr ""
 
 #: publish_options.js
@@ -160,6 +168,10 @@ msgstr ""
 msgid "2FA Enabled"
 msgstr ""
 
+#: animal.js
+msgid "3 - Medium"
+msgstr ""
+
 #: publish_options.js
 msgid "3 months"
 msgstr ""
@@ -168,8 +180,16 @@ msgstr ""
 msgid "3. Capture Photo"
 msgstr ""
 
+#: animal.js
+msgid "4 - High"
+msgstr ""
+
 #: publish_options.js
 msgid "4 weeks"
+msgstr ""
+
+#: animal.js
+msgid "5 - Very high"
 msgstr ""
 
 #: animal.js
@@ -3291,7 +3311,7 @@ msgstr ""
 msgid "Completion Date/Time"
 msgstr ""
 
-#: incident_find_results.js
+#: incident_find_results.js incident.js
 msgid "Completion Type"
 msgstr ""
 
@@ -3472,6 +3492,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Cow"
+msgstr ""
+
+#: animal.js
+msgid "Crate trained"
 msgstr ""
 
 #: dbupdate.py
@@ -5274,6 +5298,10 @@ msgstr ""
 msgid "Ends after"
 msgstr ""
 
+#: animal.js
+msgid "Energy level"
+msgstr ""
+
 #: dbupdate.py
 msgid "English Bulldog"
 msgstr ""
@@ -6661,6 +6689,14 @@ msgstr ""
 msgid "Good With Dogs"
 msgstr ""
 
+#: animal.js
+msgid "Good on lead"
+msgstr ""
+
+#: animal.js
+msgid "Good traveller"
+msgstr ""
+
 #: common_html.js
 msgid "Good with"
 msgstr ""
@@ -6698,6 +6734,10 @@ msgstr ""
 #: person.py animal.js animal_bulk.js shelterview.js animal_find.js person.js
 #: reports_querybuilder.js
 msgid "Good with dogs"
+msgstr ""
+
+#: animal.js
+msgid "Good with elderly"
 msgstr ""
 
 #: person.py lookups.py animal_bulk.js
@@ -8130,7 +8170,8 @@ msgstr ""
 msgid "Littermates"
 msgstr ""
 
-#: animal.py roles.js common_animalchoosermulti.js litters.js
+#: animal.py roles.js common_animalchoosermulti.js mobile_photo_uploader.js
+#: litters.js
 msgid "Litters"
 msgstr ""
 
