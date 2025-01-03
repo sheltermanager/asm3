@@ -32,7 +32,8 @@ $(function() {
                 fields: [
                     { json_field: "MEDIANOTES", post_field: "medianotes", label: _("Notes"), type: "textarea" },
                     { json_field: "RETAINUNTIL", post_field: "retainuntil", label: _("Retain Until"), type: "date",
-                        callout: _("Automatically remove this media item on this date") }
+                        callout: _("Automatically remove this media item on this date") },
+                    { json_field: "MEDIAFLAGS", post_field: "mediaflags", label: _("Flags"), type: "selectmulti" }
                 ]
             };
 
@@ -41,13 +42,17 @@ $(function() {
                 idcolumn: "ID",
                 truncatelink: 50, // Only use first 50 chars of MEDIANOTES for edit link
                 edit: async function(row) {
+                    console.log(dialog);
                     tableform.fields_populate_from_json(dialog.fields, row);
+                    html.media_flag_options(controller.flags, $("#mediaflags"));
+                    //$("#mediaflags").html("<option>Arse</option><option>Boobies</option>");
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     await tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
                     tableform.table_update(table);
                     tableform.dialog_enable_buttons();
                     if (media.icon_mode_active) { media.mode_icon(); } else { media.mode_table(); }
+                    
                 },
                 change: function(rows) {
                     const all_of_type = function(mime) {

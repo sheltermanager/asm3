@@ -1483,6 +1483,22 @@ const html = {
             uri += "&date=" + encodeURIComponent(row.WEBSITEMEDIADATE);
         }
         return uri;
+    },
+
+    /**
+    * Renders a list of <option> tags for media flags.
+    */
+    media_flag_options: function(flags, node) {
+
+        var opt = [];
+
+        $.each(flags, function(i, v) {
+            opt.push('<option value=' + v.ID + '>' + v.FLAG + '</option>');    
+        });
+        console.log(opt);
+        node.html(opt.join("\n"));
+        node.change();
+
     }
 
 };

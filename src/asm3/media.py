@@ -822,9 +822,10 @@ def update_file_content(dbo: Database, username: str, mid: int, content: bytes) 
 def update_media_from_form(dbo: Database, username: str, post: PostedData) -> None:
     mediaid = post.integer("mediaid")
     dbo.update("media", mediaid, { 
-        "MediaNotes": post["medianotes"],
-        "RetainUntil": post.date("retainuntil"),
-        "Date":       dbo.now(),
+        "MediaNotes":   post["medianotes"],
+        "RetainUntil":  post.date("retainuntil"),
+        "Date":         dbo.now(),
+        "MediaFlags":   post["mediaflags"],
         # ASM2_COMPATIBILITY
         "UpdatedSinceLastPublish": 1
     }, username)
