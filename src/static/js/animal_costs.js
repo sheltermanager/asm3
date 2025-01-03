@@ -69,7 +69,7 @@ $(function() {
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
                         row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                        row.OWNERNAME = animal_costs.lastperson.OWNERNAME;
+                        if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
                         controller.rows.push(row);
                         tableform.table_update(table);
                         animal_costs.calculate_costtotals();
