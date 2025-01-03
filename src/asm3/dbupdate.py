@@ -6338,4 +6338,6 @@ def update_34904(dbo: Database) -> None:
     add_column(dbo, "animal", "IsGoodTraveller", dbo.type_integer)
     add_column(dbo, "animal", "IsGoodOnLead", dbo.type_integer)
     add_column(dbo, "animal", "EnergyLevel", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE animal SET IsCrateTrained=2, IsGoodWithElderly=2, IsGoodTraveller=2, IsGoodOnLead=2, EnergyLevel=0")
+
 
