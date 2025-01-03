@@ -34,7 +34,7 @@ $(function() {
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                    row.OWNERNAME = animal_costs.lastperson.OWNERNAME;
+                    if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
                     await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
                     tableform.table_update(table);
                     animal_costs.calculate_costtotals();
