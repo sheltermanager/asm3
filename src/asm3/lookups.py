@@ -50,7 +50,7 @@ LOOKUP_TABLES = {
     "jurisdiction":     (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animal.JurisdictionID", "animalcontrol.JurisdictionID","owner.JurisdictionID")),
     "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",)),
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
-    #"lkmediaflags":     (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", ""),
+    "lkmediaflags":     (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", ""),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
     "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
     "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
@@ -971,6 +971,10 @@ def get_log_types(dbo: Database) -> Results:
 def get_logtype_name(dbo: Database, tid: int) -> str:
     if tid is None: return ""
     return dbo.query_string("SELECT LogTypeName FROM logtype WHERE ID = ?", [tid])
+
+def get_media_flags(dbo: Database, flags: str = "") -> Results:
+    dbflags = dbo.query("SELECT * FROM lkmediaflags WHERE IsRetired=0 ORDER BY Flag")
+    return _merge_db_flags(dbflags, flags)
 
 def get_theme(theme: str) -> Tuple[str, str, str, str]:
     """ Returns a tuple of values code, jq, bg, name for a theme """

@@ -2230,7 +2230,8 @@ class animal_media(JSONEndpoint):
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
             "templates": asm3.template.get_document_templates(dbo, "email"),
-            "sigtype": ELECTRONIC_SIGNATURES
+            "sigtype": ELECTRONIC_SIGNATURES,
+            "flags": asm3.lookups.get_media_flags(dbo)
         }
 
 class animal_medical(JSONEndpoint):
