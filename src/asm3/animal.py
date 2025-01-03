@@ -419,7 +419,11 @@ def get_animal_query(dbo: Database) -> str:
         "(SELECT Name FROM lksynunk l WHERE l.ID = a.IsGoodWithChildren) AS IsGoodWithChildrenName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithCats) AS IsGoodWithCatsName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithDogs) AS IsGoodWithDogsName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithElderly) AS IsGoodWithElderlyName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsHouseTrained) AS IsHouseTrainedName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsCrateTrained) AS IsCrateTrainedName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodTraveller) AS IsGoodTravellerName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodOnLead) AS IsGoodOnLeadName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotAvailableForAdoption) AS IsNotAvailableForAdoptionName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotForRegistration) AS IsNotForRegistrationName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasSpecialNeeds) AS HasSpecialNeedsName, " \
@@ -2774,6 +2778,17 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     if "goodwithkids" in post: goodwithkids = post.integer("goodwithkids")
     housetrained = 2
     if "housetrained" in post: housetrained = post.integer("housetrained")
+    cratetrained = 2
+    if "cratetrained" in post: cratetrained = post.integer("cratetrained")
+    goodwithelderly = 2
+    if "goodwithelderly" in post: goodwithelderly = post.integer("goodwithelderly")
+    goodtraveller = 2
+    if "goodtraveller" in post: goodtraveller = post.integer("goodtraveller")
+    goodonlead = 2
+    if "goodonlead" in post: goodonlead = post.integer("goodonlead")
+    energylevel = 3
+    if "energylevel" in post: energylevel = post.integer("energylevel")
+
     unknown = 0
 
     # Validate form fields
@@ -2895,6 +2910,11 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "IsGoodWithDogs":   goodwithdogs,
         "IsGoodWithChildren": goodwithkids,
         "IsHouseTrained":   housetrained,
+        "IsCrateTrained":   cratetrained,
+        "IsGoodWithElderly": goodwithelderly,
+        "IsGoodTraveller":  goodtraveller,
+        "IsGoodOnLead":     goodonlead,
+        "EnergyLevel":      energylevel,
         "OwnerID":          post.integer("nsowner"), # only set for non-shelter
         "OriginalOwnerID":  originalowner,
         "BroughtInByOwnerID": dbb,
@@ -3121,6 +3141,11 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "IsGoodWithDogs":       post.integer("goodwithdogs"),
         "IsGoodWithChildren":   post.integer("goodwithkids"),
         "IsHouseTrained":       post.integer("housetrained"),
+        "IsCrateTrained":       post["cratetrained"],
+        "IsGoodWithElderly":    post["goodwithelderly"],
+        "IsGoodTraveller":      post["goodtraveller"],
+        "IsGoodOnLead":         post["goodonlead"],
+        "EnergyLevel":          post["energylevel"],
         "OwnerID":              post.integer("owner"),
         "OriginalOwnerID":      post.integer("originalowner"),
         "BroughtInByOwnerID":   post.integer("broughtinby"),

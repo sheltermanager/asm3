@@ -375,18 +375,30 @@ $(function() {
                         xlabel: '<button id="button-commentstomedia">' + _('Copy description to the notes field of the web preferred media for this animal') + '</button>' },
                     { post_field: "popupwarning", json_field: "POPUPWARNING", label: _("Warning"), type: "textarea", rows: 3, 
                         callout: _("Show a warning when viewing this animal") },
-
                     { type: "nextcol" },
-
                     { post_field: "goodwithcats", json_field: "ISGOODWITHCATS", label: _("Good with cats"), type: "select", 
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
                     { post_field: "goodwithdogs", json_field: "ISGOODWITHDOGS", label: _("Good with dogs"), type: "select", 
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
                     { post_field: "goodwithkids", json_field: "ISGOODWITHCHILDREN", label: _("Good with children"), type: "select", 
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynunk }},
+                    { post_field: "goodwithelderly", json_field: "ISGOODWITHELDERLY", label: _("Good with elderly"), type: "select", 
+                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
+                    { post_field: "goodonlead", json_field: "ISGOODONLEAD", label: _("Good on lead"), type: "select", 
+                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
+                    { post_field: "goodtraveller", json_field: "ISGOODTRAVELLER", label: _("Good traveller"), type: "select", 
+                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
                     { post_field: "housetrained", json_field: "ISHOUSETRAINED", label: _("Housetrained"), type: "select", 
                         rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
-
+                    { post_field: "cratetrained", json_field: "ISCRATETRAINED", label: _("Crate trained"), type: "select", 
+                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
+                    { post_field: "energylevel", json_field: "ENERGYLEVEL", label: _("Energy level"), type: "select", 
+                        rowclasses: "goodwith dogs", options: html.list_to_options([
+                            "1|" + _("1 - Very low"),
+                            "2|" + _("2 - Low"),
+                            "3|" + _("3 - Medium"),
+                            "4|" + _("4 - High"),
+                            "5|" + _("5 - Very high") ]) },
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) }
                 ]),
                '</div>', // end accordion section
