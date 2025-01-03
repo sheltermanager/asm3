@@ -6337,3 +6337,4 @@ def update_34904(dbo: Database) -> None:
     add_column(dbo, "animal", "IsGoodTraveller", dbo.type_integer)
     add_column(dbo, "animal", "IsGoodOnLead", dbo.type_integer)
     add_column(dbo, "animal", "EnergyLevel", dbo.type_integer)
+
