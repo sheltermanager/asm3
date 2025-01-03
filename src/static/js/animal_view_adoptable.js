@@ -209,8 +209,8 @@
             if (selgoodwith && selgoodwith == 5 && item.ISGOODWITHELDERLY != 0) { return; }
             if (selgoodwith && selgoodwith == 6 && item.ISGOODTRAVELLER != 0) { return; }
             if (selgoodwith && selgoodwith == 7 && item.ISGOODONLEAD != 0) { return; }
-            if (selgoodwith && selgoodwith == 8 && item.ENERGYLEVEL && item.ENERGYLEVEL > 3) { return; }
-            if (selgoodwith && selgoodwith == 9 && item.ENERGYLEVEL && item.ENERGYLEVEL < 3) { return; }
+            if (selgoodwith && selgoodwith == 8 && (!item.ENERGYLEVEL || item.ENERGYLEVEL > 3)) { return; }
+            if (selgoodwith && selgoodwith == 9 && (!item.ENERGYLEVEL || item.ENERGYLEVEL < 3)) { return; }
             if (selwhere && selwhere == 1 && item.ARCHIVED != 0) { return; }
             if (selwhere && selwhere == 2 && item.ACTIVEMOVEMENTTYPE != 2) { return; }
             if (selwhere && selwhere == 3 && item.ISCOURTESY != 1) { return; }
