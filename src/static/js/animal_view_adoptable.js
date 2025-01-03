@@ -196,7 +196,6 @@
             selwhere = document.getElementById("asm3-select-where").value;
 
         adoptables.forEach(function(item, index, arr) {
-            console.log(item.ENERGYLEVEL);
             if (selsite && item.SITEID != selsite) { return; }
             if (selspecies && item.SPECIESID != selspecies) { return; }
             if (selbreed && item.BREEDNAME != decode(selbreed)) { return; }
