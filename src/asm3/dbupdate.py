@@ -2828,6 +2828,7 @@ def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
     add_html_template_from_files("rss")
     add_html_template_from_files("slideshow")
     add_document_template_from_file("animal,movement", "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
+    add_document_template_from_file("animal", "cage_card_report.html", "/templates", path + "media/templates/cage_card_report.html")
     add_document_template_from_file("animal", "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
     add_document_template_from_file("animal", "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
     add_document_template_from_file("animal", "cat_information.html", "/templates", path + "media/templates/cat_information.html")
