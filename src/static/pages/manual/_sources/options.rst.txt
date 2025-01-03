@@ -1180,9 +1180,10 @@ Animals
 * Remove the FIV/L test fields from the animal screen: If ticked, ASM won't
   display the Combi test or FIV/FLV test fields (depending on your locale). 
 
-* Remove the “Good With...” and Housetrained fields from the animal screen: If
-  ticked, ASM won't display the good with cats/dogs/children and housetrained
-  fields. Useful for shelters that don't keep cats and dogs. 
+* Remove the “Good With...” and trained/energy level fields from the animal 
+  screen: If ticked, ASM won't display the good with cats/dogs/children/elderly,
+  and the good on lead/good traveller/crate trained/housetrained and energy 
+  level fields. Useful for shelters that don't keep cats and dogs. 
 
 * Remove the adoption fee field from the animal screen: If ticked, ASM won't
   show the adoption fee field on the animal details. If this option is not on

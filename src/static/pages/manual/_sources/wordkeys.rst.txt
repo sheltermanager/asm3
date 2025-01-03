@@ -427,13 +427,23 @@ OwnersVetLicence / OwnersVetLicense
 RabiesTag
     The animal's rabies tag 
 GoodWithCats
-    "Yes/No/Unknown" 
+    "Yes/No/Unknown/Selective" 
 GoodWithDogs
-    "Yes/No/Unknown" 
+    "Yes/No/Unknown/Selective" 
 GoodWithChildren
-    "Yes/No/Unknown" 
+    "Yes/No/Unknown/Selective" 
+GoodWithElderly
+    "Yes/No/Unknown/Selective"
+GoodOnLead
+    "Yes/No/Unknown/Selective"
+GoodTraveller
+    "Yes/No/Unknown/Selective"
 HouseTrained
-    "Yes/No/Unknown" 
+    "Yes/No/Unknown/Selective"
+CrateTrained
+    "Yes/No/Unknown/Selective"
+EnergyLevel
+    "1-Very low/2-Low/3-Medium/4-High/5-Very high"
 DisplayCatsIfGoodWith
     Outputs "Cats" if this animal is good with cats
 DisplayDogsIfGoodWith
