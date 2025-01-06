@@ -29,11 +29,12 @@ $(function() {
                 close_on_ok: true,
                 columns: 1,
                 width: 550,
+                focusfirst: false,
                 fields: [
-                    { json_field: "MEDIANOTES", post_field: "medianotes", label: _("Notes"), type: "textarea" },
                     { json_field: "RETAINUNTIL", post_field: "retainuntil", label: _("Retain Until"), type: "date",
                         callout: _("Automatically remove this media item on this date") },
-                    { json_field: "MEDIAFLAGS", post_field: "mediaflags", label: _("Flags"), type: "selectmulti" }
+                    { json_field: "MEDIAFLAGS", post_field: "mediaflags", label: _("Flags"), type: "selectmulti" },
+                    { json_field: "MEDIANOTES", post_field: "medianotes", label: _("Notes"), type: "textarea" }
                 ]
             };
 
@@ -42,10 +43,8 @@ $(function() {
                 idcolumn: "ID",
                 truncatelink: 50, // Only use first 50 chars of MEDIANOTES for edit link
                 edit: async function(row) {
-                    console.log(dialog);
                     tableform.fields_populate_from_json(dialog.fields, row);
                     html.media_flag_options(controller.flags, $("#mediaflags"));
-                    //$("#mediaflags").html("<option>Arse</option><option>Boobies</option>");
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     await tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
@@ -118,6 +117,20 @@ $(function() {
                         h.push(media.render_mods(m, true));
                         return h.join("");
                     }},
+
+                    { field: "MEDIAFLAGS", classes: "mode-table", display: _("Flags"), formatter: function(m) {
+                        let h = [];
+                        $.each(m.MEDIAFLAGS.split(","), function(count, flag) {
+                            $.each(controller.flags, function(count, flagdata) {
+                                if (flag == flagdata.ID) {
+                                    h.push("<span class=asm-media-flag>" + flagdata.FLAG + "</span>");
+                                }
+                            });
+                            
+                        });
+                        return h.join("<br>");
+                    }},
+
                     { field: "SIZE", classes: "mode-table", display: _("Size"), 
                         formatter: function(m) {
                             if (m.MEDIATYPE != 0) { return ""; } // do not show a size for non-files
@@ -140,6 +153,16 @@ $(function() {
                         h.push(tableform.table_render_edit_link(m.ID, format.date(m.DATE)));
                         h.push("<br/>");
                         h.push(media.render_mods(m));
+                        h.push("<br/>");
+                        $.each(m.MEDIAFLAGS.split(","), function(count, flag) {
+                            $.each(controller.flags, function(count, flagdata) {
+                                if (flag == flagdata.ID) {
+                                    h.push("<span class='asm-media-flag asm-media-flag-thumb'>" + flagdata.FLAG + "</span>");
+                                }
+                            });
+                            
+                        });
+                        //return h.join("<br>");
                         h.push("</div>");
                         return h.join("");
                     }}
@@ -160,10 +183,11 @@ $(function() {
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { 
                         return common.browser_is.mobile;
-                    }},
-                { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
+                    }
+                },
+                { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") },
+                { type: "raw", markup: '<span style="float: right"><select id="mediaflagsfilter" multiple="multiple" class="asm-bsmselect"></select></span>' }
             ];
-
             this.dialog = dialog;
             this.table = table;
             this.buttons = buttons;
@@ -196,6 +220,8 @@ $(function() {
                 html.list_to_options(media.retain_for_years),
                 '</select></td>',
                 '</tr>',
+                '<tr><td><label for="mediaflags">' + _("Flags") + '</label></td>',
+                '<td><select id="newmediaflags" name="mediaflags" multiple="multiple" class="asm-bsmselect"></select></td></tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="comments">' + _("Notes") + '</label>',
                 controller.name.indexOf("animal") == 0 ? '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : "",
@@ -352,7 +378,7 @@ $(function() {
             else if (controller.name == "incident_media") {
                 h.push(edit_header.incident_edit_header(controller.incident, "media", controller.tabcounts));
             }
-
+            
             h.push(tableform.buttons_render(this.buttons)); 
             h.push(tableform.table_render(this.table));
             h.push(html.content_footer());
@@ -481,7 +507,7 @@ $(function() {
          * If the file is an image, scales it down and rotates it first.
          * returns a promise.
          */
-        attach_file: function(file, sourceid, retainfor, comments) {
+        attach_file: function(file, sourceid, retainfor, comments, flags) {
 
             let deferred = $.Deferred();
 
@@ -544,7 +570,8 @@ $(function() {
                             "&retainfor=" + encodeURIComponent(retainfor) + 
                             "&filename=" + encodeURIComponent(file.name) +
                             "&filetype=" + encodeURIComponent(file.type) + 
-                            "&filedata=" + encodeURIComponent(finalfile);
+                            "&filedata=" + encodeURIComponent(finalfile) + 
+                            "&flags=" + encodeURIComponent(flags);
                         return common.ajax_post("media", formdata);
                     })
                     .then(function(result) {
@@ -661,7 +688,7 @@ $(function() {
 
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
-            media.attach_file(selectedfile, 1, $("#retainfor").val(), $("#addcomments").val())
+            media.attach_file(selectedfile, 1, $("#retainfor").val(), $("#addcomments").val(), $("#newmediaflags").val())
                 .then(function() {
                     header.hide_loading();
                     // Redirect back to this page. Reconstructing the URL removes a 
@@ -1186,7 +1213,37 @@ $(function() {
                 $("#dialog-copyperson").dialog("open");
                 return false;
             });
-
+            
+            $("#mediaflagsfilter").change(function() {
+                let flagfilters = $("#mediaflagsfilter").val();
+                if (flagfilters.length > 0) {
+                    let mediarows = controller.media;
+                    var newmediarows = [];
+                    $.each(mediarows, function(mediacount, media) {
+                        var include = true;
+                        $.each(media.MEDIAFLAGS.split(","), function(flagcount, flag) {
+                            $.each(flagfilters, function(filtercount, filter) {
+                                if (flag != filter) {
+                                    include = false;
+                                    return false;
+                                }
+                            });
+                            if (include) {
+                                newmediarows.push(media);
+                                return false;
+                            }
+                        });
+                    });
+                    media.table.rows = newmediarows;
+                } else {
+                    media.table.rows = controller.media;
+                }
+                tableform.table_update(media.table);
+                if (media.icon_mode_active) {
+                    media.mode_icon();
+                }
+                return false;
+            });
         },
 
         new_link: function() {
@@ -1207,7 +1264,7 @@ $(function() {
             $(".mode-icon").show();
             $("#tableform thead").hide();
             $("#tableform").css({ "text-align": "center" });
-            $("#tableform tbody tr").css({ "display": "inline-block", "vertical-align": "bottom", "border": "1px none transparent" });
+            $("#tableform tbody tr").css({ "display": "inline-block", "vertical-align": "top", "border": "1px none transparent" });
             // Add the drop icon if it is not present in the table
             if ($("#tableform .asm-mediadroptarget").length == 0) {
                 $("#tableform tbody").prepend('<tr style="display: inline-block"><td class="mode-icon">' +
@@ -1253,6 +1310,9 @@ $(function() {
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
+
+            html.media_flag_options(controller.flags, $("#mediaflagsfilter"));
+            html.media_flag_options(controller.flags, $("#newmediaflags"));
         },
 
         destroy: function() {

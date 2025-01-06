@@ -342,6 +342,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
     filedata = post["filedata"]
     filename = post["filename"]
     comments = post["comments"]
+    flags = post["flags"]
     transformed = post.integer("transformed") == 1
     if filedata != "":
         filetype = post["filetype"]
@@ -435,7 +436,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
         "ID":                   mediaid,
         "DBFSID":               dbfsid,
         "MediaSource":          sourceid,
-        "MediaFlags":           "",
+        "MediaFlags":           flags,
         "MediaSize":            len(filedata),
         "MediaName":            medianame,
         "MediaMimeType":        mime_type(medianame),

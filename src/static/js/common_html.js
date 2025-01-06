@@ -1495,7 +1495,6 @@ const html = {
         $.each(flags, function(i, v) {
             opt.push('<option value=' + v.ID + '>' + v.FLAG + '</option>');    
         });
-        console.log(opt);
         node.html(opt.join("\n"));
         node.change();
 
