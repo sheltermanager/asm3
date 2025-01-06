@@ -342,7 +342,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
     filedata = post["filedata"]
     filename = post["filename"]
     comments = post["comments"]
-    flags = post["flags"]
+    flags = post["flags"].replace(",", "|") + "|"
     transformed = post.integer("transformed") == 1
     if filedata != "":
         filetype = post["filetype"]
@@ -826,7 +826,7 @@ def update_media_from_form(dbo: Database, username: str, post: PostedData) -> No
         "MediaNotes":   post["medianotes"],
         "RetainUntil":  post.date("retainuntil"),
         "Date":         dbo.now(),
-        "MediaFlags":   post["mediaflags"],
+        "MediaFlags":   post["mediaflags"].replace(",", "|") + "|",
         # ASM2_COMPATIBILITY
         "UpdatedSinceLastPublish": 1
     }, username)

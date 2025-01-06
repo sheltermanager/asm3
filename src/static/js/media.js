@@ -44,7 +44,6 @@ $(function() {
                 truncatelink: 50, // Only use first 50 chars of MEDIANOTES for edit link
                 edit: async function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    html.media_flag_options(controller.flags, $("#mediaflags"));
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     await tableform.fields_post(dialog.fields, "mode=update&mediaid=" + row.ID, "media");
@@ -120,7 +119,7 @@ $(function() {
 
                     { field: "MEDIAFLAGS", classes: "mode-table", display: _("Flags"), formatter: function(m) {
                         let h = [];
-                        $.each(m.MEDIAFLAGS.split(","), function(count, flag) {
+                        $.each(m.MEDIAFLAGS.split("|"), function(count, flag) {
                             $.each(controller.flags, function(count, flagdata) {
                                 if (flag == flagdata.ID) {
                                     h.push("<span class=asm-media-flag>" + flagdata.FLAG + "</span>");
@@ -154,7 +153,7 @@ $(function() {
                         h.push("<br/>");
                         h.push(media.render_mods(m));
                         h.push("<br/>");
-                        $.each(m.MEDIAFLAGS.split(","), function(count, flag) {
+                        $.each(m.MEDIAFLAGS.split("|"), function(count, flag) {
                             $.each(controller.flags, function(count, flagdata) {
                                 if (flag == flagdata.ID) {
                                     h.push("<span class='asm-media-flag asm-media-flag-thumb'>" + flagdata.FLAG + "</span>");
@@ -1217,22 +1216,31 @@ $(function() {
             $("#mediaflagsfilter").change(function() {
                 let flagfilters = $("#mediaflagsfilter").val();
                 if (flagfilters.length > 0) {
-                    let mediarows = controller.media;
                     var newmediarows = [];
-                    $.each(mediarows, function(mediacount, media) {
+                    $.each(controller.media, function(mediacount, media) {
                         var include = true;
-                        $.each(media.MEDIAFLAGS.split(","), function(flagcount, flag) {
-                            $.each(flagfilters, function(filtercount, filter) {
-                                if (flag != filter) {
+                        console.log("media.MEDIANOTES = " + media.MEDIANOTES);
+                        //console.log('media.MEDIAFLAGS' + " = " + media.MEDIAFLAGS);
+                        //console.log('media.MEDIAFLAGS.split("|")' + " = " + media.MEDIAFLAGS.split("|"));
+                        $.each(flagfilters, function(filtercount, flag) {
+                            console.log("flag = " + flag);
+                            var flagfound = false;
+                            var mediaflags = media.MEDIAFLAGS.split("|");
+                                $.each(mediaflags, function(flagcount, filter) {
+                                    if ( flagcount < mediaflags.length - 1) {
+                                        if (flag == filter) {
+                                            flagfound = true;
+                                            return false;
+                                        }
+                                    }
+                                });
+                                if (!flagfound) {
                                     include = false;
-                                    return false;
                                 }
-                            });
-                            if (include) {
-                                newmediarows.push(media);
-                                return false;
-                            }
                         });
+                        if (include) {
+                            newmediarows.push(media);
+                        }
                     });
                     media.table.rows = newmediarows;
                 } else {
@@ -1311,6 +1319,7 @@ $(function() {
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
 
+            html.media_flag_options(controller.flags, $("#mediaflags"));
             html.media_flag_options(controller.flags, $("#mediaflagsfilter"));
             html.media_flag_options(controller.flags, $("#newmediaflags"));
         },
