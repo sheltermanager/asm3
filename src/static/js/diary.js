@@ -109,7 +109,8 @@ $(function() {
                     tooltip: _("Create diary notes from a task"),
                     hideif: function() {
                         return controller.name != "animal_diary" && controller.name != "person_diary";
-                    }},
+                    }
+                },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddn", 
                     click: async function() { 
                         await tableform.delete_dialog();
@@ -167,12 +168,9 @@ $(function() {
                 h.push('</div>');
                 h.push('<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">');
                 h.push('<input type="hidden" id="diarytaskid" />');
-                h.push('<table width="100%">');
-                h.push('<tr>');
-                h.push('<td><label for="seldate">' + _("Date") + '</label></td>');
-                h.push('<td><input id="seldate" type="text" class="asm-textbox asm-datebox" /></td>');
-                h.push('</tr>');
-                h.push('</table>');
+                h.push(tableform.fields_render([
+                    { id: "seldate", type: "date", label: _("Date") }
+                ]));
                 h.push('</div>');
                 h.push(edit_header.animal_edit_header(controller.animal, "diary", controller.tabcounts));
             }
@@ -184,12 +182,9 @@ $(function() {
                 h.push('</div>');
                 h.push('<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">');
                 h.push('<input type="hidden" id="diarytaskid" />');
-                h.push('<table width="100%">');
-                h.push('<tr>');
-                h.push('<td><label for="seldate">' + _("Date") + '</label></td>');
-                h.push('<td><input id="seldate" type="text" class="asm-textbox asm-datebox" /></td>');
-                h.push('</tr>');
-                h.push('</table>');
+                h.push(tableform.fields_render([
+                    { id: "seldate", type: "date", label: _("Date") }
+                ]));
                 h.push('</div>');
                 h.push(edit_header.person_edit_header(controller.person, "diary", controller.tabcounts));
             }
@@ -224,40 +219,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
  
-            // Diary task create ajax call
-            const create_task = async function(taskid) {
-                let formdata = "";
-                if (controller.name == "animal_diary") {
-                    formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                }
-                else if (controller.name == "person_diary") {
-                    formdata = "mode=exec&id=" + controller.person.ID + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                }
-                await common.ajax_post("diarytask", formdata);
-                common.route_reload();
-            };
-
-            // Diary task select date dialog
-            let addbuttons = { };
-            addbuttons[_("Select")] = function() {
-                validate.reset();
-                if (validate.notblank([ "seldate" ])) {
-                    create_task($("#diarytaskid").val()); 
-                }
-            };
-            addbuttons[_("Cancel")] = function() {
-                $("#dialog-dt-date").dialog("close");
-            };
-            $("#dialog-dt-date").dialog({
-                autoOpen: false,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: addbuttons
-            });
-
-            // Attach handlers for diary tasks
+           // Attach handlers for diary tasks
             $(".diarytask").each(function() {
                 let a = $(this);
                 let task = a.attr("data").split(" ");

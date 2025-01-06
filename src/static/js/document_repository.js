@@ -138,28 +138,29 @@ $(function() {
         render_rename_dialog: function() {
             return [
                 '<div id="dialog-rename" style="display: none" title="' + html.title(_("Rename")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newname">' + _("New name") + '</label></td>',
-                '<td><input id="newname" data="newname" type="text" class="asm-textbox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newname", type: "text", label: _("New name"), doublesize: true }
+                ]),
                 '</div>'
             ].join("\n");
         },
 
         bind_rename_dialog: function() {
             let renamebuttons = { }, table = document_repository.table;
-            renamebuttons[_("Rename")] = async function() {
-                validate.reset("dialog-rename");
-                if (!validate.notblank([ "newname" ])) { return; }
-                $("#dialog-rename").disable_dialog_buttons();
-                let row = tableform.table_selected_row(document_repository.table);
-                let oldname = encodeURIComponent(row.NAME);
-                let path = encodeURIComponent(row.PATH);
-                let newname = encodeURIComponent($("#newname").val());
-                await common.ajax_post("document_repository", "mode=rename&path=" + path + "&newname=" + newname + "&oldname=" + oldname);
-                common.route_reload();
+            renamebuttons[_("Rename")] = {
+                text: _("Rename"),
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset("dialog-rename");
+                    if (!validate.notblank([ "newname" ])) { return; }
+                    $("#dialog-rename").disable_dialog_buttons();
+                    let row = tableform.table_selected_row(document_repository.table);
+                    let oldname = encodeURIComponent(row.NAME);
+                    let path = encodeURIComponent(row.PATH);
+                    let newname = encodeURIComponent($("#newname").val());
+                    await common.ajax_post("document_repository", "mode=rename&path=" + path + "&newname=" + newname + "&oldname=" + oldname);
+                    common.route_reload();
+                }
             };
             renamebuttons[_("Cancel")] = function() {
                 $("#dialog-rename").dialog("close");

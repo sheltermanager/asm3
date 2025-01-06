@@ -124,12 +124,9 @@ $(function() {
         render_rename_dialog: function() {
             return [
                 '<div id="dialog-rename" style="display: none" title="' + html.title(_("Rename")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newname">' + _("New name") + '</label></td>',
-                '<td><input id="newname" data="newname" type="text" class="asm-textbox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newname", type: "text", label: _("New name"), doublesize: true }
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -172,22 +169,12 @@ $(function() {
                 html.info(_("File types accepted: {0}").replace("{0}", ".odt, .html")),
                 '<form id="form-upload" action="document_templates" method="post" enctype="multipart/form-data">',
                 '<input type="hidden" name="mode" value="upload" />',
-                '<table style="width: 100%; margin-top: 5px; ">',
-                '<tr>',
-                '<td><label for="filechooser">' + _("Document file") + '</label></td>',
-                '<td><input id="filechooser" name="filechooser" type="file" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="uploadpath">' + _("Path") + '</label></td>',
-                '<td><input id="uploadpath" name="path" type="text" class="asm-textbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="uploadshow">' + _("Show") + '</label></td>',
-                '<td><select id="uploadshow" name="uploadshow" multiple="multiple" class="asm-bsmselect">',
-                html.list_to_options(document_templates.doctypes, "VALUE", "DISPLAY"),
-                '</select></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { name: "filechooser", type: "file", label: _("Document file") },
+                    { name: "uploadpath", type: "text", label: _("Path") },
+                    { name: "uploadshow", type: "selectmulti", label: _("Show"), 
+                        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: document_templates.doctypes }}
+                ]),
                 '</form>',
                 '</div>'
             ].join("\n");
@@ -231,14 +218,10 @@ $(function() {
         render_show_dialog: function() {
             return [
                 '<div id="dialog-show" style="display: none" title="' + html.title(_("Show")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newshow">' + _("Show") + '</label></td>',
-                '<td><select id="newshow" data="newshow" multiple="multiple" class="asm-bsmselect">',
-                html.list_to_options(document_templates.doctypes, "VALUE", "DISPLAY"),
-                '</select></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newshow", type: "selectmulti", label: _("Show"), 
+                        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: document_templates.doctypes }}
+                ]),
                 '</div>'
             ].join("\n");
         },

@@ -202,23 +202,17 @@ $(function(){
 
         render_addanimaldialog: function() {
             return ['<div id="dialog-addanimal" style="display: none" title="' + html.title(_("Add animal")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="addanimal">' + _("Animal") + '</label></td>',
-                '<td><input id="addanimal" data="addanimal" type="hidden" class="asm-animalchooser" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "addanimal", type: "animal", label: _("Animal") }
+                ]),
                 '</div>'].join("\n");
         },
 
         render_addanimalsdialog: function() {
             return ['<div id="dialog-addanimals" style="display: none" title="' + html.title(_("Add animals")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="addanimals">' + _("Animals") + '</label></td>',
-                '<td><input id="addanimals" data="addanimals" type="hidden" class="asm-animalchoosermulti" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "addanimals", type: "animalmulti", label: _("Animals") }
+                ]),
                 '</div>'].join("\n");
         },
 

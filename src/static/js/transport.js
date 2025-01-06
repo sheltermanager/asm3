@@ -32,6 +32,7 @@ $(function() {
                 edit_perm: 'ctr',
                 close_on_ok: false,
                 resizable: true,
+                width: 700,
                 columns: 2,
                 fields: [
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },

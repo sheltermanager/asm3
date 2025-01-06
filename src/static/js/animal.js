@@ -486,22 +486,13 @@ $(function() {
                 '<p>' + html.error(html.lf_to_br(controller.animal.POPUPWARNING)) + '</p>',
                 '</div>',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                _("Select an animal to merge into this record. The selected animal will be removed, and their movements, diary notes, log entries, etc. will be reattached to this record."),
-                '</p>',
+                html.info(_("Select an animal to merge into this record. The selected animal will be removed, and their movements, diary notes, log entries, etc. will be reattached to this record.")),
+                html.capture_autofocus(),
+                tableform.fields_render([
+                    { post_field: "mergeanimal", type: "animal", label: _("Animal") }
+                ]),
                 '</div>',
                 microchip.render_checkresults_dialog(),
-                html.capture_autofocus(),
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="mergeanimal">' + _("Animal") + '</label></td>',
-                '<td>',
-                '<input id="mergeanimal" data="mergeanimal" type="hidden" class="asm-animalchooser" value="" />',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>',
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-shareweb" class="sharebutton asm-menu-item"><a '
@@ -521,7 +512,6 @@ $(function() {
                         + '" target="_blank" href="#">' + html.icon("pinterest") + ' ' + _("Pinterest") + '</a></li>',
                     '<li id="button-tumblr" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("tumblr") + ' ' + _("Tumblr") + '</a></li>',
-
                 '</ul>',
                 '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
@@ -1270,25 +1260,12 @@ $(function() {
                 common.route("animal?id=" + response + "&cloned=true"); 
             });
 
-            $("#button-merge").button().click(function() {
-                let mb = {}; 
-                mb[_("Merge")] = async function() { 
-                    $("#dialog-merge").dialog("close");
-                    let formdata = "mode=merge&animalid=" + $("#animalid").val() + "&mergeanimalid=" + $("#mergeanimal").val();
-                    await common.ajax_post("animal", formdata);
-                    validate.dirty(false);
-                    common.route_reload(); 
-                };
-                mb[_("Cancel")] = function() { $(this).dialog("close"); };
-                $("#dialog-merge").dialog({
-                     width: 600,
-                     resizable: false,
-                     modal: true,
-                     dialogClass: "dialogshadow",
-                     show: dlgfx.delete_show,
-                     hide: dlgfx.delete_hide,
-                     buttons: mb
-                });
+            $("#button-merge").button().click(async function() {
+                await tableform.show_okcancel_dialog("#dialog-merge", _("Merge"), { width: 450, notzero: [ "mergeanimal" ] });
+                let formdata = "mode=merge&animalid=" + $("#animalid").val() + "&mergeanimalid=" + $("#mergeanimal").val();
+                await common.ajax_post("animal", formdata);
+                validate.dirty(false);
+                common.route_reload(); 
             });
 
             $("#button-delete").button().click(async function() {

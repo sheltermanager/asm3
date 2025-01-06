@@ -3534,7 +3534,7 @@ class document_templates(JSONEndpoint):
         fname = post.filename()
         ext = fname[fname.rfind("."):]
         if ext not in (".html", ".odt"): raise asm3.utils.ASMValidationError("Document template files must be .html or .odt")
-        if post["path"] != "": fname = post["path"] + "/" + fname
+        if post["uploadpath"] != "": fname = post["uploadpath"] + "/" + fname
         asm3.template.create_document_template(o.dbo, o.user, fname, ext, post.filedata(), show = o.post["uploadshow"])
         self.redirect("document_templates")
 
