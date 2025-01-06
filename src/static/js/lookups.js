@@ -101,9 +101,9 @@ $(function() {
                             // If we don't talk to any third party services in this locale, might as well hide
                             // the publisher fields to avoid confusion
                             if ($.inArray(asm.locale, lookups.publisher_locales) == -1) {
-                                $("#pfspecies").closest("tr").hide();
-                                $("#pfbreed").closest("tr").hide();
-                                $("#pfapcolour").closest("tr").hide();
+                                $("#pfspeciesrow").hide();
+                                $("#pfbreedrow").hide();
+                                $("#pfapcolourrow").hide();
                             }
                         }
                         });
@@ -191,9 +191,9 @@ $(function() {
                                 // If we don't talk to any third party services in this locale, might as well hide
                                 // the publisher fields to avoid confusion
                                 if ($.inArray(asm.locale, lookups.publisher_locales) == -1) {
-                                    $("#pfspecies").closest("tr").hide();
-                                    $("#pfbreed").closest("tr").hide();
-                                    $("#pfapcolour").closest("tr").hide();
+                                    $("#pfspeciesrow").hide();
+                                    $("#pfbreedrow").hide();
+                                    $("#pfapcolourrow").hide();
                                 }
                             }
                             });
@@ -290,7 +290,7 @@ $(function() {
             $("#lookup").val(controller.tablename);
             // Only show the site field if the lookup has it and multi site is on
             if (controller.hassite) {
-                $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
+                $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             }
             // Hide the sites lookup if multi site isn't on
             if (!config.bool("MultiSiteEnabled")) {

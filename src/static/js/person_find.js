@@ -97,15 +97,13 @@ $(function() {
 
             $("#asm-search-selector-advanced").click(function() {
                 advanced_mode();
-                let showsite = config.bool("MultiSiteEnabled") && asm.siteid;
-                $("#site").closest("tr").toggle(showsite);
             });
 
             // Load the person flag options
             html.person_flag_options(null, controller.flags, $("#filter"), false, true);
 
-            $("label[for='gdpr']").toggle( config.bool("ShowGDPRContactOptIn") );
-            $("#gdpr").closest("td").toggle( config.bool("ShowGDPRContactOptIn") );
+            $("#siterow").toggle( config.bool("MultiSiteEnabled") && asm.siteid );
+            $("#gdprrow").toggle( config.bool("ShowGDPRContactOptIn") );
 
             // Search button - we don't use the traditional submit because
             // the bsmselect widget craps extra values into the form and 

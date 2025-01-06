@@ -504,22 +504,22 @@ $(function() {
         change_type: function() {
             let type = $("#type").val();
             if (type != "REPORT") {
-                $("#html").closest("tr").hide();
-                $("#dailyemail").closest("tr").hide();
-                $("#dailyemailfrequency").closest("tr").hide();
-                $("#dailyemailhour").closest("tr").hide();
-                $("#omitheaderfooter").closest("tr").hide();
-                $("#omitcriteria").closest("tr").hide();
+                $("#htmlrow").hide();
+                $("#dailyemailrow").hide();
+                $("#dailyemailfrequencyrow").hide();
+                $("#dailyemailhourrow").hide();
+                $("#omitheaderfooterrow").hide();
+                $("#omitcriteriarow").hide();
                 $("#button-genhtml").hide();
                 $("#dialog-add").dialog("option", "height", "auto");
             }
             else {
-                $("#html").closest("tr").show();
-                $("#dailyemail").closest("tr").show();
-                $("#dailyemailfrequency").closest("tr").show();
-                $("#dailyemailhour").closest("tr").show();
-                $("#omitheaderfooter").closest("tr").show();
-                $("#omitcriteria").closest("tr").show();
+                $("#htmlrow").show();
+                $("#dailyemailrow").show();
+                $("#dailyemailfrequencyrow").show();
+                $("#dailyemailhourrow").show();
+                $("#omitheaderfooterrow").show();
+                $("#omitcriteriarow").show();
                 $("#button-genhtml").show();
                 $("#dialog-add").dialog("option", "height", "auto");
             }

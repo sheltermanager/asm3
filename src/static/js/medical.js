@@ -38,30 +38,26 @@ $(function() {
                     { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
-                    { type: "raw", justwidget: true, markup: "<tr><td></td><td>" },
-                    { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", readonly: true, justwidget: true, halfsize: true, defaultval: "1" },
-                    { type: "raw", justwidget: true, markup: " " + _("treatments, every") + " " },
-                    { json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", type: "number", justwidget: true, halfsize: true, readonly: true, defaultval: "1" },
-                    { type: "raw", justwidget: true, markup: " " },
-                    { json_field: "TIMINGRULEFREQUENCY", post_field: "timingrulefrequency", type: "select", justwidget: true, halfsize: true, readonly: true, options: 
-                            '<option value="0">' + _("days") + '</option>' + 
-                            '<option value="4">' + _("weekdays") + '</option>' +
-                            '<option value="1">' + _("weeks") + '</option>' +
-                            '<option value="2">' + _("months") + '</option>' + 
-                            '<option value="3">' + _("years") + '</option>' },
-                    { type: "raw", justwidget: true, markup: "</td></tr>" },
-                    { type: "raw", justwidget: true, markup: "<tr><td>" + _("Duration") + "</td><td>" },
-                    { json_field: "TREATMENTRULE", post_field: "treatmentrule", justwidget: true, type: "select", halfsize: true, readonly: true, options:
-                            '<option value="0">' + _("Ends after") + '</option>' +
-                            '<option value="1">' + _("Unspecified") + '</option>' },
-                    { type: "raw", justwidget: true, markup: " <span id='treatmentrulecalc'>" },
-                    { json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", justwidget: true, halfsize: true, type: "number", readonly: true, 
-                            defaultval: "1" },
-                    { type: "raw", justwidget: true, markup:
-                        ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
-                        '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
-                        '</span></span>' +
-                        '</td></tr>'},
+                    { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", readonly: true, label: "", halfsize: true, defaultval: "1",
+                        xmarkup: [ ' ', _("treatments, every"), ' ',
+                            tableform.render_intnumber({ json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", justwidget: true, halfsize: true, defaultval: "1" }), ' ',
+                            tableform.render_select({ json_field: "TIMINGRULEFREQUENCY", post_field: "timingrulefrequency", type: "select", justwidget: true, halfsize: true, options: 
+                                '<option value="0">' + _("days") + '</option>' + 
+                                '<option value="4">' + _("weekdays") + '</option>' +
+                                '<option value="1">' + _("weeks") + '</option>' +
+                                '<option value="2">' + _("months") + '</option>' + 
+                                '<option value="3">' + _("years") + '</option>' })
+                            ].join("\n") },
+                    { json_field: "TREATMENTRULE", post_field: "treatmentrule", label: _("Duration"), type: "select", halfsize: true, readonly: true, 
+                        options: '<option value="0">' + _("Ends after") + '</option>' +
+                            '<option value="1">' + _("Unspecified") + '</option>',
+                        xmarkup: [
+                            ' <span id="treatmentrulecalc">', 
+                            tableform.render_intnumber({ json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", 
+                                justwidget: true, halfsize: true, defaultval: "1" }),
+                            ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
+                            '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
+                            '</span></span>' ].join("\n") },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -71,13 +67,13 @@ $(function() {
                 idcolumn: "COMPOSITEID",
                 edit: async function(row) {
                     if (controller.animal) {
-                        $("#animal").closest("tr").hide();
+                        $("#animalrow").hide();
                     }
                     else {
-                        $("#animal").closest("tr").show();
+                        $("#animalrow").show();
                     }
-                    $("#animals").closest("tr").hide();
-                    $("#profileid").closest("tr").hide();
+                    $("#animalsrow").hide();
+                    $("#profileidrow").hide();
                     $("#treatmentrulecalc").hide();
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
@@ -232,7 +228,7 @@ $(function() {
                         $("#newdate").date("today");
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").date("today");
-                        $("#usagedate").closest("tr").hide();
+                        $("#usagedaterow").hide();
                         $("#quantity").val("0");
                         $("#givenby").select("value", asm.user);
                         // Default animal's current vet if set and this is an animal medical tab
@@ -441,14 +437,14 @@ $(function() {
                 onload: function() {
                     if (controller.animal) {
                         $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                        $("#animal").closest("tr").hide();
+                        $("#animalrow").hide();
                     }
                     else {
-                        $("#animal").closest("tr").show();
+                        $("#animalrow").show();
                         $("#animal").animalchooser("clear");
                     }
-                    $("#animals").closest("tr").hide();
-                    $("#profileid").closest("tr").show();
+                    $("#animalsrow").hide();
+                    $("#profileidrow").show();
                     $("#profileid").select("value", "");
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
@@ -473,10 +469,10 @@ $(function() {
                     }
                 },
                 onload: function() {
-                    $("#animal").closest("tr").hide();
-                    $("#animals").closest("tr").show();
+                    $("#animalrow").hide();
+                    $("#animalsrow").show();
                     $("#animals").animalchoosermulti("clear");
-                    $("#profileid").closest("tr").show();
+                    $("#profileidrow").show();
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
                 }
@@ -656,8 +652,8 @@ $(function() {
                 $("#treatmentrule").select("disable");
                 $("#totalnumberoftreatments").val("1");
 
-                $("#timingrule").closest("tr").fadeOut();
-                $("#treatmentrule").closest("tr").fadeOut();
+                $("#timingrulerow").fadeOut();
+                $("#treatmentrulerow").fadeOut();
             }
             else {
                 $("#timingrule").val("1");
@@ -668,8 +664,8 @@ $(function() {
                 $("#treatmentrule").select("enable");
                 $("#totalnumberoftreatments").val("1");
 
-                $("#timingrule").closest("tr").fadeIn();
-                $("#treatmentrule").closest("tr").fadeIn();
+                $("#timingrulerow").fadeIn();
+                $("#treatmentrulerow").fadeIn();
             }
         },
 
@@ -679,7 +675,7 @@ $(function() {
                 if ($(v).val() == "0" || $(v).val().indexOf("-") != -1) { $(v).val("1"); }
             });
             if ($("#treatmentrule").val() == "0") {
-                $("#displaytotalnumberoftreatments").text( parseInt($("#timingrule").val(), 10) * parseInt($("#totalnumberoftreatments").val(), 10));
+                $("#displaytotalnumberoftreatments").text( format.to_int($("#timingrule").val()) * format.to_int($("#totalnumberoftreatments").val()));
                 $("#timingrulefrequencyagain").text($("#timingrulefrequency option[value=\"" + $("#timingrulefrequency").val() + "\"]").text());
             }
         },

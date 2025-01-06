@@ -82,7 +82,7 @@ $(function() {
                     { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
                     { post_field: "shelterview", label: _("Shelter view"), type: "select", 
                         options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
-                    { post_field: "signature", type: "raw", label: _("Signature"), 
+                    { rowid: "signaturerow", type: "raw", label: _("Signature"), 
                         xlabel: ' <button id="button-change" type="button" style="vertical-align: middle">' + _("Clear and sign again") + '</button>',
                         markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' +
                             '<img id="existingsig" style="display: none; border: 0" />' },
@@ -202,7 +202,7 @@ $(function() {
             let emaildefault = config.bool(asm.user + "_EmailDefault");
             $("#emaildefault").prop("checked", emaildefault);
             if (controller.sigtype != "touch") { 
-                $("#signature").closest("tr").hide(); 
+                $("#signaturerow").hide(); 
             }
             if (u.SIGNATURE) {
                 $("#signature").hide();

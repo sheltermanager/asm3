@@ -262,7 +262,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
+            $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             validate.indicator([ "newpassword", "confirmpassword" ]);
         },
 

@@ -337,12 +337,12 @@ $(function() {
 
         show_person_animals: function(b) {
             if (b) {
-                $("#personanimal").closest("tr").show();
-                $("#animal").closest("tr").hide();
+                $("#personanimalrow").show();
+                $("#animalrow").hide();
             }
             else {
-                $("#personanimal").closest("tr").hide();
-                $("#animal").closest("tr").show();
+                $("#personanimalrow").hide();
+                $("#animalrow").show();
             }
         },
 
@@ -359,7 +359,6 @@ $(function() {
             if (clinic_appointment.dialog_row && clinic_appointment.dialog_row.ANIMALID) {
                 $("#personanimal").select("value", clinic_appointment.dialog_row.ANIMALID);
             }
-            $("#movement").closest("tr").fadeIn();
         },
 
         render: function() {

@@ -103,7 +103,7 @@ $(function() {
         },
 
         type_change: function() {
-            $("#worktype").closest("tr").toggle(format.to_int($("#type").val()) <= 10);
+            $("#worktyperow").toggle(format.to_int($("#type").val()) <= 10);
         },
 
         render: function() {

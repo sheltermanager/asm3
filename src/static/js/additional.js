@@ -131,19 +131,19 @@ $(function() {
             let ft = $("#type").select("value");
             // Show lookups if field type is yes/no, lookup or multi-lookup
             if (ft == 0 || ft == 6 || ft == 7) {
-                $("#lookupvalues").closest("tr").fadeIn();
+                $("#lookupvaluesrow").fadeIn();
             }
             else {
-                $("#lookupvalues").closest("tr").fadeOut();
+                $("#lookupvaluesrow").fadeOut();
             }
             // Show searchable for correct field types
             // of text, notes, number, lookup or multi-lookup
             if (ft == 1 || ft == 2 || ft == 3 || ft == 6 || ft == 7) {
-                $("#searchable").closest("tr").fadeIn();
+                $("#searchablerow").fadeIn();
             }
             else {
                 $("#searchable").prop("checked", false);
-                $("#searchable").closest("tr").fadeOut();
+                $("#searchablerow").fadeOut();
             }
         },
 

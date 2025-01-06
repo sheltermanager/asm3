@@ -52,24 +52,19 @@ $(function() {
                             // have the edit all diary notes permission and is not
                             // the person who created the diary note, they should only 
                             // be able to edit the comments.
+                            //$("#note").prop("disabled", true);
                             if ((controller.name.indexOf("diary_edit") == 0) && (row.CREATEDBY != asm.user) && (!common.has_permission("eadn"))) {
-                                $("#subjecttext").remove();
-                                $("#notetext").remove();
-                                $("#note").closest("span").hide();
-                                $("#subject").hide();
-                                $("#note").closest("td").append("<span id='notetext'>" + row.NOTE + "</span>");
-                                $("#subject").closest("td").append("<span id='subjecttext'>" + row.SUBJECT + "</span>");
+                                $("#subject").prop("disabled", true);
+                                $("#note").prop("disabled", true);
                             }
                             else {
-                                $("#subjecttext").remove();
-                                $("#notetext").remove();
-                                $("#subject").show();
-                                $("#note").closest("span").show();
+                                $("#subject").prop("disabled", false);
+                                $("#note").prop("disabled", false);
                             }
                             $("#emailnow").prop("checked", config.bool("EmailDiaryOnChange"));
-                            $("#emailnow").closest("tr").hide();
+                            $("#emailnowrow").hide();
                             // Allow editing of the comments once the diary is created
-                            $("#comments").closest("tr").show();
+                            $("#commentsrow").show();
                         }
                     });
                 },
@@ -318,17 +313,11 @@ $(function() {
 
                     tableform.dialog_enable_buttons(); 
 
-                    // Show the note textarea and subject box and remove any old text display of notes
-                    $("#notetext").remove();
-                    $("#subjecttext").remove();
-                    $("#note").closest("span").show();
-                    $("#subject").show();
-
                     // Hide the comments field for new diary notes
-                    $("#comments").closest("tr").hide();
+                    $("#commentsrow").hide();
 
                     $("#emailnow").prop("checked", config.bool("EmailDiaryOnChange"));
-                    $("#emailnow").closest("tr").show();
+                    $("#emailnowrow").show();
 
                     // If a default diary person is set, choose them
                     if (config.str("AFDefaultDiaryPerson")) {

@@ -44,8 +44,7 @@ $(function() {
                     { json_field: "RESERVATIONSTATUSID", post_field: "reservationstatus", label: _("Reservation Status"), type: "select", 
                         options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
                     { json_field: "RESERVATIONCANCELLEDDATE", post_field: "reservationcancelled", label: _("Reservation Cancelled"), type: "date" },
-                    { type: "raw", justwidget: true, markup: 
-                        additional.additional_fields_tableform(additional.merge_definitions_and_values(controller.additional, {}),  -1, true, "additionaldialog")},
+                    { type: "additional", markup: additional.additional_fields_tableform(additional.merge_definitions_and_values(controller.additional, {}),  -1, true, "additionaldialog")},
 
                     { type: "nextcol" },
 
@@ -366,7 +365,7 @@ $(function() {
                                 $("#returncategory").select("value", config.str("AFDefaultReturnReason"));
                                 $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
                                 $("#reservationtime").val("00:00:00");
-                                $("#adoptionno").closest("tr").hide();
+                                $("#adoptionnorow").hide();
 
                                 // Choose an appropriate default type based on our controller
                                 if (controller.name == "move_book_foster") { $("#type").select("value", "2"); }
@@ -669,7 +668,7 @@ $(function() {
             if (!config.bool("UseAutoInsurance")) { $("#button-insurance").button("disable"); }
 
             if (config.bool("DontShowInsurance")) {
-                $("#insurance").closest("tr").hide();
+                $("#insurancerow").hide();
             }
 
             // Add click handlers to templates
@@ -822,12 +821,12 @@ $(function() {
                 $("#eventlink").prop("checked", false);
             }
             if ($("#eventlink").prop("checked")) {
-                $("#event").closest("tr").fadeIn();
+                $("#eventrow").fadeIn();
                 movements.populate_event_dates();
             }
             else {
                 $("#event").empty();
-                $("#event").closest("tr").fadeOut();
+                $("#eventrow").fadeOut();
             }
         },
 
@@ -858,83 +857,83 @@ $(function() {
             let mt = $("#type").val();
             // Show trial fields if option is set and the movement is an adoption
             if (config.bool("TrialAdoptions") && mt == 1) {
-                $("#trial").closest("tr").find("label").html(_("Trial"));
-                $("#trialenddate").closest("tr").find("label").html(_("Trial ends on"));
-                $("#trial").closest("tr").fadeIn();
-                $("#trialenddate").closest("tr").fadeIn();
+                $("#trialrow").find("label").html(_("Trial"));
+                $("#trialenddaterow").find("label").html(_("Trial ends on"));
+                $("#trialrow").fadeIn();
+                $("#trialenddaterow").fadeIn();
             }
             // Show soft release fields if option is set and the movement is a release
             else if (config.bool("SoftReleases") && mt == 7) {
-                $("#trial").closest("tr").find("label").html(_("Soft release"));
-                $("#trialenddate").closest("tr").find("label").html(_("Soft release ends on"));
-                $("#trial").closest("tr").fadeIn();
-                $("#trialenddate").closest("tr").fadeIn();
+                $("#trialrow").find("label").html(_("Soft release"));
+                $("#trialenddaterow").find("label").html(_("Soft release ends on"));
+                $("#trialrow").fadeIn();
+                $("#trialenddaterow").fadeIn();
             }
             else {
-                $("#trial").closest("tr").hide();
-                $("#trialenddate").closest("tr").hide();
+                $("#trialrow").hide();
+                $("#trialenddaterow").hide();
             }
             // Show permanent field if the movement is a foster
             if (mt == 2) {
-                $("#permanentfoster").closest("tr").fadeIn();
+                $("#permanentfosterrow").fadeIn();
             }
             else {
-                $("#permanentfoster").closest("tr").hide();
+                $("#permanentfosterrow").hide();
             }
             // If the movement isn't an adoption, hide the retailer row
             if (mt == 1 && !config.bool("DisableRetailer")) {
-                $("#retailer").closest("tr").fadeIn();
+                $("#retailerrow").fadeIn();
             }
             else {
-                $("#retailer").closest("tr").hide();
+                $("#retailerrow").hide();
             }
             // Show the insurance row for adoptions
             if (mt == 1 && !config.bool("DontShowInsurance")) {
-                $("#insurance").closest("tr").fadeIn();
+                $("#insurancerow").fadeIn();
             }
             else {
-                $("#insurance").closest("tr").fadeOut();
+                $("#insurancerow").fadeOut();
             }
             // Show the reservation date field for both reserves and adoptions
             if (mt == 1 || mt == 0) {
-                $("#reservationdate").closest("tr").fadeIn();
+                $("#reservationdaterow").fadeIn();
             }
             else {
-                $("#reservationdate").closest("tr").fadeOut();
+                $("#reservationdaterow").fadeOut();
             }
             // Show the other reservation fields for reserves
             if (mt == 0) {
-                $("#reservationstatus").closest("tr").fadeIn();
-                $("#reservationcancelled").closest("tr").fadeIn();
-                $("#movementdate").closest("tr").fadeOut();
-                $("#returndate").closest("tr").fadeOut();
+                $("#reservationstatusrow").fadeIn();
+                $("#reservationcancelledrow").fadeIn();
+                $("#movementdaterow").fadeOut();
+                $("#returndaterow").fadeOut();
             }
             else {
-                $("#reservationstatus").closest("tr").fadeOut();
-                $("#reservationcancelled").closest("tr").fadeOut();
-                $("#movementdate").closest("tr").fadeIn();
-                $("#returndate").closest("tr").fadeIn();
+                $("#reservationstatusrow").fadeOut();
+                $("#reservationcancelledrow").fadeOut();
+                $("#movementdaterow").fadeIn();
+                $("#returndaterow").fadeIn();
             }
             // If the movement is one that doesn't require a person, hide the person row
             if (mt == 4 || mt == 6) {
-                $("#person").closest("tr").fadeOut();
+                $("#personrow").fadeOut();
             }
             else {
-                $("#person").closest("tr").fadeIn();
+                $("#personrow").fadeIn();
             }
             // show event link only when movement type is adoption
             if (mt == 1) {
-                $("#eventlink").closest("tr").fadeIn();
+                $("#eventlinkrow").fadeIn();
             }
             else {
-                $("#eventlink").closest("tr").fadeOut();
+                $("#eventlinkrow").fadeOut();
             }
             // show event selection if eventlink is checked
             if (mt == 1 && $("#eventlink").is(":checked")) {
-                $("#event").closest("tr").fadeIn();
+                $("#eventrow").fadeIn();
             }
             else {
-                $("#event").closest("tr").fadeOut();
+                $("#eventrow").fadeOut();
             }
             additional.toggle_elements_by_linktype('additionaldialog', controller.movementtypes_additionalfieldtypes[mt]);
 
@@ -946,14 +945,14 @@ $(function() {
             // Show return category/reason for movements that need them 
             // (adoptions and reclaims)
             if ($("#returndate").val() && ( $("#type").val() == 1 || $("#type").val() == 5 )) {
-                $("#returncategory").closest("tr").fadeIn();
-                $("#reason").closest("tr").fadeIn();
-                $("#returnedby").closest("tr").fadeIn();
+                $("#returncategoryrow").fadeIn();
+                $("#reasonrow").fadeIn();
+                $("#returnedbyrow").fadeIn();
             }
             else {
-                $("#returncategory").closest("tr").fadeOut();
-                $("#reason").closest("tr").fadeOut();
-                $("#returnedby").closest("tr").fadeOut();
+                $("#returncategoryrow").fadeOut();
+                $("#reasonrow").fadeOut();
+                $("#returnedbyrow").fadeOut();
             }
         },
 

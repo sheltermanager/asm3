@@ -68,16 +68,16 @@ $(function() {
                     donations.update_movements(row.OWNERID);
                     // Only allow destination account to be overridden when the received date
                     // hasn't been set yet.
-                    $("#destaccount").closest("tr").toggle( config.bool("DonationTrxOverride") && !row.DATE );
-                    $("#receiptnumber").closest("tr").show();
+                    $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
+                    $("#receiptnumberrow").show();
                     $("#receiptnumber").prop("disabled", true);
                     if (row.ISVAT == 1) {
-                        $("#vatrate").closest("tr").show();
-                        $("#vatamount").closest("tr").show();
+                        $("#vatraterow").show();
+                        $("#vatamountrow").show();
                     }
                     else {
-                        $("#vatrate").closest("tr").hide();
-                        $("#vatamount").closest("tr").hide();
+                        $("#vatraterow").hide();
+                        $("#vatamountrow").hide();
                     }
                     try {
                         await tableform.dialog_show_edit(dialog, row);
@@ -162,9 +162,10 @@ $(function() {
                             onload: function() {
                                 donations.create_semaphore = true;
                                 // Editing can hide the destination account field - show it if the option is on
-                                $("#destaccount").closest("tr").toggle(config.bool("DonationTrxOverride"));
+                                $("#destaccountrow").toggle(config.bool("DonationTrxOverride"));
                                 $("#animal").animalchooser("clear");
                                 $("#person").personchooser("clear");
+                                $("#movement").select("value", "0");
                                 if (controller.animal) {
                                     $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 }
@@ -182,10 +183,10 @@ $(function() {
                                 $("#payment").select("value", config.str("AFDefaultPaymentMethod"));
                                 $("#giftaid").prop("checked", false);
                                 $("#receiptnumber").val("");
-                                $("#receiptnumber").closest("tr").hide();
+                                $("#receiptnumberrow").hide();
                                 donations.type_change();
-                                $("#vatrate").closest("tr").hide();
-                                $("#vatamount").closest("tr").hide();
+                                $("#vatraterow").hide();
+                                $("#vatamountrow").hide();
                             }
                         });
                     } 
@@ -276,7 +277,7 @@ $(function() {
             if (donations.dialog_row && donations.dialog_row.MOVEMENTID) {
                 $("#movement").select("value", donations.dialog_row.MOVEMENTID);
             }
-            $("#movement").closest("tr").fadeIn();
+            $("#movementrow").fadeIn();
         },
 
         set_extra_fields: function(row) {
@@ -419,15 +420,15 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
 
             if (controller.name.indexOf("animal_") != -1) {
-                $("#animal").closest("tr").hide();
+                $("#animalrow").hide();
                 $(".asm-tabbar").asmtabs();
             }
             if (controller.name.indexOf("person_") != -1) {
-                $("#person").closest("tr").hide();
+                $("#personrow").hide();
                 $(".asm-tabbar").asmtabs();
             }
             if (asm.locale != "en_GB") {
-                $("#giftaid").closest("tr").hide();
+                $("#giftaidrow").hide();
             }
 
             if (controller.name == "move_donations") {
@@ -446,7 +447,7 @@ $(function() {
                 });                
             }
 
-            $("#movement").closest("tr").hide();
+            $("#movementrow").hide();
 
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
                 donations.lastanimal = rec;
@@ -487,14 +488,14 @@ $(function() {
                         $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), config.number("VATRate")));
                         $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
                     }
-                    $("#vatrate").closest("tr").fadeIn();
-                    $("#vatamount").closest("tr").fadeIn();
+                    $("#vatraterow").fadeIn();
+                    $("#vatamountrow").fadeIn();
                 }
                 else {
                     $("#vatamount").currency("value", "0");
                     $("#vatrate").val("0"); 
-                    $("#vatrate").closest("tr").fadeOut();
-                    $("#vatamount").closest("tr").fadeOut();
+                    $("#vatraterow").fadeOut();
+                    $("#vatamountrow").fadeOut();
                 }
             });
 

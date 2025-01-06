@@ -84,8 +84,8 @@ $(function() {
                             }
                         },
                         onload: function() {
-                            $("#animal").closest("tr").show();
-                            $("#animals").closest("tr").hide();
+                            $("#animalrow").show();
+                            $("#animalsrow").hide();
                         }
                     });
                 },
@@ -193,8 +193,8 @@ $(function() {
                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "atr",
                     hideif: function() { return controller.animal; }, 
                     click: async function() { 
-                        $("#animal").closest("tr").hide();
-                        $("#animals").closest("tr").show();
+                        $("#animalrow").hide();
+                        $("#animalsrow").show();
                         $("#animals").animalchoosermulti("clear");
                         $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                         await tableform.dialog_show_add(dialog, {
@@ -283,8 +283,8 @@ $(function() {
                     if (controller.animal) {
                         $("#animal").animalchooser("loadbyid", controller.animal.ID);
                     }
-                    $("#animal").closest("tr").show();
-                    $("#animals").closest("tr").hide();
+                    $("#animalrow").show();
+                    $("#animalsrow").hide();
                     $("#type").select("value", config.str("AFDefaultTransportType"));
                 }
             });
@@ -304,8 +304,8 @@ $(function() {
                     }
                 },
                 onload: function() {
-                    $("#animal").closest("tr").hide();
-                    $("#animals").closest("tr").show();
+                    $("#animalrow").hide();
+                    $("#animalsrow").show();
                     $("#animals").animalchoosermulti("clear");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultTransportType"));

@@ -783,9 +783,9 @@ const html = {
         ].join("\n");
     },
 
-    search_field: function(labelhtml, widgethtml) {
+    search_field: function(id, labelhtml, widgethtml) {
         return [
-            '<tr>',
+            '<tr id="' + id + 'row">',
                 '<td>',
                 labelhtml,
                 '</td>',
@@ -799,27 +799,27 @@ const html = {
     search_field_date: function(id, label) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
         let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox asm-datebox" />';
-        return html.search_field(labelhtml, widgethtml);
+        return html.search_field(id, labelhtml, widgethtml);
     },
 
     search_field_daterange: function(id1, id2, label) {
         let labelhtml = '<label for="' + id1 + '">' + label + '</label>';
         let widgethtml = '<input id="' + id1 + '" data="' + id1 + '" class="asm-halftextbox asm-datebox" /> ' +
             '<input id="' + id2 + '" data="' + id2 + '" class="asm-halftextbox asm-datebox" />';
-        return html.search_field(labelhtml, widgethtml);
+        return html.search_field(id1, labelhtml, widgethtml);
     },
 
     search_field_number: function(id, label) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
         let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox asm-numberbox" />';
-        return html.search_field(labelhtml, widgethtml);
+        return html.search_field(id, labelhtml, widgethtml);
     },
 
     search_field_numberrange: function(id1, id2, label) {
         let labelhtml = '<label for="' + id1 + '">' + label + '</label>';
         let widgethtml = '<input id="' + id1 + '" data="' + id1 + '" class="asm-halftextbox asm-numberbox" /> ' +
             '<input id="' + id2 + '" data="' + id2 + '" class="asm-halftextbox asm-numberbox" />';
-        return html.search_field(labelhtml, widgethtml);
+        return html.search_field(id1, labelhtml, widgethtml);
     },
 
     search_field_select: function(id, label, options, includeall, allvalue) {
@@ -831,7 +831,7 @@ const html = {
         }
         widgethtml += options;
         widgethtml += '</select>';
-        return html.search_field(labelhtml, widgethtml);
+        return html.search_field(id, labelhtml, widgethtml);
     },
 
     search_field_mselect: function(id, label, options) {
@@ -839,13 +839,13 @@ const html = {
         let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-bsmselect" multiple="multiple">';
         widgethtml += options;
         widgethtml += '</select>';
-        return html.search_field(labelhtml, widgethtml);
+        return html.search_field(id, labelhtml, widgethtml);
     },
 
     search_field_text: function(id, label) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
         let widgethtml = '<input id="' + id + '" data="' + id + '" class="asm-textbox" />';
-        return html.search_field(labelhtml, widgethtml);
+        return html.search_field(id, labelhtml, widgethtml);
     },
 
 

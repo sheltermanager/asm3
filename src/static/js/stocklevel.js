@@ -38,7 +38,8 @@ $(function() {
                         callout: _("The wholesale/trade price the container was bought for") },
                     { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency",
                         callout: _("The retail/resale price per unit") },
-                    { type: "raw", label: "", markup: html.info(_("Usage explains why this stock record was created or adjusted. Usage records will only be created if the balance changes.")) },
+                    { rowid: "usageinfo", type: "raw", label: "", 
+                        markup: html.info(_("Usage explains why this stock record was created or adjusted. Usage records will only be created if the balance changes.")) },
                     { json_field: "", post_field: "usagetype", label: _("Usage Type"), type: "select",
                         options: { displayfield: "USAGETYPENAME", valuefield: "ID", rows: controller.stockusagetypes }},
                     { json_field: "", post_field: "usagedate", label: _("Usage Date"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -211,17 +212,17 @@ $(function() {
         },
 
         hide_usage_fields: function() {
-            $("#usagetype").closest("tr").prev().hide();
-            $("#usagetype").closest("tr").hide();
-            $("#usagedate").closest("tr").hide();
-            $("#comments").closest("tr").hide();
+            $("#usageinfo").hide();
+            $("#usagetyperow").hide();
+            $("#usagedaterow").hide();
+            $("#commentsrow").hide();
         },
 
         show_usage_fields: function() {
-            $("#usagetype").closest("tr").prev().fadeIn();
-            $("#usagetype").closest("tr").fadeIn();
-            $("#usagedate").closest("tr").fadeIn();
-            $("#comments").closest("tr").fadeIn();
+            $("#usageinfo").fadeIn();
+            $("#usagetyperow").fadeIn();
+            $("#usagedaterow").fadeIn();
+            $("#commentsrow").fadeIn();
         },
         
         bind: function() {

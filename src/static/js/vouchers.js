@@ -216,11 +216,11 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
 
             if (controller.name.indexOf("animal_") != -1) {
-                $("#animal").closest("tr").hide();
+                $("#animalrow").hide();
                 $(".asm-tabbar").asmtabs();
             }
             if (controller.name.indexOf("person_") != -1) {
-                $("#person").closest("tr").hide();
+                $("#personrow").hide();
                 $(".asm-tabbar").asmtabs();
             }
 

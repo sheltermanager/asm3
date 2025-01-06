@@ -698,8 +698,7 @@ $(function() {
             $("#microchipdate, #microchipnumber, #microchiprow2").toggle($("#microchipped").is(":checked"));
             $("#tattoodate, #tattoonumber").toggle($("#tattoo").is(":checked"));
             $("#smarttagnumber, #smarttagtype").toggle($("#smarttag").is(":checked"));
-            $("#neutereddate").toggle($("#neutered").is(":checked"));
-            $("#neuteringvet").closest("td").toggle($("#neutered").is(":checked"));
+            $("#neutereddate").parent().toggle($("#neutered").is(":checked"));
             $("#heartwormtestdate, #heartwormtestresult").toggle($("#heartwormtested").is(":checked"));
             $("#fivltestdate, #fivresult, #flvresult").toggle($("#fivltested").is(":checked"));
 
@@ -801,7 +800,7 @@ $(function() {
             // a read only copy of the most recent entry date instead.
             if (controller.entryhistory.length > 0) {
                 $("#datebroughtin").hide();
-                $("#timebroughtin").closest("tr").hide();
+                $("#timebroughtinrow").hide();
                 $("#mostrecententrydate").val(format.date(controller.animal.MOSTRECENTENTRYDATE)).textbox("disable").show();
             }
 
@@ -903,7 +902,7 @@ $(function() {
             if (config.bool("DontShowBonded")) { $(".bondedwith").hide(); }
             if (config.bool("DontShowPickup")) { $("#pickeduprow, #pickupaddressrow, #pickuplocationrow").hide(); }
             if (config.bool("DontShowNeutered")) { $("#neuteredrow").hide(); }
-            if (config.bool("DontShowDeclawed")) { $("#declawed").closest("tr").hide(); }
+            if (config.bool("DontShowDeclawed")) { $("#declawedrow").hide(); }
             if (config.bool("DontShowGoodWith")) { $(".goodwith").hide(); }
             if (config.bool("DontShowCombi")) { $("#fivlrow").hide(); }
             if (config.bool("DontShowHeartworm")) { $("#heartwormrow").hide(); }

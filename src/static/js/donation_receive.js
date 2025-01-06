@@ -112,7 +112,7 @@ $(function() {
                 h += "</option>";
             });
             $("#movement").html(h);
-            $("#movement").closest("tr").fadeIn();
+            $("#movementrow").fadeIn();
         },
 
         destroy: function() {

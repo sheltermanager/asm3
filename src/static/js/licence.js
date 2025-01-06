@@ -31,7 +31,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    $("#renewed").closest("tr").toggle(row.ANIMALID == 0); // Only allow editing of renewed flag for licenses with no animals
+                    $("#renewedrow").toggle(row.ANIMALID == 0); // Only allow editing of renewed flag for licenses with no animals
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
@@ -143,7 +143,7 @@ $(function() {
                              },
                              onload: function() {
                                 licence.type_change();
-                                $("#renewed").closest("tr").hide();
+                                $("#renewedrow").hide();
                              }
                          });
                      }
@@ -188,7 +188,7 @@ $(function() {
                                 let expirydate = common.add_days(issuedate, rescheduledays);
                                 $("#issuedate").date("setDate", issuedate);
                                 $("#expirydate").date("setDate", expirydate);
-                                $("#renewed").closest("tr").hide();
+                                $("#renewedrow").hide();
                             }
                         });
                     }

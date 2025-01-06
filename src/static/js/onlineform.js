@@ -144,25 +144,25 @@ $(function() {
         check_controls: function() {
             let ft = $("#fieldtype").select("value");
             if (ft == 3 || ft == 12 || ft == 14 || ft == 18) {
-                $("#lookups").closest("tr").fadeIn();
+                $("#lookupsrow").fadeIn();
             }
             else {
-                $("#lookups").closest("tr").fadeOut();
+                $("#lookupsrow").fadeOut();
             }
             if (ft == 4 || ft == 5) {
-                $("#species").closest("tr").fadeIn();
+                $("#speciesrow").fadeIn();
             }
             else {
-                $("#species").closest("tr").fadeOut();
+                $("#speciesrow").fadeOut();
             }
             if (ft == 9) {
-                $("#tooltip").closest("tr").find("label").html(_("Markup"));
+                $("#tooltiprow").find("label").html(_("Markup"));
             }
             else if (ft == 11) {
-                $("#tooltip").closest("tr").find("label").html(_("Flags"));
+                $("#tooltiprow").find("label").html(_("Flags"));
             }
             else {
-                $("#tooltip").closest("tr").find("label").html(_("Additional"));
+                $("#tooltiprow").find("label").html(_("Additional"));
             }
         },
 

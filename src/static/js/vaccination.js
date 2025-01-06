@@ -46,12 +46,12 @@ $(function() {
                 idcolumn: "ID",
                 edit: async function(row) {
                     if (controller.animal) {
-                        $("#animal").closest("tr").hide();
+                        $("#animalrow").hide();
                     }
                     else {
-                        $("#animal").closest("tr").show();
+                        $("#animalrow").show();
                     }
-                    $("#animals").closest("tr").hide();
+                    $("#animalsrow").hide();
                     $("#administeringvet").personchooser("clear");
                     vaccination.enable_default_cost = false;
                     tableform.fields_populate_from_json(dialog.fields, row);
@@ -188,7 +188,7 @@ $(function() {
                         vaccination.set_given_batch(vacctype);
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").date("today");
-                        $("#usagedate").closest("tr").hide();
+                        $("#usagedaterow").hide();
                         $("#quantity").val("0");
                         $("#givenby").select("value", asm.user);
                         // Default animal's current vet if set and this is an animal vacc tab
@@ -450,7 +450,7 @@ $(function() {
                 html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"),
                 '</select></td>',
                 '</tr>',
-                '<tr class="tagstock">',
+                '<tr id="usagedaterow" class="tagstock">',
                 '<td><label for="usagedate">' + _("Usage Date") + '</label></td>',
                 '<td><input id="usagedate" data="usagedate" class="asm-textbox asm-datebox asm-field" />',
                 '</select></td>',

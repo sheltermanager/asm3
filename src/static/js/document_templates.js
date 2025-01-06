@@ -66,7 +66,7 @@ $(function() {
             const buttons = [
                 { id: "new", text: _("New"), icon: "document", tooltip: _("Create a new template"), enabled: "always", 
                     click: async function() { 
-                        $("#show").closest("tr").show();
+                        $("#showrow").show();
                         await tableform.dialog_show_add(dialog);
                         let response = await tableform.fields_post(dialog.fields, "mode=create", "document_templates");
                         common.route("document_template_edit?dtid=" + response);
@@ -80,7 +80,7 @@ $(function() {
                 { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new template by copying the selected template"), enabled: "one", 
                     click: async function() { 
                         let ids = tableform.table_ids(table);
-                        $("#show").closest("tr").hide();
+                        $("#showrow").hide();
                         await tableform.dialog_show_add(dialog);
                         let response = await tableform.fields_post(dialog.fields, "mode=clone&ids=" + ids , "document_templates");
                         common.route("document_template_edit?dtid=" + response);

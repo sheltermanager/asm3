@@ -21,7 +21,7 @@ $(function() {
                         html.search_field_select("includeremoved", _("Include Removed"), html.list_to_options(controller.yesno, "ID", "NAME")),
                         html.search_field_select("size", _("Size"), html.list_to_options(controller.sizes, "ID", "SIZE")),
                         html.search_field_text("addresscontains", _("Address Contains")),
-                        html.search_field("", '<button id="button-refresh">' + html.icon("refresh") + ' ' + _("Refresh") + '</button>')
+                        html.search_field("refresh", "", '<button id="button-refresh">' + html.icon("refresh") + ' ' + _("Refresh") + '</button>')
                     ].join("\n")),
                 ]),
                 '</div>',

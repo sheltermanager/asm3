@@ -43,8 +43,8 @@ $(function() {
                 }
             });
 
-            $("#country").closest("tr").toggle( !config.bool("HideCountry") );
-            $("#county").closest("tr").toggle( !config.bool("HideTownCounty") );
+            $("#countryrow").toggle( !config.bool("HideCountry") );
+            $("#countyrow").toggle( !config.bool("HideTownCounty") );
         },
 
         name: "event_find",
