@@ -72,9 +72,13 @@ $(function() {
                     } 
                 },
                 { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
-                    click: function() { 
-                        $("#newname").val(tableform.table_ids(table).split(",")[0]);
-                        $("#dialog-rename").dialog("open");
+                    click: async function() { 
+                        let oldname = tableform.table_ids(table).split(",")[0];
+                        $("#newname").val(oldname);
+                        await tableform.show_okcancel_dialog("#dialog-rename", _("Rename"), { width: 550, notblank: [ "newname" ] });
+                        let newname = $("#newname").val();
+                        await common.ajax_post("report_images", "mode=rename&newname=" + encodeURIComponent(newname) + "&oldname=" + encodeURIComponent(oldname));
+                        common.route_reload();
                     } 
                 }
 
@@ -87,41 +91,12 @@ $(function() {
         render_rename_dialog: function() {
             return [
                 '<div id="dialog-rename" style="display: none" title="' + html.title(_("Rename")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newname">' + _("New name") + '</label></td>',
-                '<td><input id="newname" data="newname" type="text" class="asm-textbox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newname", type: "text", label: _("New name"), doublesize: true }
+                ]),
                 '</div>'
             ].join("\n");
         },
-
-        bind_rename_dialog: function() {
-            let renamebuttons = { }, table = report_images.table;
-            renamebuttons[_("Rename")] = async function() {
-                validate.reset("dialog-rename");
-                if (!validate.notblank([ "newname" ])) { return; }
-                $("#dialog-rename").disable_dialog_buttons();
-                let oldname = tableform.table_ids(table).split(",")[0];
-                let newname = encodeURIComponent($("#newname").val());
-                await common.ajax_post("report_images", "mode=rename&newname=" + newname + "&oldname=" + oldname);
-                common.route_reload();
-            };
-            renamebuttons[_("Cancel")] = function() {
-                $("#dialog-rename").dialog("close");
-            };
-            $("#dialog-rename").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: renamebuttons
-            });
-        },
-
 
         render: function() {
             let s = "";
@@ -138,7 +113,6 @@ $(function() {
         },
 
         bind: function() {
-            this.bind_rename_dialog();
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);

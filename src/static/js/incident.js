@@ -128,12 +128,9 @@ $(function() {
                 '</div>',
                 '<div id="emailform"></div>',
                 '<div id="dialog-linkanimal" style="display: none" title="' + html.title(_("Link an animal")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="linkanimal">' + _("Animal") + '</label></td>',
-                '<td><input id="linkanimal" data="linkanimal" type="hidden" class="asm-animalchooser" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "linkanimal", type: "animal", label: _("Animal") }
+                ]),
                 '</div>',
                 edit_header.incident_edit_header(controller.incident, "details", controller.tabcounts),
                 tableform.buttons_render([

@@ -1290,7 +1290,7 @@ const tableform = {
         d += tableform._render_class(v, "asm-textbox asm-datebox");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
-        if (v.date_onlydays) { d += "data-onlydays=\"" + v.onlydays + "\" "; }
+        if (v.date_onlydays) { d += "data-onlydays=\"" + v.date_onlydays + "\" "; }
         if (v.date_nofuture) { d+= "data-nofuture=\"true\" "; }
         if (v.date_nopast) { d+= "data-nopast=\"true\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -2021,9 +2021,14 @@ const tableform = {
      * Shows an Ok/Cancel dialog.
      * selector: The dialog div
      * oktext: The text to show on the ok button
-     * o: Additional options to pass the dialog
-     * callback: A function to call when ok is clicked.
-     * returns a promise that resolves when ok is clicked.
+     * o: Additional options to pass the dialog:
+     *      callback: A function to call when ok is clicked.
+     *      redbutton: Text for a third/red button 
+     *      redcallback: Function to call when the third/red button is clicked.
+     *      notzero: An array of ID attributes to check are not zero before allowing Ok to be clicked
+     *      notblank: An array of ID attributes to check are not blank before allowing Ok to be clicked
+     *      hidecancel: If true, omit the cancel button so only ok can be clicked
+     * returns a promise that resolves when ok or red button is clicked (the string "ok" or "red" is returned).
      */
     show_okcancel_dialog: function(selector, oktext, o) {
         
@@ -2032,32 +2037,7 @@ const tableform = {
         // If this dialog has already been created, destroy it first
         common.widget_destroy(selector, "dialog", true);
 
-        b[oktext] = {
-            text: oktext,
-            "class": "asm-dialog-actionbutton", 
-            click: function() {
-                // We've been given a list of fields that should not be blank or zero,
-                // validate them before doing anything
-                if (o && o.notblank) {
-                    if (!validate.notblank(o.notblank)) { return; }
-                }
-                if (o && o.notzero) {
-                    if (!validate.notzero(o.notzero)) { return; }
-                }
-                $(selector).dialog("close");
-                if (o && o.callback) { o.callback(); }
-                deferred.resolve();
-            }
-        };
-
-        if (o && !o.hidecancel) {
-            b[_("Cancel")] = function() { 
-                $(this).dialog("close"); 
-                deferred.reject("dialog cancelled");
-            };
-        }
-
-        if (!o) { o = {}; }
+        if (!o) { o = { notblank: [], notzero: [], callback: null }; }
         $.extend(o, {
             autoOpen: false,
             modal: true,
@@ -2066,6 +2046,44 @@ const tableform = {
             hide: dlgfx.delete_hide,
             buttons: b
         });
+
+        if (o.redbutton) {
+            b[o.redbutton] = {
+                text: o.redbutton,
+                "class": "asm-redbutton",
+                click: function() {
+                    $(selector).dialog("close");
+                    if (o.redcallback) { o.redcallback(); }
+                    deferred.resolve("red");
+                }
+            };
+        }
+
+        b[oktext] = {
+            text: oktext,
+            "class": "asm-dialog-actionbutton", 
+            click: function() {
+                // We've been given a list of fields that should not be blank or zero,
+                // validate them before doing anything
+                if (o.notblank) {
+                    if (!validate.notblank(o.notblank)) { return; }
+                }
+                if (o.notzero) {
+                    if (!validate.notzero(o.notzero)) { return; }
+                }
+                $(selector).dialog("close");
+                if (o.callback) { o.callback(); }
+                deferred.resolve("ok");
+            }
+        };
+
+        if (!o.hidecancel) {
+            b[_("Cancel")] = function() { 
+                $(this).dialog("close"); 
+                deferred.reject("dialog cancelled");
+            };
+        }
+
         $(selector).dialog(o).dialog("open");
 
         return deferred.promise();

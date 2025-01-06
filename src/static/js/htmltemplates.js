@@ -111,8 +111,10 @@ $(function() {
                     } 
                 },
                 { id: "preview", text: _("Preview"), icon: "web", enabled: "one",
-                    click: function() {
-                        $("#dialog-preview").dialog("open");
+                    click: async function() {
+                        await tableform.show_okcancel_dialog("#dialog-preview", _("Preview"), { width: 550, notblank: [ "animals" ] });
+                        let ids = tableform.table_ids(table);
+                        window.open("htmltemplates_preview?template=" + ids + "&animals=" + $("#animals").val(), true);
                     }
                 }
             ];
@@ -138,7 +140,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            this.bind_previewdialog();
 
             // Only allow letters and numbers in the template names, no spaces
             /*jslint regexp: true */
@@ -153,39 +154,11 @@ $(function() {
             return [
                 '<div id="dialog-preview" style="display: none" title="' + html.title(_("Preview")) + '">',
                 html.info(_("Preview allows you to test your HTML templates while bypassing server side caching and without making your animals adoptable")),
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="animals">' + _("Animals") + '</label></td>',
-                '<td><input id="animals" data="animals" type="hidden" class="asm-animalchoosermulti" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "animals", type: "animalmulti", label: _("Animals") }
+                ]),
                 '</div>'
             ].join("\n");
-        },
-
-        bind_previewdialog: function() {
-
-            let previewbuttons = { }, table = htmltemplates.table;
-            previewbuttons[_("Preview")] = function() {
-                validate.reset("dialog-preview");
-                if (!validate.notblank([ "animals" ])) { return; }
-                let ids = tableform.table_ids(table);
-                window.open("htmltemplates_preview?template=" + ids + "&animals=" + $("#animals").val(), true);
-            };
-            previewbuttons[_("Cancel")] = function() {
-                $("#dialog-preview").dialog("close");
-            };
-
-            $("#dialog-preview").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: previewbuttons
-            });
-
         },
 
         destroy: function() {

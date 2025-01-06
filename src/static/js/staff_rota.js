@@ -148,21 +148,19 @@ $(function() {
             $(".asm-staff-rota tbody").html(h.join("\n"));
         },
 
-        get_flags_param: function() {
+        get_flags_param: function(encode) {
             let flags = $("#flags").val();
             if (!flags) { flags = []; }
-            return encodeURIComponent(flags.join("|"));
+            if (encode === undefined || encode === true) { return encodeURIComponent(flags.join("|")); }
+            return flags.join("|");
         },
 
         render_clonedialog: function() {
             return [
                 '<div id="dialog-clone" style="display: none" title="' + html.title(_("Clone Rota")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newdate">' + _("To week beginning") + '</label></td>',
-                '<td><input id="newdate" data="newdate" type="text" data-nopast="true" data-onlydays="1" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newdate", type: "date", label: _("To week beginning"), date_nopast: true, date_onlydays: "1," }
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -241,23 +239,14 @@ $(function() {
                 $("#enddate").val($("#startdate").val());
             });
 
-            $("#button-clone").button().click(function() {
-                tableform.show_okcancel_dialog("#dialog-clone", _("Clone"), { width: 500, notblank: [ "newdate" ] })
-                    .then(function() {
-                         let newdate = encodeURIComponent($("#newdate").val()),
-                             flags = staff_rota.get_flags_param(); 
-                         return common.ajax_post(controller.name, "mode=clone" +
-                             "&startdate=" + format.date(staff_rota.days[0]) + 
-                             "&newdate=" + newdate +
-                             "&flags=" + flags);
-                    })
-                    .then(function() {
-                        header.show_info(_("Rota cloned successfully."));
-                    })
-                    .always(function() {
-                        $("#dialog-clone").dialog("close");
-                        $("#dialog-clone").enable_dialog_buttons();
-                    });
+            $("#button-clone").button().click(async function() {
+                await tableform.show_okcancel_dialog("#dialog-clone", _("Clone"), { width: 500, notblank: [ "newdate" ] });
+                let formdata = { mode: "clone", 
+                    startdate: format.date(staff_rota.days[0]), 
+                    newdate: $("#newdate").val(), 
+                    flags: staff_rota.get_flags_param(false) };
+                await common.ajax_post(controller.name, formdata);
+                header.show_info(_("Rota cloned successfully."));
             });
 
             $("#button-delete").button().click(async function() {

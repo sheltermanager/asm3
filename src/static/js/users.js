@@ -189,45 +189,43 @@ $(function() {
         render_resetdialog: function() {
             return [
                 '<div id="dialog-reset" style="display: none" title="' + html.title(_("Reset Password")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newpassword">' + _("New Password") + '</label></td>',
-                '<td><input id="newpassword" data="newpassword" type="password" class="asm-textbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="confirmpassword">' + _("Confirm Password") + '</label></td>',
-                '<td><input id="confirmpassword" data="confirmpassword" type="password" class="asm-textbox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newpassword", type: "password", label: _("New Password") },
+                    { post_field: "confirmpassword", type: "password", label: _("Confirm Password") }
+                ]),
                 '</div>'
             ].join("\n");
         },
 
         bind_resetdialog: function() {
             let resetbuttons = { }, table = users.table;
-            resetbuttons[_("Change Password")] = async function() {
-                validate.reset("dialog-reset");
-                if (!validate.notblank([ "newpassword" ])) { return; }
-                if (!validate.notblank([ "confirmpassword" ])) { return; }
-                if (common.trim($("#newpassword").val()) != common.trim($("#confirmpassword").val())) {
-                    header.show_error(_("New password and confirmation password don't match."));
-                    return;
-                }
-                $("#dialog-reset").disable_dialog_buttons();
-                let ids = tableform.table_ids(table);
-                try {
-                    await common.ajax_post("systemusers", "mode=reset&ids=" + ids + "&password=" + encodeURIComponent($("#newpassword").val()));
-                    let h = "";
-                    $("#tableform input:checked").each(function() {
-                        let username = $(this).next().text();
-                        $(this).prop("checked", false);
-                        h += _("Password for '{0}' has been reset.").replace("{0}", username) + "<br />";
-                    });
-                    header.show_info(h);
-                }
-                finally {
-                    $("#dialog-reset").dialog("close");
-                    $("#dialog-reset").enable_dialog_buttons();
+            resetbuttons[_("Change Password")] = {
+                text: _("Change Password"),
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset("dialog-reset");
+                    if (!validate.notblank([ "newpassword" ])) { return; }
+                    if (!validate.notblank([ "confirmpassword" ])) { return; }
+                    if (common.trim($("#newpassword").val()) != common.trim($("#confirmpassword").val())) {
+                        header.show_error(_("New password and confirmation password don't match."));
+                        return;
+                    }
+                    $("#dialog-reset").disable_dialog_buttons();
+                    let ids = tableform.table_ids(table);
+                    try {
+                        await common.ajax_post("systemusers", "mode=reset&ids=" + ids + "&password=" + encodeURIComponent($("#newpassword").val()));
+                        let h = "";
+                        $("#tableform input:checked").each(function() {
+                            let username = $(this).next().text();
+                            $(this).prop("checked", false);
+                            h += _("Password for '{0}' has been reset.").replace("{0}", username) + "<br />";
+                        });
+                        header.show_info(h);
+                    }
+                    finally {
+                        $("#dialog-reset").dialog("close");
+                        $("#dialog-reset").enable_dialog_buttons();
+                    }
                 }
             };
             resetbuttons[_("Cancel")] = function() {

@@ -206,7 +206,11 @@ $(function() {
                 },
                 { id: "roles", text: _("Roles"), icon: "auth", enabled: "multi", tooltip: _("Apply roles to reports in bulk"),
                     click: async function() {
-                        $("#dialog-bulkroleassign").dialog("open");
+                        await tableform.show_okcancel_dialog("#dialog-bulkroleassign", _("Apply"), { width: 400 });
+                        let reportids = encodeURIComponent(tableform.table_ids(table));
+                        let roleids = $("#viewbulkroles").toPOST();
+                        await common.ajax_post("reports", "mode=bulkupdateviewroles&reportids=" + reportids + "&" + roleids);
+                        common.route_reload();
                     }
                 },
                 { id: "browse", text: _("Browse sheltermanager.com"), icon: "logo", enabled: "always", tooltip: _("Get more reports from sheltermanager.com"),
@@ -234,20 +238,12 @@ $(function() {
             return [
                 '<div id="dialog-headfoot" style="display: none" title="' + html.title(_("Edit Header/Footer")) + '">',
                 html.info(_("These are the HTML headers and footers used when generating reports.")),
-                '<table width="100%">',
-                '<tr>',
-                '<td valign="top">',
-                '<label for="rhead">' + _("Header") + '</label><br />',
-                '<textarea id="rhead" data="header" class="asm-htmleditor headfoot" data-height="250px" data-width="750px">',
-                controller.header,
-                '</textarea>',
-                '<label for="rfoot">' + _("Footer") + '</label><br />',
-                '<textarea id="rfoot" data="footer" class="asm-htmleditor headfoot" data-height="250px" data-width="750px">',
-                controller.footer,
-                '</textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "rhead", type: "htmleditor", label: _("Header"), labelpos: "above", 
+                        height: "250px", width: "750px", value: controller.header },
+                    { post_field: "rfoot", type: "htmleditor", label: _("Footer"), labelpos: "above", 
+                        height: "250px", width: "750px", value: controller.footer }
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -307,7 +303,6 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             reports.bind_headfoot();
-            reports.bind_bulkroleassign();
             reports.qb.bind();
             reports.bind_browse_smcom();
             reports.bind_dialogbuttons();
@@ -322,33 +317,6 @@ $(function() {
             if (common.current_url().indexOf("browse=true") != -1) {
                 reports.browse_smcom();
             }
-        },
-
-        bind_bulkroleassign: function() {
-            let bulkroleassignbuttons = {};
-            bulkroleassignbuttons[_("Apply")] = {
-                text: _("Apply"),
-                "class": 'asm-dialog-actionbutton',
-                click: async function() {
-                    //tableform.buttons_default_state(buttons);
-                    let reportids = encodeURIComponent(tableform.table_ids(reports.table));
-                    let roleids = $("#viewbulkroles").toPOST();
-                    await common.ajax_post("reports", "mode=bulkupdateviewroles&reportids=" + reportids + "&" + roleids);
-                    common.route_reload();
-                }
-            };
-            bulkroleassignbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
-            $("#dialog-bulkroleassign").dialog({
-                autoOpen: false,
-                resizable: true,
-                height: "auto",
-                width: 400,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: bulkroleassignbuttons
-            });
         },
 
         bind_headfoot: function() {

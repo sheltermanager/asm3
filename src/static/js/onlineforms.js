@@ -214,26 +214,13 @@ $(function() {
         render_headfoot: function() {
             return [
                 '<div id="dialog-headfoot" style="display: none" title="' + html.title(_("Edit Header/Footer")) + '">',
-                '<div class="ui-state-highlight ui-corner-all">',
-                    '<p>',
-                        '<span class="ui-icon ui-icon-info"></span>',
-                        _("These are the HTML headers and footers used when displaying online forms."),
-                    '</p>',
-                '</div>',
-                '<table width="100%">',
-                '<tr>',
-                '<td valign="top">',
-                '<label for="rhead">' + _("Header") + '</label><br />',
-                '<textarea id="rhead" data="header" class="asm-htmleditor headfoot" data-height="250px" data-width="750px">',
-                controller.header,
-                '</textarea>',
-                '<label for="rfoot">' + _("Footer") + '</label><br />',
-                '<textarea id="rfoot" data="footer" class="asm-htmleditor headfoot" data-height="250px" data-width="750px">',
-                controller.footer,
-                '</textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                html.info(_("These are the HTML headers and footers used when displaying online forms.")),
+                tableform.fields_render([
+                    { post_field: "header", type: "htmleditor", classes: "headfoot", label: _("Header"), labelpos: "above", 
+                        height: "250px", width: "750px", value: controller.header },
+                    { post_field: "footer", type: "htmleditor", classes: "headfoot", label: _("Footer"), labelpos: "above", 
+                        height: "250px", width: "750px", value: controller.footer }
+                ]),
                 '</div>'
             ].join("\n");
         },

@@ -73,8 +73,18 @@ $(function() {
                     } 
                 },
                 { id: "upload", text: _("Upload"), icon: "media-add", tooltip: _("Upload a new document template"), enabled: "always", 
-                    click: function() { 
-                        $("#dialog-upload").dialog("open");
+                    click: async function() { 
+                        await tableform.show_okcancel_dialog("#dialog-upload", _("Upload"), { width: 550, notblank: [ "filechooser" ] });
+                        let filename = $("#filechooser").val();
+                        if (filename.endsWith(".odt") && !config.bool("AllowODTDocumentTemplates")) {
+                            header.show_error(_(".odt templates are not permitted by the system options."));
+                            return;
+                        }
+                        if (!filename.endsWith(".odt") && !filename.endsWith(".html")) {
+                            header.show_error(_("File types accepted: {0}").replace("{0}", ".odt, .html"));
+                            return;
+                        }
+                        $("#form-upload").submit();
                     } 
                 },
                 { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new template by copying the selected template"), enabled: "one", 
@@ -97,19 +107,32 @@ $(function() {
                     } 
                 },
                 { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
-                    click: function() { 
+                    click: async function() { 
                         $("#newname").val(tableform.table_selected_row(table).NAME);
-                        $("#dialog-rename").dialog("open");
+                        await tableform.show_okcancel_dialog("#dialog-rename", _("Rename"), { width: 550, notblank: [ "newname" ] });
+                        let dtid = tableform.table_ids(document_templates.table).split(",")[0];
+                        let newname = $("#newname").val();
+                        await common.ajax_post("document_templates", "mode=rename&newname=" + encodeURIComponent(newname) + "&dtid=" + dtid);
+                        tableform.table_selected_row(document_templates.table).NAME = newname;
+                        tableform.table_update(table);
+                        tableform.buttons_default_state(buttons);
                     } 
                 },
                 { id: "show", text: _("Show"), icon: "document", enabled: "multi", 
-                    click: function() { 
+                    click: async function() { 
                         $("#newshow").val(tableform.table_selected_row(table).SHOWAT);
                         $("#newshow").change();
-                        $("#dialog-show").dialog("open");
+                        await tableform.show_okcancel_dialog("#dialog-show", _("Change"), { width: 550 });
+                        let dtid = tableform.table_ids(document_templates.table);
+                        let newshow = $("#newshow").val();
+                        await common.ajax_post("document_templates", "mode=show&newshow=" + newshow + "&ids=" + dtid);
+                        $.each(tableform.table_selected_rows(document_templates.table), function(i, v) {
+                            v.SHOWAT = newshow;
+                        });
+                        tableform.table_update(document_templates.table);
+                        tableform.buttons_default_state(buttons);
                     } 
                 },
-
                 { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
                     click: function() {
                        common.route("report_images");
@@ -131,38 +154,6 @@ $(function() {
             ].join("\n");
         },
 
-        bind_rename_dialog: function() {
-            let renamebuttons = { };
-            renamebuttons[_("Rename")] = {
-                text: _("Rename"),
-                "class": 'asm-dialog-actionbutton',
-                click: async function() {
-                    validate.reset();
-                    if (!validate.notblank([ "newname" ])) { return; }
-                    $("#dialog-rename").disable_dialog_buttons();
-                    let dtid = tableform.table_ids(document_templates.table).split(",")[0];
-                    let newname = $("#newname").val();
-                    await common.ajax_post("document_templates", "mode=rename&newname=" + encodeURIComponent(newname) + "&dtid=" + dtid);
-                    $("#dialog-rename").enable_dialog_buttons();
-                    $("#dialog-rename").dialog("close");
-                    tableform.table_selected_row(document_templates.table).NAME = newname;
-                    tableform.table_update(document_templates.table);
-                }
-            };
-            renamebuttons[_("Cancel")] = function() {
-                $("#dialog-rename").dialog("close");
-            };
-            $("#dialog-rename").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: renamebuttons
-            });
-        },
-
         render_upload_dialog: function() {
             return [
                 '<div id="dialog-upload" style="display: none" title="' + html.title(_("Upload a new document template")) + '">',
@@ -180,41 +171,6 @@ $(function() {
             ].join("\n");
         },
 
-        bind_upload_dialog: function() {
-            let upbuttons = { };
-            upbuttons[_("Upload")] = {
-                text: _("Upload"),
-                "class": 'asm-dialog-actionbutton',
-                click: async function() {
-                    let filename = $("#filechooser").val();
-                    validate.reset();
-                    if (!validate.notblank([ "filechooser" ])) { return; }
-                    if (filename.endsWith(".odt") && !config.bool("AllowODTDocumentTemplates")) {
-                        header.show_error(_(".odt templates are not permitted by the system options."));
-                        return;
-                    }
-                    if (!filename.endsWith(".odt") && !filename.endsWith(".html")) {
-                        header.show_error(_("File types accepted: {0}").replace("{0}", ".odt, .html"));
-                        return;
-                    }
-                    $("#dialog-upload").disable_dialog_buttons();
-                    $("#form-upload").submit();
-                }
-            };
-            upbuttons[_("Cancel")] = function() {
-                $("#dialog-upload").dialog("close");
-            };
-            $("#dialog-upload").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: upbuttons
-            });
-        },
-
         render_show_dialog: function() {
             return [
                 '<div id="dialog-show" style="display: none" title="' + html.title(_("Show")) + '">',
@@ -225,40 +181,6 @@ $(function() {
                 '</div>'
             ].join("\n");
         },
-
-        bind_show_dialog: function() {
-            let showbuttons = { };
-            showbuttons[_("Change")] = {
-                text: _("Change"),
-                "class": 'asm-dialog-actionbutton',
-                click: async function() {
-                    $("#dialog-show").disable_dialog_buttons();
-                    let dtid = tableform.table_ids(document_templates.table);
-                    let newshow = $("#newshow").val();
-                    await common.ajax_post("document_templates", "mode=show&newshow=" + newshow + "&ids=" + dtid);
-                    $("#dialog-show").enable_dialog_buttons();
-                    $("#dialog-show").dialog("close");
-                    $.each(tableform.table_selected_rows(document_templates.table), function(i, v) {
-                        v.SHOWAT = newshow;
-                    });
-                    tableform.table_update(document_templates.table);
-                }
-            };
-            showbuttons[_("Cancel")] = function() {
-                $("#dialog-show").dialog("close");
-            };
-            $("#dialog-show").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: showbuttons
-            });
-        },
-
-
 
         render: function() {
             let s = "";
@@ -278,9 +200,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            this.bind_rename_dialog();
-            this.bind_show_dialog();
-            this.bind_upload_dialog();
         },
 
         destroy: function() {

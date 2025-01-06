@@ -714,16 +714,10 @@ $(function() {
                 '<div id="dialog-unit" style="display: none" title="">',
                 '<input id="ud-location" type="hidden" value="" />',
                 '<input id="ud-unit" type="hidden" value="" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="reserved">' + _("Reserved For") + '</label></td>',
-                '<td><input id="reserved" data="reserved" type="text" class="asm-textbox asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="sponsor">' + _("Sponsored By") + '</label></td>',
-                '<td><input id="sponsor" data="sponsor" type="text" class="asm-textbox asm-doubletextbox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "reserved", type: "text", label: _("Reserved For"), doublesize: true },
+                    { post_field: "sponsor", type: "text", label: _("Sponsored By"), doublesize: true }
+                ]),
                 '</div>'
             ].join("\n");
         },

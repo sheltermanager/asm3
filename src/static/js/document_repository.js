@@ -69,9 +69,15 @@ $(function() {
                     } 
                 },
                 { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
-                    click: function() { 
-                        $("#newname").val(tableform.table_selected_row(document_repository.table).NAME);
-                        $("#dialog-rename").dialog("open");
+                    click: async function() { 
+                        $("#newname").val(tableform.table_selected_row(table).NAME);
+                        await tableform.show_okcancel_dialog("#dialog-rename", _("Rename"), { width: 550, notblank: [ "newname" ] });
+                        let row = tableform.table_selected_row(table);
+                        let oldname = encodeURIComponent(row.NAME);
+                        let path = encodeURIComponent(row.PATH);
+                        let newname = encodeURIComponent($("#newname").val());
+                        await common.ajax_post("document_repository", "mode=rename&path=" + path + "&newname=" + newname + "&oldname=" + oldname);
+                        common.route_reload();
                     } 
                 },
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo",
@@ -145,37 +151,6 @@ $(function() {
             ].join("\n");
         },
 
-        bind_rename_dialog: function() {
-            let renamebuttons = { }, table = document_repository.table;
-            renamebuttons[_("Rename")] = {
-                text: _("Rename"),
-                "class": "asm-dialog-actionbutton",
-                click: async function() {
-                    validate.reset("dialog-rename");
-                    if (!validate.notblank([ "newname" ])) { return; }
-                    $("#dialog-rename").disable_dialog_buttons();
-                    let row = tableform.table_selected_row(document_repository.table);
-                    let oldname = encodeURIComponent(row.NAME);
-                    let path = encodeURIComponent(row.PATH);
-                    let newname = encodeURIComponent($("#newname").val());
-                    await common.ajax_post("document_repository", "mode=rename&path=" + path + "&newname=" + newname + "&oldname=" + oldname);
-                    common.route_reload();
-                }
-            };
-            renamebuttons[_("Cancel")] = function() {
-                $("#dialog-rename").dialog("close");
-            };
-            $("#dialog-rename").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: renamebuttons
-            });
-        },
-
         render: function() {
             let s = "";
             this.model();
@@ -194,7 +169,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            this.bind_rename_dialog();
             $("#emailform").emailform();
             // Assign name attribute to the path as we're using straight form POST for uploading
             $("#path").attr("name", "path");
