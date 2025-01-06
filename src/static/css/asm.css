@@ -670,6 +670,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-media-mods {
     display: inline-block;
     vertical-align: middle;
+    margin-bottom: 3px;
 }
 .asm-mediadroptarget {
     display: inline-block;
@@ -683,6 +684,24 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-mediadroptarget-hover {
     color: #000;
     border: 4px dashed #000;
+}
+.asm-media-flag {
+    display: inline-block;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    cursor: default;
+    border-radius: 3px;
+    color: #fff;
+    background-color: #CC00FF;
+    color: #000;
+    background-color: #FBEBFF;
+    border: 1px solid black;
+    padding: 3px;
+    white-space: nowrap;
+}
+
+.asm-media-flag-thumb {
+    white-space: auto;
 }
 
 /** PERSON ============================ */
