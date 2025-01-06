@@ -56,6 +56,22 @@ const common = {
     },
 
     /**
+     * 
+     * Returns true if all elements of array1 are present in array2
+     */
+    array_overlap_all: function(array1, array2) {
+        var overlap = true;
+        $.each(array1, function(i1, v1) {
+            $.each(array2, function(i2, v2) {
+                if (v2 != v1) {
+                    overlap = false;
+                }
+            });
+        });
+        return overlap;
+    },
+
+    /**
      * Returns true if v is present in array arr.
      * NB: Types must match, int 1 !== str "1"
      */
