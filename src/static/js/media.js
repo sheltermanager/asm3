@@ -119,13 +119,9 @@ $(function() {
 
                     { field: "MEDIAFLAGS", classes: "mode-table", display: _("Flags"), formatter: function(m) {
                         let h = [];
-                        $.each(m.MEDIAFLAGS.split("|"), function(count, flag) {
-                            $.each(controller.flags, function(count, flagdata) {
-                                if (flag == flagdata.ID) {
-                                    h.push("<span class=asm-media-flag>" + flag + "</span>");
-                                }
-                            });
-                            
+                        $.each(m.MEDIAFLAGS.split("|"), function(i, flag) {
+                            if (!flag) { return; }
+                            h.push("<span class=asm-media-flag>" + flag + "</span>");
                         });
                         return h.join("<br>");
                     }},
@@ -153,15 +149,10 @@ $(function() {
                         h.push("<br/>");
                         h.push(media.render_mods(m));
                         h.push("<br/>");
-                        $.each(m.MEDIAFLAGS.split("|"), function(count, flag) {
-                            $.each(controller.flags, function(count, flagdata) {
-                                if (flag == flagdata.ID) {
-                                    h.push("<span class='asm-media-flag asm-media-flag-thumb'>" + flagdata.FLAG + "</span>");
-                                }
-                            });
-                            
+                        $.each(m.MEDIAFLAGS.split("|"), function(i, flag) {
+                            if (!flag) { return; }
+                            h.push("<span class='asm-media-flag asm-media-flag-thumb'>" + flag + "</span>");
                         });
-                        //return h.join("<br>");
                         h.push("</div>");
                         return h.join("");
                     }}
@@ -1214,33 +1205,17 @@ $(function() {
             });
             
             $("#mediaflagsfilter").change(function() {
-                let flagfilters = $("#mediaflagsfilter").val();
-                if (flagfilters.length > 0) {
-                    let newmediarows = [];
-                    $.each(controller.media, function(mediacount, media) {
-                        let include = true;
-                        $.each(flagfilters, function(filtercount, filter) {
-                            let flagfound = false;
-                            let mediaflags = media.MEDIAFLAGS.split("|");
-                                $.each(mediaflags, function(flagcount, flag) {
-                                    if ( flagcount < mediaflags.length) {
-                                        if (!flag) {return false;}
-                                        if (flag == filter) {
-                                            flagfound = true;
-                                            return false;
-                                        }
-                                    }
-                                });
-                                if (!flagfound) {
-                                    include = false;
-                                }
-                        });
-                        if (include) {
-                            newmediarows.push(media);
+                let filters = $("#mediaflagsfilter").val();
+                if (filters.length > 0) {
+                    let filteredrows = [];
+                    $.each(controller.media, function(i, m) {
+                        if (common.array_overlap_all(filters, m.MEDIAFLAGS.split("|"))) {
+                            filteredrows.push(m);
                         }
                     });
-                    media.table.rows = newmediarows;
-                } else {
+                    media.table.rows = filteredrows;
+                } 
+                else {
                     media.table.rows = controller.media;
                 }
                 tableform.table_update(media.table);

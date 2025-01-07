@@ -1489,15 +1489,12 @@ const html = {
     * Renders a list of <option> tags for media flags.
     */
     media_flag_options: function(flags, node) {
-
         var opt = [];
-
         $.each(flags, function(i, v) {
-            opt.push('<option value=' + v.ID + '>' + v.FLAG + '</option>');    
+            opt.push('<option>' + v.FLAG + '</option>');    
         });
         node.html(opt.join("\n"));
         node.change();
-
     }
 
 };
