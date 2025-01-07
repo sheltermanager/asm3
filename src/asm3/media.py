@@ -485,7 +485,7 @@ def attach_link_from_form(dbo: Database, username: str, linktype: int, linkid: i
         "MediaName":            url,
         "MediaMimeType":        "text/url",
         "MediaType":            post.integer("linktype"),
-        "MediaNotes":           post["comments"],
+        "MediaNotes":           post["linkcomments"],
         "WebsitePhoto":         0,
         "WebsiteVideo":         defvid,
         "DocPhoto":             0,

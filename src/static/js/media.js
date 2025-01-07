@@ -176,7 +176,7 @@ $(function() {
                     }
                 },
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") },
-                { type: "raw", markup: '<span style="float: right"><select id="mediaflagsfilter" multiple="multiple" class="asm-bsmselect"></select></span>' }
+                { type: "raw", markup: '<span style="float: right"><select id="filter" multiple="multiple" class="asm-bsmselect"></select></span>' }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -189,105 +189,57 @@ $(function() {
                 tableform.dialog_render(this.dialog),
 
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Attach File")) + '">',
-                '<div id="tipattach" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                _("Please select a PDF, HTML or JPG image file to attach"),
-                '</p>',
-                '</div>',
+                html.info(_("Please select a PDF, HTML or JPG image file to attach")),
                 '<form id="addform" method="post" enctype="multipart/form-data" action="media">',
-                '<input type="hidden" name="mode" value="create" />',
-                '<input type="hidden" id="linkid" name="linkid" value="' + controller.linkid + '" />',
-                '<input type="hidden" id="linktypeid" name="linktypeid" value="' + controller.linktypeid + '" />',
-                '<input type="hidden" id="controller" name="controller" value="' + controller.name + '" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="filechooser">' + _("File") + '</label></td>',
-                '<td><input id="filechooser" name="filechooser" type="file" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="retainfor">' + _("Retain for") + '</label></td>',
-                '<td><select id="retainfor" name="retainfor" class="asm-selectbox">',
-                html.list_to_options(media.retain_for_years),
-                '</select></td>',
-                '</tr>',
-                '<tr><td><label for="mediaflags">' + _("Flags") + '</label></td>',
-                '<td><select id="newmediaflags" name="mediaflags" multiple="multiple" class="asm-bsmselect"></select></td></tr>',
-                '<tr id="commentsrow">',
-                '<td><label for="comments">' + _("Notes") + '</label>',
-                controller.name.indexOf("animal") == 0 ? '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : "",
-                '</td>',
-                '<td><textarea id="addcomments" name="comments" rows="10" autofocus="autofocus" class="asm-textarea"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { type: "hidden", name: "mode", value: "create" },
+                    { type: "hidden", name: "linkid", value: controller.linkid },
+                    { type: "hidden", name: "linktypeid", value: controller.linktypeid },
+                    { type: "hidden", name: "controller", value: controller.name },
+                    { type: "file", name: "filechooser", label: _("File") },
+                    { type: "select", name: "retainfor", label: _("Retain for"), options: media.retain_for_years },
+                    { type: "selectmulti", name: "newmediaflags", label: _("Flags") },
+                    { type: "textarea", name: "comments", label: _("Notes"), rows: 10,
+                        xlabel: controller.name.indexOf("animal") == 0 ? 
+                            '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : ""
+                    }
+                ]),
                 '</form>',
                 '</div>',
 
                 '<div id="dialog-addlink" style="display: none" title="' + html.title(_("Attach link")) + '">',
-                '<div id="tipattachlink" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                _("The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"),
-                '</p>',
-                '</div>',
-                '<input type="hidden" data="mode" value="createlink" />',
-                '<input type="hidden" id="linkid" data="linkid" value="' + controller.linkid + '" />',
-                '<input type="hidden" id="linktypeid" data="linktypeid" value="' + controller.linktypeid + '" />',
-                '<input type="hidden" id="controller" data="controller" value="' + controller.name + '" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="linktype">' + _("Type") + '</label></td>',
-                '<td><select id="linktype" data="linktype" class="asm-selectbox">',
-                '<option value="1">' + _("Document Link") + '</option>',
-                '<option value="2">' + _("Video Link") + '</option>',
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="linktarget">' + _("URL") + '</label></td>',
-                '<td><input id="linktarget" data="linktarget" class="asm-textbox asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr id="commentsrow">',
-                '<td><label for="linkcomments">' + _("Notes") + '</label>',
-                '</td>',
-                '<td><textarea id="linkcomments" data="comments" rows="10" class="asm-textarea"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                html.info(_("The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx")),
+                tableform.fields_render([
+                    { type: "select", post_field: "linktype", label: _("Type"), 
+                        options: '<option value="1">' + _("Document Link") + '</option>' +
+                            '<option value="2">' + _("Video Link") + '</option>' },
+                    { type: "text", post_field: "linktarget", label: _("URL"), doublesize: true },
+                    { type: "textarea", post_field: "linkcomments", label: _("Notes"), rows: 10 }
+                ]),
                 '</div>',
 
                 '<div id="dialog-copyanimal" style="display: none" title="' + html.title(_("Copy to an animal")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="copyanimal">' + _("Animal") + '</label></td>',
-                '<td><input type="hidden" class="asm-animalchooser" id="copyanimal" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { type: "animal", post_field: "copyanimal", label: _("Animal") }
+                ]),
                 '</div>',
 
                 '<div id="dialog-copyperson" style="display: none" title="' + html.title(_("Copy to a person")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="copyperson">' + _("Person") + '</label></td>',
-                '<td><input type="hidden" class="asm-personchooser" id="copyperson" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { type: "person", post_field: "copyperson", label: _("Person") }
+                ]),
                 '</div>',
 
                 '<div id="dialog-moveanimal" style="display: none" title="' + html.title(_("Move to an animal")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="moveanimal">' + _("Animal") + '</label></td>',
-                '<td><input type="hidden" class="asm-animalchooser" id="moveanimal" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { type: "animal", post_field: "moveanimal", label: _("Animal") }
+                ]),
                 '</div>',
 
                 '<div id="dialog-moveperson" style="display: none" title="' + html.title(_("Move to a person")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="moveperson">' + _("Person") + '</label></td>',
-                '<td><input type="hidden" class="asm-personchooser" id="moveperson" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { type: "person", post_field: "moveperson", label: _("Person") }
+                ]),
                 '</div>',
 
                 '<div id="emailform"></div>',
@@ -678,7 +630,7 @@ $(function() {
 
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
-            media.attach_file(selectedfile, 1, $("#retainfor").val(), $("#addcomments").val(), $("#newmediaflags").val())
+            media.attach_file(selectedfile, 1, $("#retainfor").val(), $("#comments").val(), $("#newmediaflags").val())
                 .then(function() {
                     header.hide_loading();
                     // Redirect back to this page. Reconstructing the URL removes a 
@@ -793,41 +745,6 @@ $(function() {
                 buttons: addbuttons
             });
 
-            let addlinkbuttons = { };
-            addlinkbuttons[_("Attach")] = {
-                text: _("Attach"),
-                "class": "asm-dialog-actionbutton",
-                click: function() {
-                    if (!validate.notblank([ "linktarget" ])) { return; }
-                    $("#dialog-addlink").disable_dialog_buttons();
-                    let formdata = "mode=createlink&linkid=" + controller.linkid + 
-                        "&linktypeid=" + controller.linktypeid + 
-                        "&controller=" + controller.name + "&" +
-                        $("#linktype, #linktarget, #linkcomments").toPOST();
-                    common.ajax_post("media", formdata)
-                        .then(function() {
-                            $("#dialog-addlink").dialog("close").enable_dialog_buttons();
-                            common.route_reload();
-                        })
-                        .fail(function() {
-                            $("#dialog-addlink").dialog("close").enable_dialog_buttons(); 
-                        });
-                }
-            };
-            addlinkbuttons[_("Cancel")] = function() {
-                $("#dialog-addlink").dialog("close");
-            };
-
-            $("#dialog-addlink").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: addlinkbuttons
-            });
-
             let signbuttons = {};
             signbuttons[_("Sign")] = {
                 text: _("Sign"),
@@ -860,103 +777,7 @@ $(function() {
                 buttons: signbuttons
             });
 
-            let copyanimalbuttons = {};
-            copyanimalbuttons[_("Copy")] = {
-                text: _("Copy"),
-                "class": 'asm-dialog-actionbutton',
-                click: function() {
-                    if (!validate.notblank([ "copyanimal" ])) { return; }
-                    let formdata = "mode=copyanimal&animalid=" + $("#copyanimal").val() + "&ids=" + tableform.table_ids(media.table);
-                    media.ajax(formdata);
-                }
-            };
-            copyanimalbuttons[_("Cancel")] = function() {
-                $("#dialog-copyanimal").dialog("close");
-            };
-
-            $("#dialog-copyanimal").dialog({
-                autoOpen: false,
-                width: 450,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: copyanimalbuttons
-            });
-
-            let moveanimalbuttons = {};
-            moveanimalbuttons[_("Move")] = {
-                text: _("Move"),
-                "class": 'asm-dialog-actionbutton',
-                click: function() {
-                    if (!validate.notblank([ "moveanimal" ])) { return; }
-                    let formdata = "mode=moveanimal&animalid=" + $("#moveanimal").val() + "&ids=" + tableform.table_ids(media.table);
-                    media.ajax(formdata);
-                }
-            };
-            moveanimalbuttons[_("Cancel")] = function() {
-                $("#dialog-moveanimal").dialog("close");
-            };
-
-            $("#dialog-moveanimal").dialog({
-                autoOpen: false,
-                width: 450,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: moveanimalbuttons
-            });
-
-            let copypersonbuttons = {};
-            copypersonbuttons[_("Copy")] = {
-                text: _("Copy"),
-                "class": 'asm-dialog-actionbutton',
-                click: function() {
-                    if (!validate.notblank([ "copyperson" ])) { return; }
-                    let formdata = "mode=copyperson&personid=" + $("#copyperson").val() + "&ids=" + tableform.table_ids(media.table);
-                    media.ajax(formdata);
-                }
-            };
-            copypersonbuttons[_("Cancel")] = function() {
-                $("#dialog-copyperson").dialog("close");
-            };
-
-            $("#dialog-copyperson").dialog({
-                autoOpen: false,
-                width: 450,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: copypersonbuttons
-            });
-
-            let movepersonbuttons = {};
-            movepersonbuttons[_("Move")] = {
-                text: _("Move"),
-                "class": 'asm-dialog-actionbutton',
-                click: function() {
-                    if (!validate.notblank([ "moveperson" ])) { return; }
-                    let formdata = "mode=moveperson&personid=" + $("#moveperson").val() + "&ids=" + tableform.table_ids(media.table);
-                    media.ajax(formdata);
-                }
-            };
-            movepersonbuttons[_("Cancel")] = function() {
-                $("#dialog-moveperson").dialog("close");
-            };
-
-            $("#dialog-moveperson").dialog({
-                autoOpen: false,
-                width: 450,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: movepersonbuttons
-            });
-
-            $("#button-viewmode").button().click(function() {
+           $("#button-viewmode").button().click(function() {
                 if (media.icon_mode_active) {
                     media.mode_table();
                 }
@@ -980,7 +801,7 @@ $(function() {
             $("#button-comments")
                 .button({ icons: { primary: "ui-icon-arrow-1-ne" }, text: false })
                 .click(function() {
-                    $("#addcomments").val(controller.animal.ANIMALCOMMENTS);
+                    $("#comments").val(controller.animal.ANIMALCOMMENTS);
                 });
 
             $("#button-delete").button({disabled: true}).click(function() {
@@ -1180,32 +1001,40 @@ $(function() {
                 $("#button-sign").hide();
             }
 
-            $("#button-moveanimal").click(function() {
+            $("#button-moveanimal").click(async function() {
                 $("#button-move").asmmenu("hide_all");
-                $("#dialog-moveanimal").dialog("open");
+                await tableform.show_okcancel_dialog("#dialog-moveanimal", _("Move"), { width: 450, notzero: [ "moveanimal" ] });
+                let formdata = "mode=moveanimal&animalid=" + $("#moveanimal").val() + "&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
                 return false;
             });
 
-            $("#button-moveperson").click(function() {
+            $("#button-moveperson").click(async function() {
                 $("#button-move").asmmenu("hide_all");
-                $("#dialog-moveperson").dialog("open");
+                await tableform.show_okcancel_dialog("#dialog-moveperson", _("Move"), { width: 450, notzero: [ "moveperson" ] });
+                let formdata = "mode=moveperson&personid=" + $("#moveperson").val() + "&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
                 return false;
             });
 
-            $("#button-copyanimal").click(function() {
+            $("#button-copyanimal").click(async function() {
                 $("#button-move").asmmenu("hide_all");
-                $("#dialog-copyanimal").dialog("open");
+                await tableform.show_okcancel_dialog("#dialog-copyanimal", _("Copy"), { width: 450, notzero: [ "copyanimal" ] });
+                let formdata = "mode=copyanimal&animalid=" + $("#copyanimal").val() + "&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
                 return false;
             });
 
-            $("#button-copyperson").click(function() {
+            $("#button-copyperson").click(async function() {
                 $("#button-move").asmmenu("hide_all");
-                $("#dialog-copyperson").dialog("open");
+                await tableform.show_okcancel_dialog("#dialog-copyperson", _("Copy"), { width: 450, notzero: [ "copyperson" ] });
+                let formdata = "mode=copyperson&personid=" + $("#copyperson").val() + "&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
                 return false;
             });
-            
-            $("#mediaflagsfilter").change(function() {
-                let filters = $("#mediaflagsfilter").val();
+
+            $("#filter").change(function() {
+                let filters = $("#filter").val();
                 if (filters.length > 0) {
                     let filteredrows = [];
                     $.each(controller.media, function(i, m) {
@@ -1226,10 +1055,16 @@ $(function() {
             });
         },
 
-        new_link: function() {
-           $("#dialog-addlink textarea, #linktarget").val("");
-           $("#linktype").select("value", "2");
-           $("#dialog-addlink").dialog("open"); 
+        new_link: async function() {
+            $("#dialog-addlink textarea, #linktarget").val("");
+            $("#linktype").select("value", "2");
+            await tableform.show_okcancel_dialog("#dialog-addlink", _("Attach"), { width: 550, notblank: [ "linktarget" ] });
+            let formdata = "mode=createlink&linkid=" + controller.linkid + 
+                "&linktypeid=" + controller.linktypeid + 
+                "&controller=" + controller.name + "&" +
+                $("#linktype, #linktarget, #linkcomments").toPOST();
+            await common.ajax_post("media", formdata);
+            common.route_reload();
         },
 
         new_media: function() {
@@ -1292,7 +1127,7 @@ $(function() {
             media.check_preferred_images();
 
             html.media_flag_options(controller.flags, $("#mediaflags"));
-            html.media_flag_options(controller.flags, $("#mediaflagsfilter"));
+            html.media_flag_options(controller.flags, $("#filter"));
             html.media_flag_options(controller.flags, $("#newmediaflags"));
         },
 

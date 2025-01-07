@@ -1075,6 +1075,7 @@ const tableform = {
             else if (v.type == "date") { d += tableform.render_date(v); }
             else if (v.type == "datetime") { d += tableform.render_datetime(v); }
             else if (v.type == "file") { d += tableform.render_file(v); }
+            else if (v.type == "hidden") { d += tableform.render_hidden(v); }
             else if (v.type == "htmleditor") { d += tableform.render_htmleditor(v); }
             else if (v.type == "intnumber") { d += tableform.render_intnumber(v); }
             else if (v.type == "latlong") { d += tableform.render_latlong(v); }
@@ -1189,6 +1190,10 @@ const tableform = {
         td = '<td ' + colclasses + '>';
         if (v.type == "check") {
             return tr + td + '</td>' + td + h + '</td></tr>';
+        }
+        else if (v.type == "hidden") {
+            tr = '<tr ' + rowid + rowclasses + ' style="display: none">';
+            return tr + '<td colspan="2">' + h + '</td></tr>';
         }
         else if ((v.type == "textarea" || 
                     v.type == "richtextarea" || 
@@ -1355,6 +1360,22 @@ const tableform = {
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
+        return tableform._render_formfield(v, d);
+    },
+
+    render_hidden: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
+        if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
