@@ -538,10 +538,10 @@ header = {
         if (config.bool("QuicklinksAllScreens")) {
             $("#linkstips").show();
             $("#quicklinks").show();
-            $("#quicklinks").on("mouseover", "a", function() {
+            $("#quicklinks").on("mouseover", ".asm-quicklink", function() {
                 $(this).addClass("ui-state-hover");
             });
-            $("#quicklinks").on("mouseout", "a", function() {
+            $("#quicklinks").on("mouseout", ".asm-quicklink", function() {
                 $(this).removeClass("ui-state-hover");
             });
             // If there are more than our default items, hide the text to save space
