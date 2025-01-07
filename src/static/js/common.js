@@ -44,13 +44,9 @@ const common = {
      * Returns true if any element of array1 is present in array2
      */
     array_overlap: function(array1, array2) {
-        var overlap = false;
-        $.each(array1, function(i1, v1) {
-            $.each(array2, function(i2, v2) {
-                if (v2 == v1) {
-                    overlap = true;
-                }
-            });
+        let overlap = false;
+        $.each(array1, function(i, v) {
+            if (common.array_in(v, array2)) { overlap = true; }
         });
         return overlap;
     },
@@ -60,13 +56,10 @@ const common = {
      * Returns true if all elements of array1 are present in array2
      */
     array_overlap_all: function(array1, array2) {
-        var overlap = true;
-        $.each(array1, function(i1, v1) {
-            $.each(array2, function(i2, v2) {
-                if (v2 != v1) {
-                    overlap = false;
-                }
-            });
+        let overlap = true;
+        $.each(array1, function(i, v) {
+            overlap = common.array_in(v, array2);
+            if (overlap == false) { return false; }
         });
         return overlap;
     },
