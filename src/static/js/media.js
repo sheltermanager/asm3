@@ -122,7 +122,7 @@ $(function() {
                         $.each(m.MEDIAFLAGS.split("|"), function(count, flag) {
                             $.each(controller.flags, function(count, flagdata) {
                                 if (flag == flagdata.ID) {
-                                    h.push("<span class=asm-media-flag>" + flagdata.FLAG + "</span>");
+                                    h.push("<span class=asm-media-flag>" + flag + "</span>");
                                 }
                             });
                             
@@ -1216,18 +1216,15 @@ $(function() {
             $("#mediaflagsfilter").change(function() {
                 let flagfilters = $("#mediaflagsfilter").val();
                 if (flagfilters.length > 0) {
-                    var newmediarows = [];
+                    let newmediarows = [];
                     $.each(controller.media, function(mediacount, media) {
-                        var include = true;
-                        console.log("media.MEDIANOTES = " + media.MEDIANOTES);
-                        //console.log('media.MEDIAFLAGS' + " = " + media.MEDIAFLAGS);
-                        //console.log('media.MEDIAFLAGS.split("|")' + " = " + media.MEDIAFLAGS.split("|"));
-                        $.each(flagfilters, function(filtercount, flag) {
-                            console.log("flag = " + flag);
-                            var flagfound = false;
-                            var mediaflags = media.MEDIAFLAGS.split("|");
-                                $.each(mediaflags, function(flagcount, filter) {
-                                    if ( flagcount < mediaflags.length - 1) {
+                        let include = true;
+                        $.each(flagfilters, function(filtercount, filter) {
+                            let flagfound = false;
+                            let mediaflags = media.MEDIAFLAGS.split("|");
+                                $.each(mediaflags, function(flagcount, flag) {
+                                    if ( flagcount < mediaflags.length) {
+                                        if (!flag) {return false;}
                                         if (flag == filter) {
                                             flagfound = true;
                                             return false;
