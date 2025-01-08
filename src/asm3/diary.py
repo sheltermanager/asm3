@@ -467,7 +467,7 @@ def execute_diary_task(dbo: Database, username: str, tasktype: int, taskid: int,
             rollingdate = selecteddate
         else:
             rollingdate = asm3.i18n.add_days(rollingdate, int(d.DAYPIVOT))
-        if d.WHOFOR == asm3.i18n._("taskcreator"):
+        if d.WHOFOR == "taskcreator":
             d.WHOFOR = username
         insert_diary(dbo, username, linktype, linkid, rollingdate, \
             d.WHOFOR, \
