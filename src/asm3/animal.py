@@ -3550,6 +3550,11 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
         "IsGoodWithDogs":   a.isgoodwithdogs,
         "IsGoodWithChildren": a.isgoodwithchildren,
         "IsHouseTrained":   a.ishousetrained,
+        "IsCrateTrained":   a.iscratetrained,
+        "IsGoodWithElderly": a.isgoodwithelderly,
+        "IsGoodTraveller":  a.isgoodtraveller,
+        "IsGoodOnLead":     a.isgoodonlead,
+        "EnergyLevel":      a.energylevel,
         "IsNotAvailableForAdoption": a.isnotavailableforadoption,
         "IsHold":           a.ishold,
         "AdditionalFlags":  a.additionalflags, 
@@ -3643,6 +3648,8 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
     for c in dbo.query("SELECT * FROM animalcost WHERE AnimalID = ?", [animalid]):
         dbo.insert("animalcost", {
             "AnimalID":             nid,
+            "OwnerID":              c.ownerid,
+            "InvoiceNumber":        c.invoicenumber,
             "CostTypeID":           c.costtypeid,
             "CostDate":             c.costdate,
             "CostAmount":           c.costamount,
