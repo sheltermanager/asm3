@@ -218,8 +218,20 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            const create_task = async function(taskid) {
+                let formdata = "";
+                if (controller.name == "animal_diary") {
+                    formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
+                }
+                else if (controller.name == "person_diary") {
+                    formdata = "mode=exec&id=" + controller.person.ID + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
+                }
+                await common.ajax_post("diarytask", formdata);
+                common.route_reload();
+            };
  
-           // Attach handlers for diary tasks
+            // Attach handlers for diary tasks
             $(".diarytask").each(function() {
                 let a = $(this);
                 let task = a.attr("data").split(" ");
