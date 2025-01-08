@@ -216,9 +216,9 @@ $(function() {
                 '<div id="dialog-headfoot" style="display: none" title="' + html.title(_("Edit Header/Footer")) + '">',
                 html.info(_("These are the HTML headers and footers used when displaying online forms.")),
                 tableform.fields_render([
-                    { post_field: "header", type: "htmleditor", classes: "headfoot", label: _("Header"), labelpos: "above", 
+                    { post_field: "rhead", type: "htmleditor", classes: "headfoot", label: _("Header"), labelpos: "above", 
                         height: "250px", width: "750px", value: controller.header },
-                    { post_field: "footer", type: "htmleditor", classes: "headfoot", label: _("Footer"), labelpos: "above", 
+                    { post_field: "rfoot", type: "htmleditor", classes: "headfoot", label: _("Footer"), labelpos: "above", 
                         height: "250px", width: "750px", value: controller.footer }
                 ]),
                 '</div>'

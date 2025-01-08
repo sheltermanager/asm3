@@ -5754,7 +5754,7 @@ class onlineforms(JSONEndpoint):
 
     def post_headfoot(self, o):
         self.check(asm3.users.CHANGE_ONLINE_FORMS)
-        asm3.onlineform.set_onlineform_headerfooter(o.dbo, o.post["header"], o.post["footer"])
+        asm3.onlineform.set_onlineform_headerfooter(o.dbo, o.post["rhead"], o.post["rfoot"])
 
     def post_import(self, o):
         self.check(asm3.users.ADD_ONLINE_FORMS)

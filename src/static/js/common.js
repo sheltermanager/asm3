@@ -1219,7 +1219,9 @@ const common = {
             "#dialog-": "dialog",
             "#emailform": "emailform",
             "#sql": "sqleditor",
-            "#html": "htmleditor"
+            "#html": "htmleditor",
+            "#rhead": "htmleditor",
+            "#rfoot": "htmleditor"
         };
         if (!type) {
             $.each(types, function(k, v) {
