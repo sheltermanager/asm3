@@ -33,6 +33,14 @@ TRIAL_ADOPTION_TEXT = 11        # ADOPTION + IsTrial=1
 PERMANENT_FOSTER_TEXT = 12      # FOSTER + IsPermanentFoster=1
 TNR_TEXT = 13                   # RELEASED + animal.SpeciesID IN (1,2) (Dog,Cat)
 
+def bulk_update_movement_statuses(dbo: Database, username: str, movementids: list, movementstatus: int):
+    for mid in movementids:
+        movementdata = asm3.movement.get_movement(dbo, mid)
+        animalid = movementdata["ANIMALID"]
+        ownerid = movementdata["OWNERID"]
+        dbo.update("adoption", mid, { "ReservationStatusID": movementstatus, "AnimalID": animalid, "OwnerID": ownerid }, username)
+    return len(movementids)
+
 def get_movement_query(dbo: Database) -> str:
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
