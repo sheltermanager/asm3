@@ -6859,7 +6859,7 @@ class reports(JSONEndpoint):
 
     def post_headfoot(self, o):
         self.check(asm3.users.CHANGE_REPORT)
-        asm3.reports.set_raw_report_headerfooter(o.dbo, o.post["header"], o.post["footer"])
+        asm3.reports.set_raw_report_headerfooter(o.dbo, o.post["rhead"], o.post["rfoot"])
 
     def post_smcomlist(self, o):
         return asm3.utils.json(asm3.reports.get_smcom_reports_installable(o.dbo))

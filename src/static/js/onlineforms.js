@@ -258,7 +258,7 @@ $(function() {
                 "class": 'asm-dialog-actionbutton',
                 click: async function() {
                     try {
-                        let formdata = "mode=headfoot&" + $(".headfoot").toPOST();
+                        let formdata = "mode=headfoot&" + $("#rhead, #rfoot").toPOST();
                         await common.ajax_post("onlineforms", formdata);
                         header.show_info(_("Updated."));
                     }

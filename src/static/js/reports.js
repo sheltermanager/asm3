@@ -340,7 +340,7 @@ $(function() {
                 text: _("Save"),
                 "class": 'asm-dialog-actionbutton',
                 click: async function() {
-                    let formdata = "mode=headfoot&" + $(".headfoot").toPOST();
+                    let formdata = "mode=headfoot&" + $("#rhead, #rfoot").toPOST();
                     try {
                         await common.ajax_post("reports", formdata);                    
                         header.show_info(_("Updated."));
