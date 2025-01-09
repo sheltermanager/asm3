@@ -25,26 +25,31 @@ $(function() {
                     { post_field: "singlemulti", label: _("Frequency"), type: "select",  
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
-                    { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", label: "", halfsize: true, defaultval: "1",
-                        xmarkup: [ ' ', _("treatments, every"), ' ',
-                            tableform.render_intnumber({ json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", justwidget: true, halfsize: true, defaultval: "1" }), ' ',
-                            tableform.render_select({ json_field: "TIMINGRULEFREQUENCY", post_field: "timingrulefrequency", type: "select", justwidget: true, halfsize: true, options: 
+
+                    { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", label: "", halfsize: true, defaultval: "1", 
+                        xmarkup: ' ' + _("treatments, every") + ' ',
+                        rowclose: false },
+                    { json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", type: "intnumber", justwidget: true, halfsize: true, defaultval: "1" },
+                    { json_field: "TIMINGRULEFREQUENCY", post_field: "timingrulefrequency", type: "select", justwidget: true, halfsize: true, options: 
                                 '<option value="0">' + _("days") + '</option>' + 
                                 '<option value="4">' + _("weekdays") + '</option>' +
                                 '<option value="1">' + _("weeks") + '</option>' +
                                 '<option value="2">' + _("months") + '</option>' + 
-                                '<option value="3">' + _("years") + '</option>' })
-                            ].join("\n") },
+                                '<option value="3">' + _("years") + '</option>' },
+                    { type: "rowclose" },
+
                     { json_field: "TREATMENTRULE", post_field: "treatmentrule", label: _("Duration"), type: "select", halfsize: true,  
                         options: '<option value="0">' + _("Ends after") + '</option>' +
                             '<option value="1">' + _("Unspecified") + '</option>',
-                        xmarkup: [
-                            ' <span id="treatmentrulecalc">', 
-                            tableform.render_intnumber({ json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", 
-                                justwidget: true, halfsize: true, defaultval: "1" }),
-                            ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
+                        xmarkup: ' <span id="treatmentrulecalc">',
+                        rowclose: false },
+                    { json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", 
+                            type: "intnumber", justwidget: true, halfsize: true, defaultval: "1" },
+                    { type: "raw", justwidget: true, markup: ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
                             '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
-                            '</span></span>' ].join("\n") },
+                            '</span>'},
+                    { type: "rowclose" },
+
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };

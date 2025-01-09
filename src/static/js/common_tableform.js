@@ -1092,6 +1092,10 @@ const tableform = {
             else if (v.type == "textarea") { d += tableform.render_textarea(v); }
             else if (v.type == "time") { d += tableform.render_time(v); }
             else if (v.type == "additional") { v.justwidget = true; d += tableform.render_markup(v); }
+            else if (v.type == "rowclose") { 
+                // Special widget that ends a row after it was opened with norowclose
+                d += "</td></tr>";
+            }
             else if (v.type == "nextcol") {
                 // Special widget that causes rendering to move to a new column
                 d += endcol + startcol.replace("{data}", v.coldata).replace("{classes}", v.classes);
@@ -1167,7 +1171,9 @@ const tableform = {
      *  h: The generated widget HTML being passed from a render_text/check/etc method.
      */
     _render_formfield: function(v, h) {
-        let tr = "<tr>", td = "<td>", rowid = "", rowclasses = "", colclasses = "", label = tableform._render_label(v);
+        let tr = "<tr>", td = "<td>", closer = "</td></tr>", 
+            rowid = "", rowclasses = "", colclasses = "", 
+            label = tableform._render_label(v);
         if (v.hideif && v.hideif()) {
             return "";
         }
@@ -1186,24 +1192,27 @@ const tableform = {
         if (v.colclasses) {
             colclasses = ' class="' + v.colclasses + '" ';
         }
+        if (v.rowclose === false) {
+            closer = "";   
+        }
         tr = '<tr ' + rowid + rowclasses + '>'; 
         td = '<td ' + colclasses + '>';
         if (v.type == "check") {
-            return tr + td + '</td>' + td + h + '</td></tr>';
+            return tr + td + '</td>' + td + h + closer;
         }
         else if (v.type == "hidden") {
             tr = '<tr ' + rowid + rowclasses + ' style="display: none">';
-            return tr + '<td colspan="2">' + h + '</td></tr>';
+            return tr + '<td colspan="2">' + h + closer;
         }
         else if ((v.type == "textarea" || 
                     v.type == "richtextarea" || 
                     v.type == "htmleditor" || 
                     v.type == "sqleditor") && 
                     v.labelpos && v.labelpos == "above") {
-            return tr + '<td colspan="2">' + label + (v.label ? '<br>' : '') + h + '</td></tr>';
+            return tr + '<td colspan="2">' + label + (v.label ? '<br>' : '') + h + closer;
         }
         else {
-            return tr + td + label + '</td>' + td + h + '</td></tr>';
+            return tr + td + label + '</td>' + td + h + closer;
         }
     },
 
@@ -1731,16 +1740,17 @@ const tableform = {
                 if (v.defaultval instanceof Date) {
                     dval = format.date(v.defaultval);
                 }
+                if (!v.post_field) { return; } 
                 if (v.type == "check") { $("#" + v.post_field).prop("checked", dval); return; }
-                if (v.type == "currency") { $("#" + v.post_field).currency("value", dval); return; }
-                if (v.type == "animal") { $("#" + v.post_field).animalchooser("loadbyid", dval); return; }
-                if (v.type == "person") { $("#" + v.post_field).personchooser("loadbyid", dval); return; }
-                if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
-                if (v.type == "textarea") { $("#" + v.post_field).val(dval); return; }
-                if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
-                if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
-                if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
-                if (v.type != "nextcol") { $("#" + v.post_field).val(dval); }
+                else if (v.type == "currency") { $("#" + v.post_field).currency("value", dval); return; }
+                else if (v.type == "animal") { $("#" + v.post_field).animalchooser("loadbyid", dval); return; }
+                else if (v.type == "person") { $("#" + v.post_field).personchooser("loadbyid", dval); return; }
+                else if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
+                else if (v.type == "textarea") { $("#" + v.post_field).val(dval); return; }
+                else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
+                else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
+                else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
+                else { $("#" + v.post_field).val(dval); }
             }
         });
     },
