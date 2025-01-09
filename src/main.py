@@ -5495,6 +5495,10 @@ class movement(JSONEndpoint):
         self.check(asm3.users.LINK_EVENT_MOVEMENT)
         e = asm3.event.get_events_by_date(o.dbo, o.post.date("movementdate"))
         return asm3.utils.json(e)
+    
+    def post_bulkstatus(self, o):
+        self.check(asm3.users.CHANGE_MOVEMENT)
+        asm3.movement.bulk_update_movement_statuses(o.dbo, o.user, o.post.integer_list("ids"), o.post.integer("flagid"))
 
 class onlineform_incoming(JSONEndpoint):
     url = "onlineform_incoming"

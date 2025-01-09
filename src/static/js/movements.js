@@ -584,6 +584,9 @@ $(function() {
                             message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.")
                         });
                     }
+                },
+                { id: "status", text: _("Status"), icon: "document", enabled: "multi", perm: "gaf", 
+                    tooltip: _("Update reservation status"), type: "buttonmenu" 
                 }
             ];
             this.dialog = dialog;
@@ -593,12 +596,20 @@ $(function() {
 
         render: function() {
             let s = "";
-            this.model();   
+            this.model();
+            let reservationstatusoptions = "";
+            $.each(controller.reservationstatuses, function(statuscount, statusobject) {
+                reservationstatusoptions += '<li class="asm-menu-item"><a href="#" data-status="' + statusobject.ID + '" class="bulkstatus">' + statusobject.STATUSNAME + '</a></li>';
+            });
             s += tableform.dialog_render(this.dialog);
             s += '<div id="button-document-body" class="asm-menu-body">' +
                 '<ul class="asm-menu-list">' +
                 edit_header.template_list(controller.templates, "MOVEMENT", 0) +
-                '</ul></div>' + 
+                '</ul></div>' +
+                '<div id="button-status-body" class="asm-menu-body">' +
+                '<ul class="asm-menu-list">' + 
+                reservationstatusoptions +
+                '</ul></div>' +
                 '<div id="emailform"></div>';
             if (controller.name == "animal_movements") {
                 s += edit_header.animal_edit_header(controller.animal, "movements", controller.tabcounts);
@@ -626,6 +637,28 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            // Bulk status update
+            $(".bulkstatus").click(async function() {
+                let statusid = $(this).data("status");
+                let selectedmovements = tableform.table_selected_rows(movements.table);
+                let ids = tableform.table_ids(movements.table);
+                await common.ajax_post("movement", "mode=bulkstatus&flagid=" + statusid + "&ids=" + ids);
+                $.each(selectedmovements, function(movementrowcount, movementrow) {
+                    movementrow.RESERVATIONSTATUSID = statusid;
+                    let statusname = _("Unknown");
+                    $.each(controller.reservationstatuses, function(statuscount, status) {
+                        if (status.ID == statusid) {
+                            statusname = status.STATUSNAME;
+                            return false;
+                        }
+                    });
+                    movementrow.RESERVATIONSTATUSNAME = statusname;
+                });
+                tableform.table_update(movements.table);
+
+                return false;
+             });
 
             // Watch for movement type changing
             $("#type").change(movements.type_change);
