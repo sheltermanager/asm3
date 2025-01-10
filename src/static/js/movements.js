@@ -585,7 +585,7 @@ $(function() {
                         });
                     }
                 },
-                { id: "status", text: _("Status"), icon: "document", enabled: "multi", perm: "gaf", 
+                { id: "status", text: _("Status"), icon: "complete", enabled: "multi", perm: "gaf", 
                     tooltip: _("Update reservation status"), type: "buttonmenu" 
                 }
             ];
@@ -646,14 +646,7 @@ $(function() {
                 await common.ajax_post("movement", "mode=bulkstatus&flagid=" + statusid + "&ids=" + ids);
                 $.each(selectedmovements, function(movementrowcount, movementrow) {
                     movementrow.RESERVATIONSTATUSID = statusid;
-                    let statusname = _("Unknown");
-                    $.each(controller.reservationstatuses, function(statuscount, status) {
-                        if (status.ID == statusid) {
-                            statusname = status.STATUSNAME;
-                            return false;
-                        }
-                    });
-                    movementrow.RESERVATIONSTATUSNAME = statusname;
+                    movementrow.RESERVATIONSTATUSNAME = common.get_field(controller.reservationstatuses, statusid, "STATUSNAME");
                 });
                 tableform.table_update(movements.table);
 
