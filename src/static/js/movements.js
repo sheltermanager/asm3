@@ -925,10 +925,10 @@ $(function() {
             }
             // Show the reservation date field for both reserves and adoptions
             if (mt == 1 || mt == 0) {
-                $("#reservationdaterow").fadeIn();
+                $("#reservationrow").fadeIn();
             }
             else {
-                $("#reservationdaterow").fadeOut();
+                $("#reservationrow").fadeOut();
             }
             // Show the other reservation fields for reserves
             if (mt == 0) {
