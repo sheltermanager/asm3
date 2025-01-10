@@ -26,10 +26,8 @@ import smtplib
 import string
 import struct
 import subprocess
-import sys
 import tempfile
 import time
-import traceback
 import uuid
 import zipfile
 
@@ -2120,23 +2118,18 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
                 send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
     thread.start_new_thread(do_send, ())
 
-def send_error_email() -> None:
+def send_error_email(errtype, errvalue, path, msg) -> None:
     """
     Used for sending email messages about errors that have occurred.
+    errtype, errvalue: The type and value of the exception (from sys.exc_info()[0] and [1])
+    path: The URL path being accessed if applicable
+    msg: The error message to send in plain text
     """
-    tb = sys.exc_info()
-    error_name = tb[0]
-    error_value = tb[1]
-    path = ""
-    try:
-        path = web.ctx.path # we use this call from async S3 methods where web.ctx will be None
-    except:
-        pass
     msg = MIMEMultipart("mixed")
     msg["From"] = Header(ADMIN_EMAIL)
     msg["To"] = Header(ADMIN_EMAIL)
-    msg["Subject"] = Header(f"{error_name}: {error_value} ({path})")
-    msg.attach(MIMEText(str(traceback.format_exc()), "html"))
+    msg["Subject"] = Header(f"{errtype}: {errvalue} ({path})")
+    msg.attach(MIMEText(msg), "plain")
     _send_email(msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
 
 def send_user_email(dbo: Database, sendinguser: str, user: str, subject: str, body: str) -> None:

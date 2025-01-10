@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys
+import os, sys, traceback
 
 # The path to the folder containing the ASM3 modules
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
@@ -164,7 +164,10 @@ def asm_500_email() -> Any:
     Custom 500 error page that sends emails to the site admin
     (web.InternalError)
     """
-    asm3.utils.send_error_email()
+    ei = sys.exc_info()
+    path = web.ctx.path 
+    msg = f"database:\n\n{session.dbo}\n\ntraceback:\n\n{traceback.format_exc()}"
+    asm3.utils.send_error_email(ei[0], ei[1], path, msg)
     s = """<!DOCTYPE html
         <html>
         <head>
@@ -198,7 +201,6 @@ def asm_500() -> Any:
     Custom 500 error page that outputs the stack trace
     (web.InternalError)
     """
-    import traceback
     s = f"""<!DOCTYPE html
         <html>
         <head>
@@ -213,6 +215,8 @@ def asm_500() -> Any:
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
         <img src="static/images/logo/icon-64.png" align="right" />
         <h2>Error 500</h2>
+        <pre>{session.dbo}</pre>
+        <h3>Traceback:</h3>
         <pre>{traceback.format_exc()}</pre>
         </div>
         </body>
