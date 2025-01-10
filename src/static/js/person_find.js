@@ -102,7 +102,7 @@ $(function() {
             // Load the person flag options
             html.person_flag_options(null, controller.flags, $("#filter"), false, true);
 
-            $("#siterow").toggle( config.bool("MultiSiteEnabled") && asm.siteid );
+            $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             $("#gdprrow").toggle( config.bool("ShowGDPRContactOptIn") );
 
             // Search button - we don't use the traditional submit because
