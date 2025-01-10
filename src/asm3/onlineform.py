@@ -44,6 +44,7 @@ FIELDTYPE_IMAGE = 17
 FIELDTYPE_CHECKBOXGROUP = 18
 FIELDTYPE_EMAIL = 19
 FIELDTYPE_NUMBER = 20
+FIELDTYPE_FOSTERANIMAL = 21
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -65,7 +66,10 @@ FIELDTYPE_MAP = {
     "GDPR_CONTACT_OPTIN": 15,
     "TIME": 16,
     "IMAGE": 17,
-    "CHECKBOXGROUP": 18
+    "CHECKBOXGROUP": 18,
+    "EMAIL": 19,
+    "NUMBER": 20,
+    "FOSTERANIMAL": 21
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -183,6 +187,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<table class="asm-onlineform-table">')
     shelteranimals = None
     adoptableanimals = None
+    fosteranimals = None
     for f in formfields:
         fname = "%s_%s" % (f.FIELDNAME, f.ID)
         cname = asm3.html.escape(fname)
@@ -281,6 +286,19 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('</select>')
             h.append('<img class="asm-onlineform-thumbnail" ' \
                 ' style="vertical-align: middle; height: 150px; width: 150px; object-fit: contain; display: block; display: none">')
+        elif f.FIELDTYPE == FIELDTYPE_FOSTERANIMAL:
+            h.append('<select class="asm-onlineform-fosteranimal" id="%s" name="%s" %s>' % ( fid, cname, required))
+            h.append('<option data-id="" value=""></option>')
+            if fosteranimals is None:
+                fosteranimals = asm3.animal.get_animals_on_foster_namecode(dbo)
+                fosteranimals = sorted(fosteranimals, key=lambda k: k["ANIMALNAME"])
+            for a in fosteranimals:
+                if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
+                h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
+            h.append('</select>')
+            h.append('<img class="asm-onlineform-thumbnail" ' \
+                ' style="vertical-align: middle; height: 150px; width: 150px; object-fit: contain; display: block; display: none">')
+            
         elif f.FIELDTYPE == FIELDTYPE_GDPR_CONTACT_OPTIN:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" id="%s" data-name="%s" data-required="%s" title="">' % ( fid, cname, asm3.utils.iif(required != "", "required", "")))

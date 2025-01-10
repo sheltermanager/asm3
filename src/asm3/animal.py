@@ -2148,6 +2148,19 @@ def get_animals_on_shelter_namecode(dbo: Database, remove_units: bool = False, r
         if remove_fosterer and r.ACTIVEMOVEMENTTYPE == 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
     return rows
 
+def get_animals_on_foster_namecode(dbo: Database) -> Results:
+    """
+    Returns a resultset containing the ID, Name, Code of all foster animals.
+    """
+    rows = dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, s.SpeciesName, " \
+        "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
+        "THEN ShortCode ELSE ShelterCode END AS Code " \
+        "FROM animal " \
+        "LEFT OUTER JOIN species s ON s.ID = animal.SpeciesID " \
+        "WHERE animal.ActiveMovementType = 2 " \
+        "ORDER BY AnimalName, ShelterCode")
+    return rows
+
 def get_animals_adoptable_namecode(dbo: Database) -> Results:
     """
     Returns a resultset containing the ID, Name and Code of all adoptable animals.

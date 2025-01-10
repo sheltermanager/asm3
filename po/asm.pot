@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-03 09:29+0000\n"
+"POT-Creation-Date: 2025-01-10 11:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2582,13 +2582,12 @@ msgstr ""
 msgid "Canary"
 msgstr ""
 
-#: medical.js common_tableform.js movements.js htmltemplates.js roles.js
-#: common_widgets.js animal.js vaccination.js media.js publish_options.js
-#: onlineforms.js person_new.js common.js mobile2.js shelterview.js
-#: document_templates.js report_toolbar.js onlineform_incoming.js
-#: document_repository.js common_animalchoosermulti.js common_animalchooser.js
-#: report_images.js reports.js main.js test.js users.js accounts_trx.js
-#: diary.js person.js sql.js reports_querybuilder.js common_personchooser.js
+#: medical.js common_tableform.js movements.js roles.js common_widgets.js
+#: vaccination.js media.js publish_options.js onlineforms.js person_new.js
+#: common.js mobile2.js shelterview.js report_toolbar.js onlineform_incoming.js
+#: common_animalchoosermulti.js common_animalchooser.js reports.js main.js
+#: test.js users.js accounts_trx.js person.js sql.js reports_querybuilder.js
+#: common_personchooser.js
 msgid "Cancel"
 msgstr ""
 
@@ -6136,7 +6135,7 @@ msgstr ""
 msgid "Flag {0}"
 msgstr ""
 
-#: person.py html.py animal.js onlineform.js animal_find_results.js
+#: person.py html.py animal.js onlineform.js animal_find_results.js media.js
 #: person_find_results.js person_new.js common_animalchoosermulti.js
 #: common_html.js csvimport_stripe.js csvimport_paypal.js animal_find.js
 #: person.js common_personchooser.js person_find.js
@@ -6232,6 +6231,10 @@ msgstr ""
 #: dbupdate.py move_foster.js publish_options.js common_animalchoosermulti.js
 #: common_html.js
 msgid "Foster"
+msgstr ""
+
+#: onlineform.js
+msgid "Foster Animal"
 msgstr ""
 
 #: movements.js
@@ -12161,7 +12164,7 @@ msgstr ""
 
 #: common_tableform.js common_widgets.js accounts.js onlineforms.js
 #: event_animals.js common.js common_animalchoosermulti.js common_html.js
-#: diarytasks.js reports.js accounts_trx.js diary.js common_personchooser.js
+#: diarytasks.js reports.js accounts_trx.js common_personchooser.js
 msgid "Select"
 msgstr ""
 
@@ -14944,6 +14947,10 @@ msgstr ""
 msgid "Update publishing options"
 msgstr ""
 
+#: movements.js
+msgid "Update reservation status"
+msgstr ""
+
 #: event_animals.js
 msgid "Update selected animals arrival time?"
 msgstr ""
@@ -16247,10 +16254,6 @@ msgstr ""
 msgid "oz"
 msgstr ""
 
-#: diary.py
-msgid "taskcreator"
-msgstr ""
-
 #: animal_bulk.js accounts_trx.js
 msgid "to"
 msgstr ""
@@ -16267,7 +16270,7 @@ msgstr ""
 msgid "treatments, every"
 msgstr ""
 
-#: medical.py medical.js
+#: medical.py medical.js medicalprofile.js
 msgid "weekdays"
 msgstr ""
 
