@@ -499,6 +499,12 @@ $(function() {
                         });
                     }
                 },
+                { id: "status", text: _("Status"), icon: "complete", enabled: "multi", perm: "gaf", 
+                    tooltip: _("Update reservation status"), type: "buttonmenu",
+                    hideif: function() {
+                        return controller.name != "move_book_reservation";
+                    }
+                },
                 { id: "trialfull", text: _("Full Adoption"), icon: "complete", enabled: "multi", perm: "camv",
                     tooltip: _("Convert this movement from a trial to full adoption"),
                     hideif: function() {
@@ -584,9 +590,6 @@ $(function() {
                             message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.")
                         });
                     }
-                },
-                { id: "status", text: _("Status"), icon: "complete", enabled: "multi", perm: "gaf", 
-                    tooltip: _("Update reservation status"), type: "buttonmenu" 
                 }
             ];
             this.dialog = dialog;
