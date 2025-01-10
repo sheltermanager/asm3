@@ -29,6 +29,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import traceback
 import uuid
 import zipfile
 
@@ -2135,7 +2136,7 @@ def send_error_email() -> None:
     msg["From"] = Header(ADMIN_EMAIL)
     msg["To"] = Header(ADMIN_EMAIL)
     msg["Subject"] = Header(f"{error_name}: {error_value} ({path})")
-    msg.attach(MIMEText(str(web.djangoerror()), "html"))
+    msg.attach(MIMEText(str(traceback.format_exc()), "html"))
     _send_email(msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
 
 def send_user_email(dbo: Database, sendinguser: str, user: str, subject: str, body: str) -> None:

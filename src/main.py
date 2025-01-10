@@ -147,18 +147,13 @@ def asm_404() -> str:
         </head>
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
-
         <img src="static/images/logo/icon-64.png" align="right" />
         <h2>Error 404</h2>
-
         <p>Sorry, but the record or resource you tried to access was not found.</p>
-
         <p><a href="javascript:history.back()">Go Back</a></p>
-
         </div>
         </body>
-        </html>
-    """
+        </html>"""
     web.header("Content-Type", "text/html")
     web.header("Cache-Control", "public, max-age=3600, s-maxage=3600") # Cache 404s for an hour at any proxy/CDN as they can be a DoS vector
     session.no_cookie = True
@@ -170,7 +165,7 @@ def asm_500_email() -> Any:
     (web.InternalError)
     """
     asm3.utils.send_error_email()
-    s = """
+    s = """<!DOCTYPE html
         <html>
         <head>
         <title>500</title>
@@ -183,25 +178,48 @@ def asm_500_email() -> Any:
         </head>
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
-
         <img src="static/images/logo/icon-64.png" align="right" />
         <h2>Error 500</h2>
-
         <p>An error occurred trying to process your request.</p>
-
         <p>The system administrator has been notified to fix the problem.</p>
-
         <p>Sometimes, a database update needs to have been run, or you 
         need to update your browser's local version of the application. 
         Please return to the <a href="main">home page</a> to run and
         receive any updates.</p>
-
         </div>
         </body>
-        </html>
-    """
+        </html>"""
     web.header("Content-Type", "text/html")
     web.header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0") # Never cache 500 errors
+    return web.internalerror(s)
+
+def asm_500() -> Any:
+    """
+    Custom 500 error page that outputs the stack trace
+    (web.InternalError)
+    """
+    import traceback
+    s = f"""<!DOCTYPE html
+        <html>
+        <head>
+        <title>500</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
+        </head>
+        <body style="background-color: #999">
+        <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
+        <img src="static/images/logo/icon-64.png" align="right" />
+        <h2>Error 500</h2>
+        <pre>{traceback.format_exc()}</pre>
+        </div>
+        </body>
+        </html>"""
+    web.header("Content-Type", "text/html")
+    web.header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0") # Never cache 500 errors
+    session.no_cookie = True
     return web.internalerror(s)
 
 def emergency_notice() -> str:
@@ -7724,6 +7742,7 @@ routes = []
 # Setup the WSGI application object and session with mappings
 app = web.application(generate_routes(), globals(), autoreload=AUTORELOAD)
 app.notfound = asm_404
+app.internalerror = asm_500
 if EMAIL_ERRORS:
     app.internalerror = asm_500_email
 session = session_manager()
