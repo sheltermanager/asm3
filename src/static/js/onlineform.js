@@ -19,6 +19,7 @@ $(function() {
         { "ID": 18, "NAME": _("Checkbox Group") },
         { "ID": 4, "NAME": _("Shelter Animal") },
         { "ID": 5, "NAME": _("Adoptable Animal") },
+        { "ID": 21, "NAME": _("Foster Animal") },
         { "ID": 6, "NAME": _("Color") },
         { "ID": 7, "NAME": _("Breed") },
         { "ID": 8, "NAME": _("Species") },
@@ -149,7 +150,7 @@ $(function() {
             else {
                 $("#lookupsrow").fadeOut();
             }
-            if (ft == 4 || ft == 5) {
+            if (ft == 4 || ft == 5 || ft == 21) {
                 $("#speciesrow").fadeIn();
             }
             else {
