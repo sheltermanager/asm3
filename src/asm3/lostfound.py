@@ -150,7 +150,7 @@ def get_foundanimal_find_simple(dbo: Database, query: str = "", limit: int = 0, 
     sitefilter = ""
     if siteid != 0: sitefilter = " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
 
-    # If no query has been given, show unfound lost animal records
+    # If no query has been given, show unreturned found animal records
     # for the last 30 days
     if query == "":
         ss.ors.append("a.DateFound > ? AND a.ReturnToOwnerDate Is Null %s" % sitefilter)
