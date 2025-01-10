@@ -297,64 +297,26 @@ $(function() {
         render_givendialog: function() {
             return [
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Perform Test")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newdate">' + _("Performed") + '</label></td>',
-                '<td><input id="newdate" data="newdate" data-nofuture="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="testresult">' + _("Result") + '</label></td>',
-                '<td><select id="testresult" data="testresult" class="asm-selectbox asm-field">',
-                html.list_to_options(controller.testresults, "ID", "RESULTNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="renewon">' + _("Retest") + '</label></td>',
-                '<td><input id="renewon" data="retest" data-nopast="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givencost">' + _("Cost") + '</label></td>',
-                '<td><input id="givencost" data="givencost" type="text" class="asm-textbox asm-currencybox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
-                '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td class="asm-header" colspan="2">',
-                _("Stock"),
-                '<span id="callout-stock" class="asm-callout">' + _("These fields allow you to deduct stock for the test(s) given. This single deduction should cover the selected tests being performed.") + '</span>',
-                '</td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="item">' + _("Item") + '</label></td>',
-                '<td><select id="item" data="item" class="asm-selectbox asm-field">',
-                '<option value="-1">' + _("(no deduction)") + '</option>',
-                html.list_to_options(controller.stockitems, "ID", "ITEMNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="quantity">' + _("Quantity") + '</label></td>',
-                '<td><input id="quantity" data="quantity" type="text" class="asm-textbox asm-numberbox asm-field" /></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagetype">' + _("Usage Type") + '</label></td>',
-                '<td><select id="usagetype" data="usagetype" class="asm-selectbox asm-field">',
-                html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr id="usagedaterow" class="tagstock">',
-                '<td><label for="usagedate">' + _("Usage Date") + '</label></td>',
-                '<td><input id="usagedate" data="usagedate" class="asm-textbox asm-datebox asm-field" />',
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagecomments">' + _("Comments") + '</label></td>',
-                '<td><textarea id="usagecomments" data="usagecomments" class="asm-textarea asm-field"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newdate", type: "date", label: _("Performed") },
+                    { post_field: "testresult", type: "select", label: _("Result"), 
+                        options: { displayfield: "RESULTNAME", rows: controller.testresults }},
+                    { post_field: "renewon", type: "date", label: _("Retest"), nopast: true },
+                    { post_field: "givencost", type: "currency", label: _("Cost") },
+                    { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
+                    { type: "raw", fullrow: true, colclasses: "asm-header", rowclasses: "tagstock", 
+                        markup: _("Stock") + 
+                            ' <span id="callout-stock" class="asm-callout">' + 
+                            _("These fields allow you to deduct stock for the test(s) given. This single deduction should cover the selected tests being performed.") + 
+                            '</span>' },
+                    { post_field: "item", type: "select", label: _("Item"), rowclasses: "tagstock", 
+                        options: { displayfield: "ITEMNAME", rows: controller.stockitems, prepend: '<option value="-1">' + _("(no deduction)") + '</option>'} },
+                    { post_field: "quantity", type: "number", label: _("Quantity"), rowclasses: "tagstock" },
+                    { post_field: "usagetype", type: "select", label: _("Usage Type"), rowclasses: "tagstock", 
+                        options: { displayfield: "USAGETYPENAME", rows: controller.stockusagetypes}},
+                    { post_field: "usagedate", type: "date", label: _("Usage Date"), rowclasses: "tagstock" },
+                    { post_field: "usagecomments", type: "textarea", label: _("Comments"), rowclasses: "tagstock" }
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -366,28 +328,32 @@ $(function() {
                 let si = common.get_row(controller.stockitems, $("#item").val(), "ID");
                 $("#givencost").currency("value", si.UNITPRICE);
             });
-            givenbuttons[_("Save")] = async function() {
-                validate.reset("dialog-given");
-                if (!validate.notblank([ "newdate" ])) { return; }
-                $("#usagedate").val($("#newdate").val()); // copy given to usage
-                $("#dialog-given").disable_dialog_buttons();
-                let ids = tableform.table_ids(table);
-                try {
-                    await common.ajax_post("test", $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids);
-                    $.each(controller.rows, function(i, t) {
-                        if (tableform.table_id_selected(t.ID)) {
-                            t.DATEOFTEST = format.date_iso($("#newdate").val());
-                            t.TESTRESULTID = $("#testresult").val();
-                            t.RESULTNAME = common.get_field(controller.testresults, t.TESTRESULTID, "RESULTNAME");
+            givenbuttons[_("Perform")] = {
+                text: _("Perform"),
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset("dialog-given");
+                    if (!validate.notblank([ "newdate" ])) { return; }
+                    $("#usagedate").val($("#newdate").val()); // copy given to usage
+                    $("#dialog-given").disable_dialog_buttons();
+                    let ids = tableform.table_ids(table);
+                    try {
+                        await common.ajax_post("test", $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids);
+                        $.each(controller.rows, function(i, t) {
+                            if (tableform.table_id_selected(t.ID)) {
+                                t.DATEOFTEST = format.date_iso($("#newdate").val());
+                                t.TESTRESULTID = $("#testresult").val();
+                                t.RESULTNAME = common.get_field(controller.testresults, t.TESTRESULTID, "RESULTNAME");
+                            }
+                        });
+                        tableform.table_update(table);
+                    }
+                    finally {
+                        $("#dialog-given").dialog("close");
+                        $("#dialog-given").enable_dialog_buttons();
+                        if (controller.name == "animal_test") {
+                            common.route_reload();
                         }
-                    });
-                    tableform.table_update(table);
-                }
-                finally {
-                    $("#dialog-given").dialog("close");
-                    $("#dialog-given").enable_dialog_buttons();
-                    if (controller.name == "animal_test") {
-                        common.route_reload();
                     }
                 }
             };

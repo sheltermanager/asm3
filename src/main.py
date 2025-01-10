@@ -7477,7 +7477,7 @@ class vaccination(JSONEndpoint):
     def post_given(self, o):
         self.check(asm3.users.BULK_COMPLETE_VACCINATION)
         post = o.post
-        newdate = post.date("newdate")
+        newdate = post.date("givennewdate")
         rescheduledate = post.date("rescheduledate")
         reschedulecomments = post["reschedulecomments"]
         givenexpires = post.date("givenexpires")
