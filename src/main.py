@@ -7367,7 +7367,7 @@ class test(JSONEndpoint):
     def post_perform(self, o):
         self.check(asm3.users.CHANGE_TEST)
         newdate = o.post.date("newdate")
-        retestdate = o.post.date("retest")
+        retestdate = o.post.date("retestdate")
         reschedulecomments = o.post["usagecomments"]
         cost = o.post.integer("givencost")
         vet = o.post.integer("givenvet")

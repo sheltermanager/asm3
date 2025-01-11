@@ -170,9 +170,9 @@ $(function() {
                         });
                         $("#usagecomments").html(comments);
                         $("#newdate").date("today");
-                        $("#renewon").val("");
+                        $("#restestdate").val("");
                         let rd = test.calc_reschedule_date(new Date(), testtype);
-                        if (rd) { $("#renewon").date("setDate", rd); }
+                        if (rd) { $("#retestdate").date("setDate", rd); }
                         $("#givencost").currency("value", tableform.table_selected_row(table).COST);
                         $("#testresult").select("firstvalue");
                         $("#usagetype").select("firstvalue");
@@ -301,7 +301,7 @@ $(function() {
                     { post_field: "newdate", type: "date", label: _("Performed") },
                     { post_field: "testresult", type: "select", label: _("Result"), 
                         options: { displayfield: "RESULTNAME", rows: controller.testresults }},
-                    { post_field: "renewon", type: "date", label: _("Retest"), nopast: true },
+                    { post_field: "retestdate", type: "date", label: _("Retest"), nopast: true },
                     { post_field: "givencost", type: "currency", label: _("Cost") },
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
                     { type: "raw", fullrow: true, colclasses: "asm-header", rowclasses: "tagstock", 
