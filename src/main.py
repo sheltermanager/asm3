@@ -166,7 +166,9 @@ def asm_500_email() -> Any:
     """
     ei = sys.exc_info()
     path = web.ctx.path 
-    msg = f"database:\n\n{session.dbo}\n\ntraceback:\n\n{traceback.format_exc()}"
+    env = ""
+    for k, v in web.ctx.env.items(): env += f"{k}: {v}\n"
+    msg = f"{traceback.format_exc()}\n\nDatabase:\n\n{session.dbo}\n\nData:\n\n{web.ctx.query} {web.data()}\n\nEnvironment:\n\n{env}"
     asm3.utils.send_error_email(ei[0], ei[1], path, msg)
     s = """<!DOCTYPE html
         <html>
@@ -201,6 +203,8 @@ def asm_500() -> Any:
     Custom 500 error page that outputs the stack trace
     (web.InternalError)
     """
+    env = ""
+    for k, v in web.ctx.env.items(): env += f"{k}: {v}\n"
     s = f"""<!DOCTYPE html
         <html>
         <head>
@@ -214,10 +218,14 @@ def asm_500() -> Any:
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
         <img src="static/images/logo/icon-64.png" align="right" />
-        <h2>Error 500</h2>
-        <pre>{session.dbo}</pre>
-        <h3>Traceback:</h3>
+        <h2>Error 500 --&gt; {web.ctx.path}</h2>
         <pre>{traceback.format_exc()}</pre>
+        <h3>Database</h3>
+        <pre>{session.dbo}</pre>
+        <h3>Data</h3>
+        <pre>{web.ctx.query} {web.data()}</pre>
+        <h3>Enivronment</h3>
+        <pre>{env}</pre>
         </div>
         </body>
         </html>"""

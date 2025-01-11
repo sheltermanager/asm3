@@ -2026,7 +2026,7 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
 
     _send_email(msg, fromadd, tolist, dbo, exceptions=exceptions, retries=retries)
 
-def _send_email(msg: str, fromadd: str, tolist: List[str], dbo: Database = None, 
+def _send_email(msg: MIMEMultipart, fromadd: str, tolist: List[str], dbo: Database = None, 
                 exceptions: bool = True, retries: int = 1) -> bool:
     """
     Internal function to handle the final transmission of an email message.
@@ -2118,18 +2118,18 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
                 send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
     thread.start_new_thread(do_send, ())
 
-def send_error_email(errtype, errvalue, path, msg) -> None:
+def send_error_email(errtype, errvalue, path, errmsg) -> None:
     """
     Used for sending email messages about errors that have occurred.
     errtype, errvalue: The type and value of the exception (from sys.exc_info()[0] and [1])
     path: The URL path being accessed if applicable
-    msg: The error message to send in plain text
+    errmsg: The error message to send in plain text
     """
     msg = MIMEMultipart("mixed")
     msg["From"] = Header(ADMIN_EMAIL)
     msg["To"] = Header(ADMIN_EMAIL)
     msg["Subject"] = Header(f"{errtype}: {errvalue} ({path})")
-    msg.attach(MIMEText(msg), "plain")
+    msg.attach(MIMEText(errmsg, "plain"))
     _send_email(msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
 
 def send_user_email(dbo: Database, sendinguser: str, user: str, subject: str, body: str) -> None:
