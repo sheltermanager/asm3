@@ -167,7 +167,6 @@ $(function() {
                 h.push('</ul>');
                 h.push('</div>');
                 h.push('<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">');
-                h.push('<input type="hidden" id="diarytaskid" />');
                 h.push(tableform.fields_render([
                     { id: "seldate", type: "date", label: _("Date") }
                 ]));
@@ -181,7 +180,6 @@ $(function() {
                 h.push('</ul>');
                 h.push('</div>');
                 h.push('<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">');
-                h.push('<input type="hidden" id="diarytaskid" />');
                 h.push(tableform.fields_render([
                     { id: "seldate", type: "date", label: _("Date") }
                 ]));
@@ -238,12 +236,12 @@ $(function() {
                 let taskmode = task[0];
                 let taskid = task[1];
                 let taskneeddate = task[2];
-                $(this).click(function() {
+                $(this).click(async function() {
                     $("#seldate").val("");
                     // If the task needs a date, prompt for it
                     if (taskneeddate == "1") {
-                        $("#diarytaskid").val(taskid);
-                        $("#dialog-dt-date").dialog("open");
+                        await tableform.show_okcancel_dialog("#dialog-dt-date", _("Select"));
+                        create_task(taskid);
                     }
                     else {
                         // No need for anything else, go create the task
