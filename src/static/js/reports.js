@@ -223,7 +223,7 @@ $(function() {
                         tableform.show_okcancel_dialog("#dialog-headfoot", _("Save"), {
                             width: 800,
                             open: function() {
-                                try { $("#rhead, #rfoot").htmleditor("refresh"); } catch {}
+                                try { $("#rhead, #rfoot").htmleditor("refresh"); } catch(err) {}
                             },
                             okclick: async function() {
                                 let formdata = "mode=headfoot&" + $("#rhead, #rfoot").toPOST();
