@@ -10,8 +10,8 @@ const tableform = {
      * Renders a toolbar button set. 
      *
      * buttons: [
-     *      { id: "new", text: _("Text"), tooltip: _("Tooltip"), icon: "iconname", enabled: "always|multi|one", perm: "va", hideif: function() {}, click: tableform.click_delete }
-     *      { id: "buttonmenu", type: "buttonmenu", text: _("Text"), tooltip: _("Tooltip"), icon: "iconname", enabled: "always|multi|one", 
+     *      { id: "new", text: _("Text"), tooltip: _("Tooltip"), icon: "iconname", enabled: "always|multi|one|none", perm: "va", hideif: function() {}, click: tableform.click_delete }
+     *      { id: "buttonmenu", type: "buttonmenu", text: _("Text"), tooltip: _("Tooltip"), icon: "iconname", enabled: "always|multi|one|none", 
      *          hideif: function() {}, click: function(selval) {}}
      *      { id: "dropdownfilter", type: "dropdownfilter", options: [ "value1|text1", "value2|text2" ] }
      *      { type: "raw", markup: "<span>" }
@@ -97,7 +97,7 @@ const tableform = {
      * Binds events to a toolbar button set
      *
      * buttons: [
-     *      { id: "new", text: _("Text"), tooltip: _("Tooltip"), icon: "iconname", enabled: "always|multi|one", click: tableform.click_delete, mouseover: function(e), mouseleave: function(e) }
+     *      { id: "new", text: _("Text"), tooltip: _("Tooltip"), icon: "iconname", enabled: "always|multi|one|none", click: tableform.click_delete, mouseover: function(e), mouseleave: function(e) }
      * ]
      */
     buttons_bind: function(buttons) {
@@ -107,7 +107,7 @@ const tableform = {
                 if (v.click) { $("#button-" + v.id).click(v.click); }
                 if (v.mouseover) { $("#button-" + v.id).mouseover(v.mouseover); }
                 if (v.mouseleave) { $("#button-" + v.id).mouseleave(v.mouseleave); }
-                if (v.enabled != "always") { $("#button-" + v.id).button("disable"); }
+                if (v.enabled == "one" || v.enabled == "multi") { $("#button-" + v.id).button("disable"); }
             }
             else if (v.type == "buttonmenu") {
                 $("#button-" + v.id).asmmenu();
@@ -121,7 +121,7 @@ const tableform = {
                         });
                     }
                 });
-                if (v.enabled != "always") {
+                if (v.enabled == "one" || v.enabled == "multi") {
                     $("#button-" + v.id).addClass("ui-state-disabled").addClass("ui-button-disabled");
                 }
             }
@@ -142,10 +142,12 @@ const tableform = {
         $.each(buttons, function(i, v) {
             if (!v.type || v.type == "button") {
                 $("#button-" + v.id).button("enable");
-                if (v.enabled != "always") { $("#button-" + v.id).button("disable"); }
+                if (v.enabled == "one" || v.enabled == "multi") { 
+                    $("#button-" + v.id).button("disable"); 
+                }
             }
             else if (v.type == "buttonmenu") {
-                if (v.enabled != "always") { 
+                if (v.enabled == "one" || v.enabled == "multi") { 
                     $("#button-" + v.id).addClass("ui-state-disabled").addClass("ui-button-disabled");
                 }
             }
@@ -351,6 +353,9 @@ const tableform = {
                 enabled = true;
             }
             if (b.enabled == "one" && nosel == 1) {
+                enabled = true;
+            }
+            if (b.enabled == "none" && nosel == 0) {
                 enabled = true;
             }
             if (enabled) {

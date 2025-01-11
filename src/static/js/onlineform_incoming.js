@@ -63,7 +63,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "deleteprocessed", text: _("Delete Processed"), icon: "link", enabled: "always", perm: "dif", 
+                { id: "deleteprocessed", text: _("Delete Processed"), icon: "link", enabled: "none", perm: "dif", 
                     mouseover: function() {
                        onlineform_incoming.highlight_processed(true);
                     },
@@ -85,7 +85,7 @@ $(function() {
                         tableform.table_update(table);
                     }
                 },
-                { id: "deletespam", text: _("Delete Spam"), icon: "spam", enabled: "always", perm: "dif", 
+                { id: "deletespam", text: _("Delete Spam"), icon: "spam", enabled: "none", perm: "dif", 
                     mouseover: function() {
                        onlineform_incoming.highlight_spam(true);
                     },
