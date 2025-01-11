@@ -489,7 +489,7 @@ def get_onlineformincoming_headers(dbo: Database) -> Results:
     return dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
         "(SELECT MAX(Value) FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
         "CASE WHEN EXISTS(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='processed') THEN 1 ELSE 0 END AS Processed, " \
-        "CASE WHEN EXISTS(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='isspam') THEN 1 ELSE 0 END AS IsSpam " \
+        "CASE WHEN EXISTS(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='spam') THEN 1 ELSE 0 END AS Spam " \
         "FROM onlineformincoming f " \
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
         "ORDER BY f.PostedDate")
@@ -797,12 +797,12 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     # Do some spam/junk tests before accepting the form. If any of these fail, they are logged silently
     # and the submitter still receives the redirect to the thank you page so they don't know that something is up.
 
-    isspam = False
+    spam = False
     # Check our spambot checkbox/honey trap
     if asm3.configuration.onlineform_spam_honeytrap(dbo):
         if post[SPAMBOT_TXT] != "": 
             asm3.al.error("blocked spambot (honeytrap): %s" % post.data, "insert_onlineformincoming_from_form", dbo)
-            isspam = True
+            spam = True
             return
 
     # Check that the useragent looks like an actual browser
@@ -810,7 +810,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     if asm3.configuration.onlineform_spam_ua_check(dbo):
         if not useragent.strip().startswith("Mozilla"):
             asm3.al.error("blocked spambot (bad ua: %s): %s" % (useragent, post.data), "insert_onlineformincoming_from_form", dbo)
-            isspam = True
+            spam = True
             return
 
     # Look for junk in firstname. A lot of bot submitted junk is just random upper and lower case letters. 
@@ -833,11 +833,11 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                         lc += 1
                 if lc >= 3 and uc >= 3 and sp == 0:
                     asm3.al.error("blocked spambot (mixed caps, firstname=%s, uc=%s, lc=%s, sp=%s): %s" % (v, uc, lc, sp, post.data), "insert_onlineformincoming_from_form", dbo)
-                    isspam = True
+                    spam = True
                     return
                 if v.find("@") != -1 and v.find(".") != -1:
                     asm3.al.error("blocked spambot (email in firstname, firstname=%s): %s" % (v, post.data), "insert_onlineformincoming_from_form", dbo)
-                    isspam = True
+                    spam = True
                     return
 
     collationid = get_collationid(dbo)
@@ -860,8 +860,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
     post.data["ipaddress"] = remoteip
     post.data["useragent"] = useragent
-    if isspam == True:
-        post.data["isspam"] = "1"
+    if spam: post.data["spam"] = "1"
 
     for k, v in post.data.items():
 
@@ -1084,7 +1083,8 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             subject, formdata, "html", images, exceptions=False, fromoverride=False)
 
     # Does this form have an option set to autoprocess it? If not, stop now
-    if formdef.autoprocess is None or formdef.autoprocess == AP_NO or isspam == True: return collationid
+    # also stop at this point if we think the form is spam
+    if formdef.autoprocess is None or formdef.autoprocess == AP_NO or spam: return collationid
 
     try:
         if formdef.autoprocess == AP_ATTACHANIMAL:

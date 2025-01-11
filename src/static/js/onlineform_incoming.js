@@ -42,7 +42,7 @@ $(function() {
                         if (row.PROCESSED) {
                             s += html.icon("link", _("This form has been previously processed")) + " ";
                         }
-                        if (row.ISSPAM) {
+                        if (row.SPAM) {
                             s += html.icon("spam", _("This form has marked as spam")) + " ";
                         }
                         s += html.truncate(row.PREVIEW); 
@@ -63,7 +63,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "deleteprocessed", text: _("Delete Processed"), icon: "delete", enabled: "always", perm: "dif", 
+                { id: "deleteprocessed", text: _("Delete Processed"), icon: "link", enabled: "always", perm: "dif", 
                     mouseover: function() {
                        onlineform_incoming.highlight_processed(true);
                     },
@@ -85,7 +85,7 @@ $(function() {
                         tableform.table_update(table);
                     }
                 },
-                { id: "deletespam", text: _("Delete Spam"), icon: "delete", enabled: "always", perm: "dif", 
+                { id: "deletespam", text: _("Delete Spam"), icon: "spam", enabled: "always", perm: "dif", 
                     mouseover: function() {
                        onlineform_incoming.highlight_spam(true);
                     },
@@ -96,7 +96,7 @@ $(function() {
                         await tableform.delete_dialog();
                         let ids=[]; // select the rows so we can use remove_selected to update the table
                         $.each(controller.rows, function(i, v) {
-                            if (v.LINK || v.ISSPAM) { 
+                            if (v.LINK || v.SPAM) { 
                                 ids.push(v.COLLATIONID); 
                                 $("[data-id='" + v.COLLATIONID + "']").prop("checked", true);
                             }
@@ -411,7 +411,7 @@ $(function() {
             let bval = "1px solid red";
             if (!enable) { bval = ""; }
             $.each(controller.rows, function(i, v) {
-                if (v.LINK || v.ISSPAM) {
+                if (v.LINK || v.SPAM) {
                     $("[data-id='" + v.COLLATIONID + "']").closest("tr").find("td").css({ border: bval });
                 }
             });
