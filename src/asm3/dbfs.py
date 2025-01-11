@@ -263,7 +263,7 @@ class S3Storage(DBFSStorage):
         except Exception as err:
             asm3.al.error(f"[{attempts}]: {err}", "dbfs.S3Storage._s3_put_object", self.dbo)
             if attempts > 5:
-                asm3.utils.send_error_email()
+                asm3.utils.send_error_email("DBFSError", ">5 PUT attempts", "dbfs", f"Failed to store {key} in {bucket} after 5 attempts [{self.dbo.database}]")
             else:
                 time.sleep(10 * attempts) # wait an increasingly longer amount of time between retries
                 self._s3_put_object(bucket, key, body, attempts+1)

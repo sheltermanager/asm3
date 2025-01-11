@@ -491,63 +491,26 @@ $(function() {
         render_givendialog: function() {
             return [
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Give Treatments")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newdate">' + _("Given") + '</label></td>',
-                '<td><input id="newdate" data="newdate" data-nofuture="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenby">' + _("By") + '</label></td>',
-                '<td>',
-                '<select id="givenby" data="givenby" class="asm-selectbox asm-field">',
-                '<option value=""></option>',
-                html.list_to_options(controller.users, "USERNAME", "USERNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
-                '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="treatmentcomments">' + _("Comments") + '</label></td>',
-                '<td><textarea id="treatmentcomments" data="treatmentcomments" class="asm-textarea asm-field"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td class="asm-header" colspan="2">',
-                _("Stock"),
-                '<span id="callout-stock" class="asm-callout">' + _("These fields allow you to deduct stock for the treatment(s) given. This single deduction should cover the selected treatments being administered.") + '</span>',
-                '</td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="item">' + _("Item") + '</label></td>',
-                '<td><select id="item" data="item" class="asm-selectbox asm-field">',
-                '<option value="-1">' + _("(no deduction)") + '</option>',
-                html.list_to_options(controller.stockitems, "ID", "ITEMNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="quantity">' + _("Quantity") + '</label></td>',
-                '<td><input id="quantity" data="quantity" type="text" class="asm-textbox asm-numberbox asm-field" /></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagetype">' + _("Usage Type") + '</label></td>',
-                '<td><select id="usagetype" data="usagetype" class="asm-selectbox asm-field">',
-                html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagedate">' + _("Usage Date") + '</label></td>',
-                '<td><input id="usagedate" data="usagedate" class="asm-textbox asm-datebox asm-field" />',
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagecomments">' + _("Comments") + '</label></td>',
-                '<td><textarea id="usagecomments" data="usagecomments" class="asm-textarea asm-field"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newdate", type: "date", label: _("Given"), nofuture: true },
+                    { post_field: "givenby", type: "select", label: _("By"), 
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>' }},
+                    { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
+                    { post_field: "treatmentcomments", type: "textarea", label: _("Comments") },
+                    { type: "raw", fullrow: true, colclasses: "asm-header", rowclasses: "tagstock", 
+                        markup: _("Stock") + 
+                            ' <span id="callout-stock" class="asm-callout">' + 
+                            _("These fields allow you to deduct stock for the treatment(s) given. This single deduction should cover the selected treatments being administered.") + 
+                            '</span>' },
+                    { post_field: "item", type: "select", label: _("Item"), rowclasses: "tagstock", 
+                        options: { displayfield: "ITEMNAME", rows: controller.stockitems, prepend: '<option value="-1">' + _("(no deduction)") + '</option>'} },
+                    { post_field: "quantity", type: "number", label: _("Quantity"), rowclasses: "tagstock" },
+                    { post_field: "usagetype", type: "select", label: _("Usage Type"), rowclasses: "tagstock", 
+                        options: { displayfield: "USAGETYPENAME", rows: controller.stockusagetypes}},
+                    { post_field: "usagedate", type: "date", label: _("Usage Date"), rowclasses: "tagstock" },
+                    { post_field: "usagecomments", type: "textarea", label: _("Comments"), rowclasses: "tagstock" }
+
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -555,29 +518,33 @@ $(function() {
         bind_givendialog: function() {
 
             let givenbuttons = { };
-            givenbuttons[_("Save")] = async function() {
-                validate.reset();
-                if (!validate.notblank([ "newdate" ])) { return; }
-                $("#usagedate").val($("#newdate").val()); // copy given to usage
-                $("#dialog-given").disable_dialog_buttons();
-                let ids = medical.selected_treatment_ids();
-                let newdate = encodeURIComponent($("#newdate").val());
-                try {
-                    await common.ajax_post("medical", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids);
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.COMPOSITEID)) {
-                            v.DATEGIVEN = format.date_iso($("#newdate").val());
-                            if (!v.GIVENBY) { v.GIVENBY = asm.user; }
-                            v.TREATMENTCOMMENTS = $("#treatmentcomments").val();
+            givenbuttons[_("Give")] = {
+                text: _("Give"),
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset();
+                    if (!validate.notblank([ "newdate" ])) { return; }
+                    $("#usagedate").val($("#newdate").val()); // copy given to usage
+                    $("#dialog-given").disable_dialog_buttons();
+                    let ids = medical.selected_treatment_ids();
+                    let newdate = encodeURIComponent($("#newdate").val());
+                    try {
+                        await common.ajax_post("medical", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids);
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                v.DATEGIVEN = format.date_iso($("#newdate").val());
+                                if (!v.GIVENBY) { v.GIVENBY = asm.user; }
+                                v.TREATMENTCOMMENTS = $("#treatmentcomments").val();
+                            }
+                        });
+                        tableform.table_update(medical.table);
+                    }
+                    finally {
+                        $("#dialog-given").dialog("close");
+                        $("#dialog-given").enable_dialog_buttons();
+                        if (controller.name == "animal_medical") {
+                            common.route_reload();
                         }
-                    });
-                    tableform.table_update(medical.table);
-                }
-                finally {
-                    $("#dialog-given").dialog("close");
-                    $("#dialog-given").enable_dialog_buttons();
-                    if (controller.name == "animal_medical") {
-                        common.route_reload();
                     }
                 }
             };
@@ -600,12 +567,9 @@ $(function() {
         render_requireddialog: function() {
             return [
                 '<div id="dialog-required" style="display: none" title="' + html.title(_("Change Date Required")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newdater">' + _("Required") + '</label></td>',
-                '<td><input id="newdater" data="newdater" type="text" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "newdater", type: "date", label: _("Required") }
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -613,24 +577,28 @@ $(function() {
         bind_requireddialog: function() {
 
             let requiredbuttons = { };
-            requiredbuttons[_("Save")] = async function() {
-                validate.reset();
-                if (!validate.notblank([ "newdater" ])) { return; }
-                $("#dialog-required").disable_dialog_buttons();
-                let ids = medical.selected_treatment_ids();
-                let newdate = encodeURIComponent($("#newdater").val());
-                try {
-                    await common.ajax_post("medical", "mode=required&newdate=" + newdate + "&ids=" + ids);
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.COMPOSITEID)) {
-                            v.DATEREQUIRED = format.date_iso($("#newdater").val());
-                        }
-                    });
-                    tableform.table_update(medical.table);
-                }
-                finally {
-                    $("#dialog-required").dialog("close");
-                    $("#dialog-required").enable_dialog_buttons();
+            requiredbuttons[_("Change")] = {
+                text: _("Change"), 
+                "class": "asm-dialog-actionbutton", 
+                click: async function() {
+                    validate.reset();
+                    if (!validate.notblank([ "newdater" ])) { return; }
+                    $("#dialog-required").disable_dialog_buttons();
+                    let ids = medical.selected_treatment_ids();
+                    let newdate = encodeURIComponent($("#newdater").val());
+                    try {
+                        await common.ajax_post("medical", "mode=required&newdate=" + newdate + "&ids=" + ids);
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                v.DATEREQUIRED = format.date_iso($("#newdater").val());
+                            }
+                        });
+                        tableform.table_update(medical.table);
+                    }
+                    finally {
+                        $("#dialog-required").dialog("close");
+                        $("#dialog-required").enable_dialog_buttons();
+                    }
                 }
             };
             requiredbuttons[_("Cancel")] = function() {

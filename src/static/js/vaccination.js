@@ -246,12 +246,9 @@ $(function() {
         render_requireddialog: function() {
             return [
                 '<div id="dialog-required" style="display: none" title="' + html.title(_("Change Date Required")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="newdate">' + _("Required") + '</label></td>',
-                '<td><input id="newdate" data="newdate" type="text" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([ 
+                    { post_field: "newdate", type: "date", label: _("Required") }
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -259,24 +256,28 @@ $(function() {
         bind_requireddialog: function() {
 
             let requiredbuttons = { }, table = vaccination.table;
-            requiredbuttons[_("Save")] = async function() {
-                validate.reset("dialog-required");
-                if (!validate.notblank([ "newdate" ])) { return; }
-                $("#dialog-required").disable_dialog_buttons();
-                let ids = tableform.table_ids(table);
-                let newdate = encodeURIComponent($("#newdate").val());
-                try {
-                    await common.ajax_post("vaccination", "mode=required&newdate=" + newdate + "&ids=" + ids);
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.ID)) {
-                            v.DATEREQUIRED = format.date_iso($("#newdate").val());
-                        }
-                    });
-                    tableform.table_update(table);
-                }
-                finally {
-                    $("#dialog-required").dialog("close");
-                    $("#dialog-required").enable_dialog_buttons();
+            requiredbuttons[_("Change")] = {
+                text: _("Change"),
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset("dialog-required");
+                    if (!validate.notblank([ "newdate" ])) { return; }
+                    $("#dialog-required").disable_dialog_buttons();
+                    let ids = tableform.table_ids(table);
+                    let newdate = encodeURIComponent($("#newdate").val());
+                    try {
+                        await common.ajax_post("vaccination", "mode=required&newdate=" + newdate + "&ids=" + ids);
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.ID)) {
+                                v.DATEREQUIRED = format.date_iso($("#newdate").val());
+                            }
+                        });
+                        tableform.table_update(table);
+                    }
+                    finally {
+                        $("#dialog-required").dialog("close");
+                        $("#dialog-required").enable_dialog_buttons();
+                    }
                 }
             };
             requiredbuttons[_("Cancel")] = function() {
@@ -370,97 +371,34 @@ $(function() {
         render_givendialog: function() {
             return [
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Give Vaccination")) + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="givennewdate">' + _("Given") + '</label></td>',
-                '<td><input id="givennewdate" data="newdate" data-nofuture="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenexpires">' + _("Expires") + '</label>',
-                '<span id="callout-givenexpires" class="asm-callout">' + _('Optional, the date the vaccination "wears off" and needs to be administered again') + '</span>',
-                '</td>',
-                '<td><input id="givenexpires" data="givenexpires" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenbatch">' + _("Batch Number") + '</label></td>',
-                '<td><input id="givenbatch" data="givenbatch" type="text" class="asm-textbox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<tr>',
-                '<td><label for="givenmanufacturer">' + _("Manufacturer") + '</label></td>',
-                '<td><input id="givenmanufacturer" data="givenmanufacturer" type="text" class="asm-textbox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<tr>',
-                '<td><label for="givencost">' + _("Cost") + '</label></td>',
-                '<td><input id="givencost" data="givencost" type="text" class="asm-textbox asm-currencybox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenrabiestag">' + _("Rabies Tag") + '</label></td>',
-                '<td><input id="givenrabiestag" data="givenrabiestag" type="text" class="asm-textbox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenby">' + _("By") + '</label></td>',
-                '<td>',
-                '<select id="givenby" data="givenby" class="asm-selectbox asm-field">',
-                '<option value=""></option>',
-                html.list_to_options(controller.users, "USERNAME", "USERNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
-                '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td colspan="2" class="asm-header">',
-                _("Reschedule"),
-                '<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>',
-                '</td>',
-                '<tr>',
-                '<td><label for="rescheduledate">' + _("Reschedule") + '</label>',
-                '</td>',
-                '<td><input id="rescheduledate" data="rescheduledate" data-nopast="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="reschedulecomments">' + _("Comments") + '</label></td>',
-                '<td><textarea id="reschedulecomments" data="reschedulecomments" class="asm-textarea asm-field"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td colspan="2" class="asm-header">',
-                _("Stock"),
-                '<span id="callout-stock" class="asm-callout">' + _("These fields allow you to deduct stock for the vaccination(s) given. This single deduction should cover the selected vaccinations being administered.") + '</span>',
-                '</td>',
-                '<tr>',
-                '<tr class="tagstock">',
-                '<td><label for="item">' + _("Item") + '</label></td>',
-                '<td><select id="item" data="item" class="asm-selectbox asm-field">',
-                '<option value="-1">' + _("(no deduction)") + '</option>',
-                html.list_to_options(controller.stockitems, "ID", "ITEMNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="quantity">' + _("Quantity") + '</label></td>',
-                '<td><input id="quantity" data="quantity" type="text" class="asm-textbox asm-numberbox asm-field" /></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagetype">' + _("Usage Type") + '</label></td>',
-                '<td><select id="usagetype" data="usagetype" class="asm-selectbox asm-field">',
-                html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr id="usagedaterow" class="tagstock">',
-                '<td><label for="usagedate">' + _("Usage Date") + '</label></td>',
-                '<td><input id="usagedate" data="usagedate" class="asm-textbox asm-datebox asm-field" />',
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagecomments">' + _("Comments") + '</label></td>',
-                '<td><textarea id="usagecomments" data="usagecomments" class="asm-textarea asm-field"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "givennewdate", type: "date", label: _("Given"), nofuture: true },
+                    { post_field: "givenexpires", type: "date", label: _("Expires"),  
+                        callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
+                    { post_field: "givenbatch", type: "text", label: _("Batch Number") },
+                    { post_field: "givenmanufacturer", type: "text", label: _("Manufacturer") },
+                    { post_field: "givencost", type: "currency", label: _("Cost") },
+                    { post_field: "givenrabiestag", type: "text", label: _("Rabies Tag") },
+                    { post_field: "givenby", type: "select", label: _("By"), 
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>'}},
+                    { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
+                    { type: "raw", fullrow: true, colclasses: "asm-header", markup: _("Reschedule") + 
+                        '<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>' },
+                    { post_field: "rescheduledate", type: "date", label: _("Reschedule"), nopast: true },
+                    { post_field: "reschedulecomments", type: "textarea", label: _("Comments") },
+                    { type: "raw", fullrow: true, colclasses: "asm-header", rowclasses: "tagstock", 
+                        markup: _("Stock") + 
+                            ' <span id="callout-stock" class="asm-callout">' + 
+                            _("These fields allow you to deduct stock for the vaccination(s) given. This single deduction should cover the selected vaccinations being administered.") + 
+                            '</span>' },
+                    { post_field: "item", type: "select", label: _("Item"), rowclasses: "tagstock", 
+                        options: { displayfield: "ITEMNAME", rows: controller.stockitems, prepend: '<option value="-1">' + _("(no deduction)") + '</option>'} },
+                    { post_field: "quantity", type: "number", label: _("Quantity"), rowclasses: "tagstock" },
+                    { post_field: "usagetype", type: "select", label: _("Usage Type"), rowclasses: "tagstock", 
+                        options: { displayfield: "USAGETYPENAME", rows: controller.stockusagetypes}},
+                    { post_field: "usagedate", type: "date", label: _("Usage Date"), rowclasses: "tagstock" },
+                    { post_field: "usagecomments", type: "textarea", label: _("Comments"), rowclasses: "tagstock" }
+                ]),
                 '</div>'
             ].join("\n");
         },
@@ -472,26 +410,30 @@ $(function() {
                 $("#givenbatch").val( si.BATCHNUMBER );
                 $("#givencost").currency("value", si.UNITPRICE);
             });
-            givenbuttons[_("Save")] = async function() {
-                validate.reset("dialog-given");
-                if (!validate.notblank([ "givennewdate" ])) { return; }
-                $("#usagedate").val($("#givennewdate").val()); // copy given to usage
-                $("#dialog-given").disable_dialog_buttons();
-                let ids = tableform.table_ids(table);
-                try {
-                    await common.ajax_post("vaccination", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids);
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.ID)) {
-                            v.DATEOFVACCINATION = format.date_iso($("#givennewdate").val());
+            givenbuttons[_("Give")] = {
+                text: _("Give"), 
+                "class": "asm-dialog-actionbutton",
+                click: async function() {
+                    validate.reset("dialog-given");
+                    if (!validate.notblank([ "givennewdate" ])) { return; }
+                    $("#usagedate").val($("#givennewdate").val()); // copy given to usage
+                    $("#dialog-given").disable_dialog_buttons();
+                    let ids = tableform.table_ids(table);
+                    try {
+                        await common.ajax_post("vaccination", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids);
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.ID)) {
+                                v.DATEOFVACCINATION = format.date_iso($("#givennewdate").val());
+                            }
+                        });
+                        tableform.table_update(table);
+                    }
+                    finally {
+                        $("#dialog-given").dialog("close");
+                        $("#dialog-given").enable_dialog_buttons();
+                        if (controller.name == "animal_vaccination") {
+                            common.route_reload();
                         }
-                    });
-                    tableform.table_update(table);
-                }
-                finally {
-                    $("#dialog-given").dialog("close");
-                    $("#dialog-given").enable_dialog_buttons();
-                    if (controller.name == "animal_vaccination") {
-                        common.route_reload();
                     }
                 }
             };

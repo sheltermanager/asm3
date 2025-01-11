@@ -1136,7 +1136,7 @@ const tableform = {
         if (v.classes) { c += " " + v.classes; }
         if (v.halfsize) { c += v.type == "select" ? " asm-halfselectbox" : " asm-halftextbox"; }
         if (v.doublesize) { c += v.type == "select" ? " asm-doubleselectbox" : " asm-doubletextbox"; }
-        return ' class="' + c + '" ';
+        return ' class="asm-field ' + c + '" ';
     },
 
     /**
@@ -1452,7 +1452,12 @@ const tableform = {
     },
 
     render_markup: function(v) {
-        if (v.fullrow) { return '<tr><td colspan="2">' + v.markup + '</td></tr>'; }
+        if (v.fullrow) { 
+            let colclasses = "", rowclasses = "";
+            if (v.colclasses) { colclasses = v.colclasses; }
+            if (v.rowclasses) { rowclasses = v.rowclasses; }
+            return '<tr class="' + rowclasses + '"><td class="' + colclasses + '" colspan="2">' + v.markup + '</td></tr>'; 
+        }
         return tableform._render_formfield(v, v.markup);
     },
 

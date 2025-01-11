@@ -28,6 +28,9 @@ class PetFBIPublisher(FTPPublisher):
     def fbiGetFound(self) -> Results:
         return asm3.lostfound.get_foundanimal_find_simple(self.dbo)
     
+    def fbiGetLost(self) -> Results:
+        return asm3.lostfound.get_lostanimal_find_simple(self.dbo)
+    
     def fbiGetStrayHold(self) -> Results:
         return self.dbo.query("%s WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.HasPermanentFoster=0 " \
             "AND a.HasTrialAdoption=0 AND a.EntryTypeID=2 AND a.IsHold=1" % self.fbiQuery())
@@ -39,7 +42,8 @@ class PetFBIPublisher(FTPPublisher):
             "a.EntryTypeID, et.EntryTypeName AS EntryTypeName, er.ReasonName AS EntryReasonName, " \
             "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, a.HealthProblems, a.IsNotAvailableForAdoption, " \
             "a.Neutered, a.IsGoodWithDogs, a.IsGoodWithCats, a.IsGoodWithChildren, a.IsHouseTrained, a.IsCourtesy, a.Declawed, a.CrueltyCase, a.HasSpecialNeeds, " \
-            "web.ID AS WebsiteMediaID, web.MediaName AS WebsiteMediaName, web.Date AS WebsiteMediaDate " \
+            "web.ID AS WebsiteMediaID, web.MediaName AS WebsiteMediaName, web.Date AS WebsiteMediaDate, " \
+            "1 AS RecentlyChangedImages" \
             "FROM animal a " \
             "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
             "INNER JOIN breed b2 ON a.Breed2ID = b2.ID " \
@@ -73,6 +77,7 @@ class PetFBIPublisher(FTPPublisher):
         
         animals = self.fbiGetStrayHold()
         foundanimals = self.fbiGetFound()
+        lostanimals = self.fbiGetLost()
 
         if len(animals) == 0 and len(foundanimals) == 0:
             self.setLastError("No animals found to publish.")
@@ -88,6 +93,26 @@ class PetFBIPublisher(FTPPublisher):
             return
 
         csv = []
+
+        # Lost Animals
+        anCount = 0
+        for an in lostanimals:
+            try:
+                anCount += 1
+                self.log("Processing Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(lostanimals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.stopPublishing()
+                    return
+
+                csv.append( self.processLostAnimal(an, shelterid) )
+
+                # Mark success in the log
+                self.logSuccess("Processed Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(lostanimals)))
+
+            except Exception as err:
+                self.logError("Failed processing lost animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
         # Found Animals
         anCount = 0
@@ -199,6 +224,59 @@ class PetFBIPublisher(FTPPublisher):
         line.append(str(asm3.i18n.python2unix(an.DATEFOUND)))
         # PickupAddress
         line.append(an.AREAFOUND)
+        # LastUpdated
+        line.append(str(asm3.i18n.python2unix(an.LASTCHANGEDDATE)))
+        return self.csvLine(line)
+    
+    def processLostAnimal(self, an: ResultRow, shelterid: str = "") -> str:
+        """
+        Processes a lost animal and returns a CSV line
+        """
+        line = []
+        # OrgID
+        line.append(shelterid)
+        # PetID
+        line.append("L%s" % an.ID)
+        # Status
+        line.append("Lost")
+        # Name
+        line.append(str(an.ID))
+        # Species
+        line.append(an.SPECIESNAME)
+        # Sex
+        line.append(an.SEXNAME)
+        # PrimaryBreed
+        line.append(an.BREEDNAME)
+        # SecondaryBreed
+        line.append("")
+        # Age, one of Baby, Young, Adult, Senior - just happens to match our default age groups
+        line.append(an.AGEGROUP)
+        # Altered - don't have
+        line.append("")
+        # Size, one of Small, Medium or Large or X-Large - also don't have
+        line.append("")
+        # ZipPostal
+        line.append(an.AREAPOSTCODE)
+        # Description
+        notes = str(an.DISTFEAT) + "\n" + str(an.COMMENTS)
+        # Strip carriage returns
+        notes = notes.replace("\r\n", "<br />")
+        notes = notes.replace("\r", "<br />")
+        notes = notes.replace("\n", "<br />")
+        notes = notes.replace("\"", "&ldquo;")
+        notes = notes.replace("'", "&lsquo;")
+        notes = notes.replace("`", "&lsquo;")
+        line.append(notes)
+        # Photo
+        line.append("")
+        # Colour
+        line.append(an.BASECOLOURNAME)
+        # MedicalConditions
+        line.append("")
+        # IntakeDate
+        line.append(str(asm3.i18n.python2unix(an.DATELOST)))
+        # PickupAddress
+        line.append(an.AREALOST)
         # LastUpdated
         line.append(str(asm3.i18n.python2unix(an.LASTCHANGEDDATE)))
         return self.csvLine(line)
