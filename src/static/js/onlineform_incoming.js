@@ -42,6 +42,9 @@ $(function() {
                         if (row.PROCESSED) {
                             s += html.icon("link", _("This form has been previously processed")) + " ";
                         }
+                        if (row.ISSPAM) {
+                            s += html.icon("spam", _("This form has marked as spam")) + " ";
+                        }
                         s += html.truncate(row.PREVIEW); 
                         return s;
                     }},
@@ -72,6 +75,28 @@ $(function() {
                         let ids=[]; // select the rows so we can use remove_selected to update the table
                         $.each(controller.rows, function(i, v) {
                             if (v.LINK || v.PROCESSED) { 
+                                ids.push(v.COLLATIONID); 
+                                $("[data-id='" + v.COLLATIONID + "']").prop("checked", true);
+                            }
+                        });
+                        await common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids.join(","));
+                        tableform.buttons_default_state(buttons);
+                        tableform.table_remove_selected_from_json(table, controller.rows);
+                        tableform.table_update(table);
+                    }
+                },
+                { id: "deletespam", text: _("Delete Spam"), icon: "delete", enabled: "always", perm: "dif", 
+                    mouseover: function() {
+                       onlineform_incoming.highlight_spam(true);
+                    },
+                    mouseleave: function() {
+                       onlineform_incoming.highlight_spam(false);
+                    },
+                    click: async function() {
+                        await tableform.delete_dialog();
+                        let ids=[]; // select the rows so we can use remove_selected to update the table
+                        $.each(controller.rows, function(i, v) {
+                            if (v.LINK || v.ISSPAM) { 
                                 ids.push(v.COLLATIONID); 
                                 $("[data-id='" + v.COLLATIONID + "']").prop("checked", true);
                             }
@@ -374,6 +399,19 @@ $(function() {
             if (!enable) { bval = ""; }
             $.each(controller.rows, function(i, v) {
                 if (v.LINK || v.PROCESSED) {
+                    $("[data-id='" + v.COLLATIONID + "']").closest("tr").find("td").css({ border: bval });
+                }
+            });
+        },
+
+         /**
+         * Puts a red border around all forms identified as spam in the list
+         */
+         highlight_spam: function(enable) {
+            let bval = "1px solid red";
+            if (!enable) { bval = ""; }
+            $.each(controller.rows, function(i, v) {
+                if (v.LINK || v.ISSPAM) {
                     $("[data-id='" + v.COLLATIONID + "']").closest("tr").find("td").css({ border: bval });
                 }
             });
