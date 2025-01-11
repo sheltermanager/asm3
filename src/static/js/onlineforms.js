@@ -191,7 +191,22 @@ $(function() {
                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", 
                     tooltip: _("Edit online form HTML header/footer"), perm: "eof", 
                     click: function() {
-                        $("#dialog-headfoot").dialog("open");
+                        tableform.show_okcancel_dialog("#dialog-headfoot", _("Save"), {
+                            width: 800,
+                            open: function() { 
+                                try { $("#rhead, #rfoot").htmleditor("refresh"); } catch {}
+                            },
+                            okclick: async function() {
+                                let formdata = "mode=headfoot&" + $("#rhead, #rfoot").toPOST();
+                                await common.ajax_post("onlineforms", formdata);                    
+                                header.show_info(_("Updated."));
+                            },
+                            redbutton: _("Revert to default"),
+                            redclick: async function() {
+                                await common.ajax_post("onlineforms", "mode=headfoot&header=&footer=");
+                                header.show_info(_("Updated."));
+                                common.route_reload(); 
+                            }});
                     }
                 },
                 { id: "import", text: _("Import"), icon: "database", enabled: "always", 
@@ -236,54 +251,6 @@ $(function() {
             ].join("\n");
         },
 
-        bind_headfoot: function() {
-            let headfootbuttons = {};
-            headfootbuttons[_("Revert")] = {
-                text: _("Revert to default"),
-                "class": 'asm-redbutton',
-                click: async function() {
-                    let formdata = "mode=headfoot&header=&footer=";
-                    try {
-                        await common.ajax_post("onlineforms", formdata);                    
-                        header.show_info(_("Updated."));
-                        common.route_reload(); 
-                    }
-                    finally {
-                        $("#dialog-headfoot").dialog("close");
-                    }
-                }
-            };
-            headfootbuttons[_("Save")] = {
-                text: _("Save"),
-                "class": 'asm-dialog-actionbutton',
-                click: async function() {
-                    try {
-                        let formdata = "mode=headfoot&" + $("#rhead, #rfoot").toPOST();
-                        await common.ajax_post("onlineforms", formdata);
-                        header.show_info(_("Updated."));
-                    }
-                    finally {
-                        $("#dialog-headfoot").dialog("close");
-                    }
-                }
-            };
-            headfootbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
-            $("#dialog-headfoot").dialog({
-                autoOpen: false,
-                resizable: true,
-                height: "auto",
-                width: 800,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: headfootbuttons,
-                open: function() {
-                    $("#rhead, #rfoot").htmleditor("refresh");
-                }
-            });
-        },
-
         check_redirect_url: function() {
             let u = $("#redirect").val();
             if (u && u.indexOf("http") != 0) { $("#redirect").val( "https://" + u ); }
@@ -307,7 +274,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            this.bind_headfoot();
             this.load_person_flags();
         },
 

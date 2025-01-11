@@ -2078,7 +2078,7 @@ const tableform = {
         // If this dialog has already been created, destroy it first
         common.widget_destroy(selector, "dialog", true);
 
-        if (!o) { o = { notblank: [], notzero: [], callback: null }; }
+        if (!o) { o = { notblank: [], notzero: [], okclick: null, redbutton: null, redclick: null, cancelclick: null }; }
         $.extend(o, {
             autoOpen: false,
             modal: true,
@@ -2094,7 +2094,7 @@ const tableform = {
                 "class": "asm-redbutton",
                 click: function() {
                     $(selector).dialog("close");
-                    if (o.redcallback) { o.redcallback(); }
+                    if (o.redclick) { o.redclick(); }
                     deferred.resolve("red");
                 }
             };
@@ -2113,15 +2113,21 @@ const tableform = {
                     if (!validate.notzero(o.notzero)) { return; }
                 }
                 $(selector).dialog("close");
-                if (o.callback) { o.callback(); }
+                if (o.okclick) { o.okclick(); }
                 deferred.resolve("ok");
             }
         };
 
         if (!o.hidecancel) {
-            b[_("Cancel")] = function() { 
-                $(this).dialog("close"); 
-                deferred.reject("dialog cancelled");
+            let canceltext = _("Cancel");
+            if (o.canceltext) { canceltext = o.canceltext; }
+            b[canceltext] = {
+                text: canceltext, 
+                click: function() { 
+                    $(this).dialog("close"); 
+                    if (o.cancelclick) { o.cancelclick(); }
+                    deferred.reject("dialog cancelled");
+                }
             };
         }
 

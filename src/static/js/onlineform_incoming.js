@@ -63,7 +63,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "deleteprocessed", text: _("Delete Processed"), icon: "link", enabled: "none", perm: "dif", 
+                { id: "deleteprocessed", text: _("Delete Processed"), icon: "delete", enabled: "none", perm: "dif", 
                     mouseover: function() {
                        onlineform_incoming.highlight_processed(true);
                     },

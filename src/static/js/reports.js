@@ -220,7 +220,22 @@ $(function() {
                 },
                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "report", enabled: "always", tooltip: _("Edit report template HTML header/footer"),
                     click: function() {
-                        $("#dialog-headfoot").dialog("open");
+                        tableform.show_okcancel_dialog("#dialog-headfoot", _("Save"), {
+                            width: 800,
+                            open: function() {
+                                try { $("#rhead, #rfoot").htmleditor("refresh"); } catch {}
+                            },
+                            okclick: async function() {
+                                let formdata = "mode=headfoot&" + $("#rhead, #rfoot").toPOST();
+                                await common.ajax_post("reports", formdata);                    
+                                header.show_info(_("Updated."));
+                            },
+                            redbutton: _("Revert to default"),
+                            redclick: async function() {
+                                await common.ajax_post("reports", "mode=headfoot&header=&footer=");
+                                header.show_info(_("Updated."));
+                                common.route_reload(); 
+                            }});
                     }
                 },
                 { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
@@ -302,7 +317,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            reports.bind_headfoot();
             reports.qb.bind();
             reports.bind_browse_smcom();
             reports.bind_dialogbuttons();
@@ -319,53 +333,6 @@ $(function() {
             }
         },
 
-        bind_headfoot: function() {
-            let headfootbuttons = {};
-            headfootbuttons[_("Revert")] = {
-                text: _("Revert to default"),
-                "class": 'asm-redbutton',
-                click: async function() {
-                    let formdata = "mode=headfoot&header=&footer=";
-                    try {
-                        await common.ajax_post("reports", formdata);                    
-                        header.show_info(_("Updated."));
-                        common.route_reload(); 
-                    }
-                    finally {
-                        $("#dialog-headfoot").dialog("close");
-                    }
-                }
-            };
-            headfootbuttons[_("Save")] = {
-                text: _("Save"),
-                "class": 'asm-dialog-actionbutton',
-                click: async function() {
-                    let formdata = "mode=headfoot&" + $("#rhead, #rfoot").toPOST();
-                    try {
-                        await common.ajax_post("reports", formdata);                    
-                        header.show_info(_("Updated."));
-                    }
-                    finally {
-                        $("#dialog-headfoot").dialog("close");
-                    }
-                }
-            };
-            headfootbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
-            $("#dialog-headfoot").dialog({
-                autoOpen: false,
-                resizable: true,
-                height: "auto",
-                width: 800,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: headfootbuttons,
-                open: function() {
-                    $("#rhead, #rfoot").htmleditor("refresh");
-                }
-            });
-        },
 
         bind_browse_smcom: function() {
             $("#table-smcom").table({ sticky_header: false, reflow: false, filter: true, sortList: [[1, 0]] });
