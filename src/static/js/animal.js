@@ -31,10 +31,10 @@ $(function() {
                 tableform.fields_render([
                     { post_field: "sheltercode", label: _("Code"), type: "raw", markup: [
                         '<span style="white-space: nowrap;">',
-                        '<input type="text" id="sheltercode" data-json="SHELTERCODE" data-post="sheltercode" class="asm-halftextbox" />',
-                        '<input type="text" id="shortcode" data-json="SHORTCODE" data-post="shortcode" class="asm-halftextbox" />',
-                        '<input type="hidden" id="uniquecode" data-json="UNIQUECODEID" data-post="uniquecode" />',
-                        '<input type="hidden" id="yearcode" data-json="YEARCODEID" data-post="yearcode" />',
+                        tableform.render_text({ post_field: "sheltercode", json_field: "SHELTERCODE", justwidget: true, halfsize: true }),
+                        tableform.render_text({ post_field: "shortcode", json_field: "SHORTCODE", justwidget: true, halfsize: true }),
+                        tableform.render_hidden({ post_field: "uniquecode", json_field: "UNIQUECODEID", justwidget: true }),
+                        tableform.render_hidden({ post_field: "yearcode", json_field: "YEARCODEID", justwidget: true }),
                         '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
                         '</span>' ].join("\n") },
                     { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "text" },
@@ -52,14 +52,14 @@ $(function() {
                         options: { displayfield: "SIZE", rows: controller.sizes }},
                     { rowid: "kilosrow", label: _("Weight"), type: "raw", markup: [ 
                         '<span style="white-space: nowrap;">',
-                        '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
+                        tableform.render_number({ post_field: "weight", json_field: "WEIGHT", justwidget: true, halfsize: true }),
                         '<span id="kglabel">' + _("kg") + '</span>',
                         '</span>' ].join("\n") },
                     { rowid: "poundsrow", label: _("Weight"), type: "raw", markup: [
                         '<span style="white-space: nowrap;">',
-                        '<input id="weightlb" class="asm-textbox asm-intbox" style="width: 70px" />',
+                        tableform.render_intnumber({ id: "weightlb", justwidget: true, style: "width: 70px" }),
                         '<span id="lblabel">' + _("lb") + '</span>',
-                        '<input id="weightoz" class="asm-textbox asm-intbox" style="width: 70px" />',
+                        tableform.render_intnumber({ id: "weightoz", justwidget: true, style: "width: 70px" }),
                         '<span id="ozlabel">' + _("oz") + '</span>',
                         '</span>' ].join("\n") },
 
@@ -74,8 +74,8 @@ $(function() {
                             '</select>'].join("\n") },
                     { post_field: "breed2", json_field: "BREED2ID", rowid: "secondbreedrow",
                         type: "select", options: html.list_to_options_breeds(controller.breeds),
-                        label:  '<label for="crossbreed">' + _("Crossbreed") + '</label>' + 
-                            '<input type="checkbox" class="asm-checkbox" id="crossbreed" data-json="CROSSBREED" data-post="crossbreed" />' },
+                        label: tableform.render_check({ post_field: "crossbreed", json_field: "CROSSBREED", justwidget: true,
+                            label: _("Crossbreed"), labelpos: "before" })  },
                     { post_field: "location", json_field: "SHELTERLOCATION", label: _("Location"), type: "select", 
                         callout: _("Where this animal is located within the shelter"),
                         options: { displayfield: "LOCATIONNAME", rows: controller.internallocations }},
@@ -90,9 +90,9 @@ $(function() {
                     { post_field: "owner", json_field: "OWNERID", label: _("Owner"), type: "person", personmode: "brief" },
                     { post_field: "flags", label: _("Flags"), type: "selectmulti" },
                     { rowid: "dobrow", type: "raw", label: _("Date of Birth"), markup: [
-                        '<input id="dateofbirth" data-json="DATEOFBIRTH" data-post="dateofbirth" class="asm-datebox asm-halftextbox" />',
-                        '<input class="asm-checkbox" type="checkbox" id="estimateddob" data-json="ESTIMATEDDOB" data-post="estimateddob" />',
-                        _("Estimate") ].join("\n") },
+                        tableform.render_date({ post_field: "dateofbirth", json_field: "DATEOFBIRTH", halfsize: true, justwidget: true }),
+                        tableform.render_check({ post_field: "estimateddob", json_field: "ESTIMATEDDOB", label: _("Estimate"), justwidget: true }),
+                        ].join("\n") },
                     { post_field: "fee", json_field: "FEE", label: _("Adoption Fee"), type: "currency" },
 
                     { type: "nextcol" },  
@@ -118,7 +118,7 @@ $(function() {
                     { type: "nextcol" },
 
                     { post_field: "datebroughtin", json_field: "DATEBROUGHTIN", label: _("Date Brought In"), type: "date",
-                        xmarkup: '<input id="mostrecententrydate" class="asm-textbox" style="display: none" />' },
+                        xmarkup: tableform.render_text({ id: "mostrecententrydate", justwidget: true, style: "display: none" }) },
                     { post_field: "timebroughtin", json_field: "DATEBROUGHTIN", label: _("Time Brought In"), type: "time" },
                     { post_field: "entrytype", json_field: "ENTRYTYPEID", label: _("Entry Type"), type: "select", 
                         options: { displayfield: "ENTRYTYPENAME", rows: controller.entrytypes }},
@@ -126,10 +126,8 @@ $(function() {
                         options: { displayfield: "REASONNAME", rows: controller.entryreasons }},
                     { post_field: "asilomarintakecategory", json_field: "ASILOMARINTAKECATEGORY", label: "Asilomar Category", 
                         rowclasses: "asilomar", type: "select", 
-                        options: [ '<option value="0">Healthy</option>',
-                            '<option value="1">Treatable - Rehabilitatable</option>',
-                            '<option value="2">Treatable - Manageable</option>',
-                            '<option value="3">Unhealthy and Untreatable</option>' ].join("\n") },
+                        options: [ "0|Healthy", "1|Treatable - Rehabilitatable", "2|Treatable - Manageable", 
+                            "3|Unhealthy and Untreatable" ] },
                     { post_field: "jurisdiction", json_field: "JURISDICTIONID", label: _("Jurisdiction"), type: "select", 
                         options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
                     { post_field: "transferin", json_field: "ISTRANSFER", label: _("Transfer In"), type: "check" },
@@ -142,8 +140,8 @@ $(function() {
                     { post_field: "hold", json_field: "ISHOLD", label: _("Hold until"), type: "check", 
                         xmarkup: [
                             ' <span class="asm-callout" id="callout-hold">' + _("Hold the animal until this date or blank to hold indefinitely") + '</span>',
-                            '<input class="asm-halftextbox asm-datebox" id="holduntil" data-json="HOLDUNTILDATE" data-post="holduntil" />',
-                            '</span>' ].join("\n") },
+                            tableform.render_date({ post_field: "holduntil", json_field: "HOLDUNTILDATE", justwidget: true, halfsize: true }),
+                            ].join("\n") },
                     { post_field: "bonded1", json_field: "BONDEDANIMALID", label: _("Bonded With"), type: "animal", rowclasses: "bondedwith" },
                     { post_field: "bonded2", json_field: "BONDEDANIMAL2ID", label: "", type: "animal", rowclasses: "bondedwith" },
                     { post_field: "reasonnotfromowner", json_field: "REASONNO", label: _("Reason not from Owner"), type: "textarea", rows: 3},
@@ -212,57 +210,53 @@ $(function() {
                     { rowid: "microchiprow", type: "raw", 
                         label: tableform.render_check({ post_field: "microchipped", json_field: "IDENTICHIPPED", label: _("Microchipped"), justwidget: true }), 
                         markup: [
-                        '<input id="microchipdate" data-json="IDENTICHIPDATE" data-post="microchipdate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
-                        '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" />',
+                        tableform.render_date({ post_field: "microchipdate", json_field: "IDENTICHIPDATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                        tableform.render_text({ post_field: "microchipnumber", json_field: "IDENTICHIPNUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
                         '<span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>'
-                    ].join("\n") },
-                    { rowid: "microchiprow2", type: "raw", label: "", markup: [
-                        '<input id="microchipdate2" data-json="IDENTICHIP2DATE" data-post="microchipdate2" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
-                        '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" />',
+                        ].join("\n") },
+                    { rowid: "microchiprow2", type: "raw", label: "", 
+                        markup: [
+                        tableform.render_date({ post_field: "microchipdate2", json_field: "IDENTICHIP2DATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                        tableform.render_text({ post_field: "microchipnumber2", json_field: "IDENTICHIP2NUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
                         '<span id="microchipbrand2"></span> <button id="button-microchipcheck2">' + microchip.check_site_name() + '</button>'
                     ].join("\n") },
                     { rowid: "tattoorow", type: "raw", 
                         label: tableform.render_check({ post_field: "tattoo", json_field: "TATTOO", label: _("Tattoo"), justwidget: true }), 
                         markup: [
-                        '<input id="tattoodate" data-json="TATTOODATE" data-post="tattoodate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
-                        '<input type="text" id="tattoonumber" data-json="TATTOONUMBER" data-post="tattoonumber" class="asm-textbox" placeholder="' + html.title(_("Number")) + '" />',
+                        tableform.render_date({ post_field: "tattoodate", json_field: "TATTOODATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                        tableform.render_text({ post_field: "tattoonumber", json_field: "TATTOONUMBER", placeholder: _("Number"), justwidget: true  })
                     ].join("\n") },
                     { rowid: "smarttagrow", type: "raw", 
                         label: tableform.render_check({ post_field: "smarttag", json_field: "SMARTTAG", label: _("SmartTag PETID"), justwidget: true }), 
                         markup: [
-                        '<input id="smarttagnumber" data-json="SMARTTAGNUMBER" data-post="smarttagnumber" class="asm-halftextbox asm-alphanumberbox" placeholder="' + html.title(_("Number")) + '" />',
-                        '<select class="asm-selectbox" id="smarttagtype" data-json="SMARTTAGTYPE" data-post="smarttagtype">',
-                        '<option value="0">' + _("Annual") + '</option>',
-                        '<option value="1">' + _("5 Year") + '</option>',
-                        '<option value="2">' + _("Lifetime") + '</option>',
-                        '</select>',
+                        tableform.render_text({ post_field: "smarttagnumber", json_field: "SMARTTAGNUMBER", placeholder: _("Number"), 
+                            classes: "asm-alphanumberbox", justwidget: true, halfsize: true }),
+                        tableform.render_select({ post_field: "smarttagtype", json_field: "SMARTTAGTYPE", justwidget: true, 
+                            options: [ "0|Annual", "1|5 Year", "2|Lifetime" ] })
                     ].join("\n") },
                     { rowid: "neuteredrow", type: "raw", rowclasses: "topvalign",
                         label: tableform.render_check({ post_field: "neutered", json_field: "NEUTERED", label: _("Altered"), justwidget: true }), 
                         markup: [
-                        '<input id="neutereddate" data-json="NEUTEREDDATE" data-post="neutereddate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
-                        '<input id="neuteringvet" data-json="NEUTEREDBYVETID" data-post="neuteringvet" data-mode="brief" data-filter="vet" type="hidden" class="asm-personchooser" />',
+                        tableform.render_date({ post_field: "neutereddate", json_field: "NEUTEREDDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
+                        tableform.render_person({ post_field: "neuteringvet", json_field: "NEUTEREDBYVETID", personfilter: "vet", personmode: "brief", justwidget: true })
                     ].join("\n") },
                     { rowid: "declawedrow", rowclasses: "cats", type: "raw", markup: "",
                         label: tableform.render_check({ post_field: "declawed", json_field: "DECLAWED", label: _("Declawed"), justwidget: true }) }, 
                     { rowid: "heartwormrow", rowclasses: "dogs", type: "raw", 
                         label: tableform.render_check({ post_field: "heartwormtested", json_field: "HEARTWORMTESTED", label: _("Heartworm Tested"), justwidget: true }), 
                         markup: [
-                        '<input id="heartwormtestdate" data-json="HEARTWORMTESTDATE" data-post="heartwormtestdate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
-                        '<select class="asm-selectbox" id="heartwormtestresult" data-json="HEARTWORMTESTRESULT" data-post="heartwormtestresult">',
-                        html.list_to_options(controller.posneg, "ID", "NAME"),
-                        '</select>',
+                        tableform.render_date({ post_field: "heartwormtestdate", json_field: "HEARTWORMTESTDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
+                        tableform.render_select({ post_field: "heartwormtestresult", json_field: "HEARTWORMTESTRESULT", justwidget: true, 
+                            options: { displayfield: "NAME", rows: controller.posneg }})
                     ].join("\n") },
                     { rowid: "fivlrow", rowclasses: "cats", type: "raw", 
                         label: tableform.render_check({ post_field: "fivltested", json_field: "COMBITESTED", label: _("FIV/L Tested"), justwidget: true }), 
                         markup: [
-                        '<input id="fivltestdate" data-json="COMBITESTDATE" data-post="fivltestdate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
-                        '<select class="asm-halftextbox selectbox" id="fivresult" data-json="COMBITESTRESULT" data-post="fivresult">',
-                        html.list_to_options(controller.posneg, "ID", "NAME"),
-                        '</select>',
-                        '<select class="asm-halftextbox selectbox" id="flvresult" data-json="FLVRESULT" data-post="flvresult">',
-                        html.list_to_options(controller.posneg, "ID", "NAME"),
-                        '</select>',
+                        tableform.render_date({ post_field: "fivltestdate", json_field: "COMBITESTDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
+                        tableform.render_select({ post_field: "fivresult", json_field: "COMBITESTRESULT", justwidget: true, 
+                            options: { displayfield: "NAME", rows: controller.posneg }}),
+                        tableform.render_select({ post_field: "flvresult", json_field: "FLVRESULT", justwidget: true, 
+                            options: { displayfield: "NAME", rows: controller.posneg }})
                     ].join("\n") },
                     { type: "raw", markup: "",
                         label: tableform.render_check({ post_field: "specialneeds", json_field: "HASSPECIALNEEDS", label: _("Special Needs"), justwidget: true }) }, 
@@ -685,7 +679,7 @@ $(function() {
             if ($("#species").select("value") == 2) { $(".cats").show(); }
 
             // Enable/disable health and identification fields based on checkboxes
-            $("#microchipdate, #microchipnumber, #microchiprow2").toggle($("#microchipped").is(":checked"));
+            $("#microchipdate, #microchipnumber, #microchiprow2, #microchipbrand, #button-microchipcheck").toggle($("#microchipped").is(":checked"));
             $("#tattoodate, #tattoonumber").toggle($("#tattoo").is(":checked"));
             $("#smarttagnumber, #smarttagtype").toggle($("#smarttag").is(":checked"));
             $("#neutereddate").parent().toggle($("#neutered").is(":checked"));

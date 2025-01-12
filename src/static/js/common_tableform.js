@@ -1145,6 +1145,17 @@ const tableform = {
     },
 
     /**
+     * Renders the widget style attribute
+     * v: the widget object
+     * s: any fixed styles for the widget
+     */
+    _render_style: function(v, s) {
+        if (s === undefined || s === null) { s = ""; }
+        if (v.style) { s += " " + v.style; }
+        return ' style="' + s + '" ';
+    },
+
+    /**
      * renders the label for a form field, including callout and validation indicator
      * v: field definition
      */
@@ -1266,6 +1277,7 @@ const tableform = {
         if (v.labelpos && v.labelpos == "before") { d += label; }
         d += "<input type=\"checkbox\" ";
         d += tableform._render_class(v, "asm-checkbox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1286,6 +1298,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-currencybox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1307,6 +1320,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-datebox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.date_onlydays) { d += "data-onlydays=\"" + v.date_onlydays + "\" "; }
@@ -1332,6 +1346,7 @@ const tableform = {
         d += "<span style=\"white-space: nowrap\">";
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-datebox asm-halftextbox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "date\" "; }
         if (v.name) { d += "name=\"" + v.name + "date\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1345,6 +1360,7 @@ const tableform = {
         d += "/>";
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-timebox asm-halftextbox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "time\" "; }
         if (v.name) { d += "name=\"" + v.name + "time\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1365,6 +1381,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"file\" ";
         d += tableform._render_class(v, "asm-filechooser");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1420,6 +1437,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-intbox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1471,6 +1489,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-numberbox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1514,6 +1533,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"" + (v.type || "text") + "\" ";
         d += tableform._render_class(v, "asm-textbox asm-phone");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.autocomplete) { d += "autocomplete=\"" + v.autocomplete + "\" "; }
@@ -1557,6 +1577,7 @@ const tableform = {
         d += "<select ";
         v.type = "select";
         d += tableform._render_class(v, "asm-selectbox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1588,6 +1609,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<select multiple=\"multiple\" ";
         d += tableform._render_class(v, "asm-bsmselect");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1636,6 +1658,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"" + (v.type || "text") + "\" ";
         d += tableform._render_class(v, "asm-textbox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.autocomplete) { d += "autocomplete=\"" + v.autocomplete + "\" "; }
@@ -1659,6 +1682,7 @@ const tableform = {
         tableform._check_id(v);
         d += "<input type=\"text\" ";
         d += tableform._render_class(v, "asm-textbox asm-timebox");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
@@ -1681,6 +1705,7 @@ const tableform = {
         if (!v.rows) { v.rows = 5; }
         d += "<textarea "; 
         d += tableform._render_class(v, "asm-textarea");
+        d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
         if (v.rows) { d += "rows=\"" + v.rows + "\" "; }
