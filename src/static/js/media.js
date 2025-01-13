@@ -119,6 +119,7 @@ $(function() {
 
                     { field: "MEDIAFLAGS", classes: "mode-table", display: _("Flags"), formatter: function(m) {
                         let h = [];
+                        if (!m.MEDIAFLAGS) { return ""; }
                         $.each(m.MEDIAFLAGS.split("|"), function(i, flag) {
                             if (!flag) { return; }
                             h.push("<span class=asm-media-flag>" + flag + "</span>");
@@ -140,7 +141,8 @@ $(function() {
                     { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date },
                     { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },
                     { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
-                        let h = [];
+                        let h = [], flags = m.MEDIAFLAGS;
+                        if (!flags) { flags = ""; }
                         h.push("<div class=\"centered\">");
                         h.push(media.render_preview_thumbnail(m, true, false));
                         h.push("<br/>");
@@ -149,7 +151,7 @@ $(function() {
                         h.push("<br/>");
                         h.push(media.render_mods(m));
                         h.push("<br/>");
-                        $.each(m.MEDIAFLAGS.split("|"), function(i, flag) {
+                        $.each(flags.split("|"), function(i, flag) {
                             if (!flag) { return; }
                             h.push("<span class='asm-media-flag asm-media-flag-thumb'>" + flag + "</span>");
                         });
@@ -1036,9 +1038,10 @@ $(function() {
             $("#filter").change(function() {
                 let filters = $("#filter").val();
                 if (filters.length > 0) {
-                    let filteredrows = [];
+                    let filteredrows = [], flags = m.MEDIAFLAGS;
+                    if (!flags) { flags = ""; }
                     $.each(controller.media, function(i, m) {
-                        if (common.array_overlap_all(filters, m.MEDIAFLAGS.split("|"))) {
+                        if (common.array_overlap_all(filters, flags.split("|"))) {
                             filteredrows.push(m);
                         }
                     });

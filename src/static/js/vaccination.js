@@ -384,7 +384,7 @@ $(function() {
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
                     { type: "raw", fullrow: true, 
                         markup: '<p class="asm-header">' + _("Reschedule") + 
-                        '<span id="callout-rescheduledate" class="asm-callout">' + 
+                        ' <span id="callout-rescheduledate" class="asm-callout">' + 
                         _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + 
                         '</span></p>' },
                     { post_field: "rescheduledate", type: "date", label: _("Reschedule"), nopast: true },
