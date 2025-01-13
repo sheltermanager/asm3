@@ -464,8 +464,14 @@ def is_bytes(f: Any) -> bool:
 
 def is_currency(f: str) -> bool:
     """ Returns true if the field with name f is a currency field """
-    CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST DAILYFEE FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT UNITPRICE VATAMOUNT"
-    return f.upper().startswith("MONEY") or CURRENCY_FIELDS.find(f.upper()) != -1
+    CURRENCY_FIELDS = [ "AMT", "AMOUNT", 
+        "COST", "COSTAMOUNT", 
+        "DAILYBOARDINGCOST", "DAILYFEE", 
+        "DEPOSITAMOUNT", "DONATION", 
+        "FEE", "FINEAMOUNT", "GROSS", 
+        "LICENCEFEE", "NET", 
+        "UNITPRICE", "VATAMOUNT" ] 
+    return f.upper().startswith("MONEY") or f.upper() in CURRENCY_FIELDS
 
 def is_date(d: Any) -> bool:
     """ Returns true if d is a date field """
