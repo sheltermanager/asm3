@@ -471,6 +471,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             if gks(row, "ANIMALDOB") == "" and a["estimatedage"] != "":
                 a["dateofbirth"] = "" # if we had an age and dob was blank, prefer the age
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
+            a["timebroughtin"] = gks(row, "ANIMALENTRYTIME")
             if entrytoday: 
                 a["datebroughtin"] = asm3.i18n.python2display(dbo.locale, dbo.today())
             a["deceaseddate"] = gkd(dbo, row, "ANIMALDECEASEDDATE")
@@ -874,6 +875,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasincident and personid != 0 and gks(row, "INCIDENTDATE") != "":
             d = {}
             d["incidentdate"] = gkd(dbo, row, "INCIDENTDATE", True)
+            d["incidenttime"] = gks(row, "INCIDENTTIME")
             d["incidenttype"] = gkl(dbo, row, "INCIDENTTYPE", "incidenttype", "IncidentName", createmissinglookups)
             if d["incidenttype"] == "0":
                 d["incidenttype"] = str(asm3.configuration.default_incident(dbo))
@@ -888,9 +890,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["sex"] = gksx(row, "INCIDENTANIMALSEX")
             d["dispatchedaco"] = gks(row, "DISPATCHACO")
             d["dispatchdate"] = gkd(dbo, row, "DISPATCHDATE")
+            d["dispatchtime"] = gks(row, "DISPATCHTIME")
             d["respondeddate"] = gkd(dbo, row, "INCIDENTRESPONDEDDATE")
             d["followupdate"] = gkd(dbo, row, "INCIDENTFOLLOWUPDATE")
             d["completeddate"] = gkd(dbo, row, "INCIDENTCOMPLETEDDATE")
+            d["completedtime"] = gks(row, "INCIDENTCOMPLETEDTIME")
             d["completedtype"] = gkl(dbo, row, "INCIDENTCOMPLETEDTYPE", "incidentcompleted", "CompletedName", True)
             try:
                 incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
