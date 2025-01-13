@@ -64,6 +64,7 @@
 </div></center>
 
 <div id="animalcommentscontainer">
+  <div id="animalcommentsraw" style="display: none">$$DESCRIPTIONBR$$</div>
   <div id="animalcomments"></div>
   <div id="additionalanimalcomments"></div>
 </div>
@@ -93,9 +94,9 @@ document.write('<a target="_blank" href="https://twitter.com/share?url=' + u + '
     document.getElementById("additionalanimalcomments").style.display = 'block';
     document.getElementById("morebutton").style.display = 'none';
   }
-  let rawanimalcomments = '$$ANIMALCOMMENTS$$'.split("<br>");
-  let additionalcomments = '';
-  let initialanimalcomments = '';
+  var rawanimalcomments = document.getElementById("animalcommentsraw").innerHTML.split("<br>");
+  var additionalcomments = '';
+  var initialanimalcomments = '';
   if ( rawanimalcomments.length > 1 ) {
   	initialanimalcomments = "<p>" + rawanimalcomments[0] + " <span id=morebutton onclick='showAllComments()'>more</span></p>";
     for ( let a = 1; a < rawanimalcomments.length; a++ ) {
