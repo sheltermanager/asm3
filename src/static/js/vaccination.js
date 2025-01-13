@@ -382,15 +382,18 @@ $(function() {
                     { post_field: "givenby", type: "select", label: _("By"), 
                         options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>'}},
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
-                    { type: "raw", fullrow: true, colclasses: "asm-header", markup: _("Reschedule") + 
-                        '<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>' },
+                    { type: "raw", fullrow: true, 
+                        markup: '<p class="asm-header">' + _("Reschedule") + 
+                        '<span id="callout-rescheduledate" class="asm-callout">' + 
+                        _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + 
+                        '</span></p>' },
                     { post_field: "rescheduledate", type: "date", label: _("Reschedule"), nopast: true },
                     { post_field: "reschedulecomments", type: "textarea", label: _("Comments") },
-                    { type: "raw", fullrow: true, colclasses: "asm-header", rowclasses: "tagstock", 
-                        markup: _("Stock") + 
+                    { type: "raw", fullrow: true, rowclasses: "tagstock", 
+                        markup: '<p class="asm-header">' + _("Stock") + 
                             ' <span id="callout-stock" class="asm-callout">' + 
                             _("These fields allow you to deduct stock for the vaccination(s) given. This single deduction should cover the selected vaccinations being administered.") + 
-                            '</span>' },
+                            '</span></p>' },
                     { post_field: "item", type: "select", label: _("Item"), rowclasses: "tagstock", 
                         options: { displayfield: "ITEMNAME", rows: controller.stockitems, prepend: '<option value="-1">' + _("(no deduction)") + '</option>'} },
                     { post_field: "quantity", type: "number", label: _("Quantity"), rowclasses: "tagstock" },

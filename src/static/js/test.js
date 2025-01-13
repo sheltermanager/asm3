@@ -304,11 +304,11 @@ $(function() {
                     { post_field: "retestdate", type: "date", label: _("Retest"), nopast: true },
                     { post_field: "givencost", type: "currency", label: _("Cost") },
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
-                    { type: "raw", fullrow: true, colclasses: "asm-header", rowclasses: "tagstock", 
-                        markup: _("Stock") + 
+                    { type: "raw", fullrow: true, rowclasses: "tagstock", 
+                        markup: '<p class="asm-header">' + _("Stock") + 
                             ' <span id="callout-stock" class="asm-callout">' + 
                             _("These fields allow you to deduct stock for the test(s) given. This single deduction should cover the selected tests being performed.") + 
-                            '</span>' },
+                            '</span></p>' },
                     { post_field: "item", type: "select", label: _("Item"), rowclasses: "tagstock", 
                         options: { displayfield: "ITEMNAME", rows: controller.stockitems, prepend: '<option value="-1">' + _("(no deduction)") + '</option>'} },
                     { post_field: "quantity", type: "number", label: _("Quantity"), rowclasses: "tagstock" },
