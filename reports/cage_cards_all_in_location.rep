@@ -2,7 +2,7 @@ Cage Cards (all animals in location)
 ###
 Inventories
 ###
-34302/Any omitcriteria omitheaderfooter rev04
+34904/Any omitcriteria omitheaderfooter rev05
 ###
 Animal cage cards with images for all on animals in a location.
 ###
@@ -37,6 +37,13 @@ entryreason.reasonname,
 (SELECT Sex FROM lksex WHERE ID = animal.sex) AS TheSex,
 (SELECT Name FROM lksyesno WHERE ID = animal.neutered) AS altered,
 (SELECT NAME FROM lksyesno WHERE ID = animal.HasActiveReserve) AS reserved,
+(SELECT Name FROM lksynun WHERE ID = animal.IsCrateTrained) AS CrateTrained,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodOnLead) AS GoodOnLead,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodTraveller) AS GoodTraveller,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithElderly) AS WithElderly,
+CASE WHEN animal.EnergyLevel = 1 THEN '1 - Very Low' WHEN animal.EnergyLevel = 2 THEN '2 - Low'
+WHEN animal.EnergyLevel = 3 THEN '3 - Medium' WHEN animal.EnergyLevel = 4 THEN '4 - High' WHEN animal.EnergyLevel = 5 
+THEN '5 - Very High' ELSE 'Unknown' END AS EnergyLevel, 
 animal.breedname,
 species.speciesName,
 basecolour.basecolour,
@@ -104,10 +111,14 @@ Microchip: <b>$identichipnumber</b><br />
 Heartworm: <b>$heartworm</b><br />
 FIV/L: <b>$fivl</b><br />
 FLV: <b>$flv</b><br />
-Housetrained? <b>$HouseTrained</b><br />
 Good With Dogs? <b>$WithDogs</b><br />
 Good With Cats? <b>$WithCats</b><br />
-Good With Children? <b>$WithChildren</b>
+Good With Children? <b>$WithChildren</b><br />
+Good With Elderly? <b>$WithElderly</b><br />  
+Housetrained? <b>$HouseTrained</b><br /> 
+Cratetrained? <b>$CrateTrained</b><br />    
+Good On Lead? <b>$GoodOnLead</b><br />
+Energy Level? <b>$EnergyLevel</b><br /> 
 </font>
 </td>
 </tr>
