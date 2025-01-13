@@ -83,7 +83,7 @@ def gks(m: Dict, f: str) -> str:
     if f not in m: return ""
     return str(m[f])
 
-def gkd(dbo: Database, m: Dict, f: str, usetoday: bool = False) -> datetime:
+def gkd(dbo: Database, m: Dict, f: str, usetoday: bool = False) -> str:
     """ reads field f from map m, returning a display date. 
         string is empty if key not present or date is invalid.
         If usetoday is set to True, then today's date is returned
@@ -978,6 +978,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l = {}
             l["type"] = gkl(dbo, row, "LOGTYPE", "logtype", "LogTypeName", createmissinglookups)
             l["logdate"] = gkd(dbo, row, "LOGDATE", True)
+            l["logtime"] = gks(row, "LOGTIME")
             l["entry"] = gks(row, "LOGCOMMENTS")
             try:
                 asm3.log.insert_log_from_form(dbo, user, asm3.log.ANIMAL, animalid, asm3.utils.PostedData(l, dbo.locale))
@@ -1340,7 +1341,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         "CURRENTVETTITLE", "CURRENTVETINITIALS", "CURRENTVETFIRSTNAME",
         "CURRENTVETLASTNAME", "CURRENTVETADDRESS", "CURRENTVETCITY", "CURRENTVETSTATE", "CURRENTVETZIPCODE",
         "CURRENTVETHOMEPHONE", "CURRENTVETWORKPHONE", "CURRENTVETCELLPHONE", "CURRENTVETEMAIL", 
-        "LOGDATE", "LOGTYPE", "LOGCOMMENTS", 
+        "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS", 
         "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
         "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY", "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE",
         "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "ORIGINALOWNERWARNING", 
@@ -1552,6 +1553,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         for g in asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"]):
             row = {}
             row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
+            row["LOGTIME"] = asm3.i18n.format_time(g["DATE"])
             row["LOGTYPE"] = g["LOGTYPENAME"]
             row["LOGCOMMENTS"] = g["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
