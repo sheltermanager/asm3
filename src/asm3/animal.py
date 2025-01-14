@@ -4102,12 +4102,12 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
             uv[fieldname] = display2python(dbo.locale, d[dictfield])
             a[fieldname] = uv[fieldname]
     def merge_float(dictfield, fieldname):
-        if dictfield not in d or asm3.utils.cfloat(d[dictfield]) == 0: return
+        if dictfield not in d or not asm3.utils.is_numeric(d[dictfield]): return
         if a[fieldname] is None or a[fieldname] == 0 or force:
             uv[fieldname] = asm3.utils.cfloat(d[dictfield])
             a[fieldname] = uv[fieldname]
     def merge_int(dictfield, fieldname):
-        if dictfield not in d or asm3.utils.cint(d[dictfield]) == 0: return
+        if dictfield not in d or not asm3.utils.is_numeric(d[dictfield]): return
         if a[fieldname] is None or a[fieldname] == 0 or force:
             uv[fieldname] = asm3.utils.cint(d[dictfield])
             a[fieldname] = uv[fieldname]
@@ -4135,6 +4135,16 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
     merge("unit", "SHELTERLOCATIONUNIT")
     merge_int("pickuplocation", "PICKUPLOCATIONID")
     merge("pickupaddress", "PICKUPADDRESS")
+    merge_int("housetrained", "ISHOUSETRAINED")
+    merge_int("cratetrained", "ISCRATETRAINED")
+    merge_int("goodwithcats", "ISGOODWITHCATS")
+    merge_int("goodwithdogs", "ISGOODWITHDOGS")
+    merge_int("goodwithkids", "ISGOODWITHCHILDREN")
+    merge_int("goodwithelderly", "ISGOODWITHELDERLY")
+    merge_int("energylevel", "ENERGYLEVEL")
+    merge_int("goodonlead", "ISGOODONLEAD")
+    merge_int("goodtraveller", "ISGOODTRAVELLER")
+    
     if len(uv) > 0:
         dbo.update("animal", animalid, uv, username)
 

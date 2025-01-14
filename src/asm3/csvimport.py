@@ -27,10 +27,10 @@ VALID_FIELDS = [
     "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALDECEASEDDATE", "ANIMALDECEASEDREASON", "ANIMALDECEASEDNOTES", "ANIMALEUTHANIZED", 
     "ANIMALCOMMENTS", "ANIMALDESCRIPTION", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
-    "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALENTRYTYPE", "ANIMALFLAGS", "ANIMALWARNING",
+    "ANIMALENTRYDATE", "ANIMALENTRYTIME", "ANIMALENTRYCATEGORY", "ANIMALENTRYTYPE", "ANIMALFLAGS", "ANIMALWARNING",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
-    "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
-    "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
+    "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALGOODWITHELDERLY", "ANIMALGOODONLEAD",
+    "ANIMALHOUSETRAINED", "ANIMALCRATETRAINED", "ANIMALENERGYLEVEL", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
@@ -41,10 +41,10 @@ VALID_FIELDS = [
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "ORIGINALOWNERWARNING", 
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", "DONATIONGIFTAID",
-    "INCIDENTDATE", "INCIDENTTYPE", "INCIDENTNOTES", "DISPATCHADDRESS", "DISPATCHCITY", "DISPATCHSTATE", "DISPATCHZIPCODE", "DISPATCHACO", "DISPATCHDATE", "INCIDENTRESPONDEDDATE", "INCIDENTFOLLOWUPDATE", "INCIDENTCOMPLETEDDATE", "INCIDENTCOMPLETEDTYPE"
+    "INCIDENTDATE", "INCIDENTTIME", "INCIDENTTYPE", "INCIDENTNOTES", "DISPATCHADDRESS", "DISPATCHCITY", "DISPATCHSTATE", "DISPATCHZIPCODE", "DISPATCHACO", "DISPATCHDATE", "DISPATCHTIME", "INCIDENTRESPONDEDDATE", "INCIDENTFOLLOWUPDATE", "INCIDENTCOMPLETEDDATE", "INCIDENTCOMPLETEDTIME", "INCIDENTCOMPLETEDTYPE"
     "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
-    "LOGDATE", "LOGTYPE", "LOGCOMMENTS",
+    "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
     "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
     "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
@@ -83,7 +83,7 @@ def gks(m: Dict, f: str) -> str:
     if f not in m: return ""
     return str(m[f])
 
-def gkd(dbo: Database, m: Dict, f: str, usetoday: bool = False) -> datetime:
+def gkd(dbo: Database, m: Dict, f: str, usetoday: bool = False) -> str:
     """ reads field f from map m, returning a display date. 
         string is empty if key not present or date is invalid.
         If usetoday is set to True, then today's date is returned
@@ -462,15 +462,21 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             nonshelter = a["nonshelter"] == "on"
             a["transferin"] = gkbc(row, "ANIMALTRANSFER")
             a["housetrained"] = gkynu(row, "ANIMALHOUSETRAINED")
+            a["cratetrained"] = gkynu(row, "ANIMALCRATETRAINED")
             a["goodwithcats"] = gkynu(row, "ANIMALGOODWITHCATS")
             a["goodwithdogs"] = gkynu(row, "ANIMALGOODWITHDOGS")
             a["goodwithkids"] = gkynu(row, "ANIMALGOODWITHKIDS")
+            a["goodwithelderly"] = gkynu(row, "ANIMALGOODWITHELDERLY")
+            a["goodonlead"] = gkynu(row, "ANIMALGOODONLEAD")
+            a["goodtraveller"] = gkynu(row, "ANIMALGOODTRAVELLER")
+            a["energylevel"] = gks(row, "ANIMALENERGYLEVEL")
             a["reasonforentry"] = gks(row, "ANIMALREASONFORENTRY")
             a["estimatedage"] = gks(row, "ANIMALAGE")
             a["dateofbirth"] = gkd(dbo, row, "ANIMALDOB")
             if gks(row, "ANIMALDOB") == "" and a["estimatedage"] != "":
                 a["dateofbirth"] = "" # if we had an age and dob was blank, prefer the age
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
+            a["timebroughtin"] = gks(row, "ANIMALENTRYTIME")
             if entrytoday: 
                 a["datebroughtin"] = asm3.i18n.python2display(dbo.locale, dbo.today())
             a["deceaseddate"] = gkd(dbo, row, "ANIMALDECEASEDDATE")
@@ -874,6 +880,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasincident and personid != 0 and gks(row, "INCIDENTDATE") != "":
             d = {}
             d["incidentdate"] = gkd(dbo, row, "INCIDENTDATE", True)
+            d["incidenttime"] = gks(row, "INCIDENTTIME")
             d["incidenttype"] = gkl(dbo, row, "INCIDENTTYPE", "incidenttype", "IncidentName", createmissinglookups)
             if d["incidenttype"] == "0":
                 d["incidenttype"] = str(asm3.configuration.default_incident(dbo))
@@ -888,9 +895,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["sex"] = gksx(row, "INCIDENTANIMALSEX")
             d["dispatchedaco"] = gks(row, "DISPATCHACO")
             d["dispatchdate"] = gkd(dbo, row, "DISPATCHDATE")
+            d["dispatchtime"] = gks(row, "DISPATCHTIME")
             d["respondeddate"] = gkd(dbo, row, "INCIDENTRESPONDEDDATE")
             d["followupdate"] = gkd(dbo, row, "INCIDENTFOLLOWUPDATE")
             d["completeddate"] = gkd(dbo, row, "INCIDENTCOMPLETEDDATE")
+            d["completedtime"] = gks(row, "INCIDENTCOMPLETEDTIME")
             d["completedtype"] = gkl(dbo, row, "INCIDENTCOMPLETEDTYPE", "incidentcompleted", "CompletedName", True)
             try:
                 incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
@@ -978,6 +987,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l = {}
             l["type"] = gkl(dbo, row, "LOGTYPE", "logtype", "LogTypeName", createmissinglookups)
             l["logdate"] = gkd(dbo, row, "LOGDATE", True)
+            l["logtime"] = gks(row, "LOGTIME")
             l["entry"] = gks(row, "LOGCOMMENTS")
             try:
                 asm3.log.insert_log_from_form(dbo, user, asm3.log.ANIMAL, animalid, asm3.utils.PostedData(l, dbo.locale))
@@ -1340,7 +1350,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         "CURRENTVETTITLE", "CURRENTVETINITIALS", "CURRENTVETFIRSTNAME",
         "CURRENTVETLASTNAME", "CURRENTVETADDRESS", "CURRENTVETCITY", "CURRENTVETSTATE", "CURRENTVETZIPCODE",
         "CURRENTVETHOMEPHONE", "CURRENTVETWORKPHONE", "CURRENTVETCELLPHONE", "CURRENTVETEMAIL", 
-        "LOGDATE", "LOGTYPE", "LOGCOMMENTS", 
+        "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS", 
         "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
         "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY", "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE",
         "ORIGINALOWNERHOMEPHONE", "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL", "ORIGINALOWNERWARNING", 
@@ -1552,6 +1562,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         for g in asm3.log.get_logs(dbo, asm3.log.ANIMAL, a["ID"]):
             row = {}
             row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
+            row["LOGTIME"] = asm3.i18n.format_time(g["DATE"])
             row["LOGTYPE"] = g["LOGTYPENAME"]
             row["LOGCOMMENTS"] = g["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
