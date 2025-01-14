@@ -781,6 +781,7 @@ $(document).ready(function() {
             let o = await common.ajax_post(mobile.post_handler, "mode=loadincident&id=" + ac.ID);
             o = jQuery.parseJSON(o);
             ac = o.animalcontrol;
+            console.log(ac);
             // Inline buttons for completing, dispatching and responding, either the date or a button
             let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
             if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
@@ -798,6 +799,18 @@ $(document).ready(function() {
                 respdt = '<button type="button" data-id="' + ac.ID + '" class="respond btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Respond");
                 respdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
             }
+            ////
+            let followupdt = dt(ac.FOLLOWUPDATETIME);
+            $.each([ac.FOLLOWUPDATETIME, ac.FOLLOWUPDATETIME2, ac.FOLLOWUPDATETIME3], function(followupcount, followup) {
+                console.log(followup);
+                if (followup == null && common.has_permission("caci")) { 
+                    console.log("Adding button!");
+                    followupdt = '<button type="button" data-id="' + ac.ID + '" class="followup btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Follow Up");
+                    followupdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
+                    return false;
+                }
+            });
+            ////
             let dispadd = ac.DISPATCHADDRESS;
             if (dispadd) {
                 let encadd = encodeURIComponent(ac.DISPATCHADDRESS + ',' + ac.DISPATCHTOWN + ',' + ac.DISPATCHCOUNTY + ',' + ac.DISPATCHPOSTCODE);
@@ -844,6 +857,7 @@ $(document).ready(function() {
                     i(_("Dispatched ACO"), ac.DISPATCHEDACO),
                     i(_("Dispatch Date/Time"), dispdt),
                     i(_("Responded Date/Time"), respdt),
+                    i(_("Followup Date/Time"), followupdt),
                     i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME)),
                     i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME2)),
                     i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME3))
@@ -907,6 +921,13 @@ $(document).ready(function() {
                 mobile.ajax_post("mode=increspond&id=" + $(this).attr("data-id"), function() {
                     $(".btn.respond").hide();
                     $(".btn.respond").parent().append( format.datetime_now() );
+                });
+            });
+            $(".btn.followup").click(function() {
+                $(".btn.followup .spinner-border").show();
+                mobile.ajax_post("mode=incfollowup&id=" + $(this).attr("data-id"), function() {
+                    $(".btn.followup").hide();
+                    $(".btn.followup").parent().append( format.datetime_now() );
                 });
             });
             $(".form-select.complete").change(function() {
