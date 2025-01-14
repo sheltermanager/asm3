@@ -801,15 +801,16 @@ $(document).ready(function() {
             }
             ////
             let followupdt = dt(ac.FOLLOWUPDATETIME);
-            $.each([ac.FOLLOWUPDATETIME, ac.FOLLOWUPDATETIME2, ac.FOLLOWUPDATETIME3], function(followupcount, followup) {
-                console.log(followup);
-                if (followup == null && common.has_permission("caci")) { 
-                    console.log("Adding button!");
-                    followupdt = '<button type="button" data-id="' + ac.ID + '" class="followup btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Follow Up");
-                    followupdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
-                    return false;
-                }
-            });
+            if (ac.RESPONDEDDATETIME && common.has_permission("caci")) {
+                $.each([ac.FOLLOWUPDATETIME, ac.FOLLOWUPDATETIME2, ac.FOLLOWUPDATETIME3], function(followupcount, followup) {
+                    console.log(followup);
+                    if (followup == null) {
+                        followupdt = '<button type="button" data-id="' + ac.ID + '" class="followup btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Follow Up");
+                        followupdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
+                        return false;
+                    }
+                });
+            }
             ////
             let dispadd = ac.DISPATCHADDRESS;
             if (dispadd) {
@@ -857,7 +858,7 @@ $(document).ready(function() {
                     i(_("Dispatched ACO"), ac.DISPATCHEDACO),
                     i(_("Dispatch Date/Time"), dispdt),
                     i(_("Responded Date/Time"), respdt),
-                    i(_("Followup Date/Time"), followupdt),
+                    i("", followupdt),
                     i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME)),
                     i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME2)),
                     i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME3))
