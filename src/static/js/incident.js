@@ -360,7 +360,6 @@ $(function() {
                 if (!$("#dispatchtime").val()) {
                     $("#dispatchdate").date("today");
                     $("#dispatchtime").val(format.time(new Date()));
-                    $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-dispatch").button("disable");
                     header.show_loading(_("Saving..."));
                     validate.save(function() {
@@ -376,7 +375,6 @@ $(function() {
                 if (!$("#respondedtime").val()) {
                     $("#respondeddate").date("today");
                     $("#respondedtime").val(format.time(new Date()));
-                    $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-respond").button("disable");
                     header.show_loading(_("Saving..."));
                     validate.save(function() {
@@ -397,7 +395,6 @@ $(function() {
                         inputs[0].date("today");
                         inputs[1].val(format.time(new Date()));
                         inputs[2].prop("checked", true);
-                        //$("#asm-details-accordion").accordion("option", "active", 2);
                         $("#button-respond").button("disable");
                         return false;
                     }
