@@ -4135,6 +4135,16 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
     merge("unit", "SHELTERLOCATIONUNIT")
     merge_int("pickuplocation", "PICKUPLOCATIONID")
     merge("pickupaddress", "PICKUPADDRESS")
+    merge("housetrained", "ISHOUSETRAINED")
+    merge("cratetrained", "ISCRATETRAINED")
+    merge("goodwithcats", "ISGOODWITHCATS")
+    merge("goodwithdogs", "ISGOODWITHDOGS")
+    merge("goodwithkids", "ISGOODWITHCHILDREN")
+    merge("goodwithelderly", "ISGOODWITHELDERLY")
+    merge("energylevel", "ENERGYLEVEL")
+    merge("goodonlead", "ISGOODONLEAD")
+    merge("goodtraveller", "ISGOODTRAVELLER")
+    
     if len(uv) > 0:
         dbo.update("animal", animalid, uv, username)
 

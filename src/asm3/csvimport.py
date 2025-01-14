@@ -29,8 +29,8 @@ VALID_FIELDS = [
     "ANIMALCOMMENTS", "ANIMALDESCRIPTION", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALENTRYTYPE", "ANIMALFLAGS", "ANIMALWARNING",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
-    "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
-    "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
+    "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALGOODWITHELDERLY",
+    "ANIMALHOUSETRAINED", "ANIMALCRATETRAINED", "ANIMALENERGYLEVEL", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
     "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
@@ -461,10 +461,15 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             a["nonshelter"] = gkbc(row, "ANIMALNONSHELTER")
             nonshelter = a["nonshelter"] == "on"
             a["transferin"] = gkbc(row, "ANIMALTRANSFER")
-            a["housetrained"] = gkynu(row, "ANIMALHOUSETRAINED")
-            a["goodwithcats"] = gkynu(row, "ANIMALGOODWITHCATS")
-            a["goodwithdogs"] = gkynu(row, "ANIMALGOODWITHDOGS")
-            a["goodwithkids"] = gkynu(row, "ANIMALGOODWITHKIDS")
+            a["housetrained"] = int(gkynu(row, "ANIMALHOUSETRAINED"))
+            a["cratetrained"] = int(gkynu(row, "ANIMALCRATETRAINED"))
+            a["goodwithcats"] = int(gkynu(row, "ANIMALGOODWITHCATS"))
+            a["goodwithdogs"] = int(gkynu(row, "ANIMALGOODWITHDOGS"))
+            a["goodwithkids"] = int(gkynu(row, "ANIMALGOODWITHKIDS"))
+            a["goodwithelderly"] = int(gkynu(row, "ANIMALGOODWITHELDERLY"))
+            a["goodonlead"] = int(gkynu(row, "ANIMALGOODONLEAD"))
+            a["goodtraveller"] = int(gkynu(row, "ANIMALGOODTRAVELLER"))
+            a["energylevel"] = int(row["ANIMALENERGYLEVEL"])
             a["reasonforentry"] = gks(row, "ANIMALREASONFORENTRY")
             a["estimatedage"] = gks(row, "ANIMALAGE")
             a["dateofbirth"] = gkd(dbo, row, "ANIMALDOB")
