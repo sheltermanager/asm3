@@ -142,6 +142,7 @@ $(function() {
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email incident notes to ACO") },
                     { id: "dispatch", text: _("Dispatch"), icon: "calendar", perm: "cacd", tooltip: _("Mark dispatched now") },
                     { id: "respond", text: _("Respond"), icon: "calendar", perm: "cacr", tooltip: _("Mark responded now") },
+                    { id: "followup", text: _("Follow Up"), icon: "calendar", perm: "caci", tooltip: _("Mark follow up now") },
                     { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") }
                 ]),
                 '<div id="asm-details-accordion">',
@@ -196,6 +197,13 @@ $(function() {
             }
             else {
                 $("#button-respond").button("enable");
+            }
+            // If a followup time is already set, disable the followup button
+            if ($("#followupdate").val() && $("#followup2date").val() && $("#followup3date").val()) {
+                $("#button-followup").button("disable");
+            }
+            else {
+                $("#button-followup").button("enable");
             }
 
         },
@@ -375,6 +383,29 @@ $(function() {
                         common.route_reload();
                     });
                 }
+            });
+
+            $("#button-followup").button().click(function() {
+                $.each(
+                    [
+                        [$("#followupdate"), $("#followuptime"), $("#followupcomplete")],
+                        [$("#followup2date"), $("#followup2time"), $("#followupcomplete2")],
+                        [$("#followup3date"), $("#followup3time"), $("#followupcomplete3")]
+
+                    ], function(inputcount, inputs) {
+                    if (!inputs[0].val()) {
+                        inputs[0].date("today");
+                        inputs[1].val(format.time(new Date()));
+                        inputs[2].prop("checked", true);
+                        //$("#asm-details-accordion").accordion("option", "active", 2);
+                        $("#button-respond").button("disable");
+                        return false;
+                    }
+                });
+                header.show_loading(_("Saving..."));
+                validate.save(function() {
+                    common.route_reload();
+                });
             });
 
             $("#button-map").button().click(function() {
