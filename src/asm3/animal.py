@@ -4111,6 +4111,11 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
         if a[fieldname] is None or a[fieldname] == 0 or force:
             uv[fieldname] = asm3.utils.cint(d[dictfield])
             a[fieldname] = uv[fieldname]
+    def merge_ref(dictfield, fieldname):
+        if dictfield not in d or asm3.utils.cint(d[dictfield]) == 0: return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            uv[fieldname] = asm3.utils.cint(d[dictfield])
+            a[fieldname] = uv[fieldname]
     def merge_bool(dictfield, fieldname):
         if dictfield not in d or d[dictfield] == "": return
         if a[fieldname] is None or a[fieldname] == 0 or force:
@@ -4124,16 +4129,16 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
     if "microchipnumber" in d and "IDENTICHIPNUMBER" in uv and d["microchipnumber"] == uv["IDENTICHIPNUMBER"]: uv["IDENTICHIPPED"] = 1
     if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["NEUTERED"] = 1
     merge_date("neutereddate", "NEUTEREDDATE")
-    merge_int("neuteringvet", "NEUTEREDBYVETID")
+    merge_ref("neuteringvet", "NEUTEREDBYVETID")
     merge_date("dateofbirth", "DATEOFBIRTH")
     merge_date("deceaseddate", "DECEASEDDATE")
     merge_bool("puttosleep", "PUTTOSLEEP")
-    merge_int("deathcategory", "PTSREASONID")
+    merge_ref("deathcategory", "PTSREASONID")
     merge("ptsreason", "PTSREASON")
     merge_float("weight", "WEIGHT")
-    merge_int("internallocation", "SHELTERLOCATION")
+    merge_ref("internallocation", "SHELTERLOCATION")
     merge("unit", "SHELTERLOCATIONUNIT")
-    merge_int("pickuplocation", "PICKUPLOCATIONID")
+    merge_ref("pickuplocation", "PICKUPLOCATIONID")
     merge("pickupaddress", "PICKUPADDRESS")
     merge_int("housetrained", "ISHOUSETRAINED")
     merge_int("cratetrained", "ISCRATETRAINED")
