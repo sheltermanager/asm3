@@ -139,22 +139,22 @@ the caller.</p>
 </dd>
 <dt>ANIMALLITTER</dt><dd><p>A litter reference for the animal. Animals with the same reference can be viewed together with the “littermates” button on animal records.</p>
 </dd>
-<dt>ANIMALNAME</dt><dd><p>The animal’s name</p>
+<dt>ANIMALNAME</dt><dd><p>The animal’s name.</p>
 </dd>
-<dt>ANIMALIMAGE</dt><dd><p>A photo for the animal, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</p>
+<dt>ANIMALIMAGE</dt><dd><p>A photo for the animal, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI.</p>
 </dd>
-<dt>ANIMALPDFDATA</dt><dd><p>A PDF file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI</p>
+<dt>ANIMALPDFDATA</dt><dd><p>A PDF file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI.</p>
 </dd>
-<dt>ANIMALPDFNAME</dt><dd><p>The filename associated with the PDF data</p>
+<dt>ANIMALPDFNAME</dt><dd><p>The filename associated with the PDF data.</p>
 </dd>
-<dt>ANIMALNONSHELTER</dt><dd><p>Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal</p>
+<dt>ANIMALNONSHELTER</dt><dd><p>Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal.</p>
 </dd>
 <dt>ANIMALNOTFORADOPTION</dt><dd><p>Y/N to indicate whether this animal is not available for adoption (Y is not available).</p>
 </dd>
 <dt>ANIMALTRANSFER</dt><dd><p>Y/N to indicate whether this animal as transferred in. If set to Y, the ORIGINALOWNER fields will be used in the “Transferred From” field.</p>
 </dd>
 <dt>ANIMALFLAGS</dt><dd><p>A comma separated list of animal flags, including builtins courtesy,
-crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
+crueltycase, notforadoption, notforregistration, nonshelter, quarantine.</p>
 </dd>
 <dt>ANIMALSEX</dt><dd><p>The animal’s gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female or “U” for Unknown.</p>
 </dd>
@@ -172,7 +172,7 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ANIMALSIZE</dt><dd><p>The animal’s size. This should correspond to a size in your database.</p>
 </dd>
-<dt>ANIMALWEIGHT</dt><dd><p>The animal’s weight as a floating point number of pounds or kilos (eg: 2.5 = 2 lb and 8 oz)</p>
+<dt>ANIMALWEIGHT</dt><dd><p>The animal’s weight as a floating point number of pounds or kilos (eg: 2.5 = 2 lb and 8 oz).</p>
 </dd>
 <dt>ANIMALAGE</dt><dd><p>The animal’s current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.</p>
 </dd>
@@ -180,7 +180,7 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ANIMALUNIT</dt><dd><p>The unit within the animal’s location within the shelter, eg: pen/cage number.</p>
 </dd>
-<dt>ANIMALJURISDICTION</dt><dd><p>The jurisidiction to allocate the animal to based on entry circumstances (usually pickup)</p>
+<dt>ANIMALJURISDICTION</dt><dd><p>The jurisidiction to allocate the animal to based on entry circumstances (usually pickup).</p>
 </dd>
 <dt>ANIMALPICKUPLOCATION</dt><dd><p>The location where the animal was picked up. This should match a value in the pickup location lookup.</p>
 </dd>
@@ -188,13 +188,21 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ANIMALSPECIES</dt><dd><p>The animal’s species. This should match a species in your database.</p>
 </dd>
-<dt>ANIMALHOUSETRAINED</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+<dt>ANIMALCRATETRAINED</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
 </dd>
-<dt>ANIMALGOODWITHCATS</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+<dt>ANIMALHOUSETRAINED</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
 </dd>
-<dt>ANIMALGOODWITHDOGS</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+<dt>ANIMALENERGYLEVEL</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
 </dd>
-<dt>ANIMALGOODWITHKIDS</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+<dt>ANIMALGOODWITHCATS</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
+</dd>
+<dt>ANIMALGOODWITHDOGS</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
+</dd>
+<dt>ANIMALGOODWITHELDERLY</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
+</dd>
+<dt>ANIMALGOODWITHKIDS</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
+</dd>
+<dt>ANIMALGOODONLEAD</dt><dd><p>Y/N/U to indicate yes/no/unknown.</p>
 </dd>
 <dt>ANIMALDESCRIPTION</dt><dd><p>Some comments to put in the animal’s description field.</p>
 </dd>
@@ -206,23 +214,25 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ANIMALWARNING</dt><dd><p>A popup warning to display when viewing the animal record.</p>
 </dd>
-<dt>ANIMALNEUTERED</dt><dd><p>Y/N to indicate yes/no</p>
+<dt>ANIMALNEUTERED</dt><dd><p>Y/N to indicate yes/no.</p>
 </dd>
 <dt>ANIMALNEUTEREDDATE</dt><dd><p>The date the animal was neuteured. If supplied and not blank, ANIMALNEUTERED = Y is also assumed.</p>
 </dd>
 <dt>ANIMALMICROCHIP</dt><dd><p>If not blank, ASM will mark the animal microchipped with this as the microchip number.</p>
 </dd>
-<dt>ANIMALMICROCHIPDATE</dt><dd><p>The date the microchip was implanted</p>
+<dt>ANIMALMICROCHIPDATE</dt><dd><p>The date the microchip was implanted.</p>
 </dd>
 <dt>ANIMALTATTOO</dt><dd><p>If not blank, ASM will mark the animal tattooed with this as the tattoo number.</p>
 </dd>
-<dt>ANIMALTATTOODATE</dt><dd><p>The date the tattoo was implanted</p>
+<dt>ANIMALTATTOODATE</dt><dd><p>The date the tattoo was implanted.</p>
 </dd>
-<dt>ANIMALDECLAWED</dt><dd><p>Y/N to indicate yes/no</p>
+<dt>ANIMALDECLAWED</dt><dd><p>Y/N to indicate yes/no.</p>
 </dd>
-<dt>ANIMALHASSPECIALNEEDS</dt><dd><p>Y/N to indicate yes/no</p>
+<dt>ANIMALHASSPECIALNEEDS</dt><dd><p>Y/N to indicate yes/no.</p>
 </dd>
 <dt>ANIMALENTRYDATE</dt><dd><p>The date the animal entered the shelter (date brought in). Today’s date will be used if this column is not present or the value is blank.</p>
+</dd>
+<dt>ANIMALENTRYTIME</dt><dd><p>The time the animal entered the shelter. These should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.</p>
 </dd>
 <dt>ANIMALENTRYCATEGORY</dt><dd><p>The animal’s entry category, which should correspond to an entry category in your database.</p>
 </dd>
@@ -234,19 +244,19 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ANIMALDECEASEDREASON</dt><dd><p>The death category for the animal, which should correspond to one in your database.</p>
 </dd>
-<dt>ANIMALDECEASEDNOTES</dt><dd><p>The notes about the animal’s death</p>
+<dt>ANIMALDECEASEDNOTES</dt><dd><p>The notes about the animal’s death.</p>
 </dd>
-<dt>ANIMALEUTHANIZED</dt><dd><p>Y/N to indicate whether the animal was euthanized</p>
+<dt>ANIMALEUTHANIZED</dt><dd><p>Y/N to indicate whether the animal was euthanized.</p>
 </dd>
-<dt>ANIMALADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT</p>
+<dt>ANIMALADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT.</p>
 </dd>
-<dt>COSTTYPE</dt><dd><p>The cost type to use (should correspond to a cost type in your database)</p>
+<dt>COSTTYPE</dt><dd><p>The cost type to use (should correspond to a cost type in your database).</p>
 </dd>
-<dt>COSTDATE</dt><dd><p>The date of the cost on this line</p>
+<dt>COSTDATE</dt><dd><p>The date of the cost on this line.</p>
 </dd>
-<dt>COSTAMOUNT</dt><dd><p>The amount of the cost on this line</p>
+<dt>COSTAMOUNT</dt><dd><p>The amount of the cost on this line.</p>
 </dd>
-<dt>COSTDESCRIPTION</dt><dd><p>A description of the cost on this line</p>
+<dt>COSTDESCRIPTION</dt><dd><p>A description of the cost on this line.</p>
 </dd>
 <dt>CURRENTVETTITLE</dt><dd><p>If we have current vet info for the animal, the vet’s title.</p>
 </dd>
@@ -264,7 +274,7 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>CURRENTVETZIPCODE</dt><dd><p>The vet’s zip or postcode.</p>
 </dd>
-<dt>CURRENTVETJURISDICTION</dt><dd><p>The vet’s jurisdiction</p>
+<dt>CURRENTVETJURISDICTION</dt><dd><p>The vet’s jurisdiction.</p>
 </dd>
 <dt>CURRENTVETHOMEPHONE</dt><dd><p>The vet’s home phone.</p>
 </dd>
@@ -274,97 +284,105 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>CURRENTVETEMAIL</dt><dd><p>The vet’s email.</p>
 </dd>
-<dt>CURRENTVETADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth CURRENTVETADDITIONALDATEOFBIRTH</p>
+<dt>CURRENTVETADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth CURRENTVETADDITIONALDATEOFBIRTH.</p>
 </dd>
-<dt>DIARYDATE</dt><dd><p>The date of the diary entry</p>
+<dt>DIARYDATE</dt><dd><p>The date of the diary entry.</p>
 </dd>
-<dt>DIARYFOR</dt><dd><p>The person the diary note is for</p>
+<dt>DIARYFOR</dt><dd><p>The person the diary note is for.</p>
 </dd>
-<dt>DIARYSUBJECT</dt><dd><p>The subject of the diary note</p>
+<dt>DIARYSUBJECT</dt><dd><p>The subject of the diary note.</p>
 </dd>
-<dt>DIARYNOTE</dt><dd><p>The diary note section</p>
+<dt>DIARYNOTE</dt><dd><p>The diary note section.</p>
 </dd>
 <dt>DONATIONDATE</dt><dd><p>The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.</p>
 </dd>
-<dt>DONATIONAMOUNT</dt><dd><p>The amount of the donation on this line (as a floating point number)</p>
+<dt>DONATIONAMOUNT</dt><dd><p>The amount of the donation on this line (as a floating point number).</p>
 </dd>
-<dt>DONATIONFEE</dt><dd><p>The amount of any transaction fee in handling the donation</p>
+<dt>DONATIONFEE</dt><dd><p>The amount of any transaction fee in handling the donation.</p>
 </dd>
-<dt>DONATIONCHECKNUMBER</dt><dd><p>The cheque/check number for the donation</p>
+<dt>DONATIONCHECKNUMBER</dt><dd><p>The cheque/check number for the donation.</p>
 </dd>
-<dt>DONATIONCOMMENTS</dt><dd><p>Any comments to go with the donation</p>
+<dt>DONATIONCOMMENTS</dt><dd><p>Any comments to go with the donation.</p>
 </dd>
-<dt>DONATIONPAYMENT</dt><dd><p>The payment method to use (should correspond to a payment method in your database, eg: Cash)</p>
+<dt>DONATIONPAYMENT</dt><dd><p>The payment method to use (should correspond to a payment method in your database, eg: Cash).</p>
 </dd>
 <dt>DONATIONTYPE</dt><dd><p>The payment type to use (should correspond to a payment type in your database).</p>
 </dd>
-<dt>DONATIONGIFTAID</dt><dd><p>Y / N if the payment should have the giftaid flag set</p>
+<dt>DONATIONGIFTAID</dt><dd><p>Y / N if the payment should have the giftaid flag set.</p>
 </dd>
-<dt>INCIDENTDATE</dt><dd><p>The date of the incident and call</p>
+<dt>INCIDENTDATE</dt><dd><p>The date of the incident and call.</p>
 </dd>
-<dt>INCIDENTCOMPLETEDDATE</dt><dd><p>The date the incident was completed</p>
+<dt>INCIDENTTIME</dt><dd><p>The time of the incident. These should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.</p>
 </dd>
-<dt>INCIDENTCOMPLETEDTYPE</dt><dd><p>The incident completion disposition</p>
+<dt>INCIDENTCOMPLETEDDATE</dt><dd><p>The date the incident was completed.</p>
 </dd>
-<dt>INCIDENTRESPONDEDDATE</dt><dd><p>The date the officer responded to the incident</p>
+<dt>INCIDENTCOMPLETEDTIME</dt><dd><p>The time the incident was completed should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.</p>
 </dd>
-<dt>INCIDENTFOLLOWUPDATE</dt><dd><p>The date of follow for the incident</p>
+<dt>INCIDENTCOMPLETEDTYPE</dt><dd><p>The incident completion disposition.</p>
+</dd>
+<dt>INCIDENTRESPONDEDDATE</dt><dd><p>The date the officer responded to the incident.</p>
+</dd>
+<dt>INCIDENTFOLLOWUPDATE</dt><dd><p>The date of follow for the incident.</p>
 </dd>
 <dt>INCIDENTTYPE</dt><dd><p>The type for the incident (should correspond to an incident type in your database).</p>
 </dd>
-<dt>INCIDENTNOTES</dt><dd><p>The call notes for the incident</p>
+<dt>INCIDENTNOTES</dt><dd><p>The call notes for the incident.</p>
 </dd>
-<dt>DISPATCHACO</dt><dd><p>The animal control officer dispatched to the incident</p>
+<dt>DISPATCHACO</dt><dd><p>The animal control officer dispatched to the incident .</p>
 </dd>
-<dt>DISPATCHDATE</dt><dd><p>The date the officer was dispatched to the incident</p>
+<dt>DISPATCHDATE</dt><dd><p>The date the officer was dispatched to the incident.</p>
 </dd>
-<dt>DISPATCHADDRESS</dt><dd><p>The dispatch address for the incident</p>
+<dt>DISPATCHTIME</dt><dd><p>The time the officer was dispatched to the incident. Should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.</p>
 </dd>
-<dt>DISPATCHCITY</dt><dd><p>The dispatch city</p>
+<dt>DISPATCHADDRESS</dt><dd><p>The dispatch address for the incident.</p>
 </dd>
-<dt>DISPATCHSTATE</dt><dd><p>The dispatch state</p>
+<dt>DISPATCHCITY</dt><dd><p>The dispatch city.</p>
 </dd>
-<dt>DISPATCHZIPCODE</dt><dd><p>The dispatch zipcode</p>
+<dt>DISPATCHSTATE</dt><dd><p>The dispatch state.</p>
 </dd>
-<dt>INCIDENTANIMALSPECIES</dt><dd><p>The species of animal involved in the incident</p>
+<dt>DISPATCHZIPCODE</dt><dd><p>The dispatch zipcode.</p>
 </dd>
-<dt>INCIDENTANIMALSEX</dt><dd><p>The sex of the animal involved in the incident</p>
+<dt>INCIDENTANIMALSPECIES</dt><dd><p>The species of animal involved in the incident.</p>
 </dd>
-<dt>INCIDENTANIMALDESCRIPTION</dt><dd><p>Description of the animal involved in the incident</p>
+<dt>INCIDENTANIMALSEX</dt><dd><p>The sex of the animal involved in the incident.</p>
 </dd>
-<dt>LICENSETYPE</dt><dd><p>The license type to use (licenses need at least person info)</p>
+<dt>INCIDENTANIMALDESCRIPTION</dt><dd><p>Description of the animal involved in the incident.</p>
 </dd>
-<dt>LICENSENUMBER</dt><dd><p>The license number (mandatory)</p>
+<dt>LICENSETYPE</dt><dd><p>The license type to use (licenses need at least person info).</p>
 </dd>
-<dt>LICENSEFEE</dt><dd><p>The fee paid for the license</p>
+<dt>LICENSENUMBER</dt><dd><p>The license number (mandatory).</p>
 </dd>
-<dt>LICENSEISSUEDATE</dt><dd><p>The date the license was issued</p>
+<dt>LICENSEFEE</dt><dd><p>The fee paid for the license.</p>
 </dd>
-<dt>LICENSEEXPIRESDATE</dt><dd><p>The date the license expires</p>
+<dt>LICENSEISSUEDATE</dt><dd><p>The date the license was issued.</p>
+</dd>
+<dt>LICENSEEXPIRESDATE</dt><dd><p>The date the license expires.</p>
 </dd>
 <dt>LICENSECOMMENTS</dt><dd><p>Any comments on the license</p>
 </dd>
-<dt>LOGDATE</dt><dd><p>The date of any log entry (only animal logs can be imported)</p>
+<dt>LOGDATE</dt><dd><p>The date of any log entry (only animal logs can be imported).</p>
 </dd>
-<dt>LOGTYPE</dt><dd><p>The type of log entry</p>
+<dt>LOGTIME</dt><dd><p>The time of any log entry. Should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.</p>
 </dd>
-<dt>LOGCOMMENTS</dt><dd><p>The log entry itself</p>
+<dt>LOGTYPE</dt><dd><p>The type of log entry.</p>
 </dd>
-<dt>MEDICALNAME</dt><dd><p>The name of the medical regimen for this line</p>
+<dt>LOGCOMMENTS</dt><dd><p>The log entry itself.</p>
 </dd>
-<dt>MEDICALDOSAGE</dt><dd><p>The dosage of the medical regimen</p>
+<dt>MEDICALNAME</dt><dd><p>The name of the medical regimen for this line.</p>
 </dd>
-<dt>MEDICALGIVENDATE</dt><dd><p>The date the medical regimen started (only one-off treatment regimens can be created via import)</p>
+<dt>MEDICALDOSAGE</dt><dd><p>The dosage of the medical regimen.</p>
 </dd>
-<dt>MEDICALCOMMENTS</dt><dd><p>Any comments on the medical regimen</p>
+<dt>MEDICALGIVENDATE</dt><dd><p>The date the medical regimen started (only one-off treatment regimens can be created via import).</p>
+</dd>
+<dt>MEDICALCOMMENTS</dt><dd><p>Any comments on the medical regimen.</p>
 </dd>
 <dt>MOVEMENTTYPE</dt><dd><p>The type of movement for this line (0 = Reservation, 1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption. If MOVEMENTTYPE is 0, then MOVEMENTDATE and MOVEMENTRETURNDATE will be used to set the reservation date and reservation cancelled date fields.</p>
 </dd>
-<dt>MOVEMENTDATE</dt><dd><p>The date of the movement</p>
+<dt>MOVEMENTDATE</dt><dd><p>The date of the movement.</p>
 </dd>
-<dt>MOVEMENTRETURNDATE</dt><dd><p>The return date of the movement</p>
+<dt>MOVEMENTRETURNDATE</dt><dd><p>The return date of the movement.</p>
 </dd>
-<dt>MOVEMENTCOMMENTS</dt><dd><p>Any comments for the movement</p>
+<dt>MOVEMENTCOMMENTS</dt><dd><p>Any comments for the movement.</p>
 </dd>
 <dt>ORIGINALOWNERTITLE</dt><dd><p>If we have original owner info for the animal, the person’s title. If the animal has been marked as non-shelter, the ORIGINALOWNER will become the animal’s owner.</p>
 </dd>
@@ -382,7 +400,7 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ORIGINALOWNERZIPCODE</dt><dd><p>The original owner’s zip or postcode.</p>
 </dd>
-<dt>ORIGINALOWNERJURISDICTION</dt><dd><p>The original owner’s jurisdiction</p>
+<dt>ORIGINALOWNERJURISDICTION</dt><dd><p>The original owner’s jurisdiction.</p>
 </dd>
 <dt>ORIGINALOWNERHOMEPHONE</dt><dd><p>The original owner’s home phone.</p>
 </dd>
@@ -395,56 +413,56 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 <dt>ORIGINALOWNERWARNING</dt><dd><p>A popup warning to display when viewing the original owner record.</p>
 </dd>
 <dt>ORIGINALOWNERFLAGS</dt><dd><p>This column can be used to set any other person flags on the original owner. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker,excludefrombulkemail
-Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</p>
+Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag.</p>
 </dd>
-<dt>ORIGINALOWNERADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH</p>
+<dt>ORIGINALOWNERADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH.</p>
 </dd>
-<dt>PERSONCLASS</dt><dd><p>1 = Individual, 2 = Organisation</p>
+<dt>PERSONCLASS</dt><dd><p>1 = Individual, 2 = Organisation.</p>
 </dd>
-<dt>PERSONTITLE</dt><dd><p>The person’s title</p>
+<dt>PERSONTITLE</dt><dd><p>The person’s title.</p>
 </dd>
-<dt>PERSONINITIALS</dt><dd><p>The person’s initials</p>
+<dt>PERSONINITIALS</dt><dd><p>The person’s initials.</p>
 </dd>
-<dt>PERSONFIRSTNAME</dt><dd><p>The person’s first name (forenames)</p>
+<dt>PERSONFIRSTNAME</dt><dd><p>The person’s first name (forenames).</p>
 </dd>
-<dt>PERSONLASTNAME</dt><dd><p>The person’s last name (surname)</p>
+<dt>PERSONLASTNAME</dt><dd><p>The person’s last name (surname).</p>
 </dd>
 <dt>PERSONNAME</dt><dd><p>If this field is supplied, ASM will assume it contains first names and a last name, overriding any fields that set those. Everything up to the last space is considered first names and everything up to the last space the last name.</p>
 </dd>
-<dt>PERSONADDRESS</dt><dd><p>The person’s address</p>
+<dt>PERSONADDRESS</dt><dd><p>The person’s address.</p>
 </dd>
-<dt>PERSONCITY</dt><dd><p>The person’s town/city</p>
+<dt>PERSONCITY</dt><dd><p>The person’s town/city.</p>
 </dd>
-<dt>PERSONSTATE</dt><dd><p>The person’s state/county</p>
+<dt>PERSONSTATE</dt><dd><p>The person’s state/county.</p>
 </dd>
-<dt>PERSONZIPCODE</dt><dd><p>The person’s zip or postcode</p>
+<dt>PERSONZIPCODE</dt><dd><p>The person’s zip or postcode.</p>
 </dd>
-<dt>PERSONJURISDICTION</dt><dd><p>The person’s jurisdiction</p>
+<dt>PERSONJURISDICTION</dt><dd><p>The person’s jurisdiction.</p>
 </dd>
-<dt>PERSONHOMEPHONE</dt><dd><p>The person’s home phone number</p>
+<dt>PERSONHOMEPHONE</dt><dd><p>The person’s home phone number.</p>
 </dd>
-<dt>PERSONWORKPHONE</dt><dd><p>The person’s work phone number</p>
+<dt>PERSONWORKPHONE</dt><dd><p>The person’s work phone number.</p>
 </dd>
-<dt>PERSONCELLPHONE</dt><dd><p>The person’s cell/mobile number</p>
+<dt>PERSONCELLPHONE</dt><dd><p>The person’s cell/mobile number.</p>
 </dd>
-<dt>PERSONEMAIL</dt><dd><p>The person’s email address</p>
+<dt>PERSONEMAIL</dt><dd><p>The person’s email address.</p>
 </dd>
-<dt>PERSONGDPRCONTACTOPTIN</dt><dd><p>The GDPR contact optin values, separated by a comma. These values are: didnotask, declined, email, post, sms, phone</p>
+<dt>PERSONGDPRCONTACTOPTIN</dt><dd><p>The GDPR contact optin values, separated by a comma. These values are: didnotask, declined, email, post, sms, phone.</p>
 </dd>
 <dt>PERSONMEMBER</dt><dd><p>Y or 1 in this column to indicate the person should have the membership flag set.</p>
 </dd>
-<dt>PERSONMEMBERSHIPNUMBER</dt><dd><p>The person’s membership number</p>
+<dt>PERSONMEMBERSHIPNUMBER</dt><dd><p>The person’s membership number.</p>
 </dd>
-<dt>PERSONMEMBERSHIPEXPIRY</dt><dd><p>A date for when this person’s membership expires</p>
+<dt>PERSONMEMBERSHIPEXPIRY</dt><dd><p>A date for when this person’s membership expires.</p>
 </dd>
 <dt>PERSONFOSTERER</dt><dd><p>Y or 1 in this column to indicate the person should have the fosterer flag set.</p>
 </dd>
-<dt>PERSONFOSTERCAPACITY</dt><dd><p>The number of animals this person is willing to foster</p>
+<dt>PERSONFOSTERCAPACITY</dt><dd><p>The number of animals this person is willing to foster.</p>
 </dd>
 <dt>PERSONDONOR</dt><dd><p>Y or 1 in this column to indicate the person is a regular donor.</p>
 </dd>
 <dt>PERSONFLAGS</dt><dd><p>This column can be used to set any other person flags on the imported person. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker,excludefrombulkemail
-Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</p>
+Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag.</p>
 </dd>
 <dt>PERSONCOMMENTS</dt><dd><p>Any comments to go with the person record.</p>
 </dd>
@@ -452,61 +470,61 @@ Additional flags that you have added to the system should exactly match their fl
 </dd>
 <dt>PERSONMATCHACTIVE</dt><dd><p>Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.</p>
 </dd>
-<dt>PERSONMATCHADDED</dt><dd><p>The date the system should start looking for matches</p>
+<dt>PERSONMATCHADDED</dt><dd><p>The date the system should start looking for matches.</p>
 </dd>
-<dt>PERSONMATCHEXPIRES</dt><dd><p>The date the system should stop looking for matches</p>
+<dt>PERSONMATCHEXPIRES</dt><dd><p>The date the system should stop looking for matches.</p>
 </dd>
-<dt>PERSONMATCHSEX</dt><dd><p>The gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female, “U” for Unknown or “A” for any</p>
+<dt>PERSONMATCHSEX</dt><dd><p>The gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female, “U” for Unknown or “A” for any.</p>
 </dd>
-<dt>PERSONMATCHSIZE</dt><dd><p>The size of the animal the person is looking for</p>
+<dt>PERSONMATCHSIZE</dt><dd><p>The size of the animal the person is looking for.</p>
 </dd>
-<dt>PERSONMATCHCOLOR</dt><dd><p>The color of the animal the person is looking for</p>
+<dt>PERSONMATCHCOLOR</dt><dd><p>The color of the animal the person is looking for.</p>
 </dd>
-<dt>PERSONMATCHAGEFROM, PERSONMATCHAGETO</dt><dd><p>The age range of the animal the person is looking for in years</p>
+<dt>PERSONMATCHAGEFROM, PERSONMATCHAGETO</dt><dd><p>The age range of the animal the person is looking for in years.</p>
 </dd>
-<dt>PERSONMATCHTYPE</dt><dd><p>The animal type of the animal the person is looking for</p>
+<dt>PERSONMATCHTYPE</dt><dd><p>The animal type of the animal the person is looking for.</p>
 </dd>
-<dt>PERSONMATCHSPECIES</dt><dd><p>The species of animal the person is looking for</p>
+<dt>PERSONMATCHSPECIES</dt><dd><p>The species of animal the person is looking for.</p>
 </dd>
 <dt>PERSONMATCHBREED1, PERSONMATCHBREED2</dt><dd><p>The breed of the animal the person is looking for</p>
 </dd>
-<dt>PERSONMATCHGOODWITHCATS, PERSONMATCHGOODWITHDOGS, PERSONMATCHGOODWITHCHILDREN, PERSONMATCHHOUSETRAINED</dt><dd><p>The good with/housetrained flags of the animal the person is looking for</p>
+<dt>PERSONMATCHGOODWITHCATS, PERSONMATCHGOODWITHDOGS, PERSONMATCHGOODWITHCHILDREN, PERSONMATCHHOUSETRAINED</dt><dd><p>The good with/housetrained flags of the animal the person is looking for.</p>
 </dd>
-<dt>PERSONMATCHCOMMENTSCONTAIN</dt><dd><p>The animal this person is looking for will have this value in its comments</p>
+<dt>PERSONMATCHCOMMENTSCONTAIN</dt><dd><p>The animal this person is looking for will have this value in its comments.</p>
 </dd>
-<dt>PERSONADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH</p>
+<dt>PERSONADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH.</p>
 </dd>
-<dt>PERSONIMAGE</dt><dd><p>A photo for the person, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</p>
+<dt>PERSONIMAGE</dt><dd><p>A photo for the person, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI.</p>
 </dd>
-<dt>PERSONPDFDATA</dt><dd><p>A PDF file to attach to the person. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI</p>
+<dt>PERSONPDFDATA</dt><dd><p>A PDF file to attach to the person. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI.</p>
 </dd>
-<dt>PERSONPDFNAME</dt><dd><p>The filename associated with the PDF data</p>
+<dt>PERSONPDFNAME</dt><dd><p>The filename associated with the PDF data.</p>
 </dd>
-<dt>TESTTYPE</dt><dd><p>The type of test on this line</p>
+<dt>TESTTYPE</dt><dd><p>The type of test on this line.</p>
 </dd>
-<dt>TESTRESULT</dt><dd><p>The test result</p>
+<dt>TESTRESULT</dt><dd><p>The test result.</p>
 </dd>
-<dt>TESTDUEDATE</dt><dd><p>The due date for the test</p>
+<dt>TESTDUEDATE</dt><dd><p>The due date for the test.</p>
 </dd>
-<dt>TESTPERFORMEDDATE</dt><dd><p>The date the test was performed</p>
+<dt>TESTPERFORMEDDATE</dt><dd><p>The date the test was performed.</p>
 </dd>
-<dt>TESTCOMMENTS</dt><dd><p>Any comments for the test</p>
+<dt>TESTCOMMENTS</dt><dd><p>Any comments for the test.</p>
 </dd>
-<dt>VACCINATIONTYPE</dt><dd><p>The type of vaccination on this line</p>
+<dt>VACCINATIONTYPE</dt><dd><p>The type of vaccination on this line.</p>
 </dd>
-<dt>VACCINATIONDUEDATE</dt><dd><p>The due date for the vaccination</p>
+<dt>VACCINATIONDUEDATE</dt><dd><p>The due date for the vaccination.</p>
 </dd>
-<dt>VACCINATIONGIVENDATE</dt><dd><p>The date the vaccination was given</p>
+<dt>VACCINATIONGIVENDATE</dt><dd><p>The date the vaccination was given.</p>
 </dd>
-<dt>VACCINATIONEXPIRESDATE</dt><dd><p>The date the vaccine wears off and needs to be re-administered</p>
+<dt>VACCINATIONEXPIRESDATE</dt><dd><p>The date the vaccine wears off and needs to be re-administered.</p>
 </dd>
-<dt>VACCINATIONMANUFACTURER</dt><dd><p>The manufacturer of the vaccine</p>
+<dt>VACCINATIONMANUFACTURER</dt><dd><p>The manufacturer of the vaccine.</p>
 </dd>
-<dt>VACCINATIONBATCHNUMBER</dt><dd><p>The serial/batch number of the vaccine</p>
+<dt>VACCINATIONBATCHNUMBER</dt><dd><p>The serial/batch number of the vaccine.</p>
 </dd>
-<dt>VACCINATIONRABIESTAG</dt><dd><p>The rabies tag accompanying the vaccine</p>
+<dt>VACCINATIONRABIESTAG</dt><dd><p>The rabies tag accompanying the vaccine.</p>
 </dd>
-<dt>VACCINATIONCOMMENTS</dt><dd><p>Comments on the vaccine</p>
+<dt>VACCINATIONCOMMENTS</dt><dd><p>Comments on the vaccine.</p>
 </dd>
 </dl>
 </section>
