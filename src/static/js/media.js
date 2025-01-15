@@ -458,6 +458,7 @@ $(function() {
             // If no values were supplied, make them an empty string instead
             if (!comments) { comments = ""; }
             if (!retainfor) { retainfor = ""; }
+            if (!flags) { flags = ""; }
 
             // We're only allowed to upload files of a certain type
             if ( !media.is_jpeg(file.name) && !media.is_extension(file.name, "png") && 
