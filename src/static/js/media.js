@@ -672,11 +672,14 @@ $(function() {
             else if (s.indexOf("youtube.com/shorts/") != -1) {
                 yid = s.substring(s.lastIndexOf("/") +1);
             }
+            else if (s.indexOf("youtube.com/embed/") != -1) {
+                yid = s.substring(s.lastIndexOf("/") +1);
+            }
             else if (s.indexOf("youtu.be") != -1 && s.lastIndexOf("/") != -1) {
                 yid = s.substring(s.lastIndexOf("/") +1);
             }
             if (yid) {
-                return "https://img.youtube.com/vi/" + yid + "/default.jpg";
+                return "https://img.youtube.com/vi/" + yid + "/0.jpg";
             }
             return "";
         },
@@ -1061,13 +1064,14 @@ $(function() {
         },
 
         new_link: async function() {
-            $("#dialog-addlink textarea, #linktarget").val("");
+            $("#linkcomments, #linktarget").val("");
             $("#linktype").select("value", "2");
             await tableform.show_okcancel_dialog("#dialog-addlink", _("Attach"), { width: 550, notblank: [ "linktarget" ] });
             let formdata = "mode=createlink&linkid=" + controller.linkid + 
                 "&linktypeid=" + controller.linktypeid + 
                 "&controller=" + controller.name + "&" +
-                $("#linktype, #linktarget, #linkcomments").toPOST();
+                "&linktype=" + $("#linktype").val() + "&" +  
+                $("#linktarget, #linkcomments").toPOST();
             await common.ajax_post("media", formdata);
             common.route_reload();
         },
