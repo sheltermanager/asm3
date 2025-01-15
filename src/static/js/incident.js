@@ -391,13 +391,14 @@ $(function() {
                         [$("#followup3date"), $("#followup3time"), $("#followupcomplete3")]
 
                     ], function(inputcount, inputs) {
-                    if (!inputs[0].val()) {
-                        inputs[0].date("today");
-                        inputs[1].val(format.time(new Date()));
-                        inputs[2].prop("checked", true);
-                        $("#button-respond").button("disable");
-                        return false;
-                    }
+                        let [ followupdate, followuptime, followupcomplete ] = inputs;
+                        if (!followupdate.val()) {
+                            followupdate.date("today");
+                            followuptime.val(format.time(new Date()));
+                            followupcomplete.prop("checked", true);
+                            $("#button-respond").button("disable");
+                            return false;
+                        }
                 });
                 header.show_loading(_("Saving..."));
                 validate.save(function() {

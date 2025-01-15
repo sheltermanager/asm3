@@ -781,7 +781,6 @@ $(document).ready(function() {
             let o = await common.ajax_post(mobile.post_handler, "mode=loadincident&id=" + ac.ID);
             o = jQuery.parseJSON(o);
             ac = o.animalcontrol;
-            console.log(ac);
             // Inline buttons for completing, dispatching and responding, either the date or a button
             let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
             if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
@@ -799,25 +798,21 @@ $(document).ready(function() {
                 respdt = '<button type="button" data-id="' + ac.ID + '" class="respond btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Respond");
                 respdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
             }
-            ////
-            let followupdt = dt(ac.FOLLOWUPDATETIME);
-            if (ac.RESPONDEDDATETIME && common.has_permission("caci")) {
-                $.each([ac.FOLLOWUPDATETIME, ac.FOLLOWUPDATETIME2, ac.FOLLOWUPDATETIME3], function(followupcount, followup) {
-                    console.log(followup);
-                    if (followup == null) {
-                        followupdt = '<button type="button" data-id="' + ac.ID + '" class="followup btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Follow Up");
-                        followupdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
-                        return false;
-                    }
-                });
-            }
-            ////
             let dispadd = ac.DISPATCHADDRESS;
             if (dispadd) {
                 let encadd = encodeURIComponent(ac.DISPATCHADDRESS + ',' + ac.DISPATCHTOWN + ',' + ac.DISPATCHCOUNTY + ',' + ac.DISPATCHPOSTCODE);
                 dispadd = '<button type="button" data-address="' + encadd + '" class="showmap btn btn-secondary"><i class="bi-map"></i></button> ' + ac.DISPATCHADDRESS;
             }
             let x= [];
+            let followupdatetimes = [dt(ac.FOLLOWUPDATETIME), dt(ac.FOLLOWUPDATETIME2), dt(ac.FOLLOWUPDATETIME3)];
+            $.each(followupdatetimes, function(followupcount, followupdatetime) {
+                if (followupdatetime == " ") {
+                    let followupbutton = '<button type="button" data-id="' + ac.ID + '" class="followup btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Follow Up");
+                    followupbutton += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
+                    followupdatetimes[followupcount] = followupbutton;
+                    return false;
+                }
+            });
             let h = [
                 '<div class="list-group mt-3" style="margin-top: 5px">',
                 '<a href="#" data-link="' + backlink + '" class="list-group-item list-group-item-action internal-link">',
@@ -850,6 +845,8 @@ $(document).ready(function() {
                     common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : ""
                 ].join("\n"), "show"),
 
+                
+
                 aci("dispatch", _("Dispatch"), [
                     i(_("Address"), dispadd),
                     i(_("City"), ac.DISPATCHTOWN),
@@ -858,10 +855,9 @@ $(document).ready(function() {
                     i(_("Dispatched ACO"), ac.DISPATCHEDACO),
                     i(_("Dispatch Date/Time"), dispdt),
                     i(_("Responded Date/Time"), respdt),
-                    i("", followupdt),
-                    i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME)),
-                    i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME2)),
-                    i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME3))
+                    i(_("Followup Date/Time"), followupdatetimes[0]),
+                    i(_("Followup Date/Time"), followupdatetimes[1]),
+                    i(_("Followup Date/Time"), followupdatetimes[2])
                 ].join("\n"))
             ];
 
