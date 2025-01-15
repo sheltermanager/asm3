@@ -1111,6 +1111,10 @@ class mobile2(ASMEndpoint):
     def post_increspond(self, o):
         self.check(asm3.users.CHANGE_INCIDENT)
         asm3.animalcontrol.update_animalcontrol_respondnow(o.dbo, o.post.integer("id"), o.user)
+    
+    def post_incfollowup(self, o):
+        self.check(asm3.users.CHANGE_INCIDENT)
+        asm3.animalcontrol.update_animalcontrol_followupnow(o.dbo, o.post.integer("id"), o.user)
 
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)

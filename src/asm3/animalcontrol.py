@@ -556,6 +556,21 @@ def update_animalcontrol_respondnow(dbo: Database, acid: int, username: str) -> 
         "RespondedDateTime":    dbo.now()
     }, username)
 
+def update_animalcontrol_followupnow(dbo: Database, acid: int, username: str) -> None:
+    """
+    Updates an animal control incident record, marking it followed up now
+    """
+    for acdata in dbo.query("SELECT FollowupDateTime, FollowupDateTime2, FollowupDateTime3 FROM animalcontrol WHERE ID = %d" % (acid)):
+        for followupdatetime, followupcomplete in (
+            ("FOLLOWUPDATETIME", "FOLLOWUPCOMPLETE"), ("FOLLOWUPDATETIME2", "FOLLOWUPCOMPLETE2"), ("FOLLOWUPDATETIME3", "FOLLOWUPCOMPLETE3")
+            ):
+            if not acdata[followupdatetime]:
+                dbo.update("animalcontrol", acid, {
+                    followupdatetime: dbo.now(),
+                    followupcomplete: 1
+                }, username)
+                break
+
 def update_animalcontrol_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:
     """
     Updates an animal control incident record from the screen
