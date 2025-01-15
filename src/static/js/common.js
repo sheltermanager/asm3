@@ -1317,8 +1317,8 @@ const config = {
 };
 
 const dlgfx = {
-        delete_show: "explode",
-        delete_hide: "explode",
+        delete_show: "fade",
+        delete_hide: "drop",
         add_show:    "fade",
         add_hide:    "drop",
         edit_show:   "fade",

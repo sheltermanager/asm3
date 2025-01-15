@@ -1070,8 +1070,7 @@ $(function() {
             let formdata = "mode=createlink&linkid=" + controller.linkid + 
                 "&linktypeid=" + controller.linktypeid + 
                 "&controller=" + controller.name + "&" +
-                "&linktype=" + $("#linktype").val() + "&" +  
-                $("#linktarget, #linkcomments").toPOST();
+                $("#dialog-addlink .asm-field").toPOST();
             await common.ajax_post("media", formdata);
             common.route_reload();
         },
