@@ -1039,9 +1039,10 @@ $(function() {
             $("#filter").change(function() {
                 let filters = $("#filter").val();
                 if (filters.length > 0) {
-                    let filteredrows = [], flags = m.MEDIAFLAGS;
-                    if (!flags) { flags = ""; }
+                    let filteredrows = [];
                     $.each(controller.media, function(i, m) {
+                        let flags = m.MEDIAFLAGS;
+                        if (!flags) { flags = ""; }
                         if (common.array_overlap_all(filters, flags.split("|"))) {
                             filteredrows.push(m);
                         }
