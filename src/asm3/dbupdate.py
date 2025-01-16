@@ -90,7 +90,7 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
 # Tables that don't have an ID column (we don't create sequences for these tables for supporting dbs like postgres)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
     "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
-    "deletion", "onlineformincoming", "ownerlookingfor", "userrole" )
+    "deletion", "onlineformincoming", "ownerlookingfor", "ownerrole", "userrole" )
 
 # Tables that contain data rather than lookups - used by reset_db
 # to determine which tables to delete data from
@@ -102,7 +102,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
     "log", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
-    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", 
+    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", 
     "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
@@ -1558,6 +1558,13 @@ def sql_structure(dbo: Database) -> str:
     sql += index("ownerlicence_PaymentReference", "ownerlicence", "PaymentReference")
     sql += index("ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     sql += index("ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
+
+    sql += table("ownerrole", (
+        fint("OwnerID"),
+        fint("RoleID"),
+        fint("CanView"),
+        fint("CanEdit") ), False)
+    sql += index("ownerrole_OwnerRoleID", "ownerrole", "OwnerID, RoleID")
 
     sql += table("ownerrota", (
         fid(),
