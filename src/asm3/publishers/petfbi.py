@@ -32,8 +32,8 @@ class PetFBIPublisher(FTPPublisher):
         return asm3.lostfound.get_lostanimal_find_simple(self.dbo)
     
     def fbiGetStrayHold(self) -> Results:
-        return self.dbo.query("%s WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.HasPermanentFoster=0 " \
-            "AND a.HasTrialAdoption=0 AND a.EntryTypeID=2 AND a.IsHold=1" % self.fbiQuery())
+        return self.dbo.query(f"{self.fbiQuery()} WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.HasPermanentFoster=0 " \
+            "AND a.HasTrialAdoption=0 AND a.EntryTypeID=2 AND a.IsHold=1")
 
     def fbiQuery(self) -> str:
         return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, x.Sex AS SexName, a.Size, " \
@@ -43,7 +43,7 @@ class PetFBIPublisher(FTPPublisher):
             "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, a.HealthProblems, a.IsNotAvailableForAdoption, " \
             "a.Neutered, a.IsGoodWithDogs, a.IsGoodWithCats, a.IsGoodWithChildren, a.IsHouseTrained, a.IsCourtesy, a.Declawed, a.CrueltyCase, a.HasSpecialNeeds, " \
             "web.ID AS WebsiteMediaID, web.MediaName AS WebsiteMediaName, web.Date AS WebsiteMediaDate, " \
-            "1 AS RecentlyChangedImages" \
+            "1 AS RecentlyChangedImages " \
             "FROM animal a " \
             "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
             "INNER JOIN breed b2 ON a.Breed2ID = b2.ID " \
