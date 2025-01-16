@@ -65,6 +65,7 @@ $(function() {
                         options: animal_bulk.options(controller.ynun, "ID", "NAME") },
                     { post_field: "energylevel", json_field: "ENERGYLEVEL", label: _("Energy level"), type: "select", 
                         rowclasses: "goodwith dogs", options: html.list_to_options([
+                            "-1|" + _("(no change)"),
                             "1|" + _("1 - Very low"),
                             "2|" + _("2 - Low"),
                             "3|" + _("3 - Medium"),
