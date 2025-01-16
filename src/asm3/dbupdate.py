@@ -6349,7 +6349,12 @@ def update_34904(dbo: Database) -> None:
 
 def update_34905(dbo: Database) -> None:
     # Add the ownerrole table
-    dbo.execute_dbupdate("CREATE TABLE ownerrole (OwnerID INTEGER NOT NULL, " \
-        "RoleID INTEGER NOT NULL, CanView INTEGER NOT NULL, CanEdit INTEGER NOT NULL)")
-    dbo.execute_dbupdate("CREATE UNIQUE INDEX ownerrole_OwnerIDRoleID ON ownerrole(OwnerID, RoleID)")
+    fields = ",".join([
+        dbo.ddl_add_table_column("OwnerID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("RoleID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CanView", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CanEdit", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("ownerrole", fields) )
+    add_index(dbo, "ownerrole_OwnerIDRoleID", "OwnerID,RoleID", unique=True)
 
