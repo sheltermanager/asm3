@@ -152,6 +152,12 @@ tests: scripts/unittestdb/base.db
 	cd unittest && python3 suite.py
 	rm -f unittest/*.pyc && rm -rf unittest/__pycache__
 
+tests_dbupdates: 
+	@echo "[tests_dbupdates] =============="
+	rm -f scripts/unittestdb/dbupdates.db
+	sqlite3 scripts/unittestdb/dbupdates.db < scripts/unittestdb/asm2_postgres.sql
+	cd src && python3 cron.py maint_db_update_stdout SQLITE host 21 user pass ../scripts/unittestdb/dbupdates.db dbupdates
+
 deps:
 	@echo "[deps] ========================="
 	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-webpy

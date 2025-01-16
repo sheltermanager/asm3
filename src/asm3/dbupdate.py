@@ -3329,10 +3329,10 @@ def reset_db(dbo: Database) -> None:
         dbo.execute_dbupdate("DELETE FROM %s" % t)
     install_db_sequences(dbo)
 
-def perform_updates(dbo: Database) -> None:
+def perform_updates(dbo: Database) -> str:
     """
-    Performs any updates that need to be performed against the 
-    database. Returns the new database version.
+    Performs any updates that need to be run against the database. 
+    Returns the new database version.
     """
     # Lock the database - fail silently if we couldn't lock it
     if not asm3.configuration.db_lock(dbo): return ""
@@ -3358,6 +3358,25 @@ def perform_updates(dbo: Database) -> None:
     finally:
         # Unlock the database for updates before we leave
         asm3.configuration.db_unlock(dbo)
+
+def perform_updates_stdout(dbo: Database) -> None:
+    """
+    Performs any updates that need to be run against the database. 
+    Intended to be called by testing functions as this outputs to stdout.
+    """
+    # Go through our updates to see if any need running
+    ver = int(asm3.configuration.dbv(dbo))
+    for v in VERSIONS:
+        if ver < v:
+            print("update_%s" % v)
+            try:
+                globals()["update_%s" % v](dbo)
+            except Exception as err:
+                import traceback
+                print("ERROR: %s" % err)
+                print(traceback.format_exc())
+            asm3.configuration.dbv(dbo, str(v))
+            ver = v
 
 def add_column(dbo: Database, table: str, column: str, coltype: str) -> None:
     dbo.execute_dbupdate( dbo.ddl_add_column(table, column, coltype) )

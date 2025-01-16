@@ -439,6 +439,12 @@ def maint_db_update(dbo: Database):
         em = str(sys.exc_info()[0])
         al.error("FAIL: running db updates: %s" % em, "cron.maint_db_update", dbo, sys.exc_info())
 
+def maint_db_update_stdout(dbo: Database):
+    """
+    Check and run any outstanding database updates with output to stdout.
+    """
+    dbupdate.perform_updates_stdout(dbo)
+
 def maint_deduplicate_people(dbo: Database):
     try:
         person.merge_duplicate_people(dbo, "cron")
@@ -569,6 +575,8 @@ def run(dbo: Database, mode: str) -> None:
         maint_db_reset(dbo)
     elif mode == "maint_db_update":
         maint_db_update(dbo)
+    elif mode == "maint_db_update_stdout":
+        maint_db_update_stdout(dbo)
     elif mode == "maint_db_delete_orphaned_media":
         maint_db_delete_orphaned_media(dbo)
     elif mode == "maint_deduplicate_people":

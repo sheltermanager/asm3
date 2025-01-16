@@ -21,3 +21,4 @@ scripts/jsmin/jsmin
 scripts/schema/schema.db
 scripts/unittestdb/base.db
 scripts/unittestdb/test.db
+scripts/unittestdb/dbupdates.db
