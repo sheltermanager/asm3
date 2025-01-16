@@ -1940,6 +1940,12 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
         else:
             msg[header] = Header(value)
 
+    def sanitise_addresses(s: str) -> str:
+        if s is None: s = ""
+        if s.find("\n") != -1: s = s.replace("\n", " ")
+        if s.find("  ") != -1: s = strip_duplicate_spaces(s)
+        return s
+
     # If the email is plain text, but contains HTML escape characters, 
     # switch it to being an html message instead and make sure line 
     # breaks are retained
@@ -1976,6 +1982,11 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
         replyadd = asm3.configuration.email(dbo)
     if replyadd.find("<") != -1 and replyadd.find(">") == -1:
         replyadd += ">"
+
+    # Strip line breaks from any of the outbound address fields
+    toadd = sanitise_addresses(toadd)
+    ccadd = sanitise_addresses(ccadd)
+    bccadd = sanitise_addresses(bccadd)
 
     # Construct the mime message
     msg = MIMEMultipart("mixed")
