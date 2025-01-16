@@ -219,11 +219,11 @@ class Database(object):
 
         for k, v in values.copy().items(): # Work from a copy to prevent iterator problems
             if asm3.utils.is_str(v):
-                if k.find("*") != -1:
-                    # If there's an asterisk in the name, remove it so that the
+                if k.startswith("*"):
+                    # If the column name starts with an asterisk, remove it so that the
                     # value is stored again below, but without XSS escaping
                     del values[k]
-                    k = k.replace("*", "")
+                    k = k[1:]
                 else:
                     # Otherwise, do XSS escaping
                     v = self.escape_xss(v)

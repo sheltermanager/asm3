@@ -435,11 +435,14 @@ def get_file_id(dbo: Database, dbfsid: int, saveto: str) -> bool:
     asm3.utils.write_binary_file(saveto, get_string_id(dbo, dbfsid))
     return True
 
-def file_exists(dbo: Database, name: str) -> bool:
+def file_exists(dbo: Database, name: str, path: str = "") -> bool:
     """
     Return True if a file with name exists in the database.
     """
-    return dbo.query_int("SELECT COUNT(*) FROM dbfs WHERE Name = ?", [name]) > 0
+    if path == "":
+        return dbo.query_int("SELECT COUNT(*) FROM dbfs WHERE Name = ?", [name]) > 0
+    else:
+        return dbo.query_int("SELECT COUNT(*) FROM dbfs WHERE Name = ? AND Path = ?", [name, path]) > 0
 
 def get_files(dbo: Database, name: str, path: str, saveto: str) -> bool:
     """
