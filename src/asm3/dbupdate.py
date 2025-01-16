@@ -45,7 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
-    34904
+    34904, 34905
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -68,7 +68,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "lkwaitinglistremoval", "lkworktype", 
     "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
-    "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
+    "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
     "vaccinationtype", "voucher" )
@@ -6340,4 +6340,9 @@ def update_34904(dbo: Database) -> None:
     add_column(dbo, "animal", "EnergyLevel", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE animal SET IsCrateTrained=2, IsGoodWithElderly=2, IsGoodTraveller=2, IsGoodOnLead=2, EnergyLevel=0")
 
+def update_34905(dbo: Database) -> None:
+    # Add the ownerrole table
+    dbo.execute_dbupdate("CREATE TABLE ownerrole (OwnerID INTEGER NOT NULL, " \
+        "RoleID INTEGER NOT NULL, CanView INTEGER NOT NULL, CanEdit INTEGER NOT NULL)")
+    dbo.execute_dbupdate("CREATE UNIQUE INDEX ownerrole_OwnerIDRoleID ON ownerrole(OwnerID, RoleID)")
 

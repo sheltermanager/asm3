@@ -1087,7 +1087,7 @@ class mobile2(ASMEndpoint):
 
     def post_findperson(self, o):
         self.check(asm3.users.VIEW_PERSON)
-        rows = asm3.person.get_person_find_simple(o.dbo, o.post["q"], limit=100, siteid=o.siteid)
+        rows = asm3.person.get_person_find_simple(o.dbo, o.post["q"], o.user, limit=100, siteid=o.siteid)
         return asm3.utils.json(rows)
 
     def post_getstocklevel(self, o):
@@ -6052,6 +6052,7 @@ class person(JSONEndpoint):
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.id)[0],
             "templates": asm3.template.get_document_templates(dbo, "person"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "roles": asm3.users.get_roles(dbo),
             "person": p
         }
 
@@ -6211,7 +6212,7 @@ class person_embed(ASMEndpoint):
         self.check(asm3.users.VIEW_PERSON)
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.person.get_person_find_simple(o.dbo, q, classfilter=o.post["filter"], typefilter=o.post["type"], \
+        rows = asm3.person.get_person_find_simple(o.dbo, q, o.user, classfilter=o.post["filter"], typefilter=o.post["type"], \
             includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
             includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "main.person_embed", o.dbo)
@@ -6300,12 +6301,12 @@ class person_find_results(JSONEndpoint):
         mode = o.post["mode"]
         q = o.post["q"]
         if mode == "SIMPLE":
-            results = asm3.person.get_person_find_simple(dbo, q, classfilter="all", \
+            results = asm3.person.get_person_find_simple(dbo, q, o.user, classfilter="all", \
                 includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
                 includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), \
                 limit=asm3.configuration.record_search_limit(dbo), siteid=o.siteid)
         else:
-            results = asm3.person.get_person_find_advanced(dbo, o.post.data, \
+            results = asm3.person.get_person_find_advanced(dbo, o.post.data, o.user, \
                 includeStaff=self.checkb(asm3.users.VIEW_STAFF), includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), \
                 limit=asm3.configuration.record_search_limit(dbo), siteid=o.siteid)
         add = None
@@ -7180,7 +7181,7 @@ class sql_dump(ASMEndpoint):
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "person.csv")
-            rows = asm3.person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
+            rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
             asm3.additional.append_to_results(dbo, rows, "person")
             return asm3.utils.csv_generator(l, rows)
         elif mode == "incidentcsv":
