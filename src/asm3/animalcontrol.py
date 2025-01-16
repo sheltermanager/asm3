@@ -67,6 +67,10 @@ def get_animalcontrol_animals_query(dbo: Database) -> str:
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
         "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
 
+def get_animalcontrol_images(dbo: Database) -> ResultRow:
+    # This seems inefficient as there could be thousands of images out there maybe come back to this once mechanism is working - Adam 
+    return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? ORDER BY Date DESC", ( asm3.media.ANIMALCONTROL, ))
+
 def get_traploan_query(dbo: Database) -> str:
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \
         "ot.DepositAmount, ot.DepositReturnDate, ot.ReturnDueDate, ot.ReturnDate, " \

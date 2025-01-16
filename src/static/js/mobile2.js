@@ -1,5 +1,33 @@
 /*global $, controller */
 
+const image_slider = function(rows) {
+    let sliderhtml = '<div id=imageslider>';
+    let sliderbodyhtml = '<div id=imagesliderbody>';
+    let sliderheaderhtml = '<div id=imagesliderheader>';
+    let bordercolour = '#000000ff';
+    if (rows.length == 0) { return _("There are no images associated with this incident")}
+    $.each(rows, function(rowcount, row) {
+        if (rowcount == 0) {
+            sliderbodyhtml += '<img id="slidermainimage" style="max-width: 100%;" src="/image?db=/home/adam-spencer/workspace/asmtestdb.db&mode=media&id=' + row.ID + '"><div id=slidermedianotes>' + row.MEDIANOTES + '</div></div>';
+        }
+        sliderheaderhtml += '<div style="border-style: solid;border-width: 1px;border-color: ' + bordercolour + ';display: inline-block;height: 100px;width: 100px;background: url(\'/image?db=/home/adam-spencer/workspace/asmtestdb.db&mode=media&id=' + row.ID + '\');background-size: cover;background-position: center center;margin-right: 10px;margin-bottom: 10px;" data-imageid="' + row.ID + '" onclick="image_slider_thumbnail_click(' + row.ID + ', \'' + row.MEDIANOTES + '\')">';
+        sliderheaderhtml += '</div>';
+        bordercolour = '#00000000';
+    });
+    sliderheaderhtml += '</div>';
+    sliderbodyhtml += '</div>';
+    sliderhtml += sliderheaderhtml + sliderbodyhtml + '</div>';
+    return sliderhtml;
+}
+
+const image_slider_thumbnail_click = function(rowid, rowmedianotes) {
+    console.log(rowid);
+    $("#imagesliderheader div").css("border-color", "#00000000");
+    $("#imagesliderheader div[data-imageid='" + rowid + "']").css("border-color", "#000000ff");
+    $("#slidermainimage").prop("src", "/image?db=/home/adam-spencer/workspace/asmtestdb.db&mode=media&id=" + rowid);
+    $("#slidermedianotes").html(rowmedianotes);
+}
+
 $(document).ready(function() {
 
     "use strict";
@@ -813,6 +841,10 @@ $(document).ready(function() {
                     return false;
                 }
             });
+            let incidentimages = []
+            $.each(controller.incidentimages, function(imagecount, image) {
+                if (image.LINKID == ac.ID) {incidentimages.push(image)}
+            });
             let h = [
                 '<div class="list-group mt-3" style="margin-top: 5px">',
                 '<a href="#" data-link="' + backlink + '" class="list-group-item list-group-item-action internal-link">',
@@ -845,7 +877,10 @@ $(document).ready(function() {
                     common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : ""
                 ].join("\n"), "show"),
 
-                
+                aci("incidentimages", _("Images"), [
+                    image_slider(incidentimages),
+                ].join("\n")
+                ),
 
                 aci("dispatch", _("Dispatch"), [
                     i(_("Address"), dispadd),

@@ -1042,6 +1042,7 @@ class mobile2(ASMEndpoint):
             "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "undispatched" }, o.user),
             "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
             "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
+            "incidentimages": asm3.animalcontrol.get_animalcontrol_images(dbo),
             "maplink":      MAP_LINK,
             "animaltypes":  asm3.lookups.get_animal_types(dbo),
             "breeds":       asm3.lookups.get_breeds_by_species(dbo),

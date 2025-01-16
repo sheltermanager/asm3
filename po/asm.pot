@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-14 17:43+0000\n"
+"POT-Creation-Date: 2025-01-16 16:54+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -128,7 +128,7 @@ msgstr ""
 msgid ".odt templates are not permitted by the system options."
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "1 - Very low"
 msgstr ""
 
@@ -148,7 +148,7 @@ msgstr ""
 msgid "1. Choose Animal"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "2 - Low"
 msgstr ""
 
@@ -168,7 +168,7 @@ msgstr ""
 msgid "2FA Enabled"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "3 - Medium"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgstr ""
 msgid "3. Capture Photo"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "4 - High"
 msgstr ""
 
@@ -188,7 +188,7 @@ msgstr ""
 msgid "4 weeks"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "5 - Very high"
 msgstr ""
 
@@ -3486,7 +3486,7 @@ msgstr ""
 msgid "Cow"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "Crate trained"
 msgstr ""
 
@@ -5294,7 +5294,7 @@ msgstr ""
 msgid "Ends after"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "Energy level"
 msgstr ""
 
@@ -6693,11 +6693,11 @@ msgstr ""
 msgid "Good With Dogs"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "Good on lead"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "Good traveller"
 msgstr ""
 
@@ -6740,7 +6740,7 @@ msgstr ""
 msgid "Good with dogs"
 msgstr ""
 
-#: animal.js
+#: animal.js animal_bulk.js
 msgid "Good with elderly"
 msgstr ""
 
@@ -7180,6 +7180,10 @@ msgstr ""
 
 #: report_images.js
 msgid "Image file"
+msgstr ""
+
+#: mobile2.js
+msgid "Images"
 msgstr ""
 
 #: csvimport.js onlineforms.js csvimport_stripe.js csvimport_paypal.js
@@ -13873,6 +13877,10 @@ msgstr ""
 
 #: stocklevel.js
 msgid "The wholesale/trade price the container was bought for"
+msgstr ""
+
+#: mobile2.js
+msgid "There are no images associated with this incident"
 msgstr ""
 
 #: onlineform.py
