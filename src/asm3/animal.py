@@ -3280,9 +3280,24 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
     if post.integer("goodwithkids") != -1:
         dbo.execute("UPDATE animal SET IsGoodWithChildren = %d WHERE ID IN (%s)" % (post.integer("goodwithkids"), post["animals"]))
         aud.append("IsGoodWithChildren = %s" % post["goodwithkids"])
+    if post.integer("goodwithelderly") != -1:
+        dbo.execute("UPDATE animal SET IsGoodWithElderly = %d WHERE ID IN (%s)" % (post.integer("goodwithelderly"), post["animals"]))
+        aud.append("IsGoodWithElderly = %s" % post["goodwithelderly"])
+    if post.integer("goodonlead") != -1:
+        dbo.execute("UPDATE animal SET IsGoodOnLead = %d WHERE ID IN (%s)" % (post.integer("goodonlead"), post["animals"]))
+        aud.append("IsGoodOnLead = %s" % post["goodonlead"])
+    if post.integer("goodtraveller") != -1:
+        dbo.execute("UPDATE animal SET IsGoodTraveller = %d WHERE ID IN (%s)" % (post.integer("goodtraveller"), post["animals"]))
+        aud.append("IsGoodTraveller = %s" % post["goodtraveller"])
     if post.integer("housetrained") != -1:
         dbo.execute("UPDATE animal SET IsHouseTrained = %d WHERE ID IN (%s)" % (post.integer("housetrained"), post["animals"]))
         aud.append("IsHouseTrained = %s" % post["housetrained"])
+    if post.integer("cratetrained") != -1:
+        dbo.execute("UPDATE animal SET IsCrateTrained = %d WHERE ID IN (%s)" % (post.integer("cratetrained"), post["animals"]))
+        aud.append("IsCrateTrained = %s" % post["cratetrained"])
+    if post.integer("energylevel") != -1:
+        dbo.execute("UPDATE animal SET EnergyLevel = %d WHERE ID IN (%s)" % (post.integer("energylevel"), post["animals"]))
+        aud.append("EnergyLevel = %s" % post["energylevel"])
     if post["neutereddate"] != "":
         dbo.execute("UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("neutereddate")), post["animals"]))
         aud.append("NeuteredDate = %s" % post["neutereddate"])

@@ -53,8 +53,23 @@ $(function() {
                         options: animal_bulk.options(controller.ynun, "ID", "NAME") },
                     { post_field: "goodwithkids", label: _("Good with kids"), type: "select", rowclasses: "goodwith",
                         options: animal_bulk.options(controller.ynunk, "ID", "NAME") },
+                    { post_field: "goodwithelderly", label: _("Good with elderly"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME") },
+                    { post_field: "goodtraveller", label: _("Good traveller"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME") },
+                    { post_field: "goodonlead", label: _("Good on lead"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME") },
                     { post_field: "housetrained", label: _("Housetrained"), type: "select", rowclasses: "goodwith",
                         options: animal_bulk.options(controller.ynun, "ID", "NAME") },
+                    { post_field: "cratetrained", label: _("Crate trained"), type: "select", rowclasses: "goodwith",
+                        options: animal_bulk.options(controller.ynun, "ID", "NAME") },
+                    { post_field: "energylevel", json_field: "ENERGYLEVEL", label: _("Energy level"), type: "select", 
+                        rowclasses: "goodwith dogs", options: html.list_to_options([
+                            "1|" + _("1 - Very low"),
+                            "2|" + _("2 - Low"),
+                            "3|" + _("3 - Medium"),
+                            "4|" + _("4 - High"),
+                            "5|" + _("5 - Very high") ]) },
 
                     { type: "nextcol" },
 
