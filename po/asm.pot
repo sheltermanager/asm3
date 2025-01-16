@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-14 17:43+0000\n"
+"POT-Creation-Date: 2025-01-16 10:54+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -9820,6 +9820,10 @@ msgstr ""
 msgid "Only allow users with one of these roles to view this incident"
 msgstr ""
 
+#: person.js
+msgid "Only allow users with one of these roles to view this person record"
+msgstr ""
+
 #: options.js
 msgid "Only for these species of adopted animal"
 msgstr ""
@@ -11302,6 +11306,10 @@ msgstr ""
 
 #: options.js
 msgid "Remove fine-grained animal control incident permissions"
+msgstr ""
+
+#: options.js
+msgid "Remove fine-grained person record viewing permissions"
 msgstr ""
 
 #: options.js
@@ -15391,7 +15399,7 @@ msgstr ""
 msgid "View Report"
 msgstr ""
 
-#: accounts.js incident.js reports.js incident_new.js
+#: accounts.js incident.js reports.js person.js incident_new.js
 msgid "View Roles"
 msgstr ""
 
