@@ -2157,7 +2157,7 @@ def get_animals_on_foster_namecode(dbo: Database) -> Results:
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
         "LEFT OUTER JOIN species s ON s.ID = animal.SpeciesID " \
-        "WHERE animal.ActiveMovementType = 2 " \
+        "WHERE ActiveMovementType = 2 AND DeceasedDate Is Null " \
         "ORDER BY AnimalName, ShelterCode")
     return rows
 
