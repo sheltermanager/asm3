@@ -523,7 +523,7 @@ def sql_structure(dbo: Database) -> str:
         fint("RoleID"),
         fint("CanView"),
         fint("CanEdit") ), False)
-    sql += index("animalcontrolrole_AnimalControlIDRoleID", "animalcontrolrole", "AnimalControlID, RoleID")
+    sql += index("animalcontrolrole_AnimalControlIDRoleID", "animalcontrolrole", "AnimalControlID, RoleID", True)
 
     sql += table("animalcost", (
         fid(),
@@ -1564,7 +1564,7 @@ def sql_structure(dbo: Database) -> str:
         fint("RoleID"),
         fint("CanView"),
         fint("CanEdit") ), False)
-    sql += index("ownerrole_OwnerRoleID", "ownerrole", "OwnerID, RoleID")
+    sql += index("ownerrole_OwnerRoleID", "ownerrole", "OwnerID, RoleID", True)
 
     sql += table("ownerrota", (
         fid(),
