@@ -794,51 +794,59 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     create a row for every key/value pair in the posted data
     with a unique collation ID.
     """
-    # Do some spam/junk tests before accepting the form. If any of these fail, they are logged silently
-    # and the submitter still receives the redirect to the thank you page so they don't know that something is up.
-
+    # Do some spam/junk tests, we need to extract some values from the form first
     spam = False
+    firstname = ""
+    lastname = ""
+    postcode = ""
+    for k, v in post.data.items():
+        if k.startswith("firstname") or k.startswith("forenames"): firstname = v
+        if k.startswith("lastname") or k.startswith("surname"): lastname = v
+        if k.startswith("zipcode") or k.startswith("postcode"): postcode = v
+
     # Check our spambot checkbox/honey trap
     if asm3.configuration.onlineform_spam_honeytrap(dbo):
         if post[SPAMBOT_TXT] != "": 
-            asm3.al.error("blocked spambot (honeytrap): %s" % post.data, "insert_onlineformincoming_from_form", dbo)
+            asm3.al.error(f"identified spam (honeytrap): {post.data}", "insert_onlineformincoming_from_form", dbo)
             spam = True
-            return
 
     # Check that the useragent looks like an actual browser
     # had a few bots that identified as python-requests, etc.
     if asm3.configuration.onlineform_spam_ua_check(dbo):
         if not useragent.strip().startswith("Mozilla"):
-            asm3.al.error("blocked spambot (bad ua: %s): %s" % (useragent, post.data), "insert_onlineformincoming_from_form", dbo)
+            asm3.al.error(f"identified spam (bad ua: {useragent}): {post.data}", "insert_onlineformincoming_from_form", dbo)
             spam = True
-            return
 
-    # Look for junk in firstname. A lot of bot submitted junk is just random upper and lower case letters. 
-    # If we have 3 or more upper and lower case letters in the firstname and no spaces, it's very likely bot junk.
-    # We have javascript that title cases name fields, so a mix of cases, or all one case also indicates the form has been filled out by
-    # an automated process instead of a browser.
+    # Check for junk in the name fields.
+    # A lot of bot submitted junk is just random upper and lower case letters. 
+    # Some bots stick an email address in every field.
     # This test does nothing if there's no firstname field in the form.
-    if asm3.configuration.onlineform_spam_firstname_mixcase(dbo):
-        for k, v in post.data.items():
-            if k.startswith("firstname") or k.startswith("forenames"):
-                lc = 0
-                uc = 0
-                sp = 0
-                for x in v:
-                    if x.isupper():
-                        uc += 1
-                    elif x == " ":
-                        sp += 1
-                    else:
-                        lc += 1
-                if lc >= 3 and uc >= 3 and sp == 0:
-                    asm3.al.error("blocked spambot (mixed caps, firstname=%s, uc=%s, lc=%s, sp=%s): %s" % (v, uc, lc, sp, post.data), "insert_onlineformincoming_from_form", dbo)
-                    spam = True
-                    return
-                if v.find("@") != -1 and v.find(".") != -1:
-                    asm3.al.error("blocked spambot (email in firstname, firstname=%s): %s" % (v, post.data), "insert_onlineformincoming_from_form", dbo)
-                    spam = True
-                    return
+    if asm3.configuration.onlineform_spam_firstname_mixcase(dbo) and firstname != "":
+        uc = 0
+        lc = 0
+        sp = 0
+        # Calculate how many upper case and lower case letters in both names combined
+        for x in f"{firstname}{lastname}":
+            if x.isupper():
+                uc += 1
+            elif x == " ":
+                sp += 1
+            else:
+                lc += 1
+        # There should never realistically be more than 4 upper case chars in a combined name
+        # and there should never be more upper case than lower case
+        if (uc > lc and sp == 0) or (lc >= 4 and uc >= 4 and sp == 0):
+            asm3.al.error(f"identified spam (mixed caps, firstname={firstname}, lastname={lastname}, uc={uc}, lc={lc}, sp={sp}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            spam = True
+        if firstname.find("@") != -1 and firstname.find(".") != -1:
+            asm3.al.error(f"identified spam (email in firstname, firstname={firstname}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            spam = True
+
+    # Make sure that the postcode/zipcode actually contains some numbers
+    if asm3.configuration.onlineform_spam_postcode(dbo) and postcode != "":
+        if asm3.utils.atio(postcode) == 0:
+            asm3.al.error(f"identified spam (non-numeric postcode/zipcode={postcode}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            spam = True
 
     collationid = get_collationid(dbo)
 

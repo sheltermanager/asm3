@@ -1472,6 +1472,7 @@ $(function() {
                 '<input data="OnlineFormSpamHoneyTrap" id="spamhoneytrap" class="asm-checkbox" type="checkbox" /> <label for="spamhoneytrap">' + _("Spambot protection: Invisible checkbox") + '</label><br/>',
                 '<input data="OnlineFormSpamUACheck" id="spamuacheck" class="asm-checkbox" type="checkbox" /> <label for="spamuacheck">' + _("Spambot protection: UserAgent check") + '</label><br/>',
                 '<input data="OnlineFormSpamFirstnameMixCase" id="spamfirstname" class="asm-checkbox" type="checkbox" /> <label for="spamfirstname">' + _("Spambot protection: First name mixed case") + '</label><br/>',
+                '<input data="OnlineFormSpamPostcode" id="spampostcode" class="asm-checkbox" type="checkbox" /> <label for="spampostcode">' + _("Spambot protection: Zipcode contains numbers") + '</label><br/>',
                 '</p>',
                 '</div>'
             ].join("\n");

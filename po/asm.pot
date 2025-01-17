@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-17 10:03+0000\n"
+"POT-Creation-Date: 2025-01-17 11:45+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -13065,6 +13065,10 @@ msgstr ""
 
 #: options.js
 msgid "Spambot protection: UserAgent check"
+msgstr ""
+
+#: options.js
+msgid "Spambot protection: Zipcode contains numbers"
 msgstr ""
 
 #: dbupdate.py
