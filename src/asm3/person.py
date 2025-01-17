@@ -73,8 +73,10 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     (int) personid: The person to get
     """
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = %d" % personid) )
+    if p is None: return None
     p = embellish_latest_movement(dbo, p)
-    roles = dbo.query("SELECT ownerrole.*, role.RoleName FROM ownerrole INNER JOIN role ON ownerrole.RoleID = role.ID WHERE ownerrole.OwnerID = ?", [personid])
+    roles = dbo.query("SELECT ownerrole.*, role.RoleName FROM ownerrole " \
+        "INNER JOIN role ON ownerrole.RoleID = role.ID WHERE ownerrole.OwnerID = ?", [personid])
     viewroleids = []
     viewrolenames = []
     editroleids = []
