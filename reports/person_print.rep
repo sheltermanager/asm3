@@ -2,7 +2,7 @@ Print Person Record
 ###
 Auditing
 ###
-34702/Any rev04
+34702/Any rev05
 ###
 A complete printout of a person record.
 ###
@@ -50,7 +50,7 @@ $$BODY
 
 <h2>Looking For</h2>
 
-<table>
+<table class="nosort">
 <tr>
 <td>Added</td><td><b>$MATCHADDED</b></td><td>Expires</td><td>$MATCHEXPIRES</td>
 </tr><tr>
