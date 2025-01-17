@@ -32,6 +32,9 @@ $(function() {
                         options: { displayfield: "SITENAME", rows: controller.sites }},
                     { post_field: "ownertype", json_field: "OWNERTYPE", type: "select", label: _("Class"), 
                         options: html.list_to_options([ '1|' + _("Individual"), '3|' + _("Couple"), '2|' + _("Organization") ])},
+                    { post_field: "viewroles", json_field: "VIEWROLEIDS", type: "selectmulti", label: _("View Roles"), 
+                        callout: _("Only allow users with one of these roles to view this person record"),
+                        options: { displayfield: "ROLENAME", rows: controller.roles }},
                     { post_field: "title", json_field: "OWNERTITLE", type: "text", label: _("Title"), maxlength: 50, 
                         rowclasses: "tag-individual",  colclasses: "nowrap",
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "title2", json_field: "OWNERTITLE2", classes: "tag-couple", maxlength: 50 }) },
@@ -239,6 +242,11 @@ $(function() {
         enable_widgets: function() {
 
             // DATA ===========================================
+
+            // Hide the view roles controls if incident permissions are off
+            if (!config.bool("PersonPermissions")) {
+                $("#viewrolesrow").hide();
+            }
 
             // If the looking for status is inactive, disable the fields
             if ($("#matchactive").val() == "0") {
