@@ -1000,6 +1000,11 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     dbo.update("onlineformincoming", "CollationID=%s" % collationid, { 
         "Preview": ", ".join(preview) 
     })
+
+    # If we think the form is spam, stop now before we send any emails
+    # or try to autoprocess the form. 
+    # Stopping now will leave it in the queue for user inspection.
+    if spam: return collationid
         
     # Get the onlineform if we have one
     formdef = dbo.first_row(dbo.query("SELECT * FROM onlineform o " \
@@ -1090,9 +1095,9 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
             subject, formdata, "html", images, exceptions=False, fromoverride=False)
 
-    # Does this form have an option set to autoprocess it? If not, stop now
-    # also stop at this point if we think the form is spam
-    if formdef.autoprocess is None or formdef.autoprocess == AP_NO or spam: return collationid
+    # Does this form have an option set to autoprocess it? 
+    # Stop now if it doesn't.
+    if formdef.autoprocess is None or formdef.autoprocess == AP_NO: return collationid
 
     try:
         if formdef.autoprocess == AP_ATTACHANIMAL:
