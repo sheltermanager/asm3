@@ -67,10 +67,6 @@ def get_animalcontrol_animals_query(dbo: Database) -> str:
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
         "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
 
-def get_animalcontrol_images(dbo: Database, acid: int) -> ResultRow:
-    sql = "SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? ORDER BY Date DESC"
-    return dbo.query(sql, [asm3.media.ANIMALCONTROL, acid])
-
 def get_traploan_query(dbo: Database) -> str:
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \
         "ot.DepositAmount, ot.DepositReturnDate, ot.ReturnDueDate, ot.ReturnDate, " \

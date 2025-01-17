@@ -768,7 +768,7 @@ $(document).ready(function() {
                 if (rowcount == 0) {
                     sliderbodyhtml += '<a id="slidermainanchor" href="/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '" target="_blank"><img id="slidermainimage" style="max-width: 100%;" src="/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '"></a><div id=slidermedianotes>' + row.MEDIANOTES + '</div></div>';
                 }
-                sliderheaderhtml += '<div class="media-thumb" style="position: relative;border-style: solid;border-width: 1px;border-color: ' + bordercolour + ';display: inline-block;height: 100px;width: 100px;background: url(\'/image?db=/home/adam-spencer/workspace/asmtestdb.db&mode=media&id=' + row.ID + '\');background-size: cover;background-position: center center;margin-right: 10px;margin-bottom: 10px;" data-imageid="' + row.ID + '" data-description="' + row.MEDIANOTES + '">';
+                sliderheaderhtml += '<div class="media-thumb" style="position: relative;border-style: solid;border-width: 1px;border-color: ' + bordercolour + ';display: inline-block;height: 100px;width: 100px;background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '\');background-size: cover;background-position: center center;margin-right: 10px;margin-bottom: 10px;" data-imageid="' + row.ID + '" data-description="' + row.MEDIANOTES + '">';
                 sliderheaderhtml += '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + format.date(row.DATE) + '</div>';
                 sliderheaderhtml += '</div>';
                 bordercolour = '#000000ff';

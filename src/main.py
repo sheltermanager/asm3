@@ -1028,12 +1028,6 @@ class mobile2(ASMEndpoint):
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile2", dbo)
 
-        """allincidentids = []
-        for a in (incidentsmy, incidentsundispatched, incidentsincomplete, incidentsfollowup):
-            for b in a:
-                if allincidentids.__contains__(b.ID) == False:
-                    allincidentids.append(b.ID)"""
-
         c = {
             "animals":      animals,
             "reports":      asm3.reports.get_available_reports(dbo),
