@@ -761,7 +761,7 @@ $(document).ready(function() {
         render_image_slider: function(rows, customid) {
             let sliderhtml = '<div id=imageslider>';
             let sliderbodyhtml = '<div id=imagesliderbody>';
-            let sliderheaderhtml = '<div id=imagesliderheader style="height: 110px;overflow-x: scroll;overflow-y: hidden;white-space: nowrap;">';
+            let sliderheaderhtml = '<div id=imagesliderheader style="height: 120px;overflow-x: scroll;overflow-y: hidden;white-space: nowrap;">';
             let bordercolour = '#ffffffff';
             if (rows.length == 0) { return _("There are no images associated with this incident")}
             $.each(rows, function(rowcount, row) {
