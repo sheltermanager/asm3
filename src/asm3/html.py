@@ -42,17 +42,24 @@ def script_tag(uri: str, idattr: str = "", addbuild: bool = False) -> str:
     buildqs = asm3.utils.iif(addbuild, "?b=%s" % BUILD, "")
     return f"<script type=\"text/javascript\" src=\"{uri}{buildqs}\" {idattr}></script>\n"
 
+def is_standalone_js(filename: str) -> bool:
+    """
+    Returns true if this is a standalone js file
+    """
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_extra.js", "report_toolbar.js" ]
+    if filename in standalone: return True
+    if filename.startswith("mobile"): return True
+    if filename.startswith("service"): return True
+    return False
+
 def asm_script_tag(filename: str) -> str:
     """
     Returns a script tag to one of our javascript files.
     If we're in rollup mode and one of our standalone files is requested,
     get it from the compat folder instead so it's still cross-browser compliant and minified.
+    javascript files that start with mobile or service are always standalone.
     """
-    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
-        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_photo_uploader.js", "mobile_report.js", "mobile_sign.js", 
-        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js", 
-        "service_checkout_licence.js" ]
-    if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = f"compat/{filename}"
+    if ROLLUP_JS and is_standalone_js(filename): filename = f"compat/{filename}"
     return script_tag(f"static/js/{filename}", addbuild=True)
 
 def asm_script_tags(path: str) -> str:
@@ -62,16 +69,14 @@ def asm_script_tags(path: str) -> str:
     jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
         "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
-    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
-        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_photo_uploader.js", "mobile_report.js", "mobile_sign.js", 
-        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js",
-        "service_checkout_licence.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     # or those we should exclude because they are standalone files
     for i in os.listdir(path + "static/js"):
-        if i not in jsfiles and i not in standalone and not i.startswith(".") and i.endswith(".js"):
-            jsfiles.append(i)
+        if i in jsfiles: continue
+        if is_standalone_js(i): continue
+        if i.startswith(".") or not i.endswith(".js"): continue # ignore anything that's not a js file
+        jsfiles.append(i)
     buf = []
     for i in jsfiles:
         buf.append(asm_script_tag(i))
