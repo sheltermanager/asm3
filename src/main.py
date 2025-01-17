@@ -4063,7 +4063,7 @@ class incident(JSONEndpoint):
         dbo = o.dbo
         a = asm3.animalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
         if a is None: self.notfound()
-        asm3.animalcontrol.check_view_permission(dbo, o.user, o.session, o.post.integer("id"))
+        asm3.animalcontrol.check_view_permission(dbo, o.user, o.session, a.ID)
         if o.siteid != 0 and a.SITEID != 0 and o.siteid != a.SITEID:
             raise asm3.utils.ASMPermissionError("incident not in user site")
         if (a.DISPATCHLATLONG is None or a.DISPATCHLATLONG == "") and a.DISPATCHADDRESS != "":
@@ -6022,6 +6022,7 @@ class person(JSONEndpoint):
             self.check(asm3.users.VIEW_VOLUNTEER)
         if o.siteid != 0 and p.SITEID != 0 and o.siteid != p.SITEID:
             raise asm3.utils.ASMPermissionError("person not in user site")
+        asm3.person.check_view_permission(dbo, o.user, o.session, p.ID)
         if (p.LATLONG is None or p.LATLONG == "") and p.OWNERADDRESS != "":
             p.LATLONG = asm3.person.update_geocode(dbo, p.ID, p.LATLONG, p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE)
         upid = asm3.users.get_personid(dbo, o.user)

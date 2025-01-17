@@ -6406,5 +6406,5 @@ def update_34905(dbo: Database) -> None:
         dbo.ddl_add_table_column("CanEdit", dbo.type_integer, False)
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("ownerrole", fields) )
-    add_index(dbo, "ownerrole_OwnerIDRoleID", "OwnerID,RoleID", unique=True)
+    add_index(dbo, "ownerrole_OwnerIDRoleID", "ownerrole", "OwnerID,RoleID", unique=True)
 

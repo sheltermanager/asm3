@@ -16,7 +16,7 @@ import asm3.users
 import asm3.utils
 from asm3.i18n import _, add_days, date_diff_days, format_time, display2python, python2display, subtract_years, now
 from asm3.sitedefs import GEO_BATCH, GEO_LIMIT
-from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results
+from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results, Session
 
 from datetime import datetime
 
@@ -747,7 +747,6 @@ def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], username: 
     #return dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-
 def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
     """
     Given the results of a find operation, goes through the results and removes 
@@ -789,6 +788,32 @@ def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
         if rok:
             results.append(r)
     return results
+
+def check_view_permission(dbo: Database, username: str, session: Session, pid: int) -> bool:
+    """
+    Checks that the currently logged in user has permission to
+    view the person with pid.
+    If they can't, an ASMPermissionError is thrown.
+    """
+    # Superusers can do anything
+    if session.superuser == 1: return True
+    viewroles = []
+    for rr in dbo.query("SELECT RoleID FROM ownerrole WHERE OwnerID = ? AND CanView = 1", [pid]):
+        viewroles.append(rr.ROLEID)
+    # No view roles means anyone can view
+    if len(viewroles) == 0:
+        return True
+    # Does the user have any of the view roles?
+    userroles = []
+    for ur in dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [username]):
+        userroles.append(ur.ROLEID)
+    hasperm = False
+    for ur in userroles:
+        if ur in viewroles:
+            hasperm = True
+    if hasperm:
+        return True
+    raise asm3.utils.ASMPermissionError("User does not have required role to view this person")
 
 def get_person_rota(dbo: Database, personid: int) -> Results:
     return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])
