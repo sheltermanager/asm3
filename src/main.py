@@ -1027,6 +1027,13 @@ class mobile2(ASMEndpoint):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile2", dbo)
+
+        """allincidentids = []
+        for a in (incidentsmy, incidentsundispatched, incidentsincomplete, incidentsfollowup):
+            for b in a:
+                if allincidentids.__contains__(b.ID) == False:
+                    allincidentids.append(b.ID)"""
+
         c = {
             "animals":      animals,
             "reports":      asm3.reports.get_available_reports(dbo),
@@ -1042,7 +1049,6 @@ class mobile2(ASMEndpoint):
             "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "undispatched" }, o.user),
             "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
             "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
-            "incidentimages": asm3.animalcontrol.get_animalcontrol_images(dbo),
             "maplink":      MAP_LINK,
             "animaltypes":  asm3.lookups.get_animal_types(dbo),
             "breeds":       asm3.lookups.get_breeds_by_species(dbo),
@@ -1161,7 +1167,8 @@ class mobile2(ASMEndpoint):
             "vaccinations": asm3.medical.get_vaccinations(dbo, pid),
             "tests": asm3.medical.get_tests(dbo, pid),
             "medicals": asm3.medical.get_regimens(dbo, pid),
-            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMAL, pid)
+            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMAL, pid),
+            "media": asm3.media.get_media(dbo, asm3.media.ANIMAL, pid)
         })
 
     def post_loadincident(self, o):
@@ -1174,7 +1181,8 @@ class mobile2(ASMEndpoint):
             "animals": asm3.animalcontrol.get_animalcontrol_animals(dbo, pid),
             "citations": asm3.financial.get_incident_citations(dbo, pid),
             "diary": asm3.diary.get_diaries(dbo, asm3.diary.ANIMALCONTROL, pid),
-            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, pid)
+            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, pid),
+            "media": asm3.media.get_media(dbo, asm3.media.ANIMALCONTROL, pid)
         })
 
     def post_loadperson(self, o):
