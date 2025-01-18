@@ -286,12 +286,12 @@ $(document).ready(function() {
                         else if (cond == "!" && v == value) { andshow = false; }
                         else if (cond == ">" && v <= value) { andshow = false; }
                         else if (cond == "<" && v >= value) { andshow = false; }
-                        else if (cond == "*" && v.indexOf(value) == -1) { andshow = false; }
+                        else if (cond == "*" && String(v).indexOf(value) == -1) { andshow = false; }
                         if (cond == "=" && v == value) { orshow = true; }
                         else if (cond == "!" && v != value) { orshow = true; }
                         else if (cond == ">" && v >= value) { orshow = true; }
                         else if (cond == "<" && v <= value) { orshow = true; }
-                        else if (cond == "*" && v.indexOf(value) != -1) { orshow = true; }
+                        else if (cond == "*" && String(v).indexOf(value) != -1) { orshow = true; }
                         return false; // stop iterating fields, we found it
                     }
                 });
