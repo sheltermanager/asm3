@@ -615,6 +615,14 @@ $(document).ready(function() {
             a = o.animal;
             let [adoptable, adoptreason] = html.is_animal_adoptable(a);
             let x = [];
+            let animalimages = o.media;
+            let imagesection = "";
+            if (animalimages.length > 0) {
+                imagesection = aci("animalimages", _("Images"), [
+                    mobile.render_image_slider(o.media, "animalimage"),
+                ].join("\n")
+                )
+            }
             let h = [
                 '<div class="list-group mt-3">',
                 '<a href="#" data-link="shelteranimals" class="list-group-item list-group-item-action internal-link">',
@@ -676,7 +684,8 @@ $(document).ready(function() {
                     i(_("Rabies Tag"), a.RABIESTAG),
                     i(_("Special Needs"), a.HASSPECIALNEEDSNAME),
                     i(_("Current Vet"), n(a.CURRENTVETNAME) + " " + n(a.CURRENTVETWORKTELEPHONE))
-                ].join("\n"))
+                ].join("\n")),
+                imagesection
             ];
             if (o.additional.length > 0) {
                 x = [];
@@ -735,13 +744,44 @@ $(document).ready(function() {
             // Display our animal now it's rendered
             $(".container").hide();
             $("#content-animal").show();
+            $(".media-thumb").click(function() {
+                let rowid = $(this).attr("data-imageid");
+                let rowmedianotes = $(this).attr("data-description");
+                $("#imagesliderheader div").css("border-color", "#000000ff");
+                $("#imagesliderheader div[data-imageid='" + rowid + "']").css("border-color", "#ffffffff");
+                $("#animalimage-image").prop("src", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
+                $("#animalimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
+                $("#animalimage-notes").html(rowmedianotes);
+            });
             // Handle the uploading of a photo when one is chosen
             $("#content-animal .uploadphoto").click(function() { $("#content-animal .uploadphotofile").click(); });
             $("#content-animal .uploadphotofile").change(function() { alert($("#content-animal .uploadphotofile").val()); });
         },
 
+        render_image_slider: function(rows, customid) {
+            let sliderhtml = '<div id=imageslider>';
+            let sliderbodyhtml = '<div id=imagesliderbody>';
+            let sliderheaderhtml = '<div id=imagesliderheader style="height: 120px;overflow-x: scroll;overflow-y: hidden;white-space: nowrap;">';
+            let bordercolour = '#ffffffff';
+            if (rows.length == 0) { return _("There are no images associated with this incident")}
+            $.each(rows, function(rowcount, row) {
+                if (rowcount == 0) {
+                    sliderbodyhtml += '<a id="' + customid + '-anchor" href="/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '" target="_blank"><img id="' + customid + '-image" style="max-width: 100%;" src="/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '"></a><div id="' + customid + '-notes">' + row.MEDIANOTES + '</div></div>';
+                }
+                sliderheaderhtml += '<div class="media-thumb" style="position: relative;border-style: solid;border-width: 1px;border-color: ' + bordercolour + ';display: inline-block;height: 100px;width: 100px;background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '\');background-size: cover;background-position: center center;margin-right: 10px;margin-bottom: 10px;" data-imageid="' + row.ID + '" data-description="' + row.MEDIANOTES + '">';
+                sliderheaderhtml += '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + format.date(row.DATE) + '</div>';
+                sliderheaderhtml += '</div>';
+                bordercolour = '#000000ff';
+            });
+            sliderheaderhtml += '</div>';
+            sliderbodyhtml += '</div>';
+            sliderhtml += sliderheaderhtml + sliderbodyhtml + '</div>';
+            return sliderhtml;
+        },
+
         // Renders an incident record into the selector given
         render_incident: async function(ac, selector, backlink) {
+
             const i = function(label, value) {
                 if (!value) { value = ""; }
                 return '<div class="row align-items-start"><div class="col">' + label + '</div><div class="col">' + value + '</div></div>';
@@ -813,6 +853,14 @@ $(document).ready(function() {
                     return false;
                 }
             });
+            let incidentimages = o.media;
+            let imagesection = "";
+            if (incidentimages.length > 0) {
+                imagesection = aci("incidentimages", _("Images"), [
+                    mobile.render_image_slider(o.media, "incidentimage"),
+                ].join("\n")
+                )
+            }
             let h = [
                 '<div class="list-group mt-3" style="margin-top: 5px">',
                 '<a href="#" data-link="' + backlink + '" class="list-group-item list-group-item-action internal-link">',
@@ -844,9 +892,7 @@ $(document).ready(function() {
                     common.has_permission("vo") ? i(_("Phone"), tel(ac.CALLERHOMETELEPHONE) + " " + tel(ac.CALLERWORKTELEPHONE) + " " + tel(ac.CALLERMOBILETELEPHONE)) : "",
                     common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : ""
                 ].join("\n"), "show"),
-
-                
-
+                imagesection,
                 aci("dispatch", _("Dispatch"), [
                     i(_("Address"), dispadd),
                     i(_("City"), ac.DISPATCHTOWN),
@@ -906,6 +952,15 @@ $(document).ready(function() {
             // Display the record
             $(".container").hide();
             $(selector).show();
+            $(".media-thumb").click(function() {
+                let rowid = $(this).attr("data-imageid");
+                let rowmedianotes = $(this).attr("data-description");
+                $("#imagesliderheader div").css("border-color", "#000000ff");
+                $("#imagesliderheader div[data-imageid='" + rowid + "']").css("border-color", "#ffffffff");
+                $("#incidentimage-image").prop("src", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
+                $("#incidentimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
+                $("#incidentimage-notes").html(rowmedianotes);
+            });
             $(".btn.dispatch").click(function() {
                 $(".btn.dispatch .spinner-border").show();
                 mobile.ajax_post("mode=incdispatch&id=" + $(this).attr("data-id"), function() {

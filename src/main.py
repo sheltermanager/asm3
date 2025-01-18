@@ -1027,6 +1027,7 @@ class mobile2(ASMEndpoint):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile2", dbo)
+
         c = {
             "animals":      animals,
             "reports":      asm3.reports.get_available_reports(dbo),
@@ -1160,7 +1161,8 @@ class mobile2(ASMEndpoint):
             "vaccinations": asm3.medical.get_vaccinations(dbo, pid),
             "tests": asm3.medical.get_tests(dbo, pid),
             "medicals": asm3.medical.get_regimens(dbo, pid),
-            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMAL, pid)
+            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMAL, pid),
+            "media": asm3.media.get_media(dbo, asm3.media.ANIMAL, pid)
         })
 
     def post_loadincident(self, o):
@@ -1173,7 +1175,8 @@ class mobile2(ASMEndpoint):
             "animals": asm3.animalcontrol.get_animalcontrol_animals(dbo, pid),
             "citations": asm3.financial.get_incident_citations(dbo, pid),
             "diary": asm3.diary.get_diaries(dbo, asm3.diary.ANIMALCONTROL, pid),
-            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, pid)
+            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, pid),
+            "media": asm3.media.get_media(dbo, asm3.media.ANIMALCONTROL, pid)
         })
 
     def post_loadperson(self, o):
