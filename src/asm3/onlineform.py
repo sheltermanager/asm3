@@ -844,7 +844,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
 
     # Make sure that the postcode/zipcode actually contains some numbers
     if asm3.configuration.onlineform_spam_postcode(dbo) and postcode != "":
-        if asm3.utils.atio(postcode) == 0:
+        if asm3.utils.atoi(postcode) == 0:
             asm3.al.error(f"identified spam (non-numeric postcode/zipcode={postcode}): {post.data}", "insert_onlineformincoming_from_form", dbo)
             spam = True
 
