@@ -620,8 +620,7 @@ $(document).ready(function() {
             if (animalimages.length > 0) {
                 imagesection = aci("animalimages", _("Images"), [
                     mobile.render_image_slider(o.media, "animalimage"),
-                ].join("\n")
-                )
+                ].join("\n"));
             }
             let h = [
                 '<div class="list-group mt-3">',
@@ -863,8 +862,7 @@ $(document).ready(function() {
             if (incidentimages.length > 0) {
                 imagesection = aci("incidentimages", _("Images"), [
                     mobile.render_image_slider(o.media, "incidentimage"),
-                ].join("\n")
-                )
+                ].join("\n"));
             }
             let h = [
                 '<div class="list-group mt-3" style="margin-top: 5px">',
