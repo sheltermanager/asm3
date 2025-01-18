@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-18 09:04+0000\n"
+"POT-Creation-Date: 2025-01-18 09:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -13880,10 +13880,6 @@ msgstr ""
 
 #: stocklevel.js
 msgid "The wholesale/trade price the container was bought for"
-msgstr ""
-
-#: mobile2.js
-msgid "There are no images associated with this incident"
 msgstr ""
 
 #: onlineform.py

@@ -747,8 +747,8 @@ $(document).ready(function() {
             $(".media-thumb").click(function() {
                 let rowid = $(this).attr("data-imageid");
                 let rowmedianotes = $(this).attr("data-description");
-                $("#imagesliderheader div").css("border-color", "#000000ff");
-                $("#imagesliderheader div[data-imageid='" + rowid + "']").css("border-color", "#ffffffff");
+                $(this).parent().find(".media-thumb").css("border-color", "#fff");
+                $(this).css("border-color", "#000");
                 $("#animalimage-image").prop("src", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
                 $("#animalimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
                 $("#animalimage-notes").html(rowmedianotes);
@@ -758,25 +758,30 @@ $(document).ready(function() {
             $("#content-animal .uploadphotofile").change(function() { alert($("#content-animal .uploadphotofile").val()); });
         },
 
-        render_image_slider: function(rows, customid) {
-            let sliderhtml = '<div id=imageslider>';
-            let sliderbodyhtml = '<div id=imagesliderbody>';
-            let sliderheaderhtml = '<div id=imagesliderheader style="height: 120px;overflow-x: scroll;overflow-y: hidden;white-space: nowrap;">';
-            let bordercolour = '#ffffffff';
-            if (rows.length == 0) { return _("There are no images associated with this incident")}
-            $.each(rows, function(rowcount, row) {
-                if (rowcount == 0) {
-                    sliderbodyhtml += '<a id="' + customid + '-anchor" href="/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '" target="_blank"><img id="' + customid + '-image" style="max-width: 100%;" src="/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '"></a><div id="' + customid + '-notes">' + row.MEDIANOTES + '</div></div>';
-                }
-                sliderheaderhtml += '<div class="media-thumb" style="position: relative;border-style: solid;border-width: 1px;border-color: ' + bordercolour + ';display: inline-block;height: 100px;width: 100px;background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '\');background-size: cover;background-position: center center;margin-right: 10px;margin-bottom: 10px;" data-imageid="' + row.ID + '" data-description="' + row.MEDIANOTES + '">';
-                sliderheaderhtml += '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + format.date(row.DATE) + '</div>';
-                sliderheaderhtml += '</div>';
-                bordercolour = '#000000ff';
+        render_image_slider: function(rows, id) {
+            let h = '<div id="' + id + '-imageslider">';
+            let body = '<div id="' + id + '-imagesliderbody">' +
+                '<a id="' + id + '-anchor" href="#" target="_blank">' +
+                '<img id="' + id + '-image" style="max-width: 100%;" src=""></a>' +
+                '<div id="' + id + '-notes"></div>' +
+                '</div>';
+            let head = '<div id="' + id + '-imagesliderheader" style="height: 120px; ' +
+                'overflow-x: scroll; overflow-y: hidden; white-space: nowrap;">';
+            if (rows.length == 0) { return ""; }
+            $.each(rows, function(i, row) {
+                if (row.MEDIAMIMETYPE != 'image/jpeg') { return; }
+                head += '<div class="media-thumb" style="position: relative; border-style: solid; border-width: 1px; ' +
+                    'border-color: #ffffffff; display: inline-block; height: 100px; width: 100px; ' +
+                    'background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '\'); ' +
+                    'background-size: cover; background-position: center center; ' +
+                    'margin-right: 10px; margin-bottom: 10px;" ' +
+                    'data-imageid="' + row.ID + '" data-description="' + html.title(row.MEDIANOTES) + '">' +
+                    '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + 
+                    format.date(row.DATE) + '</div>' +
+                    '</div>';
             });
-            sliderheaderhtml += '</div>';
-            sliderbodyhtml += '</div>';
-            sliderhtml += sliderheaderhtml + sliderbodyhtml + '</div>';
-            return sliderhtml;
+            head += '</div>';
+            return h + head + body + '</div>';
         },
 
         // Renders an incident record into the selector given
@@ -955,8 +960,8 @@ $(document).ready(function() {
             $(".media-thumb").click(function() {
                 let rowid = $(this).attr("data-imageid");
                 let rowmedianotes = $(this).attr("data-description");
-                $("#imagesliderheader div").css("border-color", "#000000ff");
-                $("#imagesliderheader div[data-imageid='" + rowid + "']").css("border-color", "#ffffffff");
+                $(this).parent().find(".media-thumb").css("border-color", "#fff");
+                $(this).css("border-color", "#000");
                 $("#incidentimage-image").prop("src", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
                 $("#incidentimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
                 $("#incidentimage-notes").html(rowmedianotes);

@@ -14479,11 +14479,6 @@ msgid "This form has been previously processed"
 msgstr "This form has been previously processed"
 
 #: onlineform_incoming.js
-#| msgid "This code has already been used."
-msgid "This form has marked as spam"
-msgstr "This form has marked as spam"
-
-#: onlineform_incoming.js
 msgid "This form will merge with person '{0}'"
 msgstr "This form will merge with person '{0}'"
 
