@@ -23,7 +23,7 @@ import os, sys
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
-    3201, 3202, 3203, 3204, 3210, 3211, 3212, 3213, 3214, 3215, 3216, 3217, 3218,
+    3201, 3202, 3203, 3204, 3210, 3211, 3212, 3213, 3214, 3215, 3216, 3217, 
     3220, 3221, 3222, 3223, 3224, 3225, 3300, 3301, 3302, 3303, 3304, 3305, 3306,
     3307, 3308, 3309, 
     33010, 33011, 33012, 33013, 33014, 33015, 33016, 33017, 33018, 33019, 33101, 
@@ -45,7 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
-    34904
+    34904, 34905
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -68,7 +68,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "lkwaitinglistremoval", "lkworktype", 
     "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
-    "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
+    "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
     "vaccinationtype", "voucher" )
@@ -90,7 +90,7 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
 # Tables that don't have an ID column (we don't create sequences for these tables for supporting dbs like postgres)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
     "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
-    "deletion", "onlineformincoming", "ownerlookingfor", "userrole" )
+    "deletion", "onlineformincoming", "ownerlookingfor", "ownerrole", "userrole" )
 
 # Tables that contain data rather than lookups - used by reset_db
 # to determine which tables to delete data from
@@ -102,7 +102,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
     "log", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
-    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", 
+    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", 
     "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
@@ -523,7 +523,7 @@ def sql_structure(dbo: Database) -> str:
         fint("RoleID"),
         fint("CanView"),
         fint("CanEdit") ), False)
-    sql += index("animalcontrolrole_AnimalControlIDRoleID", "animalcontrolrole", "AnimalControlID, RoleID")
+    sql += index("animalcontrolrole_AnimalControlIDRoleID", "animalcontrolrole", "AnimalControlID, RoleID", True)
 
     sql += table("animalcost", (
         fid(),
@@ -1558,6 +1558,13 @@ def sql_structure(dbo: Database) -> str:
     sql += index("ownerlicence_PaymentReference", "ownerlicence", "PaymentReference")
     sql += index("ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     sql += index("ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
+
+    sql += table("ownerrole", (
+        fint("OwnerID"),
+        fint("RoleID"),
+        fint("CanView"),
+        fint("CanEdit") ), False)
+    sql += index("ownerrole_OwnerRoleID", "ownerrole", "OwnerID, RoleID", True)
 
     sql += table("ownerrota", (
         fid(),
@@ -3359,7 +3366,7 @@ def perform_updates(dbo: Database) -> str:
         # Unlock the database for updates before we leave
         asm3.configuration.db_unlock(dbo)
 
-def perform_updates_stdout(dbo: Database) -> None:
+def perform_updates_stdout(dbo: Database, stoponexc = False) -> None:
     """
     Performs any updates that need to be run against the database. 
     Intended to be called by testing functions as this outputs to stdout.
@@ -3375,6 +3382,7 @@ def perform_updates_stdout(dbo: Database) -> None:
                 import traceback
                 print("ERROR: %s" % err)
                 print(traceback.format_exc())
+                if stoponexc: return
             asm3.configuration.dbv(dbo, str(v))
             ver = v
 
@@ -3420,43 +3428,56 @@ def remove_asm2_compatibility(dbo: Database) -> None:
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedP911")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedRG")
 
+def asm2_dbfs_put_file(dbo: Database, name: str, path: str, filename: str):
+    """ A version of asm3.dbfs.put_file that is compatible with asm2 databases with no URL column """
+    # NOTE: This doesn't create the empty name/path elements because asm3 does not need them,
+    # asm2 only used them for visualising the files as a tree.
+    return dbo.insert("dbfs", {
+        "ID": dbo.get_id_max("dbfs"),
+        "Name": name,
+        "Path": path,
+        "Content": asm3.utils.base64encode(asm3.utils.read_binary_file(filename))
+    }, generateID=False)
+
 def update_3000(dbo: Database) -> None:
     path = dbo.installpath
-    # NB: We don't keep these things in the dbfs any more, but for the upgrade path, we keep
-    # on doing what we did, so that when update 34100 runs, the new tables are created and they get moved.
-    asm3.dbfs.put_file(dbo, "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
-    asm3.dbfs.put_file(dbo, "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
-    asm3.dbfs.put_file(dbo, "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
-    asm3.dbfs.put_file(dbo, "cat_information.html", "/templates", path + "media/templates/cat_information.html")
-    asm3.dbfs.put_file(dbo, "dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
-    asm3.dbfs.put_file(dbo, "dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
-    asm3.dbfs.put_file(dbo, "dog_information.html", "/templates", path + "media/templates/dog_information.html")
-    asm3.dbfs.put_file(dbo, "dog_license.html", "/templates", path + "media/templates/dog_license.html")
-    asm3.dbfs.put_file(dbo, "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
-    asm3.dbfs.put_file(dbo, "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
-    asm3.dbfs.put_file(dbo, "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
-    asm3.dbfs.put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
-    asm3.dbfs.put_file(dbo, "invoice.html", "/templates", path + "media/templates/invoice.html")
-    asm3.dbfs.put_file(dbo, "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
-    asm3.dbfs.put_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
-    asm3.dbfs.put_file(dbo, "rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
-    asm3.dbfs.put_file(dbo, "receipt.html", "/templates", path + "media/templates/receipt.html")
-    asm3.dbfs.put_file(dbo, "receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
-    asm3.dbfs.put_file(dbo, "reserved.html", "/templates", path + "media/templates/reserved.html")
-    asm3.dbfs.put_file(dbo, "spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
-    asm3.dbfs.create_path(dbo, "/templates", "rspca")
-    asm3.dbfs.put_file(dbo, "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
-    asm3.dbfs.put_file(dbo, "rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
-    asm3.dbfs.put_file(dbo, "rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
-    asm3.dbfs.put_file(dbo, "rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
-    asm3.dbfs.put_file(dbo, "rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
-    asm3.dbfs.put_file(dbo, "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
-    asm3.dbfs.put_file(dbo, "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
-    asm3.dbfs.put_file(dbo, "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
-    asm3.dbfs.put_file(dbo, "nopic.jpg", "/reports", path + "media/reports/nopic.jpg")
-    dbo.execute_dbupdate("CREATE TABLE messages ( ID INTEGER NOT NULL, Added %s NOT NULL, Expires %s NOT NULL, " \
-        "CreatedBy %s NOT NULL, Priority INTEGER NOT NULL, Message %s NOT NULL )" % ( dbo.type_datetime, dbo.type_datetime, dbo.type_shorttext, dbo.type_longtext ))
-    dbo.execute_dbupdate("CREATE UNIQUE INDEX messages_ID ON messages(ID)")
+    asm2_dbfs_put_file(dbo, "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
+    asm2_dbfs_put_file(dbo, "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
+    asm2_dbfs_put_file(dbo, "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
+    asm2_dbfs_put_file(dbo, "cat_information.html", "/templates", path + "media/templates/cat_information.html")
+    asm2_dbfs_put_file(dbo, "dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
+    asm2_dbfs_put_file(dbo, "dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
+    asm2_dbfs_put_file(dbo, "dog_information.html", "/templates", path + "media/templates/dog_information.html")
+    asm2_dbfs_put_file(dbo, "dog_license.html", "/templates", path + "media/templates/dog_license.html")
+    asm2_dbfs_put_file(dbo, "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
+    asm2_dbfs_put_file(dbo, "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
+    asm2_dbfs_put_file(dbo, "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
+    asm2_dbfs_put_file(dbo, "invoice.html", "/templates", path + "media/templates/invoice.html")
+    asm2_dbfs_put_file(dbo, "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
+    asm2_dbfs_put_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
+    asm2_dbfs_put_file(dbo, "rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
+    asm2_dbfs_put_file(dbo, "receipt.html", "/templates", path + "media/templates/receipt.html")
+    asm2_dbfs_put_file(dbo, "receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
+    asm2_dbfs_put_file(dbo, "reserved.html", "/templates", path + "media/templates/reserved.html")
+    asm2_dbfs_put_file(dbo, "spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
+    asm2_dbfs_put_file(dbo, "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
+    asm2_dbfs_put_file(dbo, "rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
+    asm2_dbfs_put_file(dbo, "rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
+    asm2_dbfs_put_file(dbo, "rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
+    asm2_dbfs_put_file(dbo, "rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
+    asm2_dbfs_put_file(dbo, "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
+    asm2_dbfs_put_file(dbo, "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
+    asm2_dbfs_put_file(dbo, "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
+    asm2_dbfs_put_file(dbo, "nopic.jpg", "/reports", path + "media/reports/nopic.jpg")
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("Added", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("Expires", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Priority", dbo.type_integer, False),
+        dbo.ddl_add_table_column("Message", dbo.type_longtext, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("messages", fields) )
     add_index(dbo, "messages_Expires", "messages", "Expires")
 
 def update_3001(dbo: Database) -> None:
@@ -3622,8 +3643,9 @@ def update_3050(dbo: Database) -> None:
 def update_3051(dbo: Database) -> None:
     # Fix incorrect field name from ASM3 initial install (it was listed
     # as TimingRuleNoFrequency instead of TimingRuleFrequency)
-    add_column(dbo, "medicalprofile", "TimingRuleFrequency", "INTEGER")
-    drop_column(dbo, "medicalprofile", "TimingRuleNoFrequency")
+    if column_exists(dbo, "medicalprofile", "TimingRuleNoFrequency"):
+        add_column(dbo, "medicalprofile", "TimingRuleFrequency", "INTEGER")
+        drop_column(dbo, "medicalprofile", "TimingRuleNoFrequency")
 
 def update_3081(dbo: Database) -> None:
     # Remove AdoptionFee field - it was a stupid idea to have with species
@@ -3939,7 +3961,8 @@ def update_3224(dbo: Database) -> None:
 
 def update_3225(dbo: Database) -> None:
     # Make sure the ADOPTIONFEE mistake is really gone
-    dbo.execute_dbupdate("ALTER TABLE species DROP COLUMN AdoptionFee")
+    if column_exists(dbo, "species", "AdoptionFee"):
+        dbo.execute_dbupdate("ALTER TABLE species DROP COLUMN AdoptionFee")
 
 def update_3300(dbo: Database) -> None:
     # Add diary comments field
@@ -4174,7 +4197,7 @@ def update_33101(dbo: Database) -> None:
     add_index(dbo, "owner_OwnerTown", "owner", "OwnerTown")
     add_index(dbo, "animal_AcceptanceNumber", "animal", "AcceptanceNumber")
     add_index(dbo, "animal_ActiveMovementType", "animal", "ActiveMovementType")
-    add_index(dbo, "animal_AnimalTypeID", "animal", "AnimalTypeID")
+    #add_index(dbo, "animal_AnimalTypeID", "animal", "AnimalTypeID")
     add_index(dbo, "animal_BaseColourID", "animal", "BaseColourID")
     add_index(dbo, "animal_BondedAnimalID", "animal", "BondedAnimalID")
     add_index(dbo, "animal_BondedAnimal2ID", "animal", "BondedAnimal2ID")
@@ -4862,31 +4885,36 @@ def update_33703(dbo: Database) -> None:
 def update_33704(dbo: Database) -> None:
     # Add the default animalview template
     path = dbo.installpath
-    asm3.dbfs.create_path(dbo, "/internet", "animalview")
-    asm3.dbfs.put_file(dbo, "body.html", "/internet/animalview", path + "media/internet/animalview/body.html")
-    asm3.dbfs.put_file(dbo, "foot.html", "/internet/animalview", path + "media/internet/animalview/foot.html")
-    asm3.dbfs.put_file(dbo, "head.html", "/internet/animalview", path + "media/internet/animalview/head.html")
+    asm2_dbfs_put_file(dbo, "body.html", "/internet/animalview", path + "media/internet/animalview/body.html")
+    asm2_dbfs_put_file(dbo, "foot.html", "/internet/animalview", path + "media/internet/animalview/foot.html")
+    asm2_dbfs_put_file(dbo, "head.html", "/internet/animalview", path + "media/internet/animalview/head.html")
+    pass
 
 def update_33705(dbo: Database) -> None:
     # Fix the animalview template to have OpenGraph meta tags
-    asm3.dbfs.replace_string(dbo, asm3.utils.read_text_file(dbo.installpath + "media/internet/animalview/head.html") , "head.html", "/internet/animalview")
+    # NOTE: Removed since the file has already been updated, this was a temporary fix
+    # asm3.dbfs.replace_string(dbo, asm3.utils.read_text_file(dbo.installpath + "media/internet/animalview/head.html") , "head.html", "/internet/animalview")
+    pass
 
 def update_33706(dbo: Database) -> None:
     # Add users.Signature
     add_column(dbo, "users", "Signature", dbo.type_longtext)
 
 def update_33707(dbo: Database) -> None:
-    # Add animalincident table
-    sql = "CREATE TABLE animalcontrolanimal (" \
-        "AnimalControlID INTEGER NOT NULL, " \
-        "AnimalID INTEGER NOT NULL)"
-    dbo.execute_dbupdate(sql)
-    add_index(dbo, "animalcontrolanimal_AnimalControlIDAnimalID", "animalcontrolanimal", "AnimalControlID, AnimalID", True)
+    # Add animal links table
+    fields = ",".join([
+        dbo.ddl_add_table_column("AnimalControlID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("animalcontrolanimal", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalcontrolanimal_AnimalControlIDAnimalID", "animalcontrolanimal", "AnimalControlID,AnimalID", True) )
     # Copy the existing links from animalcontrol.AnimalID
     for ac in dbo.query("SELECT ID, AnimalID FROM animalcontrol WHERE AnimalID Is Not Null AND AnimalID <> 0"):
         dbo.execute_dbupdate("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%d, %d)" % (ac["ID"], ac["ANIMALID"]))
     # Remove the animalid field from animalcontrol
-    drop_column(dbo, "animalcontrol", "AnimalID")
+    if column_exists(dbo, "animalcontrol", "AnimalID"):
+        drop_index(dbo, "animalcontrol_AnimalID", "animalcontrol")
+        drop_column(dbo, "animalcontrol", "AnimalID")
 
 def update_33708(dbo: Database) -> None:
     # Add basecolour.AdoptAPetColour
@@ -5047,14 +5075,11 @@ def update_33801(dbo: Database) -> None:
 def update_33802(dbo: Database) -> None:
     # Remove the Incident - Citation link from additional fields as it's no longer valid
     dbo.execute_dbupdate("DELETE FROM lksfieldlink WHERE ID = 19")
-    # Move PickedUpByOwnerID to BroughtInByOwnerID and remove it
-    dbo.execute_dbupdate("UPDATE animal SET BroughtInByOwnerID = PickedUpByOwnerID WHERE BroughtInByOwnerID = 0 AND PickedUpByOwnerID <> 0")
-    drop_column(dbo, "animal", "PickedUpByOwnerID")
 
 def update_33803(dbo: Database) -> None:
     # Install new incident information template
     path = dbo.installpath
-    asm3.dbfs.put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
+    asm2_dbfs_put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
 
 def update_33900(dbo: Database) -> None:
     # Add extra payment fields
@@ -5171,8 +5196,9 @@ def update_33909(dbo: Database) -> None:
 
 def update_33911(dbo: Database) -> None:
     # NB: 33910 was broken so moved to 33911 and fixed
+    # Cannot usually modify a column that a view depends on in Postgres
+    if dbo.dbtype == "POSTGRESQL": dbo.execute_dbupdate("DROP VIEW v_animalwaitinglist")
     # Extend animalasm3.waitinglist.AnimalDescription
-    dbo.execute_dbupdate("DROP VIEW v_animalwaitinglist")
     modify_column(dbo, "animalwaitinglist", "AnimalDescription", dbo.type_longtext)
 
 def update_33912(dbo: Database) -> None:
@@ -5184,7 +5210,7 @@ def update_33913(dbo: Database) -> None:
     # Add owner.OwnerCode
     add_column(dbo, "owner", "OwnerCode", dbo.type_shorttext)
     add_index(dbo, "owner_OwnerCode", "owner", "OwnerCode")
-    dbo.execute_dbupdate("UPDATE owner o SET OwnerCode = %s" % dbo.sql_concat([ dbo.sql_substring("UPPER(o.OwnerSurname)", 1, 2), dbo.sql_zero_pad_left("o.ID", 6) ]))
+    dbo.execute_dbupdate("UPDATE owner SET OwnerCode = %s" % dbo.sql_concat([ dbo.sql_substring("UPPER(OwnerSurname)", 1, 2), dbo.sql_zero_pad_left("ID", 6) ]))
 
 def update_33914(dbo: Database) -> None:
     # Add owner.IsAdoptionCoordinator
@@ -5208,8 +5234,10 @@ def update_33916(dbo: Database) -> None:
 
 def update_34000(dbo: Database) -> None:
     # Add missing LostArea and FoundArea fields due to broken schema
-    add_column(dbo, "animallostfoundmatch", "LostArea", dbo.type_shorttext)
-    add_column(dbo, "animallostfoundmatch", "FoundArea", dbo.type_shorttext)
+    if not column_exists(dbo, "animallostfoundmatch", "LostArea"):
+        add_column(dbo, "animallostfoundmatch", "LostArea", dbo.type_shorttext)
+    if not column_exists(dbo, "animallostfoundmatch", "FoundArea"):
+        add_column(dbo, "animallostfoundmatch", "FoundArea", dbo.type_shorttext)
 
 def update_34001(dbo: Database) -> None:
     # Remove the unique index on LicenceNumber and make it non-unique (optionally enforced by backend code)
@@ -5258,9 +5286,9 @@ def update_34005(dbo: Database) -> None:
     add_index(dbo, "publishlog_PublishDateTime", "publishlog", "PublishDateTime")
     add_index(dbo, "publishlog_Name", "publishlog", "Name")
     # Remove old publish logs, reports and asm news from the dbfs
-    asm3.dbfs.delete_path(dbo, "/logs")
-    asm3.dbfs.delete_path(dbo, "/reports/daily")
-    asm3.dbfs.delete(dbo, "asm.news")
+    dbo.execute_dbupdate("DELETE FROM dbfs WHERE Path LIKE '/logs%'")
+    dbo.execute_dbupdate("DELETE FROM dbfs WHERE Path LIKE '/reports/daily%'")
+    dbo.execute_dbupdate("DELETE FROM dbfs WHERE Name LIKE 'asm.news'")
 
 def update_34006(dbo: Database) -> None:
     # Set includenonneutered in the publishing presets
@@ -5412,36 +5440,38 @@ def update_34100(dbo: Database) -> None:
         dbo.insert("templatehtml", {
             "ID":       nextid,
             "Name":     row.name,
-            "*Header":  head,
-            "*Body":    body,
-            "*Footer":  foot,
+            "*Header":  asm3.utils.bytes2str(head),
+            "*Body":    asm3.utils.bytes2str(body),
+            "*Footer":  asm3.utils.bytes2str(foot),
             "IsBuiltIn":  0
         }, generateID=False, setOverrideDBLock=True)
         nextid += 1
     # Copy fixed templates for report header/footer and online form header/footer
-    reporthead = asm3.dbfs.get_string(dbo, "head.html", "/reports")
-    reportfoot = asm3.dbfs.get_string(dbo, "foot.html", "/reports")
-    if reporthead != "":
-        dbo.insert("templatehtml", {
-            "ID":       nextid,
-            "Name":     "report",
-            "*Header":  reporthead,
-            "*Body":    "",
-            "*Footer":  reportfoot,
-            "IsBuiltIn":  1
-        }, generateID=False, setOverrideDBLock=True)
-        nextid += 1
-    ofhead = asm3.dbfs.get_string(dbo, "head.html", "/onlineform")
-    offoot = asm3.dbfs.get_string(dbo, "foot.html", "/onlineform")
-    if ofhead != "":
-        dbo.insert("templatehtml", {
-            "ID":       nextid,
-            "Name":     "onlineform",
-            "*Header":  ofhead,
-            "*Body":    "",
-            "*Footer":  offoot,
-            "IsBuiltIn":  1
-        }, generateID=False, setOverrideDBLock=True)
+    if asm3.dbfs.file_exists(dbo, "head.html", "/reports") and asm3.dbfs.file_exists(dbo, "foot.html"):
+        reporthead = asm3.dbfs.get_string(dbo, "head.html", "/reports")
+        reportfoot = asm3.dbfs.get_string(dbo, "foot.html", "/reports")
+        if reporthead != "":
+            dbo.insert("templatehtml", {
+                "ID":       nextid,
+                "Name":     "report",
+                "*Header":  asm3.utils.bytes2str(reporthead),
+                "*Body":    "",
+                "*Footer":  asm3.utils.bytes2str(reportfoot),
+                "IsBuiltIn":  1
+            }, generateID=False, setOverrideDBLock=True)
+            nextid += 1
+    if asm3.dbfs.file_exists(dbo, "head.html", "/onlineform") and asm3.dbfs.file_exists(dbo, "foot.html", "/onlineform"):
+        ofhead = asm3.dbfs.get_string(dbo, "head.html", "/onlineform")
+        offoot = asm3.dbfs.get_string(dbo, "foot.html", "/onlineform")
+        if ofhead != "":
+            dbo.insert("templatehtml", {
+                "ID":       nextid,
+                "Name":     "onlineform",
+                "*Header":  asm3.utils.bytes2str(ofhead),
+                "*Body":    "",
+                "*Footer":  asm3.utils.bytes2str(offoot),
+                "IsBuiltIn":  1
+            }, generateID=False, setOverrideDBLock=True)
 
 def update_34101(dbo: Database) -> None:
     # Add templatedocument table and copy templates from DBFS
@@ -5586,10 +5616,11 @@ def update_34107(dbo: Database) -> None:
 def update_34108(dbo: Database) -> None:
     # Install new clinic_invoice template
     dbo.insert("templatedocument", {
+        "ID":       dbo.get_id_max("templatedocument"), 
         "Name":     "clinic_invoice.html",
         "Path":     "/templates",
         "Content":  asm3.utils.base64encode( asm3.utils.read_text_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
-    })
+    }, generateID=False)
 
 def update_34109(dbo: Database) -> None:
     # Remove recordversion and created/lastchanged columns from ownerlookingfor - should never have been there
@@ -5598,7 +5629,7 @@ def update_34109(dbo: Database) -> None:
     cols = [ "CreatedBy", "CreatedDate", "LastChangedBy", "LastChangedDate", "RecordVersion" ]
     for t in tables:
         for c in cols:
-            drop_column(dbo, t, c)
+            if column_exists(dbo, t, c): drop_column(dbo, t, c)
 
 def update_34110(dbo: Database) -> None:
     # Add additionalfield.NewRecord
@@ -5789,7 +5820,7 @@ def update_34409(dbo: Database) -> None:
     # Add animalvaccination.RabiesTag
     add_column(dbo, "animalvaccination", "RabiesTag", dbo.type_shorttext)
     add_index(dbo, "animalvaccination_RabiesTag", "animalvaccination", "RabiesTag")
-    dbo.execute_update("UPDATE animalvaccination SET RabiesTag='' WHERE RabiesTag Is Null")
+    dbo.execute_dbupdate("UPDATE animalvaccination SET RabiesTag='' WHERE RabiesTag Is Null")
 
 def update_34410(dbo: Database) -> None:
     # Add owner.ExtraIDs
@@ -5893,9 +5924,10 @@ def update_34601(dbo: Database) -> None:
     dbo.execute_dbupdate("UPDATE medicalprofile SET CostPerTreatment=0")
 
 def update_34602(dbo: Database) -> None:
-    # Add time fieldtype
-    l = dbo.locale
-    dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
+    # Add time fieldtype - this seems to be a duplicate of update_34112 ?
+    #l = dbo.locale
+    #dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
+    pass
 
 def update_34603(dbo: Database) -> None:
     l = dbo.locale
@@ -6038,11 +6070,13 @@ def update_34702(dbo: Database) -> None:
     dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='', IdentificationNumber2='', MatchFlags='' ")
 
 def update_34703(dbo: Database) -> None:
-    add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
-    add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
-    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='' WHERE IdentificationNumber Is Null") 
-    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber2='' WHERE IdentificationNumber2 Is Null") 
-    dbo.execute_dbupdate("UPDATE owner SET MatchFlags='' WHERE MatchFlags Is Null") 
+    # NOTE: This doesn't seem to do anything that 34702 didn't and must have been added for a short term fix
+    #add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
+    #add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
+    #dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='' WHERE IdentificationNumber Is Null") 
+    #dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber2='' WHERE IdentificationNumber2 Is Null") 
+    #dbo.execute_dbupdate("UPDATE owner SET MatchFlags='' WHERE MatchFlags Is Null") 
+    pass
 
 def update_34704(dbo: Database) -> None:
     fields = ",".join([
@@ -6102,22 +6136,24 @@ def update_34707(dbo: Database) -> None:
     foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/foot.html")
     body = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/body.html")
     dbo.insert("templatehtml", {
+        "ID":       dbo.get_id_max("templatehtml"),
         "Name":     "animalviewcarousel",
         "*Header":  head,
         "*Body":    body,
         "*Footer":  foot,
         "IsBuiltIn": 0
-    })
+    }, generateID=False)
     head = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/head.html")
     foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/foot.html")
     body = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/body.html")
     dbo.insert("templatehtml", {
+        "ID":       dbo.get_id_max("templatehtml"),
         "Name":     "slideshow",
         "*Header":  head,
         "*Body":    body,
         "*Footer":  foot,
         "IsBuiltIn": 0
-    })
+    }, generateID=False)
 
 def update_34708(dbo: Database) -> None:
     # Add onlineform.EmailFosterer
@@ -6287,15 +6323,17 @@ def update_34812(dbo: Database) -> None:
 
 def update_34813(dbo: Database) -> None:
     # rename animallocation.By to animallocation.MovedBy (By is a MySQL reserved word)
-    add_column(dbo, "animallocation", "MovedBy", dbo.type_shorttext)
-    dbo.execute_dbupdate("UPDATE animallocation SET MovedBy=By")
-    drop_column(dbo, "animallocation", "By")
+    if column_exists(dbo, "animallocation", "By"):
+        add_column(dbo, "animallocation", "MovedBy", dbo.type_shorttext)
+        dbo.execute_dbupdate("UPDATE animallocation SET MovedBy=By")
+        drop_column(dbo, "animallocation", "By")
 
 def update_34900(dbo: Database) -> None:
     # ClinicTypeDescription was mispelled in the create code above (but not the update for existing databases) 
     # as ClinicTypeDescripton - fix this.
-    add_column(dbo, "lkclinictype", "ClinicTypeDescription", dbo.type_longtext)
-    drop_column(dbo, "lkclinictype", "ClinicTypeDescripton")
+    if column_exists(dbo, "lkclinictype", "ClinicTypeDescripton"):
+        add_column(dbo, "lkclinictype", "ClinicTypeDescription", dbo.type_longtext)
+        drop_column(dbo, "lkclinictype", "ClinicTypeDescripton")
 
 def update_34901(dbo: Database) -> None:
     # Add animallocation.PrevAnimalLocationID
@@ -6359,4 +6397,14 @@ def update_34904(dbo: Database) -> None:
     add_column(dbo, "animal", "EnergyLevel", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE animal SET IsCrateTrained=2, IsGoodWithElderly=2, IsGoodTraveller=2, IsGoodOnLead=2, EnergyLevel=0")
 
+def update_34905(dbo: Database) -> None:
+    # Add the ownerrole table
+    fields = ",".join([
+        dbo.ddl_add_table_column("OwnerID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("RoleID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CanView", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CanEdit", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("ownerrole", fields) )
+    add_index(dbo, "ownerrole_OwnerIDRoleID", "ownerrole", "OwnerID,RoleID", unique=True)
 

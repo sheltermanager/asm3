@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-34111/Any rev09
+34111/Any rev10
 ###
 A complete printout of an animal record.
 ###
@@ -68,13 +68,13 @@ HEADER$$
 
 $$BODY
 <h2><a target="_blank" href="animal?id=$AnimalID">$ANIMALNAME</a></h2>
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td><img height="150px" src="{IMAGE.$ANIMALID}" /></td><td><img src="{QR.$ANIMALID}" /></td>
 </tr>
 </table>
 
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td>Code</td><td><b>$SHELTERCODE</b></td><td></td><td><b>On shelter for $TIMEONSHELTER</b></td>
 </tr><tr>
@@ -108,7 +108,7 @@ $$BODY
 
 <h2>Entry Details</h2>
 
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td>Original Owner</td><td><a target="_blank" href="person?id=$OID">$OONAME</a><br />$OOADDRESS<br />$OOPOSTCODE<br />$OOTEL<br />$OOEMAIL</td>
 <td>Brought In By</td><td><a target="_blank" href="person?id=$BID">$BINAME</a><br />$BIADDRESS<br />$BIPOSTCODE<br />$BITEL<br />$BIEMAIL</td>
@@ -123,7 +123,7 @@ $$BODY
 
 <h2>Vet</h2>
 
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td>Special Needs</td><td>$YSPECIALNEEDS</td><td>Health Problems</td><td>$HEALTHPROBLEMS</td>
 </tr><tr>
@@ -133,7 +133,7 @@ $$BODY
 
 <h2>Death</h2>
 
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td>Deceased</td><td><b>$DECEASEDDATE</b></td><td>Euthanized</td><td>$YPUTTOSLEEP</td>
 </tr><tr>

@@ -16,7 +16,7 @@ import asm3.users
 import asm3.utils
 from asm3.i18n import _, add_days, date_diff_days, format_time, display2python, python2display, subtract_years, now
 from asm3.sitedefs import GEO_BATCH, GEO_LIMIT
-from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results
+from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results, Session
 
 from datetime import datetime
 
@@ -73,7 +73,25 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     (int) personid: The person to get
     """
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = %d" % personid) )
+    if p is None: return None
     p = embellish_latest_movement(dbo, p)
+    roles = dbo.query("SELECT ownerrole.*, role.RoleName FROM ownerrole " \
+        "INNER JOIN role ON ownerrole.RoleID = role.ID WHERE ownerrole.OwnerID = ?", [personid])
+    viewroleids = []
+    viewrolenames = []
+    editroleids = []
+    editrolenames = []
+    for r in roles:
+        if r.canview == 1:
+            viewroleids.append(str(r.roleid))
+            viewrolenames.append(str(r.rolename))
+        if r.canedit == 1:
+            editroleids.append(str(r.roleid))
+            editrolenames.append(str(r.rolename))
+    p["VIEWROLEIDS"] = "|".join(viewroleids)
+    p["VIEWROLES"] = "|".join(viewrolenames)
+    p["EDITROLEIDS"] = "|".join(editroleids)
+    p["EDITROLES"] = "|".join(editrolenames)
     return p
 
 def get_person_embedded(dbo: Database, personid: int) -> ResultRow:
@@ -580,7 +598,7 @@ def get_investigation(dbo: Database, personid: int, sort: int = ASCENDING) -> Re
         sql += "ORDER BY o.Date DESC"
     return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo: Database, query: str, classfilter: str = "all", typefilter: str = "all", 
+def get_person_find_simple(dbo: Database, query: str, username: str = "", classfilter: str = "all", typefilter: str = "all", 
                            includeStaff: bool = False, includeVolunteers: bool = False, limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for simple person searches.
@@ -630,9 +648,10 @@ def get_person_find_simple(dbo: Database, query: str, classfilter: str = "all", 
     if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
     if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
     sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + dt + " ORDER BY o.OwnerName"
-    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    #return dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], includeStaff: bool = False, includeVolunteers: bool = False, 
+def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], username: str = "", includeStaff: bool = False, includeVolunteers: bool = False, 
                              limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for advanced person searches.
@@ -727,7 +746,76 @@ def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], includeSta
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
     else:
         sql = get_person_query(dbo) + " WHERE " + " AND ".join(ss.ands) + " ORDER BY o.OwnerName"
-    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    #return dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
+
+def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
+    """
+    Given the results of a find operation, goes through the results and removes 
+    any results which the user does not have permission to view.
+    1. Because there are one or more view roles on the person record and the user doesn't have any
+    2. Multi-site is on, there's a site on the person record that is not the users
+    """
+    # Do nothing if there are no results
+    if len(rows) == 0: return rows
+    u = dbo.query("SELECT * FROM users WHERE UserName = ?", [username])
+    # Do nothing if we can't find the user
+    if len(u) == 0: return rows
+    # Do nothing if the user is a super user and has no site
+    u = u[0]
+    if u.superuser == 1 and u.siteid == 0: return rows
+    roles = asm3.users.get_roles_ids_for_user(dbo, username)
+    # Build an IN clause of result IDs
+    rids = []
+    for r in rows:
+        rids.append(str(r.personid))
+    viewroles = dbo.query("SELECT * FROM ownerrole WHERE OwnerID IN (%s)" % dbo.sql_placeholders(rids), rids)
+    # Remove rows where the user doesn't have that role
+    results = []
+    for r in rows:
+        rok = False
+        # Compare the site ID on the person record to our user - to exclude the record,
+        # both user and person record must have a site ID and they must be different
+        if r.siteid != 0 and u.siteid != 0 and r.siteid != u.siteid: continue
+        # Get the list of required view roles for this incident
+        incroles = [ x for x in viewroles if r.personid == x.ownerid and x.canview == 1 ]
+        # If there aren't any, it's fine to view the incident
+        if len(incroles) == 0: 
+            rok = True
+        else:
+            # If the user has any of the set view roles, we're good
+            for v in incroles:
+                if v.roleid in roles:
+                    rok = True
+        if rok:
+            results.append(r)
+    return results
+
+def check_view_permission(dbo: Database, username: str, session: Session, pid: int) -> bool:
+    """
+    Checks that the currently logged in user has permission to
+    view the person with pid.
+    If they can't, an ASMPermissionError is thrown.
+    """
+    # Superusers can do anything
+    if session.superuser == 1: return True
+    viewroles = []
+    for rr in dbo.query("SELECT RoleID FROM ownerrole WHERE OwnerID = ? AND CanView = 1", [pid]):
+        viewroles.append(rr.ROLEID)
+    # No view roles means anyone can view
+    if len(viewroles) == 0:
+        return True
+    # Does the user have any of the view roles?
+    userroles = []
+    for ur in dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [username]):
+        userroles.append(ur.ROLEID)
+    hasperm = False
+    for ur in userroles:
+        if ur in viewroles:
+            hasperm = True
+    if hasperm:
+        return True
+    raise asm3.utils.ASMPermissionError("User does not have required role to view this person")
 
 def get_person_rota(dbo: Database, personid: int) -> Results:
     return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])
@@ -1133,8 +1221,37 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     # Update diary link info
     asm3.diary.update_link_info(dbo, username, asm3.diary.PERSON, pid)
 
+    # Update roles needed to view
+    update_person_roles(dbo, pid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
     # Check/update the geocode for the person's address
     if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
+
+def update_person_roles(dbo: Database, pid: int, viewroles: List[int], editroles: List[int]) -> None:
+    """
+    Updates the view and edit roles for a person record
+    pid:       The person ID
+    viewroles:  a list of integer role ids
+    editroles:  a list of integer role ids
+    """
+    dbo.execute("DELETE FROM ownerrole WHERE OwnerID = ?", [pid])
+    for rid in viewroles:
+        dbo.insert("ownerrole", {
+            "OwnerID":          pid,
+            "RoleID":           rid,
+            "CanView":          1,
+            "CanEdit":          0
+        }, generateID=False)
+    for rid in editroles:
+        if rid in viewroles:
+            dbo.execute("UPDATE ownerrole SET CanEdit = 1 WHERE OwnerID = ? AND RoleID = ?", (pid, rid))
+        else:
+            dbo.insert("ownerrole", {
+                "OwnerID":          pid,
+                "RoleID":           rid,
+                "CanView":          0,
+                "CanEdit":          1
+            }, generateID=False)
 
 def update_remove_flag(dbo: Database, username: str, personid: int, flag: str) -> None:
     """

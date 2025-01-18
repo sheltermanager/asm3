@@ -15,10 +15,7 @@ jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js"
     "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
     "header_additional.js", "header_edit_header.js" ]
 
-exclude = [ "animal_view_adoptable.js", "document_edit.js", 
-    "mobile.js", "mobile2.js", "mobile_login.js", "mobile_photo_uploader.js", "mobile_report.js", "mobile_sign.js", 
-    "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js", 
-    "service_checkout_licence.js" ]
+exclude = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_extra.js", "report_toolbar.js" ]
 
 exclude += [ "rollup.js", "rollup_compat.js" ]
 
@@ -27,8 +24,11 @@ readfile_print("node_modules/regenerator-runtime/runtime.min.js")
 readfile_print("node_modules/promise-polyfill/dist/polyfill.min.js")
 
 for i in os.listdir("src/static/js/compat"):
-    if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
-        jsfiles.append(i)
+    if i in exclude: continue
+    if i in jsfiles: continue
+    if i.startswith("mobile") or i.startswith("service"): continue
+    if i.startswith(".") or not i.endswith(".js"): continue
+    jsfiles.append(i)
 
 for i in jsfiles:
     readfile_print("src/static/js/compat/%s" % i)

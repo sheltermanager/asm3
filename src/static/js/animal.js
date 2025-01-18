@@ -113,7 +113,7 @@ $(function() {
                     { post_field: "originalowner", json_field: "ORIGINALOWNERID", 
                         label: _("Original Owner"), type: "person", colclasses: "bottomborder" },
                     { rowid: "broughtinbyownerrow", post_field: "broughtinby", json_field: "BROUGHTINBYOWNERID", 
-                        label: _("BroughtInBy"), type: "person" },
+                        label: _("Brought In By"), type: "person" },
 
                     { type: "nextcol" },
 

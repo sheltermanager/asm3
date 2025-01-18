@@ -2,7 +2,7 @@ Print Animal Record (for adopters)
 ###
 Auditing
 ###
-34018/Any rev08
+34018/Any rev09
 ###
 A complete printout of an animal record for giving to adopters.
 ###
@@ -69,13 +69,13 @@ HEADER$$
 
 $$BODY
 <h2><a target="_blank" href="animal?id=$AnimalID">$ANIMALNAME</a></h2>
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td><img height="150px" src="{IMAGE.$ANIMALID}" /></td><td><img src="{QR.$ANIMALID}" /></td>
 </tr>
 </table>
 
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td>Code</td><td><b>$SHELTERCODE</b></td><td></td><td><b>On shelter for $TIMEONSHELTER</b></td>
 </tr><tr>
@@ -111,7 +111,7 @@ $$BODY
 
 <h2>Entry Details</h2>
 
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td>Reason not by owner</td><td>$REASONNO</td><td>Entry Reason</td><td>$REASONFORENTRY</td>
 </tr><tr>
@@ -123,7 +123,7 @@ $$BODY
 
 <h2>Vet</h2>
 
-<table cellpadding="5">
+<table cellpadding="5" class="nosort">
 <tr>
 <td>Special Needs</td><td>$YSPECIALNEEDS</td><td>Health Problems</td><td>$HEALTHPROBLEMS</td>
 </tr><tr>

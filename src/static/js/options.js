@@ -1472,6 +1472,7 @@ $(function() {
                 '<input data="OnlineFormSpamHoneyTrap" id="spamhoneytrap" class="asm-checkbox" type="checkbox" /> <label for="spamhoneytrap">' + _("Spambot protection: Invisible checkbox") + '</label><br/>',
                 '<input data="OnlineFormSpamUACheck" id="spamuacheck" class="asm-checkbox" type="checkbox" /> <label for="spamuacheck">' + _("Spambot protection: UserAgent check") + '</label><br/>',
                 '<input data="OnlineFormSpamFirstnameMixCase" id="spamfirstname" class="asm-checkbox" type="checkbox" /> <label for="spamfirstname">' + _("Spambot protection: First name mixed case") + '</label><br/>',
+                '<input data="OnlineFormSpamPostcode" id="spampostcode" class="asm-checkbox" type="checkbox" /> <label for="spampostcode">' + _("Spambot protection: Zipcode contains numbers") + '</label><br/>',
                 '</p>',
                 '</div>'
             ].join("\n");
@@ -1720,7 +1721,6 @@ $(function() {
                 '<input data="DisableAnimalControl" id="disableanimalcontrol" class="asm-checkbox" type="checkbox" /> <label for="disableanimalcontrol">' + _("Remove the animal control functionality from menus and screens") + '</label><br />',
                 '<input data="DisableEvents" id="disableevents" class="asm-checkbox" type="checkbox" /> <label for="disableevents">' + _("Remove the event management functionality from menus and screens") + '</label><br />',
                 '<input data="DisableTrapLoan" id="disabletraploan" class="asm-checkbox" type="checkbox" /> <label for="disabletraploan">' + _("Remove the equipment loan functionality from menus and screens") + '</label><br />',
-                '<input data="rc:IncidentPermissions" id="incidentpermissions" class="asm-checkbox" type="checkbox" /> <label for="incidentpermissions">' + _("Remove fine-grained animal control incident permissions") + '</label><br />',
                 '<input data="DisableRota" id="disablerota" class="asm-checkbox" type="checkbox" /> <label for="disablerota">' + _("Remove the rota functionality from menus and screens") + '</label><br />',
                 '<input data="DisableStockControl" id="disablestockcontrol" class="asm-checkbox" type="checkbox" /> <label for="disablestockcontrol">' + _("Remove the stock control functionality from menus and screens") + '</label><br />',
                 '<input data="DisableTransport" id="disabletransport" class="asm-checkbox" type="checkbox" /> <label for="disabletransport">' + _("Remove the transport functionality from menus and screens") + '</label><br />',
@@ -1785,6 +1785,8 @@ $(function() {
                 '<p>',
                 '<input data="Force2FA" id="force2fa" class="asm-checkbox" type="checkbox" /> <label for="force2fa">' + _("Force users to enable 2 factor authentication") + '</label><br />',
                 '<input data="ForceStrongPasswords" id="forcestrongpasswords" class="asm-checkbox" type="checkbox" /> <label for="forcestrongpasswords">' + _("Force users to set strong passwords (8+ characters of mixed case and numbers)") + '</label><br />',
+                '<input data="IncidentPermissions" id="incidentpermissions" class="asm-checkbox" type="checkbox" /> <label for="incidentpermissions">' + _("Enable access permissions for incident records") + '</label><br />',
+                '<input data="PersonPermissions" id="personpermissions" class="asm-checkbox" type="checkbox" /> <label for="personpermissions">' + _("Enable access permissions for person records") + '</label><br />',
                 '</p>',
                 '</div>'
             ].join("\n");

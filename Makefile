@@ -156,6 +156,7 @@ tests_dbupdates:
 	@echo "[tests_dbupdates] =============="
 	rm -f scripts/unittestdb/dbupdates.db
 	sqlite3 scripts/unittestdb/dbupdates.db < scripts/unittestdb/asm2_postgres.sql
+	sqlite3 scripts/unittestdb/dbupdates.db < scripts/unittestdb/asm2_data.sql
 	cd src && python3 cron.py maint_db_update_stdout SQLITE host 21 user pass ../scripts/unittestdb/dbupdates.db dbupdates
 
 deps:

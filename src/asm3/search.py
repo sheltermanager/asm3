@@ -328,73 +328,73 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
             ar(asm3.animal.get_animals_adoptable(dbo), "ANIMAL", animalsort)
 
     elif q == "people":
-        ar(asm3.person.get_person_find_simple(dbo, "", classfilter="all", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+        ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="all", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
         explain = _("All people on file.", l)
 
     elif q == "vets":
         explain = _("All vets on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="vet", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="vet", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "retailers":
         explain = _("All retailers on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="retailer", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="retailer", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "staff":
         explain = _("All staff on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="staff", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="staff", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "fosterers":
         explain = _("All fosterers on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="fosterer", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="fosterer", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "volunteers":
         explain = _("All volunteers on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="volunteer", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="volunteer", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "shelters":
         explain = _("All animal shelters on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="shelter", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="shelter", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "aco":
         explain = _("All animal care officers on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="aco", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="aco", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "banned":
         explain = _("All banned owners on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="banned", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="banned", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "homechecked":
         explain = _("All homechecked owners on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="homechecked", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="homechecked", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "homecheckers":
         explain = _("All homecheckers on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="homechecker", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="homechecker", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "members":
         explain = _("All members on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="member", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="member", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "donors":
         explain = _("All donors on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="donor", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="donor", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "drivers":
         explain = _("All drivers on file.", l)
         if viewperson:
-            ar(asm3.person.get_person_find_simple(dbo, "", classfilter="driver", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
+            ar(asm3.person.get_person_find_simple(dbo, "", user, classfilter="driver", includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort)
 
     elif q == "reservenohomecheck":
         explain = _("People with active reservations, but no homecheck has been done.", l)
@@ -449,7 +449,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         q = q[q.find(":")+1:].strip()
         explain = _("People matching '{0}'.", l).format(q)
         if viewperson:
-            ar( asm3.person.get_person_find_simple(dbo, q, includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort )
+            ar( asm3.person.get_person_find_simple(dbo, q, user, includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort )
 
     elif q.startswith("wl:") or q.startswith("waitinglist:"):
         q = q[q.find(":")+1:].strip()
@@ -494,7 +494,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         if cp(asm3.users.VIEW_INCIDENT):
             ar( asm3.animalcontrol.get_animalcontrol_find_simple(dbo, q, user, limit=limit, siteid=siteid), "ANIMALCONTROL", acsort )
         if viewperson:
-            ar( asm3.person.get_person_find_simple(dbo, q, includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort )
+            ar( asm3.person.get_person_find_simple(dbo, q, user, includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort )
         if cp(asm3.users.VIEW_WAITING_LIST):
             ar( asm3.waitinglist.get_waitinglist_find_simple(dbo, q, limit=limit, siteid=siteid), "WAITINGLIST", wlsort )
         if cp(asm3.users.VIEW_LOST_ANIMAL):

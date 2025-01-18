@@ -325,7 +325,7 @@ def maint_db_dump_animalcsv(dbo: Database):
 
 def maint_db_dump_personcsv(dbo: Database):
     try:
-        print(utils.bytes2str(utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", classfilter="all", includeStaff=True, includeVolunteers=True, limit=0))))
+        print(utils.bytes2str(utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", "system", classfilter="all", includeStaff=True, includeVolunteers=True, limit=0))))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_personcsv: %s" % em, "cron.maint_db_dump_personcsv", dbo, sys.exc_info())
@@ -352,7 +352,7 @@ def maint_db_dump_zip(dbo: Database):
         utils.write_binary_file(f"{PATH}/animal.csv", utils.csv(l, rows))
         utils.write_binary_file(f"{PATH}/media.csv", utils.csv(l, media.get_media_export(dbo)))
         utils.write_binary_file(f"{PATH}/medical.csv", utils.csv(l, medical.get_medical_export(dbo)))
-        rows = person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
+        rows = person.get_person_find_simple(dbo, "", "system", includeStaff=True, includeVolunteers=True)
         additional.append_to_results(dbo, rows, "person")
         utils.write_binary_file(f"{PATH}/person.csv", utils.csv(l, rows))
         rows = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, "system")
