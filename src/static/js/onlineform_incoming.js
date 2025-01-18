@@ -43,7 +43,7 @@ $(function() {
                             s += html.icon("link", _("This form has been previously processed")) + " ";
                         }
                         if (row.SPAM) {
-                            s += html.icon("spam", _("This form has marked as spam")) + " ";
+                            s += html.icon("spam", _("This form has been marked as spam")) + " ";
                         }
                         s += html.truncate(row.PREVIEW); 
                         return s;
