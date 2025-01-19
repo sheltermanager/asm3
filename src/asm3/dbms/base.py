@@ -1087,7 +1087,11 @@ class Database(object):
             "(select count(*) from media where mediamimetype='image/jpeg') as totaljpg, " \
             "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='image/jpeg') as jpgsize, " \
             "(select count(*) from media where mediamimetype='application/pdf') as totalpdf, " \
-            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='application/pdf') as pdfsize "))
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='application/pdf') as pdfsize, " \
+            "(select count(*) from media where mediamimetype='text/html') as totalhtml, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='text/html') as htmlsize, " \
+            "(select count(*) from media where mediamimetype not in ('text/html', 'image/jpeg', 'application/pdf')) as totalother, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype not in ('text/html', 'image/jpeg', 'application/pdf')) as othersize "))
 
     def switch_param_placeholder(self, sql: str) -> str:
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 

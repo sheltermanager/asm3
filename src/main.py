@@ -4825,17 +4825,22 @@ class maint_db_stats(ASMEndpoint):
         self.content_type("text/plain")
         self.cache_control(0)
         s = o.dbo.stats()
-        return f"first record added on {s.firstrecord}\n" \
-            f"{s.shelteranimals} shelter animals\n" \
-            f"{s.totalanimals} animals (max id {s.maxidanimal})\n" \
-            f"{s.totalvacc} vaccinations (max id {s.maxidanimalvaccination})\n" \
-            f"{s.totaltreatments} treatments (max id {s.maxidanimalmedicaltreatment})\n" \
-            f"{s.totalpeople} people (max id {s.maxidowner})\n" \
-            f"{s.totalmovements} movements (max id {s.maxidadoption})\n" \
-            f"{s.totalincidents} incidents (max id {s.maxidanimalcontrol})\n" \
-            f"{s.totalmedia} media ({s.mediasize} MB)\n" \
-            f"{s.totaljpg} jpg ({s.jpgsize} MB)\n" \
-            f"{s.totalpdf} pdf ({s.pdfsize} MB)\n"
+        def rnd(x):
+            if x is None: return "0"
+            return round(x, 1)
+        return f"first record added on {s.firstrecord}\n\n" \
+            f"{s.shelteranimals:,} shelter animals\n" \
+            f"{s.totalanimals:,} total animals (max id {s.maxidanimal})\n" \
+            f"{s.totalvacc:,} vaccinations (max id {s.maxidanimalvaccination})\n" \
+            f"{s.totaltreatments:,} treatments (max id {s.maxidanimalmedicaltreatment})\n" \
+            f"{s.totalpeople:,} people (max id {s.maxidowner})\n" \
+            f"{s.totalmovements:,} movements (max id {s.maxidadoption})\n" \
+            f"{s.totalincidents:,} incidents (max id {s.maxidanimalcontrol})\n\n" \
+            f"{s.totalmedia:,} media ({rnd(s.mediasize)} MB)\n" \
+            f"    {s.totaljpg} image/jpeg ({rnd(s.jpgsize)} MB)\n" \
+            f"    {s.totalpdf} application/pdf ({rnd(s.pdfsize)} MB)\n" \
+            f"    {s.totalhtml} text/html ({rnd(s.htmlsize)} MB)\n" \
+            f"    {s.totalother} other ({rnd(s.othersize)} MB)\n"
 
 class maint_deps(ASMEndpoint):
     url = "maint_deps"
