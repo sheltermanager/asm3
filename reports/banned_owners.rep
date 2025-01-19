@@ -2,7 +2,7 @@ Banned Owners
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Owners banned from adopting animals.
 ###
@@ -14,7 +14,7 @@ WHERE isbanned = 1
 ORDER BY ownersurname, ownerforenames
 ###
 $$HEADER
-<table border="1">
+<table border="1" class="nosort">
 HEADER$$
 
 $$BODY
@@ -44,7 +44,7 @@ Banned Owners between two dates
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Owners banned from adopting animals between two dates (last changed).
 ###
@@ -58,7 +58,7 @@ AND LastChangedDate <= '$ASK DATE Enter the to date$'
 ORDER BY ownersurname, ownerforenames
 ###
 $$HEADER
-<table border="1">
+<table border="1" class="nosort">
 HEADER$$
 
 $$BODY
