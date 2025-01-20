@@ -6243,6 +6243,7 @@ class person_embed(ASMEndpoint):
         dbo = o.dbo
         pid = o.post.integer("id")
         p = asm3.person.get_person_embedded(dbo, pid)
+        asm3.person.check_view_permission(o.dbo, o.user, o.session, pid)
         if not p:
             asm3.al.error("get person by id %d found no records." % pid, "main.person_embed", dbo)
             raise web.notfound()
@@ -6279,6 +6280,7 @@ class person_embed(ASMEndpoint):
         email = post["emailaddress"]
         mobile = post["mobiletelephone"]
         p = asm3.person.get_person_similar(dbo, email, mobile, surname, forenames, address, siteid=o.siteid, checkcouple=True, checkforenames=False, checkmobilehome=True)
+        p = asm3.person.reduce_find_results(dbo, o.user, p)
         if len(p) == 0:
             asm3.al.debug("No similar people found for %s, %s, %s, %s, %s" % (email, mobile, surname, forenames, address), "main.person_embed", dbo)
         else:
