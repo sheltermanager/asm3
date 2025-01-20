@@ -2,7 +2,7 @@ Cost Breakdown by Animal
 ###
 Financial
 ###
-34601/Any rev12
+34601/Any rev13
 ###
 Costs between two dates, broken down by animal.
 ###
@@ -123,6 +123,7 @@ $$HEAD
 <th><b>Date</b></th>
 <th><b>Amount</b></th>
 <th><b>Description</b></th>
+<th></th>
 </tr>
 </thead>
 <tbody>

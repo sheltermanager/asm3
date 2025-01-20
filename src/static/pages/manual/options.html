@@ -948,25 +948,25 @@ only: If this option is on, form submissions will be hashed and read only
 recorded. This prevents anyone from editing form submissions after they have been
 stored.</p></li>
 </ul>
-<p>There are a number of options for protection forms from spambots. If any of
-these options are enabled and triggered by a form submission, the submitter
-will see the thank you screen and think it has worked, but the form will be
-silently dropped so that you do not have to delete it from the queue.</p>
+<p>There are a number of options for protection of online forms from spambots.
+If any of these options are enabled and triggered by a form submission, the form
+will be marked as spam in your incoming form queue. If auto-process is enabled for
+the form it would go into the queue to be reviewed and deleted instead of being
+processed. If an email address has been selected to send subbmissions to, the email
+would not be sent.</p>
+<p>In the queue, forms flagged as spam can be easily identified by the spam icon in
+the preview column and deleted in one click using the “Delete Spam” button.</p>
 <ul class="simple">
 <li><p>Spambot protection: Invisible checkbox: Sometimes called a honey trap, forms will
 add an extra invisible checkbox that only bots can see. If the box is ticked, we
-know the submission has been filled in by a bot.</p></li>
+know the submission has been filled in by a bot and will be marked as spam.</p></li>
 <li><p>Spambot protection: Useragent check: Web browsers all have comment elements to the
-useragent string they use to identify themselves. This option will reject the form
-if we don’t recognise the submission as coming from a browser.</p></li>
-<li><p>Spambot protection: First name mixed case: The firstname field on a form (if
-present) should only really contain one upper case character per name and
-it’s unusual for there to be more than two first names. Bots tend to autofill
-fields with random junk like YxoOopoUoyuVV - this option will reject form
-submissions where the first name has a mix of too many upper and lower case
-characters.  It will also reject if it finds something that looks like an
-email address in the first name field (ie. it contains . and &#64;) - this is
-also something that spambots do, stuffing an email address into every field.</p></li>
+useragent string they use to identify themselves. This option will mark the form
+as spam if we don’t recognise the submission as coming from a browser.</p></li>
+<li><p>Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
+and lower case letters in the applicants name fields and marks these as spam.</p></li>
+<li><p>Spambot protection: Zipcode / Postcode contains numbers: Checks that the Zipcode /
+Postcode field contains numbers, marks forms as spam where no number is present.</p></li>
 </ul>
 </section>
 <section id="payment-processors">
