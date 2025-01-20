@@ -44,7 +44,8 @@ def bulk_update_movement_statuses(dbo: Database, username: str, movementids: lis
 def get_movement_query(dbo: Database) -> str:
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
-        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags AS OwnerFlags, " \
+        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.SiteID AS OwnerSiteID, " \
+        "o.AdditionalFlags AS OwnerFlags, " \
         "rs.StatusName AS ReservationStatusName, " \
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
         "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \

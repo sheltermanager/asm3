@@ -749,7 +749,7 @@ def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], username: 
     #return dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
+def reduce_find_results(dbo: Database, username: str, rows: Results, idcol: str = "PERSONID", sitecol = "SITEID") -> Results:
     """
     Given the results of a find operation, goes through the results and removes 
     any results which the user does not have permission to view.
@@ -768,7 +768,7 @@ def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
     # Build an IN clause of result IDs
     rids = []
     for r in rows:
-        rids.append(str(r.personid))
+        rids.append(str(r[idcol]))
     viewroles = dbo.query("SELECT * FROM ownerrole WHERE OwnerID IN (%s)" % dbo.sql_placeholders(rids), rids)
     # Remove rows where the user doesn't have that role
     results = []
@@ -776,7 +776,7 @@ def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
         rok = False
         # Compare the site ID on the person record to our user - to exclude the record,
         # both user and person record must have a site ID and they must be different
-        if r.siteid != 0 and u.siteid != 0 and r.siteid != u.siteid: continue
+        if r[sitecol] != 0 and u.siteid != 0 and r[sitecol] != u.siteid: continue
         # Get the list of required view roles for this incident
         incroles = [ x for x in viewroles if r.personid == x.ownerid and x.canview == 1 ]
         # If there aren't any, it's fine to view the incident

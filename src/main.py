@@ -2309,6 +2309,7 @@ class animal_movements(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         movements = asm3.movement.get_animal_movements(dbo, o.post.integer("id"))
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements for animal %s %s" % (len(movements), a["CODE"], a["ANIMALNAME"]), "main.animal_movements", dbo)
         return {
             "rows": movements,
@@ -5179,6 +5180,7 @@ class move_book_foster(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_active_movements(dbo, asm3.movement.FOSTER)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         movements = o.lf.reduce(movements)
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_foster", dbo)
         return {
@@ -5200,6 +5202,7 @@ class move_book_recent_adoption(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_adoptions(dbo)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_recent_adoption", dbo)
         return {
             "name": "move_book_recent_adoption",
@@ -5221,6 +5224,7 @@ class move_book_recent_other(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_nonfosteradoption(dbo)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_recent_other", dbo)
         return {
             "name": "move_book_recent_other",
@@ -5241,6 +5245,7 @@ class move_book_recent_transfer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_transfers(dbo)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_recent_transfer", dbo)
         return {
             "name": "move_book_recent_transfer",
@@ -5261,6 +5266,7 @@ class move_book_reservation(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_active_reservations(dbo)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_reservation", dbo)
         return {
             "name": "move_book_reservation",
@@ -5283,6 +5289,7 @@ class move_book_retailer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_active_movements(dbo, asm3.movement.RETAILER)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_retailer", dbo)
         return {
             "name": "move_book_retailer",
@@ -5323,6 +5330,7 @@ class move_book_trial_adoption(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_trial_adoptions(dbo)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_trial_adoption", dbo)
         return {
             "name": "move_book_trial_adoption",
@@ -5343,6 +5351,7 @@ class move_book_unneutered(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_unneutered_adoptions(dbo)
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_unneutered", dbo)
         return {
             "name": "move_book_unneutered",
@@ -6465,6 +6474,7 @@ class person_movements(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         movements = asm3.movement.get_person_movements(dbo, o.post.integer("id"))
+        movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.person_movements", dbo)
         return {
             "name": "person_movements",
