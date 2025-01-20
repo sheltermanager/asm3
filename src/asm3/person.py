@@ -778,7 +778,7 @@ def reduce_find_results(dbo: Database, username: str, rows: Results, idcol: str 
         # both user and person record must have a site ID and they must be different
         if r[sitecol] != 0 and u.siteid != 0 and r[sitecol] != u.siteid: continue
         # Get the list of required view roles for this incident
-        incroles = [ x for x in viewroles if r.personid == x.ownerid and x.canview == 1 ]
+        incroles = [ x for x in viewroles if r[idcol] == x.ownerid and x.canview == 1 ]
         # If there aren't any, it's fine to view the incident
         if len(incroles) == 0: 
             rok = True
