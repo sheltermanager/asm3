@@ -288,7 +288,7 @@ class FindPetPublisher(AbstractPublisher):
         return {
             "token": FINDPET_API_KEY,
             "report_type": "Adopt", # seems to be the value they want irrespective of whether it's nonshelter or not
-            "photos": [ self.getPhotoUrls(an.ID) ],
+            "photos": self.getPhotoUrls(an.ID),
             "videos": [],  # not used
             "adt_markings": [], # not used 
             "breeds": [ an.BREEDNAME1, an.BREEDNAME2 ], 
