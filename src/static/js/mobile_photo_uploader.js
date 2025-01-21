@@ -94,7 +94,7 @@ $(document).ready(function() {
                 method: "POST",
                 url: targeturl,
                 data: formdata,
-                dataType: "text/plain",
+                dataType: "text",
                 error: function() {
                     $("#spinner").hide();
                     $("#" + checkid).show();
@@ -157,15 +157,15 @@ $(document).ready(function() {
     });
 
     $("#button-take").click(function() {
-        $("#take-camera").click();
+        $("#take-camera").trigger("click");
     });
 
     $("#button-gallery").click(function() {
-        $("#take-gallery").click();
+        $("#take-gallery").trigger("click");
     });
 
     $("#button-paperwork").click(function() {
-        $("#take-paperwork").click();
+        $("#take-paperwork").trigger("click");
     });
 
     $("#take-camera").change(function() {

@@ -8,6 +8,80 @@ $(document).ready(function() {
 
         post_handler: "mobile2",
 
+        upload_animal_image: function(file, animalid, uploadtype) {
+            let reader = new FileReader();
+            reader.addEventListener("load", function() {
+                let formdata = "animalid=" + animalid + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
+                let targeturl =  "mobile_photo_upload";
+                $.ajax({
+                    method: "POST",
+                    url: targeturl,
+                    data: formdata,
+                    dataType: "text",
+                    error: function(e) {
+                        //console.log("Error");
+                    },
+                    success: function(mid) {
+                        let newthumbnail = '<div class="media-thumb" style="position: relative; border-style: solid; border-width: 1px; ' +
+                        'border-color: #ffffffff; display: inline-block; height: 100px; width: 100px; ' +
+                        'background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + mid + '\'); ' +
+                        'background-size: cover; background-position: center center; ' +
+                        'margin-right: 10px; margin-bottom: 10px;" ' +
+                        'data-imageid="' + mid + '" data-description="">' +
+                        '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + 
+                        format.date_now() + '</div>' +
+                        '</div>';
+                        $(newthumbnail).insertAfter($("#animalimage-image-slider-upload-file"));
+                        $(".media-thumb").first().click(function() {
+                            $(this).parent().find(".media-thumb").css("border-color", "#fff");
+                            $(this).css("border-color", "#000");
+                            $("#animalimage-image").prop("src", "/image?db=" + asm.useraccount + "&mode=media&id=" + mid);
+                            $("#animalimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + mid);
+                            $("#animalimage-notes").html("");
+                        });
+                    }
+                });
+            }, false);
+            reader.readAsDataURL(file);
+        },
+
+        upload_incident_image: function(file, incidentid, uploadtype) {
+            let reader = new FileReader();
+            reader.addEventListener("load", function() {
+                let formdata = "incidentid=" + incidentid + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
+                let targeturl =  "mobile_photo_upload";
+                $.ajax({
+                    method: "POST",
+                    url: targeturl,
+                    data: formdata,
+                    dataType: "text",
+                    error: function(e) {
+                        //console.log("Error");
+                    },
+                    success: function(mid) {
+                        let newthumbnail = '<div class="media-thumb" style="position: relative; border-style: solid; border-width: 1px; ' +
+                        'border-color: #ffffffff; display: inline-block; height: 100px; width: 100px; ' +
+                        'background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + mid + '\'); ' +
+                        'background-size: cover; background-position: center center; ' +
+                        'margin-right: 10px; margin-bottom: 10px;" ' +
+                        'data-imageid="' + mid + '" data-description="">' +
+                        '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + 
+                        format.date_now() + '</div>' +
+                        '</div>';
+                        $(newthumbnail).insertAfter($("#incidentimage-image-slider-upload-file"));
+                        $("#incidentimage-imagesliderheader .media-thumb").first().click(function() {
+                            $(this).parent().find(".media-thumb").css("border-color", "#fff");
+                            $(this).css("border-color", "#000");
+                            $("#incidentimage-image").prop("src", "/image?db=" + asm.useraccount + "&mode=media&id=" + mid);
+                            $("#incidentimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + mid);
+                            $("#incidentimage-notes").html("");
+                        });
+                    }
+                });
+            }, false);
+            reader.readAsDataURL(file);
+        },
+
         show_info: function(title, body) {
             $("#infotitle").html(title);
             $("#infotext").html(body);
@@ -573,6 +647,37 @@ $(document).ready(function() {
             ].join("\n");
         },
 
+        render_image_slider: function(rows, id) {
+            let h = '<div id="' + id + '-imageslider">';
+            let body = '<div id="' + id + '-imagesliderbody">' +
+                '<a id="' + id + '-anchor" href="#" target="_blank">' +
+                '<img id="' + id + '-image" style="max-width: 100%;" src=""></a>' +
+                '<div id="' + id + '-notes"></div>' +
+                '</div>';
+            let head = '<div id="' + id + '-imagesliderheader" style="height: 120px; ' +
+                'overflow-x: scroll; overflow-y: hidden; white-space: nowrap;">';
+            if (rows.length == 0) { return ""; }
+            head += '<div id="' + id + '-media-add" style="position: relative; border-style: solid; border-width: 1px; ' +
+                    'border-color: #000000; border-style: dashed; display: inline-block; height: 100px; width: 100px; margin-right: 10px; margin-bottom: 10px; cursor: pointer;">' +
+                    '<div style="position: absolute; top: 40px; left: 0px; right: 0px; margin-left: auto; margin-right: auto;text-align: center;">' + _("Add") + '</div>' +
+                    '</div>' +
+                    '<input id="' + id + '-image-slider-upload-file" type="file" style="display: none;">';
+            $.each(rows, function(i, row) {
+                if (row.MEDIAMIMETYPE != 'image/jpeg') { return; }
+                head += '<div class="media-thumb" style="position: relative; border-style: solid; border-width: 1px; ' +
+                    'border-color: #ffffffff; display: inline-block; height: 100px; width: 100px; ' +
+                    'background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '\'); ' +
+                    'background-size: cover; background-position: center center; ' +
+                    'margin-right: 10px; margin-bottom: 10px;" ' +
+                    'data-imageid="' + row.ID + '" data-description="' + html.title(row.MEDIANOTES) + '">' +
+                    '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + 
+                    format.date(row.DATE) + '</div>' +
+                    '</div>';
+            });
+            head += '</div>';
+            return h + head + body + '</div>';
+        },
+
         // Returns the HTML for rendering an animal record
         render_animal: async function(a, selector) {
             const i = function(label, value, cfg) {
@@ -752,36 +857,21 @@ $(document).ready(function() {
                 $("#animalimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + rowid);
                 $("#animalimage-notes").html(rowmedianotes);
             });
+            // Add listener for adding media
+            $("#animalimage-media-add").click(function() {
+                $("#animalimage-image-slider-upload-file").trigger("click");
+                //mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_MOBILEUI, o.post)
+        
+            });
+            $("#animalimage-image-slider-upload-file").change(function() {
+                mobile.upload_animal_image($("#animalimage-image-slider-upload-file")[0].files[0], a.ID, "gallery");
+            });
             // Handle the uploading of a photo when one is chosen
             $("#content-animal .uploadphoto").click(function() { $("#content-animal .uploadphotofile").click(); });
             $("#content-animal .uploadphotofile").change(function() { alert($("#content-animal .uploadphotofile").val()); });
         },
 
-        render_image_slider: function(rows, id) {
-            let h = '<div id="' + id + '-imageslider">';
-            let body = '<div id="' + id + '-imagesliderbody">' +
-                '<a id="' + id + '-anchor" href="#" target="_blank">' +
-                '<img id="' + id + '-image" style="max-width: 100%;" src=""></a>' +
-                '<div id="' + id + '-notes"></div>' +
-                '</div>';
-            let head = '<div id="' + id + '-imagesliderheader" style="height: 120px; ' +
-                'overflow-x: scroll; overflow-y: hidden; white-space: nowrap;">';
-            if (rows.length == 0) { return ""; }
-            $.each(rows, function(i, row) {
-                if (row.MEDIAMIMETYPE != 'image/jpeg') { return; }
-                head += '<div class="media-thumb" style="position: relative; border-style: solid; border-width: 1px; ' +
-                    'border-color: #ffffffff; display: inline-block; height: 100px; width: 100px; ' +
-                    'background: url(\'/image?db=' + asm.useraccount + '&mode=media&id=' + row.ID + '\'); ' +
-                    'background-size: cover; background-position: center center; ' +
-                    'margin-right: 10px; margin-bottom: 10px;" ' +
-                    'data-imageid="' + row.ID + '" data-description="' + html.title(row.MEDIANOTES) + '">' +
-                    '<div style="position: absolute;width:98px;bottom: 0;left: 0;background-color: white;" align="center">' + 
-                    format.date(row.DATE) + '</div>' +
-                    '</div>';
-            });
-            head += '</div>';
-            return h + head + body + '</div>';
-        },
+        
 
         // Renders an incident record into the selector given
         render_incident: async function(ac, selector, backlink) {
@@ -998,6 +1088,15 @@ $(document).ready(function() {
             });
             $(".showmap").click(function() {
                 window.open(controller.maplink.replace("{0}", $(this).attr("data-address")));
+            });
+            // Add listener for adding media
+            $("#incidentimage-media-add").click(function() {
+                $("#incidentimage-image-slider-upload-file").trigger("click");
+                //mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_MOBILEUI, o.post)
+        
+            });
+            $("#incidentimage-image-slider-upload-file").change(function() {
+                mobile.upload_incident_image($("#incidentimage-image-slider-upload-file")[0].files[0], ac.ID, "gallery");
             });
         },
 
