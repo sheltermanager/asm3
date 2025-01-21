@@ -87,7 +87,16 @@ $(function() {
                 [ "ISGOODWITHCHILDREN", 0, _("Good with children") ],
                 [ "ISGOODWITHCHILDREN", 5, _("Good with children over 5") ],
                 [ "ISGOODWITHCHILDREN", 12, _("Good with children over 12") ],
-                [ "ISHOUSETRAINED", 0, _("Housetrained") ]
+                [ "ISGOODWITHELDERLY", 0, _("Good with elderly")],
+                [ "ISGOODTRAVELLER", 0, _("Good traveller")],
+                [ "ISGOODONLEAD", 0, _("Good on lead")],
+                [ "ISCRATETRAINED", 0, _("Crate trained") ],
+                [ "ISHOUSETRAINED", 0, _("Housetrained") ],
+                [ "ENERGYLEVEL", 1, _("Energy level") + ': ' + _("1 - Very low") ],
+                [ "ENERGYLEVEL", 2, _("Energy level") + ': ' + _("2 - Low") ],
+                [ "ENERGYLEVEL", 3, _("Energy level") + ': ' + _("3 - Medium") ],
+                [ "ENERGYLEVEL", 4, _("Energy level") + ': ' + _("4 - High") ],
+                [ "ENERGYLEVEL", 5, _("Energy level") + ': ' + _("5 - Very high") ]
             ];
             $.each(gw, function(i, v) {
                 let ht = [], c = 0;

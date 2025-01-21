@@ -549,7 +549,12 @@ def get_animal_brief_query(dbo: Database) -> str:
         "a.IsGoodWithCats, " \
         "a.IsGoodWithChildren, " \
         "a.IsGoodWithDogs, " \
+        "a.IsGoodWithElderly, " \
+        "a.IsGoodOnLead, " \
+        "a.IsGoodTraveller, " \
+        "a.IsCrateTrained, " \
         "a.IsHouseTrained, " \
+        "a.EnergyLevel, " \
         "a.IsHold, " \
         "a.IsNotAvailableForAdoption, " \
         "a.IsPickup, " \
