@@ -656,7 +656,7 @@ $(document).ready(function() {
                 '</div>';
             let head = '<div id="' + id + '-imagesliderheader" style="height: 120px; ' +
                 'overflow-x: scroll; overflow-y: hidden; white-space: nowrap;">';
-            if (rows.length == 0) { return ""; }
+            //if (rows.length == 0) { return ""; }
             head += '<div id="' + id + '-media-add" style="position: relative; border-style: solid; border-width: 1px; ' +
                     'border-color: #000000; border-style: dashed; display: inline-block; height: 100px; width: 100px; margin-right: 10px; margin-bottom: 10px; cursor: pointer;">' +
                     '<div style="position: absolute; top: 40px; left: 0px; right: 0px; margin-left: auto; margin-right: auto;text-align: center;">' + _("Add") + '</div>' +
@@ -720,13 +720,6 @@ $(document).ready(function() {
             a = o.animal;
             let [adoptable, adoptreason] = html.is_animal_adoptable(a);
             let x = [];
-            let animalimages = o.media;
-            let imagesection = "";
-            if (animalimages.length > 0) {
-                imagesection = aci("animalimages", _("Images"), [
-                    mobile.render_image_slider(o.media, "animalimage"),
-                ].join("\n"));
-            }
             let h = [
                 '<div class="list-group mt-3">',
                 '<a href="#" data-link="shelteranimals" class="list-group-item list-group-item-action internal-link">',
@@ -789,7 +782,10 @@ $(document).ready(function() {
                     i(_("Special Needs"), a.HASSPECIALNEEDSNAME),
                     i(_("Current Vet"), n(a.CURRENTVETNAME) + " " + n(a.CURRENTVETWORKTELEPHONE))
                 ].join("\n")),
-                imagesection
+
+                aci("animalimages", _("Images"), [
+                    mobile.render_image_slider(o.media, "animalimage"),
+                ].join("\n"))
             ];
             if (o.additional.length > 0) {
                 x = [];
@@ -947,13 +943,6 @@ $(document).ready(function() {
                     return false;
                 }
             });
-            let incidentimages = o.media;
-            let imagesection = "";
-            if (incidentimages.length > 0) {
-                imagesection = aci("incidentimages", _("Images"), [
-                    mobile.render_image_slider(o.media, "incidentimage"),
-                ].join("\n"));
-            }
             let h = [
                 '<div class="list-group mt-3" style="margin-top: 5px">',
                 '<a href="#" data-link="' + backlink + '" class="list-group-item list-group-item-action internal-link">',
@@ -985,7 +974,9 @@ $(document).ready(function() {
                     common.has_permission("vo") ? i(_("Phone"), tel(ac.CALLERHOMETELEPHONE) + " " + tel(ac.CALLERWORKTELEPHONE) + " " + tel(ac.CALLERMOBILETELEPHONE)) : "",
                     common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : ""
                 ].join("\n"), "show"),
-                imagesection,
+                aci("incidentimages", _("Images"), [
+                    mobile.render_image_slider(o.media, "incidentimage"),
+                ].join("\n")),
                 aci("dispatch", _("Dispatch"), [
                     i(_("Address"), dispadd),
                     i(_("City"), ac.DISPATCHTOWN),
