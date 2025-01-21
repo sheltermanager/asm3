@@ -49,7 +49,7 @@ def delete_html_template(dbo: Database, username: str, name: str) -> None:
 def get_document_templates(dbo: Database, show: str = "") -> Results:
     """ Returns document template info. """
     allowodt = asm3.configuration.allow_odt_document_templates(dbo)
-    rows = dbo.query("SELECT ID, Name, Path, ShowAt FROM templatedocument ORDER BY Path, Name")
+    rows = dbo.query(f"SELECT ID, Name, Path, ShowAt, {dbo.sql_char_length('Content')} AS Size FROM templatedocument ORDER BY Path, Name")
     out = []
     for r in rows:
         if not allowodt and r.NAME.endswith(".odt"): continue

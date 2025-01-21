@@ -59,6 +59,10 @@ $(function() {
                         });
                         return l.join(", ");
                     }},
+                    { field: "SIZE", display: _("Size"), formatter: function(row) {
+                        if (!row.SIZE) { return ""; }
+                        return Math.round(row.SIZE / 1024.0) + " Kb";
+                    }},
                     { field: "PATH", display: _("Path"), initialsort: true }
                 ]
             };
