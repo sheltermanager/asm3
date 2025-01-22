@@ -8,6 +8,39 @@ $(document).ready(function() {
 
         post_handler: "mobile2",
 
+        show_info: function(title, body) {
+            $("#infotitle").html(title);
+            $("#infotext").html(body);
+            $("#infodlg").modal("show");
+        },
+
+        show_error: function(title, body) {
+            $("#errortitle").html(title);
+            $("#errortext").html(body);
+            $("#errordlg").modal("show");
+        },
+
+        ajax_post: function(formdata, successfunc, errorfunc) {
+            $.ajax({
+                type: "POST",
+                url: mobile.post_handler,
+                data: formdata,
+                dataType: "text",
+                mimeType: "textPlain",
+                success: function(result) {
+                    if (successfunc) {
+                        successfunc(result);
+                    }
+                },
+                error: function(jqxhr, textstatus, response) {
+                    if (errorfunc) {
+                        errorfunc(textstatus, response);
+                    }
+                    mobile.show_error(textstatus, response);
+                }
+            });
+        },
+
         /* Outputs the displaylocation for an animal. If the user does not have permission to view
             person records and the animal has left on an active movement to a person, only show the
             active movement and remove the person name */
@@ -551,14 +584,17 @@ $(document).ready(function() {
                 'overflow-x: scroll; overflow-y: hidden; white-space: nowrap;">';
             head += '<div style="position: relative; display: inline-block; height: 100px; width: 50px; margin-right: 10px; margin-bottom: 10px;">' +
                     '<div style="position: absolute; padding-left: 5px; padding-right: 5px;">' +
-                    
-                    '<button id="' + id + '-media-add-camera" class="btn btn-primary mt-1" style="display: block;margin-top: 0 !important;"><i id="' + id + '-media-add-camera-icon" class="bi-camera"></i><span id="' + id + '-media-add-camera-spinner" class="spinner-border spinner-border-sm" role="status" style="display: none;"></span></button>' +
-
-                    '<button id="' + id + '-media-add-gallery" class="btn btn-secondary mt-1" style="display: block;"><i id="' + id + '-media-add-gallery-icon" class="bi-card-image"></i><span id="' + id + '-media-add-gallery-spinner" class="spinner-border spinner-border-sm" role="status" style="display: none;"></span></button>' +
-
+                    '<button id="' + id + '-button-camera" class="btn btn-primary mt-1" style="display: block;margin-top: 0 !important;">' + 
+                        '<i class="bi-camera media-button-icon"></i>' +
+                        '<span class="spinner-border spinner-border-sm media-button-spinner" role="status" style="display: none;"></span>' +
+                    '</button>' +
+                    '<button id="' + id + '-button-gallery" class="btn btn-secondary mt-1" style="display: block;">' +
+                        '<i class="bi-card-image media-button-icon"></i>' + 
+                        '<span class="spinner-border spinner-border-sm media-button-spinner" role="status" style="display: none;"></span>' +
+                    '</button>' +
                     '</div></div>' + 
-                    '<input id="' + id + '-image-slider-upload-camera" type="file" capture="environment" accept="image/*" style="display: none;">' +
-                    '<input id="' + id + '-image-slider-upload-file" type="file" accept="image/*" multiple="multiple" style="display: none;">';
+                    '<input id="' + id + '-input-camera" type="file" capture="environment" accept="image/*" style="display: none;">' +
+                    '<input id="' + id + '-input-gallery" type="file" accept="image/*" multiple="multiple" style="display: none;">';
             $.each(rows, function(i, row) {
                 if (row.MEDIAMIMETYPE != 'image/jpeg') { return; }
                 
@@ -587,6 +623,8 @@ $(document).ready(function() {
             reader.addEventListener("load", function() {
                 let formdata = "animalid=" + animalid + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
                 let targeturl =  "mobile_photo_upload";
+                $("#animalimage-button-" + uploadtype + " .media-button-icon").hide();
+                $("#animalimage-button-" + uploadtype + " .media-button-spinner").show();
                 $.ajax({
                     method: "POST",
                     url: targeturl,
@@ -595,18 +633,14 @@ $(document).ready(function() {
                     mimeType: "textPlain",
                     error: function(obj, error, errorthrown) {
                         mobile.show_error(error, errorthrown);
-                        $("#animalimage-media-add-camera-icon").show();
-                        $("#animalimage-media-add-camera-spinner").hide();
-                        $("#animalimage-media-add-gallery-icon").show();
-                        $("#animalimage-media-add-gallery-spinner").hide();
+                        $(".media-button-icon").show();
+                        $(".media-button-spinner").hide();
                     },
                     success: function(mid) {
                         let newthumbnail = mobile.render_image_thumbnail(mid, "animalimage");
-                        $(newthumbnail).insertAfter($("#animalimage-image-slider-upload-file"));
-                        $("#animalimage-media-add-camera-icon").show();
-                        $("#animalimage-media-add-camera-spinner").hide();
-                        $("#animalimage-media-add-gallery-icon").show();
-                        $("#animalimage-media-add-gallery-spinner").hide();
+                        $(newthumbnail).insertAfter($("#animalimage-input-gallery"));
+                        $(".media-button-icon").show();
+                        $(".media-button-spinner").hide();
                     }
                 });
             }, false);
@@ -618,6 +652,8 @@ $(document).ready(function() {
             reader.addEventListener("load", function() {
                 let formdata = "incidentid=" + incidentid + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
                 let targeturl =  "mobile_photo_upload";
+                $("#incidentimage-button-" + uploadtype + " .media-button-icon").hide();
+                $("#incidentimage-button-" + uploadtype + " .media-button-spinner").show();
                 $.ajax({
                     method: "POST",
                     url: targeturl,
@@ -625,55 +661,18 @@ $(document).ready(function() {
                     dataType: "text",
                     error: function(obj, error, errorthrown) {
                         mobile.show_error(error, errorthrown);
-                        $("#incidentimage-media-add-camera-icon").show();
-                        $("#incidentimage-media-add-camera-spinner").hide();
-                        $("#incidentimage-media-add-gallery-icon").show();
-                        $("#incidentimage-media-add-gallery-spinner").hide();
+                        $(".media-button-icon").show();
+                        $(".media-button-spinner").hide();
                     },
                     success: function(mid) {
                         let newthumbnail = mobile.render_image_thumbnail(mid, "incidentimage");
-                        $(newthumbnail).insertAfter($("#incidentimage-image-slider-upload-file"));
-                        $("#incidentimage-media-add-camera-icon").show();
-                        $("#incidentimage-media-add-camera-spinner").hide();
-                        $("#incidentimage-media-add-gallery-icon").show();
-                        $("#incidentimage-media-add-gallery-spinner").hide();
+                        $(newthumbnail).insertAfter($("#incidentimage-input-gallery"));
+                        $(".media-button-icon").show();
+                        $(".media-button-spinner").hide();
                     }
                 });
             }, false);
             reader.readAsDataURL(file);
-        },
-
-        show_info: function(title, body) {
-            $("#infotitle").html(title);
-            $("#infotext").html(body);
-            $("#infodlg").modal("show");
-        },
-
-        show_error: function(title, body) {
-            $("#errortitle").html(title);
-            $("#errortext").html(body);
-            $("#errordlg").modal("show");
-        },
-
-        ajax_post: function(formdata, successfunc, errorfunc) {
-            $.ajax({
-                type: "POST",
-                url: mobile.post_handler,
-                data: formdata,
-                dataType: "text",
-                mimeType: "textPlain",
-                success: function(result) {
-                    if (successfunc) {
-                        successfunc(result);
-                    }
-                },
-                error: function(jqxhr, textstatus, response) {
-                    if (errorfunc) {
-                        errorfunc(textstatus, response);
-                    }
-                    mobile.show_error(textstatus, response);
-                }
-            });
         },
 
         // Returns the HTML for rendering an animal record
@@ -852,23 +851,17 @@ $(document).ready(function() {
             });
 
             // Add listener for adding media
-            $("#animalimage-media-add-gallery").click(function() {
-                $("#animalimage-media-add-gallery-icon").hide();
-                $("#animalimage-media-add-gallery-spinner").show();
-                $("#animalimage-image-slider-upload-file").trigger("click");
-        
+            $("#animalimage-button-gallery").click(function() {
+                $("#animalimage-input-gallery").trigger("click");
             });
-            $("#animalimage-media-add-camera").click(function() {
-                $("#animalimage-media-add-camera-icon").hide();
-                $("#animalimage-media-add-camera-spinner").show();
-                $("#animalimage-image-slider-upload-camera").trigger("click");
-        
+            $("#animalimage-button-camera").click(function() {
+                $("#animalimage-input-camera").trigger("click");
             });
-            $("#animalimage-image-slider-upload-file").change(function() {
-                mobile.upload_animal_image($("#animalimage-image-slider-upload-file")[0].files[0], a.ID, "gallery");
+            $("#animalimage-input-gallery").change(function() {
+                mobile.upload_animal_image($("#animalimage-input-gallery")[0].files[0], a.ID, "gallery");
             });
-            $("#animalimage-image-slider-upload-camera").change(function() {
-                mobile.upload_animal_image($("#animalimage-image-slider-upload-camera")[0].files[0], a.ID, "camera");
+            $("#animalimage-input-camera").change(function() {
+                mobile.upload_animal_image($("#animalimage-input-camera")[0].files[0], a.ID, "camera");
             });
             // Handle the uploading of a photo when one is chosen
             $("#content-animal .uploadphoto").click(function() { $("#content-animal .uploadphotofile").click(); });
@@ -1088,24 +1081,18 @@ $(document).ready(function() {
                 $("#incidentimage-notes").html($(this).attr("data-description"));
             });
 
-            // Add listener for adding media
-            $("#incidentimage-media-add-gallery").click(function() {
-                $("#incidentimage-media-add-gallery-icon").hide();
-                $("#incidentimage-media-add-gallery-spinner").show();
-                $("#incidentimage-image-slider-upload-file").trigger("click");
-        
+            // Listeners for adding media
+            $("#incidentimage-button-gallery").click(function() {
+                $("#incidentimage-input-gallery").trigger("click");
             });
-            $("#incidentimage-media-add-camera").click(function() {
-                $("#incidentimage-media-add-camera-icon").hide();
-                $("#incidentimage-media-add-camera-spinner").show();
-                $("#incidentimage-image-slider-upload-camera").trigger("click");
-        
+            $("#incidentimage-button-camera").click(function() {
+                $("#incidentimage-input-camera").trigger("click");
             });
-            $("#incidentimage-image-slider-upload-file").change(function() {
-                mobile.upload_incident_image($("#incidentimage-image-slider-upload-file")[0].files[0], ac.ID, "gallery");
+            $("#incidentimage-input-gallery").change(function() {
+                mobile.upload_incident_image($("#incidentimage-input-gallery")[0].files[0], ac.ID, "gallery");
             });
-            $("#incidentimage-image-slider-upload-camera").change(function() {
-                mobile.upload_incident_image($("#incidentimage-image-slider-upload-camera")[0].files[0], ac.ID, "camera");
+            $("#incidentimage-input-camera").change(function() {
+                mobile.upload_incident_image($("#incidentimage-input-camera")[0].files[0], ac.ID, "camera");
             });
             
         },
@@ -1200,7 +1187,6 @@ $(document).ready(function() {
                 '<a href="#" data-link="personresults" class="list-group-item list-group-item-action internal-link">',
                 '&#8592; ' + _("Back"),
                 '</a>',
-                '<div class="list-group-item">',
                 '<img style="float: right" height="75px" src="' + html.thumbnail_src(p, "personthumb") + '">',
                 '<h5 class="mb-1">' + p.OWNERNAME + ' - ' + p.OWNERCODE + '</h5>',
                 '<small>' + p.OWNERADDRESS + ', ' + p.OWNERTOWN + ' ' + p.OWNERCOUNTY + ' ' + p.OWNERPOSTCODE + '</small>',
