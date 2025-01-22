@@ -1103,11 +1103,6 @@ System
   shelter does not hold events, setting this option will remove the systems
   event screens from the menu and adoption movement screen.
 
-* Remove fine-grained animal control incident permissions: Setting this option
-  removes the "View Roles" control from the new incident and edit incident
-  screens. The "View Roles" control allows a user to specify exactly which
-  users can see the incident.
-
 * Remove the rota functionality from menus: Setting this option removes
   the staff rota from the menu and person screens.
 
@@ -1240,6 +1235,16 @@ Security
   their password under the Change Password screen. You can't force the user
   to change their password, but you can reset it to something stronger on 
   the user administration screen and notify them of their new password.
+
+* Enable access permissions for incident records: Enabling this option
+  adds a "View Roles" control to the new incident and edit incident
+  screens. The "View Roles" control allows a user to specify exactly which
+  users can see the incident.  
+
+* Enable access permissions for person records: Enabling this option
+  adds a "View Roles" control to the add person and person record screens. 
+  The "View Roles" control allows a user to specify exactly which
+  users can see the person record.    
 
 Shelter View
 ------------
