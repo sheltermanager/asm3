@@ -141,11 +141,29 @@ $(function() {
                     click: function() {
                        common.route("report_images");
                     }
+                },
+                { id: "reload", text: _("Reload Defaults"), icon: "refresh", enabled: "always", 
+                    click: async function() {
+                        await tableform.show_okcancel_dialog("#dialog-reload", _("Reload"), { width: 600 });
+                        await common.ajax_post("document_templates", "mode=reload&names=" + encodeURIComponent($("#reloadtemplates").val()));
+                        common.route_reload();
+                    }
                 }
             ];
             this.dialog = dialog;
             this.table = table;
             this.buttons = buttons;
+        },
+
+        render_reload_dialog: function() {
+            return [
+                '<div id="dialog-reload" style="display: none" title="' + html.title(_("Reload Defaults")) + '">',
+                html.info(_("Use this dialog to reload default document templates that have been deleted")),
+                tableform.fields_render([
+                    { post_field: "reloadtemplates", type: "selectmulti", label: _("Templates"), options: controller.defaults }
+                ]),
+                '</div>'
+            ].join("\n");
         },
 
         render_rename_dialog: function() {
@@ -190,6 +208,7 @@ $(function() {
             let s = "";
             this.model();
             s += this.render_rename_dialog();
+            s += this.render_reload_dialog();
             s += this.render_show_dialog();
             s += this.render_upload_dialog();
             s += tableform.dialog_render(this.dialog);
@@ -208,6 +227,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-upload");
+            common.widget_destroy("#dialog-reload");
             common.widget_destroy("#dialog-rename");
             common.widget_destroy("#dialog-show");
             tableform.dialog_destroy();

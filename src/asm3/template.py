@@ -57,6 +57,16 @@ def get_document_templates(dbo: Database, show: str = "") -> Results:
         out.append(r)
     return out
 
+def get_document_templates_defaults(dbo: Database, hide_installed: bool = True) -> List[str]:
+    """ Returns a list of default document templates for installation """
+    installed = [ x.NAME for x in get_document_templates(dbo) ]
+    t = []
+    for name in asm3.utils.listdir(f"{dbo.installpath}media/templates"):
+        if not name.endswith(".html"): continue
+        if name in installed and hide_installed: continue
+        t.append(name)
+    return sorted(t)
+
 def get_document_template_content(dbo: Database, dtid: int) -> bytes:
     """ Returns the document template content for a given ID as bytes """
     return asm3.utils.base64decode( dbo.query_string("SELECT Content FROM templatedocument WHERE ID = ?", [dtid]) )

@@ -28,6 +28,9 @@ class TestTemplate(unittest.TestCase):
     def test_get_document_templates(self):
         self.assertNotEqual(0, len(asm3.template.get_document_templates(base.get_dbo())))
 
+    def test_get_document_templates_defaults(self):
+        self.assertNotEqual(0, len(asm3.template.get_document_templates_defaults(base.get_dbo())))
+
     def test_get_document_template_content(self):
         nid = asm3.template.create_document_template(base.get_dbo(), "test", asm3.utils.uuid_b64())
         self.assertNotEqual("", asm3.template.get_document_template_content(base.get_dbo(), nid))

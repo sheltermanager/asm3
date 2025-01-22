@@ -1504,6 +1504,10 @@ def zip_replace(zipfilename: str, filename: str, content: bytes) -> None:
         zfo.close()
         return zo.getvalue()
 
+def listdir(path: str) -> List[str]:
+    """ Returns a directory listing for path """
+    return os.listdir(path)
+
 def mkdir(path: str) -> None:
     """
     Creates a directory.

@@ -1619,13 +1619,16 @@ const tableform = {
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
         if (v.xattr) { d += v.xattr + " "; }
         d += ">";
-        if (v.options && v.options.rows) {
+        if (common.is_array(v.options)) {
+            d += html.list_to_options_array(v.options); 
+        }
+        else if (common.is_string(v.options)) {
+            d += v.options;
+        }
+        else if (v.options && v.options.rows) {
             if (v.options.prepend) { d += v.options.prepend; }
             if (!v.options.valuefield) { v.options.valuefield = "ID"; } // assume ID if not given - is for most things
             d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
-        }
-        else if (v.options) {
-            d += v.options;
         }
         d += "</select>";
         return tableform._render_formfield(v, d);

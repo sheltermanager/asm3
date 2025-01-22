@@ -2467,7 +2467,8 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksmedialink", "LinkType", 2, _("Found Animal", l))
     sql += lookup1("lksmedialink", "LinkType", 3, _("Owner", l))
     sql += lookup1("lksmedialink", "LinkType", 4, _("Movement", l))
-    sql += lookup1("lksmedialink", "LinkType", 5, _("Incident", l))
+    sql += lookup1("lksmedialink", "LinkType", 5, _("Waiting List", l))
+    sql += lookup1("lksmedialink", "LinkType", 6, _("Incident", l))
     sql += lookup1("lksmediatype", "MediaType", 0, _("File", l))
     sql += lookup1("lksmediatype", "MediaType", 1, _("Document Link", l))
     sql += lookup1("lksmediatype", "MediaType", 2, _("Video Link", l))
@@ -4445,7 +4446,7 @@ def update_33303(dbo: Database) -> None:
     # Add new incident link types
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksloglink (ID, LinkType) VALUES (%d, '%s')" % (6, _("Incident", l)))
-    dbo.execute_dbupdate("INSERT INTO lksmedialink (ID, LinkType) VALUES (%d, '%s')" % (5, _("Incident", l)))
+    dbo.execute_dbupdate("INSERT INTO lksmedialink (ID, LinkType) VALUES (%d, '%s')" % (6, _("Incident", l)))
     dbo.execute_dbupdate("INSERT INTO lksdiarylink (ID, LinkType) VALUES (%d, '%s')" % (7, _("Incident", l)))
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (16, '%s')" % _("Incident - Details", l))
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (17, '%s')" % _("Incident - Dispatch", l))
