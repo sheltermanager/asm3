@@ -1417,13 +1417,15 @@ $.widget("asm.callout", {
         let button = this.element;
         this.options.button = this.element;
         let popupid = this.element.attr("id") + "-popup";
+        let icon = this.element.attr("data-icon");
+        if (!icon) { icon = "callout"; }
 
         // Read the elements inner content then remove it
         let content = button.html();
         button.html("");
 
         // Style the button by adding an actual button with icon
-        button.append(html.icon("callout"));
+        button.append(html.icon(icon));
         //button.append('<span class="ui-icon ui-icon-help bottomborder"></span>');
 
         // Create the callout
