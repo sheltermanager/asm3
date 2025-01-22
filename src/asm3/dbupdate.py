@@ -2800,12 +2800,16 @@ def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
     removeFirst: if True, deletes all from templatedocument/templatehtml first.
     """
     def add_document_template_from_file(show, name, path, filename):
-        dbo.insert("templatedocument", {
-            "Name":     name,
-            "Path":     path,
-            "ShowAt":   show,
-            "Content":  asm3.utils.base64encode( asm3.utils.read_binary_file(filename) )
-        })
+        try:
+            content = asm3.utils.read_binary_file(filename)
+            dbo.insert("templatedocument", {
+                "Name":     name,
+                "Path":     path,
+                "ShowAt":   show,
+                "Content":  asm3.utils.base64encode(content)
+            })
+        except FileNotFoundError:
+            asm3.al.warn(f"FileNotFound: {filename}", "dbupdate.add_document_template_from_file")
     def add_html_template(name, head, body, foot, builtin):
         dbo.execute_dbupdate("DELETE FROM templatehtml WHERE Name = ?", [name])
         dbo.insert("templatehtml", {
@@ -2816,10 +2820,13 @@ def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
             "IsBuiltIn": builtin
         })
     def add_html_template_from_files(name):
-        head = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/head.html" % name)
-        foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/foot.html" % name)
-        body = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/body.html" % name)
-        add_html_template(name, head, body, foot, 0)
+        try:
+            head = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/head.html" % name)
+            foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/foot.html" % name)
+            body = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/body.html" % name)
+            add_html_template(name, head, body, foot, 0)
+        except FileNotFoundError:
+            asm3.al.warn(f"FileNotFound: {name}", "dbupdate.add_html_template_from_files")
     path = dbo.installpath
     if removeFirst:
         asm3.al.info("removing templates from templatehtml and templatedocument", "dbupdate.install_default_templates", dbo)
@@ -2835,7 +2842,8 @@ def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
     add_html_template_from_files("rss")
     add_html_template_from_files("slideshow")
     add_document_template_from_file("animal,movement", "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
-    add_document_template_from_file("animal", "cage_card_report.html", "/templates", path + "media/templates/cage_card_report.html")
+    add_document_template_from_file("animal", "cage_card_report_cat.html", "/templates", path + "media/templates/cage_card_report_cat.html")
+    add_document_template_from_file("animal", "cage_card_report_dog.html", "/templates", path + "media/templates/cage_card_report_dog.html")
     add_document_template_from_file("animal", "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
     add_document_template_from_file("animal", "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
     add_document_template_from_file("animal", "cat_information.html", "/templates", path + "media/templates/cat_information.html")
