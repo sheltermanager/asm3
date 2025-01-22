@@ -1297,22 +1297,32 @@ class mobile_photo_upload(ASMEndpoint):
         }
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 
-    def attach_file(self, o, animalid):
+    def attach_animal_file(self, o, animalid):
         mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_MOBILEUI, o.post)
         if o.post["type"] == "paperwork":
             asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
             asm3.media.delete_media(o.dbo, o.user, mid)
-
+        return mid
+    
+    def attach_incident_file(self, o, incidentid):
+        mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMALCONTROL, incidentid, asm3.media.MEDIASOURCE_MOBILEUI, o.post)
+        if o.post["type"] == "paperwork":
+            asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
+            asm3.media.delete_media(o.dbo, o.user, mid)
+        return mid
 
     def post_all(self, o):
         dbo = o.dbo
+        if "incidentid" in o.post:
+            mid = self.attach_incident_file(o, o.post.integer("incidentid"))
+            return str(mid)
         if "litterid" in o.post:
             littermates = asm3.animal.get_litter_animals_by_id(dbo, o.post["litterid"])
             for lm in littermates:
-                self.attach_file(o, lm.ID)
+                mid = self.attach_animal_file(o, lm.ID)
         else: 
-            self.attach_file(o, o.post.integer("animalid"))
-        return "OK"
+            mid = self.attach_animal_file(o, o.post.integer("animalid"))
+        return str(mid)
 
 class mobile_report(ASMEndpoint):
     url = "mobile_report"
