@@ -95,6 +95,7 @@ $(document).ready(function() {
                 url: targeturl,
                 data: formdata,
                 dataType: "text",
+                mimeType: "textPlain",
                 error: function() {
                     $("#spinner").hide();
                     $("#" + checkid).show();
