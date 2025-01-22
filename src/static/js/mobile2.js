@@ -657,11 +657,13 @@ $(document).ready(function() {
             let head = '<div id="' + id + '-imagesliderheader" style="height: 120px; ' +
                 'overflow-x: scroll; overflow-y: hidden; white-space: nowrap;">';
             //if (rows.length == 0) { return ""; }
-            head += '<div id="' + id + '-media-add" style="position: relative; border-style: solid; border-width: 1px; ' +
-                    'border-color: #000000; border-style: dashed; display: inline-block; height: 100px; width: 100px; margin-right: 10px; margin-bottom: 10px; cursor: pointer;">' +
-                    '<div style="position: absolute; top: 40px; left: 0px; right: 0px; margin-left: auto; margin-right: auto;text-align: center;">' + _("Add") + '</div>' +
-                    '</div>' +
-                    '<input id="' + id + '-image-slider-upload-file" type="file" style="display: none;">';
+            head += '<div style="position: relative; display: inline-block; height: 100px; width: 50px; margin-right: 10px; margin-bottom: 10px;">' +
+                    '<div style="position: absolute; padding: 5px;">' +
+                    '<button id="' + id + '-media-add-camera" class="btn btn-primary mt-1" style="display: block;"><i class="bi-camera"></i></button>' +
+                    '<button id="' + id + '-media-add-gallery" class="btn btn-secondary mt-1" style="display: block;"><i class="bi-card-image"></i></button>' +
+                    '</div></div>' + 
+                    '<input id="' + id + '-image-slider-upload-camera" type="file" capture="environment" accept="image/*" style="display: none;">' +
+                    '<input id="' + id + '-image-slider-upload-file" type="file" accept="image/*" multiple="multiple" style="display: none;">';
             $.each(rows, function(i, row) {
                 if (row.MEDIAMIMETYPE != 'image/jpeg') { return; }
                 head += '<div class="media-thumb" style="position: relative; border-style: solid; border-width: 1px; ' +
@@ -854,13 +856,21 @@ $(document).ready(function() {
                 $("#animalimage-notes").html(rowmedianotes);
             });
             // Add listener for adding media
-            $("#animalimage-media-add").click(function() {
+            $("#animalimage-media-add-gallery").click(function() {
                 $("#animalimage-image-slider-upload-file").trigger("click");
+                //mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_MOBILEUI, o.post)
+        
+            });
+            $("#animalimage-media-add-camera").click(function() {
+                $("#animalimage-image-slider-upload-camera").trigger("click");
                 //mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_MOBILEUI, o.post)
         
             });
             $("#animalimage-image-slider-upload-file").change(function() {
                 mobile.upload_animal_image($("#animalimage-image-slider-upload-file")[0].files[0], a.ID, "gallery");
+            });
+            $("#animalimage-image-slider-upload-camera").change(function() {
+                mobile.upload_animal_image($("#animalimage-image-slider-upload-camera")[0].files[0], a.ID, "camera");
             });
             // Handle the uploading of a photo when one is chosen
             $("#content-animal .uploadphoto").click(function() { $("#content-animal .uploadphotofile").click(); });
