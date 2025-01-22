@@ -1,0 +1,59 @@
+Clinic appointments completed between two dates
+###
+Clinic
+###
+34808/Any rev01
+###
+All clinic appointments with completed date and status between two dates
+###
+en
+###
+SELECT c.*, o.OwnerName, o.ID AS OID, o.OwnerAddress, o.ownerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
+a.AnimalName, a.ID AS AID, a.BreedName, s.SpeciesName, a.AnimalAge, st.Status AS StatusName, ct.ClinicTypeName AS AppointmentType
+FROM clinicappointment c
+INNER JOIN lksclinicstatus st ON st.ID = c.Status
+INNER JOIN lkclinictype ct ON ct.ID = c.clinictypeID 
+LEFT OUTER JOIN animal a ON a.ID = c.AnimalID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN owner o ON o.ID = c.OwnerID
+WHERE c.CompletedDateTime >= '$ASK DATE Appointments completed between$' AND c.CompletedDateTime <= '$ASK DATE and$ 23:59:59'
+AND c.Status = 5
+ORDER BY c.DateTime
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Appointment</th>
+<th>Appointment Type</th> 
+<th>Reason</th>
+<th>With</th>
+<th>Animal</th>
+<th>Person</th>
+<th>Status</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+  <td>$DATETIME</td>
+  <td>$APPOINTMENTTYPE</td>
+  <td>$REASONFORAPPOINTMENT</td>
+  <td>$APPTFOR</td>
+  <td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> ($BREEDNAME $SPECIESNAME aged $ANIMALAGE)</td>
+  <td><a target="_blank" href="person?id=$OID">$OWNERNAME</a><br/>
+    $OWNERADDRESS<br/>
+    $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+    $HOMETELEPHONE $MOBILETELEPHONE</td>
+   <td>$STATUSNAME</td>
+   <td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</tbody>
+</table>
+FOOTER$$

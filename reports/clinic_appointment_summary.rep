@@ -1,0 +1,66 @@
+Clinic appointment Summary by species and sex
+###
+Clinic
+###
+34808/Any rev01
+###
+Summary of clinic appointments between two dates by species and sex
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT
+
+(SELECT COUNT(*) FROM clinicappointment
+INNER JOIN clinicappointment c ON c.AnimalID = animal.ID 
+WHERE clinicappointment.DateTime >= '$@from$' AND clinicappointment.DateTime <= '$@to$ 23:59:59'
+AND SpeciesID = 1  AND Sex = 1) AS MaleDogsTreated,
+
+(SELECT COUNT(*) FROM clinicappointment
+INNER JOIN clinicappointment c ON c.AnimalID = animal.ID 
+WHERE clinicappointment.DateTime >= '$@from$' AND clinicappointment.DateTime <= '$@to$ 23:59:59'
+AND SpeciesID = 1  AND Sex = 0) AS FemaleDogsTreated,
+
+(SELECT COUNT(*) FROM clinicappointment
+INNER JOIN clinicappointment c ON c.AnimalID = animal.ID 
+WHERE clinicappointment.DateTime >= '$@from$' AND clinicappointment.DateTime <= '$@to$ 23:59:59'
+AND SpeciesID = 1  AND Sex = 2) AS UnknownSexDogsTreated,
+
+(SELECT COUNT(*) FROM clinicappointment
+INNER JOIN clinicappointment c ON c.AnimalID = animal.ID 
+WHERE clinicappointment.DateTime >= '$@from$' AND clinicappointment.DateTime <= '$@to$ 23:59:59'
+AND SpeciesID = 2  AND Sex = 1) AS MaleCatsTreated,
+
+(SELECT COUNT(*) FROM clinicappointment
+INNER JOIN clinicappointment c ON c.AnimalID = animal.ID 
+WHERE clinicappointment.DateTime >= '$@from$' AND clinicappointment.DateTime <= '$@to$ 23:59:59'
+AND SpeciesID = 2  AND Sex = 0) AS FemaleCatsTreated,
+
+(SELECT COUNT(*) FROM clinicappointment
+INNER JOIN clinicappointment c ON c.AnimalID = animal.ID 
+WHERE clinicappointment.DateTime >= '$@from$' AND clinicappointment.DateTime <= '$@to$ 23:59:59'
+AND SpeciesID = 2  AND Sex = 2) AS UnknownSexCatsTreated
+
+FROM animal LIMIT 1
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h3>Dogs</h3>
+<p></p>
+<p>Male Dogs Treated: <b>$MaleDogsTreated</b></p> 
+<p>Female Dogs Treated: <b>$FemaleDogsTreated</b></p> 
+<p>Dogs of Unknown Sex Treated: <b>$UnknownSexDogsTreated</b></p> 
+<p></p>
+<h3>Cats</h3>
+<p>Male Cats Treated: <b>$MaleCatsTreated</b></p> 
+<p>Female Cats Treated: <b>$FemaleCatsTreated</b></p> 
+<p>Dogs of Unknown Sex Treated: <b>$UnknownSexCatsTreated</b></p> 
+<p></p>
+BODY$$
+
+$$FOOTER
+FOOTER$$
