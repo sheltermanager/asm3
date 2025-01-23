@@ -1384,11 +1384,11 @@ $(document).ready(function() {
                     "breed1": $("#breed1").val(),
                     "basecolour": $("#basecolour").val(),
                     "size": $("#size").val(),
+                    "microchipped": $("#microchipnumber").val() != "" ? "on" : "",
                     "microchipnumber": $("#microchipnumber").val(),
                     "internallocation": $("#internallocation").val(),
                     "unit": $("#unit").val()
                 };
-                if (formdata["microchipnumber"]) {formdata["microchipped"] = "on"};
                 mobile.ajax_post(formdata, function(response) {
                     let a = jQuery.parseJSON(response);
                     controller.animals.push(a);
