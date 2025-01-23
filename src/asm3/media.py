@@ -861,11 +861,16 @@ def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, lin
 
 def update_media_link(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
     """ Updates the media with id to have a new link """
+    row = asm3.media.get_media_by_id(dbo, mediaid)
+    parentlinks = asm3.audit.get_parent_links(row, "media")
+    message = f"{mediaid} moved to linktype={linktypeid} linkid={linkid}"
+    asm3.audit.edit(dbo, username, "media", linkid, parentlinks, message)
     dbo.update("media", mediaid, {
         "LinkID":   linkid,
         "LinkTypeID": linktypeid,
         "Date":     dbo.now()
     }, username)
+    
 
 def delete_media(dbo: Database, username: str, mid: int) -> None:
     """
