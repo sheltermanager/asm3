@@ -621,6 +621,7 @@ PETFINDER_BREEDS = (
     "Toucan",
     "Turkey",
     "**--Farm Animals",
+    "Alpaca",
     "Cow",
     "Goat",
     "Sheep",
