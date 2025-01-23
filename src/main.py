@@ -3561,7 +3561,8 @@ class document_templates(JSONEndpoint):
         templates = asm3.template.get_document_templates(o.dbo)
         asm3.al.debug("got %d document templates" % len(templates), "main.document_templates", o.dbo)
         return {
-            "rows": templates
+            "rows": templates,
+            "defaults": asm3.template.get_document_templates_defaults(o.dbo)
         }
 
     def post_create(self, o):
@@ -3574,6 +3575,11 @@ class document_templates(JSONEndpoint):
     def post_delete(self, o):
         for t in o.post.integer_list("ids"):
             asm3.template.delete_document_template(o.dbo, o.user, t)
+
+    def post_reload(self, o):
+        for name in o.post["names"].split(","):
+            content = asm3.utils.read_binary_file(f"{PATH}media/templates/{name}")
+            asm3.template.create_document_template(o.dbo, o.user, name, show="nowhere", content=content)
 
     def post_rename(self, o):
         asm3.template.rename_document_template(o.dbo, o.user, o.post.integer("dtid"), o.post["newname"])
