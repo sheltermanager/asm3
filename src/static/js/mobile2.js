@@ -226,6 +226,10 @@ $(document).ready(function() {
                     '</select>',
                 '</div>',
                 '<div class="mb-3">',
+                    '<label for="microchipnumber" class="form-label">' + _("Microchip") + '</label>',
+                    '<input type="text" class="form-control" id="microchipnumber" data="microchipnumber">',
+                '</div>',
+                '<div class="mb-3">',
                     '<label for="internallocation" class="form-label">' + _("Location") + '</label>',
                     '<select class="form-select" data="internallocation" id="internallocation">',
                     html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME"),
@@ -1380,9 +1384,11 @@ $(document).ready(function() {
                     "breed1": $("#breed1").val(),
                     "basecolour": $("#basecolour").val(),
                     "size": $("#size").val(),
+                    "microchipnumber": $("#microchipnumber").val(),
                     "internallocation": $("#internallocation").val(),
                     "unit": $("#unit").val()
                 };
+                if (formdata["microchipnumber"]) {formdata["microchipped"] = "on"};
                 mobile.ajax_post(formdata, function(response) {
                     let a = jQuery.parseJSON(response);
                     controller.animals.push(a);
