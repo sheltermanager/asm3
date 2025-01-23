@@ -45,7 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
-    34904, 34905
+    34904, 34905, 34906
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -6414,4 +6414,18 @@ def update_34905(dbo: Database) -> None:
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("ownerrole", fields) )
     add_index(dbo, "ownerrole_OwnerIDRoleID", "ownerrole", "OwnerID,RoleID", unique=True)
+
+def update_34906(dbo: Database) -> None:
+    # Add the new lostanimalvoew HTML template
+    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/lostanimalview/head.html")
+    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/lostanimalview/foot.html")
+    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/lostanimalview/body.html")
+    dbo.insert("templatehtml", {
+        "ID":       dbo.get_id_max("templatehtml"),
+        "Name":     "lostanimalview",
+        "*Header":  head,
+        "*Body":    body,
+        "*Footer":  foot,
+        "IsBuiltIn": 0
+    }, generateID=False)
 
