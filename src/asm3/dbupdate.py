@@ -2835,6 +2835,8 @@ def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
         dbo.execute_dbupdate("DELETE FROM templatehtml")
     asm3.al.info("creating default templates", "dbupdate.install_default_templates", dbo)
     add_html_template_from_files("animalview")
+    #add_html_template_from_files("lostanimalview")
+    #add_html_template_from_files("foundanimalview")
     add_html_template_from_files("animalviewadoptable")
     add_html_template_from_files("animalviewcarousel")
     add_html_template_from_files("littlebox")
