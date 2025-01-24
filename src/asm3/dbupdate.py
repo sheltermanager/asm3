@@ -6406,28 +6406,6 @@ def update_34905(dbo: Database) -> None:
     add_index(dbo, "ownerrole_OwnerIDRoleID", "ownerrole", "OwnerID,RoleID", unique=True)
 
 def update_34906(dbo: Database) -> None:
-    # Add the new lostanimalview HTML template
-    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/lostanimalview/head.html")
-    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/lostanimalview/foot.html")
-    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/lostanimalview/body.html")
-    dbo.insert("templatehtml", {
-        "ID":       dbo.get_id_max("templatehtml"),
-        "Name":     "lostanimalview",
-        "*Header":  head,
-        "*Body":    body,
-        "*Footer":  foot,
-        "IsBuiltIn": 0
-    }, generateID=False)
-    # Add the new foundanimalview HTML template
-    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/foundanimalview/head.html")
-    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/foundanimalview/foot.html")
-    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/foundanimalview/body.html")
-    dbo.insert("templatehtml", {
-        "ID":       dbo.get_id_max("templatehtml"),
-        "Name":     "foundanimalview",
-        "*Header":  head,
-        "*Body":    body,
-        "*Footer":  foot,
-        "IsBuiltIn": 0
-    }, generateID=False)
-
+    # Add the new lostanimalview and foundanimal view HTML templates
+    install_html_template(dbo, "lostanimalview", use_max_id=True)
+    install_html_template(dbo, "foundanimalview", use_max_id=True)
