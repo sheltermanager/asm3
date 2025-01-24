@@ -2801,33 +2801,9 @@ def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
     removeFirst: if True, deletes all from templatedocument/templatehtml first.
     """
     def add_document_template_from_file(show, name, path, filename):
-        try:
-            content = asm3.utils.read_binary_file(filename)
-            dbo.insert("templatedocument", {
-                "Name":     name,
-                "Path":     path,
-                "ShowAt":   show,
-                "Content":  asm3.utils.base64encode(content)
-            })
-        except FileNotFoundError:
-            asm3.al.warn(f"FileNotFound: {filename}", "dbupdate.add_document_template_from_file")
-    def add_html_template(name, head, body, foot, builtin):
-        dbo.execute_dbupdate("DELETE FROM templatehtml WHERE Name = ?", [name])
-        dbo.insert("templatehtml", {
-            "Name":     name,
-            "*Header":  head,
-            "*Body":    body,
-            "*Footer":  foot,
-            "IsBuiltIn": builtin
-        })
+        install_document_template(dbo, show, name, path, filename)
     def add_html_template_from_files(name):
-        try:
-            head = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/head.html" % name)
-            foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/foot.html" % name)
-            body = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/body.html" % name)
-            add_html_template(name, head, body, foot, 0)
-        except FileNotFoundError:
-            asm3.al.warn(f"FileNotFound: {name}", "dbupdate.add_html_template_from_files")
+        install_html_template(dbo, name)
     path = dbo.installpath
     if removeFirst:
         asm3.al.info("removing templates from templatehtml and templatedocument", "dbupdate.install_default_templates", dbo)
@@ -2871,6 +2847,38 @@ def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
     add_document_template_from_file("animal", "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
     add_document_template_from_file("animal", "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
     add_document_template_from_file("animal", "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
+
+def install_document_template(dbo: Database, show: str, name: str, path: str, filename: str, use_max_id: bool = False):
+    """ Install a document template """
+    try:
+        content = asm3.utils.read_binary_file(filename)
+        dbo.insert("templatedocument", {
+            "ID":       use_max_id and dbo.get_id_max("templatedocument") or dbo.get_id("templatedocument"),
+            "Name":     name,
+            "Path":     path,
+            "ShowAt":   show,
+            "Content":  asm3.utils.base64encode(content)
+        }, generateID = False)
+    except FileNotFoundError:
+        asm3.al.warn(f"FileNotFound: {filename}", "dbupdate.install_document_template")
+
+def install_html_template(dbo: Database, name: str, use_max_id: bool = False) -> None:
+    """ Install an HTML template from a folder """
+    try:
+        head = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/head.html" % name)
+        foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/foot.html" % name)
+        body = asm3.utils.read_text_file(dbo.installpath + "media/internet/%s/body.html" % name)
+        dbo.execute_dbupdate("DELETE FROM templatehtml WHERE Name = ?", [name])
+        dbo.insert("templatehtml", {
+            "ID":       use_max_id and dbo.get_id_max("templatehtml") or dbo.get_id("templatehtml"),
+            "Name":     name,
+            "*Header":  head,
+            "*Body":    body,
+            "*Footer":  foot,
+            "IsBuiltIn": 0
+        }, generateID = False)
+    except FileNotFoundError:
+        asm3.al.warn(f"FileNotFound: {name}", "dbupdate.install_html_template")
 
 def install(dbo: Database) -> None:
     """
@@ -6139,28 +6147,8 @@ def update_34706(dbo: Database) -> None:
 
 def update_34707(dbo: Database) -> None:
     # Add the new animalviewcarousel and slideshow HTML templates
-    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/head.html")
-    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/foot.html")
-    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/body.html")
-    dbo.insert("templatehtml", {
-        "ID":       dbo.get_id_max("templatehtml"),
-        "Name":     "animalviewcarousel",
-        "*Header":  head,
-        "*Body":    body,
-        "*Footer":  foot,
-        "IsBuiltIn": 0
-    }, generateID=False)
-    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/head.html")
-    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/foot.html")
-    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/body.html")
-    dbo.insert("templatehtml", {
-        "ID":       dbo.get_id_max("templatehtml"),
-        "Name":     "slideshow",
-        "*Header":  head,
-        "*Body":    body,
-        "*Footer":  foot,
-        "IsBuiltIn": 0
-    }, generateID=False)
+    install_html_template(dbo, "animalviewcarousel", use_max_id = True)
+    install_html_template(dbo, "slideshow", use_max_id = True)
 
 def update_34708(dbo: Database) -> None:
     # Add onlineform.EmailFosterer
