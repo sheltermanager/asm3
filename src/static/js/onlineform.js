@@ -63,7 +63,16 @@ $(function() {
                             }
                             return true;
                         },
-                        callout: _("Additional text to be shown with the label to help the user complete this form field") }
+                        callout: _("Additional text to be shown with the label to help the user complete this form field") },
+                    { json_field: "RAWMARKUP", post_field: "rawmarkup", label: _("Markup"), type: "htmleditor", 
+                        validation: function(v) {
+                            if (v.indexOf("<!DOCTYPE") != -1 || v.indexOf("<html") != -1 || v.indexOf("<body") != -1) {
+                                tableform.dialog_error(_("Markup should be HTML fragments, not a full document."));
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
                 ]
             };
 
@@ -73,6 +82,9 @@ $(function() {
                 edit: async function(row) {
                     try {
                         await tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls });
+                        if ($("#fieldtype").val() == 9) {
+                            $("#tooltip").html($("#rawmarkup").html());
+                        }
                         tableform.fields_update_row(dialog.fields, row);
                         await tableform.fields_post(dialog.fields, "mode=update&formid=" + controller.formid + "&formfieldid=" + row.ID, "onlineform");
                         tableform.table_update(table);
@@ -101,6 +113,9 @@ $(function() {
                     click: async function() { 
                         try {
                             await tableform.dialog_show_add(dialog, { onload: onlineform.check_controls });
+                            if ($("#fieldtype").val() == 9) {
+                                $("#tooltip").html($("#rawmarkup").html());
+                            }
                             let response = await tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform");
                             let row = {};
                             row.ID = response;
@@ -157,13 +172,18 @@ $(function() {
                 $("#speciesrow").fadeOut();
             }
             if (ft == 9) {
-                $("#tooltiprow").find("label").html(_("Markup"));
+                $("#tooltiprow").fadeOut();
+                $("#rawmarkuprow").fadeIn();
             }
             else if (ft == 11) {
                 $("#tooltiprow").find("label").html(_("Flags"));
+                $("#tooltiprow").fadeIn();
+                $("#rawmarkuprow").fadeOut();
             }
             else {
                 $("#tooltiprow").find("label").html(_("Additional"));
+                $("#tooltiprow").fadeIn();
+                $("#rawmarkuprow").fadeOut();
             }
         },
 
