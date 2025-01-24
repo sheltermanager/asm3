@@ -189,8 +189,12 @@ $(function() {
                                 clinic_appointment.show_person_animals(false);
                             }
                             if (controller.animal) {
+                                if (controller.animal.NONSHELTERANIMAL == 1 || controller.animal.ACTIVEMOVEMENTID > 0) {
+                                    $("#person").personchooser("loadbyid", controller.animal.OWNERID);
+                                }
                                 $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 clinic_appointment.show_person_animals(false);
+
                             }
                         }
                     });
@@ -358,6 +362,8 @@ $(function() {
             $("#personanimal").html(h);
             if (clinic_appointment.dialog_row && clinic_appointment.dialog_row.ANIMALID) {
                 $("#personanimal").select("value", clinic_appointment.dialog_row.ANIMALID);
+            } else if (clinic_appointment.personanimals.length == 1) {
+                $("#personanimal").select("value", clinic_appointment.personanimals[0].ID);
             }
         },
 
