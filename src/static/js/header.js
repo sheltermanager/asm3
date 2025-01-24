@@ -473,6 +473,19 @@ header = {
                     '</p>',
                 '</div>',
             '</div>',
+            '<div id="asm-topline-masteruser" style="display: none" class="ui-widget">',
+                '<div class="ui-state-error ui-corner-all">',
+                    '<p style="padding: 5px">',
+                        '<span class="ui-icon ui-icon-alert"></span>',
+                        '<strong><span id="asm-topline-masteruser-text">',
+                        _("You are logged in as the master user. This account should ONLY be used for emergency administration."),
+                        '<br>',
+                        _("If you haven't already, you should create and use an individual user account for data entry at {0}.")
+                            .replace("{0}", ' ' + html.icon("users") + '<a href="systemusers">' + _("System user accounts") + '</a>'),
+                        '</span></strong>',
+                    '</p>',
+                '</div>',
+            '</div>',
             '<div class="emergencynotice ui-widget" style="display: none">',
                 '<div class="ui-state-error ui-corner-all">',
                     '<p style="padding: 5px">',
@@ -611,6 +624,11 @@ header = {
             $("#asm-mysmcom").hide();
         }
 
+        // Show a warning message if this is the master user of an smcom account
+        if (asm.smcom && asm.user == asm.useraccount) {
+            $("#asm-topline-masteruser").show();
+        }
+
         // Hide the change user settings/password options for smcom demo database
         if (asm.smcom && asm.useraccount == "demo") {
             $("#asm-chusersettings, #asm-chpassword").hide();
@@ -620,6 +638,7 @@ header = {
         if (config.has() && config.bool("SMDBLocked")) {
             $("#asm-topline-locked").fadeIn().delay(20000).slideUp();
         }
+
 
         // If there's an emergency notice, show it
         try {

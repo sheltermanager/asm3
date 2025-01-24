@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-22 10:22+0000\n"
+"POT-Creation-Date: 2025-01-24 11:12+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -7164,6 +7164,12 @@ msgid ""
 "locations."
 msgstr ""
 
+#: header.js
+msgid ""
+"If you haven't already, you should create and use an individual user account "
+"for data entry at {0}."
+msgstr ""
+
 #: donations.js
 msgid "If you were charged a transaction fee for receiving this payment, the amount"
 msgstr ""
@@ -8826,7 +8832,8 @@ msgstr ""
 
 #: lostfound.py html.py animal_find_results.js lostfound_find.js
 #: waitinglist_new.js lostfound_find_results.js header_edit_header.js
-#: lostfound_new.js waitinglist.js common_animalchooser.js lostfound.js
+#: mobile2.js lostfound_new.js waitinglist.js common_animalchooser.js
+#: lostfound.js
 msgid "Microchip"
 msgstr ""
 
@@ -13516,7 +13523,7 @@ msgstr ""
 msgid "System Options"
 msgstr ""
 
-#: html.py main.js
+#: html.py main.js header.js
 msgid "System user accounts"
 msgstr ""
 
@@ -16065,6 +16072,12 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Yorkshire Terrier Yorkie"
+msgstr ""
+
+#: header.js
+msgid ""
+"You are logged in as the master user. This account should ONLY be used for "
+"emergency administration."
 msgstr ""
 
 #: options.js
