@@ -59,7 +59,7 @@ def get_lost_animals(dbo: Database, dayslost=0, style="", speciesid=0, orderby="
     animals = dbo.query(asm3.lostfound.get_lostanimal_query(dbo) + \
         " WHERE a.DateLost >= ? AND a.DateFound Is Null " \
         "ORDER BY %s" % orderby, [ dbo.today(dayslost * -1)] )
-    return lost_animals_to_page(dbo, animals, style=style, speciesid=speciesid)
+    return lostfound_animals_to_page(dbo, animals, "lost", style=style, speciesid=speciesid)
 
 def get_found_animals(dbo: Database, daysfound=0, style="", speciesid=0, orderby="found_desc") -> str:
     """ Returns a page of found animals.
@@ -73,7 +73,7 @@ def get_found_animals(dbo: Database, daysfound=0, style="", speciesid=0, orderby
     animals = dbo.query(asm3.lostfound.get_foundanimal_query(dbo) + \
         " WHERE a.DateFound >= ? AND a.ReturnToOwnerDate Is Null " \
         "ORDER BY %s" % orderby, [ dbo.today(daysfound * -1)] )
-    return found_animals_to_page(dbo, animals, style=style, speciesid=speciesid)
+    return lostfound_animals_to_page(dbo, animals, "found", style=style, speciesid=speciesid)
 
 def get_deceased_animals(dbo: Database, daysdeceased=0, style="", speciesid=0, animaltypeid=0, orderby="deceased_desc") -> str:
     """ Returns a page of deceased animals.
@@ -239,14 +239,17 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
         bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
     return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
 
-def lost_animals_to_page(dbo: Database, lostanimals: Results, style="", speciesid=0) -> str:
-    """ Returns a page of lost animals.
-    lostanimals: A resultset containing lost animal records
+def lostfound_animals_to_page(dbo: Database, rows: Results, lostorfound="found", style="", speciesid=0) -> str:
+    """ Returns a page of lost/found animals.
+    rows: A resultset containing lost/found animal records
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     """
     if style == "":
-        head, body, foot = get_lostanimal_view_template(dbo)
+        if lostorfound == "lost":
+            head, body, foot = get_lostanimal_view_template(dbo)
+        else:
+            head, body, foot = get_foundanimal_view_template(dbo)
     else:
         head, body, foot = asm3.template.get_html_template(dbo, style)
         if head == "":
@@ -257,45 +260,18 @@ def lost_animals_to_page(dbo: Database, lostanimals: Results, style="", speciesi
     foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
     # Run through each animal and generate body sections
     bodies = []
-    for a in lostanimals:
+    for a in rows:
         if speciesid > 0:
             speciesname = asm3.lookups.get_species_name(dbo, speciesid)
             if a.SPECIESNAME != speciesname: continue
         # Generate tags for this row
-        lostanimaltags = asm3.wordprocessor.lostanimal_tags(dbo, a)
-        persontags = asm3.wordprocessor.person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
-        tags = asm3.wordprocessor.append_tags(lostanimaltags, persontags)
-        bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
-    return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
 
-def found_animals_to_page(dbo: Database, foundanimals: Results, style="", speciesid=0) -> str:
-    """ Returns a page of found animals.
-    foundanimals: A resultset containing found animal records
-    style: The HTML publishing template to use
-    speciesid: 0 for all species, or a specific one
-    """
-    if style == "":
-        head, body, foot = get_foundanimal_view_template(dbo)
-    else:
-        head, body, foot = asm3.template.get_html_template(dbo, style)
-        if head == "":
-            raise asm3.utils.ASMError(f"template {style} does not exist")
-    # Substitute the header and footer tags
-    org_tags = asm3.wordprocessor.org_tags(dbo, "system")
-    head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
-    foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
-    # Run through each animal and generate body sections
-    bodies = []
-    for a in foundanimals:
-        if speciesid > 0:
-            speciesname = asm3.lookups.get_species_name(dbo, speciesid)
-            if a.SPECIESNAME != speciesname:
-                continue
-        # Generate tags for this row
-        
-        foundanimaltags = asm3.wordprocessor.foundanimal_tags(dbo, a)
+        if lostorfound == "lost":
+            tags = asm3.wordprocessor.lostanimal_tags(dbo, a)
+        else:
+            tags = asm3.wordprocessor.foundanimal_tags(dbo, a)
         persontags = asm3.wordprocessor.person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
-        tags = asm3.wordprocessor.append_tags(foundanimaltags, persontags)
+        tags = asm3.wordprocessor.append_tags(tags, persontags)
         bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
     return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
     
