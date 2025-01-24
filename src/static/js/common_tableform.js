@@ -751,6 +751,12 @@ const tableform = {
                 $("#" + v.post_field).html(opts);
             }
         });
+
+        // Remove the highlight from any labels that have been highlighted as part of
+        // previous validation failures
+        $.each(dialog.fields, function(i, v) {
+            $("label[for='" + v.post_field + "']").removeClass(validate.ERROR_LABEL_CLASS);
+        });
         
         // Set fields to their default values
         if (dialog.use_default_values === undefined || dialog.use_default_values === true) {
@@ -888,6 +894,12 @@ const tableform = {
                     $("#" + v.post_field).closest("tr").hide(); 
                 }
             }
+        });
+
+        // Remove the highlight from any labels that have been highlighted as part of
+        // previous validation failures
+        $.each(dialog.fields, function(i, v) {
+            $("label[for='" + v.post_field + "']").removeClass(validate.ERROR_LABEL_CLASS);
         });
 
         var b = {}; 
