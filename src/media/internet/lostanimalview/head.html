@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lost Animals</title>
+<link rel="stylesheet" type="text/css" href="static/lib/bootstrap-icons/1.5.0/bootstrap-icons.css"  />
+<style>
+	html {
+    	font-family: sans-serif;
+    	background-color: #efefef;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+    	max-width: 800px;
+        margin: 0;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0;
+        background-color: white;
+    }
+    
+    #header, #footer {
+    	background-color: #dfdfdf;
+        padding: 10px;
+    }
+
+    #reportbody {
+        padding: 10px;
+    }
+    
+	#logoimage {
+        max-width: 200px;
+        max-height: 200px;
+        margin-right: 10px;
+    }
+    
+    #companyname {
+    	display: inline-block;
+        vertical-align: middle;
+        padding: 10px;
+    }
+    
+    #title, #animaldetails, #goodwiths {
+    	text-align: center;
+    }
+    
+    #title {
+    	margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    #lostanimals td img {
+        height: 70px;
+        cursor: pointer;
+    }
+</style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta property="og:title" content="Lost Animals" />
+<meta property="og:description" content="Animals reported lost" />
+
+</head>
+<body>
+<div id="header">
+    <img id="logoimage" src="service?account=$$DATABASE$$&method=dbfs_image&title=logo.jpg" align="middle" onError="blankImage(this.id)">
+    <div id="companyname">$$ORGANISATION$$</div>
+    <div style="clear: left;"></div>
+</div>
+
+<div id="reportbody">
+
+<h1>Lost Animals</h1>
+
+<table id="lostanimals" border="1" cellpadding="10px;" align="center">
+    <thead>
+        <tr><th>ID</th><th>Date Lost</th><th>Species</th><th>Sex</th><th>Colour</th><th>Age</th><th>Area Lost</th><th>Photo</th></tr>
+    </thead>
+    <tbody>

@@ -47,6 +47,34 @@ def get_adopted_animals(dbo: Database, daysadopted=0, style="", speciesid=0, ani
         "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
+def get_lost_animals(dbo: Database, dayslost=0, style="", speciesid=0, orderby="lost_desc") -> str:
+    """ Returns a page of lost animals.
+    dayslost: The number of days the animals have been lost
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    """
+    if dayslost == 0: dayslost = 30
+    if orderby == "": orderby = "lost_desc"
+    orderby = get_orderby_const(orderby)
+    animals = dbo.query(asm3.lostfound.get_lostanimal_query(dbo) + \
+        " WHERE a.DateLost >= ? AND a.DateFound Is Null " \
+        "ORDER BY %s" % orderby, [ dbo.today(dayslost * -1)] )
+    return lostfound_animals_to_page(dbo, animals, "lost", style=style, speciesid=speciesid)
+
+def get_found_animals(dbo: Database, daysfound=0, style="", speciesid=0, orderby="found_desc") -> str:
+    """ Returns a page of found animals.
+    daysfound: The number of days since the animals were found
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    """
+    if daysfound == 0: daysfound = 30
+    if orderby == "": orderby = "lost_desc"
+    orderby = get_orderby_const(orderby)
+    animals = dbo.query(asm3.lostfound.get_foundanimal_query(dbo) + \
+        " WHERE a.DateFound >= ? AND a.ReturnToOwnerDate Is Null " \
+        "ORDER BY %s" % orderby, [ dbo.today(daysfound * -1)] )
+    return lostfound_animals_to_page(dbo, animals, "found", style=style, speciesid=speciesid)
+
 def get_deceased_animals(dbo: Database, daysdeceased=0, style="", speciesid=0, animaltypeid=0, orderby="deceased_desc") -> str:
     """ Returns a page of deceased animals.
     daysdeceased: The number of days the animals have been deceased
@@ -143,7 +171,11 @@ def get_orderby_const(c: str) -> str:
         "litterid_asc":     "a.AcceptanceNumber",
         "litterid_desc":    "a.AcceptanceNumber DESC",
         "name_asc":         "a.AnimalName",
-        "name_desc":        "a.AnimalName DESC"
+        "name_desc":        "a.AnimalName DESC",
+        "lost_asc":         "a.DateLost",
+        "lost_desc":        "a.DateLost DESC",
+        "found_asc":        "a.DateFound DESC",
+        "found_desc":       "a.DateFound DESC"
     }
     if c in CLAUSES:
         return CLAUSES[c]
@@ -204,6 +236,42 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
         notes += asm3.configuration.third_party_publisher_sig(dbo)
         tags["WEBMEDIANOTES"] = notes 
         tags["WEBSITEMEDIANOTES"] = notes # Compatibility, both are valid in asm3.wordprocessor.py
+        bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
+    return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
+
+def lostfound_animals_to_page(dbo: Database, rows: Results, lostorfound="found", style="", speciesid=0) -> str:
+    """ Returns a page of lost/found animals.
+    rows: A resultset containing lost/found animal records
+    style: The HTML publishing template to use
+    speciesid: 0 for all species, or a specific one
+    """
+    if style == "":
+        if lostorfound == "lost":
+            head, body, foot = get_lostanimal_view_template(dbo)
+        else:
+            head, body, foot = get_foundanimal_view_template(dbo)
+    else:
+        head, body, foot = asm3.template.get_html_template(dbo, style)
+        if head == "":
+            raise asm3.utils.ASMError(f"template {style} does not exist")
+    # Substitute the header and footer tags
+    org_tags = asm3.wordprocessor.org_tags(dbo, "system")
+    head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
+    foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
+    # Run through each animal and generate body sections
+    bodies = []
+    for a in rows:
+        if speciesid > 0:
+            speciesname = asm3.lookups.get_species_name(dbo, speciesid)
+            if a.SPECIESNAME != speciesname: continue
+        # Generate tags for this row
+
+        if lostorfound == "lost":
+            tags = asm3.wordprocessor.lostanimal_tags(dbo, a)
+        else:
+            tags = asm3.wordprocessor.foundanimal_tags(dbo, a)
+        persontags = asm3.wordprocessor.person_tags(dbo, asm3.person.get_person(dbo, a.OWNERID))
+        tags = asm3.wordprocessor.append_tags(tags, persontags)
         bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
     return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
     
@@ -270,6 +338,20 @@ def get_animal_view_template(dbo: Database) -> str:
     head, body, foot = asm3.template.get_html_template(dbo, "animalview")
     # Something has gone wrong and we don't have an animalview template in the DB, read it from the filesystem instead
     if head == "": head, body, foot = asm3.template.get_html_template_from_file(dbo, "animalview")
+    return ( head, body, foot )
+
+def get_lostanimal_view_template(dbo: Database) -> str:
+    """ Returns a tuple of the header, body and footer for the lostanimalview template """
+    head, body, foot = asm3.template.get_html_template(dbo, "lostanimalview")
+    # Something has gone wrong and we don't have a lostanimalview template in the DB, read it from the filesystem instead
+    if head == "": head, body, foot = asm3.template.get_html_template_from_file(dbo, "lostanimalview")
+    return ( head, body, foot )
+
+def get_foundanimal_view_template(dbo: Database) -> str:
+    """ Returns a tuple of the header, body and footer for the foundanimalview template """
+    head, body, foot = asm3.template.get_html_template(dbo, "foundnimalview")
+    # Something has gone wrong and we don't have a foundanimalview template in the DB, read it from the filesystem instead
+    if head == "": head, body, foot = asm3.template.get_html_template_from_file(dbo, "foundanimalview")
     return ( head, body, foot )
 
 class HTMLPublisher(FTPPublisher):

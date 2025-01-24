@@ -654,6 +654,16 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_adopted_animals(dbo, daysadopted=post.integer("days"), style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
+    
+    elif method == "html_lost_animals":
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
+            asm3.publishers.html.get_lost_animals(dbo, dayslost=post.integer("days"), style=post["template"], \
+                speciesid=post.integer("speciesid")))
+    
+    elif method == "html_found_animals":
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
+            asm3.publishers.html.get_found_animals(dbo, daysfound=post.integer("days"), style=post["template"], \
+                speciesid=post.integer("speciesid")))
 
     elif method == "html_deceased_animals":
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
