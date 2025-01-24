@@ -64,7 +64,7 @@ $(function() {
                             return true;
                         },
                         callout: _("Additional text to be shown with the label to help the user complete this form field") },
-                    { json_field: "RAWMARKUP", post_field: "rawmarkup", label: _("Markup"), type: "htmleditor", 
+                    { json_field: "RAWMARKUP", id: "rawmarkup", label: _("Markup"), type: "htmleditor", 
                         validation: function(v) {
                             if (v.indexOf("<!DOCTYPE") != -1 || v.indexOf("<html") != -1 || v.indexOf("<body") != -1) {
                                 tableform.dialog_error(_("Markup should be HTML fragments, not a full document."));
