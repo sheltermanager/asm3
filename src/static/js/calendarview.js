@@ -129,11 +129,11 @@ $(function() {
             if (config.bool("DisableClinic")) { $(".tagclinic").hide(); }
             if (config.bool("DisableTransport")) { $(".tagtransport").hide(); }
             if (config.bool("DisableTrapLoan")) { $(".tagtraploan").hide(); }
+        },
 
-            setTimeout(function() {
-                $("#calendar").fullCalendar("today");
-                calendarview.update_events_from_checkboxes();
-            }, 500);
+        delay: function() {
+            $("#calendar").fullCalendar("today");
+            calendarview.update_events_from_checkboxes();
         },
 
         name: "calendarview",

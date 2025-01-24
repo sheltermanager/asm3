@@ -292,13 +292,6 @@ $(function() {
 
         sync: function() {
 
-            // When first loaded, scroll to the bottom of the page and make the
-            // new description active
-            setTimeout(function() {
-                $("html, body").animate({scrollTop: $(document).height()});
-                $("#newdesc").focus();
-            }, 1000);
-
             // Set the filter at the top to match our current view
             $("#recfilter").select("value", controller.recfilter);
             $("#fromdate").val(controller.fromdate);
@@ -317,6 +310,13 @@ $(function() {
                 $(".newrow").hide();
                 $("#asm-content .asm-toolbar").hide();
             }
+        },
+
+        delay: function() {
+            // When first loaded, scroll to the bottom of the page and make the
+            // new description active
+            $("html, body").animate({scrollTop: $(document).height()});
+            $("#newdesc").focus();
         },
 
         destroy: function() {

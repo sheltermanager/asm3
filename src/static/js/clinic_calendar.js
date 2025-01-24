@@ -84,10 +84,11 @@ $(function() {
             // If there's an apptfor parameter, sync our checkboxes
             let apptfor = common.querystring_param("apptfor");
             $("#consultant").select("value", apptfor);
-            setTimeout(function() {
-                $("#calendar").fullCalendar("today");
-                clinic_calendar.update_events();
-            }, 500);
+        },
+
+        delay: function() {
+            $("#calendar").fullCalendar("today");
+            clinic_calendar.update_events();
         },
 
         name: "clinic_calendar",

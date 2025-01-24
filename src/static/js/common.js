@@ -650,6 +650,14 @@ const common = {
                 errhandler("sync", exsync);
             }
         }
+        if (o.delay) {
+            try {
+                setTimeout(() => { o.delay(); }, 100); 
+            }
+            catch (exdelay) {
+                errhandler("delay", exdelay);
+            }
+        }
         if (o.title) { 
             try {
                 $(document).attr("title", format.decode_html_str(o.title())); 

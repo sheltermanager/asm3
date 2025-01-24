@@ -426,13 +426,6 @@ $(function() {
             return map;
         },
 
-        show_mini_map: function() {
-            setTimeout(function() {
-                mapping.draw_map("embeddedmap", 15, controller.person.LATLONG, [{ 
-                    latlong: controller.person.LATLONG, popuptext: controller.person.OWNERADDRESS, popupactive: true }]);
-            }, 50);
-        },
-
         show_popup_warning: async function() {
             if (controller.person.POPUPWARNING) {
                 await tableform.show_okcancel_dialog("#dialog-popupwarning", _("Ok"), { hidecancel: true });
@@ -582,16 +575,19 @@ $(function() {
                 window.open(maplinkref, "_blank");
             });
 
-            if (config.bool("ShowPersonMiniMap")) {
-                person.show_mini_map();
-            }
-
             // Dirty handling
             validate.bind_dirty([ "person_" ]);
 
             // If a popup warning has been set, display it
             person.show_popup_warning();
 
+        },
+
+        delay: function() {
+            if (config.bool("ShowPersonMiniMap")) {
+                mapping.draw_map("embeddedmap", 15, controller.person.LATLONG, [{ 
+                    latlong: controller.person.LATLONG, popuptext: controller.person.OWNERADDRESS, popupactive: true }]);
+            }
         },
 
         destroy: function() {

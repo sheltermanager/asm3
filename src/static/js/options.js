@@ -2064,16 +2064,20 @@ $(function() {
             });
             $("#watermarkfontfile").change();
 
-            // Show the mini map
-            setTimeout(function() {
-                let latlong = config.str("OrganisationLatLong"), 
-                    popuptext = "<b>" + config.str("Organisation") + "</b><br>" + config.str("OrganisationAddress");
-                mapping.draw_map("embeddedmap", 15, latlong, [{ 
-                    latlong: latlong, popuptext: popuptext, popupactive: true }]);
-            }, 50);
-
             validate.bind_dirty();
 
+        },
+
+        sync: function() {
+
+        },
+
+        delay: function() {
+            // Show the mini map
+            let latlong = config.str("OrganisationLatLong"), 
+                popuptext = "<b>" + config.str("Organisation") + "</b><br>" + config.str("OrganisationAddress");
+            mapping.draw_map("embeddedmap", 15, latlong, [{ 
+                latlong: latlong, popuptext: popuptext, popupactive: true }]);
         },
 
         destroy: function() {

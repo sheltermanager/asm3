@@ -197,18 +197,17 @@ $(function() {
         },
 
         sync: function() {
-
             // Set date inputs to today in the local timezone
             $(".asm-datebox").val( format.date(new Date()) );
 
             // Special handling for flags
             html.animal_flag_options(null, controller.animalflags, $(".animalflags"));
             html.person_flag_options(null, controller.personflags, $(".personflags"));
+        },
 
+        delay: function() {
             // Focus the first displayed criteria field
-            setTimeout(function() {
-                $("#displayfields input, #displayfields select").first().focus();
-            }, 100);
+            $("#displayfields input, #displayfields select").first().focus();
         },
 
         destroy: function() {

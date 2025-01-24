@@ -1120,16 +1120,7 @@ $(function() {
         },
 
         sync: function() {
-
             if (controller.newmedia) { media.new_media(); }
-
-            // Start in the correct mode
-            if (config.bool("MediaTableMode")) { 
-                this.mode_table();
-            }
-            else {
-                this.mode_icon();
-            }
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
@@ -1137,6 +1128,18 @@ $(function() {
             html.media_flag_options(controller.flags, $("#mediaflags"));
             html.media_flag_options(controller.flags, $("#filter"));
             html.media_flag_options(controller.flags, $("#newmediaflags"));
+
+            $(".mode-icon, .mode-table").hide();
+        },
+
+        delay: function() {
+            // Start in the correct mode
+            if (config.bool("MediaTableMode")) { 
+                this.mode_table();
+            }
+            else {
+                this.mode_icon();
+            }
         },
 
         destroy: function() {
