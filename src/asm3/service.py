@@ -254,6 +254,24 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
     asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
+def unsubscribe(dbo: Database, token: str) -> str:
+    """
+    Unsubscribes person from email
+    """
+
+    try:
+        personcode = asm3.utils.base64decode_str(token)
+        dbo.update("owner", "ownercode='%s'"%personcode, {
+            "ExcludeFromBulkEmail": 0,
+        })
+        asm3.al.debug("Successfully updated ExcludeFromBulkEmail for personcode '%s'" % personcode, "service.unsubscribe", dbo)
+    except Exception as err:
+        asm3.al.error("Failed to update owner - %s" % str(err), "service.unsubscribe", dbo)
+        raise
+    
+    asm3.al.debug("Completed unsubscribe for personcode '%s'" % personcode, "service.unsubscribe", dbo)
+    return asm3.html.js_page([], "Successfully Unsubscribed")
+
 def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     """
     Called by the adoption checkout frontend with the document signature and donation amount.
@@ -638,6 +656,17 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
 
+    
+    elif method == "html_lost_animals":
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
+            asm3.publishers.html.get_lost_animals(dbo, dayslost=post.integer("days"), style=post["template"], \
+                speciesid=post.integer("speciesid")))
+    
+    elif method == "html_found_animals":
+        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
+            asm3.publishers.html.get_found_animals(dbo, daysfound=post.integer("days"), style=post["template"], \
+                speciesid=post.integer("speciesid")))
+                
     elif method == "media_file":
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
         if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
@@ -654,6 +683,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_adopted_animals(dbo, daysadopted=post.integer("days"), style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
+
     
     elif method == "html_lost_animals":
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
@@ -669,6 +699,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_deceased_animals(dbo, daysdeceased=post.integer("days"), style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
+   
     elif method == "html_events":
         return set_cached_response(cache_key, account, "text/html", 3600, 3600, 
             asm3.event.get_events_html(dbo, post.integer("count"), template=post["template"]))
@@ -970,7 +1001,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if redirect == "":
             redirect = BASE_URL + "/static/pages/form_submitted.html"
         return ("redirect", 0, 0, redirect)
-
+    
     elif method == "sign_document":
         if formid == 0:
             raise asm3.utils.ASMError("method sign_document requires a valid formid")
@@ -1022,6 +1053,12 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
                 asm3.utils.send_email(dbo, fromaddr, post["email"], "", "", _("Signed Document", l), m.MEDIANOTES, "plain", attachments)
             return ("text/plain", 0, 0, "OK")
 
+    elif method == "unsubscribe":
+        if post["token"] == "":
+            raise asm3.utils.ASMError("method unsubscribe requires a personcode")
+        unsubscribe(dbo, post["token"])
+        redirect = BASE_URL + "/static/pages/successful_unsubscribe.html"
+        return ("redirect", 0, 0, redirect)
     else:
         asm3.al.error("invalid method '%s'" % method, "service.handler", dbo)
         raise asm3.utils.ASMError("Invalid method '%s'" % method)
