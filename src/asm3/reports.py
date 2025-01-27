@@ -408,17 +408,35 @@ def generate_html(dbo: Database, username: str, sql: str) -> str:
     """
     sql = check_sql(dbo, username, sql)
     rs, cols = dbo.query_tuple_columns(sql)
-    h = "$$HEADER\n<table border=\"1\">\n<thead>\n<tr>\n"
+    h = "$$HEADER\n" 
+    th = "<table border=\"1\">\n<thead>\n<tr>\n"
     b = "$$BODY\n<tr>\n"
-    f = "$$FOOTER\n</table>\nFOOTER$$\n"
-    if len(cols) > 0:
-        f = "$$FOOTER\n</tbody>\n</table>\n<p>Total: {COUNT.%s}</p>\nFOOTER$$\n" % cols[0].upper()
+    f = "$$FOOTER\n"
     for c in cols:
-        h += "<th>%s</th>\n" % c
+        th += "<th>%s</th>\n" % c
         b += "<td>$%s</td>\n" % c.upper()
-    h += "</tr>\n</thead>\n<tbody>\nHEADER$$\n\n"
+    th += "</thead>\n<tbody>\n"
+    g = ""
+    if sql.find("-- GRP:") != -1:
+        gstart = sql.find("-- GRP:") + 7
+        gl = sql[gstart:sql.find("\n", gstart)].split(",")
+        for i, gn in enumerate(gl):
+            g += f"$$GROUP_{gn}\n$$HEAD\n<h3>${gn}</h3>\n"
+            if i == len(gl)-1:
+                g += th
+            g += "$$FOOT\n"
+            if i == len(gl)-1:
+                g += "</table>\n"
+            g += "<h3>Total $%s: {COUNT.%s}</h3>\nGROUP$$\n\n" % (gn, gn)
+    else:
+        h += th
+        f += "</table>\n"
+    if len(cols) > 0:
+        f += "<h2>Total: {COUNT.%s}</h2>\n" % cols[0].upper()
+    h += "HEADER$$\n\n"
     b += "</tr>\nBODY$$\n\n"
-    return h + b + f
+    f += "FOOTER$$\n"
+    return h + g + b + f
 
 def get_smcom_reports_installable(dbo: Database) -> Results:
     """
