@@ -1,0 +1,20 @@
+People with selected jurisdicion Map
+###
+Maps
+###
+34703/Any rev031
+###
+A map of all people with the selected jurisdiction.
+###
+en
+###
+SELECT latlong,
+'<a target="_blank" href="person?id=', o.ID, '">', OwnerName, '</a><br />',
+OwnerAddress, '<br />', OwnerTown, ' ', OwnerCounty,' ', OwnerPostcode, '<br>',
+emailaddress, '<br>', hometelephone, '<br>', JurisdictionName
+FROM owner o
+LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID
+WHERE o.IsDeceased = 0 AND j.JurisdictionName LIKE '%$ASK STRING Enter partialjurisdiction$%'
+ORDER BY o.OwnerSurname
+###
+MAP
