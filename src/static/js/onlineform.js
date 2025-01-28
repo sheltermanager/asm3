@@ -36,6 +36,10 @@ $(function() {
             let species = controller.species;
             species.unshift( { "ID": -1, "SPECIESNAME": _("(all)") });
 
+            $.each(controller.rows, function(i, v) {
+                v.RAWMARKUP = v.TOOLTIP;
+            });
+
             const dialog = {
                 add_title: _("Add form field"),
                 edit_title: _("Edit form field"),
@@ -55,16 +59,9 @@ $(function() {
                     { json_field: "LOOKUPS", post_field: "lookups", label: _("Lookups"), type: "textarea" }, 
                     { json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", options: {
                         valuefield: "ID", displayfield: "SPECIESNAME", rows: species } }, 
-                    { json_field: "TOOLTIP", post_field: "tooltip", label: _("Additional"), type: "textarea", 
-                        validation: function(v) {
-                            if (v.indexOf("<!DOCTYPE") != -1 || v.indexOf("<html") != -1 || v.indexOf("<body") != -1) {
-                                tableform.dialog_error(_("Markup should be HTML fragments, not a full document."));
-                                return false;
-                            }
-                            return true;
-                        },
+                    { json_field: "TOOLTIP", post_field: "tooltip", label: _("Additional"), type: "textarea",
                         callout: _("Additional text to be shown with the label to help the user complete this form field") },
-                    { json_field: "RAWMARKUP", id: "rawmarkup", label: _("Markup"), type: "htmleditor", 
+                    { json_field: "RAWMARKUP", post_field: "rawmarkup", label: _("Markup"), type: "htmleditor", width: 400,
                         validation: function(v) {
                             if (v.indexOf("<!DOCTYPE") != -1 || v.indexOf("<html") != -1 || v.indexOf("<body") != -1) {
                                 tableform.dialog_error(_("Markup should be HTML fragments, not a full document."));
@@ -82,9 +79,6 @@ $(function() {
                 edit: async function(row) {
                     try {
                         await tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls });
-                        if ($("#fieldtype").val() == 9) {
-                            $("#tooltip").html($("#rawmarkup").html());
-                        }
                         tableform.fields_update_row(dialog.fields, row);
                         await tableform.fields_post(dialog.fields, "mode=update&formid=" + controller.formid + "&formfieldid=" + row.ID, "onlineform");
                         tableform.table_update(table);
@@ -113,9 +107,6 @@ $(function() {
                     click: async function() { 
                         try {
                             await tableform.dialog_show_add(dialog, { onload: onlineform.check_controls });
-                            if ($("#fieldtype").val() == 9) {
-                                $("#tooltip").html($("#rawmarkup").html());
-                            }
                             let response = await tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform");
                             let row = {};
                             row.ID = response;

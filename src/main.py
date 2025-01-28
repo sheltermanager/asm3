@@ -5759,11 +5759,6 @@ class onlineform(JSONEndpoint):
         formid = o.post.integer("formid")
         formname = asm3.onlineform.get_onlineform_name(dbo, formid)
         fields = asm3.onlineform.get_onlineformfields(dbo, formid)
-        # Escape any angle brackets in raw markup output. This is needed
-        # to target tooltip as a textarea
-        for r in fields:
-            if r.FIELDTYPE == asm3.onlineform.FIELDTYPE_RAWMARKUP:
-                r.TOOLTIP = asm3.html.escape_angle(r.TOOLTIP) 
         # Make a list of all additional fields, prefixed with the "additional" to
         # add to the autocomplete field names.
         addf = []
