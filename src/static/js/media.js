@@ -200,7 +200,7 @@ $(function() {
                     { type: "hidden", name: "controller", value: controller.name },
                     { type: "file", name: "filechooser", label: _("File") },
                     { type: "select", name: "retainfor", label: _("Retain for"), options: media.retain_for_years },
-                    { type: "selectmulti", name: "newmediaflags", label: _("Flags") },
+                    { type: "selectmulti", id: "newmediaflags", name: "flags", label: _("Flags") },
                     { type: "textarea", name: "comments", label: _("Notes"), rows: 10,
                         xlabel: controller.name.indexOf("animal") == 0 ? 
                             '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : ""
@@ -539,7 +539,8 @@ $(function() {
                             "&comments=" + encodeURIComponent(comments) + 
                             "&filename=" + encodeURIComponent(file.name) +
                             "&filetype=" + encodeURIComponent(file.type) + 
-                            "&filedata=" + encodeURIComponent(result);
+                            "&filedata=" + encodeURIComponent(result) +
+                            "&flags=" + encodeURIComponent(flags);
                         return common.ajax_post("media", formdata);
                     })
                     .then(function(result) { 
