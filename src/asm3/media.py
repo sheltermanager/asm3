@@ -1157,6 +1157,39 @@ def remove_media_after_exit(dbo: Database, years: int = None, username: str = "s
             affected = dbo.delete("media", "LinkType=0 AND LinkID IN (%s)" % ",".join(animals), username) 
         asm3.al.debug("removed %d expired animal media items (remove %s years after exit)" % (affected, years), "media.remove_media_after_exit", dbo)
         return "OK %s" % affected
+    
+def replace_doc_image(dbo: Database, findstr: str, replacestr: str) -> None:
+    """
+    Goes through all html document media and looks for image attributes that contain
+    findstr, and replaces the whole image attribute with replacestr. 
+    Very useful for people who copied and pasted logo images as large data-uris
+    and need to replace them with links to extra images.
+    """
+    mo = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'text/html' ORDER BY ID")
+    total = 0
+    for i, m in enumerate(mo):
+        try:
+            asm3.al.debug("find/replace image %s (%d of %d)" % (m.MEDIANAME, i, len(mo)), "media.replace_doc_image", dbo)
+            data = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
+            fpos = data.find(findstr)
+            if fpos == -1:
+                asm3.al.warn("findstr not present, skipping (ID=%s, DBFSID=%s)" % (m.ID, m.DBFSID), "media.replace_doc_image", dbo)
+                continue
+            while fpos != -1:
+                spos = data.rfind("\"", fpos)
+                epos = data.find("\"", fpos)
+                if spos == -1 or epos == -1:
+                    asm3.al.debug("findstr found, but no attribute quotes either side, abandoning", "media.replace_doc_image", dbo)
+                    continue
+                asm3.al.debug(f"found findstr at pos {fpos}, attribute starts at {spos} and ends at {epos}", "media.replace_doc_image", dbo)
+                data = data[0:spos+1] + replacestr + data[epos:]
+                fpos = data.find(findstr)
+            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, asm3.utils.str2bytes(data))
+            dbo.update("media", m.ID, { "MediaSize": len(data) }) 
+            total += 1
+        except Exception as err:
+            asm3.al.error("failed find/replace (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.replace_doc_image", dbo)
+    asm3.al.debug("find/replace image on %d of %d html documents" % (total, len(mo)), "media.replace_doc_image", dbo)
 
 def scale_image_file(inimage: bytes, outimage: bytes, resizespec: str) -> None:
     """
