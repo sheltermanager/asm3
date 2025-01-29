@@ -369,7 +369,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             # Mark published
             self.markAnimalsPublished(animals, first=True)
 
-        filename = "%s_%s.csv" % (customerid, self.dbo.database)
+        filename = "%s_%s.csv" % (customerid, self.dbo.name())
         self.saveFile(os.path.join(self.publishDir, filename), header + "\n".join(csv))
         self.log("Uploading datafile %s" % filename)
         self.upload(filename)

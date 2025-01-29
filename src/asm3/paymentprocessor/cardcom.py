@@ -92,7 +92,7 @@ class Cardcom(PaymentProcessor):
             total_charge_sum += round(r.DONATION, 2)
             if r.VATAMOUNT: total_charge_sum += r.VATAMOUNT # add VAT for consistency with other ayment providers
         total_charge_sum = total_charge_sum / 100.0
-        client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
+        client_reference_id = "%s-%s" % (self.dbo.name(), payref) # prefix database to payref 
         OwnerID = payments[0].OWNERID
         p = asm3.person.get_person(self.dbo, OwnerID)
 
@@ -178,7 +178,7 @@ class Cardcom(PaymentProcessor):
         total_charge_sum = sum(
             round(r.DONATION, 2) for r in payments
         )
-        client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
+        client_reference_id = "%s-%s" % (self.dbo.name(), payref) # prefix database to payref 
         OwnerID = payments[0].OWNERID
         p = asm3.person.get_person(self.dbo, OwnerID)
 

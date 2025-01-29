@@ -2075,8 +2075,8 @@ def update_lookingfor_report(dbo: Database) -> str:
     asm3.al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
     s = lookingfor_report(dbo, limit=5000)
     count = lookingfor_last_match_count(dbo)
-    asm3.cachedisk.put("lookingfor_report", dbo.database, s, 86400)
-    asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.database, count, 86400)
+    asm3.cachedisk.put("lookingfor_report", dbo.name(), s, 86400)
+    asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.name(), count, 86400)
     return "OK %d" % count
 
 def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, username: str = "system") -> str:

@@ -71,7 +71,7 @@ class GeoProvider(object):
         self.url = self.url.replace("{postcode}", postcode).replace("{zipcode}", postcode)
         self.url = self.url.replace("{country}", country)
         self.url = self.url.replace("{locale}", self.dbo.locale)
-        self.url = self.url.replace("{account}", self.dbo.database)
+        self.url = self.url.replace("{account}", self.dbo.name())
         self.url = self.url.replace("{key}", GEO_PROVIDER_KEY)
 
     def search(self) -> None:
@@ -189,7 +189,7 @@ def get_lat_long(dbo: Database, address: str, town: str, county: str, postcode: 
 
         # Check the cache in case we already requested this address
         cachekey = "nom:%s" % g.q
-        v = asm3.cachedisk.get(cachekey, dbo.database)
+        v = asm3.cachedisk.get(cachekey, dbo.name())
         if v is not None:
             asm3.al.debug("cache hit for address: %s = %s" % (cachekey, v), "geo.get_lat_long", dbo)
             return v
@@ -199,7 +199,7 @@ def get_lat_long(dbo: Database, address: str, town: str, county: str, postcode: 
 
         # Parse the response to a lat/long value
         latlon = g.parse()
-        asm3.cachedisk.put(cachekey, dbo.database, latlon, 86400)
+        asm3.cachedisk.put(cachekey, dbo.name(), latlon, 86400)
 
         if GEO_SLEEP_AFTER > 0:
             time.sleep(GEO_SLEEP_AFTER)
@@ -224,7 +224,7 @@ def get_address(dbo: Database, postcode: str, country: str = "") -> str:
 
         # Check the cache in case we already requested this postcode
         cachekey = "addr:p=%sc=%s" % (postcode, country)
-        v = asm3.cachedisk.get(cachekey, dbo.database)
+        v = asm3.cachedisk.get(cachekey, dbo.name())
         if v is not None:
             asm3.al.debug("cache hit for postcode/country: %s/%s = %s" % (postcode, country, v), "geo.get_address", dbo)
             return v
@@ -238,7 +238,7 @@ def get_address(dbo: Database, postcode: str, country: str = "") -> str:
         headers = { "Referer": BASE_URL, "User-Agent": "Animal Shelter Manager %s" % VERSION }
         response = asm3.utils.get_url(url, headers=headers, timeout=GEO_LOOKUP_TIMEOUT)["response"]
         
-        asm3.cachedisk.put(cachekey, dbo.database, v, 86400)
+        asm3.cachedisk.put(cachekey, dbo.name(), v, 86400)
 
         asm3.al.debug("postcode lookup: %s/%s = %s" % (postcode, country, response), "geo.get_postcode", dbo)
 

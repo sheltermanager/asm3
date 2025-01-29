@@ -1175,7 +1175,7 @@ class Report:
                 animalid = fields[1]
                 seq = ""
                 if len(fields) > 2: seq = "&seq=" + fields[2]
-                value = "image?db=%s&mode=animal&id=%s%s" % (self.dbo.database, animalid, seq)
+                value = "image?db=%s&mode=animal&id=%s%s" % (self.dbo.name(), animalid, seq)
 
             # {CHIPMANUFACTURER.chipno} - substitutes the microchip
             # manufacturer for the chip number specified
@@ -1204,7 +1204,7 @@ class Report:
                 animalid = fields[1]
                 size = "150x150"
                 if len(fields) > 2: size = fields[2]
-                url = f"{SERVICE_URL}?account={self.dbo.database}&method=animal_view&animalid={animalid}"
+                url = f"{SERVICE_URL}?account={self.dbo.name()}&method=animal_view&animalid={animalid}"
                 value = asm3.utils.qr_datauri(url, size) 
 
             # {SUBREPORT.[title].[parentField]} - embed a subreport
@@ -1272,7 +1272,7 @@ class Report:
         s = s.replace("$$DATETIME$$", asm3.i18n.python2display(l, self.dbo.now()) + " " + asm3.i18n.format_time(self.dbo.now()))
         s = s.replace("$$VERSION$$", asm3.i18n.get_version())
         s = s.replace("$$USER$$", self.user)
-        s = s.replace("$$DATABASE$$", self.dbo.database)
+        s = s.replace("$$DATABASE$$", self.dbo.name())
         s = s.replace("$$REGISTEREDTO$$", asm3.configuration.organisation(self.dbo))
         s = s.replace("$$ORGANISATION$$", asm3.configuration.organisation(self.dbo))
         s = s.replace("$$ORGANISATIONADDRESS$$", asm3.configuration.organisation_address(self.dbo))
@@ -1334,7 +1334,7 @@ class Report:
         s = s.replace("$CURRENT_DATE_FDY$", self.dbo.sql_date(asm3.i18n.first_of_year(self.dbo.now()), includeTime=False, wrapParens=False))
         s = s.replace("$CURRENT_DATE_LDY$", self.dbo.sql_date(asm3.i18n.last_of_year(self.dbo.now()), includeTime=False, wrapParens=False))
         s = s.replace("$USER$", self.user)
-        s = s.replace("$DATABASENAME$", self.dbo.database)
+        s = s.replace("$DATABASENAME$", self.dbo.name())
         # Substitute the location filter, but only if the report actually
         # references it to save unnecessary database lookups
         if s.find("$LOCATIONFILTER$") != -1:
@@ -2106,7 +2106,7 @@ class Report:
                     animalid = fields[1]
                     seq = ""
                     if len(fields) > 2: seq = "&seq=" + fields[2]
-                    value = "image?db=%s&mode=animal&id=%s%s" % (self.dbo.database, animalid, seq)
+                    value = "image?db=%s&mode=animal&id=%s%s" % (self.dbo.name(), animalid, seq)
 
                 # {CHIPMANUFACTURER.chipno} - substitutes the microchip
                 # manufacturer for the chip number specified
@@ -2145,7 +2145,7 @@ class Report:
                     animalid = fields[1]
                     size = "150x150"
                     if len(fields) > 2: size = fields[2]
-                    url = f"{SERVICE_URL}?account={self.dbo.database}&method=animal_view&animalid={animalid}"
+                    url = f"{SERVICE_URL}?account={self.dbo.name()}&method=animal_view&animalid={animalid}"
                     value = asm3.utils.qr_datauri(url, size) 
 
                 # {SUBREPORT.[title].[parentField]} - embed a subreport

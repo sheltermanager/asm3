@@ -186,7 +186,7 @@ class PetRescuePublisher(AbstractPublisher):
 
                     data = { "status": status }
                     jsondata = asm3.utils.json(data)
-                    url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.database)
+                    url = PETRESCUE_URL + "listings/%s/SM%s" % (an.ID, self.dbo.name())
 
                     self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
                     r = asm3.utils.patch_json(url, jsondata, headers=headers)
@@ -295,7 +295,7 @@ class PetRescuePublisher(AbstractPublisher):
         # Construct and return a dictionary of info for this animal
         return {
             "remote_id":                str(an.ID), # animal identifier in ASM
-            "remote_source":            "SM%s" % self.dbo.database, # system/database identifier
+            "remote_source":            "SM%s" % self.dbo.name(), # system/database identifier
             "name":                     an.ANIMALNAME.title(), # animal name (title case, they validate against caps)
             "shelter_code":             an.SHELTERCODE,
             "adoption_fee":             asm3.i18n.format_currency_no_symbol(self.locale, an.FEE),

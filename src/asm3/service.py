@@ -228,7 +228,7 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
         asm3.html.script_i18n(dbo.locale),
         asm3.html.asm_script_tag("service_checkout_adoption.js") 
     ]
-    co = asm3.cachedisk.get(token, dbo.database)
+    co = asm3.cachedisk.get(token, dbo.name())
     if co is None:
         raise asm3.utils.ASMError("invalid token")
     # Generate the adoption paperwork if it has not been generated already
@@ -243,7 +243,7 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
         co["mediaid"] = pmid
         content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(content))
         co["mediacontent"] = content
-        asm3.cachedisk.put(token, dbo.database, co, 86400 * 2)
+        asm3.cachedisk.put(token, dbo.name(), co, 86400 * 2)
     # Include extra values
     co["donationmsg"] = asm3.configuration.adoption_checkout_donation_msg(dbo)
     co["donationtiers"] = asm3.configuration.adoption_checkout_donation_tiers(dbo)
@@ -261,7 +261,7 @@ def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     Returns the URL needed to redirect to the payment processor to complete payment.
     """
     l = dbo.locale
-    co = asm3.cachedisk.get(post["token"], dbo.database)
+    co = asm3.cachedisk.get(post["token"], dbo.name())
     if co is None:
         raise asm3.utils.ASMError("invalid token")
     mediaid = co["mediaid"]
@@ -308,7 +308,7 @@ def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
                 "giftaid":      str(co["giftaid"])
             }, l))
         # Update the cache entry
-        asm3.cachedisk.put(post["token"], dbo.database, co, 86400 * 2)
+        asm3.cachedisk.put(post["token"], dbo.name(), co, 86400 * 2)
     elif co["paymentdonid"] > 0 and donationamt > 0:
         # payments have already been created, must be a user revisiting the checkout.
         # update their donation amount in case they made a different choice this time.
@@ -326,7 +326,7 @@ def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     title = _("{0}: Adoption fee", l)
     if co["paymentdonid"] != "0": title = _("{0}: Adoption fee and donation", l)
     params = { 
-        "account": dbo.database, 
+        "account": dbo.name(), 
         "method": "checkout",
         "processor": co["paymentprocessor"],
         "payref": co["payref"],
@@ -349,7 +349,7 @@ def checkout_licence_page(dbo: Database, token: str) -> str:
         asm3.html.script_i18n(dbo.locale),
         asm3.html.asm_script_tag("service_checkout_licence.js") 
     ]
-    co = asm3.cachedisk.get(token, dbo.database)
+    co = asm3.cachedisk.get(token, dbo.name())
     if co is None:
         li = asm3.financial.get_licence_token(dbo, token)
         if li is None:
@@ -364,11 +364,11 @@ def checkout_licence_page(dbo: Database, token: str) -> str:
         co["animalid"] = li.ANIMALID
         co["ownercode"] = li.OWNERCODE
         co["ownerid"] = li.OWNERID
-        co["database"] = dbo.database
+        co["database"] = dbo.name()
         co["paymentfeeid"] = 0
         co["newfee"] = asm3.financial.get_licence_fee(dbo, li.LICENCETYPEID)
         co["formatfee"] = format_currency(dbo.locale, co["newfee"])
-        asm3.cachedisk.put(token, dbo.database, co, 86400 * 2)
+        asm3.cachedisk.put(token, dbo.name(), co, 86400 * 2)
     # Record that the checkout was accessed in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "LC01:%s" % co["licencenumber"]
@@ -382,7 +382,7 @@ def checkout_licence_post(dbo: Database, post: PostedData) -> str:
     Returns the URL needed to redirect to the payment processor to complete payment.
     """
     l = dbo.locale
-    co = asm3.cachedisk.get(post["token"], dbo.database)
+    co = asm3.cachedisk.get(post["token"], dbo.name())
     if co is None:
         raise asm3.utils.ASMError("invalid token")
     # Create the due payment record if it hasn't been done already, along with a receipt/payref
@@ -407,14 +407,14 @@ def checkout_licence_post(dbo: Database, post: PostedData) -> str:
             "giftaid":      str("0")
         }, l))
         # Update the cache entry
-        asm3.cachedisk.put(post["token"], dbo.database, co, 86400 * 2)
+        asm3.cachedisk.put(post["token"], dbo.name(), co, 86400 * 2)
     # Record that the checkout was completed in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "LC02:%s:%s" % ( co["licencenumber"], co["newfee"] )
     asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
     title = _("{0}: License renewal fee", l)
     params = { 
-        "account": dbo.database, 
+        "account": dbo.name(), 
         "method": "checkout",
         "processor": co["processor"],
         "payref": co["payref"],
@@ -441,7 +441,7 @@ def sign_document_page(dbo: Database, mid: int, email: str) -> str:
     content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(contents))
     controller = {
         "id":       mid,
-        "account":  dbo.database,
+        "account":  dbo.name(),
         "email":    email,
         "notes":    asm3.media.get_notes_for_id(dbo, int(mid)),
         "signed":   asm3.media.has_signature(dbo, mid),

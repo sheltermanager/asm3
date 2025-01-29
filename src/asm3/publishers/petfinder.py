@@ -97,7 +97,7 @@ class PetFinderPublisher(FTPPublisher):
     
     def pfGetCacheInvalidationKeys(self, cachekey: str = CK_ADOPTABLE_ANIMALS) -> CacheInvalidationKeys:
         """ Returns the list of cache invalidation keys - a dictionary with animal ID as the key """
-        cik = asm3.cachedisk.get(cachekey, self.dbo.database, dict)
+        cik = asm3.cachedisk.get(cachekey, self.dbo.name(), dict)
         if cik is None:
             return {}
         return cik
@@ -131,14 +131,14 @@ class PetFinderPublisher(FTPPublisher):
             if a.ID in cik: continue
             cik[a.ID] = asm3.utils.epoch_b32()
         # Persist the dictionary
-        asm3.cachedisk.put(cachekey, self.dbo.database, cik, 86400*7)
+        asm3.cachedisk.put(cachekey, self.dbo.name(), cik, 86400*7)
         return cik
     
     def pfRemoveCacheInvalidationKeys(self, cachekey: str = CK_STRAY_ANIMALS) -> None:
         """
         Clears an invalidation key cache - used when we stop sending animals of a particular type.
         """
-        asm3.cachedisk.delete(cachekey, self.dbo.database)
+        asm3.cachedisk.delete(cachekey, self.dbo.name())
 
     def run(self) -> None:
 

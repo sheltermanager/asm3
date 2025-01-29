@@ -67,7 +67,7 @@ def logmsg(mtype: str, msg: str, location: str, dbo: Any):
         if isinstance(dbo, str):
             dbname = dbo
         else: 
-            dbname = dbo.database
+            dbname = dbo.name()
         msg = "%s %s" % (fixed_chars(dbname, 6), msg)
     # Restrict message to a max of 1024 chars to prevent "Message too long" exceptions
     if len(msg) > 1024: msg = msg[0:1024]

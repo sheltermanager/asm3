@@ -68,7 +68,7 @@ def org_tags(dbo: Database, username: str) -> Tags:
         "SIGNATURE150"          : '<img src="signature:placeholder" width="150px" />',
         "SIGNATURE200"          : '<img src="signature:placeholder" width="200px" />',
         "SIGNATURE300"          : '<img src="signature:placeholder" width="300px" />',
-        "DATABASE"              : dbo.database,
+        "DATABASE"              : dbo.name(),
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
         "USEREMAILADDRESS"      : email,
@@ -1360,7 +1360,7 @@ def licence_tags(dbo: Database, li: ResultRow) -> Tags:
     (from anything using asm3.financial.get_licence_query)
     """
     l = dbo.locale
-    renew_url = f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token={li.TOKEN}"
+    renew_url = f"{SERVICE_URL}?account={dbo.name()}&method=checkout_licence&token={li.TOKEN}"
     tags = {
         "LICENCETYPENAME":      li["LICENCETYPENAME"],
         "LICENCENUMBER":        li["LICENCENUMBER"],

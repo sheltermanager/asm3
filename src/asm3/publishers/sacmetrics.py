@@ -142,7 +142,7 @@ class SACMetricsPublisher(AbstractPublisher):
             month: (int)
             year: (int)
             speciesname: (str) from SAC_SPECIES
-            externalId: The externalId value to use, defaults to dbo.database (sm account number) if not set
+            externalId: The externalId value to use, defaults to dbo.name() (sm account number) if not set
         """
         dbo = self.dbo
         fromdate = asm3.i18n.parse_date("%Y-%m-%d", "%s-%02d-01" % (year, month))
@@ -214,7 +214,7 @@ class SACMetricsPublisher(AbstractPublisher):
                 }
             },
             "organization": {
-                "externalId": asm3.utils.iif(externalId != "", externalId, dbo.database),
+                "externalId": asm3.utils.iif(externalId != "", externalId, dbo.name()),
                 "name": asm3.configuration.organisation(dbo),
                 "vendorName": "Shelter_Manager"
             },

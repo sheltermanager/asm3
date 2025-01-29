@@ -709,7 +709,7 @@ def embellish_photo_urls(dbo: Database, rows: Results, linktypeid: int = ANIMAL)
         for m in mr:
             if r.ID == m.LINKID: 
                 ts = asm3.i18n.python2unix(m.DATE)
-                url = f"{SERVICE_URL}?account={dbo.database}&method=media_image&mediaid={m.ID}&ts={ts}"
+                url = f"{SERVICE_URL}?account={dbo.name()}&method=media_image&mediaid={m.ID}&ts={ts}"
                 r.PHOTOURLS.append(url)
     return rows
 
@@ -729,7 +729,7 @@ def send_signature_request(dbo: Database, username: str, mid: int, post: PostedD
     if m.MEDIAMIMETYPE != "text/html": 
         raise asm3.utils.ASMValidationError("invalid mime type for document signing %s" % m.MEDIAMIMETYPE)
     token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
-    url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid, token)
+    url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.name(), asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid, token)
     body = asm3.utils.replace_url_token(body, url, m.MEDIANOTES)
     if post.boolean("addtolog"):
         asm3.log.add_log_email(dbo, username, get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 

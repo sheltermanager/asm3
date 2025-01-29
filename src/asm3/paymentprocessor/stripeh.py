@@ -42,7 +42,7 @@ class Stripe(PaymentProcessor):
         if zp != "": return zp
 
         item_description = item_description or ", ".join(paymenttypes)
-        client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
+        client_reference_id = "%s-%s" % (self.dbo.name(), payref) # prefix database to payref 
 
         # Stripe will reject blank URLs
         if return_url == "": return_url = "%s/static/pages/payment_success.html" % BASE_URL

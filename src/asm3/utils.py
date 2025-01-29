@@ -1194,7 +1194,7 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
 
     def url(method, params):
         account = ""
-        if MULTIPLE_DATABASES: account = "account=%s&" % dbo.database
+        if MULTIPLE_DATABASES: account = "account=%s&" % dbo.name()
         return "%s/service?method=%s&%s%s" % (BASE_URL, method, account, params)
 
     p = ImgSrcHTMLParser()
@@ -1970,7 +1970,7 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
     fromadd = FROM_ADDRESS
     fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
     fromadd = fromadd.replace("{alias}", dbo.alias)
-    fromadd = fromadd.replace("{database}", dbo.database)
+    fromadd = fromadd.replace("{database}", dbo.name())
     fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
     # If we have an SMTPOverride, set the from header to the main email instead

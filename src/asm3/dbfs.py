@@ -103,7 +103,7 @@ class FileStorage(DBFSStorage):
     
     def __init__(self, dbo: Database):
         self.dbo = dbo
-        self.dbname = dbo.database.replace("/", "").replace(".", "")
+        self.dbname = dbo.name()
 
     def get(self, dbfsid: int, url: str) -> bytes:
         """ Returns the file data for url """
@@ -147,7 +147,7 @@ class S3Storage(DBFSStorage):
     
     def __init__(self, dbo: Database, access_key_id: str = "", secret_access_key: str = "", endpoint_url: str = "", bucket: str = "") -> None:
         self.dbo = dbo
-        self.dbname = dbo.database.replace(".", "").replace("/", "")
+        self.dbname = dbo.name()
         self.access_key_id = DBFS_S3_ACCESS_KEY_ID
         self.secret_access_key = DBFS_S3_SECRET_ACCESS_KEY
         self.endpoint_url = DBFS_S3_ENDPOINT_URL
@@ -263,7 +263,7 @@ class S3Storage(DBFSStorage):
         except Exception as err:
             asm3.al.error(f"[{attempts}]: {err}", "dbfs.S3Storage._s3_put_object", self.dbo)
             if attempts > 5:
-                asm3.utils.send_error_email("DBFSError", ">5 PUT attempts", "dbfs", f"Failed to store {key} in {bucket} after 5 attempts [{self.dbo.database}]")
+                asm3.utils.send_error_email("DBFSError", ">5 PUT attempts", "dbfs", f"Failed to store {key} in {bucket} after 5 attempts [{self.dbo.name()}]")
             else:
                 time.sleep(10 * attempts) # wait an increasingly longer amount of time between retries
                 self._s3_put_object(bucket, key, body, attempts+1)

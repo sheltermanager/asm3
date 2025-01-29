@@ -1063,7 +1063,7 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> No
     feetypeid = post.integer("feetypeid")
     if feetypeid == 0: feetypeid = asm3.configuration.adoption_checkout_feeid(dbo)
     co = {
-        "database":     dbo.database,
+        "database":     dbo.name(),
         "movementid":   post.integer("id"),
         "templateid":   templateid, 
         "mediaid":      0, # paperwork mediaid, generated in the next step
@@ -1090,10 +1090,10 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> No
         "receiptnumber": "", # receiptnumber for all payments, generated in next step
         "payref":       "" # payref for the payment processor, generated in next step
     }
-    asm3.cachedisk.put(key, dbo.database, co, 86400 * 2) # persist for 2 days
+    asm3.cachedisk.put(key, dbo.name(), co, 86400 * 2) # persist for 2 days
     # Send the email to the adopter
     body = post["body"]
-    url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.database, key)
+    url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.name(), key)
     body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
     asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
     # Record that the checkout email was sent in the log

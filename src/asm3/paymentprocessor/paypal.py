@@ -51,7 +51,7 @@ class PayPal(PaymentProcessor):
             "item_number":      payref,
             "amount":           "%0.2f" % ((totalamount - totalvat) / 100.0), 
             "currency_code":    asm3.configuration.currency_code(self.dbo),
-            "custom":           self.dbo.database,
+            "custom":           self.dbo.name(),
             "tax_rate":         vatrate,
             "tax":              "%0.2f" % (totalvat / 100.0),
             "notify_url":       BASE_URL + "/pp_paypal", # callback url

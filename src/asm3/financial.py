@@ -1583,7 +1583,7 @@ def renew_licence_payref(dbo: Database, payref: str) -> None:
             "Comments":         r.COMMENTS
         }, "system")
         # Remove the cached checkout info
-        asm3.cachedisk.delete(r.TOKEN, dbo.database)
+        asm3.cachedisk.delete(r.TOKEN, dbo.name())
 
 def delete_licence(dbo: Database, username: str, lid: int) -> None:
     """

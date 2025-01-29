@@ -18,11 +18,11 @@ lc = {}
 
 def get(dbo: Database, k: str) -> Any:
     """ Retrieve a task value for this database """
-    return asm3.cachedisk.get(k, dbo.database)
+    return asm3.cachedisk.get(k, dbo.name())
 
 def put(dbo: Database, k: str, v: Any) -> None:
     """ Store a task value for this database """
-    asm3.cachedisk.put(k, dbo.database, v, 3600)
+    asm3.cachedisk.put(k, dbo.name(), v, 3600)
 
 def is_task_running(dbo: Database) -> bool:
     """ Returns True if a task is running """

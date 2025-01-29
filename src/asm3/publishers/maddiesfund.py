@@ -216,7 +216,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             "Pattern": "",
             "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
             "PetBiography": an["ANIMALCOMMENTS"],
-            "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
+            "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.name(), an["ID"]),
             "Microchip": an["IDENTICHIPNUMBER"],
             "MicrochipIssuer": asm3.lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
             "RelationshipType": self.getRelationshipType(an),

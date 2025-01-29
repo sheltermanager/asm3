@@ -135,7 +135,7 @@ class Database(object):
     def connect(self) -> Any:
         """ Virtual: Connect to the database and return the connection """
         raise NotImplementedError()
-
+    
     def cursor_open(self) -> Tuple[Any, Any]:
         """ Returns a tuple containing an open connection and cursor.
             If the dbo object contains an active connection, we'll just use
@@ -163,6 +163,10 @@ class Database(object):
                 c.close()
             except:
                 pass
+
+    def name(self) -> str:
+        """ Returns the database name """
+        return self.database
 
     def ddl_add_column(self, table: str, column: str, coltype: str) -> str:
         return "ALTER TABLE %s ADD %s %s" % (table, column, coltype)

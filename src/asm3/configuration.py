@@ -563,17 +563,17 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
 
 def get_map(dbo: Database) -> Dict[str, str]:
     """ Returns a map of the config items, using a read-through cache to save database calls """
-    cmap = asm3.cachedisk.get("config", dbo.database, expectedtype=dict)
+    cmap = asm3.cachedisk.get("config", dbo.name(), expectedtype=dict)
     if cmap is None:
         rows = dbo.query("SELECT ItemName, ItemValue FROM configuration ORDER BY ItemName")
         cmap = DEFAULTS.copy()
         for r in rows:
             cmap[r.itemname] = r.itemvalue
-        asm3.cachedisk.put("config", dbo.database, cmap, 3600) # one hour cache means direct database updates show up eventually
+        asm3.cachedisk.put("config", dbo.name(), cmap, 3600) # one hour cache means direct database updates show up eventually
     return cmap
 
 def invalidate_config_cache(dbo: Database) -> None:
-    asm3.cachedisk.delete("config", dbo.database)
+    asm3.cachedisk.delete("config", dbo.name())
 
 def address_change_log(dbo: Database) -> bool:
     return cboolean(dbo, "AddressChangeLog", DEFAULTS["AddressChangeLog"] == "Yes")
@@ -877,15 +877,15 @@ def db_lock(dbo: Database) -> bool:
     Locks the database for updates, returns True if the lock was
     successful.
     """
-    if asm3.cachedisk.get("db_update_lock", dbo.database): return False
-    asm3.cachedisk.put("db_update_lock", dbo.database, "YES", 60 * 5)
+    if asm3.cachedisk.get("db_update_lock", dbo.name()): return False
+    asm3.cachedisk.put("db_update_lock", dbo.name(), "YES", 60 * 5)
     return True
 
 def db_unlock(dbo: Database) -> None:
     """
     Marks the database as unlocked for updates
     """
-    asm3.cachedisk.delete("db_update_lock", dbo.database)
+    asm3.cachedisk.delete("db_update_lock", dbo.name())
 
 def db_view_seq_version(dbo: Database, newval: str = None) -> Any:
     if newval is None:

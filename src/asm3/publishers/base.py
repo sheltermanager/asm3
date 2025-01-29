@@ -682,7 +682,7 @@ class AbstractPublisher(threading.Thread):
         """
         Returns the URL for the preferred photo for animalid.
         """
-        return f"{SERVICE_URL}?account={self.dbo.database}&method=animal_image&animalid={animalid}"
+        return f"{SERVICE_URL}?account={self.dbo.name()}&method=animal_image&animalid={animalid}"
 
     def getPhotoUrls(self, animalid: int) -> List[str]:
         """
@@ -695,7 +695,7 @@ class AbstractPublisher(threading.Thread):
             "ORDER BY WebsitePhoto DESC, ID", [animalid])
         for m in photos:
             ts = asm3.i18n.python2unix(m.DATE)
-            photo_urls.append(f"{SERVICE_URL}?account={self.dbo.database}&method=media_image&mediaid={m.ID}&ts={ts}")
+            photo_urls.append(f"{SERVICE_URL}?account={self.dbo.name()}&method=media_image&mediaid={m.ID}&ts={ts}")
         return photo_urls
 
     def getPublisherBreed(self, an: ResultRow, b1or2: int = 1) -> str:
@@ -755,7 +755,7 @@ class AbstractPublisher(threading.Thread):
         Replace MULTIPLE_DATABASE tokens in the string given (redundant)
         """
         s = s.replace("{alias}", dbo.alias)
-        s = s.replace("{database}", dbo.database)
+        s = s.replace("{database}", dbo.name())
         s = s.replace("{username}", dbo.username)
         return s
 
@@ -1253,7 +1253,7 @@ class FTPPublisher(AbstractPublisher):
 
             return True
         except Exception as err:
-            self.logError("Failed opening FTP socket (%s->%s): %s" % (self.dbo.database, self.ftphost, err), sys.exc_info())
+            self.logError("Failed opening FTP socket (%s->%s): %s" % (self.dbo.name(), self.ftphost, err), sys.exc_info())
             return False
 
     def closeFTPSocket(self) -> None:

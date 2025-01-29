@@ -440,14 +440,14 @@ def import_onlineform_html(dbo: Database, h: str) -> int:
 def get_onlineform_header(dbo: Database) -> str:
     header = asm3.template.get_html_template(dbo, "onlineform")[0]
     if header == "": header = asm3.utils.read_text_file(dbo.installpath + "media/onlineform/head.html")
-    header = header.replace("$$DATABASE$$", dbo.database)
+    header = header.replace("$$DATABASE$$", dbo.name())
     header = header.replace("$$SERVICEURL$$", SERVICE_URL)
     return header
 
 def get_onlineform_footer(dbo: Database) -> str:
     footer = asm3.template.get_html_template(dbo, "onlineform")[2]
     if footer == "": footer = asm3.utils.read_text_file(dbo.installpath + "media/onlineform/foot.html")
-    footer = footer.replace("$$DATABASE$$", dbo.database)
+    footer = footer.replace("$$DATABASE$$", dbo.name())
     footer = footer.replace("$$SERVICEURL$$", SERVICE_URL)
     return footer
 

@@ -1480,7 +1480,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         if a["WEBSITEIMAGECOUNT"] > 0 and includemedia == "photo":
             # dummy, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
             # row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
-            row["ANIMALIMAGE"] = "%s?account=%s&method=animal_image&animalid=%s" % (SERVICE_URL, dbo.database, a["ID"])
+            row["ANIMALIMAGE"] = "%s?account=%s&method=animal_image&animalid=%s" % (SERVICE_URL, dbo.name(), a["ID"])
         out.write(tocsv(row))
 
         if includemedia == "photos":
@@ -1490,7 +1490,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
                     row["ANIMALCODE"] = a["SHELTERCODE"]
                     row["ANIMALNAME"] = a["ANIMALNAME"]
                     #row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
-                    row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                    row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                     out.write(tocsv(row))
 
         if includemedia == "all":
@@ -1501,17 +1501,17 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
                     row["ANIMALNAME"] = a["ANIMALNAME"]
                     if m["MEDIANAME"].endswith(".jpg"):
                         #row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
-                        row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                        row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                     elif m["MEDIANAME"].endswith(".pdf"):
                         row["ANIMALPDFNAME"] = m["MEDIANOTES"]
                         if row["ANIMALPDFNAME"].strip() == "": row["ANIMALPDFNAME"] = "doc.pdf"
                         #row["ANIMALPDFDATA"] = "data:application/pdf;base64,%s" % asm3.utils.base64encode(mdata)
-                        row["ANIMALPDFDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                        row["ANIMALPDFDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                     elif m["MEDIANAME"].endswith(".html"):
                         row["ANIMALHTMLNAME"] = m["MEDIANOTES"]
                         if row["ANIMALHTMLNAME"].strip() == "": row["ANIMALHTMLNAME"] = "doc.html"
                         #row["ANIMALHTMLDATA"] = "data:text/html;base64,%s" % asm3.utils.base64encode(mdata)
-                        row["ANIMALHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                        row["ANIMALHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                     out.write(tocsv(row))
 
         for v in asm3.medical.get_vaccinations(dbo, a["ID"]):
@@ -1574,7 +1574,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
 
     # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
     key = asm3.utils.uuid_str()
-    asm3.cachedisk.put(key, dbo.database, out.getvalue(), 3600)
+    asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
     h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
         asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
     return h

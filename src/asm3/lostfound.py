@@ -645,8 +645,8 @@ def update_match_report(dbo: Database) -> str:
     asm3.al.debug("updating lost/found match report", "lostfound.update_match_report", dbo)
     s = match_report(dbo, limit=1000)
     count = lostfound_last_match_count(dbo)
-    asm3.cachedisk.put("lostfound_report", dbo.database, s, 86400)
-    asm3.cachedisk.put("lostfound_lastmatchcount", dbo.database, count, 86400)
+    asm3.cachedisk.put("lostfound_report", dbo.name(), s, 86400)
+    asm3.cachedisk.put("lostfound_lastmatchcount", dbo.name(), count, 86400)
     return "OK %d" % count
 
 def get_lost_person_name(dbo: Database, aid: int) -> str:

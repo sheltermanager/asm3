@@ -445,7 +445,7 @@ def header(title: str, session: Session) -> str:
     session: The user session
     compatjs: True if this browser requires compatibility js for older browsers
     """
-    s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
+    s = bare_header(title, session.theme, session.locale, session.dbo.name(), session.config_ts)
     return s
 
 def footer() -> str:
@@ -503,9 +503,9 @@ def doc_img_src(dbo: Database, row: ResultRow) -> str:
     row: A query containing DOCMEDIAID
     """
     if row.DOCMEDIAID is None or row.DOCMEDIAID == "":
-        return "image?db=%s&mode=nopic" % dbo.database
+        return "image?db=%s&mode=nopic" % dbo.name()
     else:
-        return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.database, row.DOCMEDIAID, row.DOCMEDIADATE.isoformat())
+        return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.name(), row.DOCMEDIAID, row.DOCMEDIADATE.isoformat())
 
 def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: MenuItems) -> MenuStructure:
     """
@@ -982,7 +982,7 @@ def qr_animal_img_share_src(dbo: Database, animalid: int, size: str = "150x150")
     Returns an img src attribute for a QR code to the public animalview page for the animal.
     size is a sizespec eg: 150x150
     """
-    url = f"{SERVICE_URL}?account={dbo.database}&method=animal_view&animalid={animalid}"
+    url = f"{SERVICE_URL}?account={dbo.name()}&method=animal_view&animalid={animalid}"
     return asm3.utils.qr_datauri(url, size)
 
 def thumbnail_img_src(dbo: Database, row: ResultRow, mode: str) -> str:
@@ -996,7 +996,7 @@ def thumbnail_img_src(dbo: Database, row: ResultRow, mode: str) -> str:
     mode: The mode - animalthumb or personthumb
     """
     if row.WEBSITEMEDIANAME is None or row.WEBSITEMEDIANAME == "":
-        return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.database
+        return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.name()
     else:
         idval = 0
         if mode == "animalthumb":
@@ -1011,7 +1011,7 @@ def thumbnail_img_src(dbo: Database, row: ResultRow, mode: str) -> str:
                 idval = asm3.utils.cint(row.ID)
         else:
             idval = asm3.utils.cint(row.ID)
-        uri = f"image?db={dbo.database}&mode={mode}&id={str(idval)}"
+        uri = f"image?db={dbo.name()}&mode={mode}&id={str(idval)}"
         if "WEBSITEMEDIADATE" in row and row.WEBSITEMEDIADATE is not None:
             uri += "&date=%s" % row.WEBSITEMEDIADATE.isoformat()
         return uri

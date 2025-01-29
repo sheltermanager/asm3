@@ -333,8 +333,7 @@ def maint_db_dump_personcsv(dbo: Database):
 def maint_db_dump_zip(dbo: Database):
     try:
         l = dbo.locale
-        dbname = dbo.database
-        if dbname.find("/") != -1: dbname = dbname[dbname.rfind("/")+1:]
+        dbname = dbo.name()
         dbomysql = db.get_dbo("MYSQL")
         dbopg = db.get_dbo("POSTGRESQL")
         dbodb2 = db.get_dbo("DB2")
@@ -454,7 +453,7 @@ def maint_deduplicate_people(dbo: Database):
 
 def maint_disk_cache(dbo: Database):
     try:
-        cachedisk.remove_expired(dbo.database)
+        cachedisk.remove_expired(dbo.name())
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running remove_expired: %s" % em, "cron.maint_disk_cache", dbo, sys.exc_info())

@@ -177,6 +177,6 @@ class PetcademyPublisher(FTPPublisher):
             self.getDate(an.ACTIVEMOVEMENTDATE),
             self.getEventType(an),
             asm3.configuration.organisation(self.dbo),
-            "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an.ID)
+            "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.name(), an.ID)
         ]
         return self.csvLine(line)

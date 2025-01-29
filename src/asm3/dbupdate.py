@@ -5525,7 +5525,7 @@ def update_34102(dbo: Database) -> None:
         batch = []
         for r in dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE (MediaSize Is Null OR MediaSize = 0) AND (DBFSID Is Not Null AND DBFSID > 0)"):
             ext = r.medianame[r.medianame.rfind("."):]
-            fname = "/root/media/%s/%s%s" % (dbo.database, r.dbfsid, ext)
+            fname = "/root/media/%s/%s%s" % (dbo.name(), r.dbfsid, ext)
             try:
                 fsize = os.path.getsize(fname)
                 batch.append( (fsize, r.id) )

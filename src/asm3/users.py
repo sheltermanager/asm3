@@ -533,7 +533,7 @@ def get_active_users(dbo: Database) -> str:
     Returns a string containing the active/logged in users on the system
     USERNAME, SINCE, MESSAGES
     """
-    return asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.database))
+    return asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.name()))
 
 def is_user_valid(dbo: Database, user: str) -> bool:
     """
@@ -542,13 +542,13 @@ def is_user_valid(dbo: Database, user: str) -> bool:
     so it uses a 24 hour memory cache to keep the list rather than going to the database.
     The functions in here that add, change or delete users will invalidate that cache.
     """
-    users = asm3.cachemem.get("usernames_%s" % dbo.database)
+    users = asm3.cachemem.get("usernames_%s" % dbo.name())
     if users is None:
         ul = dbo.query("SELECT UserName FROM users WHERE (DisableLogin Is Null OR DisableLogin=0)")
         users = []
         for u in ul:
             users.append(u.USERNAME)
-        asm3.cachemem.put("usernames_%s" % dbo.database, users, 86400)
+        asm3.cachemem.put("usernames_%s" % dbo.name(), users, 86400)
     return user in users
 
 def logout(session: Session, remoteip: str = "", useragent: str = "") -> None:
@@ -569,7 +569,7 @@ def update_user_activity(dbo: Database, user: str, timenow: bool = True) -> None
     If timenow is False, removes this user from the active list.
     """
     if dbo is None or user is None: return
-    ac = asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.database))
+    ac = asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.name()))
     # Prune old activity and remove the current user
     nc = []
     for a in ac.split(","):
@@ -592,7 +592,7 @@ def update_user_activity(dbo: Database, user: str, timenow: bool = True) -> None
     # Add this user with the new time 
     if timenow: 
         nc.append("%s=%s" % (user, asm3.i18n.format_date(dbo.now(), "%Y-%m-%d %H:%M:%S")))
-    asm3.cachemem.put("activity_%s" % dbo.database, ",".join(nc), 3600 * 8)
+    asm3.cachemem.put("activity_%s" % dbo.name(), ",".join(nc), 3600 * 8)
 
 def get_personid(dbo: Database, user: str) -> int:
     """
@@ -643,7 +643,7 @@ def insert_user_from_form(dbo: Database, username: str, post: PostedData) -> int
                 dbo.insert("userrole", { "UserID": nuserid, "RoleID": rid }, generateID=False)
 
     # Invalidate the cache of usernames
-    asm3.cachemem.delete("usernames_%s" % dbo.database)
+    asm3.cachemem.delete("usernames_%s" % dbo.name())
 
     # If the option was set, email these new credentials to the user
     # Note: we do not audit the actual email content to prevent plaintext passwords appearing in the audit log
@@ -722,7 +722,7 @@ def update_user_from_form(dbo: Database, username: str, post: PostedData) -> Non
                 dbo.insert("userrole", { "UserID": userid, "RoleID": rid }, generateID=False)
 
     # Invalidate the cache of usernames
-    asm3.cachemem.delete("usernames_%s" % dbo.database)
+    asm3.cachemem.delete("usernames_%s" % dbo.name())
 
 def delete_user(dbo: Database, username: str, uid: int) -> None:
     """
@@ -731,7 +731,7 @@ def delete_user(dbo: Database, username: str, uid: int) -> None:
     dbo.delete("userrole", "UserID=%d" % uid)
     dbo.delete("users", uid, username)
     # Invalidate the cache of usernames
-    asm3.cachemem.delete("usernames_%s" % dbo.database)
+    asm3.cachemem.delete("usernames_%s" % dbo.name())
 
 def insert_role_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
@@ -883,7 +883,7 @@ def web_login(post: PostedData, session: Session, remoteip: str, useragent: str,
         dbo.installpath = path
         dbo.locale = asm3.configuration.locale(dbo)
         session.nologconnection = nologconnection
-        session.force2fa = not asm3.smcom.is_master_user(user.USERNAME, dbo.database) and asm3.configuration.force_2fa(dbo) and onetimepass == ""
+        session.force2fa = not asm3.smcom.is_master_user(user.USERNAME, dbo.name()) and asm3.configuration.force_2fa(dbo) and onetimepass == ""
         update_session(dbo, session, user.USERNAME)
     except:
         asm3.al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())

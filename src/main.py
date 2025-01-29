@@ -637,7 +637,7 @@ class image(ASMEndpoint):
             cache_indicator = ""
             if o.post["date"] != "" and o.post["mode"].endswith("thumb"):
                 cache_key = "%s:id=%s:seq=%s:date=%s" % ( o.post["mode"], o.post["id"], o.post.integer("seq"), o.post["date"])
-                cache_path = o.dbo.database
+                cache_path = o.dbo.name()
                 imagedata = asm3.cachedisk.get(cache_key, cache_path)
                 cache_indicator = asm3.utils.iif(imagedata is None, "", " from cache")
                 if imagedata is None:
@@ -668,7 +668,7 @@ class image(ASMEndpoint):
         else:
             # If a parameter of nopic=404 is passed, we return a 404 instead of redirecting to nopic
             if o.post["nopic"] == "404": self.notfound()
-            self.redirect("image?db=%s&mode=nopic" % o.dbo.database)
+            self.redirect("image?db=%s&mode=nopic" % o.dbo.name())
 
 class configjs(ASMEndpoint):
     url = "config.js"
@@ -723,7 +723,7 @@ class configjs(ASMEndpoint):
             "user": o.session.user,
             "useremail": emailaddress,
             "userreal": realname,
-            "useraccount": dbo.database,
+            "useraccount": dbo.name(),
             "useraccountalias": dbo.alias,
             "dateformat": get_display_date_format(o.locale),
             "currencysymbol": get_currency_symbol(o.locale),
@@ -745,7 +745,7 @@ class configjs(ASMEndpoint):
             "smcom": asm3.smcom.active(),
             "smcomexpiry": expirydate,
             "smcomexpirydisplay": expirydatedisplay,
-            "smcompaymentlink": SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.database),
+            "smcompaymentlink": SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.name()),
             "jqueryuicss": JQUERY_UI_CSS,
             "leafletcss": LEAFLET_CSS,
             "leafletjs": LEAFLET_JS,
@@ -1465,8 +1465,8 @@ class main(JSONEndpoint):
         if asm3.configuration.show_alerts_home_page(dbo):
             alerts = asm3.animal.get_alerts(dbo, o.lf, age=age)
             if len(alerts) > 0: 
-                alerts[0]["LOOKFOR"] = asm3.cachedisk.get("lookingfor_lastmatchcount", dbo.database)
-                alerts[0]["LOSTFOUND"] = asm3.cachedisk.get("lostfound_lastmatchcount", dbo.database)
+                alerts[0]["LOOKFOR"] = asm3.cachedisk.get("lookingfor_lastmatchcount", dbo.name())
+                alerts[0]["LOSTFOUND"] = asm3.cachedisk.get("lostfound_lastmatchcount", dbo.name())
         # Overview
         overview = {}
         if asm3.configuration.show_overview_home_page(dbo):
@@ -1635,7 +1635,7 @@ class login(ASMEndpoint):
         asm3.al.info("password reset request from %s for %s:%s" % (self.remote_ip(), o.post["database"], o.post["username"]), "main.login", dbo)
         l = dbo.locale
         # This cannot be used to reset the SM master password
-        if asm3.smcom.active() and o.post["username"].lower() == dbo.database:
+        if asm3.smcom.active() and o.post["username"].lower() == dbo.name():
             asm3.al.error("failed password reset: master user %s cannot be reset here" % o.post["username"], "main.login", dbo)
             return "MASTER"
         # Find the user id and email address for the username given
@@ -2220,7 +2220,7 @@ class animal_licence(JSONEndpoint):
             "name": "animal_licence",
             "rows": licences,
             "animal": a,
-            "baselink": f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token=",
+            "baselink": f"{SERVICE_URL}?account={dbo.name()}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
@@ -2740,7 +2740,7 @@ class change_password(JSONEndpoint):
     def controller(self, o):
         asm3.al.debug("%s change password screen" % o.user, "main.change_password", o.dbo)
         return {
-            "ismaster": asm3.smcom.is_master_user(o.user, o.dbo.database),
+            "ismaster": asm3.smcom.is_master_user(o.user, o.dbo.name()),
             "username": o.user
         }
 
@@ -2967,7 +2967,7 @@ class csvexport_animals(ASMEndpoint):
         if o.post["get"] != "":
             self.content_type("text/csv")
             self.content_disposition("attachment", "export.csv")
-            v = asm3.cachedisk.get(o.post["get"], o.dbo.database)
+            v = asm3.cachedisk.get(o.post["get"], o.dbo.name())
             if v is None: self.notfound()
             return v
         else:
@@ -3674,7 +3674,7 @@ class donation(JSONEndpoint):
         emailadd = post["to"]
         body = post["body"]
         params = { 
-            "account": dbo.database, 
+            "account": dbo.name(), 
             "method": "checkout",
             "processor": post["processor"],
             "payref": post["payref"],
@@ -4320,7 +4320,7 @@ class licence(JSONEndpoint):
         return {
             "name": "licence",
             "rows": licences,
-            "baselink": f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token=",
+            "baselink": f"{SERVICE_URL}?account={dbo.name()}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
@@ -4687,7 +4687,7 @@ class lostfound_match(ASMEndpoint):
         # If no parameters have been given, use the cached daily copy of the match report
         if lostanimalid == 0 and foundanimalid == 0 and animalid == 0:
             asm3.al.debug("no parameters given, using cached report", "main.lostfound_match", dbo)
-            return asm3.cachedisk.get("lostfound_report", dbo.database)
+            return asm3.cachedisk.get("lostfound_report", dbo.name())
         else:
             asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "main.lostfound_match", dbo)
             return asm3.lostfound.match_report(dbo, o.user, lostanimalid, foundanimalid, animalid)
@@ -6393,7 +6393,7 @@ class person_licence(JSONEndpoint):
             "name": "person_licence",
             "rows": licences,
             "person": p,
-            "baselink": f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token=",
+            "baselink": f"{SERVICE_URL}?account={dbo.name()}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
@@ -6429,7 +6429,7 @@ class person_lookingfor(ASMEndpoint):
     def content(self, o):
         self.content_type("text/html")
         if o.post.integer("personid") == 0:
-            return asm3.cachedisk.get("lookingfor_report", o.dbo.database)
+            return asm3.cachedisk.get("lookingfor_report", o.dbo.name())
         else:
             return asm3.person.lookingfor_report(o.dbo, o.user, o.post.integer("personid"))
 
@@ -7145,7 +7145,7 @@ class sql(JSONEndpoint):
         q = q.replace("$CURRENT_DATE_FDY$", dbo.sql_date(asm3.i18n.first_of_year(dbo.now()), includeTime=False, wrapParens=False))
         q = q.replace("$CURRENT_DATE_LDY$", dbo.sql_date(asm3.i18n.last_of_year(dbo.now()), includeTime=False, wrapParens=False))
         q = q.replace("$USER$", user)
-        q = q.replace("$DATABASENAME$", dbo.database)
+        q = q.replace("$DATABASENAME$", dbo.name())
         return q
 
 class sql_dump(ASMEndpoint):

@@ -203,7 +203,7 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
     head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
     foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
     # Substitute the special ADOPTABLEJSURL token if present so animalviewadoptable can be tested/previewed
-    body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.database))
+    body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name()))
     # Run through each animal and generate body sections
     bodies = []
     for a in animals:
@@ -214,7 +214,7 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
         if overweeks > 0 and a.DATEOFBIRTH >= dbo.today(offset=overweeks * -7): continue
         # Translate website media name to the service call for images
         if asm3.smcom.active():
-            a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, a.ID)
+            a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.name(), a.ID)
         else:
             a.WEBSITEMEDIANAME = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, a.ID)
         # Generate tags for this row
@@ -291,7 +291,7 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
         head, body, foot = asm3.template.get_html_template(dbo, ustyle)
         if head == "": raise asm3.utils.ASMPermissionError("animal is not adoptable")
     if asm3.smcom.active():
-        a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, animalid)
+        a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.name(), animalid)
     else:
         a.WEBSITEMEDIANAME = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, animalid)
     s = head + body + foot
@@ -315,7 +315,7 @@ def get_animal_view_adoptable_html(dbo: Database) -> str:
     head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptable")
     # Template doesn't exist, read it from the file system instead
     if head == "": head, body, foot = asm3.template.get_html_template_from_file(dbo, "animalviewadoptable")
-    body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.database))
+    body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name()))
     return "%s\n%s\n%s" % (head, body, foot)
 
 def get_animal_view_adoptable_js(dbo: Database) -> str:
@@ -328,7 +328,7 @@ def get_animal_view_adoptable_js(dbo: Database) -> str:
         if r.ANIMALCOMMENTS is not None: r.ANIMALCOMMENTS = r.ANIMALCOMMENTS.replace("\n", "<br>")
         if r.WEBSITEMEDIANOTES is not None: r.WEBSITEMEDIANOTES = r.WEBSITEMEDIANOTES.replace("\n", "<br>")
     # inject adoptable animals, account and base url
-    js = js.replace("{TOKEN_ACCOUNT}", dbo.database)
+    js = js.replace("{TOKEN_ACCOUNT}", dbo.name())
     js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
     js = js.replace("\"{TOKEN_ADOPTABLES}\"", asm3.utils.json(rows))
     return js
@@ -631,7 +631,7 @@ class HTMLPublisher(FTPPublisher):
             thisPage += "<h2>Online Forms</h2>"
             account = ""
             if asm3.smcom.active():
-                account = "account=%s&" % self.dbo.database 
+                account = "account=%s&" % self.dbo.name() 
             for f in forms:
                 thisPage += "<p><a target='_blank' href='%s?%smethod=online_form_html&formid=%d'>%s</a></p>" % (SERVICE_URL, account, f["ID"], f["NAME"])
             thisPage += "</body></html>"
