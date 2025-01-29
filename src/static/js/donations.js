@@ -358,7 +358,7 @@ $(function() {
                 s += '<li id="button-stripe" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("stripe") + ' ' + _("Stripe") + '</a></li>';
             }
-            if (config.str("SquareEmail")) {
+            if (config.str("SquareAccessToken") && config.str("SquareLocationID")) {
                 s += '<li id="button-square" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("square") + ' ' + _("Square") + '</a></li>';
             }
