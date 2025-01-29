@@ -1,0 +1,29 @@
+Receipt Email
+###
+Financial
+34701/Any rev01
+###
+Receipt mail merge for payments of a selected type made between two dates
+###
+en
+###
+SELECT DISTINCT owner.OwnerName, owner.OwnerForeNames, owner.OwnerSurname, owner.OwnerAddress, 
+owner.OwnerTown, owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, donationtype.DonationName AS DonationType, 
+ROUND(ownerdonation.donation / 100.0,2) AS Amount, ownerdonation.Date AS PaymentDate, ownerdonation.ReceiptNumber AS Receipt,
+$SQL DATETOCHAR ownerdonation.Date,MM/DD/YYYY$ AS PaymentDate,
+$SQL DATETOCHAR CURRENT_DATE,MM/DD/YYYY$ AS Date,
+(SELECT ItemValue FROM configuration WHERE ItemName LIKE 'Organisation') AS Organisation,
+(SELECT ItemValue FROM configuration WHERE ItemName LIKE 'OrganisationTown') AS OrganisationTown,
+(SELECT ItemValue FROM configuration WHERE ItemName LIKE 'OrganisationCounty') AS OrganisationState,
+(SELECT ItemValue FROM configuration WHERE ItemName LIKE 'OrganisationPostcode') AS OrganisationPostCode,
+(SELECT ItemValue FROM configuration WHERE ItemName LIKE 'OrganisationTelephone') AS OrganisationTelephone
+FROM owner
+INNER JOIN ownerdonation ON owner.ID = ownerdonation.ownerID
+LEFT OUTER JOIN animal ON ownerdonation.animalID = animal.ID
+INNER JOIN donationtype ON ownerdonation.DonationTypeID = donationtype.ID  
+WHERE ownerdonation.donationtypeid = $ASK PAYMENTTYPE$ 
+AND ownerdonation.date >= '$ASK DATE Payments received between$'
+AND ownerdonation.date <= '$ASK DATE and$'  
+ORDER BY ownername
+###
+MAIL
