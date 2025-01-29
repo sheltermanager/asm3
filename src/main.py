@@ -5866,6 +5866,7 @@ class options(JSONEndpoint):
         dbo = o.dbo
         pp_paypal = "%s/pp_paypal" % BASE_URL
         pp_stripe = "%s/pp_stripe" % BASE_URL
+        pp_square = "%s/pp_square" % BASE_URL
         if asm3.smcom.active():
             pp_paypal = asm3.smcom.get_payments_url()
             pp_stripe = asm3.smcom.get_payments_url()
@@ -5899,6 +5900,7 @@ class options(JSONEndpoint):
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
+            "pp_square": pp_square,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
@@ -6032,6 +6034,52 @@ class pp_stripe(ASMEndpoint):
             dbo.timezone = asm3.configuration.timezone(dbo)
             dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
             p = asm3.paymentprocessor.stripeh.Stripe(dbo)
+            p.receive(o.data)
+        except asm3.paymentprocessor.base.ProcessorError:
+            # ProcessorError subclasses are thrown when there is a problem with the 
+            # data Stripe have sent, but we do not want them to send it again.
+            # By catching these and returning a 200 empty body, they will not
+            # send it again.
+            return
+
+class pp_square(ASMEndpoint):
+    """
+    Square webhook endpoint. Like PayPal, a non-200 return code
+    will force a retry.
+    The payload is utf-8 encoded JSON?
+    """
+    url = "pp_square"
+    check_logged_in = False
+    use_web_input = False
+    data_encoding = "utf-8"
+
+    def post_all(self, o):
+        asm3.al.debug(o.data, "main.pp_square")
+        try:
+            j = asm3.utils.json_parse(o.data)
+
+            #if "client_reference_id" not in j["data"]["object"]:
+            #    asm3.al.error("client_reference_id missing, this is not an ASM requested payment", "main.pp_stripe")
+            #    return # OK 200, this payment notification is not for us
+            client_reference_id = j["data"]["object"]["payment"]["note"]
+            dbname = client_reference_id[-2:client_reference_id.find("-")]
+            dbo = asm3.db.get_database(dbname)
+            if dbo.database in asm3.db.ERROR_VALUES:
+                asm3.al.error("invalid database '%s'" % dbname, "main.pp_square")
+                return # OK 200, we can't do anything with this
+
+            if j["data"]["object"]["payment"]["status"] != "COMPLETED":
+                asm3.al.error("payment incomplete", "main.pp_square")
+                return
+        except Exception as e:
+            asm3.al.error("failed extracting status from square payment: %s" % e, "main.pp_square")
+            return
+
+        try:
+            dbo.locale = asm3.configuration.locale(dbo)
+            dbo.timezone = asm3.configuration.timezone(dbo)
+            dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
+            p = asm3.paymentprocessor.square.Square(dbo)
             p.receive(o.data)
         except asm3.paymentprocessor.base.ProcessorError:
             # ProcessorError subclasses are thrown when there is a problem with the 

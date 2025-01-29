@@ -1520,6 +1520,21 @@ $(function() {
                 '</p>',
                 '</div>',
 
+                '<div id="square-options">',
+                '<hr/>',
+                '<p class="centered"><img height="25px" src="static/images/ui/logo_square_100.png" /></p>',
+                '<table>',
+                '<tr><td><label for="squareaccesstoken">' + _("Square Access Token") + '</label></td>',
+                '<td><input data="SquareAccessToken" id="squareaccesstoken" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+                '<tr><td><label for="squarelocationid">' + _("Square Location ID") + '</label></td>',
+                '<td><input data="SquareLocationID" id="squarelocationid" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '</table>',
+                '<p class="centered">',
+                    _("In your Square account, enable Instant Payment Notifications with a URL of {0}")
+                    .replace("{0}", "<br/><b>" + controller.pp_square + "</b>"),
+                '</p>',
+                '</div>',
+
                 '<div id="cardcom-options" class="israel">',
                 '<hr/>',
                 '<p class="centered strong">' + _("Cardcom Payment Gateway")  + '</p>',

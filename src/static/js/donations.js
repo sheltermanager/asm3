@@ -358,6 +358,10 @@ $(function() {
                 s += '<li id="button-stripe" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("stripe") + ' ' + _("Stripe") + '</a></li>';
             }
+            if (config.str("SquareEmail")) {
+                s += '<li id="button-square" class="processorbutton asm-menu-item"><a '
+                        + ' target="_blank" href="#">' + html.icon("square") + ' ' + _("Square") + '</a></li>';
+            }
             if (config.str("CardcomUserName")) {
                 s += '<li id="button-cardcom" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom") + '</a></li>';
@@ -530,7 +534,11 @@ $(function() {
                 payment_processor_email_dialog("stripe");
                 return false;
             });
-
+            $("#button-square").click(function() {
+                payment_processor_email_dialog("square");
+                return false;
+            });
+            
             $("#button-cardcom").click(function() {
                 payment_processor_popup("cardcom");
                 return false;

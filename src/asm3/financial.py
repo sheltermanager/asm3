@@ -8,6 +8,7 @@ import asm3.i18n
 import asm3.movement
 import asm3.paymentprocessor.paypal
 import asm3.paymentprocessor.stripeh
+import asm3.paymentprocessor.square
 import asm3.paymentprocessor.cardcom
 import asm3.utils
 
@@ -1602,6 +1603,8 @@ def get_payment_processor(dbo: Database, name: str) -> PaymentProcessor:
         return asm3.paymentprocessor.paypal.PayPal(dbo)
     elif name == "stripe":
         return asm3.paymentprocessor.stripeh.Stripe(dbo)
+    elif name == "square":
+        return asm3.paymentprocessor.square.Square(dbo)
     elif name == "cardcom":
         return asm3.paymentprocessor.cardcom.Cardcom(dbo)
     else:
