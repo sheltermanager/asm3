@@ -3,9 +3,8 @@ import asm3.configuration
 import asm3.financial
 import asm3.utils
 
-from .base import PaymentProcessor, ProcessorError, PayRefError, AlreadyReceivedError
+from .base import PaymentProcessor, ProcessorError, PayRefError, IncompleteStatusError
 
-from asm3.sitedefs import BASE_URL
 from asm3.typehints import Database
 
 class IncorrectEventError(ProcessorError):
@@ -26,13 +25,13 @@ class Square(PaymentProcessor):
         """
         totalamount = 0
         totalvat = 0
-        vatrate = 0
+        #vatrate = 0
         paymenttypes = []
 
         for r in self.getPayments(payref):
             totalamount += r.DONATION
             if r.VATAMOUNT > 0: totalvat += r.VATAMOUNT
-            if r.VATRATE > 0: vatrate = r.VATRATE
+            #if r.VATRATE > 0: vatrate = r.VATRATE
             paymenttypes.append(r.DONATIONNAME)
 
         zp = self._checkForZeroPaymentPage(payref, totalamount)
@@ -56,20 +55,14 @@ class Square(PaymentProcessor):
             access_token = asm3.configuration.square_access_token(self.dbo)
         ),
         environment=squareenvironment)
-
-        #locationid = asm3.configuration.square_location_id(self.dbo)
         
         result = client.checkout.create_payment_link(
             body = {
                 "idempotency_key": payref,
-                #"amount_money": {
-                #    "amount": "%0.2f" % ((totalamount - totalvat) / 100.0),
-                #    "currency": currency
-                #},
                 "quick_pay": {
                     "name": item_description,
                     "price_money": {
-                        "amount": int(totalamount - totalvat),
+                        "amount": totalamount - totalvat,
                         "currency": currency
                     },
                     "location_id": asm3.configuration.square_location_id(self.dbo)
@@ -119,12 +112,12 @@ class Square(PaymentProcessor):
             asm3.al.error("Square payment status is not 'Completed' ('%s')" % status, "square.receive", self.dbo)
             raise IncompleteStatusError("payment status is not 'Completed'")
 
-        # Check the payref is valid  ## Need to upcomment when Bob's fix for dbpaths that contain hyphens has been merged - Adam.
-        #if not self.validatePaymentReference(payref):
-        #    asm3.al.error("payref '%s' failed validation" % payref, "paypal.receive", self.dbo)
-        #    raise PayRefError("payref '%s' is invalid" % payref)
+        # Check the payref is valid  
+        if not self.validatePaymentReference(payref):
+            asm3.al.error("payref '%s' failed validation" % payref, "paypal.receive", self.dbo)
+            raise PayRefError("payref '%s' is invalid" % payref)
 
-        # Do nothing if we already received payment for this payref removed to allow follow on fees
+        # Do nothing if we already received payment for this payref - this was removed to allow follow on fees
         #if self.isPaymentReceived(payref): 
         #    asm3.al.error("cannot receive payref '%s' again, already received.", "paypal.receive", self.dbo)
         #    raise AlreadyReceivedError("payref '%s' has already been processed." % payref)
