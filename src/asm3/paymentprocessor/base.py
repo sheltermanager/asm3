@@ -82,7 +82,7 @@ class PaymentProcessor(object):
 
     def getReceiptNumber(self, payref: str) -> str:
         """ Extracts the receipt number from a payref """
-        return payref.split("-")[1]
+        return payref.split("-")[-1] #Changed to cope with payrefs that contain a path that includes hyphens when using a localdb
 
     def isPaymentReceived(self, payref: str) -> bool:
         """ Returns False if the payment(s) comprising payref have not been received """

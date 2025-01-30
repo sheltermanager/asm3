@@ -1650,6 +1650,12 @@ def smtp_use_tls(dbo: Database) -> bool:
 def softrelease_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "SoftReleaseOnShelter", DEFAULTS["SoftReleaseOnShelter"] == "Yes")
 
+def square_access_token(dbo: Database) -> str:
+    return cstring(dbo, "SquareAccessToken")
+
+def square_location_id(dbo: Database) -> str:
+    return cstring(dbo, "SquareLocationID")
+
 def stripe_key(dbo: Database) -> str:
     return cstring(dbo, "StripeKey")
 
