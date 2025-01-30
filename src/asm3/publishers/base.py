@@ -594,10 +594,17 @@ def is_animal_adoptable(dbo: Database, a: ResultRow) -> bool:
 def strip_sensitive_data(rows: Results) -> Results:
     """ Removes any personal or sensitive data from animal and movement rows 
     """
-    prefixes = ( "OWNER", "ADOPTIONCOORDINATOR", "CURRENTOWNER", "ORIGINALOWNER", "BROUGHTINBY", "RESERVEDOWNER", 
+    prefixes = ( 
+        "OWNER", "FUTUREOWNER",
+        "ADOPTIONCOORDINATOR", "CURRENTOWNER", "ORIGINALOWNER", "BROUGHTINBY", "RESERVEDOWNER", 
         "CURRENTVET", "OWNERSVET", "NEUTERINGVET",
         "EMAILADDRESS", "HOMETELEPHONE", "WORKTELEPHONE", "MOBILETELEPHONE", 
-        "POPUPWARNING", "HIDDENANIMALDETAILS", "REASONFORENTRY", "REASONNO", "PICKUPADDRESS" )
+        "POPUPWARNING", "HIDDENANIMALDETAILS", "REASONFORENTRY", "REASONNO", 
+        "PICKUPADDRESS", "PICKUPLOCATION", "JURISDICTION", 
+        "DAILYBOARDINGCOST", "OUTCOMEQUALIFIER", 
+        "LASTCHANGEDBY", "CREATEDBY", 
+        "ACTIVEMOVEMENTCREATEDBY", "ACTIVEMOVEMENTLASTCHANGEDBY", "ACTIVEMOVEMENTCOMMENTS", 
+        "ANIMALCONTROL" )
     for r in rows:
         for k in r.keys():
             for x in prefixes:
