@@ -36,6 +36,9 @@ class TestPerson(unittest.TestCase):
         self.assertNotEqual(0, len(asm3.person.get_person_similar(base.get_dbo(), "", "", "Testing", "Test", "123 street")))
         self.assertEqual(0, len(asm3.person.get_person_similar(base.get_dbo(), "test@test.com", "012345678", "Testing", "Test", "123 street", checkcouple=True, checkmobilehome=True, checkforenames=False, siteid=1)))
 
+    def test_get_person_id_for_code(self):
+        self.assertEqual(0, asm3.person.get_person_id_for_code(base.get_dbo(), "XX"))
+
     def test_get_person_name(self):
         self.assertNotEqual("", asm3.person.get_person_name(base.get_dbo(), self.nid))
 
@@ -111,6 +114,12 @@ class TestPerson(unittest.TestCase):
 
     def test_update_adopter_flag(self):
         asm3.person.update_adopter_flag(base.get_dbo(), "test", self.nid)
+
+    def test_update_add_flag(self):
+        asm3.person.update_add_flag(base.get_dbo(), "test", self.nid, "excludefrombulkemail")
+
+    def test_update_remove_flag(self):
+        asm3.person.update_remove_flag(base.get_dbo(), "test", self.nid, "excludefrombulkemail")
 
     def test_merge_person_details(self):
         asm3.person.merge_person_details(base.get_dbo(), "test", self.nid, {})

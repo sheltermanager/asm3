@@ -72,7 +72,7 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     Returns a complete person row by id, or None if not found
     (int) personid: The person to get
     """
-    p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = %d" % personid) )
+    p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = ?", [personid]) )
     if p is None: return None
     p = embellish_latest_movement(dbo, p)
     roles = dbo.query("SELECT ownerrole.*, role.RoleName FROM ownerrole " \
@@ -205,6 +205,14 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
             cper = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname2) LIKE ? AND " \
              "LOWER(o.OwnerForeNames2) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames, address))
     return eq + mq + ceq + cmq + per + cper
+
+def get_person_id_for_code(dbo: Database, personcode: str) -> ResultRow:
+    """
+    Returns the person id for the code given
+    (str) personcode: The person to find
+    """
+    pid = dbo.query_int(dbo.query("SELECT ID FROM owner WHERE OwnerCode = ?", [personcode]))
+    return pid
 
 def get_person_name(dbo: Database, personid: int) -> str:
     """
@@ -1252,6 +1260,15 @@ def update_person_roles(dbo: Database, pid: int, viewroles: List[int], editroles
                 "CanView":          0,
                 "CanEdit":          1
             }, generateID=False)
+
+def update_add_flag(dbo: Database, username: str, personid: int, flag: str) -> None:
+    """
+    Adds a flag to personid. 
+    """
+    flags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
+    if flags.find("%s|" % flag) != -1:
+        flags += "%s|" % flag
+        update_flags(dbo, username, personid, flags.split("|"))
 
 def update_remove_flag(dbo: Database, username: str, personid: int, flag: str) -> None:
     """

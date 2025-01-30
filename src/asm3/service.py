@@ -22,6 +22,7 @@ import asm3.media
 import asm3.lostfound
 import asm3.movement
 import asm3.onlineform
+import asm3.person
 import asm3.publishers.base
 import asm3.publishers.html
 import asm3.reports
@@ -251,7 +252,7 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
     # Record that the checkout was accessed in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "AC02:%s:%s(%s)-->%s(%s)" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"])
-    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
+    asm3.log.add_log(dbo, "service", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
 def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
@@ -321,7 +322,7 @@ def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     # Record that the checkout was completed in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "AC03:%s:%s(%s)-->%s(%s):volamt=%s" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"], donationamt)
-    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
+    asm3.log.add_log(dbo, "service", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     # Construct the payment checkout URL
     title = _("{0}: Adoption fee", l)
     if co["paymentdonid"] != "0": title = _("{0}: Adoption fee and donation", l)
@@ -372,7 +373,7 @@ def checkout_licence_page(dbo: Database, token: str) -> str:
     # Record that the checkout was accessed in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "LC01:%s" % co["licencenumber"]
-    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
+    asm3.log.add_log(dbo, "service", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("License Checkout", l), co)
 
 def checkout_licence_post(dbo: Database, post: PostedData) -> str:
@@ -393,7 +394,7 @@ def checkout_licence_post(dbo: Database, post: PostedData) -> str:
         co["payref"] = "%s-%s" % (co["ownercode"], co["receiptnumber"])
         # Link this payment reference to the licence so that when payment is received,
         # we can update the licence and create the next one in the sequence
-        dbo.update("ownerlicence", co["row"].ID, { "PaymentReference": co["payref"] }, "system")
+        dbo.update("ownerlicence", co["row"].ID, { "PaymentReference": co["payref"] }, "service")
         # Renewal Fee
         co["paymentfeeid"] = asm3.financial.insert_donation_from_form(dbo, "checkout", asm3.utils.PostedData({
             "person":       str(co["ownerid"]),
@@ -411,7 +412,7 @@ def checkout_licence_post(dbo: Database, post: PostedData) -> str:
     # Record that the checkout was completed in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "LC02:%s:%s" % ( co["licencenumber"], co["newfee"] )
-    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
+    asm3.log.add_log(dbo, "service", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
     title = _("{0}: License renewal fee", l)
     params = { 
         "account": dbo.name(), 
@@ -463,24 +464,6 @@ def strip_personal_data(rows: Results) -> Results:
                     else:
                         r[k] = ""
     return rows
-
-def unsubscribe(dbo: Database, token: str) -> str:
-    """
-    Unsubscribes person from email
-    """
-
-    try:
-        personcode = asm3.utils.base64decode_str(token)
-        dbo.update("owner", "ownercode='%s'"%personcode, {
-            "ExcludeFromBulkEmail": 0,
-        })
-        asm3.al.debug("Successfully updated ExcludeFromBulkEmail for personcode '%s'" % personcode, "service.unsubscribe", dbo)
-    except Exception as err:
-        asm3.al.error("Failed to update owner - %s" % str(err), "service.unsubscribe", dbo)
-        raise
-    
-    asm3.al.debug("Completed unsubscribe for personcode '%s'" % personcode, "service.unsubscribe", dbo)
-    return asm3.html.js_page([], "Successfully Unsubscribed")
 
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, dbo: Database = None) -> ServiceResponse:
     """ Handles the various service method types.
@@ -1041,11 +1024,14 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             return ("text/plain", 0, 0, "OK")
 
     elif method == "unsubscribe":
-        if post["token"] == "":
-            raise asm3.utils.ASMError("method unsubscribe requires a personcode")
-        unsubscribe(dbo, post["token"])
-        redirect = BASE_URL + "/static/pages/successful_unsubscribe.html"
-        return ("redirect", 0, 0, redirect)
+        if post["token"] == "": 
+            raise asm3.utils.ASMError("method unsubscribe requires a token")
+        token = asm3.utils.base64decode_str(post["token"])
+        pid = asm3.person.get_person_id_for_code(dbo, token)
+        if pid  == 0: 
+            raise asm3.utils.ASMError("token is not valid")
+        asm3.person.update_add_flag(dbo, "service", pid, "excludefrombulkemail")
+        return ("redirect", 0, 0, f"{BASE_URL}/static/pages/unsubscribe_success.html")
 
     else:
         asm3.al.error("invalid method '%s'" % method, "service.handler", dbo)
