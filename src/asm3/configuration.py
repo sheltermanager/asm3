@@ -1653,7 +1653,7 @@ def softrelease_on_shelter(dbo: Database) -> bool:
 def square_access_token(dbo: Database) -> str:
     return cstring(dbo, "SquareAccessToken")
 
-def square_location_ID(dbo: Database) -> str:
+def square_location_id(dbo: Database) -> str:
     return cstring(dbo, "SquareLocationID")
 
 def stripe_key(dbo: Database) -> str:

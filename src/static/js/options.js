@@ -1530,7 +1530,7 @@ $(function() {
                 '<td><input data="SquareLocationID" id="squarelocationid" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
                 '</table>',
                 '<p class="centered">',
-                    _("In your Square account, enable Instant Payment Notifications with a URL of {0}")
+                    _("In your Square account, enable a webhook to send 'payment.updated' events to {0}")
                     .replace("{0}", "<br/><b>" + controller.pp_square + "</b>"),
                 '</p>',
                 '</div>',

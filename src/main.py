@@ -6057,12 +6057,15 @@ class pp_square(ASMEndpoint):
         asm3.al.debug(o.data, "main.pp_square")
         try:
             j = asm3.utils.json_parse(o.data)
-
-            #if "client_reference_id" not in j["data"]["object"]:
-            #    asm3.al.error("client_reference_id missing, this is not an ASM requested payment", "main.pp_stripe")
-            #    return # OK 200, this payment notification is not for us
-            client_reference_id = j["data"]["object"]["payment"]["note"]
-            dbname = client_reference_id[-2:client_reference_id.find("-")]
+            if "note" not in j["data"]["object"]["payment"]:
+                asm3.al.error("'note' parameter missing, this is not an ASM requested payment", "main.pp_square")
+                return # OK 200, this payment notification is not for us
+            note = j["data"]["object"]["payment"]["note"]
+            if note == "" or len(note.split("-")) < 2:
+                asm3.al.error("'note' parameter invlaid, this is not an ASM requested payment", "main.pp_square")
+                return # OK 200, this payment notification is not for us
+            
+            dbname = note[-2:note.find("-")]
             dbo = asm3.db.get_database(dbname)
             if dbo.database in asm3.db.ERROR_VALUES:
                 asm3.al.error("invalid database '%s'" % dbname, "main.pp_square")

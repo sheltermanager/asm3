@@ -6,6 +6,7 @@ import base
 import asm3.financial
 import asm3.paymentprocessor.base
 import asm3.paymentprocessor.paypal
+import asm3.paymentprocessor.square
 import asm3.utils
 
 class TestPaypalPaymentProcessor(unittest.TestCase):
@@ -186,7 +187,7 @@ class TestSquarePaymentProcessor(unittest.TestCase):
         asm3.financial.delete_donation(base.get_dbo(), "test", self.recid)
         asm3.person.delete_person(base.get_dbo(), "test", self.personid)
     
-    def test_square_ipn_success(self):
+    def test_square(self):
         ownercode = base.get_dbo().query_string("SELECT ownercode FROM owner WHERE ID=?", [self.personid])
         recnum = base.get_dbo().query_string("SELECT receiptnumber FROM ownerdonation WHERE ID=?", [self.dueid])
         payref = ownercode + "-" + recnum
