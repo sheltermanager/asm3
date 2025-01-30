@@ -464,6 +464,24 @@ def strip_personal_data(rows: Results) -> Results:
                         r[k] = ""
     return rows
 
+def unsubscribe(dbo: Database, token: str) -> str:
+    """
+    Unsubscribes person from email
+    """
+
+    try:
+        personcode = asm3.utils.base64decode_str(token)
+        dbo.update("owner", "ownercode='%s'"%personcode, {
+            "ExcludeFromBulkEmail": 0,
+        })
+        asm3.al.debug("Successfully updated ExcludeFromBulkEmail for personcode '%s'" % personcode, "service.unsubscribe", dbo)
+    except Exception as err:
+        asm3.al.error("Failed to update owner - %s" % str(err), "service.unsubscribe", dbo)
+        raise
+    
+    asm3.al.debug("Completed unsubscribe for personcode '%s'" % personcode, "service.unsubscribe", dbo)
+    return asm3.html.js_page([], "Successfully Unsubscribed")
+
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, dbo: Database = None) -> ServiceResponse:
     """ Handles the various service method types.
     post:        The GET/POST parameters
@@ -1021,6 +1039,13 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
                 fromaddr = asm3.configuration.email(dbo)
                 asm3.utils.send_email(dbo, fromaddr, post["email"], "", "", _("Signed Document", l), m.MEDIANOTES, "plain", attachments)
             return ("text/plain", 0, 0, "OK")
+
+    elif method == "unsubscribe":
+        if post["token"] == "":
+            raise asm3.utils.ASMError("method unsubscribe requires a personcode")
+        unsubscribe(dbo, post["token"])
+        redirect = BASE_URL + "/static/pages/successful_unsubscribe.html"
+        return ("redirect", 0, 0, redirect)
 
     else:
         asm3.al.error("invalid method '%s'" % method, "service.handler", dbo)
