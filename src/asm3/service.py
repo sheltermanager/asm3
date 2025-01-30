@@ -451,20 +451,8 @@ def sign_document_page(dbo: Database, mid: int, email: str) -> str:
     return asm3.html.js_page(scripts, _("Signing Pad", l), controller)
 
 def strip_personal_data(rows: Results) -> Results:
-    """ Removes any personal or sensitive data from animal and movement rows 
-    """
-    prefixes = ( "OWNER", "ADOPTIONCOORDINATOR", "CURRENTOWNER", "ORIGINALOWNER", "BROUGHTINBY", "RESERVEDOWNER", 
-        "EMAILADDRESS", "HOMETELEPHONE", "WORKTELEPHONE", "MOBILETELEPHONE", 
-        "POPUPWARNING", "HIDDENANIMALDETAILS", "REASONFORENTRY", "REASONNO", "PICKUPADDRESS" )
-    for r in rows:
-        for k in r.keys():
-            for x in prefixes:
-                if k.startswith(x):
-                    if k.endswith("ID"):
-                        r[k] = 0
-                    else:
-                        r[k] = ""
-    return rows
+    """ Shorthand to save typing the module name repeatedly """
+    return asm3.publishers.base.strip_sensitive_data(rows)
 
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, dbo: Database = None) -> ServiceResponse:
     """ Handles the various service method types.

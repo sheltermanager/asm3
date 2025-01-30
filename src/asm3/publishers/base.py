@@ -234,14 +234,7 @@ def get_animal_data(dbo: Database, pc: PublishCriteria = None, animalid: int = 0
 
     # Strip any personal data if requested
     if strip_personal_data:
-        personal = ["ADOPTIONCOORDINATOR", "ORIGINALOWNER", "BROUGHTINBY", 
-            "CURRENTOWNER", "OWNERNAME", "RESERVEDOWNER", 
-            "CURRENTVET", "NEUTERINGVET", "OWNERSVET"]
-        for r in rows:
-            for k in r.keys():
-                for p in personal:
-                    if k.startswith(p):
-                        r[k] = ""
+        rows = strip_sensitive_data(rows)
 
     # Recalculate age groups
     if recalc_age_groups:
@@ -597,6 +590,23 @@ def is_animal_adoptable(dbo: Database, a: ResultRow) -> bool:
     if p.excludeReserves > 0 and a.ACTIVERESERVATIONS > p.excludeReserves: return False
     if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE is None and str(a.SHELTERLOCATION) not in p.internalLocations: return False
     return True
+
+def strip_sensitive_data(rows: Results) -> Results:
+    """ Removes any personal or sensitive data from animal and movement rows 
+    """
+    prefixes = ( "OWNER", "ADOPTIONCOORDINATOR", "CURRENTOWNER", "ORIGINALOWNER", "BROUGHTINBY", "RESERVEDOWNER", 
+        "CURRENTVET", "OWNERSVET", "NEUTERINGVET",
+        "EMAILADDRESS", "HOMETELEPHONE", "WORKTELEPHONE", "MOBILETELEPHONE", 
+        "POPUPWARNING", "HIDDENANIMALDETAILS", "REASONFORENTRY", "REASONNO", "PICKUPADDRESS" )
+    for r in rows:
+        for k in r.keys():
+            for x in prefixes:
+                if k.startswith(x):
+                    if k.endswith("ID"):
+                        r[k] = 0
+                    else:
+                        r[k] = ""
+    return rows
 
 class AbstractPublisher(threading.Thread):
     """
