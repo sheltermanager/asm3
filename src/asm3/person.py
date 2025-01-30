@@ -211,7 +211,7 @@ def get_person_id_for_code(dbo: Database, personcode: str) -> ResultRow:
     Returns the person id for the code given
     (str) personcode: The person to find
     """
-    pid = dbo.query_int(dbo.query("SELECT ID FROM owner WHERE OwnerCode = ?", [personcode]))
+    pid = dbo.query_int("SELECT ID FROM owner WHERE OwnerCode = ?", [personcode])
     return pid
 
 def get_person_name(dbo: Database, personid: int) -> str:
