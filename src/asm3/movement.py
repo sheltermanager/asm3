@@ -364,26 +364,37 @@ def validate_movement_form_data(dbo: Database, username: str, post: PostedData) 
         asm3.al.debug("movement return date is before the movement date.", "movement.validate_movement_form_data", dbo)
         raise asm3.utils.ASMValidationError(asm3.i18n._("Return date cannot be before the movement date.", l))
     # If the option to return fosters on adoption is set, return any outstanding fosters for the animal
-    if movementtype == ADOPTION and asm3.configuration.return_fosters_on_adoption(dbo):
-        fosterid = dbo.query_int("SELECT ID FROM adoption WHERE ReturnDate Is Null AND MovementType=2 AND AnimalID=? AND ID<>?", (animalid, movementid))
-        if fosterid > 0:
-            dbo.update("adoption", fosterid, { "ReturnDate": movementdate }, username)
-            asm3.al.debug(f"movement is an adoption, returning outstanding foster (id={fosterid}).", "movement.validate_movement_form_data", dbo)
+    if movementtype == ADOPTION and returndate is None and asm3.configuration.return_fosters_on_adoption(dbo):
+        fosterrow = dbo.first_row(dbo.query("SELECT ID, AnimalID, OwnerID FROM adoption WHERE ReturnDate Is Null AND " \
+            "MovementType=2 AND AnimalID=? AND ID<>?", (animalid, movementid)))
+        if fosterrow is not None:
+            dbo.update("adoption", fosterrow.ID, { 
+                "AnimalID": fosterrow.ANIMALID,
+                "OwnerID": fosterrow.OWNERID, 
+                "ReturnDate": movementdate }, username)
+            asm3.al.debug(f"movement is an adoption, returning outstanding foster (id={fosterrow.ID}).", "movement.validate_movement_form_data", dbo)
     # If the option to return fosters on transfer is set, return any outstanding fosters for the animal
-    if movementtype == TRANSFER and asm3.configuration.return_fosters_on_transfer(dbo):
-        fosterid = dbo.query_int("SELECT ID FROM adoption WHERE ReturnDate Is Null AND MovementType=2 AND AnimalID=? AND ID<>?", (animalid, movementid))
-        if fosterid > 0:
-            dbo.update("adoption", fosterid, { "ReturnDate": movementdate }, username)
-            asm3.al.debug(f"movement is a transfer, returning outstanding foster (id={fosterid}).", "movement.validate_movement_form_data", dbo)
+    if movementtype == TRANSFER and returndate is None and asm3.configuration.return_fosters_on_transfer(dbo):
+        fosterrow = dbo.first_row(dbo.query("SELECT ID, AnimalID, OwnerID FROM adoption WHERE ReturnDate Is Null AND " \
+            "MovementType=2 AND AnimalID=? AND ID<>?", (animalid, movementid)))
+        if fosterrow is not None:
+            dbo.update("adoption", fosterrow.ID, { 
+                "AnimalID": fosterrow.ANIMALID,
+                "OwnerID": fosterrow.OWNERID, 
+                "ReturnDate": movementdate }, username)
+            asm3.al.debug(f"movement is a transfer, returning outstanding foster (id={fosterrow.ID}).", "movement.validate_movement_form_data", dbo)
     # If the option to return retailers on adoption is set, return any outstanding retailer moves for the animal
-    if movementtype == ADOPTION and asm3.configuration.return_retailer_on_adoption(dbo):
-        retailermove = dbo.first_row(dbo.query("SELECT ID, OwnerID FROM adoption WHERE " \
+    if movementtype == ADOPTION and returndate is None and asm3.configuration.return_retailer_on_adoption(dbo):
+        retailerrow = dbo.first_row(dbo.query("SELECT ID, AnimalID, OwnerID FROM adoption WHERE " \
             "ReturnDate Is Null AND MovementType=8 AND AnimalID=? AND ID<>?", (animalid, movementid)))
-        if retailermove is not None:
-            dbo.update("adoption", retailermove.ID, { "ReturnDate": movementdate }, username)
-            asm3.al.debug(f"movement is an adoption, returning outstanding retailer (id={retailermove.ID}).", "movement.validate_movement_form_data", dbo)
-            post["originalretailermovement"] = str(retailermove.ID)
-            post["retailer"] = str(retailermove.OWNERID)
+        if retailerrow is not None:
+            dbo.update("adoption", retailerrow.ID, { 
+                "AnimalID": retailerrow.ANIMALID, 
+                "OwnerID": retailerrow.OWNERID, 
+                "ReturnDate": movementdate }, username)
+            asm3.al.debug(f"movement is an adoption, returning outstanding retailer (id={retailerrow.ID}).", "movement.validate_movement_form_data", dbo)
+            post["originalretailermovement"] = str(retailerrow.ID)
+            post["retailer"] = str(retailerrow.OWNERID)
     # Can't have multiple open movements
     if movementdate is not None and returndate is None:
         existingopen = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementDate Is Not Null AND " \
