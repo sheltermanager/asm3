@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-29 10:00+0000\n"
+"POT-Creation-Date: 2025-01-31 11:48+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2907,7 +2907,7 @@ msgstr ""
 msgid "Check Microchip"
 msgstr ""
 
-#: common_widgets.js donations.js
+#: common_widgets.js donations.js accounts_trx.js
 msgid "Check No"
 msgstr ""
 
@@ -5859,7 +5859,7 @@ msgstr ""
 msgid "February"
 msgstr ""
 
-#: licence_renewal.js donations.js licence.js boarding.js
+#: licence_renewal.js donations.js licence.js accounts_trx.js boarding.js
 msgid "Fee"
 msgstr ""
 
@@ -6597,6 +6597,10 @@ msgstr ""
 msgid "Gift Aid"
 msgstr ""
 
+#: accounts_trx.js
+msgid "Gift Aid Applied"
+msgstr ""
+
 #: html.py person_find_results.js reports_querybuilder.js
 msgid "GiftAid"
 msgstr ""
@@ -7286,7 +7290,7 @@ msgstr ""
 
 #: options.js
 msgid ""
-"In your Square account, enable Instant Payment Notifications with a URL of "
+"In your Square account, enable a webhook to send 'payment.updated' events to "
 "{0}"
 msgstr ""
 
@@ -8835,7 +8839,7 @@ msgid "Messages successfully sent"
 msgstr ""
 
 #: wordprocessor.py common_widgets.js donations.js csvimport_stripe.js
-#: csvimport_paypal.js
+#: csvimport_paypal.js accounts_trx.js
 msgid "Method"
 msgstr ""
 
@@ -10194,7 +10198,7 @@ msgstr ""
 msgid "Payee"
 msgstr ""
 
-#: common_widgets.js calendarview.js reports_querybuilder.js
+#: common_widgets.js calendarview.js accounts_trx.js reports_querybuilder.js
 msgid "Payment"
 msgstr ""
 
@@ -11021,7 +11025,7 @@ msgstr ""
 msgid "Receipt"
 msgstr ""
 
-#: donations.js
+#: donations.js accounts_trx.js
 msgid "Receipt No"
 msgstr ""
 
@@ -12037,7 +12041,7 @@ msgid "Saint Bernard St. Bernard"
 msgstr ""
 
 #: financial.py dbupdate.py common_widgets.js donations.js lookups.js
-#: clinic_appointment.js
+#: accounts_trx.js clinic_appointment.js
 msgid "Sales Tax"
 msgstr ""
 
@@ -14843,8 +14847,9 @@ msgstr ""
 #: common_animalchooser.js common_html.js incident.js diarytasks.js
 #: animal_new.js licence.js citations.js animal_costs.js reports.js options.js
 #: csvimport_stripe.js csvimport_paypal.js mailmerge.js test.js traploan.js
-#: animal_find.js users.js report_criteria.js transport.js person.js
-#: incident_new.js boarding.js reports_querybuilder.js clinic_appointment.js
+#: animal_find.js users.js accounts_trx.js report_criteria.js transport.js
+#: person.js incident_new.js boarding.js reports_querybuilder.js
+#: clinic_appointment.js
 msgid "Type"
 msgstr ""
 

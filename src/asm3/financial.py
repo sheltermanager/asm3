@@ -354,6 +354,14 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "o.OwnerName AS PersonName, o.ID AS PersonID, a.ID AS DonationAnimalID, " \
         "a.AnimalName AS DonationAnimalName, " \
         "od.ReceiptNumber AS DonationReceiptNumber, " \
+        "dt.DonationName AS DonationTypeName, " \
+        "dm.PaymentName AS PaymentMethod, " \
+        "od.ChequeNumber AS ChequeNumber, " \
+        "od.IsVAT, " \
+        "od.VATRate AS VatRate, " \
+        "od.VATAmount AS VatAmount, " \
+        "od.IsGiftAid AS GiftAid, " \
+        "od.Fee AS Fee, " \
         "CASE " \
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN a.ShortCode ELSE a.ShelterCode END AS DonationAnimalCode, " \
@@ -365,6 +373,8 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "LEFT OUTER JOIN accounts srcac ON srcac.ID = t.SourceAccountID " \
         "LEFT OUTER JOIN accounts destac ON destac.ID = t.DestinationAccountID " \
         "LEFT OUTER JOIN ownerdonation od ON od.ID = t.OwnerDonationID " \
+        "LEFT OUTER JOIN donationtype dt ON dt.ID = od.DonationTypeID " \
+        "LEFT OUTER JOIN donationpayment dm ON dm.ID = od.DonationPaymentID " \
         "LEFT OUTER JOIN owner o ON o.ID = od.OwnerID " \
         "LEFT OUTER JOIN animal a ON a.ID = od.AnimalID " \
         "LEFT OUTER JOIN animalcost ac ON ac.ID = t.AnimalCostID " \
