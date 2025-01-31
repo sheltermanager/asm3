@@ -110,7 +110,23 @@ $(function() {
                         t.DONATIONANIMALNAME + '</a>';
                 }
                 if (t.DONATIONRECEIPTNUMBER) {
-                    desc += " [" + t.DONATIONRECEIPTNUMBER + "]";
+                    //desc += " [" + t.DONATIONRECEIPTNUMBER + "]";
+                    desc += ' <span class="asm-callout" data-icon="donation">' +
+                    _("Payment") + "<br><br>" +
+                    _("Receipt No") + ": " + t.DONATIONRECEIPTNUMBER + "<br>" +
+                    _("Type") + ": "+ t.DONATIONTYPENAME + "<br>" +
+                    _("Method") + ": " + t.PAYMENTMETHOD + "<br>" +
+                    _("Check No") + ": " + t.CHEQUENUMBER
+                    if ( t.VATABLE == 1 ) {
+                        desc += "<br>" + _("Sales Tax") + ": " + format.currency(t.VATAMOUNT) + " (" + t.VATRATE + "%)"
+                    }
+                    if ( t.GIFTAID == 1 ) {
+                        desc += "<br>" + _("Gift Aid Applied")
+                    }
+                    if ( t.FEE > 0) {
+                        desc += "<br>" + _("Fee") + ": " + format.currency(t.FEE)
+                    }
+                    desc += '</span>';
                 }
                 desc = html.truncate(t.DESCRIPTION) + " " + desc;
                 h.push("<tr>");
