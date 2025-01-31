@@ -318,7 +318,7 @@ VETENVOY_US_AKC_REUNITE_RECIPIENTID = get_string("vetenvoy_us_akc_reunite_recipi
 PAYPAL_VALIDATE_IPN_URL = get_string("paypal_validate_ipn_url", "")
 
 # Square payment environment, options are 'sandbox' or 'production'
-SQUARE_PAYMENT_ENVIRONMENT = get_string("square_payment_environment", "sandbox")
+SQUARE_PAYMENT_ENVIRONMENT = get_string("square_payment_environment", "")
 
 # Options available under the share button
 SHARE_BUTTON = get_string("share_button", "shareweb,sharepic,shareemail")

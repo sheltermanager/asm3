@@ -73,7 +73,7 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
     RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
-    SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL
+    SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT
 
 from asm3.typehints import Any, Dict, Generator, List, ResultRow, Session
 
@@ -5885,6 +5885,7 @@ class options(JSONEndpoint):
             "foundanimalfindcolumns": asm3.html.json_foundanimalfindcolumns(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "haspaypal": PAYPAL_VALIDATE_IPN_URL != "",
+            "hassquare": SQUARE_PAYMENT_ENVIRONMENT != "",
             "incidentfindcolumns": asm3.html.json_incidentfindcolumns(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "locales": get_locales(),

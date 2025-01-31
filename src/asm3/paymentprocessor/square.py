@@ -3,11 +3,14 @@ import asm3.configuration
 import asm3.financial
 import asm3.utils
 
-from .base import PaymentProcessor, ProcessorError, PayRefError, IncompleteStatusError
+from .base import PaymentProcessor, ProcessorError, PayRefError
 
 from asm3.typehints import Database
 
 class IncorrectEventError(ProcessorError):
+    pass
+
+class IncompleteStatusError(ProcessorError):
     pass
 
 class Square(PaymentProcessor):
@@ -76,25 +79,20 @@ class Square(PaymentProcessor):
             s = """<DOCTYPE html>
             <html>
             <head>
-            <script>
-                location.href = '%s';
-            </script>
+            <meta http-equiv="refresh" content="0; url=%s/" />
             </head>
             <body></body>
-            </html>""" % (result.body["payment_link"]["url"],)
+            </html>""" % result.body["payment_link"]["url"]
             return s
-        elif result.is_error():
-            #print(result.errors)
-            print("Failure")
+
+        else: # result.is_error() is also possible
+            asm3.al.error("Failed creating Square payment", "square.checkoutPage", self.dbo)
 
     def receive(self, rawdata: str) -> None:
         """ 
         Method to be called by the provider via an endpoint on receipt of payment.
         validate: Whether or not to skip validation of the IPN - useful for testing
         """
-        # Extract the values we're interested in from the URLencoded data
-        #j["data"]["object"]["payment"]["status"] != "COMPLETED"
-
         e = asm3.utils.json_parse(rawdata)
         status = e["data"]["object"]["payment"]["status"]
         payref = e["data"]["object"]["payment"]["note"]
@@ -117,7 +115,9 @@ class Square(PaymentProcessor):
             asm3.al.error("payref '%s' failed validation" % payref, "paypal.receive", self.dbo)
             raise PayRefError("payref '%s' is invalid" % payref)
 
-        # Do nothing if we already received payment for this payref - this was removed to allow follow on fees
+        # Do nothing if we already received payment for this payref - this was removed 
+        # because square can send multiple payment.update webhooks, and the last one will
+        # have the processing fees attached.
         #if self.isPaymentReceived(payref): 
         #    asm3.al.error("cannot receive payref '%s' again, already received.", "paypal.receive", self.dbo)
         #    raise AlreadyReceivedError("payref '%s' has already been processed." % payref)

@@ -2063,6 +2063,9 @@ $(function() {
             if (!controller.haspaypal) {
                 $("#paypal-options").hide();
             }
+            if (!controller.hassquare) {
+                $("#square-options").hide();
+            }
             if (!asm.smcom) {
                 $(".smcom").hide();
             }
