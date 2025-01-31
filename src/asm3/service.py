@@ -110,8 +110,8 @@ CACHE_PROTECT_METHODS = {
 # method, request limit, requests in last seconds, ban period in seconds
 # Eg: 1 / 15 / 30 bans for 30 seconds after 1 request in 15 seconds.
 FLOOD_PROTECT_METHODS = {
-    "csv_mail": [ 5, 60, 60 ],
-    "csv_report": [ 5, 60, 60 ],
+    "csv_mail": [ 10, 60, 60 ],
+    "csv_report": [ 10, 60, 60 ],
     "html_report": [ 5, 60, 60 ],
     "json_report": [ 5, 60, 60 ],
     "jsonp_report": [ 5, 60, 60 ],
