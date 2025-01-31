@@ -357,7 +357,7 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "dt.DonationName AS DonationTypeName, " \
         "dm.PaymentName AS PaymentMethod, " \
         "od.ChequeNumber AS ChequeNumber, " \
-        "od.IsVAT AS Vatable, " \
+        "od.IsVAT, " \
         "od.VATRate AS VatRate, " \
         "od.VATAmount AS VatAmount, " \
         "od.IsGiftAid AS GiftAid, " \

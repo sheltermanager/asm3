@@ -116,15 +116,15 @@ $(function() {
                     _("Receipt No") + ": " + t.DONATIONRECEIPTNUMBER + "<br>" +
                     _("Type") + ": "+ t.DONATIONTYPENAME + "<br>" +
                     _("Method") + ": " + t.PAYMENTMETHOD + "<br>" +
-                    _("Check No") + ": " + t.CHEQUENUMBER
-                    if ( t.VATABLE == 1 ) {
-                        desc += "<br>" + _("Sales Tax") + ": " + format.currency(t.VATAMOUNT) + " (" + t.VATRATE + "%)"
+                    _("Check No") + ": " + t.CHEQUENUMBER;
+                    if ( t.ISVAT == 1 ) {
+                        desc += "<br>" + _("Sales Tax") + ": " + format.currency(t.VATAMOUNT) + " (" + t.VATRATE + "%)";
                     }
                     if ( t.GIFTAID == 1 ) {
-                        desc += "<br>" + _("Gift Aid Applied")
+                        desc += "<br>" + _("Gift Aid Applied");
                     }
                     if ( t.FEE > 0) {
-                        desc += "<br>" + _("Fee") + ": " + format.currency(t.FEE)
+                        desc += "<br>" + _("Fee") + ": " + format.currency(t.FEE);
                     }
                     desc += '</span>';
                 }
