@@ -781,6 +781,11 @@ def reduce_find_results(dbo: Database, username: str, rows: Results, idcol: str 
     # Remove rows where the user doesn't have that role
     results = []
     for r in rows:
+        # If we don't have a person ID, then we can't do the comparison and should
+        # let the row through. This can happen if fed say escaped or stolen movements
+        if r[idcol] is None or r[idcol] == 0:
+            results.append(r)
+            continue
         rok = False
         # Compare the site ID on the person record to our user - to exclude the record,
         # both user and person record must have a site ID and they must be different
