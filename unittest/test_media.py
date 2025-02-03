@@ -32,3 +32,10 @@ class TestMedia(unittest.TestCase):
 
     def test_get_media_export(self):
         asm3.media.get_media_export(base.get_dbo())
+
+    def test_replace_doc_image(self):
+        content = asm3.utils.str2bytes('<h1>Test</h1><p><img src="findme.jpg"></p>')
+        mid = asm3.media.create_document_media(base.get_dbo(), "test", asm3.media.ANIMAL, 1, "test", content)
+        asm3.media.replace_doc_image(base.get_dbo(), "findme.jpg", "replace.jpg")
+        lm, mn, mt, content = asm3.media.get_media_file_data(base.get_dbo(), mid)
+        self.assertTrue( content.find(b'replace') != -1)

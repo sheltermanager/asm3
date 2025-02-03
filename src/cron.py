@@ -394,6 +394,20 @@ def maint_db_reinstall_default_onlineforms(dbo: Database):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reinstall_default_onlineforms: %s" % em, "cron.maint_db_reinstall_default_onlineforms", dbo, sys.exc_info())
 
+def maint_db_replace_doc_image(dbo: Database):
+    try:
+        if "FINDSTR" not in os.environ or "REPLACESTR" not in os.environ:
+            msg = "FAIL: FINDSTR and REPLACESTR environment variables are needed by replace_doc_image"
+            al.error(msg)
+            print(msg)
+            return
+        findstr = os.environ["FINDSTR"]
+        replacestr =- os.environ["REPLACESTR"]
+        media.replace_doc_image(dbo, findstr, replacestr)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_replace_doc_image: %s" % em, "cron.maint_db_replace_doc_image", dbo, sys.exc_info())
+
 def maint_db_replace_html_entities(dbo: Database):
     try:
         dbupdate.replace_html_entities(dbo)
@@ -568,6 +582,8 @@ def run(dbo: Database, mode: str) -> None:
         maint_db_reinstall_default_onlineforms(dbo)
     elif mode == "maint_db_reinstall_default_templates":
         maint_db_reinstall_default_templates(dbo)
+    elif mode == "maint_db_replace_doc_image":
+        maint_db_replace_doc_image(dbo)
     elif mode == "maint_db_replace_html_entities":
         maint_db_replace_html_entities(dbo)
     elif mode == "maint_db_reset":

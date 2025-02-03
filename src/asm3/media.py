@@ -1176,7 +1176,7 @@ def replace_doc_image(dbo: Database, findstr: str, replacestr: str) -> None:
                 asm3.al.warn("findstr not present, skipping (ID=%s, DBFSID=%s)" % (m.ID, m.DBFSID), "media.replace_doc_image", dbo)
                 continue
             while fpos != -1:
-                spos = data.rfind("\"", fpos)
+                spos = data.rfind("\"", 0, fpos)
                 epos = data.find("\"", fpos)
                 if spos == -1 or epos == -1:
                     asm3.al.debug("findstr found, but no attribute quotes either side, abandoning", "media.replace_doc_image", dbo)
