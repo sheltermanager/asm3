@@ -63,6 +63,7 @@ class LostFoundMatch:
                 self.fdistinguishingfeatures, self.fbasecolourid, self.fdatefound, self.matchpoints)
 
 def get_foundanimal_query(dbo: Database) -> str:
+    twodaysago = dbo.sql_date(dbo.today(offset=-2))
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
@@ -73,16 +74,18 @@ def get_foundanimal_query(dbo: Database) -> str:
         "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
-        "web.MediaNotes AS WebsiteMediaNotes " \
+        "web.MediaNotes AS WebsiteMediaNotes, " \
+        f"(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= {twodaysago} AND LinkID = a.ID AND LinkTypeID = {asm3.media.FOUNDANIMAL}) AS RecentlyChangedImages " \
         "FROM animalfound a " \
         "LEFT OUTER JOIN breed b ON a.BreedID = b.ID " \
         "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
         "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
         "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
-        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID" % asm3.media.FOUNDANIMAL
+        f"LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = {asm3.media.FOUNDANIMAL} AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
 
 def get_lostanimal_query(dbo: Database) -> str:
+    twodaysago = dbo.sql_date(dbo.today(offset=-2))
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
@@ -93,14 +96,15 @@ def get_lostanimal_query(dbo: Database) -> str:
         "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
-        "web.MediaNotes AS WebsiteMediaNotes " \
+        "web.MediaNotes AS WebsiteMediaNotes, " \
+        f"(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= {twodaysago} AND LinkID = a.ID AND LinkTypeID = {asm3.media.LOSTANIMAL}) AS RecentlyChangedImages " \
         "FROM animallost a " \
         "LEFT OUTER JOIN breed b ON a.BreedID = b.ID " \
         "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
         "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
         "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
-        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
-        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID" % asm3.media.LOSTANIMAL
+        f"LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = {asm3.media.LOSTANIMAL} AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
 
 def get_lostanimal(dbo: Database, aid: int) -> ResultRow:
     """
