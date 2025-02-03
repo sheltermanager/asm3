@@ -30,22 +30,85 @@ import asm3.utils
 class TestPublish(unittest.TestCase):
  
     def setUp(self):
+        animaldata = [
+            {
+                "animalname": "Testio",
+                "estimatedage": "1",
+                "animaltype": "1",
+                "entryreason": "1",
+                "breed1": "1",
+                "breed2": "1", 
+                "species": "1",
+                "comments": "bio",
+                "dateofbirth": "01/01/2022",
+                "basecolour": "1"
+            },
+            {
+                "animalname": "Heldio Strayio",
+                "estimatedage": "1",
+                "animaltype": "2",
+                "entryreason": "1",
+                "breed1": "1",
+                "breed2": "1", 
+                "species": "1",
+                "comments": "bio",
+                "hold": "on",
+                "entrytype": "2",
+                "dateofbirth": "01/01/2023",
+                "basecolour": "1"
+            }
+        ]
+        f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
+        imagedata = f.read()
+        f.close()
+        self.animals = []
+        for animal in animaldata:
+            post = asm3.utils.PostedData(animal, "en")
+            animalid, sheltercode = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
+            post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
+            asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+
+            self.animals.append((animalid, sheltercode))
+        
         data = {
-            "animalname": "Testio",
-            "estimatedage": "1",
-            "animaltype": "1",
-            "entryreason": "1",
-            "breed1": "1",
-            "breed2": "1", 
-            "species": "1",
-            "comments": "bio"
+            "datelost": base.today_display(),
+            "datereported": base.today_display(),
+            "owner": "1",
+            "species": "1", 
+            "sex": "1",
+            "breed": "1",
+            "colour": "1",
+            "markings": "Test",
+            "arealost": "Test",
+            "areapostcode": "Test"
         }
         post = asm3.utils.PostedData(data, "en")
-        self.nid, self.code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
+        laid = asm3.lostfound.insert_lostanimal_from_form(base.get_dbo(), post, "test")
+        post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
+        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.LOSTANIMAL, laid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+
+        data = {
+            "datefound": base.today_display(),
+            "datereported": base.today_display(),
+            "owner": "1",
+            "species": "1", 
+            "sex": "1",
+            "breed": "1",
+            "colour": "1",
+            "markings": "Test",
+            "areafound": "Test",
+            "areapostcode": "Test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        faid = asm3.lostfound.insert_foundanimal_from_form(base.get_dbo(), post, "test")
+        post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
+        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.FOUNDANIMAL, faid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+
         asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered includenonmicrochip excludeunder=1")
 
     def tearDown(self):
-        asm3.animal.delete_animal(base.get_dbo(), "test", self.nid)
+        for animal in self.animals:
+            asm3.animal.delete_animal(base.get_dbo(), "test", animal[0])
 
     # base
     def test_get_adoption_status(self):
@@ -158,10 +221,18 @@ class TestPublish(unittest.TestCase):
     def test_petfbi(self):
         pc = asm3.publishers.base.PublishCriteria()
         fbi = asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc)
-        fbi.fbiGetFound()
-        fbi.fbiGetStrayHold()
-        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        self.assertIsNotNone(asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc).processAnimal(a))
+        lostanimals = fbi.fbiGetLost()
+        foundanimals = fbi.fbiGetFound()
+        animals = fbi.fbiGetStrayHold()
+
+        for animal in animals:
+            self.assertIsNotNone(asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc).processAnimal(animal))
+
+        for lostanimal in lostanimals:
+            self.assertIsNotNone(asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc).processLostAnimal(lostanimal))
+        
+        for foundanimal in foundanimals:
+            self.assertIsNotNone(asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc).processFoundAnimal(foundanimal))
 
     # petfinder
     def test_petfinder(self):

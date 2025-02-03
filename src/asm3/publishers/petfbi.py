@@ -32,6 +32,7 @@ class PetFBIPublisher(FTPPublisher):
         return asm3.lostfound.get_lostanimal_find_simple(self.dbo)
     
     def fbiGetStrayHold(self) -> Results:
+
         return self.dbo.query(f"{self.fbiQuery()} WHERE a.Archived=0 AND a.CrueltyCase=0 AND a.HasPermanentFoster=0 " \
             "AND a.HasTrialAdoption=0 AND a.EntryTypeID=2 AND a.IsHold=1")
 
@@ -105,6 +106,9 @@ class PetFBIPublisher(FTPPublisher):
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
+                
+                # Upload one image for this animal
+                self.uploadImage(an, an["WEBSITEMEDIAID"], an["WEBSITEMEDIANAME"], "LOST" + an["ID"] + ".jpg")
 
                 csv.append( self.processLostAnimal(an, shelterid) )
 
@@ -125,6 +129,9 @@ class PetFBIPublisher(FTPPublisher):
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
+                
+                # Upload one image for this animal
+                self.uploadImage(an, an["WEBSITEMEDIAID"], an["WEBSITEMEDIANAME"], "FOUND" + an["ID"] + ".jpg")
 
                 csv.append( self.processFoundAnimal(an, shelterid) )
 
