@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-31 11:48+0000\n"
+"POT-Creation-Date: 2025-02-03 14:46+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -7492,6 +7492,10 @@ msgstr ""
 msgid "Include unaltered animals"
 msgstr ""
 
+#: mailmerge.js
+msgid "Include unsubscribe link"
+msgstr ""
+
 #: dbupdate.py
 msgid "Income"
 msgstr ""
@@ -14969,6 +14973,10 @@ msgstr ""
 
 #: medical.py medical.js medicalprofile.js
 msgid "Unspecified"
+msgstr ""
+
+#: utils.py
+msgid "Unsubscribe"
 msgstr ""
 
 #: dbupdate.py

@@ -1271,7 +1271,7 @@ def update_add_flag(dbo: Database, username: str, personid: int, flag: str) -> N
     Adds a flag to personid. 
     """
     flags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID = ?", [personid])
-    if flags.find("%s|" % flag) != -1:
+    if flags.find("%s|" % flag) == -1:
         flags += "%s|" % flag
         update_flags(dbo, username, personid, flags.split("|"))
 
