@@ -263,11 +263,19 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr><tr>',
-                '<td>',
+                '<td class="bottomborder">',
                 '<label for="qbsort">' + _("Sort") + '</label>',
                 '</td>',
-                '<td>',
+                '<td class="bottomborder">',
                 '<select id="qbsort" data="qbsort" multiple="multiple" class="qb asm-bsmselect">',
+                '</select>',
+                '</td>',
+                '</tr><tr>',
+                '<td>',
+                '<label for="qbgrp">' + _("Group (optional)") + '</label>',
+                '</td>',
+                '<td>',
+                '<select id="qbgrp" data="qbgrp" class="qb asm-selectbox">',
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -365,8 +373,9 @@ $(function() {
             let qbbuttons = {};
             qbbuttons[_("Update")] = function() {
                 // Construct the query from the selected values
-                let q = "-- " + $(".qb").toPOST() + "&v=1\n\n";
-                q += "SELECT \n " + expand_additional($("#qbfields").val()).join(",\n ");
+                let q = "-- " + $(".qb").toPOST() + "&v=1\n";
+                if ($("#qbgrp").val()) { q += "-- GRP:" + $("#qbgrp").val() + "\n"; }
+                q += "\nSELECT \n " + expand_additional($("#qbfields").val()).join(",\n ");
                 q += "\nFROM \n v_" + $("#qbtype").val();
                 let critout = [];
                 $.each($("#qbcriteria").val(), function(i, v) {
@@ -394,6 +403,7 @@ $(function() {
                 hide: dlgfx.add_hide
             });
             $("#qbtype").change( reports_querybuilder.qb_change_type );
+            $("#qbsort").change( reports_querybuilder.qb_change_sort );
             // Build the criteria lists
             reports_querybuilder.qb_animal_criteria = Array.from(QB_ANIMAL_CRITERIA);
             reports_querybuilder.qb_incident_criteria = Array.from(QB_INCIDENT_CRITERIA);
@@ -586,6 +596,18 @@ $(function() {
             });
         },
 
+        /** Called when the sort is changed in the querybuilder dialog */
+        qb_change_sort: function() {
+            let groups = [ "" ];
+            let cgroups = [];
+            let sorts = $("#qbsort").val();
+            $.each( String(sorts).split(","), function(i, v) {
+                cgroups.push(v);
+                groups.push(cgroups.join(","));
+            });
+            $("#qbgrp").html( html.list_to_options(groups) );
+        },
+
         /** Called when the data type is changed in the querybuilder dialog */
         qb_change_type: function() {
             let type = $("#qbtype").val();
@@ -724,10 +746,12 @@ $(function() {
                 set_values("#qbfields", common.url_param(enc, "qbfields"));
                 set_values("#qbcriteria", common.url_param(enc, "qbcriteria"));
                 set_values("#qbsort", common.url_param(enc, "qbsort"));
+                set_values("#qbgrp", common.url_param(enc, "qbgrp"));
             }
             else {
                 $("#qbtype").val("animal");
                 reports_querybuilder.qb_change_type();
+                reports_querybuilder.qb_change_sort();
             }
             $("#dialog-qb").dialog("open");
         },
