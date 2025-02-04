@@ -6415,4 +6415,4 @@ def update_34907(dbo: Database) -> None:
     add_column(dbo, "ownercitation", "CitationNumber", dbo.type_shorttext)
     rows = dbo.execute_dbupdate("SELECT ID FROM ownercitation")
     for row in rows:
-        dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s WHERE ID=%s" % (row["ID"], asm3.financial.pad_citation_number(row["ID"])))
+        dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s WHERE ID=%s" % (dbo.sql_zero_pad_left(row["ID"], 6)), row["ID"])
