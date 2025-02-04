@@ -67,9 +67,9 @@ class TestPublish(unittest.TestCase):
             animalid, sheltercode = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
             post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
             asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
-
             self.animals.append((animalid, sheltercode))
-        
+        self.nid = self.animals[0][0] 
+
         data = {
             "datelost": base.today_display(),
             "datereported": base.today_display(),
@@ -107,8 +107,8 @@ class TestPublish(unittest.TestCase):
         asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered includenonmicrochip excludeunder=1")
 
     def tearDown(self):
-        for animal in self.animals:
-            asm3.animal.delete_animal(base.get_dbo(), "test", animal[0])
+        for aid, sheltercode in self.animals:
+            asm3.animal.delete_animal(base.get_dbo(), "test", aid)
 
     # base
     def test_get_adoption_status(self):

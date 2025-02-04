@@ -60,10 +60,10 @@ class SACMetricsPublisher(AbstractPublisher):
         for m in movements:
             if m.MOVEMENTDATE and m.MOVEMENTDATE < dbo.today(): 
                 monthset.add( d2m(m.MOVEMENTDATE) )
-                self.log("Add month %s (movement), triggered by changes to animal %s" % (d2m(m.MOVEMENTDATE), a.ID))
+                self.log("Add month %s (movement), triggered by changes to movement %s" % (d2m(m.MOVEMENTDATE), m.ID))
             if m.RETURNDATE and m.RETURNDATE < dbo.today(): 
                 monthset.add( d2m(m.RETURNDATE) )
-                self.log("Add month %s (return), triggered by changes to animal %s" % (d2m(m.RETURNDATE), a.ID))
+                self.log("Add month %s (return), triggered by changes to movement %s" % (d2m(m.RETURNDATE), m.ID))
 
         # Remove this month from the set as we would be premature doing this month now.
         thismonth = d2m(dbo.today())
