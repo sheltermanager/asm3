@@ -166,7 +166,6 @@ $(function() {
                     h.push('</p>');
                 }
                 if (r.RESULTTYPE == "CITATION") {
-                    console.log(r);
                     if (controller.results.length == 1) {
                         common.route("person_citations?id=" + r.OWNERID);
                     }
