@@ -1466,6 +1466,7 @@ def insert_citation_from_form(dbo: Database, username: str, post: PostedData) ->
         "OwnerID":              post.integer("person"),
         "AnimalControlID":      post.integer("incident"),
         "CitationTypeID":       post.integer("type"),
+        "CitationNumber":       post["citationnumber"],
         "CitationDate":         post.date("citationdate"),
         "FineAmount":           post.integer("fineamount"),
         "FineDueDate":          post.date("finedue"),

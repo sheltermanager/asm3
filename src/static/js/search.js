@@ -166,6 +166,7 @@ $(function() {
                     h.push('</p>');
                 }
                 if (r.RESULTTYPE == "CITATION") {
+                    console.log(r);
                     if (controller.results.length == 1) {
                         common.route("person_citations?id=" + r.OWNERID);
                     }
@@ -173,7 +174,7 @@ $(function() {
                     h.push(html.icon("citation", _("Citation")));
                     h.push('<a href="person_citations?id=' + r.OWNERID + '">' + r.OWNERNAME  + ' - ' + r.CITATIONNUMBER + '</a></span> ');
                     h.push('<br />');
-                    h.push('<span class="asm-search-personflags">' + r.CITATIONNAME + ', ' + format.date(r.CITATIONDATE) + 
+                    h.push('<span class="asm-search-personflags">' + r.CITATIONNAME + ', ' + format.currency(r.FINEAMOUNT) + ", " + format.date(r.CITATIONDATE) + 
                         ' - ' + format.date(r.FINEPAIDDATE) + '</span>');
                     h.push('<br/>');
                     h.push(html.truncate(r.COMMENTS));
