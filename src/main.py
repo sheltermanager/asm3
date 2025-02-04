@@ -6192,14 +6192,13 @@ class person_citations(JSONEndpoint):
         if p is None: self.notfound()
         citations = asm3.financial.get_person_citations(dbo, o.post.integer("id"))
         asm3.al.debug("got %d citations" % len(citations), "main.incident_citations", dbo)
-        nextid = asm3.financial.pad_citation_number(dbo.get_id("ownercitation"))
         return {
             "name": "person_citations",
             "rows": citations,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
             "citationtypes": asm3.lookups.get_citation_types(dbo),
-            "nextid": nextid
+            "nextid": dbo.get_id("ownercitation")
         }
 
 class person_clinic(JSONEndpoint):

@@ -1458,13 +1458,6 @@ def update_location_boarding_today(dbo: Database) -> None:
     for r in rows:
         asm3.animal.update_location_unit(dbo, "system", r.ANIMALID, r.SHELTERLOCATION, r.SHELTERLOCATIONUNIT, returnactivemovement=False)
 
-def pad_citation_number(citationnumber) -> str:
-    citationnumber = str(citationnumber)
-    if len(citationnumber) < 6:
-        for a in range(0, 6 - len(citationnumber)):
-            citationnumber = "0" + citationnumber
-    return citationnumber
-
 def insert_citation_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a citation record from posted form data 

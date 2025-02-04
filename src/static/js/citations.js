@@ -16,7 +16,7 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
-                    { json_field: "CITATIONNUMBER", post_field: "citationnumber", label: _("Citation Number"), type: "text", validation: "notblank", defaultval: controller.nextid },
+                    { json_field: "CITATIONNUMBER", post_field: "citationnumber", label: _("Citation Number"), type: "text", validation: "notblank", defaultval: format.padleft(controller.nextid, 6) },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "CITATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "CITATIONNAME", valuefield: "ID", rows: controller.citationtypes }},
                     { json_field: "CITATIONDATE", post_field: "citationdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -87,7 +87,10 @@ $(function() {
                         if (controller.incident && controller.incident.OWNERID) {
                             $("#person").personchooser("loadbyid", controller.incident.OWNERID);
                         }
-                        await tableform.dialog_show_add(dialog, { onload: citations.type_change });
+                        await tableform.dialog_show_add(dialog, { onload: function() {
+                            citations.type_change;
+                            $("#citationnumber").val(format.padleft(controller.nextid, 6));
+                        } });
                         var incid = "";
                         if (controller.incident) { incid = controller.incident.ACID; }
                         let response = await tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, "citations");
@@ -99,6 +102,8 @@ $(function() {
                         controller.rows.push(row);
                         tableform.table_update(table);
                         tableform.dialog_close();
+                        controller.nextid++;
+                        $("#citationnumber").val(format.padleft(controller.nextid, 6));
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dacc", 
