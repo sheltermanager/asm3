@@ -14,7 +14,7 @@
         site/rss.xml 
         site/en_header.t (new version number)
         repo/asm_news.html 
-        copy changelog to repo/changelog3.txt
+        copy src/static/pages/changelog.txt to repo/changelog3.txt
 
 *. Mark milestone complete in github
 

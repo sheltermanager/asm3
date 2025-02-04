@@ -4,7 +4,7 @@ all:	clean compile tags rollup schema
 dist:	clean version rollup schema
 	rm -rf build
 	mkdir build
-	tar -czvf build/sheltermanager3-`cat VERSION`-src.tar.gz changelog LICENSE src README.md scripts/asm3.conf.example scripts/wsgi
+	tar --exclude __pycache__ -czvf build/sheltermanager3-`cat VERSION`-src.tar.gz LICENSE src README.md scripts/asm3.conf.example scripts/wsgi
 	cd install/deb && ./makedeb.sh && mv *.deb ../../build
 
 distwin32: dist
