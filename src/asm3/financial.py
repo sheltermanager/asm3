@@ -62,9 +62,9 @@ def get_boarding_query(dbo: Database) -> str:
         "LEFT OUTER JOIN internallocation il ON il.ID = ab.ShelterLocation "
 
 def get_citation_query(dbo: Database) -> str:
-    return "SELECT oc.ID, oc.CitationTypeID, oc.CitationDate, oc.Comments, ct.CitationName, " \
+    return "SELECT oc.ID, oc.CitationNumber, oc.CitationTypeID, oc.CitationDate, oc.Comments, ct.CitationName, " \
         "oc.FineAmount, oc.FineDueDate, oc.FinePaidDate, oc.AnimalControlID, " \
-        "oc.OwnerID, ti.IncidentName, " \
+        "oc.OwnerID, oc.CitationNumber, ti.IncidentName, " \
         "oc.CreatedBy, oc.CreatedDate, oc.LastChangedBy, oc.LastChangedDate, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName " \
         "FROM ownercitation oc " \
@@ -574,7 +574,7 @@ def get_person_citations(dbo: Database, oid: int, sort: int = ASCENDING) -> Resu
     Returns all of the citation records for a person, along with
     some owner info.
     ID, CITATIONTYPEID, CITATIONNAME, CITATIONDATE, FINEDUEDATE, FINEPAIDDATE,
-    FINEAMOUNT, OWNERNAME, INCIDENTNAME
+    FINEAMOUNT, OWNERNAME, INCIDENTNAME, CITATIONNUMBER
     """
     order = "oc.CitationDate DESC"
     if sort == ASCENDING:
@@ -690,6 +690,10 @@ def get_voucher(dbo: Database, voucherid: int) -> ResultRow:
 def get_voucher_find_simple(dbo: Database, vocode: str, dummy: int = 0) -> Results:
     return dbo.query(get_voucher_query(dbo) + \
         "WHERE UPPER(ov.VoucherCode) LIKE UPPER(?)", [vocode])
+
+def get_citation_find_simple(dbo: Database, cinumber: str, dummy: int = 0) -> Results:
+    return dbo.query(get_citation_query(dbo) + \
+        "WHERE UPPER(oc.CitationNumber) LIKE UPPER(?)", [cinumber])
 
 def get_vouchers(dbo: Database, offset: str = "i31") -> Results:
     """
@@ -1475,6 +1479,7 @@ def update_citation_from_form(dbo: Database, username: str, post: PostedData) ->
     """
     dbo.update("ownercitation", post.integer("citationid"), {
         "CitationTypeID":       post.integer("type"),
+        "CitationNumber":       post["citationnumber"],
         "CitationDate":         post.date("citationdate"),
         "FineAmount":           post.integer("fineamount"),
         "FineDueDate":          post.date("finedue"),

@@ -16,6 +16,7 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
+                    { json_field: "CITATIONNUMBER", post_field: "citationnumber", label: _("Citation Number"), type: "text" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "CITATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "CITATIONNAME", valuefield: "ID", rows: controller.citationtypes }},
                     { json_field: "CITATIONDATE", post_field: "citationdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -34,6 +35,8 @@ $(function() {
                     tableform.fields_update_row(dialog.fields, row);
                     row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
                     row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                    //row.CITATIONNUMBER = $("#citationnumber").val();
+                    console.log(dialog.fields);
                     await tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, "citations");
                     tableform.table_update(table);
                     tableform.dialog_close();

@@ -45,7 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
-    34904, 34905, 34906
+    34904, 34905, 34906, 34907
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -6409,3 +6409,8 @@ def update_34906(dbo: Database) -> None:
     # Add the new lostanimalview and foundanimal view HTML templates
     install_html_template(dbo, "lostanimalview", use_max_id=True)
     install_html_template(dbo, "foundanimalview", use_max_id=True)
+
+def update_34907(dbo: Database) -> None:
+    # Add extra column to ownercitation
+    add_column(dbo, "ownercitation", "CitationNumber", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
