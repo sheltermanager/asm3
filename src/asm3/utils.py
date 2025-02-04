@@ -5,7 +5,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.users
 
-from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
+from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SERVICE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union
 
 import web062 as web
@@ -2116,27 +2116,32 @@ def _send_email(msg: MIMEMultipart, fromadd: str, tolist: List[str], dbo: Databa
             time.sleep(RETRY_SECS)
             _send_email(msg, fromadd, tolist, dbo=dbo, exceptions=exceptions, retries=retries-1)
 
-def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows: Results, contenttype: str, offerunsubscribe: bool) -> None:
+def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows: Results, contenttype: str, unsubscribe: bool) -> None:
     """
     Sends a set of bulk emails asynchronously.
     replyadd is an RFC821 address and controls the Reply-To header
     subject and body are strings. Either can contain <<TAGS>>
     rows is a list of dictionaries of tag tokens with real values to substitute
     contenttype is either "plain" or "html"
+    unsubscribe: if True, adds a link to the bottom of the email to "unsubscribe" (set excludefrombulkemail for this person)
+                 does nothing if OWNERCODE is not in the results, or the content type is plain
     """
+    l = dbo.locale
     def do_send():
         for r in rows:
             ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>", cr_to_br = False)
             sbody = substitute_tags(body, r)
-            if r["OWNERCODE"] and offerunsubscribe:
-                token = asm3.utils.base64encode(r["OWNERCODE"])
-                sbody = sbody + "<p><a href=service?method=unsubscribe&token=" + token.replace("=", "%3D") + ">" + asm3.i18n._("Unsubscribe") + "</a>"
-            toadd = r["EMAILADDRESS"]
+            if "OWNERCODE" in r and unsubscribe and contenttype == "html":
+                token = asm3.utils.base64encode(r.OWNERCODE)
+                token = token.replace("=", "%3D")
+                linktext = asm3.i18n._("Unsubscribe from future messages", l)
+                sbody = f'{sbody}\n<p><a href="{SERVICE_URL}?account={dbo.name()}&method=unsubscribe&token={token}">{linktext}</a>'
+            toadd = r.EMAILADDRESS
             if toadd is None or toadd.strip() == "": continue
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
             send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
             if "EMAILADDRESS2" in r: 
-                toadd = r["EMAILADDRESS2"]
+                toadd = r.EMAILADDRESS2
                 if toadd is None or toadd.strip() == "": continue
                 asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
                 send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)

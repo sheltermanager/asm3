@@ -126,7 +126,7 @@ $(function() {
                 '</p>',
                 '<p>',
                 '<input id="em-includeunsubscribe" data="unsubscribe" type="checkbox" name="em-includeunsubscribe" class="asm-checkbox" />',
-                '<label for="em-includeunsubscribe">' + _("Include unsubscribe link") + '</label>',
+                '<label for="em-includeunsubscribe">' + _("Add an unsubscribe link to the bottom of emails") + '</label>',
                 '</p>',
                 '</td>',
                 '<td>',
