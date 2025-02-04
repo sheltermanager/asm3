@@ -2,7 +2,7 @@ Birthday List Mailer (Adopted)
 ###
 Auditing
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -11,6 +11,7 @@ en
 $VAR monthno NUMBER Enter the month (1 for January, 12 for December)$
 
 SELECT owner.OwnerName, 
+owner.OwnerCode,
 owner.OwnerAddress, 
 owner.OwnerTown, 
 owner.OwnerCounty, 

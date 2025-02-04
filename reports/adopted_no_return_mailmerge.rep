@@ -2,13 +2,13 @@ Non-Returned Adoptions
 ###
 Movements
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions between two dates
 ###
 en
 ###
-SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode, owner.OwnerCode,
 animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
@@ -27,13 +27,13 @@ Non-Returned Adoptions (Puppies)
 ###
 Movements
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of puppies between two dates
 ###
 en
 ###
-SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode, owner.OwnerCode,
 animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
@@ -53,13 +53,13 @@ Non-Returned Adoptions (Adult Dogs)
 ###
 Movements
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of adult dogs between two dates
 ###
 en
 ###
-SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode, owner.OwnerCode,
 animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
@@ -79,13 +79,13 @@ Non-Returned Adoptions (Kittens)
 ###
 Movements
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of kittens between two dates
 ###
 en
 ###
-SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode, owner.OwnerCode,
 animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
@@ -105,13 +105,13 @@ Non-Returned Adoptions (Adult Cats)
 ###
 Movements
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of adult cats between two dates
 ###
 en
 ###
-SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode, owner.OwnerCode,
 animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
@@ -131,13 +131,13 @@ Fosterers of Non-Returned Adoptions
 ###
 Movements
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Mailmerge source of fosterer contact info and animal information for non-returned adoptions between two dates
 ###
 en
 ###
-SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode, owner.OwnerCode,
 animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM animal

@@ -2,13 +2,13 @@ Expiring licenses between two dates
 ###
 Animal Control
 ###
-34800/Any rev04
+34800/Any rev05
 ###
 Licenses that expire between the two dates given with owner details, excludes people who have renewed and deceased animals
 ###
 en
 ###
-SELECT DISTINCT ol.*, o.OwnerName, o.OwnerForeNames, o.OwnerSurname, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.EmailAddress2,
+SELECT DISTINCT ol.*, o.OwnerName, o.OwnerCode, o.OwnerForeNames, o.OwnerSurname, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.EmailAddress2,
 a.AnimalName, a.ShelterCode, a.AnimalAge, a.BreedName, sx.Sex, s.SpeciesName, 
 rv.DateOfVaccination AS RabiesGiven, rv.DateExpires AS RabiesExpires, rvet.OwnerName AS RabiesVetName, rvet.OwnerTown AS RabiesVetCity
 FROM ownerlicence ol

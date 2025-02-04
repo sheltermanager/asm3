@@ -2,13 +2,13 @@ Brought in an animal between two dates
 ###
 Shelter
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Owner info for everyone who surrendered an animal between two dates.
 ###
 en
 ###
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.OwnerCode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o

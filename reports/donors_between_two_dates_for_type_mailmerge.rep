@@ -2,13 +2,13 @@ Donors between two dates for type
 ###
 Financial
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Donors between two dates for payment types
 ###
 en
 ###
-SELECT DISTINCT owner.OwnerName, owner.OwnerForeNames, owner.OwnerSurname, owner.OwnerAddress, 
+SELECT DISTINCT owner.OwnerName, owner.OwnerCode, owner.OwnerForeNames, owner.OwnerSurname, owner.OwnerAddress, 
 owner.OwnerTown, owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, animal.AnimalName, 
 animal.ShelterCode, animal.BreedName 
 FROM owner

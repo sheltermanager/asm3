@@ -2,14 +2,14 @@ Active Fosterers
 ###
 Movements
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Mail merge for all fosterers who are currently looking after an animal
 ###
 en
 ###
 SELECT DISTINCT 
-OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, 
+OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, OwnerCode, 
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress, EmailAddress2
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID

@@ -2,13 +2,13 @@ Adopted animals with a due vaccination
 ###
 Medical
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Mailmerge source of owner and animal information for all adoptions where the animal has a vaccination due
 ###
 en
 ###
-SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode, owner.OwnerCode,
 animal.AnimalName, animalvaccination.DateRequired, vaccinationtype.VaccinationType, 
 owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname

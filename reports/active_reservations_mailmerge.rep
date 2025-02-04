@@ -2,7 +2,7 @@ Active Reservations
 ###
 Movements
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Contact info and animal details for active reservations
 ###
@@ -13,7 +13,7 @@ species.SpeciesName,
 reservationstatus.StatusName,
 animaltype.AnimalType AS theType,
 animal.BreedName,
-no.OwnerName, no.OwnerAddress,
+no.OwnerName, no.OwnerAddress, no.OwnerCode,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.EmailAddress2, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption

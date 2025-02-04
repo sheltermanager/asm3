@@ -2,13 +2,13 @@ Appointments between two dates (mail)
 ###
 Clinic
 ###
-34808/Any rev03
+34808/Any rev04
 ###
 All clinic appointments scheduled between two dates
 ###
 en
 ###
-SELECT c.DateTime, o.OwnerName, o.OwnerAddress, o.ownerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress, o.EmailAddress2, 
+SELECT c.DateTime, o.OwnerName, o.OwnerCode, o.OwnerAddress, o.ownerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress, o.EmailAddress2, 
 a.AnimalName, a.BreedName, s.SpeciesName, a.AnimalAge, st.Status AS StatusName, ct.ClinicTypeName AS AppointmentType
 FROM clinicappointment c
 INNER JOIN lksclinicstatus st ON st.ID = c.Status

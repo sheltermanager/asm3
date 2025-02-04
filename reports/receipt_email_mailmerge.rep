@@ -1,13 +1,13 @@
 Receipt Email
 ###
 Financial
-34701/Any rev01
+34701/Any rev02
 ###
 Receipt mail merge for payments of a selected type made between two dates
 ###
 en
 ###
-SELECT DISTINCT owner.OwnerName, owner.OwnerForeNames, owner.OwnerSurname, owner.OwnerAddress, 
+SELECT DISTINCT owner.OwnerName, owner.OwnerForeNames, owner.OwnerSurname, owner.OwnerCode, owner.OwnerAddress, 
 owner.OwnerTown, owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, donationtype.DonationName AS DonationType, 
 ROUND(ownerdonation.donation / 100.0,2) AS Amount, ownerdonation.Date AS PaymentDate, ownerdonation.ReceiptNumber AS Receipt,
 $SQL DATETOCHAR ownerdonation.Date,MM/DD/YYYY$ AS PaymentDate,

@@ -2,14 +2,14 @@ People with Flag (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people with the selected person flag.
 ###
 en
 ###
 $VAR flag PERSONFLAG$
-SELECT DISTINCT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
@@ -22,7 +22,7 @@ People with Flag created after date (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people with the selected person flag where the person record was created after a date.
 ###
@@ -30,7 +30,7 @@ en
 ###
 $VAR flag PERSONFLAG$
 $VAR since DATE Created after$
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
@@ -44,14 +44,14 @@ People without Flag (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people without the selected person flag.
 ###
 en
 ###
 $VAR flag PERSONFLAG$
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
@@ -64,7 +64,7 @@ People with 2 Flags (AND) (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people with all of the selected two person flags.
 ###
@@ -72,7 +72,7 @@ en
 ###
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, .OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
@@ -87,7 +87,7 @@ People with 3 Flags (AND) (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people with all of the selected three person flags.
 ###
@@ -96,7 +96,7 @@ en
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
 $VAR flag3 PERSONFLAG$
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
@@ -112,7 +112,7 @@ People with 2 Flags (OR) (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people with either of the selected two person flags.
 ###
@@ -120,7 +120,7 @@ en
 ###
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
@@ -135,7 +135,7 @@ People with 3 Flags (OR) (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people with any of the selected three person flags.
 ###
@@ -144,7 +144,7 @@ en
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
 $VAR flag3 PERSONFLAG$
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
@@ -160,7 +160,7 @@ People with 2 Flags (AND NOT) (mail)
 ###
 People
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Person info for all people with the first flag, but not the second flag.
 ###
@@ -168,7 +168,7 @@ en
 ###
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o

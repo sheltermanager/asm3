@@ -2,14 +2,14 @@ Off-Shelter Vaccinations
 ###
 Vaccinations
 ###
-34701/Any rev02
+34701/Any rev03
 ###
 Owner/vaccination info for animals that need vaccinating between two dates
 ###
 en
 ###
 SELECT DISTINCT o.OwnerTitle, o.OwnerForenames, o.OwnerSurname, o.OwnerInitials, 
-o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2,
 a.AnimalName, av.DateRequired, 
 (SELECT VaccinationType FROM vaccinationtype WHERE ID = av.VaccinationID) AS VaccType
