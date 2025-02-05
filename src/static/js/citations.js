@@ -116,19 +116,21 @@ $(function() {
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
                     } 
-                },
+                }
+                /*
                 { id: "offset", type: "dropdownfilter", 
-                     options: [ "unpaid|" + _("Unpaid") ],
-                     click: function(selval) {
+                    options: [ "unpaid|" + _("Unpaid") ],
+                    click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);
-                     },
-                     hideif: function(row) {
-                         // Don't show for person or incident records
-                         if (controller.name.indexOf("incident_") == 0 || controller.name.indexOf("person_") == 0) {
-                             return true;
-                         }
-                     }
-                 }
+                    },
+                    hideif: function(row) {
+                        // Don't show for person or incident records
+                        if (controller.name.indexOf("incident_") == 0 || controller.name.indexOf("person_") == 0) {
+                            return true;
+                        }
+                    }
+                }
+                */
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -146,7 +148,7 @@ $(function() {
                 s += edit_header.person_edit_header(controller.person, "citation", controller.tabcounts);
             }
             else {
-                s += html.content_header(_("Citations"));
+                s += html.content_header(citations.title());
             }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
