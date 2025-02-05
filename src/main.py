@@ -2818,7 +2818,8 @@ class citations(JSONEndpoint):
         return {
             "name": "citations",
             "rows": citations,
-            "citationtypes": asm3.lookups.get_citation_types(o.dbo)
+            "citationtypes": asm3.lookups.get_citation_types(o.dbo),
+            "nextid": o.dbo.get_id_max("ownercitation")
         }
 
     def post_create(self, o):
