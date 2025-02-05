@@ -4160,7 +4160,7 @@ class incident_citations(JSONEndpoint):
             "incident": a,
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
             "citationtypes": asm3.lookups.get_citation_types(dbo),
-            "nextid": dbo.get_id("ownercitation")
+            "nextid": dbo.get_id_max("ownercitation")
         }
 
 class incident_find(JSONEndpoint):
@@ -6199,7 +6199,7 @@ class person_citations(JSONEndpoint):
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
             "citationtypes": asm3.lookups.get_citation_types(dbo),
-            "nextid": dbo.get_id("ownercitation")
+            "nextid": dbo.get_id_max("ownercitation")
         }
 
 class person_clinic(JSONEndpoint):
