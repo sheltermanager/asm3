@@ -88,7 +88,7 @@ $(function() {
                             $("#person").personchooser("loadbyid", controller.incident.OWNERID);
                         }
                         await tableform.dialog_show_add(dialog, { onload: function() {
-                            citations.type_change;
+                            citations.type_change();
                             $("#citationnumber").val(format.padleft(controller.nextid, 6));
                         } });
                         var incid = "";
