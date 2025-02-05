@@ -47,6 +47,7 @@ $(function() {
                 },
                 columns: [
                     { field: "CITATIONNAME", display: _("Type") },
+                    { field: "CITATIONNUMBER", display: _("Number") },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
                             if (row.OWNERID) {
