@@ -1484,12 +1484,14 @@ def sql_structure(dbo: Database) -> str:
         fint("FineAmount", True),
         fdate("FineDueDate", True),
         fdate("FinePaidDate", True),
-        flongstr("Comments", True) ))
+        flongstr("Comments", True),
+        fstr("CitationNumber", True) ))
     sql += index("ownercitation_OwnerID", "ownercitation", "OwnerID")
     sql += index("ownercitation_CitationTypeID", "ownercitation", "CitationTypeID")
     sql += index("ownercitation_CitationDate", "ownercitation", "CitationDate")
     sql += index("ownercitation_FineDueDate", "ownercitation", "FineDueDate")
     sql += index("ownercitation_FinePaidDate", "ownercitation", "FinePaidDate")
+    sql += index("ownercitation_CitationNumber", "ownercitation", "CitationNumber")
 
     sql += table("ownerdonation", (
         fid(),
@@ -6414,3 +6416,4 @@ def update_34907(dbo: Database) -> None:
     # Add extra column to ownercitation
     add_column(dbo, "ownercitation", "CitationNumber", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
+    add_index(dbo, "ownercitation_CitationNumber", "ownercitation", "CitationNumber")
