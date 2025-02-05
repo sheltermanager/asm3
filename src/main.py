@@ -6197,7 +6197,8 @@ class person_citations(JSONEndpoint):
             "rows": citations,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
-            "citationtypes": asm3.lookups.get_citation_types(dbo)
+            "citationtypes": asm3.lookups.get_citation_types(dbo),
+            "nextid": dbo.get_id("ownercitation")
         }
 
 class person_clinic(JSONEndpoint):

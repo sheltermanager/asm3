@@ -152,7 +152,7 @@ $(function() {
                         common.route("person_vouchers?id=" + r.OWNERID);
                     }
                     h.push('<p class="asm-search-result"><span class="asm-search-name">');
-                    h.push(html.icon("voucher", _("Voucher")));
+                    h.push(html.icon("donation", _("Voucher")));
                     h.push('<a href="person_vouchers?id=' + r.OWNERID + '">' + r.OWNERNAME  + ' - ' + r.VOUCHERCODE + '</a></span> ');
                     h.push('<br/>');
                     h.push(r.OWNERADDRESS);
@@ -161,6 +161,20 @@ $(function() {
                     h.push('<br />');
                     h.push('<span class="asm-search-personflags">' + r.VOUCHERNAME + ', ' + format.date(r.DATEISSUED) + 
                         ' - ' + format.date(r.DATEREDEEMED) + '</span>');
+                    h.push('<br/>');
+                    h.push(html.truncate(r.COMMENTS));
+                    h.push('</p>');
+                }
+                if (r.RESULTTYPE == "CITATION") {
+                    if (controller.results.length == 1) {
+                        common.route("person_citations?id=" + r.OWNERID);
+                    }
+                    h.push('<p class="asm-search-result"><span class="asm-search-name">');
+                    h.push(html.icon("citation", _("Citation")));
+                    h.push('<a href="person_citations?id=' + r.OWNERID + '">' + r.OWNERNAME  + ' - ' + r.CITATIONNUMBER + '</a></span> ');
+                    h.push('<br />');
+                    h.push('<span class="asm-search-personflags">' + r.CITATIONNAME + ', ' + format.currency(r.FINEAMOUNT) + ", " + format.date(r.CITATIONDATE) + 
+                        ' - ' + format.date(r.FINEPAIDDATE) + '</span>');
                     h.push('<br/>');
                     h.push(html.truncate(r.COMMENTS));
                     h.push('</p>');
