@@ -1481,17 +1481,17 @@ def sql_structure(dbo: Database) -> str:
         fint("AnimalControlID", True),
         fint("CitationTypeID"),
         fdate("CitationDate"),
+        fstr("CitationNumber", True),
         fint("FineAmount", True),
         fdate("FineDueDate", True),
         fdate("FinePaidDate", True),
-        flongstr("Comments", True),
-        fstr("CitationNumber", True) ))
+        flongstr("Comments", True) ))
     sql += index("ownercitation_OwnerID", "ownercitation", "OwnerID")
     sql += index("ownercitation_CitationTypeID", "ownercitation", "CitationTypeID")
     sql += index("ownercitation_CitationDate", "ownercitation", "CitationDate")
+    sql += index("ownercitation_CitationNumber", "ownercitation", "CitationNumber")
     sql += index("ownercitation_FineDueDate", "ownercitation", "FineDueDate")
     sql += index("ownercitation_FinePaidDate", "ownercitation", "FinePaidDate")
-    sql += index("ownercitation_CitationNumber", "ownercitation", "CitationNumber")
 
     sql += table("ownerdonation", (
         fid(),
@@ -6415,5 +6415,6 @@ def update_34906(dbo: Database) -> None:
 def update_34907(dbo: Database) -> None:
     # Add extra column to ownercitation
     add_column(dbo, "ownercitation", "CitationNumber", dbo.type_shorttext)
-    dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
     add_index(dbo, "ownercitation_CitationNumber", "ownercitation", "CitationNumber")
+    dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
+
