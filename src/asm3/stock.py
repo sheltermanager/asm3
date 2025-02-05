@@ -108,6 +108,7 @@ def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
     dbo.update("stocklevel", slid, {
         "Name":             post["name"],
         "Description":      post["description"],
+        "Barcode":          post["barcode"],
         "StockLocationID":  post.integer("location"),
         "UnitName":         post["unitname"],
         "Total":            post.floating("total"),
@@ -138,6 +139,7 @@ def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
     nid = dbo.insert("stocklevel", {
         "Name":             post["name"],
         "Description":      post["description"],
+        "Barcode":          post["barcode"],
         "StockLocationID":  post.integer("location"),
         "UnitName":         post["unitname"],
         "Total":            post.floating("total"),
@@ -209,4 +211,3 @@ def stock_take_from_mobile_form(dbo: Database, username: str, post: PostedData) 
             dbo.update("stocklevel", slid, { "Balance": sln })
             # Write a stock usage record for the difference
             insert_stockusage(dbo, username, slid, sln - slb, now(dbo.timezone), post.integer("usagetype"), "")
-
