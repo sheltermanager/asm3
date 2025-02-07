@@ -5,7 +5,7 @@ import asm3.smcom
 import asm3.utils
 
 from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER
-from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL
+from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL, DBFS_S3_QUEUE_FOLDER
 from asm3.sitedefs import DBFS_S3_MIGRATE_BUCKET, DBFS_S3_MIGRATE_ACCESS_KEY_ID, DBFS_S3_MIGRATE_SECRET_ACCESS_KEY, DBFS_S3_MIGRATE_ENDPOINT_URL
 from asm3.sitedefs import DBFS_S3_BACKUP_BUCKET, DBFS_S3_BACKUP_ACCESS_KEY_ID, DBFS_S3_BACKUP_SECRET_ACCESS_KEY, DBFS_S3_BACKUP_ENDPOINT_URL
 from asm3.typehints import Any, Database, List, Results, S3Client
@@ -137,7 +137,7 @@ class FileStorage(DBFSStorage):
         return "file:"
 
 class S3Storage(DBFSStorage):
-    """ Storage class for putting media in Amazon S3 """
+    """ Storage class for putting media in S3 compatible object storage """
     dbo = None
     dbname = ""
     access_key_id = ""
@@ -225,7 +225,12 @@ class S3Storage(DBFSStorage):
         try:
             asm3.cachedisk.put(self._cache_key(url), self.dbname, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
-            threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
+            # If a queue folder has been specified, save the file there instead of uploading
+            # immediately on a new thread
+            if DBFS_S3_QUEUE_FOLDER == "":
+                asm3.utils.write_binary_file("{DBFS_S3_QUEUE_FOLDER}/{self.dbname}-{dbfsid}{extension}", filedata)
+            else:
+                threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
             # If a backup S3 has been set, store the file there too
             if DBFS_S3_BACKUP_ACCESS_KEY_ID != "":
                 backup = S3Storage(self.dbo, DBFS_S3_BACKUP_ACCESS_KEY_ID, DBFS_S3_BACKUP_SECRET_ACCESS_KEY, DBFS_S3_BACKUP_ENDPOINT_URL, DBFS_S3_BACKUP_BUCKET)
