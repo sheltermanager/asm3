@@ -6421,7 +6421,7 @@ def update_34907(dbo: Database) -> None:
     dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
 
 def update_34908(dbo: Database) -> None:
-    # Add extra column to ownercitation
+    # Add extra column to stocklevel
     add_column(dbo, "stocklevel", "Barcode", dbo.type_shorttext)
     add_index(dbo, "stocklevel_Barcode", "stocklevel", "Barcode")
     dbo.execute_dbupdate("UPDATE stocklevel SET Barcode=''")
