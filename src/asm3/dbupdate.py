@@ -45,7 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
-    34904, 34905, 34906, 34907
+    34904, 34905, 34906, 34907, 35000
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -6418,3 +6418,9 @@ def update_34907(dbo: Database) -> None:
     add_index(dbo, "ownercitation_CitationNumber", "ownercitation", "CitationNumber")
     dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
 
+
+def update_35000(dbo: Database) -> None:
+    # Add extra column to person
+    add_column(dbo, "owner", "IsSupplier", dbo.type_integer)
+    add_index(dbo, "owner_IsSupplier", "owner", "IsSupplier")
+    dbo.execute_dbupdate("UPDATE owner SET IsSupplier=0")

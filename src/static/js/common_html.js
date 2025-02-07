@@ -660,6 +660,7 @@ const html = {
             { label: _("Other Shelter"), html: field_option("ISSHELTER", "shelter", _("Other Shelter")) },
             { label: _("Sponsor"), html: field_option("ISSPONSOR", "sponsor", _("Sponsor")) },
             { label: _("Staff"), html: field_option("ISSTAFF", "staff", _("Staff")) },
+            { label: _("Supplier"), html: field_option("ISSUPPLIER", "supplier", _("Supplier")) },
             { label: _("Vet"), html: field_option("ISVET", "vet", _("Vet")) },
             { label: _("Volunteer"), html: field_option("ISVOLUNTEER", "volunteer", _("Volunteer")) }
         ];

@@ -7375,6 +7375,18 @@ class stocklevel(JSONEndpoint):
         self.check(asm3.users.VIEW_STOCKLEVEL)
         return asm3.stock.get_last_stock_with_name(o.dbo, o.post["name"])
 
+class stocksuppliers(JSONEndpoint):
+    url = "stocksuppliers"
+    js_module = "stocksuppliers"
+    get_permissions = asm3.users.CHANGE_STOCKLEVEL
+
+    def controller(self, o):
+        dbo = o.dbo
+        #asm3.al.debug("editing %d system users" % len(user), "main.systemusers", dbo)
+        return {
+            "controlleritem": "Adam woz ere"
+        }
+
 class systemusers(JSONEndpoint):
     url = "systemusers"
     js_module = "users"
