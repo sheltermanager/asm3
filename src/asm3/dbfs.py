@@ -226,8 +226,9 @@ class S3Storage(DBFSStorage):
             asm3.cachedisk.put(self._cache_key(url), self.dbname, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             # If a queue folder has been specified, save the file there instead of uploading
-            # immediately on a new thread
+            # immediately on a new thread. This requires a separate external process to do the upload.
             if DBFS_S3_QUEUE_FOLDER == "":
+                asm3.utils.mkdir(DBFS_S3_QUEUE_FOLDER)
                 asm3.utils.write_binary_file("{DBFS_S3_QUEUE_FOLDER}/{self.dbname}-{dbfsid}{extension}", filedata)
             else:
                 threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
