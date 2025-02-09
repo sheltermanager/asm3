@@ -64,7 +64,7 @@ People with 2 Flags (AND) (mail)
 ###
 People
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Person info for all people with all of the selected two person flags.
 ###
@@ -72,7 +72,7 @@ en
 ###
 $VAR flag1 PERSONFLAG$
 $VAR flag2 PERSONFLAG$
-SELECT DISTINCT o.OwnerName, o.OwnerCode, .OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName, o.OwnerCode, OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
