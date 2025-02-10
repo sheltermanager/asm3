@@ -118,6 +118,7 @@ $(function() {
                     } 
                 },
                 { id: "scan", text: _("Scan"), icon: "find", enabled: "always", perm: "asl", 
+                    hideif: function() { return !common.browser_is.mobile; },
                     click: async function() {
                         let code = await barcode.scan();
                         let barcodefilter = $(".tablesorter-filter-row input[data-column='4']");
@@ -146,17 +147,6 @@ $(function() {
         },
 
         render: function() {
-            /*console.log("controller.barcode = " + controller.barcode);
-            if (controller.barcode != "") {
-                let filteredrows = [];
-                console.log("Filtering by barcode");
-                $.each(controller.rows, function(rowcount, row) {
-                    if (row.BARCODE == controller.barcode) {
-                        filteredrows.push(row);
-                    }
-                });
-                controller.rows = filteredrows;
-            }*/
             let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
@@ -285,13 +275,15 @@ $(function() {
             });
 
             // Generate code button
-            $("#barcode").after('<button id="definebarcode">' + _("Scan a barcode to assign to the stock") + '</button>');
-            $("#definebarcode")
-                .button({ icons: { primary: "ui-icon-transferthick-e-w" }, text: false })
-                .click(async function() {
-                    let code = await barcode.scan();
-                    $("#barcode").val(code);
-                });
+            if (common.browser_is.mobile) {
+                $("#barcode").after('<button id="definebarcode">' + _("Scan a barcode to assign to the stock") + '</button>');
+                $("#definebarcode")
+                    .button({ icons: { primary: "ui-icon-transferthick-e-w" }, text: false })
+                    .click(async function() {
+                        let code = await barcode.scan();
+                        $("#barcode").val(code);
+                    });
+            }
 
             if (controller.newlevel == 1) {
                 this.new_level();
