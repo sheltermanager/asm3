@@ -19,7 +19,8 @@ const barcode = {
         barcode.deferred = $.Deferred();
         common.local_set("zxing_result", "");
         header.show_loading(_("Scanning"));
-        let targeturl = "zxing://scan/?ret=" + asm.serviceurl + "?account=" + asm.useraccount + "&method=barcode_scan_result&barcode={CODE}";
+        let returnurl = asm.serviceurl + "?account=" + asm.useraccount + "&method=barcode_scan_result&barcode={CODE}";
+        let targeturl = "zxing://scan/?ret=" + encodeURIComponent(returnurl);
         window.location = targeturl;
         return barcode.deferred;
     },
