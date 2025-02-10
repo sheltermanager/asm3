@@ -579,9 +579,9 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if barcode == "": barcode = "cancel"
         h = "<!DOCTYPE html>\n<html>\n<body>\n<script>\n" \
             f'window.localStorage.setItem("zxing_result", "{barcode}");\n' \
-            'window.close();' \
             "</script>\n" \
             f"<p>Result: {barcode}</p>" \
+            '<h1><a href="javascript:window.close()">BACK</a></h1>' \
             "</body>\n</html>"
         return ("text/html", 0, 0, h)
 
