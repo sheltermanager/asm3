@@ -409,7 +409,7 @@ header = {
                     '<input id="topline-q" name="q" type="search" class="asm-textbox" title="' + 
                         html.title("ALT+SHIFT+S " + _("filters") + ": " +
                             "a:animal, ac:animalcontrol, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal, " + 
-                            "li:licence, lo:logs, vo:voucher " +
+                            "li:licence, lo:logs, vo:voucher, ci:citation \n" +
                             _("keywords") + ": " + "onshelter/os, notforadoption, aco, banned, donors, deceased, vets, " + 
                             "retailers, staff, fosterers, volunteers, homecheckers, members, drivers, overduedonations, " +
                             "signed, unsigned, activelost, activefound") +

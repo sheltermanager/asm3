@@ -166,6 +166,10 @@ DBFS_S3_BUCKET = get_string("dbfs_s3_bucket", "")
 DBFS_S3_ACCESS_KEY_ID = get_string("dbfs_s3_access_key_id", "")
 DBFS_S3_SECRET_ACCESS_KEY = get_string("dbfs_s3_secret_access_key", "")
 DBFS_S3_ENDPOINT_URL = get_string("dbfs_s3_endpoint_url", "")
+# If a backup folder is specified, any files that we fail to upload
+# to object storage are placed there with the name dbname-file so that they
+# can be easily retried by another process later
+DBFS_S3_BACKUP_FOLDER = get_string("dbfs_s3_backup_folder", "")
 
 # If you are migrating away from one S3 provider to another, you can set the old provider's
 # credentials here. The DBFS module will look in the new provider first, and if it doesn't

@@ -315,7 +315,7 @@ def _get_media_filename(m: ResultRow) -> str:
     """ Constructs a filename from media notes.
         Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
     s = m.MEDIANOTES
-    s = s.replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_")
+    s = s.replace("\n", "_").replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_")
     s = asm3.utils.truncate(s, 20)
     ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
     if not s.endswith(ext): s += ext

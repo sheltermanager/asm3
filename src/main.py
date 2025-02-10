@@ -2818,7 +2818,8 @@ class citations(JSONEndpoint):
         return {
             "name": "citations",
             "rows": citations,
-            "citationtypes": asm3.lookups.get_citation_types(o.dbo)
+            "citationtypes": asm3.lookups.get_citation_types(o.dbo),
+            "nextid": o.dbo.get_id_max("ownercitation")
         }
 
     def post_create(self, o):
@@ -4159,7 +4160,8 @@ class incident_citations(JSONEndpoint):
             "rows": citations,
             "incident": a,
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
-            "citationtypes": asm3.lookups.get_citation_types(dbo)
+            "citationtypes": asm3.lookups.get_citation_types(dbo),
+            "nextid": dbo.get_id_max("ownercitation")
         }
 
 class incident_find(JSONEndpoint):
@@ -6191,13 +6193,14 @@ class person_citations(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         citations = asm3.financial.get_person_citations(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d citations" % len(citations), "main.incident_citations", dbo)
+        asm3.al.debug("got %d citations" % len(citations), "main.person_citations", dbo)
         return {
             "name": "person_citations",
             "rows": citations,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
-            "citationtypes": asm3.lookups.get_citation_types(dbo)
+            "citationtypes": asm3.lookups.get_citation_types(dbo),
+            "nextid": dbo.get_id_max("ownercitation")
         }
 
 class person_clinic(JSONEndpoint):
