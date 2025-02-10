@@ -67,8 +67,8 @@ def asm_script_tags(path: str) -> str:
     Returns separate script tags for all ASM javascript files.
     """
     jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
-        "header_additional.js", "header_edit_header.js" ]
+        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_barcode.js", "common_microchip.js", 
+        "header.js", "header_additional.js", "header_edit_header.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     # or those we should exclude because they are standalone files

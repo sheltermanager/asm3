@@ -45,6 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
+    34904, 34905, 34906, 34907, 34908
     34904, 34905, 34906, 34907
 )
 
@@ -1675,13 +1676,15 @@ def sql_structure(dbo: Database) -> str:
         fstr("BatchNumber", True),
         fint("Cost", True),
         fint("UnitPrice", True),
-        fdate("CreatedDate")
+        fdate("CreatedDate"),
+        fstr("Barcode")
         ), False)
     sql += index("stocklevel_Name", "stocklevel", "Name")
     sql += index("stocklevel_UnitName", "stocklevel", "UnitName")
     sql += index("stocklevel_StockLocationID", "stocklevel", "StockLocationID")
     sql += index("stocklevel_Expiry", "stocklevel", "Expiry")
     sql += index("stocklevel_BatchNumber", "stocklevel", "BatchNumber")
+    sql += index("stocklevel_Barcode", "stocklevel", "Barcode")
 
     sql += table("stocklocation", (
         fid(),
@@ -6413,8 +6416,13 @@ def update_34906(dbo: Database) -> None:
     install_html_template(dbo, "foundanimalview", use_max_id=True)
 
 def update_34907(dbo: Database) -> None:
-    # Add extra column to ownercitation
+    # Add ownercitation.CitationNumber
     add_column(dbo, "ownercitation", "CitationNumber", dbo.type_shorttext)
     add_index(dbo, "ownercitation_CitationNumber", "ownercitation", "CitationNumber")
     dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
 
+def update_34908(dbo: Database) -> None:
+    # Add stocklevel.Barcode
+    add_column(dbo, "stocklevel", "Barcode", dbo.type_shorttext)
+    add_index(dbo, "stocklevel_Barcode", "stocklevel", "Barcode")
+    dbo.execute_dbupdate("UPDATE stocklevel SET Barcode=''")

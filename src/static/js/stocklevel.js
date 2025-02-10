@@ -18,6 +18,7 @@ $(function() {
                 fields: [
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
+                    { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "", post_field: "quantity", label: _("Quantity"), type: "intnumber", validation: "notblank", 
                         defaultval: "1", min: 1, max: 100, readonly: true, callout: _("The number of stock records to create (containers)") },
                     { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
@@ -52,6 +53,7 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
+                    stocklevel.active_row_id = row.ID;
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
@@ -91,6 +93,7 @@ $(function() {
                         if (row.LOW) { s += " " + _("(low at {0})").replace("{0}", row.LOW); }
                         return s;
                     }},
+                    { field: "BARCODE", display: _("Barcode") },
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
                     { field: "UNITPRICE", display: _("Unit Price"), formatter: tableform.format_currency },
                     { field: "BATCHNUMBER", display: _("Batch") },
@@ -112,6 +115,20 @@ $(function() {
                         await common.ajax_post("stocklevel", "mode=delete&ids=" + ids);
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
+                    } 
+                },
+                { id: "scan", text: _("Scan"), icon: "find", enabled: "always", perm: "asl", 
+                    hideif: function() { return !common.browser_is.mobile; },
+                    click: async function() {
+                        let code = await barcode.scan();
+                        let barcodefilter = $(".tablesorter-filter-row input[data-column='4']");
+                        barcodefilter.val(code);
+                        barcodefilter.change();
+                        //$("#tableform-toggle-filter").click();
+                        table.filter_toggle = true;
+                        //$(".tablesorter-filter-row").toggle(table.filter_toggle);
+                        console.log(table.filter_toggle);
+                        $(".tablesorter-filter-row").show();
                     } 
                 },
                 { id: "viewlocation", type: "dropdownfilter", 
@@ -257,6 +274,17 @@ $(function() {
                 }
             });
 
+            // Generate code button
+            if (common.browser_is.mobile) {
+                $("#barcode").after('<button id="definebarcode">' + _("Scan a barcode to assign to the stock") + '</button>');
+                $("#definebarcode")
+                    .button({ icons: { primary: "ui-icon-transferthick-e-w" }, text: false })
+                    .click(async function() {
+                        let code = await barcode.scan();
+                        $("#barcode").val(code);
+                    });
+            }
+
             if (controller.newlevel == 1) {
                 this.new_level();
             }
@@ -267,6 +295,13 @@ $(function() {
             // If a viewlocation is given in the querystring, update the select
             if (common.querystring_param("viewlocation")) {
                 $("#viewlocation").select("value", common.querystring_param("viewlocation"));
+            }
+
+            if (common.querystring_param("barcode")) {
+                let barcode = common.querystring_param("barcode");
+                let barcodefilter = $(".tablesorter-filter-row input[data-column='4']");
+                barcodefilter.val(barcode);
+                $("#tableform-toggle-filter").click();
             }
 
             $("#name").autocomplete({ source: html.decode(controller.stocknames.split("|")) });
