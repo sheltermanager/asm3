@@ -119,9 +119,9 @@ $(function() {
                 },
                 { id: "scan", text: _("Scan"), icon: "find", enabled: "always", perm: "asl", 
                     click: async function() {
-                        let barcode = await barcode.scan();
+                        let code = await barcode.scan();
                         let barcodefilter = $(".tablesorter-filter-row input[data-column='4']");
-                        barcodefilter.val(barcode);
+                        barcodefilter.val(code);
                         barcodefilter.change();
                         //$("#tableform-toggle-filter").click();
                         table.filter_toggle = true;
@@ -289,8 +289,8 @@ $(function() {
             $("#definebarcode")
                 .button({ icons: { primary: "ui-icon-transferthick-e-w" }, text: false })
                 .click(async function() {
-                    let barcode = await barcode.scan();
-                    $("#barcode").val(barcode);
+                    let code = await barcode.scan();
+                    $("#barcode").val(code);
                 });
 
             if (controller.newlevel == 1) {
