@@ -6415,13 +6415,13 @@ def update_34906(dbo: Database) -> None:
     install_html_template(dbo, "foundanimalview", use_max_id=True)
 
 def update_34907(dbo: Database) -> None:
-    # Add extra column to ownercitation
+    # Add ownercitation.CitationNumber
     add_column(dbo, "ownercitation", "CitationNumber", dbo.type_shorttext)
     add_index(dbo, "ownercitation_CitationNumber", "ownercitation", "CitationNumber")
     dbo.execute_dbupdate("UPDATE ownercitation SET CitationNumber=%s" % dbo.sql_zero_pad_left("ID", 6))
 
 def update_34908(dbo: Database) -> None:
-    # Add extra column to stocklevel
+    # Add stocklevel.Barcode
     add_column(dbo, "stocklevel", "Barcode", dbo.type_shorttext)
     add_index(dbo, "stocklevel_Barcode", "stocklevel", "Barcode")
     dbo.execute_dbupdate("UPDATE stocklevel SET Barcode=''")
