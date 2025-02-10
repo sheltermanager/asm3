@@ -1,4 +1,4 @@
-/*global $, console, jQuery, common */
+/*global $, console, jQuery, common, header, _, asm */
 /*global barcode: true */
 
 "use strict";
