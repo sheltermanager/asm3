@@ -18,6 +18,7 @@ const barcode = {
     scan: function() {
         barcode.deferred = $.Deferred();
         common.local_set("zxing_result", "");
+        header.show_loading(_("Scanning"));
         let targeturl = "zxing://scan/?ret=" + asm.serviceurl + "?account=" + asm.useraccount + "&method=barcode_scan_result&barcode={CODE}";
         window.location = targeturl;
         return barcode.deferred;
@@ -28,6 +29,12 @@ const barcode = {
 /** We only need one global listener to handle changes to localstorage to look for barcode results from zxing */
 window.addEventListener("storage", function() {
     let rv = common.local_get("zxing_result");
-    if (rv && rv == "cancel") { barcode.deferred.reject("cancel"); }
-    if (rv) { barcode.deferred.resolve(rv); }
+    if (rv && rv == "cancel") {
+        header.hide_loading();
+        barcode.deferred.reject("cancel"); 
+    }
+    if (rv) { 
+        header.hide_loading();
+        barcode.deferred.resolve(rv); 
+    }
 });

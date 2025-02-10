@@ -577,11 +577,13 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     elif method == "barcode_scan_result":
         barcode = post["barcode"]
         if barcode == "": barcode = "cancel"
-        h = "<html>\n<body>\n<script>\n" \
+        h = "<!DOCTYPE html>\n<html>\n<body>\n<script>\n" \
             f'window.localStorage.setItem("zxing_result", "{barcode}");\n' \
             'window.close();' \
-            "</script>\n</body>\n</html>"
-        return ("text/plain", 0, 0, barcode)
+            "</script>\n" \
+            f"<p>Result: {barcode}</p>" \
+            "</body>\n</html>"
+        return ("text/html", 0, 0, h)
 
     elif method == "checkout":
         processor = asm3.financial.get_payment_processor(dbo, post["processor"])
