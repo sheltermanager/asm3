@@ -119,9 +119,7 @@ $(function() {
                 },
                 { id: "scan", text: _("Scan"), icon: "find", enabled: "always", perm: "asl", 
                     click: async function() {
-                        //let targeturl = "zxing://scan/?ret=https:" + window.location.host + "?viewlocation=" + $("#viewlocation").val() + "&barcode={CODE}";
-                        //let barcode = await barcode.scan();
-                        let barcode = "SC4NN3D 84RC0D3";
+                        let barcode = await barcode.scan();
                         let barcodefilter = $(".tablesorter-filter-row input[data-column='4']");
                         barcodefilter.val(barcode);
                         barcodefilter.change();
@@ -290,9 +288,8 @@ $(function() {
             $("#barcode").after('<button id="definebarcode">' + _("Scan a barcode to assign to the stock") + '</button>');
             $("#definebarcode")
                 .button({ icons: { primary: "ui-icon-transferthick-e-w" }, text: false })
-                .click(function() {
-                    //let barcode = await barcode.scan();
-                    let barcode = "SC4NN3D 84RC0D3";
+                .click(async function() {
+                    let barcode = await barcode.scan();
                     $("#barcode").val(barcode);
                 });
 

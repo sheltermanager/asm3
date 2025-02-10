@@ -573,6 +573,15 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     elif method == "animal_view_adoptable_html":
         return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
+    
+    elif method == "barcode_scan_result":
+        barcode = post["barcode"]
+        if barcode == "": barcode = "cancel"
+        h = "<html>\n<body>\n<script>\n" \
+            f'window.localStorage.setItem("zxing_result", "{barcode}");\n' \
+            'window.close();' \
+            "</script>\n</body>\n</html>"
+        return ("text/plain", 0, 0, barcode)
 
     elif method == "checkout":
         processor = asm3.financial.get_payment_processor(dbo, post["processor"])
