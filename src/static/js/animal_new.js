@@ -78,7 +78,8 @@ $(function() {
                         markup: tableform.render_check({ post_field: "tattoo", label: "", justwidget: true }) +
                             tableform.render_date({ post_field: "tattoodate", halfsize: true, justwidget: true, placeholder: _("Date") }) + 
                             tableform.render_text({ post_field: "tattoonumber", justwidget: true, placeholder: _("Number") }) },
-                    { post_field: "litterid", label: _("Litter"), type: "text", rowid: "litterrow" },
+                    { post_field: "litterid", label: _("Litter"), type: "autotext", rowid: "litterrow",
+                        options: { rows: controller.activelitters, displayfield: "label", valuefield: "value" }},
                     { post_field: "entrytype", label: _("Entry Type"), type: "select", 
                         options: { displayfield: "ENTRYTYPENAME", rows: controller.entrytypes }},
                     { post_field: "entryreason", label: _("Entry Category"), type: "select", 
@@ -496,9 +497,6 @@ $(function() {
             $("#entryreason, #transferin, #datebroughtin, #dateofbirth").change(function() {
                 animal_new.update_entry_type();
             });
-
-            // Litter autocomplete
-            $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
             // Setting the neutered date sets the checkbox
             $("#neutereddate").change(function() {

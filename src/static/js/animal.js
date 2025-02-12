@@ -37,7 +37,8 @@ $(function() {
                         tableform.render_hidden({ post_field: "yearcode", json_field: "YEARCODEID", justwidget: true }),
                         '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
                         '</span>' ].join("\n") },
-                    { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "text" },
+                    { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "autotext", 
+                        options: { rows: controller.activelitters, displayfield: "label", valuefield: "value" }},
                     { post_field: "animalname", json_field: "ANIMALNAME", label: _("Name"), type: "text", 
                         xmarkup: ' <button id="button-randomname">' + _("Generate a random name for this animal") + '</button>' },
                     { post_field: "sex", json_field: "SEX", label: _("Sex"), type: "select", 
@@ -1109,7 +1110,7 @@ $(function() {
                 animal.update_entry_type();
             });
 
-            // Changing the location updates the unit autocomplete and clears the unit
+            // Changing the location updates the unit autotext and clears the unit
             $("#location").change(function() {
                 $("#unit").val("");
                 animal.update_units();
@@ -1163,9 +1164,6 @@ $(function() {
                     }
                 }
             });
-
-            // Litter autocomplete
-            $("#litterid").autocomplete({source: html.decode(controller.activelitters)});
 
             // If the bonded animals are cleared (or any animalchooser as part
             // of an additional field for that matter), dirty the form.
@@ -1403,7 +1401,7 @@ $(function() {
             // Load animal flags (note some will not be added if animal is not on shelter)
             html.animal_flag_options(controller.animal, controller.flags, $("#flags"));
 
-            // Update the unit autocomplete to match the selected location
+            // Update the unit autotext to match the selected location
             animal.update_units();
 
             // Update on-screen fields from the data and display the screen

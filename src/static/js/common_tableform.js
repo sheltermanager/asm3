@@ -1090,7 +1090,7 @@ const tableform = {
         $.each(fields, function(i, v) {
             if (v.type == "animal") { d += tableform.render_animal(v); }
             else if (v.type == "animalmulti") { d += tableform.render_animalmulti(v); }
-            else if (v.type == "autocomplete") { d += tableform.render_autocomplete(v); }
+            else if (v.type == "autotext") { d += tableform.render_autotext(v); }
             else if (v.type == "check") { d += tableform.render_check(v); }
             else if (v.type == "currency") { d += tableform.render_currency(v); }
             else if (v.type == "date") { d += tableform.render_date(v); }
@@ -1293,7 +1293,7 @@ const tableform = {
     },
 
     _pack_ac_source: function(v) {
-        // turns an options attribute an autocomplete data-source attribute, which are
+        // turns an options attribute into a autotext data-source attribute, which are
         // ^^ separated items with a pipe separating the value and label.
         // Eg: 1|Thing^^2|Another thing^^3|etc
         if (common.is_array(v.options)) {
@@ -1330,11 +1330,11 @@ const tableform = {
         return src;
     },
 
-    render_autocomplete: function(v) {
+    render_autotext: function(v) {
         let d = "";
         tableform._check_id(v);
         d += "<input type=\"text\" ";
-        d += tableform._render_class(v, "asm-textbox asm-autocomplete");
+        d += tableform._render_class(v, "asm-textbox asm-autotext");
         d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }

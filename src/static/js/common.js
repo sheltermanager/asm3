@@ -1090,7 +1090,7 @@ const common = {
         $(".asm-callout").callout();
         $(".asm-datebox").date();
         $(".asm-alphanumberbox").alphanumber();
-        $(".asm-autocomplete").asmautocomplete();
+        $(".asm-autotext").autotext();
         $(".asm-numberbox").number();
         $(".asm-intbox").intnumber();
         $(".asm-ipbox").ipnumber();

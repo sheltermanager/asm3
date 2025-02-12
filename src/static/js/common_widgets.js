@@ -294,7 +294,7 @@ $.fn.asmtabs = function() {
 
 // Wrapper/helper for JQuery autocomplete widget. 
 // Expects a data-source attribute to contain the source for the dropdown.
-$.fn.asmautocomplete = function(method, newval) {
+$.fn.autotext = function(method, newval) {
     if (!method || method == "create") {
         this.each(function() {
             let self = $(this);

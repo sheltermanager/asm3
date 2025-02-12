@@ -48,7 +48,8 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
-                    { json_field: "FIELDNAME", post_field: "fieldname", label: _("Name"), type: "text", validation: "notblank" }, 
+                    { json_field: "FIELDNAME", post_field: "fieldname", label: _("Name"), type: "autotext", validation: "notblank",
+                        options: controller.formfields },
                     { json_field: "FIELDTYPE", post_field: "fieldtype", label: _("Type"), type: "select", options: {
                         valuefield: "ID", displayfield: "NAME", rows: fieldtypes }},
                     { json_field: "LABEL", post_field: "label", label: _("Label"), type: "text", maxlength: 1000, validation: "notblank" }, 
@@ -205,12 +206,6 @@ $(function() {
 
             // Show/hide the lookup values box if type changes
             $("#fieldtype").change(this.check_controls);
-
-            // Prompt with our recognised fields in the autocomplete
-            $("#fieldname").autocomplete({ source: controller.formfields }); 
-            // Fix for JQuery UI 10.3, autocomplete has to be created after the dialog is
-            // shown or the stacking order is wrong. This fixes it now.
-            $("#fieldname").autocomplete("widget").css("z-index", 1000);
 
         },
 

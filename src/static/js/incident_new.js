@@ -26,10 +26,10 @@ $(function() {
                     { type: "nextcol" },
 
                     { post_field: "dispatchaddress", type: "textarea", label: _("Dispatch Address"), rows: 5, classes: "asm-textareafixed" },
-                    { post_field: "dispatchtown", type: "text", label: _("City"), maxlength: 100 },
+                    { post_field: "dispatchtown", type: "autotext", label: _("City"), maxlength: 100, options: controller.towns, minlength: 3 },
                     common.iif(config.bool("USStateCodes"),
                         { post_field: "dispatchcounty", type: "select", label: _("State"), options: html.states_us_options(config.str("OrganisationCounty")) },
-                        { post_field: "dispatchcounty", type: "text", label: _("State"), maxlength: 100 }),
+                        { post_field: "dispatchcounty", type: "autotext", label: _("State"), maxlength: 100, options: controller.counties, minlength: 3 }),
                     { post_field: "dispatchpostcode", type: "text", label: _("Zipcode") },
                     { post_field: "dispatchedaco", type: "selectmulti", label: _("Dispatched ACO"), 
                         options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
@@ -130,13 +130,11 @@ $(function() {
                 }
             });
 
-            $("#dispatchtown").autocomplete({ source: controller.towns });
             $("#dispatchtown").blur(function() {
                 if ($("#dispatchcounty").val() == "") {
                     $("#dispatchcounty").val(controller.towncounties[$("#dispatchtown").val()]);
                 }
             });
-            if (!config.bool("USStateCodes")) { $("#dispatchcounty").autocomplete({ source: controller.counties }); }
 
             if (!config.bool("MultiSiteEnabled")) {
                 $("#siterow").hide();

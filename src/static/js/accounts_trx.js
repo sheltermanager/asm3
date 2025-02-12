@@ -18,7 +18,8 @@ $(function() {
                                     '<option value="1">' + _("Reconciled") + '</option>' },
                     { post_field: "thisaccount", label: _("Account"), type: "raw",
                         markup: '<span id="thisaccount">' + controller.accountcode + '</span>' },
-                    { post_field: "otheraccount", label: _("Other Account"), type: "text"},
+                    { post_field: "otheraccount", label: _("Other Account"), type: "autotext",
+                        options: controller.codes.split("|") },
                     { rowid: "paymentrow", label: _("Payment From"), 
                         type: "raw", markup: ['<a id="personlink" class="asm-embed-name" href="#"></a> ' + html.icon("right"),
                         '<a id="animallink" class="asm-embed-name" href="#"></a>',
@@ -316,7 +317,6 @@ $(function() {
             // Default values for the new row
             $("#newtrxdate").date("today");
             $("#newacc").autocomplete({ source: html.decode(controller.codes).split("|") });
-            $("#otheraccount").autocomplete({ source: html.decode(controller.codes).split("|") });
 
             // If this account has edit roles set and our user is
             // not a superuser and not in one of those roles then

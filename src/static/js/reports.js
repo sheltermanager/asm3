@@ -74,7 +74,8 @@ $(function() {
                         '<option value="MAP USER">' + _("Map (Center current loc)") + '</option>',
                         '<option value="MAP FIRST">' + _("Map (Center first valid)") + '</option>' ].join("\n") },
 
-                    { json_field: "CATEGORY", post_field: "category", classes: "asm-doubletextbox", label: _("Category"), type: "text", validation: "notblank" },
+                    { json_field: "CATEGORY", post_field: "category", classes: "asm-doubletextbox", label: _("Category"), type: "autotext",
+                        validation: "notblank", options: controller.categories.split("|") },
                     { json_field: "TITLE", post_field: "title", classes: "asm-doubletextbox", label: _("Report Title"), type: "text", validation: "notblank" },
                     { json_field: "DESCRIPTION", post_field: "description", classes: "asm-doubletextbox", label: _("Description"), type: "text" },
                     { json_field: "DAILYEMAIL", post_field: "dailyemail", classes: "asm-doubletextbox", label: _("Email To"), type: "text", validation: "validemail", 
@@ -320,10 +321,6 @@ $(function() {
             reports.qb.bind();
             reports.bind_browse_smcom();
             reports.bind_dialogbuttons();
-            $("#category").autocomplete({ source: html.decode(controller.categories).split("|") });
-            // Fix for JQuery UI 10.3, autocomplete has to be created after the dialog is
-            // shown or the stacking order is wrong. This fixes it now.
-            $("#category").autocomplete("widget").css("z-index", 1000);
             $("#type").change(reports.change_type);
         },
 

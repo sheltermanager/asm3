@@ -69,11 +69,13 @@ $(function() {
                     { type: "nextcol" },
 
                     { post_field: "address", json_field: "OWNERADDRESS", type: "textarea", label: _("Address"), classes: "asm-textareafixed", rows: 5},
-                    { post_field: "town", json_field: "OWNERTOWN", type: "text", label: _("City"), rowclasses: "towncounty", maxlength: 100 },
+                    { post_field: "town", json_field: "OWNERTOWN", type: "autotext", label: _("City"), rowclasses: "towncounty", 
+                        maxlength: 100, options: controller.towns, minlength: 4 },
                     common.iif(config.bool("USStateCodes"),
                         { post_field: "county", json_field: "OWNERCOUNTY", type: "select", label: _("State"), rowclasses: "towncounty", 
                             options: html.states_us_options(config.str("OrganisationCounty")) },
-                        { post_field: "county", json_field: "OWNERCOUNTY", type: "text", label: _("State"), rowclasses: "towncounty", maxlength: 100 }),
+                        { post_field: "county", json_field: "OWNERCOUNTY", type: "autotext", label: _("State"), rowclasses: "towncounty", 
+                            minlength: 3, options: controller.counties }),
                     { post_field: "postcode", json_field: "OWNERPOSTCODE", type: "text", label: _("Zipcode") },
                     { post_field: "country", json_field: "OWNERCOUNTRY", type: "text", label: _("Country") }, 
                     { post_field: "latlong", json_field: "LATLONG", type: "latlong", label: _("Latitude/Longitude"), 
@@ -446,10 +448,7 @@ $(function() {
             // Email dialog for sending emails
             $("#emailform").emailform();
 
-            if (!config.bool("USStateCodes")) {
-                $("#county").autocomplete({ source: controller.counties, minLength: 3 });
-            }
-            $("#town").autocomplete({ source: controller.towns, minLength: 4 });
+            // Set the county field when leaving town
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
                     $("#county").val(controller.towncounties[$("#town").val()]);

@@ -24,7 +24,8 @@ $(function() {
                 html.content_header(_("Bulk change animals")),
                 tableform.fields_render([
                     { post_field: "animals", label: _("Animals"), type: "animalmulti" },
-                    { post_field: "litterid", label: _("Litter"), type: "text" },
+                    { post_field: "litterid", label: _("Litter"), type: "autotext",
+                        options: { rows: controller.autolitters, displayfield: "label", valuefield: "value" }},
                     { post_field: "animaltype", label: _("Type"), type: "select", 
                         options: animal_bulk.options(controller.animaltypes, "ID", "ANIMALTYPE") },
                     { post_field: "location", label: _("Location"), type: "select", 
@@ -116,9 +117,6 @@ $(function() {
         },
 
         bind: function() {
-
-            // Litter autocomplete
-            $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
             validate.indicator([ "animals" ]);
 

@@ -16,14 +16,16 @@ $(function() {
                 columns: 1,
                 width: 500,
                 fields: [
-                    { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
+                    { json_field: "NAME", post_field: "name", label: _("Name"), type: "autotext", validation: "notblank",
+                        options: controller.stocknames.split("|") },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "", post_field: "quantity", label: _("Quantity"), type: "intnumber", validation: "notblank", 
                         defaultval: "1", min: 1, max: 100, readonly: true, callout: _("The number of stock records to create (containers)") },
                     { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
                         options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.stocklocations }},
-                    { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "text", validation: "notblank",
+                    { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "autotext", validation: "notblank",
+                        options: controller.stockunits.split("|"),
                         callout: _("The type of unit in the container, eg: tablet, vial, etc.") },
                     { json_field: "TOTAL", post_field: "total", label: _("Total"), type: "number", 
                         callout: _("Total number of units in the container") },
@@ -258,7 +260,7 @@ $(function() {
             });
 
             // If the user changes the name and we don't have a description or unit,
-            // look up the last stock we saw with that name to autocomplete
+            // look up the last stock we saw with that name to auto fill the fields
             $("#name").change(function() {
                 if (!$("#description").val() && !$("#unitname").val()) {
                     common.ajax_post("stocklevel", "mode=lastname&name=" + $("#name").val())
@@ -303,12 +305,6 @@ $(function() {
                 barcodefilter.val(barcode);
                 $("#tableform-toggle-filter").click();
             }
-
-            $("#name").autocomplete({ source: html.decode(controller.stocknames.split("|")) });
-            $("#name").autocomplete("option", "appendTo", "#dialog-tableform");
-            $("#unitname").autocomplete({ source: html.decode(controller.stockunits.split("|")) });
-            $("#unitname").autocomplete("option", "appendTo", "#dialog-tableform");
-
         },
 
         destroy: function() {

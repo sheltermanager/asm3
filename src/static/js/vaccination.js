@@ -33,7 +33,8 @@ $(function() {
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
-                    { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "text" },
+                    { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "autotext", 
+                        minlength: 3, options: controller.manufacturers.split("|") },
                     { json_field: "RABIESTAG", post_field: "rabiestag", label: _("Rabies Tag"), type: "text" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
@@ -504,10 +505,6 @@ $(function() {
             if (config.bool("DisableStockControl")) {
                 $(".tagstock").hide();
             }
-            // Autocomplete manufacturers
-            $("#manufacturer").autocomplete({ source: html.decode(controller.manufacturers.split("|")), minLength: 3 });
-            $("#manufacturer").autocomplete("option", "appendTo", "#dialog-tableform");
-
         },
 
         /** Whether or not we should allow overwriting of the cost */
