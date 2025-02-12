@@ -114,7 +114,7 @@ $(function() {
                 },
                 { id: "csv", text: _("CSV"), icon: "save", enabled: "multi", tooltip: _("Export selected forms to a CSV file"),
                     click: function() {
-                        common.route("onlineform_incoming_csv?ajax=false&ids=" + encodeURIComponent(tableform.table_ids(table)));
+                        window.open("onlineform_incoming_csv?ajax=false&ids=" + encodeURIComponent(tableform.table_ids(table)));
                     }
                 },
                 { id: "attach", icon: "link", text: _("Attach"), enabled: "one", type: "buttonmenu" },
