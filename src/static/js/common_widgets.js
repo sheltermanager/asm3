@@ -1,5 +1,5 @@
 /*global $, console, jQuery, CodeMirror, Mousetrap, tinymce */
-/*global asm, common, config, dlgfx, edit_header, format, html, header, log, schema, validate, _, escape, unescape */
+/*global asm, common, config, dlgfx, edit_header, format, html, header, log, schema, tableform, validate, _, escape, unescape */
 /*global MASK_VALUE: true */
 
 "use strict";
@@ -290,6 +290,41 @@ $.fn.asmtabs = function() {
             $(this).removeClass("ui-state-hover");
         });
     });
+};
+
+// Wrapper/helper for JQuery autocomplete widget. 
+// Expects a data-source attribute to contain the source for the dropdown.
+$.fn.asmautocomplete = function(method, newval) {
+    if (!method || method == "create") {
+        this.each(function() {
+            let self = $(this);
+            disable_autocomplete(self);
+            let minlength = self.attr("data-minlength") || 1;
+            let defaultsearch = self.attr("data-defaultsearch");
+            let appendto = self.attr("data-appendto");
+            if (!appendto && $("#dialog-tableform").length > 0) { appendto = "#dialog-tableform"; }
+            self.autocomplete({
+                source: tableform._unpack_ac_source(self.attr("data-source")),
+                minLength: minlength, // number of chars to enter before searching starts
+                select: function() {
+                    // fire the change event when something is selected from the dropdown
+                    self.change();
+                }
+            });
+            if (defaultsearch) {
+                self.focus(function() {
+                    self.autocomplete("search", defaultsearch); 
+                });
+            }
+            if (appendto) {
+                self.autocomplete("option", "appendTo", appendto);
+            }
+            else {
+                // If we don't have an appendTo, fall back to manipulating the z-index
+                self.autocomplete("widget").css("z-index", 1000);
+            }
+        });
+    }
 };
 
 // Textbox that should only contain numbers.

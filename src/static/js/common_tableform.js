@@ -439,8 +439,11 @@ const tableform = {
 
         // Bind the CTRL+A key
         Mousetrap.bind("ctrl+a", function() {
+            // allow the event to propogate if we don't have visible table to select from or the dialog is open
+            if ($("#tableform input[type='checkbox']").length == 0) { return; } 
+            if ($("#dialog-tableform").hasClass("ui-dialog-content") && $("#dialog-tableform").dialog("isOpen")) { return; }
             select_all();
-            return false;
+            return false; 
         });
 
         // Bind any widgets inside the table
@@ -1087,6 +1090,7 @@ const tableform = {
         $.each(fields, function(i, v) {
             if (v.type == "animal") { d += tableform.render_animal(v); }
             else if (v.type == "animalmulti") { d += tableform.render_animalmulti(v); }
+            else if (v.type == "autocomplete") { d += tableform.render_autocomplete(v); }
             else if (v.type == "check") { d += tableform.render_check(v); }
             else if (v.type == "currency") { d += tableform.render_currency(v); }
             else if (v.type == "date") { d += tableform.render_date(v); }
@@ -1285,6 +1289,72 @@ const tableform = {
         if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
         if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
+        return tableform._render_formfield(v, d);
+    },
+
+    _pack_ac_source: function(v) {
+        // turns an options attribute an autocomplete data-source attribute, which are
+        // ^^ separated items with a pipe separating the value and label.
+        // Eg: 1|Thing^^2|Another thing^^3|etc
+        if (common.is_array(v.options)) {
+            return html.title(v.options.join("^^"));
+        }
+        else if (v.options && v.options.rows) {
+            let s = [];
+            if (v.options.prepend) { s.push(v.options.prepend); }
+            if (!v.options.valuefield) { v.options.valuefield = "ID"; } // assume ID if not given - is for most things
+            $.each(v.options.rows, function(i, x) {
+                s.push(x[v.options.valuefield] + "|" + x[v.options.displayfield]);
+            });
+            return html.title(s.join("^^"));
+        }
+        else {
+            return html.title(v.options);
+        }
+    },
+
+    _unpack_ac_source: function(x) {
+        let src = [];
+        $.each(x.split("^^"), function(i, v) {
+            let label = "", value = "";
+            if (v.indexOf("|") != -1) {
+                value = v.split("|")[0];
+                label = v.split("|")[1];
+            }
+            else {
+                value = v;
+                label = v;
+            }
+            src.push({ label: label, value: value });
+        });
+        return src;
+    },
+
+    render_autocomplete: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-autocomplete");
+        d += tableform._render_style(v, "");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.autocomplete) { d += "autocomplete=\"" + v.autocomplete + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.appendto) { d += "data-appendto=\"" + v.appendto + "\" "; }
+        if (v.defaultsearch) { d += "data-defaultsearch=\"" + v.defaultsearch + "\" "; }
+        if (v.minlength) { d += "data-minlength=\"" + v.minlength + "\" "; }
+        if (v.options) { d += "data-source=\"" + tableform._pack_ac_source(v) + "\" ";}
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.validation) { d += tableform._render_validation_attr(v); }
+        if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
+        if (v.maxlength) { d += "maxlength=" + v.maxlength; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
+        if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
 
