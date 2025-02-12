@@ -223,13 +223,7 @@ $(function() {
                     click: async function() {
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
-                        let rawids = tableform.table_ids(table);
-                        let ids = [];
-                        for ( let a = 0; a < rawids.length; a++ ) {
-                            if ( rawids[a] >= 0 ) {
-                                ids.push(rawids[a]);
-                            }
-                        }
+                        let ids = tableform.table_ids(table);
                         await common.ajax_post("lookups", "mode=delete&lookup=" + controller.tablename + "&ids=" + ids);
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
