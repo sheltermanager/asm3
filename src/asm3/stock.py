@@ -8,6 +8,24 @@ def get_stocklevel_query(dbo: Database) -> str:
         "FROM stocklevel s " \
         "INNER JOIN stocklocation l ON s.StockLocationID = l.ID " 
 
+def get_products(dbo: Database, includeretired=False) -> Results:
+    """
+    Returns all products
+    """
+    return dbo.query("SELECT * FROM product WHERE IsRetired = %s ORDER BY ProductName" % (int(includeretired),))
+
+def get_product_types(dbo: Database) -> Results:
+    """
+    Returns all producttypes
+    """
+    return dbo.query("SELECT * FROM lkproducttype ORDER BY ProductTypeName")
+
+def get_tax_rates(dbo: Database) -> Results:
+    """
+    Returns all tax rates
+    """
+    return dbo.query("SELECT * FROM lktaxrate ORDER BY TaxRateName")
+
 def get_stocklevels(dbo: Database, location: int = 0) -> Results:
     """
     Returns a set of stock levels for a location or 0 for all locations.
@@ -86,6 +104,34 @@ def get_stock_units(dbo: Database) -> List[str]:
         names.append(r.UNITNAME)
     return names
 
+def update_product_from_form(dbo: Database, post: PostedData, username: str) -> None:
+    """
+    Updates a product item from a dialog. The post should include
+    the ID of the product to adjust
+    """
+    l = dbo.locale
+    pid = post.integer("productid")
+    if post["productname"] == "":
+        raise asm3.utils.ASMValidationError(_("Product must have a name", l))
+
+    dbo.update("product", pid, {
+        "ProductName":          post["productname"],
+        "Description":          post["productdescription"],
+        "ProductType":          post.integer("producttype"),
+        "SupplierID":           post.integer("supplierid"),
+        "UnitType":             post.integer("unittype"),
+        "CustomUnit":           post["customunit"],
+        "PurchaseUnitType":     post.integer("purchaseunittype"),
+        "CustomPurchaseUnit":   post["custompurchaseunit"],
+        "CostPrice":            post.integer("costprice"),
+        "RetailPrice":          post.integer("retailprice"),
+        "UnitRatio":            post.integer("unitratio"),
+        "TaxRate":              post.integer("taxrate"),
+        "IsRetired":            post.boolean("retired"),
+        "Barcode":              post["barcode"],
+        "PLU":                  post["plu"]
+    }, username)
+
 def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
     """
     Updates a stocklevel item from a dialog. The post should include
@@ -122,6 +168,58 @@ def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
     if diff != 0: 
         insert_stockusage(dbo, username, slid, diff, post.date("usagedate"), post.integer("usagetype"), post["comments"])
 
+def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> int:
+    """
+    Inserts a product item from a dialog.
+    """
+    l = dbo.locale
+    if post["productname"] == "":
+        raise asm3.utils.ASMValidationError(_("Product must have a name", l))
+   
+    pid = dbo.insert("product", {
+        "ProductName":          post["productname"],
+        "Description":          post["productdescription"],
+        "ProductType":          post.integer("producttype"),
+        "SupplierID":           post.integer("supplierid"),
+        "UnitType":             post.integer("unittype"),
+        "CustomUnit":           post["customunit"],
+        "PurchaseUnitType":     post.integer("purchaseunittype"),
+        "CustomPurchaseUnit":   post["custompurchaseunit"],
+        "CostPrice":            post.integer("costprice"),
+        "RetailPrice":          post.integer("retailprice"),
+        "UnitRatio":            post.integer("unitratio"),
+        "TaxRate":              post.integer("taxrate"),
+        "IsRetired":            post.boolean("retired"),
+        "Barcode":              post["barcode"],
+        "PLU":                  post["plu"],
+        "RecentBatchNo":        "",
+        "RecentExpiry":         ""
+    }, username)
+
+    return pid
+
+def insert_productmovement_from_form(dbo: Database, post: PostedData, username: str) -> int:
+    """
+    Inserts a product movement from a dialog.
+    """
+    l = dbo.locale
+    if post["movementdate"] == "":
+        raise asm3.utils.ASMValidationError(_("Movement must have a date", l))
+   
+    pid = dbo.insert("productmovement", {
+        "ProductID":            post.integer("productid"),
+        "MovementDate":         post.date("movementdate"),
+        "Quantity":             post.integer("quantity"),
+        "UnitRatio":            post.integer("unitratio"),
+        "FromID":               post.integer("fromid"),
+        "ToID":                 post.integer("toid"),
+        "BatchNo":              post["batch"],
+        "Expiry":               post.date("expiry"),
+        "UnitCostPrice":        post.integer("unitcostprice")
+    }, username)
+
+    return pid
+
 def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
     Inserts a stocklevel item from a dialog.
@@ -152,6 +250,12 @@ def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
 
     insert_stockusage(dbo, username, nid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
     return nid
+
+def delete_product(dbo: Database, username: str, pid: int) -> None:
+    """
+    Deletes a product record
+    """
+    dbo.delete("product", "ID=%d" % pid, username)
 
 def delete_stocklevel(dbo: Database, username: str, slid: int) -> None:
     """

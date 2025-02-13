@@ -6420,7 +6420,82 @@ def update_34907(dbo: Database) -> None:
 
 
 def update_35000(dbo: Database) -> None:
+    l = dbo.locale
     # Add extra column to person
     add_column(dbo, "owner", "IsSupplier", dbo.type_integer)
     add_index(dbo, "owner_IsSupplier", "owner", "IsSupplier")
     dbo.execute_dbupdate("UPDATE owner SET IsSupplier=0")
+
+    # Add the product table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("ProductName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("ProductType", dbo.type_integer, False),
+        dbo.ddl_add_table_column("SupplierID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("UnitType", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CustomUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("PurchaseUnitType", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CustomPurchaseUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CostPrice", dbo.type_integer, False),
+        dbo.ddl_add_table_column("RetailPrice", dbo.type_integer, False),
+        dbo.ddl_add_table_column("UnitRatio", dbo.type_integer, False),
+        dbo.ddl_add_table_column("TaxRate", dbo.type_integer, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False),
+        dbo.ddl_add_table_column("Barcode", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("PLU", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("RecentBatchNo", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("RecentExpiry", dbo.type_datetime),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("product", fields) )
+    #add_index(dbo, "ownerrole_OwnerIDRoleID", "ownerrole", "OwnerID,RoleID", unique=True)
+
+    # Add the lkproducttype table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("ProductTypeName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lkproducttype", fields) )
+
+    # Insert "general" into lkproducttype
+    dbo.execute_dbupdate("INSERT INTO lkproducttype (ProductTypeName, Description, IsRetired) VALUES (?, ?, ?)", [ _("General", l), "", 0 ])
+
+    # Add the lkstaxrate table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("TaxRateName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("TaxRate", dbo.type_float, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lktaxrate", fields) )
+
+    # Insert notax into lktaxrate
+    dbo.execute_dbupdate("INSERT INTO lktaxrate (TaxRateName, Description, TaxRate, IsRetired) VALUES (?, ?, ?, ?)", [ _("Tax Free", l), "", 0, 0 ])
+
+    # Add the productmovement table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("ProductID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("MovementDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("Quantity", dbo.type_integer, False),
+        dbo.ddl_add_table_column("UnitRatio", dbo.type_float, False),
+        dbo.ddl_add_table_column("FromID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ToID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("BatchNo", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Expiry", dbo.type_datetime),
+        dbo.ddl_add_table_column("UnitCostPrice", dbo.type_integer, False),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("productmovement", fields) )

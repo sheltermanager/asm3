@@ -14,18 +14,26 @@ $(function() {
                 close_on_ok: false,
                 hide_read_only: true,
                 columns: 1,
-                width: 500,
+                width: 800,
                 fields: [
-                    { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
+                    { json_field: "PRODUCTSEARCHKEY", post_field: "productsearchkey", label: _("Search"), type: "text" },
+                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Results"), type: "select", validation: "notzero", options: controller.productnames },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
+                    { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "text", validation: "notblank",
+                        callout: _("The type of unit in the container, eg: tablet, vial, etc.") },
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
+                        callout: _("The wholesale/trade price the container was bought for") },
+                    { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency",
+                        callout: _("The retail/resale price per unit") },
+                    { json_field: "TOTAL", post_field: "total", label: _("Total"), type: "number", 
+                        callout: _("Total number of units in the container") },
+                    { type: "nextcol" },
                     { json_field: "", post_field: "quantity", label: _("Quantity"), type: "intnumber", validation: "notblank", 
                         defaultval: "1", min: 1, max: 100, readonly: true, callout: _("The number of stock records to create (containers)") },
                     { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
                         options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.stocklocations }},
-                    { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "text", validation: "notblank",
-                        callout: _("The type of unit in the container, eg: tablet, vial, etc.") },
-                    { json_field: "TOTAL", post_field: "total", label: _("Total"), type: "number", 
-                        callout: _("Total number of units in the container") },
+                    
+                    
                     { json_field: "BALANCE", post_field: "balance", label: _("Balance"), type: "number", validation: "notblank",
                         callout: _("The remaining units in the container") },
                     { json_field: "LOW", post_field: "low", label: _("Low"), type: "number", validation: "notblank",
@@ -34,10 +42,7 @@ $(function() {
                         callout: _("If this stock record is for a drug, the batch number from the container") },
                     { json_field: "EXPIRY", post_field: "expiry", label: _("Expiry"), type: "date",
                         callout: _("If this stock record is for a perishable good, the expiry date on the container") },
-                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
-                        callout: _("The wholesale/trade price the container was bought for") },
-                    { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency",
-                        callout: _("The retail/resale price per unit") },
+                    
                     { rowid: "usageinfo", type: "raw", label: "", 
                         markup: html.info(_("Usage explains why this stock record was created or adjusted. Usage records will only be created if the balance changes.")) },
                     { json_field: "", post_field: "usagetype", label: _("Usage Type"), type: "select",
@@ -100,7 +105,7 @@ $(function() {
             };
 
             const buttons = [
-                { id: "new", text: _("New Stock"), icon: "new", enabled: "always", perm: "asl", 
+                { id: "new", text: _("Add Stock"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { stocklevel.new_level(); }},
                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "asl",
                     click: function() { stocklevel.clone_level(); }},
@@ -143,6 +148,7 @@ $(function() {
         new_level: function() { 
             let dialog = stocklevel.dialog, table = stocklevel.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+            $("#productlist").val(-1);
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=create", "stocklevel")
@@ -257,6 +263,59 @@ $(function() {
                 }
             });
 
+            $("#button-chooseproduct").click(function() {
+                tableform.dialog_show_edit(productdialog, {});
+            });
+
+            $("#productsearchkey").keyup(function() {
+                $("#productlist option").hide();
+                $("#productlist option:contains('" + $("#productsearchkey").val() + "')").show();
+            });
+
+            $("#productlist").change(function() {
+                console.log("Product selected = " + $("#productlist").val());
+                let productid = $("#productlist").val();
+                let activeproduct = false;
+                $.each(controller.products, function(productcount, product) {
+                    if (product.ID == productid) {
+                        console.log("Product found");
+                        activeproduct = product;
+
+                        return false;
+                    }
+                });
+                console.log(activeproduct);
+                $("#description").val(activeproduct.DESCRIPTION);
+                let unittype = activeproduct.CUSTOMUNIT;
+                if (activeproduct.UNITTYPE == 0) {
+                    if (activeproduct.PURCHASEUNITTYPE == 0) {
+                        unittype = _("Unit").toLowerCase();
+                    } else if (activeproduct.PURCHASEUNITTYPE == 1) {
+                        unittype = "kg";
+                    } else if (activeproduct.PURCHASEUNITTYPE == 2) {
+                        unittype = "g";
+                    } else if (activeproduct.PURCHASEUNITTYPE == 3) {
+                        unittype = "l";
+                    } else if (activeproduct.PURCHASEUNITTYPE == 4) {
+                        unittype = "ml";
+                    } else if (activeproducttype.PURCHASEUNITTYPE == 5) {
+                        unittype = activeproducttype.CUSTOMPURCHASEUNIT;
+                    }
+                } else if (activeproduct.UNITTYPE == 1) {
+                    unittype = "kg";
+                } else if (activeproduct.UNITTYPE == 2) {
+                    unittype = "g";
+                } else if (activeproduct.UNITTYPE == 3) {
+                    unittype = "l";
+                } else if (activeproduct.UNITTYPE == 4) {
+                    unittype = "ml";
+                }
+                $("#unitname").val(unittype);
+                
+                
+
+            });
+
             if (controller.newlevel == 1) {
                 this.new_level();
             }
@@ -273,6 +332,8 @@ $(function() {
             $("#name").autocomplete("option", "appendTo", "#dialog-tableform");
             $("#unitname").autocomplete({ source: html.decode(controller.stockunits.split("|")) });
             $("#unitname").autocomplete("option", "appendTo", "#dialog-tableform");
+
+            $("#productlist").attr("size", 5);
 
         },
 

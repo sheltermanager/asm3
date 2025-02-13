@@ -1048,6 +1048,10 @@ select:disabled, input:disabled, textarea:disabled {
     text-decoration: none;
 }
 
+#productlist {
+    size: 5;
+}
+
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {
 

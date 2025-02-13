@@ -1100,6 +1100,7 @@ const tableform = {
             else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
             else if (v.type == "phone") { d += tableform.render_phone(v); }
+            else if (v.type == "product") { d += tableform.render_product(v); }
             else if (v.type == "raw") { d += tableform.render_markup(v); }
             else if (v.type == "richtextarea") { d += tableform.render_richtextarea(v); }
             else if (v.type == "select") { d += tableform.render_select(v); } 
@@ -1568,6 +1569,26 @@ const tableform = {
         d += "/>";
         if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
+        return tableform._render_formfield(v, d);
+    },
+
+    render_product: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "asm-productchooser");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
+        if (v.persontype) { d += "data-type=\"" + v.persontype + "\" "; }
+        if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
+        if (v.validation) { d += tableform._render_validation_attr(v); }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
         return tableform._render_formfield(v, d);
     },
 

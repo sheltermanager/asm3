@@ -4474,7 +4474,8 @@ class lookups(JSONEndpoint):
             "hasdefaultcost": "cost" in modifiers,
             "hasunits": "units" in modifiers,
             "hassite": "site" in modifiers,
-            "hasvat": "vat" in modifiers, 
+            "hasvat": "vat" in modifiers,
+            "hastaxrate": tablename == "lktaxrate",
             "canadd": "add" in modifiers,
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
@@ -4486,12 +4487,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
 
     def post_update(self, o):
         post = o.post
         asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
@@ -6654,6 +6655,68 @@ class person_vouchers(JSONEndpoint):
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
+class products(JSONEndpoint):
+    url = "products"
+    js_module = "product"
+    get_permissions = asm3.users.VIEW_STOCKLEVEL # May be worth adding asm3.users.VIEW_PRODUCT??
+
+    def controller(self, o):
+        dbo = o.dbo
+        #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
+        producttypes = []
+        for producttype in asm3.stock.get_product_types(dbo):
+            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
+        taxrates = []
+        for taxrate in asm3.stock.get_tax_rates(dbo):
+            taxrates.append(str(taxrate["ID"]) + "|" + taxrate["TAXRATENAME"])
+        return {
+            "producttypes": producttypes,
+            "taxrates": taxrates,
+            "stocklocations": asm3.lookups.get_stock_locations(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "sortexp": o.post.integer("sortexp") == 1, # Don't know what this does - Adam
+            "rows": asm3.stock.get_products(dbo)
+        }
+    
+    def post_create(self, o):
+        self.check(asm3.users.ADD_STOCKLEVEL)
+        asm3.stock.insert_product_from_form(o.dbo, o.post, o.user)
+    
+    def post_move(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        asm3.stock.insert_productmovement_from_form(o.dbo, o.post, o.user)
+    
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        asm3.stock.update_product_from_form(o.dbo, o.post, o.user)
+    
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_STOCKLEVEL)
+        for pid in o.post.integer_list("ids"):
+            asm3.stock.delete_product(o.dbo, o.user, pid)
+
+"""class product_movements(JSONEndpoint):
+    url = "product_movements"
+    js_module = "productmovement"
+    get_permissions = asm3.users.VIEW_STOCKLEVEL
+
+    def controller(self, o):
+        dbo = o.dbo
+        #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
+        producttypes = []
+        for producttype in asm3.stock.get_product_types(dbo):
+            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
+        products = []
+        for product in asm3.stock.get_products(dbo):
+            products.append(str(product["ID"]) + "|" + producttype["PRODUCTNAME"])
+        return {
+            "producttypes": producttypes,
+            "products": products,
+            "stocklocations": asm3.lookups.get_stock_locations(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "rows": asm3.stock.get_productmovements(dbo)
+        }
+"""
 class publish(JSONEndpoint):
     url = "publish"
     get_permissions = asm3.users.USE_INTERNET_PUBLISHER
@@ -7346,6 +7409,10 @@ class stocklevel(JSONEndpoint):
             levels = asm3.stock.get_stocklevels_lowbalance(dbo)
         else:
             levels = asm3.stock.get_stocklevels(dbo, o.post.integer("viewlocation"))
+        products = asm3.stock.get_products(dbo)
+        productnames = []
+        for product in products:
+            productnames.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
         asm3.al.debug("got %d stock levels" % len(levels), "main.stocklevel", dbo)
         return {
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
@@ -7354,6 +7421,8 @@ class stocklevel(JSONEndpoint):
             "stockunits": "|".join(asm3.stock.get_stock_units(dbo)),
             "newlevel": o.post.integer("newlevel") == 1,
             "sortexp": o.post.integer("sortexp") == 1,
+            "products": products,
+            "productnames": productnames,
             "rows": levels
         }
 
