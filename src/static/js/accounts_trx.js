@@ -70,7 +70,7 @@ $(function() {
                 '</td>',
                 '<td class="newrow left"><input id="newreconciled" data="reconciled" type="checkbox" class="asm-checkbox" /></td>',
                 '<td class="newrow left"><input id="newdesc" data="description" type="text" class="asm-textbox" /></td>',
-                '<td class="newrow left"><input id="newacc" data="otheraccount" class="asm-textbox" /></td>',
+                '<td class="newrow left"><input id="newacc" data="otheraccount" class="asm-textbox asm-autotext" /></td>',
                 '<td class="newrow right"><input id="newdeposit" data="deposit" type="text" class="asm-halftextbox asm-currencybox" /></td>',
                 '<td class="newrow right"><input id="newwithdrawal" data="withdrawal" type="text" class="asm-halftextbox asm-currencybox" /></td>',
                 '<td class="newrow right"><button id="button-add">' + html.icon("new") + ' ' + _("Add") + '</button></td>',
@@ -316,7 +316,7 @@ $(function() {
 
             // Default values for the new row
             $("#newtrxdate").date("today");
-            $("#newacc").autocomplete({ source: html.decode(controller.codes).split("|") });
+            $("#newacc").autotext("source", controller.codes.split("|"));
 
             // If this account has edit roles set and our user is
             // not a superuser and not in one of those roles then

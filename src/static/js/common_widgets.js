@@ -302,9 +302,10 @@ $.fn.autotext = function(method, newval) {
             let minlength = self.attr("data-minlength") || 1;
             let defaultsearch = self.attr("data-defaultsearch");
             let appendto = self.attr("data-appendto");
+            let source = tableform._unpack_ac_source(self.attr("data-source"));
             if (!appendto && $("#dialog-tableform").length > 0) { appendto = "#dialog-tableform"; }
             self.autocomplete({
-                source: tableform._unpack_ac_source(self.attr("data-source")),
+                source: newval || source,
                 minLength: minlength, // number of chars to enter before searching starts
                 select: function() {
                     // fire the change event when something is selected from the dropdown
@@ -323,6 +324,12 @@ $.fn.autotext = function(method, newval) {
                 // If we don't have an appendTo, fall back to manipulating the z-index
                 self.autocomplete("widget").css("z-index", 1000);
             }
+        });
+    }
+    else if (method == "source") {
+        this.each(function() {
+            let self = $(this);
+            self.autocomplete("option", "source", newval);
         });
     }
 };

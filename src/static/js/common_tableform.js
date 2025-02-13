@@ -1315,6 +1315,7 @@ const tableform = {
 
     _unpack_ac_source: function(x) {
         let src = [];
+        if (!x) { return src; }
         $.each(x.split("^^"), function(i, v) {
             let label = "", value = "";
             if (v.indexOf("|") != -1) {

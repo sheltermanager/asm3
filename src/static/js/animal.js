@@ -80,8 +80,9 @@ $(function() {
                     { post_field: "location", json_field: "SHELTERLOCATION", label: _("Location"), type: "select", 
                         callout: _("Where this animal is located within the shelter"),
                         options: { displayfield: "LOCATIONNAME", rows: controller.internallocations }},
-                    { rowid: "locationunitrow", post_field: "unit", json_field: "SHELTERLOCATIONUNIT", label: _("Unit"), type: "text", 
-                      callout:_("Unit within the location, eg: pen or cage number")
+                    { rowid: "locationunitrow", post_field: "unit", json_field: "SHELTERLOCATIONUNIT", label: _("Unit"), 
+                        type: "autotext", defaultsearch: ":", options: "",
+                        callout:_("Unit within the location, eg: pen or cage number")
                     },
                     { rowid: "lastlocation", type: "raw", label: _("Last Location"), markup:
                         '<a class="asm-embed-name" href="animal_find_results?logicallocation=onshelter&shelterlocation=' + 
@@ -613,17 +614,7 @@ $(function() {
                 if (!desc) { desc = _("(available)"); }
                 src.push({ label: unit + ' : ' + desc, value: unit });
             });
-            // Reload the source of available units
-            $("#unit").autocomplete({ 
-                source: src,
-                // Dirty the form when an item is chosen from the dropdown
-                select: function(event, ui) {
-                    validate.dirty(true);
-                }
-            // Display the autocomplete on focus
-            }).bind('focus', function() { 
-                $(this).autocomplete("search", ":"); 
-            });
+            $("#unit").autotext("source", src); 
         },
 
         /** 
