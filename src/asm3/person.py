@@ -98,6 +98,16 @@ def get_person_embedded(dbo: Database, personid: int) -> ResultRow:
     """ Returns a person record for the person chooser widget, uses a read-through cache for performance """
     return dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = ?", [personid], age=120) )
 
+def get_person_embedded_forbidden(dbo: Database, personid: int) -> ResultRow:
+    """ Returns a "Forbidden" empty person record for the person chooser widget when the user doesn't have permission.
+        Leaves the ID field alone, so that saving the linked record still retains the link """
+    l = dbo.locale
+    p = dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = ?", [personid], age=120) )
+    for k, v in p.items():
+        if k != "ID": p[k] = ""
+    p.OWNERNAME = _("Forbidden", l)
+    return p
+
 def embellish_adoption_warnings(dbo: Database, p: ResultRow) -> ResultRow:
     """ Adds the adoption warning columns to a person record p and returns it """
     warn = dbo.first_row(dbo.query("SELECT (SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
@@ -804,11 +814,17 @@ def reduce_find_results(dbo: Database, username: str, rows: Results, idcol: str 
             results.append(r)
     return results
 
-def check_view_permission(dbo: Database, username: str, session: Session, pid: int) -> bool:
+def check_view_permission(dbo: Database, username: str, session: Session, pid: int) -> None:
     """
-    Checks that the currently logged in user has permission to
-    view the person with pid.
-    If they can't, an ASMPermissionError is thrown.
+    Checks that the currently logged in user has permission to view the person with pid.
+    If it doesn't, ASMPermissionError is thrown
+    """
+    if not check_view_permission_bool(dbo, username, session, pid):
+        raise asm3.utils.ASMPermissionError("User does not have required role to view this person")
+
+def check_view_permission_bool(dbo: Database, username: str, session: Session, pid: int) -> bool:
+    """
+    Checks that the currently logged in user has permission to view the person with pid.
     """
     # Superusers can do anything
     if session.superuser == 1: return True
@@ -828,7 +844,7 @@ def check_view_permission(dbo: Database, username: str, session: Session, pid: i
             hasperm = True
     if hasperm:
         return True
-    raise asm3.utils.ASMPermissionError("User does not have required role to view this person")
+    return False
 
 def get_person_rota(dbo: Database, personid: int) -> Results:
     return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])

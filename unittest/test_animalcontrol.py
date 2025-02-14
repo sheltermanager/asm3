@@ -22,7 +22,7 @@ class TestAnimalControl(unittest.TestCase):
         asm3.animalcontrol.get_animalcontrol_animals(base.get_dbo(), self.nid)
 
     def test_get_animalcontrol_for_animal(self):
-        asm3.animalcontrol.get_animalcontrol_for_animal(base.get_dbo(), 0)
+        asm3.animalcontrol.get_animalcontrol_for_animal(base.get_dbo(), "test", 0)
 
     def test_get_followup_two_dates(self):
         asm3.animalcontrol.get_followup_two_dates(base.get_dbo(), base.today(), base.today())

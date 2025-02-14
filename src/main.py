@@ -1848,7 +1848,7 @@ class animal(JSONEndpoint):
             "entrytypes": asm3.lookups.get_entry_types(dbo),
             "events": asm3.event.get_events_by_animal(dbo, a.ID),
             "flags": asm3.lookups.get_animal_flags(dbo, a.ADDITIONALFLAGS),
-            "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, a.ID),
+            "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.user, a.ID),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
@@ -6311,7 +6311,8 @@ class person_embed(ASMEndpoint):
         dbo = o.dbo
         pid = o.post.integer("id")
         p = asm3.person.get_person_embedded(dbo, pid)
-        asm3.person.check_view_permission(o.dbo, o.user, o.session, pid)
+        if not asm3.person.check_view_permission_bool(o.dbo, o.user, o.session, pid):
+            p = asm3.person.get_person_embedded_forbidden(dbo, pid)
         if not p:
             asm3.al.error("get person by id %d found no records." % pid, "main.person_embed", dbo)
             raise web.notfound()
