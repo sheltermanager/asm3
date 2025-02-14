@@ -146,6 +146,7 @@ class TestPerson(unittest.TestCase):
 
     def test_get_person_embedded(self):
         self.assertIsNotNone(asm3.person.get_person_embedded(base.get_dbo(), self.nid))
+        self.assertIsNotNone(asm3.person.get_person_embedded_forbidden(base.get_dbo(), self.nid))
 
     def test_embellish_adoption_warnings(self):
         self.assertIsNotNone(asm3.person.embellish_adoption_warnings(base.get_dbo(), asm3.person.get_person_embedded(base.get_dbo(), self.nid)))

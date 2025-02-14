@@ -102,7 +102,7 @@ def get_person_embedded_forbidden(dbo: Database, personid: int) -> ResultRow:
     """ Returns a "Forbidden" empty person record for the person chooser widget when the user doesn't have permission.
         Leaves the ID field alone, so that saving the linked record still retains the link """
     l = dbo.locale
-    p = dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = ?", [personid], age=120) )
+    p = get_person_embedded(dbo, personid)
     for k, v in p.items():
         if k != "ID": p[k] = ""
     p.OWNERNAME = _("Forbidden", l)
