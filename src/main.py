@@ -1019,14 +1019,14 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             asm3.media.set_excluded(o.dbo, o.user, mid, 1)
 
-class mobile2(ASMEndpoint):
-    url = "mobile2"
+class mobile(ASMEndpoint):
+    url = "mobile"
     login_url = "mobile_login"
 
     def content(self, o):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
-        asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile2", dbo)
+        asm3.al.debug("mobile for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile", dbo)
 
         c = {
             "animals":      animals,
@@ -1061,7 +1061,9 @@ class mobile2(ASMEndpoint):
             "locale":       o.locale
         }
         self.content_type("text/html")
-        return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
+        return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile.js", 
+            "mobile_ui_addanimal.js", "mobile_ui_animal.js", "mobile_ui_image.js", "mobile_ui_incident.js", 
+            "mobile_ui_person.js", "mobile_ui_stock.js" ], c)
 
     def post_addanimal(self, o):
         self.check(asm3.users.ADD_ANIMAL)
@@ -1232,7 +1234,7 @@ class mobile_login(ASMEndpoint):
                 asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "main.mobile_login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH, use2fa = False)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
-                    self.redirect("mobile2")
+                    self.redirect("mobile")
                     return
         # Do we have base64 encoded credentials?
         if o.post["b"] != "":
@@ -1247,7 +1249,7 @@ class mobile_login(ASMEndpoint):
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "main.mobile_login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER", "ASK2FA" ):
-                    self.redirect("mobile2")
+                    self.redirect("mobile")
                     return
         self.content_type("text/html")
         c = {

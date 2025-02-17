@@ -127,7 +127,7 @@ $(document).ready(function() {
     $("#signing-container").toggle(controller.count != 0);
 
     $("#sig-home").click(function() {
-        window.location = "mobile2";
+        window.location = "mobile";
     });
 
     $("#sig-refresh").click(function() {

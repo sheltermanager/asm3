@@ -119,7 +119,7 @@ $(document).ready(function() {
                         window.location = controller.target;
                     }
                     else {
-                        window.location = "mobile2";
+                        window.location = "mobile";
                     }
                 }
             },
