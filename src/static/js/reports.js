@@ -398,6 +398,9 @@ $(function() {
                 let formdata = "mode=sql&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
                 $("#asm-report-error").fadeOut();
                 header.show_loading();
+                header.hide_error();
+                tableform.dialog_info("");
+                tableform.dialog_error("");
                 common.ajax_post("reports", formdata)
                     .then(function() { 
                         tableform.dialog_info(_("SQL is syntactically correct."));
