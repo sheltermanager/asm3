@@ -1,5 +1,7 @@
-/*global $, controller, mobile */
-/* mobile_ui_stock: true */
+/*global $, jQuery, controller */
+/*global common, config, format, html */
+/*global _, mobile, mobile_ui_addanimal, mobile_ui_animal, mobile_ui_addanimal, mobile_ui_person */
+/*global mobile_ui_stock: true */
 
 "use strict";
 
