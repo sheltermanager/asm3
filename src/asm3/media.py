@@ -627,7 +627,6 @@ def create_document_animalperson(dbo: Database, username: str, animalid: int, pe
         "CreatedDate":          dbo.now(),
         "RetainUntil":          retainuntil
     }, username, generateID=False)
-    asm3.dbfs.rename_file_id(dbo, dbfsid, f"{mediaida}.{mediaidp}.html")
     return (mediaida, mediaidp)
 
 def create_document_media(dbo: Database, username: str, linktype: int, linkid: int, template: str, content: bytes, retainfor: int = 0) -> int:
