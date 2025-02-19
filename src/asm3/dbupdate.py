@@ -6480,17 +6480,20 @@ def update_35000(dbo: Database) -> None:
     # Insert notax into lktaxrate
     dbo.execute_dbupdate("INSERT INTO lktaxrate (TaxRateName, Description, TaxRate, IsRetired) VALUES (?, ?, ?, ?)", [ _("Tax Free", l), "", 0, 0 ])
 
-    # Add the productmovement table
+    """# Add the productmovement table
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
         dbo.ddl_add_table_column("ProductID", dbo.type_integer, False),
         dbo.ddl_add_table_column("MovementDate", dbo.type_datetime, False),
         dbo.ddl_add_table_column("Quantity", dbo.type_integer, False),
-        dbo.ddl_add_table_column("UnitRatio", dbo.type_float, False),
+        dbo.ddl_add_table_column("Unit", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("FromID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("FromType", dbo.type_integer, False),
         dbo.ddl_add_table_column("ToID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ToType", dbo.type_integer, False),
         dbo.ddl_add_table_column("BatchNo", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("Expiry", dbo.type_datetime),
+        dbo.ddl_add_table_column("Comments", dbo.type_longtext, False),
         dbo.ddl_add_table_column("UnitCostPrice", dbo.type_integer, False),
         dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
         dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
@@ -6498,4 +6501,7 @@ def update_35000(dbo: Database) -> None:
         dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
     ])
-    dbo.execute_dbupdate( dbo.ddl_add_table("productmovement", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_table("productmovement", fields) )"""
+
+    add_column(dbo, "stocklevel", "ProductID", dbo.type_integer)
+

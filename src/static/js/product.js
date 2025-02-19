@@ -17,11 +17,11 @@ $(function() {
                 width: 500,
                 fields: [
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
-                    { json_field: "PRODUCTTYPE", post_field: "producttype", label: _("Product type"), type: "select", options: controller.producttypes },
+                    { json_field: "PRODUCTTYPE", post_field: "producttype", label: _("Product type"), type: "select", options: controller.producttypes, validation: "notnull" },
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text" },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
-                    { json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "select", options: controller.taxrates },
+                    { json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "select", options: controller.taxrates, validation: "notnull" },
                     { json_field: "RETIRED", post_field: "retired", label: _("Retired"), type: "check" },
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
@@ -47,7 +47,7 @@ $(function() {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
                             //stocklevel.set_extra_fields(row);
-                            tableform.fields_post(dialog.fields, "mode=update&productid=" + row.ID, "products")
+                            tableform.fields_post(dialog.fields, "mode=update&productid=" + row.ID, "product")
                                 .then(function(response) {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
@@ -76,10 +76,10 @@ $(function() {
                             }
                 
                             if ($("#unittype").val() == 0) {
-                                console.log("Hiding unit ratio");
+                                console.log("Hiding unit ratio!");
                                 $("#unitratiorow").fadeOut();
                             } else {
-                                console.log("Showing unit ratio");
+                                console.log("Showing unit ratio!");
                                 $("#unitratiorow").fadeIn();
                             }
                         }
@@ -87,7 +87,8 @@ $(function() {
                 },
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
-                    { field: "DESCRIPTION", display: _("Type") }
+                    { field: "PRODUCTTYPENAME", display: _("Type") },
+                    { field: "BARCODE", display: _("Barcode") }
                 ]
             };
 
@@ -103,7 +104,7 @@ $(function() {
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
                         let ids = tableform.table_ids(table);
-                        await common.ajax_post("products", "mode=delete&ids=" + ids);
+                        await common.ajax_post("product", "mode=delete&ids=" + ids);
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
                     } 
@@ -123,6 +124,7 @@ $(function() {
                 '<p>to <select id=movementto name=movementto></select></p>',
                 '<p>' + _("Batch") + '<br><input id=batch name=batch></p>',
                 '<p>' + _("Expiry") + '<br><input type=text id=expiry name=expiry class="asm-textbox asm-datebox"></p>',
+                '<p>' + _("Comments") + '<br><textarea id=comments name=comments></textarea></p>',
                 '</div>',
             ].join("\n");
             this.model();
@@ -139,9 +141,13 @@ $(function() {
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#producttype, #taxrate, #purchaseunittype, #unittype").val(0);
             $("#unitratio").val(1);
+            $("#custompurchaseunitrow").fadeOut();
+            $("#customunitrow").fadeOut();
+            $("#unitratiorow").fadeOut();
+
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=create", "products")
+                    tableform.fields_post(dialog.fields, "mode=create", "product")
                         .then(function(response) {
                             let row = {};
                             row.ID = response;
@@ -172,29 +178,29 @@ $(function() {
             });
             let purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
             if (activeproduct.PURCHASEUNITTYPE == 0) {
-                purchaseunit = "0|" + _("Unit").toLowerCase();
+                purchaseunit = _("Unit").toLowerCase();
             } else if (activeproduct.PURCHASEUNITTYPE == 1) {
-                purchaseunit = "1|kg";
+                purchaseunit = "kg";
             } else if (activeproduct.PURCHASEUNITTYPE == 2) {
-                purchaseunit = "2|g";
+                purchaseunit = "g";
             } else if (activeproduct.PURCHASEUNITTYPE == 3) {
-                purchaseunit = "3|l";
+                purchaseunit = "l";
             } else if (activeproduct.PURCHASEUNITTYPE == 4) {
-                purchaseunit = "4|ml";
+                purchaseunit = "ml";
             } else if (activeproduct.PURCHASEUNITTYPE == 5) {
                 purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
             }
-            let units = [purchaseunit,];
+            let units = [activeproduct.UNITRATIO + "|" + purchaseunit,];
             if (activeproduct.UNITTYPE == 1) {
                 units.push("1|kg");
             } else if (activeproduct.UNITTYPE == 2) {
-                units.push("2|g");
+                units.push("1|g");
             } else if (activeproduct.UNITTYPE == 3) {
-                units.push("3|l");
+                units.push("1|l");
             } else if (activeproduct.UNITTYPE == 4) {
-                units.push("4|ml");
+                units.push("1|ml");
             } else if (activeproduct.UNITTYPE == 5) {
-                units.push(activeproduct.CUSTOMUNIT);
+                units.push("1|" + activeproduct.CUSTOMUNIT);
             }
             console.log(units);
             $("#movementunit").html(html.list_to_options(units));
@@ -205,21 +211,41 @@ $(function() {
             $("#movementdate").val(format.date_now());
 
             $("#movementquantity").val(1);
-            $("#movementquantity").focus();
+            //$("#movementquantity").focus();
 
             await tableform.show_okcancel_dialog("#dialog-move-product", _("Move"));
+
+            let fromid = $("#movementfrom").val().split("$")[1];
+            let fromtype = 0;
+            if ($("#movementfrom").val().split("$")[0] == "U") {
+                fromtype = 1;
+            }
+            let totype = 0;
+            if ($("#movementto").val().split("$")[0] == "U") {
+                totype = 1;
+            }
+            let toid = $("#movementto").val().split("$")[1];
+
+            let quantity = parseInt($("#movementquantity").val()) * parseInt($("#movementunit").val())
             
             let formdata = "mode=move" +
                 "&productid=" + productid +
+                "&productname=" + activeproduct.PRODUCTNAME +
+                "&productdescription=" + activeproduct.DESCRIPTION +
                 "&movementdate=" + $("#movementdate").val() + 
-                "&movementquantity=" + $("#movementquantity").val() +
-                "&movementunit=" + $("#movementunit").val() +
-                "&movementfrom=" + $("#movementfrom").val() +
-                "&movementto=" + $("#movementto").val() +
+                "&movementquantity=" + quantity +
+                "&unitratio=" + activeproduct.UNITRATIO +
+                "&costprice=" + activeproduct.COSTPRICE +
+                "&movementunit=" + $("#movementunit option").last().text() +
+                "&movementfrom=" + fromid +
+                "&movementfromtype=" + fromtype +
+                "&movementto=" + toid +
+                "&movementtotype=" + totype +
                 "&batch=" + $("#batch").val() +
-                "&expiry=" + $("#expiry").val()
+                "&expiry=" + $("#expiry").val() +
+                "&comments=" + $("#comments").val()
             console.log(formdata);
-            let response = await common.ajax_post("products", formdata);
+            let response = await common.ajax_post("product", formdata);
 
             console.log("Movement dialog complete.");
         },
@@ -229,7 +255,7 @@ $(function() {
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=create", "products")
+                    tableform.fields_post(dialog.fields, "mode=create", "product")
                         .then(function(response) {
                             let row = {};
                             row.ID = response;

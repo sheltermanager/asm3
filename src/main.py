@@ -6655,27 +6655,35 @@ class person_vouchers(JSONEndpoint):
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
-class products(JSONEndpoint):
-    url = "products"
+class product(JSONEndpoint):
+    url = "product"
     js_module = "product"
     get_permissions = asm3.users.VIEW_STOCKLEVEL # May be worth adding asm3.users.VIEW_PRODUCT??
 
     def controller(self, o):
         dbo = o.dbo
         #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
+        producttyperows = asm3.stock.get_product_types(dbo)
         producttypes = []
-        for producttype in asm3.stock.get_product_types(dbo):
+        for producttype in producttyperows:
             producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
         taxrates = []
         for taxrate in asm3.stock.get_tax_rates(dbo):
             taxrates.append(str(taxrate["ID"]) + "|" + taxrate["TAXRATENAME"])
+        products = asm3.stock.get_products(dbo)
+        for product in products:
+            product["PRODUCTTYPENAME"] = _("Undefined")
+            for producttype in producttyperows:
+                if product["PRODUCTTYPE"] == producttype["ID"]:
+                    product["PRODUCTTYPENAME"] = producttype["PRODUCTTYPENAME"]
+                    break
         return {
             "producttypes": producttypes,
             "taxrates": taxrates,
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "sortexp": o.post.integer("sortexp") == 1, # Don't know what this does - Adam
-            "rows": asm3.stock.get_products(dbo)
+            "rows": products
         }
     
     def post_create(self, o):
@@ -6695,9 +6703,9 @@ class products(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             asm3.stock.delete_product(o.dbo, o.user, pid)
 
-"""class product_movements(JSONEndpoint):
-    url = "product_movements"
-    js_module = "productmovement"
+class stock_movement(JSONEndpoint):
+    url = "stock_movement"
+    js_module = "stock_movement"
     get_permissions = asm3.users.VIEW_STOCKLEVEL
 
     def controller(self, o):
@@ -6708,15 +6716,20 @@ class products(JSONEndpoint):
             producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
         products = []
         for product in asm3.stock.get_products(dbo):
-            products.append(str(product["ID"]) + "|" + producttype["PRODUCTNAME"])
+            products.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
         return {
             "producttypes": producttypes,
             "products": products,
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
-            "rows": asm3.stock.get_productmovements(dbo)
+            "rows": asm3.stock.get_stock_movements(dbo)
         }
-"""
+    
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_STOCKLEVEL)
+        for mid in o.post.integer_list("ids"):
+            asm3.stock.delete_stockusage(o.dbo, o.user, mid)
+
 class publish(JSONEndpoint):
     url = "publish"
     get_permissions = asm3.users.USE_INTERNET_PUBLISHER

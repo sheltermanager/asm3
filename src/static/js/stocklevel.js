@@ -16,6 +16,7 @@ $(function() {
                 columns: 1,
                 width: 800,
                 fields: [
+                    { json_field: "NAME", post_field: "name", label: _("Name"), type: "text" },
                     { json_field: "PRODUCTSEARCHKEY", post_field: "productsearchkey", label: _("Search"), type: "text" },
                     { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Results"), type: "select", validation: "notzero", options: controller.productnames },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
@@ -56,6 +57,10 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
+                    console.log("Editing");
+                    $("#productsearchkeyrow").fadeOut();
+                    $("#productlistrow").fadeOut();
+                    $("#productnamerow").fadeIn();
                     tableform.fields_populate_from_json(dialog.fields, row);
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
@@ -148,6 +153,9 @@ $(function() {
         new_level: function() { 
             let dialog = stocklevel.dialog, table = stocklevel.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+            $("#productsearchkeyrow").fadeOut();
+            $("#productlistrow").fadeOut();
+            $("#productnamerow").fadeIn();
             $("#productlist").val(-1);
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -235,6 +243,15 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            $("#name").after('<button id="button-product">' + _("Use a product template") + '</button>');
+            $("#button-product")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() {
+                    $("#productsearchkey").val("");
+                    $("#productsearchkeyrow").fadeIn();
+                    $("#productlistrow").fadeIn();
+                    $("#productnamerow").fadeOut();
+                });
 
             // If the user edits the balance, prompt for usage info
             $("#balance").change(stocklevel.show_usage_fields);
@@ -280,11 +297,11 @@ $(function() {
                     if (product.ID == productid) {
                         console.log("Product found");
                         activeproduct = product;
-
                         return false;
                     }
                 });
                 console.log(activeproduct);
+                $("#name").val(activeproduct.PRODUCTNAME);
                 $("#description").val(activeproduct.DESCRIPTION);
                 let unittype = activeproduct.CUSTOMUNIT;
                 if (activeproduct.UNITTYPE == 0) {
@@ -311,6 +328,15 @@ $(function() {
                     unittype = "ml";
                 }
                 $("#unitname").val(unittype);
+                $("#cost").currency("value", activeproduct.COSTPRICE);
+                $("#unitprice").currency("value", activeproduct.RETAILPRICE);
+                $("#total").val(activeproduct.UNITRATIO);
+                $("#balance").val(activeproduct.UNITRATIO);
+                $("#low").val(0);
+                $("#productsearchkey").val("");
+                $("#productsearchkeyrow").fadeOut();
+                $("#productlistrow").fadeOut();
+                $("#namerow").fadeIn();
                 
                 
 
@@ -323,6 +349,7 @@ $(function() {
         },
 
         sync: function() {
+            console.log("Syncing");
             // If a viewlocation is given in the querystring, update the select
             if (common.querystring_param("viewlocation")) {
                 $("#viewlocation").select("value", common.querystring_param("viewlocation"));
