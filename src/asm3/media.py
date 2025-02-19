@@ -573,11 +573,12 @@ def create_document_animalperson(dbo: Database, username: str, animalid: int, pe
     retainfor: Number of years to retain this document (any non-integer or 0 = Indefinitely)
     """
     path = get_dbfs_path(personid, PERSON)
-    name = f"{animalid}.{personid}.html"
+    mediaida = dbo.get_id("media")
+    mediaidp = dbo.get_id("media")
+    name = f"{mediaida}.{mediaidp}.html"
     content = asm3.utils.str2bytes(content)
     dbfsid = asm3.dbfs.put_string(dbo, name, path, content)
     retainuntil = calc_retainuntil_from_retainfor(dbo, retainfor)
-    mediaida = dbo.get_id("media")
     dbo.insert("media", {
         "ID":                   mediaida,
         "DBFSID":               dbfsid,
@@ -602,7 +603,6 @@ def create_document_animalperson(dbo: Database, username: str, animalid: int, pe
         "CreatedDate":          dbo.now(),
         "RetainUntil":          retainuntil
     }, username, generateID=False)
-    mediaidp = dbo.get_id("media")
     dbo.insert("media", {
         "ID":                   mediaidp,
         "DBFSID":               dbfsid,
