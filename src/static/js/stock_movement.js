@@ -42,10 +42,10 @@ $(function() {
                 idcolumn: "ID",
                 columns: [
                     { field: "USAGEDATE", display: _("Date"), formatter: function(row) {
-                        return tableform.table_render_edit_link(row.ID, format.date(row.USAGEDATE));
+                        return format.date(row.USAGEDATE);
                     }  },
                     { field: "PRODUCTNAME", display: _("Product") },
-                    { field: "MODQUANTITY", display: _("Quantity") },
+                    { field: "QUANTITY", display: _("Quantity") },
                     { field: "UNIT", display: _("Unit") },
                     { field: "FROMNAME", display: _("From") },
                     { field: "TONAME", display: _("To") },
@@ -53,7 +53,7 @@ $(function() {
                 ]
             };
 
-            const buttons = [
+            /*const buttons = [
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dsl", 
                     click: async function() { 
                         await tableform.delete_dialog();
@@ -64,9 +64,9 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 }
-            ];
+            ];*/
             this.dialog = dialog;
-            this.buttons = buttons;
+            //this.buttons = buttons;
             this.table = table;
         },
 

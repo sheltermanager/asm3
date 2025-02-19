@@ -31,19 +31,9 @@ def get_stock_movements(dbo: Database) -> Results:
         stockusagetype.UsageTypeName, \
         stocklevel.BatchNumber, \
         stockusage.Comments, \
-        CASE WHEN stockusage.Quantity > 0 THEN ( \
-            SELECT UsageTypeName FROM stockusagetype WHERE ID = stockusage.StockUsageTypeID \
-        ) ELSE ( \
-            SELECT LocationName FROM stocklocation WHERE ID = stocklevel.StockLocationID \
-        ) END AS FromName, \
-        CASE WHEN stockusage.Quantity > 0 THEN ( \
-            SELECT LocationName FROM stocklocation WHERE ID = stocklevel.StockLocationID \
-        ) ELSE ( \
-            SELECT UsageTypeName FROM stockusagetype WHERE ID = stockusage.StockUsageTypeID \
-        ) END AS ToName, \
-        CASE WHEN stockusage.Quantity < 0 THEN stockusage.Quantity * -1 \
-        ELSE stockusage.Quantity \
-        END AS ModQuantity, \
+        CASE WHEN stockusage.Quantity > 0 THEN UsageTypeName ELSE LocationName END AS FromName, \
+        CASE WHEN stockusage.Quantity > 0 THEN LocationName ELSE UsageTypeName END AS ToName, \
+        ABS(stockusage.Quantity) AS Quantity, \
         CASE \
         WHEN product.ID IS NULL THEN stocklevel.UnitName \
         WHEN product.UnitType = 1 THEN 'kg' \
