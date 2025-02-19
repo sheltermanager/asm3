@@ -319,7 +319,7 @@ edit_header = {
             '<option value="post">' + _("Post") + '</option>',
             '<option value="sms">' + _("SMS") + '</option>',
             '<option value="phone">' + _("Phone") + '</option>'
-        ];
+        ].join("\n");
     },
 
     /**
