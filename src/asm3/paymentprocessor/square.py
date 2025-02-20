@@ -14,9 +14,9 @@ class IncompleteStatusError(ProcessorError):
     pass
 
 class Square(PaymentProcessor):
+
     """ Square provider """
     def __init__(self, dbo: Database):
-
         PaymentProcessor.__init__(self, dbo, "square")
 
     def checkoutPage(self, payref: str, return_url: str = "",  item_description: str = "") -> str:
@@ -48,45 +48,50 @@ class Square(PaymentProcessor):
             "description=%s, amount=%s, currency=%s" % (payment_note, 
             item_description, totalamount + totalvat, currency), "square.checkoutPage", self.dbo)
 
+        access_token = asm3.configuration.square_access_token(self.dbo)
+        squenv = asm3.sitedefs.SQUARE_PAYMENT_ENVIRONMENT
+        body = {
+            "idempotency_key": payref,
+            "quick_pay": {
+                "name": item_description,
+                "price_money": {
+                    "amount": totalamount - totalvat,
+                    "currency": currency
+                },
+                "location_id": asm3.configuration.square_location_id(self.dbo)
+            },
+            "payment_note": payment_note,
+        }
+
+        """
+        # NOTE: This is the original code using the "squareup" package from pypi - 
+        # we're using plain HTTP to save having another dependency.
         from square.http.auth.o_auth_2 import BearerAuthCredentials
         from square.client import Client
+        client = Client(bearer_auth_credentials=BearerAuthCredentials(access_token=access_token), environment=squenv)
+        result = client.checkout.create_payment_link(body=body)
+        response = result.body
+        success = result.is_success()
+        """
+        url = f"https://connect.squareup{squenv}.com/v2/online-checkout/payment-links"
+        headers = { "Authorization": f"Bearer {access_token}", "Square-Version": "2025-01-23", "Content-Type": "application/json" }
+        result = asm3.utils.post_json(url, asm3.utils.json(body), headers)
+        response = asm3.utils.json_parse(result["response"])
+        success = "payment_link" in response and "url" in response["payment_link"]
+        link = response["payment_link"]["url"]
 
-        squareenvironment = asm3.sitedefs.SQUARE_PAYMENT_ENVIRONMENT
-
-        client = Client(
-        bearer_auth_credentials = BearerAuthCredentials(
-            access_token = asm3.configuration.square_access_token(self.dbo)
-        ),
-        environment=squareenvironment)
-        
-        result = client.checkout.create_payment_link(
-            body = {
-                "idempotency_key": payref,
-                "quick_pay": {
-                    "name": item_description,
-                    "price_money": {
-                        "amount": totalamount - totalvat,
-                        "currency": currency
-                    },
-                    "location_id": asm3.configuration.square_location_id(self.dbo)
-                },
-                "payment_note": payment_note,
-            }
-        )
-
-        if result.is_success():
+        if success:
             # Construct the page that will redirect us to the real checkout
-            s = """<DOCTYPE html>
-            <html>
-            <head>
-            <meta http-equiv="refresh" content="0; url=%s/" />
-            </head>
-            <body></body>
-            </html>""" % result.body["payment_link"]["url"]
+            s = "<DOCTYPE html>\n" \
+            "<html>\n" \
+            "<head>\n" \
+            f'<meta http-equiv="refresh" content="0; url="{link}/" />\n' \
+            "</head>\n" \
+            "<body></body>\n" \
+            "</html>"
             return s
-
-        else: # result.is_error() is also possible
-            asm3.al.error("Failed creating Square payment", "square.checkoutPage", self.dbo)
+        else: 
+            asm3.al.error(f"Failed creating Square payment [got {response}]", "square.checkoutPage", self.dbo)
 
     def receive(self, rawdata: str) -> None:
         """ 
