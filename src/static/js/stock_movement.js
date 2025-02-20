@@ -41,6 +41,9 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 columns: [
+                    { field: "ID", display: _("ID"), formatter: function(row) {
+                        return row.ID;
+                    }  },
                     { field: "USAGEDATE", display: _("Date"), formatter: function(row) {
                         return format.date(row.USAGEDATE);
                     }  },

@@ -613,11 +613,13 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             (asm3.users.VIEW_CONSULTING_ROOM, "", "tagclinic", "clinic_consultingroom", "asm-icon-users", _("Consulting Room", l) ),
             (asm3.users.VIEW_CLINIC, "", "tagclinic", "clinic_calendar", "asm-icon-diary", _("Clinic Calendar", l) ),
         )),
-        ("", "financial", _("Financial", l), (
-            ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
+        ("", "stock", _("Stock", l), (
             ( asm3.users.VIEW_STOCKLEVEL, "", "", "product", "asm-icon-stock", _("Products", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock levels", l) ),
-            ( asm3.users.VIEW_STOCKLEVEL, "", "tastock", "stock_movement", "asm-icon-stock", _("Stock movements", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tastock", "stock_movement", "asm-icon-stock", _("Stock movements", l) )
+        )),
+        ("", "financial", _("Financial", l), (
+            ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
             ( asm3.users.VIEW_VOUCHER, "", "", "voucher", "asm-icon-blank", _("Voucher book", l) ),
             ( asm3.users.VIEW_BOARDING, "", "tagboarding", "--cat", "", _("Boarding", l) ),
             ( asm3.users.VIEW_BOARDING, "", "tagboarding", "boarding", "asm-icon-boarding", _("Boarding book", l) ),

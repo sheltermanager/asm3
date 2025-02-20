@@ -6465,9 +6465,11 @@ def update_35000(dbo: Database) -> None:
     dbo.execute_dbupdate( dbo.ddl_add_table("lkproducttype", fields) )
 
     # Insert "general" into lkproducttype
-    dbo.execute_dbupdate("INSERT INTO lkproducttype (ProductTypeName, Description, IsRetired) VALUES (?, ?, ?)", [ _("General", l), "", 0 ])
+    nextid = dbo.get_id("lkproducttype")
+    dbo.execute_dbupdate("INSERT INTO lkproducttype (ID, ProductTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("General", l), "", 0 ])
+    dbo.execute_dbupdate("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockDefaultProductTypeID", str(nextid)])
 
-    # Add the lkstaxrate table
+    # Add the lktaxrate table
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
         dbo.ddl_add_table_column("TaxRateName", dbo.type_shorttext, False),
@@ -6478,30 +6480,21 @@ def update_35000(dbo: Database) -> None:
     dbo.execute_dbupdate( dbo.ddl_add_table("lktaxrate", fields) )
 
     # Insert notax into lktaxrate
+    nextid = dbo.get_id("lktaxrate")
     dbo.execute_dbupdate("INSERT INTO lktaxrate (TaxRateName, Description, TaxRate, IsRetired) VALUES (?, ?, ?, ?)", [ _("Tax Free", l), "", 0, 0 ])
+    dbo.execute_dbupdate("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockDefaultTaxRateID", str(nextid)])
 
-    """# Add the productmovement table
-    fields = ",".join([
-        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
-        dbo.ddl_add_table_column("ProductID", dbo.type_integer, False),
-        dbo.ddl_add_table_column("MovementDate", dbo.type_datetime, False),
-        dbo.ddl_add_table_column("Quantity", dbo.type_integer, False),
-        dbo.ddl_add_table_column("Unit", dbo.type_shorttext, False),
-        dbo.ddl_add_table_column("FromID", dbo.type_integer, False),
-        dbo.ddl_add_table_column("FromType", dbo.type_integer, False),
-        dbo.ddl_add_table_column("ToID", dbo.type_integer, False),
-        dbo.ddl_add_table_column("ToType", dbo.type_integer, False),
-        dbo.ddl_add_table_column("BatchNo", dbo.type_shorttext, False),
-        dbo.ddl_add_table_column("Expiry", dbo.type_datetime),
-        dbo.ddl_add_table_column("Comments", dbo.type_longtext, False),
-        dbo.ddl_add_table_column("UnitCostPrice", dbo.type_integer, False),
-        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
-        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
-        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
-        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
-        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
-    ])
-    dbo.execute_dbupdate( dbo.ddl_add_table("productmovement", fields) )"""
+    # Adding 'Movement' stockusagetype setting option
+    nextid = dbo.get_id("stockusagetype")
+    dbo.execute_dbupdate("INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A pseudo location used to represent internal stock movements", l), 0 ])
+    dbo.execute_dbupdate("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockMovementUsageTypeID", str(nextid)])
 
+    # Adding DefaultStockLocationID and DefaultStockUsageTypeID to users table and setting to 0
+    add_column(dbo, "users", "DefaultStockLocationID", dbo.type_integer)
+    add_column(dbo, "users", "DefaultStockUsageTypeID", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE users SET DefaultStockLocationID=0")
+    dbo.execute_dbupdate("UPDATE users SET DefaultStockUsageTypeID=0")
+
+    # Adding ProductID columns to stocklevel table
     add_column(dbo, "stocklevel", "ProductID", dbo.type_integer)
 

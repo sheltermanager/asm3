@@ -12,7 +12,18 @@ def get_products(dbo: Database, includeretired=False) -> Results:
     """
     Returns all products
     """
-    return dbo.query("SELECT * FROM product WHERE IsRetired = %s ORDER BY ProductName" % (int(includeretired),))
+    return dbo.query("SELECT product.*, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        "WHEN product.UnitType = 1 THEN 'kg' " \
+        "WHEN product.UnitType = 2 THEN 'g' " \
+        "WHEN product.UnitType = 3 THEN 'l' " \
+        "WHEN product.UnitType = 4 THEN 'ml' " \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "WHERE IsRetired = %s " \
+        "ORDER BY ProductName" % (int(includeretired),))
 
 def get_stock_movements(dbo: Database) -> Results:
     """
@@ -20,33 +31,33 @@ def get_stock_movements(dbo: Database) -> Results:
     """
     #return dbo.query("SELECT stockusage.ID, stockusage.UsageDate, product.ProductName, stockusage.Quantity, product.CustomUnit, CASE WHEN productmovement.FromType = 0 THEN (SELECT LocationName FROM stocklocation WHERE ID = productmovement.FromID) ELSE (SELECT UsageTypeName FROM stockusagetype WHERE ID = productmovement.FromID) END AS FromName, CASE WHEN productmovement.ToType = 0 THEN (SELECT LocationName FROM stocklocation WHERE ID = productmovement.ToID) ELSE (SELECT UsageTypeName FROM stockusagetype WHERE ID = productmovement.ToID) END AS ToName, productmovement.BatchNo, productmovement.Comments FROM productmovement INNER JOIN product ON productmovement.ProductID = product.ID ORDER BY MovementDate")
 
-    return dbo.query("SELECT \
-        stockusage.ID, \
-        stockusage.UsageDate, \
-        CASE WHEN product.ID IS NULL THEN stocklevel.NAME \
-        ELSE product.ProductName || ' *' \
-        END AS ProductName, \
-        stockusage.Quantity, \
-        stocklocation.LocationName, \
-        stockusagetype.UsageTypeName, \
-        stocklevel.BatchNumber, \
-        stockusage.Comments, \
-        CASE WHEN stockusage.Quantity > 0 THEN UsageTypeName ELSE LocationName END AS FromName, \
-        CASE WHEN stockusage.Quantity > 0 THEN LocationName ELSE UsageTypeName END AS ToName, \
-        ABS(stockusage.Quantity) AS Quantity, \
-        CASE \
-        WHEN product.ID IS NULL THEN stocklevel.UnitName \
-        WHEN product.UnitType = 1 THEN 'kg' \
-        WHEN product.UnitType = 2 THEN 'g' \
-        WHEN product.UnitType = 3 THEN 'l' \
-        WHEN product.UnitType = 4 THEN 'ml' \
-        ELSE product.CustomUnit \
-        END AS Unit \
-        FROM stockusage \
-        INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID \
-        LEFT JOIN stocklocation ON stocklevel.StockLocationID = stocklocation.ID \
-        LEFT JOIN stockusagetype ON stockusage.StockUsageTypeID = stockusagetype.ID \
-        LEFT JOIN product ON stocklevel.ProductID = product.ID")
+    return dbo.query("SELECT " \
+        "stockusage.ID, " \
+        "stockusage.UsageDate, " \
+        "CASE WHEN product.ID IS NULL THEN stocklevel.NAME " \
+        "ELSE product.ProductName || ' *' " \
+        "END AS ProductName, " \
+        "stockusage.Quantity, " \
+        "stocklocation.LocationName, " \
+        "stockusagetype.UsageTypeName, " \
+        "stocklevel.BatchNumber, " \
+        "stockusage.Comments, " \
+        "CASE WHEN stockusage.Quantity > 0 THEN UsageTypeName ELSE LocationName END AS FromName, " \
+        "CASE WHEN stockusage.Quantity > 0 THEN LocationName ELSE UsageTypeName END AS ToName, " \
+        "ABS(stockusage.Quantity) AS Quantity, " \
+        "CASE " \
+        "WHEN product.ID IS NULL THEN stocklevel.UnitName " \
+        "WHEN product.UnitType = 1 THEN 'kg' " \
+        "WHEN product.UnitType = 2 THEN 'g' " \
+        "WHEN product.UnitType = 3 THEN 'l' " \
+        "WHEN product.UnitType = 4 THEN 'ml' " \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM stockusage " \
+        "INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID " \
+        "LEFT JOIN stocklocation ON stocklevel.StockLocationID = stocklocation.ID " \
+        "LEFT JOIN stockusagetype ON stockusage.StockUsageTypeID = stockusagetype.ID " \
+        "LEFT JOIN product ON stocklevel.ProductID = product.ID")
 
 def get_product_types(dbo: Database) -> Results:
     """
@@ -236,12 +247,12 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     """
     Inserts a product movement from a dialog.
     """
-    movementusagetypeid = 8
+    movementusagetypeid = asm3.configuration.product_movement_usage_type(dbo)
     l = dbo.locale
     if post["movementdate"] == "":
         raise asm3.utils.ASMValidationError(_("Movement must have a date", l))
     
-    quantity = post.integer("movementquantity")
+    
     locations = []
 
     if post.integer("movementfromtype") == 0 and post.integer("movementtotype") == 1:# Stock to usage
@@ -256,7 +267,9 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     else:# Usage to usage
         locations = [post.integer("movementfrom"), post.integer("movementto")]
         usagetypeid = movementusagetypeid
-
+    
+    quantity = post.integer("movementquantity")
+    unitratio = post.integer("unitratio")
 
     # Get current stock levels of the selected product
     stocklevels = dbo.query("SELECT ID, BatchNumber, Balance, Cost, UnitPrice, Total, Low, Expiry, UnitPrice, StockLocationID FROM stocklevel WHERE ProductID = %s ORDER BY Balance" % (post.integer("productid"),))
@@ -264,8 +277,11 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
         for stocklevel in stocklevels:
             if quantity == 0:
                 break
-            if stocklevel["BALANCE"] > 0 and post["batch"] == stocklevel["BATCHNUMBER"] and post.integer("movementfrom") == stocklevel["STOCKLOCATIONID"]:
-                if quantity >= stocklevel["BALANCE"]:
+            if stocklevel["BALANCE"] != 0 and post["batch"] == stocklevel["BATCHNUMBER"] and post.integer("movementfrom") == stocklevel["STOCKLOCATIONID"]:
+                if stocklevel["BALANCE"] < 0:
+                    remaining = stocklevel["BALANCE"] - quantity
+                    quantity = 0
+                elif quantity >= stocklevel["BALANCE"]:
                     remaining = 0
                     quantity = quantity - stocklevel["BALANCE"]
                 else:
@@ -292,6 +308,25 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                 slpost["comments"] = post["comments"]
 
                 update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+        
+        if quantity > 0:
+            slpost = {}
+            slpost["productlist"] = post.integer("productid")
+            slpost["name"] = post["productname"]
+            slpost["description"] = post["productdescription"]
+            slpost["location"] = locations[0]
+            slpost["unitname"] = post["movementunit"]
+            slpost["total"] = unitratio
+            slpost["balance"] = quantity * -1
+            slpost["low"] = 0
+            slpost["expiry"] = post.date("expiry")
+            slpost["batchnumber"] = post["batch"]
+            slpost["cost"] = post.integer("COSTPRICE")
+            slpost["unitprice"] = post.integer("RETAILPRICE")
+            slpost["usagedate"] = python2display(dbo.locale, dbo.today())
+            slpost["usagetype"] = usagetypeid
+            slpost["comments"] = post["comments"]
+            insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
     
     quantity = post.integer("movementquantity")
 
@@ -301,7 +336,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                 break
             if stocklevel["BALANCE"] < stocklevel["TOTAL"] and post["batch"] == stocklevel["BATCHNUMBER"] and post.integer("movementto") == stocklevel["STOCKLOCATIONID"]:
                 availablespace = stocklevel["TOTAL"] - stocklevel["BALANCE"]
-                if quantity > availablespace:
+                if quantity >= availablespace:
                     balance = stocklevel["TOTAL"]
                     quantity = quantity - availablespace
                 else:
@@ -327,7 +362,6 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
 
                 update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
         
-        unitratio = post.integer("unitratio")
         while quantity > 0:
             if quantity <= unitratio:
                 remaining = quantity
@@ -349,7 +383,8 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["cost"] = post.integer("COSTPRICE")
             slpost["unitprice"] = post.integer("RETAILPRICE")
             slpost["usagedate"] = python2display(dbo.locale, dbo.today())
-            slpost["usagetype"] = movementusagetypeid
+            slpost["usagetype"] = usagetypeid
+            slpost["comments"] = post["comments"]
             insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
     
 

@@ -1407,6 +1407,9 @@ def pdf_zoom(dbo: Database) -> int:
 def person_search_columns(dbo: Database) -> str:
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
 
+def product_movement_usage_type(dbo: Database) -> int:
+    return cint(dbo, "StockMovementUsageTypeID", 1)
+
 def event_search_columns(dbo: Database) -> str:
     return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])
 

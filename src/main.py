@@ -2767,7 +2767,9 @@ class change_user_settings(JSONEndpoint):
             "locales": get_locales(),
             "sigtype": ELECTRONIC_SIGNATURES,
             "themes": asm3.lookups.VISUAL_THEMES,
-            "reports": asm3.reports.get_all_report_titles(o.dbo)
+            "reports": asm3.reports.get_all_report_titles(o.dbo),
+            "stocklocations": asm3.lookups.get_stock_locations(o.dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(o.dbo)
         }
 
     def post_all(self, o):
@@ -2791,8 +2793,10 @@ class change_user_settings(JSONEndpoint):
         quickreportscfg = ",".join(quickreportscfg)
         twofavalidcode = post["twofavalidcode"]
         twofavalidpassword = post["twofavalidpassword"]
+        defaultlocationid = post.integer("defaultlocationid")
+        defaultstockusagetypeid = post.integer("defaultstockusagetypeid")
         asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "main.change_password", o.dbo)
-        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword)
+        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword, defaultlocationid, defaultstockusagetypeid)
         # If the user now has 2FA enabled, and force2fa session flag is on, we can turn it off
         if "force2fa" in o.session and o.session.force2fa and asm3.users.get_user(o.dbo, o.user).ENABLETOTP == 1:
             o.session.force2fa = False
@@ -5901,9 +5905,12 @@ class options(JSONEndpoint):
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
             "pp_square": pp_square,
+            "producttypes": asm3.lookups.get_product_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "themes": asm3.lookups.VISUAL_THEMES,
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesclinic": asm3.template.get_document_templates(dbo, "clinic"),
@@ -6662,6 +6669,7 @@ class product(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
+        username = o.user
         #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
         producttyperows = asm3.stock.get_product_types(dbo)
         producttypes = []
@@ -6678,6 +6686,8 @@ class product(JSONEndpoint):
                     product["PRODUCTTYPENAME"] = producttype["PRODUCTTYPENAME"]
                     break
         return {
+            "defaultstocklocationid": asm3.users.get_default_stock_location_id(dbo, username),
+            "defaultstockusagetypeid": asm3.users.get_default_stock_usage_type_id(dbo, username),
             "producttypes": producttypes,
             "taxrates": taxrates,
             "stocklocations": asm3.lookups.get_stock_locations(dbo),

@@ -391,6 +391,18 @@ def change_password(dbo: Database, username: str, oldpassword: str, newpassword:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Password is incorrect.", l))
     dbo.execute("UPDATE users SET Password = ? WHERE UserName LIKE ?", (hash_password(newpassword), username))
 
+def get_default_stock_location_id(dbo: Database, username: str) -> str:
+    """
+    Returns a user's default stock location ID
+    """
+    return dbo.query_string("SELECT DefaultStockLocationID FROM users WHERE UserName LIKE ?", [username])
+
+def get_default_stock_usage_type_id(dbo: Database, username: str) -> str:
+    """
+    Returns a user's default stock usage type ID
+    """
+    return dbo.query_string("SELECT DefaultStockUsageTypeID FROM users WHERE UserName LIKE ?", [username])
+
 def get_real_name(dbo: Database, username: str) -> str:
     """
     Returns a user's real name
@@ -665,17 +677,19 @@ def insert_user_from_form(dbo: Database, username: str, post: PostedData) -> int
     return nuserid
 
 def update_user_settings(dbo: Database, username: str, email: str = "", realname: str = "", locale: str = "", 
-                         theme: str = "", signature: str = "", twofavalidcode: str = "", twofavalidpassword: str = "") -> None:
+                         theme: str = "", signature: str = "", twofavalidcode: str = "", twofavalidpassword: str = "", defaultstocklocationid: int = 0, defaultstockusagetypeid: int = 0) -> None:
     """
     Updates the user account settings for email, name, locale, theme and signature.
     if twofavalidcode is set and valid, EnableTOTP is set to 1
     if twofavalidpassword is set and valid, EnableTOTP is set to 0
     """
     values = {
-        "RealName":         realname,
-        "EmailAddress":     email,
-        "ThemeOverride":    theme,
-        "LocaleOverride":   locale
+        "RealName":                 realname,
+        "EmailAddress":             email,
+        "ThemeOverride":            theme,
+        "LocaleOverride":           locale,
+        "DefaultStockLocationID":   defaultstocklocationid,
+        "DefaultStockUsageTypeID":  defaultstockusagetypeid
     }
     user = dbo.first_row(dbo.query("SELECT ID, Password, OTPSecret, EnableTOTP FROM users WHERE Username = ?", [username]))
     if twofavalidcode != "" and twofavalidcode == str(asm3.utils.totp(user.OTPSECRET)):

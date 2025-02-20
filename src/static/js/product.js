@@ -87,6 +87,14 @@ $(function() {
                 },
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
+                    { field: "UNIT", display: _("Unit") },
+                    { field: "BALANCE", display: _("Balance"), formatter: function(row) {
+                        if (!row.BALANCE) {
+                            return 0;
+                        } else {
+                            return row.BALANCE;
+                        }
+                    } },
                     { field: "PRODUCTTYPENAME", display: _("Type") },
                     { field: "BARCODE", display: _("Barcode") }
                 ]
@@ -144,6 +152,8 @@ $(function() {
             $("#custompurchaseunitrow").fadeOut();
             $("#customunitrow").fadeOut();
             $("#unitratiorow").fadeOut();
+            $("#producttype").val(config.integer("StockDefaultProductTypeID"));
+            $("#taxrate").val(config.integer("StockDefaultTaxRateID"));
 
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -205,8 +215,11 @@ $(function() {
             console.log(units);
             $("#movementunit").html(html.list_to_options(units));
             
-            $("#movementfrom").val($("#movementfrom option[value^='L']").first().val());
-            $("#movementto").val($("#movementto option[value^='U']").first().val());
+            //$("#movementfrom").val($("#movementfrom option[value^='L']").first().val());
+            //$("#movementto").val($("#movementto option[value^='U']").first().val());
+
+            $("#movementfrom").val("L$" + controller.defaultstocklocationid);
+            $("#movementto").val("U$" + controller.defaultstockusagetypeid);
 
             $("#movementdate").val(format.date_now());
 
@@ -243,11 +256,8 @@ $(function() {
                 "&movementtotype=" + totype +
                 "&batch=" + $("#batch").val() +
                 "&expiry=" + $("#expiry").val() +
-                "&comments=" + $("#comments").val()
-            console.log(formdata);
+                "&comments=" + _("Movement") + ". " + $("#movementfrom option:selected").text() + " to " + $("#movementto option:selected").text() + "\n" + $("#comments").val();
             let response = await common.ajax_post("product", formdata);
-
-            console.log("Movement dialog complete.");
         },
 
         clone_product: function() { 
