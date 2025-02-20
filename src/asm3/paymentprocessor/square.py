@@ -73,14 +73,15 @@ class Square(PaymentProcessor):
         response = result.body
         success = result.is_success()
         """
+        if squenv == "production": squenv = "" # url is connect.squareup.com or connect.squareupsandbox.com
         url = f"https://connect.squareup{squenv}.com/v2/online-checkout/payment-links"
         headers = { "Authorization": f"Bearer {access_token}", "Square-Version": "2025-01-23", "Content-Type": "application/json" }
         result = asm3.utils.post_json(url, asm3.utils.json(body), headers)
         response = asm3.utils.json_parse(result["response"])
         success = "payment_link" in response and "url" in response["payment_link"]
-        link = response["payment_link"]["url"]
 
         if success:
+            link = response["payment_link"]["url"]
             # Construct the page that will redirect us to the real checkout
             s = "<DOCTYPE html>\n" \
             "<html>\n" \
