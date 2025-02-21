@@ -229,10 +229,10 @@ class PetRescuePublisher(AbstractPublisher):
         else: coat = "medium_coat"
 
         origin = ""
-        if an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") == -1: origin = "shelter_transfer"
-        elif an.ISTRANSFER == 1 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
-        elif an.ORIGINALOWNERID > 0: origin = "owner_surrender"
-        else: origin = "community_cat"
+        if an.ENTRYTYPEID == 3 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") == -1: origin = "shelter_transfer"
+        elif an.ENTRYTYPEID == 3 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
+        elif an.ENTRYTYPEID == 1: origin = "owner_surrender"
+        elif an.NONSHELTERANIMAL == 1 and an.SPECIESID == 2: origin = "community_cat"
 
         best_feature = "Looking for love"
         if "BESTFEATURE" in an and an.BESTFEATURE:
@@ -322,7 +322,7 @@ class PetRescuePublisher(AbstractPublisher):
             "wormed":                   wormed, # cats & dogs, true | false
             "heart_worm_treated":       hwtreated, # dogs only, true | false
             "coat":                     coat, # Only applies to cats and guinea pigs, but we send for everything: short | medium_coat | long
-            "intake_origin":            asm3.utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
+            "intake_origin":            origin, # community_cat | owner_surrender | pound_transfer | shelter_transfer
             "incompatible_with_cats":   an.ISGOODWITHCATS == 1,
             "incompatible_with_dogs":   an.ISGOODWITHDOGS == 1,
             "incompatible_with_kids_under_5": an.ISGOODWITHCHILDREN == 1 or an.ISGOODWITHCHILDREN >= 5,
