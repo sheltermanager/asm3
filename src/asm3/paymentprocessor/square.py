@@ -63,22 +63,25 @@ class Square(PaymentProcessor):
             "payment_note": payment_note,
         }
 
-        """
-        # NOTE: This is the original code using the "squareup" package from pypi - 
-        # we're using plain HTTP to save having another dependency.
+        # NOTE: Using the "squareup" package from pypi
         from square.http.auth.o_auth_2 import BearerAuthCredentials
         from square.client import Client
         client = Client(bearer_auth_credentials=BearerAuthCredentials(access_token=access_token), environment=squenv)
         result = client.checkout.create_payment_link(body=body)
         response = result.body
         success = result.is_success()
+
         """
+        # NOTE: This was an attempt to do the above without having a dependency on the "squareup" package from pypi
+        # NOTE: Not used because I don't think we can use bearer tokens this way without oauth in production, 
+        #       The square documentation is not very clear on the subject.
         if squenv == "production": squenv = "" # url is connect.squareup.com or connect.squareupsandbox.com
         url = f"https://connect.squareup{squenv}.com/v2/online-checkout/payment-links"
         headers = { "Authorization": f"Bearer {access_token}", "Square-Version": "2025-01-23", "Content-Type": "application/json" }
         result = asm3.utils.post_json(url, asm3.utils.json(body), headers)
         response = asm3.utils.json_parse(result["response"])
         success = "payment_link" in response and "url" in response["payment_link"]
+        """
 
         if success:
             link = response["payment_link"]["url"]
