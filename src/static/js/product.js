@@ -343,7 +343,12 @@ $(function() {
             $("#movementto").html(html.list_to_options(stocklocations));
 
             if (controller.productid != 0) {
-                this.table.edit(controller.row);
+                $.each(controller.rows, function(rowcount, row) {
+                    if (row.ID == controller.productid) {
+                        product.table.edit(row);
+                        return false;
+                    }
+                });
             }
         },
 
