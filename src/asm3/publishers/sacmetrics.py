@@ -49,7 +49,7 @@ class SACMetricsPublisher(AbstractPublisher):
         # which we parse into a set of months/years that will require an update sending.
         # (these are the 4 fields that determine intake and outcome)
         animals = dbo.query("SELECT ID, ShelterCode, MostRecentEntryDate, DeceasedDate FROM animal WHERE LastChangedDate >= ?", [ dbo.now(offset=-1) ])
-        movements = dbo.query("SELECT AnimalID, MovementDate, ReturnDate FROM adoption WHERE LastChangedDate >= ?", [ dbo.now(offset=-1) ])
+        movements = dbo.query("SELECT ID, AnimalID, MovementDate, ReturnDate FROM adoption WHERE LastChangedDate >= ?", [ dbo.now(offset=-1) ])
         for a in animals:
             if a.MOSTRECENTENTRYDATE and a.MOSTRECENTENTRYDATE < dbo.today(): 
                 monthset.add( d2m(a.MOSTRECENTENTRYDATE) )

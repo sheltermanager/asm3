@@ -165,7 +165,11 @@ def publish_3pty(dbo: Database):
             if publish.PUBLISHER_LIST[p]["sub24hour"] and freq != 0: continue
             # We do html/ftp publishing separate from other publishers
             if p == "html": continue
-            publish.start_publisher(dbo, p, user="system", newthread=False)
+            try:
+                publish.start_publisher(dbo, p, user="system", newthread=False)
+            except: 
+                em = str(sys.exc_info()[0])
+                al.error("FAIL: uncaught error running publisher '%s': %s" % (p, em), "cron.publish_3pty", dbo, sys.exc_info())
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running third party publishers: %s" % em, "cron.publish_3pty", dbo, sys.exc_info())
