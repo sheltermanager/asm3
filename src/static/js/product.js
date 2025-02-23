@@ -58,28 +58,21 @@ $(function() {
                                 });
                         },
                         onload: function() {
-                            console.log("Loaded");
                             if ($("#purchaseunittype").val() == 5) {
-                                console.log("Showing custom purchase unit");
                                 $("#custompurchaseunitrow").fadeIn();
                             } else {
-                                console.log("Hiding custom purchase unit");
                                 $("#custompurchaseunitrow").fadeOut();
                             }
                 
                             if ($("#unittype").val() == 5) {
-                                console.log("Showing custom unit");
                                 $("#customunitrow").fadeIn();
                             } else {
-                                console.log("Hiding custom unit");
                                 $("#customunitrow").fadeOut();
                             }
                 
                             if ($("#unittype").val() == 0) {
-                                console.log("Hiding unit ratio!");
                                 $("#unitratiorow").fadeOut();
                             } else {
-                                console.log("Showing unit ratio!");
                                 $("#unitratiorow").fadeIn();
                             }
                         }
@@ -104,7 +97,17 @@ $(function() {
                 { id: "new", text: _("New Product"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { product.new_product(); }},
                 { id: "move", text: _("Move Stock"), icon: "right", enabled: "one", perm: "asl", 
-                    click: function() { product.move_product(); }},
+                    click: async function() {
+                        product.move_product_init();
+                        await tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { width: 500 });
+                        product.move_product();
+                    }
+                },
+                { id: "showmovements", text: _("Show Movements"), icon: "stock", enabled: "one", perm: "asl", 
+                    click: function() {
+                        document.location.href = "stock_movement?productid=" + tableform.table_selected_id(table);
+                    }
+                },
                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "asl",
                     click: function() { product.clone_product(); }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dsl", 
@@ -124,17 +127,19 @@ $(function() {
         },
 
         render: function() {
-            let s = [
-                '<div id="dialog-move-product" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">',
-                '<p><input id=movementdate name=movementdate class="asm-textbox asm-datebox"></p>',
-                '<p><input id=movementquantity name=movementquantity class="asm-field asm-textbox asm-intbox"> x <select id=movementunit name=movementunit></select></p>',
-                '<p>from <select id=movementfrom name=movementfrom></select></p>',
-                '<p>to <select id=movementto name=movementto></select></p>',
-                '<p>' + _("Batch") + '<br><input id=batch name=batch></p>',
-                '<p>' + _("Expiry") + '<br><input type=text id=expiry name=expiry class="asm-textbox asm-datebox"></p>',
-                '<p>' + _("Comments") + '<br><textarea id=comments name=comments></textarea></p>',
-                '</div>',
-            ].join("\n");
+            let s = '<div id="dialog-moveproduct" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">'
+            s += tableform.fields_render([
+                { post_field: "movementdate", json_field: "MOVEMENTDATE", label: _("Date"), type: "date" },
+                { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true },
+                { post_field: "movementunit", json_field: "MOVEMENTUNIT", type: "select", justwidget: true, halfsize: true },
+                { type: "rowclose" },
+                { post_field: "movementfrom", json_field: "MOVEMENTFROM", label: _("From"), type: "select" },
+                { post_field: "movementto", json_field: "MOVEMENTTO", label: _("To"), type: "select" },
+                { post_field: "batch", json_field: "BATCH", label: _("Batch"), type: "text" },
+                { post_field: "expiry", json_field: "EXPIRY", label: _("Expiry"), type: "date" },
+                { post_field: "comments", json_field: "COMMENTS", label: _("Comments"), type: "textarea" }
+            ]);
+            s += '</div>';
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Product"));
@@ -177,7 +182,7 @@ $(function() {
             });
         },
 
-        move_product: async function() {
+        move_product_init: function() {
             let productid = tableform.table_selected_id();
             let activeproduct = false;
             $.each(controller.rows, function(rowcount, row) {
@@ -212,22 +217,26 @@ $(function() {
             } else if (activeproduct.UNITTYPE == 5) {
                 units.push("1|" + activeproduct.CUSTOMUNIT);
             }
-            console.log(units);
             $("#movementunit").html(html.list_to_options(units));
-            
-            //$("#movementfrom").val($("#movementfrom option[value^='L']").first().val());
-            //$("#movementto").val($("#movementto option[value^='U']").first().val());
-
+            $("#movementunit").val($("#movementunit option").last().val());
             $("#movementfrom").val("L$" + controller.defaultstocklocationid);
             $("#movementto").val("U$" + controller.defaultstockusagetypeid);
 
             $("#movementdate").val(format.date_now());
 
             $("#movementquantity").val(1);
-            //$("#movementquantity").focus();
+        },
 
-            await tableform.show_okcancel_dialog("#dialog-move-product", _("Move"));
-
+        move_product: async function() {
+           
+            let productid = tableform.table_selected_id();
+            let activeproduct = false;
+            $.each(controller.rows, function(rowcount, row) {
+                if (row.ID == productid) {
+                    activeproduct = row;
+                    return false;
+                }
+            });
             let fromid = $("#movementfrom").val().split("$")[1];
             let fromtype = 0;
             if ($("#movementfrom").val().split("$")[0] == "U") {
@@ -241,22 +250,24 @@ $(function() {
 
             let quantity = parseInt($("#movementquantity").val()) * parseInt($("#movementunit").val())
             
-            let formdata = "mode=move" +
-                "&productid=" + productid +
-                "&productname=" + activeproduct.PRODUCTNAME +
-                "&productdescription=" + activeproduct.DESCRIPTION +
-                "&movementdate=" + $("#movementdate").val() + 
-                "&movementquantity=" + quantity +
-                "&unitratio=" + activeproduct.UNITRATIO +
-                "&costprice=" + activeproduct.COSTPRICE +
-                "&movementunit=" + $("#movementunit option").last().text() +
-                "&movementfrom=" + fromid +
-                "&movementfromtype=" + fromtype +
-                "&movementto=" + toid +
-                "&movementtotype=" + totype +
-                "&batch=" + $("#batch").val() +
-                "&expiry=" + $("#expiry").val() +
-                "&comments=" + _("Movement") + ". " + $("#movementfrom option:selected").text() + " to " + $("#movementto option:selected").text() + "\n" + $("#comments").val();
+            let formdata = {
+                mode: "move",
+                productid: productid,
+                productname: activeproduct.PRODUCTNAME,
+                productdescription: activeproduct.DESCRIPTION,
+                movementdate: $("#movementdate").val() ,
+                movementquantity: quantity,
+                unitratio: activeproduct.UNITRATIO,
+                costprice: activeproduct.COSTPRICE,
+                movementunit: $("#movementunit option").last().text(),
+                movementfrom: fromid,
+                movementfromtype: fromtype,
+                movementto: toid,
+                movementtotype: totype,
+                batch: $("#batch").val(),
+                expiry: $("#expiry").val(),
+                comments: _("Movement") + ". " + _("{0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
+            }
             let response = await common.ajax_post("product", formdata);
         },
 
@@ -296,7 +307,6 @@ $(function() {
             }
 
             $("#purchaseunittype").change(function() {
-                console.log("purchaseunittype changed");
                 if ($("#purchaseunittype").val() == 5) {
                     $("#custompurchaseunitrow").fadeIn();
                 } else {
@@ -305,7 +315,6 @@ $(function() {
             });
             
             $("#unittype").change(function() {
-                console.log("unittype changed");
                 if ($("#unittype").val() == 5) {
                     $("#customunitrow").fadeIn();
                 } else {
@@ -332,6 +341,10 @@ $(function() {
             });
             $("#movementfrom").html(html.list_to_options(stocklocations));
             $("#movementto").html(html.list_to_options(stocklocations));
+
+            if (controller.productid != 0) {
+                this.table.edit(controller.row);
+            }
         },
 
         destroy: function() {

@@ -57,7 +57,6 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    console.log("Editing");
                     $("#productsearchkeyrow").fadeOut();
                     $("#productlistrow").fadeOut();
                     $("#productnamerow").fadeIn();
@@ -290,17 +289,14 @@ $(function() {
             });
 
             $("#productlist").change(function() {
-                console.log("Product selected = " + $("#productlist").val());
                 let productid = $("#productlist").val();
                 let activeproduct = false;
                 $.each(controller.products, function(productcount, product) {
                     if (product.ID == productid) {
-                        console.log("Product found");
                         activeproduct = product;
                         return false;
                     }
                 });
-                console.log(activeproduct);
                 $("#name").val(activeproduct.PRODUCTNAME);
                 $("#description").val(activeproduct.DESCRIPTION);
                 let unittype = activeproduct.CUSTOMUNIT;
@@ -349,7 +345,6 @@ $(function() {
         },
 
         sync: function() {
-            console.log("Syncing");
             // If a viewlocation is given in the querystring, update the select
             if (common.querystring_param("viewlocation")) {
                 $("#viewlocation").select("value", common.querystring_param("viewlocation"));

@@ -25,17 +25,22 @@ def get_products(dbo: Database, includeretired=False) -> Results:
         "WHERE IsRetired = %s " \
         "ORDER BY ProductName" % (int(includeretired),))
 
-def get_stock_movements(dbo: Database) -> Results:
+def get_stock_movements(dbo: Database, productid: int = 0) -> Results:
     """
-    Returns all product movements
+    Returns product movements
     """
-    #return dbo.query("SELECT stockusage.ID, stockusage.UsageDate, product.ProductName, stockusage.Quantity, product.CustomUnit, CASE WHEN productmovement.FromType = 0 THEN (SELECT LocationName FROM stocklocation WHERE ID = productmovement.FromID) ELSE (SELECT UsageTypeName FROM stockusagetype WHERE ID = productmovement.FromID) END AS FromName, CASE WHEN productmovement.ToType = 0 THEN (SELECT LocationName FROM stocklocation WHERE ID = productmovement.ToID) ELSE (SELECT UsageTypeName FROM stockusagetype WHERE ID = productmovement.ToID) END AS ToName, productmovement.BatchNo, productmovement.Comments FROM productmovement INNER JOIN product ON productmovement.ProductID = product.ID ORDER BY MovementDate")
+
+    wheresql = ""
+    if productid != 0:
+        wheresql = "WHERE stocklevel.ProductID = %i" % productid
+
 
     return dbo.query("SELECT " \
         "stockusage.ID, " \
         "stockusage.UsageDate, " \
+        "product.ID AS ProductID, " \
         "CASE WHEN product.ID IS NULL THEN stocklevel.NAME " \
-        "ELSE product.ProductName || ' *' " \
+        "ELSE product.ProductName " \
         "END AS ProductName, " \
         "stockusage.Quantity, " \
         "stocklocation.LocationName, " \
@@ -57,7 +62,8 @@ def get_stock_movements(dbo: Database) -> Results:
         "INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID " \
         "LEFT JOIN stocklocation ON stocklevel.StockLocationID = stocklocation.ID " \
         "LEFT JOIN stockusagetype ON stockusage.StockUsageTypeID = stockusagetype.ID " \
-        "LEFT JOIN product ON stocklevel.ProductID = product.ID")
+        "LEFT JOIN product ON stocklevel.ProductID = product.ID " + wheresql \
+        )
 
 def get_product_types(dbo: Database) -> Results:
     """

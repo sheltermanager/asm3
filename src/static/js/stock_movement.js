@@ -47,7 +47,13 @@ $(function() {
                     { field: "USAGEDATE", display: _("Date"), formatter: function(row) {
                         return format.date(row.USAGEDATE);
                     }  },
-                    { field: "PRODUCTNAME", display: _("Product") },
+                    { field: "PRODUCTNAME", display: _("Product"), formatter: function(row) {
+                        if (!row.PRODUCTID) {
+                            return row.PRODUCTNAME;
+                        } else {
+                            return row.PRODUCTNAME + " <a href=product?id=" + row.PRODUCTID + "><img src='static/images/icons/match.png' title='" + _("Linked to product") + "'></a>"
+                        }
+                    } },
                     { field: "QUANTITY", display: _("Quantity") },
                     { field: "UNIT", display: _("Unit") },
                     { field: "FROMNAME", display: _("From") },
@@ -56,20 +62,7 @@ $(function() {
                 ]
             };
 
-            /*const buttons = [
-                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dsl", 
-                    click: async function() { 
-                        await tableform.delete_dialog();
-                        tableform.buttons_default_state(buttons);
-                        let ids = tableform.table_ids(table);
-                        await common.ajax_post("stock_movement", "mode=delete&ids=" + ids);
-                        tableform.table_remove_selected_from_json(table, controller.rows);
-                        tableform.table_update(table);
-                    } 
-                }
-            ];*/
             this.dialog = dialog;
-            //this.buttons = buttons;
             this.table = table;
         },
 
@@ -77,7 +70,11 @@ $(function() {
             let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
-            s += html.content_header(_("Stock movement"));
+            if (controller.productid != 0) {
+                s += html.content_header(_("{0} Movements").replace("{0}", controller.productname));
+            } else {
+                s += html.content_header(_("Stock Movement"));
+            }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -95,13 +92,15 @@ $(function() {
             tableform.dialog_destroy();
         },
 
-        /*set_extra_fields: function(row) {
-            row.STOCKLOCATIONNAME = common.get_field(controller.stocklocations, row.STOCKLOCATIONID, "LOCATIONNAME");
-        },*/
-
         name: "stock_movement",
         animation: "book",
-        title: function() { return _("Stock movement"); },
+        title: function() {
+            if (controller.productid != 0) {
+                return _("{0} Movements").replace("{0}", controller.productname);
+            } else {
+                return _("Stock movement");
+            }
+        },
         routes: {
             "stock_movement": function() { common.module_loadandstart("stock_movement", "stock_movement?" + this.rawqs); }
         }

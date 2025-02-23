@@ -6665,12 +6665,16 @@ class person_vouchers(JSONEndpoint):
 class product(JSONEndpoint):
     url = "product"
     js_module = "product"
-    get_permissions = asm3.users.VIEW_STOCKLEVEL # May be worth adding asm3.users.VIEW_PRODUCT??
+    get_permissions = asm3.users.VIEW_STOCKLEVEL # Do I need to add asm3.users.VIEW_PRODUCT??
 
     def controller(self, o):
         dbo = o.dbo
         username = o.user
         #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
+        productid = 0
+        if o.post["id"]:
+            productid = o.post.integer("id")
+            
         producttyperows = asm3.stock.get_product_types(dbo)
         producttypes = []
         for producttype in producttyperows:
@@ -6686,6 +6690,7 @@ class product(JSONEndpoint):
                     product["PRODUCTTYPENAME"] = producttype["PRODUCTTYPENAME"]
                     break
         return {
+            "productid": productid,
             "defaultstocklocationid": asm3.users.get_default_stock_location_id(dbo, username),
             "defaultstockusagetypeid": asm3.users.get_default_stock_usage_type_id(dbo, username),
             "producttypes": producttypes,
@@ -6720,19 +6725,27 @@ class stock_movement(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
-        producttypes = []
-        for producttype in asm3.stock.get_product_types(dbo):
-            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
+        productid = 0
+        productname = ""
+        if o.post["productid"]:
+            productid = o.post.integer("productid")
         products = []
         for product in asm3.stock.get_products(dbo):
             products.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
+            if product["ID"] == productid:
+                productname = product["PRODUCTNAME"]
+        producttypes = []
+        for producttype in asm3.stock.get_product_types(dbo):
+            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
+        
         return {
+            "productid": productid,
+            "productname": productname,
             "producttypes": producttypes,
             "products": products,
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
-            "rows": asm3.stock.get_stock_movements(dbo)
+            "rows": asm3.stock.get_stock_movements(dbo, productid)
         }
     
     def post_delete(self, o):
