@@ -165,7 +165,7 @@ class PetcademyPublisher(FTPPublisher):
             an.CURRENTOWNERCOUNTY,
             an.CURRENTOWNERPOSTCODE,
             an.CURRENTOWNERMOBILETELEPHONE,
-            str(an.CURRENTOWNEREXCLUDEEMAIL),
+            str(an.CURRENTOWNERADDITIONALFLAGS).find("Exclude from petcademy") != -1 and "1" or "0",
             an.SHELTERCODE,
             an.ANIMALNAME,
             an.SPECIESNAME,
