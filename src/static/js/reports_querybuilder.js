@@ -669,7 +669,7 @@ $(function() {
             };
             if (type == "animal") {
                 $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type)).concat(get_animal_medical())));
-                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type))));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type)).concat(get_animal_medical())));
                 $("#qbcriteria").html(html.list_to_options(build_criteria(reports_querybuilder.qb_animal_criteria)));
                 $("#qbfields").change();
                 $("#qbsort").change();
