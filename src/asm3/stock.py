@@ -1,5 +1,6 @@
 
 import asm3.utils
+import asm3.lookups
 from asm3.i18n import _, now, python2display
 from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
 
@@ -12,18 +13,34 @@ def get_products(dbo: Database, includeretired=False) -> Results:
     """
     Returns all products
     """
-    return dbo.query("SELECT product.*, " \
+    unitsql = ""
+    for unitdict in asm3.lookups.UNITTYPES:
+        unitsql = unitsql + "WHEN product.UnitType = %s THEN '%s' " % (str(unitdict["ID"]), unitdict["UNIT"])
+    sql = "SELECT product.*, " \
         "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
         "CASE " \
-        "WHEN product.UnitType = 1 THEN 'kg' " \
-        "WHEN product.UnitType = 2 THEN 'g' " \
-        "WHEN product.UnitType = 3 THEN 'l' " \
-        "WHEN product.UnitType = 4 THEN 'ml' " \
+        "WHEN product.UnitType = 0 THEN '%s' " \
+        "WHEN product.UnitType = -1 THEN product.CustomUnit " \
+        "%s" \
         "ELSE product.CustomUnit " \
         "END AS Unit " \
         "FROM product " \
         "WHERE IsRetired = %s " \
-        "ORDER BY ProductName" % (int(includeretired),))
+        "ORDER BY ProductName" % (_("unit"), unitsql, int(includeretired))
+    
+    pass
+
+    return dbo.query("SELECT product.*, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        "WHEN product.UnitType = 0 THEN '%s' " \
+        "WHEN product.UnitType = -1 THEN product.CustomUnit " \
+        "%s" \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "WHERE IsRetired = %s " \
+        "ORDER BY ProductName" % (_("unit"), unitsql, int(includeretired),))
 
 def get_stock_movements(dbo: Database, productid: int = 0) -> Results:
     """

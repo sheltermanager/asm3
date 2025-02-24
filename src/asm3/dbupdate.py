@@ -1161,6 +1161,19 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lkcoattype", (
         fid(), fstr("CoatType") ), False)
+    
+    sql += table("lkproducttype", (
+        fid(),
+        fstr("ProductTypeName"),
+        fstr("Description"),
+        fint("IsRetired") ), False)
+
+    sql += table("lktaxrate", (
+        fid(),
+        fstr("TaxRateName"),
+        fstr("Description"),
+        ffloat("TaxRate"),
+        fint("IsRetired") ), False)
 
     sql += table("lksex", (
         fid(), fstr("Sex") ), False)
@@ -1410,6 +1423,7 @@ def sql_structure(dbo: Database) -> str:
         fint("IsRetailer", True),
         fint("IsVet", True),
         fint("IsGiftAid", True),
+        fint("IsSupplier", True),
         fstr("ExtraIDs", True),
         flongstr("AdditionalFlags", True),
         flongstr("HomeCheckAreas", True),
@@ -1474,6 +1488,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("owner_IsVolunteer", "owner", "IsVolunteer")
     sql += index("owner_ExtraIDs", "owner", "ExtraIDs")
     sql += index("owner_IsSponsor", "owner", "IsSponsor")
+    sql += index("owner_IsSupplier", "owner", "IsSupplier")
 
     sql += table("ownercitation", (
         fid(),
@@ -1629,6 +1644,32 @@ def sql_structure(dbo: Database) -> str:
         fint("NextID") ), False)
     sql += index("primarykey_TableName", "primarykey", "TableName")
 
+    sql += table("product", (
+        fid(),
+        fstr("ProductName"),
+        fstr("Description"),
+        fint("ProductType"),
+        fint("SupplierID"),
+        fint("UnitType"),
+        fstr("CustomUnit"),
+        fint("PurchaseTypeUnit"),
+        fstr("CustomPurchaseUnit"),
+        fint("CostPrice"),
+        fint("RetailPrice"),
+        fint("UnitRatio"),
+        fint("TaxRate"),
+        fstr("Barcode"),
+        fstr("PLU"),
+        fstr("RecentBatchNo"),
+        fstr("RecentExpiry"),
+        fint("RecordVersion"),
+        fstr("CreatedBy"),
+        fdate("CreatedDate"),
+        fstr("LastChangedBy"),
+        fdate("LastChangedDate"),
+        fint("IsRetired") ), False)
+    sql += index("product_SupplierID", "product", "SupplierID")
+
     sql += table("publishlog", (
         fid(),
         fdate("PublishDateTime"),
@@ -1675,6 +1716,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("BatchNumber", True),
         fint("Cost", True),
         fint("UnitPrice", True),
+        fint("ProductID", True),
         fdate("CreatedDate")
         ), False)
     sql += index("stocklevel_Name", "stocklevel", "Name")
@@ -1682,6 +1724,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("stocklevel_StockLocationID", "stocklevel", "StockLocationID")
     sql += index("stocklevel_Expiry", "stocklevel", "Expiry")
     sql += index("stocklevel_BatchNumber", "stocklevel", "BatchNumber")
+    sql += index("stocklevel_ProductID", "stocklevel", "ProductID")
 
     sql += table("stocklocation", (
         fid(),
@@ -1770,7 +1813,10 @@ def sql_structure(dbo: Database) -> str:
         fint("SiteID", True), 
         fint("DisableLogin", True),
         fstr("LocationFilter", True),
+        fint("DefaultStockLocationID"),
+        fint("DefaultStockUsageTypeID"),
         fint("RecordVersion", True)), False)
+        
     sql += index("users_UserName", "users", "UserName")
 
     sql += table("userrole", (
@@ -1827,6 +1873,10 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
         return "INSERT INTO role (ID, Rolename, SecurityMap) VALUES (%s, '%s', '%s')|=\n" % (tid, dbo.escape(name), perms)
     def species(tid: int, name: str, petfinder: str) -> str:
         return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( tid, dbo.escape(name), petfinder )
+    
+    def taxrate(tid: int, name: str, taxrate: float) -> str:
+        return "INSERT INTO lktaxrate (ID, TaxRateName, Description, TaxRate, IsRetired) VALUES (%s, '%s', '', %f, 0)" % ( tid, name, "", taxrate, 0 )
+    
     def user(tid: int, username: str, realname: str, password: str, superuser: bool) -> str:
         return "INSERT INTO users (ID, UserName, RealName, EmailAddress, Password, SuperUser, OwnerID, SecurityMap, IPRestriction, Signature, LocaleOverride, ThemeOverride, SiteID, DisableLogin, LocationFilter, RecordVersion) VALUES (%s,'%s','%s', '', 'plain:%s', %s, 0,'', '', '', '', '', 0, 0, '', 0)|=\n" % (tid, username, realname, password, superuser and 1 or 0)
 
@@ -2621,6 +2671,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += medicalprofile(3, _("Deflea", l), _("{0} Pipette", l).format(1))
     sql += medicalprofile(4, _("Wormer", l), _("{0} Tablet", l).format(1))
     sql += lookup2("pickuplocation", "LocationName", 1, _("Shelter", l))
+    sql += lookup2("lkproducttype", "ProductTypeName", 1, _("General", l))
     sql += lookup2("reservationstatus", "StatusName", 1, _("More Info Needed", l))
     sql += lookup2("reservationstatus", "StatusName", 2, _("Pending Vet Check", l))
     sql += lookup2("reservationstatus", "StatusName", 3, _("Pending Apartment Verification", l))
@@ -2666,6 +2717,8 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2("stockusagetype", "UsageTypeName", 5, _("Sold", l))
     sql += lookup2("stockusagetype", "UsageTypeName", 6, _("Stocktake", l))
     sql += lookup2("stockusagetype", "UsageTypeName", 7, _("Wasted", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 8, _("Movement", l))
+    sql += taxrate(1, _("Tax Free", l), 0.0)
     sql += lookup2("testresult", "ResultName", 1, _("Unknown", l))
     sql += lookup2("testresult", "ResultName", 2, _("Negative", l))
     sql += lookup2("testresult", "ResultName", 3, _("Positive", l))
@@ -6421,7 +6474,7 @@ def update_34907(dbo: Database) -> None:
 
 def update_35000(dbo: Database) -> None:
     l = dbo.locale
-    # Add extra column to person
+    # Add extra column to owner table
     add_column(dbo, "owner", "IsSupplier", dbo.type_integer)
     add_index(dbo, "owner_IsSupplier", "owner", "IsSupplier")
     dbo.execute_dbupdate("UPDATE owner SET IsSupplier=0")
@@ -6441,7 +6494,6 @@ def update_35000(dbo: Database) -> None:
         dbo.ddl_add_table_column("RetailPrice", dbo.type_integer, False),
         dbo.ddl_add_table_column("UnitRatio", dbo.type_integer, False),
         dbo.ddl_add_table_column("TaxRate", dbo.type_integer, False),
-        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False),
         dbo.ddl_add_table_column("Barcode", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("PLU", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("RecentBatchNo", dbo.type_shorttext, False),
@@ -6450,10 +6502,11 @@ def update_35000(dbo: Database) -> None:
         dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
         dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
-        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("product", fields) )
-    #add_index(dbo, "ownerrole_OwnerIDRoleID", "ownerrole", "OwnerID,RoleID", unique=True)
+    add_index(dbo, "product_SupplierID", "product", "SupplierID")
 
     # Add the lkproducttype table
     fields = ",".join([
@@ -6497,4 +6550,6 @@ def update_35000(dbo: Database) -> None:
 
     # Adding ProductID columns to stocklevel table
     add_column(dbo, "stocklevel", "ProductID", dbo.type_integer)
+    add_index(dbo, "stocklevel_ProductID", "stocklevel", "ProductID")
+
 

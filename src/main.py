@@ -6698,6 +6698,7 @@ class product(JSONEndpoint):
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "sortexp": o.post.integer("sortexp") == 1, # Don't know what this does - Adam
+            "units": asm3.lookups.UNITTYPES,
             "rows": products
         }
     

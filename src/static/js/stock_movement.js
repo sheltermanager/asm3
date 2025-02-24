@@ -26,11 +26,11 @@ $(function() {
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
                     { json_field: "PURCHASEUNITTYPE", post_field: "purchaseunittype", label: _("Purchase Unit"), type: "select",
-                        options: ["0|" + _("Unit").toLowerCase(), "1|kg", "2|g", "3|l", "4|ml", "5|" + _("Custom").toLowerCase()]
+                        options: ["0|" + _("Unit").toLowerCase(), "1|kg", "2|g", "3|lb", "4|oz", "5|l", "6|ml", "7|" + _("Custom").toLowerCase()]
                     },
                     { json_field: "CUSTOMPURCHASEUNIT", post_field: "custompurchaseunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "COSTPRICE", post_field: "costprice", label: _("Cost price"), type: "currency", colclasses: "bottomborder" },
-                    { json_field: "UNITTYPE", post_field: "unittype", label: _("Unit"), type: "select", options: ["0|" + _("Purchase unit").toLowerCase(), "1|kg", "2|g", "3|l", "4|ml", "5|" + _("Custom").toLowerCase()] },
+                    { json_field: "UNITTYPE", post_field: "unittype", label: _("Unit"), type: "select", options: ["0|" + _("Purchase unit").toLowerCase(), "1|kg", "2|g", "3|lb", "4|oz", "5|l", "6|ml", "7|" + _("Custom").toLowerCase()] },
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
                     { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 }
@@ -51,7 +51,7 @@ $(function() {
                         if (!row.PRODUCTID) {
                             return row.PRODUCTNAME;
                         } else {
-                            return row.PRODUCTNAME + " <a href=product?id=" + row.PRODUCTID + "><img src='static/images/icons/match.png' title='" + _("Linked to product") + "'></a>"
+                            return row.PRODUCTNAME + " <a href=product?id=" + row.PRODUCTID + "><img src='static/images/icons/match.png' title='" + _("Linked to product") + "'></a>";
                         }
                     } },
                     { field: "QUANTITY", display: _("Quantity") },

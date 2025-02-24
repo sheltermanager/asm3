@@ -7,6 +7,8 @@ $(function() {
     const product = {
 
         model: function() {
+            
+
             const dialog = {
                 add_title: _("Add product"),
                 edit_title: _("Edit product"),
@@ -25,12 +27,17 @@ $(function() {
                     { json_field: "RETIRED", post_field: "retired", label: _("Retired"), type: "check" },
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
+
                     { json_field: "PURCHASEUNITTYPE", post_field: "purchaseunittype", label: _("Purchase Unit"), type: "select",
-                        options: ["0|" + _("Unit").toLowerCase(), "1|kg", "2|g", "3|l", "4|ml", "5|" + _("Custom").toLowerCase()]
+                        options: { rows: controller.units, displayfield: "UNIT", prepend: '<option value="0">' + _("unit") + '</option><option value="-1">' + _("custom") + '</option>' }
                     },
                     { json_field: "CUSTOMPURCHASEUNIT", post_field: "custompurchaseunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "COSTPRICE", post_field: "costprice", label: _("Cost price"), type: "currency", colclasses: "bottomborder" },
-                    { json_field: "UNITTYPE", post_field: "unittype", label: _("Unit"), type: "select", options: ["0|" + _("Purchase unit").toLowerCase(), "1|kg", "2|g", "3|l", "4|ml", "5|" + _("Custom").toLowerCase()] },
+
+                    { json_field: "UNITTYPE", post_field: "unittype", label: _("Unit"), type: "select",
+                        options: { rows: controller.units, displayfield: "UNIT", prepend: '<option value="0">' + _("purchase unit") + '</option><option value="-1">' + _("custom") + '</option>' }
+                    },
+
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
                     { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 }
@@ -58,13 +65,13 @@ $(function() {
                                 });
                         },
                         onload: function() {
-                            if ($("#purchaseunittype").val() == 5) {
+                            if ($("#purchaseunittype").val() == -1) {
                                 $("#custompurchaseunitrow").fadeIn();
                             } else {
                                 $("#custompurchaseunitrow").fadeOut();
                             }
                 
-                            if ($("#unittype").val() == 5) {
+                            if ($("#unittype").val() == -1) {
                                 $("#customunitrow").fadeIn();
                             } else {
                                 $("#customunitrow").fadeOut();
@@ -80,7 +87,35 @@ $(function() {
                 },
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
-                    { field: "UNIT", display: _("Unit") },
+                    { field: "UNIT", display: _("Unit"), formatter: function(row) {
+                        if (row.UNITTYPE == 0) {
+                            if (row.PURCHASEUNITTYPE == 0) {
+                                return _("unit");
+                            } else if (row.PURCHASEUNITTYPE == -1) {
+                                return row.CUSTOMPURCHASEUNIT;
+                            } else {
+                                let unit = _("undefined");
+                                $.each(controller.units, function(unitdictcount, unitdict) {
+                                    if (unitdict.ID == row.PURCHASEUNITTYPE) {
+                                        unit = unitdict.UNIT;
+                                        return false;
+                                    }
+                                });
+                                return unit;
+                            }
+                        } else if (row.UNITTYPE == -1) {
+                            return row.CUSTOMUNITTYPE;
+                        } else {
+                            let unit = _("undefined");
+                            $.each(controller.units, function(unitdictcount, unitdict) {
+                                if (unitdict.ID == row.UNITTYPE) {
+                                    unit = unitdict.UNIT;
+                                    return false;
+                                }
+                            });
+                            return unit;
+                        }
+                    } },
                     { field: "BALANCE", display: _("Balance"), formatter: function(row) {
                         if (!row.BALANCE) {
                             return 0;
@@ -127,7 +162,7 @@ $(function() {
         },
 
         render: function() {
-            let s = '<div id="dialog-moveproduct" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">'
+            let s = '<div id="dialog-moveproduct" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">';
             s += tableform.fields_render([
                 { post_field: "movementdate", json_field: "MOVEMENTDATE", label: _("Date"), type: "date" },
                 { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true },
@@ -193,30 +228,20 @@ $(function() {
             });
             let purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
             if (activeproduct.PURCHASEUNITTYPE == 0) {
-                purchaseunit = _("Unit").toLowerCase();
-            } else if (activeproduct.PURCHASEUNITTYPE == 1) {
-                purchaseunit = "kg";
-            } else if (activeproduct.PURCHASEUNITTYPE == 2) {
-                purchaseunit = "g";
-            } else if (activeproduct.PURCHASEUNITTYPE == 3) {
-                purchaseunit = "l";
-            } else if (activeproduct.PURCHASEUNITTYPE == 4) {
-                purchaseunit = "ml";
-            } else if (activeproduct.PURCHASEUNITTYPE == 5) {
+                purchaseunit = _("unit");
+            } else if (activeproduct.PURCHASEUNITTYPE == -1) {
                 purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
+            } else {
+                purchaseunit = controller.units[activeproduct.PURCHASEUNITTYPE];
             }
-            let units = [activeproduct.UNITRATIO + "|" + purchaseunit,];
-            if (activeproduct.UNITTYPE == 1) {
-                units.push("1|kg");
-            } else if (activeproduct.UNITTYPE == 2) {
-                units.push("1|g");
-            } else if (activeproduct.UNITTYPE == 3) {
-                units.push("1|l");
-            } else if (activeproduct.UNITTYPE == 4) {
-                units.push("1|ml");
-            } else if (activeproduct.UNITTYPE == 5) {
-                units.push("1|" + activeproduct.CUSTOMUNIT);
+            
+            let units = [0 + "|" + purchaseunit,];
+            if (activeproduct.UNITTYPE == -1) {
+                units.push("-1|" + activeproduct.CUSTOMUNIT);
+            } else {
+                units.push(controller.units[activeproduct.UNITTYPE]);
             }
+
             $("#movementunit").html(html.list_to_options(units));
             $("#movementunit").val($("#movementunit option").last().val());
             $("#movementfrom").val("L$" + controller.defaultstocklocationid);
@@ -248,7 +273,7 @@ $(function() {
             }
             let toid = $("#movementto").val().split("$")[1];
 
-            let quantity = parseInt($("#movementquantity").val()) * parseInt($("#movementunit").val())
+            let quantity = parseInt($("#movementquantity").val()) * parseInt($("#movementunit").val());
             
             let formdata = {
                 mode: "move",
@@ -267,7 +292,7 @@ $(function() {
                 batch: $("#batch").val(),
                 expiry: $("#expiry").val(),
                 comments: _("Movement") + ". " + _("{0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
-            }
+            };
             let response = await common.ajax_post("product", formdata);
         },
 
@@ -307,7 +332,7 @@ $(function() {
             }
 
             $("#purchaseunittype").change(function() {
-                if ($("#purchaseunittype").val() == 5) {
+                if ($("#purchaseunittype").val() == -1) {
                     $("#custompurchaseunitrow").fadeIn();
                 } else {
                     $("#custompurchaseunitrow").fadeOut();
@@ -315,7 +340,7 @@ $(function() {
             });
             
             $("#unittype").change(function() {
-                if ($("#unittype").val() == 5) {
+                if ($("#unittype").val() == -1) {
                     $("#customunitrow").fadeIn();
                 } else {
                     $("#customunitrow").fadeOut();
