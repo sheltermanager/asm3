@@ -228,7 +228,7 @@ class PetRescuePublisher(AbstractPublisher):
         elif an.COATTYPE == 1: coat = "long"
         else: coat = "medium_coat"
 
-        origin = ""
+        origin = "owner_surrender"
         if an.ENTRYTYPEID == 3 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") == -1: origin = "shelter_transfer"
         elif an.ENTRYTYPEID == 3 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
         elif an.ENTRYTYPEID == 1: origin = "owner_surrender"
