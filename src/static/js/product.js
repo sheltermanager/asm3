@@ -345,6 +345,7 @@ $(function() {
             if (controller.productid != 0) {
                 $.each(controller.rows, function(rowcount, row) {
                     if (row.ID == controller.productid) {
+                        $("input[data-id='" + controller.productid + "']").prop("checked", true);
                         product.table.edit(row);
                         return false;
                     }
