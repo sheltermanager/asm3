@@ -726,6 +726,10 @@ const tableform = {
         $("#dialog-tableform-spinner").fadeOut();
     },
 
+    dialog_hide_callouts: function() {
+        $(".asm-callout-popup").hide();
+    },
+
     /**
      * Shows the dialog in add mode 
      * 
@@ -792,6 +796,7 @@ const tableform = {
                         return;
                     }
                 }
+                tableform.dialog_hide_callouts();
                 if (tableform.fields_validate(dialog.fields)) {
                     if (dialog.close_on_ok) {
                         $(this).dialog("close");
@@ -838,6 +843,7 @@ const tableform = {
                 tableform.dialog_enable_buttons();
             },
             close: function() {
+                tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
                 tableform.dialog_destroy();
             }
@@ -929,6 +935,7 @@ const tableform = {
                             return;
                         }
                     }
+                    tableform.dialog_hide_callouts();
                     if (tableform.fields_validate(dialog.fields)) {
                         if (dialog.close_on_ok) {
                             $(this).dialog("close");
@@ -1002,6 +1009,7 @@ const tableform = {
                 tableform.dialog_enable_buttons();
             },
             close: function() {
+                tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
                 tableform.dialog_destroy();
             }
