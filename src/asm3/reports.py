@@ -205,6 +205,8 @@ def get_criteria_params(dbo: Database, customreportid: int, post: PostedData) ->
             p.append( ( name, asm3.i18n._("Location", l), post[name], asm3.lookups.get_internallocation_name(dbo, post.integer(name) )) )
         elif rtype == "LOGTYPE":
             p.append( ( name, asm3.i18n._("Log Type", l), post[name], asm3.lookups.get_logtype_name(dbo, post.integer(name) )) )
+        elif rtype == "MEDIAFLAG":
+            p.append( ( name, asm3.i18n._("Flag", l), post[name], post[name] ) )
         elif rtype == "PAYMENTMETHOD":
             p.append( ( name, asm3.i18n._("Payment Method", l), post[name], asm3.lookups.get_paymentmethod_name(dbo, post.integer(name) )) )
         elif rtype == "PERSON":

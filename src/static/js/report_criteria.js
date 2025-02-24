@@ -117,6 +117,13 @@ $(function() {
                         '</select>' +
                         '</td></tr>');
                 }
+                else if (rtype == "MEDIAFLAG") {
+                    h.push('<tr>' + 
+                        '<td>' + _("Flag") + '</td>' +
+                        '<td>' +
+                        '<select class="asm-selectbox mediaflags" id="report-' + name + '" data-post="' + name + '"></select>' +
+                        '</td></tr>');
+                }
                 else if (rtype == "PAYMENTMETHOD" || rtype == "PAYMENTTYPE") {
                     h.push('<tr>' + 
                         '<td>' + _("Payment Method") + '</td>' +
@@ -202,6 +209,7 @@ $(function() {
 
             // Special handling for flags
             html.animal_flag_options(null, controller.animalflags, $(".animalflags"));
+            html.media_flag_options(controller.mediaflags, $(".mediaflags"));
             html.person_flag_options(null, controller.personflags, $(".personflags"));
         },
 

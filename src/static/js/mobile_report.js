@@ -111,6 +111,12 @@ $(document).ready(function() {
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + 
                 '</select></div>');
         }
+        else if (rtype == "MEDIAFLAG") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("Flag") + '</label>' +
+                '<select class="form-control mediaflags" id="report-' + name + '" name="' + name + '">' +
+                '</select></div>');
+        }
         else if (rtype == "PAYMENTMETHOD" || rtype == "PAYMENTTYPE") {
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + _("Payment Method") + '</label>' +
@@ -162,6 +168,7 @@ $(document).ready(function() {
 
     // Special handling for flags
     html.animal_flag_options(null, controller.animalflags, $(".animalflags"));
+    html.media_flag_options(controller.mediaflags, $(".mediaflags"));
     html.person_flag_options(null, controller.personflags, $(".personflags"));
 
     // Set date inputs to today in the local timezone
