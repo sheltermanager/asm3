@@ -613,11 +613,6 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             (asm3.users.VIEW_CONSULTING_ROOM, "", "tagclinic", "clinic_consultingroom", "asm-icon-users", _("Consulting Room", l) ),
             (asm3.users.VIEW_CLINIC, "", "tagclinic", "clinic_calendar", "asm-icon-diary", _("Clinic Calendar", l) ),
         )),
-        ("", "stock", _("Stock", l), (
-            ( asm3.users.VIEW_STOCKLEVEL, "", "", "product", "asm-icon-stock", _("Products", l) ),
-            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock levels", l) ),
-            ( asm3.users.VIEW_STOCKLEVEL, "", "tastock", "stock_movement", "asm-icon-stock", _("Stock movements", l) )
-        )),
         ("", "financial", _("Financial", l), (
             ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
             ( asm3.users.VIEW_VOUCHER, "", "", "voucher", "asm-icon-blank", _("Voucher book", l) ),
@@ -629,7 +624,11 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.VIEW_DONATION, "", "", "calendarview?ev=p", "asm-icon-calendar", _("Payment calendar", l) ),
             ( asm3.users.ADD_DONATION, "", "", "donation_receive", "asm-icon-blank", _("Receive a payment", l) ),
             ( asm3.users.VIEW_DONATION, "", "taggb", "--cat", "", "HMRC" ),
-            ( asm3.users.VIEW_DONATION, "", "taggb", "giftaid_hmrc_spreadsheet", "asm-icon-report", "Generate HMRC Gift Aid spreadsheet" )
+            ( asm3.users.VIEW_DONATION, "", "taggb", "giftaid_hmrc_spreadsheet", "asm-icon-report", "Generate HMRC Gift Aid spreadsheet" ),
+            ( asm3.users.VIEW_DONATION, "", "", "--cat", "", _("Stock control", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "", "product", "asm-icon-stock", _("Products", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock levels", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tastock", "stock_movement", "asm-icon-stock", _("Stock movements", l) )
         )),
         (asm3.users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), [
             ("", "", "", "--cat", "asm-icon-settings", _("Configuration", l) ),
