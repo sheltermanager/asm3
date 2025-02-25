@@ -406,6 +406,16 @@ $(function() {
                         _("{plural3} items of stock have a low balance")
                     ]));
             }
+            if (alerts.GLOBALLOWS > 0 && common.has_permission("vsl")) {
+                totalalerts += alerts.GLOBALLOWS;
+                oa("product", "stock",
+                    common.ntranslate(alerts.GLOBALLOWS, [
+                        _("{plural0} item of stock has a low balance"),
+                        _("{plural1} items of stock have a low balance"),
+                        _("{plural2} items of stock have a low balance"),
+                        _("{plural3} items of stock have a low balance")
+                    ]));
+            }
             if (alerts.TRNODRV > 0 && common.has_permission("vtr")) {
                 totalalerts += alerts.TRNODRV;
                 oa("transport", "transport",
