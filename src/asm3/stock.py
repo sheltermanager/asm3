@@ -197,7 +197,8 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "TaxRate":              post.integer("taxrate"),
         "IsRetired":            post.boolean("retired"),
         "Barcode":              post["barcode"],
-        "PLU":                  post["plu"]
+        "PLU":                  post["plu"],
+        "GlobalMinimum":         post["globalminimum"]
     }, username)
 
 def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
@@ -260,6 +261,7 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            post.boolean("retired"),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
+        "GlobalMinimum":         post["globalminimum"],
         "RecentBatchNo":        "",
         "RecentExpiry":         ""
     }, username)

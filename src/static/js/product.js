@@ -40,7 +40,13 @@ $(function() {
 
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
-                    { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 }
+                    { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 },
+                    { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number",
+                        callout: _("Show an alert if the balance falls below this amount"),
+                        hideif: function() { 
+                            return !config.bool("GlobalStockMinima");
+                        }
+                    }
 
                 ]
             };
@@ -85,6 +91,9 @@ $(function() {
                         }
                     });
                 },
+                overdue: function(row) {
+                    return ( row.BALANCE < row.GLOBALMINIMUM );
+                },
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
                     { field: "UNIT", display: _("Unit"), formatter: function(row) {
@@ -104,7 +113,7 @@ $(function() {
                                 return unit;
                             }
                         } else if (row.UNITTYPE == -1) {
-                            return row.CUSTOMUNITTYPE;
+                            return row.CUSTOMUNIT;
                         } else {
                             let unit = _("undefined");
                             $.each(controller.units, function(unitdictcount, unitdict) {
@@ -164,12 +173,12 @@ $(function() {
         render: function() {
             let s = '<div id="dialog-moveproduct" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">';
             s += tableform.fields_render([
-                { post_field: "movementdate", json_field: "MOVEMENTDATE", label: _("Date"), type: "date" },
-                { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true },
+                { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true, validation: "notzero" },
                 { post_field: "movementunit", json_field: "MOVEMENTUNIT", type: "select", justwidget: true, halfsize: true },
                 { type: "rowclose" },
-                { post_field: "movementfrom", json_field: "MOVEMENTFROM", label: _("From"), type: "select" },
-                { post_field: "movementto", json_field: "MOVEMENTTO", label: _("To"), type: "select" },
+                { post_field: "movementdate", json_field: "MOVEMENTDATE", label: _("Date"), type: "date" },
+                { post_field: "movementfrom", json_field: "MOVEMENTFROM", label: _("From"), type: "select", validation: "notblank" },
+                { post_field: "movementto", json_field: "MOVEMENTTO", label: _("To"), type: "select", validation: "notblank" },
                 { post_field: "batch", json_field: "BATCH", label: _("Batch"), type: "text" },
                 { post_field: "expiry", json_field: "EXPIRY", label: _("Expiry"), type: "date" },
                 { post_field: "comments", json_field: "COMMENTS", label: _("Comments"), type: "textarea" }
@@ -226,6 +235,7 @@ $(function() {
                     return false;
                 }
             });
+
             let purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
             if (activeproduct.PURCHASEUNITTYPE == 0) {
                 purchaseunit = _("unit");
@@ -234,13 +244,22 @@ $(function() {
             } else {
                 purchaseunit = controller.units[activeproduct.PURCHASEUNITTYPE];
             }
-            
-            let units = [0 + "|" + purchaseunit,];
-            if (activeproduct.UNITTYPE == -1) {
-                units.push("-1|" + activeproduct.CUSTOMUNIT);
+
+            let unit = activeproduct.CUSTOMUNIT;
+            if (activeproduct.UNITTYPE == 0) {
+                unit = purchaseunit;
+            } else if (activeproduct.UNITTYPE == -1) {
+                unit = activeproduct.CUSTOMUNIT;
             } else {
-                units.push(controller.units[activeproduct.UNITTYPE]);
+                unit = controller.units[activeproduct.UNITTYPE];
             }
+            
+            let units = [activeproduct.UNITRATIO + "|" + purchaseunit,];
+            if (activeproduct.UNITTYPE != 0) {
+                units.push("1|" + unit);
+            }
+
+            console.log(units);
 
             $("#movementunit").html(html.list_to_options(units));
             $("#movementunit").val($("#movementunit option").last().val());

@@ -1662,6 +1662,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("PLU"),
         fstr("RecentBatchNo"),
         fstr("RecentExpiry"),
+        fint("GlobalMinimum"),
         fint("RecordVersion"),
         fstr("CreatedBy"),
         fdate("CreatedDate"),
@@ -3445,6 +3446,7 @@ def perform_updates_stdout(dbo: Database, stoponexc = False) -> None:
     """
     # Go through our updates to see if any need running
     ver = int(asm3.configuration.dbv(dbo))
+    print("Version: %s" % str(ver))
     for v in VERSIONS:
         if ver < v:
             print("update_%s" % v)
@@ -6498,6 +6500,7 @@ def update_35000(dbo: Database) -> None:
         dbo.ddl_add_table_column("PLU", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("RecentBatchNo", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("RecentExpiry", dbo.type_datetime),
+        dbo.ddl_add_table_column("GlobalMinimum", dbo.type_integer),
         dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
         dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
         dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
