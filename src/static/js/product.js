@@ -59,7 +59,6 @@ $(function() {
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
-                            //stocklevel.set_extra_fields(row);
                             tableform.fields_post(dialog.fields, "mode=update&productid=" + row.ID, "product")
                                 .then(function(response) {
                                     tableform.table_update(table);
@@ -186,7 +185,7 @@ $(function() {
             s += '</div>';
             this.model();
             s += tableform.dialog_render(this.dialog);
-            s += html.content_header(_("Product"));
+            s += html.content_header(_("Move product"));
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -259,8 +258,6 @@ $(function() {
                 units.push("1|" + unit);
             }
 
-            console.log(units);
-
             $("#movementunit").html(html.list_to_options(units));
             $("#movementunit").val($("#movementunit option").last().val());
             $("#movementfrom").val("L$" + controller.defaultstocklocationid);
@@ -313,6 +310,15 @@ $(function() {
                 comments: _("Movement") + ". " + _("{0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
             };
             let response = await common.ajax_post("product", formdata);
+            console.log($("#dialog-moveproduct"));
+            let balance = activeproduct.BALANCE;
+            if (fromtype == 0 && totype == 1) {
+                activeproduct.BALANCE = activeproduct.BALANCE - quantity;
+            } else if (fromtype == 1 && totype == 0) {
+                activeproduct.BALANCE = activeproduct.BALANCE + quantity;
+            }
+            //tableform.fields_update_row(this.dialog.fields, activeproduct);
+            tableform.table_update(this.table);
         },
 
         clone_product: function() { 
@@ -390,6 +396,7 @@ $(function() {
                 $.each(controller.rows, function(rowcount, row) {
                     if (row.ID == controller.productid) {
                         $("input[data-id='" + controller.productid + "']").prop("checked", true);
+                        tableform.table_update_buttons(product.table, product.buttons);
                         product.table.edit(row);
                         return false;
                     }

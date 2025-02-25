@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-02-24 17:04+0000\n"
+"POT-Creation-Date: 2025-02-25 15:10+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5293,6 +5293,10 @@ msgid "Enable accounts functionality"
 msgstr ""
 
 #: options.js
+msgid "Enable global stock minima"
+msgstr ""
+
+#: options.js
 msgid "Enable location filters"
 msgstr ""
 
@@ -8566,7 +8570,7 @@ msgstr ""
 msgid "Lovebird"
 msgstr ""
 
-#: dbupdate.py stocklevel.js
+#: dbupdate.py product.js stocklevel.js
 msgid "Low"
 msgstr ""
 
@@ -9090,6 +9094,10 @@ msgstr ""
 
 #: html.py move_retailer.js
 msgid "Move an animal to a retailer"
+msgstr ""
+
+#: product.js
+msgid "Move product"
 msgstr ""
 
 #: media.js
@@ -12773,7 +12781,7 @@ msgid ""
 "period"
 msgstr ""
 
-#: stocklevel.js
+#: product.js stocklevel.js
 msgid "Show an alert if the balance falls below this amount"
 msgstr ""
 
