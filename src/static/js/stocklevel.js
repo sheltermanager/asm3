@@ -33,12 +33,14 @@ $(function() {
                         defaultval: "1", min: 1, max: 100, readonly: true, callout: _("The number of stock records to create (containers)") },
                     { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
                         options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.stocklocations }},
-                    
-                    
                     { json_field: "BALANCE", post_field: "balance", label: _("Balance"), type: "number", validation: "notblank",
                         callout: _("The remaining units in the container") },
-                    { json_field: "LOW", post_field: "low", label: _("Low"), type: "number", validation: "notblank",
-                        callout: _("Show an alert if the balance falls below this amount") },
+                    { json_field: "LOW", post_field: "low", label: _("Low"), type: "number",
+                        callout: _("Show an alert if the balance falls below this amount"),
+                        hideif: function() { 
+                            return config.bool("GlobalStockMinima");
+                            }
+                    },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch"), type: "text", 
                         callout: _("If this stock record is for a drug, the batch number from the container") },
                     { json_field: "EXPIRY", post_field: "expiry", label: _("Expiry"), type: "date",
