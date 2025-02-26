@@ -189,8 +189,8 @@ $(function() {
             $(".enable2fa, .disable2fa").hide();
             $("#button-enable2fa").toggle(u.ENABLETOTP == 0);
             $("#button-disable2fa").toggle(u.ENABLETOTP == 1);
-            $("#defaultlocationid").select("value", u.DEFAULTSTOCKLOCATIONID);
-            $("#defaultstockusagetypeid").select("value", u.DEFAULTSTOCKUSAGETYPEID);
+            $("#defaultlocationid").select("value", config.integer(asm.user + "_DefaultStockLocationID") );
+            $("#defaultstockusagetypeid").select("value", config.integer(asm.user + "_DefaultStockUsageTypeID") );
             let userql = config.str(asm.user + "_QuicklinksID");
             if (userql == "") { userql = config.str("QuicklinksID"); }
             let ql = userql.split(",");

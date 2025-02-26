@@ -19,7 +19,7 @@ $(function() {
                 width: 500,
                 fields: [
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
-                    { json_field: "PRODUCTTYPE", post_field: "producttype", label: _("Product type"), type: "select", options: controller.producttypes, validation: "notnull" },
+                    { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", options: controller.producttypes },
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text" },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
@@ -28,20 +28,20 @@ $(function() {
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
 
-                    { json_field: "PURCHASEUNITTYPE", post_field: "purchaseunittype", label: _("Purchase Unit"), type: "select",
-                        options: { rows: controller.units, displayfield: "UNIT", prepend: '<option value="0">' + _("unit") + '</option><option value="-1">' + _("custom") + '</option>' }
+                    { json_field: "PURCHASEUNITTYPEID", post_field: "purchaseunittypeid", label: _("Purchase Unit"), type: "select",
+                        options: { rows: controller.units, displayfield: "UNITNAME", prepend: '<option value="0">' + _("unit") + '</option><option value="-1">' + _("custom") + '</option>' }
                     },
                     { json_field: "CUSTOMPURCHASEUNIT", post_field: "custompurchaseunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "COSTPRICE", post_field: "costprice", label: _("Cost price"), type: "currency", colclasses: "bottomborder" },
 
-                    { json_field: "UNITTYPE", post_field: "unittype", label: _("Unit"), type: "select",
-                        options: { rows: controller.units, displayfield: "UNIT", prepend: '<option value="0">' + _("purchase unit") + '</option><option value="-1">' + _("custom") + '</option>' }
+                    { json_field: "UNITTYPEID", post_field: "unittypeid", label: _("Unit"), type: "select",
+                        options: { rows: controller.units, displayfield: "UNITNAME", prepend: '<option value="0">' + _("purchase unit") + '</option><option value="-1">' + _("custom") + '</option>' }
                     },
 
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
                     { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 },
-                    { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number",
+                    { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: 0, validation: "notblank",
                         callout: _("Show an alert if the balance falls below this amount"),
                         hideif: function() { 
                             return !config.bool("GlobalStockMinima");
@@ -70,19 +70,19 @@ $(function() {
                                 });
                         },
                         onload: function() {
-                            if ($("#purchaseunittype").val() == -1) {
+                            if ($("#purchaseunittypeid").val() == -1) {
                                 $("#custompurchaseunitrow").fadeIn();
                             } else {
                                 $("#custompurchaseunitrow").fadeOut();
                             }
                 
-                            if ($("#unittype").val() == -1) {
+                            if ($("#unittypeid").val() == -1) {
                                 $("#customunitrow").fadeIn();
                             } else {
                                 $("#customunitrow").fadeOut();
                             }
                 
-                            if ($("#unittype").val() == 0) {
+                            if ($("#unittypeid").val() == 0) {
                                 $("#unitratiorow").fadeOut();
                             } else {
                                 $("#unitratiorow").fadeIn();
@@ -96,28 +96,28 @@ $(function() {
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
                     { field: "UNIT", display: _("Unit"), formatter: function(row) {
-                        if (row.UNITTYPE == 0) {
-                            if (row.PURCHASEUNITTYPE == 0) {
+                        if (row.UNITTYPEID == 0) {
+                            if (row.PURCHASEUNITTYPEID == 0) {
                                 return _("unit");
-                            } else if (row.PURCHASEUNITTYPE == -1) {
+                            } else if (row.PURCHASEUNITTYPEID == -1) {
                                 return row.CUSTOMPURCHASEUNIT;
                             } else {
                                 let unit = _("undefined");
                                 $.each(controller.units, function(unitdictcount, unitdict) {
-                                    if (unitdict.ID == row.PURCHASEUNITTYPE) {
-                                        unit = unitdict.UNIT;
+                                    if (unitdict.ID == row.PURCHASEUNITTYPEID) {
+                                        unit = unitdict.UNITNAME;
                                         return false;
                                     }
                                 });
                                 return unit;
                             }
-                        } else if (row.UNITTYPE == -1) {
+                        } else if (row.UNITTYPEID == -1) {
                             return row.CUSTOMUNIT;
                         } else {
                             let unit = _("undefined");
                             $.each(controller.units, function(unitdictcount, unitdict) {
-                                if (unitdict.ID == row.UNITTYPE) {
-                                    unit = unitdict.UNIT;
+                                if (unitdict.ID == row.UNITTYPEID) {
+                                    unit = unitdict.UNITNAME;
                                     return false;
                                 }
                             });
@@ -142,7 +142,7 @@ $(function() {
                 { id: "move", text: _("Move Stock"), icon: "right", enabled: "one", perm: "asl", 
                     click: async function() {
                         product.move_product_init();
-                        await tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { width: 500 });
+                        await tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { width: 500, notblank: [ "movementfrom", "movementto" ] });
                         product.move_product();
                     }
                 },
@@ -162,6 +162,16 @@ $(function() {
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
                     } 
+                },
+                { id: "productfilter", type: "dropdownfilter", 
+                    options: '<option value="0">' + _("(active)") + '</option>' + 
+                        '<option value="-1">' + _("(depleted)") + '</option>' + 
+                        '<option value="-2">' + _("(low balance)") + '</option>' +
+                        '<option value="-3">' + _("(negative balance)") + '</option>' +
+                        '<option value="-4">' + _("(retired)") + '</option>',
+                    click: function(selval) {
+                        common.route("product?productfilter=" + selval);
+                    }
                 }
             ];
             this.dialog = dialog;
@@ -195,13 +205,13 @@ $(function() {
         new_product: function() { 
             let dialog = product.dialog, table = product.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#producttype, #taxrate, #purchaseunittype, #unittype").val(0);
+            $("#producttypeid, #taxrateid, #purchaseunittypeid, #unittypeid").val(0);
             $("#unitratio").val(1);
             $("#custompurchaseunitrow").fadeOut();
             $("#customunitrow").fadeOut();
             $("#unitratiorow").fadeOut();
-            $("#producttype").val(config.integer("StockDefaultProductTypeID"));
-            $("#taxrate").val(config.integer("StockDefaultTaxRateID"));
+            $("#producttypeid").val(config.integer("StockDefaultProductTypeID"));
+            $("#taxrateid").val(config.integer("StockDefaultTaxRateID"));
 
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -234,34 +244,43 @@ $(function() {
                     return false;
                 }
             });
-
-            let purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
-            if (activeproduct.PURCHASEUNITTYPE == 0) {
+            
+            let purchaseunit = _("undefined");
+            if (activeproduct.PURCHASEUNITTYPEID == 0) {
                 purchaseunit = _("unit");
-            } else if (activeproduct.PURCHASEUNITTYPE == -1) {
+            } else if (activeproduct.PURCHASEUNITTYPEID == -1) {
                 purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
             } else {
-                purchaseunit = controller.units[activeproduct.PURCHASEUNITTYPE];
+                $.each(controller.units, function(unitcount, unitrow) {
+                    if (unitrow.ID == activeproduct.PURCHASEUNITTYPEID) {
+                        purchaseunit = unitrow.UNITNAME;
+                        return false;
+                    }
+                });
+                
             }
-
-            let unit = activeproduct.CUSTOMUNIT;
-            if (activeproduct.UNITTYPE == 0) {
+            let unit = _("undefined");
+            if (activeproduct.UNITTYPEID == 0) {
                 unit = purchaseunit;
-            } else if (activeproduct.UNITTYPE == -1) {
+            } else if (activeproduct.UNITTYPEID == -1) {
                 unit = activeproduct.CUSTOMUNIT;
             } else {
-                unit = controller.units[activeproduct.UNITTYPE];
+                $.each(controller.units, function(unitcount, unitrow) {
+                    if (unitrow.ID == activeproduct.UNITTYPEID) {
+                        unit = unitrow.UNITNAME;
+                        return false;
+                    }
+                });
             }
-            
             let units = [activeproduct.UNITRATIO + "|" + purchaseunit,];
-            if (activeproduct.UNITTYPE != 0) {
+            if (activeproduct.UNITTYPEID != 0) {
                 units.push("1|" + unit);
             }
 
             $("#movementunit").html(html.list_to_options(units));
             $("#movementunit").val($("#movementunit option").last().val());
-            $("#movementfrom").val("L$" + controller.defaultstocklocationid);
-            $("#movementto").val("U$" + controller.defaultstockusagetypeid);
+            $("#movementfrom").val("L$" + config.integer(asm.user + "_DefaultStockLocationID"));
+            $("#movementto").val("U$" + config.integer(asm.user + "_DefaultStockUsageTypeID"));
 
             $("#movementdate").val(format.date_now());
 
@@ -356,21 +375,21 @@ $(function() {
                 this.new_product();
             }
 
-            $("#purchaseunittype").change(function() {
-                if ($("#purchaseunittype").val() == -1) {
+            $("#purchaseunittypeid").change(function() {
+                if ($("#purchaseunittypeid").val() == -1) {
                     $("#custompurchaseunitrow").fadeIn();
                 } else {
                     $("#custompurchaseunitrow").fadeOut();
                 }
             });
             
-            $("#unittype").change(function() {
-                if ($("#unittype").val() == -1) {
+            $("#unittypeid").change(function() {
+                if ($("#unittypeid").val() == -1) {
                     $("#customunitrow").fadeIn();
                 } else {
                     $("#customunitrow").fadeOut();
                 }
-                if ($("#unittype").val() == 0) {
+                if ($("#unittypeid").val() == 0) {
                     $("#unitratiorow").fadeOut();
                 } else {
                     $("#unitratiorow").fadeIn();
@@ -380,8 +399,10 @@ $(function() {
         },
 
         sync: function() {
-            //let stocklocations = html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME");
-            //let usagetypes = html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME");
+            // If a productfilter is given in the querystring, update the select
+            if (common.querystring_param("productfilter")) {
+                $("#productfilter").select("value", common.querystring_param("productfilter"));
+            }
             let stocklocations = [];
             $.each(controller.stocklocations, function(locationcount, location) {
                 stocklocations.push("L$" + location.ID + "|" + location.LOCATIONNAME);

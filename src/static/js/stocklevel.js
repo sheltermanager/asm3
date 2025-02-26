@@ -18,7 +18,7 @@ $(function() {
                 fields: [
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text" },
                     { json_field: "PRODUCTSEARCHKEY", post_field: "productsearchkey", label: _("Search"), type: "text" },
-                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Results"), type: "select", validation: "notzero", options: controller.productnames },
+                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Results"), type: "select", validation: "notzero", options: controller.productnames, style: "size: 5" },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
                     { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "text", validation: "notblank",
                         callout: _("The type of unit in the container, eg: tablet, vial, etc.") },
@@ -126,7 +126,7 @@ $(function() {
                     } 
                 },
                 { id: "viewlocation", type: "dropdownfilter", 
-                    options: '<option value="0">' + _("(all)") + '</option>' + 
+                    options: '<option value="0">' + _("(active)") + '</option>' + 
                         '<option value="-1">' + _("(depleted)") + '</option>' + 
                         '<option value="-2">' + _("(low balance)") + '</option>' + 
                         html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME"),

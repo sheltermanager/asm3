@@ -7,40 +7,119 @@ from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Resu
 def get_stocklevel_query(dbo: Database) -> str:
     return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName " \
         "FROM stocklevel s " \
-        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID " 
+        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID "
+
+def get_unit_sql(dbo: Database) -> str:
+    unitsql = ""
+    for unitdict in asm3.lookups.get_unit_types(dbo):
+        unitsql = unitsql + "WHEN product.UnitTypeID = %s THEN '%s' " % (str(unitdict["ID"]), unitdict["UNITNAME"])
+    return unitsql
 
 def get_products(dbo: Database, includeretired=False) -> Results:
     """
     Returns all products
     """
-    unitsql = ""
-    for unitdict in asm3.lookups.UNITTYPES:
-        unitsql = unitsql + "WHEN product.UnitType = %s THEN '%s' " % (str(unitdict["ID"]), unitdict["UNIT"])
-    sql = "SELECT product.*, " \
-        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
-        "CASE " \
-        "WHEN product.UnitType = 0 THEN '%s' " \
-        "WHEN product.UnitType = -1 THEN product.CustomUnit " \
-        "%s" \
-        "ELSE product.CustomUnit " \
-        "END AS Unit " \
-        "FROM product " \
-        "WHERE IsRetired = %s " \
-        "ORDER BY ProductName" % (_("unit"), unitsql, int(includeretired))
-    
-    pass
 
     return dbo.query("SELECT product.*, " \
         "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
         "CASE " \
-        "WHEN product.UnitType = 0 THEN '%s' " \
-        "WHEN product.UnitType = -1 THEN product.CustomUnit " \
+        "WHEN product.UnitTypeID = 0 THEN '%s' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
         "%s" \
         "ELSE product.CustomUnit " \
         "END AS Unit " \
         "FROM product " \
         "WHERE IsRetired = %s " \
-        "ORDER BY ProductName" % (_("unit"), unitsql, int(includeretired),))
+        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), int(includeretired)))
+
+def get_active_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired
+    """
+    return dbo.query("SELECT product.*, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        "WHEN product.UnitTypeID = 0 THEN '%s' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "%s" \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "WHERE IsRetired = %s " \
+        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+
+def get_depleted_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired and have a balance of zero or less
+    """
+
+    return dbo.query("SELECT product.*, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        "WHEN product.UnitTypeID = 0 THEN '%s' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "%s" \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "WHERE IsRetired = %s " \
+        "AND ((SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) <= 0 " \
+        "OR (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) IS NULL) " \
+        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+
+def get_low_balance_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired, have a non-zero globalminimum and have a balance below the globalminimum
+    """
+    return dbo.query("SELECT product.*, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        "WHEN product.UnitTypeID = 0 THEN '%s' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "%s" \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "WHERE IsRetired = %s " \
+        "AND product.GlobalMinimum > 0 " \
+        "AND ((SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) < product.GlobalMinimum " \
+        "OR (product.GlobalMinimum > 0 AND (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) IS NULL)) " \
+        "ORDER BY product.ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+
+def get_negative_balance_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired and have a negative balance
+    """
+
+    return dbo.query("SELECT product.*, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        "WHEN product.UnitTypeID = 0 THEN '%s' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "%s" \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "WHERE IsRetired = %s " \
+        "AND (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) < 0 " \
+        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+
+def get_retired_products(dbo: Database) -> Results:
+    """
+    Returns all products that are marked as retired - just in case someone would like to un-retire a product
+    """
+
+    return dbo.query("SELECT product.*, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        "WHEN product.UnitTypeID = 0 THEN '%s' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "%s" \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "WHERE IsRetired = %s " \
+        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 1))
 
 def get_stock_movements(dbo: Database, productid: int = 0) -> Results:
     """
@@ -69,10 +148,9 @@ def get_stock_movements(dbo: Database, productid: int = 0) -> Results:
         "ABS(stockusage.Quantity) AS Quantity, " \
         "CASE " \
         "WHEN product.ID IS NULL THEN stocklevel.UnitName " \
-        "WHEN product.UnitType = 1 THEN 'kg' " \
-        "WHEN product.UnitType = 2 THEN 'g' " \
-        "WHEN product.UnitType = 3 THEN 'l' " \
-        "WHEN product.UnitType = 4 THEN 'ml' " \
+        f"WHEN product.UnitTypeID = 0 AND product.PurchaseUnitTypeID = 0 THEN '{_("unit")}' " \
+        "WHEN product.UnitTypeID = 0 AND product.PurchaseUnitTypeID = -1 THEN CustomPurchaseUnit " \
+        "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID = product.UnitTypeID) " \
         "ELSE product.CustomUnit " \
         "END AS Unit " \
         "FROM stockusage " \
@@ -185,20 +263,20 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
     dbo.update("product", pid, {
         "ProductName":          post["productname"],
         "Description":          post["productdescription"],
-        "ProductType":          post.integer("producttype"),
+        "ProductTypeID":        post.integer("producttypeid"),
         "SupplierID":           post.integer("supplierid"),
-        "UnitType":             post.integer("unittype"),
+        "UnitTypeID":           post.integer("unittypeid"),
         "CustomUnit":           post["customunit"],
-        "PurchaseUnitType":     post.integer("purchaseunittype"),
+        "PurchaseUnitTypeID":   post.integer("purchaseunittypeid"),
         "CustomPurchaseUnit":   post["custompurchaseunit"],
         "CostPrice":            post.integer("costprice"),
         "RetailPrice":          post.integer("retailprice"),
         "UnitRatio":            post.integer("unitratio"),
-        "TaxRate":              post.integer("taxrate"),
+        "TaxRateID":            post.integer("taxrateid"),
         "IsRetired":            post.boolean("retired"),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":         post["globalminimum"]
+        "GlobalMinimum":        post["globalminimum"]
     }, username)
 
 def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
@@ -248,20 +326,20 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
     pid = dbo.insert("product", {
         "ProductName":          post["productname"],
         "Description":          post["productdescription"],
-        "ProductType":          post.integer("producttype"),
+        "ProductTypeID":        post.integer("producttypeid"),
         "SupplierID":           post.integer("supplierid"),
-        "UnitType":             post.integer("unittype"),
+        "UnitTypeID":           post.integer("unittypeid"),
         "CustomUnit":           post["customunit"],
-        "PurchaseUnitType":     post.integer("purchaseunittype"),
+        "PurchaseUnitTypeID":   post.integer("purchaseunittypeid"),
         "CustomPurchaseUnit":   post["custompurchaseunit"],
         "CostPrice":            post.integer("costprice"),
         "RetailPrice":          post.integer("retailprice"),
         "UnitRatio":            post.integer("unitratio"),
-        "TaxRate":              post.integer("taxrate"),
+        "TaxRateID":            post.integer("taxrateid"),
         "IsRetired":            post.boolean("retired"),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":         post["globalminimum"],
+        "GlobalMinimum":        post["globalminimum"],
         "RecentBatchNo":        "",
         "RecentExpiry":         ""
     }, username)

@@ -2793,8 +2793,8 @@ class change_user_settings(JSONEndpoint):
         quickreportscfg = ",".join(quickreportscfg)
         twofavalidcode = post["twofavalidcode"]
         twofavalidpassword = post["twofavalidpassword"]
-        defaultlocationid = post.integer("defaultlocationid")
-        defaultstockusagetypeid = post.integer("defaultstockusagetypeid")
+        defaultlocationid = post["defaultlocationid"]
+        defaultstockusagetypeid = post["defaultstockusagetypeid"]
         asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "main.change_password", o.dbo)
         asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword, defaultlocationid, defaultstockusagetypeid)
         # If the user now has 2FA enabled, and force2fa session flag is on, we can turn it off
@@ -2808,6 +2808,10 @@ class change_user_settings(JSONEndpoint):
         asm3.configuration.cset(o.dbo, "%s_QuickReportsID" % o.user, quickreportscfg)
         asm3.configuration.cset(o.dbo, "%s_ShelterView" % o.user, post["shelterview"])
         asm3.configuration.cset(o.dbo, "%s_EmailDefault" % o.user, asm3.utils.iif(post.boolean("emaildefault"), "Yes", "No"))
+
+        asm3.configuration.cset(o.dbo, "%s_DefaultStockLocationID" % o.user, defaultlocationid)
+        asm3.configuration.cset(o.dbo, "%s_DefaultStockUsageTypeID" % o.user, defaultstockusagetypeid)
+
         self.reload_config()
 
 class citations(JSONEndpoint):
@@ -6665,7 +6669,7 @@ class person_vouchers(JSONEndpoint):
 class product(JSONEndpoint):
     url = "product"
     js_module = "product"
-    get_permissions = asm3.users.VIEW_STOCKLEVEL # Do I need to add asm3.users.VIEW_PRODUCT??
+    get_permissions = asm3.users.VIEW_STOCKLEVEL
 
     def controller(self, o):
         dbo = o.dbo
@@ -6674,7 +6678,6 @@ class product(JSONEndpoint):
         productid = 0
         if o.post["id"]:
             productid = o.post.integer("id")
-            
         producttyperows = asm3.stock.get_product_types(dbo)
         producttypes = []
         for producttype in producttyperows:
@@ -6682,23 +6685,31 @@ class product(JSONEndpoint):
         taxrates = []
         for taxrate in asm3.stock.get_tax_rates(dbo):
             taxrates.append(str(taxrate["ID"]) + "|" + taxrate["TAXRATENAME"])
-        products = asm3.stock.get_products(dbo)
+        
+        if o.post.integer("productfilter") == -1:
+            products = asm3.stock.get_depleted_products(dbo)
+        elif o.post.integer("productfilter") == -2:
+            products = asm3.stock.get_low_balance_products(dbo)
+        elif o.post.integer("productfilter") == -3:
+            products = asm3.stock.get_negative_balance_products(dbo)
+        elif o.post.integer("productfilter") == -4:
+            products = asm3.stock.get_retired_products(dbo)
+        else:
+            products = asm3.stock.get_active_products(dbo)
+        
         for product in products:
             product["PRODUCTTYPENAME"] = _("Undefined")
             for producttype in producttyperows:
-                if product["PRODUCTTYPE"] == producttype["ID"]:
+                if product["PRODUCTTYPEID"] == producttype["ID"]:
                     product["PRODUCTTYPENAME"] = producttype["PRODUCTTYPENAME"]
                     break
         return {
             "productid": productid,
-            "defaultstocklocationid": asm3.users.get_default_stock_location_id(dbo, username),
-            "defaultstockusagetypeid": asm3.users.get_default_stock_usage_type_id(dbo, username),
             "producttypes": producttypes,
             "taxrates": taxrates,
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
-            "sortexp": o.post.integer("sortexp") == 1, # Don't know what this does - Adam
-            "units": asm3.lookups.UNITTYPES,
+            "units": asm3.lookups.get_unit_types(dbo),
             "rows": products
         }
     
@@ -7480,18 +7491,6 @@ class stocklevel(JSONEndpoint):
     def post_lastname(self, o):
         self.check(asm3.users.VIEW_STOCKLEVEL)
         return asm3.stock.get_last_stock_with_name(o.dbo, o.post["name"])
-
-class stocksuppliers(JSONEndpoint):
-    url = "stocksuppliers"
-    js_module = "stocksuppliers"
-    get_permissions = asm3.users.CHANGE_STOCKLEVEL
-
-    def controller(self, o):
-        dbo = o.dbo
-        #asm3.al.debug("editing %d system users" % len(user), "main.systemusers", dbo)
-        return {
-            "controlleritem": "Adam woz ere"
-        }
 
 class systemusers(JSONEndpoint):
     url = "systemusers"

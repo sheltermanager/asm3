@@ -396,7 +396,7 @@ $(function() {
                         _("{plural3} items of stock expire in the next month")
                     ]));
             }
-            if (alerts.STLOWBAL > 0 && common.has_permission("vsl")) {
+            if (!config.bool("GlobalStockMinima") && alerts.STLOWBAL > 0 && common.has_permission("vsl")) {
                 totalalerts += alerts.STLOWBAL;
                 oa("stocklevel?viewlocation=-2", "stock",
                     common.ntranslate(alerts.STLOWBAL, [
@@ -406,9 +406,9 @@ $(function() {
                         _("{plural3} items of stock have a low balance")
                     ]));
             }
-            if (alerts.GLOBALLOWS > 0 && common.has_permission("vsl")) {
+            if (config.bool("GlobalStockMinima") && alerts.GLOBALLOWS > 0 && common.has_permission("vsl")) {
                 totalalerts += alerts.GLOBALLOWS;
-                oa("product", "stock",
+                oa("product?productfilter=-2", "stock",
                     common.ntranslate(alerts.GLOBALLOWS, [
                         _("{plural0} item of stock has a low balance"),
                         _("{plural1} items of stock have a low balance"),

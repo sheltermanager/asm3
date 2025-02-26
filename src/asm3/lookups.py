@@ -769,15 +769,6 @@ ADOPTAPET_COLOURS = (
     "Albino or Red-Eyed White"
 )
 
-UNITTYPES = (
-    {"ID": 1, "UNIT": "kg"},
-    {"ID": 2, "UNIT": "g"},
-    {"ID": 3, "UNIT": "lb"},
-    {"ID": 4, "UNIT": "oz"},
-    {"ID": 5, "UNIT": "l"},
-    {"ID": 6, "UNIT": "ml"}
-)
-
 def add_message(dbo: Database, createdby: str, email: int, message: str, forname: str = "*", 
                 priority: int = 0, expires: datetime = None, added: datetime = None) -> int:
     if added is None: added = dbo.today()
@@ -1352,6 +1343,9 @@ def get_stock_usage_types(dbo: Database) -> Results:
 
 def get_trap_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM traptype ORDER BY TrapTypeName")
+
+def get_unit_types(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lksunittype ORDER BY ID")
 
 def get_urgencies(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkurgency ORDER BY ID")

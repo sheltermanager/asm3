@@ -1327,7 +1327,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry > %(today)s AND Expiry <= %(futuremonth)s) AS stexpsoon, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance < Low) AS stlowbal, " \
-        "(SELECT COUNT(*) FROM product WHERE (SELECT SUM(stocklevel.Balance) FROM stocklevel WHERE stocklevel.ProductID = productID) <= product.GlobalMinimum) AS globallows, " \
+        "(SELECT COUNT(*) FROM product WHERE (SELECT SUM(stocklevel.Balance) FROM stocklevel WHERE stocklevel.ProductID = product.ID) <= product.GlobalMinimum) AS globallows, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s) AS lngterm, " \

@@ -17,7 +17,7 @@ $(function() {
                 width: 500,
                 fields: [
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
-                    { json_field: "PRODUCTTYPE", post_field: "producttype", label: _("Product type"), type: "select", options: controller.producttypes, validation: "notnull" },
+                    { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", options: controller.producttypes, validation: "notnull" },
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text" },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
@@ -25,12 +25,12 @@ $(function() {
                     { json_field: "RETIRED", post_field: "retired", label: _("Retired"), type: "check" },
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
-                    { json_field: "PURCHASEUNITTYPE", post_field: "purchaseunittype", label: _("Purchase Unit"), type: "select",
+                    { json_field: "PURCHASEUNITTYPEID", post_field: "purchaseunittypeid", label: _("Purchase Unit"), type: "select",
                         options: ["0|" + _("Unit").toLowerCase(), "1|kg", "2|g", "3|lb", "4|oz", "5|l", "6|ml", "7|" + _("Custom").toLowerCase()]
                     },
                     { json_field: "CUSTOMPURCHASEUNIT", post_field: "custompurchaseunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "COSTPRICE", post_field: "costprice", label: _("Cost price"), type: "currency", colclasses: "bottomborder" },
-                    { json_field: "UNITTYPE", post_field: "unittype", label: _("Unit"), type: "select", options: ["0|" + _("Purchase unit").toLowerCase(), "1|kg", "2|g", "3|lb", "4|oz", "5|l", "6|ml", "7|" + _("Custom").toLowerCase()] },
+                    { json_field: "UNITTYPEID", post_field: "unittypeid", label: _("Unit"), type: "select", options: ["0|" + _("Purchase unit").toLowerCase(), "1|kg", "2|g", "3|lb", "4|oz", "5|l", "6|ml", "7|" + _("Custom").toLowerCase()] },
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
                     { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 }

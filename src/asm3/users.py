@@ -687,9 +687,7 @@ def update_user_settings(dbo: Database, username: str, email: str = "", realname
         "RealName":                 realname,
         "EmailAddress":             email,
         "ThemeOverride":            theme,
-        "LocaleOverride":           locale,
-        "DefaultStockLocationID":   defaultstocklocationid,
-        "DefaultStockUsageTypeID":  defaultstockusagetypeid
+        "LocaleOverride":           locale
     }
     user = dbo.first_row(dbo.query("SELECT ID, Password, OTPSecret, EnableTOTP FROM users WHERE Username = ?", [username]))
     if twofavalidcode != "" and twofavalidcode == str(asm3.utils.totp(user.OTPSECRET)):
