@@ -3,7 +3,7 @@ Payment Processors
 ==================
 
 ASM can request due payments from customers via a payment processor. Currently,
-support is available for PayPal, Stripe and Cardcom (Israel only).
+support is available for PayPal, Stripe, Square and Cardcom (Israel only).
 
 For details on configuring payment processors from the options screen at
 :menuselection:`Settings --> Options --> Payment Processors`, see

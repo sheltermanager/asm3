@@ -1034,6 +1034,23 @@ Webhooks`
 The Payment Processors option tab in ASM will display the URL you need to
 configure for your webhook below the key fields.
 
+Square
+^^^^^^
+
+* Square Access Token: Your Square access token, obtained from the developer 
+  console in Square
+
+* Square Location ID: Your Square location ID, found in the locations tab of
+  your developer dashboard in Square
+
+In order for ASM to receive notification that payments have been received, a
+Webhook needs to be created in the Square dashboard to receive
+"payment.updated" events under :menuselection:`Developers Console-->
+Webhook Subscriptions`
+
+The Payment Processors option tab in ASM will display the URL you need to
+configure for your webhook below the key fields.
+
 Quicklinks
 ----------
 
