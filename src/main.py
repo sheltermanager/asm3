@@ -6673,7 +6673,6 @@ class product(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        username = o.user
         #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
         productid = 0
         if o.post["id"]:
