@@ -11,6 +11,8 @@ class TestStock(unittest.TestCase):
 
     def setUp(self):
 
+        l = base.get_dbo().locale
+
         # Create a stocklevel
         data = {
             "name": "Test Stock",
@@ -46,8 +48,8 @@ class TestStock(unittest.TestCase):
         self.lid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "stocklocation", "Test Stock Location", "Just for testing")
 
         # Create a stock usage type
-        #self.uid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "stockusagetype", "Test Usage Type", "Just for testing")
-        base.get_dbo().execute_dbupdate("INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A pseudo location used to represent internal stock movements", l), 0 ])
+        self.uid = base.get_dbo().get_id_max("stockusagetype")
+        base.get_dbo().execute_dbupdate("INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ self.uid, asm3.i18n._("Movement", l), asm3.i18n._("A pseudo location used to represent internal stock movements", l), 0 ])
 
         # Create a product to test
         data = {
@@ -100,10 +102,13 @@ class TestStock(unittest.TestCase):
         data = {
             "movementdate": base.today_display(),
             "producttypeid": str(self.tid),
+            "productname": "Test Product",
             "movementfromtype" : "0",
             "movementfromtype" : "1",
             "movementquantity": "1",
             "unitratio": "1",
+            "movementunit": "unit",
+            "usagedate": "",
             "productid": str(self.pid),
             "movementfrom": str(self.lid),
             "movementto": str(self.uid),
