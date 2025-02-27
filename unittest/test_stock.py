@@ -46,7 +46,8 @@ class TestStock(unittest.TestCase):
         self.lid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "stocklocation", "Test Stock Location", "Just for testing")
 
         # Create a stock usage type
-        self.uid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "stockusagetype", "Test Usage Type", "Just for testing")
+        #self.uid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "stockusagetype", "Test Usage Type", "Just for testing")
+        base.get_dbo().execute_dbupdate("INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A pseudo location used to represent internal stock movements", l), 0 ])
 
         # Create a product to test
         data = {
@@ -109,7 +110,7 @@ class TestStock(unittest.TestCase):
             "comments": "A test movement"
         }
         post = asm3.utils.PostedData(data, "en")
-        asm3.stock.insert_productmovement_from_form(base.get_dbo(), "test", post)
+        asm3.stock.insert_productmovement_from_form(base.get_dbo(), post, "test")
 
     def test_update_stocklevel_from_form(self):
         data = {

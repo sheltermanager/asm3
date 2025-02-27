@@ -355,7 +355,6 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     if post["movementdate"] == "":
         raise asm3.utils.ASMValidationError(_("Movement must have a date", l))
     
-    
     locations = []
 
     if post.integer("movementfromtype") == 0 and post.integer("movementtotype") == 1:# Stock to usage

@@ -1165,7 +1165,7 @@ def sql_structure(dbo: Database) -> str:
     sql += table("lkproducttype", (
         fid(),
         fstr("ProductTypeName"),
-        fstr("Description"),
+        fstr("Description", True),
         fint("IsRetired") ), False)
 
     sql += table("lktaxrate", (
@@ -1885,10 +1885,10 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
         return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( tid, dbo.escape(name), petfinder )
     
     def taxrate(tid: int, name: str, taxrate: float) -> str:
-        return "INSERT INTO lktaxrate (ID, TaxRateName, Description, TaxRate, IsRetired) VALUES (%s, '%s', '', %f, 0)" % ( tid, name, "", taxrate, 0 )
+        return "INSERT INTO lktaxrate (ID, TaxRateName, Description, TaxRate, IsRetired) VALUES (%s, '%s', '', %f, 0)|=\n" % ( tid, name, taxrate )
 
     def unittype(tid: int, name: str) -> str:
-        return "INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (%s, '%s', '', 0)" % ( tid, name, "", 0 )
+        return "INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (%s, '%s', '', 0)|=\n" % ( tid, name )
     
     def user(tid: int, username: str, realname: str, password: str, superuser: bool) -> str:
         return "INSERT INTO users (ID, UserName, RealName, EmailAddress, Password, SuperUser, OwnerID, SecurityMap, IPRestriction, Signature, LocaleOverride, ThemeOverride, SiteID, DisableLogin, LocationFilter, RecordVersion) VALUES (%s,'%s','%s', '', 'plain:%s', %s, 0,'', '', '', '', '', 0, 0, '', 0)|=\n" % (tid, username, realname, password, superuser and 1 or 0)
@@ -6537,7 +6537,7 @@ def update_35000(dbo: Database) -> None:
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
         dbo.ddl_add_table_column("ProductTypeName", dbo.type_shorttext, False),
-        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, True),
         dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("lkproducttype", fields) )
