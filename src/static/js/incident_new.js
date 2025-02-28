@@ -106,6 +106,10 @@ $(function() {
                     $("#dispatchcounty").val(rec.OWNERCOUNTY);
                     $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
                 }
+                // Default jurisdiction to the caller jurisdiction if it's currently set to the default
+                if ($("#jurisdiction").val() == config.str("DefaultJurisdiction")) {
+                    $("#jurisdiction").val(rec.JURISDICTIONID);
+                }
             });
 
             $("#owner").personchooser().bind("personchooserchange", async function(event, rec) {
@@ -120,6 +124,10 @@ $(function() {
                     $("#dispatchtown").val(rec.OWNERTOWN);
                     $("#dispatchcounty").val(rec.OWNERCOUNTY);
                     $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
+                }
+                // Default jurisdiction to the caller jurisdiction if it's currently set to the default
+                if ($("#jurisdiction").val() == config.str("DefaultJurisdiction")) {
+                    $("#jurisdiction").val(rec.JURISDICTIONID);
                 }
             });
 
