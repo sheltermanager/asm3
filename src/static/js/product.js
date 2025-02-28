@@ -41,7 +41,7 @@ $(function() {
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
                     { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 },
-                    { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: 0, validation: "notblank",
+                    { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: "0", validation: "notblank",
                         callout: _("Show an alert if the balance falls below this amount"),
                         hideif: function() { 
                             return !config.bool("GlobalStockMinima");
