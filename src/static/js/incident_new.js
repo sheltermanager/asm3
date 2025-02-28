@@ -64,7 +64,6 @@ $(function() {
                 return true;
             };
             const add_incident = async function(mode) {
-                add_incident.jurisdictionupdated = false;
                 if (!validation()) { 
                     $("#asm-content button").button("enable"); 
                     return; 
@@ -107,10 +106,9 @@ $(function() {
                     $("#dispatchcounty").val(rec.OWNERCOUNTY);
                     $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
                 }
-                // Default jurisdiction to the caller jurisdiction if it's not set
-                if (!incident_new.jurisdictionupdated) {
+                // Default jurisdiction to the caller jurisdiction if it's currently set to the default
+                if ($("#jurisdiction").val() == config.str("DefaultJurisdiction")) {
                     $("#jurisdiction").val(rec.JURISDICTIONID);
-                    incident_new.jurisdictionupdated = true;
                 }
             });
 
@@ -126,12 +124,10 @@ $(function() {
                     $("#dispatchtown").val(rec.OWNERTOWN);
                     $("#dispatchcounty").val(rec.OWNERCOUNTY);
                     $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
-                    $("#jurisdiction").val(rec.JURISDICTIONID);
                 }
-                // Default jurisdiction to the caller jurisdiction if it's not set
-                if (!incident_new.jurisdictionupdated) {
+                // Default jurisdiction to the caller jurisdiction if it's currently set to the default
+                if ($("#jurisdiction").val() == config.str("DefaultJurisdiction")) {
                     $("#jurisdiction").val(rec.JURISDICTIONID);
-                    incident_new.jurisdictionupdated = true;
                 }
             });
 
