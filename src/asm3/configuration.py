@@ -495,7 +495,7 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
         """
         Returns True if s has a valid code portion in it
         """
-        VALID_CODES = ("OO", "OOO", "XX", "XXX", "NN", "NNN", "UUUU", "UUUUUUUUUU")
+        VALID_CODES = ("OO", "XX", "NN", "UUUU", "PP")
         for v in VALID_CODES:
             if s.find(v) != -1:
                 return True
