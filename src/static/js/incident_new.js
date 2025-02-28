@@ -64,6 +64,7 @@ $(function() {
                 return true;
             };
             const add_incident = async function(mode) {
+                add_incident.jurisdictionupdated = false;
                 if (!validation()) { 
                     $("#asm-content button").button("enable"); 
                     return; 
@@ -106,6 +107,11 @@ $(function() {
                     $("#dispatchcounty").val(rec.OWNERCOUNTY);
                     $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
                 }
+                // Default jurisdiction to the caller jurisdiction if it's not set
+                if (!incident_new.jurisdictionupdated) {
+                    $("#jurisdiction").val(rec.JURISDICTIONID);
+                    incident_new.jurisdictionupdated = true;
+                }
             });
 
             $("#owner").personchooser().bind("personchooserchange", async function(event, rec) {
@@ -120,6 +126,12 @@ $(function() {
                     $("#dispatchtown").val(rec.OWNERTOWN);
                     $("#dispatchcounty").val(rec.OWNERCOUNTY);
                     $("#dispatchpostcode").val(rec.OWNERPOSTCODE);
+                    $("#jurisdiction").val(rec.JURISDICTIONID);
+                }
+                // Default jurisdiction to the caller jurisdiction if it's not set
+                if (!incident_new.jurisdictionupdated) {
+                    $("#jurisdiction").val(rec.JURISDICTIONID);
+                    incident_new.jurisdictionupdated = true;
                 }
             });
 
