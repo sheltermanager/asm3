@@ -30,6 +30,23 @@ class TestAnimal(unittest.TestCase):
 
     def test_insert_animal_entry(self):
         self.assertNotEqual(0, asm3.animal.insert_animal_entry(base.get_dbo(), "system", self.nid))
+    
+    def test_calc_shelter_code(self):
+        asm3.configuration.cset(base.get_dbo(), "CodingFormat", "TYYYYNNNN")
+        sheltercode = asm3.animal.calc_shelter_code(base.get_dbo(), 2, 1, 1, base.today())
+        self.assertEqual(sheltercode[0][0:5], "D" + str(base.today().year))
+
+        asm3.configuration.cset(base.get_dbo(), "CodingFormat", "SYYYYPPP")
+        sheltercode = asm3.animal.calc_shelter_code(base.get_dbo(), 2, 1, 2, base.today())
+        self.assertEqual(sheltercode[0][0:5], "C" + str(base.today().year))
+
+        asm3.configuration.cset(base.get_dbo(), "CodingFormat", "UUUUUUUUUU")
+        sheltercode = asm3.animal.calc_shelter_code(base.get_dbo(), 2, 1, 2, base.today())
+        self.assertEqual(len(sheltercode[0]), 10)
+
+        asm3.configuration.cset(base.get_dbo(), "CodingFormat", "XXXX")
+        sheltercode = asm3.animal.calc_shelter_code(base.get_dbo(), 2, 1, 2, base.today())
+        self.assertEqual(len(sheltercode[0]), 4)
 
     def test_get_animals_brief(self):
         asm3.animal.get_animals_brief([asm3.animal.get_animal(base.get_dbo(), self.nid),])

@@ -1823,12 +1823,18 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
         DD - 2 digit brought in day
         UUUUUUUUUU - 10 digit padded code for next animal of all time
         UUUU - 4 digit padded code for next animal of all time
+        XXXX - 4 digit padded code for next animal for year
         XXX - 3 digit padded code for next animal for year
         XX - unpadded code for next animal for year
         OOO - 3 digit padded code for next animal for month
         OO - unpadded code for next animal for month
+        NNNN - 4 digit padded code for next animal of type for year
         NNN - 3 digit padded code for next animal of type for year
         NN - unpadded code for next animal of type for year
+        PPPP - 4 digit padded code for next animal of species for year
+        PPP - 3 digit padded code for next animal of species for year
+        PP - unpadded code for next animal of species for year
+
     """
     asm3.al.debug("sheltercode: generating for type %d, entry %d, species %d, datebroughtin %s" % \
         (int(animaltypeid), int(entryreasonid), int(speciesid), datebroughtin),
@@ -1874,12 +1880,27 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
             elif fmt[x:x+4] == "UUUU": 
                 code.append("%04d" % ever)
                 x += 4
+            elif fmt[x:x+4] == "NNNN":  
+                code.append("%04d" % tyear)
+                x += 4
             elif fmt[x:x+3] == "NNN":  
                 code.append("%03d" % tyear)
                 x += 3
             elif fmt[x:x+2] == "NN":   
                 code.append(str(tyear))
                 x += 2
+            elif fmt[x:x+4] == "PPPP":  
+                code.append("%04d" % tyear)
+                x += 4
+            elif fmt[x:x+3] == "PPP":  
+                code.append("%03d" % tyear)
+                x += 3
+            elif fmt[x:x+2] == "PP":   
+                code.append(str(tyear))
+                x += 2
+            elif fmt[x:x+4] == "XXXX":  
+                code.append("%04d" % year)
+                x += 4
             elif fmt[x:x+3] == "XXX":  
                 code.append("%03d" % year)
                 x += 3
@@ -1940,6 +1961,14 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
             "DateBroughtIn <= ? AND " \
             "AnimalTypeID = ?", ( beginningofyear, endofyear, animaltypeid))
         highesttyear += 1
+    
+    # If our code uses P, calculate the highest code seen for this species this year
+    if codeformat.find("P") != -1 or shortformat.find("P") != -1:
+        highesttyear = dbo.query_int("SELECT MAX(YearCodeID) FROM animal WHERE " \
+            "DateBroughtIn >= ? AND " \
+            "DateBroughtIn <= ? AND " \
+            "SpeciesID = ?", ( beginningofyear, endofyear, speciesid))
+        highesttyear += 1
 
     # If our code uses X, calculate the highest code seen this year
     if codeformat.find("X") != -1 or shortformat.find("X") != -1:
@@ -1978,6 +2007,7 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
             if codeformat.find("U") != -1: highestever += 1
             if codeformat.find("N") != -1: highesttyear += 1
             if codeformat.find("X") != -1: highestyear += 1
+            if codeformat.find("P") != -1: highestyear += 1
             if codeformat.find("O") != -1: highestmonth += 1
 
     asm3.al.debug("sheltercode: code=%s, short=%s for type %s, entry %s, species %s, datebroughtin %s" % \
