@@ -2816,7 +2816,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
             raise asm3.utils.ASMValidationError(_("This code has already been used.", l))
     else:
         # Generate a new code
-        sheltercode, shortcode, unique, year = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
+        sheltercode, shortcode, unique, year, syear = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
 
     # Default good with to unknown
     goodwithcats = 2
