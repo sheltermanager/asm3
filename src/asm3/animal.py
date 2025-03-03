@@ -1823,12 +1823,18 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
         DD - 2 digit brought in day
         UUUUUUUUUU - 10 digit padded code for next animal of all time
         UUUU - 4 digit padded code for next animal of all time
+        XXXX - 4 digit padded code for next animal for year
         XXX - 3 digit padded code for next animal for year
         XX - unpadded code for next animal for year
         OOO - 3 digit padded code for next animal for month
         OO - unpadded code for next animal for month
+        NNNN - 4 digit padded code for next animal of type for year
         NNN - 3 digit padded code for next animal of type for year
         NN - unpadded code for next animal of type for year
+        PPPP - 4 digit padded code for next animal of species for year
+        PPP - 3 digit padded code for next animal of species for year
+        PP - unpadded code for next animal of species for year
+
     """
     asm3.al.debug("sheltercode: generating for type %d, entry %d, species %d, datebroughtin %s" % \
         (int(animaltypeid), int(entryreasonid), int(speciesid), datebroughtin),
@@ -1842,7 +1848,7 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
         s = s.strip()
         return s
 
-    def substitute_tokens(fmt: str, year: int, month: int, tyear: int, ever: int, datebroughtin: datetime, animaltype: str, species: str, entryreason: str) -> str:
+    def substitute_tokens(fmt: str, year: int, month: int, syear: int, tyear: int, ever: int, datebroughtin: datetime, animaltype: str, species: str, entryreason: str) -> str:
         """
         Produces a code by switching tokens in the code format fmt.
         The format is parsed to left to right, testing for tokens. Anything
@@ -1874,12 +1880,27 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
             elif fmt[x:x+4] == "UUUU": 
                 code.append("%04d" % ever)
                 x += 4
+            elif fmt[x:x+4] == "NNNN":  
+                code.append("%04d" % tyear)
+                x += 4
             elif fmt[x:x+3] == "NNN":  
                 code.append("%03d" % tyear)
                 x += 3
             elif fmt[x:x+2] == "NN":   
                 code.append(str(tyear))
                 x += 2
+            elif fmt[x:x+4] == "PPPP":  
+                code.append("%04d" % syear)
+                x += 4
+            elif fmt[x:x+3] == "PPP":  
+                code.append("%03d" % syear)
+                x += 3
+            elif fmt[x:x+2] == "PP":   
+                code.append(str(syear))
+                x += 2
+            elif fmt[x:x+4] == "XXXX":  
+                code.append("%04d" % year)
+                x += 4
             elif fmt[x:x+3] == "XXX":  
                 code.append("%03d" % year)
                 x += 3
@@ -1929,6 +1950,7 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     endofmonth = asm3.i18n.last_of_month(datebroughtin)
     oneyearago = subtract_years(dbo.today(), 1.0)
     highesttyear = 0
+    highestsyear = 0
     highestyear = 0
     highestmonth = 0
     highestever = 0
@@ -1940,6 +1962,14 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
             "DateBroughtIn <= ? AND " \
             "AnimalTypeID = ?", ( beginningofyear, endofyear, animaltypeid))
         highesttyear += 1
+    
+    # If our code uses P, calculate the highest code seen for this species this year
+    if codeformat.find("P") != -1 or shortformat.find("P") != -1:
+        highestsyear = dbo.query_int("SELECT COUNT(ID) FROM animal WHERE " \
+            "DateBroughtIn >= ? AND " \
+            "DateBroughtIn <= ? AND " \
+            "SpeciesID = ?", ( beginningofyear, endofyear, speciesid))
+        highestsyear += 1
 
     # If our code uses X, calculate the highest code seen this year
     if codeformat.find("X") != -1 or shortformat.find("X") != -1:
@@ -1967,8 +1997,8 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     while not unique:
 
         # Generate the codes
-        code = substitute_tokens(codeformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
-        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        code = substitute_tokens(codeformat, highestyear, highestmonth, highestsyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highestsyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
 
         # Verify the code is unique
         unique = 0 == dbo.query_int("SELECT COUNT(*) FROM animal WHERE ShelterCode LIKE ?", [code])
@@ -1978,12 +2008,13 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
             if codeformat.find("U") != -1: highestever += 1
             if codeformat.find("N") != -1: highesttyear += 1
             if codeformat.find("X") != -1: highestyear += 1
+            if codeformat.find("P") != -1: highestsyear += 1
             if codeformat.find("O") != -1: highestmonth += 1
 
     asm3.al.debug("sheltercode: code=%s, short=%s for type %s, entry %s, species %s, datebroughtin %s" % \
         (code, shortcode, animaltype, entryreason, species, datebroughtin),
         "animal.calc_shelter_code", dbo)
-    return (code, shortcode, highestever, highesttyear)
+    return (code, shortcode, highestever, highesttyear, highestsyear)
 
 def get_is_on_shelter(dbo: Database, animalid: int) -> bool:
     """
@@ -2785,7 +2816,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
             raise asm3.utils.ASMValidationError(_("This code has already been used.", l))
     else:
         # Generate a new code
-        sheltercode, shortcode, unique, year = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
+        sheltercode, shortcode, unique, year, syear = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
 
     # Default good with to unknown
     goodwithcats = 2
