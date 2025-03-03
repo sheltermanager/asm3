@@ -1578,3 +1578,126 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
     h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
         asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
     return h
+
+def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = "", includemedia: str = "photo") -> str:
+    """
+    Export CSV data for a set of people.
+    dataset: The named set of data to use
+    where: If dataset == where, a where clause to the owner table (without the keyword WHERE)
+    includemedia: photo: output base64 encoded version of the primary photo for each person
+                  all: output base64 encoded version of all media for each person
+    Returns an html link to the exported file to download.
+    """
+    l = dbo.locale
+    q = ""
+    out = asm3.utils.stringio()
+    
+    if dataset == "all": q = "SELECT ID FROM owner ORDER BY ID"
+    elif dataset == "flaggedpeople": q = ""
+    elif dataset == "where": q = "SELECT ID FROM owner WHERE %s ORDER BY ID" % where.replace(";", "")
+    
+    pids = dbo.query(q)
+
+    keys = [ "PERSONID", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
+        "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
+        "PERSONCOMMENTS", "PERSONWARNING" ]
+    
+    def tocsv(row: Dict) -> str:
+        r = []
+        for k in keys:
+            if k in row: 
+                r.append("\"%s\"" % str(row[k]).replace("\"", "\"\""))
+            else:
+                r.append("\"\"")
+        return ",".join(r) + "\n"
+
+    def nn(s: str) -> str:
+        if s is None: return ""
+        return s
+
+    firstrow = True
+    asm3.asynctask.set_progress_max(dbo, len(pids))
+    for pid in pids:
+
+        # Should we stop?
+        if asm3.asynctask.get_cancel(dbo): break
+
+        if firstrow:
+            firstrow = False
+            out.write(",".join(keys) + "\n")
+
+        row = {}
+        p = asm3.person.get_person(dbo, pid["ID"])
+        if p is None: continue
+
+        asm3.asynctask.increment_progress_value(dbo)
+
+        row["PERSONID"] = p["ID"]
+        row["PERSONTITLE"] = nn(p["OWNERTITLE"])
+        row["PERSONINITIALS"] = nn(p["OWNERINITIALS"])
+        row["PERSONFIRSTNAME"] = nn(p["OWNERFORENAMES"])
+        row["PERSONLASTNAME"] = nn(p["OWNERSURNAME"])
+        row["PERSONADDRESS"] = nn(p["OWNERADDRESS"])
+        row["PERSONCITY"] = nn(p["OWNERTOWN"])
+        row["PERSONSTATE"] = nn(p["OWNERCOUNTY"])
+        row["PERSONZIPCODE"] = nn(p["OWNERPOSTCODE"])
+        #row["PERSONFOSTERER"] = asm3.utils.iif(p["ACTIVEMOVEMENTTYPE"] == 2, "1", "0")
+        row["PERSONHOMEPHONE"] = nn(p["HOMETELEPHONE"])
+        row["PERSONWORKPHONE"] = nn(p["WORKTELEPHONE"])
+        row["PERSONCELLPHONE"] = nn(p["MOBILETELEPHONE"])
+        row["PERSONEMAIL"] = nn(p["EMAILADDRESS"])
+        row["PERSONCOMMENTS"] = nn(p["COMMENTS"])
+        row["PERSONWARNING"] = nn(p["POPUPWARNING"])
+
+        if includemedia == "none":
+            out.write(tocsv(row))
+        else:
+            media = asm3.media.get_image_media(dbo, asm3.media.PERSON, p["ID"])
+            if includemedia == "photo":
+                for m in media:
+                    if m["WEBSITEPHOTO"] == 1:
+                        row["PERSONIMAGE"] = "%s?account=%s&method=media_image&imageid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        break
+                out.write(tocsv(row))
+            elif includemedia == "photos":
+                for m in media:
+                    if m["MEDIANAME"].endswith(".jpg"):
+                        row = {}
+                        row["PERSONCODE"] = p["OWNERCODE"]
+                        row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        out.write(tocsv(row))
+            elif includemedia == "all":
+                for m in asm3.media.get_media(dbo, asm3.media.PERSON, p["ID"]):
+                    if m["MEDIANAME"].endswith(".jpg") or m["MEDIANAME"].endswith(".pdf") or m["MEDIANAME"].endswith(".html"):
+                        row = {}
+                        row["PERSONCODE"] = p["OWNERCODE"]
+                        if m["MEDIANAME"].endswith(".jpg"):
+                            row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        elif m["MEDIANAME"].endswith(".pdf"):
+                            row["PERSONPDFNAME"] = m["MEDIANOTES"]
+                            if row["PERSONPDFNAME"].strip() == "": row["PERSONPDFNAME"] = "doc.pdf"
+                            row["PERSONPDFDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        elif m["MEDIANAME"].endswith(".html"):
+                            row["PERSONHTMLNAME"] = m["MEDIANOTES"]
+                            if row["PERSONHTMLNAME"].strip() == "": row["PERSONHTMLNAME"] = "doc.html"
+                            row["PERSONHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        out.write(tocsv(row))
+
+        for g in asm3.log.get_logs(dbo, asm3.log.PERSON, p["ID"]):
+            row = {}
+            row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
+            row["LOGTIME"] = asm3.i18n.format_time(g["DATE"])
+            row["LOGTYPE"] = g["LOGTYPENAME"]
+            row["LOGCOMMENTS"] = g["COMMENTS"]
+            row["PERSONCODE"] = p["OWNERCODE"]
+            out.write(tocsv(row))
+
+        del p
+        del row
+
+    # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
+    key = asm3.utils.uuid_str()
+    asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
+    h = '<p>%s <a target="_blank" href="csvexport_people?get=%s"><b>%s</b></p>' % ( \
+        asm3.i18n._("Export complete ({0} entries).", l).format(len(pids)), key, asm3.i18n._("Download File", l) )
+    return h

@@ -20,4 +20,7 @@ class TestCSVImport(unittest.TestCase):
 
     def test_csvexport_animals(self):
         asm3.csvimport.csvexport_animals(base.get_dbo(), "all")
+    
+    def test_csvexport_people(self):
+        asm3.csvimport.csvexport_people(base.get_dbo(), "all")
 
