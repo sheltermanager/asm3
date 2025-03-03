@@ -2014,7 +2014,7 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     asm3.al.debug("sheltercode: code=%s, short=%s for type %s, entry %s, species %s, datebroughtin %s" % \
         (code, shortcode, animaltype, entryreason, species, datebroughtin),
         "animal.calc_shelter_code", dbo)
-    return (code, shortcode, highestever, highesttyear, highestsyear)
+    return (code, shortcode, highestever, highesttyear)
 
 def get_is_on_shelter(dbo: Database, animalid: int) -> bool:
     """
@@ -2816,7 +2816,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
             raise asm3.utils.ASMValidationError(_("This code has already been used.", l))
     else:
         # Generate a new code
-        sheltercode, shortcode, unique, year, syear = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
+        sheltercode, shortcode, unique, year = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
 
     # Default good with to unknown
     goodwithcats = 2
@@ -4056,6 +4056,9 @@ def merge_animal(dbo: Database, username: str, animalid: int, mergeanimalid: int
 
     if animalid == 0 or mergeanimalid == 0:
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
+    
+    if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE ID IN (?, ?)", [animalid, mergeanimalid]) != 2:
+        raise asm3.utils.ASMValidationError("Internal error: Record has been deleted")
 
     def reparent(table, field, linktypefield = "", linktype = -1, haslastchanged = True):
         try:

@@ -1495,6 +1495,9 @@ def merge_person(dbo: Database, username: str, personid: int, mergepersonid: int
 
     if personid == 0 or mergepersonid == 0:
         raise asm3.utils.ASMValidationError("Internal error: Cannot merge ID 0")
+    
+    if dbo.query_int("SELECT COUNT(ID) FROM owner WHERE ID IN (?, ?)", [personid, mergepersonid]) != 2:
+        raise asm3.utils.ASMValidationError("Internal error: Record has been deleted")
 
     def reparent(table, field, linktypefield = "", linktype = -1, haslastchanged = True):
         try:
