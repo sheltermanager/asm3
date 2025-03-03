@@ -655,6 +655,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ("", "", "", "--cat", "asm-icon-database", _("Data", l)),
             (asm3.users.EXPORT_REPORT, "", "", "report_export", "asm-icon-report", _("Export Reports as CSV", l) ),
             (asm3.users.EXPORT_ANIMAL_CSV, "", "", "csvexport", "asm-icon-animal", _("Export Animals as CSV", l) ),
+            (asm3.users.EXPORT_PEOPLE_CSV, "", "", "csvpeopleexport", "asm-icon-person", _("Export People as CSV", l) ),
             (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport", "asm-icon-database", _("Import a CSV file", l) ),
             (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport_paypal", "asm-icon-paypal", _("Import a PayPal CSV file", l) ),
             (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport_stripe", "asm-icon-stripe", _("Import a Stripe CSV file", l) ),
