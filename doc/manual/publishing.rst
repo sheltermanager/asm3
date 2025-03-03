@@ -611,6 +611,19 @@ ASM will attempt to register all microchips with BuddyID and as with
 the other chip registration publishers, will track when it last updated a
 chip with them in case of subsequent adoption or reclaim.
 
+FindPet
+-------
+
+ASM can register found animals and microchips with FindPet. Their registry 
+is free to use and will accept registration of microchips from any manufacturer.  
+To signup, you will need to complete a form to have them issue an ID for your
+organisation. A link to the form can be found in the FindPet tab in the 
+publishing section.
+
+ASM will attempt to register all microchips with FindPet and as with
+the other chip registration publishers, will track when it last updated a
+chip with them in case of subsequent adoption or reclaim.
+
 FoundAnimals/24Pet
 ------------------
 
