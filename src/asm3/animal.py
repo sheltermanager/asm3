@@ -1848,7 +1848,7 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
         s = s.strip()
         return s
 
-    def substitute_tokens(fmt: str, year: int, month: int, tyear: int, ever: int, datebroughtin: datetime, animaltype: str, species: str, entryreason: str, syear: int) -> str:
+    def substitute_tokens(fmt: str, year: int, month: int, syear: int, tyear: int, ever: int, datebroughtin: datetime, animaltype: str, species: str, entryreason: str) -> str:
         """
         Produces a code by switching tokens in the code format fmt.
         The format is parsed to left to right, testing for tokens. Anything
@@ -1997,8 +1997,8 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     while not unique:
 
         # Generate the codes
-        code = substitute_tokens(codeformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason, highestsyear)
-        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason, highestsyear)
+        code = substitute_tokens(codeformat, highestyear, highestmonth, highestsyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highestsyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
 
         # Verify the code is unique
         unique = 0 == dbo.query_int("SELECT COUNT(*) FROM animal WHERE ShelterCode LIKE ?", [code])
