@@ -1848,7 +1848,7 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
         s = s.strip()
         return s
 
-    def substitute_tokens(fmt: str, year: int, month: int, tyear: int, ever: int, datebroughtin: datetime, animaltype: str, species: str, entryreason: str) -> str:
+    def substitute_tokens(fmt: str, year: int, month: int, tyear: int, ever: int, datebroughtin: datetime, animaltype: str, species: str, entryreason: str, syear: int) -> str:
         """
         Produces a code by switching tokens in the code format fmt.
         The format is parsed to left to right, testing for tokens. Anything
@@ -1890,13 +1890,13 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
                 code.append(str(tyear))
                 x += 2
             elif fmt[x:x+4] == "PPPP":  
-                code.append("%04d" % tyear)
+                code.append("%04d" % syear)
                 x += 4
             elif fmt[x:x+3] == "PPP":  
-                code.append("%03d" % tyear)
+                code.append("%03d" % syear)
                 x += 3
             elif fmt[x:x+2] == "PP":   
-                code.append(str(tyear))
+                code.append(str(syear))
                 x += 2
             elif fmt[x:x+4] == "XXXX":  
                 code.append("%04d" % year)
@@ -1950,6 +1950,7 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     endofmonth = asm3.i18n.last_of_month(datebroughtin)
     oneyearago = subtract_years(dbo.today(), 1.0)
     highesttyear = 0
+    highestsyear = 0
     highestyear = 0
     highestmonth = 0
     highestever = 0
@@ -1996,8 +1997,8 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     while not unique:
 
         # Generate the codes
-        code = substitute_tokens(codeformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
-        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        code = substitute_tokens(codeformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason, highestsyear)
+        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason, highestsyear)
 
         # Verify the code is unique
         unique = 0 == dbo.query_int("SELECT COUNT(*) FROM animal WHERE ShelterCode LIKE ?", [code])
@@ -2007,13 +2008,13 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
             if codeformat.find("U") != -1: highestever += 1
             if codeformat.find("N") != -1: highesttyear += 1
             if codeformat.find("X") != -1: highestyear += 1
-            if codeformat.find("P") != -1: highestyear += 1
+            if codeformat.find("P") != -1: highestsyear += 1
             if codeformat.find("O") != -1: highestmonth += 1
 
     asm3.al.debug("sheltercode: code=%s, short=%s for type %s, entry %s, species %s, datebroughtin %s" % \
         (code, shortcode, animaltype, entryreason, species, datebroughtin),
         "animal.calc_shelter_code", dbo)
-    return (code, shortcode, highestever, highesttyear)
+    return (code, shortcode, highestever, highesttyear, highestsyear)
 
 def get_is_on_shelter(dbo: Database, animalid: int) -> bool:
     """
