@@ -1964,11 +1964,11 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     
     # If our code uses P, calculate the highest code seen for this species this year
     if codeformat.find("P") != -1 or shortformat.find("P") != -1:
-        highesttyear = dbo.query_int("SELECT MAX(YearCodeID) FROM animal WHERE " \
+        highestsyear = dbo.query_int("SELECT COUNT(ID) FROM animal WHERE " \
             "DateBroughtIn >= ? AND " \
             "DateBroughtIn <= ? AND " \
             "SpeciesID = ?", ( beginningofyear, endofyear, speciesid))
-        highesttyear += 1
+        highestsyear += 1
 
     # If our code uses X, calculate the highest code seen this year
     if codeformat.find("X") != -1 or shortformat.find("X") != -1:
