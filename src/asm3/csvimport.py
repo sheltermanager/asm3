@@ -1606,7 +1606,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "ANIMALCODE", 
         "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
         "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
-        "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS" ]
+        "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
+        "LOANDATE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1726,6 +1727,18 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["FINEDUEDATE"] =  gkd(dbo, c, "FINEDUEDATE")
             row["FINEPAIDDATE"] =  gkd(dbo, c, "FINEPAIDDATE")
             row["CITATIONCOMMENTS"] = gks(c, "COMMENTS")
+            out.write(tocsv(row))
+        
+        for t in dbo.query(asm3.animalcontrol.get_traploan_query(dbo) + " WHERE ot.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["LOANDATE"] = gkd(dbo, t, "LOANDATE")
+            row["DEPOSITAMOUNT"] = str(gkc(t, "DEPOSITAMOUNT"))
+            row["DEPOSITRETURNDATE"] = gkd(dbo, t, "DEPOSITRETURNDATE")
+            row["RETURNDUEDATE"] = gkd(dbo, t, "RETURNDUEDATE")
+            row["RETURNDATE"] = gkd(dbo, t, "RETURNDATE")
+            row["TRAPLOANCOMMENTS"] = gks(t, "COMMENTS")
+
             out.write(tocsv(row))
 
         del p
