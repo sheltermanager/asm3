@@ -1607,7 +1607,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
         "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
         "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
-        "LOANDATE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS" ]
+        "LOANDATE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
+        "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1738,6 +1739,24 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["RETURNDUEDATE"] = gkd(dbo, t, "RETURNDUEDATE")
             row["RETURNDATE"] = gkd(dbo, t, "RETURNDATE")
             row["TRAPLOANCOMMENTS"] = gks(t, "COMMENTS")
+            out.write(tocsv(row))
+        
+        for d in dbo.query(asm3.financial.get_donation_query(dbo) + " WHERE od.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["DONATIONNAME"] = gks(d, "DONATIONNAME")
+            row["DONATIONDATE"] = gkd(dbo, d, "DATE")
+            row["DONATIONAMOUNT"] = str(gkc(d, "DONATION"))
+            row["PAYMENTNAME"] = gks(d, "PAYMENTNAME")
+            row["PAYMENTISGIFTAID"] = gks(d, "ISGIFTAIDNAME")
+            row["PAYMENTFREQUENCY"] = gks(d, "FREQUENCYNAME")
+            row["PAYMENTRECEIPTNUMBER"] = gks(d, "RECEIPTNUMBER")
+            row["PAYMENTCHEQUENUMBER"] = gks(d, "CHEQUENUMBER")
+            row["PAYMENTFEE"] = str(gkc(d, "FEE"))
+            row["PAYMENTISVAT"] = asm3.utils.cint(d["ISVAT"])
+            row["PAYMENTVATRATE"] = asm3.utils.cfloat(d["VATRATE"])
+            row["PAYMENTVATAMOUNT"] = str(gkc(d, "VATAMOUNT"))
+            row["PAYMENTCOMMENTS"] = gks(d, "COMMENTS")
 
             out.write(tocsv(row))
 
