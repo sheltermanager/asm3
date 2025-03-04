@@ -1604,7 +1604,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "PERSONIMAGE", "PERSONPDFNAME", "PERSONPDFDATA", "PERSONHTMLNAME", "PERSONHTMLDATA",
         "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
         "ANIMALCODE", 
-        "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS" ]
+        "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
+        "INVESTIGATIONDATE", "INVESTIGATIONNOTES" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1706,6 +1707,13 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["LICENSEISSUEDATE"] = gkd(dbo, l, "ISSUEDATE")
             row["LICENSEEXPIRESDATE"] = gkd(dbo, l, "EXPIRYDATE")
             row["LICENSECOMMENTS"] =  gks(l, "COMMENTS")
+            out.write(tocsv(row))
+        
+        for i in asm3.person.get_investigation(dbo, p["ID"]):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["INVESTIGATIONDATE"] = gkd(dbo, i, "DATE")
+            row["INVESTIGATIONNOTES"] =  gks(i, "NOTES")
             out.write(tocsv(row))
 
         del p
