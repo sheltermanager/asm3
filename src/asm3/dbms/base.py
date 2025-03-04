@@ -375,11 +375,11 @@ class Database(object):
 
     def get_id_cache(self, table: str, idcol: str = "ID") -> int:
         """ Returns the next ID for a table using an in-memory cache, backed by the highest ID in the table (deprecated) """
-        cache_key = "%s_pk_%s" % (self.database, table)
+        cache_key = "%s_pk_%s" % (self.name(), table)
         id = asm3.cachemem.increment(cache_key)
         if id is None:
             id = self.get_id_max(table, idcol)
-            asm3.cachemem.put(cache_key, id, 86400)
+            asm3.cachemem.put(cache_key, id, 60)
         return id
     
     def get_id_cache_pk(self, table: str, idcol: str = "ID") -> int:
@@ -387,12 +387,12 @@ class Database(object):
             Useful for making arbitrary sequences. 
             Currently used by payment receipt numbers, online form collation IDs) 
         """
-        cache_key = "%s_pkt_%s" % (self.database, table)
+        cache_key = "%s_pkt_%s" % (self.name(), table)
         id = asm3.cachemem.increment(cache_key)
         if id is None:
             id = self.get_id_pk(table)
             if id == 1: id = self.get_id_max(table, idcol) # no pk entry, use table ID
-            asm3.cachemem.put(cache_key, id, 86400)
+            asm3.cachemem.put(cache_key, id, 60)
         self.update_primarykey(table, id)
         return id
 
@@ -661,12 +661,12 @@ class Database(object):
         without doing any caching and is equivalent to Database.query()
         """
         if not CACHE_COMMON_QUERIES or age == 0: return self.query(sql, params=params, limit=limit)
-        cache_key = "%s:%s:%s" % (self.database, sql, params)
-        results = asm3.cachedisk.get(cache_key, self.database, expectedtype=list)
+        cache_key = "%s:%s:%s" % (self.name(), sql, params)
+        results = asm3.cachedisk.get(cache_key, self.name(), expectedtype=list)
         if results is not None:
             return results
         results = self.query(sql, params=params, limit=limit, distincton=distincton)
-        asm3.cachedisk.put(cache_key, self.database, results, age)
+        asm3.cachedisk.put(cache_key, self.name(), results, age)
         return results
 
     def query_columns(self, sql: str, params: List = None) -> List[str]:
@@ -1112,7 +1112,7 @@ class Database(object):
             if c == 0:
                 self.execute("INSERT INTO primarykey (TableName, NextID) VALUES (?, ?)", (table, nextid))
         except:
-            pass
+            asm3.al.error(str(err), "Database.update_primary_key", self, sys.exc_info())
 
     def vacuum(self, tablename: str = "") -> None:
         pass # implement in derived classes
