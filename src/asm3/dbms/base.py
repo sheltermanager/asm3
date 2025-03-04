@@ -1111,7 +1111,7 @@ class Database(object):
             c = self.execute("UPDATE primarykey SET NextID = ? WHERE TableName = ?", [nextid, table] )
             if c == 0:
                 self.execute("INSERT INTO primarykey (TableName, NextID) VALUES (?, ?)", (table, nextid))
-        except:
+        except Exception as err:
             asm3.al.error(str(err), "Database.update_primary_key", self, sys.exc_info())
 
     def vacuum(self, tablename: str = "") -> None:
