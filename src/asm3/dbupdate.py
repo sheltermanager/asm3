@@ -1482,6 +1482,7 @@ def sql_structure(dbo: Database) -> str:
         fint("CitationTypeID"),
         fdate("CitationDate"),
         fint("FineAmount", True),
+        fint("CitationNumber", True),
         fdate("FineDueDate", True),
         fdate("FinePaidDate", True),
         flongstr("Comments", True) ))

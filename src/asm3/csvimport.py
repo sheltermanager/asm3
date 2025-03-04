@@ -1600,7 +1600,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
 
     keys = [ "PERSONID", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
         "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
-        "PERSONCOMMENTS", "PERSONWARNING" ]
+        "PERSONCOMMENTS", "PERSONWARNING", "PERSONIMAGE" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1633,6 +1633,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         asm3.asynctask.increment_progress_value(dbo)
 
         row["PERSONID"] = p["ID"]
+        row["PERSONCODE"] = p["OWNERCODE"]
         row["PERSONTITLE"] = nn(p["OWNERTITLE"])
         row["PERSONINITIALS"] = nn(p["OWNERINITIALS"])
         row["PERSONFIRSTNAME"] = nn(p["OWNERFORENAMES"])
@@ -1656,21 +1657,19 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             if includemedia == "photo":
                 for m in media:
                     if m["WEBSITEPHOTO"] == 1:
-                        row["PERSONIMAGE"] = "%s?account=%s&method=media_image&imageid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        row["PERSONIMAGE"] = "%s?account=%s&method=media_image&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                         break
                 out.write(tocsv(row))
             elif includemedia == "photos":
                 for m in media:
                     if m["MEDIANAME"].endswith(".jpg"):
                         row = {}
-                        row["PERSONCODE"] = p["OWNERCODE"]
                         row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                         out.write(tocsv(row))
             elif includemedia == "all":
                 for m in asm3.media.get_media(dbo, asm3.media.PERSON, p["ID"]):
                     if m["MEDIANAME"].endswith(".jpg") or m["MEDIANAME"].endswith(".pdf") or m["MEDIANAME"].endswith(".html"):
                         row = {}
-                        row["PERSONCODE"] = p["OWNERCODE"]
                         if m["MEDIANAME"].endswith(".jpg"):
                             row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                         elif m["MEDIANAME"].endswith(".pdf"):
