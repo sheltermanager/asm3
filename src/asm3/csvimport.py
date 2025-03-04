@@ -1605,7 +1605,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
         "ANIMALCODE", 
         "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
-        "INVESTIGATIONDATE", "INVESTIGATIONNOTES" ]
+        "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
+        "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1714,6 +1715,17 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["PERSONCODE"] = p["OWNERCODE"]
             row["INVESTIGATIONDATE"] = gkd(dbo, i, "DATE")
             row["INVESTIGATIONNOTES"] =  gks(i, "NOTES")
+            out.write(tocsv(row))
+        
+        for c in dbo.query(asm3.financial.get_citation_query(dbo) + " WHERE oc.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["CITATIONNUMBER"] = gks(c, "CITATIONNUMBER")
+            row["CITATIONTYPE"] =  gks(c, "CITATIONNAME")
+            row["FINEAMOUNT"] =  str(gkc(c, "FINEAMOUNT"))
+            row["FINEDUEDATE"] =  gkd(dbo, c, "FINEDUEDATE")
+            row["FINEPAIDDATE"] =  gkd(dbo, c, "FINEPAIDDATE")
+            row["CITATIONCOMMENTS"] = gks(c, "COMMENTS")
             out.write(tocsv(row))
 
         del p
