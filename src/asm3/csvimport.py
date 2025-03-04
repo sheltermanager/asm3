@@ -1603,12 +1603,13 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "PERSONCOMMENTS", "PERSONWARNING", 
         "PERSONIMAGE", "PERSONPDFNAME", "PERSONPDFDATA", "PERSONHTMLNAME", "PERSONHTMLDATA",
         "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
-        "ANIMALCODE", 
+        "ANIMALCODE", "ANIMALNAME", 
         "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
         "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
         "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
         "LOANDATE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
-        "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS" ]
+        "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
+        "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1650,7 +1651,6 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row["PERSONCITY"] = nn(p["OWNERTOWN"])
         row["PERSONSTATE"] = nn(p["OWNERCOUNTY"])
         row["PERSONZIPCODE"] = nn(p["OWNERPOSTCODE"])
-        #row["PERSONFOSTERER"] = asm3.utils.iif(p["ACTIVEMOVEMENTTYPE"] == 2, "1", "0")
         row["PERSONHOMEPHONE"] = nn(p["HOMETELEPHONE"])
         row["PERSONWORKPHONE"] = nn(p["WORKTELEPHONE"])
         row["PERSONCELLPHONE"] = nn(p["MOBILETELEPHONE"])
@@ -1757,6 +1757,23 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["PAYMENTVATRATE"] = asm3.utils.cfloat(d["VATRATE"])
             row["PAYMENTVATAMOUNT"] = str(gkc(d, "VATAMOUNT"))
             row["PAYMENTCOMMENTS"] = gks(d, "COMMENTS")
+            out.write(tocsv(row))
+        
+        for v in dbo.query(asm3.financial.get_voucher_query(dbo) + " WHERE ov.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["ANIMALCODE"] = gks(v, "SHELTERCODE")
+            row["ANIMALNAME"] = gks(v, "ANIMALNAME")
+            row["VOUCHERNAME"] = gks(v, "VOUCHERNAME")
+            row["VOUCHERVETNAME"] = gks(v, "VETNAME")
+            row["VOUCHERVETADDRESS"] = gks(v, "VETADDRESS")
+            row["VOUCHERVETTOWN"] = gks(v, "VETTOWN")
+            row["VOUCHERVETCOUNTY"] = gks(v, "VETCOUNTY")
+            row["VOUCHERVETPOSTCODE"] = gks(v, "VETPOSTCODE")
+            row["VOUCHERDATEISSUED"] = gkd(dbo, v, "DATEISSUED")
+            row["VOUCHERDATEPRESENTED"] = gkd(dbo, v, "DATEPRESENTED")
+            row["VOUCHERDATEEXPIRED"] = gkd(dbo, v, "DATEEXPIRED")
+            row["VOUCHERVALUE"] = str(gkc(v, "VALUE"))
 
             out.write(tocsv(row))
 
