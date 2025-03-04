@@ -34,6 +34,11 @@ class TestCSVImport(unittest.TestCase):
         f.close()
         post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(data) }, "en")
         asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, aid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+
+        f = open(base.PATH + "../src/static/images/splash/splash_logo.jpg", "rb")
+        data = f.read()
+        f.close()
+
         asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.PERSON, pid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
 
     def test_csvexport_animals(self):
@@ -44,3 +49,6 @@ class TestCSVImport(unittest.TestCase):
     
     def test_csvexport_people_photo(self):
         asm3.csvimport.csvexport_people(base.get_dbo(), "all", "", "", "photo")
+    
+    def test_csvexport_people_photos(self):
+        asm3.csvimport.csvexport_people(base.get_dbo(), "all", "", "", "photos")
