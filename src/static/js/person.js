@@ -171,7 +171,7 @@ $(function() {
                     { post_field: "matchcolour", json_field: "MATCHCOLOUR", type: "select", label: _("Color"), rowclasses: "lfs", 
                         options: { displayfield: "BASECOLOUR", rows: controller.colours, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchtype", json_field: "MATCHANIMALTYPE", type: "select", label: _("Type"), rowclasses: "lfs", 
-                        options: { displayfield: "ANIMALTYPE", rows: controller.colours, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                        options: { displayfield: "ANIMALTYPE", rows: controller.animaltypes, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchspecies", json_field: "MATCHSPECIES", type: "select", label: _("Species"), rowclasses: "lfs", 
                         options: { displayfield: "SPECIESNAME", rows: controller.species, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchbreed1", json_field: "MATCHBREED", type: "select", label: _("Breed"), rowclasses: "lfs", 
