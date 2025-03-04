@@ -1602,7 +1602,9 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
         "PERSONCOMMENTS", "PERSONWARNING", 
         "PERSONIMAGE", "PERSONPDFNAME", "PERSONPDFDATA", "PERSONHTMLNAME", "PERSONHTMLDATA",
-        "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS" ]
+        "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
+        "ANIMALCODE", 
+        "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1692,6 +1694,18 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["LOGTYPE"] = g["LOGTYPENAME"]
             row["LOGCOMMENTS"] = g["COMMENTS"]
             row["PERSONCODE"] = p["OWNERCODE"]
+            out.write(tocsv(row))
+        
+        for l in dbo.query(asm3.financial.get_licence_query(dbo) + " WHERE ol.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["LICENSENUMBER"] = l["LICENCENUMBER"]
+            row["ANIMALCODE"] = l["SHELTERCODE"]
+            row["LICENSETYPE"] = l["LICENCETYPENAME"]
+            row["LICENSEFEE"] = str(gkc(l, "LICENSEFEE"))
+            row["LICENSEISSUEDATE"] = gkd(dbo, l, "ISSUEDATE")
+            row["LICENSEEXPIRESDATE"] = gkd(dbo, l, "EXPIRYDATE")
+            row["LICENSECOMMENTS"] =  gks(l, "COMMENTS")
             out.write(tocsv(row))
 
         del p
