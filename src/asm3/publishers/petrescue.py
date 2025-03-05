@@ -231,8 +231,10 @@ class PetRescuePublisher(AbstractPublisher):
         origin = "owner_surrender"
         if an.ENTRYTYPEID == 3 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") == -1: origin = "shelter_transfer"
         elif an.ENTRYTYPEID == 3 and str(an.BROUGHTINBYOWNERNAME).lower().find("pound") != -1: origin = "pound_transfer"
-        elif an.ENTRYTYPEID == 1: origin = "owner_surrender"
-        elif an.NONSHELTERANIMAL == 1 and an.SPECIESID == 2: origin = "community_cat"
+        # Surrender, Seized, Abandoned or Born in Care
+        elif an.ENTRYTYPEID in (1, 7, 8, 5): origin = "owner_surrender"
+        # Stray, TNR or non-shelter cat
+        elif an.ENTRYTYPEID in (2, 4) or (an.NONSHELTERANIMAL == 1 and an.SPECIESID == 2): origin = "community_cat"
 
         best_feature = "Looking for love"
         if "BESTFEATURE" in an and an.BESTFEATURE:
