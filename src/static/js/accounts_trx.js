@@ -112,7 +112,7 @@ $(function() {
                 }
                 if (t.DONATIONRECEIPTNUMBER) {
                     //desc += " [" + t.DONATIONRECEIPTNUMBER + "]";
-                    desc += ' <span id="' + t.DONATIONRECEIPTNUMBER + '" class="asm-callout" data-icon="donation">' +
+                    desc += ' <span id="dontrx-' + t.ID + '" class="asm-callout" data-icon="donation">' +
                     _("Payment") + "<br><br>" +
                     _("Receipt No") + ": " + t.DONATIONRECEIPTNUMBER + "<br>" +
                     _("Type") + ": "+ t.DONATIONTYPENAME + "<br>" +
