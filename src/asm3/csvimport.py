@@ -53,7 +53,7 @@ VALID_FIELDS = [
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONWARNING", "PERSONFOSTERCAPACITY",
     "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
-    "PERSONHOMEPHONE2", "PERSONWORKPHONE2", "PERSONCELLPHONE2", "PERSONEMAIL2",
+    "PERSONWORKPHONE2", "PERSONCELLPHONE2", "PERSONEMAIL2",
     "PERSONGDPRCONTACT", "PERSONCLASS",
     "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
     "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
@@ -1598,9 +1598,22 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
     
     pids = dbo.query(q)
 
-    keys = [ "PERSONID", "PERSONCODE", "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
-        "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
-        "PERSONCOMMENTS", "PERSONWARNING", 
+    keys = [ "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
+        "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
+        "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
+        "PERSONTITLE2", "PERSONINITIALS2", "PERSONFIRSTNAME2", "PERSONLASTNAME2",
+        "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
+        "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
+        "PERSONFLAGS", "PERSONCOMMENTS", "PERSONWARNING", "PERSONFOSTERCAPACITY",
+        "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
+        "PERSONHOMEPHONE2", "PERSONWORKPHONE2", "PERSONCELLPHONE2", "PERSONEMAIL2",
+        "PERSONGDPRCONTACT", "PERSONCLASS",
+        "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
+        "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
+        "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
+        "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
+        "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
+        "PERSONMATCHCOMMENTSCONTAIN",
         "PERSONIMAGE", "PERSONPDFNAME", "PERSONPDFDATA", "PERSONHTMLNAME", "PERSONHTMLDATA",
         "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
         "ANIMALCODE", "ANIMALNAME", 
@@ -1609,7 +1622,9 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
         "LOANDATE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
         "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
-        "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE" ]
+        "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE",
+        "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE",
+        "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", "CLINICAPPOINTMENTDATETIME", "CLINICARRIVEDDATETIME", "CLINICWITHVETDATETIME", "CLINICCOMPLETEDDATETIME", "CLINICAPPOINTMENTISVAT", "CLINICAPPOINTMENTVATAMOUNT", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTREASON" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1636,17 +1651,24 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             out.write(",".join(keys) + "\n")
 
         row = {}
-        p = asm3.person.get_person(dbo, pid["ID"])
+        #p = asm3.person.get_person(dbo, pid["ID"])
+        p = dbo.query("SELECT * FROM owner WHERE ID = %s" % (pid["ID"]) )
         if p is None: continue
-
+        p = p[0]
         asm3.asynctask.increment_progress_value(dbo)
 
-        row["PERSONID"] = p["ID"]
-        row["PERSONCODE"] = p["OWNERCODE"]
-        row["PERSONTITLE"] = nn(p["OWNERTITLE"])
+        row["PERSONCODE"] = gks(p, "OWNERCODE")
+        row["PERSONDATEOFBIRTH"] = gkd(dbo, p, "DATEOFBIRTH")
+        row["PERSONDATEOFBIRTH2"] = gkd(dbo, p, "DATEOFBIRTH2")
+        row["PERSONTITLE"] = p["OWNERTITLE"]
         row["PERSONINITIALS"] = nn(p["OWNERINITIALS"])
         row["PERSONFIRSTNAME"] = nn(p["OWNERFORENAMES"])
         row["PERSONLASTNAME"] = nn(p["OWNERSURNAME"])
+        row["PERSONTITLE2"] = nn(p["OWNERTITLE2"])
+        row["PERSONINITIALS2"] = nn(p["OWNERINITIALS2"])
+        row["PERSONFIRSTNAME2"] = nn(p["OWNERFORENAMES2"])
+        row["PERSONLASTNAME2"] = nn(p["OWNERSURNAME2"])
+        row["PERSONNAME"] = nn(p["OWNERNAME"])
         row["PERSONADDRESS"] = nn(p["OWNERADDRESS"])
         row["PERSONCITY"] = nn(p["OWNERTOWN"])
         row["PERSONSTATE"] = nn(p["OWNERCOUNTY"])
@@ -1655,6 +1677,31 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row["PERSONWORKPHONE"] = nn(p["WORKTELEPHONE"])
         row["PERSONCELLPHONE"] = nn(p["MOBILETELEPHONE"])
         row["PERSONEMAIL"] = nn(p["EMAILADDRESS"])
+        row["PERSONWORKPHONE2"] = nn(p["WORKTELEPHONE2"])
+        row["PERSONCELLPHONE2"] = nn(p["MOBILETELEPHONE2"])
+        row["PERSONEMAIL2"] = nn(p["EMAILADDRESS2"])
+        row["PERSONGDPRCONTACT"] = nn(p["GDPRCONTACTOPTIN"])
+        row["PERSONCLASS"] = asm3.utils.cint(p["OWNERTYPE"])
+        row["PERSONMEMBER"] = asm3.utils.cint(p["ISMEMBER"])
+        row["PERSONMEMBERSHIPNUMBER"] = nn(p["MEMBERSHIPNUMBER"])
+        row["PERSONMEMBERSHIPEXPIRY"] = gkd(dbo, p, "MEMBERSHIPEXPIRYDATE")
+        row["PERSONMATCHACTIVE"] = asm3.utils.cint(p["ISMEMBER"])
+        row["PERSONMATCHADDED"] = gkd(dbo, p, "MATCHADDED")
+        row["PERSONMATCHEXPIRES"] = gkd(dbo, p, "MATCHEXPIRES")
+        row["PERSONMATCHSEX"] = asm3.utils.cint(p["MATCHSEX"])
+        row["PERSONMATCHSIZE"] = asm3.utils.cint(p["MATCHSIZE"])
+        row["PERSONMATCHCOLOR"] = asm3.utils.cint(p["MATCHCOLOUR"])
+        row["PERSONMATCHAGEFROM"] = asm3.utils.cfloat(p["MATCHAGEFROM"])
+        row["PERSONMATCHAGETO"] = asm3.utils.cfloat(p["MATCHAGETO"])
+        row["PERSONMATCHTYPE"] = asm3.utils.cint(p["MATCHANIMALTYPE"])
+        row["PERSONMATCHSPECIES"] = asm3.utils.cint(p["MATCHSPECIES"])
+        row["PERSONMATCHBREED1"] = asm3.utils.cint(p["MATCHBREED"])
+        row["PERSONMATCHBREED2"] = asm3.utils.cint(p["MATCHBREED2"])
+        row["PERSONMATCHGOODWITHCATS"] = asm3.utils.cint(p["MATCHGOODWITHCATS"])
+        row["PERSONMATCHGOODWITHDOGS"] = asm3.utils.cint(p["MATCHGOODWITHDOGS"])
+        row["PERSONMATCHGOODWITHCHILDREN"] = asm3.utils.cint(p["MATCHGOODWITHCHILDREN"])
+        row["PERSONMATCHHOUSETRAINED"] = asm3.utils.cint(p["MATCHHOUSETRAINED"])
+        row["PERSONMATCHCOMMENTSCONTAIN"] = nn(p["MATCHCOMMENTSCONTAIN"])
         row["PERSONCOMMENTS"] = nn(p["COMMENTS"])
         row["PERSONWARNING"] = nn(p["POPUPWARNING"])
         out.write(tocsv(row))
@@ -1691,6 +1738,15 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
                             row["PERSONHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                         out.write(tocsv(row))
 
+        for n in asm3.diary.get_diaries(dbo, asm3.log.PERSON, p["ID"]):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["DIARYDATE"] = gkd(dbo, n, "DIARYDATETIME")
+            row["DIARYFOR"] = gks(n, "DIARYFORNAME")
+            row["DIARYSUBJECT"] = gks(n, "SUBJECT")
+            row["DIARYNOTE"] = gks(n, "NOTE")
+            out.write(tocsv(row))
+        
         for g in asm3.log.get_logs(dbo, asm3.log.PERSON, p["ID"]):
             row = {}
             row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
@@ -1774,7 +1830,23 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["VOUCHERDATEPRESENTED"] = gkd(dbo, v, "DATEPRESENTED")
             row["VOUCHERDATEEXPIRED"] = gkd(dbo, v, "DATEEXPIRED")
             row["VOUCHERVALUE"] = str(gkc(v, "VALUE"))
-
+            out.write(tocsv(row))
+        
+        for a in dbo.query(asm3.clinic.get_clinic_appointment_query(dbo) + " WHERE ca.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = p["OWNERCODE"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["CLINICAPPOINTMENTFOR"] = nn(a["APPTFOR"])
+            row["CLINICAPPOINTMENTTYPE"] = nn(a["CLINICTYPENAME"])
+            row["CLINICAPPOINTMENTSTATUS"] = nn(a["CLINICSTATUSNAME"])
+            row["CLINICAPPOINTMENTDATETIME"] = nn(a["DATETIME"])
+            row["CLINICARRIVEDDATETIME"] = nn(a["ARRIVEDDATETIME"])
+            row["CLINICWITHVETDATETIME"] = nn(a["WITHVETDATETIME"])
+            row["CLINICCOMPLETEDDATETIME"] = nn(a["COMPLETEDDATETIME"])
+            row["CLINICAPPOINTMENTISVAT"] = nn(a["ISVAT"])
+            row["CLINICAPPOINTMENTVATAMOUNT"] = nn(a["VATAMOUNT"])
+            row["CLINICAPPOINTMENTREASON"] = nn(a["REASONFORAPPOINTMENT"])
+            row["CLINICAPPOINTMENTCOMMENTS"] = nn(a["COMMENTS"])
             out.write(tocsv(row))
 
         del p
