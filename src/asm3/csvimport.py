@@ -1593,7 +1593,12 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
     out = asm3.utils.stringio()
     
     if dataset == "all": q = "SELECT ID FROM owner ORDER BY ID"
-    elif dataset == "flaggedpeople": q = ""
+    elif dataset == "flaggedpeople":
+        q = "SELECT ID FROM owner WHERE "
+        flagargs = []
+        for flag in flags.split(","):
+            flagargs.append("AdditionalFlags LIKE '%" + flag + "|%'")
+        q += (" OR ").join(flagargs)
     elif dataset == "where": q = "SELECT ID FROM owner WHERE %s ORDER BY ID" % where.replace(";", "")
     
     pids = dbo.query(q)

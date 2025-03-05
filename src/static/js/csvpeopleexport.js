@@ -17,7 +17,8 @@ $(function() {
                         options: [ '<option value="all">' + _("All People") + '</option>',
                         '<option value="flaggedpeople">' + _("People with flags") + '</option>',
                         '<option value="where">' + _("Custom WHERE clause") + '</option>' ].join("\n") },
-                    { type: "selectmulti", name: "flags", label: _("Flags") },
+                    { type: "selectmulti", name: "flagselect", label: _("Flags") },
+                    { type: "hidden", name: "flags" },
                     { type: "text", name: "where", label: _("WHERE clause"), 
                         callout: _("Supply a WHERE clause to the animal table. Eg: 'OwnerPostCode LIKE 'S66%''") },
                     { type: "select", name: "media", label: _("Media"), 
@@ -35,21 +36,20 @@ $(function() {
         },
 
         sync: function() {
-            html.person_flag_options(false, controller.flags, $("#flags"));
+            html.person_flag_options(false, controller.flags, $("#flagselect"));
         },
 
         bind: function() {
             $("#button-submit").button().click(function() {
                 $("#csvpeopleform").submit();
             });
-
-            $("#flagsrow, #whererow").hide();
+            $("#flagselectrow, #whererow").hide();
             $("#filter").change(function() {
                 if ($("#filter").select("value") == "flaggedpeople") { 
-                    $("#flagsrow").fadeIn(); 
+                    $("#flagselectrow").fadeIn(); 
                 }
                 else {
-                    $("#flagsrow").fadeOut(); 
+                    $("#flagselectrow").fadeOut(); 
                 }
                 if ($("#filter").select("value") == "where") { 
                     $("#whererow").fadeIn(); 
@@ -57,6 +57,10 @@ $(function() {
                 else {
                     $("#whererow").fadeOut(); 
                 }
+            });
+            $("#flagselect").change(function() {
+                let flagvalues = $("#flagselect").val().join(",");
+                $("#flags").val(flagvalues);
             });
         },
 
