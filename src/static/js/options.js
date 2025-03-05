@@ -675,6 +675,7 @@ $(function() {
                 '<select id="AdoptionCheckoutProcessor" data="AdoptionCheckoutProcessor" class="asm-selectbox">',
                 '<option value=""></option>',
                 '<option value="paypal">' + _("PayPal") + '</option>',
+                '<option value="square">' + _("Square") + '</option>',
                 '<option value="stripe">' + _("Stripe") + '</option>',
                 '<option value="cardcom" class="israel">' + _("Cardcom") + '</option>',
                 '</select>',
