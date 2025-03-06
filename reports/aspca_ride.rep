@@ -72,9 +72,7 @@ c.BaseColour AS "Primary Color.",
     FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
     WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
 	OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$)) AS "DistParvDtGiven",
-    
-'DISTPARVDTGIVEN=Distemper Parvo Hepatitis Adenovirus or FVRCP Products and Dates Given' AS RenameHeader,
-                                               
+                                            
 (SELECT MIN(av.DateOfVaccination) FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
 	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $BORDETELLA$ LIMIT 1) AS "Bordetella Date",
 
@@ -223,7 +221,8 @@ c.BaseColour AS "Secondary Color.",
 '' AS "Medication What Is It Given For",
 '' AS "Medication Date Started",
 '' AS "Medication Projected Date of Completion or Unknown",
-t.Comments AS "General Notes"
+t.Comments AS "General Notes",
+'DISTPARVDTGIVEN=Distemper Parvo Hepatitis Adenovirus or FVRCP Products and Dates Given' AS RenameHeader
                                           
 FROM animaltransport t
 INNER JOIN animal a ON a.ID = t.AnimalID
