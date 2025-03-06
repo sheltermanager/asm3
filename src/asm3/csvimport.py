@@ -39,6 +39,7 @@ VALID_FIELDS = [
     "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+    "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE", "VOUCHERCODE", "VOUCHERCOMMENTS", 
     "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS",
     "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
@@ -314,6 +315,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hascurrentvet = False
     hascurrentvetlastname = False
     hasdiary = False
+    hasvoucher = False
 
     cols = rows[0].keys()
     for col in cols:
@@ -351,6 +353,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col.startswith("DONATION"): hasdonation = True
         if col == "DONATIONAMOUNT": hasdonationamount = True
         if col == "DIARYDATE": hasdiary = True
+        if col.startswith("VOUCHER"): hasvoucher = True
 
     rules = [
         ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
@@ -1163,6 +1166,25 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
+        
+        # Voucher 
+        if hasvoucher and personid != 0 and gkd(dbo, row, "VOUCHERDATEISSUED") != "":
+            v = {}
+            v["person"] = str(personid)
+            v["animal"] = "0"
+            v["type"] = gkl(dbo, row, "VOUCHERNAME", "voucher", "VoucherName", createmissinglookups)
+            v["vouchercode"] = gks(row, "VOUCHERCODE")
+            v["issued"] = gkd(dbo, row, "VOUCHERDATEISSUED")
+            v["expires"] = gkd(dbo, row, "VOUCHERDATEEXPIRED")
+            v["presented"] = gkd(dbo, row, "VOUCHERDATEPRESENTED")
+            v["vet"] = "0"
+            v["amount"] = asm3.utils.cint(row["VOUCHERVALUE"])
+            v["comments"] = gks(row, "VOUCHERCOMMENTS")
+
+            try:
+                asm3.financial.insert_voucher_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+            except Exception as e:
+                row_error(errors, "voucher", rowno, row, e, dbo, sys.exc_info())
 
         rowno += 1
     
@@ -1763,7 +1785,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
         "LOANDATE", "TRAPTYPE", "TRAPNUMBER", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
         "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
-        "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE",
+        "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE", "VOUCHERCODE", "VOUCHERCOMMENTS", 
         "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE",
         "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", 
         "CLINICAPPOINTMENTDATE", "CLINICAPPOINTMENTTIME",     "CLINICARRIVEDDATE", "CLINICARRIVEDTIME", 
@@ -1978,6 +2000,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["VOUCHERDATEPRESENTED"] = asm3.i18n.python2display(l, v["DATEPRESENTED"])
             row["VOUCHERDATEEXPIRED"] = asm3.i18n.python2display(l, v["DATEEXPIRED"])
             row["VOUCHERVALUE"] = asm3.utils.cint(v["VALUE"])
+            row["VOUCHERCODE"] = nn(v["VOUCHERCODE"])
+            row["VOUCHERCOMMENTS"] = nn(v["COMMENTS"])
             out.write(tocsv(row))
         
         for a in dbo.query(asm3.clinic.get_clinic_appointment_query(dbo) + " WHERE ca.OwnerID = " + str(p["ID"])):
