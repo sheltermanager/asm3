@@ -686,122 +686,166 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
 
         # Person data?
         personid = 0
-        if hasperson and (gks(row, "PERSONLASTNAME") != "" or gks(row, "PERSONNAME") != ""):
-            p = {}
-            p["ownercode"] = gks(row, "PERSONCODE")
-            p["ownertype"] = gks(row, "PERSONCLASS")
-            if p["ownertype"] not in ("1", "2", "3"): 
-                p["ownertype"] = "1"
-            if gks(row, "PERSONLASTNAME2") != "":
-                p["ownertype"] = "3"
-            p["title"] = gks(row, "PERSONTITLE")
-            p["title2"] = gks(row, "PERSONTITLE2")
-            p["initials"] = gks(row, "PERSONINITIALS")
-            p["initials2"] = gks(row, "PERSONINITIALS2")
-            p["forenames"] = gks(row, "PERSONFIRSTNAME")
-            p["forenames2"] = gks(row, "PERSONFIRSTNAME2")
-            p["surname"] = gks(row, "PERSONLASTNAME")
-            p["surname2"] = gks(row, "PERSONLASTNAME2")
-            # If we have a person name, all upto the last space is first names,
-            # everything after the last name
-            if gks(row, "PERSONNAME") != "":
-                pname = gks(row, "PERSONNAME")
-                if pname.find(" ") != -1:
-                    p["forenames"] = pname[0:pname.rfind(" ")]
-                    p["surname"] = pname[pname.rfind(" ")+1:]
-                else:
-                    p["surname"] = pname
-            p["dateofbirth"] = gkd(dbo, row, "PERSONDATEOFBIRTH")
-            p["dateofbirth2"] = gkd(dbo, row, "PERSONDATEOFBIRTH2")
-            p["idnumber"] = gks(row, "PERSONIDNUMBER")
-            p["idnumber2"] = gks(row, "PERSONIDNUMBER2")
-            p["address"] = gks(row, "PERSONADDRESS")
-            p["town"] = gks(row, "PERSONCITY")
-            p["county"] = gks(row, "PERSONSTATE")
-            p["postcode"] = gks(row, "PERSONZIPCODE")
-            p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
-            if p["jurisdiction"] == "0":
-                p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
-            p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
-            p["hometelephone2"] = gks(row, "PERSONHOMEPHONE2")
-            p["worktelephone"] = gks(row, "PERSONWORKPHONE")
-            p["worktelephone2"] = gks(row, "PERSONWORKPHONE2")
-            p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
-            p["mobiletelephone2"] = gks(row, "PERSONCELLPHONE2")
-            p["emailaddress"] = gks(row, "PERSONEMAIL")
-            p["emailaddress2"] = gks(row, "PERSONEMAIL2")
-            p["gdprcontactoptin"] = gks(row, "PERSONGDPRCONTACTOPTIN")
-            flags = gks(row, "PERSONFLAGS")
-            if gkb(row, "PERSONFOSTERER"): flags += ",fosterer"
-            if gkb(row, "PERSONMEMBER"): flags += ",member"
-            if gkb(row, "PERSONDONOR"): flags += ",donor"
-            p["flags"] = flags
-            p["comments"] = gks(row, "PERSONCOMMENTS")
-            p["popupwarning"] = gks(row, "PERSONWARNING")
-            p["membershipnumber"] = gks(row, "PERSONMEMBERSHIPNUMBER")
-            p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
-            p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
-            p["fostercapacity"] = gks(row,"PERSONFOSTERCAPACITY")
-            if p["matchactive"] == "1":
-                if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
-                if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
-                if "PERSONMATCHSEX" in cols: p["matchsex"] = gksx(row, "PERSONMATCHSEX")
-                if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
-                if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
-                if "PERSONMATCHAGEFROM" in cols: p["agedfrom"] = gks(row, "PERSONMATCHAGEFROM")
-                if "PERSONMATCHAGETO" in cols: p["agedto"] = gks(row, "PERSONMATCHAGETO")
-                if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
-                if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
-                if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
-                if "PERSONMATCHBREED2" in cols: p["matchbreed2"] = gkbr(dbo, row, "PERSONMATCHBREED2", p["matchspecies"], createmissinglookups)
-                if "PERSONMATCHGOODWITHCATS" in cols: p["matchgoodwithcats"] = gkynu(row, "PERSONMATCHGOODWITHCATS")
-                if "PERSONMATCHGOODWITHDOGS" in cols: p["matchgoodwithdogs"] = gkynu(row, "PERSONMATCHGOODWITHDOGS")
-                if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
-                if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
-                if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
+        if hasperson:
+            if gks(row, "PERSONLASTNAME") != "" or gks(row, "PERSONNAME") != "":
+                p = {}
+                p["ownercode"] = gks(row, "PERSONCODE")
+                p["ownertype"] = gks(row, "PERSONCLASS")
+                if p["ownertype"] not in ("1", "2", "3"): 
+                    p["ownertype"] = "1"
+                if gks(row, "PERSONLASTNAME2") != "":
+                    p["ownertype"] = "3"
+                p["title"] = gks(row, "PERSONTITLE")
+                p["title2"] = gks(row, "PERSONTITLE2")
+                p["initials"] = gks(row, "PERSONINITIALS")
+                p["initials2"] = gks(row, "PERSONINITIALS2")
+                p["forenames"] = gks(row, "PERSONFIRSTNAME")
+                p["forenames2"] = gks(row, "PERSONFIRSTNAME2")
+                p["surname"] = gks(row, "PERSONLASTNAME")
+                p["surname2"] = gks(row, "PERSONLASTNAME2")
+                # If we have a person name, all upto the last space is first names,
+                # everything after the last name
+                if gks(row, "PERSONNAME") != "":
+                    pname = gks(row, "PERSONNAME")
+                    if pname.find(" ") != -1:
+                        p["forenames"] = pname[0:pname.rfind(" ")]
+                        p["surname"] = pname[pname.rfind(" ")+1:]
+                    else:
+                        p["surname"] = pname
+                p["dateofbirth"] = gkd(dbo, row, "PERSONDATEOFBIRTH")
+                p["dateofbirth2"] = gkd(dbo, row, "PERSONDATEOFBIRTH2")
+                p["idnumber"] = gks(row, "PERSONIDNUMBER")
+                p["idnumber2"] = gks(row, "PERSONIDNUMBER2")
+                p["address"] = gks(row, "PERSONADDRESS")
+                p["town"] = gks(row, "PERSONCITY")
+                p["county"] = gks(row, "PERSONSTATE")
+                p["postcode"] = gks(row, "PERSONZIPCODE")
+                p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+                if p["jurisdiction"] == "0":
+                    p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
+                p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
+                p["hometelephone2"] = gks(row, "PERSONHOMEPHONE2")
+                p["worktelephone"] = gks(row, "PERSONWORKPHONE")
+                p["worktelephone2"] = gks(row, "PERSONWORKPHONE2")
+                p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
+                p["mobiletelephone2"] = gks(row, "PERSONCELLPHONE2")
+                p["emailaddress"] = gks(row, "PERSONEMAIL")
+                p["emailaddress2"] = gks(row, "PERSONEMAIL2")
+                p["gdprcontactoptin"] = gks(row, "PERSONGDPRCONTACTOPTIN")
+                flags = gks(row, "PERSONFLAGS")
+                if gkb(row, "PERSONFOSTERER"): flags += ",fosterer"
+                if gkb(row, "PERSONMEMBER"): flags += ",member"
+                if gkb(row, "PERSONDONOR"): flags += ",donor"
+                p["flags"] = flags
+                p["comments"] = gks(row, "PERSONCOMMENTS")
+                p["popupwarning"] = gks(row, "PERSONWARNING")
+                p["membershipnumber"] = gks(row, "PERSONMEMBERSHIPNUMBER")
+                p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
+                p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
+                p["fostercapacity"] = gks(row,"PERSONFOSTERCAPACITY")
+                if p["matchactive"] == "1":
+                    if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
+                    if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
+                    if "PERSONMATCHSEX" in cols: p["matchsex"] = gksx(row, "PERSONMATCHSEX")
+                    if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
+                    if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
+                    if "PERSONMATCHAGEFROM" in cols: p["agedfrom"] = gks(row, "PERSONMATCHAGEFROM")
+                    if "PERSONMATCHAGETO" in cols: p["agedto"] = gks(row, "PERSONMATCHAGETO")
+                    if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
+                    if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
+                    if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
+                    if "PERSONMATCHBREED2" in cols: p["matchbreed2"] = gkbr(dbo, row, "PERSONMATCHBREED2", p["matchspecies"], createmissinglookups)
+                    if "PERSONMATCHGOODWITHCATS" in cols: p["matchgoodwithcats"] = gkynu(row, "PERSONMATCHGOODWITHCATS")
+                    if "PERSONMATCHGOODWITHDOGS" in cols: p["matchgoodwithdogs"] = gkynu(row, "PERSONMATCHGOODWITHDOGS")
+                    if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
+                    if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
+                    if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
+                
+                imagedata = gks(row, "PERSONIMAGE")
+                if imagedata != "":
+                    if imagedata.startswith("http"):
+                        # It's a URL, get the image from the remote server
+                        r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
+                        if r["status"] == 200:
+                            asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
+                            imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
+                        else:
+                            row_error(errors, "person", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
+                            continue
+                    elif imagedata.startswith("data:image"):
+                        # It's a base64 encoded data URI - do nothing as attach_file requires it
+                        pass
+                    else:
+                        # We don't know what it is, don't try and do anything with it
+                        row_error(errors, "person", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
+                        imagedata = ""
+                # pdf data if any was supplied
+                pdfdata = gks(row, "PERSONPDFDATA")
+                pdfname = gks(row, "PERSONPDFNAME")
+                if pdfdata != "":
+                    if pdfdata.startswith("http"):
+                        # It's a URL, get the PDF from the remote server
+                        r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
+                        if r["status"] == 200:
+                            asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
+                            pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+                        else:
+                            row_error(errors, "person", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                            continue
+                    elif pdfdata.startswith("data:"):
+                        # It's a base64 encoded data URI - do nothing as attach_file requires it
+                        pass
+                    else:
+                        # We don't know what it is, don't try and do anything with it
+                        row_error(errors, "person", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
+                        pdfdata = ""
+                    if pdfdata != "" and pdfname == "":
+                        row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
+                        continue
+            elif gks(row, "PERSONCODE") != "":
+                personid = asm3.person.get_person_id_for_code(dbo, row["PERSONCODE"])
+                imagedata = gks(row, "PERSONIMAGE")
+                if imagedata != "":
+                    if imagedata.startswith("http"):
+                        # It's a URL, get the image from the remote server
+                        r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
+                        if r["status"] == 200:
+                            asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
+                            imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
+                        else:
+                            row_error(errors, "person", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
+                            continue
+                    elif imagedata.startswith("data:image"):
+                        # It's a base64 encoded data URI - do nothing as attach_file requires it
+                        pass
+                    else:
+                        # We don't know what it is, don't try and do anything with it
+                        row_error(errors, "person", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
+                        imagedata = ""
+                # pdf data if any was supplied
+                pdfdata = gks(row, "PERSONPDFDATA")
+                pdfname = gks(row, "PERSONPDFNAME")
+                if pdfdata != "":
+                    if pdfdata.startswith("http"):
+                        # It's a URL, get the PDF from the remote server
+                        r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
+                        if r["status"] == 200:
+                            asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
+                            pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+                        else:
+                            row_error(errors, "person", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                            continue
+                    elif pdfdata.startswith("data:"):
+                        # It's a base64 encoded data URI - do nothing as attach_file requires it
+                        pass
+                    else:
+                        # We don't know what it is, don't try and do anything with it
+                        row_error(errors, "person", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
+                        pdfdata = ""
+                    if pdfdata != "" and pdfname == "":
+                        row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
+                        continue
             
-            imagedata = gks(row, "PERSONIMAGE")
-            if imagedata != "":
-                if imagedata.startswith("http"):
-                    # It's a URL, get the image from the remote server
-                    r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
-                    if r["status"] == 200:
-                        asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
-                        imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
-                    else:
-                        row_error(errors, "person", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
-                        continue
-                elif imagedata.startswith("data:image"):
-                    # It's a base64 encoded data URI - do nothing as attach_file requires it
-                    pass
-                else:
-                    # We don't know what it is, don't try and do anything with it
-                    row_error(errors, "person", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
-                    imagedata = ""
-            # pdf data if any was supplied
-            pdfdata = gks(row, "PERSONPDFDATA")
-            pdfname = gks(row, "PERSONPDFNAME")
-            if pdfdata != "":
-                if pdfdata.startswith("http"):
-                    # It's a URL, get the PDF from the remote server
-                    r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
-                    if r["status"] == 200:
-                        asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
-                        pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
-                    else:
-                        row_error(errors, "person", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
-                        continue
-                elif pdfdata.startswith("data:"):
-                    # It's a base64 encoded data URI - do nothing as attach_file requires it
-                    pass
-                else:
-                    # We don't know what it is, don't try and do anything with it
-                    row_error(errors, "person", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
-                    pdfdata = ""
-                if pdfdata != "" and pdfname == "":
-                    row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
-                    continue
-
             try:
                 if checkduplicates:
                     dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
@@ -1770,7 +1814,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["LICENSENUMBER"] = nn(li["LICENCENUMBER"])
             row["ANIMALCODE"] = nn(li["SHELTERCODE"])
             row["LICENSETYPE"] = nn(li["LICENCETYPENAME"])
-            row["LICENSEFEE"] = asm3.utils.cint(li["LICENSEFEE"])
+            row["LICENSEFEE"] = asm3.utils.cint(li["LICENCEFEE"])
             row["LICENSEISSUEDATE"] = asm3.i18n.python2display(l, li["ISSUEDATE"])
             row["LICENSEEXPIRESDATE"] = asm3.i18n.python2display(l, li["EXPIRYDATE"])
             row["LICENSECOMMENTS"] =  nn(li["COMMENTS"])
@@ -1837,7 +1881,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["VOUCHERDATEISSUED"] = asm3.i18n.python2display(l, v["DATEISSUED"])
             row["VOUCHERDATEPRESENTED"] = asm3.i18n.python2display(l, v["DATEPRESENTED"])
             row["VOUCHERDATEEXPIRED"] = asm3.i18n.python2display(l, v["DATEEXPIRED"])
-            row["VOUCHERVALUE"] = asm3.utils.cint(d["VALUE"])
+            row["VOUCHERVALUE"] = asm3.utils.cint(v["VALUE"])
             out.write(tocsv(row))
         
         for a in dbo.query(asm3.clinic.get_clinic_appointment_query(dbo) + " WHERE ca.OwnerID = " + str(p["ID"])):
