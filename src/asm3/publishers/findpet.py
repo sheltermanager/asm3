@@ -184,7 +184,7 @@ class FindPetPublisher(AbstractPublisher):
                 # Success is returned as { "result": { "status": "Passed", details: {transfer_id} } }
                 # Validation/fail returned as { "result": { "status": "Failed", details: "error message" } }
                 # Error codes are supposed to be returned as { "reason": "message", "details": {transfer_id} }
-                if "result" in j and "status" in j["result"] and j["result"]["status"] == "Registered":
+                if "result" in j and "status" in j["result"] and j["result"]["status"] in ("Registered", "Passed"):
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(tranimals)))
                     processed_animals.append(an)
                 elif "result" in j and "status" in j["result"] and j["result"]["status"] == "Failed":
