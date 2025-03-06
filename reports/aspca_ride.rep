@@ -2,7 +2,7 @@ ASPCA Ride Report
 ###
 Transport
 ###
-34202/PostgreSQL rev01
+34202/PostgreSQL rev02
 ###
 Export to CSV for values you can copy into the ASPCA Ride spreadsheet
 ###
@@ -71,7 +71,9 @@ c.BaseColour AS "Primary Color.",
 (SELECT string_agg(vt.VaccinationType ||' '|| to_char(DateOfVaccination, 'MM/DD/YYYY'), ', ' ORDER BY DateOfVaccination)
     FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
     WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
-	OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$)) AS "Distemper Parvo Hepatitis Adenovirus or FVRCP Products and Dates Given",
+	OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$)) AS "DistParvDtGiven",
+    
+'DISTPARVDTGIVEN=Distemper Parvo Hepatitis Adenovirus or FVRCP Products and Dates Given' AS RenameHeader,
                                                
 (SELECT MIN(av.DateOfVaccination) FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
 	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $BORDETELLA$ LIMIT 1) AS "Bordetella Date",
