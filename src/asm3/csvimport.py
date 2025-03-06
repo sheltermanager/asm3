@@ -31,6 +31,7 @@ VALID_FIELDS = [
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALGOODWITHELDERLY", "ANIMALGOODONLEAD",
     "ANIMALHOUSETRAINED", "ANIMALCRATETRAINED", "ANIMALENERGYLEVEL", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
+    "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
     "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
@@ -277,6 +278,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     onevalid = False
     hasanimal = False
     hasanimalname = False
+    hascitation = False
+    hascitationdate = False
     hasmed = False
     hasmedicalname = False
     hasmedicalgivendate = False
@@ -313,6 +316,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col.startswith("ANIMAL"): hasanimal = True
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
+        if col.startswith("CITATION"): hascitation = True
+        if col == "CITATIONDATE": hascitationdate = True
         if col.startswith("CURRENTVET"): hascurrentvet = True
         if col.startswith("CURRENTVETLASTNAME"): hascurrentvetlastname = True
         if col.startswith("VACCINATION"): hasvacc = True
@@ -324,10 +329,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "MEDICALNAME": hasmedicalname = True
         if col.startswith("INCIDENT"): hasincident = True
         if col == "INCIDENTDATE": hasincidentdate = True
-        
         if col.startswith("INVESTIGATION"): hasinvestigation = True
         if col == "INVESTIGATIONDATE": hasinvestigationdate = True
-
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
         if col.startswith("COST"): hascost = True
@@ -957,6 +960,20 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
             except Exception as e:
                 row_error(errors, "incident", rowno, row, e, dbo, sys.exc_info())
+        
+        # Citation
+        if hascitation and personid != 0 and gks(row, "CITATIONDATE") != "":
+            c = {}
+            c["person"] = str(personid)
+            c["incident"] = "0"
+            c["type"] = gkl(dbo, row, "CITATIONTYPE", "citationtype", "CitationName", createmissinglookups)
+            c["citationnumber"] = gks(row, "CITATIONNUMBER")
+            c["citationdate"] = gkd(dbo, row, "CITATIONDATE")
+            c["fineamount"] = str(gkc(row, "FINEAMOUNT"))
+            c["finedue"] = gkd(dbo, row, "FINEDUEDATE")
+            c["finepaid"] = gkd(dbo, row, "FINEPAIDDATE")
+            c["comments"] = gks(row, "CITATIONCOMMENTS")
+            asm3.financial.insert_citation_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
         
         # Diary note
         if hasdiary:
@@ -1689,7 +1706,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "ANIMALCODE", "ANIMALNAME", 
         "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
         "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
-        "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
+        "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
         "LOANDATE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
         "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
         "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE",
@@ -1849,6 +1866,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         for c in dbo.query(asm3.financial.get_citation_query(dbo) + " WHERE oc.OwnerID = " + str(p["ID"])):
             row = {}
             row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["CITATIONDATE"] = asm3.i18n.python2display(l, c["CITATIONDATE"])
             row["CITATIONNUMBER"] = nn(c["CITATIONNUMBER"])
             row["CITATIONTYPE"] =  nn(c["CITATIONNAME"])
             row["FINEAMOUNT"] =  asm3.utils.cint(c["FINEAMOUNT"])
