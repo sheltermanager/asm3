@@ -31,6 +31,10 @@ VALID_FIELDS = [
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALGOODWITHELDERLY", "ANIMALGOODONLEAD",
     "ANIMALHOUSETRAINED", "ANIMALCRATETRAINED", "ANIMALENERGYLEVEL", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
+    "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", 
+    "CLINICAPPOINTMENTDATE", "CLINICAPPOINTMENTTIME", "CLINICARRIVEDDATE", "CLINICARRIVEDTIME", 
+    "CLINICWITHVETDATE", "CLINICWITHVETTIME", "CLINICCOMPLETEDDATE", "CLINICCOMPLETEDDATE", 
+    "CLINICAPPOINTMENTISVAT", "CLINICAPPOINTMENTVATRATE", "CLINICAPPOINTMENTVATAMOUNT", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTCOMMENTS", "CLINICAMOUNT", 
     "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
     "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
@@ -280,6 +284,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasanimal = False
     hasanimalname = False
     hascitation = False
+    hasclinic = False
     hasequipmentloan = False
     hasmed = False
     hasmedicalname = False
@@ -317,6 +322,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
         if col.startswith("CITATION"): hascitation = True
+        if col.startswith("CLINIC"): hasclinic = True
         if col.startswith("CURRENTVET"): hascurrentvet = True
         if col.startswith("CURRENTVETLASTNAME"): hascurrentvetlastname = True
         if col.startswith("LOANDATE"): hasequipmentloan = True
@@ -973,6 +979,40 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             c["finepaid"] = gkd(dbo, row, "FINEPAIDDATE")
             c["comments"] = gks(row, "CITATIONCOMMENTS")
             asm3.financial.insert_citation_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+        
+        # Clinic appointments
+        if hasclinic and personid != 0 and gkd(dbo, row, "CLINICAPPOINTMENTDATE") != "":
+            c = {}
+            c["animal"] = "0"
+            c["person"] = str(personid)
+            c["type"] = gkl(dbo, row, "CLINICAPPOINTMENTTYPE", "lkclinictype", "ClinicTypeName", createmissinglookups)
+            c["for"] = gks(row, "CLINICAPPOINTMENTFOR")
+            c["apptdate"] = gkd(dbo, row, "CLINICAPPOINTMENTDATE")
+            c["appttime"] = gks(row, "CLINICAPPOINTMENTTIME")
+
+            c["status"] = asm3.utils.cint(row["CLINICAPPOINTMENTSTATUS"])
+
+            c["arriveddate"] = gkd(dbo, row, "CLINICARRIVEDDATE")
+            c["arrivedtime"] = gks(row, "CLINICARRIVEDTIME")
+
+            c["withvetdate"] = gkd(dbo, row, "CLINICWITHVETDATE")
+            c["withvettime"] = gks(row, "CLINICWITHVETTIME")
+
+            c["completedate"] = gkd(dbo, row, "CLINICCOMPLETEDDATE")
+            c["completetime"] = gks(row, "CLINICCOMPLETEDDATE")
+
+            c["reason"] = gks(row, "CLINICAPPOINTMENTREASON")
+            c["comments"] = gks(row, "CLINICAPPOINTMENTCOMMENTS")
+            c["amount"] = asm3.utils.cint(row["CLINICAMOUNT"])
+
+            c["vat"] = asm3.utils.cint(row["CLINICAPPOINTMENTISVAT"])
+
+            c["vatrate"] = asm3.utils.cfloat(row["CLINICAPPOINTMENTVATRATE"])
+
+            c["vatamount"] = asm3.utils.cint(row["CLINICAPPOINTMENTVATAMOUNT"])
+
+
+            asm3.clinic.insert_appointment_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
         
         # Diary note
         if hasdiary:
@@ -1725,7 +1765,10 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
         "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE",
         "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE",
-        "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", "CLINICAPPOINTMENTDATETIME", "CLINICARRIVEDDATETIME", "CLINICWITHVETDATETIME", "CLINICCOMPLETEDDATETIME", "CLINICAPPOINTMENTISVAT", "CLINICAPPOINTMENTVATAMOUNT", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTREASON",
+        "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", 
+        "CLINICAPPOINTMENTDATE", "CLINICAPPOINTMENTTIME",     "CLINICARRIVEDDATE", "CLINICARRIVEDTIME", 
+        "CLINICWITHVETDATE", "CLINICWITHVETTIME", "CLINICCOMPLETEDDATE", "CLINICCOMPLETEDDATE", 
+        "CLINICAPPOINTMENTISVAT", "CLINICAPPOINTMENTVATRATE", "CLINICAPPOINTMENTVATAMOUNT", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTCOMMENTS", "CLINICAMOUNT", 
         "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE" ]
     
     def tocsv(row: Dict) -> str:
@@ -1944,14 +1987,26 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["CLINICAPPOINTMENTFOR"] = nn(a["APPTFOR"])
             row["CLINICAPPOINTMENTTYPE"] = nn(a["CLINICTYPENAME"])
             row["CLINICAPPOINTMENTSTATUS"] = nn(a["CLINICSTATUSNAME"])
-            row["CLINICAPPOINTMENTDATETIME"] = asm3.i18n.python2display(l, a["DATETIME"])
-            row["CLINICARRIVEDDATETIME"] = asm3.i18n.python2display(l, a["ARRIVEDDATETIME"])
-            row["CLINICWITHVETDATETIME"] = asm3.i18n.python2display(l, a["WITHVETDATETIME"])
-            row["CLINICCOMPLETEDDATETIME"] = asm3.i18n.python2display(l, a["COMPLETEDDATETIME"])
+
+            row["CLINICAPPOINTMENTDATE"] = asm3.i18n.python2display(l, a["DATETIME"])
+            row["CLINICAPPOINTMENTTIME"] = asm3.i18n.format_time(a["DATETIME"])
+
+            row["CLINICARRIVEDDATE"] = asm3.i18n.python2display(l, a["ARRIVEDDATETIME"])
+            row["CLINICARRIVEDTIME"] = asm3.i18n.format_time(a["ARRIVEDDATETIME"])
+
+            row["CLINICWITHVETDATE"] = asm3.i18n.python2display(l, a["WITHVETDATETIME"])
+            row["CLINICWITHVETTIME"] = asm3.i18n.format_time(a["WITHVETDATETIME"])
+
+            row["CLINICCOMPLETEDDATE"] = asm3.i18n.python2display(l, a["COMPLETEDDATETIME"])
+            row["CLINICCOMPLETEDTIME"] = asm3.i18n.format_time(a["COMPLETEDDATETIME"])
+
             row["CLINICAPPOINTMENTISVAT"] = asm3.utils.cint(a["ISVAT"])
+            row["CLINICAPPOINTMENTVATRATE"] = asm3.utils.cfloat(a["VATRATE"])
             row["CLINICAPPOINTMENTVATAMOUNT"] = asm3.utils.cfloat(a["VATAMOUNT"])
             row["CLINICAPPOINTMENTREASON"] = nn(a["REASONFORAPPOINTMENT"])
             row["CLINICAPPOINTMENTCOMMENTS"] = nn(a["COMMENTS"])
+
+            row["CLINICAMOUNT"] = nn(a["AMOUNT"])
             out.write(tocsv(row))
 
         del p
