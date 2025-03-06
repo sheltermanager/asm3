@@ -45,7 +45,7 @@ VALID_FIELDS = [
     "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
-    "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
+    "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
     "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONTITLE2", "PERSONINITIALS2", "PERSONFIRSTNAME2", "PERSONLASTNAME2",
@@ -688,6 +688,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         personid = 0
         if hasperson and (gks(row, "PERSONLASTNAME") != "" or gks(row, "PERSONNAME") != ""):
             p = {}
+            p["ownercode"] = gks(row, "PERSONCODE")
             p["ownertype"] = gks(row, "PERSONCLASS")
             if p["ownertype"] not in ("1", "2", "3"): 
                 p["ownertype"] = "1"
@@ -914,7 +915,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["subject"] = gks(row, "DIARYSUBJECT")
             d["note"] = gks(row, "DIARYNOTE")
 
-            if animalid != 0:
+            if d["diarydate"] == "":
+                pass
+            elif animalid != 0:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMAL, animalid, asm3.utils.PostedData(d, dbo.locale))
             elif incidentid != 0:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMALCONTROL, incidentid, asm3.utils.PostedData(d, dbo.locale))
@@ -1662,10 +1665,10 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         p = p[0]
         asm3.asynctask.increment_progress_value(dbo)
 
-        row["PERSONCODE"] = gks(p, "OWNERCODE")
-        row["PERSONDATEOFBIRTH"] = gkd(dbo, p, "DATEOFBIRTH")
-        row["PERSONDATEOFBIRTH2"] = gkd(dbo, p, "DATEOFBIRTH2")
-        row["PERSONTITLE"] = p["OWNERTITLE"]
+        row["PERSONCODE"] = nn(p["OWNERCODE"])
+        row["PERSONDATEOFBIRTH"] = asm3.i18n.python2display(l, nn(p["DATEOFBIRTH"]))
+        row["PERSONDATEOFBIRTH2"] = asm3.i18n.python2display(l, nn(p["DATEOFBIRTH2"]))
+        row["PERSONTITLE"] = nn(p["OWNERTITLE"])
         row["PERSONINITIALS"] = nn(p["OWNERINITIALS"])
         row["PERSONFIRSTNAME"] = nn(p["OWNERFORENAMES"])
         row["PERSONLASTNAME"] = nn(p["OWNERSURNAME"])
@@ -1689,10 +1692,10 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row["PERSONCLASS"] = asm3.utils.cint(p["OWNERTYPE"])
         row["PERSONMEMBER"] = asm3.utils.cint(p["ISMEMBER"])
         row["PERSONMEMBERSHIPNUMBER"] = nn(p["MEMBERSHIPNUMBER"])
-        row["PERSONMEMBERSHIPEXPIRY"] = gkd(dbo, p, "MEMBERSHIPEXPIRYDATE")
+        row["PERSONMEMBERSHIPEXPIRY"] = asm3.i18n.python2display(l, p["MEMBERSHIPEXPIRYDATE"])
         row["PERSONMATCHACTIVE"] = asm3.utils.cint(p["ISMEMBER"])
-        row["PERSONMATCHADDED"] = gkd(dbo, p, "MATCHADDED")
-        row["PERSONMATCHEXPIRES"] = gkd(dbo, p, "MATCHEXPIRES")
+        row["PERSONMATCHADDED"] = asm3.i18n.python2display(l, p["MATCHADDED"])
+        row["PERSONMATCHEXPIRES"] = asm3.i18n.python2display(l, p["MATCHEXPIRES"])
         row["PERSONMATCHSEX"] = asm3.utils.cint(p["MATCHSEX"])
         row["PERSONMATCHSIZE"] = asm3.utils.cint(p["MATCHSIZE"])
         row["PERSONMATCHCOLOR"] = asm3.utils.cint(p["MATCHCOLOUR"])
@@ -1745,111 +1748,111 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
 
         for n in asm3.diary.get_diaries(dbo, asm3.log.PERSON, p["ID"]):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
-            row["DIARYDATE"] = gkd(dbo, n, "DIARYDATETIME")
-            row["DIARYFOR"] = gks(n, "DIARYFORNAME")
-            row["DIARYSUBJECT"] = gks(n, "SUBJECT")
-            row["DIARYNOTE"] = gks(n, "NOTE")
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["DIARYDATE"] = asm3.i18n.python2display(l, n["DIARYDATETIME"])
+            row["DIARYFOR"] = nn(n["DIARYFORNAME"])
+            row["DIARYSUBJECT"] = nn(n["SUBJECT"])
+            row["DIARYNOTE"] = nn(n["NOTE"])
             out.write(tocsv(row))
         
         for g in asm3.log.get_logs(dbo, asm3.log.PERSON, p["ID"]):
             row = {}
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
             row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
             row["LOGTIME"] = asm3.i18n.format_time(g["DATE"])
-            row["LOGTYPE"] = g["LOGTYPENAME"]
-            row["LOGCOMMENTS"] = g["COMMENTS"]
-            row["PERSONCODE"] = p["OWNERCODE"]
+            row["LOGTYPE"] = nn(g["LOGTYPENAME"])
+            row["LOGCOMMENTS"] = nn(g["COMMENTS"])
             out.write(tocsv(row))
         
-        for l in dbo.query(asm3.financial.get_licence_query(dbo) + " WHERE ol.OwnerID = " + str(p["ID"])):
+        for li in dbo.query(asm3.financial.get_licence_query(dbo) + " WHERE ol.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
-            row["LICENSENUMBER"] = l["LICENCENUMBER"]
-            row["ANIMALCODE"] = l["SHELTERCODE"]
-            row["LICENSETYPE"] = l["LICENCETYPENAME"]
-            row["LICENSEFEE"] = str(gkc(l, "LICENSEFEE"))
-            row["LICENSEISSUEDATE"] = gkd(dbo, l, "ISSUEDATE")
-            row["LICENSEEXPIRESDATE"] = gkd(dbo, l, "EXPIRYDATE")
-            row["LICENSECOMMENTS"] =  gks(l, "COMMENTS")
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["LICENSENUMBER"] = nn(li["LICENCENUMBER"])
+            row["ANIMALCODE"] = nn(li["SHELTERCODE"])
+            row["LICENSETYPE"] = nn(li["LICENCETYPENAME"])
+            row["LICENSEFEE"] = asm3.utils.cint(li["LICENSEFEE"])
+            row["LICENSEISSUEDATE"] = asm3.i18n.python2display(l, li["ISSUEDATE"])
+            row["LICENSEEXPIRESDATE"] = asm3.i18n.python2display(l, li["EXPIRYDATE"])
+            row["LICENSECOMMENTS"] =  nn(li["COMMENTS"])
             out.write(tocsv(row))
         
         for i in asm3.person.get_investigation(dbo, p["ID"]):
             row = {}
             row["PERSONCODE"] = p["OWNERCODE"]
-            row["INVESTIGATIONDATE"] = gkd(dbo, i, "DATE")
-            row["INVESTIGATIONNOTES"] =  gks(i, "NOTES")
+            row["INVESTIGATIONDATE"] = asm3.i18n.python2display(l, i["DATE"])
+            row["INVESTIGATIONNOTES"] =  nn(i["NOTES"])
             out.write(tocsv(row))
         
         for c in dbo.query(asm3.financial.get_citation_query(dbo) + " WHERE oc.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
-            row["CITATIONNUMBER"] = gks(c, "CITATIONNUMBER")
-            row["CITATIONTYPE"] =  gks(c, "CITATIONNAME")
-            row["FINEAMOUNT"] =  str(gkc(c, "FINEAMOUNT"))
-            row["FINEDUEDATE"] =  gkd(dbo, c, "FINEDUEDATE")
-            row["FINEPAIDDATE"] =  gkd(dbo, c, "FINEPAIDDATE")
-            row["CITATIONCOMMENTS"] = gks(c, "COMMENTS")
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["CITATIONNUMBER"] = nn(c["CITATIONNUMBER"])
+            row["CITATIONTYPE"] =  nn(c["CITATIONNAME"])
+            row["FINEAMOUNT"] =  asm3.utils.cint(c["FINEAMOUNT"])
+            row["FINEDUEDATE"] =  asm3.i18n.python2display(l, c["FINEDUEDATE"])
+            row["FINEPAIDDATE"] =  asm3.i18n.python2display(l, c["FINEPAIDDATE"])
+            row["CITATIONCOMMENTS"] = nn(c["COMMENTS"])
             out.write(tocsv(row))
         
         for t in dbo.query(asm3.animalcontrol.get_traploan_query(dbo) + " WHERE ot.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
-            row["LOANDATE"] = gkd(dbo, t, "LOANDATE")
-            row["DEPOSITAMOUNT"] = str(gkc(t, "DEPOSITAMOUNT"))
-            row["DEPOSITRETURNDATE"] = gkd(dbo, t, "DEPOSITRETURNDATE")
-            row["RETURNDUEDATE"] = gkd(dbo, t, "RETURNDUEDATE")
-            row["RETURNDATE"] = gkd(dbo, t, "RETURNDATE")
-            row["TRAPLOANCOMMENTS"] = gks(t, "COMMENTS")
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["LOANDATE"] = asm3.i18n.python2display(l, t["LOANDATE"])
+            row["DEPOSITAMOUNT"] = asm3.utils.cint(t["DEPOSITAMOUNT"])
+            row["DEPOSITRETURNDATE"] = asm3.i18n.python2display(l, t["DEPOSITRETURNDATE"])
+            row["RETURNDUEDATE"] = asm3.i18n.python2display(l, t["RETURNDUEDATE"])
+            row["RETURNDATE"] = asm3.i18n.python2display(l, t["RETURNDATE"])
+            row["TRAPLOANCOMMENTS"] = nn(t["COMMENTS"])
             out.write(tocsv(row))
         
         for d in dbo.query(asm3.financial.get_donation_query(dbo) + " WHERE od.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
-            row["DONATIONNAME"] = gks(d, "DONATIONNAME")
-            row["DONATIONDATE"] = gkd(dbo, d, "DATE")
-            row["DONATIONAMOUNT"] = str(gkc(d, "DONATION"))
-            row["PAYMENTNAME"] = gks(d, "PAYMENTNAME")
-            row["PAYMENTISGIFTAID"] = gks(d, "ISGIFTAIDNAME")
-            row["PAYMENTFREQUENCY"] = gks(d, "FREQUENCYNAME")
-            row["PAYMENTRECEIPTNUMBER"] = gks(d, "RECEIPTNUMBER")
-            row["PAYMENTCHEQUENUMBER"] = gks(d, "CHEQUENUMBER")
-            row["PAYMENTFEE"] = str(gkc(d, "FEE"))
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["DONATIONNAME"] = nn(d["DONATIONNAME"])
+            row["DONATIONDATE"] = asm3.i18n.python2display(l, d["DATE"])
+            row["DONATIONAMOUNT"] = asm3.utils.cint(d["DONATION"])
+            row["PAYMENTNAME"] = nn(d["PAYMENTNAME"])
+            row["PAYMENTISGIFTAID"] = nn(d["ISGIFTAIDNAME"])
+            row["PAYMENTFREQUENCY"] = nn(d["FREQUENCYNAME"])
+            row["PAYMENTRECEIPTNUMBER"] = nn(d["RECEIPTNUMBER"])
+            row["PAYMENTCHEQUENUMBER"] = nn(d["CHEQUENUMBER"])
+            row["PAYMENTFEE"] = asm3.utils.cint(d["FEE"])
             row["PAYMENTISVAT"] = asm3.utils.cint(d["ISVAT"])
             row["PAYMENTVATRATE"] = asm3.utils.cfloat(d["VATRATE"])
-            row["PAYMENTVATAMOUNT"] = str(gkc(d, "VATAMOUNT"))
-            row["PAYMENTCOMMENTS"] = gks(d, "COMMENTS")
+            row["PAYMENTVATAMOUNT"] = asm3.utils.cint(d["VATAMOUNT"])
+            row["PAYMENTCOMMENTS"] = nn(d["COMMENTS"])
             out.write(tocsv(row))
         
         for v in dbo.query(asm3.financial.get_voucher_query(dbo) + " WHERE ov.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
-            row["ANIMALCODE"] = gks(v, "SHELTERCODE")
-            row["ANIMALNAME"] = gks(v, "ANIMALNAME")
-            row["VOUCHERNAME"] = gks(v, "VOUCHERNAME")
-            row["VOUCHERVETNAME"] = gks(v, "VETNAME")
-            row["VOUCHERVETADDRESS"] = gks(v, "VETADDRESS")
-            row["VOUCHERVETTOWN"] = gks(v, "VETTOWN")
-            row["VOUCHERVETCOUNTY"] = gks(v, "VETCOUNTY")
-            row["VOUCHERVETPOSTCODE"] = gks(v, "VETPOSTCODE")
-            row["VOUCHERDATEISSUED"] = gkd(dbo, v, "DATEISSUED")
-            row["VOUCHERDATEPRESENTED"] = gkd(dbo, v, "DATEPRESENTED")
-            row["VOUCHERDATEEXPIRED"] = gkd(dbo, v, "DATEEXPIRED")
-            row["VOUCHERVALUE"] = str(gkc(v, "VALUE"))
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["ANIMALCODE"] = nn(v["SHELTERCODE"])
+            row["ANIMALNAME"] = nn(v["ANIMALNAME"])
+            row["VOUCHERNAME"] = nn(v["VOUCHERNAME"])
+            row["VOUCHERVETNAME"] = nn(v["VETNAME"])
+            row["VOUCHERVETADDRESS"] = nn(v["VETADDRESS"])
+            row["VOUCHERVETTOWN"] = nn(v["VETTOWN"])
+            row["VOUCHERVETCOUNTY"] = nn(v["VETCOUNTY"])
+            row["VOUCHERVETPOSTCODE"] = nn(v["VETPOSTCODE"])
+            row["VOUCHERDATEISSUED"] = asm3.i18n.python2display(l, v["DATEISSUED"])
+            row["VOUCHERDATEPRESENTED"] = asm3.i18n.python2display(l, v["DATEPRESENTED"])
+            row["VOUCHERDATEEXPIRED"] = asm3.i18n.python2display(l, v["DATEEXPIRED"])
+            row["VOUCHERVALUE"] = asm3.utils.cint(d["VALUE"])
             out.write(tocsv(row))
         
         for a in dbo.query(asm3.clinic.get_clinic_appointment_query(dbo) + " WHERE ca.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
-            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["ANIMALCODE"] = nn(a["SHELTERCODE"])
             row["CLINICAPPOINTMENTFOR"] = nn(a["APPTFOR"])
             row["CLINICAPPOINTMENTTYPE"] = nn(a["CLINICTYPENAME"])
             row["CLINICAPPOINTMENTSTATUS"] = nn(a["CLINICSTATUSNAME"])
-            row["CLINICAPPOINTMENTDATETIME"] = nn(a["DATETIME"])
-            row["CLINICARRIVEDDATETIME"] = nn(a["ARRIVEDDATETIME"])
-            row["CLINICWITHVETDATETIME"] = nn(a["WITHVETDATETIME"])
-            row["CLINICCOMPLETEDDATETIME"] = nn(a["COMPLETEDDATETIME"])
-            row["CLINICAPPOINTMENTISVAT"] = nn(a["ISVAT"])
-            row["CLINICAPPOINTMENTVATAMOUNT"] = nn(a["VATAMOUNT"])
+            row["CLINICAPPOINTMENTDATETIME"] = asm3.i18n.python2display(l, a["DATETIME"])
+            row["CLINICARRIVEDDATETIME"] = asm3.i18n.python2display(l, a["ARRIVEDDATETIME"])
+            row["CLINICWITHVETDATETIME"] = asm3.i18n.python2display(l, a["WITHVETDATETIME"])
+            row["CLINICCOMPLETEDDATETIME"] = asm3.i18n.python2display(l, a["COMPLETEDDATETIME"])
+            row["CLINICAPPOINTMENTISVAT"] = asm3.utils.cint(a["ISVAT"])
+            row["CLINICAPPOINTMENTVATAMOUNT"] = asm3.utils.cfloat(a["VATAMOUNT"])
             row["CLINICAPPOINTMENTREASON"] = nn(a["REASONFORAPPOINTMENT"])
             row["CLINICAPPOINTMENTCOMMENTS"] = nn(a["COMMENTS"])
             out.write(tocsv(row))
