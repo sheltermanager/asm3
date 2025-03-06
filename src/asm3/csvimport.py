@@ -46,6 +46,7 @@ VALID_FIELDS = [
     "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
     "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
+    "LOANDATE", "TRAPNUMBER", "TRAPTYPE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
     "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
     "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
     "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
@@ -279,7 +280,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasanimal = False
     hasanimalname = False
     hascitation = False
-    hascitationdate = False
+    hasequipmentloan = False
     hasmed = False
     hasmedicalname = False
     hasmedicalgivendate = False
@@ -290,7 +291,6 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasincident = False
     hasincidentdate = False
     hasinvestigation = False
-    hasinvestigationdate = False
     hasperson = False
     haspersonlastname = False
     haspersonname = False
@@ -317,9 +317,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
         if col.startswith("CITATION"): hascitation = True
-        if col == "CITATIONDATE": hascitationdate = True
         if col.startswith("CURRENTVET"): hascurrentvet = True
         if col.startswith("CURRENTVETLASTNAME"): hascurrentvetlastname = True
+        if col.startswith("LOANDATE"): hasequipmentloan = True
         if col.startswith("VACCINATION"): hasvacc = True
         if col == "VACCINATIONDUEDATE": hasvaccduedate = True
         if col.startswith("TEST"): hastest = True
@@ -330,7 +330,6 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col.startswith("INCIDENT"): hasincident = True
         if col == "INCIDENTDATE": hasincidentdate = True
         if col.startswith("INVESTIGATION"): hasinvestigation = True
-        if col == "INVESTIGATIONDATE": hasinvestigationdate = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
         if col.startswith("COST"): hascost = True
@@ -962,7 +961,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 row_error(errors, "incident", rowno, row, e, dbo, sys.exc_info())
         
         # Citation
-        if hascitation and personid != 0 and gks(row, "CITATIONDATE") != "":
+        if hascitation and personid != 0 and gkd(dbo, row, "CITATIONDATE") != "":
             c = {}
             c["person"] = str(personid)
             c["incident"] = "0"
@@ -991,6 +990,21 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMALCONTROL, incidentid, asm3.utils.PostedData(d, dbo.locale))
             else:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.PERSON, personid, asm3.utils.PostedData(d, dbo.locale))
+
+        # Equipment loans
+        if hasequipmentloan and personid != 0 and gkd(dbo, row, "LOANDATE") != "":
+            t = {}
+            t["person"] = str(personid)
+            t["type"] = gkl(dbo, row, "TRAPTYPE", "traptype", "TrapTypeName", createmissinglookups)
+            t["loandate"] = gkd(dbo, row, "LOANDATE")
+            t["depositamount"] = str(gkc(row, "DEPOSITAMOUNT"))
+            t["depositreturndate"] = gkd(dbo, row, "DEPOSITRETURNDATE")
+            t["trapnumber"] = gks(row, "TRAPNUMBER")
+            t["returnduedate"] = gkd(dbo, row, "RETURNDUEDATE")
+            t["returndate"] = gkd(dbo, row, "RETURNDATE")
+            t["comments"] = gks(row, "TRAPLOANCOMMENTS")
+
+            asm3.animalcontrol.insert_traploan_from_form(dbo, user, asm3.utils.PostedData(t, dbo.locale))
 
         # Vaccination
         if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
@@ -1707,7 +1721,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
         "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
         "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
-        "LOANDATE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
+        "LOANDATE", "TRAPTYPE", "TRAPNUMBER", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
         "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
         "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE",
         "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE",
@@ -1878,6 +1892,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         for t in dbo.query(asm3.animalcontrol.get_traploan_query(dbo) + " WHERE ot.OwnerID = " + str(p["ID"])):
             row = {}
             row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["TRAPTYPE"] = nn(t["TRAPTYPENAME"])
+            row["TRAPNUMBER"] = nn(t["TRAPNUMBER"])
             row["LOANDATE"] = asm3.i18n.python2display(l, t["LOANDATE"])
             row["DEPOSITAMOUNT"] = asm3.utils.cint(t["DEPOSITAMOUNT"])
             row["DEPOSITRETURNDATE"] = asm3.i18n.python2display(l, t["DEPOSITRETURNDATE"])
