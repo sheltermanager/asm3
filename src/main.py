@@ -6841,6 +6841,7 @@ class report_export_csv(ASMEndpoint):
             renameheader = rows[0].RENAMEHEADER
         self.content_type("text/csv")
         self.content_disposition("attachment", title, "csv", "report.csv")
+        cols = [ c for c in cols if c not in ( "TITLECASEHEADER", "LOWERCASEHEADER", "RENAMEHEADER" ) ]
         return asm3.utils.csv_generator(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_email(ASMEndpoint):
@@ -6886,6 +6887,7 @@ class report_export_excel(ASMEndpoint):
             renameheader = rows[0].RENAMEHEADER
         self.content_type("application/vnd.ms-excel")
         self.content_disposition("attachment", title, "xlsx", "report.xlsx")
+        cols = [ c for c in cols if c not in ( "TITLECASEHEADER", "LOWERCASEHEADER", "RENAMEHEADER" ) ]
         return asm3.utils.excel(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_pdf(ASMEndpoint):
