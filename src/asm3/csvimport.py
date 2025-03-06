@@ -43,6 +43,7 @@ VALID_FIELDS = [
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", "DONATIONGIFTAID",
     "INCIDENTDATE", "INCIDENTTIME", "INCIDENTTYPE", "INCIDENTNOTES", "DISPATCHADDRESS", "DISPATCHCITY", "DISPATCHSTATE", "DISPATCHZIPCODE", "DISPATCHACO", "DISPATCHDATE", "DISPATCHTIME", "INCIDENTRESPONDEDDATE", "INCIDENTFOLLOWUPDATE", "INCIDENTCOMPLETEDDATE", "INCIDENTCOMPLETEDTIME", "INCIDENTCOMPLETEDTYPE"
     "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
+    "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
     "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
@@ -285,6 +286,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasvaccduedate = False
     hasincident = False
     hasincidentdate = False
+    hasinvestigation = False
+    hasinvestigationdate = False
     hasperson = False
     haspersonlastname = False
     haspersonname = False
@@ -321,6 +324,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "MEDICALNAME": hasmedicalname = True
         if col.startswith("INCIDENT"): hasincident = True
         if col == "INCIDENTDATE": hasincidentdate = True
+        
+        if col.startswith("INVESTIGATION"): hasinvestigation = True
+        if col == "INVESTIGATIONDATE": hasinvestigationdate = True
+
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
         if col.startswith("COST"): hascost = True
@@ -1029,6 +1036,17 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             except Exception as e:
                 row_error(errors, "cost", rowno, row, e, dbo, sys.exc_info())
 
+        # Investigation
+        if hasinvestigation and personid != 0 and gks(row, "INVESTIGATIONNOTES") != "":
+            i = {}
+            i["personid"] = str(personid)
+            i["date"] = gkd(dbo, row, "INVESTIGATIONDATE", True)
+            i["notes"] = gks(row, "INVESTIGATIONNOTES")
+            try:
+                asm3.person.insert_investigation_from_form(dbo, user, asm3.utils.PostedData(i, dbo.locale))
+            except Exception as e:
+                row_error(errors, "investigation", rowno, row, e, dbo, sys.exc_info())
+        
         # Logs
         if haslog and animalid != 0 and gks(row, "LOGCOMMENTS") != "":
             l = {}
