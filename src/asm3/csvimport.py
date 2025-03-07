@@ -1791,7 +1791,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         p = p[0]
         asm3.asynctask.increment_progress_value(dbo)
 
-        row["PERSONCODE"] = nn(p["OWNERCODE"])
+        row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
         row["PERSONDATEOFBIRTH"] = asm3.i18n.python2display(l, nn(p["DATEOFBIRTH"]))
         row["PERSONDATEOFBIRTH2"] = asm3.i18n.python2display(l, nn(p["DATEOFBIRTH2"]))
         row["PERSONTITLE"] = nn(p["OWNERTITLE"])
@@ -1851,14 +1851,14 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
                 for m in media:
                     if m["MEDIANAME"].endswith(".jpg"):
                         row = {}
-                        row["PERSONCODE"] = p["OWNERCODE"]
+                        row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
                         row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                         out.write(tocsv(row))
             elif includemedia == "all":
                 for m in asm3.media.get_media(dbo, asm3.media.PERSON, p["ID"]):
                     if m["MEDIANAME"].endswith(".jpg") or m["MEDIANAME"].endswith(".pdf") or m["MEDIANAME"].endswith(".html"):
                         row = {}
-                        row["PERSONCODE"] = p["OWNERCODE"]
+                        row["PERSONCODE"] ="XP-" + nn(p["OWNERCODE"])
                         if m["MEDIANAME"].endswith(".jpg"):
                             row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                         elif m["MEDIANAME"].endswith(".pdf"):
@@ -1873,7 +1873,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
 
         for n in asm3.diary.get_diaries(dbo, asm3.diary.PERSON, p["ID"]):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["DIARYDATE"] = asm3.i18n.python2display(l, n["DIARYDATETIME"])
             row["DIARYFOR"] = nn(n["DIARYFORNAME"])
             row["DIARYSUBJECT"] = nn(n["SUBJECT"])
@@ -1882,7 +1882,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         
         for g in asm3.log.get_logs(dbo, asm3.log.PERSON, p["ID"]):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
             row["LOGTIME"] = asm3.i18n.format_time(g["DATE"])
             row["LOGTYPE"] = nn(g["LOGTYPENAME"])
@@ -1891,7 +1891,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         
         for li in dbo.query(asm3.financial.get_licence_query(dbo) + " WHERE ol.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["LICENSENUMBER"] = nn(li["LICENCENUMBER"])
             row["ANIMALCODE"] = nn(li["SHELTERCODE"])
             row["LICENSETYPE"] = nn(li["LICENCETYPENAME"])
@@ -1903,14 +1903,14 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         
         for i in asm3.person.get_investigation(dbo, p["ID"]):
             row = {}
-            row["PERSONCODE"] = p["OWNERCODE"]
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["INVESTIGATIONDATE"] = asm3.i18n.python2display(l, i["DATE"])
             row["INVESTIGATIONNOTES"] =  nn(i["NOTES"])
             out.write(tocsv(row))
         
         for c in dbo.query(asm3.financial.get_citation_query(dbo) + " WHERE oc.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["CITATIONDATE"] = asm3.i18n.python2display(l, c["CITATIONDATE"])
             row["CITATIONNUMBER"] = nn(c["CITATIONNUMBER"])
             row["CITATIONTYPE"] =  nn(c["CITATIONNAME"])
@@ -1922,7 +1922,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         
         for t in dbo.query(asm3.animalcontrol.get_traploan_query(dbo) + " WHERE ot.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["TRAPTYPE"] = nn(t["TRAPTYPENAME"])
             row["TRAPNUMBER"] = nn(t["TRAPNUMBER"])
             row["LOANDATE"] = asm3.i18n.python2display(l, t["LOANDATE"])
@@ -1935,7 +1935,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         
         for d in dbo.query(asm3.financial.get_donation_query(dbo) + " WHERE od.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["DONATIONNAME"] = nn(d["DONATIONNAME"])
             row["DONATIONDATE"] = asm3.i18n.python2display(l, d["DATE"])
             row["DONATIONAMOUNT"] = asm3.utils.cint(d["DONATION"])
@@ -1953,7 +1953,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         
         for v in dbo.query(asm3.financial.get_voucher_query(dbo) + " WHERE ov.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["ANIMALCODE"] = nn(v["SHELTERCODE"])
             row["ANIMALNAME"] = nn(v["ANIMALNAME"])
             row["VOUCHERNAME"] = nn(v["VOUCHERNAME"])
@@ -1972,30 +1972,24 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         
         for a in dbo.query(asm3.clinic.get_clinic_appointment_query(dbo) + " WHERE ca.OwnerID = " + str(p["ID"])):
             row = {}
-            row["PERSONCODE"] = nn(p["OWNERCODE"])
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["ANIMALCODE"] = nn(a["SHELTERCODE"])
             row["CLINICAPPOINTMENTFOR"] = nn(a["APPTFOR"])
             row["CLINICAPPOINTMENTTYPE"] = nn(a["CLINICTYPENAME"])
             row["CLINICAPPOINTMENTSTATUS"] = nn(a["CLINICSTATUSNAME"])
-
             row["CLINICAPPOINTMENTDATE"] = asm3.i18n.python2display(l, a["DATETIME"])
             row["CLINICAPPOINTMENTTIME"] = asm3.i18n.format_time(a["DATETIME"])
-
             row["CLINICARRIVEDDATE"] = asm3.i18n.python2display(l, a["ARRIVEDDATETIME"])
             row["CLINICARRIVEDTIME"] = asm3.i18n.format_time(a["ARRIVEDDATETIME"])
-
             row["CLINICWITHVETDATE"] = asm3.i18n.python2display(l, a["WITHVETDATETIME"])
             row["CLINICWITHVETTIME"] = asm3.i18n.format_time(a["WITHVETDATETIME"])
-
             row["CLINICCOMPLETEDDATE"] = asm3.i18n.python2display(l, a["COMPLETEDDATETIME"])
             row["CLINICCOMPLETEDTIME"] = asm3.i18n.format_time(a["COMPLETEDDATETIME"])
-
             row["CLINICAPPOINTMENTISVAT"] = asm3.utils.cint(a["ISVAT"])
             row["CLINICAPPOINTMENTVATRATE"] = asm3.utils.cfloat(a["VATRATE"])
             row["CLINICAPPOINTMENTVATAMOUNT"] = asm3.utils.cfloat(a["VATAMOUNT"])
             row["CLINICAPPOINTMENTREASON"] = nn(a["REASONFORAPPOINTMENT"])
             row["CLINICAPPOINTMENTCOMMENTS"] = nn(a["COMMENTS"])
-
             row["CLINICAMOUNT"] = nn(a["AMOUNT"])
             out.write(tocsv(row))
 
