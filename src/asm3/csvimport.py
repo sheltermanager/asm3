@@ -1122,14 +1122,22 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 row_error(errors, "investigation", rowno, row, e, dbo, sys.exc_info())
         
         # Logs
-        if haslog and animalid != 0 and gks(row, "LOGCOMMENTS") != "":
+        if haslog and (animalid != 0 or personid != 0) and gks(row, "LOGCOMMENTS") != "":
             l = {}
             l["type"] = gkl(dbo, row, "LOGTYPE", "logtype", "LogTypeName", createmissinglookups)
             l["logdate"] = gkd(dbo, row, "LOGDATE", True)
             l["logtime"] = gks(row, "LOGTIME")
             l["entry"] = gks(row, "LOGCOMMENTS")
+
+            if animalid != 0:
+                linktype = asm3.log.ANIMAL
+                linkid = animalid
+            else:
+                linktype = asm3.log.PERSON
+                linkid = personid
+
             try:
-                asm3.log.insert_log_from_form(dbo, user, asm3.log.ANIMAL, animalid, asm3.utils.PostedData(l, dbo.locale))
+                asm3.log.insert_log_from_form(dbo, user, linktype, linkid, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
 
@@ -1763,7 +1771,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
 
     keys = [ "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
         "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
-        "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
+        "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME",
         "PERSONTITLE2", "PERSONINITIALS2", "PERSONFIRSTNAME2", "PERSONLASTNAME2",
         "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
         "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
@@ -1835,7 +1843,6 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row["PERSONINITIALS2"] = nn(p["OWNERINITIALS2"])
         row["PERSONFIRSTNAME2"] = nn(p["OWNERFORENAMES2"])
         row["PERSONLASTNAME2"] = nn(p["OWNERSURNAME2"])
-        row["PERSONNAME"] = nn(p["OWNERNAME"])
         row["PERSONADDRESS"] = nn(p["OWNERADDRESS"])
         row["PERSONCITY"] = nn(p["OWNERTOWN"])
         row["PERSONSTATE"] = nn(p["OWNERCOUNTY"])
