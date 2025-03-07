@@ -21,7 +21,9 @@ $(function() {
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", options: controller.producttypes },
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
-                    { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text" },
+                    { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text",
+                        callout: _("A unique identifier that may be used to link this product with an external POS system")
+                     },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
                     { json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "select", options: controller.taxrates, validation: "notnull" },
                     { json_field: "RETIRED", post_field: "retired", label: _("Retired"), type: "check" },
@@ -29,18 +31,22 @@ $(function() {
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
 
                     { json_field: "PURCHASEUNITTYPEID", post_field: "purchaseunittypeid", label: _("Purchase Unit"), type: "select",
+                        callout: _("The units that you acquire in this product in for example, 'tray', 'pallet', 'box', this does not have to be the same as the units that you use to manage your stock internally"), 
                         options: { rows: controller.units, displayfield: "UNITNAME", prepend: '<option value="0">' + _("unit") + '</option><option value="-1">' + _("custom") + '</option>' }
                     },
                     { json_field: "CUSTOMPURCHASEUNIT", post_field: "custompurchaseunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "COSTPRICE", post_field: "costprice", label: _("Cost price"), type: "currency", colclasses: "bottomborder" },
 
-                    { json_field: "UNITTYPEID", post_field: "unittypeid", label: _("Unit"), type: "select",
+                    { json_field: "UNITTYPEID", post_field: "unittypeid", label: _("Unit"), type: "select", 
+                        callout: _("The units that you use to manage this product internally for example, 'tin', 'tablet', 'bag'"), 
                         options: { rows: controller.units, displayfield: "UNITNAME", prepend: '<option value="0">' + _("purchase unit") + '</option><option value="-1">' + _("custom") + '</option>' }
                     },
 
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
-                    { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1 },
+                    { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1,
+                        callout: _("The number of 'units' per 'purchase unit' for example, if you get 24 tins per tray and have purchase unit 'tray' and unit 'tin' your unit ratio would be '24'")
+                     },
                     { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: "0", validation: "notblank",
                         callout: _("Show an alert if the balance falls below this amount"),
                         hideif: function() { 
