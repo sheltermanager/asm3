@@ -1673,11 +1673,10 @@ def sql_structure(dbo: Database) -> str:
         ffloat("Low", True),
         fdate("Expiry", True),
         fstr("BatchNumber", True),
+        fstr("Barcode", True),
         fint("Cost", True),
         fint("UnitPrice", True),
-        fdate("CreatedDate"),
-        fstr("Barcode")
-        ), False)
+        fdate("CreatedDate") ), False)
     sql += index("stocklevel_Name", "stocklevel", "Name")
     sql += index("stocklevel_UnitName", "stocklevel", "UnitName")
     sql += index("stocklevel_StockLocationID", "stocklevel", "StockLocationID")
