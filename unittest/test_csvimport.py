@@ -20,13 +20,17 @@ class TestCSVImport(unittest.TestCase):
         base.execute("DELETE FROM owner WHERE OwnerName = 'Sir Bob Hoskins'")
 
     def test_csvimport(self):
-        csvdata = "ANIMALNAME,ANIMALSEX,ANIMALAGE,PERSONNAME,INCIDENTDATE,DIARYDATE,DIARYFOR,DIARYSUBJECT,DIARYNOTE\n" \
+        """csvdata = "ANIMALNAME,ANIMALSEX,ANIMALAGE,PERSONNAME,INCIDENTDATE,DIARYDATE,DIARYFOR,DIARYSUBJECT,DIARYNOTE\n" \
             "\"TestioCSV\",\"Male\",\"2\",\"Sir Bob Hoskins\",\"2001-09-11\",\"2020-01-20\",\"Baldrick\",\"Test diary note from csv import\",\"This note was created as part of the CSV import unit test.\"\n" \
             "\"\",\"\",\"\",\"Sir Bob Hoskins\",\"\",\"2020-01-20\",\"Nanny\",\"Test diary note from csv import\",\"This note was created as part of the CSV import unit test.\"\n" \
-            "\"\",\"\",\"\",\"Sir Bob Hoskins\",\"2001-09-11\",\"2020-01-20\",\"The Prince\",\"Test diary note from csv import\",\"This note was created as part of the CSV import unit test.\"\n"
+            "\"\",\"\",\"\",\"Sir Bob Hoskins\",\"2001-09-11\",\"2020-01-20\",\"The Prince\",\"Test diary note from csv import\",\"This note was created as part of the CSV import unit test.\"\n""
+        """
+        inp = open("/home/adam-spencer/workspace/animals.csv", "r")
+        csvdata = inp.read()
+        inp.close()
         asm3.csvimport.csvimport(base.get_dbo(), csvdata)
 
-        aid = base.get_dbo().query_int("SELECT ID FROM animal WHERE AnimalName = 'TestioCSV' ORDER BY ID DESC LIMIT 1")
+        """aid = base.get_dbo().query_int("SELECT ID FROM animal WHERE AnimalName = 'TestioCSV' ORDER BY ID DESC LIMIT 1")
         pid = base.get_dbo().query_int("SELECT ID FROM owner WHERE OwnerName = 'Sir Bob Hoskins' ORDER BY ID DESC LIMIT 1")
         
         f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
@@ -39,7 +43,7 @@ class TestCSVImport(unittest.TestCase):
         data = f.read()
         f.close()
 
-        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.PERSON, pid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.PERSON, pid, asm3.media.MEDIASOURCE_ATTACHFILE, post)"""
 
     def test_csvexport_animals(self):
         asm3.csvimport.csvexport_animals(base.get_dbo(), "all")

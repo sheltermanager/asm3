@@ -251,6 +251,8 @@ def row_error(errors: List, rowtype: str, rowno: int, row: Dict, e: Any, dbo: Da
     if "ANIMALIMAGE" in row and row["ANIMALIMAGE"].startswith("data"):
         row["ANIMALIMAGE"] = "data:,"
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
+    #import traceback
+    #print(traceback.format_exc())
     errors.append( (rowno, str(row), errmsg) )
 
 def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: str = "", 
@@ -820,77 +822,34 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                     if pdfdata != "" and pdfname == "":
                         row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
                         continue
-            elif gks(row, "PERSONCODE") != "":
-                personid = asm3.person.get_person_id_for_code(dbo, row["PERSONCODE"])
-                imagedata = gks(row, "PERSONIMAGE")
-                if imagedata != "":
-                    if imagedata.startswith("http"):
-                        # It's a URL, get the image from the remote server
-                        r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
-                        if r["status"] == 200:
-                            asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
-                            imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
-                        else:
-                            row_error(errors, "person", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
-                            continue
-                    elif imagedata.startswith("data:image"):
-                        # It's a base64 encoded data URI - do nothing as attach_file requires it
-                        pass
-                    else:
-                        # We don't know what it is, don't try and do anything with it
-                        row_error(errors, "person", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
-                        imagedata = ""
-                # pdf data if any was supplied
-                pdfdata = gks(row, "PERSONPDFDATA")
-                pdfname = gks(row, "PERSONPDFNAME")
-                if pdfdata != "":
-                    if pdfdata.startswith("http"):
-                        # It's a URL, get the PDF from the remote server
-                        r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
-                        if r["status"] == 200:
-                            asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
-                            pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
-                        else:
-                            row_error(errors, "person", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
-                            continue
-                    elif pdfdata.startswith("data:"):
-                        # It's a base64 encoded data URI - do nothing as attach_file requires it
-                        pass
-                    else:
-                        # We don't know what it is, don't try and do anything with it
-                        row_error(errors, "person", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
-                        pdfdata = ""
-                    if pdfdata != "" and pdfname == "":
-                        row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
-                        continue
-            
-            try:
-                if checkduplicates:
-                    dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
-                    if len(dups) > 0:
-                        personid = dups[0].ID
-                        # Merge flags and any extra details
-                        asm3.person.merge_flags(dbo, user, personid, flags)
-                        asm3.person.merge_gdpr_flags(dbo, user, personid, p["gdprcontactoptin"])
-                        # If we deduplicated on the email address, and address details are
-                        # present, assume that they are newer than the ones we had and update them
-                        # (we do this by setting force=True parameter to merge_person_details,
-                        # otherwise we do a regular merge which only fills in any blanks)
-                        asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
-                if personid == 0:
-                    personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
-                # Identify any PERSONADDITIONAL additional fields and create/merge them
-                create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
-                # If we have some image data, add it to the person
-                if len(imagedata) > 0:
-                    imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
-                # If we have some PDF data, add that to the person
-                if len(pdfdata) > 0:
-                    pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
-            except Exception as e:
-                row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
+                        
+                try:
+                    if checkduplicates:
+                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
+                        if len(dups) > 0:
+                            personid = dups[0].ID
+                            # Merge flags and any extra details
+                            asm3.person.merge_flags(dbo, user, personid, flags)
+                            asm3.person.merge_gdpr_flags(dbo, user, personid, p["gdprcontactoptin"])
+                            # If we deduplicated on the email address, and address details are
+                            # present, assume that they are newer than the ones we had and update them
+                            # (we do this by setting force=True parameter to merge_person_details,
+                            # otherwise we do a regular merge which only fills in any blanks)
+                            asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
+                    if personid == 0:
+                        personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+                    # Identify any PERSONADDITIONAL additional fields and create/merge them
+                    create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
+                    # If we have some image data, add it to the person
+                    if len(imagedata) > 0:
+                        imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
+                        asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
+                    # If we have some PDF data, add that to the person
+                    if len(pdfdata) > 0:
+                        pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
+                        asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
+                except Exception as e:
+                    row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 
         # Movement to tie animal/person together?
         movementid = 0
