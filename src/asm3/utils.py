@@ -1094,6 +1094,8 @@ def csv_generator(l: str, rows: Results, cols: List[str] = None, includeheader: 
                 rd.append(dateportion)
             elif is_str(r[c]):
                 rd.append(r[c].replace("\"", "''")) # Escape any double quotes in strings
+            elif r[c] is None:
+                rd.append("")
             else:
                 rd.append(r[c])
         yield writerow(rd)
@@ -1168,6 +1170,8 @@ def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = T
                 rd.append(dateportion)
             elif is_str(r[c]):
                 rd.append(ILLEGAL_CHARACTERS_RE.sub(r"", r[c])) # filter out bad chars for openpyxl
+            elif r[c] is None:
+                rd.append("")
             else:
                 rd.append(r[c])
         writerow(rd, rownumber)
