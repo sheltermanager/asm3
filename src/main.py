@@ -2958,12 +2958,12 @@ class clinic_waitingroom(JSONEndpoint):
             "rows": rows
         }
 
-class csvexport(JSONEndpoint):
-    url = "csvexport"
+class csvexport_animals(JSONEndpoint):
+    url = "csvexport_animals"
     get_permissions = asm3.users.EXPORT_REPORT
 
-class csvpeopleexport(JSONEndpoint):
-    url = "csvpeopleexport"
+class csvexport_people(JSONEndpoint):
+    url = "csvexport_people"
     get_permissions = asm3.users.EXPORT_REPORT
 
     def controller(self, o):
@@ -2971,8 +2971,8 @@ class csvpeopleexport(JSONEndpoint):
             "flags": asm3.lookups.get_person_flags(o.dbo)
         }
 
-class csvexport_animals(ASMEndpoint):
-    url = "csvexport_animals"
+class csvexport_animals_ex(ASMEndpoint):
+    url = "csvexport_animals_ex"
     get_permissions = asm3.users.EXPORT_REPORT
 
     def content(self, o):
@@ -2989,8 +2989,8 @@ class csvexport_animals(ASMEndpoint):
                 o.dbo, o.post["filter"], o.post["animals"], o.post["where"], o.post["media"] )
             self.redirect("task")
 
-class csvexport_people(ASMEndpoint):
-    url = "csvexport_people"
+class csvexport_people_ex(ASMEndpoint):
+    url = "csvexport_people_ex"
     get_permissions = asm3.users.EXPORT_REPORT
 
     def content(self, o):

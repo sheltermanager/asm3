@@ -4,24 +4,23 @@ $(function() {
 
     "use strict";
 
-    const csvexport = {
+    const csvexport_people = {
 
         render: function() {
             return [
-                html.content_header(_("Export Animals as CSV")),
-                '<form id="csvform" action="csvexport_animals" method="get">',
-                html.info(_("Export a CSV file of animal records that ASM can import into another database.") + '<br/>' +
+                html.content_header(_("Export People as CSV")),
+                '<form id="csvpeopleform" action="csvexport_people_ex" method="get">',
+                html.info(_("Export a CSV file of person records that ASM can import into another database.") + '<br/>' +
                     _("Please see the manual for more information.")),
                 tableform.fields_render([
                     { type: "select", name: "filter", label: _("Filter"),
-                        options: [ '<option value="all">' + _("All Animals") + '</option>',
-                        '<option value="shelter" selected="selected">' + _("All On-Shelter Animals") + '</option>',
-                        '<option value="selshelter">' + _("Selected On-Shelter Animals") + '</option>',
-                        '<option value="nonshelter">' + _("Non-Shelter Animals") + '</option>',
+                        options: [ '<option value="all">' + _("All People") + '</option>',
+                        '<option value="flaggedpeople">' + _("People with flags") + '</option>',
                         '<option value="where">' + _("Custom WHERE clause") + '</option>' ].join("\n") },
-                    { type: "animalmulti", name: "animals", label: _("Animals") },
+                    { type: "selectmulti", name: "flagselect", label: _("Flags") },
+                    { type: "hidden", name: "flags" },
                     { type: "text", name: "where", label: _("WHERE clause"), 
-                        callout: _("Supply a WHERE clause to the animal table. Eg: 'Archived=0 AND ShelterLocation=2'") },
+                        callout: _("Supply a WHERE clause to the animal table. Eg: 'OwnerPostCode LIKE 'S66%''") },
                     { type: "select", name: "media", label: _("Media"), 
                         options: [ '<option value="none" selected="selected">' + _("Do not include media") + '</option>',
                         '<option value="photo">' + _("Include primary photo") + '</option>',
@@ -36,18 +35,21 @@ $(function() {
             ].join("\n");
         },
 
+        sync: function() {
+            html.person_flag_options(false, controller.flags, $("#flagselect"));
+        },
+
         bind: function() {
             $("#button-submit").button().click(function() {
-                $("#csvform").submit();
+                $("#csvpeopleform").submit();
             });
-
-            $("#animalsrow, #whererow").hide();
+            $("#flagselectrow, #whererow").hide();
             $("#filter").change(function() {
-                if ($("#filter").select("value") == "selshelter") { 
-                    $("#animalsrow").fadeIn(); 
+                if ($("#filter").select("value") == "flaggedpeople") { 
+                    $("#flagselectrow").fadeIn(); 
                 }
                 else {
-                    $("#animalsrow").fadeOut(); 
+                    $("#flagselectrow").fadeOut(); 
                 }
                 if ($("#filter").select("value") == "where") { 
                     $("#whererow").fadeIn(); 
@@ -56,21 +58,24 @@ $(function() {
                     $("#whererow").fadeOut(); 
                 }
             });
+            $("#flagselect").change(function() {
+                let flagvalues = $("#flagselect").val().join(",");
+                $("#flags").val(flagvalues);
+            });
         },
 
         destroy: function() {
-            common.widget_destroy("#animals");
         },
 
-        name: "csvexport",
+        name: "csvexport_people",
         animation: "options",
-        title: function() { return _("Export Animals as CSV"); },
+        title: function() { return _("Export People as CSV"); },
         routes: {
-            "csvexport": function() { common.module_start("csvexport"); }
+            "csvexport_people": function() { common.module_start("csvexport_people"); }
         }
 
     };
 
-    common.module_register(csvexport);
+    common.module_register(csvexport_people);
 
 });

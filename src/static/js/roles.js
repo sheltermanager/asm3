@@ -274,6 +274,7 @@ $(function() {
                 cr("cso", _("Change System Options")),
                 cr("cpo", _("Change Publishing Options")),
                 cr("eav", _("Export Animals as CSV")),
+                cr("epv", _("Export People as CSV")),
                 cr("icv", _("Import CSV File")),
                 cr("maf", _("Modify Additional Fields")),
                 cr("mdt", _("Modify Document Templates")),

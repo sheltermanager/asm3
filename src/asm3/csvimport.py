@@ -825,9 +825,12 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         
                 try:
                     if checkduplicates:
-                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
-                        if len(dups) > 0:
-                            personid = dups[0].ID
+                        personid = asm3.person.get_person_id_for_code(dbo, p["ownercode"])
+                        if personid == 0:
+                            dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
+                            if len(dups) > 0:
+                                personid = dups[0].ID
+                        if personid != 0:
                             # Merge flags and any extra details
                             asm3.person.merge_flags(dbo, user, personid, flags)
                             asm3.person.merge_gdpr_flags(dbo, user, personid, p["gdprcontactoptin"])
@@ -1700,7 +1703,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
     # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
     key = asm3.utils.uuid_str()
     asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
-    h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
+    h = '<p>%s <a target="_blank" href="csvexport_animals_ex?get=%s"><b>%s</b></p>' % ( \
         asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
     return h
 
@@ -1898,25 +1901,25 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row["LICENSEFEE"] = asm3.utils.cint(li["LICENCEFEE"])
             row["LICENSEISSUEDATE"] = asm3.i18n.python2display(l, li["ISSUEDATE"])
             row["LICENSEEXPIRESDATE"] = asm3.i18n.python2display(l, li["EXPIRYDATE"])
-            row["LICENSECOMMENTS"] =  nn(li["COMMENTS"])
+            row["LICENSECOMMENTS"] = nn(li["COMMENTS"])
             out.write(tocsv(row))
         
         for i in asm3.person.get_investigation(dbo, p["ID"]):
             row = {}
             row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["INVESTIGATIONDATE"] = asm3.i18n.python2display(l, i["DATE"])
-            row["INVESTIGATIONNOTES"] =  nn(i["NOTES"])
+            row["INVESTIGATIONNOTES"] = nn(i["NOTES"])
             out.write(tocsv(row))
-        
+       
         for c in dbo.query(asm3.financial.get_citation_query(dbo) + " WHERE oc.OwnerID = " + str(p["ID"])):
             row = {}
             row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["CITATIONDATE"] = asm3.i18n.python2display(l, c["CITATIONDATE"])
             row["CITATIONNUMBER"] = nn(c["CITATIONNUMBER"])
-            row["CITATIONTYPE"] =  nn(c["CITATIONNAME"])
-            row["FINEAMOUNT"] =  asm3.utils.cint(c["FINEAMOUNT"])
-            row["FINEDUEDATE"] =  asm3.i18n.python2display(l, c["FINEDUEDATE"])
-            row["FINEPAIDDATE"] =  asm3.i18n.python2display(l, c["FINEPAIDDATE"])
+            row["CITATIONTYPE"] = nn(c["CITATIONNAME"])
+            row["FINEAMOUNT"] = asm3.utils.cint(c["FINEAMOUNT"])
+            row["FINEDUEDATE"] = asm3.i18n.python2display(l, c["FINEDUEDATE"])
+            row["FINEPAIDDATE"] = asm3.i18n.python2display(l, c["FINEPAIDDATE"])
             row["CITATIONCOMMENTS"] = nn(c["COMMENTS"])
             out.write(tocsv(row))
         
@@ -1999,6 +2002,6 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
     # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
     key = asm3.utils.uuid_str()
     asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
-    h = '<p>%s <a target="_blank" href="csvexport_people?get=%s"><b>%s</b></p>' % ( \
+    h = '<p>%s <a target="_blank" href="csvexport_people_ex?get=%s"><b>%s</b></p>' % ( \
         asm3.i18n._("Export complete ({0} entries).", l).format(len(pids)), key, asm3.i18n._("Download File", l) )
     return h
