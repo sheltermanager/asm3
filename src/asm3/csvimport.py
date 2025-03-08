@@ -31,9 +31,15 @@ VALID_FIELDS = [
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALGOODWITHELDERLY", "ANIMALGOODONLEAD",
     "ANIMALHOUSETRAINED", "ANIMALCRATETRAINED", "ANIMALENERGYLEVEL", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
+    "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", 
+    "CLINICAPPOINTMENTDATE", "CLINICAPPOINTMENTTIME", "CLINICARRIVEDDATE", "CLINICARRIVEDTIME", 
+    "CLINICWITHVETDATE", "CLINICWITHVETTIME", "CLINICCOMPLETEDDATE", "CLINICCOMPLETEDDATE", 
+    "CLINICAPPOINTMENTISVAT", "CLINICAPPOINTMENTVATRATE", "CLINICAPPOINTMENTVATAMOUNT", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTCOMMENTS", "CLINICAMOUNT", 
+    "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
     "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+    "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE", "VOUCHERCODE", "VOUCHERCOMMENTS", 
     "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS",
     "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
@@ -43,9 +49,11 @@ VALID_FIELDS = [
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", "DONATIONGIFTAID",
     "INCIDENTDATE", "INCIDENTTIME", "INCIDENTTYPE", "INCIDENTNOTES", "DISPATCHADDRESS", "DISPATCHCITY", "DISPATCHSTATE", "DISPATCHZIPCODE", "DISPATCHACO", "DISPATCHDATE", "DISPATCHTIME", "INCIDENTRESPONDEDDATE", "INCIDENTFOLLOWUPDATE", "INCIDENTCOMPLETEDDATE", "INCIDENTCOMPLETEDTIME", "INCIDENTCOMPLETEDTYPE"
     "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
+    "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
+    "LOANDATE", "TRAPNUMBER", "TRAPTYPE", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
     "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
-    "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
+    "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
     "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONTITLE2", "PERSONINITIALS2", "PERSONFIRSTNAME2", "PERSONLASTNAME2",
@@ -53,7 +61,7 @@ VALID_FIELDS = [
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONWARNING", "PERSONFOSTERCAPACITY",
     "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
-    "PERSONHOMEPHONE2", "PERSONWORKPHONE2", "PERSONCELLPHONE2", "PERSONEMAIL2",
+    "PERSONWORKPHONE2", "PERSONCELLPHONE2", "PERSONEMAIL2",
     "PERSONGDPRCONTACT", "PERSONCLASS",
     "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
     "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
@@ -243,6 +251,8 @@ def row_error(errors: List, rowtype: str, rowno: int, row: Dict, e: Any, dbo: Da
     if "ANIMALIMAGE" in row and row["ANIMALIMAGE"].startswith("data"):
         row["ANIMALIMAGE"] = "data:,"
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
+    #import traceback
+    #print(traceback.format_exc())
     errors.append( (rowno, str(row), errmsg) )
 
 def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: str = "", 
@@ -276,6 +286,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     onevalid = False
     hasanimal = False
     hasanimalname = False
+    hascitation = False
+    hasclinic = False
+    hasequipmentloan = False
     hasmed = False
     hasmedicalname = False
     hasmedicalgivendate = False
@@ -285,6 +298,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasvaccduedate = False
     hasincident = False
     hasincidentdate = False
+    hasinvestigation = False
     hasperson = False
     haspersonlastname = False
     haspersonname = False
@@ -303,6 +317,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hascurrentvet = False
     hascurrentvetlastname = False
     hasdiary = False
+    hasvoucher = False
 
     cols = rows[0].keys()
     for col in cols:
@@ -310,8 +325,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col.startswith("ANIMAL"): hasanimal = True
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
+        if col.startswith("CITATION"): hascitation = True
+        if col.startswith("CLINIC"): hasclinic = True
         if col.startswith("CURRENTVET"): hascurrentvet = True
         if col.startswith("CURRENTVETLASTNAME"): hascurrentvetlastname = True
+        if col.startswith("LOANDATE"): hasequipmentloan = True
         if col.startswith("VACCINATION"): hasvacc = True
         if col == "VACCINATIONDUEDATE": hasvaccduedate = True
         if col.startswith("TEST"): hastest = True
@@ -321,6 +339,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "MEDICALNAME": hasmedicalname = True
         if col.startswith("INCIDENT"): hasincident = True
         if col == "INCIDENTDATE": hasincidentdate = True
+        if col.startswith("INVESTIGATION"): hasinvestigation = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
         if col.startswith("COST"): hascost = True
@@ -336,6 +355,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col.startswith("DONATION"): hasdonation = True
         if col == "DONATIONAMOUNT": hasdonationamount = True
         if col == "DIARYDATE": hasdiary = True
+        if col.startswith("VOUCHER"): hasvoucher = True
 
     rules = [
         ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
@@ -686,148 +706,150 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
 
         # Person data?
         personid = 0
-        if hasperson and (gks(row, "PERSONLASTNAME") != "" or gks(row, "PERSONNAME") != ""):
-            p = {}
-            p["ownertype"] = gks(row, "PERSONCLASS")
-            if p["ownertype"] not in ("1", "2", "3"): 
-                p["ownertype"] = "1"
-            if gks(row, "PERSONLASTNAME2") != "":
-                p["ownertype"] = "3"
-            p["title"] = gks(row, "PERSONTITLE")
-            p["title2"] = gks(row, "PERSONTITLE2")
-            p["initials"] = gks(row, "PERSONINITIALS")
-            p["initials2"] = gks(row, "PERSONINITIALS2")
-            p["forenames"] = gks(row, "PERSONFIRSTNAME")
-            p["forenames2"] = gks(row, "PERSONFIRSTNAME2")
-            p["surname"] = gks(row, "PERSONLASTNAME")
-            p["surname2"] = gks(row, "PERSONLASTNAME2")
-            # If we have a person name, all upto the last space is first names,
-            # everything after the last name
-            if gks(row, "PERSONNAME") != "":
-                pname = gks(row, "PERSONNAME")
-                if pname.find(" ") != -1:
-                    p["forenames"] = pname[0:pname.rfind(" ")]
-                    p["surname"] = pname[pname.rfind(" ")+1:]
-                else:
-                    p["surname"] = pname
-            p["dateofbirth"] = gkd(dbo, row, "PERSONDATEOFBIRTH")
-            p["dateofbirth2"] = gkd(dbo, row, "PERSONDATEOFBIRTH2")
-            p["idnumber"] = gks(row, "PERSONIDNUMBER")
-            p["idnumber2"] = gks(row, "PERSONIDNUMBER2")
-            p["address"] = gks(row, "PERSONADDRESS")
-            p["town"] = gks(row, "PERSONCITY")
-            p["county"] = gks(row, "PERSONSTATE")
-            p["postcode"] = gks(row, "PERSONZIPCODE")
-            p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
-            if p["jurisdiction"] == "0":
-                p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
-            p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
-            p["hometelephone2"] = gks(row, "PERSONHOMEPHONE2")
-            p["worktelephone"] = gks(row, "PERSONWORKPHONE")
-            p["worktelephone2"] = gks(row, "PERSONWORKPHONE2")
-            p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
-            p["mobiletelephone2"] = gks(row, "PERSONCELLPHONE2")
-            p["emailaddress"] = gks(row, "PERSONEMAIL")
-            p["emailaddress2"] = gks(row, "PERSONEMAIL2")
-            p["gdprcontactoptin"] = gks(row, "PERSONGDPRCONTACTOPTIN")
-            flags = gks(row, "PERSONFLAGS")
-            if gkb(row, "PERSONFOSTERER"): flags += ",fosterer"
-            if gkb(row, "PERSONMEMBER"): flags += ",member"
-            if gkb(row, "PERSONDONOR"): flags += ",donor"
-            p["flags"] = flags
-            p["comments"] = gks(row, "PERSONCOMMENTS")
-            p["popupwarning"] = gks(row, "PERSONWARNING")
-            p["membershipnumber"] = gks(row, "PERSONMEMBERSHIPNUMBER")
-            p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
-            p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
-            p["fostercapacity"] = gks(row,"PERSONFOSTERCAPACITY")
-            if p["matchactive"] == "1":
-                if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
-                if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
-                if "PERSONMATCHSEX" in cols: p["matchsex"] = gksx(row, "PERSONMATCHSEX")
-                if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
-                if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
-                if "PERSONMATCHAGEFROM" in cols: p["agedfrom"] = gks(row, "PERSONMATCHAGEFROM")
-                if "PERSONMATCHAGETO" in cols: p["agedto"] = gks(row, "PERSONMATCHAGETO")
-                if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
-                if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
-                if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
-                if "PERSONMATCHBREED2" in cols: p["matchbreed2"] = gkbr(dbo, row, "PERSONMATCHBREED2", p["matchspecies"], createmissinglookups)
-                if "PERSONMATCHGOODWITHCATS" in cols: p["matchgoodwithcats"] = gkynu(row, "PERSONMATCHGOODWITHCATS")
-                if "PERSONMATCHGOODWITHDOGS" in cols: p["matchgoodwithdogs"] = gkynu(row, "PERSONMATCHGOODWITHDOGS")
-                if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
-                if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
-                if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
-            
-            imagedata = gks(row, "PERSONIMAGE")
-            if imagedata != "":
-                if imagedata.startswith("http"):
-                    # It's a URL, get the image from the remote server
-                    r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
-                    if r["status"] == 200:
-                        asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
-                        imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
+        if hasperson:
+            if gks(row, "PERSONLASTNAME") != "" or gks(row, "PERSONNAME") != "":
+                p = {}
+                p["ownercode"] = gks(row, "PERSONCODE")
+                p["ownertype"] = gks(row, "PERSONCLASS")
+                if p["ownertype"] not in ("1", "2", "3"): 
+                    p["ownertype"] = "1"
+                if gks(row, "PERSONLASTNAME2") != "":
+                    p["ownertype"] = "3"
+                p["title"] = gks(row, "PERSONTITLE")
+                p["title2"] = gks(row, "PERSONTITLE2")
+                p["initials"] = gks(row, "PERSONINITIALS")
+                p["initials2"] = gks(row, "PERSONINITIALS2")
+                p["forenames"] = gks(row, "PERSONFIRSTNAME")
+                p["forenames2"] = gks(row, "PERSONFIRSTNAME2")
+                p["surname"] = gks(row, "PERSONLASTNAME")
+                p["surname2"] = gks(row, "PERSONLASTNAME2")
+                # If we have a person name, all upto the last space is first names,
+                # everything after the last name
+                if gks(row, "PERSONNAME") != "":
+                    pname = gks(row, "PERSONNAME")
+                    if pname.find(" ") != -1:
+                        p["forenames"] = pname[0:pname.rfind(" ")]
+                        p["surname"] = pname[pname.rfind(" ")+1:]
                     else:
-                        row_error(errors, "person", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
-                        continue
-                elif imagedata.startswith("data:image"):
-                    # It's a base64 encoded data URI - do nothing as attach_file requires it
-                    pass
-                else:
-                    # We don't know what it is, don't try and do anything with it
-                    row_error(errors, "person", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
-                    imagedata = ""
-            # pdf data if any was supplied
-            pdfdata = gks(row, "PERSONPDFDATA")
-            pdfname = gks(row, "PERSONPDFNAME")
-            if pdfdata != "":
-                if pdfdata.startswith("http"):
-                    # It's a URL, get the PDF from the remote server
-                    r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
-                    if r["status"] == 200:
-                        asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
-                        pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+                        p["surname"] = pname
+                p["dateofbirth"] = gkd(dbo, row, "PERSONDATEOFBIRTH")
+                p["dateofbirth2"] = gkd(dbo, row, "PERSONDATEOFBIRTH2")
+                p["idnumber"] = gks(row, "PERSONIDNUMBER")
+                p["idnumber2"] = gks(row, "PERSONIDNUMBER2")
+                p["address"] = gks(row, "PERSONADDRESS")
+                p["town"] = gks(row, "PERSONCITY")
+                p["county"] = gks(row, "PERSONSTATE")
+                p["postcode"] = gks(row, "PERSONZIPCODE")
+                p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
+                if p["jurisdiction"] == "0":
+                    p["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
+                p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
+                p["hometelephone2"] = gks(row, "PERSONHOMEPHONE2")
+                p["worktelephone"] = gks(row, "PERSONWORKPHONE")
+                p["worktelephone2"] = gks(row, "PERSONWORKPHONE2")
+                p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
+                p["mobiletelephone2"] = gks(row, "PERSONCELLPHONE2")
+                p["emailaddress"] = gks(row, "PERSONEMAIL")
+                p["emailaddress2"] = gks(row, "PERSONEMAIL2")
+                p["gdprcontactoptin"] = gks(row, "PERSONGDPRCONTACTOPTIN")
+                flags = gks(row, "PERSONFLAGS")
+                if gkb(row, "PERSONFOSTERER"): flags += ",fosterer"
+                if gkb(row, "PERSONMEMBER"): flags += ",member"
+                if gkb(row, "PERSONDONOR"): flags += ",donor"
+                p["flags"] = flags
+                p["comments"] = gks(row, "PERSONCOMMENTS")
+                p["popupwarning"] = gks(row, "PERSONWARNING")
+                p["membershipnumber"] = gks(row, "PERSONMEMBERSHIPNUMBER")
+                p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
+                p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
+                p["fostercapacity"] = gks(row,"PERSONFOSTERCAPACITY")
+                if p["matchactive"] == "1":
+                    if "PERSONMATCHADDED" in cols: p["matchadded"] = gkd(dbo, row, "PERSONMATCHADDED")
+                    if "PERSONMATCHEXPIRES" in cols: p["matchexpires"] = gkd(dbo, row, "PERSONMATCHEXPIRES")
+                    if "PERSONMATCHSEX" in cols: p["matchsex"] = gksx(row, "PERSONMATCHSEX")
+                    if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
+                    if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
+                    if "PERSONMATCHAGEFROM" in cols: p["agedfrom"] = gks(row, "PERSONMATCHAGEFROM")
+                    if "PERSONMATCHAGETO" in cols: p["agedto"] = gks(row, "PERSONMATCHAGETO")
+                    if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
+                    if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
+                    if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
+                    if "PERSONMATCHBREED2" in cols: p["matchbreed2"] = gkbr(dbo, row, "PERSONMATCHBREED2", p["matchspecies"], createmissinglookups)
+                    if "PERSONMATCHGOODWITHCATS" in cols: p["matchgoodwithcats"] = gkynu(row, "PERSONMATCHGOODWITHCATS")
+                    if "PERSONMATCHGOODWITHDOGS" in cols: p["matchgoodwithdogs"] = gkynu(row, "PERSONMATCHGOODWITHDOGS")
+                    if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
+                    if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
+                    if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
+                
+                imagedata = gks(row, "PERSONIMAGE")
+                if imagedata != "":
+                    if imagedata.startswith("http"):
+                        # It's a URL, get the image from the remote server
+                        r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
+                        if r["status"] == 200:
+                            asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
+                            imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
+                        else:
+                            row_error(errors, "person", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
+                            continue
+                    elif imagedata.startswith("data:image"):
+                        # It's a base64 encoded data URI - do nothing as attach_file requires it
+                        pass
                     else:
-                        row_error(errors, "person", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                        # We don't know what it is, don't try and do anything with it
+                        row_error(errors, "person", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
+                        imagedata = ""
+                # pdf data if any was supplied
+                pdfdata = gks(row, "PERSONPDFDATA")
+                pdfname = gks(row, "PERSONPDFNAME")
+                if pdfdata != "":
+                    if pdfdata.startswith("http"):
+                        # It's a URL, get the PDF from the remote server
+                        r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
+                        if r["status"] == 200:
+                            asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
+                            pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+                        else:
+                            row_error(errors, "person", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                            continue
+                    elif pdfdata.startswith("data:"):
+                        # It's a base64 encoded data URI - do nothing as attach_file requires it
+                        pass
+                    else:
+                        # We don't know what it is, don't try and do anything with it
+                        row_error(errors, "person", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
+                        pdfdata = ""
+                    if pdfdata != "" and pdfname == "":
+                        row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
                         continue
-                elif pdfdata.startswith("data:"):
-                    # It's a base64 encoded data URI - do nothing as attach_file requires it
-                    pass
-                else:
-                    # We don't know what it is, don't try and do anything with it
-                    row_error(errors, "person", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
-                    pdfdata = ""
-                if pdfdata != "" and pdfname == "":
-                    row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
-                    continue
-
-            try:
-                if checkduplicates:
-                    dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
-                    if len(dups) > 0:
-                        personid = dups[0].ID
-                        # Merge flags and any extra details
-                        asm3.person.merge_flags(dbo, user, personid, flags)
-                        asm3.person.merge_gdpr_flags(dbo, user, personid, p["gdprcontactoptin"])
-                        # If we deduplicated on the email address, and address details are
-                        # present, assume that they are newer than the ones we had and update them
-                        # (we do this by setting force=True parameter to merge_person_details,
-                        # otherwise we do a regular merge which only fills in any blanks)
-                        asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
-                if personid == 0:
-                    personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
-                # Identify any PERSONADDITIONAL additional fields and create/merge them
-                create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
-                # If we have some image data, add it to the person
-                if len(imagedata) > 0:
-                    imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
-                # If we have some PDF data, add that to the person
-                if len(pdfdata) > 0:
-                    pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
-            except Exception as e:
-                row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
+                        
+                try:
+                    if checkduplicates:
+                        dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
+                        if len(dups) > 0:
+                            personid = dups[0].ID
+                            # Merge flags and any extra details
+                            asm3.person.merge_flags(dbo, user, personid, flags)
+                            asm3.person.merge_gdpr_flags(dbo, user, personid, p["gdprcontactoptin"])
+                            # If we deduplicated on the email address, and address details are
+                            # present, assume that they are newer than the ones we had and update them
+                            # (we do this by setting force=True parameter to merge_person_details,
+                            # otherwise we do a regular merge which only fills in any blanks)
+                            asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
+                    if personid == 0:
+                        personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+                    # Identify any PERSONADDITIONAL additional fields and create/merge them
+                    create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
+                    # If we have some image data, add it to the person
+                    if len(imagedata) > 0:
+                        imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
+                        asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
+                    # If we have some PDF data, add that to the person
+                    if len(pdfdata) > 0:
+                        pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
+                        asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
+                except Exception as e:
+                    row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 
         # Movement to tie animal/person together?
         movementid = 0
@@ -906,6 +928,54 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             except Exception as e:
                 row_error(errors, "incident", rowno, row, e, dbo, sys.exc_info())
         
+        # Citation
+        if hascitation and personid != 0 and gkd(dbo, row, "CITATIONDATE") != "":
+            c = {}
+            c["person"] = str(personid)
+            c["incident"] = "0"
+            c["type"] = gkl(dbo, row, "CITATIONTYPE", "citationtype", "CitationName", createmissinglookups)
+            c["citationnumber"] = gks(row, "CITATIONNUMBER")
+            c["citationdate"] = gkd(dbo, row, "CITATIONDATE")
+            c["fineamount"] = str(gkc(row, "FINEAMOUNT"))
+            c["finedue"] = gkd(dbo, row, "FINEDUEDATE")
+            c["finepaid"] = gkd(dbo, row, "FINEPAIDDATE")
+            c["comments"] = gks(row, "CITATIONCOMMENTS")
+            asm3.financial.insert_citation_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+        
+        # Clinic appointments
+        if hasclinic and personid != 0 and gkd(dbo, row, "CLINICAPPOINTMENTDATE") != "":
+            c = {}
+            c["animal"] = "0"
+            c["person"] = str(personid)
+            c["type"] = gkl(dbo, row, "CLINICAPPOINTMENTTYPE", "lkclinictype", "ClinicTypeName", createmissinglookups)
+            c["for"] = gks(row, "CLINICAPPOINTMENTFOR")
+            c["apptdate"] = gkd(dbo, row, "CLINICAPPOINTMENTDATE")
+            c["appttime"] = gks(row, "CLINICAPPOINTMENTTIME")
+
+            c["status"] = asm3.utils.cint(row["CLINICAPPOINTMENTSTATUS"])
+
+            c["arriveddate"] = gkd(dbo, row, "CLINICARRIVEDDATE")
+            c["arrivedtime"] = gks(row, "CLINICARRIVEDTIME")
+
+            c["withvetdate"] = gkd(dbo, row, "CLINICWITHVETDATE")
+            c["withvettime"] = gks(row, "CLINICWITHVETTIME")
+
+            c["completedate"] = gkd(dbo, row, "CLINICCOMPLETEDDATE")
+            c["completetime"] = gks(row, "CLINICCOMPLETEDDATE")
+
+            c["reason"] = gks(row, "CLINICAPPOINTMENTREASON")
+            c["comments"] = gks(row, "CLINICAPPOINTMENTCOMMENTS")
+            c["amount"] = asm3.utils.cint(row["CLINICAMOUNT"])
+
+            c["vat"] = asm3.utils.cint(row["CLINICAPPOINTMENTISVAT"])
+
+            c["vatrate"] = asm3.utils.cfloat(row["CLINICAPPOINTMENTVATRATE"])
+
+            c["vatamount"] = asm3.utils.cint(row["CLINICAPPOINTMENTVATAMOUNT"])
+
+
+            asm3.clinic.insert_appointment_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+        
         # Diary note
         if hasdiary:
             d = {}
@@ -914,12 +984,29 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["subject"] = gks(row, "DIARYSUBJECT")
             d["note"] = gks(row, "DIARYNOTE")
 
-            if animalid != 0:
+            if d["diarydate"] == "":
+                pass
+            elif animalid != 0:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMAL, animalid, asm3.utils.PostedData(d, dbo.locale))
             elif incidentid != 0:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMALCONTROL, incidentid, asm3.utils.PostedData(d, dbo.locale))
             else:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.PERSON, personid, asm3.utils.PostedData(d, dbo.locale))
+
+        # Equipment loans
+        if hasequipmentloan and personid != 0 and gkd(dbo, row, "LOANDATE") != "":
+            t = {}
+            t["person"] = str(personid)
+            t["type"] = gkl(dbo, row, "TRAPTYPE", "traptype", "TrapTypeName", createmissinglookups)
+            t["loandate"] = gkd(dbo, row, "LOANDATE")
+            t["depositamount"] = str(gkc(row, "DEPOSITAMOUNT"))
+            t["depositreturndate"] = gkd(dbo, row, "DEPOSITRETURNDATE")
+            t["trapnumber"] = gks(row, "TRAPNUMBER")
+            t["returnduedate"] = gkd(dbo, row, "RETURNDUEDATE")
+            t["returndate"] = gkd(dbo, row, "RETURNDATE")
+            t["comments"] = gks(row, "TRAPLOANCOMMENTS")
+
+            asm3.animalcontrol.insert_traploan_from_form(dbo, user, asm3.utils.PostedData(t, dbo.locale))
 
         # Vaccination
         if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
@@ -982,15 +1069,34 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             except Exception as e:
                 row_error(errors, "cost", rowno, row, e, dbo, sys.exc_info())
 
+        # Investigation
+        if hasinvestigation and personid != 0 and gks(row, "INVESTIGATIONNOTES") != "":
+            i = {}
+            i["personid"] = str(personid)
+            i["date"] = gkd(dbo, row, "INVESTIGATIONDATE", True)
+            i["notes"] = gks(row, "INVESTIGATIONNOTES")
+            try:
+                asm3.person.insert_investigation_from_form(dbo, user, asm3.utils.PostedData(i, dbo.locale))
+            except Exception as e:
+                row_error(errors, "investigation", rowno, row, e, dbo, sys.exc_info())
+        
         # Logs
-        if haslog and animalid != 0 and gks(row, "LOGCOMMENTS") != "":
+        if haslog and (animalid != 0 or personid != 0) and gks(row, "LOGCOMMENTS") != "":
             l = {}
             l["type"] = gkl(dbo, row, "LOGTYPE", "logtype", "LogTypeName", createmissinglookups)
             l["logdate"] = gkd(dbo, row, "LOGDATE", True)
             l["logtime"] = gks(row, "LOGTIME")
             l["entry"] = gks(row, "LOGCOMMENTS")
+
+            if animalid != 0:
+                linktype = asm3.log.ANIMAL
+                linkid = animalid
+            else:
+                linktype = asm3.log.PERSON
+                linkid = personid
+
             try:
-                asm3.log.insert_log_from_form(dbo, user, asm3.log.ANIMAL, animalid, asm3.utils.PostedData(l, dbo.locale))
+                asm3.log.insert_log_from_form(dbo, user, linktype, linkid, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
 
@@ -1027,6 +1133,25 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
+        
+        # Voucher 
+        if hasvoucher and personid != 0 and gkd(dbo, row, "VOUCHERDATEISSUED") != "":
+            v = {}
+            v["person"] = str(personid)
+            v["animal"] = "0"
+            v["type"] = gkl(dbo, row, "VOUCHERNAME", "voucher", "VoucherName", createmissinglookups)
+            v["vouchercode"] = gks(row, "VOUCHERCODE")
+            v["issued"] = gkd(dbo, row, "VOUCHERDATEISSUED")
+            v["expires"] = gkd(dbo, row, "VOUCHERDATEEXPIRED")
+            v["presented"] = gkd(dbo, row, "VOUCHERDATEPRESENTED")
+            v["vet"] = "0"
+            v["amount"] = asm3.utils.cint(row["VOUCHERVALUE"])
+            v["comments"] = gks(row, "VOUCHERCOMMENTS")
+
+            try:
+                asm3.financial.insert_voucher_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+            except Exception as e:
+                row_error(errors, "voucher", rowno, row, e, dbo, sys.exc_info())
 
         rowno += 1
     
@@ -1577,4 +1702,303 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
     asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
     h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
         asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
+    return h
+
+def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = "", includemedia: str = "photo") -> str:
+    """
+    Export CSV data for a set of people.
+    dataset: The named set of data to use
+    where: If dataset == where, a where clause to the owner table (without the keyword WHERE)
+    includemedia: photo: output base64 encoded version of the primary photo for each person
+                  all: output base64 encoded version of all media for each person
+    Returns an html link to the exported file to download.
+    """
+    l = dbo.locale
+    q = ""
+    out = asm3.utils.stringio()
+    
+    if dataset == "all": q = "SELECT ID FROM owner ORDER BY ID"
+    elif dataset == "flaggedpeople":
+        q = "SELECT ID FROM owner WHERE "
+        flagargs = []
+        for flag in flags.split(","):
+            flagargs.append("AdditionalFlags LIKE '%" + flag + "|%'")
+        q += (" OR ").join(flagargs)
+    elif dataset == "where": q = "SELECT ID FROM owner WHERE %s ORDER BY ID" % where.replace(";", "")
+    
+    pids = dbo.query(q)
+
+    keys = [ "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
+        "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
+        "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME",
+        "PERSONTITLE2", "PERSONINITIALS2", "PERSONFIRSTNAME2", "PERSONLASTNAME2",
+        "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
+        "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
+        "PERSONFLAGS", "PERSONCOMMENTS", "PERSONWARNING", "PERSONFOSTERCAPACITY",
+        "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
+        "PERSONHOMEPHONE2", "PERSONWORKPHONE2", "PERSONCELLPHONE2", "PERSONEMAIL2",
+        "PERSONGDPRCONTACT", "PERSONCLASS",
+        "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
+        "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
+        "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
+        "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
+        "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
+        "PERSONMATCHCOMMENTSCONTAIN",
+        "PERSONIMAGE", "PERSONPDFNAME", "PERSONPDFDATA", "PERSONHTMLNAME", "PERSONHTMLDATA",
+        "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
+        "ANIMALCODE", "ANIMALNAME", 
+        "LICENSENUMBER", "LICENSETYPE", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
+        "INVESTIGATIONDATE", "INVESTIGATIONNOTES",
+        "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
+        "LOANDATE", "TRAPTYPE", "TRAPNUMBER", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
+        "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
+        "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE", "VOUCHERCODE", "VOUCHERCOMMENTS", 
+        "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE",
+        "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", 
+        "CLINICAPPOINTMENTDATE", "CLINICAPPOINTMENTTIME",     "CLINICARRIVEDDATE", "CLINICARRIVEDTIME", 
+        "CLINICWITHVETDATE", "CLINICWITHVETTIME", "CLINICCOMPLETEDDATE", "CLINICCOMPLETEDDATE", 
+        "CLINICAPPOINTMENTISVAT", "CLINICAPPOINTMENTVATRATE", "CLINICAPPOINTMENTVATAMOUNT", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTCOMMENTS", "CLINICAMOUNT", 
+        "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE" ]
+    
+    def tocsv(row: Dict) -> str:
+        r = []
+        for k in keys:
+            if k in row: 
+                r.append("\"%s\"" % str(row[k]).replace("\"", "\"\""))
+            else:
+                r.append("\"\"")
+        return ",".join(r) + "\n"
+
+    def nn(s: str) -> str:
+        if s is None: return ""
+        return s
+
+    firstrow = True
+    asm3.asynctask.set_progress_max(dbo, len(pids))
+    for pid in pids:
+
+        # Should we stop?
+        if asm3.asynctask.get_cancel(dbo): break
+
+        if firstrow:
+            firstrow = False
+            out.write(",".join(keys) + "\n")
+
+        row = {}
+        #p = asm3.person.get_person(dbo, pid["ID"])
+        p = dbo.query("SELECT * FROM owner WHERE ID = %s" % (pid["ID"]) )
+        if p is None: continue
+        p = p[0]
+        asm3.asynctask.increment_progress_value(dbo)
+
+        row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+        row["PERSONDATEOFBIRTH"] = asm3.i18n.python2display(l, nn(p["DATEOFBIRTH"]))
+        row["PERSONDATEOFBIRTH2"] = asm3.i18n.python2display(l, nn(p["DATEOFBIRTH2"]))
+        row["PERSONTITLE"] = nn(p["OWNERTITLE"])
+        row["PERSONINITIALS"] = nn(p["OWNERINITIALS"])
+        row["PERSONFIRSTNAME"] = nn(p["OWNERFORENAMES"])
+        row["PERSONLASTNAME"] = nn(p["OWNERSURNAME"])
+        row["PERSONTITLE2"] = nn(p["OWNERTITLE2"])
+        row["PERSONINITIALS2"] = nn(p["OWNERINITIALS2"])
+        row["PERSONFIRSTNAME2"] = nn(p["OWNERFORENAMES2"])
+        row["PERSONLASTNAME2"] = nn(p["OWNERSURNAME2"])
+        row["PERSONADDRESS"] = nn(p["OWNERADDRESS"])
+        row["PERSONCITY"] = nn(p["OWNERTOWN"])
+        row["PERSONSTATE"] = nn(p["OWNERCOUNTY"])
+        row["PERSONZIPCODE"] = nn(p["OWNERPOSTCODE"])
+        row["PERSONHOMEPHONE"] = nn(p["HOMETELEPHONE"])
+        row["PERSONWORKPHONE"] = nn(p["WORKTELEPHONE"])
+        row["PERSONCELLPHONE"] = nn(p["MOBILETELEPHONE"])
+        row["PERSONEMAIL"] = nn(p["EMAILADDRESS"])
+        row["PERSONWORKPHONE2"] = nn(p["WORKTELEPHONE2"])
+        row["PERSONCELLPHONE2"] = nn(p["MOBILETELEPHONE2"])
+        row["PERSONEMAIL2"] = nn(p["EMAILADDRESS2"])
+        row["PERSONGDPRCONTACT"] = nn(p["GDPRCONTACTOPTIN"])
+        row["PERSONCLASS"] = asm3.utils.cint(p["OWNERTYPE"])
+        row["PERSONMEMBER"] = asm3.utils.cint(p["ISMEMBER"])
+        row["PERSONMEMBERSHIPNUMBER"] = nn(p["MEMBERSHIPNUMBER"])
+        row["PERSONMEMBERSHIPEXPIRY"] = asm3.i18n.python2display(l, p["MEMBERSHIPEXPIRYDATE"])
+        row["PERSONMATCHACTIVE"] = asm3.utils.cint(p["ISMEMBER"])
+        row["PERSONMATCHADDED"] = asm3.i18n.python2display(l, p["MATCHADDED"])
+        row["PERSONMATCHEXPIRES"] = asm3.i18n.python2display(l, p["MATCHEXPIRES"])
+        row["PERSONMATCHSEX"] = asm3.utils.cint(p["MATCHSEX"])
+        row["PERSONMATCHSIZE"] = asm3.utils.cint(p["MATCHSIZE"])
+        row["PERSONMATCHCOLOR"] = asm3.utils.cint(p["MATCHCOLOUR"])
+        row["PERSONMATCHAGEFROM"] = asm3.utils.cfloat(p["MATCHAGEFROM"])
+        row["PERSONMATCHAGETO"] = asm3.utils.cfloat(p["MATCHAGETO"])
+        row["PERSONMATCHTYPE"] = asm3.utils.cint(p["MATCHANIMALTYPE"])
+        row["PERSONMATCHSPECIES"] = asm3.utils.cint(p["MATCHSPECIES"])
+        row["PERSONMATCHBREED1"] = asm3.utils.cint(p["MATCHBREED"])
+        row["PERSONMATCHBREED2"] = asm3.utils.cint(p["MATCHBREED2"])
+        row["PERSONMATCHGOODWITHCATS"] = asm3.utils.cint(p["MATCHGOODWITHCATS"])
+        row["PERSONMATCHGOODWITHDOGS"] = asm3.utils.cint(p["MATCHGOODWITHDOGS"])
+        row["PERSONMATCHGOODWITHCHILDREN"] = asm3.utils.cint(p["MATCHGOODWITHCHILDREN"])
+        row["PERSONMATCHHOUSETRAINED"] = asm3.utils.cint(p["MATCHHOUSETRAINED"])
+        row["PERSONMATCHCOMMENTSCONTAIN"] = nn(p["MATCHCOMMENTSCONTAIN"])
+        row["PERSONCOMMENTS"] = nn(p["COMMENTS"])
+        row["PERSONWARNING"] = nn(p["POPUPWARNING"])
+        out.write(tocsv(row))
+
+        if includemedia != "none":
+            media = asm3.media.get_image_media(dbo, asm3.media.PERSON, p["ID"])
+            if includemedia == "photo":
+                for m in media:
+                    if m["WEBSITEPHOTO"] == 1:
+                        row["PERSONIMAGE"] = "%s?account=%s&method=media_image&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        break
+                out.write(tocsv(row))
+            elif includemedia == "photos":
+                for m in media:
+                    if m["MEDIANAME"].endswith(".jpg"):
+                        row = {}
+                        row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+                        row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        out.write(tocsv(row))
+            elif includemedia == "all":
+                for m in asm3.media.get_media(dbo, asm3.media.PERSON, p["ID"]):
+                    if m["MEDIANAME"].endswith(".jpg") or m["MEDIANAME"].endswith(".pdf") or m["MEDIANAME"].endswith(".html"):
+                        row = {}
+                        row["PERSONCODE"] ="XP-" + nn(p["OWNERCODE"])
+                        if m["MEDIANAME"].endswith(".jpg"):
+                            row["PERSONIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        elif m["MEDIANAME"].endswith(".pdf"):
+                            row["PERSONPDFNAME"] = m["MEDIANOTES"]
+                            if row["PERSONPDFNAME"].strip() == "": row["PERSONPDFNAME"] = "doc.pdf"
+                            row["PERSONPDFDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        elif m["MEDIANAME"].endswith(".html"):
+                            row["PERSONHTMLNAME"] = m["MEDIANOTES"]
+                            if row["PERSONHTMLNAME"].strip() == "": row["PERSONHTMLNAME"] = "doc.html"
+                            row["PERSONHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                        out.write(tocsv(row))
+
+        for n in asm3.diary.get_diaries(dbo, asm3.diary.PERSON, p["ID"]):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["DIARYDATE"] = asm3.i18n.python2display(l, n["DIARYDATETIME"])
+            row["DIARYFOR"] = nn(n["DIARYFORNAME"])
+            row["DIARYSUBJECT"] = nn(n["SUBJECT"])
+            row["DIARYNOTE"] = nn(n["NOTE"])
+            out.write(tocsv(row))
+        
+        for g in asm3.log.get_logs(dbo, asm3.log.PERSON, p["ID"]):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["LOGDATE"] = asm3.i18n.python2display(l, g["DATE"])
+            row["LOGTIME"] = asm3.i18n.format_time(g["DATE"])
+            row["LOGTYPE"] = nn(g["LOGTYPENAME"])
+            row["LOGCOMMENTS"] = nn(g["COMMENTS"])
+            out.write(tocsv(row))
+        
+        for li in dbo.query(asm3.financial.get_licence_query(dbo) + " WHERE ol.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["LICENSENUMBER"] = nn(li["LICENCENUMBER"])
+            row["ANIMALCODE"] = nn(li["SHELTERCODE"])
+            row["LICENSETYPE"] = nn(li["LICENCETYPENAME"])
+            row["LICENSEFEE"] = asm3.utils.cint(li["LICENCEFEE"])
+            row["LICENSEISSUEDATE"] = asm3.i18n.python2display(l, li["ISSUEDATE"])
+            row["LICENSEEXPIRESDATE"] = asm3.i18n.python2display(l, li["EXPIRYDATE"])
+            row["LICENSECOMMENTS"] =  nn(li["COMMENTS"])
+            out.write(tocsv(row))
+        
+        for i in asm3.person.get_investigation(dbo, p["ID"]):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["INVESTIGATIONDATE"] = asm3.i18n.python2display(l, i["DATE"])
+            row["INVESTIGATIONNOTES"] =  nn(i["NOTES"])
+            out.write(tocsv(row))
+        
+        for c in dbo.query(asm3.financial.get_citation_query(dbo) + " WHERE oc.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["CITATIONDATE"] = asm3.i18n.python2display(l, c["CITATIONDATE"])
+            row["CITATIONNUMBER"] = nn(c["CITATIONNUMBER"])
+            row["CITATIONTYPE"] =  nn(c["CITATIONNAME"])
+            row["FINEAMOUNT"] =  asm3.utils.cint(c["FINEAMOUNT"])
+            row["FINEDUEDATE"] =  asm3.i18n.python2display(l, c["FINEDUEDATE"])
+            row["FINEPAIDDATE"] =  asm3.i18n.python2display(l, c["FINEPAIDDATE"])
+            row["CITATIONCOMMENTS"] = nn(c["COMMENTS"])
+            out.write(tocsv(row))
+        
+        for t in dbo.query(asm3.animalcontrol.get_traploan_query(dbo) + " WHERE ot.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["TRAPTYPE"] = nn(t["TRAPTYPENAME"])
+            row["TRAPNUMBER"] = nn(t["TRAPNUMBER"])
+            row["LOANDATE"] = asm3.i18n.python2display(l, t["LOANDATE"])
+            row["DEPOSITAMOUNT"] = asm3.utils.cint(t["DEPOSITAMOUNT"])
+            row["DEPOSITRETURNDATE"] = asm3.i18n.python2display(l, t["DEPOSITRETURNDATE"])
+            row["RETURNDUEDATE"] = asm3.i18n.python2display(l, t["RETURNDUEDATE"])
+            row["RETURNDATE"] = asm3.i18n.python2display(l, t["RETURNDATE"])
+            row["TRAPLOANCOMMENTS"] = nn(t["COMMENTS"])
+            out.write(tocsv(row))
+        
+        for d in dbo.query(asm3.financial.get_donation_query(dbo) + " WHERE od.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["DONATIONNAME"] = nn(d["DONATIONNAME"])
+            row["DONATIONDATE"] = asm3.i18n.python2display(l, d["DATE"])
+            row["DONATIONAMOUNT"] = asm3.utils.cint(d["DONATION"])
+            row["PAYMENTNAME"] = nn(d["PAYMENTNAME"])
+            row["PAYMENTISGIFTAID"] = nn(d["ISGIFTAIDNAME"])
+            row["PAYMENTFREQUENCY"] = nn(d["FREQUENCYNAME"])
+            row["PAYMENTRECEIPTNUMBER"] = nn(d["RECEIPTNUMBER"])
+            row["PAYMENTCHEQUENUMBER"] = nn(d["CHEQUENUMBER"])
+            row["PAYMENTFEE"] = asm3.utils.cint(d["FEE"])
+            row["PAYMENTISVAT"] = asm3.utils.cint(d["ISVAT"])
+            row["PAYMENTVATRATE"] = asm3.utils.cfloat(d["VATRATE"])
+            row["PAYMENTVATAMOUNT"] = asm3.utils.cint(d["VATAMOUNT"])
+            row["PAYMENTCOMMENTS"] = nn(d["COMMENTS"])
+            out.write(tocsv(row))
+        
+        for v in dbo.query(asm3.financial.get_voucher_query(dbo) + " WHERE ov.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["ANIMALCODE"] = nn(v["SHELTERCODE"])
+            row["ANIMALNAME"] = nn(v["ANIMALNAME"])
+            row["VOUCHERNAME"] = nn(v["VOUCHERNAME"])
+            row["VOUCHERVETNAME"] = nn(v["VETNAME"])
+            row["VOUCHERVETADDRESS"] = nn(v["VETADDRESS"])
+            row["VOUCHERVETTOWN"] = nn(v["VETTOWN"])
+            row["VOUCHERVETCOUNTY"] = nn(v["VETCOUNTY"])
+            row["VOUCHERVETPOSTCODE"] = nn(v["VETPOSTCODE"])
+            row["VOUCHERDATEISSUED"] = asm3.i18n.python2display(l, v["DATEISSUED"])
+            row["VOUCHERDATEPRESENTED"] = asm3.i18n.python2display(l, v["DATEPRESENTED"])
+            row["VOUCHERDATEEXPIRED"] = asm3.i18n.python2display(l, v["DATEEXPIRED"])
+            row["VOUCHERVALUE"] = asm3.utils.cint(v["VALUE"])
+            row["VOUCHERCODE"] = nn(v["VOUCHERCODE"])
+            row["VOUCHERCOMMENTS"] = nn(v["COMMENTS"])
+            out.write(tocsv(row))
+        
+        for a in dbo.query(asm3.clinic.get_clinic_appointment_query(dbo) + " WHERE ca.OwnerID = " + str(p["ID"])):
+            row = {}
+            row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
+            row["ANIMALCODE"] = nn(a["SHELTERCODE"])
+            row["CLINICAPPOINTMENTFOR"] = nn(a["APPTFOR"])
+            row["CLINICAPPOINTMENTTYPE"] = nn(a["CLINICTYPENAME"])
+            row["CLINICAPPOINTMENTSTATUS"] = nn(a["CLINICSTATUSNAME"])
+            row["CLINICAPPOINTMENTDATE"] = asm3.i18n.python2display(l, a["DATETIME"])
+            row["CLINICAPPOINTMENTTIME"] = asm3.i18n.format_time(a["DATETIME"])
+            row["CLINICARRIVEDDATE"] = asm3.i18n.python2display(l, a["ARRIVEDDATETIME"])
+            row["CLINICARRIVEDTIME"] = asm3.i18n.format_time(a["ARRIVEDDATETIME"])
+            row["CLINICWITHVETDATE"] = asm3.i18n.python2display(l, a["WITHVETDATETIME"])
+            row["CLINICWITHVETTIME"] = asm3.i18n.format_time(a["WITHVETDATETIME"])
+            row["CLINICCOMPLETEDDATE"] = asm3.i18n.python2display(l, a["COMPLETEDDATETIME"])
+            row["CLINICCOMPLETEDTIME"] = asm3.i18n.format_time(a["COMPLETEDDATETIME"])
+            row["CLINICAPPOINTMENTISVAT"] = asm3.utils.cint(a["ISVAT"])
+            row["CLINICAPPOINTMENTVATRATE"] = asm3.utils.cfloat(a["VATRATE"])
+            row["CLINICAPPOINTMENTVATAMOUNT"] = asm3.utils.cfloat(a["VATAMOUNT"])
+            row["CLINICAPPOINTMENTREASON"] = nn(a["REASONFORAPPOINTMENT"])
+            row["CLINICAPPOINTMENTCOMMENTS"] = nn(a["COMMENTS"])
+            row["CLINICAMOUNT"] = nn(a["AMOUNT"])
+            out.write(tocsv(row))
+
+        del p
+        del row
+
+    # Generate a disk cache key and store the data in the cache so it can be retrieved for the next hour
+    key = asm3.utils.uuid_str()
+    asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
+    h = '<p>%s <a target="_blank" href="csvexport_people?get=%s"><b>%s</b></p>' % ( \
+        asm3.i18n._("Export complete ({0} entries).", l).format(len(pids)), key, asm3.i18n._("Download File", l) )
     return h

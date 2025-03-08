@@ -1031,12 +1031,15 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     l = dbo.locale
     if post["surname"].strip() == "":
         raise asm3.utils.ASMValidationError(_("Person must have a surname.", l))
-
+    
     pid = dbo.get_id("owner")
+    ownercode = post["ownercode"]
+    if post["ownercode"] == "": ownercode = calculate_owner_code(pid, post["surname"])
+
     dbo.insert("owner", {
         "ID":               pid,
         "OwnerType":        post.integer("ownertype"),
-        "OwnerCode":        calculate_owner_code(pid, post["surname"]),
+        "OwnerCode":        ownercode,
         "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", "", \
                                 post["title2"], post["initials2"], post["forenames2"], post["surname2"] ),
         "OwnerTitle":       post["title"],

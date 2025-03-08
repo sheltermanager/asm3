@@ -2962,6 +2962,15 @@ class csvexport(JSONEndpoint):
     url = "csvexport"
     get_permissions = asm3.users.EXPORT_REPORT
 
+class csvpeopleexport(JSONEndpoint):
+    url = "csvpeopleexport"
+    get_permissions = asm3.users.EXPORT_REPORT
+
+    def controller(self, o):
+        return {
+            "flags": asm3.lookups.get_person_flags(o.dbo)
+        }
+
 class csvexport_animals(ASMEndpoint):
     url = "csvexport_animals"
     get_permissions = asm3.users.EXPORT_REPORT
@@ -2978,6 +2987,25 @@ class csvexport_animals(ASMEndpoint):
             l = o.locale
             asm3.asynctask.function_task(o.dbo, _("Export Animals as CSV", l), asm3.csvimport.csvexport_animals, 
                 o.dbo, o.post["filter"], o.post["animals"], o.post["where"], o.post["media"] )
+            self.redirect("task")
+
+class csvexport_people(ASMEndpoint):
+    url = "csvexport_people"
+    get_permissions = asm3.users.EXPORT_REPORT
+
+    def content(self, o):
+        # If we're retrieving an already saved export, serve it.
+        if o.post["get"] != "":
+            self.content_type("text/csv")
+            self.content_disposition("attachment", "export.csv")
+            v = asm3.cachedisk.get(o.post["get"], o.dbo.name())
+            if v is None: self.notfound()
+            return v
+        else:
+            l = o.locale
+            #csvexport_people(dbo: Database, dataset: str, where: str = "", includemedia: str = "photo")
+            asm3.asynctask.function_task(o.dbo, _("Export People as CSV", l), asm3.csvimport.csvexport_people, 
+                o.dbo, o.post["filter"], o.post["flags"], o.post["where"], o.post["media"] )
             self.redirect("task")
 
 class csvimport(JSONEndpoint):

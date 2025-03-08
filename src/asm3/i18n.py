@@ -395,6 +395,11 @@ def format_time(d: datetime, timeformat: str = "%H:%M:%S") -> str:
     if d is None: return ""
     return time.strftime(timeformat, d.timetuple())
 
+def format_time_flexi(d: datetime, timeformat: str = "%H:%M:%S") -> str:
+    if d is None: return ""
+    
+    return time.strftime(timeformat, d.timetuple())
+
 def format_time_now(offset: float = 0.0) -> str:
     return format_time(now(offset))
 
