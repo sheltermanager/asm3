@@ -62,7 +62,22 @@ $(function() {
                 ]
             };
 
+            const buttons = [
+                { id: "productmovementfilter", type: "dropdownfilter", 
+                    options: '<option value="0">' + _("(today)") + '</option>' + 
+                        '<option value="-7">' + _("(last week)") + '</option>' +
+                        '<option value="-30">' + _("(last month)") + '</option>' +
+                        '<option value="-91">' + _("(last quarter)") + '</option>' +
+                        '<option value="-182">' + _("(last 6 months)") + '</option>' +
+                        '<option value="-365">' + _("(last year)") + '</option>',
+                    click: function(selval) {
+                        common.route("stock_movement?interval=" + selval);
+                    }
+                }
+            ]
+
             this.dialog = dialog;
+            this.buttons = buttons;
             this.table = table;
         },
 
@@ -86,6 +101,13 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
+        },
+
+        sync: function() {
+            // If an interval is given in the querystring, update the select
+            if (common.querystring_param("interval")) {
+                $("#productmovementfilter").select("value", common.querystring_param("interval"));
+            }
         },
 
         destroy: function() {

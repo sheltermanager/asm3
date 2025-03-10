@@ -6742,6 +6742,12 @@ class stock_movement(JSONEndpoint):
         dbo = o.dbo
         productid = 0
         productname = ""
+        if o.post["interval"]:
+            interval = o.post.integer("interval")
+            fromdate = dbo.today(offset=interval)
+        else:
+            interval = 0
+            fromdate = dbo.today()
         if o.post["productid"]:
             productid = o.post.integer("productid")
         products = []
@@ -6760,7 +6766,7 @@ class stock_movement(JSONEndpoint):
             "products": products,
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
-            "rows": asm3.stock.get_stock_movements(dbo, productid)
+            "rows": asm3.stock.get_stock_movements(dbo, productid, fromdate)
         }
     
     def post_delete(self, o):

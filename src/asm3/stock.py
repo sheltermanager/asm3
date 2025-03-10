@@ -121,7 +121,7 @@ def get_retired_products(dbo: Database) -> Results:
         "WHERE IsRetired = %s " \
         "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 1))
 
-def get_stock_movements(dbo: Database, productid: int = 0) -> Results:
+def get_stock_movements(dbo: Database, productid: int = 0, fromdate: datetime = False) -> Results:
     """
     Returns product movements
     """
@@ -129,7 +129,12 @@ def get_stock_movements(dbo: Database, productid: int = 0) -> Results:
     wheresql = ""
     if productid != 0:
         wheresql = "WHERE stocklevel.ProductID = %i" % productid
-
+    if fromdate:
+        if wheresql == "":
+            wheresql = "WHERE "
+        else:
+            wheresql = " AND "
+        wheresql += "stockusage.UsageDate >= '%s'" % (fromdate,)
 
     return dbo.query("SELECT " \
         "stockusage.ID, " \
