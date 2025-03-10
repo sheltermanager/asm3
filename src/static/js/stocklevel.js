@@ -16,9 +16,8 @@ $(function() {
                 columns: 1,
                 width: 800,
                 fields: [
+                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Product templates"), type: "select", options: controller.productnames },
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text" },
-                    { json_field: "PRODUCTSEARCHKEY", post_field: "productsearchkey", label: _("Search"), type: "text" },
-                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Results"), type: "select", validation: "notzero", options: controller.productnames, style: "size: 5" },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
                     { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "text", validation: "notblank",
                         callout: _("The type of unit in the container, eg: tablet, vial, etc.") },
@@ -56,9 +55,6 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    $("#productsearchkeyrow").fadeOut();
-                    $("#productlistrow").fadeOut();
-                    $("#productnamerow").fadeIn();
                     tableform.fields_populate_from_json(dialog.fields, row);
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
@@ -151,9 +147,6 @@ $(function() {
         new_level: function() { 
             let dialog = stocklevel.dialog, table = stocklevel.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#productsearchkeyrow").fadeOut();
-            $("#productlistrow").fadeOut();
-            $("#productnamerow").fadeIn();
             $("#productlist").val(-1);
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -241,15 +234,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            $("#name").after('<button id="button-product">' + _("Use a product template") + '</button>');
-            $("#button-product")
-                .button({ icons: { primary: "ui-icon-search" }, text: false })
-                .click(function() {
-                    $("#productsearchkey").val("");
-                    $("#productsearchkeyrow").fadeIn();
-                    $("#productlistrow").fadeIn();
-                    $("#productnamerow").fadeOut();
-                });
 
             // If the user edits the balance, prompt for usage info
             $("#balance").change(stocklevel.show_usage_fields);
@@ -328,9 +312,6 @@ $(function() {
                 $("#total").val(activeproduct.UNITRATIO);
                 $("#balance").val(activeproduct.UNITRATIO);
                 $("#low").val(0);
-                $("#productsearchkey").val("");
-                $("#productsearchkeyrow").fadeOut();
-                $("#productlistrow").fadeOut();
                 $("#namerow").fadeIn();
                 
                 
@@ -353,8 +334,6 @@ $(function() {
             $("#name").autocomplete("option", "appendTo", "#dialog-tableform");
             $("#unitname").autocomplete({ source: html.decode(controller.stockunits.split("|")) });
             $("#unitname").autocomplete("option", "appendTo", "#dialog-tableform");
-
-            $("#productlist").attr("size", 5);
 
         },
 

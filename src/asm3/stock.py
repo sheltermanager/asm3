@@ -328,7 +328,7 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         raise asm3.utils.ASMValidationError(_("Product must have a name", l))
     
     retired = 0
-    if post.integer["active"] == 0:
+    if post.integer("active") == 0:
         retired = 1
    
     pid = dbo.insert("product", {
