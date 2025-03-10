@@ -39,24 +39,6 @@ to appear on the page:
 
 .. image:: images/wordpress_2.png
 
-Facebook
-^^^^^^^^
-
-The "Share" button on animal records is great for highlighting an animal so that
-all your followers see it in their timeline, but you can also add your complete
-adoptable animal list as a tab to your Facebook page too.
-
-Follow this guide: https://www.jotform.com/help/82-adding-a-form-to-facebook-using-custom-iframe-app/
-to add a new iframe tab to your page. You can use a service call to ASM as the iframe target
-to get a list of your adoptable animals.
-
-If you're using sheltermanager.com, it's as easy as using this snippet of
-iframe markup (substitute YOURACCOUNT for your sheltermanager.com account
-number):
-
-   <frame src="https://service.sheltermanager.com/asmservice?method=animal_view_adoptable_html&account=YOURACCOUNT" width="100%" height="600px"></iframe>
-
-
 Dynamic HTML Page 
 -----------------
 

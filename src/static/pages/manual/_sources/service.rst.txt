@@ -879,12 +879,7 @@ results to be in. The default is adoption date descending. Options are:
 * name_asc / name_desc - animal name
 
 You can also pass a "days" parameter to indicate how far you would like to
-go back. If you do not set it, the default is animals adopted in the last 30
-days::
- 
-    http://localhost:5000/service?method=html_adopted_animals&template=littlebox&speciesid=1&days=60
-    http://localhost:5000/service?method=html_adopted_animals&order=adopted_asc
-
+go back. If you do not set it, the default is anihttps://service.sheltermanager.com/asmservice?account=robin&method=html_found_animals&order=code_asc
 html_deceased_animals
 ----------------------
 
@@ -975,6 +970,27 @@ not just shelter animals::
     http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&all=1&flag=Needs+Foster
     http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk&order=entered_asc
 
+html_found_animals
+--------------------
+
+.. rubric:: Cache time: 30 minutes
+.. rubric:: Permissions required: None
+.. rubric:: Requires username/password: NO
+
+Returns a complete HTML document containing an HTML page of animals added to the 
+found animals section of the system.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause foundanimalview to be used). It is also possible to pass a
+speciesid=X parameter to only output animals of that species and 
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+
+You can also pass a "days" parameter to indicate how far you would like to
+go back. If you do not set it, the default is animals found in the last 30 days::
+
+    http://localhost:5000/service?method=html_found_animals&template=littlebox&speciesid=1&days=60
+    http://localhost:5000/service?method=html_found_animals
+
 html_held_animals
 ----------------------
 
@@ -994,6 +1010,28 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
 
     http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1&order=holduntildate_desc
     http://localhost:5000/service?method=html_held_animals
+
+html_lost_animals
+--------------------
+
+.. rubric:: Cache time: 30 minutes
+.. rubric:: Permissions required: None
+.. rubric:: Requires username/password: NO
+
+Returns a complete HTML document containing an HTML page of animals added to the 
+lost animals section of the system.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause lostanimalview to be used). It is also possible to pass a
+speciesid=X parameter to only output animals of that species and 
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+
+You can also pass a "days" parameter to indicate how far you would like to
+go back. If you do not set it, the default is animals lost in the last 30 days::
+
+    http://localhost:5000/service?method=html_lost_animals&template=littlebox&speciesid=1&days=60
+    http://localhost:5000/service?method=html_lost_animals
+    
 
 html_permfoster_animals
 -------------------------
