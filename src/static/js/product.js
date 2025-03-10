@@ -49,9 +49,6 @@ $(function() {
                      },
                     { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: "0", validation: "notblank",
                         callout: _("Show an alert if the balance falls below this amount"),
-                        hideif: function() { 
-                            return !config.bool("GlobalStockMinima");
-                        }
                     }
 
                 ]

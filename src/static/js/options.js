@@ -1841,9 +1841,6 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<p>',
-                options.cb({ id: "globalstockminima", data: "GlobalStockMinima", label: _("Enable global stock minima") }),
-                '</p>',
                 '</div>'
             ].join("\n");
         },
