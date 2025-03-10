@@ -267,15 +267,6 @@ $(function() {
                 }
             });
 
-            $("#button-chooseproduct").click(function() {
-                tableform.dialog_show_edit(productdialog, {});
-            });
-
-            $("#productsearchkey").keyup(function() {
-                $("#productlist option").hide();
-                $("#productlist option:contains('" + $("#productsearchkey").val() + "')").show();
-            });
-
             $("#productlist").change(function() {
                 let productid = $("#productlist").val();
                 let activeproduct = false;
@@ -288,27 +279,27 @@ $(function() {
                 $("#name").val(activeproduct.PRODUCTNAME);
                 $("#description").val(activeproduct.DESCRIPTION);
                 let unittype = activeproduct.CUSTOMUNIT;
-                if (activeproduct.UNITTYPE == 0) {
-                    if (activeproduct.PURCHASEUNITTYPE == 0) {
+                if (activeproduct.UNITTYPEID == 0) {
+                    if (activeproduct.PURCHASEUNITTYPEID == 0) {
                         unittype = _("Unit").toLowerCase();
-                    } else if (activeproduct.PURCHASEUNITTYPE == 1) {
+                    } else if (activeproduct.PURCHASEUNITTYPEID == 1) {
                         unittype = "kg";
-                    } else if (activeproduct.PURCHASEUNITTYPE == 2) {
+                    } else if (activeproduct.PURCHASEUNITTYPEID == 2) {
                         unittype = "g";
-                    } else if (activeproduct.PURCHASEUNITTYPE == 3) {
+                    } else if (activeproduct.PURCHASEUNITTYPEID == 3) {
                         unittype = "l";
-                    } else if (activeproduct.PURCHASEUNITTYPE == 4) {
+                    } else if (activeproduct.PURCHASEUNITTYPEID == 4) {
                         unittype = "ml";
                     } else if (activeproducttype.PURCHASEUNITTYPE == 5) {
                         unittype = activeproducttype.CUSTOMPURCHASEUNIT;
                     }
-                } else if (activeproduct.UNITTYPE == 1) {
+                } else if (activeproduct.UNITTYPEID == 1) {
                     unittype = "kg";
-                } else if (activeproduct.UNITTYPE == 2) {
+                } else if (activeproduct.UNITTYPEID == 2) {
                     unittype = "g";
-                } else if (activeproduct.UNITTYPE == 3) {
+                } else if (activeproduct.UNITTYPEID == 3) {
                     unittype = "l";
-                } else if (activeproduct.UNITTYPE == 4) {
+                } else if (activeproduct.UNITTYPEID == 4) {
                     unittype = "ml";
                 }
                 $("#unitname").val(unittype);
