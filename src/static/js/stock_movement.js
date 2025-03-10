@@ -71,7 +71,7 @@ $(function() {
                         '<option value="-182">' + _("(last 6 months)") + '</option>' +
                         '<option value="-365">' + _("(last year)") + '</option>',
                     click: function(selval) {
-                        common.route("stock_movement?interval=" + selval);
+                        common.route("stock_movement?productid=" + controller.productid + "&interval=" + selval);
                     }
                 }
             ]
@@ -85,11 +85,15 @@ $(function() {
             let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            
             if (controller.productid != 0) {
                 s += html.content_header(_("{0} Movements").replace("{0}", controller.productname));
+            } else if (controller.stocklevelid != 0) {
+                s += html.content_header(_("{0} Movements").replace("{0}", controller.stocklevelname));
             } else {
-                s += html.content_header(_("Stock Movement"));
+                s += html.content_header(_("All Stock Movements"));
             }
+                
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -105,6 +109,9 @@ $(function() {
 
         sync: function() {
             // If an interval is given in the querystring, update the select
+            if (common.querystring_param("stocklevelid")) {
+                $("#productmovementfilter").fadeOut();
+            }
             if (common.querystring_param("interval")) {
                 $("#productmovementfilter").select("value", common.querystring_param("interval"));
             }
@@ -119,9 +126,17 @@ $(function() {
         title: function() {
             if (controller.productid != 0) {
                 return _("{0} Movements").replace("{0}", controller.productname);
+            } else if (controller.stocklevelid != 0) {
+                return _("{0} Movements").replace("{0}", controller.stocklevelname);
+            } else {
+               return _("All Stock Movements");
+            }
+
+            /*if (controller.productid != 0) {
+                return _("{0} Movements").replace("{0}", controller.productname);
             } else {
                 return _("Stock movement");
-            }
+            }*/
         },
         routes: {
             "stock_movement": function() { common.module_loadandstart("stock_movement", "stock_movement?" + this.rawqs); }

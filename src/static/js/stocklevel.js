@@ -106,6 +106,11 @@ $(function() {
             const buttons = [
                 { id: "new", text: _("Add Stock"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { stocklevel.new_level(); }},
+                { id: "showmovements", text: _("Show Movements"), icon: "stock", enabled: "one", perm: "asl", 
+                    click: function() {
+                        document.location.href = "stock_movement?stocklevelid=" + tableform.table_selected_id(table);
+                    }
+                },
                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "asl",
                     click: function() { stocklevel.clone_level(); }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dsl", 

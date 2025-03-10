@@ -121,26 +121,26 @@ def get_retired_products(dbo: Database) -> Results:
         "WHERE IsRetired = %s " \
         "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 1))
 
-def get_stock_movements(dbo: Database, productid: int = 0, fromdate: datetime = False) -> Results:
+def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0, fromdate: datetime = False) -> Results:
     """
     Returns product movements
     """
 
     wheresql = ""
     if productid != 0:
-        wheresql = "WHERE stocklevel.ProductID = %i" % productid
-    if fromdate:
-        if wheresql == "":
-            wheresql = "WHERE "
-        else:
-            wheresql = " AND "
-        wheresql += "stockusage.UsageDate >= '%s'" % (fromdate,)
+        if fromdate == False:
+            fromdate = dbo.today()
+        wheresql = "WHERE stocklevel.ProductID = %i AND stockusage.UsageDate >= '%s'" % (productid, fromdate)
+
+    if stocklevelid != 0:
+        wheresql = "WHERE stocklevel.ID = %i" % stocklevelid
+
 
     return dbo.query("SELECT " \
         "stockusage.ID, " \
         "stockusage.UsageDate, " \
         "product.ID AS ProductID, " \
-        "CASE WHEN product.ID IS NULL THEN stocklevel.NAME " \
+        "CASE WHEN product.ID IS NULL THEN stocklevel.Name " \
         "ELSE product.ProductName " \
         "END AS ProductName, " \
         "stockusage.Quantity, " \

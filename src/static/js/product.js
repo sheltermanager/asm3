@@ -198,7 +198,7 @@ $(function() {
             s += '</div>';
             this.model();
             s += tableform.dialog_render(this.dialog);
-            s += html.content_header(_("Move product"));
+            s += html.content_header(_("Products"));
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -437,7 +437,7 @@ $(function() {
 
         name: "product",
         animation: "book",
-        title: function() { return _("Product"); },
+        title: function() { return _("Products"); },
         routes: {
             "product": function() { common.module_loadandstart("product", "product?" + this.rawqs); }
         }
