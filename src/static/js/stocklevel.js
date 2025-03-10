@@ -142,7 +142,7 @@ $(function() {
             let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
-            s += html.content_header(_("Stock"));
+            s += html.content_header(_("Stock levels"));
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -352,7 +352,7 @@ $(function() {
 
         name: "stocklevel",
         animation: "book",
-        title: function() { return _("Stock"); },
+        title: function() { return _("Stock levels"); },
         routes: {
             "stocklevel": function() { common.module_loadandstart("stocklevel", "stocklevel?" + this.rawqs); }
         }
