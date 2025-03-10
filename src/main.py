@@ -6697,6 +6697,9 @@ class product(JSONEndpoint):
             products = asm3.stock.get_active_products(dbo)
         
         for product in products:
+            product["ACTIVE"] = 1
+            if product["ISRETIRED"] == 1:
+                product["ACTIVE"] = 0
             product["PRODUCTTYPENAME"] = _("Undefined")
             for producttype in producttyperows:
                 if product["PRODUCTTYPEID"] == producttype["ID"]:
@@ -6709,6 +6712,7 @@ class product(JSONEndpoint):
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "units": asm3.lookups.get_unit_types(dbo),
+            "yesno": asm3.lookups.get_yesno(dbo),
             "rows": products
         }
     

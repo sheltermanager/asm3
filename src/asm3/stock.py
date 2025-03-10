@@ -259,6 +259,10 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
     pid = post.integer("productid")
     if post["productname"] == "":
         raise asm3.utils.ASMValidationError(_("Product must have a name", l))
+    
+    retired = 0
+    if post.integer("active") == 0:
+        retired = 1
 
     dbo.update("product", pid, {
         "ProductName":          post["productname"],
@@ -273,7 +277,7 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "RetailPrice":          post.integer("retailprice"),
         "UnitRatio":            post.integer("unitratio"),
         "TaxRateID":            post.integer("taxrateid"),
-        "IsRetired":            post.boolean("retired"),
+        "IsRetired":            retired,
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
         "GlobalMinimum":        post["globalminimum"]
@@ -322,6 +326,10 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
     l = dbo.locale
     if post["productname"] == "":
         raise asm3.utils.ASMValidationError(_("Product must have a name", l))
+    
+    retired = 0
+    if post.integer["active"] == 0:
+        retired = 1
    
     pid = dbo.insert("product", {
         "ProductName":          post["productname"],
@@ -336,7 +344,7 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "RetailPrice":          post.integer("retailprice"),
         "UnitRatio":            post.integer("unitratio"),
         "TaxRateID":            post.integer("taxrateid"),
-        "IsRetired":            post.boolean("retired"),
+        "IsRetired":            retired,
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
         "GlobalMinimum":        post["globalminimum"],

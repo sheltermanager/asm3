@@ -26,7 +26,7 @@ $(function() {
                      },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
                     { json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "select", options: controller.taxrates, validation: "notnull" },
-                    { json_field: "RETIRED", post_field: "retired", label: _("Retired"), type: "check" },
+                    { json_field: "ACTIVE", post_field: "active", label: _("Active"), type: "select", options: { rows: controller.yesno, displayfield: "NAME" }, defaultval: "1" },
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
 
@@ -226,7 +226,6 @@ $(function() {
                             let row = {};
                             row.ID = response;
                             tableform.fields_update_row(dialog.fields, row);
-                            //stocklevel.set_extra_fields(row);
                             controller.rows.push(row);
                             tableform.table_update(table);
                             tableform.dialog_close();
