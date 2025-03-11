@@ -196,8 +196,10 @@ const mobile_ui_animal = {
             $("#animalimage-input-camera").trigger("click");
         });
         $("#animalimage-input-gallery").change(function() {
-            mobile_ui_animal.upload_animal_image($("#animalimage-input-gallery")[0].files[0], a.ID, "gallery");
-        });
+                $.each($("#animalimage-input-gallery")[0].files, function(imagecount, imagefile) {
+                    mobile_ui_animal.upload_animal_image(imagefile, a.ID, "gallery");
+                });
+            });
         $("#animalimage-input-camera").change(function() {
             mobile_ui_animal.upload_animal_image($("#animalimage-input-camera")[0].files[0], a.ID, "camera");
         });
