@@ -862,7 +862,11 @@ $(document).ready(function() {
                 $("#animalimage-input-camera").trigger("click");
             });
             $("#animalimage-input-gallery").change(function() {
-                mobile.upload_animal_image($("#animalimage-input-gallery")[0].files[0], a.ID, "gallery");
+                console.log($("#animalimage-input-gallery"));
+                $.each($("#animalimage-input-gallery")[0].files, function(imagecount, imagefile) {
+                    mobile.upload_animal_image(imagefile, a.ID, "gallery");
+                })
+                //mobile.upload_animal_image($("#animalimage-input-gallery")[0].files[0], a.ID, "gallery");
             });
             $("#animalimage-input-camera").change(function() {
                 mobile.upload_animal_image($("#animalimage-input-camera")[0].files[0], a.ID, "camera");
