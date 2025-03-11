@@ -6718,7 +6718,9 @@ class product(JSONEndpoint):
     
     def post_create(self, o):
         self.check(asm3.users.ADD_STOCKLEVEL)
-        asm3.stock.insert_product_from_form(o.dbo, o.post, o.user)
+        productid = asm3.stock.insert_product_from_form(o.dbo, o.post, o.user)
+        return productid
+        
     
     def post_move(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
@@ -7471,11 +7473,11 @@ class stock_movement(JSONEndpoint):
         stocklevelid = 0
         productname = ""
         stocklevelname = ""
-        if o.post["interval"]:
-            interval = o.post.integer("interval")
-            fromdate = dbo.today(offset=interval)
+        if o.post["offset"]:
+            offset = o.post.integer("offset") * -1
+            fromdate = dbo.today(offset=offset)
         else:
-            interval = 0
+            offset = 0
             fromdate = dbo.today()
         if o.post["stocklevelid"]:
             stocklevelid = o.post.integer("stocklevelid")

@@ -48,7 +48,7 @@ $(function() {
                         callout: _("The number of 'units' per 'purchase unit' for example, if you get 24 tins per tray and have purchase unit 'tray' and unit 'tin' your unit ratio would be '24'")
                      },
                     { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: "0", validation: "notblank",
-                        callout: _("Show an alert if the balance falls below this amount"),
+                        callout: _("Show an alert if the total balance of all stock levels for this product falls below this amount"),
                     }
 
                 ]
@@ -223,7 +223,9 @@ $(function() {
                             let row = {};
                             row.ID = response;
                             tableform.fields_update_row(dialog.fields, row);
+                            product.set_extra_fields(row);
                             controller.rows.push(row);
+                            
                             tableform.table_update(table);
                             tableform.dialog_close();
                         })
@@ -432,9 +434,16 @@ $(function() {
             tableform.dialog_destroy();
         },
 
-        /*set_extra_fields: function(row) {
-            row.STOCKLOCATIONNAME = common.get_field(controller.stocklocations, row.STOCKLOCATIONID, "LOCATIONNAME");
-        },*/
+        set_extra_fields: function(row) {
+            row.PRODUCTTYPENAME = ""
+            $.each(controller.producttypes, function(typecount, producttype) {
+                if (producttype.split("|")[0] == row.PRODUCTTYPEID) {
+                    row.PRODUCTTYPENAME = producttype.split("|")[1];
+                    return false;
+                }
+                
+            });
+        },
 
         name: "product",
         animation: "book",

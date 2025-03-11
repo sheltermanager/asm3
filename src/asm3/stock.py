@@ -127,14 +127,15 @@ def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0
     """
 
     wheresql = ""
-    if productid != 0:
-        if fromdate == False:
-            fromdate = dbo.today()
-        wheresql = "WHERE stocklevel.ProductID = %i AND stockusage.UsageDate >= '%s'" % (productid, fromdate)
-
     if stocklevelid != 0:
         wheresql = "WHERE stocklevel.ID = %i" % stocklevelid
-
+    else:
+        if fromdate == False:
+            fromdate = dbo.today()
+        if productid != 0:
+            wheresql = "WHERE stocklevel.ProductID = %i AND stockusage.UsageDate >= '%s'" % (productid, fromdate)
+        else:
+            wheresql = "WHERE stockusage.UsageDate >= '%s'" % (fromdate)
 
     return dbo.query("SELECT " \
         "stockusage.ID, " \

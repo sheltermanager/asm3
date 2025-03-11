@@ -64,14 +64,14 @@ $(function() {
 
             const buttons = [
                 { id: "productmovementfilter", type: "dropdownfilter", 
-                    options: '<option value="0">' + _("(today)") + '</option>' + 
-                        '<option value="-7">' + _("(last week)") + '</option>' +
-                        '<option value="-30">' + _("(last month)") + '</option>' +
-                        '<option value="-91">' + _("(last quarter)") + '</option>' +
-                        '<option value="-182">' + _("(last 6 months)") + '</option>' +
-                        '<option value="-365">' + _("(last year)") + '</option>',
+                    options: '<option value="0">' + _("Today") + '</option>' + 
+                        '<option value="7">' + _("Last Week") + '</option>' +
+                        '<option value="-0">' + _("Last Month") + '</option>' +
+                        '<option value="91">' + _("Last Quarter") + '</option>' +
+                        '<option value="182">' + _("Last 6 Months") + '</option>' +
+                        '<option value="365">' + _("Last Year") + '</option>',
                     click: function(selval) {
-                        common.route("stock_movement?productid=" + controller.productid + "&interval=" + selval);
+                        common.route("stock_movement?productid=" + controller.productid + "&offset=" + selval);
                     }
                 }
             ]
@@ -108,12 +108,12 @@ $(function() {
         },
 
         sync: function() {
-            // If an interval is given in the querystring, update the select
+            // If an offset is given in the querystring, update the select
             if (common.querystring_param("stocklevelid")) {
                 $("#productmovementfilter").fadeOut();
             }
-            if (common.querystring_param("interval")) {
-                $("#productmovementfilter").select("value", common.querystring_param("interval"));
+            if (common.querystring_param("offset")) {
+                $("#productmovementfilter").select("value", common.querystring_param("offset"));
             }
         },
 
