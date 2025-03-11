@@ -66,7 +66,7 @@ $(function() {
                 { id: "productmovementfilter", type: "dropdownfilter", 
                     options: '<option value="0">' + _("Today") + '</option>' + 
                         '<option value="7">' + _("Last Week") + '</option>' +
-                        '<option value="-0">' + _("Last Month") + '</option>' +
+                        '<option value="30">' + _("Last Month") + '</option>' +
                         '<option value="91">' + _("Last Quarter") + '</option>' +
                         '<option value="182">' + _("Last 6 Months") + '</option>' +
                         '<option value="365">' + _("Last Year") + '</option>',
