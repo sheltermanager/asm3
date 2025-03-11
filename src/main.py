@@ -7501,11 +7501,6 @@ class stock_movement(JSONEndpoint):
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "rows": asm3.stock.get_stock_movements(dbo, productid, stocklevelid, fromdate)
         }
-    
-    def post_delete(self, o):
-        self.check(asm3.users.DELETE_STOCKLEVEL)
-        for mid in o.post.integer_list("ids"):
-            asm3.stock.delete_stockusage(o.dbo, o.user, mid)
 
 class systemusers(JSONEndpoint):
     url = "systemusers"
