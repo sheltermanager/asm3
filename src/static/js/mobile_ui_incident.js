@@ -232,7 +232,9 @@ const mobile_ui_incident = {
             $("#incidentimage-input-camera").trigger("click");
         });
         $("#incidentimage-input-gallery").change(function() {
-            mobile_ui_incident.upload_incident_image($("#incidentimage-input-gallery")[0].files[0], ac.ID, "gallery");
+            $.each($("#incidentimage-input-gallery")[0].files, function(imagecount, imagefile) {
+                mobile_ui_incident.upload_incident_image(imagefile, ac.ID, "gallery");
+            });
         });
         $("#incidentimage-input-camera").change(function() {
             mobile_ui_incident.upload_incident_image($("#incidentimage-input-camera")[0].files[0], ac.ID, "camera");
