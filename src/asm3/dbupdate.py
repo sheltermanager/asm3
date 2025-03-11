@@ -1430,7 +1430,12 @@ def sql_structure(dbo: Database) -> str:
         fint("MatchGoodWithCats", True),
         fint("MatchGoodWithDogs", True),
         fint("MatchGoodWithChildren", True),
+        fint("MatchGoodWithElderly", True),
+        fint("MatchGoodTraveller", True),
+        fint("MatchGoodOnLead", True),
+        fint("MatchEnergyLevel", True),
         fint("MatchHouseTrained", True),
+        fint("MatchCrateTrained", True),
         fstr("MatchFlags", True),
         fstr("MatchCommentsContain", True) ))
     sql += index("owner_CreatedBy", "owner", "CreatedBy")
