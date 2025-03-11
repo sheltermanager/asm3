@@ -339,6 +339,7 @@ $(function() {
                 activeproduct.BALANCE = activeproduct.BALANCE + quantity;
             }
             //tableform.fields_update_row(this.dialog.fields, activeproduct);
+            tableform.buttons_default_state(this.buttons);
             tableform.table_update(this.table);
         },
 
