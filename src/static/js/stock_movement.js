@@ -51,7 +51,7 @@ $(function() {
                         if (!row.PRODUCTID) {
                             return row.PRODUCTNAME;
                         } else {
-                            return row.PRODUCTNAME + " <a href=product?id=" + row.PRODUCTID + "><img src='static/images/icons/match.png' title='" + _("Linked to product") + "'></a>";
+                            return row.PRODUCTNAME + ' <a href="product?id=' + row.PRODUCTID + '">' + html.icon("product", _("View product")) + '</a>';
                         }
                     } },
                     { field: "QUANTITY", display: _("Quantity") },

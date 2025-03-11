@@ -6733,57 +6733,6 @@ class product(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             asm3.stock.delete_product(o.dbo, o.user, pid)
 
-class stock_movement(JSONEndpoint):
-    url = "stock_movement"
-    js_module = "stock_movement"
-    get_permissions = asm3.users.VIEW_STOCKLEVEL
-
-    def controller(self, o):
-        dbo = o.dbo
-        productid = 0
-        stocklevelid = 0
-        productname = ""
-        stocklevelname = ""
-
-        if o.post["interval"]:
-            interval = o.post.integer("interval")
-            fromdate = dbo.today(offset=interval)
-        else:
-            interval = 0
-            fromdate = dbo.today()
-        
-        if o.post["stocklevelid"]:
-            stocklevelid = o.post.integer("stocklevelid")
-            stocklevelname = asm3.stock.get_stocklevel(dbo, stocklevelid)["NAME"]
-
-        if o.post["productid"]:
-            productid = o.post.integer("productid")
-        products = []
-        for product in asm3.stock.get_products(dbo):
-            products.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
-            if product["ID"] == productid:
-                productname = product["PRODUCTNAME"]
-        producttypes = []
-        for producttype in asm3.stock.get_product_types(dbo):
-            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
-        
-        return {
-            "productid": productid,
-            "stocklevelid": stocklevelid,
-            "productname": productname,
-            "stocklevelname": stocklevelname,
-            "producttypes": producttypes,
-            "products": products,
-            "stocklocations": asm3.lookups.get_stock_locations(dbo),
-            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
-            "rows": asm3.stock.get_stock_movements(dbo, productid, stocklevelid, fromdate)
-        }
-    
-    def post_delete(self, o):
-        self.check(asm3.users.DELETE_STOCKLEVEL)
-        for mid in o.post.integer_list("ids"):
-            asm3.stock.delete_stockusage(o.dbo, o.user, mid)
-
 class publish(JSONEndpoint):
     url = "publish"
     get_permissions = asm3.users.USE_INTERNET_PUBLISHER
@@ -7464,8 +7413,8 @@ class staff_rota(JSONEndpoint):
         flags = o.post["flags"]
         asm3.person.clone_rota_week(o.dbo, o.user, startdate, newdate, flags)
 
-class stocklevel(JSONEndpoint):
-    url = "stocklevel"
+class stock_level(JSONEndpoint):
+    url = "stock_level"
     get_permissions = asm3.users.VIEW_STOCKLEVEL
 
     def controller(self, o):
@@ -7480,7 +7429,7 @@ class stocklevel(JSONEndpoint):
         productnames = []
         for product in products:
             productnames.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
-        asm3.al.debug("got %d stock levels" % len(levels), "main.stocklevel", dbo)
+        asm3.al.debug("got %d stock levels" % len(levels), "main.stock_level", dbo)
         return {
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stocknames": "|".join(asm3.stock.get_stock_names(dbo)),
@@ -7510,6 +7459,53 @@ class stocklevel(JSONEndpoint):
     def post_lastname(self, o):
         self.check(asm3.users.VIEW_STOCKLEVEL)
         return asm3.stock.get_last_stock_with_name(o.dbo, o.post["name"])
+
+class stock_movement(JSONEndpoint):
+    url = "stock_movement"
+    js_module = "stock_movement"
+    get_permissions = asm3.users.VIEW_STOCKLEVEL
+
+    def controller(self, o):
+        dbo = o.dbo
+        productid = 0
+        stocklevelid = 0
+        productname = ""
+        stocklevelname = ""
+        if o.post["interval"]:
+            interval = o.post.integer("interval")
+            fromdate = dbo.today(offset=interval)
+        else:
+            interval = 0
+            fromdate = dbo.today()
+        if o.post["stocklevelid"]:
+            stocklevelid = o.post.integer("stocklevelid")
+            stocklevelname = asm3.stock.get_stocklevel(dbo, stocklevelid)["NAME"]
+        if o.post["productid"]:
+            productid = o.post.integer("productid")
+        products = []
+        for product in asm3.stock.get_products(dbo):
+            products.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
+            if product["ID"] == productid:
+                productname = product["PRODUCTNAME"]
+        producttypes = []
+        for producttype in asm3.stock.get_product_types(dbo):
+            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
+        return {
+            "productid": productid,
+            "stocklevelid": stocklevelid,
+            "productname": productname,
+            "stocklevelname": stocklevelname,
+            "producttypes": producttypes,
+            "products": products,
+            "stocklocations": asm3.lookups.get_stock_locations(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "rows": asm3.stock.get_stock_movements(dbo, productid, stocklevelid, fromdate)
+        }
+    
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_STOCKLEVEL)
+        for mid in o.post.integer_list("ids"):
+            asm3.stock.delete_stockusage(o.dbo, o.user, mid)
 
 class systemusers(JSONEndpoint):
     url = "systemusers"

@@ -142,14 +142,14 @@ $(function() {
             const buttons = [
                 { id: "new", text: _("New Product"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { product.new_product(); }},
-                { id: "move", text: _("Move Stock"), icon: "right", enabled: "one", perm: "asl", 
+                { id: "move", text: _("Move Stock"), icon: "stock-movement", enabled: "one", perm: "asl", 
                     click: async function() {
                         product.move_product_init();
                         await tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { width: 500, notblank: [ "movementfrom", "movementto" ] });
                         product.move_product();
                     }
                 },
-                { id: "showmovements", text: _("Show Movements"), icon: "stock", enabled: "one", perm: "asl", 
+                { id: "showmovements", text: _("Show Movements"), icon: "stock-movement", enabled: "one", perm: "asl", 
                     click: function() {
                         document.location.href = "stock_movement?productid=" + tableform.table_selected_id(table);
                     }

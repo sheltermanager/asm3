@@ -625,10 +625,10 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.ADD_DONATION, "", "", "donation_receive", "asm-icon-blank", _("Receive a payment", l) ),
             ( asm3.users.VIEW_DONATION, "", "taggb", "--cat", "", "HMRC" ),
             ( asm3.users.VIEW_DONATION, "", "taggb", "giftaid_hmrc_spreadsheet", "asm-icon-report", "Generate HMRC Gift Aid spreadsheet" ),
-            ( asm3.users.VIEW_DONATION, "", "", "--cat", "", _("Stock control", l) ),
-            ( asm3.users.VIEW_STOCKLEVEL, "", "", "product", "asm-icon-database", _("Products", l) ),
-            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock levels", l) ),
-            ( asm3.users.VIEW_STOCKLEVEL, "", "tastock", "stock_movement", "asm-icon-blank", _("Stock movements", l) )
+            ( asm3.users.VIEW_DONATION, "", "tagstock", "--cat", "", _("Stock control", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "product", "asm-icon-product", _("Products", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_level", "asm-icon-stock", _("Stock levels", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_movement", "asm-icon-stock-movement", _("Stock movements", l) )
         )),
         (asm3.users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), [
             ("", "", "", "--cat", "asm-icon-settings", _("Configuration", l) ),
