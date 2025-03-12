@@ -103,6 +103,7 @@ def get_stock_usage(dbo: Database, productid: int = 0, stocklevelid: int = 0, fr
         "stocklocation.LocationName, " \
         "stockusagetype.UsageTypeName, " \
         "stocklevel.BatchNumber, " \
+        "stockusage.CreatedBy, stockusage.CreatedDate, "
         "stockusage.Comments, " \
         "CASE WHEN stockusage.Quantity > 0 THEN UsageTypeName ELSE LocationName END AS FromName, " \
         "CASE WHEN stockusage.Quantity > 0 THEN LocationName ELSE UsageTypeName END AS ToName, " \

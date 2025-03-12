@@ -28,6 +28,7 @@ $(function() {
                     { field: "UNIT", display: _("Unit") },
                     { field: "FROMNAME", display: _("From") },
                     { field: "TONAME", display: _("To") },
+                    { field: "CREATEDBY", display: _("By") },
                     { field: "COMMENTS", display: _("Comments") }
                 ]
             };
