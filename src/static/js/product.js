@@ -184,6 +184,7 @@ $(function() {
 
         render: function() {
             let s = '<div id="dialog-moveproduct" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">';
+            s += html.info(_("Adjust stock levels of this product in bulk.")),
             s += tableform.fields_render([
                 { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true, validation: "notzero" },
                 { post_field: "movementunit", json_field: "MOVEMENTUNIT", type: "select", justwidget: true, halfsize: true },
