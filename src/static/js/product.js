@@ -131,6 +131,11 @@ $(function() {
                             return row.BALANCE;
                         }
                     } },
+                    { field: "BALANCE", display: _("Balance"), formatter: function(row) {
+                        let s = row.BALANCE;
+                        if (row.GLOBALMINIMUM) { s += " " + _("(low at {0})").replace("{0}", row.GLOBALMINIMUM); }
+                        return s;
+                    }},
                     { field: "PRODUCTTYPENAME", display: _("Type") },
                     { field: "BARCODE", display: _("Barcode") }
                 ]
