@@ -7447,7 +7447,7 @@ class stock_level(JSONEndpoint):
     def post_create(self, o):
         self.check(asm3.users.ADD_STOCKLEVEL)
         for dummy in range(0, o.post.integer("quantity")):
-            asm3.stock.insert_stocklevel_from_form(o.dbo, o.post, o.user)
+            stocklevelid = asm3.stock.insert_stocklevel_from_form(o.dbo, o.post, o.user)
 
     def post_update(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)

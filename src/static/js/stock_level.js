@@ -157,9 +157,8 @@ $(function() {
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=create", "stock_level")
                         .then(function(response) {
-                            // If more than one record was created, reload the screen
-                            tableform.dialog_close();
-                            common.route_reload();
+                                tableform.dialog_close();
+                                common.route_reload();
                         })
                         .fail(function() {
                             tableform.dialog_enable_buttons();   
@@ -179,20 +178,8 @@ $(function() {
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=create", "stock_level")
                         .then(function(response) {
-                            // If more than one record was created, reload the screen
-                            if ($("#quantity").val() != "1") {
-                                tableform.dialog_close();
-                                common.route_reload();
-                            }
-                            else {
-                                let row = {};
-                                row.ID = response;
-                                tableform.fields_update_row(dialog.fields, row);
-                                stock_level.set_extra_fields(row);
-                                controller.rows.push(row);
-                                tableform.table_update(table);
-                                tableform.dialog_close();
-                            }
+                            tableform.dialog_close();
+                            common.route_reload();
                         })
                         .fail(function() {
                             tableform.dialog_enable_buttons();
