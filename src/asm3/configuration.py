@@ -49,6 +49,8 @@ DEFAULTS = {
     "AddAnimalsShowWeight": "No",
     "AdoptionCheckoutDonationMsg": "Our organization depends on the kind donations of individuals to provide animals with medical care, food and shelter.\n<br/><br/><b>We need your help!</b>",
     "AdoptionCheckoutDonationTiers": "$0=No thanks\n$10=Microchip one pet\n$25=One week of milk for a litter of kittens\n$50=Vaccinate a litter of puppies\n$100=Spay/neuter and vaccinate one pet\n$200=Contribute to surgery for pets in need",
+    "AnimalNameChangeLog": "No",
+    "AnimalNameChangeLogType": "1",
     "AnimalFiguresSplitEntryReason": "No",
     "AnimalSearchResultsNewTab": "No",
     "PersonSearchResultsNewTab": "No",
@@ -694,6 +696,12 @@ def anibase_pin_no(dbo: Database) -> str:
 
 def animal_figures_split_entryreason(dbo: Database) -> bool:
     return cboolean(dbo, "AnimalFiguresSplitEntryReason", DEFAULTS["AnimalFiguresSplitEntryReason"] == "Yes")
+
+def animalname_change_log(dbo: Database) -> bool:
+    return cboolean(dbo, "AnimalNameChangeLog", DEFAULTS["AnimalNameChangeLog"] == "Yes")
+
+def animalname_change_log_type(dbo: Database) -> int:
+    return cint(dbo, "AnimalNameChangeLogType", DEFAULTS["AnimalNameChangeLogType"])
 
 def animal_search_columns(dbo: Database) -> str:
     return cstring(dbo, "SearchColumns", DEFAULTS["SearchColumns"])
