@@ -45,7 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
-    34904, 34905, 34906, 34907, 34908
+    34904, 34905, 34906, 34907, 34908, 35000
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -62,13 +62,13 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
     "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", 
-    "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
-    "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
-    "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
+    "lkownerflags", "lkproducttype", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
+    "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lktaxrate", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
+    "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
     "lkwaitinglistremoval", "lkworktype", 
     "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
-    "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
+"ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "product", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
     "vaccinationtype", "voucher" )
@@ -109,10 +109,10 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
     "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", 
     "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", 
-    "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
+    "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkproductunittype", "lkurgency", 
     "lkwaitinglistremoval", "lkworktype", 
     "logtype", "medicalprofile", "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", 
     "stocklocation", "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
@@ -1161,6 +1161,25 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lkcoattype", (
         fid(), fstr("CoatType") ), False)
+    
+    sql += table("lkproducttype", (
+        fid(),
+        fstr("ProductTypeName"),
+        fstr("Description", True),
+        fint("IsRetired") ), False)
+
+    sql += table("lktaxrate", (
+        fid(),
+        fstr("TaxRateName"),
+        fstr("Description"),
+        ffloat("TaxRate"),
+        fint("IsRetired") ), False)
+    
+    sql += table("lksunittype", (
+        fid(),
+        fstr("UnitName"),
+        fstr("Description"),
+        fint("IsRetired") ), False)
 
     sql += table("lksex", (
         fid(), fstr("Sex") ), False)
@@ -1410,6 +1429,7 @@ def sql_structure(dbo: Database) -> str:
         fint("IsRetailer", True),
         fint("IsVet", True),
         fint("IsGiftAid", True),
+        fint("IsSupplier", True),
         fstr("ExtraIDs", True),
         flongstr("AdditionalFlags", True),
         flongstr("HomeCheckAreas", True),
@@ -1474,6 +1494,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("owner_IsVolunteer", "owner", "IsVolunteer")
     sql += index("owner_ExtraIDs", "owner", "ExtraIDs")
     sql += index("owner_IsSponsor", "owner", "IsSponsor")
+    sql += index("owner_IsSupplier", "owner", "IsSupplier")
 
     sql += table("ownercitation", (
         fid(),
@@ -1629,6 +1650,38 @@ def sql_structure(dbo: Database) -> str:
         fint("NextID") ), False)
     sql += index("primarykey_TableName", "primarykey", "TableName")
 
+    sql += table("product", (
+        fid(),
+        fstr("ProductName"),
+        fstr("Description"),
+        fint("ProductTypeID"),
+        fint("SupplierID"),
+        fint("UnitTypeID"),
+        fstr("CustomUnit"),
+        fint("PurchaseUnitTypeID"),
+        fstr("CustomPurchaseUnit"),
+        fint("CostPrice"),
+        fint("RetailPrice"),
+        fint("UnitRatio"),
+        fint("TaxRateID"),
+        fstr("Barcode"),
+        fstr("PLU"),
+        fstr("RecentBatchNo"),
+        fstr("RecentExpiry"),
+        fint("GlobalMinimum"),
+        fint("RecordVersion"),
+        fstr("CreatedBy"),
+        fdate("CreatedDate"),
+        fstr("LastChangedBy"),
+        fdate("LastChangedDate"),
+        fint("IsRetired") ), False)
+    sql += index("product_SupplierID", "product", "SupplierID")
+    sql += index("product_ProductName", "product", "ProductName")
+    sql += index("product_ProductTypeID", "product", "ProductTypeID")
+    sql += index("product_Barcode", "product", "Barcode")
+    sql += index("product_PLU", "product", "PLU")
+    sql += index("product_TaxRateID", "product", "TaxRateID")
+
     sql += table("publishlog", (
         fid(),
         fdate("PublishDateTime"),
@@ -1667,6 +1720,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("Name"),
         flongstr("Description", True),
         fint("StockLocationID"),
+        fint("ProductID", True),
         fstr("UnitName"),
         ffloat("Total", True),
         ffloat("Balance"),
@@ -1679,10 +1733,11 @@ def sql_structure(dbo: Database) -> str:
         fdate("CreatedDate") ), False)
     sql += index("stocklevel_Name", "stocklevel", "Name")
     sql += index("stocklevel_UnitName", "stocklevel", "UnitName")
+    sql += index("stocklevel_ProductID", "stocklevel", "ProductID")
+    sql += index("stocklevel_Barcode", "stocklevel", "Barcode")
     sql += index("stocklevel_StockLocationID", "stocklevel", "StockLocationID")
     sql += index("stocklevel_Expiry", "stocklevel", "Expiry")
     sql += index("stocklevel_BatchNumber", "stocklevel", "BatchNumber")
-    sql += index("stocklevel_Barcode", "stocklevel", "Barcode")
 
     sql += table("stocklocation", (
         fid(),
@@ -1772,6 +1827,7 @@ def sql_structure(dbo: Database) -> str:
         fint("DisableLogin", True),
         fstr("LocationFilter", True),
         fint("RecordVersion", True)), False)
+        
     sql += index("users_UserName", "users", "UserName")
 
     sql += table("userrole", (
@@ -1828,6 +1884,13 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
         return "INSERT INTO role (ID, Rolename, SecurityMap) VALUES (%s, '%s', '%s')|=\n" % (tid, dbo.escape(name), perms)
     def species(tid: int, name: str, petfinder: str) -> str:
         return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( tid, dbo.escape(name), petfinder )
+    
+    def taxrate(tid: int, name: str, taxrate: float) -> str:
+        return "INSERT INTO lktaxrate (ID, TaxRateName, Description, TaxRate, IsRetired) VALUES (%s, '%s', '', %f, 0)|=\n" % ( tid, name, taxrate )
+
+    def unittype(tid: int, name: str) -> str:
+        return "INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (%s, '%s', '', 0)|=\n" % ( tid, name )
+    
     def user(tid: int, username: str, realname: str, password: str, superuser: bool) -> str:
         return "INSERT INTO users (ID, UserName, RealName, EmailAddress, Password, SuperUser, OwnerID, SecurityMap, IPRestriction, Signature, LocaleOverride, ThemeOverride, SiteID, DisableLogin, LocationFilter, RecordVersion) VALUES (%s,'%s','%s', '', 'plain:%s', %s, 0,'', '', '', '', '', 0, 0, '', 0)|=\n" % (tid, username, realname, password, superuser and 1 or 0)
 
@@ -2622,6 +2685,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += medicalprofile(3, _("Deflea", l), _("{0} Pipette", l).format(1))
     sql += medicalprofile(4, _("Wormer", l), _("{0} Tablet", l).format(1))
     sql += lookup2("pickuplocation", "LocationName", 1, _("Shelter", l))
+    sql += lookup2("lkproducttype", "ProductTypeName", 1, _("General", l))
     sql += lookup2("reservationstatus", "StatusName", 1, _("More Info Needed", l))
     sql += lookup2("reservationstatus", "StatusName", 2, _("Pending Vet Check", l))
     sql += lookup2("reservationstatus", "StatusName", 3, _("Pending Apartment Verification", l))
@@ -2667,6 +2731,14 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2("stockusagetype", "UsageTypeName", 5, _("Sold", l))
     sql += lookup2("stockusagetype", "UsageTypeName", 6, _("Stocktake", l))
     sql += lookup2("stockusagetype", "UsageTypeName", 7, _("Wasted", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 8, _("Movement", l))
+    sql += taxrate(1, _("Tax Free", l), 0.0)
+    sql += unittype(1, _("kg", l))
+    sql += unittype(2, _("g", l))
+    sql += unittype(3, _("lb", l))
+    sql += unittype(4, _("oz", l))
+    sql += unittype(5, _("l", l))
+    sql += unittype(6, _("ml", l))
     sql += lookup2("testresult", "ResultName", 1, _("Unknown", l))
     sql += lookup2("testresult", "ResultName", 2, _("Negative", l))
     sql += lookup2("testresult", "ResultName", 3, _("Positive", l))
@@ -3393,6 +3465,7 @@ def perform_updates_stdout(dbo: Database, stoponexc = False) -> None:
     """
     # Go through our updates to see if any need running
     ver = int(asm3.configuration.dbv(dbo))
+    print("Version: %s" % str(ver))
     for v in VERSIONS:
         if ver < v:
             print("update_%s" % v)
@@ -6424,3 +6497,98 @@ def update_34908(dbo: Database) -> None:
     add_column(dbo, "stocklevel", "Barcode", dbo.type_shorttext)
     add_index(dbo, "stocklevel_Barcode", "stocklevel", "Barcode")
     dbo.execute_dbupdate("UPDATE stocklevel SET Barcode=''")
+
+def update_35000(dbo: Database) -> None:
+    l = dbo.locale
+    # Add IsSupplier column to owner table
+    add_column(dbo, "owner", "IsSupplier", dbo.type_integer)
+    add_index(dbo, "owner_IsSupplier", "owner", "IsSupplier")
+    dbo.execute_dbupdate("UPDATE owner SET IsSupplier=0")
+
+    # Add the product table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("ProductName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("ProductTypeID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("SupplierID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("UnitTypeID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CustomUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("PurchaseUnitTypeID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CustomPurchaseUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CostPrice", dbo.type_integer, False),
+        dbo.ddl_add_table_column("RetailPrice", dbo.type_integer, False),
+        dbo.ddl_add_table_column("UnitRatio", dbo.type_integer, False),
+        dbo.ddl_add_table_column("TaxRateID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("Barcode", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("PLU", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("RecentBatchNo", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("RecentExpiry", dbo.type_datetime),
+        dbo.ddl_add_table_column("GlobalMinimum", dbo.type_integer),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("product", fields) )
+    add_index(dbo, "product_SupplierID", "product", "SupplierID")
+    add_index(dbo, "product_ProductName", "product", "ProductName")
+    add_index(dbo, "product_ProductTypeID", "product", "ProductTypeID")
+    add_index(dbo, "product_Barcode", "product", "Barcode")
+    add_index(dbo, "product_PLU", "product", "PLU")
+
+    # Add the lkproducttype table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("ProductTypeName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lkproducttype", fields) )
+
+    # Insert "general" into lkproducttype
+    dbo.execute_dbupdate("INSERT INTO lkproducttype (ID, ProductTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 1, _("General", l), "", 0 ])
+    dbo.execute_dbupdate("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockDefaultProductTypeID", "1"])
+
+    # Add the lktaxrate table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("TaxRateName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("TaxRate", dbo.type_float, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lktaxrate", fields) )
+
+    # Insert notax into lktaxrate
+    dbo.execute_dbupdate("INSERT INTO lktaxrate (ID, TaxRateName, Description, TaxRate, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 1, _("Tax Free", l), "", 0, 0 ])
+    dbo.execute_dbupdate("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockDefaultTaxRateID", "1"])
+
+    # Add the lksunittype table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("UnitName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lksunittype", fields) )
+
+    # Populate lksunittype table
+    dbo.execute_dbupdate("INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 1, _("kg", l), "", 0 ])
+    dbo.execute_dbupdate("INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 2, _("g", l), "", 0 ])
+    dbo.execute_dbupdate("INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 3, _("lb", l), "", 0 ])
+    dbo.execute_dbupdate("INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 4, _("oz", l), "", 0 ])
+    dbo.execute_dbupdate("INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 5, _("l", l), "", 0 ])
+    dbo.execute_dbupdate("INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 6, _("ml", l), "", 0 ])
+
+    # Adding 'Movement' stockusagetype setting option
+    nextid = dbo.get_id_max("stockusagetype")
+    dbo.execute_dbupdate("INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A pseudo location used to represent internal stock movements", l), 0 ])
+    dbo.execute_dbupdate("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockMovementUsageTypeID", str(nextid)])
+
+    # Adding ProductID columns to stocklevel table
+    add_column(dbo, "stocklevel", "ProductID", dbo.type_integer)
+    add_index(dbo, "stocklevel_ProductID", "stocklevel", "ProductID")
+

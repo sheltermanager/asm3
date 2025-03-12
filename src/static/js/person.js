@@ -55,9 +55,9 @@ $(function() {
                         xmarkup: tableform.render_phone({ justwidget: true, post_field: "mobiletelephone2", json_field: "MOBILETELEPHONE2", classes: "tag-couple" }) },
                     { post_field: "emailaddress", json_field: "EMAILADDRESS", type: "text", label: _("Email Address"), colclasses: "nowrap",
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "emailaddress2", json_field: "EMAILADDRESS2", classes: "tag-couple" }) },
-                    { post_field: "dateofbirth", json_field: "DATEOFBIRTH", type: "date", label: _("Date Of Birth"), colclasses: "nowrap",
+                    { post_field: "dateofbirth", json_field: "DATEOFBIRTH", type: "date", label: _("Date Of Birth"), colclasses: "nowrap", rowclasses: "tag-individual tag-couple",
                         xmarkup: tableform.render_date({ justwidget: true, post_field: "dateofbirth2", json_field: "DATEOFBIRTH2", classes: "tag-couple" }) },
-                    { post_field: "idnumber", json_field: "IDENTIFICATIONNUMBER", type: "text", label: _("ID Number"),  colclasses: "nowrap",
+                    { post_field: "idnumber", json_field: "IDENTIFICATIONNUMBER", type: "text", label: _("ID Number"),  colclasses: "nowrap", rowclasses: "tag-individual tag-couple",
                         callout: _("Driving license, passport or other identification number"),
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "idnumber2", json_field: "IDENTIFICATIONNUMBER2", classes: "tag-couple" }) },
                     { post_field: "jurisdiction", json_field: "JURISDICTIONID", type: "select", label: _("Jurisdiction"), 
@@ -102,6 +102,8 @@ $(function() {
                     { post_field: "membershipexpires", json_field: "MEMBERSHIPEXPIRYDATE", type: "date", label: _("Membership Expiry") },
                     { post_field: "fostercapacity", json_field: "FOSTERCAPACITY", type: "number", label: _("Foster Capacity"), 
                         callout: _("If this person is a fosterer, the maximum number of animals they can care for.") },
+                    { post_field: "accountnumber", json_field: "ACCOUNTNUMBER", type: "text", label: _("Account number")},
+                    { post_field: "minimumorder", json_field: "MINIMUMORDER", type: "currency", label: _("Minimum number")},
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 8) },
 
                     { type: "nextcol" },
@@ -318,6 +320,16 @@ $(function() {
             }
             else {
                 $("#fostercapacityrow").fadeOut();
+            }
+
+            // If the supplier flag is set, show/hide the account number and minimum order fields
+            if ($("#flags option[value='supplier']").is(":selected")) {
+                $("#accountnumberrow").fadeIn();
+                $("#minimumorderrow").fadeIn();
+            }
+            else {
+                $("#accountnumberrow").fadeOut();
+                $("#minimumorderrow").fadeOut();
             }
 
             // If the homechecked flag is set, or the option is not on to

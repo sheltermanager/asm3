@@ -1112,6 +1112,7 @@ const tableform = {
             else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
             else if (v.type == "phone") { d += tableform.render_phone(v); }
+            else if (v.type == "product") { d += tableform.render_product(v); }
             else if (v.type == "raw") { d += tableform.render_markup(v); }
             else if (v.type == "richtextarea") { d += tableform.render_richtextarea(v); }
             else if (v.type == "select") { d += tableform.render_select(v); } 

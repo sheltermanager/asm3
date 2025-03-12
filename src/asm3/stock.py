@@ -1,12 +1,137 @@
 
 import asm3.utils
+import asm3.lookups
 from asm3.i18n import _, now, python2display
 from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
+
+def get_product_query(dbo: Database, retired = False) -> str:
+    l = dbo.locale
+    unittext = _("unit", l)
+    retiredclause = "WHERE product.IsRetired=%s" % asm3.utils.iif(retired, "1", "0")
+    return "SELECT product.*, pt.ProductTypeName, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        f"WHEN product.UnitTypeID = 0 THEN '{unittext}' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID=product.UnitTypeID) " \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "LEFT OUTER JOIN lkproducttype pt ON pt.ID = product.ProductTypeID " \
+        f"{retiredclause} "
 
 def get_stocklevel_query(dbo: Database) -> str:
     return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName " \
         "FROM stocklevel s " \
-        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID " 
+        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID "
+
+def get_products(dbo: Database, retired: bool = False) -> Results:
+    """
+    Returns all products
+    """
+    return dbo.query(get_product_query(dbo, retired=retired) + " ORDER BY ProductName")
+
+def get_product_name(dbo: Database, productid: int) -> str:
+    """
+    Returns the name of a product
+    """
+    return dbo.query_string("SELECT ProductName FROM product WHERE ID = ?", [productid])
+
+def get_active_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired
+    """
+    return dbo.query("%s ORDER BY ProductName" % get_product_query(dbo, retired=False))
+
+def get_depleted_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired and have a balance of zero or less
+    """
+    return dbo.query(get_product_query(dbo, retired=False) + \
+        "AND ((SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) <= 0 " \
+        "OR (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) IS NULL) " \
+        "ORDER BY ProductName")
+
+def get_low_balance_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired, have a non-zero globalminimum and have a balance below the globalminimum
+    """
+    return dbo.query(get_product_query(dbo, retired=False) + \
+        "AND product.GlobalMinimum > 0 " \
+        "AND ((SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) < product.GlobalMinimum " \
+        "OR (product.GlobalMinimum > 0 AND (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) IS NULL)) " \
+        "ORDER BY product.ProductName")
+
+def get_negative_balance_products(dbo: Database) -> Results:
+    """
+    Returns all products that are not retired and have a negative balance
+    """
+    return dbo.query(get_product_query(dbo, retired=False) + \
+        "AND (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) < 0 " \
+        "ORDER BY ProductName")
+
+def get_retired_products(dbo: Database) -> Results:
+    """
+    Returns all products that are marked as retired - just in case someone would like to un-retire a product
+    """
+    return dbo.query(get_product_query(dbo, retired=True) + "ORDER BY ProductName")
+
+def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0, fromdate: datetime = None) -> Results:
+    """
+    Returns product movements
+    """
+    l = dbo.locale
+    unittext = _("unit", l)
+    wheresql = ""
+    if stocklevelid != 0:
+        wheresql = "WHERE stocklevel.ID = %s" % stocklevelid
+    else:
+        if fromdate is None:
+            fromdate = dbo.today()
+        if productid != 0:
+            wheresql = "WHERE stocklevel.ProductID = %s AND stockusage.UsageDate >= %s" % (productid, dbo.sql_date(fromdate))
+        else:
+            wheresql = "WHERE stockusage.UsageDate >= %s" % (dbo.sql_date(fromdate))
+    return dbo.query("SELECT " \
+        "stockusage.ID, " \
+        "stockusage.UsageDate, " \
+        "product.ID AS ProductID, " \
+        "CASE WHEN product.ID IS NULL THEN stocklevel.Name " \
+        "ELSE product.ProductName " \
+        "END AS ProductName, " \
+        "stockusage.Quantity, " \
+        "stocklocation.LocationName, " \
+        "stockusagetype.UsageTypeName, " \
+        "stocklevel.BatchNumber, " \
+        "stockusage.Comments, " \
+        "CASE WHEN stockusage.Quantity > 0 THEN UsageTypeName ELSE LocationName END AS FromName, " \
+        "CASE WHEN stockusage.Quantity > 0 THEN LocationName ELSE UsageTypeName END AS ToName, " \
+        "ABS(stockusage.Quantity) AS Quantity, " \
+        "CASE " \
+        "WHEN product.ID IS NULL THEN stocklevel.UnitName " \
+        f"WHEN product.UnitTypeID = 0 AND product.PurchaseUnitTypeID = 0 THEN '{unittext}' " \
+        "WHEN product.UnitTypeID = 0 AND product.PurchaseUnitTypeID = -1 THEN CustomPurchaseUnit " \
+        "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID = product.UnitTypeID) " \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM stockusage " \
+        "INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID " \
+        "LEFT JOIN stocklocation ON stocklevel.StockLocationID = stocklocation.ID " \
+        "LEFT JOIN stockusagetype ON stockusage.StockUsageTypeID = stockusagetype.ID " \
+        "LEFT JOIN product ON stocklevel.ProductID = product.ID " \
+        f"{wheresql}" )
+
+def get_product_types(dbo: Database) -> Results:
+    """
+    Returns all producttypes
+    """
+    return dbo.query("SELECT * FROM lkproducttype ORDER BY ProductTypeName")
+
+def get_tax_rates(dbo: Database) -> Results:
+    """
+    Returns all tax rates
+    """
+    return dbo.query("SELECT * FROM lktaxrate ORDER BY TaxRateName")
 
 def get_stocklevels(dbo: Database, location: int = 0) -> Results:
     """
@@ -86,6 +211,39 @@ def get_stock_units(dbo: Database) -> List[str]:
         names.append(r.UNITNAME)
     return names
 
+def update_product_from_form(dbo: Database, post: PostedData, username: str) -> None:
+    """
+    Updates a product item from a dialog. The post should include
+    the ID of the product to adjust
+    """
+    l = dbo.locale
+    pid = post.integer("productid")
+    if post["productname"] == "":
+        raise asm3.utils.ASMValidationError(_("Product must have a name", l))
+    
+    retired = 0
+    if post.integer("active") == 0:
+        retired = 1
+
+    dbo.update("product", pid, {
+        "ProductName":          post["productname"],
+        "Description":          post["productdescription"],
+        "ProductTypeID":        post.integer("producttypeid"),
+        "SupplierID":           post.integer("supplierid"),
+        "UnitTypeID":           post.integer("unittypeid"),
+        "CustomUnit":           post["customunit"],
+        "PurchaseUnitTypeID":   post.integer("purchaseunittypeid"),
+        "CustomPurchaseUnit":   post["custompurchaseunit"],
+        "CostPrice":            post.integer("costprice"),
+        "RetailPrice":          post.integer("retailprice"),
+        "UnitRatio":            post.integer("unitratio"),
+        "TaxRateID":            post.integer("taxrateid"),
+        "IsRetired":            retired,
+        "Barcode":              post["barcode"],
+        "PLU":                  post["plu"],
+        "GlobalMinimum":        post["globalminimum"]
+    }, username)
+
 def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
     """
     Updates a stocklevel item from a dialog. The post should include
@@ -123,6 +281,191 @@ def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
     if diff != 0: 
         insert_stockusage(dbo, username, slid, diff, post.date("usagedate"), post.integer("usagetype"), post["comments"])
 
+def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> int:
+    """
+    Inserts a product item from a dialog.
+    """
+    l = dbo.locale
+    if post["productname"] == "":
+        raise asm3.utils.ASMValidationError(_("Product must have a name", l))
+    
+    retired = 0
+    if post.integer("active") == 0:
+        retired = 1
+   
+    pid = dbo.insert("product", {
+        "ProductName":          post["productname"],
+        "Description":          post["productdescription"],
+        "ProductTypeID":        post.integer("producttypeid"),
+        "SupplierID":           post.integer("supplierid"),
+        "UnitTypeID":           post.integer("unittypeid"),
+        "CustomUnit":           post["customunit"],
+        "PurchaseUnitTypeID":   post.integer("purchaseunittypeid"),
+        "CustomPurchaseUnit":   post["custompurchaseunit"],
+        "CostPrice":            post.integer("costprice"),
+        "RetailPrice":          post.integer("retailprice"),
+        "UnitRatio":            post.integer("unitratio"),
+        "TaxRateID":            post.integer("taxrateid"),
+        "IsRetired":            retired,
+        "Barcode":              post["barcode"],
+        "PLU":                  post["plu"],
+        "GlobalMinimum":        post["globalminimum"],
+        "RecentBatchNo":        "",
+        "RecentExpiry":         ""
+    }, username)
+
+    return pid
+
+def insert_productmovement_from_form(dbo: Database, post: PostedData, username: str) -> int:
+    """
+    Inserts a product movement from a dialog.
+    """
+    movementusagetypeid = asm3.configuration.product_movement_usage_type(dbo)
+    l = dbo.locale
+    if post["movementdate"] == "":
+        raise asm3.utils.ASMValidationError(_("Movement must have a date", l))
+    
+    #locations = []
+    fromlocation = 0
+    tolocation = 0
+
+    if post.integer("movementfromtype") == 0 and post.integer("movementtotype") == 1:# Stock to usage
+        #locations = [post.integer("movementfrom"), False]
+        fromlocation = post.integer("movementfrom")
+        usagetypeid = post.integer("movementto")
+    elif post.integer("movementfromtype") == 0 and post.integer("movementtotype") == 0:# Stock to stock
+        #locations = [post.integer("movementfrom"), post.integer("movementto")]
+        fromlocation = post.integer("movementfrom")
+        tolocation = post.integer("movementto")
+        usagetypeid = movementusagetypeid
+    elif post.integer("movementfromtype") == 1 and post.integer("movementtotype") == 0:# Usage to stock
+        #locations = [False, post.integer("movementto"),]
+        tolocation = post.integer("movementto")
+        usagetypeid = post.integer("movementfrom")
+    else:# Usage to usage
+        #locations = [post.integer("movementfrom"), post.integer("movementto")]
+        fromlocation = post.integer("movementfrom")
+        tolocation = post.integer("movementto")
+        usagetypeid = movementusagetypeid
+    
+    quantity = post.integer("movementquantity")
+    unitratio = post.integer("unitratio")
+
+    # Get current stock levels of the selected product
+    stocklevels = dbo.query("SELECT ID, BatchNumber, Balance, Cost, UnitPrice, Total, Low, Expiry, UnitPrice, StockLocationID FROM stocklevel " \
+        "WHERE ProductID = ? ORDER BY Balance", [ post.integer("productid") ])
+    if fromlocation != 0:
+        for stocklevel in stocklevels:
+            if quantity == 0:
+                break
+            if stocklevel["BALANCE"] != 0 and post["batch"] == stocklevel["BATCHNUMBER"] and post.integer("movementfrom") == stocklevel["STOCKLOCATIONID"]:
+                if stocklevel["BALANCE"] < 0:
+                    remaining = stocklevel["BALANCE"] - quantity
+                    quantity = 0
+                elif quantity >= stocklevel["BALANCE"]:
+                    remaining = 0
+                    quantity = quantity - stocklevel["BALANCE"]
+                else:
+                    remaining = stocklevel["BALANCE"] - quantity
+                    quantity = quantity - stocklevel["BALANCE"]
+                slpost = {}
+                slpost["stocklevelid"] = stocklevel["ID"]
+                slpost["productid"] = post.integer("productid")
+                slpost["name"] = post["productname"]
+                slpost["description"] = post["productdescription"]
+                slpost["location"] = fromlocation
+                slpost["unitname"] = post["movementunit"]
+                slpost["total"] = stocklevel["TOTAL"]
+                slpost["balance"] = remaining
+                slpost["low"] = stocklevel["LOW"]
+                slpost["expiry"] = stocklevel["EXPIRY"]
+                slpost["batchnumber"] = stocklevel["BATCHNUMBER"]
+                slpost["cost"] = stocklevel["COST"]
+                slpost["unitprice"] = stocklevel["UNITPRICE"]
+                slpost["usagedate"] = python2display(dbo.locale, dbo.today())
+                slpost["usagetype"] = usagetypeid
+                slpost["batchnumber"] = post["batch"]
+                slpost["expiry"] = post["expiry"]
+                slpost["comments"] = post["comments"]
+
+                update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+        
+        if quantity > 0:
+            slpost = {}
+            slpost["productlist"] = post.integer("productid")
+            slpost["name"] = post["productname"]
+            slpost["description"] = post["productdescription"]
+            slpost["location"] = fromlocation
+            slpost["unitname"] = post["movementunit"]
+            slpost["total"] = unitratio
+            slpost["balance"] = quantity * -1
+            slpost["low"] = 0
+            slpost["expiry"] = post.date("expiry")
+            slpost["batchnumber"] = post["batch"]
+            slpost["cost"] = post.integer("COSTPRICE")
+            slpost["unitprice"] = post.integer("RETAILPRICE")
+            slpost["usagedate"] = python2display(dbo.locale, dbo.today())
+            slpost["usagetype"] = usagetypeid
+            slpost["comments"] = post["comments"]
+            insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+    
+    quantity = post.integer("movementquantity")
+
+    if tolocation != 0:
+        for stocklevel in stocklevels:
+            if quantity == 0:
+                break
+            if stocklevel["BALANCE"] < stocklevel["TOTAL"] and post["batch"] == stocklevel["BATCHNUMBER"] and post.integer("movementto") == stocklevel["STOCKLOCATIONID"]:
+                availablespace = stocklevel["TOTAL"] - stocklevel["BALANCE"]
+                if quantity >= availablespace:
+                    balance = stocklevel["TOTAL"]
+                    quantity = quantity - availablespace
+                else:
+                    balance = stocklevel["BALANCE"] + quantity
+                    quantity = 0
+                slpost = {}
+                slpost["stocklevelid"] = stocklevel["ID"]
+                slpost["productid"] = post.integer("productid")
+                slpost["name"] = post["productname"]
+                slpost["description"] = post["productdescription"]
+                slpost["location"] = tolocation
+                slpost["unitname"] = post["movementunit"]
+                slpost["total"] = stocklevel["TOTAL"]
+                slpost["balance"] = balance
+                slpost["low"] = stocklevel["LOW"]
+                slpost["expiry"] = stocklevel["EXPIRY"]
+                slpost["batchnumber"] = stocklevel["BATCHNUMBER"]
+                slpost["cost"] = stocklevel["COST"]
+                slpost["unitprice"] = stocklevel["UNITPRICE"]
+                slpost["usagedate"] = python2display(dbo.locale, dbo.today())
+                slpost["usagetype"] = usagetypeid
+                slpost["comments"] = post["comments"]
+                update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+        while quantity > 0:
+            if quantity <= unitratio:
+                remaining = quantity
+                quantity = 0
+            else:
+                quantity = quantity - unitratio
+                remaining = unitratio
+            slpost = {}
+            slpost["productlist"] = post.integer("productid")
+            slpost["name"] = post["productname"]
+            slpost["description"] = post["productdescription"]
+            slpost["location"] = tolocation
+            slpost["unitname"] = post["movementunit"]
+            slpost["total"] = unitratio
+            slpost["balance"] = remaining
+            slpost["low"] = 0
+            slpost["expiry"] = post.date("expiry")
+            slpost["batchnumber"] = post["batch"]
+            slpost["cost"] = post.integer("COSTPRICE")
+            slpost["unitprice"] = post.integer("RETAILPRICE")
+            slpost["usagedate"] = python2display(dbo.locale, dbo.today())
+            slpost["usagetype"] = usagetypeid
+            slpost["comments"] = post["comments"]
+            insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+
 def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
     Inserts a stocklevel item from a dialog.
@@ -138,6 +481,7 @@ def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
    
     nid = dbo.insert("stocklevel", {
         "Name":             post["name"],
+        "ProductID":        post.integer("productlist"),
         "Description":      post["description"],
         "Barcode":          post["barcode"],
         "StockLocationID":  post.integer("location"),
@@ -154,6 +498,18 @@ def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
 
     insert_stockusage(dbo, username, nid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
     return nid
+
+def delete_product(dbo: Database, username: str, pid: int) -> None:
+    """
+    Deletes a product record
+    """
+    dbo.delete("product", "ID=%d" % pid, username)
+
+def delete_stockusage(dbo: Database, username: str, mid: int) -> None:
+    """
+    Deletes a stockusage record
+    """
+    dbo.delete("stockusage", "ID=%d" % mid, username)
 
 def delete_stocklevel(dbo: Database, username: str, slid: int) -> None:
     """

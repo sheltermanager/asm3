@@ -652,7 +652,8 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
         "member":           " AND o.IsMember = 1",
         "donor":            " AND o.IsDonor = 1",
         "driver":           " AND o.IsDriver = 1",
-        "sponsor":          " AND o.IsSponsor = 1"
+        "sponsor":          " AND o.IsSponsor = 1",
+        "supplier":         " AND o.IsSupplier = 1"
     }
     typefilters = {
         "":             "",
@@ -733,6 +734,7 @@ def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], username: 
             elif flag == "giftaid": ss.ands.append("o.IsGiftAid=1")
             elif flag == "vet": ss.ands.append("o.IsVet=1")
             elif flag == "volunteer": ss.ands.append("o.IsVolunteer=1")
+            elif flag == "supplier": ss.ands.append("o.IsSupplier=1")
             elif flag == "padopter": ss.ands.append("EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = o.ID AND MovementType=1)")
             else: 
                 ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
@@ -1117,6 +1119,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "IsVet":                    0,
         "IsGiftAid":                0,
         "IsSponsor":                0,
+        "IsSupplier":               0,
         "AdditionalFlags":          "|"
     }, username, generateID=False)
 
@@ -1329,6 +1332,7 @@ def update_flags(dbo: Database, username: str, personid: int, flags: str) -> Non
     retailer = bi("retailer" in flags)
     vet = bi("vet" in flags)
     giftaid = bi("giftaid" in flags)
+    supplier = bi("supplier" in flags)
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
     sponsor = bi("sponsor" in flags)
     flagstr = "|".join(sorted(flags)) + "|"
@@ -1361,6 +1365,7 @@ def update_flags(dbo: Database, username: str, personid: int, flags: str) -> Non
         "IsVet":                    vet,
         "IsSponsor":                sponsor,
         "IsGiftAid":                giftaid,
+        "IsSupplier":               supplier,
         "AdditionalFlags":          flagstr
     }, username)
 
@@ -2066,11 +2071,12 @@ def update_check_flags(dbo: Database) -> str:
         "retailer": "IsRetailer",
         "vet": "IsVet",
         "giftaid": "IsGiftAid",
-        "sponsor": "IsSponsor"
+        "sponsor": "IsSponsor",
+        "supplier": "IsSupplier"
     }
     people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsDangerous, IsVolunteer, " \
         "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
-        "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid, IsSponsor FROM owner ORDER BY ID")
+        "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid, IsSponsor, IsSupplier FROM owner ORDER BY ID")
     lookupflags = [x["FLAG"] for x in dbo.query("SELECT Flag from lkownerflags ORDER BY Flag")]
     batch = []
     asm3.asynctask.set_progress_max(dbo, len(people))
@@ -2140,7 +2146,7 @@ def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, usern
         return
     cutoff = dbo.today(offset=-365 * retainyears)
     people = dbo.query("SELECT ID FROM owner WHERE "
-        "MatchActive=0 AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
+        "MatchActive=0 AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 AND IsSupplier=0 " \
         "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 AND IsAdopter=0 AND IsBanned=0 " \
         "AND EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 0) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType > 0) " \
@@ -2184,7 +2190,7 @@ def update_anonymise_personal_data(dbo: Database, years: int = None, username: s
     people = dbo.query_named_params("SELECT ID FROM owner " \
         "WHERE OwnerSurname <> :anonymised AND CreatedDate <= :cutoff " \
         "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
-        f"AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 {adopterclause} " \
+        f"AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 AND IsSupplier=0 {adopterclause} " \
         "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > :cutoff) " \
         "AND NOT EXISTS(SELECT ID FROM animalboarding WHERE OwnerID = owner.ID AND OutDateTime > :cutoff) " \
         "AND NOT EXISTS(SELECT ID FROM animalcontrol WHERE (CallerID = owner.ID OR VictimID = owner.ID OR OwnerID = owner.ID OR Owner2ID = owner.ID OR Owner3ID = owner.ID) AND IncidentDateTime > :cutoff) " \
