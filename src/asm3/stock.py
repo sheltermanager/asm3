@@ -76,7 +76,7 @@ def get_retired_products(dbo: Database) -> Results:
     """
     return dbo.query(get_product_query(dbo, retired=True) + "ORDER BY ProductName")
 
-def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0, fromdate: datetime = False) -> Results:
+def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0, fromdate: datetime = None) -> Results:
     """
     Returns product movements
     """
@@ -86,7 +86,7 @@ def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0
     if stocklevelid != 0:
         wheresql = "WHERE stocklevel.ID = %s" % stocklevelid
     else:
-        if fromdate == False:
+        if fromdate is None:
             fromdate = dbo.today()
         if productid != 0:
             wheresql = "WHERE stocklevel.ProductID = %s AND stockusage.UsageDate >= %s" % (productid, dbo.sql_date(fromdate))

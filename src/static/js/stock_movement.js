@@ -44,7 +44,7 @@ $(function() {
                         common.route("stock_movement?productid=" + controller.productid + "&offset=" + selval);
                     }
                 }
-            ]
+            ];
 
             this.buttons = buttons;
             this.table = table;
