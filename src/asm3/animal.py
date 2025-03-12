@@ -3502,10 +3502,11 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
 def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: str, oldname: str) -> None:
     """ Writes an entry to the log when an animal's name changes."""
     # If the option is on and the name has changed, log it
+    l = dbo.locale
     if asm3.configuration.animalname_change_log(dbo):
         if newname != oldname:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalname_change_log_type(dbo),
-                _("Name changed from '%s' to '%s'") % (oldname, newname))
+                _("Name changed from '%s' to '%s'", l) % (oldname, newname))
 
 def insert_weight_log(dbo: Database, username: str, animalid: int, newweight: float = 0, oldweight: float = -1) -> None:
     """ Writes an entry to the log when an animal's weight changes. 
