@@ -6585,7 +6585,7 @@ def update_35000(dbo: Database) -> None:
 
     # Adding 'Movement' stockusagetype setting option
     nextid = dbo.get_id_max("stockusagetype")
-    dbo.execute_dbupdate("INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A pseudo location used to represent internal stock movements", l), 0 ])
+    dbo.execute_dbupdate("INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A usage type to represent internal stock movements", l), 0 ])
     dbo.execute_dbupdate("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockMovementUsageTypeID", str(nextid)])
 
     # Adding ProductID columns to stocklevel table

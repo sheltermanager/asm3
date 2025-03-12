@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-03-12 13:50+0000\n"
+"POT-Creation-Date: 2025-03-12 13:59+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -240,10 +240,6 @@ msgstr ""
 msgid "A person is required for this movement type."
 msgstr ""
 
-#: dbupdate.py
-msgid "A pseudo location used to represent internal stock movements"
-msgstr ""
-
 #: publish.js
 msgid "A publish job is already running."
 msgstr ""
@@ -273,6 +269,10 @@ msgstr ""
 
 #: litters.js
 msgid "A unique reference for this litter"
+msgstr ""
+
+#: dbupdate.py
+msgid "A usage type to represent internal stock movements"
 msgstr ""
 
 #: mailmerge.js
