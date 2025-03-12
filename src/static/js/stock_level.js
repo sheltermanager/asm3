@@ -16,19 +16,17 @@ $(function() {
                 columns: 1,
                 width: 800,
                 fields: [
-                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Product templates"), type: "select", 
+                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Product templates"), type: "select", readonly: true, 
                         options: { rows: controller.products, displayfield: "PRODUCTNAME", prepend: '<option value=""></option>' }},
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "autotext", validation: "notblank",
                         options: controller.stocknames.split("|") },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
-                    { json_field: "", post_field: "quantity", label: _("Quantity"), type: "intnumber", validation: "notblank", 
-                        defaultval: "1", min: 1, max: 100, readonly: true, callout: _("The number of stock records to create (containers)") },
                     { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
                         options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.stocklocations }},
                     { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "autotext", validation: "notblank",
-                        callout: _("The type of unit in the container, eg: tablet, vial, etc.") },
-                        options: controller.stockunits.split("|"),
+                        callout: _("The type of unit in the container, eg: tablet, vial, etc."),
+                        options: controller.stockunits.split("|") },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
                         callout: _("The wholesale/trade price the container was bought for") },
                     { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency",
@@ -37,7 +35,8 @@ $(function() {
                         callout: _("Total number of units in the container") },
                     { type: "nextcol" },
                     { json_field: "", post_field: "quantity", label: _("Quantity"), type: "intnumber", validation: "notblank", 
-                        defaultval: "1", min: 1, max: 100, readonly: true, callout: _("The number of stock records to create (containers)") },
+                        defaultval: "1", min: 1, max: 100, readonly: true, 
+                        callout: _("The number of stock records to create (containers)") },
                     { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
                         options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.stocklocations }},
                     { json_field: "BALANCE", post_field: "balance", label: _("Balance"), type: "number", validation: "notblank",
@@ -63,7 +62,7 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    stocklevel.active_row_id = row.ID;
+                    stock_level.active_row_id = row.ID;
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);

@@ -14,7 +14,7 @@ together in the list of available locations and be able to hold their own list
 of stock.  
 
 To view and add to current stock levels, go to :menuselection:`Financial -->
-Stock`
+Stock levels`
 
 .. image:: images/stocklevels.png
 
@@ -101,4 +101,16 @@ that have either expired or are due to expire in the next month.
 
 .. image:: images/stock_alerts.png
 
+Products
+--------
 
+ASM allows you to create product records for all of the items that you buy
+and manage as stock. Think of them as templates that can be used to quickly
+create stock levels.
+
+In addition to this, the products screen will show you the total that you
+have in all stock levels for each product as well as giving you a convenient
+method to move or consume stock levels based on the product.
+
+The "Show Movements" button allows you to view all usage records for the
+product.
