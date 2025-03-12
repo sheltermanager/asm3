@@ -4,7 +4,7 @@ $(function() {
 
     "use strict";
 
-    const stock_movement = {
+    const stock_usage = {
 
         model: function() {
             const table = {
@@ -35,13 +35,13 @@ $(function() {
             const buttons = [
                 { id: "productmovementfilter", type: "dropdownfilter", 
                     options: '<option value="0">' + _("Today") + '</option>' + 
-                        '<option value="7">' + _("Last Week") + '</option>' +
-                        '<option value="30">' + _("Last Month") + '</option>' +
-                        '<option value="91">' + _("Last Quarter") + '</option>' +
-                        '<option value="182">' + _("Last 6 Months") + '</option>' +
-                        '<option value="365">' + _("Last Year") + '</option>',
+                        '<option value="7">' + _("Last week") + '</option>' +
+                        '<option value="30">' + _("Last month") + '</option>' +
+                        '<option value="91">' + _("Last {0} months").replace("{0}", "3") + '</option>' +
+                        '<option value="182">' + _("Last {0} months").replace("{0}", "6") + '</option>' +
+                        '<option value="365">' + _("Last {0} months").replace("{0}", "12") + '</option>',
                     click: function(selval) {
-                        common.route("stock_movement?productid=" + controller.productid + "&offset=" + selval);
+                        common.route("stock_usage?productid=" + controller.productid + "&offset=" + selval);
                     }
                 }
             ];
@@ -55,11 +55,11 @@ $(function() {
             this.model();
             
             if (controller.productid != 0) {
-                s += html.content_header(_("{0} Movements").replace("{0}", controller.productname));
+                s += html.content_header(_("Usage: {0}").replace("{0}", controller.productname));
             } else if (controller.stocklevelid != 0) {
-                s += html.content_header(_("{0} Movements").replace("{0}", controller.stocklevelname));
+                s += html.content_header(_("Usage: {0}").replace("{0}", controller.stocklevelname));
             } else {
-                s += html.content_header(_("All Stock Movements"));
+                s += html.content_header(_("Stock Usage"));
             }
                 
             s += tableform.buttons_render(this.buttons);
@@ -87,29 +87,23 @@ $(function() {
         destroy: function() {
         },
 
-        name: "stock_movement",
+        name: "stock_usage",
         animation: "book",
         title: function() {
             if (controller.productid != 0) {
-                return _("{0} Movements").replace("{0}", controller.productname);
+                return _("Usage: {0}").replace("{0}", controller.productname);
             } else if (controller.stocklevelid != 0) {
-                return _("{0} Movements").replace("{0}", controller.stocklevelname);
+                return _("Usage: {0}").replace("{0}", controller.stocklevelname);
             } else {
-               return _("All Stock Movements");
+               return _("Stock Usage");
             }
-
-            /*if (controller.productid != 0) {
-                return _("{0} Movements").replace("{0}", controller.productname);
-            } else {
-                return _("Stock movement");
-            }*/
         },
         routes: {
-            "stock_movement": function() { common.module_loadandstart("stock_movement", "stock_movement?" + this.rawqs); }
+            "stock_usage": function() { common.module_loadandstart("stock_usage", "stock_usage?" + this.rawqs); }
         }
 
     };
     
-    common.module_register(stock_movement);
+    common.module_register(stock_usage);
 
 });

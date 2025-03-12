@@ -112,5 +112,6 @@ In addition to this, the products screen will show you the total that you
 have in all stock levels for each product as well as giving you a convenient
 method to move or consume stock levels based on the product.
 
-The "Show Movements" button allows you to view all usage records for the
-product.
+The "Usage" button allows you to view all usage records for stock levels
+connected to the product.
+

@@ -7475,9 +7475,9 @@ class stock_level(JSONEndpoint):
         self.check(asm3.users.VIEW_STOCKLEVEL)
         return asm3.stock.get_last_stock_with_name(o.dbo, o.post["name"])
 
-class stock_movement(JSONEndpoint):
-    url = "stock_movement"
-    js_module = "stock_movement"
+class stock_usage(JSONEndpoint):
+    url = "stock_usage"
+    js_module = "stock_usage"
     get_permissions = asm3.users.VIEW_STOCKLEVEL
 
     def controller(self, o):
@@ -7503,7 +7503,7 @@ class stock_movement(JSONEndpoint):
             "stocklevelid": stocklevelid,
             "productname": productname,
             "stocklevelname": stocklevelname,
-            "rows": asm3.stock.get_stock_movements(dbo, productid, stocklevelid, fromdate)
+            "rows": asm3.stock.get_stock_usage(dbo, productid, stocklevelid, fromdate)
         }
 
 class systemusers(JSONEndpoint):

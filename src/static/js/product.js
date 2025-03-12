@@ -139,16 +139,16 @@ $(function() {
             const buttons = [
                 { id: "new", text: _("New Product"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { product.new_product(); }},
-                { id: "move", text: _("Move Stock"), icon: "stock-movement", enabled: "one", perm: "asl", 
+                { id: "move", text: _("Move Stock"), icon: "stock-usage", enabled: "one", perm: "asl", 
                     click: async function() {
                         product.move_product_init();
                         await tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { width: 500, notblank: [ "movementfrom", "movementto" ] });
                         product.move_product();
                     }
                 },
-                { id: "showmovements", text: _("Show Movements"), icon: "stock-movement", enabled: "one", perm: "asl", 
+                { id: "showusage", text: _("Usage"), icon: "stock-usage", enabled: "one", perm: "asl", 
                     click: function() {
-                        document.location.href = "stock_movement?productid=" + tableform.table_selected_id(table);
+                        document.location.href = "stock_usage?productid=" + tableform.table_selected_id(table);
                     }
                 },
                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "asl",
@@ -299,7 +299,7 @@ $(function() {
                 movementtotype: totype,
                 batch: $("#batch").val(),
                 expiry: $("#expiry").val(),
-                comments: _("Movement") + ". " + _("{0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
+                comments: _("Move: {0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
             };
             await common.ajax_post("product", formdata);
             console.log($("#dialog-moveproduct"));

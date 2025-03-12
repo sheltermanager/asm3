@@ -76,9 +76,9 @@ def get_retired_products(dbo: Database) -> Results:
     """
     return dbo.query(get_product_query(dbo, retired=True) + "ORDER BY ProductName")
 
-def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0, fromdate: datetime = None) -> Results:
+def get_stock_usage(dbo: Database, productid: int = 0, stocklevelid: int = 0, fromdate: datetime = None) -> Results:
     """
-    Returns product movements
+    Returns stock usage for products or levels
     """
     l = dbo.locale
     unittext = _("unit", l)

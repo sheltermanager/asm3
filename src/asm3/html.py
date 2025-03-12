@@ -628,7 +628,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.VIEW_DONATION, "", "tagstock", "--cat", "", _("Stock control", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "product", "asm-icon-product", _("Products", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_level", "asm-icon-stock", _("Stock levels", l) ),
-            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_movement", "asm-icon-stock-movement", _("Stock movements", l) )
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_usage", "asm-icon-stock-usage", _("Stock usage", l) )
         )),
         (asm3.users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), [
             ("", "", "", "--cat", "asm-icon-settings", _("Configuration", l) ),

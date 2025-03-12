@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-03-12 13:59+0000\n"
+"POT-Creation-Date: 2025-03-12 14:39+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1170,10 +1170,6 @@ msgstr ""
 
 #: publish_options.js
 msgid "All Publishers"
-msgstr ""
-
-#: stock_movement.js
-msgid "All Stock Movements"
 msgstr ""
 
 #: accounts.js
@@ -3284,15 +3280,14 @@ msgid "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pe
 msgstr ""
 
 #: html.py person.py wordprocessor.py animal_diet.js log.js move_deceased.js
-#: citations.js transport.js person_find_results.js event_animals.js rota.js
-#: move_transfer.js move_retailer.js movements.js licence.js
-#: clinic_appointment.js medical.js vouchers.js waitinglist_new.js
+#: citations.js stock_usage.js transport.js person_find_results.js
+#: event_animals.js rota.js move_transfer.js move_retailer.js movements.js
+#: licence.js clinic_appointment.js medical.js vouchers.js waitinglist_new.js
 #: move_foster.js medicalprofile.js donations.js accounts.js animal.js
 #: vaccination.js mobile_ui_person.js staff_rota.js waitinglist_results.js
-#: move_adopt.js move_reclaim.js move_reserve.js header_edit_header.js
-#: stock_movement.js test.js lostfound_new.js product.js boarding.js
-#: waitinglist.js common_widgets.js stock_level.js litters.js diary.js
-#: lostfound.js traploan.js
+#: move_adopt.js move_reclaim.js move_reserve.js header_edit_header.js test.js
+#: lostfound_new.js product.js boarding.js waitinglist.js common_widgets.js
+#: stock_level.js litters.js diary.js lostfound.js traploan.js
 msgid "Comments"
 msgstr ""
 
@@ -3877,10 +3872,10 @@ msgid "Database"
 msgstr ""
 
 #: html.py wordprocessor.py dbupdate.py log.js log_new.js citations.js
-#: animal_find_results.js onlineform.js move_transfer.js move_retailer.js
-#: movements.js person_investigation.js move_foster.js person_links.js
-#: animal_costs.js animal.js common_html.js move_adopt.js move_reclaim.js
-#: lostfound_find_results.js move_reserve.js person.js stock_movement.js
+#: stock_usage.js animal_find_results.js onlineform.js move_transfer.js
+#: move_retailer.js movements.js person_investigation.js move_foster.js
+#: person_links.js animal_costs.js animal.js common_html.js move_adopt.js
+#: move_reclaim.js lostfound_find_results.js move_reserve.js person.js
 #: accounts_trx.js product.js maint_undelete.js animal_new.js diary.js
 #: traploan.js publish_logs.js
 msgid "Date"
@@ -6512,8 +6507,8 @@ msgstr ""
 msgid "Friday"
 msgstr ""
 
-#: giftaid_hmrc_spreadsheet.js onlineform_incoming.js mailmerge.js
-#: stock_movement.js product.js common_widgets.js
+#: stock_usage.js giftaid_hmrc_spreadsheet.js onlineform_incoming.js
+#: mailmerge.js product.js common_widgets.js
 msgid "From"
 msgstr ""
 
@@ -7188,7 +7183,7 @@ msgstr ""
 msgid "I've finished, Don't show me this popup again."
 msgstr ""
 
-#: stock_movement.js additional.js lookups.js maint_undelete.js
+#: stock_usage.js additional.js lookups.js maint_undelete.js
 msgid "ID"
 msgstr ""
 
@@ -8034,10 +8029,6 @@ msgstr ""
 msgid "Large"
 msgstr ""
 
-#: stock_movement.js
-msgid "Last 6 Months"
-msgstr ""
-
 #: html.py event_find_results.js common_html.js
 msgid "Last Change Date"
 msgstr ""
@@ -8058,7 +8049,7 @@ msgstr ""
 msgid "Last Location"
 msgstr ""
 
-#: options.js stock_movement.js
+#: options.js
 msgid "Last Month"
 msgstr ""
 
@@ -8070,16 +8061,8 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: stock_movement.js
-msgid "Last Quarter"
-msgstr ""
-
-#: options.js stock_movement.js
+#: options.js
 msgid "Last Week"
-msgstr ""
-
-#: stock_movement.js
-msgid "Last Year"
 msgstr ""
 
 #: header_edit_header.js common_tableform.js
@@ -8090,8 +8073,20 @@ msgstr ""
 msgid "Last entered shelter"
 msgstr ""
 
+#: stock_usage.js
+msgid "Last month"
+msgstr ""
+
 #: person_new.js common_personchooser.js mobile_ui_person.js
 msgid "Last name"
+msgstr ""
+
+#: stock_usage.js
+msgid "Last week"
+msgstr ""
+
+#: stock_usage.js
+msgid "Last {0} months"
 msgstr ""
 
 #: options.js
@@ -9149,11 +9144,15 @@ msgstr ""
 msgid "Move/Copy"
 msgstr ""
 
+#: product.js
+msgid "Move: {0} to {1}"
+msgstr ""
+
 #: waitinglist.py
 msgid "Moved to animal record {0}"
 msgstr ""
 
-#: dbupdate.py donation_receive.js donations.js product.js
+#: dbupdate.py donation_receive.js donations.js
 msgid "Movement"
 msgstr ""
 
@@ -10915,7 +10914,7 @@ msgstr ""
 msgid "Produce a PDF of printable labels"
 msgstr ""
 
-#: stock_movement.js
+#: stock_usage.js
 msgid "Product"
 msgstr ""
 
@@ -11055,7 +11054,7 @@ msgstr ""
 msgid "Quaker Parakeet"
 msgstr ""
 
-#: move_deceased.js medical.js donations.js vaccination.js stock_movement.js
+#: move_deceased.js stock_usage.js medical.js donations.js vaccination.js
 #: test.js product.js common_widgets.js stock_level.js
 msgid "Quantity"
 msgstr ""
@@ -12798,10 +12797,6 @@ msgstr ""
 msgid "Show If"
 msgstr ""
 
-#: product.js stock_level.js
-msgid "Show Movements"
-msgstr ""
-
 #: options.js
 msgid "Show PDF files inline instead of sending them as attachments"
 msgstr ""
@@ -13562,6 +13557,10 @@ msgstr ""
 msgid "Stock Take"
 msgstr ""
 
+#: stock_usage.js
+msgid "Stock Usage"
+msgstr ""
+
 #: lookups.py
 msgid "Stock Usage Type"
 msgstr ""
@@ -13586,16 +13585,12 @@ msgstr ""
 msgid "Stock levels for location '{0}' updated."
 msgstr ""
 
-#: stock_movement.js
-msgid "Stock movement"
-msgstr ""
-
 #: options.js
 msgid "Stock movement usage type"
 msgstr ""
 
 #: html.py
-msgid "Stock movements"
+msgid "Stock usage"
 msgstr ""
 
 #: stock.py
@@ -14786,7 +14781,7 @@ msgstr ""
 msgid "Title Initials Last"
 msgstr ""
 
-#: giftaid_hmrc_spreadsheet.js stock_movement.js product.js common_widgets.js
+#: stock_usage.js giftaid_hmrc_spreadsheet.js product.js common_widgets.js
 msgid "To"
 msgstr ""
 
@@ -14828,7 +14823,7 @@ msgstr ""
 msgid "To week beginning"
 msgstr ""
 
-#: calendarview.js options.js stock_movement.js common.js clinic_calendar.js
+#: stock_usage.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Today"
 msgstr ""
 
@@ -15197,9 +15192,10 @@ msgstr ""
 msgid "Undo given treatments"
 msgstr ""
 
-#: html.py animal_find_results.js search.js animal_observations.js animal.js
-#: common_html.js animal_bulk.js header_edit_header.js stock_movement.js
-#: product.js boarding.js stock_level.js mobile_ui_addanimal.js animal_new.js
+#: html.py stock_usage.js animal_find_results.js search.js
+#: animal_observations.js animal.js common_html.js animal_bulk.js
+#: header_edit_header.js product.js boarding.js stock_level.js
+#: mobile_ui_addanimal.js animal_new.js
 msgid "Unit"
 msgstr ""
 
@@ -15377,6 +15373,10 @@ msgstr ""
 msgid "Urgent"
 msgstr ""
 
+#: product.js stock_level.js
+msgid "Usage"
+msgstr ""
+
 #: move_deceased.js medical.js vaccination.js test.js stock_level.js
 msgid "Usage Date"
 msgstr ""
@@ -15390,6 +15390,10 @@ msgstr ""
 msgid ""
 "Usage explains why this stock record was created or adjusted. Usage records "
 "will only be created if the balance changes."
+msgstr ""
+
+#: stock_usage.js
+msgid "Usage: {0}"
 msgstr ""
 
 #: options.js
@@ -15815,7 +15819,7 @@ msgstr ""
 msgid "View media for this person"
 msgstr ""
 
-#: stock_movement.js
+#: stock_usage.js
 msgid "View product"
 msgstr ""
 
@@ -16708,10 +16712,6 @@ msgstr ""
 msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 
-#: stock_movement.js
-msgid "{0} Movements"
-msgstr ""
-
 #: dbupdate.py
 msgid "{0} Pipette"
 msgstr ""
@@ -16796,10 +16796,6 @@ msgstr ""
 
 #: reports_querybuilder.js
 msgid "{0} test result"
-msgstr ""
-
-#: product.js
-msgid "{0} to {1}"
 msgstr ""
 
 #: medical.py
