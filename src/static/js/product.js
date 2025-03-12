@@ -7,8 +7,6 @@ $(function() {
     const product = {
 
         model: function() {
-            
-
             const dialog = {
                 add_title: _("Add product"),
                 edit_title: _("Edit product"),
@@ -19,29 +17,28 @@ $(function() {
                 width: 500,
                 fields: [
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
-                    { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", options: controller.producttypes },
+                    { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", 
+                        options: { rows: controller.producttypes, displayfield: "PRODUCTTYPENAME" }},
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text",
-                        callout: _("A unique identifier that may be used to link this product with an external POS system")
-                     },
+                        callout: _("A unique identifier that may be used to link this product with an external POS system") },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
-                    { json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "select", options: controller.taxrates, validation: "notnull" },
-                    { json_field: "ACTIVE", post_field: "active", label: _("Active"), type: "select", options: { rows: controller.yesno, displayfield: "NAME" }, defaultval: "1" },
+                    { json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "select", 
+                        options: { rows: controller.taxrates, displayfield: "TAXRATENAME" }, validation: "notnull" },
+                    { json_field: "ACTIVE", post_field: "active", label: _("Active"), type: "select", 
+                        options: { rows: controller.yesno, displayfield: "NAME" }, defaultval: "1" },
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
                     { json_field: "SUPPLIERCODE", post_field: "suppliercode", label: _("Supplier code"), type: "text", colclasses: "bottomborder" },
-
                     { json_field: "PURCHASEUNITTYPEID", post_field: "purchaseunittypeid", label: _("Purchase Unit"), type: "select",
                         callout: _("The units that you acquire in this product in for example, 'tray', 'pallet', 'box', this does not have to be the same as the units that you use to manage your stock internally"), 
                         options: { rows: controller.units, displayfield: "UNITNAME", prepend: '<option value="0">' + _("unit") + '</option><option value="-1">' + _("custom") + '</option>' }
                     },
                     { json_field: "CUSTOMPURCHASEUNIT", post_field: "custompurchaseunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "COSTPRICE", post_field: "costprice", label: _("Cost price"), type: "currency", colclasses: "bottomborder" },
-
                     { json_field: "UNITTYPEID", post_field: "unittypeid", label: _("Unit"), type: "select", 
                         callout: _("The units that you use to manage this product internally for example, 'tin', 'tablet', 'bag'"), 
                         options: { rows: controller.units, displayfield: "UNITNAME", prepend: '<option value="0">' + _("purchase unit") + '</option><option value="-1">' + _("custom") + '</option>' }
                     },
-
                     { json_field: "CUSTOMUNIT", post_field: "customunit", label: _("Custom Unit"), type: "text" },
                     { json_field: "RETAILPRICE", post_field: "retailprice", label: _("Unit price"), type: "currency" },
                     { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1,
@@ -241,28 +238,16 @@ $(function() {
         },
 
         move_product_init: function() {
-            let productid = tableform.table_selected_id();
-            let activeproduct = false;
-            $.each(controller.rows, function(rowcount, row) {
-                if (row.ID == productid) {
-                    activeproduct = row;
-                    return false;
-                }
-            });
-            
+            let activeproduct = tableform.table_selected_row(product.table);
             let purchaseunit = _("undefined");
             if (activeproduct.PURCHASEUNITTYPEID == 0) {
                 purchaseunit = _("unit");
-            } else if (activeproduct.PURCHASEUNITTYPEID == -1) {
+            } 
+            else if (activeproduct.PURCHASEUNITTYPEID == -1) {
                 purchaseunit = activeproduct.CUSTOMPURCHASEUNIT;
-            } else {
-                $.each(controller.units, function(unitcount, unitrow) {
-                    if (unitrow.ID == activeproduct.PURCHASEUNITTYPEID) {
-                        purchaseunit = unitrow.UNITNAME;
-                        return false;
-                    }
-                });
-                
+            } 
+            else {
+                purchaseunit = common.get_field(controller.units, activeproduct.PURCHASEUNITTYPEID, "UNITNAME");
             }
             let unit = _("undefined");
             if (activeproduct.UNITTYPEID == 0) {
@@ -270,38 +255,23 @@ $(function() {
             } else if (activeproduct.UNITTYPEID == -1) {
                 unit = activeproduct.CUSTOMUNIT;
             } else {
-                $.each(controller.units, function(unitcount, unitrow) {
-                    if (unitrow.ID == activeproduct.UNITTYPEID) {
-                        unit = unitrow.UNITNAME;
-                        return false;
-                    }
-                });
+                unit = common.get_field(controller.units, activeproduct.UNITTYPEID, "UNITNAME");
             }
             let units = [activeproduct.UNITRATIO + "|" + purchaseunit,];
             if (activeproduct.UNITTYPEID != 0) {
                 units.push("1|" + unit);
             }
-
             $("#movementunit").html(html.list_to_options(units));
             $("#movementunit").val($("#movementunit option").last().val());
             $("#movementfrom").val("L$" + config.integer(asm.user + "_DefaultStockLocationID"));
             $("#movementto").val("U$" + config.integer(asm.user + "_DefaultStockUsageTypeID"));
-
             $("#movementdate").val(format.date_now());
-
             $("#movementquantity").val(1);
         },
 
         move_product: async function() {
-           
-            let productid = tableform.table_selected_id();
-            let activeproduct = false;
-            $.each(controller.rows, function(rowcount, row) {
-                if (row.ID == productid) {
-                    activeproduct = row;
-                    return false;
-                }
-            });
+            let productid = tableform.table_selected_id(product.table);
+            let activeproduct = tableform.table_selected_row(product.table);
             let fromid = $("#movementfrom").val().split("$")[1];
             let fromtype = 0;
             if ($("#movementfrom").val().split("$")[0] == "U") {
@@ -312,9 +282,7 @@ $(function() {
                 totype = 1;
             }
             let toid = $("#movementto").val().split("$")[1];
-
             let quantity = parseInt($("#movementquantity").val()) * parseInt($("#movementunit").val());
-            
             let formdata = {
                 mode: "move",
                 productid: productid,
@@ -333,9 +301,8 @@ $(function() {
                 expiry: $("#expiry").val(),
                 comments: _("Movement") + ". " + _("{0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
             };
-            let response = await common.ajax_post("product", formdata);
+            await common.ajax_post("product", formdata);
             console.log($("#dialog-moveproduct"));
-            let balance = activeproduct.BALANCE;
             if (fromtype == 0 && totype == 1) {
                 activeproduct.BALANCE = activeproduct.BALANCE - quantity;
             } else if (fromtype == 1 && totype == 0) {
@@ -377,10 +344,6 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
-            if (controller.newproduct == 1) {
-                this.new_product();
-            }
-
             $("#purchaseunittypeid").change(function() {
                 if ($("#purchaseunittypeid").val() == -1) {
                     $("#custompurchaseunitrow").fadeIn();
@@ -410,15 +373,14 @@ $(function() {
                 $("#productfilter").select("value", common.querystring_param("productfilter"));
             }
             let stocklocations = [];
-            $.each(controller.stocklocations, function(locationcount, location) {
-                stocklocations.push("L$" + location.ID + "|" + location.LOCATIONNAME);
+            $.each(controller.stocklocations, function(i, v) {
+                stocklocations.push("L$" + v.ID + "|" + v.LOCATIONNAME);
             });
-            $.each(controller.stockusagetypes, function(usagecount, usage) {
-                stocklocations.push("U$" + usage.ID + "|" + usage.USAGETYPENAME);
+            $.each(controller.stockusagetypes, function(i, v) {
+                stocklocations.push("U$" + v.ID + "|" + v.USAGETYPENAME);
             });
             $("#movementfrom").html(html.list_to_options(stocklocations));
             $("#movementto").html(html.list_to_options(stocklocations));
-
             if (controller.productid != 0) {
                 $.each(controller.rows, function(rowcount, row) {
                     if (row.ID == controller.productid) {
@@ -429,6 +391,9 @@ $(function() {
                     }
                 });
             }
+            if (controller.newproduct == 1) {
+                this.new_product();
+            }
         },
 
         destroy: function() {
@@ -436,14 +401,7 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
-            row.PRODUCTTYPENAME = ""
-            $.each(controller.producttypes, function(typecount, producttype) {
-                if (producttype.split("|")[0] == row.PRODUCTTYPEID) {
-                    row.PRODUCTTYPENAME = producttype.split("|")[1];
-                    return false;
-                }
-                
-            });
+            row.PRODUCTTYPENAME = common.get_field(controller.producttypes, row.PRODUCTTYPENAME, "PRODUCTTYPENAME");
         },
 
         name: "product",

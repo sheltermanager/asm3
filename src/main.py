@@ -6673,18 +6673,9 @@ class product(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        #asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
         productid = 0
         if o.post["id"]:
             productid = o.post.integer("id")
-        producttyperows = asm3.stock.get_product_types(dbo)
-        producttypes = []
-        for producttype in producttyperows:
-            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
-        taxrates = []
-        for taxrate in asm3.stock.get_tax_rates(dbo):
-            taxrates.append(str(taxrate["ID"]) + "|" + taxrate["TAXRATENAME"])
-        
         if o.post.integer("productfilter") == -1:
             products = asm3.stock.get_depleted_products(dbo)
         elif o.post.integer("productfilter") == -2:
@@ -6695,20 +6686,11 @@ class product(JSONEndpoint):
             products = asm3.stock.get_retired_products(dbo)
         else:
             products = asm3.stock.get_active_products(dbo)
-        
-        for product in products:
-            product["ACTIVE"] = 1
-            if product["ISRETIRED"] == 1:
-                product["ACTIVE"] = 0
-            product["PRODUCTTYPENAME"] = _("Undefined")
-            for producttype in producttyperows:
-                if product["PRODUCTTYPEID"] == producttype["ID"]:
-                    product["PRODUCTTYPENAME"] = producttype["PRODUCTTYPENAME"]
-                    break
+        asm3.al.debug("got %d products" % len(products), "main.product", dbo)
         return {
             "productid": productid,
-            "producttypes": producttypes,
-            "taxrates": taxrates,
+            "producttypes": asm3.stock.get_product_types(dbo),
+            "taxrates": asm3.stock.get_tax_rates(dbo),
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "units": asm3.lookups.get_unit_types(dbo),
@@ -7427,10 +7409,6 @@ class stock_level(JSONEndpoint):
             levels = asm3.stock.get_stocklevels_lowbalance(dbo)
         else:
             levels = asm3.stock.get_stocklevels(dbo, o.post.integer("viewlocation"))
-        products = asm3.stock.get_products(dbo)
-        productnames = []
-        for product in products:
-            productnames.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
         asm3.al.debug("got %d stock levels" % len(levels), "main.stock_level", dbo)
         return {
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
@@ -7439,8 +7417,7 @@ class stock_level(JSONEndpoint):
             "stockunits": "|".join(asm3.stock.get_stock_units(dbo)),
             "newlevel": o.post.integer("newlevel") == 1,
             "sortexp": o.post.integer("sortexp") == 1,
-            "products": products,
-            "productnames": productnames,
+            "products": asm3.stock.get_products(dbo),
             "rows": levels
         }
 
@@ -7484,23 +7461,12 @@ class stock_movement(JSONEndpoint):
             stocklevelname = asm3.stock.get_stocklevel(dbo, stocklevelid)["NAME"]
         if o.post["productid"]:
             productid = o.post.integer("productid")
-        products = []
-        for product in asm3.stock.get_products(dbo):
-            products.append(str(product["ID"]) + "|" + product["PRODUCTNAME"])
-            if product["ID"] == productid:
-                productname = product["PRODUCTNAME"]
-        producttypes = []
-        for producttype in asm3.stock.get_product_types(dbo):
-            producttypes.append(str(producttype["ID"]) + "|" + producttype["PRODUCTTYPENAME"])
+            productname = asm3.stock.get_product_name(dbo, productid)
         return {
             "productid": productid,
             "stocklevelid": stocklevelid,
             "productname": productname,
             "stocklevelname": stocklevelname,
-            "producttypes": producttypes,
-            "products": products,
-            "stocklocations": asm3.lookups.get_stock_locations(dbo),
-            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "rows": asm3.stock.get_stock_movements(dbo, productid, stocklevelid, fromdate)
         }
 

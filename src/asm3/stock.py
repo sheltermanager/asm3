@@ -4,139 +4,94 @@ import asm3.lookups
 from asm3.i18n import _, now, python2display
 from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
 
+def get_product_query(dbo: Database, retired = False) -> str:
+    l = dbo.locale
+    unittext = _("unit", l)
+    retiredclause = "WHERE product.IsRetired=%s" % asm3.utils.iif(retired, "1", "0")
+    return "SELECT product.*, pt.ProductTypeName, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        f"WHEN product.UnitTypeID = 0 THEN '{unittext}' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID=product.UnitTypeID) " \
+        "ELSE product.CustomUnit " \
+        "END AS Unit " \
+        "FROM product " \
+        "LEFT OUTER JOIN lkproducttype pt ON pt.ID = product.ProductTypeID " \
+        f"{retiredclause} "
+
 def get_stocklevel_query(dbo: Database) -> str:
     return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName " \
         "FROM stocklevel s " \
         "INNER JOIN stocklocation l ON s.StockLocationID = l.ID "
 
-def get_unit_sql(dbo: Database) -> str:
-    unitsql = ""
-    for unitdict in asm3.lookups.get_unit_types(dbo):
-        unitsql = unitsql + "WHEN product.UnitTypeID = %s THEN '%s' " % (str(unitdict["ID"]), unitdict["UNITNAME"])
-    return unitsql
-
-def get_products(dbo: Database, includeretired=False) -> Results:
+def get_products(dbo: Database, retired: bool = False) -> Results:
     """
     Returns all products
     """
+    return dbo.query(get_product_query(dbo, retired=retired) + " ORDER BY ProductName")
 
-    return dbo.query("SELECT product.*, " \
-        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
-        "CASE " \
-        "WHEN product.UnitTypeID = 0 THEN '%s' " \
-        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
-        "%s" \
-        "ELSE product.CustomUnit " \
-        "END AS Unit " \
-        "FROM product " \
-        "WHERE IsRetired = %s " \
-        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), int(includeretired)))
+def get_product_name(dbo: Database, productid: int) -> str:
+    """
+    Returns the name of a product
+    """
+    return dbo.query_string("SELECT ProductName FROM product WHERE ID = ?", [productid])
 
 def get_active_products(dbo: Database) -> Results:
     """
     Returns all products that are not retired
     """
-    return dbo.query("SELECT product.*, " \
-        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
-        "CASE " \
-        "WHEN product.UnitTypeID = 0 THEN '%s' " \
-        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
-        "%s" \
-        "ELSE product.CustomUnit " \
-        "END AS Unit " \
-        "FROM product " \
-        "WHERE IsRetired = %s " \
-        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+    return dbo.query("%s ORDER BY ProductName" % get_product_query(dbo, retired=False))
 
 def get_depleted_products(dbo: Database) -> Results:
     """
     Returns all products that are not retired and have a balance of zero or less
     """
-
-    return dbo.query("SELECT product.*, " \
-        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
-        "CASE " \
-        "WHEN product.UnitTypeID = 0 THEN '%s' " \
-        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
-        "%s" \
-        "ELSE product.CustomUnit " \
-        "END AS Unit " \
-        "FROM product " \
-        "WHERE IsRetired = %s " \
+    return dbo.query(get_product_query(dbo, retired=False) + \
         "AND ((SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) <= 0 " \
         "OR (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) IS NULL) " \
-        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+        "ORDER BY ProductName")
 
 def get_low_balance_products(dbo: Database) -> Results:
     """
     Returns all products that are not retired, have a non-zero globalminimum and have a balance below the globalminimum
     """
-    return dbo.query("SELECT product.*, " \
-        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
-        "CASE " \
-        "WHEN product.UnitTypeID = 0 THEN '%s' " \
-        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
-        "%s" \
-        "ELSE product.CustomUnit " \
-        "END AS Unit " \
-        "FROM product " \
-        "WHERE IsRetired = %s " \
+    return dbo.query(get_product_query(dbo, retired=False) + \
         "AND product.GlobalMinimum > 0 " \
         "AND ((SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) < product.GlobalMinimum " \
         "OR (product.GlobalMinimum > 0 AND (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) IS NULL)) " \
-        "ORDER BY product.ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+        "ORDER BY product.ProductName")
 
 def get_negative_balance_products(dbo: Database) -> Results:
     """
     Returns all products that are not retired and have a negative balance
     """
-
-    return dbo.query("SELECT product.*, " \
-        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
-        "CASE " \
-        "WHEN product.UnitTypeID = 0 THEN '%s' " \
-        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
-        "%s" \
-        "ELSE product.CustomUnit " \
-        "END AS Unit " \
-        "FROM product " \
-        "WHERE IsRetired = %s " \
+    return dbo.query(get_product_query(dbo, retired=False) + \
         "AND (SELECT SUM(stockusage.Quantity) FROM stockusage INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID WHERE stocklevel.ProductID = product.ID) < 0 " \
-        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 0))
+        "ORDER BY ProductName")
 
 def get_retired_products(dbo: Database) -> Results:
     """
     Returns all products that are marked as retired - just in case someone would like to un-retire a product
     """
-
-    return dbo.query("SELECT product.*, " \
-        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
-        "CASE " \
-        "WHEN product.UnitTypeID = 0 THEN '%s' " \
-        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
-        "%s" \
-        "ELSE product.CustomUnit " \
-        "END AS Unit " \
-        "FROM product " \
-        "WHERE IsRetired = %s " \
-        "ORDER BY ProductName" % (_("unit"), get_unit_sql(dbo), 1))
+    return dbo.query(get_product_query(dbo, retired=True) + "ORDER BY ProductName")
 
 def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0, fromdate: datetime = False) -> Results:
     """
     Returns product movements
     """
-
+    l = dbo.locale
+    unittext = _("unit", l)
     wheresql = ""
     if stocklevelid != 0:
-        wheresql = "WHERE stocklevel.ID = %i" % stocklevelid
+        wheresql = "WHERE stocklevel.ID = %s" % stocklevelid
     else:
         if fromdate == False:
             fromdate = dbo.today()
         if productid != 0:
-            wheresql = "WHERE stocklevel.ProductID = %i AND stockusage.UsageDate >= '%s'" % (productid, fromdate)
+            wheresql = "WHERE stocklevel.ProductID = %s AND stockusage.UsageDate >= %s" % (productid, dbo.sql_date(fromdate))
         else:
-            wheresql = "WHERE stockusage.UsageDate >= '%s'" % (fromdate)
-
+            wheresql = "WHERE stockusage.UsageDate >= %s" % (dbo.sql_date(fromdate))
     return dbo.query("SELECT " \
         "stockusage.ID, " \
         "stockusage.UsageDate, " \
@@ -154,7 +109,7 @@ def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0
         "ABS(stockusage.Quantity) AS Quantity, " \
         "CASE " \
         "WHEN product.ID IS NULL THEN stocklevel.UnitName " \
-        f"WHEN product.UnitTypeID = 0 AND product.PurchaseUnitTypeID = 0 THEN '{_("unit")}' " \
+        f"WHEN product.UnitTypeID = 0 AND product.PurchaseUnitTypeID = 0 THEN '{unittext}' " \
         "WHEN product.UnitTypeID = 0 AND product.PurchaseUnitTypeID = -1 THEN CustomPurchaseUnit " \
         "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID = product.UnitTypeID) " \
         "ELSE product.CustomUnit " \
@@ -163,8 +118,8 @@ def get_stock_movements(dbo: Database, productid: int = 0, stocklevelid: int = 0
         "INNER JOIN stocklevel ON stockusage.StockLevelID = stocklevel.ID " \
         "LEFT JOIN stocklocation ON stocklevel.StockLocationID = stocklocation.ID " \
         "LEFT JOIN stockusagetype ON stockusage.StockUsageTypeID = stockusagetype.ID " \
-        "LEFT JOIN product ON stocklevel.ProductID = product.ID " + wheresql \
-        )
+        "LEFT JOIN product ON stocklevel.ProductID = product.ID " \
+        f"{wheresql}" )
 
 def get_product_types(dbo: Database) -> Results:
     """

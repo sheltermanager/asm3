@@ -16,7 +16,8 @@ $(function() {
                 columns: 1,
                 width: 800,
                 fields: [
-                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Product templates"), type: "select", options: controller.productnames },
+                    { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Product templates"), type: "select", 
+                        options: { rows: controller.products, displayfield: "PRODUCTNAME", prepend: '<option value=""></option>' }},
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text" },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
                     { json_field: "UNITNAME", post_field: "unitname", label: _("Units"), type: "text", validation: "notblank",
@@ -245,19 +246,13 @@ $(function() {
 
             $("#productlist").change(function() {
                 let productid = $("#productlist").val();
-                let activeproduct = false;
-                $.each(controller.products, function(productcount, product) {
-                    if (product.ID == productid) {
-                        activeproduct = product;
-                        return false;
-                    }
-                });
+                let activeproduct = common.get_row(controller.products, productid);
                 $("#name").val(activeproduct.PRODUCTNAME);
                 $("#description").val(activeproduct.DESCRIPTION);
                 let unittype = activeproduct.CUSTOMUNIT;
                 if (activeproduct.UNITTYPEID == 0) {
                     if (activeproduct.PURCHASEUNITTYPEID == 0) {
-                        unittype = _("Unit").toLowerCase();
+                        unittype = _("unit");
                     } else if (activeproduct.PURCHASEUNITTYPEID == 1) {
                         unittype = "kg";
                     } else if (activeproduct.PURCHASEUNITTYPEID == 2) {
@@ -285,9 +280,6 @@ $(function() {
                 $("#balance").val(activeproduct.UNITRATIO);
                 $("#low").val(0);
                 $("#namerow").fadeIn();
-                
-                
-
             });
 
             if (controller.newlevel == 1) {
