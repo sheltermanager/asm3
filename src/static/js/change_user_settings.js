@@ -107,7 +107,7 @@ $(function() {
 
         bind: function() {
 
-            $("#adamwozere").textcompatiblesignature({ guideline: true });
+            $("#adamwozere").textcompatiblesignature({ guideline: true, value: 'https://adam.7thwave.io/uploads/adam/AI20241117T194455610967.jpg' });
 
             try {
                 $("#signature").signature({ guideline: true });
