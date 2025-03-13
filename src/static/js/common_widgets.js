@@ -2105,9 +2105,7 @@ $.widget("asm.textcompatiblesignature", {
                 '<div class="tcsignaturewidget" style="width: 500px; height: 200px;display: none;"></div>', 
             '</div>'
         ].join("\n"));
-
         $("#" + newid + " .tcsignaturewidget").signature({ guideline: this.options.guideline });
-
         $("#" + newid + " .button-tcsignaturechange")
             .button({ icons: { primary: "ui-icon-pencil" }, text: false })
             .click(function() {
@@ -2119,22 +2117,18 @@ $.widget("asm.textcompatiblesignature", {
                 $("#" + newid + " .tcsignatureimg").hide();
                 $("#" + newid + " .tcsignaturetools").show();
                 $("#" + newid + " .tcsignaturewidget").show();
-
             });
-        
         $("#" + newid + " .tcsignaturedraw").change(function() {
             $("#" + newid + " .tcsignaturetextinput").hide();
             $("#" + newid + " .tcsignaturewidget").show();
             $("#" + newid + " .tcsignaturecanvas").hide();
         });
-        
         $("#" + newid + " .tcsignaturetext").change(function() {
             $("#" + newid + " .tcsignaturetextinput").show();
             $("#" + newid + " .tcsignaturewidget").hide();
             $("#" + newid + " .tcsignaturecanvas").show();
             $("#" + newid + " .tcsignaturetextinput").focus();
         });
-
         $("#" + newid + " .tcsignaturetextinput").keyup(function() {
             let canvas = $("#" + newid + " .tcsignaturecanvas")[0];
             let ctx = canvas.getContext("2d");
@@ -2150,13 +2144,6 @@ $.widget("asm.textcompatiblesignature", {
             ctx.fillText($("#" + newid + " .tcsignaturetextinput").val(),10,100,500);
         });
         
-    },
-    save: function() {
-        // Store the entered values back in the base element value
-        let v = this.options.lat.val() + "," +
-            this.options.lng.val() + "," +
-            this.options.hash.val();
-        this.element.val("Hello there!");
     },
     value: function() {
         let newid = "tcsignature-" + this.element[0].id;

@@ -70,7 +70,6 @@ $(function() {
                 html.content_header(_("Change User Settings")),
                 html.error(_("Your administrator requires all users to enable 2FA below in order to use the system."), "force2fa"),
                 tableform.fields_render([
-                    //{ label: _("Experiment"), type: "raw", markup: '<div id="adamwozere" style="width: 500px; height: 200px;"></div>' },
                     { label: _("Username"), type: "raw", markup: asm.user },
                     { post_field: "realname", label: _("Real name"), type: "text", doublesize: true },
                     { post_field: "email", label: _("Email Address"), type: "text", doublesize: true },
@@ -103,30 +102,13 @@ $(function() {
         },
 
         bind: function() {
-
-            //$("#adamwozere").textcompatiblesignature({ guideline: true, value: 'https://adam.7thwave.io/uploads/adam/AI20241117T194455610967.jpg' });
             $("#signature").textcompatiblesignature({ guideline: true, value: controller.user.SIGNATURE });
-
-            /*try {
-                $("#signature").signature({ guideline: true });
-                $("#button-change")
-                    .button({ icons: { primary: "ui-icon-pencil" }, text: false })
-                    .click(function() {
-                        $("#existingsig").hide();
-                        $("#signature").show();
-                        $("#signature").signature("clear");
-                    });
-            }
-            catch (excanvas) {
-                log.error("failed creating signature canvas");   
-            }*/
 
             $("#button-save").button().click(async function() {
                 $(".asm-content button").button("disable");
                 header.show_loading();
                 let formdata = $("input, select").toPOST();
                 try {
-                    //formdata += "&signature=" + encodeURIComponent($("#signature canvas").get(0).toDataURL("image/png"));
                     formdata += "&signature=" + encodeURIComponent($("#signature").textcompatiblesignature("value"));
                 } catch (excanvas) {
                     log.error("failed reading signature canvas", excanvas);
