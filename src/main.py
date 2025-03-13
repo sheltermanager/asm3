@@ -6309,6 +6309,7 @@ class person_donations(JSONEndpoint):
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "name": "person_donations",
             "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo), 
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),

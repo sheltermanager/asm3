@@ -46,7 +46,7 @@ $(function() {
                     { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
-                    { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate %"), type: "number", 
+                    { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate"), type: "select", options: { displayfield: "TAXRATENAME", valuefield: "ID", rows: controller.taxrates }, 
                         hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "VATAMOUNT", post_field: "vatamount", label: _("Tax Amount"), type: "currency",
                         hideif: function() { return !config.bool("VATEnabled"); } },
