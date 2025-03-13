@@ -70,7 +70,7 @@ $(function() {
                 html.content_header(_("Change User Settings")),
                 html.error(_("Your administrator requires all users to enable 2FA below in order to use the system."), "force2fa"),
                 tableform.fields_render([
-                    { label: _("Experiment"), type: "raw", markup: '<div id="adamwozere" style="width: 500px; height: 200px;"></div>' },
+                    //{ label: _("Experiment"), type: "raw", markup: '<div id="adamwozere" style="width: 500px; height: 200px;"></div>' },
                     { label: _("Username"), type: "raw", markup: asm.user },
                     { post_field: "realname", label: _("Real name"), type: "text", doublesize: true },
                     { post_field: "email", label: _("Email Address"), type: "text", doublesize: true },
@@ -83,10 +83,7 @@ $(function() {
                     { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
                     { post_field: "shelterview", label: _("Shelter view"), type: "select", 
                         options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
-                    { rowid: "signaturerow", type: "raw", label: _("Signature"), 
-                        xlabel: ' <button id="button-change" type="button" style="vertical-align: middle">' + _("Clear and sign again") + '</button>',
-                        markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' +
-                            '<img id="existingsig" style="display: none; border: 0" />' },
+                    { rowid: "signaturerow", type: "raw", label: _("Signature"), markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' },
                     { post_field: "button-enable2fa", type: "raw", label: _("Two factor authentication (2FA)"), 
                         markup: '<input id="enabletotp" data="enabletotp" type="hidden" val="0" />' +
                             '<button id="button-enable2fa">' + _("Enable 2FA") + '</button>' +
@@ -107,9 +104,10 @@ $(function() {
 
         bind: function() {
 
-            $("#adamwozere").textcompatiblesignature({ guideline: true, value: 'https://adam.7thwave.io/uploads/adam/AI20241117T194455610967.jpg' });
+            //$("#adamwozere").textcompatiblesignature({ guideline: true, value: 'https://adam.7thwave.io/uploads/adam/AI20241117T194455610967.jpg' });
+            $("#signature").textcompatiblesignature({ guideline: true, value: controller.user.SIGNATURE });
 
-            try {
+            /*try {
                 $("#signature").signature({ guideline: true });
                 $("#button-change")
                     .button({ icons: { primary: "ui-icon-pencil" }, text: false })
@@ -121,16 +119,15 @@ $(function() {
             }
             catch (excanvas) {
                 log.error("failed creating signature canvas");   
-            }
+            }*/
 
             $("#button-save").button().click(async function() {
                 $(".asm-content button").button("disable");
                 header.show_loading();
                 let formdata = $("input, select").toPOST();
                 try {
-                    if (!$("#signature").signature("isEmpty")) {
-                        formdata += "&signature=" + encodeURIComponent($("#signature canvas").get(0).toDataURL("image/png"));
-                    }
+                    //formdata += "&signature=" + encodeURIComponent($("#signature canvas").get(0).toDataURL("image/png"));
+                    formdata += "&signature=" + encodeURIComponent($("#signature").textcompatiblesignature("value"));
                 } catch (excanvas) {
                     log.error("failed reading signature canvas", excanvas);
                 }

@@ -2102,7 +2102,7 @@ $.widget("asm.textcompatiblesignature", {
                 '<div>', 
                     '<canvas class="tcsignaturecanvas" style="width: 500px; height: 200px;display: none;"></canvas>', 
                 '</div>', 
-                '<div class="tcsignaturewidget" style="width: 500px; height: 200px;"></div>', 
+                '<div class="tcsignaturewidget" style="width: 500px; height: 200px;display: none;"></div>', 
             '</div>'
         ].join("\n"));
 
@@ -2118,6 +2118,7 @@ $.widget("asm.textcompatiblesignature", {
                 $("#" + newid + " .tcsignaturetextinput").val("");
                 $("#" + newid + " .tcsignatureimg").hide();
                 $("#" + newid + " .tcsignaturetools").show();
+                $("#" + newid + " .tcsignaturewidget").show();
 
             });
         
