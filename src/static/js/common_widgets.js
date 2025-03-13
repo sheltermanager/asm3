@@ -2078,3 +2078,71 @@ $.fn.asmcontent = function(type) {
         $(this).show("slide", {direction: 'left'}, common.fx_speed);
     });
 };
+
+$.widget("asm.textcompatiblesignature", {
+    options: {
+        guideline: false
+    },
+    _create: function() {
+        let self = this;
+        this.element.hide();
+        this.element.after([
+            '<div>',
+            '<button class="button-tcsignaturechange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
+            '<label>' + _("Draw") + '<input id="tcsignaturedraw" name="tcsignaturetype" type="radio" checked></label> <label>' + _("Text") + '<input id="tcsignaturetext" name="tcsignaturetype" type="radio"></label> ', 
+            '<input type="text" id="tcsignaturetextinput" placeholder="' + _("Signature text") + '" style="margin-left: 10px;display: none;">', 
+            '</div>',
+            '<div>', 
+            '<canvas id="tcsignaturecanvas" style="width: 500px; height: 200px;display: none;"></canvas>', 
+            '<div id="tcsignaturewidget" style="width: 500px; height: 200px;"></div>', 
+            '</div>'
+        ]);
+        $("#tcsignaturewidget").signature({ guideline: true });
+        $(".button-tcsignaturechange")
+            .button({ icons: { primary: "ui-icon-pencil" }, text: false })
+            .click(function() {
+                //$("#existingsig").hide();
+                //$("#signature").show();
+                $(".tcsignaturewidget").signature("clear");
+                //console.log("Changing");
+            });
+        $("#tcsignaturedraw").change(function() {
+            $("#tcsignaturetextinput").fadeOut();
+            $("#tcsignaturewidget").fadeIn();
+            $("#tcsignaturecanvas").fadeOut();
+        });
+        $("#tcsignaturetext").change(function() {
+            $("#tcsignaturetextinput").fadeIn();
+            $("#tcsignaturewidget").fadeOut();
+            $("#tcsignaturecanvas").fadeIn();
+            $("#tcsignaturetextinput").focus();
+        });
+        $("#tcsignaturetextinput").keyup(function() {
+            let canvas = $("#tcsignaturecanvas")[0];
+            //let ctx = document.querySelector("#tcsignaturecanvas").getContext("2d");
+            let ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let fontsize = 22 - ( $("#tcsignaturetextinput").val().length / 4 );
+            //fontsize = 20;
+            ctx.font = fontsize + "px Arial";
+            ctx.fillText($("#tcsignaturetextinput").val(),10,80);
+            console.log("Canvas updated");
+        });
+        
+    },
+    load: function() {
+        // Reads the base element value and splits it into the boxes
+        console.log("Loading widget");
+        let bits = this.element.val().split(",");
+        if (bits.length > 0) { this.options.lat.val(bits[0]); }
+        if (bits.length > 1) { this.options.lng.val(bits[1]); }
+        if (bits.length > 2) { this.options.hash.val(bits[2]); }
+    },
+    save: function() {
+        // Store the entered values back in the base element value
+        let v = this.options.lat.val() + "," +
+            this.options.lng.val() + "," +
+            this.options.hash.val();
+        this.element.val(v);
+    }
+});

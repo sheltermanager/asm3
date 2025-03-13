@@ -70,6 +70,7 @@ $(function() {
                 html.content_header(_("Change User Settings")),
                 html.error(_("Your administrator requires all users to enable 2FA below in order to use the system."), "force2fa"),
                 tableform.fields_render([
+                    { label: _("Experiment"), type: "raw", markup: '<div id="adamwozere" style="width: 500px; height: 200px;"></div>' },
                     { label: _("Username"), type: "raw", markup: asm.user },
                     { post_field: "realname", label: _("Real name"), type: "text", doublesize: true },
                     { post_field: "email", label: _("Email Address"), type: "text", doublesize: true },
@@ -105,6 +106,8 @@ $(function() {
         },
 
         bind: function() {
+
+            $("#adamwozere").textcompatiblesignature({ guideline: true });
 
             try {
                 $("#signature").signature({ guideline: true });
