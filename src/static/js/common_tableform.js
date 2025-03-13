@@ -2037,9 +2037,11 @@ const tableform = {
         $.each(fields, function(i, v) {
             $("label[for='" + v.id + "']").removeClass(validate.ERROR_LABEL_CLASS);
             if (v.validation == "notblank") {
-                nbids.push(v.id);
                 if (v.type == "datetime") { 
                     nbids.push(v.id + "date"); nbids.push(v.id + "time"); 
+                }
+                else {
+                    nbids.push(v.id);
                 }
             }
             if (v.validation == "notzero") {
