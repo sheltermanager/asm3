@@ -4505,6 +4505,7 @@ class lookups(JSONEndpoint):
             "namelabel": table[2],
             "descfield": table[3].upper(),
             "hasspecies": "species" in modifiers,
+            "hastaxrate": "taxrate" in modifiers,
             "haspfspecies": "pubspec" in modifiers,
             "haspfbreed": "pubbreed" in modifiers,
             "hasapcolour": "pubcol" in modifiers,

@@ -868,6 +868,7 @@ $(function() {
                 ddrop("defaultreturn", _("Return Reason"), "AFDefaultReturnReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
                 ddrop("defaultsize", _("Size"), "AFDefaultSize", html.list_to_options(controller.sizes, "ID", "SIZE")),
                 ddrop("defaultspecies", _("Species"), "AFDefaultSpecies", html.list_to_options(controller.species, "ID", "SPECIESNAME")),
+                ddrop("defaulttaxrate", _("Tax Rate"), "AFDefaultTaxRate", html.list_to_options(controller.taxrates, "ID", "TAXRATENAME")),
                 ddrop("defaulttest", _("Test Type"), "AFDefaultTestType", html.list_to_options(controller.testtypes, "ID", "TESTNAME")),
                 ddrop("defaulttransport", _("Transport Type"), "AFDefaultTransportType", html.list_to_options(controller.transporttypes, "ID", "TRANSPORTTYPENAME")),
                 ddrop("defaulttype", _("Type"), "AFDefaultType", html.list_to_options(controller.types, "ID", "ANIMALTYPE")),
