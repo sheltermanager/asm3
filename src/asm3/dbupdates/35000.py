@@ -1,3 +1,6 @@
+from asm3.dbupdate import execute, add_column, add_index
+dbo = dbo
+
 l = dbo.locale
 
 # Add IsSupplier column to owner table
