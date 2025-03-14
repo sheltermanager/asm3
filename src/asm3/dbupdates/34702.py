@@ -1,0 +1,8 @@
+add_column(dbo, "owner", "DateOfBirth", dbo.type_datetime)
+add_column(dbo, "owner", "DateOfBirth2", dbo.type_datetime)
+add_column(dbo, "owner", "IdentificationNumber", dbo.type_shorttext)
+add_column(dbo, "owner", "IdentificationNumber2", dbo.type_shorttext)
+add_column(dbo, "owner", "MatchFlags", dbo.type_shorttext)
+add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
+add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
+execute(dbo,"UPDATE owner SET IdentificationNumber='', IdentificationNumber2='', MatchFlags='' ")

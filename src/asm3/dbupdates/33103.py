@@ -1,0 +1,5 @@
+add_index(dbo, "owner_HomeTelephone", "owner", "HomeTelephone")
+add_index(dbo, "owner_MobileTelephone", "owner", "MobileTelephone")
+add_index(dbo, "owner_WorkTelephone", "owner", "WorkTelephone")
+add_index(dbo, "owner_EmailAddress", "owner", "EmailAddress")
+add_index(dbo, "animal_BroughtInByOwnerID", "animal", "BroughtInByOwnerID")
