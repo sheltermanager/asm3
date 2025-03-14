@@ -874,32 +874,17 @@ def date_brought_in_future_limit(dbo: Database) -> int:
 def date_diff_cutoffs(dbo: Database) -> str:
     return cstring(dbo, "DateDiffCutoffs", DEFAULTS["DateDiffCutoffs"])
 
-def dbv(dbo: Database, v: str = None) -> Any:
-    if v is None:
-        return cstring(dbo, "DBV", "2870")
+def dbv(dbo: Database, v: int = -1) -> Any:
+    if v == -1:
+        return cint(dbo, "DBV", 2870)
     else:
-        cset_db(dbo, "DBV", v)
+        cset_db(dbo, "DBV", str(v))
 
-def db_lock(dbo: Database) -> bool:
-    """
-    Locks the database for updates, returns True if the lock was
-    successful.
-    """
-    if asm3.cachedisk.get("db_update_lock", dbo.name()): return False
-    asm3.cachedisk.put("db_update_lock", dbo.name(), "YES", 60 * 5)
-    return True
-
-def db_unlock(dbo: Database) -> None:
-    """
-    Marks the database as unlocked for updates
-    """
-    asm3.cachedisk.delete("db_update_lock", dbo.name())
-
-def db_view_seq_version(dbo: Database, newval: str = None) -> Any:
-    if newval is None:
-        return cstring(dbo, "DBViewSeqVersion")
+def db_view_seq_version(dbo: Database, v: int = -1) -> Any:
+    if v == -1:
+        return cint(dbo, "DBViewSeqVersion")
     else:
-        cset(dbo, "DBViewSeqVersion", newval)
+        cset_db(dbo, "DBViewSeqVersion", str(v))
 
 def default_account_view_period(dbo: Database) -> int:
     return cint(dbo, "DefaultAccountViewPeriod")
