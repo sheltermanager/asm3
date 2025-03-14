@@ -46,8 +46,8 @@ $(function() {
                     { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
-                    { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate"), type: "select", options: { displayfield: "TAXRATENAME", valuefield: "TAXRATE", rows: controller.taxrates }, 
-                        hideif: function() { return !config.bool("VATEnabled"); } },
+                    { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate"), type: "select", options: { displayfield: "TAXRATENAME", valuefield: "ID", rows: controller.taxrates }, 
+                        defaultval: config.str("AFDefaultTaxRate"), hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "VATAMOUNT", post_field: "vatamount", label: _("Tax Amount"), type: "currency",
                         hideif: function() { return !config.bool("VATEnabled"); } },
                     { type: "nextcol" },
@@ -484,7 +484,8 @@ $(function() {
 
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
-                    $("#vatrate").val(config.number("VATRate"));
+                    $("#vatrate").val(config.str("AFDefaultTaxRate"));
+                    //$("#vatrate").val(config.number("VATRate"));
                     if (!config.bool("VATExclusive")) {
                         $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), config.number("VATRate")));
                     }

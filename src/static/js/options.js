@@ -1838,16 +1838,7 @@ $(function() {
                 html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME"),
                 '</select>',
                 '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="defaulttaxtrateid">' + _("Default tax rate") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="defaulttaxtrateid" class="asm-selectbox" data="StockDefaultTaxRateID">',
-                html.list_to_options(controller.taxrates, "ID", "TAXRATENAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
+                '</tr>', 
                 '</table>',
                 '</div>'
             ].join("\n");
