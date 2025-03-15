@@ -2,7 +2,7 @@ ASPCA Ride Report
 ###
 Transport
 ###
-34202/PostgreSQL rev02
+34202/PostgreSQL rev03
 ###
 Export to CSV for values you can copy into the ASPCA Ride spreadsheet
 ###
@@ -52,21 +52,39 @@ AnimalName AS "Animal Name",
 SpeciesName AS "Animal Type",
 BreedName AS "Primary Breed",
 
-$SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$ / 365 AS "Age (in years)",
-MOD($SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$ / 30, 12) AS "Age (in months)",
-MOD($SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$, 30) / 7 AS "Age (in weeks)",
+$SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$ / 365 AS "Age In Years",
+MOD($SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$ / 30, 12) AS "Age In Months",
+MOD($SQL DATEDIFF t.PickupDateTime,a.DateOfBirth$, 30) / 7 AS "Age In Weeks",
 
 CASE 
-WHEN a.Sex = 0 AND a.Neutered=0 THEN 'F'
-WHEN a.Sex = 0 AND a.Neutered=1 THEN 'FS'
-WHEN a.Sex = 1 AND a.Neutered=0 THEN 'M'
-WHEN a.Sex = 1 AND a.Neutered=1 THEN 'MN'
+WHEN a.Sex = 0 AND a.Neutered=0 THEN 'Female'
+WHEN a.Sex = 0 AND a.Neutered=1 THEN 'Female Spayed'
+WHEN a.Sex = 1 AND a.Neutered=0 THEN 'Male'
+WHEN a.Sex = 1 AND a.Neutered=1 THEN 'Male Neutered'
 ELSE '' END AS Sex,
 
 a.Weight,
-e.ReasonName AS "Intake Type",
+CASE
+WHEN e.ReasonName LIKE '%Allergies%' THEN 'Allergies'
+WHEN e.ReasonName LIKE '%Boarding%' THEN 'Boarding'
+WHEN e.ReasonName LIKE '%Born %' THEN 'Born In Care'
+WHEN e.ReasonName LIKE '%Clinic%' THEN 'Clinic'
+WHEN e.ReasonName LIKE '%Boarding%' THEN 'Emergency Boarding'
+WHEN (e.ReasonName LIKE '%Surrender%' OR e.ReasonName LIKE 'OS%') THEN 'Owner/Guardian Surrender'
+WHEN e.ReasonName LIKE '%Return%' THEN 'Return'
+WHEN e.ReasonName LIKE '%Seized%' THEN 'Seized'
+WHEN e.ReasonName LIKE '%Sick/Injured%' THEN 'Sick/Injured'
+WHEN e.ReasonName LIKE '%Stray%' THEN 'Stray'
+WHEN e.ReasonName LIKE '%Too Many Animals%' THEN 'Too Many Animals'
+WHEN e.ReasonName LIKE '%Transfer%' THEN 'Transfer'
+WHEN e.ReasonName LIKE '%Afford%' THEN 'Unable to Afford'
+WHEN e.ReasonName LIKE '%Cope%' THEN 'Unable to Cope'
+WHEN e.ReasonName LIKE '%Unsuitable%' THEN 'Unsuitable Accomodation'
+WHEN e.ReasonName LIKE '%Wildlife%' THEN 'Wildlife'
+ELSE 'Unknown'
+END AS "Intake Type",
 a.DateBroughtIn AS "Intake Date",
-c.BaseColour AS "Primary Color.",
+c.BaseColour AS "Primary Color",
 
 (SELECT string_agg(vt.VaccinationType ||' '|| to_char(DateOfVaccination, 'MM/DD/YYYY'), ', ' ORDER BY DateOfVaccination)
     FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
@@ -74,32 +92,32 @@ c.BaseColour AS "Primary Color.",
 	OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$)) AS "DistParvDtGiven",
                                             
 (SELECT MIN(av.DateOfVaccination) FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $BORDETELLA$ LIMIT 1) AS "Bordetella Date",
+	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $BORDETELLA$ LIMIT 1) AS "Bordetella Date Given",
 
 (SELECT MIN(av.DateOfVaccination) FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $LEPTO$ LIMIT 1) AS "Lepto Date",
+	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $LEPTO$ LIMIT 1) AS "Leptospirosis Date Given",
 
 (SELECT MIN(av.DateOfVaccination) FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $RABIES$ LIMIT 1) AS "Rabies Date",
+	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $RABIES$ LIMIT 1) AS "Rabies Date Given",
 
 CASE 
-WHEN a.SpeciesID=1 THEN 'Observation' 
-ELSE 'N/A' END AS "Behavior Assessment Type",
+WHEN a.SpeciesID=1 THEN 'OBS' 
+ELSE '' END AS "Behavior Assessment Type",
 
 CASE 
-WHEN a.SpeciesID=1 AND a.HeartwormTested=1 AND a.HeartwormTestResult=1 THEN 'NEG'
-WHEN a.SpeciesID=1 AND a.HeartwormTested=1 AND a.HeartwormTestResult=2 THEN 'POS'
-ELSE 'N/A' END AS "Heartworm Test Status",
+WHEN a.SpeciesID=1 AND a.HeartwormTested=1 AND a.HeartwormTestResult=1 THEN 'Negative'
+WHEN a.SpeciesID=1 AND a.HeartwormTested=1 AND a.HeartwormTestResult=2 THEN 'Positive'
+ELSE '' END AS "Heartworm Test Status",
 
 CASE 
-WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.CombiTestResult=1 THEN 'NEG'
-WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.CombiTestResult=2 THEN 'POS'
-ELSE 'N/A' END AS "FIV Status",
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.CombiTestResult=1 THEN 'Negative'
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.CombiTestResult=2 THEN 'Positive'
+ELSE '' END AS "FIV Status",
 
 CASE 
-WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.FLVResult=1 THEN 'NEG'
-WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.FLVResult=2 THEN 'POS'
-ELSE 'N/A' END AS "FELV Status",
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.FLVResult=1 THEN 'Negative'
+WHEN a.SpeciesID=2 AND a.CombiTested=1 AND a.FLVResult=2 THEN 'Positive'
+ELSE '' END AS "FELV Status",
 
 CASE
 WHEN a.SpeciesID=1 THEN a.HeartwormTestDate
@@ -128,13 +146,13 @@ a.IdentichipNumber AS "Microchip Number",
     WHERE DateGiven Is Not Null AND am.AnimalID = a.ID AND (TreatmentName LIKE $OTHERW1$ OR TreatmentName LIKE $OTHERW2$ OR TreatmentName LIKE $OTHERW3$ 
     OR TreatmentName LIKE $OTHERW4$ OR TreatmentName LIKE $OTHERW5$) ) AS "Other Parasite Treatment Product and Date Given",
 
-$SQL DATETOCHAR CURRENT_DATE,MM/DD/YYYY$ AS "Health Cert Date",
+$SQL DATETOCHAR CURRENT_DATE,MM/DD/YYYY$ AS "Health Cert or CVI Date",
 
 a.HealthProblems AS "Medical Notes",
 t.PickUpAddress AS "Location",
-c.BaseColour AS "Secondary Color.",
+c.BaseColour AS "Secondary Color",
 
-'https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=animal_image&animalid=' || a.ID::varchar AS "Photo or Videos",
+'https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=animal_image&animalid=' || a.ID::varchar AS "Photos or Videos",
 
 (SELECT VaccinationType FROM vaccinationtype vt INNER JOIN animalvaccination av ON av.VaccinationID = vt.ID 
 	WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $BORDETELLA$ 
@@ -181,7 +199,7 @@ c.BaseColour AS "Secondary Color.",
    	INNER JOIN animaltest v ON v.testresultid = tr.id
  	INNER JOIN testtype tt ON tt.id = v.TestTypeID
    	WHERE DateOfTest Is Not Null AND v.AnimalID = a.ID 
- 	AND (tt.TestName LIKE $FVTEST1$ OR tt.TestName LIKE $FVTEST2$ OR tt.TestName LIKE $FVTEST2$)) AS "FeLV FIV Combo Test Result",  
+ 	AND (tt.TestName LIKE $FVTEST1$ OR tt.TestName LIKE $FVTEST2$ OR tt.TestName LIKE $FVTEST2$)) AS "FeLV FIV Combo Status",  
     
 (SELECT string_agg(TO_CHAR(DateOfTest, 'MM/DD/YYYY'),', ' ORDER BY DateOfTest) FROM animaltest v
     INNER JOIN testtype tt ON tt.id=v.testtypeid
@@ -203,20 +221,22 @@ c.BaseColour AS "Secondary Color.",
    	INNER JOIN animaltest v ON v.testresultid = tr.id
  	INNER JOIN testtype tt ON tt.id = v.TestTypeID
    	WHERE DateOfTest Is Not Null AND v.AnimalID = a.ID 
- 	AND (tt.TestName LIKE $FECAL1$ OR tt.TestName LIKE $FECAL2$ OR tt.TestName LIKE $FVTEST2$)) AS "Fecal Test Satus", 
+ 	AND (tt.TestName LIKE $FECAL1$ OR tt.TestName LIKE $FECAL2$ OR tt.TestName LIKE $FVTEST2$)) AS "Fecal Test Status", 
     
 '' AS "Behavior Assessment Date Performed", 
-'' AS "Upload Behavior Assesment File",
+'' AS "Upload Behavior Assessment File",
 '' AS "History of Biting",
 '' AS "History of Aggression or Reactivity",
 '' AS "Aggressive or Reactive Towards",
 '' AS "Please Specify Other Animals",
 '' AS "Has a Contagious Illness",
-'' AS "Needs Routine Dental Cleaning",
+'' AS "Needs Routine Dental Cleanings",
+'' AS "Has Extensive Dental Issues", 
 '' AS "Currently Pregnant",
 '' AS "Currently Nursing",
 '' AS "Upload Medical Document",
 '' AS "Medication Name",
+'' AS "Medication Dosage", 
 '' AS "Medication How Often",
 '' AS "Medication What Is It Given For",
 '' AS "Medication Date Started",
