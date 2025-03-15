@@ -1429,14 +1429,6 @@ class main(JSONEndpoint):
         # frontend doesn't keep receiving the same build number via configjs 
         # and get into an endless loop of reloads
         if o.post["b"] != "": self.reload_config()
-        # Database update checks
-        dbupdated = ""
-        if asm3.dbupdate.check_for_updates(dbo):
-            dbupdated = asm3.dbupdate.perform_updates(dbo)
-        if asm3.dbupdate.check_for_view_seq_changes(dbo):
-            asm3.dbupdate.install_db_views(dbo)
-            asm3.dbupdate.install_db_sequences(dbo)
-            asm3.dbupdate.install_db_stored_procedures(dbo)
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
@@ -1501,7 +1493,6 @@ class main(JSONEndpoint):
             "build": BUILD,
             "noreload": o.post["b"] != "", 
             "news": news,
-            "dbupdated": dbupdated,
             "version": get_version(),
             "emergencynotice": emergency_notice(),
             "linkmode": linkmode,
@@ -4900,6 +4891,22 @@ class maint_db_stats(ASMEndpoint):
             f"    {s.totalpdf} application/pdf ({rnd(s.pdfsize)} MB)\n" \
             f"    {s.totalhtml} text/html ({rnd(s.htmlsize)} MB)\n" \
             f"    {s.totalother} other ({rnd(s.othersize)} MB)\n"
+    
+class maint_db_update(ASMEndpoint):
+    url = "maint_db_update"
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        dbo = o.dbo
+        # Run any outstanding database updates
+        update_ver = asm3.dbupdate._dbupdates_exec(dbo)
+        asm3.dbupdate.install_db_views(dbo)
+        asm3.dbupdate.install_db_sequences(dbo)
+        asm3.dbupdate.install_db_stored_procedures(dbo)
+        return f"perform_updates (highest update applied: {update_ver})\n" \
+            "forced reinstall of all views, sequences and stored procedures.\n" \
+            "check syslog for further info."
 
 class maint_deps(ASMEndpoint):
     url = "maint_deps"
@@ -7255,7 +7262,6 @@ class sql(JSONEndpoint):
                 else:
                     self.check_update_query(ql)
                     rowsaffected += dbo.execute(q)
-            asm3.configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception as err:
             asm3.al.error("%s" % str(err), "main.sql", dbo)
@@ -7279,7 +7285,6 @@ class sql(JSONEndpoint):
             except Exception as err:
                 asm3.al.error("%s" % str(err), "main.sql", dbo)
                 output.append("ERROR: %s" % str(err))
-        asm3.configuration.db_view_seq_version(dbo, "0")
         return "\n\n".join(output)
 
     def substitute_report_tokens(self, dbo, user, q):

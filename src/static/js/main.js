@@ -812,9 +812,9 @@ $(function() {
 
         bind: function () {
 
-            if (controller.dbupdated != "") {
+            /*if (controller.dbupdated != "") {
                 header.show_info( _("Updated database to version {0}").replace("{0}", controller.dbupdated) );
-            }
+            }*/
 
             if (asm.smcom && asm.smcomexpiry) {
                 let warnat = new Date(format.date_js(asm.smcomexpiry).getTime() - (1000 * 60 * 60 * 24 * 5)),

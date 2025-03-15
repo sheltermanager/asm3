@@ -510,11 +510,6 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.al.error("Service API is disabled (%s)" % method, "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Service API is disabled")
 
-        # Do any database updates need doing in this db?
-        dbo.installpath = path
-        if asm3.dbupdate.check_for_updates(dbo):
-            asm3.dbupdate.perform_updates(dbo)
-
     # Does the method require us to authenticate? If so, do it.
     user = None
     securitymap = ""

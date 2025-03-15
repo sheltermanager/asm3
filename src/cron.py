@@ -50,11 +50,6 @@ def daily(dbo: Database):
     Tasks to run once each day before users login for the day.
     """
     try:
-        # The batch should never be run at a time when users may be
-        # using the system, remove any database update locks as any
-        # lock at this time should be erroneous
-        configuration.db_unlock(dbo)
-
         # Check to see if any updates need performing on this database
         if dbupdate.check_for_updates(dbo):
             ttask(dbupdate.perform_updates, dbo)
@@ -438,20 +433,13 @@ def maint_db_update(dbo: Database):
     Check and run any outstanding database updates
     """
     try:
-        # This should never be run at a time when users may be
-        # using the system, remove any database update locks as any
-        # lock at this time should be erroneous
-        configuration.db_unlock(dbo)
+        # Perform any updates on this database
+        ttask(dbupdate.perform_updates, dbo)
 
-        # Check to see if any updates need performing on this database
-        if dbupdate.check_for_updates(dbo):
-            ttask(dbupdate.perform_updates, dbo)
-
-        if dbupdate.check_for_view_seq_changes(dbo):
-            ttask(dbupdate.install_db_views, dbo)
-            ttask(dbupdate.install_db_sequences, dbo)
-            ttask(dbupdate.install_db_stored_procedures, dbo)
-
+        # Force reinstall of views, sequences and stored procedures
+        ttask(dbupdate.install_db_views, dbo)
+        ttask(dbupdate.install_db_sequences, dbo)
+        ttask(dbupdate.install_db_stored_procedures, dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running db updates: %s" % em, "cron.maint_db_update", dbo, sys.exc_info())
