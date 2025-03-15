@@ -14,6 +14,7 @@ import asm3.db
 import asm3.dbfs
 import asm3.reports
 import asm3.smcom
+import asm3.stock
 import asm3.utils
 from asm3.i18n import _
 from asm3.typehints import Database, Dict, Generator, List, Tuple
@@ -2777,6 +2778,7 @@ def install_db_views(dbo: Database) -> None:
     create_view("v_ownertraploan", asm3.animalcontrol.get_traploan_query(dbo))
     create_view("v_ownervoucher", asm3.financial.get_voucher_query(dbo))
     create_view("v_product", asm3.stock.get_product_query(dbo))
+    create_view("v_stock", asm3.stock.get_stocklevel_query(dbo))
 
 def install_db_sequences(dbo: Database) -> None:
     """
