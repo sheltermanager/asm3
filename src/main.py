@@ -4894,6 +4894,7 @@ class maint_db_stats(ASMEndpoint):
     
 class maint_db_update(ASMEndpoint):
     url = "maint_db_update"
+    check_logged_in = False
 
     def content(self, o):
         self.content_type("text/plain")
@@ -4910,6 +4911,7 @@ class maint_db_update(ASMEndpoint):
 
 class maint_deps(ASMEndpoint):
     url = "maint_deps"
+    check_logged_in = False
 
     def content(self, o):
         self.content_type("text/plain")
@@ -4918,12 +4920,14 @@ class maint_deps(ASMEndpoint):
 
 class maint_error(ASMEndpoint):
     url = "maint_error"
+    check_logged_in = False
 
     def content(self, o):
         return 1 / 0 # Test error handling
 
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
+    check_logged_in = False
 
     def controller(self, o):
         return {}
