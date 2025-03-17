@@ -841,11 +841,13 @@ const tableform = {
                     }
                 });
                 tableform.dialog_enable_buttons();
+                tableform.dialog_state = 1;
             },
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
                 tableform.dialog_destroy();
+                tableform.dialog_state = 0;
             }
         });
         this.dialog_error("");
@@ -1007,11 +1009,13 @@ const tableform = {
                 });
                 
                 tableform.dialog_enable_buttons();
+                tableform.dialog_state = 2;
             },
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
                 tableform.dialog_destroy();
+                tableform.dialog_state = 0;
             }
         });
         this.dialog_error("");
@@ -1022,6 +1026,13 @@ const tableform = {
         return deferred.promise();
     },
 
+    /** 
+     *  Indicates the state of the dialog. Useful for callback events that hide/show widgets.
+     *  0 - dialog is closed/not visible
+     *  1 - dialog is open and in add mode
+     *  2 - dialog is open and in edit mode
+     */
+    dialog_state: 0,
 
     /**
      * Renders fields
