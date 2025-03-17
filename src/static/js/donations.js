@@ -73,7 +73,7 @@ $(function() {
                     $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
                     $("#receiptnumberrow").show();
                     $("#receiptnumber").prop("disabled", true);
-                    $("#vatratechoicerow").attr("data-edit", true);
+                    donations.editmode = true;
                     $("#vatratechoicerow").hide();
                     if (row.ISVAT == 1) {
                         $("#vatraterow").show();
@@ -192,7 +192,7 @@ $(function() {
                                 $("#vatratechoicerow").hide();
                                 $("#vatraterow").hide();
                                 $("#vatamountrow").hide();
-                                $("#vatratechoicerow").attr("data-edit", false);
+                                donations.editmode = false;
                             }
                         });
                     } 
@@ -491,7 +491,7 @@ $(function() {
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
                     $("#vatratechoice").val(config.str("AFDefaultTaxRate"));
-                    if ($("#vatratechoicerow").attr("data-edit") == "false") {
+                    if (donations.editmode == false) {
                         $("#vatratechoice").change();
                         $("#vatratechoicerow").fadeIn();
                     }
