@@ -4901,11 +4901,11 @@ class maint_db_update(ASMEndpoint):
         self.cache_control(0)
         dbo = o.dbo
         # Run any outstanding database updates
-        update_ver = asm3.dbupdate._dbupdates_exec(dbo)
+        update_ver = asm3.dbupdate.perform_updates(dbo)
         asm3.dbupdate.install_db_views(dbo)
         asm3.dbupdate.install_db_sequences(dbo)
         asm3.dbupdate.install_db_stored_procedures(dbo)
-        return f"perform_updates (highest update applied: {update_ver})\n" \
+        return f"perform_updates (max dbv: {update_ver})\n" \
             "forced reinstall of all views, sequences and stored procedures.\n" \
             "check syslog for further info."
 
