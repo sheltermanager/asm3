@@ -15,7 +15,8 @@ def get_product_query(dbo: Database, retired = False) -> str:
         "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
         "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID=product.UnitTypeID) " \
         "ELSE product.CustomUnit " \
-        "END AS Unit " \
+        "END AS Unit, " \
+        "CASE WHEN product.IsRetired=0 THEN 1 ELSE 0 END AS Active " \
         "FROM product " \
         "LEFT OUTER JOIN lkproducttype pt ON pt.ID = product.ProductTypeID " \
         f"{retiredclause} "
@@ -222,10 +223,6 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
     if post["productname"] == "":
         raise asm3.utils.ASMValidationError(_("Product must have a name", l))
     
-    retired = 0
-    if post.integer("active") == 0:
-        retired = 1
-
     dbo.update("product", pid, {
         "ProductName":          post["productname"],
         "Description":          post["productdescription"],
@@ -239,7 +236,7 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "RetailPrice":          post.integer("retailprice"),
         "UnitRatio":            post.integer("unitratio"),
         "TaxRateID":            post.integer("taxrateid"),
-        "IsRetired":            retired,
+        "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
         "GlobalMinimum":        post["globalminimum"]
@@ -290,10 +287,6 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
     if post["productname"] == "":
         raise asm3.utils.ASMValidationError(_("Product must have a name", l))
     
-    retired = 0
-    if post.integer("active") == 0:
-        retired = 1
-   
     pid = dbo.insert("product", {
         "ProductName":          post["productname"],
         "Description":          post["productdescription"],
@@ -307,7 +300,7 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "RetailPrice":          post.integer("retailprice"),
         "UnitRatio":            post.integer("unitratio"),
         "TaxRateID":            post.integer("taxrateid"),
-        "IsRetired":            retired,
+        "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
         "GlobalMinimum":        post["globalminimum"]

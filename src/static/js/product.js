@@ -125,14 +125,8 @@ $(function() {
                         }
                     } },
                     { field: "BALANCE", display: _("Balance"), formatter: function(row) {
-                        if (!row.BALANCE) {
-                            return 0;
-                        } else {
-                            return row.BALANCE;
-                        }
-                    } },
-                    { field: "BALANCE", display: _("Balance"), formatter: function(row) {
                         let s = row.BALANCE;
+                        if (!s) { s = "0"; }
                         if (row.GLOBALMINIMUM) { s += " " + _("(low at {0})").replace("{0}", row.GLOBALMINIMUM); }
                         return s;
                     }},
