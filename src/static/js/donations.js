@@ -193,6 +193,12 @@ $(function() {
                                 $("#vatraterow").hide();
                                 $("#vatamountrow").hide();
                                 donations.editmode = false;
+                                if (config.bool("VATEnabled")) {
+                                    $("#vat").prop("checked", true);
+                                } else {
+                                    $("#vat").prop("checked", false);
+                                }
+                                $("#vat").change();
                             }
                         });
                     } 
@@ -490,7 +496,7 @@ $(function() {
 
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
-                    $("#vatratechoice").val(config.str("AFDefaultTaxRate"));
+                    //$("#vatratechoice").val(config.str("AFDefaultTaxRate"));
                     if (donations.editmode == false) {
                         $("#vatratechoice").change();
                         $("#vatratechoicerow").fadeIn();

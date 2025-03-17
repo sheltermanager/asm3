@@ -46,6 +46,8 @@ $(function() {
                     { type: "nextcol" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
+                    { post_field: "vatratechoice", label: _("Tax Type"), type: "select", options: { displayfield: "TAXRATENAME", valuefield: "ID", rows: controller.taxrates }, 
+                        defaultval: config.str("AFDefaultTaxRate"), hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate %"), type: "number", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "REASONFORAPPOINTMENT", post_field: "reason", label: _("Reason For Appointment"), type: "textarea" },
@@ -60,6 +62,8 @@ $(function() {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     clinic_appointment.dialog_row = row;
                     clinic_appointment.show_person_animals(false);
+                    clinic_appointment.editmode = true;
+                    $("#vatratechoicerow").hide();
                     try {
                         await tableform.dialog_show_edit(dialog, row);
                         if (!clinic_appointment.validation()) { tableform.dialog_enable_buttons(); return; }
@@ -196,6 +200,13 @@ $(function() {
                                 clinic_appointment.show_person_animals(false);
 
                             }
+                            clinic_appointment.editmode = false;
+                            if (config.bool("VATEnabled")) {
+                                $("#vat").prop("checked", true);
+                            } else {
+                                $("#vat").prop("checked", false);
+                            }
+                            $("#vat").change();
                         }
                     });
                     try {
@@ -414,6 +425,36 @@ $(function() {
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
                 clinic_appointment.lastperson = rec;
+            });
+
+            $("#vat").change(function() {
+                if ($(this).is(":checked")) {
+                    $("#vatratechoice").val(config.str("AFDefaultTaxRate"));
+                    if (clinic_appointment.editmode == false) {
+                        $("#vatratechoice").change();
+                        $("#vatratechoicerow").fadeIn();
+                    }
+                    $("#vatraterow").fadeIn();
+                    $("#vatamountrow").fadeIn();
+                }
+                else {
+                    $("#vatamount").currency("value", "0");
+                    $("#vatrate").val("0"); 
+                    $("#vatratechoicerow").fadeOut();
+                    $("#vatraterow").fadeOut();
+                    $("#vatamountrow").fadeOut();
+                }
+            });
+
+            $("#vatratechoice").change(function() {
+                let taxrate = 0.0;
+                $.each(controller.taxrates, function(trcount, tr) {
+                    if (tr.ID == $("#vatratechoice").val()) {
+                        taxrate = tr.TAXRATE;
+                        return false;
+                    }
+                });
+                $("#vatrate").val(taxrate);
             });
 
             // Add click handlers to templates
