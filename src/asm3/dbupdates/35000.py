@@ -25,8 +25,6 @@ fields = ",".join([
     dbo.ddl_add_table_column("TaxRateID", dbo.type_integer, False),
     dbo.ddl_add_table_column("Barcode", dbo.type_shorttext, False),
     dbo.ddl_add_table_column("PLU", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("RecentBatchNo", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("RecentExpiry", dbo.type_datetime),
     dbo.ddl_add_table_column("GlobalMinimum", dbo.type_integer),
     dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
     dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
@@ -89,7 +87,7 @@ execute(dbo, "INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VAL
 
 # Adding 'Movement' stockusagetype setting option
 nextid = dbo.get_id_max("stockusagetype")
-execute(dbo, "INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeName, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A usage type to represent internal stock movements", l), 0 ])
+execute(dbo, "INSERT INTO stockusagetype (ID, UsageTypeName, UsageTypeDescription, IsRetired) VALUES (?, ?, ?, ?)", [ nextid, _("Movement", l), _("A usage type to represent internal stock movements", l), 0 ])
 execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockMovementUsageTypeID", str(nextid)])
 
 # Adding ProductID columns to stocklevel table

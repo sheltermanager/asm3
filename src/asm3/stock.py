@@ -310,9 +310,7 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            retired,
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":        post["globalminimum"],
-        "RecentBatchNo":        "",
-        "RecentExpiry":         ""
+        "GlobalMinimum":        post["globalminimum"]
     }, username)
 
     return pid

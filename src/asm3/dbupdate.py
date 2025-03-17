@@ -1637,15 +1637,8 @@ def sql_structure(dbo: Database) -> str:
         fint("TaxRateID"),
         fstr("Barcode"),
         fstr("PLU"),
-        fstr("RecentBatchNo"),
-        fstr("RecentExpiry"),
         fint("GlobalMinimum"),
-        fint("RecordVersion"),
-        fstr("CreatedBy"),
-        fdate("CreatedDate"),
-        fstr("LastChangedBy"),
-        fdate("LastChangedDate"),
-        fint("IsRetired") ), False)
+        fint("IsRetired") ), True)
     sql += index("product_SupplierID", "product", "SupplierID")
     sql += index("product_ProductName", "product", "ProductName")
     sql += index("product_ProductTypeID", "product", "ProductTypeID")
