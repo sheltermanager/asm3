@@ -1998,7 +1998,8 @@ class animal_clinic(JSONEndpoint):
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
-            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class animal_costs(JSONEndpoint):
@@ -2941,6 +2942,7 @@ class clinic_consultingroom(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": rows
         }
 
@@ -2964,6 +2966,7 @@ class clinic_waitingroom(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": rows
         }
 
@@ -5156,7 +5159,8 @@ class move_adopt(JSONEndpoint):
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "templatesemail": asm3.template.get_document_templates(dbo, "email")
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
