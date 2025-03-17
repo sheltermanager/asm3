@@ -1249,12 +1249,12 @@ $.widget("asm.payments", {
             '</tbody>',
             '<tfoot id="paymenttotals">',
             '<tr>',
-            '<td><button class="takepayment">' + _("Take another payment") + '</button>',
+            '<td colspan="3"><button class="takepayment">' + _("Take another payment") + '</button>',
             '<a class="takepayment" href="#">' + _("Take another payment") + '</a></td>',
             '<td class="overridedates"></td>',
             '<td class="overridedates"></td>',
-            '<td></td>',
-            '<td></td>',
+            //'<td></td>',
+            //'<td></td>',
             '<td class="quantities"></td>',
             '<td class="quantities"></td>',
             '<td class="rightalign strong" id="totalamount"></td>',
@@ -1283,7 +1283,7 @@ $.widget("asm.payments", {
         let h = [
             '<tr>',
             '<td>',
-            '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox">',
+            '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox asm-halfselectbox">',
             html.list_to_options(this.options.controller.donationtypes, "ID", "DONATIONNAME"),
             '</select>',
             '</td>',
@@ -1311,7 +1311,7 @@ $.widget("asm.payments", {
             '<input id="amount{i}" data="amount{i}" class="rightalign amount asm-currencybox asm-textbox asm-halftextbox" />',
             '</td>',
             '<td class="overrideaccount">',
-            '<select id="destaccount{i}" data="destaccount{i}" class="asm-selectbox">',
+            '<select id="destaccount{i}" data="destaccount{i}" class="asm-selectbox asm-halfselectbox">',
             html.list_to_options(this.options.controller.accounts, "ID", "CODE"),
             '</select>',
             '</td>',
@@ -1322,7 +1322,10 @@ $.widget("asm.payments", {
             '<td class="vat centered nowrap">',
             '<input id="vat{i}" data="vat{i}" type="checkbox" class="asm-checkbox" />',
             '<span id="vatboxes{i}" style="display: none">',
-            '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" /> %',
+            '<select id="vatratechoice{i}" data="destaccount{i}" class="asm-selectbox asm-halfselectbox">',
+            html.list_to_options(this.options.controller.taxrates, "ID", "TAXRATENAME"),
+            '</select>',
+            '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" style="display: none;" /> %',
             '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
             '</span>',
             '</td>',
@@ -1361,9 +1364,28 @@ $.widget("asm.payments", {
         $("#amount" + i + ", #vatamount" + i).change(function() {
             self.update_totals(); 
         });
+        $("#vatratechoice" + i).change(function() {
+            console.log("Changing");
+            let taxrate = 0.0;
+            $.each(controller.taxrates, function(trcount, tr) {
+                if (tr.ID == $("#vatratechoice" + i).val()) {
+                    taxrate = tr.TAXRATE;
+                    return false;
+                }
+            });
+            $("#vatrate" + i).val(taxrate);
+            if (!config.bool("VATExclusive")) {
+                $("#vatamount" + i).currency("value", common.tax_from_inclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
+            }
+            else {
+                $("#vatamount" + i).currency("value", common.tax_from_exclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
+            }
+            $("#amount" + i).change();
+        });
         // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
         $("#vat" + i).change(function() {
             if ($(this).is(":checked")) {
+                
                 $("#vatrate" + i).val(config.number("VATRate"));
                 if (!config.bool("VATExclusive")) {
                     $("#vatamount" + i).currency("value", 
@@ -1374,12 +1396,14 @@ $.widget("asm.payments", {
                         common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
                     $("#amount" + i).currency("value", $("#amount" + i).currency("value") + $("#vatamount" + i).currency("value"));
                 }
+                $("#vatratechoice" + i).val(config.number("AFDefaultTaxRate"));
                 $("#vatboxes" + i).fadeIn();
             }
             else {
                 $("#vatrate" + i + ", #vatamount" + i).val("0");
                 $("#vatboxes" + i).fadeOut();
             }
+            $("#vatratechoice" + i).change();
             self.update_totals();
         });
         // Set the default for our new payment type

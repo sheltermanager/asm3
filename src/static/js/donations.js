@@ -537,7 +537,7 @@ $(function() {
                 }
                 else {
                     $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
-                    $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
+                    //$("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
                 }
             });
 
