@@ -3758,7 +3758,8 @@ class donation_receive(JSONEndpoint):
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "accounts": asm3.financial.get_accounts(dbo, onlybank=True)
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -4400,7 +4401,8 @@ class licence_renewal(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "licencetypes": asm3.lookups.get_licence_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "accounts": asm3.financial.get_accounts(dbo, onlybank=True)
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_all(self, o):
@@ -5507,7 +5509,8 @@ class move_reclaim(JSONEndpoint):
             "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RECLAIMED),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
-            "paymentmethods": asm3.lookups.get_payment_methods(dbo)
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -5540,7 +5543,8 @@ class move_reserve(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo)
+            "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):

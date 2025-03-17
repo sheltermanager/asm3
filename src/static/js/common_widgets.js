@@ -1365,7 +1365,6 @@ $.widget("asm.payments", {
             self.update_totals(); 
         });
         $("#vatratechoice" + i).change(function() {
-            console.log("Changing");
             let taxrate = 0.0;
             $.each(controller.taxrates, function(trcount, tr) {
                 if (tr.ID == $("#vatratechoice" + i).val()) {
