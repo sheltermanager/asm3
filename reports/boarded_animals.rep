@@ -2,7 +2,7 @@ Boarded animals between two dates
 ###
 Boarding
 ###
-34704/Any rev01
+34704/Any rev02
 ### 
 Animals in boarding between two dates grouped by animal type
 ###
@@ -15,13 +15,13 @@ a.IdentichipNumber, il.LocationName,
 ab.InDateTime, ab.OutDateTime, ab.Days, 
 o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.EmailAddress, o.HomeTelephone, o.MobileTelephone,
-(SELECT DailyFee * Days) AS MONEYCost  
+(SELECT DailyFee * Days) AS Cost  
 FROM animalboarding ab
 INNER JOIN animal a ON a.ID = ab.AnimalID
 INNER JOIN species s ON a.SpeciesID = s.ID
 INNER JOIN animaltype atp ON a.AnimalTypeID = atp.ID
 INNER JOIN owner o ON ab.OwnerID = o.ID 
-INNER JOIN internallocation il ON a.ShelterLocation = il.ID
+INNER JOIN internallocation il ON ab.ShelterLocation = il.ID
 WHERE ab.InDateTime >= '$ASK DATE Entering between$' AND ab.OutDateTime <= '$ASK DATE and$ 23:59:59' 
 ORDER BY atp.AnimalType, ab.InDateTime
 ###
@@ -71,7 +71,7 @@ $HOMETELEPHONE $MOBILETELEPHONE
 <td>$INDATETIME</td>
 <td>$OUTDATETIME</td>
 <td>$DAYS</td>  
-<td>$MONEYCost</td>    
+<td>$COST</td>    
 </tr>
 BODY$$
 
