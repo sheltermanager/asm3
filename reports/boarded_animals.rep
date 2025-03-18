@@ -1,0 +1,79 @@
+Boarded animals between two dates
+###
+Boarding
+###
+34704/Any rev01
+### 
+Animals in boarding between two dates grouped by animal type
+###
+en
+###
+SELECT
+a.ID AS AID, a.AnimalName, a.ShelterCode, a.DateOfBirth, a.AnimalAge, s.SpeciesName, atp.AnimalType, 
+a.BreedName,  
+a.IdentichipNumber, il.LocationName, 
+ab.InDateTime, ab.OutDateTime, ab.Days, 
+o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.EmailAddress, o.HomeTelephone, o.MobileTelephone,
+(SELECT DailyFee * Days) AS MONEYCost  
+FROM animalboarding ab
+INNER JOIN animal a ON a.ID = ab.AnimalID
+INNER JOIN species s ON a.SpeciesID = s.ID
+INNER JOIN animaltype atp ON a.AnimalTypeID = atp.ID
+INNER JOIN owner o ON ab.OwnerID = o.ID 
+INNER JOIN internallocation il ON a.ShelterLocation = il.ID
+WHERE ab.InDateTime >= '$ASK DATE Entering between$' AND ab.OutDateTime <= '$ASK DATE and$ 23:59:59' 
+ORDER BY atp.AnimalType, ab.InDateTime
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AnimalType
+$$HEAD
+<h2>$ANIMALTYPE</h2>
+<table border="1">
+<thead>
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Microchip</th>
+<th>DOB</th>
+<th>Owner</th>
+<th>Location</th>  
+<th>Entered</th>
+<th>Leaving</th>
+<th>Days</th>  
+<th>Cost</th>    
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+<p>Total $ANIMALTYPE: {COUNT.ANIMALTYPE}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE / $BREEDNAME / $SPECIESNAME</td>
+<td>$IDENTICHIPNUMBER</td>
+<td>$DATEOFBIRTH ($ANIMALAGE)</td>
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+<i>$EMAILADDRESS</i><br/>
+$HOMETELEPHONE $MOBILETELEPHONE
+</td>
+<td>$LOCATIONNAME</td>  
+<td>$INDATETIME</td>
+<td>$OUTDATETIME</td>
+<td>$DAYS</td>  
+<td>$MONEYCost</td>    
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
