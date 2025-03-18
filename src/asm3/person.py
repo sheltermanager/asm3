@@ -1094,7 +1094,12 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodWithCats": post.integer("matchgoodwithcats", -1),
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs", -1),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren", -1),
+        "MatchGoodWithElderly": post.integer("matchgoodwithelderly", -1),
+        "MatchGoodOnLead": post.integer("matchgoodonlead", -1),
+        "MatchGoodTraveller": post.integer("matchgoodtraveller", -1),
         "MatchHouseTrained": post.integer("matchhousetrained", -1),
+        "MatchCrateTrained": post.integer("matchcratetrained", -1),
+        "MatchEnergyLevel": post.integer("matchenergylevel", -1),
         "MatchCommentsContain": post["matchcommentscontain"],
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
@@ -1240,7 +1245,12 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodWithCats": post.integer("matchgoodwithcats"),
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs"),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren"),
+        "MatchGoodWithElderly": post.integer("matchgoodwithelderly"),
+        "MatchGoodTraveller": post.integer("matchgoodtraveller"),
+        "MatchGoodOnLead": post.integer("matchgoodonlead"),
         "MatchHouseTrained": post.integer("matchhousetrained"),
+        "MatchCrateTrained": post.integer("matchcratetrained"),
+        "MatchEnergyLevel": post.integer("matchenergylevel"),
         "MatchCommentsContain": post["matchcommentscontain"]
     }, username)
 

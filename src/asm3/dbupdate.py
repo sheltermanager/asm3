@@ -6436,5 +6436,5 @@ def update_35001(dbo: Database) -> None:
     add_column(dbo, "owner", "MatchGoodWithElderly", dbo.type_integer)
     add_column(dbo, "owner", "MatchGoodTraveller", dbo.type_integer)
     add_column(dbo, "owner", "MatchGoodOnLead", dbo.type_integer)
-    add_column(dbo, "owner", "EMatchnergyLevel", dbo.type_integer)
+    add_column(dbo, "owner", "MatchEnergyLevel", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE owner SET MatchCrateTrained=-1, MatchGoodWithElderly=-1, MatchGoodTraveller=-1, MatchGoodOnLead=-1, MatchEnergyLevel=-1")
