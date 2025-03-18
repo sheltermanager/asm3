@@ -2079,7 +2079,7 @@ $.fn.asmcontent = function(type) {
     });
 };
 
-$.widget("asm.textcompatiblesignature", {
+$.widget("asm.asmsignature", {
     options: {
         guideline: false,
         value: ''
@@ -2087,9 +2087,9 @@ $.widget("asm.textcompatiblesignature", {
     _create: function() {
         let self = this;
         this.element.hide();
-        let newid = "tcsignature-" + this.element[0].id;
+        let id = "tcsignature-" + this.element[0].id;
         this.element.after([
-            '<div id=' + newid + '>',
+            '<div id=' + id + '>',
                 '<div>', 
                     '<button class="button-tcsignaturechange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
                     '<span class="tcsignaturetools" style="display: none;">', 
@@ -2105,35 +2105,44 @@ $.widget("asm.textcompatiblesignature", {
                 '<div class="tcsignaturewidget" style="width: 500px; height: 200px;display: none;"></div>', 
             '</div>'
         ].join("\n"));
-        $("#" + newid + " .tcsignaturewidget").signature({ guideline: this.options.guideline });
-        $("#" + newid + " .button-tcsignaturechange")
+
+        /*let canvas = $("#" + id + " .tcsignaturecanvas")[0];
+        let context = canvas.getContext("2d");
+        context.fillStyle = "white";
+        context.fillRect(0, 0, canvas.width, canvas.height);*/
+
+        $("#" + id + " .tcsignaturewidget").signature({ guideline: this.options.guideline });
+        $("#" + id + " .button-tcsignaturechange")
             .button({ icons: { primary: "ui-icon-pencil" }, text: false })
             .click(function() {
-                $("#" + newid + " .tcsignaturewidget").signature("clear");
-                let canvas = $("#" + newid + " .tcsignaturecanvas")[0];
+                $("#" + id + " .tcsignaturewidget").signature("clear");
+                let canvas = $("#" + id + " .tcsignaturecanvas")[0];
                 let ctx = canvas.getContext("2d");
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                $("#" + newid + " .tcsignaturetextinput").val("");
-                $("#" + newid + " .tcsignatureimg").hide();
-                $("#" + newid + " .tcsignaturetools").show();
-                $("#" + newid + " .tcsignaturewidget").show();
+                $("#" + id + " .tcsignaturetextinput").val("");
+                $("#" + id + " .tcsignatureimg").hide();
+                $("#" + id + " .tcsignaturetools").show();
+                $("#" + id + " .tcsignaturewidget").show();
             });
-        $("#" + newid + " .tcsignaturedraw").change(function() {
-            $("#" + newid + " .tcsignaturetextinput").hide();
-            $("#" + newid + " .tcsignaturewidget").show();
-            $("#" + newid + " .tcsignaturecanvas").hide();
+        $("#" + id + " .tcsignaturedraw").change(function() {
+            $("#" + id + " .tcsignaturetextinput").hide();
+            $("#" + id + " .tcsignaturewidget").show();
+            $("#" + id + " .tcsignaturecanvas").hide();
         });
-        $("#" + newid + " .tcsignaturetext").change(function() {
-            $("#" + newid + " .tcsignaturetextinput").show();
-            $("#" + newid + " .tcsignaturewidget").hide();
-            $("#" + newid + " .tcsignaturecanvas").show();
-            $("#" + newid + " .tcsignaturetextinput").focus();
+        $("#" + id + " .tcsignaturetext").change(function() {
+            $("#" + id + " .tcsignaturetextinput").show();
+            $("#" + id + " .tcsignaturewidget").hide();
+            $("#" + id + " .tcsignaturecanvas").show();
+            $("#" + id + " .tcsignaturetextinput").focus();
         });
-        $("#" + newid + " .tcsignaturetextinput").keyup(function() {
-            let canvas = $("#" + newid + " .tcsignaturecanvas")[0];
+        $("#" + id + " .tcsignaturetextinput").keyup(function() {
+            let canvas = $("#" + id + " .tcsignaturecanvas")[0];
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let siglength = $("#" + newid + " .tcsignaturetextinput").val().length;
+            //ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            let siglength = $("#" + id + " .tcsignaturetextinput").val().length;
             let fontsize = 60;
             if ( siglength > 20 ) { 
                 fontsize = 26 - ( siglength * 0.33 );
@@ -2141,18 +2150,20 @@ $.widget("asm.textcompatiblesignature", {
                 fontsize = 60 - ( siglength * 1.7 ) ;
             }
             ctx.font = fontsize + "px Arial";
-            ctx.fillText($("#" + newid + " .tcsignaturetextinput").val(),10,100,500);
+            ctx.fillText($("#" + id + " .tcsignaturetextinput").val(),10,100,500);
+
+            
         });
         
     },
     value: function() {
-        let newid = "tcsignature-" + this.element[0].id;
-        if ($("#" + newid + " .tcsignaturetools").css("display") == "none") {
+        let id = "tcsignature-" + this.element[0].id;
+        if ($("#" + id + " .tcsignaturetools").css("display") == "none") {
             return "";
         }
-        let canvas = $("#" + newid + " .tcsignaturecanvas");
-        if ($("#" + newid + " .tcsignaturedraw").prop("checked") == true ) {
-            canvas = $("#" + newid + " .tcsignaturewidget canvas");
+        let canvas = $("#" + id + " .tcsignaturecanvas");
+        if ($("#" + id + " .tcsignaturedraw").prop("checked") == true ) {
+            canvas = $("#" + id + " .tcsignaturewidget canvas");
         }
         return canvas.get(0).toDataURL("image/png");
     }

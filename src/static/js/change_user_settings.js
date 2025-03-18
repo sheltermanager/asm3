@@ -102,14 +102,14 @@ $(function() {
         },
 
         bind: function() {
-            $("#signature").textcompatiblesignature({ guideline: true, value: controller.user.SIGNATURE });
+            $("#signature").asmsignature({ guideline: true, value: controller.user.SIGNATURE });
 
             $("#button-save").button().click(async function() {
                 $(".asm-content button").button("disable");
                 header.show_loading();
                 let formdata = $("input, select").toPOST();
                 try {
-                    formdata += "&signature=" + encodeURIComponent($("#signature").textcompatiblesignature("value"));
+                    formdata += "&signature=" + encodeURIComponent($("#signature").asmsignature("value"));
                 } catch (excanvas) {
                     log.error("failed reading signature canvas", excanvas);
                 }
