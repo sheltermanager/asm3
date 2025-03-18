@@ -201,6 +201,7 @@ $(function() {
                         options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchenergylevel", json_field: "MATCHENERGYLEVEL", type: "select", label: _("Energy level"), 
                         rowclasses: "goodwith dogs", options: html.list_to_options([
+                            "-1|" + _("(any)"),
                             "1|" + _("1 - Very low"),
                             "2|" + _("2 - Low"),
                             "3|" + _("3 - Medium"),

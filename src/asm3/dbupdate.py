@@ -45,7 +45,7 @@ VERSIONS = (
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
     34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902, 34903,
-    34904, 34905, 34906, 34907, 34908
+    34904, 34905, 34906, 34907, 34908, 35001
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -6429,3 +6429,12 @@ def update_34908(dbo: Database) -> None:
     add_column(dbo, "stocklevel", "Barcode", dbo.type_shorttext)
     add_index(dbo, "stocklevel_Barcode", "stocklevel", "Barcode")
     dbo.execute_dbupdate("UPDATE stocklevel SET Barcode=''")
+
+def update_35001(dbo: Database) -> None:
+    # Add the new goodwith fields to looking for
+    add_column(dbo, "owner", "MatchCrateTrained", dbo.type_integer)
+    add_column(dbo, "owner", "MatchGoodWithElderly", dbo.type_integer)
+    add_column(dbo, "owner", "MatchGoodTraveller", dbo.type_integer)
+    add_column(dbo, "owner", "MatchGoodOnLead", dbo.type_integer)
+    add_column(dbo, "owner", "EMatchnergyLevel", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE owner SET MatchCrateTrained=-1, MatchGoodWithElderly=-1, MatchGoodTraveller=-1, MatchGoodOnLead=-1, MatchEnergyLevel=-1")
