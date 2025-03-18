@@ -1958,10 +1958,20 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
             ands.append("a.IsGoodWithChildren=0")
         if p.MATCHGOODWITHCATS == 0: 
             ands.append("a.IsGoodWithCats=0")
+        if p.MATCHGOODWITHELDERLY == 0: 
+            ands.append("a.IsGoodWithElderly=0")
+        if p.MATCHGOODTRAVELLER == 0: 
+            ands.append("a.IsGoodTraveller=0")
+        if p.MATCHGOODONLEAD == 0: 
+            ands.append("a.IsGoodOnLead=0")
         if p.MATCHGOODWITHDOGS == 0: 
             ands.append("a.IsGoodWithDogs=0")
         if p.MATCHHOUSETRAINED == 0: 
             ands.append("a.IsHouseTrained=0")
+        if p.MATCHCRATETRAINED == 0: 
+            ands.append("a.IsCrateTrained=0")
+        if p.MATCHENERGYLEVEL != -1: 
+            ands.append(b"a.EnergyLevel=%i" % p.MATCHENERGYLEVEL)
         if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
             ands.append("a.DateOfBirth BETWEEN ? AND ?")
             v.append(subtract_years(now(dbo.timezone), p.MATCHAGETO))
