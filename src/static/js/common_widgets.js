@@ -2126,6 +2126,21 @@ $.widget("asm.asmsignature", {
         $("#" + id + " .tcsignaturetext").change(function() {
             $("#" + id + " .tcsignaturetextinput").show();
             $("#" + id + " .tcsignaturewidget").hide();
+            let canvas = $("#" + id + " .tcsignaturecanvas")[0];
+            let ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#aaaaaa";
+
+            //if (this.options.guideline) {
+            ctx.beginPath();
+            ctx.moveTo(5, 115);
+            ctx.lineTo(455, 115);
+            //ctx.strokeStyle("#aaaaaa");
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.closePath();
             $("#" + id + " .tcsignaturecanvas").show();
             $("#" + id + " .tcsignaturetextinput").focus();
         });
@@ -2135,6 +2150,20 @@ $.widget("asm.asmsignature", {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#aaaaaa";
+
+            //if (this.options.guideline) {
+            ctx.beginPath();
+            ctx.moveTo(10, 120);
+            ctx.lineTo(490, 120);
+            //ctx.strokeStyle("#aaaaaa");
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.closePath();
+            //ctx.moveTo(20, 20);
+            //}
+
+            ctx.fillStyle = "black";
             let siglength = $("#" + id + " .tcsignaturetextinput").val().length;
             let fontsize = 60;
             if ( siglength > 20 ) { 
@@ -2143,7 +2172,6 @@ $.widget("asm.asmsignature", {
                 fontsize = 60 - ( siglength * 1.7 ) ;
             }
             ctx.font = fontsize + "px cursive";
-            ctx.fillStyle = "black";
             ctx.fillText($("#" + id + " .tcsignaturetextinput").val(),10,100,500);
 
             
