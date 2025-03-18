@@ -2087,46 +2087,46 @@ $.widget("asm.asmsignature", {
     _create: function() {
         let self = this;
         this.element.hide();
-        let id = "tcsignature-" + this.element[0].id;
+        let id = "asmsign-" + this.element[0].id;
         this.element.after([
             '<div id=' + id + '>',
                 '<div>', 
-                    '<button class="button-tcsignaturechange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
-                    '<span class="tcsignaturetools" style="display: none;">', 
-                        '<label>' + _("Draw") + '<input class="tcsignaturedraw" name="tcsignaturetype" type="radio" checked></label> ', 
-                        '<label>' + _("Text") + '<input class="tcsignaturetext" name="tcsignaturetype" type="radio"></label> ', 
-                        '<input type="text" class="tcsignaturetextinput" placeholder="' + _("Signature text") + '" style="margin-left: 10px;display: none;">', 
+                    '<button class="button-asmsignchange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
+                    '<span class="asmsigntools" style="display: none;">', 
+                        '<label>' + _("Draw") + '<input class="asmsigndraw" name="asmsigntype" type="radio" checked></label> ', 
+                        '<label>' + _("Text") + '<input class="asmsigntext" name="asmsigntype" type="radio"></label> ', 
+                        '<input type="text" class="asmsigntextinput" placeholder="' + _("Signature text") + '" style="margin-left: 10px;display: none;">', 
                     '</span>', 
                 '</div>',
-                '<div class="tcsignatureimg"><img src="' + this.options.value + '" style="width: 500px; height: 200px;"></div>', 
+                '<div class="asmsignimg"><img src="' + this.options.value + '" style="width: 500px; height: 200px;"></div>', 
                 '<div style="width: 500px; max-height: 200px;">', 
-                    '<canvas class="tcsignaturecanvas" style="width: 500px; height: 200px;display: none;"></canvas>', 
+                    '<canvas class="asmsigncanvas" style="width: 500px; height: 200px;display: none;"></canvas>', 
                 '</div>', 
-                '<div class="tcsignaturewidget" style="width: 500px; height: 200px;display: none;"></div>', 
+                '<div class="asmsignwidget" style="width: 500px; height: 200px;display: none;"></div>', 
             '</div>'
         ].join("\n"));
-        $("#" + id + " .tcsignaturewidget").signature({ guideline: this.options.guideline });
-        $("#" + id + " .button-tcsignaturechange")
+        $("#" + id + " .asmsignwidget").signature({ guideline: this.options.guideline });
+        $("#" + id + " .button-asmsignchange")
             .button({ icons: { primary: "ui-icon-pencil" }, text: false })
             .click(function() {
-                $("#" + id + " .tcsignaturewidget").signature("clear");
-                let canvas = $("#" + id + " .tcsignaturecanvas")[0];
+                $("#" + id + " .asmsignwidget").signature("clear");
+                let canvas = $("#" + id + " .asmsigncanvas")[0];
                 let ctx = canvas.getContext("2d");
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                $("#" + id + " .tcsignaturetextinput").val("");
-                $("#" + id + " .tcsignatureimg").hide();
-                $("#" + id + " .tcsignaturetools").show();
-                $("#" + id + " .tcsignaturewidget").show();
+                $("#" + id + " .asmsigntextinput").val("");
+                $("#" + id + " .asmsignimg").hide();
+                $("#" + id + " .asmsigntools").show();
+                $("#" + id + " .asmsignwidget").show();
             });
-        $("#" + id + " .tcsignaturedraw").change(function() {
-            $("#" + id + " .tcsignaturetextinput").hide();
-            $("#" + id + " .tcsignaturewidget").show();
-            $("#" + id + " .tcsignaturecanvas").hide();
+        $("#" + id + " .asmsigndraw").change(function() {
+            $("#" + id + " .asmsigntextinput").hide();
+            $("#" + id + " .asmsignwidget").show();
+            $("#" + id + " .asmsigncanvas").hide();
         });
-        $("#" + id + " .tcsignaturetext").change(function() {
-            $("#" + id + " .tcsignaturetextinput").show();
-            $("#" + id + " .tcsignaturewidget").hide();
-            let canvas = $("#" + id + " .tcsignaturecanvas")[0];
+        $("#" + id + " .asmsigntext").change(function() {
+            $("#" + id + " .asmsigntextinput").show();
+            $("#" + id + " .asmsignwidget").hide();
+            let canvas = $("#" + id + " .asmsigncanvas")[0];
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "white";
@@ -2141,11 +2141,11 @@ $.widget("asm.asmsignature", {
             ctx.lineWidth = 1;
             ctx.stroke();
             ctx.closePath();
-            $("#" + id + " .tcsignaturecanvas").show();
-            $("#" + id + " .tcsignaturetextinput").focus();
+            $("#" + id + " .asmsigncanvas").show();
+            $("#" + id + " .asmsigntextinput").focus();
         });
-        $("#" + id + " .tcsignaturetextinput").keyup(function() {
-            let canvas = $("#" + id + " .tcsignaturecanvas")[0];
+        $("#" + id + " .asmsigntextinput").keyup(function() {
+            let canvas = $("#" + id + " .asmsigncanvas")[0];
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "white";
@@ -2164,7 +2164,7 @@ $.widget("asm.asmsignature", {
             //}
 
             ctx.fillStyle = "black";
-            let siglength = $("#" + id + " .tcsignaturetextinput").val().length;
+            let siglength = $("#" + id + " .asmsigntextinput").val().length;
             let fontsize = 60;
             if ( siglength > 20 ) { 
                 fontsize = 26 - ( siglength * 0.33 );
@@ -2172,20 +2172,20 @@ $.widget("asm.asmsignature", {
                 fontsize = 60 - ( siglength * 1.7 ) ;
             }
             ctx.font = fontsize + "px cursive";
-            ctx.fillText($("#" + id + " .tcsignaturetextinput").val(),10,100,500);
+            ctx.fillText($("#" + id + " .asmsigntextinput").val(),10,100,500);
 
             
         });
         
     },
     value: function() {
-        let id = "tcsignature-" + this.element[0].id;
-        if ($("#" + id + " .tcsignaturetools").css("display") == "none") {
+        let id = "asmsign-" + this.element[0].id;
+        if ($("#" + id + " .asmsigntools").css("display") == "none") {
             return "";
         }
-        let canvas = $("#" + id + " .tcsignaturecanvas");
-        if ($("#" + id + " .tcsignaturedraw").prop("checked") == true ) {
-            canvas = $("#" + id + " .tcsignaturewidget canvas");
+        let canvas = $("#" + id + " .asmsigncanvas");
+        if ($("#" + id + " .asmsigndraw").prop("checked") == true ) {
+            canvas = $("#" + id + " .asmsignwidget canvas");
         }
         return canvas.get(0).toDataURL("image/png");
     }
