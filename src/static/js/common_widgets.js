@@ -2139,8 +2139,7 @@ $.widget("asm.asmsignature", {
             let canvas = $("#" + id + " .tcsignaturecanvas")[0];
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            //ctx.globalCompositeOperation = 'destination-over';
-            ctx.fillStyle = "yellow";
+            ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             let siglength = $("#" + id + " .tcsignaturetextinput").val().length;
             let fontsize = 60;
@@ -2149,7 +2148,8 @@ $.widget("asm.asmsignature", {
             } else if ( siglength > 8 ) { 
                 fontsize = 60 - ( siglength * 1.7 ) ;
             }
-            ctx.font = fontsize + "px Arial";
+            ctx.font = fontsize + "px cursive";
+            ctx.fillStyle = "black";
             ctx.fillText($("#" + id + " .tcsignaturetextinput").val(),10,100,500);
 
             
