@@ -2088,6 +2088,7 @@ $.widget("asm.asmsignature", {
         let self = this;
         this.element.hide();
         let id = "asmsign-" + this.element[0].id;
+        let guideline = this.options.guideline;
         this.element.after([
             '<div id=' + id + '>',
                 '<div>', 
@@ -2132,15 +2133,16 @@ $.widget("asm.asmsignature", {
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#aaaaaa";
-
-            //if (this.options.guideline) {
-            ctx.beginPath();
-            ctx.moveTo(5, 115);
-            ctx.lineTo(455, 115);
-            //ctx.strokeStyle("#aaaaaa");
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            ctx.closePath();
+            console.log($("#" + id));
+            if (guideline) {
+                ctx.beginPath();
+                ctx.moveTo(5, 115);
+                ctx.lineTo(455, 115);
+                //ctx.strokeStyle("#aaaaaa");
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.closePath();
+            }
             $("#" + id + " .asmsigncanvas").show();
             $("#" + id + " .asmsigntextinput").focus();
         });
@@ -2152,16 +2154,15 @@ $.widget("asm.asmsignature", {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#aaaaaa";
 
-            //if (this.options.guideline) {
-            ctx.beginPath();
-            ctx.moveTo(10, 120);
-            ctx.lineTo(490, 120);
-            //ctx.strokeStyle("#aaaaaa");
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            ctx.closePath();
-            //ctx.moveTo(20, 20);
-            //}
+            if (guideline) {
+                ctx.beginPath();
+                ctx.moveTo(10, 120);
+                ctx.lineTo(490, 120);
+                //ctx.strokeStyle("#aaaaaa");
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.closePath();
+            }
 
             ctx.fillStyle = "black";
             let siglength = $("#" + id + " .asmsigntextinput").val().length;
