@@ -2132,13 +2132,11 @@ $.widget("asm.asmsignature", {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#aaaaaa";
-            console.log($("#" + id));
             if (guideline) {
                 ctx.beginPath();
-                ctx.moveTo(5, 115);
-                ctx.lineTo(455, 115);
-                //ctx.strokeStyle("#aaaaaa");
+                ctx.moveTo(6, 112);
+                ctx.lineTo(294, 112);
+                ctx.strokeStyle = "#a0a0a0";
                 ctx.lineWidth = 1;
                 ctx.stroke();
                 ctx.closePath();
@@ -2152,18 +2150,15 @@ $.widget("asm.asmsignature", {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "white";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#aaaaaa";
-
             if (guideline) {
                 ctx.beginPath();
-                ctx.moveTo(10, 120);
-                ctx.lineTo(490, 120);
-                //ctx.strokeStyle("#aaaaaa");
+                ctx.moveTo(6, 112);
+                ctx.lineTo(294, 112);
+                ctx.strokeStyle = "#a0a0a0";
                 ctx.lineWidth = 1;
                 ctx.stroke();
                 ctx.closePath();
             }
-
             ctx.fillStyle = "black";
             let siglength = $("#" + id + " .asmsigntextinput").val().length;
             let fontsize = 60;
@@ -2174,8 +2169,6 @@ $.widget("asm.asmsignature", {
             }
             ctx.font = fontsize + "px cursive";
             ctx.fillText($("#" + id + " .asmsigntextinput").val(),10,100,500);
-
-            
         });
         
     },
