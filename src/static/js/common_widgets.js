@@ -2099,18 +2099,12 @@ $.widget("asm.asmsignature", {
                     '</span>', 
                 '</div>',
                 '<div class="tcsignatureimg"><img src="' + this.options.value + '" style="width: 500px; height: 200px;"></div>', 
-                '<div>', 
+                '<div style="width: 500px; max-height: 200px;">', 
                     '<canvas class="tcsignaturecanvas" style="width: 500px; height: 200px;display: none;"></canvas>', 
                 '</div>', 
                 '<div class="tcsignaturewidget" style="width: 500px; height: 200px;display: none;"></div>', 
             '</div>'
         ].join("\n"));
-
-        /*let canvas = $("#" + id + " .tcsignaturecanvas")[0];
-        let context = canvas.getContext("2d");
-        context.fillStyle = "white";
-        context.fillRect(0, 0, canvas.width, canvas.height);*/
-
         $("#" + id + " .tcsignaturewidget").signature({ guideline: this.options.guideline });
         $("#" + id + " .button-tcsignaturechange")
             .button({ icons: { primary: "ui-icon-pencil" }, text: false })
