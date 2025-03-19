@@ -25,7 +25,7 @@ import os, sys
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalboarding", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
     "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
-    "animalfound", "animalcontrolanimal", "animallitter", "animallocation", "animallost", "animallostfoundmatch", 
+    "animalfound", "animallitter", "animallocation", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "clinicappointment", "clinicinvoiceitem", "configuration", 
