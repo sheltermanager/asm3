@@ -71,7 +71,8 @@ VALID_FIELDS = [
     "PERSONMATCHHOUSETRAINED", "PERSONMATCHCRATETRAINED", "PERSONMATCHGOODTRAVELLER", "PERSONMATCHGOODONLEAD", "PERSONMATCHENERGYLEVEL", 
     "PERSONMATCHCOMMENTSCONTAIN",
     "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE", 
-    "STOCKLEVELNAME", "STOCKLEVELDESCRIPTION", "STOCKLEVELBARCODE", "STOCKLEVELLOCATIONNAME", "STOCKLEVELUNITNAME", "STOCKLEVELTOTAL", "STOCKLEVELBALANCE", "STOCKLEVELLOW", "STOCKLEVELEXPIRY", "STOCKLEVELBATCHNUMBER", "STOCKLEVELCOST", "STOCKLEVELUNITPRICE"
+    "STOCKLEVELNAME", "STOCKLEVELDESCRIPTION", "STOCKLEVELBARCODE", "STOCKLEVELLOCATIONNAME", "STOCKLEVELUNITNAME", "STOCKLEVELTOTAL", 
+    "STOCKLEVELBALANCE", "STOCKLEVELLOW", "STOCKLEVELEXPIRY", "STOCKLEVELBATCHNUMBER", "STOCKLEVELCOST", "STOCKLEVELUNITPRICE"
 ]
 
 def gkc(m: Dict, f: str) -> int:
@@ -1184,7 +1185,6 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             s["usagedate"] = asm3.i18n.python2display(dbo.locale, dbo.today())
             s["usagetype"] = asm3.configuration.product_movement_usage_type(dbo)
             s["comments"] = asm3.i18n._("Imported from CSV", dbo.locale)
-            
 
             try:
                 asm3.stock.insert_stocklevel_from_form(dbo, asm3.utils.PostedData(s, dbo.locale), user)

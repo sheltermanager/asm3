@@ -400,6 +400,30 @@ PERSONPDFDATA
     A PDF file to attach to the person. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI.
 PERSONPDFNAME
     The filename associated with the PDF data.
+STOCKLEVELNAME
+    The name of the stock level on this line.
+STOCKLEVELDESCRIPTION
+    A description of the stock level on this line.
+STOCKLEVELBARCODE
+    The barcode number of this stock level item.
+STOCKLEVELLOCATIONNAME
+    The stock location that this level is in.
+STOCKLEVELUNITNAME
+    The name of the units used to count this stock level.
+STOCKLEVELTOTAL
+    The total units in the container for this stock level.
+STOCKLEVELBALANCE
+    The balance of units in this stock level.
+STOCKLEVELLOW
+    The low balance value for this stock level (shows an alert on the home page).
+STOCKLEVELEXPIRY
+    The expiry date for this stock level if it is a perishable good.
+STOCKLEVELBATCHNUMBER
+    The batch number for this stock level if it is medication.
+STOCKLEVELCOST
+    The total cost of the container for this stock level.
+STOCKLEVELUNITPRICE
+    The individual unit price of an item in this stock level.
 TESTTYPE
    The type of test on this line.
 TESTRESULT
