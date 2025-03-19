@@ -2959,11 +2959,11 @@ class clinic_waitingroom(JSONEndpoint):
 
 class csvexport_animals(JSONEndpoint):
     url = "csvexport_animals"
-    get_permissions = asm3.users.EXPORT_REPORT
+    get_permissions = asm3.users.EXPORT_ANIMAL_CSV
 
 class csvexport_people(JSONEndpoint):
     url = "csvexport_people"
-    get_permissions = asm3.users.EXPORT_REPORT
+    get_permissions = asm3.users.EXPORT_PEOPLE_CSV
 
     def controller(self, o):
         return {
