@@ -1421,7 +1421,12 @@ def sql_structure(dbo: Database) -> str:
         fint("MatchGoodWithCats", True),
         fint("MatchGoodWithDogs", True),
         fint("MatchGoodWithChildren", True),
+        fint("MatchGoodWithElderly", True),
+        fint("MatchGoodTraveller", True),
+        fint("MatchGoodOnLead", True),
+        fint("MatchEnergyLevel", True),
         fint("MatchHouseTrained", True),
+        fint("MatchCrateTrained", True),
         fstr("MatchFlags", True),
         fstr("MatchCommentsContain", True) ))
     sql += index("owner_CreatedBy", "owner", "CreatedBy")
@@ -3550,4 +3555,5 @@ def asm2_dbfs_put_file(dbo: Database, name: str, path: str, filename: str):
         "Path": path,
         "Content": asm3.utils.base64encode(asm3.utils.read_binary_file(filename))
     }, generateID=False)
+
 

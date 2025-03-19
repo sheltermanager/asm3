@@ -180,6 +180,8 @@ $(function() {
                         options: { displayfield: "BREEDNAME", rows: controller.breeds, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchbreed2", json_field: "MATCHBREED2", type: "select", label: _("or"), rowclasses: "lfs", 
                         options: { displayfield: "BREEDNAME", rows: controller.breeds, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchflags", json_field: "MATCHFLAGS", type: "selectmulti", label: _("Flags"), rowclasses: "lfs", 
+                        options: { displayfield: "FLAG", valuefield: "FLAG", rows: controller.animalflags }},
 
                     { type: "nextcol" },
 
@@ -189,10 +191,26 @@ $(function() {
                         options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchgoodwithchildren", json_field: "MATCHGOODWITHCHILDREN", type: "select", label: _("Good with children"), rowclasses: "lfs", 
                         options: { displayfield: "NAME", rows: controller.ynunk, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchgoodwithelderly", json_field: "MATCHGOODWITHELDERLY", type: "select", label: _("Good with elderly"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynunk, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchgoodonlead", json_field: "MATCHGOODONLEAD", type: "select", label: _("Good on lead"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchgoodtraveller", json_field: "MATCHGOODTRAVELLER", type: "select", label: _("Good traveller"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchhousetrained", json_field: "MATCHHOUSETRAINED", type: "select", label: _("Housetrained"), rowclasses: "lfs", 
                         options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
-                    { post_field: "matchflags", json_field: "MATCHFLAGS", type: "selectmulti", label: _("Flags"), rowclasses: "lfs", 
-                        options: { displayfield: "FLAG", valuefield: "FLAG", rows: controller.animalflags }}
+                    { post_field: "matchcratetrained", json_field: "MATCHCRATETRAINED", type: "select", label: _("Crate trained"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchenergylevel", json_field: "MATCHENERGYLEVEL", type: "select", label: _("Energy level"), 
+                        rowclasses: "lfs", options: html.list_to_options([
+                            "-1|" + _("(any)"),
+                            "1|" + _("1 - Very low"),
+                            "2|" + _("2 - Low"),
+                            "3|" + _("3 - Medium"),
+                            "4|" + _("4 - High"),
+                            "5|" + _("5 - Very high") ])
+                    },
+                    
                 ]),
                 '</div>'
             ].join("\n");

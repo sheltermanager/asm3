@@ -1096,7 +1096,12 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodWithCats": post.integer("matchgoodwithcats", -1),
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs", -1),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren", -1),
+        "MatchGoodWithElderly": post.integer("matchgoodwithelderly", -1),
+        "MatchGoodOnLead": post.integer("matchgoodonlead", -1),
+        "MatchGoodTraveller": post.integer("matchgoodtraveller", -1),
         "MatchHouseTrained": post.integer("matchhousetrained", -1),
+        "MatchCrateTrained": post.integer("matchcratetrained", -1),
+        "MatchEnergyLevel": post.integer("matchenergylevel", -1),
         "MatchCommentsContain": post["matchcommentscontain"],
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
@@ -1243,7 +1248,12 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodWithCats": post.integer("matchgoodwithcats"),
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs"),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren"),
+        "MatchGoodWithElderly": post.integer("matchgoodwithelderly"),
+        "MatchGoodTraveller": post.integer("matchgoodtraveller"),
+        "MatchGoodOnLead": post.integer("matchgoodonlead"),
         "MatchHouseTrained": post.integer("matchhousetrained"),
+        "MatchCrateTrained": post.integer("matchcratetrained"),
+        "MatchEnergyLevel": post.integer("matchenergylevel"),
         "MatchCommentsContain": post["matchcommentscontain"]
     }, username)
 
@@ -1953,10 +1963,20 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
             ands.append("a.IsGoodWithChildren=0")
         if p.MATCHGOODWITHCATS == 0: 
             ands.append("a.IsGoodWithCats=0")
+        if p.MATCHGOODWITHELDERLY == 0: 
+            ands.append("a.IsGoodWithElderly=0")
+        if p.MATCHGOODTRAVELLER == 0: 
+            ands.append("a.IsGoodTraveller=0")
+        if p.MATCHGOODONLEAD == 0: 
+            ands.append("a.IsGoodOnLead=0")
         if p.MATCHGOODWITHDOGS == 0: 
             ands.append("a.IsGoodWithDogs=0")
         if p.MATCHHOUSETRAINED == 0: 
             ands.append("a.IsHouseTrained=0")
+        if p.MATCHCRATETRAINED == 0: 
+            ands.append("a.IsCrateTrained=0")
+        if p.MATCHENERGYLEVEL != -1: 
+            ands.append(b"a.EnergyLevel=%i" % p.MATCHENERGYLEVEL)
         if p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
             ands.append("a.DateOfBirth BETWEEN ? AND ?")
             v.append(subtract_years(now(dbo.timezone), p.MATCHAGETO))
