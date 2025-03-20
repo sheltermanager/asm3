@@ -46,7 +46,7 @@ $(function() {
                     { type: "nextcol" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
-                    { post_field: "vatratechoice", label: _("Tax Type"), type: "select", options: { displayfield: "TAXRATENAME", valuefield: "ID", rows: controller.taxrates }, 
+                    { post_field: "vatratechoice", label: _("Tax Rate"), type: "select", options: { displayfield: "TAXRATENAME", valuefield: "ID", rows: controller.taxrates }, 
                         defaultval: config.str("AFDefaultTaxRate"), hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate %"), type: "number", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
@@ -63,6 +63,7 @@ $(function() {
                     clinic_appointment.dialog_row = row;
                     clinic_appointment.show_person_animals(false);
                     clinic_appointment.editmode = true;
+                    $("#vat").change();
                     $("#vatratechoicerow").hide();
                     try {
                         await tableform.dialog_show_edit(dialog, row);
@@ -297,7 +298,7 @@ $(function() {
                             donationtypes: controller.donationtypes,
                             paymentmethods: controller.paymentmethods,
                             amount: row.AMOUNT,
-                            vat: row.VAT,
+                            vat: row.ISVAT,
                             vatrate: row.VATRATE,
                             vatamount: row.VATAMOUNT,
                             comments: common.sub_arr(_("Appointment {0}. {1} on {2} for {3}"), [ format.padleft(row.ID, 6), row.OWNERNAME, format.date(row.DATETIME), row.ANIMALNAME ])
@@ -433,16 +434,17 @@ $(function() {
                     if (clinic_appointment.editmode == false) {
                         $("#vatratechoice").change();
                         $("#vatratechoicerow").fadeIn();
+                        $("#vatraterow").fadeOut();
+                    } else {
+                        $("#vatratechoicerow").fadeOut();
+                        $("#vatraterow").fadeIn();
                     }
-                    $("#vatraterow").fadeIn();
-                    $("#vatamountrow").fadeIn();
                 }
                 else {
                     $("#vatamount").currency("value", "0");
                     $("#vatrate").val("0"); 
                     $("#vatratechoicerow").fadeOut();
                     $("#vatraterow").fadeOut();
-                    $("#vatamountrow").fadeOut();
                 }
             });
 

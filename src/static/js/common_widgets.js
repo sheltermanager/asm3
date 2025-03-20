@@ -796,7 +796,13 @@ $.widget("asm.createpayment", {
             '<td></td>',
             '<td><input id="pm-vat" data="vat" type="checkbox" class="asm-checkbox asm-field" /> <label for="pm-vat">' + _("Sales Tax") + '</label></td>',
             '</tr>',
+
             '<tr class="paymentsalestax">',
+            '<td><label for="pm-vatratechoice">' + _("Tax Rate") + '</label></td>',
+            '<td><select id="pm-vatratechoice" data="vatratechoice" class="asm-selectbox" /></select></td>',
+            '</tr>',
+
+            '<tr style="display: none;">',
             '<td><label for="pm-vatrate">' + _("Tax Rate %") + '</label></td>',
             '<td><input id="pm-vatrate" data="vatrate" type="text" class="asm-numberbox asm-field" /></td>',
             '</tr>',
@@ -825,7 +831,7 @@ $.widget("asm.createpayment", {
             "class": "asm-dialog-actionbutton",
             click: function() {
                 validate.reset("dialog-payment");
-                if (!validate.notblank(["paymentdue"])) { return; }
+                if (!validate.notblank(["pm-due"])) { return; }
                 let o = self.options.o;
                 let formdata = "mode=create&";
                 formdata += $("#dialog-payment .asm-field").toPOST();
@@ -850,21 +856,26 @@ $.widget("asm.createpayment", {
         });
         $("#pm-vat").change(function() {
             if ($(this).is(":checked")) {
-                $("#pm-vatrate").val(config.number("VATRate"));
                 if (!config.bool("VATExclusive")) {
-                    $("#pm-vatamount").currency("value", common.tax_from_inclusive($("#pm-amount").currency("value"), config.number("VATRate")));
+                    $("#pm-vatamount").currency("value", common.tax_from_inclusive($("#pm-amount").currency("value"), $("#pm-vatrate").val()));
                 }
                 else {
-                    $("#pm-vatamount").currency("value", common.tax_from_exclusive($("#pm-amount").currency("value"), config.number("VATRate")));
+                    $("#pm-vatamount").currency("value", common.tax_from_exclusive($("#pm-amount").currency("value"), $("#pm-vatrate").val()));
                     $("#pm-amount").currency("value", $("#pm-amount").currency("value") + $("#pm-vatamount").currency("value"));
                 }
                 $("#dialog-payment .paymentsalestax").fadeIn();
-            }
-            else {
+            } else {
                 $("#pm-vatamount").currency("value", "0");
                 $("#pm-vatrate").val("0"); 
                 $("#dialog-payment .paymentsalestax").fadeOut();
             }
+        });
+        $("#pm-amount").change(function() {
+            $("#pm-vat").change();
+        });
+        $("#pm-vatratechoice").change(function() {
+            $("#pm-vatrate").val($("#pm-vatratechoice").val().split("|")[1]);
+            $("#pm-vat").change();
         });
     },
 
@@ -906,8 +917,26 @@ $.widget("asm.createpayment", {
         $("#pm-vatamount").currency("value", o.vatamount || 0);
         $("#pm-comments").html( o.comments );
         $("#pm-due").date("today");
-        $("#dialog-payment .paymentsalestax").toggle(o.vat);
+        //$("#dialog-payment .paymentsalestax").toggle(o.vat); # Took this out as it was overiding new behaviour
+        $("#pm-vat").change();
+        let vatrates = [];
+        let defaulttaxrateval = "";
+        $.each(controller.taxrates, function(taxratecount, taxrate) {
+            let optval = taxrate.ID + "|" + taxrate.TAXRATE;
+            if (taxrate.ID == config.integer("AFDefaultTaxRate")) {
+                defaulttaxrateval = optval;
+            }
+            vatrates.push({ID: optval, TAXRATENAME: taxrate.TAXRATENAME});
+        });
+        let vatrateoptions = html.list_to_options(vatrates, "ID", "TAXRATENAME" );
+        $("#pm-vatratechoice").html(vatrateoptions);
+        if (defaulttaxrateval != "") {
+            $("#pm-vatratechoice").val(defaulttaxrateval);
+        }
+        $("#pm-vat").change();
+        $("#pm-vatratechoice").change();
         $("#dialog-payment").dialog("open");
+        
     }
 });
 

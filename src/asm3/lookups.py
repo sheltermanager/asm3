@@ -1356,7 +1356,7 @@ def get_urgency_name(dbo: Database, uid: int) -> str:
     return dbo.query_string("SELECT Urgency FROM lkurgency WHERE ID = ?", [uid])
 
 def get_tax_rates(dbo: Database) -> Results:
-    return dbo.query("SELECT * FROM lktaxrate ORDER BY TaxRateName")
+    return dbo.query("SELECT ID, TaxRateName || ' (' || TaxRate || '%)' AS TaxRateName, TaxRate FROM lktaxrate ORDER BY TaxRateName")
 
 def get_test_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM testtype ORDER BY TestName")
