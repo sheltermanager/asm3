@@ -54,15 +54,37 @@ $(function() {
                         options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations, prepend: '<option value="0"></option>'}},
                     { post_field: "jurisdiction", json_field: "JURISDICTIONID", type: "select", label: _("Jurisidiction"), 
                         options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
-                    { type: "nextcol" },
+                   
                     { post_field: "dispatchedaco", json_field: "DISPATCHEDACO", type: "selectmulti", label: _("Dispatched ACO"), 
                         options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
                     { post_field: "dispatch", json_field: "DISPATCHDATETIME", type: "datetime", label: _("Dispatch Date/Time"), halfsize: true },
+                    
+                    { type: "nextcol" },
                     { post_field: "responded", json_field: "RESPONDEDDATETIME", type: "datetime", label: _("Responded Date/Time"), halfsize: true },
+                    { type: "raw", 
+                        markup: "<div style='margin-top: 5px;'>" + _("Followup") + "</div>"},
+                    
+                    { post_field: "followupaco", json_field: "FOLLOWUPACO", type: "selectmulti", label: _("Followup ACO"), 
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
+                    
                     { post_field: "followup", json_field: "FOLLOWUPDATETIME", type: "datetime", label: _("Followup Date/Time"), halfsize: true,
                         xmarkup: tableform.render_check({ post_field: "followupcomplete", json_field: "FOLLOWUPCOMPLETE", tooltip: _("Complete"), justwidget: true }) },
+                    
+                    { type: "raw", 
+                        markup: "<div style='margin-top: 5px;'>" + _("Followup 2") + "</div>" },
+                    
+                    { post_field: "followupaco2", json_field: "FOLLOWUPACO2", type: "selectmulti", label: _("Followup ACO"), 
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
+                    
                     { post_field: "followup2", json_field: "FOLLOWUPDATETIME2", type: "datetime", label: _("Followup Date/Time"), halfsize: true,
                         xmarkup: tableform.render_check({ post_field: "followupcomplete2", json_field: "FOLLOWUPCOMPLETE2", tooltip: _("Complete"), justwidget: true }) },
+                    
+                    { type: "raw", 
+                        markup: "<div style='margin-top: 5px;'>" + _("Followup 3") + "</div>"},
+                    
+                    { post_field: "followupaco3", json_field: "FOLLOWUPACO3", type: "selectmulti", label: _("Followup ACO"), 
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
+                    
                     { post_field: "followup3", json_field: "FOLLOWUPDATETIME3", type: "datetime", label: _("Followup Date/Time"), halfsize: true, 
                         xmarkup: tableform.render_check({ post_field: "followupcomplete3", json_field: "FOLLOWUPCOMPLETE3", tooltip: _("Complete"), justwidget: true }) },
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 17) },
