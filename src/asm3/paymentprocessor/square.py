@@ -96,6 +96,16 @@ class Square(PaymentProcessor):
             return s
         else: 
             asm3.al.error(f"Failed creating Square payment [got {response}]", "square.checkoutPage", self.dbo)
+            s = "<DOCTYPE html>\n" \
+            "<html>\n" \
+            "<head>\n" \
+            "</head>\n" \
+            "<body>\n" \
+            "<h1>ERROR</h1>\n" \
+            f"<p>{response}</p>\n" \
+            "</body>\n" \
+            "</html>"
+            return s
 
     def receive(self, rawdata: str) -> None:
         """ 
