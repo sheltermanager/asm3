@@ -443,19 +443,24 @@ $(function() {
         },
 
         sync: function() {
-
-            // If any of the dispatched ACOs are not in the list (can happen if a
-            // user account is later deleted), add it to the aco list so that it doesn't
-            // disappear.
-            $.each(controller.incident.DISPATCHEDACO.split(","), function(ia, aco) {
-                let acoinlist = false;
-                $.each(controller.users, function(i, v) {
-                    if (v.USERNAME == aco) { acoinlist = true; return false; }
+            // Checks the ACO values given from a field and if they are not in the users
+            // list, adds them to the selector given.
+            const add_missing_aco = function(values, selector) {
+                $.each(values.split(","), function(ia, aco) {
+                    let acoinlist = false;
+                    $.each(controller.users, function(i, v) {
+                        if (v.USERNAME == aco) { acoinlist = true; return false; }
+                    });
+                    if (!acoinlist) {
+                        $(selector).append("<option value=\"" + html.title(aco) + "\">" + aco + "</option>");
+                    }
                 });
-                if (!acoinlist) {
-                    $("#dispatchedaco").append("<option value=\"" + html.title(aco) + "\">" + aco + "</option>");
-                }
-            });
+            };
+
+            add_missing_aco(controller.incident.DISPATCHEDACO, "#dispatchedaco");
+            add_missing_aco(controller.incident.FOLLOWUPACO, "#followupaco");
+            add_missing_aco(controller.incident.FOLLOWUPACO2, "#followupaco2");
+            add_missing_aco(controller.incident.FOLLOWUPACO3, "#followupaco3");
 
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.incident);

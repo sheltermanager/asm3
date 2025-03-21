@@ -136,6 +136,7 @@ $(function() {
                 "DispatchDateTime":  _("Dispatch Date/Time"),
                 "RespondedDateTime":  _("Responded Date/Time"),
                 "DispatchedACO":  _("ACO"),
+                "FollowupACO":  _("Followup ACO"),
                 "FollowupDateTime":  _("Followup Date"),
                 "CompletedDate":  _("Completion Date"),
                 "CompletedName": _("Completion Type"),
@@ -163,7 +164,7 @@ $(function() {
             const DATE_FIELDS = [ "FollowupDateTime", "CompletedDate" ],
             DATETIME_FIELDS = [ "IncidentDateTime", "DispatchDateTime", "RespondedDateTime" ],
             STRING_FIELDS = [ "DispatchedACO", "DispatchAddress", "DispatchTown", "DispatchPostcode", 
-                "IncidentCode", "JurisdictionName", "LocationName", "CompletedName" ];
+                "FollowupACO", "IncidentCode", "JurisdictionName", "LocationName", "CompletedName" ];
             let rv = "";
             if (name == "IncidentNumber") {
               rv  = format.padleft(row.ID, 6);

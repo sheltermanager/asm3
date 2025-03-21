@@ -850,6 +850,7 @@ def json_incidentfindcolumns(dbo: Database) -> ColumnList:
         ( "DispatchDateTime", _("Dispatch Date/Time", l) ),
         ( "RespondedDateTime", _("Responded Date/Time", l) ),
         ( "DispatchedACO", _("ACO", l) ),
+        ( "FollowupACO", _("Followup ACO", l) ),
         ( "FollowupDateTime", _("Followup Date", l) ),
         ( "CompletedDate", _("Completed Date", l) ),
         ( "CompletedName", _("Completed Type", l) ),
