@@ -65,11 +65,14 @@ VALID_FIELDS = [
     "PERSONGDPRCONTACT", "PERSONCLASS",
     "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
     "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
-    "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
-    "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
-    "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
+    "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO", 
+    "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2", 
+    "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHGOODWITHELDERLY", 
+    "PERSONMATCHHOUSETRAINED", "PERSONMATCHCRATETRAINED", "PERSONMATCHGOODTRAVELLER", "PERSONMATCHGOODONLEAD", "PERSONMATCHENERGYLEVEL", 
     "PERSONMATCHCOMMENTSCONTAIN",
-    "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE"
+    "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE", 
+    "STOCKLEVELNAME", "STOCKLEVELDESCRIPTION", "STOCKLEVELBARCODE", "STOCKLEVELLOCATIONNAME", "STOCKLEVELUNITNAME", "STOCKLEVELTOTAL", 
+    "STOCKLEVELBALANCE", "STOCKLEVELLOW", "STOCKLEVELEXPIRY", "STOCKLEVELBATCHNUMBER", "STOCKLEVELCOST", "STOCKLEVELUNITPRICE"
 ]
 
 def gkc(m: Dict, f: str) -> int:
@@ -251,8 +254,8 @@ def row_error(errors: List, rowtype: str, rowno: int, row: Dict, e: Any, dbo: Da
     if "ANIMALIMAGE" in row and row["ANIMALIMAGE"].startswith("data"):
         row["ANIMALIMAGE"] = "data:,"
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
-    #import traceback
-    #print(traceback.format_exc())
+    import traceback
+    print(traceback.format_exc())
     errors.append( (rowno, str(row), errmsg) )
 
 def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: str = "", 
@@ -318,6 +321,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hascurrentvetlastname = False
     hasdiary = False
     hasvoucher = False
+    hasstocklevel = False
 
     cols = rows[0].keys()
     for col in cols:
@@ -356,6 +360,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "DONATIONAMOUNT": hasdonationamount = True
         if col == "DIARYDATE": hasdiary = True
         if col.startswith("VOUCHER"): hasvoucher = True
+        if col.startswith("STOCKLEVEL"): hasstocklevel = True
 
     rules = [
         ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
@@ -778,7 +783,12 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                     if "PERSONMATCHGOODWITHCATS" in cols: p["matchgoodwithcats"] = gkynu(row, "PERSONMATCHGOODWITHCATS")
                     if "PERSONMATCHGOODWITHDOGS" in cols: p["matchgoodwithdogs"] = gkynu(row, "PERSONMATCHGOODWITHDOGS")
                     if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
+                    if "PERSONMATCHGOODWITHELDERLY" in cols: p["matchgoodwithelderly"] = gkynu(row, "PERSONMATCHGOODWITHELDERLY")
+                    if "PERSONMATCHGOODONLEAD" in cols: p["matchgoodonlead"] = gkynu(row, "PERSONMATCHGOODONLEAD")
+                    if "PERSONMATCHGOODTRAVELLER" in cols: p["matchgoodtraveller"] = gkynu(row, "PERSONMATCHGOODTRAVELLER")
                     if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
+                    if "PERSONMATCHCRATETRAINED" in cols: p["matchcratetrained"] = gkynu(row, "PERSONMATCHCRATETRAINED")
+                    if "PERSONMATCHENERGYLEVEL" in cols: p["matchenergylevel"] = gkynu(row, "PERSONMATCHENERGYLEVEL")
                     if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
                 
                 imagedata = gks(row, "PERSONIMAGE")
@@ -1155,6 +1165,31 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 asm3.financial.insert_voucher_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "voucher", rowno, row, e, dbo, sys.exc_info())
+        
+        # Stocklevel 
+        if hasstocklevel:
+            s = {}
+            s["name"] = gks(row, "STOCKLEVELNAME")
+            s["productlist"] = "0"
+            s["description"] = gks(row, "STOCKLEVELDESCRIPTION")
+            s["barcode"] = gks(row, "STOCKLEVELBARCODE")
+            s["location"] = gkl(dbo, row, "STOCKLEVELLOCATIONNAME", "stocklocation", "LocationName", createmissinglookups)
+            s["unitname"] = gks(row, "STOCKLEVELUNITNAME")
+            s["total"] = asm3.utils.cfloat(row["STOCKLEVELTOTAL"])
+            s["balance"] = asm3.utils.cfloat(row["STOCKLEVELBALANCE"])
+            s["low"] = asm3.utils.cfloat(row["STOCKLEVELLOW"])
+            s["expiry"] = gkd(dbo, row, "STOCKLEVELEXPIRY")
+            s["batchnumber"] = gks(row, "STOCKLEVELBATCHNUMBER")
+            s["cost"] = asm3.utils.cint(row["STOCKLEVELCOST"])
+            s["unitprice"] = asm3.utils.cint(row["STOCKLEVELUNITPRICE"])
+            s["usagedate"] = asm3.i18n.python2display(dbo.locale, dbo.today())
+            s["usagetype"] = asm3.configuration.product_movement_usage_type(dbo)
+            s["comments"] = asm3.i18n._("Imported from CSV", dbo.locale)
+
+            try:
+                asm3.stock.insert_stocklevel_from_form(dbo, asm3.utils.PostedData(s, dbo.locale), user)
+            except Exception as e:
+                row_error(errors, "stocklevel", rowno, row, e, dbo, sys.exc_info())
 
         rowno += 1
     
@@ -1743,9 +1778,10 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "PERSONGDPRCONTACT", "PERSONCLASS",
         "PERSONMEMBER", "PERSONMEMBERSHIPNUMBER", "PERSONMEMBERSHIPEXPIRY",
         "PERSONMATCHACTIVE", "PERSONMATCHADDED", "PERSONMATCHEXPIRES",
-        "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
-        "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
-        "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
+        "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO", 
+        "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2", 
+        "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHGOODWITHELDERLY", 
+        "PERSONMATCHHOUSETRAINED", "PERSONMATCHCRATETRAINED", "PERSONMATCHGOODTRAVELLER", "PERSONMATCHGOODONLEAD", "PERSONMATCHENERGYLEVEL", 
         "PERSONMATCHCOMMENTSCONTAIN",
         "PERSONIMAGE", "PERSONPDFNAME", "PERSONPDFDATA", "PERSONHTMLNAME", "PERSONHTMLDATA",
         "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
@@ -1821,7 +1857,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row["PERSONMEMBER"] = asm3.utils.cint(p["ISMEMBER"])
         row["PERSONMEMBERSHIPNUMBER"] = nn(p["MEMBERSHIPNUMBER"])
         row["PERSONMEMBERSHIPEXPIRY"] = asm3.i18n.python2display(l, p["MEMBERSHIPEXPIRYDATE"])
-        row["PERSONMATCHACTIVE"] = asm3.utils.cint(p["ISMEMBER"])
+        row["PERSONMATCHACTIVE"] = asm3.utils.cint(p["MATCHACTIVE"])
         row["PERSONMATCHADDED"] = asm3.i18n.python2display(l, p["MATCHADDED"])
         row["PERSONMATCHEXPIRES"] = asm3.i18n.python2display(l, p["MATCHEXPIRES"])
         row["PERSONMATCHSEX"] = asm3.utils.cint(p["MATCHSEX"])
@@ -1836,7 +1872,12 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row["PERSONMATCHGOODWITHCATS"] = asm3.utils.cint(p["MATCHGOODWITHCATS"])
         row["PERSONMATCHGOODWITHDOGS"] = asm3.utils.cint(p["MATCHGOODWITHDOGS"])
         row["PERSONMATCHGOODWITHCHILDREN"] = asm3.utils.cint(p["MATCHGOODWITHCHILDREN"])
+        row["PERSONMATCHGOODWITHELDERLY"] = asm3.utils.cint(p["MATCHGOODWITHELDERLY"])
+        row["PERSONMATCHGOODONLEAD"] = asm3.utils.cint(p["MATCHGOODONLEAD"])
+        row["PERSONMATCHGOODTRAVELLER"] = asm3.utils.cint(p["MATCHGOODTRAVELLER"])
         row["PERSONMATCHHOUSETRAINED"] = asm3.utils.cint(p["MATCHHOUSETRAINED"])
+        row["PERSONMATCHCRATETRAINED"] = asm3.utils.cint(p["MATCHCRATETRAINED"])
+        row["PERSONMATCHENERGYLEVEL"] = asm3.utils.cint(p["MATCHENERGYLEVEL"])
         row["PERSONMATCHCOMMENTSCONTAIN"] = nn(p["MATCHCOMMENTSCONTAIN"])
         row["PERSONCOMMENTS"] = nn(p["COMMENTS"])
         row["PERSONWARNING"] = nn(p["POPUPWARNING"])

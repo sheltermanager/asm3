@@ -841,11 +841,13 @@ const tableform = {
                     }
                 });
                 tableform.dialog_enable_buttons();
+                tableform.dialog_state = 1;
             },
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
                 tableform.dialog_destroy();
+                tableform.dialog_state = 0;
             }
         });
         this.dialog_error("");
@@ -1007,11 +1009,13 @@ const tableform = {
                 });
                 
                 tableform.dialog_enable_buttons();
+                tableform.dialog_state = 2;
             },
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
                 tableform.dialog_destroy();
+                tableform.dialog_state = 0;
             }
         });
         this.dialog_error("");
@@ -1022,6 +1026,13 @@ const tableform = {
         return deferred.promise();
     },
 
+    /** 
+     *  Indicates the state of the dialog. Useful for callback events that hide/show widgets.
+     *  0 - dialog is closed/not visible
+     *  1 - dialog is open and in add mode
+     *  2 - dialog is open and in edit mode
+     */
+    dialog_state: 0,
 
     /**
      * Renders fields
@@ -1112,6 +1123,7 @@ const tableform = {
             else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
             else if (v.type == "phone") { d += tableform.render_phone(v); }
+            else if (v.type == "product") { d += tableform.render_product(v); }
             else if (v.type == "raw") { d += tableform.render_markup(v); }
             else if (v.type == "richtextarea") { d += tableform.render_richtextarea(v); }
             else if (v.type == "select") { d += tableform.render_select(v); } 
@@ -2036,9 +2048,11 @@ const tableform = {
         $.each(fields, function(i, v) {
             $("label[for='" + v.id + "']").removeClass(validate.ERROR_LABEL_CLASS);
             if (v.validation == "notblank") {
-                nbids.push(v.id);
                 if (v.type == "datetime") { 
                     nbids.push(v.id + "date"); nbids.push(v.id + "time"); 
+                }
+                else {
+                    nbids.push(v.id);
                 }
             }
             if (v.validation == "notzero") {

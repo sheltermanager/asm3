@@ -263,16 +263,18 @@ class SavourLifePublisher(AbstractPublisher):
                                 "DogId":        dogid
                             }
                             url = SAVOURLIFE_URL + "DeleteDog"
-                            # Clear the dogId since the listing has been deleted
-                            asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
 
                         jsondata = asm3.utils.json(data)
                         self.log("Sending POST to %s to mark animal '%s - %s' %s: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, status, jsondata))
+                        
                         r = asm3.utils.post_json(url, jsondata)
 
                         if r["status"] != 200:
                             self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                         else:
+                            if url == SAVOURLIFE_URL + "DeleteDog":
+                                # Clear the dogId since the listing has been deleted
+                                asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
                             self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                             self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 

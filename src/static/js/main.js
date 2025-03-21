@@ -378,7 +378,7 @@ $(function() {
             }
             if (alerts.STEXP > 0 && common.has_permission("vsl")) {
                 totalalerts += alerts.STEXP;
-                oa("stocklevel?sortexp=1", "stock",
+                oa("stock_level?sortexp=1", "stock",
                     common.ntranslate(alerts.STEXP, [
                         _("{plural0} item of stock has expired"),
                         _("{plural1} items of stock have expired"),
@@ -388,7 +388,7 @@ $(function() {
             }
             if (alerts.STEXPSOON > 0 && common.has_permission("vsl")) {
                 totalalerts += alerts.STEXPSOON;
-                oa("stocklevel?sortexp=1", "stock",
+                oa("stock_level?sortexp=1", "stock",
                     common.ntranslate(alerts.STEXPSOON, [
                         _("{plural0} item of stock expires in the next month"),
                         _("{plural1} items of stock expire in the next month"),
@@ -398,12 +398,22 @@ $(function() {
             }
             if (alerts.STLOWBAL > 0 && common.has_permission("vsl")) {
                 totalalerts += alerts.STLOWBAL;
-                oa("stocklevel?viewlocation=-2", "stock",
+                oa("stock_level?viewlocation=-2", "stock",
                     common.ntranslate(alerts.STLOWBAL, [
                         _("{plural0} item of stock has a low balance"),
                         _("{plural1} items of stock have a low balance"),
                         _("{plural2} items of stock have a low balance"),
                         _("{plural3} items of stock have a low balance")
+                    ]));
+            }
+            if (alerts.GLOBALLOWS > 0 && common.has_permission("vsl")) {
+                totalalerts += alerts.GLOBALLOWS;
+                oa("product?productfilter=-2", "product",
+                    common.ntranslate(alerts.GLOBALLOWS, [
+                        _("{plural0} product has a low balance"),
+                        _("{plural1} products have a low balance"),
+                        _("{plural2} products have a low balance"),
+                        _("{plural3} products have a low balance")
                     ]));
             }
             if (alerts.TRNODRV > 0 && common.has_permission("vtr")) {
@@ -802,9 +812,9 @@ $(function() {
 
         bind: function () {
 
-            if (controller.dbupdated != "") {
+            /*if (controller.dbupdated != "") {
                 header.show_info( _("Updated database to version {0}").replace("{0}", controller.dbupdated) );
-            }
+            }*/
 
             if (asm.smcom && asm.smcomexpiry) {
                 let warnat = new Date(format.date_js(asm.smcomexpiry).getTime() - (1000 * 60 * 60 * 24 * 5)),

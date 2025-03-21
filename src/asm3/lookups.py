@@ -54,6 +54,7 @@ LOOKUP_TABLES = {
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
     "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
     "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
+    "lkproducttype":    (_("Product Types"), "ProductTypeName", _("Name"), _("Description"), "add del ret", ""),
     "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", "", ("ownerrota.RotaTypeID",)),
     "lksex":            (_("Sexes"), "Sex", _("Sex"), "", "", ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
     "lksize":           (_("Sizes"), "Size", _("Size"), "", "", ("animal.Size",)),
@@ -68,6 +69,7 @@ LOOKUP_TABLES = {
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
+    "lktaxrate":        (_("Tax Rate"), "TaxRateName", _("Name"), _("Description"), "add del ret", ("lktaxrate.TaxRate",)),
     "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost sched", ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
     "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
@@ -805,7 +807,7 @@ def _merge_db_flags(dbflags: Results, flags: str = "") -> Results:
     """
     BUILTINS = [ "aco", "adopter", "banned", "coordinator", "dangerous", "deceased", "donor", "driver", 
         "excludefrombulkemail", "fosterer", "giftaid", "homechecked", "homechecker", "member", "padopter", 
-        "retailer", "shelter", "staff", "sponsor", "vet", "volunteer", 
+        "retailer", "shelter", "staff", "sponsor", "vet", "volunteer", "supplier",
         "courtesy", "crueltycase", "nonshelter", "notforadoption", "notforregistration", "quarantine" ]
     if flags is None or flags == "" or flags == "|": return dbflags
     out = dbflags.copy()
@@ -992,7 +994,7 @@ def get_lookup(dbo: Database, tablename: str, namefield: str) -> Results:
 def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: str = "", 
                   speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", 
                   units: str = "", site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0) -> int:
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0) -> int:
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -1073,6 +1075,13 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
             t[LOOKUP_NAMEFIELD]:    name,
             "IsRetired":            retired
         }, username, setCreated=False)
+    elif lookup == "lktaxrate":
+        return dbo.insert(lookup, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "TaxRate":              taxrate,
+            "IsRetired":            retired
+        }, username, setCreated=False)
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
@@ -1089,7 +1098,7 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
 def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str, desc: str = "", 
                   speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", units: str = "", 
                   site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0) -> None:
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0) -> None:
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1163,6 +1172,13 @@ def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str
             dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (f"{oldflag}|", f"{newflag}|", f"%{oldflag}|%"))
         elif lookup == "lkanimalflags":
             dbo.execute("UPDATE animal SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (f"{oldflag}|", f"{newflag}|", f"%{oldflag}|%"))
+    elif lookup == "lktaxrate":
+        dbo.update(lookup, iid, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "TaxRate":              taxrate,
+            "IsRetired":            retired
+        }, username, setLastChanged=False)
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_MODIFIERS].find("ret") != -1:
@@ -1265,6 +1281,9 @@ def get_pickup_locations(dbo: Database) -> Results:
 def get_posneg(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksposneg ORDER BY Name")
 
+def get_product_types(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lkproducttype ORDER BY ProductTypeName")
+
 def get_reservation_statuses(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM reservationstatus ORDER BY StatusName")
 
@@ -1325,12 +1344,18 @@ def get_stock_usage_types(dbo: Database) -> Results:
 def get_trap_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM traptype ORDER BY TrapTypeName")
 
+def get_unit_types(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lksunittype ORDER BY ID")
+
 def get_urgencies(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkurgency ORDER BY ID")
 
 def get_urgency_name(dbo: Database, uid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT Urgency FROM lkurgency WHERE ID = ?", [uid])
+
+def get_tax_rates(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lktaxrate ORDER BY TaxRateName")
 
 def get_test_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM testtype ORDER BY TestName")

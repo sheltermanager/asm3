@@ -1,0 +1,20 @@
+# add outcome table (mainly for string translations, used by v_animal view)
+l = dbo.locale
+fields = ",".join([
+    dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+    dbo.ddl_add_table_column("Outcome", dbo.type_shorttext, False)
+])
+execute(dbo, dbo.ddl_add_table("lksoutcome", fields) )
+execute(dbo,"INSERT INTO lksoutcome VALUES (1, ?)", [ _("On Shelter", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (2, ?)", [ _("Died", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (3, ?)", [ _("DOA", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (4, ?)", [ _("Euthanized", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (11, ?)", [ _("Adopted", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (12, ?)", [ _("Fostered", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (13, ?)", [ _("Transferred", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (14, ?)", [ _("Escaped", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (15, ?)", [ _("Reclaimed", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (16, ?)", [ _("Stolen", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (17, ?)", [ _("Released to Wild", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (18, ?)", [ _("Retailer", l) ])
+execute(dbo,"INSERT INTO lksoutcome VALUES (19, ?)", [ _("TNR", l) ])

@@ -491,10 +491,11 @@ def get_smcom_reports(dbo: Database) -> Results:
     reps = s.split("&&&")
     reports = []
     loaded = get_all_report_titles(dbo)
+    latest_db_version = asm3.dbupdate._dbupdates_latest_ver(dbo)
     def version_ok(rdb):
         if rdb.find("/") == -1: return True
         ver = asm3.utils.cint(rdb[0:rdb.find("/")])
-        return asm3.dbupdate.LATEST_VERSION >= ver
+        return latest_db_version >= ver
     def database_ok(rdb):
         if rdb.find("ASM2") != -1: return False
         if rdb.find("Any") != -1: return True

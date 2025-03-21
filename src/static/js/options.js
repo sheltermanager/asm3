@@ -120,6 +120,7 @@ $(function() {
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
                 '<li><a href="#tab-security">' + _("Security") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
+                '<li><a href="#tab-stock">' + _("Stock") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
                 '<li><a href="#tab-watermark">' + _("Watermark") + '</a></li>',
                 '</ul>'
@@ -1290,6 +1291,11 @@ $(function() {
                 '<select data="LocationChangeLogType" id="locationchangelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
+                '</br />',
+                '<input data="AnimalNameChangeLog" id="animalnamechangelog" type="checkbox" class="asm-checkbox" /> <label for="animalnamechangelog">' + _("When I change the name of an animal, make a note of it in the log with this type") + '</label>',
+                '<select data="AnimalNameChangeLogType" id="animalnamechangelogtype" class="asm-selectbox">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select>',
                 '<br />',
                 '<input data="WeightChangeLog" id="weightchangelog" type="checkbox" class="asm-checkbox" /> <label for="weightchangelog">' + _("When I change the weight of an animal, make a note of it in the log with this type") + '</label>',
                 '<select data="WeightChangeLogType" id="weightchangelogtype" class="asm-selectbox">',
@@ -1809,6 +1815,43 @@ $(function() {
             ].join("\n");
         },
 
+        render_stock: function() {
+
+            return [
+                '<div id="tab-stock">',
+                '<table class="asm-left-table">',
+                '<tr>',
+                '<td><label for="stockmovementusagetypeid">' + _("Stock movement usage type") + '</label>',
+                '<span id="callout-stockmovementusagetypeid" class="asm-callout">' + _("The pseudo usagetype used to represent internal movements") + '</span>',
+                '</td>',
+                '<td>',
+                '<select id="stockmovementusagetypeid" class="asm-selectbox" data="StockMovementUsageTypeID">',
+                html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"),
+                '</select>',
+                '</td>',
+                '<tr>',
+                '<td><label for="defaultproducttypeid">' + _("Default product type") + '</label>',
+                '</td>',
+                '<td>',
+                '<select id="defaultproducttypeid" class="asm-selectbox" data="StockDefaultProductTypeID">',
+                html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="defaulttaxtrateid">' + _("Default tax rate") + '</label>',
+                '</td>',
+                '<td>',
+                '<select id="defaulttaxtrateid" class="asm-selectbox" data="StockDefaultTaxRateID">',
+                html.list_to_options(controller.taxrates, "ID", "TAXRATENAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_waitinglist: function() {
             return [
                 '<div id="tab-waitinglist">',
@@ -1950,6 +1993,7 @@ $(function() {
                 this.render_unwanted(),
                 this.render_reports(),
                 this.render_security(),
+                this.render_stock(),
                 this.render_waitinglist(),
                 this.render_watermark(),
                 '</div>',

@@ -445,7 +445,7 @@ edit_header = {
             '</tr><tr>',
             '<td>' + _("Responded") + ':</td><td><b>' + format.date(a.RESPONDEDDATETIME) + ' ' + format.time(a.RESPONDEDDATETIME) + '</b></td>',
             '</tr><tr>',
-            '<td>' + _("Followup") + ':</td><td><b>' + format.date(a.FOLLOWUPDATETIME) + ' ' + format.time(a.FOLLOWUPDATETIME) + '</b></td>',
+            '<td>' + _("Followup") + ':</td><td><b>' + format.date(a.FOLLOWUPDATETIME) + ' ' + format.time(a.FOLLOWUPDATETIME) + ' ' + common.nulltostr(a.FOLLOWUPACO) + '</b></td>',
             '</tr><tr>',
             '<td>' + _("Completed") + ':</td><td><b>' + format.date(a.COMPLETEDDATE) + ' ' + format.time(a.COMPLETEDDATE) + ' ' + common.nulltostr(a.COMPLETEDNAME) + '</b></td>',
             '</tr>',

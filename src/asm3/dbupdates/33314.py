@@ -1,0 +1,12 @@
+# Add extra followup and suspect fields to animal control
+add_column(dbo, "animalcontrol", "FollowupDateTime2", dbo.type_datetime)
+add_column(dbo, "animalcontrol", "FollowupDateTime3", dbo.type_datetime)
+add_column(dbo, "animalcontrol", "Owner2ID", "INTEGER")
+add_column(dbo, "animalcontrol", "Owner3ID", "INTEGER")
+add_column(dbo, "animalcontrol", "AnimalID", "INTEGER")
+add_index(dbo, "animalcontrol_FollowupDateTime", "animalcontrol", "FollowupDateTime")
+add_index(dbo, "animalcontrol_FollowupDateTime2", "animalcontrol", "FollowupDateTime2")
+add_index(dbo, "animalcontrol_FollowupDateTime3", "animalcontrol", "FollowupDateTime3")
+add_index(dbo, "animalcontrol_Owner2ID", "animalcontrol", "Owner2ID")
+add_index(dbo, "animalcontrol_Owner3ID", "animalcontrol", "Owner3ID")
+add_index(dbo, "animalcontrol_AnimalID", "animalcontrol", "AnimalID")

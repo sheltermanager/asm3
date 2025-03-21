@@ -1,0 +1,11 @@
+# Add new transport address fields
+add_column(dbo, "animaltransport", "PickupAddress", dbo.type_shorttext)
+add_column(dbo, "animaltransport", "PickupTown", dbo.type_shorttext)
+add_column(dbo, "animaltransport", "PickupCounty", dbo.type_shorttext)
+add_column(dbo, "animaltransport", "PickupPostcode", dbo.type_shorttext)
+add_column(dbo, "animaltransport", "DropoffAddress", dbo.type_shorttext)
+add_column(dbo, "animaltransport", "DropoffTown", dbo.type_shorttext)
+add_column(dbo, "animaltransport", "DropoffCounty", dbo.type_shorttext)
+add_column(dbo, "animaltransport", "DropoffPostcode", dbo.type_shorttext)
+add_index(dbo, "animaltransport_PickupAddress", "animaltransport", "PickupAddress")
+add_index(dbo, "animaltransport_DropoffAddress", "animaltransport", "DropoffAddress")

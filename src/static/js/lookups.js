@@ -87,6 +87,9 @@ $(function() {
                     { hideif: function() { return !controller.hasvat; },
                         json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "select", 
                         options: '<option value="0">' + _("No") + '</option><option value="1">' + _("Yes") + '</option>' },
+                    { hideif: function() { return !controller.hastaxrate; },
+                        json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "number", 
+                        callout: _("Rate of tax to be applied") },
                     { hideif: function() { return controller.descfield == ""; },
                         json_field: controller.descfield, post_field: "lookupdesc", label: _("Description"), type: "textarea" }
                 ]
@@ -322,6 +325,7 @@ $(function() {
                     { ID: -1, FLAG: _("Other Shelter") },
                     { ID: -1, FLAG: _("Sponsor") },
                     { ID: -1, FLAG: _("Staff") },
+                    { ID: -1, FLAG: _("Supplier") },
                     { ID: -1, FLAG: _("Vet") },
                     { ID: -1, FLAG: _("Volunteer") }
                 ]);

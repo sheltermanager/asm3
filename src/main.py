@@ -1429,14 +1429,6 @@ class main(JSONEndpoint):
         # frontend doesn't keep receiving the same build number via configjs 
         # and get into an endless loop of reloads
         if o.post["b"] != "": self.reload_config()
-        # Database update checks
-        dbupdated = ""
-        if asm3.dbupdate.check_for_updates(dbo):
-            dbupdated = asm3.dbupdate.perform_updates(dbo)
-        if asm3.dbupdate.check_for_view_seq_changes(dbo):
-            asm3.dbupdate.install_db_views(dbo)
-            asm3.dbupdate.install_db_sequences(dbo)
-            asm3.dbupdate.install_db_stored_procedures(dbo)
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
@@ -1501,7 +1493,6 @@ class main(JSONEndpoint):
             "build": BUILD,
             "noreload": o.post["b"] != "", 
             "news": news,
-            "dbupdated": dbupdated,
             "version": get_version(),
             "emergencynotice": emergency_notice(),
             "linkmode": linkmode,
@@ -2770,7 +2761,9 @@ class change_user_settings(JSONEndpoint):
             "locales": get_locales(),
             "sigtype": ELECTRONIC_SIGNATURES,
             "themes": asm3.lookups.VISUAL_THEMES,
-            "reports": asm3.reports.get_all_report_titles(o.dbo)
+            "reports": asm3.reports.get_all_report_titles(o.dbo),
+            "stocklocations": asm3.lookups.get_stock_locations(o.dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(o.dbo)
         }
 
     def post_all(self, o):
@@ -2794,8 +2787,10 @@ class change_user_settings(JSONEndpoint):
         quickreportscfg = ",".join(quickreportscfg)
         twofavalidcode = post["twofavalidcode"]
         twofavalidpassword = post["twofavalidpassword"]
+        defaultlocationid = post["defaultlocationid"]
+        defaultstockusagetypeid = post["defaultstockusagetypeid"]
         asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "main.change_password", o.dbo)
-        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword)
+        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword, defaultlocationid, defaultstockusagetypeid)
         # If the user now has 2FA enabled, and force2fa session flag is on, we can turn it off
         if "force2fa" in o.session and o.session.force2fa and asm3.users.get_user(o.dbo, o.user).ENABLETOTP == 1:
             o.session.force2fa = False
@@ -2807,6 +2802,10 @@ class change_user_settings(JSONEndpoint):
         asm3.configuration.cset(o.dbo, "%s_QuickReportsID" % o.user, quickreportscfg)
         asm3.configuration.cset(o.dbo, "%s_ShelterView" % o.user, post["shelterview"])
         asm3.configuration.cset(o.dbo, "%s_EmailDefault" % o.user, asm3.utils.iif(post.boolean("emaildefault"), "Yes", "No"))
+
+        asm3.configuration.cset(o.dbo, "%s_DefaultStockLocationID" % o.user, defaultlocationid)
+        asm3.configuration.cset(o.dbo, "%s_DefaultStockUsageTypeID" % o.user, defaultstockusagetypeid)
+
         self.reload_config()
 
 class citations(JSONEndpoint):
@@ -2960,11 +2959,11 @@ class clinic_waitingroom(JSONEndpoint):
 
 class csvexport_animals(JSONEndpoint):
     url = "csvexport_animals"
-    get_permissions = asm3.users.EXPORT_REPORT
+    get_permissions = asm3.users.EXPORT_ANIMAL_CSV
 
 class csvexport_people(JSONEndpoint):
     url = "csvexport_people"
-    get_permissions = asm3.users.EXPORT_REPORT
+    get_permissions = asm3.users.EXPORT_PEOPLE_CSV
 
     def controller(self, o):
         return {
@@ -4505,7 +4504,8 @@ class lookups(JSONEndpoint):
             "hasdefaultcost": "cost" in modifiers,
             "hasunits": "units" in modifiers,
             "hassite": "site" in modifiers,
-            "hasvat": "vat" in modifiers, 
+            "hasvat": "vat" in modifiers,
+            "hastaxrate": tablename == "lktaxrate",
             "canadd": "add" in modifiers,
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
@@ -4517,12 +4517,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
 
     def post_update(self, o):
         post = o.post
         asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
@@ -4891,9 +4891,27 @@ class maint_db_stats(ASMEndpoint):
             f"    {s.totalpdf} application/pdf ({rnd(s.pdfsize)} MB)\n" \
             f"    {s.totalhtml} text/html ({rnd(s.htmlsize)} MB)\n" \
             f"    {s.totalother} other ({rnd(s.othersize)} MB)\n"
+    
+class maint_db_update(ASMEndpoint):
+    url = "maint_db_update"
+    check_logged_in = False
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        dbo = o.dbo
+        # Run any outstanding database updates
+        update_ver = asm3.dbupdate.perform_updates(dbo)
+        asm3.dbupdate.install_db_views(dbo)
+        asm3.dbupdate.install_db_sequences(dbo)
+        asm3.dbupdate.install_db_stored_procedures(dbo)
+        return f"perform_updates (max dbv: {update_ver})\n" \
+            "forced reinstall of all views, sequences and stored procedures.\n" \
+            "check syslog for further info."
 
 class maint_deps(ASMEndpoint):
     url = "maint_deps"
+    check_logged_in = False
 
     def content(self, o):
         self.content_type("text/plain")
@@ -4902,12 +4920,14 @@ class maint_deps(ASMEndpoint):
 
 class maint_error(ASMEndpoint):
     url = "maint_error"
+    check_logged_in = False
 
     def content(self, o):
         return 1 / 0 # Test error handling
 
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
+    check_logged_in = False
 
     def controller(self, o):
         return {}
@@ -5932,9 +5952,12 @@ class options(JSONEndpoint):
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
             "pp_square": pp_square,
+            "producttypes": asm3.lookups.get_product_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "themes": asm3.lookups.VISUAL_THEMES,
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesclinic": asm3.template.get_document_templates(dbo, "clinic"),
@@ -6687,6 +6710,57 @@ class person_vouchers(JSONEndpoint):
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
+class product(JSONEndpoint):
+    url = "product"
+    js_module = "product"
+    get_permissions = asm3.users.VIEW_STOCKLEVEL
+
+    def controller(self, o):
+        dbo = o.dbo
+        productid = 0
+        if o.post["id"]:
+            productid = o.post.integer("id")
+        if o.post.integer("productfilter") == -1:
+            products = asm3.stock.get_depleted_products(dbo)
+        elif o.post.integer("productfilter") == -2:
+            products = asm3.stock.get_low_balance_products(dbo)
+        elif o.post.integer("productfilter") == -3:
+            products = asm3.stock.get_negative_balance_products(dbo)
+        elif o.post.integer("productfilter") == -4:
+            products = asm3.stock.get_retired_products(dbo)
+        else:
+            products = asm3.stock.get_active_products(dbo)
+        asm3.al.debug("got %d products" % len(products), "main.product", dbo)
+        return {
+            "productid": productid,
+            "producttypes": asm3.stock.get_product_types(dbo),
+            "taxrates": asm3.stock.get_tax_rates(dbo),
+            "stocklocations": asm3.lookups.get_stock_locations(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "units": asm3.lookups.get_unit_types(dbo),
+            "yesno": asm3.lookups.get_yesno(dbo),
+            "rows": products
+        }
+    
+    def post_create(self, o):
+        self.check(asm3.users.ADD_STOCKLEVEL)
+        productid = asm3.stock.insert_product_from_form(o.dbo, o.post, o.user)
+        return productid
+        
+    
+    def post_move(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        asm3.stock.insert_productmovement_from_form(o.dbo, o.post, o.user)
+    
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        asm3.stock.update_product_from_form(o.dbo, o.post, o.user)
+    
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_STOCKLEVEL)
+        for pid in o.post.integer_list("ids"):
+            asm3.stock.delete_product(o.dbo, o.user, pid)
+
 class publish(JSONEndpoint):
     url = "publish"
     get_permissions = asm3.users.USE_INTERNET_PUBLISHER
@@ -7192,7 +7266,6 @@ class sql(JSONEndpoint):
                 else:
                     self.check_update_query(ql)
                     rowsaffected += dbo.execute(q)
-            asm3.configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception as err:
             asm3.al.error("%s" % str(err), "main.sql", dbo)
@@ -7216,7 +7289,6 @@ class sql(JSONEndpoint):
             except Exception as err:
                 asm3.al.error("%s" % str(err), "main.sql", dbo)
                 output.append("ERROR: %s" % str(err))
-        asm3.configuration.db_view_seq_version(dbo, "0")
         return "\n\n".join(output)
 
     def substitute_report_tokens(self, dbo, user, q):
@@ -7370,8 +7442,8 @@ class staff_rota(JSONEndpoint):
         flags = o.post["flags"]
         asm3.person.clone_rota_week(o.dbo, o.user, startdate, newdate, flags)
 
-class stocklevel(JSONEndpoint):
-    url = "stocklevel"
+class stock_level(JSONEndpoint):
+    url = "stock_level"
     get_permissions = asm3.users.VIEW_STOCKLEVEL
 
     def controller(self, o):
@@ -7382,7 +7454,7 @@ class stocklevel(JSONEndpoint):
             levels = asm3.stock.get_stocklevels_lowbalance(dbo)
         else:
             levels = asm3.stock.get_stocklevels(dbo, o.post.integer("viewlocation"))
-        asm3.al.debug("got %d stock levels" % len(levels), "main.stocklevel", dbo)
+        asm3.al.debug("got %d stock levels" % len(levels), "main.stock_level", dbo)
         return {
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stocknames": "|".join(asm3.stock.get_stock_names(dbo)),
@@ -7390,6 +7462,7 @@ class stocklevel(JSONEndpoint):
             "stockunits": "|".join(asm3.stock.get_stock_units(dbo)),
             "newlevel": o.post.integer("newlevel") == 1,
             "sortexp": o.post.integer("sortexp") == 1,
+            "products": asm3.stock.get_products(dbo),
             "rows": levels
         }
 
@@ -7410,6 +7483,37 @@ class stocklevel(JSONEndpoint):
     def post_lastname(self, o):
         self.check(asm3.users.VIEW_STOCKLEVEL)
         return asm3.stock.get_last_stock_with_name(o.dbo, o.post["name"])
+
+class stock_usage(JSONEndpoint):
+    url = "stock_usage"
+    js_module = "stock_usage"
+    get_permissions = asm3.users.VIEW_STOCKLEVEL
+
+    def controller(self, o):
+        dbo = o.dbo
+        productid = 0
+        stocklevelid = 0
+        productname = ""
+        stocklevelname = ""
+        if o.post["offset"]:
+            offset = o.post.integer("offset") * -1
+            fromdate = dbo.today(offset=offset)
+        else:
+            offset = 0
+            fromdate = dbo.today()
+        if o.post["stocklevelid"]:
+            stocklevelid = o.post.integer("stocklevelid")
+            stocklevelname = asm3.stock.get_stocklevel(dbo, stocklevelid)["NAME"]
+        if o.post["productid"]:
+            productid = o.post.integer("productid")
+            productname = asm3.stock.get_product_name(dbo, productid)
+        return {
+            "productid": productid,
+            "stocklevelid": stocklevelid,
+            "productname": productname,
+            "stocklevelname": stocklevelname,
+            "rows": asm3.stock.get_stock_usage(dbo, productid, stocklevelid, fromdate)
+        }
 
 class systemusers(JSONEndpoint):
     url = "systemusers"

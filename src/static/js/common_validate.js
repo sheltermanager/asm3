@@ -148,8 +148,7 @@ const validate = {
         var rv = true;
         $.each(fields, function(i, f) {
             var v = $("#" + f).val();
-            v = common.trim(v);
-            if (v == "") {
+            if (!v || !common.trim(v)) {
                 validate.highlight(f);
                 rv = false;
                 return false;

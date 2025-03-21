@@ -1,0 +1,11 @@
+# More indexes to speed up get_alerts
+add_index(dbo, "animal_Neutered", "animal", "Neutered")
+add_index(dbo, "owner_IDCheck", "owner", "IDCheck")
+add_index(dbo, "owner_IsACO", "owner", "IsACO")
+add_index(dbo, "owner_IsAdoptionCoordinator", "owner", "IsAdoptionCoordinator")
+add_index(dbo, "owner_IsFosterer", "owner", "IsFosterer")
+add_index(dbo, "owner_IsRetailer", "owner", "IsRetailer")
+add_index(dbo, "owner_IsStaff", "owner", "IsStaff")
+add_index(dbo, "owner_IsVet", "owner", "IsVet")
+add_index(dbo, "owner_IsVolunteer", "owner", "IsVolunteer")
+add_index(dbo, "ownerdonation_DateDue", "ownerdonation", "DateDue")

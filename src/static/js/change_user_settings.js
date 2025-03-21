@@ -78,10 +78,16 @@ $(function() {
                     { post_field: "locale", label: _("Locale"), type: "select", classes: "asm-iconselectmenu", 
                         options: '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>' + 
                             this.two_pair_options(controller.locales, true), colclasses: "bottomborder" },
-                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", options: change_user_settings.quicklink_options(), colclasses: "bottomborder" },
-                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
                     { post_field: "shelterview", label: _("Shelter view"), type: "select", 
                         options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
+                    { post_field: "defaultlocationid", label: _("Default stock location"), type: "select", 
+                        options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
+                    { post_field: "defaultstockusagetypeid", label: _("Default stock usage type"), type: "select", 
+                        options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
+                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", 
+                        options: change_user_settings.quicklink_options(), colclasses: "bottomborder" },
+                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", 
+                         options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
                     { rowid: "signaturerow", type: "raw", label: _("Signature"), markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' },
                     { post_field: "button-enable2fa", type: "raw", label: _("Two factor authentication (2FA)"), 
                         markup: '<input id="enabletotp" data="enabletotp" type="hidden" val="0" />' +
@@ -166,6 +172,8 @@ $(function() {
             $(".enable2fa, .disable2fa").hide();
             $("#button-enable2fa").toggle(u.ENABLETOTP == 0);
             $("#button-disable2fa").toggle(u.ENABLETOTP == 1);
+            $("#defaultlocationid").select("value", config.integer(asm.user + "_DefaultStockLocationID") );
+            $("#defaultstockusagetypeid").select("value", config.integer(asm.user + "_DefaultStockUsageTypeID") );
             let userql = config.str(asm.user + "_QuicklinksID");
             if (userql == "") { userql = config.str("QuicklinksID"); }
             let ql = userql.split(",");

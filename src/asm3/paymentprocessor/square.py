@@ -51,7 +51,8 @@ class Square(PaymentProcessor):
         access_token = asm3.configuration.square_access_token(self.dbo)
         squenv = asm3.sitedefs.SQUARE_PAYMENT_ENVIRONMENT
         body = {
-            "idempotency_key": payref,
+            # NOTE: We used to use payref here, but square will prevent you loading the checkout again for the same payment
+            "idempotency_key": asm3.utils.uuid_b64(), 
             "quick_pay": {
                 "name": item_description,
                 "price_money": {
@@ -96,6 +97,16 @@ class Square(PaymentProcessor):
             return s
         else: 
             asm3.al.error(f"Failed creating Square payment [got {response}]", "square.checkoutPage", self.dbo)
+            s = "<DOCTYPE html>\n" \
+            "<html>\n" \
+            "<head>\n" \
+            "</head>\n" \
+            "<body>\n" \
+            "<h1>ERROR</h1>\n" \
+            f"<p>{response}</p>\n" \
+            "</body>\n" \
+            "</html>"
+            return s
 
     def receive(self, rawdata: str) -> None:
         """ 

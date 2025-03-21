@@ -1110,6 +1110,7 @@ class AbstractPublisher(threading.Thread):
         """
         Logs a message
         """
+        msg = "%s %s" % (asm3.i18n.format_date(self.dbo.now(), "%Y-%m-%d %H:%M:%S"), msg)
         self.logBuffer.append(msg)
 
     def logError(self, msg: str, ie: Any = None) -> None:
