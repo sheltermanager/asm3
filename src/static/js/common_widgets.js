@@ -796,13 +796,19 @@ $.widget("asm.createpayment", {
             '<td></td>',
             '<td><input id="pm-vat" data="vat" type="checkbox" class="asm-checkbox asm-field" /> <label for="pm-vat">' + _("Sales Tax") + '</label></td>',
             '</tr>',
+
             '<tr class="paymentsalestax">',
+            '<td><label for="pm-vatratechoice">' + _("Tax Rate") + '</label></td>',
+            '<td><select id="pm-vatratechoice" data="vatratechoice" class="asm-selectbox" /></select></td>',
+            '</tr>',
+
+            '<tr style="display: none;">',
             '<td><label for="pm-vatrate">' + _("Tax Rate %") + '</label></td>',
             '<td><input id="pm-vatrate" data="vatrate" type="text" class="asm-numberbox asm-field" /></td>',
             '</tr>',
             '<tr class="paymentsalestax">',
             '<td><label for="pm-vatamount">' + _("Tax Amount") + '</label></td>',
-            '<td><input id="pm-vatamount" data="vatamount" type="text" class="asm-currencybox asm-field" /></td>',
+            '<td><input id="pm-vatamount" data="vatamount" type="text" class="asm-currencybox asm-textbox asm-field" /></td>',
             '</tr>',
             '</table>',
             '</td>',
@@ -825,7 +831,7 @@ $.widget("asm.createpayment", {
             "class": "asm-dialog-actionbutton",
             click: function() {
                 validate.reset("dialog-payment");
-                if (!validate.notblank(["paymentdue"])) { return; }
+                if (!validate.notblank(["pm-due"])) { return; }
                 let o = self.options.o;
                 let formdata = "mode=create&";
                 formdata += $("#dialog-payment .asm-field").toPOST();
@@ -850,21 +856,26 @@ $.widget("asm.createpayment", {
         });
         $("#pm-vat").change(function() {
             if ($(this).is(":checked")) {
-                $("#pm-vatrate").val(config.number("VATRate"));
                 if (!config.bool("VATExclusive")) {
-                    $("#pm-vatamount").currency("value", common.tax_from_inclusive($("#pm-amount").currency("value"), config.number("VATRate")));
+                    $("#pm-vatamount").currency("value", common.tax_from_inclusive($("#pm-amount").currency("value"), $("#pm-vatrate").val()));
                 }
                 else {
-                    $("#pm-vatamount").currency("value", common.tax_from_exclusive($("#pm-amount").currency("value"), config.number("VATRate")));
+                    $("#pm-vatamount").currency("value", common.tax_from_exclusive($("#pm-amount").currency("value"), $("#pm-vatrate").val()));
                     $("#pm-amount").currency("value", $("#pm-amount").currency("value") + $("#pm-vatamount").currency("value"));
                 }
                 $("#dialog-payment .paymentsalestax").fadeIn();
-            }
-            else {
+            } else {
                 $("#pm-vatamount").currency("value", "0");
                 $("#pm-vatrate").val("0"); 
                 $("#dialog-payment .paymentsalestax").fadeOut();
             }
+        });
+        $("#pm-amount").change(function() {
+            $("#pm-vat").change();
+        });
+        $("#pm-vatratechoice").change(function() {
+            $("#pm-vatrate").val($("#pm-vatratechoice").val().split("|")[1]);
+            $("#pm-vat").change();
         });
     },
 
@@ -906,8 +917,25 @@ $.widget("asm.createpayment", {
         $("#pm-vatamount").currency("value", o.vatamount || 0);
         $("#pm-comments").html( o.comments );
         $("#pm-due").date("today");
-        $("#dialog-payment .paymentsalestax").toggle(o.vat);
+        $("#pm-vat").change();
+        let vatrates = [];
+        let defaulttaxrateval = "";
+        $.each(controller.taxrates, function(taxratecount, taxrate) {
+            let optval = taxrate.ID + "|" + taxrate.TAXRATE;
+            if (taxrate.ID == config.integer("AFDefaultTaxRate")) {
+                defaulttaxrateval = optval;
+            }
+            vatrates.push({ID: optval, TAXRATENAME: taxrate.TAXRATENAME});
+        });
+        let vatrateoptions = html.list_to_options(vatrates, "ID", "TAXRATENAME" );
+        $("#pm-vatratechoice").html(vatrateoptions);
+        if (defaulttaxrateval != "") {
+            $("#pm-vatratechoice").val(defaulttaxrateval);
+        }
+        $("#pm-vat").change();
+        $("#pm-vatratechoice").change();
         $("#dialog-payment").dialog("open");
+        
     }
 });
 
@@ -1249,12 +1277,12 @@ $.widget("asm.payments", {
             '</tbody>',
             '<tfoot id="paymenttotals">',
             '<tr>',
-            '<td><button class="takepayment">' + _("Take another payment") + '</button>',
+            '<td colspan="3"><button class="takepayment">' + _("Take another payment") + '</button>',
             '<a class="takepayment" href="#">' + _("Take another payment") + '</a></td>',
             '<td class="overridedates"></td>',
             '<td class="overridedates"></td>',
-            '<td></td>',
-            '<td></td>',
+            //'<td></td>',
+            //'<td></td>',
             '<td class="quantities"></td>',
             '<td class="quantities"></td>',
             '<td class="rightalign strong" id="totalamount"></td>',
@@ -1283,7 +1311,7 @@ $.widget("asm.payments", {
         let h = [
             '<tr>',
             '<td>',
-            '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox">',
+            '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox asm-halfselectbox">',
             html.list_to_options(this.options.controller.donationtypes, "ID", "DONATIONNAME"),
             '</select>',
             '</td>',
@@ -1311,7 +1339,7 @@ $.widget("asm.payments", {
             '<input id="amount{i}" data="amount{i}" class="rightalign amount asm-currencybox asm-textbox asm-halftextbox" />',
             '</td>',
             '<td class="overrideaccount">',
-            '<select id="destaccount{i}" data="destaccount{i}" class="asm-selectbox">',
+            '<select id="destaccount{i}" data="destaccount{i}" class="asm-selectbox asm-halfselectbox">',
             html.list_to_options(this.options.controller.accounts, "ID", "CODE"),
             '</select>',
             '</td>',
@@ -1322,8 +1350,11 @@ $.widget("asm.payments", {
             '<td class="vat centered nowrap">',
             '<input id="vat{i}" data="vat{i}" type="checkbox" class="asm-checkbox" />',
             '<span id="vatboxes{i}" style="display: none">',
-            '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" /> %',
-            '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
+            '<select id="vatratechoice{i}" data="destaccount{i}" class="asm-selectbox asm-halfselectbox">',
+            html.list_to_options(this.options.controller.taxrates, "ID", "TAXRATENAME"),
+            '</select>',
+            '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" style="display: none;" />',
+            '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" disabled="disabled" />',
             '</span>',
             '</td>',
             '<td>',
@@ -1358,12 +1389,27 @@ $.widget("asm.payments", {
             self.update_totals();
         });
         // Recalculate when amount or VAT changes
-        $("#amount" + i + ", #vatamount" + i).change(function() {
-            self.update_totals(); 
+        $("#amount" + i).change(function() {
+            $("#vatratechoice" + i).change();
+            //self.update_totals();
+        });
+        $("#vatratechoice" + i).change(function() {
+            let taxrate = 0.0;
+            taxrate = common.get_field(self.options.controller.taxrates, $("#vatratechoice" + i).val(), "TAXRATE");
+            console.log("taxrate = " + taxrate);
+            $("#vatrate" + i).val(taxrate);
+            if (!config.bool("VATExclusive")) {
+                $("#vatamount" + i).currency("value", common.tax_from_inclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
+            }
+            else {
+                $("#vatamount" + i).currency("value", common.tax_from_exclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
+            }
+            self.update_totals();
         });
         // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
         $("#vat" + i).change(function() {
             if ($(this).is(":checked")) {
+                
                 $("#vatrate" + i).val(config.number("VATRate"));
                 if (!config.bool("VATExclusive")) {
                     $("#vatamount" + i).currency("value", 
@@ -1374,12 +1420,14 @@ $.widget("asm.payments", {
                         common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
                     $("#amount" + i).currency("value", $("#amount" + i).currency("value") + $("#vatamount" + i).currency("value"));
                 }
+                $("#vatratechoice" + i).val(config.number("AFDefaultTaxRate"));
                 $("#vatboxes" + i).fadeIn();
             }
             else {
                 $("#vatrate" + i + ", #vatamount" + i).val("0");
                 $("#vatboxes" + i).fadeOut();
             }
+            $("#vatratechoice" + i).change();
             self.update_totals();
         });
         // Set the default for our new payment type

@@ -26,7 +26,7 @@ $(function() {
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
-                    { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
+                    { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date", validation: "notblank" },
                     { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
                     { json_field: "QUANTITY", post_field: "quantity", label: _("Quantity"), type: "number", 
                         hideif: function() { return !config.bool("DonationQuantities"); } },
@@ -46,8 +46,10 @@ $(function() {
                     { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
+                    { post_field: "vatratechoice", label: _("Tax Rate"), type: "select", options: { displayfield: "TAXRATENAME", valuefield: "ID", rows: controller.taxrates }, 
+                        defaultval: config.str("AFDefaultTaxRate"), hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate %"), type: "number", 
-                        hideif: function() { return !config.bool("VATEnabled"); } },
+                    defaultval: 0, hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "VATAMOUNT", post_field: "vatamount", label: _("Tax Amount"), type: "currency",
                         hideif: function() { return !config.bool("VATEnabled"); } },
                     { type: "nextcol" },
@@ -71,6 +73,8 @@ $(function() {
                     $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
                     $("#receiptnumberrow").show();
                     $("#receiptnumber").prop("disabled", true);
+                    donations.editmode = true;
+                    $("#vatratechoicerow").hide();
                     if (row.ISVAT == 1) {
                         $("#vatraterow").show();
                         $("#vatamountrow").show();
@@ -185,8 +189,16 @@ $(function() {
                                 $("#receiptnumber").val("");
                                 $("#receiptnumberrow").hide();
                                 donations.type_change();
+                                $("#vatratechoicerow").hide();
                                 $("#vatraterow").hide();
                                 $("#vatamountrow").hide();
+                                donations.editmode = false;
+                                if (config.bool("VATEnabled")) {
+                                    $("#vat").prop("checked", true);
+                                } else {
+                                    $("#vat").prop("checked", false);
+                                }
+                                $("#vat").change();
                             }
                         });
                     } 
@@ -484,22 +496,51 @@ $(function() {
 
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
-                    $("#vatrate").val(config.number("VATRate"));
-                    if (!config.bool("VATExclusive")) {
-                        $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), config.number("VATRate")));
+                    //$("#vatratechoice").val(config.str("AFDefaultTaxRate"));
+                    if (donations.editmode == false) {
+                        $("#vatratechoice").change();
+                        $("#vatratechoicerow").fadeIn();
+                        $("#vatraterow").fadeOut();
+                    } else {
+                        $("#vatraterow").fadeIn();
                     }
-                    else {
-                        $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), config.number("VATRate")));
-                        $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
-                    }
-                    $("#vatraterow").fadeIn();
+                    
                     $("#vatamountrow").fadeIn();
                 }
                 else {
                     $("#vatamount").currency("value", "0");
                     $("#vatrate").val("0"); 
+                    $("#vatratechoicerow").fadeOut();
                     $("#vatraterow").fadeOut();
                     $("#vatamountrow").fadeOut();
+                }
+            });
+
+            $("#vatrate").change(function() {
+                if (!config.bool("VATExclusive")) {
+                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
+                }
+                else {
+                    $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
+                    $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
+                }
+            });
+
+            $("#vatratechoice").change(function() {
+                let taxrate = 0.0;
+                $.each(controller.taxrates, function(trcount, tr) {
+                    if (tr.ID == $("#vatratechoice").val()) {
+                        taxrate = tr.TAXRATE;
+                        return false;
+                    }
+                });
+                $("#vatrate").val(taxrate);
+                if (!config.bool("VATExclusive")) {
+                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
+                }
+                else {
+                    $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
+                    //$("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
                 }
             });
 

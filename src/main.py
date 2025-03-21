@@ -1989,7 +1989,8 @@ class animal_clinic(JSONEndpoint):
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
-            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class animal_costs(JSONEndpoint):
@@ -2110,7 +2111,8 @@ class animal_donations(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "payment")
+            "templates": asm3.template.get_document_templates(dbo, "payment"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class animal_embed(ASMEndpoint):
@@ -2931,6 +2933,7 @@ class clinic_consultingroom(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": rows
         }
 
@@ -2954,6 +2957,7 @@ class clinic_waitingroom(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": rows
         }
 
@@ -3647,6 +3651,7 @@ class donation(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo, "payment"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": donations
         }
 
@@ -3744,7 +3749,8 @@ class donation_receive(JSONEndpoint):
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "accounts": asm3.financial.get_accounts(dbo, onlybank=True)
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -4386,7 +4392,8 @@ class licence_renewal(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "licencetypes": asm3.lookups.get_licence_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "accounts": asm3.financial.get_accounts(dbo, onlybank=True)
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_all(self, o):
@@ -4496,6 +4503,7 @@ class lookups(JSONEndpoint):
             "namelabel": table[2],
             "descfield": table[3].upper(),
             "hasspecies": "species" in modifiers,
+            "hastaxrate": "taxrate" in modifiers,
             "haspfspecies": "pubspec" in modifiers,
             "haspfbreed": "pubbreed" in modifiers,
             "hasapcolour": "pubcol" in modifiers,
@@ -5164,7 +5172,8 @@ class move_adopt(JSONEndpoint):
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "templatesemail": asm3.template.get_document_templates(dbo, "email")
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -5511,7 +5520,8 @@ class move_reclaim(JSONEndpoint):
             "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RECLAIMED),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
-            "paymentmethods": asm3.lookups.get_payment_methods(dbo)
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -5544,7 +5554,8 @@ class move_reserve(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo)
+            "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -6280,6 +6291,7 @@ class person_clinic(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": rows
         }
 
@@ -6320,11 +6332,13 @@ class person_donations(JSONEndpoint):
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "name": "person_donations",
             "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo), 
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo, "payment"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": donations
         }
 
@@ -6734,7 +6748,7 @@ class product(JSONEndpoint):
         return {
             "productid": productid,
             "producttypes": asm3.stock.get_product_types(dbo),
-            "taxrates": asm3.stock.get_tax_rates(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "units": asm3.lookups.get_unit_types(dbo),

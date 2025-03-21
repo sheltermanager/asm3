@@ -23,7 +23,7 @@ $(function() {
                     { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text",
                         callout: _("A unique identifier that may be used to link this product with an external POS system") },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
-                    { json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "select", 
+                    { json_field: "TAXRATE", post_field: "taxrateid", label: _("Tax Rate"), type: "select", 
                         options: { rows: controller.taxrates, displayfield: "TAXRATENAME" }, validation: "notnull" },
                     { json_field: "ACTIVE", post_field: "active", label: _("Active"), type: "select", 
                         options: { rows: controller.yesno, displayfield: "NAME" }, defaultval: "1" },
@@ -204,14 +204,6 @@ $(function() {
 
         new_product: function() { 
             let dialog = product.dialog, table = product.table;
-            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#producttypeid, #taxrateid, #purchaseunittypeid, #unittypeid").val(0);
-            $("#unitratio").val(1);
-            $("#custompurchaseunitrow").fadeOut();
-            $("#customunitrow").fadeOut();
-            $("#unitratiorow").fadeOut();
-            $("#producttypeid").val(config.integer("StockDefaultProductTypeID"));
-            $("#taxrateid").val(config.integer("StockDefaultTaxRateID"));
 
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -231,7 +223,14 @@ $(function() {
                         });
                 },
                 onload: function() {
-                    
+                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                    $("#producttypeid, #purchaseunittypeid, #unittypeid").val(0);
+                    $("#unitratio").val(1);
+                    $("#custompurchaseunitrow").fadeOut();
+                    $("#customunitrow").fadeOut();
+                    $("#unitratiorow").fadeOut();
+                    $("#producttypeid").val(config.integer("StockDefaultProductTypeID"));
+                    $("#taxrateid").val(config.integer("AFDefaultTaxRate"));
                 }
             });
         },

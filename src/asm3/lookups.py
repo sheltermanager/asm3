@@ -26,6 +26,7 @@ import re
 #   units - has Units column (internallocation)
 #   site - has SiteID column (internallocation)
 #   vat - has an IsVAT column (donationtype)
+#   taxrate - has a TaxRate column
 LOOKUP_TABLES = {
     "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",)),
     "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", ""),
@@ -69,7 +70,7 @@ LOOKUP_TABLES = {
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
-    "lktaxrate":        (_("Tax Rate"), "TaxRateName", _("Name"), _("Description"), "add del ret", ("lktaxrate.TaxRate",)),
+    "lktaxrate":        (_("Tax Rate"), "TaxRateName", _("Name"), _("Description"), "add del ret taxrate", ("lktaxrate.TaxRate",)),
     "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost sched", ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
     "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
@@ -1355,7 +1356,8 @@ def get_urgency_name(dbo: Database, uid: int) -> str:
     return dbo.query_string("SELECT Urgency FROM lkurgency WHERE ID = ?", [uid])
 
 def get_tax_rates(dbo: Database) -> Results:
-    return dbo.query("SELECT * FROM lktaxrate ORDER BY TaxRateName")
+    #return dbo.query("SELECT ID, TaxRateName || ' (' || TaxRate || '%)' AS TaxRateName, TaxRate FROM lktaxrate ORDER BY TaxRateName")
+    return dbo.query("SELECT ID, %s, TaxRate FROM lktaxrate ORDER BY TaxRateName" % dbo.sql_concat([ "TaxRateName", "' ('", "TaxRate", "'%'" ]))
 
 def get_test_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM testtype ORDER BY TestName")

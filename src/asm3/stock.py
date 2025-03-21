@@ -129,12 +129,6 @@ def get_product_types(dbo: Database) -> Results:
     """
     return dbo.query("SELECT * FROM lkproducttype ORDER BY ProductTypeName")
 
-def get_tax_rates(dbo: Database) -> Results:
-    """
-    Returns all tax rates
-    """
-    return dbo.query("SELECT * FROM lktaxrate ORDER BY TaxRateName")
-
 def get_stocklevels(dbo: Database, location: int = 0) -> Results:
     """
     Returns a set of stock levels for a location or 0 for all locations.

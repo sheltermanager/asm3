@@ -142,6 +142,11 @@ $(function() {
                     { field: "SPECIESNAME", display: _("Species"), hideif: function(row) {
                         return !controller.hasspecies;
                     }},
+                    { field: "TAXRATE", display: _("Tax Rate"), hideif: function(row) {
+                        return !controller.hastaxrate;
+                    }, formatter: function(row) {
+                        return parseFloat(row.TAXRATE);
+                    }},
                     { field: "PUBLISHER", display: _("Publisher"), hideif: function(row) {
                         if (!(controller.haspfspecies || controller.haspfbreed || controller.hasapcolour)) { return true; }
                         if ($.inArray(asm.locale, lookups.publisher_locales) == -1) { return true; }
