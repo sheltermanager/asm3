@@ -2078,3 +2078,109 @@ $.fn.asmcontent = function(type) {
         $(this).show("slide", {direction: 'left'}, common.fx_speed);
     });
 };
+
+$.widget("asm.asmsignature", {
+    options: {
+        guideline: false,
+        value: ''
+    },
+    _create: function() {
+        let self = this;
+        this.element.hide();
+        let id = "asmsign-" + this.element[0].id;
+        let guideline = this.options.guideline;
+        this.element.after([
+            '<div id=' + id + '>',
+                '<div>', 
+                    '<button class="button-asmsignchange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
+                    '<span class="asmsigntools" style="display: none;">', 
+                        '<label>' + _("Draw") + '<input class="asmsigndraw" name="asmsigntype" type="radio" checked></label> ', 
+                        '<label>' + _("Text") + '<input class="asmsigntext" name="asmsigntype" type="radio"></label> ', 
+                        '<input type="text" class="asmsigntextinput" placeholder="' + _("Signature text") + '" style="margin-left: 10px;display: none;">', 
+                    '</span>', 
+                '</div>',
+                '<div class="asmsignimg"><img src="' + this.options.value + '" style="width: 500px; height: 200px;"></div>', 
+                '<div style="width: 500px; max-height: 200px;">', 
+                    '<canvas class="asmsigncanvas" style="width: 500px; height: 200px;display: none;"></canvas>', 
+                '</div>', 
+                '<div class="asmsignwidget" style="width: 500px; height: 200px;display: none;"></div>', 
+            '</div>'
+        ].join("\n"));
+        $("#" + id + " .asmsignwidget").signature({ guideline: this.options.guideline });
+        $("#" + id + " .button-asmsignchange")
+            .button({ icons: { primary: "ui-icon-pencil" }, text: false })
+            .click(function() {
+                $("#" + id + " .asmsignwidget").signature("clear");
+                let canvas = $("#" + id + " .asmsigncanvas")[0];
+                let ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                $("#" + id + " .asmsigntextinput").val("");
+                $("#" + id + " .asmsignimg").hide();
+                $("#" + id + " .asmsigntools").show();
+                $("#" + id + " .asmsignwidget").show();
+            });
+        $("#" + id + " .asmsigndraw").change(function() {
+            $("#" + id + " .asmsigntextinput").hide();
+            $("#" + id + " .asmsignwidget").show();
+            $("#" + id + " .asmsigncanvas").hide();
+        });
+        $("#" + id + " .asmsigntext").change(function() {
+            $("#" + id + " .asmsigntextinput").show();
+            $("#" + id + " .asmsignwidget").hide();
+            let canvas = $("#" + id + " .asmsigncanvas")[0];
+            let ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (guideline) {
+                ctx.beginPath();
+                ctx.moveTo(6, 112);
+                ctx.lineTo(294, 112);
+                ctx.strokeStyle = "#a0a0a0";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.closePath();
+            }
+            $("#" + id + " .asmsigncanvas").show();
+            $("#" + id + " .asmsigntextinput").focus();
+        });
+        $("#" + id + " .asmsigntextinput").keyup(function() {
+            let canvas = $("#" + id + " .asmsigncanvas")[0];
+            let ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (guideline) {
+                ctx.beginPath();
+                ctx.moveTo(6, 112);
+                ctx.lineTo(294, 112);
+                ctx.strokeStyle = "#a0a0a0";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.closePath();
+            }
+            ctx.fillStyle = "black";
+            let siglength = $("#" + id + " .asmsigntextinput").val().length;
+            let fontsize = 60;
+            if ( siglength > 20 ) { 
+                fontsize = 26 - ( siglength * 0.33 );
+            } else if ( siglength > 8 ) { 
+                fontsize = 60 - ( siglength * 1.7 ) ;
+            }
+            ctx.font = fontsize + "px cursive";
+            ctx.fillText($("#" + id + " .asmsigntextinput").val(),10,100,500);
+        });
+        
+    },
+    value: function() {
+        let id = "asmsign-" + this.element[0].id;
+        if ($("#" + id + " .asmsigntools").css("display") == "none") {
+            return "";
+        }
+        let canvas = $("#" + id + " .asmsigncanvas");
+        if ($("#" + id + " .asmsigndraw").prop("checked") == true ) {
+            canvas = $("#" + id + " .asmsignwidget canvas");
+        }
+        return canvas.get(0).toDataURL("image/png");
+    }
+});

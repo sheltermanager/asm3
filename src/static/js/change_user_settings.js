@@ -80,17 +80,15 @@ $(function() {
                             this.two_pair_options(controller.locales, true), colclasses: "bottomborder" },
                     { post_field: "shelterview", label: _("Shelter view"), type: "select", 
                         options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
-                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", options: change_user_settings.quicklink_options(), colclasses: "bottomborder" },
-                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
-                   
                     { post_field: "defaultlocationid", label: _("Default stock location"), type: "select", 
                         options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
                     { post_field: "defaultstockusagetypeid", label: _("Default stock usage type"), type: "select", 
                         options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
-                    { rowid: "signaturerow", type: "raw", label: _("Signature"), 
-                        xlabel: ' <button id="button-change" type="button" style="vertical-align: middle">' + _("Clear and sign again") + '</button>',
-                        markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' +
-                            '<img id="existingsig" style="display: none; border: 0" />' },
+                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", 
+                        options: change_user_settings.quicklink_options(), colclasses: "bottomborder" },
+                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", 
+                         options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
+                    { rowid: "signaturerow", type: "raw", label: _("Signature"), markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' },
                     { post_field: "button-enable2fa", type: "raw", label: _("Two factor authentication (2FA)"), 
                         markup: '<input id="enabletotp" data="enabletotp" type="hidden" val="0" />' +
                             '<button id="button-enable2fa">' + _("Enable 2FA") + '</button>' +
@@ -110,29 +108,14 @@ $(function() {
         },
 
         bind: function() {
-
-            try {
-                $("#signature").signature({ guideline: true });
-                $("#button-change")
-                    .button({ icons: { primary: "ui-icon-pencil" }, text: false })
-                    .click(function() {
-                        $("#existingsig").hide();
-                        $("#signature").show();
-                        $("#signature").signature("clear");
-                    });
-            }
-            catch (excanvas) {
-                log.error("failed creating signature canvas");   
-            }
+            $("#signature").asmsignature({ guideline: true, value: controller.user.SIGNATURE });
 
             $("#button-save").button().click(async function() {
                 $(".asm-content button").button("disable");
                 header.show_loading();
                 let formdata = $("input, select").toPOST();
                 try {
-                    if (!$("#signature").signature("isEmpty")) {
-                        formdata += "&signature=" + encodeURIComponent($("#signature canvas").get(0).toDataURL("image/png"));
-                    }
+                    formdata += "&signature=" + encodeURIComponent($("#signature").asmsignature("value"));
                 } catch (excanvas) {
                     log.error("failed reading signature canvas", excanvas);
                 }
