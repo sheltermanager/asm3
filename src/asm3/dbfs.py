@@ -266,7 +266,7 @@ class S3Storage(DBFSStorage):
                 asm3.utils.send_error_email("DBFSError", ">5 PUT attempts", "dbfs", f"Failed to store {key} in {bucket} after 5 attempts [{self.dbo.name()}]")
                 # If a backup folder has been specified, save the file there so that it
                 # can be retried later
-                if DBFS_S3_BACKUP_FOLDER == "":
+                if DBFS_S3_BACKUP_FOLDER != "":
                     asm3.utils.mkdir(DBFS_S3_BACKUP_FOLDER)
                     fname = key.replace("/", "-")
                     asm3.utils.write_binary_file(f"{DBFS_S3_BACKUP_FOLDER}/{fname}", body)
