@@ -564,12 +564,15 @@ def update_animalcontrol_followupnow(dbo: Database, acid: int, username: str) ->
     Updates an animal control incident record, marking it followed up now
     """
     for acdata in dbo.query("SELECT FollowupDateTime, FollowupDateTime2, FollowupDateTime3 FROM animalcontrol WHERE ID = %d" % (acid)):
-        for followupdatetime, followupcomplete in (
-            ("FOLLOWUPDATETIME", "FOLLOWUPCOMPLETE"), ("FOLLOWUPDATETIME2", "FOLLOWUPCOMPLETE2"), ("FOLLOWUPDATETIME3", "FOLLOWUPCOMPLETE3")
+        for followupdatetime, followupcomplete, followupaco in (
+            ("FOLLOWUPDATETIME", "FOLLOWUPCOMPLETE", "FOLLOWUPACO"), 
+            ("FOLLOWUPDATETIME2", "FOLLOWUPCOMPLETE2", "FOLLOWUPACO2"), 
+            ("FOLLOWUPDATETIME3", "FOLLOWUPCOMPLETE3", "FOLLOWUPACO3")
             ):
             if not acdata[followupdatetime]:
                 dbo.update("animalcontrol", acid, {
                     followupdatetime: dbo.now(),
+                    followupaco: username,
                     followupcomplete: 1
                 }, username)
                 break
@@ -607,10 +610,13 @@ def update_animalcontrol_from_form(dbo: Database, post: PostedData, username: st
         "DispatchedACO":        post["dispatchedaco"],
         "DispatchDateTime":     post.datetime("dispatchdate", "dispatchtime"),
         "RespondedDateTime":    post.datetime("respondeddate", "respondedtime"),
+        "FollowupACO":          post["followupaco"],
         "FollowupDateTime":     post.datetime("followupdate", "followuptime"),
         "FollowupComplete":     post.boolean("followupcomplete"),
+        "FollowupACO2":         post["followupaco2"],
         "FollowupDateTime2":    post.datetime("followup2date", "followup2time"),
         "FollowupComplete2":    post.boolean("followupcomplete2"),
+        "FollowupACO3":         post["followupaco3"],
         "FollowupDateTime3":    post.datetime("followup3date", "followup3time"),
         "FollowupComplete3":    post.boolean("followupcomplete3"),
         "CompletedDate":        post.datetime("completeddate", "completedtime"),
