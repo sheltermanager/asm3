@@ -808,7 +808,7 @@ $.widget("asm.createpayment", {
             '</tr>',
             '<tr class="paymentsalestax">',
             '<td><label for="pm-vatamount">' + _("Tax Amount") + '</label></td>',
-            '<td><input id="pm-vatamount" data="vatamount" type="text" class="asm-currencybox asm-field" /></td>',
+            '<td><input id="pm-vatamount" data="vatamount" type="text" class="asm-currencybox asm-textbox asm-field" /></td>',
             '</tr>',
             '</table>',
             '</td>',
@@ -917,7 +917,6 @@ $.widget("asm.createpayment", {
         $("#pm-vatamount").currency("value", o.vatamount || 0);
         $("#pm-comments").html( o.comments );
         $("#pm-due").date("today");
-        //$("#dialog-payment .paymentsalestax").toggle(o.vat); # Took this out as it was overiding new behaviour
         $("#pm-vat").change();
         let vatrates = [];
         let defaulttaxrateval = "";
@@ -1354,8 +1353,8 @@ $.widget("asm.payments", {
             '<select id="vatratechoice{i}" data="destaccount{i}" class="asm-selectbox asm-halfselectbox">',
             html.list_to_options(this.options.controller.taxrates, "ID", "TAXRATENAME"),
             '</select>',
-            '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" style="display: none;" /> %',
-            '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
+            '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" style="display: none;" />',
+            '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" disabled="disabled" />',
             '</span>',
             '</td>',
             '<td>',
@@ -1390,17 +1389,14 @@ $.widget("asm.payments", {
             self.update_totals();
         });
         // Recalculate when amount or VAT changes
-        $("#amount" + i + ", #vatamount" + i).change(function() {
-            self.update_totals(); 
+        $("#amount" + i).change(function() {
+            $("#vatratechoice" + i).change();
+            //self.update_totals();
         });
         $("#vatratechoice" + i).change(function() {
             let taxrate = 0.0;
-            $.each(self.options.controller.taxrates, function(trcount, tr) {
-                if (tr.ID == $("#vatratechoice" + i).val()) {
-                    taxrate = tr.TAXRATE;
-                    return false;
-                }
-            });
+            taxrate = common.get_field(self.options.controller.taxrates, $("#vatratechoice" + i).val(), "TAXRATE");
+            console.log("taxrate = " + taxrate);
             $("#vatrate" + i).val(taxrate);
             if (!config.bool("VATExclusive")) {
                 $("#vatamount" + i).currency("value", common.tax_from_inclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
@@ -1408,7 +1404,7 @@ $.widget("asm.payments", {
             else {
                 $("#vatamount" + i).currency("value", common.tax_from_exclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
             }
-            $("#amount" + i).change();
+            self.update_totals();
         });
         // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
         $("#vat" + i).change(function() {
