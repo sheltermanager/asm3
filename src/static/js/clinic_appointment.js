@@ -62,7 +62,6 @@ $(function() {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     clinic_appointment.dialog_row = row;
                     clinic_appointment.show_person_animals(false);
-                    clinic_appointment.editmode = true;
                     $("#vat").change();
                     $("#vatratechoicerow").hide();
                     try {
@@ -201,7 +200,6 @@ $(function() {
                                 clinic_appointment.show_person_animals(false);
 
                             }
-                            clinic_appointment.editmode = false;
                             if (config.bool("VATEnabled")) {
                                 $("#vat").prop("checked", true);
                             } else {
@@ -431,7 +429,8 @@ $(function() {
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
                     $("#vatratechoice").val(config.str("AFDefaultTaxRate"));
-                    if (clinic_appointment.editmode == false) {
+                    if (tableform.dialog_state == 1) {
+                        // add dialog mode
                         $("#vatratechoice").change();
                         $("#vatratechoicerow").fadeIn();
                         $("#vatraterow").fadeOut();
