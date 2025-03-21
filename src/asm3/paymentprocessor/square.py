@@ -51,7 +51,8 @@ class Square(PaymentProcessor):
         access_token = asm3.configuration.square_access_token(self.dbo)
         squenv = asm3.sitedefs.SQUARE_PAYMENT_ENVIRONMENT
         body = {
-            "idempotency_key": payref,
+            # NOTE: We used to use payref here, but square will prevent you loading the checkout again for the same payment
+            "idempotency_key": asm3.utils.uuid_b64(), 
             "quick_pay": {
                 "name": item_description,
                 "price_money": {
