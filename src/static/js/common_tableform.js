@@ -1766,6 +1766,22 @@ const tableform = {
         return tableform._render_formfield(v, d);
     },
 
+    render_tabs: function(l) {
+        let h = [];
+        h.push('<div class="asm-tabbar asm-tabs">');
+        h.push('<ul class="asm-tablist">');
+        $.each(l, function(i, v) {
+            h.push('<li><a href="#tab-' + v.id + '">' + v.title + '</a></li>');
+        });
+        h.push('</ul>');
+        $.each(l, function(i, v) {
+            h.push('<div id="tab-' + v.id + '">');
+            h.push( tableform.fields_render(v.fields ));
+            h.push('</div>');
+        });
+        return h.join("\n");
+    },
+
     render_text: function(v) {
         let d = "";
         tableform._check_id(v);

@@ -1950,7 +1950,7 @@ $(function() {
                 '<div class="asm-toolbar">',
                 '<button id="button-save" title="' + _("Update system options") + '">' + html.icon("save") + ' ' + _("Save") + '</button>',
                 '</div>',
-                '<div id="tabs">',
+                '<div id="tabs" class="asm-tabs">',
                 this.render_tabs(),
                 this.render_shelterdetails(),
                 this.render_accounts(),
@@ -2020,8 +2020,6 @@ $(function() {
             });
 
             // Components
-            $("#tabs").tabs({ show: "slideDown", hide: "slideUp" });
-
             $("#button-save").button("disable");
 
             // Load default values from the config settings

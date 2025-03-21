@@ -1146,7 +1146,7 @@ $(function() {
                 '<div class="asm-toolbar">',
                 '<button id="button-save" title="' + _("Update publishing options") + '">' + html.icon("save") + ' ' + _("Save") + '</button>',
                 '</div>',
-                '<div id="tabs">',
+                '<div id="tabs" class="asm-tabs">',
                 this.render_tabs(),
                 this.render_animalselection(),
                 this.render_allpublishers(),
@@ -1306,9 +1306,6 @@ $(function() {
             if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
             if (!controller.hasvetenvoy) { $(".hasvetenvoy").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
-
-            // Components
-            $("#tabs").tabs({ show: "slideDown", hide: "slideUp" });
 
             // Load default values from the config settings
             $(".cfg").each(function() {

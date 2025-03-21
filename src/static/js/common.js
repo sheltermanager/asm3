@@ -1108,6 +1108,8 @@ const common = {
         $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
         $(".asm-richtextarea").richtextarea();
         $(".asm-table").table();
+        //$(".asm-tabs").tabs({ show: "slideDown", hide: "slideUp" });
+        $(".asm-tabs").tabs();
         if (_ && !$(".asm-bsmselect").attr("title")) {
             $(".asm-bsmselect").attr("title", _("Select"));
         }
