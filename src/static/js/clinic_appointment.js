@@ -295,6 +295,7 @@ $(function() {
                             personname: row.OWNERNAME,
                             donationtypes: controller.donationtypes,
                             paymentmethods: controller.paymentmethods,
+                            taxrates: controller.taxrates,
                             amount: row.AMOUNT,
                             vat: row.ISVAT,
                             vatrate: row.VATRATE,

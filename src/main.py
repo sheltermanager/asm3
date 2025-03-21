@@ -1937,7 +1937,8 @@ class animal_boarding(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
-            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class animal_bulk(JSONEndpoint):
@@ -2543,7 +2544,8 @@ class boarding(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
-            "templates": asm3.template.get_document_templates(dbo, "boarding")
+            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -4513,7 +4515,6 @@ class lookups(JSONEndpoint):
             "hasunits": "units" in modifiers,
             "hassite": "site" in modifiers,
             "hasvat": "vat" in modifiers,
-            "hastaxrate": tablename == "lktaxrate",
             "canadd": "add" in modifiers,
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
@@ -6246,7 +6247,8 @@ class person_boarding(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
-            "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0]
+            "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class person_citations(JSONEndpoint):
@@ -6332,7 +6334,6 @@ class person_donations(JSONEndpoint):
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "name": "person_donations",
             "donationtypes": asm3.lookups.get_donation_types(dbo),
-            "taxrates": asm3.lookups.get_tax_rates(dbo), 
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),

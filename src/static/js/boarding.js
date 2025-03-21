@@ -133,6 +133,7 @@ $(function() {
                             personname: row.OWNERNAME,
                             donationtypes: controller.donationtypes,
                             paymentmethods: controller.paymentmethods,
+                            taxrates: controller.taxrates,
                             chosentype: config.integer("BoardingPaymentType"),
                             amount: row.DAILYFEE * row.DAYS,
                             comments: common.sub_arr(_("{0} - {1} ({2} days at {3})"), [ row.BOARDINGTYPENAME, row.ANIMALNAME, row.DAYS, format.currency(row.DAILYFEE) ])

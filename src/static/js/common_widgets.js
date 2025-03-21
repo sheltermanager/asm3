@@ -920,7 +920,7 @@ $.widget("asm.createpayment", {
         $("#pm-vat").change();
         let vatrates = [];
         let defaulttaxrateval = "";
-        $.each(controller.taxrates, function(taxratecount, taxrate) {
+        $.each(o.taxrates, function(i, taxrate) {
             let optval = taxrate.ID + "|" + taxrate.TAXRATE;
             if (taxrate.ID == config.integer("AFDefaultTaxRate")) {
                 defaulttaxrateval = optval;
