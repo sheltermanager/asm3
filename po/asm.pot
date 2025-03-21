@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-03-12 15:06+0000\n"
+"POT-Creation-Date: 2025-03-21 14:02+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -80,7 +80,7 @@ msgstr ""
 msgid "(everywhere)"
 msgstr ""
 
-#: stock_level.js
+#: product.js stock_level.js
 msgid "(low at {0})"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgstr ""
 msgid ".odt templates are not permitted by the system options."
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "1 - Very low"
 msgstr ""
 
@@ -160,7 +160,7 @@ msgstr ""
 msgid "1. Choose Animal"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "2 - Low"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgstr ""
 msgid "2FA Enabled"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "3 - Medium"
 msgstr ""
 
@@ -192,7 +192,7 @@ msgstr ""
 msgid "3. Capture Photo"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "4 - High"
 msgstr ""
 
@@ -200,7 +200,7 @@ msgstr ""
 msgid "4 weeks"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "5 - Very high"
 msgstr ""
 
@@ -269,10 +269,6 @@ msgstr ""
 
 #: litters.js
 msgid "A unique reference for this litter"
-msgstr ""
-
-#: dbupdate.py
-msgid "A usage type to represent internal stock movements"
 msgstr ""
 
 #: mailmerge.js
@@ -2498,8 +2494,8 @@ msgstr ""
 msgid "Burmilla"
 msgstr ""
 
-#: wordprocessor.py log.js medical.js person_investigation.js animal.js
-#: vaccination.js animal_bulk.js maint_undelete.js diary.js
+#: wordprocessor.py log.js stock_usage.js medical.js person_investigation.js
+#: animal.js vaccination.js animal_bulk.js maint_undelete.js diary.js
 msgid "By"
 msgstr ""
 
@@ -3099,7 +3095,7 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: change_user_settings.js
+#: common_widgets.js
 msgid "Clear and sign again"
 msgstr ""
 
@@ -3549,7 +3545,7 @@ msgstr ""
 msgid "Cow"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "Crate trained"
 msgstr ""
 
@@ -4142,10 +4138,6 @@ msgstr ""
 
 #: change_user_settings.js
 msgid "Default stock usage type"
-msgstr ""
-
-#: options.js
-msgid "Default tax rate"
 msgstr ""
 
 #: options.js
@@ -4823,6 +4815,10 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
+#: common_widgets.js
+msgid "Draw"
+msgstr ""
+
 #: transport.js person_links.js common_html.js header_edit_header.js lookups.js
 #: reports_querybuilder.js
 msgid "Driver"
@@ -5392,7 +5388,7 @@ msgstr ""
 msgid "Ends after"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "Energy level"
 msgstr ""
 
@@ -6271,6 +6267,10 @@ msgstr ""
 msgid "Followup"
 msgstr ""
 
+#: html.py incident.js incident_find_results.js
+msgid "Followup ACO"
+msgstr ""
+
 #: incident_find.js
 msgid "Followup Between"
 msgstr ""
@@ -6805,11 +6805,11 @@ msgstr ""
 msgid "Good With Dogs"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "Good on lead"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "Good traveller"
 msgstr ""
 
@@ -6852,7 +6852,7 @@ msgstr ""
 msgid "Good with dogs"
 msgstr ""
 
-#: shelterview.js animal.js animal_bulk.js
+#: shelterview.js animal.js person.js animal_bulk.js
 msgid "Good with elderly"
 msgstr ""
 
@@ -13080,6 +13080,10 @@ msgstr ""
 msgid "Signature is required"
 msgstr ""
 
+#: common_widgets.js
+msgid "Signature text"
+msgstr ""
+
 #: media.js
 msgid "Signed"
 msgstr ""
@@ -13290,7 +13294,7 @@ msgid "South Russian Ovcharka"
 msgstr ""
 
 #: options.js
-msgid "Spambot protection: Invisible checkbox"
+msgid "Spambot protection: Invisible textbox"
 msgstr ""
 
 #: options.js
@@ -13887,7 +13891,8 @@ msgstr ""
 msgid "Tax Free"
 msgstr ""
 
-#: lookups.py product.js lookups.js
+#: lookups.py clinic_appointment.js donations.js options.js product.js
+#: lookups.js common_widgets.js
 msgid "Tax Rate"
 msgstr ""
 
@@ -13981,7 +13986,7 @@ msgstr ""
 msgid "Tests"
 msgstr ""
 
-#: dbupdate.py onlineform.js common_tableform.js
+#: dbupdate.py onlineform.js common_widgets.js common_tableform.js
 msgid "Text"
 msgstr ""
 
@@ -14963,8 +14968,7 @@ msgstr ""
 msgid "Transfers must have a valid transfer date."
 msgstr ""
 
-#: dbupdate.py onlineform_incoming.js calendarview.js header_edit_header.js
-#: roles.js
+#: onlineform_incoming.js calendarview.js header_edit_header.js roles.js
 msgid "Transport"
 msgstr ""
 
@@ -16253,7 +16257,7 @@ msgid "When receiving payments, allow a transaction fee to be set"
 msgstr ""
 
 #: options.js
-msgid "When receiving payments, allow recording of sales tax with a default rate of"
+msgid "When receiving payments, allow recording of sales tax"
 msgstr ""
 
 #: options.js
@@ -17169,6 +17173,10 @@ msgid "{plural0} potential match for a lost animal"
 msgstr ""
 
 #: main.js
+msgid "{plural0} product has a low balance"
+msgstr ""
+
+#: main.js
 msgid "{plural0} recent publisher run had errors"
 msgstr ""
 
@@ -17364,6 +17372,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} potential matches for lost animals"
+msgstr ""
+
+#: main.js
+msgid "{plural1} products have a low balance"
 msgstr ""
 
 #: main.js
@@ -17565,6 +17577,10 @@ msgid "{plural2} potential matches for lost animals"
 msgstr ""
 
 #: main.js
+msgid "{plural2} products have a low balance"
+msgstr ""
+
+#: main.js
 msgid "{plural2} recent publisher runs had errors"
 msgstr ""
 
@@ -17760,6 +17776,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} potential matches for lost animals"
+msgstr ""
+
+#: main.js
+msgid "{plural3} products have a low balance"
 msgstr ""
 
 #: main.js

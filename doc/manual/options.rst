@@ -977,8 +977,8 @@ In the queue, forms flagged as spam can be easily identified by the spam icon in
 the preview column and deleted in one click using the "Delete Spam" button. 
 
 
-* Spambot protection: Invisible checkbox: Sometimes called a honey trap, forms will
-  add an extra invisible checkbox that only bots can see. If the box is ticked, we
+* Spambot protection: Invisible textbox: Sometimes called a honey trap, forms will
+  add an extra invisible text field that only bots can see. If the box contains a value, we
   know the submission has been filled in by a bot and will be marked as spam.
 
 * Spambot protection: Useragent check: Web browsers all have comment elements to the
