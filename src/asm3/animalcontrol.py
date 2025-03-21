@@ -564,12 +564,15 @@ def update_animalcontrol_followupnow(dbo: Database, acid: int, username: str) ->
     Updates an animal control incident record, marking it followed up now
     """
     for acdata in dbo.query("SELECT FollowupDateTime, FollowupDateTime2, FollowupDateTime3 FROM animalcontrol WHERE ID = %d" % (acid)):
-        for followupdatetime, followupcomplete in (
-            ("FOLLOWUPDATETIME", "FOLLOWUPCOMPLETE"), ("FOLLOWUPDATETIME2", "FOLLOWUPCOMPLETE2"), ("FOLLOWUPDATETIME3", "FOLLOWUPCOMPLETE3")
+        for followupdatetime, followupcomplete, followupaco in (
+            ("FOLLOWUPDATETIME", "FOLLOWUPCOMPLETE", "FOLLOWUPACO"), 
+            ("FOLLOWUPDATETIME2", "FOLLOWUPCOMPLETE2", "FOLLOWUPACO2"), 
+            ("FOLLOWUPDATETIME3", "FOLLOWUPCOMPLETE3", "FOLLOWUPACO3")
             ):
             if not acdata[followupdatetime]:
                 dbo.update("animalcontrol", acid, {
                     followupdatetime: dbo.now(),
+                    followupaco: username,
                     followupcomplete: 1
                 }, username)
                 break
