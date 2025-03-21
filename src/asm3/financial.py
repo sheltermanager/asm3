@@ -1095,7 +1095,7 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
 
     # Is there a tax portion? If so, remove it from the amount before creating
     # the transaction as we're going to do a separate transaction for the tax
-    if d.VATAMOUNT > 0 and not isrefund:
+    if d.VATAMOUNT is not None and d.VATAMOUNT > 0 and not isrefund:
         amount -= d.VATAMOUNT
 
     # Create the transaction
