@@ -2724,11 +2724,12 @@ def get_units_with_availability(dbo: Database, locationid: int) -> List[str]:
     useshortcodes = asm3.configuration.use_short_shelter_codes(dbo)
     for u in units:
         if u == "": continue
-        uname = u.strip().replace("'", "`")
+        uname = u.strip()
+        unamec = uname.replace("'", "`").lower()
         occupant = ""
         # Check for an animal in the unit
         for n in animals:
-            if asm3.utils.nulltostr(n.shelterlocationunit).strip().lower() == uname.strip().lower():
+            if asm3.utils.nulltostr(n.shelterlocationunit).strip().lower() == unamec:
                 if occupant != "": occupant += ", "
                 occupant += useshortcodes and n.shortcode or n.sheltercode
                 occupant += " %s" % n.animalname
