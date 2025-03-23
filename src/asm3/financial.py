@@ -64,7 +64,7 @@ def get_boarding_query(dbo: Database) -> str:
 def get_citation_query(dbo: Database) -> str:
     return "SELECT oc.ID, oc.CitationNumber, oc.CitationTypeID, oc.CitationDate, oc.Comments, ct.CitationName, " \
         "oc.FineAmount, oc.FineDueDate, oc.FinePaidDate, oc.AnimalControlID, " \
-        "oc.OwnerID, oc.CitationNumber, ti.IncidentName, " \
+        "oc.OwnerID, ti.IncidentName, " \
         "oc.CreatedBy, oc.CreatedDate, oc.LastChangedBy, oc.LastChangedDate, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName " \
         "FROM ownercitation oc " \

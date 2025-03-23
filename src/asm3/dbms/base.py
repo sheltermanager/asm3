@@ -644,6 +644,12 @@ class Database(object):
         except Exception as err:
             asm3.al.error(str(err), "Database.query", self, sys.exc_info())
             asm3.al.error("failing sql: %s %s" % (sql, params), "Database.query", self)
+            try:
+                # An error can leave a connection in unusable state, 
+                # rollback any attempted changes.
+                c.rollback()
+            except:
+                pass
             raise err
         finally:
             try:
@@ -692,6 +698,12 @@ class Database(object):
         except Exception as err:
             asm3.al.error(str(err), "Database.query_columns", self, sys.exc_info())
             asm3.al.error("failing sql: %s %s" % (sql, params), "Database.query_columns", self)
+            try:
+                # An error can leave a connection in unusable state, 
+                # rollback any attempted changes.
+                c.rollback()
+            except:
+                pass
             raise err
         finally:
             try:
@@ -742,6 +754,12 @@ class Database(object):
         except Exception as err:
             asm3.al.error(str(err), "Database.query_generator", self, sys.exc_info())
             asm3.al.error("failing sql: %s %s" % (sql, params), "Database.query_generator", self)
+            try:
+                # An error can leave a connection in unusable state, 
+                # rollback any attempted changes.
+                c.rollback()
+            except:
+                pass
             raise err
         finally:
             try:
@@ -794,6 +812,12 @@ class Database(object):
         except Exception as err:
             asm3.al.error(str(err), "Database.query_tuple", self, sys.exc_info())
             asm3.al.error("failing sql: %s %s" % (sql, params), "Database.query_tuple", self)
+            try:
+                # An error can leave a connection in unusable state, 
+                # rollback any attempted changes.
+                c.rollback()
+            except:
+                pass
             raise err
         finally:
             try:
@@ -827,6 +851,12 @@ class Database(object):
         except Exception as err:
             asm3.al.error(str(err), "Database.query_tuple_columns", self, sys.exc_info())
             asm3.al.error("failing sql: %s %s" % (sql, params), "Database.query_tuple_columns", self)
+            try:
+                # An error can leave a connection in unusable state, 
+                # rollback any attempted changes.
+                c.rollback()
+            except:
+                pass
             raise err
         finally:
             try:
