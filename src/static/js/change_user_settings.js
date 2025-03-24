@@ -129,7 +129,7 @@ $(function() {
                 }
                 try {
                     await common.ajax_post("change_user_settings", formdata);
-                    common.route("main", true);
+                    common.route_reload(true); 
                 }
                 catch(err) {
                     log.error(err, err);
