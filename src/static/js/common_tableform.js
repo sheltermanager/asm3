@@ -1776,7 +1776,7 @@ const tableform = {
         h.push('</ul>');
         $.each(l, function(i, v) {
             h.push('<div id="tab-' + v.id + '">');
-            h.push( tableform.fields_render(v.fields ));
+            h.push( tableform.fields_render(v.fields, { full_width: false, centered: true } ));
             h.push('</div>');
         });
         return h.join("\n");
