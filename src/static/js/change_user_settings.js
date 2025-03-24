@@ -69,40 +69,48 @@ $(function() {
             return [
                 html.content_header(_("Change User Settings")),
                 html.error(_("Your administrator requires all users to enable 2FA below in order to use the system."), "force2fa"),
-                tableform.fields_render([
-                    { label: _("Username"), type: "raw", markup: asm.user },
-                    { post_field: "realname", label: _("Real name"), type: "text", doublesize: true },
-                    { post_field: "email", label: _("Email Address"), type: "text", doublesize: true },
-                    { post_field: "emaildefault", label: _("Make this the default reply address when I send email"), type: "check" },
-                    { post_field: "theme", label: _("Visual Theme"), type: "select", options: change_user_settings.theme_list() },
-                    { post_field: "locale", label: _("Locale"), type: "select", classes: "asm-iconselectmenu", 
-                        options: '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>' + 
-                            this.two_pair_options(controller.locales, true), colclasses: "bottomborder" },
-                    { post_field: "shelterview", label: _("Shelter view"), type: "select", 
-                        options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
-                    { post_field: "defaultlocationid", label: _("Default stock location"), type: "select", 
-                        options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
-                    { post_field: "defaultstockusagetypeid", label: _("Default stock usage type"), type: "select", 
-                        options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
-                    { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", 
-                        options: change_user_settings.quicklink_options(), colclasses: "bottomborder" },
-                    { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", 
-                         options: { displayfield: "TITLE", rows: controller.reports}, colclasses: "bottomborder" },
-                    { rowid: "signaturerow", type: "raw", label: _("Signature"), markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' },
-                    { post_field: "button-enable2fa", type: "raw", label: _("Two factor authentication (2FA)"), 
-                        markup: '<input id="enabletotp" data="enabletotp" type="hidden" val="0" />' +
-                            '<button id="button-enable2fa">' + _("Enable 2FA") + '</button>' +
-                            '<button id="button-disable2fa" class="asm-redbutton">' + _("Disable 2FA") + '</button>' },
-                    { rowclasses: "enable2fa", type: "raw", label: "", 
-                        markup: html.info(_("Scan the QR code below with the Google Authenticator app for your mobile device.")) },
-                    { rowclasses: "enable2fa", type: "raw", label: "", 
-                        markup: '<div id="qr2fa" style="padding: 10px; background: #fff; display: inline-block"></div>' },
-                    { rowclasses: "enable2fa", post_field: "twofavalidcode", type: "text", label: _("Enter the code from your app") },
-                    { rowclasses: "disable2fa", post_field: "twofavalidpassword", type: "password", label: _("Confirm Password") }
-                ], { full_width: false }),
                 tableform.buttons_render([
-                   { id: "save", icon: "save", text: _("Save") }
-                ], { centered: true }),
+                    { id: "save", icon: "save", text: _("Save") }
+                 ], { centered: false }),
+                tableform.render_tabs([
+                    { id: "preferences", title: _("Preferences"), fields: [
+                        { label: _("Username"), type: "raw", markup: asm.user },
+                        { post_field: "realname", label: _("Real name"), type: "text", doublesize: true },
+                        { post_field: "email", label: _("Email Address"), type: "text", doublesize: true },
+                        { post_field: "emaildefault", label: _("Make this the default reply address when I send email"), type: "check" },
+                        { post_field: "theme", label: _("Visual Theme"), type: "select", options: change_user_settings.theme_list() },
+                        { post_field: "locale", label: _("Locale"), type: "select", classes: "asm-iconselectmenu", 
+                            options: '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>' + 
+                                this.two_pair_options(controller.locales, true) },
+                        { post_field: "shelterview", label: _("Shelter view"), type: "select", 
+                            options: '<option value="">' + _("(use system)") + '</option>' + html.shelter_view_options() },
+                        { post_field: "defaultlocationid", label: _("Default stock location"), type: "select", 
+                            options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
+                        { post_field: "defaultstockusagetypeid", label: _("Default stock usage type"), type: "select", 
+                            options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
+                    ]},
+                    { id: "quicklinks", title: _("Quicklinks"), fields: [
+                        { post_field: "quicklinksid", label: _("Quicklinks"), type: "selectmulti", 
+                            options: change_user_settings.quicklink_options()},
+                        { post_field: "quickreportsid", label: _("Quick Reports"), type: "selectmulti", 
+                            options: { displayfield: "TITLE", rows: controller.reports} },
+                    ]},
+                    { id: "signature", title: _("Signature"), fields: [
+                        { rowid: "signaturerow", type: "raw", label: _("Signature"), markup: '<div id="signature" style="width: 500px; height: 200px; display: none"></div>' }
+                    ]},
+                    { id: "security", title: _("Security"), fields: [
+                        { post_field: "button-enable2fa", type: "raw", label: _("Two factor authentication (2FA)"), 
+                            markup: '<input id="enabletotp" data="enabletotp" type="hidden" val="0" />' +
+                                '<button id="button-enable2fa">' + _("Enable 2FA") + '</button>' +
+                                '<button id="button-disable2fa" class="asm-redbutton">' + _("Disable 2FA") + '</button>' },
+                        { rowclasses: "enable2fa", type: "raw", label: "", 
+                            markup: html.info(_("Scan the QR code below with the Google Authenticator app for your mobile device.")) },
+                        { rowclasses: "enable2fa", type: "raw", label: "", 
+                            markup: '<div id="qr2fa" style="padding: 10px; background: #fff; display: inline-block"></div>' },
+                        { rowclasses: "enable2fa", post_field: "twofavalidcode", type: "text", label: _("Enter the code from your app") },
+                        { rowclasses: "disable2fa", post_field: "twofavalidpassword", type: "password", label: _("Confirm Password") }
+                    ]}
+                ], { full_width: false }),
                 html.content_footer()
             ].join("\n");
         },
@@ -111,7 +119,8 @@ $(function() {
             $("#signature").asmsignature({ guideline: true, value: controller.user.SIGNATURE });
 
             $("#button-save").button().click(async function() {
-                $(".asm-content button").button("disable");
+                $("#button-save").button("disable");
+                validate.dirty(false);
                 header.show_loading();
                 let formdata = $("input, select").toPOST();
                 try {
@@ -121,13 +130,15 @@ $(function() {
                 }
                 try {
                     await common.ajax_post("change_user_settings", formdata);
-                    common.route("main", true);
+                    common.route_reload(true); 
                 }
                 catch(err) {
                     log.error(err, err);
                     $(".asm-content button").button("enable");
                 }
             });
+
+            $("#button-save").button("disable");
 
             $("#button-enable2fa").button().click(function() {
                 $(".enable2fa").show();
@@ -207,6 +218,8 @@ $(function() {
             if (controller.smcom && asm.user == asm.useraccount) { $("#enabletotp").closest("tr").hide(); } // disable 2FA for smcom master user for now
             let tfa_url = "otpauth://totp/" + issuer + ":" + encodeURIComponent(u.USERNAME) + "?secret=" + encodeURIComponent(u.OTPSECRET) + "&issuer=" + encodeURIComponent(issuer);
             new QRCode(document.getElementById("qr2fa"), tfa_url);
+
+            validate.bind_dirty();
         },
 
         name: "change_user_settings",
