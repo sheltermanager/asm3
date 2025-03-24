@@ -119,7 +119,8 @@ $(function() {
             $("#signature").asmsignature({ guideline: true, value: controller.user.SIGNATURE });
 
             $("#button-save").button().click(async function() {
-                $(".asm-content button").button("disable");
+                $("#button-save").button("disable");
+                validate.dirty(false);
                 header.show_loading();
                 let formdata = $("input, select").toPOST();
                 try {
@@ -136,6 +137,8 @@ $(function() {
                     $(".asm-content button").button("enable");
                 }
             });
+
+            $("#button-save").button("disable");
 
             $("#button-enable2fa").button().click(function() {
                 $(".enable2fa").show();
@@ -215,6 +218,8 @@ $(function() {
             if (controller.smcom && asm.user == asm.useraccount) { $("#enabletotp").closest("tr").hide(); } // disable 2FA for smcom master user for now
             let tfa_url = "otpauth://totp/" + issuer + ":" + encodeURIComponent(u.USERNAME) + "?secret=" + encodeURIComponent(u.OTPSECRET) + "&issuer=" + encodeURIComponent(issuer);
             new QRCode(document.getElementById("qr2fa"), tfa_url);
+
+            validate.bind_dirty();
         },
 
         name: "change_user_settings",
