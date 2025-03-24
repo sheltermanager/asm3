@@ -1251,6 +1251,9 @@ def sql_structure(dbo: Database) -> str:
         fint("DocPhoto"),
         fint("ExcludeFromPublish", True),
         fstr("SignatureHash", True),
+        fstr("SignatureIP", True),
+        fstr("SignatureDevice", True),
+        fdate("SignatureDate", True),
         # ASM2_COMPATIBILITY
         fint("NewSinceLastPublish"),
         fint("UpdatedSinceLastPublish"),

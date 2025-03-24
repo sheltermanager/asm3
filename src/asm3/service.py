@@ -270,7 +270,7 @@ def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     # Sign the docs if they haven't been done already
     if not asm3.media.has_signature(dbo, mediaid):
         signdate = "%s %s" % (python2display(l, dbo.now()), format_time(dbo.now()))
-        asm3.media.sign_document(dbo, "service", mediaid, post["sig"], signdate, "signemail")
+        asm3.media.sign_document(dbo, "service", mediaid, post["sig"], signdate, "signemail", post["remoteip"], post["useragent"])
         if post.boolean("sendsigned"):
             m = asm3.media.get_media_by_id(dbo, mediaid)
             if m is None: raise asm3.utils.ASMError("cannot find %s" % mediaid)
@@ -980,7 +980,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         else:
             m = asm3.media.get_media_by_id(dbo, formid)
             signdate = "%s %s" % (python2display(l, dbo.now()), format_time(dbo.now()))
-            asm3.media.sign_document(dbo, "service", formid, post["sig"], signdate, "signemail")
+            asm3.media.sign_document(dbo, "service", formid, post["sig"], signdate, "signemail", post["remoteip"], post["useragent"])
             asm3.media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
 
             if asm3.configuration.email_adoptioncoordinator_on_document_signed(dbo):

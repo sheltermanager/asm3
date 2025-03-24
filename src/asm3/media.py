@@ -738,7 +738,7 @@ def send_signature_request(dbo: Database, username: str, mid: int, post: PostedD
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)
 
-def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate: datetime, signprefix: str) -> None:
+def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate: str, signprefix: str, remoteip: str = "", useragent: str = "") -> None:
     """
     Signs an HTML document.
     sigurl: An HTML5 data: URL containing an image of the signature
@@ -785,7 +785,7 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
         asm3.al.debug("document %s: no placeholder, appending" % mid, "media.sign_document", dbo)
         sig = "<hr />\n"
         if sigurl != "": sig += '<p><img src="' + sigurl + '" /></p>\n'
-        sig += "<p>%s</p>\n" % signdate
+        sig += "<p>%s | %s | %s</p>\n" % (signdate, remoteip, useragent)
         content += sig
     # Create a hash of the contents and set it on all media records pointing to this DBFSID
     # (this gracefully handles animal/person media doc entries that point to the same DBFS file)
@@ -796,7 +796,10 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
             "LinkID": r.LINKID,
             "LinkTypeID": r.LINKTYPEID, 
             "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)), 
-            "Date": dbo.now() 
+            "Date": dbo.now(),
+            "SignatureIP": remoteip,
+            "SignatureDevice": useragent,
+            "SignatureDate": dbo.now()
         }, username)
     # Update the dbfs contents
     content = asm3.utils.str2bytes(content)
