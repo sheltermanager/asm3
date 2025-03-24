@@ -30,7 +30,7 @@ import asm3.users
 import asm3.utils
 from asm3.i18n import _, now, add_seconds, format_currency, format_time, python2display, subtract_seconds
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
-from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS
+from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, JQUERY_UI_CSS, MOUSETRAP_JS
 from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 from asm3.typehints import Database, PostedData, Results, ServiceResponse
 
@@ -429,14 +429,19 @@ def sign_document_page(dbo: Database, mid: int, email: str) -> str:
         email is the address to send a copy of the signed document to. """
     l = dbo.locale
     scripts = [ 
+        asm3.html.css_tag(JQUERY_UI_CSS % { "theme": "asm"}, idattr="jqt", addbuild=True),
         asm3.html.script_tag(JQUERY_JS),
         asm3.html.script_tag(JQUERY_UI_JS),
         asm3.html.script_tag(BOOTSTRAP_JS),
         asm3.html.script_tag(SIGNATURE_JS),
+        asm3.html.script_tag(MOUSETRAP_JS),
         asm3.html.css_tag(BOOTSTRAP_CSS),
         asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
         asm3.html.script_i18n(dbo.locale),
-        asm3.html.asm_script_tag("service_sign_document.js") 
+        asm3.html.asm_script_tag("common.js"), 
+        asm3.html.asm_script_tag("common_widgets.js"),
+        asm3.html.asm_script_tag("service_sign_document.js")
+        
     ]
     dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
     content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(contents))
