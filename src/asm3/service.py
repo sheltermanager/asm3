@@ -500,6 +500,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     if not dbo:
         dbo = asm3.db.get_database(account)
+        dbo.installpath = path
 
         if dbo.database in asm3.db.ERROR_VALUES:
             asm3.al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
