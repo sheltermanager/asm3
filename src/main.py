@@ -688,7 +688,8 @@ class configjs(ASMEndpoint):
             self.cache_control(0)
             return ""
         dbo = o.dbo
-        self.content_type("text/javascript")
+        self.content_type("text/javascript; charset=utf-8")
+        self.data_encoding = "utf-8"
         self.cache_control(CACHE_ONE_YEAR)
         realname = ""
         emailaddress = ""
