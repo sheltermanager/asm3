@@ -115,3 +115,4 @@ method to move or consume stock levels based on the product.
 The "Usage" button allows you to view all usage records for stock levels
 connected to the product.
 
+.. image:: images/stock_products.png
