@@ -198,7 +198,8 @@ class PetRescuePublisher(AbstractPublisher):
                         # so that it can be picked up next time.
                         self.markAnimalPublished(an.ID, extra = status)
                     else:
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                        self.logError("%s - %s: Error updating status to %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
 
             except Exception as err:
                 self.logError("Failed closing listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
