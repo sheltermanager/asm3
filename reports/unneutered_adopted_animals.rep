@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals
 ###
 Movements
 ###
-Any rev05
+Any rev06
 ###
 Adopted animals who have not been neutered/spayed.
 ###
@@ -10,7 +10,9 @@ en
 ###
 SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
 o.OwnerName, o.ID AS OID, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
-o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge, p.SpeciesName
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, 
+$SQL AGE CURRENT_DATE,a.DateOfBirth$ AS AnimalAge, 
+p.SpeciesName
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
 LEFT OUTER JOIN species p ON p.ID = a.SpeciesID
