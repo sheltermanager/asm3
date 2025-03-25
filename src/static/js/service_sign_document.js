@@ -66,24 +66,22 @@ $(document).ready(function() {
 
     $("body").html(h);
 
-    $("#signature").asmsignature({ guideline: true, bootstrapsupport: true });
+    $("#signature").asmsignature({ guideline: true, bootstrap: true });
 
     $("#sig-sign").click(function() {
         let formdata = {
             "account":      controller.account,
             "method":       "sign_document",
             "formid":       controller.id, 
-            //"sig":          encodeURIComponent($("#signature").asmsignature("value")),
+            "sig":          $("#signature").asmsignature("value"),
             "email":        controller.email,
             "sendsigned":   $("#sendsigned").is(":checked") ? "on" : ""
         };
 
-        formdata += "&sig=" + encodeURIComponent($("#signature").asmsignature("value"));
-
-        /*if ($("#signature").asmsignature("isEmpty")) {
+        if ($("#signature").asmsignature("isEmpty")) {
             show_dlg("Error", _("Signature is required"));
             return;
-        }*/
+        }
 
         $("#sig-sign").prop("disabled", true);
         $("#spinner").show();

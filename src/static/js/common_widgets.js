@@ -2131,7 +2131,7 @@ $.widget("asm.asmsignature", {
     options: {
         guideline: false,
         value: '',
-        bootstrapsupport: false
+        bootstrap: false
     },
     _create: function() {
         let self = this;
@@ -2156,8 +2156,7 @@ $.widget("asm.asmsignature", {
             '</div>'
         ].join("\n"));
         $("#" + id + " .asmsignwidget").signature({ guideline: this.options.guideline });
-        if (this.options.bootstrapsupport) {
-            //$("#" + id + " .button-asmsignchange").button({ icons: { primary: "ui-icon-pencil" }, text: false });
+        if (this.options.bootstrap) {
             $("#" + id + " .button-asmsignchange").addClass("btn btn-primary").html("<i class='bi-x'>" + _("Clear") + "</i>");
         } else {
             $("#" + id + " .button-asmsignchange").button({ icons: { primary: "ui-icon-pencil" }, text: false });
@@ -2239,5 +2238,18 @@ $.widget("asm.asmsignature", {
             canvas = $("#" + id + " .asmsignwidget canvas");
         }
         return canvas.get(0).toDataURL("image/png");
+    },
+    isEmpty: function() {
+        let id = "asmsign-" + this.element[0].id;
+        if ($("#" + id + " .asmsigndraw").prop("checked") == true ) {
+            return $("#" + id + " .asmsignwidget").signature("isEmpty");
+        } else {
+            if ($("#" + id + " .asmsigntextinput").val() == "") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
     }
 });
