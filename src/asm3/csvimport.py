@@ -848,7 +848,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                             # present, assume that they are newer than the ones we had and update them
                             # (we do this by setting force=True parameter to merge_person_details,
                             # otherwise we do a regular merge which only fills in any blanks)
-                            asm3.person.merge_person_details(dbo, user, personid, p, force=dups[0].EMAILADDRESS == p["emailaddress"])
+                            force = dbo.query_string("SELECT EmailAddress FROM owner WHERE ID=?", [personid]) == p["emailaddress"]
+                            asm3.person.merge_person_details(dbo, user, personid, p, force=force)
                     if personid == 0:
                         personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create/merge them
