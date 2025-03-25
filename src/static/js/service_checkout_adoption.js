@@ -110,15 +110,11 @@ $(document).ready(function() {
     $("#btn-next").click(function() {
         $(".container").hide();
         $("#pane-sign").show();
-        $("#signature").signature({ guideline: true });
-    });
-
-    $("#btn-clear").click(function() {
-        $("#signature").signature("clear");
+        $("#signature").asmsignature({ guideline: true, bootstrap: true });
     });
 
     $("#btn-sign").click(function() {
-        if ($("#signature").signature("isEmpty")) {
+        if ($("#signature").asmsignature("isEmpty")) {
             show_dlg("Error", _("Signature is required"));
             return;
         }
@@ -141,7 +137,7 @@ $(document).ready(function() {
             "account":      controller.database,
             "method":       "checkout_adoption",
             "token":        controller.token,
-            "sig":          $("#signature canvas").get(0).toDataURL("image/png"),
+            "sig":          $("#signature").asmsignature("value"),
             "sendsigned":   $("#sendsigned").is(":checked") ? "on" : "",
             "donationamt":  $(this).attr("data-amount")
         };
