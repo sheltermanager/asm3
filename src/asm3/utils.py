@@ -1950,6 +1950,8 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
 
     def sanitise_addresses(s: str) -> str:
         if s is None: s = ""
+        if s.find("\r\n") != -1: s = s.replace("\r\n", " ")
+        if s.find("\r") != -1: s = s.replace("\r", " ")
         if s.find("\n") != -1: s = s.replace("\n", " ")
         if s.find("  ") != -1: s = strip_duplicate_spaces(s)
         return s
