@@ -3154,11 +3154,11 @@ msgstr "Colunas apresentadas"
 
 #: options.js
 msgid "Comma separated list of extra addresses that the From email field of send email dialogs will prompt with"
-msgstr "Lista separada por vírgulas com os endereços extra que serão apresentados pelo campo \\"De\\" da caixa de diálogo de envio de e-mails"
+msgstr "Lista separada por vírgulas com os endereços extra que serão apresentados pelo campo \"De\" da caixa de diálogo de envio de e-mails"
 
 #: options.js
 msgid "Comma separated list of extra addresses that the To and CC email fields of send email dialogs will prompt with"
-msgstr "Lista separada por vírgulas com os endereços extra que serão apresentados pelos campos \\"Para\\" e \\"CC\\" da caixa de diálogo de envio de e-mails"
+msgstr "Lista separada por vírgulas com os endereços extra que serão apresentados pelos campos \"Para\" e \"CC\" da caixa de diálogo de envio de e-mails"
 
 #: lookups.js
 msgid "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
@@ -5318,19 +5318,19 @@ msgstr "Admitido no abrigo hoje"
 
 #: main.js
 msgid "Entering 'activelost' or 'activefound' in the search box will show you lost and found animals reported in the last 30 days."
-msgstr "Introduza \\"activelost\\" ou \\"activefound\\" na caixa de pesquisa para ver os animais perdidos e encontrados comunicados nos últimos 30 dias."
+msgstr "Introduza \"activelost\" ou \"activefound\" na caixa de pesquisa para ver os animais perdidos e encontrados comunicados nos últimos 30 dias."
 
 #: main.js
 msgid "Entering 'deceased' in the search box will show you recently deceased animals."
-msgstr "Pode escrever \\"deceased\\" na caixa de pesquisa para ver os animais recentemente falecidos."
+msgstr "Pode escrever \"deceased\" na caixa de pesquisa para ver os animais recentemente falecidos."
 
 #: main.js
 msgid "Entering 'fosterers', 'homecheckers', 'staff', 'volunteers', 'aco' or 'members' in the search box will show you those groups of people."
-msgstr "Pode escrever \\"FAT\\", \\"inspetores de domicílio\\", \\"equipa\\", \\"voluntários\\", \\"aco\\" ou \\"associados\\" na caixa de pesquisa para ver as pessoas pertencentes a cada um desses grupos."
+msgstr "Pode escrever \"FAT\", \"inspetores de domicílio\", \"equipa\", \"voluntários\", \"aco\" ou \"associados\" na caixa de pesquisa para ver as pessoas pertencentes a cada um desses grupos."
 
 #: main.js
 msgid "Entering 'notforadoption' in the search box will show you all shelter animals with the not for adoption flag set."
-msgstr "Pode escrever \\"notforadoption\\" na caixa de pesquisa para ver todos os animais do abrigo com a sinalização não para adoção."
+msgstr "Pode escrever \"notforadoption\" na caixa de pesquisa para ver todos os animais do abrigo com a sinalização não para adoção."
 
 #: main.js
 msgid "Entering 'os' in the search box will show you all shelter animals."
@@ -13876,7 +13876,7 @@ msgstr "Esta base de dados está bloqueada."
 
 #: options.js
 msgid "This email address is the default From address when sending emails"
-msgstr "Este endereço de email é o endereço \\"De\\" padrão para o envio de emails"
+msgstr "Este endereço de email é o endereço \"De\" padrão para o envio de emails"
 
 #: event.py
 msgid "This event is linked to an adoption and cannot be removed."
