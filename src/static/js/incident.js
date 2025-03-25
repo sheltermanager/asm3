@@ -446,6 +446,7 @@ $(function() {
             // Checks the ACO values given from a field and if they are not in the users
             // list, adds them to the selector given.
             const add_missing_aco = function(values, selector) {
+                if (!values) { return; }
                 $.each(values.split(","), function(ia, aco) {
                     let acoinlist = false;
                     $.each(controller.users, function(i, v) {
