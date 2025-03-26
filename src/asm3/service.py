@@ -220,13 +220,17 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
         and then pay their adoption fee and an optional donation """
     l = dbo.locale
     scripts = [ 
+        asm3.html.css_tag(JQUERY_UI_CSS % { "theme": "asm"}, idattr="jqt", addbuild=True),
         asm3.html.script_tag(JQUERY_JS),
         asm3.html.script_tag(JQUERY_UI_JS),
         asm3.html.script_tag(BOOTSTRAP_JS),
         asm3.html.script_tag(SIGNATURE_JS),
+        asm3.html.script_tag(MOUSETRAP_JS),
         asm3.html.css_tag(BOOTSTRAP_CSS),
         asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
         asm3.html.script_i18n(dbo.locale),
+        asm3.html.asm_script_tag("common.js"), 
+        asm3.html.asm_script_tag("common_widgets.js"),
         asm3.html.asm_script_tag("service_checkout_adoption.js") 
     ]
     co = asm3.cachedisk.get(token, dbo.name())
