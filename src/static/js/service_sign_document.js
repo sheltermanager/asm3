@@ -60,32 +60,25 @@ $(document).ready(function() {
                 _("Sign"),
                 '<div id="spinner" class="spinner-border spinner-border-sm" style="display: none"></div>',
             '</button>',
-            '<button id="sig-clear" type="button" class="btn btn-secondary">',
-                '<i class="bi-x"></i>',
-                _("Clear") + '</button>',
         '</div>',
         '</div>'
     ].join("\n");
 
     $("body").html(h);
 
-    $("#signature").signature({ guideline: true });
-
-    $("#sig-clear").click(function() {
-        $("#signature").signature("clear");
-    });
+    $("#signature").asmsignature({ guideline: true, bootstrap: true });
 
     $("#sig-sign").click(function() {
         let formdata = {
             "account":      controller.account,
             "method":       "sign_document",
             "formid":       controller.id, 
-            "sig":          $("#signature canvas").get(0).toDataURL("image/png"),
+            "sig":          $("#signature").asmsignature("value"),
             "email":        controller.email,
             "sendsigned":   $("#sendsigned").is(":checked") ? "on" : ""
         };
 
-        if ($("#signature").signature("isEmpty")) {
+        if ($("#signature").asmsignature("isEmpty")) {
             show_dlg("Error", _("Signature is required"));
             return;
         }

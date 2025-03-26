@@ -65,7 +65,9 @@ $(document).ready(function() {
                 '</div>',
             '</div>',
         '</div>',
+        '<center>', 
         '<div id="signature" style="margin-left: auto; margin-right: auto; max-height: 300px; max-width: 800px; width: 95vw; height: 70vh; border: 1px solid #aaa;"></div>',
+        '</center>', 
         '<div class="mb-3">',
             '<small class="text-muted">' + _("Once signed, this document cannot be edited or tampered with.") + '</small>',
         '</div>',
@@ -76,10 +78,6 @@ $(document).ready(function() {
             '</label>',
         '</div>',
         '<div class="form-group">',
-            '<button id="btn-clear" type="button" class="btn btn-secondary">',
-                '<i class="bi-x"></i>',
-                _("Clear"),
-                '</button>',
             '<button id="btn-sign" type="button" class="btn btn-primary">',
                 '<i class="bi-vector-pen"></i>',
                 _("Sign"),
@@ -110,15 +108,11 @@ $(document).ready(function() {
     $("#btn-next").click(function() {
         $(".container").hide();
         $("#pane-sign").show();
-        $("#signature").signature({ guideline: true });
-    });
-
-    $("#btn-clear").click(function() {
-        $("#signature").signature("clear");
+        $("#signature").asmsignature({ guideline: true, bootstrap: true });
     });
 
     $("#btn-sign").click(function() {
-        if ($("#signature").signature("isEmpty")) {
+        if ($("#signature").asmsignature("isEmpty")) {
             show_dlg("Error", _("Signature is required"));
             return;
         }
@@ -141,7 +135,7 @@ $(document).ready(function() {
             "account":      controller.database,
             "method":       "checkout_adoption",
             "token":        controller.token,
-            "sig":          $("#signature canvas").get(0).toDataURL("image/png"),
+            "sig":          $("#signature").asmsignature("value"),
             "sendsigned":   $("#sendsigned").is(":checked") ? "on" : "",
             "donationamt":  $(this).attr("data-amount")
         };
