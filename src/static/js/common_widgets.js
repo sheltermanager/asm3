@@ -2158,6 +2158,8 @@ $.widget("asm.asmsignature", {
         $("#" + id + " .asmsignwidget").signature({ guideline: this.options.guideline });
         if (this.options.bootstrap) {
             $("#" + id + " .button-asmsignchange").addClass("btn btn-primary").html("<i class='bi-x'>" + _("Clear") + "</i>");
+            $("#" + id + " input[name='asmsigntype']").addClass("m-1");
+            $("#" + id + " label").addClass("form-check-label");
         } else {
             $("#" + id + " .button-asmsignchange").button({ icons: { primary: "ui-icon-pencil" }, text: false });
         }
