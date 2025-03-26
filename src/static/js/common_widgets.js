@@ -1350,7 +1350,7 @@ $.widget("asm.payments", {
             '<td class="vat centered nowrap">',
             '<input id="vat{i}" data="vat{i}" type="checkbox" class="asm-checkbox" />',
             '<span id="vatboxes{i}" style="display: none">',
-            '<select id="vatratechoice{i}" data="destaccount{i}" class="asm-selectbox asm-halfselectbox">',
+            '<select id="vatratechoice{i}" data="vatratechoice{i}" class="asm-selectbox asm-halfselectbox">',
             html.list_to_options(this.options.controller.taxrates, "ID", "TAXRATENAME"),
             '</select>',
             '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" style="display: none;" />',
@@ -1396,7 +1396,6 @@ $.widget("asm.payments", {
         $("#vatratechoice" + i).change(function() {
             let taxrate = 0.0;
             taxrate = common.get_field(self.options.controller.taxrates, $("#vatratechoice" + i).val(), "TAXRATE");
-            console.log("taxrate = " + taxrate);
             $("#vatrate" + i).val(taxrate);
             if (!config.bool("VATExclusive")) {
                 $("#vatamount" + i).currency("value", common.tax_from_inclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
