@@ -1,0 +1,40 @@
+Duplicate People with Links
+###
+Statistics
+###
+Any rev01
+###
+People in the system with same name with links to records (limited to 50) 
+###
+en
+###
+SELECT OwnerName, OwnerAddress, ID 
+FROM owner o 
+WHERE (SELECT COUNT(*) FROM owner WHERE OwnerName LIKE o.OwnerName) > 1
+AND OwnerName <> ''
+ORDER BY ownername LIMIT 50
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Name</th>
+<th>Addresses</th>
+<th>ID</th>
+</tr>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td><a target="_blank" href="person?id=$ID">$ID</a></td>
+</tr>
+BODY$$
+
+$$FOOTER
+</tbody>
+</table>
+FOOTER$$
