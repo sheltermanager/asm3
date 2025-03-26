@@ -1952,15 +1952,16 @@ $(function() {
                  ], { centered: false }),
                 tableform.render_tabs([
                     { id: "shelterdetails", title: _("Shelter Details"), fields: [
-                        { post_field: "organisation", label: _("Organization"), type: "text", doublesize: true },
-                        { post_field: "address", label: _("Address"), type: "textarea", doublesize: true },
-                        { post_field: "city", label: _("City"), type: "text" },
-                        { post_field: "state", label: _("State"), type: "text", hideif: function() { return config.bool("USStateCodes") }},
-                        { post_field: "state", label: _("State"), type: "select", options: html.states_us_options(), hideif: function() { if (config.bool("USStateCodes") == true) {return false;} else {return true;} }},
-                        { post_field: "zipcode", label: _("Zipcode"), type: "text" },
-                        { post_field: "country", label: _("Country"), type: "text" },
-                        { post_field: "telephone", label: _("Telephone"), type: "phone" },
-                        { post_field: "timezone", label: _("Server clock adjustment"), type: "select",
+                        { id: "organisation", json_field: "Organisation", label: _("Organization"), type: "text", doublesize: true },
+                        { id: "address", json_field: "OrganisationAddress", label: _("Address"), type: "textarea", doublesize: true },
+                        { id: "city", json_field: "OrganisationTown", label: _("City"), type: "text" },
+                        { id: "state", json_field: "OrganisationCounty", label: _("State"), type: "text", hideif: function() { return config.bool("USStateCodes") }},
+                        { id: "state", json_field: "OrganisationCounty", label: _("State"), type: "select", options: html.states_us_options(), hideif: function() { if (config.bool("USStateCodes") == true) {return false;} else {return true;} }},
+                        { id: "zipcode", json_field: "OrganisationPostcode", label: _("Zipcode"), type: "text" },
+                        { id: "country", json_field: "OrganisationCountry", label: _("Country"), type: "text" },
+                        { id: "telephone", json_field: "OrganisationTelephone", label: _("Telephone"), type: "phone" },
+                        { id: "telephone2", json_field: "OrganisationTelephone2", label: _("Telephone"), type: "phone" },
+                        { id: "timezone", json_field: "Timezone", label: _("Server clock adjustment"), type: "select",
                             options: [
                                 "-12|-12:00",
                                 "-11|-11:00",
@@ -2003,11 +2004,22 @@ $(function() {
                                 "13.75|+13:45",
                                 "14|+14:00",
 
-                            ]
+                            ], rowclose: false
                         },
-                        { post_field: "timezonedst", label: _("auto adjust for daylight savings"), type: "check" },
-                        { post_field: "olocale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true) },
+                        { id: "timezonedst", json_field: "TimezoneDST", label: _("auto adjust for daylight savings"), type: "check", justwidget: true },
+                        { type: "rowclose" },
+                        { id: "olocale", json_field: "Locale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true), callout: _("The locale determines the language ASM will use when displaying text, dates and currencies."), classes: "asm-iconselectmenu" },
+                        { type: "nextcol" },
+                        { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
                     ]},
+                    { id: "accounts", title: _("Accounts"), fields: [
+                        { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check" },
+                        { id: "createdonations", json_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check" },
+                        { id: "createcost", json_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check" },
+                        { id: "donationtrxoverride", json_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check" },
+                        { id: "donationquantities", json_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check" },
+                        { id: "donationfees", json_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check" },
+                    ]}
                 ]),
                 html.content_footer()
             ].join("\n");
@@ -2045,8 +2057,9 @@ $(function() {
 
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").each(function() {
-                if ($(this).attr("data")) {
+                if ($(this).attr("data") || $(this).attr("data-json")) {
                     let d = $(this).attr("data");
+                    if (!d) { d = $(this).attr("data-json");}
                     if ($(this).is(".asm-currencybox")) {
                         $(this).val( html.decode(config.currency(d)));
                     }
