@@ -2130,6 +2130,61 @@ $(function() {
                         { id: "agegroup8", json_field: "AgeGroup8", label: _("Age Group 8"), type: "text", 
                             xmarkup: "<input id='agegroup8name' type='text' class='asm-textbox' data='AgeGroup8Name' style='margin-left: 5px;' />"
                         },
+                    ]},
+                    { id: "animalcode", title: _("Animal Codes"), fields: [
+                        { id: "codeformat", json_field: "CodingFormat", label: _("Animal code format"), type: "text",
+                            callout: _("Code format tokens:") + '<br />' +
+                            _("T = first letter of animal type") + '<br />' +
+                            _("TT = first and second letter of animal type") + '<br />' + 
+                            _("E = first letter of animal entry category") + '<br />' +
+                            _("EE = first and second letter of animal entry category") + '<br />' + 
+                            _("S = first letter of animal species") + '<br />' +
+                            _("SS = first and second letter of animal species") + '<br />' + 
+                            _("YY or YYYY = current year") + '<br />' +
+                            _("MM = current month") + '<br />' +
+                            _("DD = current day") + '<br />' + 
+                            _("UUUUUUUUUU or UUUU = unique number") + '<br />' +
+                            _("XXXX, XXX or XX = number unique for this year") + '<br />' +
+                            _("OOO or OO = number unique for this month") + '<br />' +
+                            _("NNNN, NNN or NN = number unique for this type of animal for this year") + '<br />' +
+                            _("PPPP, PPP or PP = number unique for this species of animal for this year") + '<br />' +
+                            _("Defaults formats for code and shortcode are TYYYYNNN and NNT")
+                         },
+                         { id: "shortformat", json_field: "ShortCodingFormat", label: _("Animal shortcode format"), type: "text",
+                            callout: _("Code format tokens:") + '<br />' +
+                            _("T = first letter of animal type") + '<br />' +
+                            _("TT = first and second letter of animal type") + '<br />' + 
+                            _("E = first letter of animal entry category") + '<br />' +
+                            _("EE = first and second letter of animal entry category") + '<br />' + 
+                            _("S = first letter of animal species") + '<br />' +
+                            _("SS = first and second letter of animal species") + '<br />' + 
+                            _("YY or YYYY = current year") + '<br />' +
+                            _("MM = current month") + '<br />' +
+                            _("DD = current day") + '<br />' + 
+                            _("UUUUUUUUUU or UUUU = unique number") + '<br />' +
+                            _("XXXX, XXX or XX = number unique for this year") + '<br />' +
+                            _("OOO or OO = number unique for this month") + '<br />' +
+                            _("NNNN, NNN or NN = number unique for this type of animal for this year") + '<br />' +
+                            _("PPPP, PPP or PP = number unique for this species of animal for this year") + '<br />' +
+                            _("Defaults formats for code and shortcode are TYYYYNNN and NNT")
+                         },
+                         { id: "incidentcodeformat", json_field: "IncidentCodingFormat", label: _("Incident code format"), type: "text",
+                            callout: _("Code format tokens:") + '<br />' +
+                            _("YY or YYYY = current year") + '<br />' +
+                            _("MM = current month") + '<br />' +
+                            _("DD = current day") + '<br />' + 
+                            _("UUUUUUUUUU or UUUU = unique number") + '<br />' +
+                            _("XXX or XX = number unique for this year") + '<br />' +
+                            _("OOO or OO = number unique for this month") + '<br />' +
+                            _("Defaults formats for incident codes are YYMM-XXX")
+                         },
+                         { id: "manualcodes", json_field: "ManualCodes", label: _("Manually enter codes (do not generate)"), type: "check" },
+                         { id: "shortcodes", json_field: "UseShortShelterCodes", label: _("Show short shelter codes on screens"), type: "check" },
+                         { id: "disableshortcodes", json_field: "DisableShortCodesControl", label: _("Remove short shelter code box from the animal details screen"), type: "check" },
+                         { id: "shelterviewshowcodes", json_field: "ShelterViewShowCodes", label: _("Show codes on the shelter view screen"), type: "check" },
+                         { id: "lockcodes", json_field: "LockCodes", label: _("Once assigned, codes cannot be changed"), type: "check" },
+                         { id: "duplicatechip", json_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check" },
+                         { id: "uniquelicence", json_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check" }
                     ]}
                 ]),
                 html.content_footer()
