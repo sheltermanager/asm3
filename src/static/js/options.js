@@ -1963,6 +1963,90 @@ $(function() {
                     '</tr>'
                 ].join("\n");
             };
+            const emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
+                emblemglyphs = [
+                    8592,  // Left arrow
+                    8593,  // Up arrow
+                    8594,  // Right arrow
+                    8595,  // Down arrow
+                    8984,  // Place of interest
+                    8987,  // Hourglass
+                    8962,  // House
+                    9113,  // Print
+                    9114,  // Clear screen
+                    9200,  // Alarm clock
+                    9728,  // Sun
+                    9729,  // Cloud
+                    9731,  // Snowman
+                    9733,  // Star
+                    9742,  // Telephone
+                    9760,  // Skull/Crossbones
+                    9762,  // Radioactive
+                    9763,  // Biohazard
+                    9774,  // Peace
+                    9785,  // Sad face
+                    9787,  // Smiley face
+                    9792,  // Female
+                    9794,  // Male
+                    9850,  // Recycling
+                    9855,  // Disabled
+                    9872,  // White flag
+                    9873,  // Black flag
+                    9875,  // Anchor
+                    9877,  // Medical
+                    9878,  // Scales
+                    9888,  // Warning
+                    9889,  // High Voltage
+                    9917,  // Soccer ball
+                    9951,  // Truck
+                    9983,  // Striped flag
+                    9986,  // Scissors
+                    9989,  // White heavy check mark (green)
+                    9990,  // Telephone location
+                    9992,  // Airplane
+                    9999,  // Pencil
+                    10003, // Tick
+                    10004, // Cross
+                    10024, // Sparkles
+                    10052, // Snowflake
+                    10062, // White heavy cross
+                    10084, // Heavy heart
+                    127798, // Spicy pepper
+                    127960, // House - buildings
+                    127968, // House - building
+                    128008, // Cat
+                    128021, // Dog
+                    128049, // Cat Face
+                    128054, // Dog Face,
+                    128137, // Syringe
+                    128138, // Pill
+                    128169, // Poop
+                    128266, // Speaker with high volume
+                    128272, // Lock with key
+                    128308, // Red circle
+                    128309, // Blue circle
+                    128992, // Orange circle
+                    128993, // Yellow circle
+                    128994, // Green circle
+                    128995, // Purple circle
+                    128996, // Brown circle
+                    128997, // Red square
+                    128998, // Blue square
+                    128999, // Orange square
+                    129000, // Yellow square
+                    129001, // Green square
+                    129002, // Purple square
+                    129003, // Brown square
+                    128571, // Cat with heart eyes
+                    129379, // Bowl and spoon
+                    129387, // Can of food
+                    129440, // Microbe
+                    129460, // Bone
+                    129514, // Test tube
+                    129516, // DNA
+                    129713, // Worm
+                    129745  // Bell pepper
+                ]
             return [
                 html.content_header(_("System Options")),
                 tableform.buttons_render([
@@ -2185,6 +2269,11 @@ $(function() {
                          { id: "lockcodes", json_field: "LockCodes", label: _("Once assigned, codes cannot be changed"), type: "check" },
                          { id: "duplicatechip", json_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check" },
                          { id: "uniquelicence", json_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check" }
+                    ]},
+                    { id: "animalemblems", title: _("Animal Emblems"), fields: [
+                        { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
+                        { type: "raw", markup: html.info(_("You can assign a custom emblem to your additional animal flags")) },
+                        { id: "alwaysshowlocation", json_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + _("Location"), type: "check" },
                     ]}
                 ]),
                 html.content_footer()
