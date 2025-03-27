@@ -2278,7 +2278,6 @@ $(function() {
                     ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
                         { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
-                        
                         { id: "alwaysshowlocation", json_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + _("Location"), type: "check" },
                         { id: "showadoptable", json_field: "EmblemAdoptable", label: html.icon("adoptable") + _("Adoptable"), type: "check" },
                         { id: "showboarding", json_field: "EmblemBoarding", label: html.icon("boarding") + _("Boarding"), type: "check" },
@@ -2368,10 +2367,33 @@ $(function() {
                     { id: "tab-boarding", title: _("Boarding"), fields: [
                         { id: "boardingpaytype", json_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
                         }
-                    ]}
-                    { id: "tab-checkout", title: _("Boarding"), fields: [
-                        { id: "boardingpaytype", json_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
-                        }
+                    ]},
+                    { id: "tab-checkout", title: _("Checkout"), fields: [
+                        { type: "raw", markup: html.info(_("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation.")) },
+                        { id: "AdoptionCheckoutProcessor", json_field: "AdoptionCheckoutProcessor", label: _("Payment processor"), type: "select", 
+                            options: html.list_to_options([
+                                "paypal|" + _("PayPal"),
+                                "square|" + _("Square"),
+                                "stripe|" + _("Stripe")
+                            ]) + "<option value='cardcom' class='israel'>" + _("Cardcom") + "</option>"
+                        },
+                        { id: "AdoptionCheckoutTemplateID", json_field: "AdoptionCheckoutTemplateID", label: _("Adoption paperwork template"), type: "select", 
+                            options: edit_header.template_list_options(controller.templates)
+                        }, 
+                        { id: "AdoptionCheckoutFeeID", json_field: "AdoptionCheckoutFeeID", label: _("Adoption fee payment type"), type: "select", 
+                            options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME")
+                        }, 
+                        { id: "LicenceCheckoutFeeID", json_field: "LicenceCheckoutFeeID", label: _("License fee payment type"), type: "select", 
+                            options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME")
+                        }, 
+                        { id: "AdoptionCheckoutDonationID", json_field: "AdoptionCheckoutDonationID", label: _("Donation payment type"), type: "select", 
+                            options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME")
+                        }, 
+                        { id: "AdoptionCheckoutPaymentMethod", json_field: "AdoptionCheckoutPaymentMethod", label: _("Payment method"), type: "select", 
+                            options: html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME")
+                        }, 
+                        { id: "AdoptionCheckoutDonationMsg", json_field: "AdoptionCheckoutDonationMsg", label: _("Donation message"), type: "textarea", callout: _("The text to show adopters when requesting a donation. Simple HTML formatting is allowed.") }, 
+                        { id: "AdoptionCheckoutDonationTiers", json_field: "AdoptionCheckoutDonationTiers", label: _("Donation tiers"), type: "textarea" }
                     ]}
                 ]),
                 html.content_footer()
