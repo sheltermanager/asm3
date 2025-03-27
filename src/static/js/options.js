@@ -2362,8 +2362,12 @@ $(function() {
                         },
                         { json_field: "EmblemsCustomValue20", type: "select", options: emblemoptions.join(""),
                             xmarkup: ' <select data="EmblemsCustomCond20" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag20" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
+                        }
 
+                    ]},
+                    { id: "tab-boarding", title: _("Boarding"), fields: [
+                        { id: "boardingpaytype", json_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
+                        }
                     ]}
                 ]),
                 html.content_footer()
