@@ -2272,8 +2272,32 @@ $(function() {
                     ]},
                     { id: "animalemblems", title: _("Animal Emblems"), fields: [
                         { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
-                        { type: "raw", markup: html.info(_("You can assign a custom emblem to your additional animal flags")) },
+                        
                         { id: "alwaysshowlocation", json_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + _("Location"), type: "check" },
+                        { id: "showadoptable", json_field: "EmblemAdoptable", label: html.icon("adoptable") + _("Adoptable"), type: "check" },
+                        { id: "showboarding", json_field: "EmblemBoarding", label: html.icon("boarding") + _("Boarding"), type: "check" },
+                        { id: "showbonded", json_field: "EmblemBonded", label: html.icon("bonded") + _("Bonded"), type: "check" },
+                        { id: "showcourtesy", json_field: "EmblemCourtesy", label: html.icon("share") + _("Courtesy Listing"), type: "check" },
+                        { id: "showcrueltycase", json_field: "EmblemCrueltyCase", label: html.icon("case") + _("Cruelty Case"), type: "check" },
+                        { id: "showdeceased", json_field: "EmblemDeceased", label: html.icon("death") + _("Deceased"), type: "check" },
+                        { id: "showfutureintake", json_field: "EmblemFutureIntake", label: html.icon("animal-add") + _("Future Intake"), type: "check" },
+                        { id: "showfutureadoption", json_field: "EmblemHold", label: html.icon("movement") + _("Future Adoption"), type: "check" },
+                        { id: "showhold", json_field: "EmblemFutureAdoption", label: html.icon("hold") + _("Hold"), type: "check" },
+                        { id: "longterm", json_field: "EmblemLongTerm", label: html.icon("calendar") + _("Long Term"), type: "check" },
+                        { id: "shownevervacc", json_field: "EmblemNeverVacc", label: html.icon("novaccination") + _("Never Vaccinated"), type: "check" },
+                        { id: "shownonshelter", json_field: "EmblemNonShelter", label: html.icon("nonshelter") + _("Non-Shelter"), type: "check" },
+                        { id: "shownotforadoption", json_field: "EmblemNotForAdoption", label: html.icon("notforadoption") + _("Not For Adoption"), type: "check" },
+                        { id: "showunmicrochipped", json_field: "EmblemNotMicrochipped", label: html.icon("microchip") + _("Not Microchipped"), type: "check" },
+                        { id: "showpositivetest", json_field: "EmblemPositiveTest", label: html.icon("positivetest") + _("Positive for Heartworm, FIV or FLV"), type: "check" },
+                        { id: "showquarantine", json_field: "EmblemQuarantine", label: html.icon("quarantine") + _("Quarantine"), type: "check" },
+                        { id: "showrabies", json_field: "EmblemRabies", label: html.icon("rabies") + _("Rabies not given"), type: "check" },
+                        { id: "showreserved", json_field: "EmblemReserved", label: html.icon("reservation") + _("Reserved"), type: "check" },
+                        { id: "showspecialneeds", json_field: "EmblemSpecialNeeds", label: html.icon("health") + _("Special Needs"), type: "check" },
+                        { id: "showtrialadoption", json_field: "EmblemTrialAdoption", label: html.icon("trial") + _("Trial Adoption"), type: "check" },
+                        { id: "showunneutered", json_field: "EmblemUnneutered", label: html.icon("unneutered") + _("Unaltered"), type: "check" },
+
+                        { type: "nextcol" },
+                        { type: "raw", markup: html.info(_("You can assign a custom emblem to your additional animal flags")) },
                     ]}
                 ]),
                 html.content_footer()
