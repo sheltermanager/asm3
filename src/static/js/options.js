@@ -1945,6 +1945,24 @@ $(function() {
         },
 
         render: function() {
+            const donmap = function(idx) {
+                return [
+                    '<tr>',
+                    '<td><label for="mapdt' + idx + '">' + _("Payments of type") + '</td>',
+                    '<td><select id="mapdt' + idx + '" data-idx="' + idx + '" class="asm-selectbox donmap">',
+                    '<option value="-1">' + _("[None]") + '</option>',
+                    html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
+                    '</select>',
+                    '</td>',
+                    '<td>' + _("are sent to") + '</td>',
+                    '<td><select id="mapac' + idx + '" class="asm-selectbox">',
+                    '<option value="-1">' + _("[None]") + '</option>',
+                    html.list_to_options(controller.accounts, "ID", "CODE"),
+                    '</select>',
+                    '</td>',
+                    '</tr>'
+                ].join("\n");
+            };
             return [
                 html.content_header(_("System Options")),
                 tableform.buttons_render([
@@ -2013,12 +2031,47 @@ $(function() {
                         { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
                     ]},
                     { id: "accounts", title: _("Accounts"), fields: [
-                        { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check" },
-                        { id: "createdonations", json_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check" },
-                        { id: "createcost", json_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check" },
-                        { id: "donationtrxoverride", json_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check" },
-                        { id: "donationquantities", json_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check" },
-                        { id: "donationfees", json_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check" },
+                        { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "createdonations", json_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "createcost", json_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "donationtrxoverride", json_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "donationquantities", json_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "donationfees", json_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "vatenabled", json_field: "VATEnabled", label: _("When receiving payments, allow recording of sales tax"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "vatexclusive", json_field: "VATExclusive", label: _("When calculating sales tax, assume the payment amount is net and add it"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "donationdateoverride", json_field: "DonationDateOverride", label: _("When receiving multiple payments, allow the due and received dates to be set"), type: "check", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "accountperiodtotals", json_field: "AccountPeriodTotals", label: _("Only show account totals for the current period, which starts on "), type: "check", justwidget: true },
+                        { id: "accountingperiod", json_field: "AccountingPeriod", type: "date", justwidget: true },
+                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "defaulttrxview", json_field: "DefaultAccountViewPeriod", label: _("Default transaction view"), type: "select", options:[
+                            "0|" + _("This Month"),
+                            "1|" + _("This Week"),
+                            "2|" + _("This Year"),
+                            "3|" + _("Last Month"),
+                            "4|" + _("Last Week"),
+                        ] },
+                        { id: "csourceaccount", json_field: "CostSourceAccount", label: _("Default source account for costs"), type: "select", options: html.list_to_options(controller.accounts, "ID", "CODE") },
+                        { id: "destinationaccount", json_field: "DonationTargetAccount", label: _("efault destination account for payments"), type: "select", options: html.list_to_options(controller.accounts, "ID", "CODE") },
+                        { id: "vataccount", json_field: "DonationVATAccount", label: _("Income account for sales tax"), type: "select", options: html.list_to_options(controller.accountsinc, "ID", "CODE") },
+                        { id: "feeaccount", json_field: "DonationFeeAccount", label: _("Expense account for transaction fees"), type: "select", options: html.list_to_options(controller.accountsexp, "ID", "CODE") },
+                        { type: "raw", justwidget: true, markup: donmap(1)},
+                        { type: "raw", justwidget: true, markup: donmap(2)},
+                        { type: "raw", justwidget: true, markup: donmap(3)},
+                        { type: "raw", justwidget: true, markup: donmap(4)},
+                        { type: "raw", justwidget: true, markup: donmap(5)},
+                        { type: "raw", justwidget: true, markup: donmap(6)},
+                        { type: "raw", justwidget: true, markup: donmap(7)},
+                        { type: "raw", justwidget: true, markup: donmap(8)},
+                        { type: "raw", justwidget: true, markup: donmap(9)},
                     ]}
                 ]),
                 html.content_footer()
