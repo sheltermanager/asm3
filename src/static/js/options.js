@@ -2059,7 +2059,7 @@ $(function() {
                     { id: "save", icon: "save", text: _("Save") }
                  ], { centered: false }),
                 tableform.render_tabs([
-                    { id: "shelterdetails", title: _("Shelter Details"), fields: [
+                    { id: "tab-shelterdetails", title: _("Shelter Details"), fields: [
                         { id: "organisation", json_field: "Organisation", label: _("Organization"), type: "text", doublesize: true },
                         { id: "address", json_field: "OrganisationAddress", label: _("Address"), type: "textarea", doublesize: true },
                         { id: "city", json_field: "OrganisationTown", label: _("City"), type: "text" },
@@ -2120,7 +2120,7 @@ $(function() {
                         { type: "nextcol" },
                         { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
                     ]},
-                    { id: "accounts", title: _("Accounts"), fields: [
+                    { id: "tab-accounts", title: _("Accounts"), fields: [
                         { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", justwidget: true },
                         { type: "raw", justwidget: true, markup: '<br>'},
                         { id: "createdonations", json_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check", justwidget: true },
@@ -2163,7 +2163,7 @@ $(function() {
                         { type: "raw", justwidget: true, markup: donmap(8)},
                         { type: "raw", justwidget: true, markup: donmap(9)}
                     ]},
-                    { id: "adding", title: _("Add Animal"), fields: [
+                    { id: "tab-adding", title: _("Add Animal"), fields: [
                         { id: "aashowbreed", json_field: "AddAnimalsShowBreed", label: _("Show the breed fields"), type: "check" },
                         { type: "raw", markup: "<br>" },
                         { id: "singlebreed", json_field: "UseSingleBreedField", label: _("Use a single breed field"), type: "check" },
@@ -2194,7 +2194,7 @@ $(function() {
                         { id: "aashowhold", json_field: "AddAnimalsShowHold", label: _("Show the hold fields"), type: "check" },
                         { id: "warnsimilaranimal", json_field: "WarnSimilarAnimalName", label: _("Warn if the name of the new animal is similar to one entered recently"), type: "check" }
                     ]},
-                    { id: "ageegroups", title: _("Age Groups"), fields: [
+                    { id: "tab-ageegroups", title: _("Age Groups"), fields: [
                         { type: "raw", markup: html.info(_("Age groups are assigned based on the age of an animal. The figure in the left column is the upper limit in years for that group.")) },
                         { id: "agegroup1", json_field: "AgeGroup1", label: _("Age Group 1"), type: "text", 
                             xmarkup: "<input id='agegroup1name' type='text' class='asm-textbox' data='AgeGroup1Name' style='margin-left: 5px;' />"
@@ -2221,7 +2221,7 @@ $(function() {
                             xmarkup: "<input id='agegroup8name' type='text' class='asm-textbox' data='AgeGroup8Name' style='margin-left: 5px;' />"
                         },
                     ]},
-                    { id: "animalcode", title: _("Animal Codes"), fields: [
+                    { id: "tab-animalcodes", title: _("Animal Codes"), fields: [
                         { id: "codeformat", json_field: "CodingFormat", label: _("Animal code format"), type: "text",
                             callout: _("Code format tokens:") + '<br />' +
                             _("T = first letter of animal type") + '<br />' +
@@ -2276,7 +2276,7 @@ $(function() {
                          { id: "duplicatechip", json_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check" },
                          { id: "uniquelicence", json_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check" }
                     ]},
-                    { id: "animalemblems", title: _("Animal Emblems"), fields: [
+                    { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
                         { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
                         
                         { id: "alwaysshowlocation", json_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + _("Location"), type: "check" },
@@ -2366,6 +2366,10 @@ $(function() {
 
                     ]},
                     { id: "tab-boarding", title: _("Boarding"), fields: [
+                        { id: "boardingpaytype", json_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
+                        }
+                    ]}
+                    { id: "tab-checkout", title: _("Boarding"), fields: [
                         { id: "boardingpaytype", json_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
                         }
                     ]}
