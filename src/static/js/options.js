@@ -2103,6 +2103,33 @@ $(function() {
                         { id: "aashowbroughtinby", json_field: "AddAnimalsShowBroughtInBy", label: _("Show the brought in by field"), type: "check" },
                         { id: "aashowhold", json_field: "AddAnimalsShowHold", label: _("Show the hold fields"), type: "check" },
                         { id: "warnsimilaranimal", json_field: "WarnSimilarAnimalName", label: _("Warn if the name of the new animal is similar to one entered recently"), type: "check" }
+                    ]},
+                    { id: "ageegroups", title: _("Age Groups"), fields: [
+                        { type: "raw", markup: html.info(_("Age groups are assigned based on the age of an animal. The figure in the left column is the upper limit in years for that group.")) },
+                        { id: "agegroup1", json_field: "AgeGroup1", label: _("Age Group 1"), type: "text", 
+                            xmarkup: "<input id='agegroup1name' type='text' class='asm-textbox' data='AgeGroup1Name' style='margin-left: 5px;' />"
+                        },
+                        { id: "agegroup2", json_field: "AgeGroup2", label: _("Age Group 2"), type: "text", 
+                            xmarkup: "<input id='agegroup2name' type='text' class='asm-textbox' data='AgeGroup2Name' style='margin-left: 5px;' />"
+                        },
+                        { id: "agegroup3", json_field: "AgeGroup3", label: _("Age Group 3"), type: "text", 
+                            xmarkup: "<input id='agegroup3name' type='text' class='asm-textbox' data='AgeGroup3Name' style='margin-left: 5px;' />"
+                        },
+                        { id: "agegroup4", json_field: "AgeGroup4", label: _("Age Group 4"), type: "text", 
+                            xmarkup: "<input id='agegroup4name' type='text' class='asm-textbox' data='AgeGroup4Name' style='margin-left: 5px;' />"
+                        },
+                        { id: "agegroup5", json_field: "AgeGroup5", label: _("Age Group 5"), type: "text", 
+                            xmarkup: "<input id='agegroup5name' type='text' class='asm-textbox' data='AgeGroup5Name' style='margin-left: 5px;' />"
+                        },
+                        { id: "agegroup6", json_field: "AgeGroup6", label: _("Age Group 6"), type: "text", 
+                            xmarkup: "<input id='agegroup6name' type='text' class='asm-textbox' data='AgeGroup6Name' style='margin-left: 5px;' />"
+                        },
+                        { id: "agegroup7", json_field: "AgeGroup7", label: _("Age Group 7"), type: "text", 
+                            xmarkup: "<input id='agegroup7name' type='text' class='asm-textbox' data='AgeGroup7Name' style='margin-left: 5px;' />"
+                        },
+                        { id: "agegroup8", json_field: "AgeGroup8", label: _("Age Group 8"), type: "text", 
+                            xmarkup: "<input id='agegroup8name' type='text' class='asm-textbox' data='AgeGroup8Name' style='margin-left: 5px;' />"
+                        },
                     ]}
                 ]),
                 html.content_footer()
