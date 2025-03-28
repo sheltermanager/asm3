@@ -2405,6 +2405,24 @@ $(function() {
                         { id: "costonadoption", json_field: "CreateBoardingCostOnAdoption", label: _("Create boarding cost record when animal is adopted"), type: "check" },
                         { id: "showcostamount", json_field: "ShowCostAmount", label: _("Show a cost field on medical/test/vaccination screens"), type: "check" },
                         { id: "showcostpaid", json_field: "ShowCostPaid", label: _("Show a separate paid date field with costs"), type: "check" }
+                    ]},
+                    { id: "tab-daily-observations", title: _("Daily Observations"), fields: [
+                        { type: "raw", markup: html.info(_("These are the values that can be recorded for animals on the daily observations screen")) },
+                        { id: "behavelogtype", json_field: "BehaveLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")
+                        },
+                        { id: "suppressblankobservations", json_field: "SuppressBlankObservations", label: _("Suppress blank observations"), type: "check" }, 
+                        { type: "raw", markup: '<tr><th>' + _("Name") + '</th><th>' + _("Values") + '</th></tr>' },
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave1Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave1Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave2Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave2Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave3Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave3Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave4Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave4Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave5Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave5Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave6Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave6Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave7Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave7Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave8Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave8Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave9Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave9Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave10Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave10Values' /></td></tr>" }, 
+
                     ]}
                 ]),
                 html.content_footer()
