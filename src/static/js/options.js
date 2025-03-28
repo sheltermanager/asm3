@@ -2421,8 +2421,17 @@ $(function() {
                         { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave7Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave7Values' /></td></tr>" }, 
                         { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave8Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave8Values' /></td></tr>" }, 
                         { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave9Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave9Values' /></td></tr>" }, 
-                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave10Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave10Values' /></td></tr>" }, 
+                        { type: "raw", markup: "<tr><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave10Name' /></td><td><input type='text' class='asm-textbox asm-doubletextbox' data='Behave10 Values' /></td></tr>" }, 
 
+                    ]},
+                    { id: "tab-data-protection", title: _("Data Protection"), fields: [
+                        { id: "anonymisepersonaldata", json_field: "AnonymisePersonalData", label: _("Anonymize personal data after this many years"), type: "check", callout: _("This many years after creation of a person record, the name, address and telephone data will be anonymized."), xmarkup: '<input data="AnonymiseAfterYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
+                        { id: "anonymiseadopters", json_field: "rc:AnonymiseAdopters", label: _("Never anonymize people who adopted an animal"), type: "check" }, 
+                        { id: "autoremovedocumentmedia", json_field: "AutoRemoveDocumentMedia", label: _("Remove HTML and PDF document media after this many years"), type: "check", xmarkup: '<input data="AutoRemoveDMYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
+                        { id: "autoremoveanimalmediaexit", json_field: "AutoRemoveAnimalMediaExit", label: _("Remove animal media this many years after the animal dies or leaves the shelter"), type: "check", xmarkup: '<input data="AutoRemoveAMExitYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
+                        { id: "autoremovepeoplecancresv", json_field: "AutoRemovePeopleCancResv", label: _("Remove people with a cancelled reservation who have not had any other contact after this many years"), type: "check", xmarkup: '<input data="AutoRemovePeopleCRYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
+                        { id: "showgdprcontact", json_field: "ShowGDPRContactOptIn", label: _("Show GDPR Contact Opt-In field on person screens"), type: "check" }, 
+                        { id: "gdprcontactchangelog", json_field: "GDPRContactChangeLog", label: _("When I set a new GDPR Opt-In contact option, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GDPRContactChangeLogType" id="gdprcontactchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }
                     ]}
                 ]),
                 html.content_footer()
