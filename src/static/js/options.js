@@ -2432,6 +2432,44 @@ $(function() {
                         { id: "autoremovepeoplecancresv", json_field: "AutoRemovePeopleCancResv", label: _("Remove people with a cancelled reservation who have not had any other contact after this many years"), type: "check", xmarkup: '<input data="AutoRemovePeopleCRYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
                         { id: "showgdprcontact", json_field: "ShowGDPRContactOptIn", label: _("Show GDPR Contact Opt-In field on person screens"), type: "check" }, 
                         { id: "gdprcontactchangelog", json_field: "GDPRContactChangeLog", label: _("When I set a new GDPR Opt-In contact option, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GDPRContactChangeLogType" id="gdprcontactchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }
+                    ]}, 
+                    { id: "tab-defaults", title: _("Defaults"), fields: [
+                        { type: "raw", markup: html.info(_("These are the default values for these fields when creating new records.")) }, 
+                        { id: "defaultbreed", json_field: "AFDefaultBreed", label: _("Breed"), type: "select", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") }, 
+                        { id: "defaultclinictype", json_field: "AFDefaultClinicType", label: _("Clinic Appointment"), type: "select", options: html.list_to_options(controller.clinictypes, "ID", "CLINICTYPENAME") }, 
+                        { id: "defaultcoattype", json_field: "AFDefaultCoatType", label: _("Coat Type"), type: "select", options: html.list_to_options(controller.coattypes, "ID", "COATTYPE") }, 
+                        { id: "defaultcolour", json_field: "AFDefaultColour", label: _("Color"), type: "select", options: html.list_to_options(controller.colours, "ID", "BASECOLOUR") }, 
+                        { id: "defaultdeath", json_field: "AFDefaultDeathReason", label: _("Death Reason"), type: "select", options: html.list_to_options(controller.deathreasons, "ID", "REASONNAME") }, 
+                        { id: "defaultdiary", json_field: "AFDefaultDiaryPerson", label: _("Diary Person"), type: "select", options: html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME") }, 
+                        { id: "defaultentry", json_field: "AFDefaultEntryReason", label: _("Entry Reason"), type: "select", options: html.list_to_options(controller.entryreasons, "ID", "REASONNAME") }, 
+                        { id: "defaultentry", json_field: "AFDefaultEntryType", label: _("Entry Type"), type: "select", options: html.list_to_options(controller.entrytypes, "ID", "ENTRYTYPENAME") }, // To do - query duplicate id "defaultentry"
+                        { id: "defaultincident", json_field: "DefaultIncidentType", label: _("Incident Type"), type: "select", options: html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME") }, 
+                        { id: "defaultjurisdiction", json_field: "DefaultJurisdiction", label: _("Jurisdiction"), type: "select", options: html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME") }, 
+                        { id: "defaultlocation", json_field: "AFDefaultLocation", label: _("Location"), type: "select", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME") }, 
+                        { id: "defaultlog", json_field: "AFDefaultLogFilter", label: _("Log Filter"), type: "select", options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
+                        { id: "defaultlogtype", json_field: "AFDefaultLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
+                        { id: "systemlogtype", json_field: "SystemLogType", label: _("System Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
+                        { type: "nextcol" }, 
+                        { id: "defaultpaymentmethod", json_field: "AFDefaultPaymentMethod", label: _("Payment Method"), type: "select", options: html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") }, 
+                        { id: "defaultdonation", json_field: "AFDefaultDonationType", label: _("Payment Type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME") }, 
+                        { id: "defaultreservation", json_field: "AFDefaultReservationStatus", label: _("Reservation Status"), type: "select", options: html.list_to_options(controller.reservationstatuses, "ID", "STATUSNAME") }, 
+                        { id: "defaultreturn", json_field: "AFDefaultReturnReason", label: _("Return Reason"), type: "select", options: html.list_to_options(controller.entryreasons, "ID", "REASONNAME") }, 
+                        { id: "defaultsize", json_field: "AFDefaultSize", label: _("Size"), type: "select", options: html.list_to_options(controller.sizes, "ID", "SIZE") }, 
+                        { id: "defaultspecies", json_field: "AFDefaultSpecies", label: _("Species"), type: "select", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "defaulttaxrate", json_field: "AFDefaultTaxRate", label: _("Tax Rate"), type: "select", options: html.list_to_options(controller.taxrates, "ID", "TAXRATENAME") }, 
+                        { id: "defaulttest", json_field: "AFDefaultTestType", label: _("Test Type"), type: "select", options: html.list_to_options(controller.testtypes, "ID", "TESTNAME") }, 
+                        { id: "defaulttransport", json_field: "AFDefaultTransportType", label: _("Transport Type"), type: "select", options: html.list_to_options(controller.transporttypes, "ID", "TRANSPORTTYPENAME") }, 
+                        { id: "defaulttype", json_field: "AFDefaultType", label: _("Type"), type: "select", options: html.list_to_options(controller.types, "ID", "ANIMALTYPE") }, 
+                        { id: "defaultvaccination", json_field: "AFDefaultVaccinationType", label: _("Vaccination Type"), type: "select", options: html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE") }, 
+
+                        { id: "DefaultAnimalAge", json_field: "DefaultAnimalAge", label: _("Default Age"), type: "text", classes: "asm-textbox asm-numberbox", xattr: 'data-min="2" data-max="10"' }, 
+                        { id: "DefaultBroughtInBy", json_field: "DefaultBroughtInBy", label: _("Default Brought In By"), type: "person" }, 
+                        { id: "defaultshift", json_field: "DefaultShiftStart", label: _("Default Rota Shift"), type: "text", classes: "asm-textbox asm-halftextbox asm-timebox", xmarkup: '<input id="defaultshiftend" data="DefaultShiftEnd" type="text" class="asm-textbox asm-halftextbox asm-timebox" />' }, 
+
+                        { id: "autonotadopt", json_field: "AutoNotForAdoption", label: _("Mark new animals as not for adoption"), type: "check" }, 
+                        { id: "autoimagesnotforpublish", json_field: "AutoNewImagesNotForPublish", label: _("Exclude new animal photos from publishing"), type: "check" }, 
+                        { id: "automedianotes", json_field: "AutoMediaNotes", label: _("Prefill new media notes for animal images with animal comments if left blank"), type: "check" },
+                        { id: "medianotesfile", json_field: "DefaultMediaNotesFromFile", label: _("Prefill new media notes with the filename if left blank"), type: "check" }
                     ]}
                 ]),
                 html.content_footer()
