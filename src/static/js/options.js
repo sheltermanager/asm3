@@ -2470,7 +2470,15 @@ $(function() {
                         { id: "autoimagesnotforpublish", json_field: "AutoNewImagesNotForPublish", label: _("Exclude new animal photos from publishing"), type: "check" }, 
                         { id: "automedianotes", json_field: "AutoMediaNotes", label: _("Prefill new media notes for animal images with animal comments if left blank"), type: "check" },
                         { id: "medianotesfile", json_field: "DefaultMediaNotesFromFile", label: _("Prefill new media notes with the filename if left blank"), type: "check" }
-                    ]}
+                    ]}, 
+                    { id: "tab-diaryandmessages", title: _("Diary and Messages"), fields: [
+                        { id: "alldiaryhomepage", json_field: "AllDiaryHomePage", label: _("Show the full diary (instead of just my notes) on the home page"), type: "check" }, 
+                        { id: "diarycompleteondeath", json_field: "DiaryCompleteOnDeath", label: _("Auto complete diary notes linked to animals when they are marked deceased"), type: "check" }, 
+                        { id: "emaildiarynotes", json_field: "EmailDiaryNotes", label: _("Email users their outstanding diary notes once per day"), type: "check" }, 
+                        { id: "emaildiaryonchange", json_field: "EmailDiaryOnChange", label: _("Email users immediately when a diary note assigned to them is created or updated"), type: "check" }, 
+                        { id: "emaildiaryoncomplete", json_field: "EmailDiaryOnComplete", label: _("Email diary note creators when a diary note is marked complete"), type: "check" }, 
+                        { id: "emailmessages", json_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check" }, 
+                    ]}, 
                 ]),
                 html.content_footer()
             ].join("\n");
