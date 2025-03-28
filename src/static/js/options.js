@@ -2394,6 +2394,17 @@ $(function() {
                         }, 
                         { id: "AdoptionCheckoutDonationMsg", json_field: "AdoptionCheckoutDonationMsg", label: _("Donation message"), type: "textarea", callout: _("The text to show adopters when requesting a donation. Simple HTML formatting is allowed.") }, 
                         { id: "AdoptionCheckoutDonationTiers", json_field: "AdoptionCheckoutDonationTiers", label: _("Donation tiers"), type: "textarea" }
+                    ]},
+                    { id: "tab-costs", title: _("Costs"), fields: [
+                        { id: "dailyboardingcost", json_field: "DefaultDailyBoardingCost", label: _("Default daily boarding cost"), type: "currency", callout: _("The daily cost for every day a shelter animal is in care")
+                        },
+                        { id: "costtype", json_field: "BoardingCostType", label: _("Boarding cost type"), type: "select", 
+                            options: html.list_to_options(controller.costtypes, "ID", "COSTTYPENAME"), 
+                            callout: _("The cost type used when creating a cost record of the total daily boarding cost for adopted animals")
+                        },
+                        { id: "costonadoption", json_field: "CreateBoardingCostOnAdoption", label: _("Create boarding cost record when animal is adopted"), type: "check" },
+                        { id: "showcostamount", json_field: "ShowCostAmount", label: _("Show a cost field on medical/test/vaccination screens"), type: "check" },
+                        { id: "showcostpaid", json_field: "ShowCostPaid", label: _("Show a separate paid date field with costs"), type: "check" }
                     ]}
                 ]),
                 html.content_footer()
