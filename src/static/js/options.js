@@ -2515,8 +2515,17 @@ $(function() {
                             '<option value="{ownersurname}, {ownerforenames1} & {ownerforenames2}">' + _("Last, First & First") + '</option>' + 
                             '</select> '
                         }, 
-                        { id: "ownernameformat", json_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) }, 
-                    ]}
+                        { id: "ownernameformat", json_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) }
+                    ]}, 
+                    { id: "tab-documents", title: _("Documents"), fields: [
+                        { id: "allowodttemp", json_field: "AllowODTDocumentTemplates", label: _("Allow use of OpenOffice document templates"), type: "check" }, 
+                        { id: "jswprint", json_field: "JSWindowPrint", label: _("Printing word processor documents uses hidden iframe and window.print"), type: "check" }, 
+                        { id: "pdfinline", json_field: "PDFInline", label: _("Show PDF files inline instead of sending them as attachments"), type: "check" }, 
+                        { id: "includeincompletemedical", json_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check" }, 
+                        { id: "notifycoordicatorondocsign", json_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check" }, 
+                        { id: "generatedocumentlog", json_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "pdfzoom", json_field: "PDFZoom", label: _("Default zoom level when converting documents to PDF"), type: "number", xmarkup: "%" }
+                    ]}, 
                 ]),
                 html.content_footer()
             ].join("\n");
