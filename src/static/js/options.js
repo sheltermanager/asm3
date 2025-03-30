@@ -2479,6 +2479,44 @@ $(function() {
                         { id: "emaildiaryoncomplete", json_field: "EmailDiaryOnComplete", label: _("Email diary note creators when a diary note is marked complete"), type: "check" }, 
                         { id: "emailmessages", json_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check" }, 
                     ]}, 
+                    { id: "tab-display", title: _("Display"), fields: [
+                        { id: "disableeffects", json_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check" }, 
+                        //{ id: "fancytooltips", json_field: "FancyTooltips", label: _("Use fancy tooltips"), type: "check" }, 
+                        { id: "disablehtml5scaling", json_field: "rc:DontUseHTML5Scaling", label: _("Use HTML5 client side image scaling where available to speed up image uploads"), type: "check" }, 
+                        { id: "picsinbooksclinic", json_field: "PicturesInBooksClinic", label: _("Show animal thumbnails in clinic books"), type: "check" }, 
+                        { id: "picsinbooks", json_field: "PicturesInBooks", label: _("Show animal thumbnails in movement and medical books"), type: "check" }, 
+                        { id: "sexborder", json_field: "ShowSexBorder", label: _("Show pink and blue borders around animal thumbnails to indicate sex"), type: "check" }, 
+                        { id: "minimap", json_field: "ShowPersonMiniMap", label: _("Show a minimap of the address on person screens"), type: "check" }, 
+                        { id: "usstatecodes", json_field: "USStateCodes", label: _("When entering addresses, restrict states to valid US 2 letter state codes"), type: "check", hideif: asm.locale != "en" }, // To do - check that this behaves as intended
+                        { id: "latlong", json_field: "ShowLatLong", label: _("Allow editing of latitude/longitude with minimaps"), type: "check" }, 
+                        { id: "mediatablemode", json_field: "MediaTableMode", label: _("Default to table mode when viewing media tabs"), type: "check" }, 
+                        { id: "showlbs", json_field: "ShowWeightInLbs", label: _("Show weights as lb and oz"), type: "check" }, 
+                        { id: "showlbsf", json_field: "ShowWeightInLbsFraction", label: _("Show weights as decimal lb"), type: "check" }, 
+                        { id: "showfullcommentstables", json_field: "ShowFullCommentsInTables", label: _("Show complete comments in table views"), type: "check" }, 
+                        { id: "showviewsaudittrail", json_field: "ShowViewsInAuditTrail", label: _("Show record views in the audit trail"), type: "check" }, 
+                        { id: "showlookupdataid", json_field: "ShowLookupDataID", label: _("Show ID numbers when editing lookup data"), type: "check" }, 
+                        { id: "floatingheaders", json_field: "StickyTableHeaders", label: _("Keep table headers visible when scrolling"), type: "check" }, 
+                        { id: "tablesreflow", json_field: "TablesReflow", label: _("Tables stack vertically on portrait smartphones"), type: "check" }, 
+                        { id: "recordnewbrowsertab", json_field: "RecordNewBrowserTab", label: _("Open records in a new browser tab"), type: "check" }, 
+                        { id: "reportnewbrowsertab", json_field: "ReportNewBrowserTab", label: _("Open reports in a new browser tab"), type: "check" }, 
+                        { id: "locationfilters", json_field: "LocationFiltersEnabled", label: _("Enable location filters"), type: "check" }, 
+                        { id: "multisite", json_field: "MultiSiteEnabled", label: _("Enable multiple sites"), type: "check" }, 
+                        { id: "formatphonenumbers", json_field: "FormatPhoneNumbers", label: _("Format telephone numbers according to my locale"), type: "check" }, 
+                        { id: "inactivitytimer", json_field: "InactivityTimer", label: _("Auto log users out after this many minutes of inactivity"), type: "check", xmarkup: '<input data="InactivityTimeout" id="inactivitytimeout" data-min="0" data-max="1440" class="asm-textbox asm-numberbox" />' }, 
+                        { id: "ownernameformat", json_field: "OwnerNameFormat", label: _("When displaying person names, use the format"), type: "select", options:
+                            '<option value="{ownertitle} {ownerforenames} {ownersurname}">' + _("Title First Last") + '</option>' + 
+                            '<option value="{ownertitle} {ownerinitials} {ownersurname}">' + _("Title Initials Last") + '</option>' + 
+                            '<option value="{ownerforenames} {ownersurname}">' + _("First Last") + '</option>' + 
+                            '<option value="{ownersurname}, {ownerforenames}">' + _("Last, First") + '</option>' + 
+                            '<option value="{ownersurname} {ownerforenames}">' + _("Last First") + '</option>', 
+                            xmarkup: 
+                            '<select data="OwnerNameMarriedFormat" id="ownernamemarriedformat" type="text" class="asm-selectbox">' + 
+                            '<option value="{ownerforenames1} & {ownerforenames2} {ownersurname}">' + _("First & First Last") + '</option>' + 
+                            '<option value="{ownersurname}, {ownerforenames1} & {ownerforenames2}">' + _("Last, First & First") + '</option>' + 
+                            '</select> '
+                        }, 
+                        { id: "ownernameformat", json_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) }, 
+                    ]}
                 ]),
                 html.content_footer()
             ].join("\n");
