@@ -2526,6 +2526,23 @@ $(function() {
                         { id: "generatedocumentlog", json_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                         { id: "pdfzoom", json_field: "PDFZoom", label: _("Default zoom level when converting documents to PDF"), type: "number", xmarkup: "%" }
                     ]}, 
+                    { id: "tab-email", title: _("Email"), fields: [
+                        { id: "emailaddress", json_field: "EmailAddress", label: _("Email address"), type: "text", callout: "This email address is the default From address when sending emails" }, 
+                        { id: "emailbcc", json_field: "EmailBCC", label: _("BCC messages to"), type: "text", callout: "BCC this address when sending email. This is useful if you want to archive your emails with another service." }, 
+                        { id: "emailsig", json_field: "EmailSignature", label: _("Email signature"), type: "richtextarea", callout: "This text will be added to the bottom of all send email dialogs" }, 
+                        { type: "nextcol" },
+                        { id: "emailfromadd", json_field: "EmailFromAddresses", label: _("From address book"), type: "textarea", callout: "Comma separated list of extra addresses that the From email field of send email dialogs will prompt with" }, 
+                        { id: "emailtoadd", json_field: "EmailToAddresses", label: _("To address book"), type: "textarea", callout: "Comma separated list of extra addresses that the To and CC email fields of send email dialogs will prompt with" }, 
+                            // To do - wrap the widgets below in a div with class="smcom"???
+                            { id: "smtpoverride", json_field: "SMTPOverride", label: _("Specify an SMTP server for sending emails"), type: "check", callout: _("Please do not enable this option if you do not understand what this means.") }, 
+                            { id: "smtpserver", json_field: "SMTPServer", label: _("SMTP Server"), type: "text" }, 
+                            { id: "smtpport", json_field: "SMTPPort", label: _("Port"), type: "select", options: "<option>25</option><option>587</option><option>2525</option>" }, 
+                            { id: "smtptls", json_field: "SMTPUseTLS", label: _("Use TLS"), type: "check" }, 
+                            { id: "smtpuser", json_field: "SMTPUsername", label: _("Username"), type: "text" }, 
+                            { id: "smtppass", json_field: "SMTPPassword", label: _("Password"), type: "text" }, 
+                            { id: "smtpreplyasfrom", json_field: "SMTPReplyAsFrom", label: _("Set the FROM header from the email dialog"), type: "check", callout: _("Allow the user to override the From header. Emails will fail if you try to send email from a domain you do not own.") }
+                            //
+                    ]}
                 ]),
                 html.content_footer()
             ].join("\n");
