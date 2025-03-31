@@ -73,6 +73,11 @@
         div_id = asm3_adoptable_div_id;
     }
 
+    var delay = 0;
+    if (typeof asm3_adoptable_delay !== 'undefined') {
+        delay = asm3_adoptable_delay;
+    }
+
     var translate = function(s) {
         if (typeof asm3_adoptable_translations !== 'undefined') {
             if (asm3_adoptable_translations.hasOwnProperty(s)) {
@@ -345,7 +350,7 @@
 
     var onReady = function(event) {
         window.removeEventListener( "load", onReady );
-        render();
+        setTimeout(render, delay);
     };
 
     window.addEventListener("load", onReady);
