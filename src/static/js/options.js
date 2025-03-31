@@ -2595,7 +2595,18 @@ $(function() {
                         { id: "insurancestart", json_field: "UseAutoAutoInsuranceStartInsurance", label: _("Start at"), type: "number" }, 
                         { id: "insuranceend", json_field: "AutoInsuranceEnd", label: _("End at"), type: "number" }, 
                         { id: "insurancenext", json_field: "AutoInsuranceNext", label: _("Next"), type: "number" } 
-                    ]}
+                    ]}, 
+                    { id: "tab-logs", title: _("Logs"), fields: [
+                        { id: "flagchangelog", json_field: "FlagChangeLog", label: _("When I change the flags on an animal or person, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="FlagChangeLogType" id="flagchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "holdchangelog", json_field: "HoldChangeLog", label: _("When I mark an animal held, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="HoldChangeLogType" id="holdchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "locationchangelog", json_field: "LocationChangeLog", label: _("When I change the location of an animal, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="LocationChangeLogType" id="locationchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "animalnamechangelog", json_field: "AnimalNameChangeLog", label: _("When I change the name of an animal, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="AnimalNameChangeLogType" id="animalnamechangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "weightchangelog", json_field: "WeightChangeLog", label: _("When I change the weight of an animal, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="WeightChangeLogType" id="weightchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+
+                        { id: "addresschangelog", json_field: "AddressChangeLog", label: _("When I change the address of a person, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="AddressChangeLogType" id="addresschangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+
+                        { id: "logemailbydefault", json_field: "LogEmailByDefault", label: _("When I send an email, record it in the log with this type"), type: "check", xmarkup: '<select data="EmailLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                    ]}, 
                 ]),
                 html.content_footer()
             ].join("\n");
