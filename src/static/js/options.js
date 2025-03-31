@@ -2555,8 +2555,39 @@ $(function() {
                         { id: "advancedfindperson", json_field: "AdvancedFindOwner", label: _("Default to advanced find person screen"), type: "check" }, 
                         { id: "aficomplete", json_field: "AdvancedFindIncidentIncomplete", label: _("Find an incident screen defaults to incomplete incidents"), type: "check" }, 
                         { id: "animalsearchnewtab", json_field: "AnimalSearchResultsNewTab", label: _("Open animal find screens in a new tab"), type: "check" }, 
-                        { id: "personsearchnewtab", json_field: "PersonSearchResultsNewTab", label: _("Open person find screens in a new tab"), type: "check" }, 
+                        { id: "personsearchnewtab", json_field: "PersonSearchResultsNewTab", label: _("Open person find screens in a new tab"), type: "check" }
 
+                    ]}, 
+                    { id: "tab-homepage", title: _("Home page"), fields: [
+                        { id: "disabletips", json_field: "rc:DisableTips", label: _("Show tips on the home page"), type: "check" }, 
+                        { id: "showalerts", json_field: "ShowAlertsHomePage", label: _("Show alerts on the home page"), type: "check" }, 
+                        { id: "showoverview", json_field: "ShowOverviewHomePage", label: _("Show overview counts on the home page"), type: "check" }, 
+                        { id: "showtimeline", json_field: "ShowTimelineHomePage", label: _("Show timeline on the home page"), type: "check" }, 
+                        { id: "showhdeceased", json_field: "rc:ShowDeceasedHomePage", label: _("Hide deceased animals from the home page"), type: "check" }, 
+                        { id: "showhfinancial", json_field: "rc:ShowFinancialHomePage", label: _("Hide financial stats from the home page"), type: "check" }, 
+                        { id: "alertmicrochip", json_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertmicrochip", json_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, // To do - query duplicate id "alertmicrochip"
+                        { id: "alertnevervacc", json_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertrabies", json_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { type: "raw", markup: html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) },
+                        { id: "statmode", json_field: "ShowStatsHomePage", label: _("Stats period"), type: "select", options: 
+                            '<option value="none">' + _("Do not show") + '</option>' + 
+                            '<option value="today">' + _("Today") + '</option>' + 
+                            '<option value="thisweek">' + _("This week") + '</option>' + 
+                            '<option value="thismonth">' + _("This month") + '</option>' + 
+                            '<option value="thisyear">' + _("This year") + '</option>' + 
+                            '<option value="alltime">' + _("All time") + '</option>'
+                        }, 
+                        { id: "linkmode", json_field: "MainScreenAnimalLinkMode", label: _("Type of animal links to show"), type: "select", options: 
+                            '<option value="none">' + _("Do not show") + '</option>' + 
+                            '<option value="recentlychanged">' + _("Recently Changed") + '</option>' + 
+                            '<option value="recentlyentered">' + _("Recently Entered Shelter") + '</option>' + 
+                            '<option value="recentlyadopted">' + _("Recently Adopted") + '</option>' + 
+                            '<option value="recentlyfostered">' + _("Recently Fostered") + '</option>' + 
+                            '<option value="adoptable">' + _("Up for adoption") + '</option>' + 
+                            '<option value="longestonshelter">' + _("Longest On Shelter") + '</option>'
+                        }, 
+                        { id: "linkmax", json_field: "MainScreenAnimalLinkMax", label: _("Number of animal links to show"), type: "number", xattr: 'data-min="0" data-max="200"' }, 
                     ]}
                 ]),
                 html.content_footer()
