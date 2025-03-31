@@ -348,15 +348,11 @@
     };
 
     var onReady = function(event) {
-        document.removeEventListener( "DOMContentLoaded", onReady, false );
         window.removeEventListener( "load", onReady );
         inject_host_div();
         render();
     };
 
-    if (document.addEventListener) {
-        document.addEventListener("DOMContentLoaded", onReady, false);
-        window.addEventListener("load", onReady);
-    }
+    window.addEventListener("load", onReady);
 
 }());
