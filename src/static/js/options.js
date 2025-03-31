@@ -2798,7 +2798,15 @@ $(function() {
                     // To do - make sure that tab-shelterview has turned up :)
                     { id: "tab-stock", title: _("Stock"), fields: [
                         { id: "stockmovementusagetypeid", json_field: "StockMovementUsageTypeID", label: "Stock movement usage type", type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"), callout: _("The pseudo usagetype used to represent internal movements") }, 
-                        { id: "defaultproducttypeid", json_field: "StockDefaultProductTypeID", label: "Default product type", type: "select", options: html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME") }, 
+                        { id: "defaultproducttypeid", json_field: "StockDefaultProductTypeID", label: "Default product type", type: "select", options: html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME") }
+                    ]}, 
+                    { id: "tab-waitinglist", title: _("Waiting List"), fields: [
+                        { id: "disablewl", json_field: "rc:DisableWaitingList", label: _("Enable the waiting list functionality"), type: "check" }, 
+                        { id: "wlrank", json_field: "WaitingListRankBySpecies", label: _("Separate waiting list rank by species"), type: "check" }, 
+                        { id: "wlupdate", json_field: "WaitingListUrgencyUpdatePeriod", label: _("Waiting list urgency update period in days"), type: "number", xattr: 'data-min="0" data-max="365"', callout: _("Set to 0 to never update urgencies.") }, 
+                        { id: "wldu", json_field: "WaitingListDefaultUrgency", label: _("Default urgency"), type: "select", options: html.list_to_options(controller.urgencies, "ID", "URGENCY") }, 
+                        { id: "wlremoval", json_field: "WaitingListDefaultRemovalWeeks", label: _("Default removal after weeks without contact"), type: "number", xattr: 'data-min="0" data-max="52"', callout: _("Set to 0 to never auto remove.") }, 
+                        { id: "wlcolumns", json_field: "WaitingListViewColumns", label: _("Columns displayed"), type: "selectmulti", options: this.two_pair_options(controller.waitinglistcolumns) }, 
                     ]}, 
                 ]),
                 html.content_footer()
