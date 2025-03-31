@@ -2621,6 +2621,26 @@ $(function() {
                         { id: "matchfeatures", json_field: "MatchFeatures", label: _("Points for matching features"), type: "number" }, 
                         { id: "matchpostcode", json_field: "MatchPostcode", label: _("Points for matching zipcode"), type: "number" }, 
                         { id: "match2weeks", json_field: "MatchWithin2Weeks", label: _("Points for being found within 2 weeks of being lost"), type: "number" }, 
+                    ]}, 
+                    { id: "tab-medical", title: _("Medical"), fields: [
+                        { id: "includeoffsheltermedical", json_field: "IncludeOffShelterMedical", label: _("Include off-shelter animals in medical calendar and books"), type: "check" }, 
+                        { id: "precreatetreat", json_field: "MedicalPrecreateTreatments", label: _("Pre-create all treatments when creating fixed-length medical regimens"), type: "check" }, 
+                        { id: "reloadmedical", json_field: "ReloadMedical", label: _("Reload the medical book/tab automatically after adding new medical items"), type: "check" }, 
+                        { id: "autodefaultvaccbatch", json_field: "AutoDefaultVaccBatch", label: _("When entering vaccinations, default the last batch number and manufacturer for that type"), type: "check" }, 
+                        { id: "fostereremails", json_field: "FostererEmails", label: _("Send a weekly email to fosterers with medical information about their animals"), type: "check" }, 
+                        { id: "fostereremailskipnomedical", json_field: "FostererEmailSkipNoMedical", label: _("Do not send an email if there are no medical items due for animals in the care of this fosterer"), type: "check" }, 
+                        { id: "femailreplyto", json_field: "FostererEmailsReplyTo", label: _("Replies to the fosterer email should go to"), type: "text", callout: _("If blank, the address from the Email tab will be used") }, 
+                        { id: "femailsendday", json_field: "FostererEmailSendDay", label: _("Send the email on"), type: "select", 
+                            options: '<option value="0">' + _("Monday") + '</option>' + 
+                            '<option value="1">' + _("Tuesday") + '</option>' + 
+                            '<option value="2">' + _("Wednesday") + '</option>' + 
+                            '<option value="3">' + _("Thursday") + '</option>' + 
+                            '<option value="4">' + _("Friday") + '</option>' + 
+                            '<option value="5">' + _("Saturday") + '</option>' + 
+                            '<option value="6">' + _("Sunday") + '</option>' 
+                        }, 
+                        { id: "femailmsg", json_field: "FostererEmailsMsg", label: _("Add an extra message to the fosterer email"), type: "richtextarea" }, 
+                        
                     ]}
                 ]),
                 html.content_footer()
