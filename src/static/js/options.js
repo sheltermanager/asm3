@@ -2674,7 +2674,17 @@ $(function() {
                         { id: "warnoopostcode", json_field: "WarnOOPostcode", label: _("Warn when adopting to a person who lives in the same area as the original owner"), type: "check" }, 
                         { id: "warnbroughtin", json_field: "WarnBroughtIn", label: _("Warn when adopting to a person who has previously brought an animal to the shelter"), type: "check" }, 
                         { id: "warnnoreserve", json_field: "WarnNoReserve", label: _("Warn when adopting an animal with reservations and this person is not one of them"), type: "check" }, 
-                        { id: "warnmultiplereseves", json_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check" }, 
+                        { id: "warnmultiplereseves", json_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check" }
+                    ]}, 
+                    { id: "tab-onlineforms", title: _("Online Forms"), fields: [
+                        { id: "autoremoveforms", json_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", xmarkup: _(" days.") }, 
+                        { id: "deleteonprocess", json_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check" }, 
+                        { id: "removeprocessedforms", json_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check" }, 
+                        { id: "hashprocessedforms", json_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check" }, 
+                        { id: "spamhoneytrap", json_field: "OnlineFormSpamHoneyTrap", label: _("Spambot protection: Invisible textbox"), type: "check" }, 
+                        { id: "spamuacheck", json_field: "OnlineFormSpamUACheck", label: _("Spambot protection: UserAgent check"), type: "check" }, 
+                        { id: "spamfirstname", json_field: "OnlineFormSpamFirstnameMixCase", label: _("Spambot protection: Person name mixed case"), type: "check" }, 
+                        { id: "spampostcode", json_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check" }
                     ]}
                 ]),
                 html.content_footer()
