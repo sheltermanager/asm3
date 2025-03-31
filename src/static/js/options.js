@@ -2588,6 +2588,13 @@ $(function() {
                             '<option value="longestonshelter">' + _("Longest On Shelter") + '</option>'
                         }, 
                         { id: "linkmax", json_field: "MainScreenAnimalLinkMax", label: _("Number of animal links to show"), type: "number", xattr: 'data-min="0" data-max="200"' }, 
+                    ]}, 
+                    { id: "tab-insurance", title: _("Insurance"), fields: [
+                        { type: "raw", markup: html.info(_("These numbers are for shelters who have agreements with insurance companies and are given blocks of policy numbers to allocate.")) }, 
+                        { id: "autoinsurance", json_field: "UseAutoInsurance", label: _("Use Automatic Insurance Numbers"), type: "check" }, 
+                        { id: "insurancestart", json_field: "UseAutoAutoInsuranceStartInsurance", label: _("Start at"), type: "number" }, 
+                        { id: "insuranceend", json_field: "AutoInsuranceEnd", label: _("End at"), type: "number" }, 
+                        { id: "insurancenext", json_field: "AutoInsuranceNext", label: _("Next"), type: "number" } 
                     ]}
                 ]),
                 html.content_footer()
