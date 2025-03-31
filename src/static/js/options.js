@@ -2782,11 +2782,18 @@ $(function() {
                         { id: "subunit", json_field: "DontShowLocationUnit", label: "Remove the location unit field from animal details", type: "check" }, 
                         { id: "bonded", json_field: "DontShowBonded", label: "Remove the bonded with fields from animal entry details", type: "check" }, 
                         { id: "jurisdiction", json_field: "DontShowJurisdiction", label: "Remove the jurisdiction field from animal entry details", type: "check" }, 
-                        { id: "pickup", json_field: "DontShowPickup", label: "Remove the picked up fields from animal entry details", type: "check" }, 
+                        { id: "pickup", json_field: "DontShowPickup", label: "Remove the picked up fields from animal entry details", type: "check" }
                     ]}, 
                     { id: "tab-reports", title: _("Reports"), fields: [
                         { id: "emptyreports", json_field: "EmailEmptyReports", label: "Email scheduled reports with no data", type: "check" }, 
                         { id: "reportmenuaccordion", json_field: "ReportMenuAccordion", label: "Show report menu items in collapsed categories", type: "check" }
+                    ]}, 
+                    // To do - make sure that tab-search has turned up :)
+                    { id: "tab-security", title: _("Security"), fields: [
+                        { id: "force2fa", json_field: "Force2FA", label: "Force users to enable 2 factor authentication", type: "check" }, 
+                        { id: "forcestrongpasswords", json_field: "ForceStrongPasswords", label: "Force users to set strong passwords (8+ characters of mixed case and numbers)", type: "check" }, 
+                        { id: "incidentpermissions", json_field: "IncidentPermissions", label: "Enable access permissions for incident records", type: "check" }, 
+                        { id: "personpermissions", json_field: "PersonPermissions", label: "Enable access permissions for person records", type: "check" }, 
                     ]}, 
                 ]),
                 html.content_footer()
