@@ -128,6 +128,15 @@
         return h.join("");
     };
 
+    var inject_host_div = function() {
+        var hostdiv = document.getElementById("asm3-adoptables");
+        if (hostdiv) { return; }
+        var sections = document.getElementsByTagName("section");
+        if (sections.length > 0) {
+            sections[0].innerHTML += '<div id="asm3-adoptables"></div>';
+        }
+    };
+
     var list_options = function(l) {
         var h = [];
         l.forEach(function(item, index, arr) {
@@ -341,6 +350,7 @@
     var onReady = function(event) {
         document.removeEventListener( "DOMContentLoaded", onReady, false );
         window.removeEventListener( "load", onReady );
+        inject_host_div();
         render();
     };
 
