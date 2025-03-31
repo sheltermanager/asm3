@@ -133,7 +133,7 @@
         if (hostdiv) { return; }
         var sections = document.getElementsByTagName("section");
         if (sections.length > 0) {
-            sections[0].innerHTML += '<div id="asm3-adoptables"></div>';
+            sections[0].insertAdjacentHTML("beforeend", '<div id="asm3-adoptables"></div>');
         }
     };
 
