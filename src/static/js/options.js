@@ -2685,6 +2685,38 @@ $(function() {
                         { id: "spamuacheck", json_field: "OnlineFormSpamUACheck", label: _("Spambot protection: UserAgent check"), type: "check" }, 
                         { id: "spamfirstname", json_field: "OnlineFormSpamFirstnameMixCase", label: _("Spambot protection: Person name mixed case"), type: "check" }, 
                         { id: "spampostcode", json_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check" }
+                    ]}, 
+                    { id: "tab-processors", title: _("Payment Processors"), fields: [
+                        { type: "raw", markup: html.info(_("ASM can talk to payment processors and request payment from your customers and donors.")) }, 
+                        { id: "currencycode", json_field: "CurrencyCode", label: _("Request payments in"), type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
+                        { id: "paymentreturn", json_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), type: "text" }, 
+                            // To do - wrap in div with id="paypal-options"
+                            { type: "raw", markup: '<p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p>' }, 
+                            { id: "paypalemail", json_field: "PayPalEmail", label: _("PayPal Business Email"), type: "text" }, 
+                            { type: "raw", markup: '<p class="centered">' + _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}").replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>") + '</p>', }, 
+                            //
+                            // To do - wrap in div with id="stripe-options"
+                            { type: "raw", markup: '<p class="centered"><img height="25px" src="static/images/ui/logo_stripe_103.png" /></p>' }, 
+                            { id: "stripekey", json_field: "StripeKey", label: _("Stripe Key"), type: "text" }, 
+                            { id: "stripesecretkey", json_field: "StripeSecretKey", label: _("Stripe Secret Key"), type: "text" }, 
+                            { type: "raw", markup: '<p class="centered">' + _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}").replace("{0}", "<br/><b>" + controller.pp_stripe + "</b>") + '</p>', }, 
+                            //
+                            // To do - wrap in div with id="square-options"
+                            { type: "raw", markup: '<p class="centered"><img height="25px" src="static/images/ui/logo_square_100.png" /></p>' }, 
+                            { id: "squareaccesstoken", json_field: "SquareAccessToken", label: _("Square Access Token"), type: "text" }, 
+                            { id: "squarelocationid", json_field: "SquareLocationID", label: _("Square Location ID"), type: "text" }, 
+                            { type: "raw", markup: '<p class="centered">' + _("In your Square account, enable a webhook to send 'payment.updated' events to {0}").replace("{0}", "<br/><b>" + controller.pp_square + "</b>") + '</p>', }, 
+                            //
+                            // To do - wrap in div with id="cardcom-options" and class="israel"
+                            { type: "raw", markup: '<p class="centered strong">' + _("Cardcom Payment Gateway") + '</p>' }, 
+                            { id: "CardcomTerminalNumber", json_field: "CardcomTerminalNumber", label: _("Cardcom Terminal Number"), type: "text" }, 
+                            { id: "CardcomUserName", json_field: "CardcomUserName", label: _("Cardcom User Name"), type: "text" }, 
+                            { id: "CardcomDocumentType", json_field: "CardcomDocumentType", label: _("Cardcom User Type"), type: "text" }, 
+                            { id: "CardcomSuccessURL", json_field: "CardcomSuccessURL", label: _("Cardcom Success URL"), type: "text" }, 
+                            { id: "CardcomErrorURL", json_field: "CardcomErrorURL", label: _("Cardcom Error URL"), type: "text" }, 
+                            { id: "cardcomusetoken", json_field: "CardcomUseToken", label: _("Allow use of tokens"), type: "check" }
+                            //
+                        
                     ]}
                 ]),
                 html.content_footer()
