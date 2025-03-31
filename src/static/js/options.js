@@ -2724,7 +2724,18 @@ $(function() {
                         { type: "raw", markup: html.info(_("Quicklinks are shown on the home page and allow quick access to areas of the system.")) }, 
                         { id: "quicklinksid", json_field: "QuicklinksID", label: _("Show quick links on all pages"), type: "selectmulti", options: this.quicklink_options() }, 
 
-                    ] }
+                    ]}, 
+                    { id: "tab-reminders", title: _("Reminder Emails"), fields: [
+                        { type: "raw", markup: html.info(_("Reminder emails can be automatically sent to groups of people a number of days before or after a key event.")) }, 
+                        { type: "raw", markup: '<tr><th colspan="2"></th><th>' + _("Days") + '</th><th>' + _("Template") + '</th></tr>' }, 
+                        { id: "adopterfollowup", json_field: "EmailAdopterFollowup", label: _("Send a followup email to new adopters after X days"), type: "check", xmarkup: '</td><td><input data="EmailAdopterFollowupDays" id="adopterfollowupdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailAdopterFollowupTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templates) + '</select>' }, 
+                        { type: "raw", markup: '<tr><td colspan="2">' + _("Only for these species of adopted animal") + '</td><td><select id="adopterfollowupspecies" multiple="multiple" class="asm-bsmselect" data="EmailAdopterFollowupSpecies">' + html.list_to_options(controller.species, "ID", "SPECIESNAME") + '</select></td><td></td></tr>' }, 
+                        { id: "vaccinationfollowup", json_field: "EmailVaccinationFollowup", label: _("Send a reminder email to owners X days before a vaccination is due"), type: "check", xmarkup: '</td><td><input data="EmailVaccinationFollowupDays" id="vaccinationfollowupdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailVaccinationFollowupTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templates) + '</select>' }, 
+                        { id: "clinicreminder", json_field: "EmailClinicReminder", label: _("Send a reminder email to people with clinic appointments in X days"), type: "check", xmarkup: '</td><td><input data="EmailClinicReminderDays" id="clinicreminderdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailClinicReminderTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templatesclinic) + '</select>' }, 
+                        { id: "duepayment", json_field: "EmailDuePayment", label: _("Send a reminder email to people with payments due in X days"), type: "check", xmarkup: '</td><td><input data="EmailDuePaymentDays" id="duepaymentdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailDuePaymentTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templateslicence) + '</select>' }, 
+                        { id: "licencereminder", json_field: "EmailLicenceReminder", label: _("Send a reminder email to people with licenses expiring in X days"), type: "check", xmarkup: '</td><td><input data="EmailLicenceReminderDays" id="licencereminderdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailLicenceReminderTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templateslicence) + '</select>' }, 
+
+                    ]}
                 ]),
                 html.content_footer()
             ].join("\n");
