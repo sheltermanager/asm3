@@ -2793,7 +2793,12 @@ $(function() {
                         { id: "force2fa", json_field: "Force2FA", label: "Force users to enable 2 factor authentication", type: "check" }, 
                         { id: "forcestrongpasswords", json_field: "ForceStrongPasswords", label: "Force users to set strong passwords (8+ characters of mixed case and numbers)", type: "check" }, 
                         { id: "incidentpermissions", json_field: "IncidentPermissions", label: "Enable access permissions for incident records", type: "check" }, 
-                        { id: "personpermissions", json_field: "PersonPermissions", label: "Enable access permissions for person records", type: "check" }, 
+                        { id: "personpermissions", json_field: "PersonPermissions", label: "Enable access permissions for person records", type: "check" }
+                    ]}, 
+                    // To do - make sure that tab-shelterview has turned up :)
+                    { id: "tab-stock", title: _("Stock"), fields: [
+                        { id: "stockmovementusagetypeid", json_field: "StockMovementUsageTypeID", label: "Stock movement usage type", type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"), callout: _("The pseudo usagetype used to represent internal movements") }, 
+                        { id: "defaultproducttypeid", json_field: "StockDefaultProductTypeID", label: "Default product type", type: "select", options: html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME") }, 
                     ]}, 
                 ]),
                 html.content_footer()
