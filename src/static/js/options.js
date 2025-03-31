@@ -2542,6 +2542,21 @@ $(function() {
                             { id: "smtppass", json_field: "SMTPPassword", label: _("Password"), type: "text" }, 
                             { id: "smtpreplyasfrom", json_field: "SMTPReplyAsFrom", label: _("Set the FROM header from the email dialog"), type: "check", callout: _("Allow the user to override the From header. Emails will fail if you try to send email from a domain you do not own.") }
                             //
+                    ]},
+                    { id: "tab-findscreens", title: _("Find Screens"), fields: [
+                        { id: "findanimalcols", json_field: "SearchColumns", label: _("Find animal columns"), type: "selectmulti", options: this.two_pair_options(controller.animalfindcolumns) }, 
+                        { id: "findfoundanimalcols", json_field: "FoundAnimalSearchColumns", label: _("Find found animal columns"), type: "selectmulti", options: this.two_pair_options(controller.foundanimalfindcolumns) }, 
+                        { id: "findlostanimalcols", json_field: "LostAnimalSearchColumns", label: _("Find lost animal columns"), type: "selectmulti", options: this.two_pair_options(controller.foundanimalfindcolumns) }, 
+                        { id: "findincidentcols", json_field: "IncidentSearchColumns", label: _("Find incident columns"), type: "selectmulti", options: this.two_pair_options(controller.incidentfindcolumns) }, 
+                        { id: "findpersoncols", json_field: "OwnerSearchColumns", label: _("Find person columns"), type: "selectmulti", options: this.two_pair_options(controller.personfindcolumns) }, 
+                        { id: "findeventcols", json_field: "EventSearchColumns", label: _("Find event columns"), type: "selectmulti", options: this.two_pair_options(controller.eventfindcolumns) }, 
+                        { id: "advancedfindanimal", json_field: "AdvancedFindAnimal", label: _("Default to advanced find animal screen"), type: "check" }, 
+                        { id: "advancedfindanimalos", json_field: "AdvancedFindAnimalOnShelter", label: _("Advanced find animal screen defaults to on shelter"), type: "check" }, 
+                        { id: "advancedfindperson", json_field: "AdvancedFindOwner", label: _("Default to advanced find person screen"), type: "check" }, 
+                        { id: "aficomplete", json_field: "AdvancedFindIncidentIncomplete", label: _("Find an incident screen defaults to incomplete incidents"), type: "check" }, 
+                        { id: "animalsearchnewtab", json_field: "AnimalSearchResultsNewTab", label: _("Open animal find screens in a new tab"), type: "check" }, 
+                        { id: "personsearchnewtab", json_field: "PersonSearchResultsNewTab", label: _("Open person find screens in a new tab"), type: "check" }, 
+
                     ]}
                 ]),
                 html.content_footer()
