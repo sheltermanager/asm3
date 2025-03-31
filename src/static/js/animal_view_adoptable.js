@@ -68,6 +68,11 @@
         style = asm3_adoptable_style;
     }
 
+    var div_id = "asm3-adoptables";
+    if (typeof asm3_adoptable_div_id !== 'undefined') {
+        div_id = asm3_adoptable_div_id;
+    }
+
     var translate = function(s) {
         if (typeof asm3_adoptable_translations !== 'undefined') {
             if (asm3_adoptable_translations.hasOwnProperty(s)) {
@@ -126,15 +131,6 @@
             }
         });
         return h.join("");
-    };
-
-    var inject_host_div = function() {
-        var hostdiv = document.getElementById("asm3-adoptables");
-        if (hostdiv) { return; }
-        var sections = document.getElementsByTagName("section");
-        if (sections.length > 0) {
-            sections[0].insertAdjacentHTML("beforeend", '<div id="asm3-adoptables"></div>');
-        }
     };
 
     var list_options = function(l) {
@@ -267,7 +263,7 @@
     };
 
     var render_iframe = function() {
-        var hostdiv = document.getElementById("asm3-adoptables");
+        var hostdiv = document.getElementById(div_id);
         var overlay = document.createElement('div');
         overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
         document.body.appendChild(overlay);
@@ -307,8 +303,8 @@
 
     var render = function() {
 
-        var hostdiv = document.getElementById("asm3-adoptables");
-        if (!hostdiv) { alert("#asm3-adoptables not present"); return; }
+        var hostdiv = document.getElementById(div_id);
+        if (!hostdiv) { alert("#" + div_id + " not present"); return; }
 
         hostdiv.innerHTML = substitute(filter_template, {
             siteoptions: construct_options("(any site)", "SITEID", "SITENAME"),
@@ -349,7 +345,6 @@
 
     var onReady = function(event) {
         window.removeEventListener( "load", onReady );
-        inject_host_div();
         render();
     };
 
