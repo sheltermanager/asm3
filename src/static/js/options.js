@@ -2806,8 +2806,18 @@ $(function() {
                         { id: "wlupdate", json_field: "WaitingListUrgencyUpdatePeriod", label: _("Waiting list urgency update period in days"), type: "number", xattr: 'data-min="0" data-max="365"', callout: _("Set to 0 to never update urgencies.") }, 
                         { id: "wldu", json_field: "WaitingListDefaultUrgency", label: _("Default urgency"), type: "select", options: html.list_to_options(controller.urgencies, "ID", "URGENCY") }, 
                         { id: "wlremoval", json_field: "WaitingListDefaultRemovalWeeks", label: _("Default removal after weeks without contact"), type: "number", xattr: 'data-min="0" data-max="52"', callout: _("Set to 0 to never auto remove.") }, 
-                        { id: "wlcolumns", json_field: "WaitingListViewColumns", label: _("Columns displayed"), type: "selectmulti", options: this.two_pair_options(controller.waitinglistcolumns) }, 
+                        { id: "wlcolumns", json_field: "WaitingListViewColumns", label: _("Columns displayed"), type: "selectmulti", options: this.two_pair_options(controller.waitinglistcolumns) }
                     ]}, 
+                    { id: "tab-watermark", title: _("Watermark"), fields: [
+                        { id: "watermarkxoffset", json_field: "WatermarkXOffset", label: _("Watermark logo X offset"), type: "number", xattr: 'data-min="0" data-max="9999"', callout: _("Relative to bottom right corner of the image") }, 
+                        { id: "watermarkyoffset", json_field: "WatermarkYOffset", label: _("Watermark logo Y offset"), type: "number", xattr: 'data-min="0" data-max="9999"', callout: _("Relative to bottom right corner of the image") }, 
+                        { id: "watermarkfontfillcolor", json_field: "WatermarkFontFillColor", label: _("Watermark font fill color"), type: "select", options: html.list_to_options_array(this.watermark_colors), xmarkup: '<span id="fontfillcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontFillColor')) + '" />' }, 
+                        { id: "watermarkfontshadowcolor", json_field: "WatermarkFontShadowColor", label: _("Watermark font outline color"), type: "select", options: html.list_to_options_array(this.watermark_colors), xmarkup: '<span id="fontshadowcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontShadowColor')) + '" />' }, 
+                        { id: "watermarkfontstroke", json_field: "WatermarkFontStroke", label: _("Watermark font outline width"), type: "number", xattr: 'data-min="0" data-max="20"' }, 
+                        { id: "watermarkfontfile", json_field: "WatermarkFontFile", label: _("Watermark font"), type: "select", options: html.list_to_options_array(asm.fontfiles), xmarkup: '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />' }, 
+                        { id: "watermarkfontoffset", json_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", xattr: 'data-min="0" data-max="100"', callout: _("Offset from left edge of the image") }, 
+                        { id: "watermarkfontmaxsize", json_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", xattr: 'data-min="0" data-max="999"' }
+                    ]}
                 ]),
                 html.content_footer()
             ].join("\n");
