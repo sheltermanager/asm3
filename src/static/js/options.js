@@ -2607,6 +2607,21 @@ $(function() {
 
                         { id: "logemailbydefault", json_field: "LogEmailByDefault", label: _("When I send an email, record it in the log with this type"), type: "check", xmarkup: '<select data="EmailLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                     ]}, 
+                    { id: "tab-lostandfound", title: _("Lost and Found"), fields: [
+                        { id: "disablelostfound", json_field: "rc:DisableLostAndFound", label: _("Enable lost and found functionality"), type: "check" }, 
+                        { id: "matchshelter", json_field: "MatchIncludeShelter", label: _("When matching lost animals, include shelter animals"), type: "check" }, 
+                        { id: "matchpointfloor", json_field: "MatchPointFloor", label: _("Points required to appear on match report"), type: "number", classes: "strong" }, 
+                        { id: "matchmicrochip", json_field: "MatchMicrochip", label: _("Points for matching microchip"), type: "number" }, 
+                        { id: "matchspecies", json_field: "MatchSpecies", label: _("Points for matching species"), type: "number" }, 
+                        { id: "matchbreed", json_field: "MatchBreed", label: _("Points for matching breed"), type: "number" }, 
+                        { id: "matchcolour", json_field: "MatchColour", label: _("Points for matching color"), type: "number" }, 
+                        { id: "matchagegroup", json_field: "MatchAge", label: _("Points for matching age group"), type: "number" }, 
+                        { id: "matchsex", json_field: "MatchSex", label: _("Points for matching sex"), type: "number" }, 
+                        { id: "matcharea", json_field: "MatchAreaLost", label: _("Points for matching lost/found area"), type: "number" }, 
+                        { id: "matchfeatures", json_field: "MatchFeatures", label: _("Points for matching features"), type: "number" }, 
+                        { id: "matchpostcode", json_field: "MatchPostcode", label: _("Points for matching zipcode"), type: "number" }, 
+                        { id: "match2weeks", json_field: "MatchWithin2Weeks", label: _("Points for being found within 2 weeks of being lost"), type: "number" }, 
+                    ]}
                 ]),
                 html.content_footer()
             ].join("\n");
