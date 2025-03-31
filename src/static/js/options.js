@@ -2717,7 +2717,14 @@ $(function() {
                             { id: "cardcomusetoken", json_field: "CardcomUseToken", label: _("Allow use of tokens"), type: "check" }
                             //
                         
-                    ]}
+                    ]}, 
+                    { id: "tab-quicklinks", title: _("Quick Links"), fields: [
+                        { id: "disablequicklinkshome", json_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check" }, 
+                        { id: "disablequicklinksall", json_field: "QuicklinksAllScreens", label: _("Show quick links on all pages"), type: "check" }, 
+                        { type: "raw", markup: html.info(_("Quicklinks are shown on the home page and allow quick access to areas of the system.")) }, 
+                        { id: "quicklinksid", json_field: "QuicklinksID", label: _("Show quick links on all pages"), type: "selectmulti", options: this.quicklink_options() }, 
+
+                    ] }
                 ]),
                 html.content_footer()
             ].join("\n");
