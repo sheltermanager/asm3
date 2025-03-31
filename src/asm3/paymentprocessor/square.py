@@ -87,17 +87,17 @@ class Square(PaymentProcessor):
         if success:
             link = response["payment_link"]["url"]
             # Construct the page that will redirect us to the real checkout
-            s = "<DOCTYPE html>\n" \
+            s = "<!DOCTYPE html>\n" \
             "<html>\n" \
             "<head>\n" \
-            f'<meta http-equiv="refresh" content="0; url="{link}/" />\n' \
+            f'<meta http-equiv="refresh" content="0; url={link}">\n' \
             "</head>\n" \
             "<body></body>\n" \
             "</html>"
             return s
         else: 
             asm3.al.error(f"Failed creating Square payment [got {response}]", "square.checkoutPage", self.dbo)
-            s = "<DOCTYPE html>\n" \
+            s = "<!DOCTYPE html>\n" \
             "<html>\n" \
             "<head>\n" \
             "</head>\n" \
