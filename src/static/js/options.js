@@ -2783,7 +2783,11 @@ $(function() {
                         { id: "bonded", json_field: "DontShowBonded", label: "Remove the bonded with fields from animal entry details", type: "check" }, 
                         { id: "jurisdiction", json_field: "DontShowJurisdiction", label: "Remove the jurisdiction field from animal entry details", type: "check" }, 
                         { id: "pickup", json_field: "DontShowPickup", label: "Remove the picked up fields from animal entry details", type: "check" }, 
-                    ]}
+                    ]}, 
+                    { id: "tab-reports", title: _("Reports"), fields: [
+                        { id: "emptyreports", json_field: "EmailEmptyReports", label: "Email scheduled reports with no data", type: "check" }, 
+                        { id: "reportmenuaccordion", json_field: "ReportMenuAccordion", label: "Show report menu items in collapsed categories", type: "check" }
+                    ]}, 
                 ]),
                 html.content_footer()
             ].join("\n");
