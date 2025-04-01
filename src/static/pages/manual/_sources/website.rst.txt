@@ -39,6 +39,45 @@ to appear on the page:
 
 .. image:: images/wordpress_2.png
 
+Wix
+^^^
+
+To embed your adoptable animals in a Wix page, add a content box within the
+page where you would like the animals to appear. Make the box as wide as it
+needs to be.
+
+.. image:: images/wix_content_box.png
+
+Next, publish your site so that the page is live. Visit the page and use
+the browser inspect tool on the content box to find its id attribute. In
+the example below, the id is "comp-m8xapztd"
+
+.. image:: images/wix_box_id.png
+
+Now, go to the main settings for your Wix site and pick "Custom Code" from
+the bottom of the list.
+
+.. image:: images/wix_settings.png
+
+Click the "Add Custom Code" button. Enter the code snippet below, changing
+ACCOUNT for your sheltermanager account number and filling in the id
+attribute of your container box::
+
+    <script>
+    asm3_adoptable_div_id = "comp-m8xapztd";
+    asm3_adoptable_delay = 2000;
+    </script>
+    <script src="https://service.sheltermanager.com/asmservice?method=animal_view_adoptable_js&account=ACCOUNT"></script>
+
+Finally, choose the page you want to add the custom code to (this will be your
+adoptable animals page) and choose "Head" for the "Place code in"
+option.
+
+.. image:: images/wix_add_code.png
+
+Further options for animal_view_adoptable.js as documented in the :ref:`serviceapi`
+section of the manual can be specified in the custom code snippet if needed.
+
 Dynamic HTML Page 
 -----------------
 

@@ -78,6 +78,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Appendix: Integrating with Your Website</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#javascript-include">Javascript Include</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#wordpress">Wordpress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wix">Wix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#dynamic-html-page">Dynamic HTML Page</a></li>
@@ -142,6 +143,36 @@ javascript include snippet shown above where you’d like your adoptable animals
 to appear on the page:</p>
 <img alt="_images/wordpress_1.png" src="_images/wordpress_1.png" />
 <img alt="_images/wordpress_2.png" src="_images/wordpress_2.png" />
+</section>
+<section id="wix">
+<h3>Wix<a class="headerlink" href="#wix" title="Link to this heading">¶</a></h3>
+<p>To embed your adoptable animals in a Wix page, add a content box within the
+page where you would like the animals to appear. Make the box as wide as it
+needs to be.</p>
+<img alt="_images/wix_content_box.png" src="_images/wix_content_box.png" />
+<p>Next, publish your site so that the page is live. Visit the page and use
+the browser inspect tool on the content box to find its id attribute. In
+the example below, the id is “comp-m8xapztd”</p>
+<img alt="_images/wix_box_id.png" src="_images/wix_box_id.png" />
+<p>Now, go to the main settings for your Wix site and pick “Custom Code” from
+the bottom of the list.</p>
+<img alt="_images/wix_settings.png" src="_images/wix_settings.png" />
+<p>Click the “Add Custom Code” button. Enter the code snippet below, changing
+ACCOUNT for your sheltermanager account number and filling in the id
+attribute of your container box:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_div_id</span> <span class="o">=</span> <span class="s2">&quot;comp-m8xapztd&quot;</span><span class="p">;</span>
+<span class="n">asm3_adoptable_delay</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://service.sheltermanager.com/asmservice?method=animal_view_adoptable_js&amp;account=ACCOUNT&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Finally, choose the page you want to add the custom code to (this will be your
+adoptable animals page) and choose “Head” for the “Place code in”
+option.</p>
+<img alt="_images/wix_add_code.png" src="_images/wix_add_code.png" />
+<p>Further options for animal_view_adoptable.js as documented in the <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a>
+section of the manual can be specified in the custom code snippet if needed.</p>
 </section>
 </section>
 <section id="dynamic-html-page">
