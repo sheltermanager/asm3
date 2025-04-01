@@ -34,7 +34,7 @@ $(function() {
                     { json_field: "STARTDATE", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
                         options: '<option value="0">' + _("Active") + '</option><option value="1">' 
-                            + _("Held") + '</option><option value="2">' + _("Completed") + '</option>' },
+                            + _("Paused") + '</option><option value="2">' + _("Completed") + '</option>' },
                     { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
@@ -749,7 +749,7 @@ $(function() {
 
         set_extra_fields: function(row) {
             if (row.STATUS == 0) { row.NAMEDSTATUS = _("Active"); }
-            if (row.STATUS == 1) { row.NAMEDSTATUS = _("Held"); }
+            if (row.STATUS == 1) { row.NAMEDSTATUS = _("Paused"); }
             if (row.STATUS == 2) { row.NAMEDSTATUS = _("Completed"); }
             if (controller.animal) {
                 row.LOCATIONUNIT = controller.animal.SHELTERLOCATIONUNIT;
