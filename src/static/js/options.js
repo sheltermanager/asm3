@@ -1945,24 +1945,6 @@ $(function() {
         },
 
         render: function() {
-            const donmap = function(idx) {
-                return [
-                    '<tr>',
-                    '<td><label for="mapdt' + idx + '">' + _("Payments of type") + '</td>',
-                    '<td><select id="mapdt' + idx + '" data-idx="' + idx + '" class="asm-selectbox donmap">',
-                    '<option value="-1">' + _("[None]") + '</option>',
-                    html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
-                    '</select>',
-                    '</td>',
-                    '<td>' + _("are sent to") + '</td>',
-                    '<td><select id="mapac' + idx + '" class="asm-selectbox">',
-                    '<option value="-1">' + _("[None]") + '</option>',
-                    html.list_to_options(controller.accounts, "ID", "CODE"),
-                    '</select>',
-                    '</td>',
-                    '</tr>'
-                ].join("\n");
-            };
             const emblemvalues = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!?#",
                 emblemglyphs = [
                     8592,  // Left arrow
@@ -2118,30 +2100,19 @@ $(function() {
                         { type: "rowclose" },
                         { id: "olocale", json_field: "Locale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true), callout: _("The locale determines the language ASM will use when displaying text, dates and currencies."), classes: "asm-iconselectmenu" },
                         { type: "nextcol" },
-                        { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
+                        { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 400px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
                     ], full_width: false},
                     { id: "tab-accounts", title: _("Accounts"), fields: [
-                        { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "createdonations", json_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "createcost", json_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "donationtrxoverride", json_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "donationquantities", json_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "donationfees", json_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "vatenabled", json_field: "VATEnabled", label: _("When receiving payments, allow recording of sales tax"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "vatexclusive", json_field: "VATExclusive", label: _("When calculating sales tax, assume the payment amount is net and add it"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "donationdateoverride", json_field: "DonationDateOverride", label: _("When receiving multiple payments, allow the due and received dates to be set"), type: "check", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
-                        { id: "accountperiodtotals", json_field: "AccountPeriodTotals", label: _("Only show account totals for the current period, which starts on "), type: "check", justwidget: true },
-                        { id: "accountingperiod", json_field: "AccountingPeriod", type: "date", justwidget: true },
-                        { type: "raw", justwidget: true, markup: '<br>'},
+                        { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check" },
+                        { id: "createdonations", json_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check" },
+                        { id: "createcost", json_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check" },
+                        { id: "donationtrxoverride", json_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check" },
+                        { id: "donationquantities", json_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check" },
+                        { id: "donationfees", json_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check" },
+                        { id: "vatenabled", json_field: "VATEnabled", label: _("When receiving payments, allow recording of sales tax"), type: "check" },
+                        { id: "vatexclusive", json_field: "VATExclusive", label: _("When calculating sales tax, assume the payment amount is net and add it"), type: "check" },
+                        { id: "donationdateoverride", json_field: "DonationDateOverride", label: _("When receiving multiple payments, allow the due and received dates to be set"), type: "check" },
+                        { id: "accountperiodtotals", json_field: "AccountPeriodTotals", label: _("Only show account totals for the current period, which starts on "), type: "check", xmarkup: '<input type="text" class="asm-field asm-textbox asm-datebox controlshadow controlborder" id="accountingperiod" data-json="AccountingPeriod" autocomplete="off">' },
                         { id: "defaulttrxview", json_field: "DefaultAccountViewPeriod", label: _("Default transaction view"), type: "select", options:[
                             "0|" + _("This Month"),
                             "1|" + _("This Week"),
@@ -2153,15 +2124,34 @@ $(function() {
                         { id: "destinationaccount", json_field: "DonationTargetAccount", label: _("efault destination account for payments"), type: "select", options: html.list_to_options(controller.accounts, "ID", "CODE") },
                         { id: "vataccount", json_field: "DonationVATAccount", label: _("Income account for sales tax"), type: "select", options: html.list_to_options(controller.accountsinc, "ID", "CODE") },
                         { id: "feeaccount", json_field: "DonationFeeAccount", label: _("Expense account for transaction fees"), type: "select", options: html.list_to_options(controller.accountsexp, "ID", "CODE") },
-                        { type: "raw", justwidget: true, markup: donmap(1)},
-                        { type: "raw", justwidget: true, markup: donmap(2)},
-                        { type: "raw", justwidget: true, markup: donmap(3)},
-                        { type: "raw", justwidget: true, markup: donmap(4)},
-                        { type: "raw", justwidget: true, markup: donmap(5)},
-                        { type: "raw", justwidget: true, markup: donmap(6)},
-                        { type: "raw", justwidget: true, markup: donmap(7)},
-                        { type: "raw", justwidget: true, markup: donmap(8)},
-                        { type: "raw", justwidget: true, markup: donmap(9)}
+
+                        { id: "mapdt1", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac1" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt2", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac2" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt3", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac3" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt4", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac4" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt5", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac5" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt6", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac6" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt7", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac7" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt8", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac8" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+                        { id: "mapdt9", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac9" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }
                     ]},
                     { id: "tab-adding", title: _("Add Animal"), fields: [
                         { id: "aashowbreed", json_field: "AddAnimalsShowBreed", label: _("Show the breed fields"), type: "check" },
