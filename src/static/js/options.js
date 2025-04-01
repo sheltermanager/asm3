@@ -874,36 +874,36 @@ $(function() {
                         { id: "lookingforno", post_field: "HideLookingFor", label: _("Remove the looking for functionality from the person menus and screens"), type: "check" }, 
                         { type: "nextcol" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("Animals") + '</p>' }, 
-                        { id: "disableasilomar", post_field: "DisableAsilomar", label: "Remove the asilomar fields from the entry/deceased sections", type: "check", classes: "us" }, 
-                        { id: "disableentryhistory", post_field: "DisableEntryHistory", label: "Remove the entry history section from animal records", type: "check" }, 
-                        { id: "entrytype", post_field: "DontShowEntryType", label: "Remove the entry type field from animal entry details", type: "check" }, 
-                        { id: "coattype", post_field: "DontShowCoatType", label: "Remove the coat type field from animal details", type: "check" }, 
-                        { id: "size", post_field: "DontShowSize", label: "Remove the size field from animal details", type: "check" }, 
-                        { id: "weight", post_field: "DontShowWeight", label: "Remove the weight field from animal details", type: "check" }, 
-                        { id: "microchip", post_field: "DontShowMicrochip", label: "Remove the microchip fields from animal identification details", type: "check" }, 
-                        { id: "microchipmf", post_field: "DontShowMicrochipSupplier", label: "Remove the microchip supplier info from animal identification details", type: "check" }, 
-                        { id: "tattoo", post_field: "DontShowTattoo", label: "Remove the tattoo fields from animal identification details", type: "check" }, 
-                        { id: "neutered", post_field: "DontShowNeutered", label: "Remove the neutered fields from animal health details", type: "check" }, 
-                        { id: "declawed", post_field: "DontShowDeclawed", label: "Remove the declawed box from animal health details", type: "check" }, 
-                        { id: "rabiestag", post_field: "DontShowRabies", label: "Remove the Rabies Tag field from animal health details", type: "check" }, 
-                        { id: "goodwith", post_field: "DontShowGoodWith", label: "Remove the good with fields from animal notes", type: "check" }, 
-                        { id: "heartworm", post_field: "DontShowHeartworm", label: "Remove the heartworm test fields from animal health details", type: "check" }, 
-                        { id: "combitest", post_field: "DontShowCombi", label: "Remove the FIV/L test fields from animal health details", type: "check" }, 
-                        { id: "fee", post_field: "DontShowAdoptionFee", label: "Remove the adoption fee field from animal details", type: "check" }, 
-                        { id: "coordinator", post_field: "DontShowAdoptionCoordinator", label: "Remove the adoption coordinator field from animal entry details", type: "check" }, 
-                        { id: "litterid", post_field: "DontShowLitterID", label: "Remove the Litter ID field from animal details", type: "check" }, 
-                        { id: "subunit", post_field: "DontShowLocationUnit", label: "Remove the location unit field from animal details", type: "check" }, 
-                        { id: "bonded", post_field: "DontShowBonded", label: "Remove the bonded with fields from animal entry details", type: "check" }, 
-                        { id: "jurisdiction", post_field: "DontShowJurisdiction", label: "Remove the jurisdiction field from animal entry details", type: "check" }, 
-                        { id: "pickup", post_field: "DontShowPickup", label: "Remove the picked up fields from animal entry details", type: "check" }
+                        { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", classes: "us" }, 
+                        { id: "disableentryhistory", post_field: "DisableEntryHistory", label: _("Remove the entry history section from animal records"), type: "check" }, 
+                        { id: "entrytype", post_field: "DontShowEntryType", label: _("Remove the entry type field from animal entry details"), type: "check" }, 
+                        { id: "coattype", post_field: "DontShowCoatType", label: _("Remove the coat type field from animal details"), type: "check" }, 
+                        { id: "size", post_field: "DontShowSize", label: _("Remove the size field from animal details"), type: "check" }, 
+                        { id: "weight", post_field: "DontShowWeight", label: _("Remove the weight field from animal details"), type: "check" }, 
+                        { id: "microchip", post_field: "DontShowMicrochip", label: _("Remove the microchip fields from animal identification details"), type: "check" }, 
+                        { id: "microchipmf", post_field: "DontShowMicrochipSupplier", label: _("Remove the microchip supplier info from animal identification details"), type: "check" }, 
+                        { id: "tattoo", post_field: "DontShowTattoo", label: _("Remove the tattoo fields from animal identification details"), type: "check" }, 
+                        { id: "neutered", post_field: "DontShowNeutered", label: _("Remove the neutered fields from animal health details"), type: "check" }, 
+                        { id: "declawed", post_field: "DontShowDeclawed", label: _("Remove the declawed box from animal health details"), type: "check" }, 
+                        { id: "rabiestag", post_field: "DontShowRabies", label: _("Remove the Rabies Tag field from animal health details"), type: "check" }, 
+                        { id: "goodwith", post_field: "DontShowGoodWith", label: _("Remove the good with fields from animal notes"), type: "check" }, 
+                        { id: "heartworm", post_field: "DontShowHeartworm", label: _("Remove the heartworm test fields from animal health details"), type: "check" }, 
+                        { id: "combitest", post_field: "DontShowCombi", label: _("Remove the FIV/L test fields from animal health details"), type: "check" }, 
+                        { id: "fee", post_field: "DontShowAdoptionFee", label: _("Remove the adoption fee field from animal details"), type: "check" }, 
+                        { id: "coordinator", post_field: "DontShowAdoptionCoordinator", label: _("Remove the adoption coordinator field from animal entry details"), type: "check" }, 
+                        { id: "litterid", post_field: "DontShowLitterID", label: _("Remove the Litter ID field from animal details"), type: "check" }, 
+                        { id: "subunit", post_field: "DontShowLocationUnit", label: _("Remove the location unit field from animal details"), type: "check" }, 
+                        { id: "bonded", post_field: "DontShowBonded", label: _("Remove the bonded with fields from animal entry details"), type: "check" }, 
+                        { id: "jurisdiction", post_field: "DontShowJurisdiction", label: _("Remove the jurisdiction field from animal entry details"), type: "check" }, 
+                        { id: "pickup", post_field: "DontShowPickup", label: _("Remove the picked up fields from animal entry details"), type: "check" }
                     ]}, 
                     { id: "tab-reports", title: _("Reports"), fields: [
-                        { id: "emptyreports", post_field: "EmailEmptyReports", label: "Email scheduled reports with no data", type: "check" }, 
-                        { id: "reportmenuaccordion", post_field: "ReportMenuAccordion", label: "Show report menu items in collapsed categories", type: "check" }
+                        { id: "emptyreports", post_field: "EmailEmptyReports", label: _("Email scheduled reports with no data"), type: "check" }, 
+                        { id: "reportmenuaccordion", post_field: "ReportMenuAccordion", label: _("Show report menu items in collapsed categories"), type: "check" }
                     ]}, 
                     { id: "tab-search", title: _("Search"), info: _("These options change the behaviour of the search box at the top of the page."), fields: [
-                        { id: "showsearchgo", post_field: "ShowSearchGo", label: "Display a search button at the right side of the search box", type: "check" }, 
-                        { id: "searchsort", post_field: "SearchSort", label: "Search sort order", type: "select", 
+                        { id: "showsearchgo", post_field: "ShowSearchGo", label: _("Display a search button at the right side of the search box"), type: "check" }, 
+                        { id: "searchsort", post_field: "SearchSort", label: _("Search sort order"), type: "select", 
                             options:  '<option value="0">' + _("Alphabetically A-Z") + '</option>' + 
                                 '<option value="1">' + _("Alphabetically Z-A") + '</option>' + 
                                 '<option value="2">' + _("Least recently changed") + '</option>' + 
@@ -912,20 +912,20 @@ $(function() {
                         }
                     ]}, 
                     { id: "tab-security", title: _("Security"), fields: [
-                        { id: "force2fa", post_field: "Force2FA", label: "Force users to enable 2 factor authentication", type: "check" }, 
-                        { id: "forcestrongpasswords", post_field: "ForceStrongPasswords", label: "Force users to set strong passwords (8+ characters of mixed case and numbers)", type: "check" }, 
-                        { id: "incidentpermissions", post_field: "IncidentPermissions", label: "Enable access permissions for incident records", type: "check" }, 
-                        { id: "personpermissions", post_field: "PersonPermissions", label: "Enable access permissions for person records", type: "check" }
+                        { id: "force2fa", post_field: "Force2FA", label: _("Force users to enable 2 factor authentication"), type: "check" }, 
+                        { id: "forcestrongpasswords", post_field: "ForceStrongPasswords", label: _("Force users to set strong passwords (8+ characters of mixed case and numbers)"), type: "check" }, 
+                        { id: "incidentpermissions", post_field: "IncidentPermissions", label: _("Enable access permissions for incident records"), type: "check" }, 
+                        { id: "personpermissions", post_field: "PersonPermissions", label: _("Enable access permissions for person records"), type: "check" }
                     ]}, 
                     { id: "tab-shelterview", title: _("Shelter view"), fields: [
-                        { id: "shelterviewdefault", post_field: "ShelterViewDefault", label: "Default view", type: "select", options: html.shelter_view_options() }, 
-                        { id: "shelterviewdragdrop", post_field: "ShelterViewDragDrop", label: "Allow drag and drop to move animals between locations", type: "check" }, 
-                        { id: "shelterviewreserves", post_field: "ShelterViewReserves", label: "Allow units to be reserved and sponsored", type: "check" }, 
-                        { id: "shelterviewempty", post_field: "ShelterViewShowEmpty", label: "Show empty locations", type: "check" }
+                        { id: "shelterviewdefault", post_field: "ShelterViewDefault", label: _("Default view"), type: "select", options: html.shelter_view_options() }, 
+                        { id: "shelterviewdragdrop", post_field: "ShelterViewDragDrop", label: _("Allow drag and drop to move animals between locations"), type: "check" }, 
+                        { id: "shelterviewreserves", post_field: "ShelterViewReserves", label: _("Allow units to be reserved and sponsored"), type: "check" }, 
+                        { id: "shelterviewempty", post_field: "ShelterViewShowEmpty", label: _("Show empty locations"), type: "check" }
                     ]}, 
                     { id: "tab-stock", title: _("Stock"), fields: [
-                        { id: "stockmovementusagetypeid", post_field: "StockMovementUsageTypeID", label: "Stock movement usage type", type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"), callout: _("The pseudo usagetype used to represent internal movements") }, 
-                        { id: "defaultproducttypeid", post_field: "StockDefaultProductTypeID", label: "Default product type", type: "select", options: html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME") }
+                        { id: "stockmovementusagetypeid", post_field: "StockMovementUsageTypeID", label: _("Stock movement usage type"), type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"), callout: _("The pseudo usagetype used to represent internal movements") }, 
+                        { id: "defaultproducttypeid", post_field: "StockDefaultProductTypeID", label: _("Default product type"), type: "select", options: html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME") }
                     ]}, 
                     { id: "tab-waitinglist", title: _("Waiting List"), fields: [
                         { id: "disablewl", post_field: "rc:DisableWaitingList", label: _("Enable the waiting list functionality"), type: "check" }, 
