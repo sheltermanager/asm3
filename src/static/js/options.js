@@ -2100,8 +2100,8 @@ $(function() {
                         { type: "rowclose" },
                         { id: "olocale", json_field: "Locale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true), callout: _("The locale determines the language ASM will use when displaying text, dates and currencies."), classes: "asm-iconselectmenu" },
                         { type: "nextcol" },
-                        { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 400px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},// To do - Gave this widget an arbitary width, if not declared, defaulted to zero, check that Bob is happy with the value chosen
-                    ], full_width: false},
+                        { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 474px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
+                    ]},
                     { id: "tab-accounts", title: _("Accounts"), fields: [
                         { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check" },
                         { id: "createdonations", json_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check" },
@@ -2266,31 +2266,29 @@ $(function() {
                          { id: "uniquelicence", json_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check" }
                     ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
-                        // To do - do the titles look goofy?
-                        // To do - there is no gap between the icons and the labels, could add spaces, check with Bon in case he'd rather use css
                         { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
-                        { id: "alwaysshowlocation", json_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + _("Location"), type: "check" },
-                        { id: "showadoptable", json_field: "EmblemAdoptable", label: html.icon("adoptable") + _("Adoptable"), type: "check" },
-                        { id: "showboarding", json_field: "EmblemBoarding", label: html.icon("boarding") + _("Boarding"), type: "check" },
-                        { id: "showbonded", json_field: "EmblemBonded", label: html.icon("bonded") + _("Bonded"), type: "check" },
-                        { id: "showcourtesy", json_field: "EmblemCourtesy", label: html.icon("share") + _("Courtesy Listing"), type: "check" },
-                        { id: "showcrueltycase", json_field: "EmblemCrueltyCase", label: html.icon("case") + _("Cruelty Case"), type: "check" },
-                        { id: "showdeceased", json_field: "EmblemDeceased", label: html.icon("death") + _("Deceased"), type: "check" },
-                        { id: "showfutureintake", json_field: "EmblemFutureIntake", label: html.icon("animal-add") + _("Future Intake"), type: "check" },
-                        { id: "showfutureadoption", json_field: "EmblemHold", label: html.icon("movement") + _("Future Adoption"), type: "check" },
-                        { id: "showhold", json_field: "EmblemFutureAdoption", label: html.icon("hold") + _("Hold"), type: "check" },
-                        { id: "longterm", json_field: "EmblemLongTerm", label: html.icon("calendar") + _("Long Term"), type: "check" },
-                        { id: "shownevervacc", json_field: "EmblemNeverVacc", label: html.icon("novaccination") + _("Never Vaccinated"), type: "check" },
-                        { id: "shownonshelter", json_field: "EmblemNonShelter", label: html.icon("nonshelter") + _("Non-Shelter"), type: "check" },
-                        { id: "shownotforadoption", json_field: "EmblemNotForAdoption", label: html.icon("notforadoption") + _("Not For Adoption"), type: "check" },
-                        { id: "showunmicrochipped", json_field: "EmblemNotMicrochipped", label: html.icon("microchip") + _("Not Microchipped"), type: "check" },
-                        { id: "showpositivetest", json_field: "EmblemPositiveTest", label: html.icon("positivetest") + _("Positive for Heartworm, FIV or FLV"), type: "check" },
-                        { id: "showquarantine", json_field: "EmblemQuarantine", label: html.icon("quarantine") + _("Quarantine"), type: "check" },
-                        { id: "showrabies", json_field: "EmblemRabies", label: html.icon("rabies") + _("Rabies not given"), type: "check" },
-                        { id: "showreserved", json_field: "EmblemReserved", label: html.icon("reservation") + _("Reserved"), type: "check" },
-                        { id: "showspecialneeds", json_field: "EmblemSpecialNeeds", label: html.icon("health") + _("Special Needs"), type: "check" },
-                        { id: "showtrialadoption", json_field: "EmblemTrialAdoption", label: html.icon("trial") + _("Trial Adoption"), type: "check" },
-                        { id: "showunneutered", json_field: "EmblemUnneutered", label: html.icon("unneutered") + _("Unaltered"), type: "check" },
+                        { id: "alwaysshowlocation", json_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + " " + _("Location"), type: "check" },
+                        { id: "showadoptable", json_field: "EmblemAdoptable", label: html.icon("adoptable") + " " + _("Adoptable"), type: "check" },
+                        { id: "showboarding", json_field: "EmblemBoarding", label: html.icon("boarding") + " " + _("Boarding"), type: "check" },
+                        { id: "showbonded", json_field: "EmblemBonded", label: html.icon("bonded") + " " + _("Bonded"), type: "check" },
+                        { id: "showcourtesy", json_field: "EmblemCourtesy", label: html.icon("share") + " " + _("Courtesy Listing"), type: "check" },
+                        { id: "showcrueltycase", json_field: "EmblemCrueltyCase", label: html.icon("case") + " " + _("Cruelty Case"), type: "check" },
+                        { id: "showdeceased", json_field: "EmblemDeceased", label: html.icon("death") + " " + _("Deceased"), type: "check" },
+                        { id: "showfutureintake", json_field: "EmblemFutureIntake", label: html.icon("animal-add") + " " + _("Future Intake"), type: "check" },
+                        { id: "showfutureadoption", json_field: "EmblemHold", label: html.icon("movement") + " " + _("Future Adoption"), type: "check" },
+                        { id: "showhold", json_field: "EmblemFutureAdoption", label: html.icon("hold") + " " + _("Hold"), type: "check" },
+                        { id: "longterm", json_field: "EmblemLongTerm", label: html.icon("calendar") + " " + _("Long Term"), type: "check" },
+                        { id: "shownevervacc", json_field: "EmblemNeverVacc", label: html.icon("novaccination") + " " + _("Never Vaccinated"), type: "check" },
+                        { id: "shownonshelter", json_field: "EmblemNonShelter", label: html.icon("nonshelter") + " " + _("Non-Shelter"), type: "check" },
+                        { id: "shownotforadoption", json_field: "EmblemNotForAdoption", label: html.icon("notforadoption") + " " + _("Not For Adoption"), type: "check" },
+                        { id: "showunmicrochipped", json_field: "EmblemNotMicrochipped", label: html.icon("microchip") + " " + _("Not Microchipped"), type: "check" },
+                        { id: "showpositivetest", json_field: "EmblemPositiveTest", label: html.icon("positivetest") + " " + _("Positive for Heartworm, FIV or FLV"), type: "check" },
+                        { id: "showquarantine", json_field: "EmblemQuarantine", label: html.icon("quarantine") + " " + _("Quarantine"), type: "check" },
+                        { id: "showrabies", json_field: "EmblemRabies", label: html.icon("rabies") + " " + _("Rabies not given"), type: "check" },
+                        { id: "showreserved", json_field: "EmblemReserved", label: html.icon("reservation") + " " + _("Reserved"), type: "check" },
+                        { id: "showspecialneeds", json_field: "EmblemSpecialNeeds", label: html.icon("health") + " " + _("Special Needs"), type: "check" },
+                        { id: "showtrialadoption", json_field: "EmblemTrialAdoption", label: html.icon("trial") + " " + _("Trial Adoption"), type: "check" },
+                        { id: "showunneutered", json_field: "EmblemUnneutered", label: html.icon("unneutered") + " " + _("Unaltered"), type: "check" },
                         { type: "nextcol" },
                         { type: "raw", markup: html.info(_("You can assign a custom emblem to your additional animal flags")) },
                         { json_field: "EmblemsCustomValue1", type: "select", options: emblemoptions.join(""),
@@ -2429,8 +2427,8 @@ $(function() {
                         { id: "defaultcolour", json_field: "AFDefaultColour", label: _("Color"), type: "select", options: html.list_to_options(controller.colours, "ID", "BASECOLOUR") }, 
                         { id: "defaultdeath", json_field: "AFDefaultDeathReason", label: _("Death Reason"), type: "select", options: html.list_to_options(controller.deathreasons, "ID", "REASONNAME") }, 
                         { id: "defaultdiary", json_field: "AFDefaultDiaryPerson", label: _("Diary Person"), type: "select", options: html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME") }, 
-                        { id: "defaultentry", json_field: "AFDefaultEntryReason", label: _("Entry Reason"), type: "select", options: html.list_to_options(controller.entryreasons, "ID", "REASONNAME") }, 
-                        { id: "defaultentry", json_field: "AFDefaultEntryType", label: _("Entry Type"), type: "select", options: html.list_to_options(controller.entrytypes, "ID", "ENTRYTYPENAME") }, // To do - query duplicate id "defaultentry"
+                        { id: "defaultentryreason", json_field: "AFDefaultEntryReason", label: _("Entry Reason"), type: "select", options: html.list_to_options(controller.entryreasons, "ID", "REASONNAME") }, 
+                        { id: "defaultentrytype", json_field: "AFDefaultEntryType", label: _("Entry Type"), type: "select", options: html.list_to_options(controller.entrytypes, "ID", "ENTRYTYPENAME") },
                         { id: "defaultincident", json_field: "DefaultIncidentType", label: _("Incident Type"), type: "select", options: html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME") }, 
                         { id: "defaultjurisdiction", json_field: "DefaultJurisdiction", label: _("Jurisdiction"), type: "select", options: html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME") }, 
                         { id: "defaultlocation", json_field: "AFDefaultLocation", label: _("Location"), type: "select", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME") }, 
@@ -2469,13 +2467,12 @@ $(function() {
                     ]}, 
                     { id: "tab-display", title: _("Display"), fields: [
                         { id: "disableeffects", json_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check" }, 
-                        //{ id: "fancytooltips", json_field: "FancyTooltips", label: _("Use fancy tooltips"), type: "check" }, //This widget was present but commented out in the code I was refactoring so I refactored it and left it commented out - Adam
                         { id: "disablehtml5scaling", json_field: "rc:DontUseHTML5Scaling", label: _("Use HTML5 client side image scaling where available to speed up image uploads"), type: "check" }, 
                         { id: "picsinbooksclinic", json_field: "PicturesInBooksClinic", label: _("Show animal thumbnails in clinic books"), type: "check" }, 
                         { id: "picsinbooks", json_field: "PicturesInBooks", label: _("Show animal thumbnails in movement and medical books"), type: "check" }, 
                         { id: "sexborder", json_field: "ShowSexBorder", label: _("Show pink and blue borders around animal thumbnails to indicate sex"), type: "check" }, 
                         { id: "minimap", json_field: "ShowPersonMiniMap", label: _("Show a minimap of the address on person screens"), type: "check" }, 
-                        { id: "usstatecodes", json_field: "USStateCodes", label: _("When entering addresses, restrict states to valid US 2 letter state codes"), type: "check", hideif: asm.locale != "en" }, // To do - check that this behaves as intended
+                        { id: "usstatecodes", json_field: "USStateCodes", label: _("When entering addresses, restrict states to valid US 2 letter state codes"), type: "check", hideif: function() { return asm.locale != "en" } }, // To do - check that this behaves as intended
                         { id: "latlong", json_field: "ShowLatLong", label: _("Allow editing of latitude/longitude with minimaps"), type: "check" }, 
                         { id: "mediatablemode", json_field: "MediaTableMode", label: _("Default to table mode when viewing media tabs"), type: "check" }, 
                         { id: "showlbs", json_field: "ShowWeightInLbs", label: _("Show weights as lb and oz"), type: "check" }, 
@@ -2515,23 +2512,20 @@ $(function() {
                         { type: "raw", markup: _("Default zoom level when converting documents to PDF") + '<input type="text" class="asm-field asm-textbox asm-numberbox controlshadow controlborder" style="" id="pdfzoom" data-json="PDFZoom"">%' }
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
-                        // To do - Still think that this panel is ugly
                         { id: "emailaddress", json_field: "EmailAddress", label: _("Email address"), type: "text", callout: "This email address is the default From address when sending emails" }, 
                         { id: "emailbcc", json_field: "EmailBCC", label: _("BCC messages to"), type: "text", callout: "BCC this address when sending email. This is useful if you want to archive your emails with another service." }, 
                         { id: "emailsig", json_field: "EmailSignature", label: _("Email signature"), type: "richtextarea", callout: "This text will be added to the bottom of all send email dialogs" }, 
                         { type: "nextcol" },
                         { id: "emailfromadd", json_field: "EmailFromAddresses", label: _("From address book"), type: "textarea", callout: "Comma separated list of extra addresses that the From email field of send email dialogs will prompt with" }, 
                         { id: "emailtoadd", json_field: "EmailToAddresses", label: _("To address book"), type: "textarea", callout: "Comma separated list of extra addresses that the To and CC email fields of send email dialogs will prompt with" }, 
-                            // To do - wrap the widgets below in a div with class="smcom"???
-                            { type: "nextcol" },
-                            { id: "smtpoverride", json_field: "SMTPOverride", label: _("Specify an SMTP server for sending emails"), type: "check", callout: _("Please do not enable this option if you do not understand what this means.") }, 
-                            { id: "smtpserver", json_field: "SMTPServer", label: _("SMTP Server"), type: "text" }, 
-                            { id: "smtpport", json_field: "SMTPPort", label: _("Port"), type: "select", options: "<option>25</option><option>587</option><option>2525</option>" }, 
-                            { id: "smtptls", json_field: "SMTPUseTLS", label: _("Use TLS"), type: "check" }, 
-                            { id: "smtpuser", json_field: "SMTPUsername", label: _("Username"), type: "text" }, 
-                            { id: "smtppass", json_field: "SMTPPassword", label: _("Password"), type: "text" }, 
-                            { id: "smtpreplyasfrom", json_field: "SMTPReplyAsFrom", label: _("Set the FROM header from the email dialog"), type: "check", callout: _("Allow the user to override the From header. Emails will fail if you try to send email from a domain you do not own.") }
-                            //
+                        { type: "nextcol" },
+                        { id: "smtpoverride", json_field: "SMTPOverride", label: _("Specify an SMTP server for sending emails"), type: "check", callout: _("Please do not enable this option if you do not understand what this means."), rowclasses: "smcom" }, 
+                        { id: "smtpserver", json_field: "SMTPServer", label: _("SMTP Server"), type: "text", rowclasses: "smcom" }, 
+                        { id: "smtpport", json_field: "SMTPPort", label: _("Port"), type: "select", options: "<option>25</option><option>587</option><option>2525</option>", rowclasses: "smcom" }, 
+                        { id: "smtptls", json_field: "SMTPUseTLS", label: _("Use TLS"), type: "check", rowclasses: "smcom" }, 
+                        { id: "smtpuser", json_field: "SMTPUsername", label: _("Username"), type: "text", rowclasses: "smcom" }, 
+                        { id: "smtppass", json_field: "SMTPPassword", label: _("Password"), type: "text", rowclasses: "smcom" }, 
+                        { id: "smtpreplyasfrom", json_field: "SMTPReplyAsFrom", label: _("Set the FROM header from the email dialog"), type: "check", callout: _("Allow the user to override the From header. Emails will fail if you try to send email from a domain you do not own."), rowclasses: "smcom" }
                     ]},
                     { id: "tab-findscreens", title: _("Find Screens"), fields: [
                         { id: "findanimalcols", json_field: "SearchColumns", label: _("Find animal columns"), type: "selectmulti", options: this.two_pair_options(controller.animalfindcolumns) }, 
@@ -2556,7 +2550,7 @@ $(function() {
                         { id: "showhdeceased", json_field: "rc:ShowDeceasedHomePage", label: _("Hide deceased animals from the home page"), type: "check" }, 
                         { id: "showhfinancial", json_field: "rc:ShowFinancialHomePage", label: _("Hide financial stats from the home page"), type: "check" }, 
                         { id: "alertmicrochip", json_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertmicrochip", json_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, // To do - query duplicate id "alertmicrochip"
+                        { id: "alertentire", json_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertnevervacc", json_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrabies", json_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { type: "raw", markup: html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) },
@@ -2678,33 +2672,24 @@ $(function() {
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
                         { id: "currencycode", json_field: "CurrencyCode", label: _("Request payments in"), type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
                         { id: "paymentreturn", json_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), type: "text" }, 
-                            // To do - wrap in div with id="paypal-options"
-                            { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p></td></tr>' }, 
-                            { id: "paypalemail", json_field: "PayPalEmail", label: _("PayPal Business Email"), type: "text" }, 
-                            { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}").replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>") + '</p></td></tr>', }, 
-                            //
-                            // To do - wrap in div with id="stripe-options"
-                            { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_stripe_103.png" /></p></td></tr>' }, 
-                            { id: "stripekey", json_field: "StripeKey", label: _("Stripe Key"), type: "text" }, 
-                            { id: "stripesecretkey", json_field: "StripeSecretKey", label: _("Stripe Secret Key"), type: "text" }, 
-                            { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}").replace("{0}", "<br/><b>" + controller.pp_stripe + "</b>") + '</p></td></tr>', }, 
-                            //
-                            // To do - wrap in div with id="square-options"
-                            { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_square_100.png" /></p></td></tr>' }, 
-                            { id: "squareaccesstoken", json_field: "SquareAccessToken", label: _("Square Access Token"), type: "text" }, 
-                            { id: "squarelocationid", json_field: "SquareLocationID", label: _("Square Location ID"), type: "text" }, 
-                            { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In your Square account, enable a webhook to send 'payment.updated' events to {0}").replace("{0}", "<br/><b>" + controller.pp_square + "</b>") + '</p></td></tr>', }, 
-                            //
-                            // To do - wrap in div with id="cardcom-options" and class="israel"
-                            { type: "raw", markup: '<tr><td colspan="2"><p class="centered strong">' + _("Cardcom Payment Gateway") + '</p></td></tr>' }, 
-                            { id: "CardcomTerminalNumber", json_field: "CardcomTerminalNumber", label: _("Cardcom Terminal Number"), type: "text" }, 
-                            { id: "CardcomUserName", json_field: "CardcomUserName", label: _("Cardcom User Name"), type: "text" }, 
-                            { id: "CardcomDocumentType", json_field: "CardcomDocumentType", label: _("Cardcom User Type"), type: "text" }, 
-                            { id: "CardcomSuccessURL", json_field: "CardcomSuccessURL", label: _("Cardcom Success URL"), type: "text" }, 
-                            { id: "CardcomErrorURL", json_field: "CardcomErrorURL", label: _("Cardcom Error URL"), type: "text" }, 
-                            { id: "cardcomusetoken", json_field: "CardcomUseToken", label: _("Allow use of tokens"), type: "check" }
-                            //
-                        
+                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p></td></tr>', rowclasses: "paypal-options" }, 
+                        { id: "paypalemail", json_field: "PayPalEmail", label: _("PayPal Business Email"), type: "text", rowclasses: "paypal-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}").replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>") + '</p></td></tr>', rowclasses: "paypal-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_stripe_103.png" /></p></td></tr>', rowclasses: "stripe-options" }, 
+                        { id: "stripekey", json_field: "StripeKey", label: _("Stripe Key"), type: "text", rowclasses: "stripe-options" }, 
+                        { id: "stripesecretkey", json_field: "StripeSecretKey", label: _("Stripe Secret Key"), type: "text", rowclasses: "stripe-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}").replace("{0}", "<br/><b>" + controller.pp_stripe + "</b>") + '</p></td></tr>', rowclasses: "stripe-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_square_100.png" /></p></td></tr>', rowclasses: "square-options" }, 
+                        { id: "squareaccesstoken", json_field: "SquareAccessToken", label: _("Square Access Token"), type: "text", rowclasses: "square-options" }, 
+                        { id: "squarelocationid", json_field: "SquareLocationID", label: _("Square Location ID"), type: "text", rowclasses: "square-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In your Square account, enable a webhook to send 'payment.updated' events to {0}").replace("{0}", "<br/><b>" + controller.pp_square + "</b>") + '</p></td></tr>', rowclasses: "square-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered strong">' + _("Cardcom Payment Gateway") + '</p></td></tr>', rowclasses: "cardcom-options israel" }, 
+                        { id: "CardcomTerminalNumber", json_field: "CardcomTerminalNumber", label: _("Cardcom Terminal Number"), type: "text", rowclasses: "cardcom-options israel" }, 
+                        { id: "CardcomUserName", json_field: "CardcomUserName", label: _("Cardcom User Name"), type: "text", rowclasses: "cardcom-options israel"}, 
+                        { id: "CardcomDocumentType", json_field: "CardcomDocumentType", label: _("Cardcom User Type"), type: "text", rowclasses: "cardcom-options israel" }, 
+                        { id: "CardcomSuccessURL", json_field: "CardcomSuccessURL", label: _("Cardcom Success URL"), type: "text", rowclasses: "cardcom-options israel" }, 
+                        { id: "CardcomErrorURL", json_field: "CardcomErrorURL", label: _("Cardcom Error URL"), type: "text", rowclasses: "cardcom-options israel" }, 
+                        { id: "cardcomusetoken", json_field: "CardcomUseToken", label: _("Allow use of tokens"), type: "check", rowclasses: "cardcom-options israel" }
                     ]}, 
                     { id: "tab-quicklinks", title: _("Quick Links"), fields: [
                         { id: "disablequicklinkshome", json_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check" }, 
