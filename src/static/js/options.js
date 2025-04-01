@@ -2797,7 +2797,7 @@ $(function() {
                                 '<option value="2">' + _("Least recently changed") + '</option>' + 
                                 '<option value="3">' + _("Most recently changed") + '</option>' + 
                                 '<option value="6">' + _("Most relevant") + '</option>'
-                        }, 
+                        }
                     ]}, 
                     { id: "tab-security", title: _("Security"), fields: [
                         { id: "force2fa", json_field: "Force2FA", label: "Force users to enable 2 factor authentication", type: "check" }, 
@@ -2805,7 +2805,14 @@ $(function() {
                         { id: "incidentpermissions", json_field: "IncidentPermissions", label: "Enable access permissions for incident records", type: "check" }, 
                         { id: "personpermissions", json_field: "PersonPermissions", label: "Enable access permissions for person records", type: "check" }
                     ]}, 
-                    // To do - make sure that tab-shelterview has turned up :)
+
+                    { id: "tab-shelterview", title: _("Shelter view"), fields: [
+                        { id: "shelterviewdefault", json_field: "ShelterViewDefault", label: "Default view", type: "select", options: html.shelter_view_options() }, 
+                        { id: "shelterviewdragdrop", json_field: "ShelterViewDragDrop", label: "Allow drag and drop to move animals between locations", type: "check" }, 
+                        { id: "shelterviewreserves", json_field: "ShelterViewReserves", label: "Allow units to be reserved and sponsored", type: "check" }, 
+                        { id: "shelterviewempty", json_field: "ShelterViewShowEmpty", label: "Show empty locations", type: "check" }
+                    ]}, 
+
                     { id: "tab-stock", title: _("Stock"), fields: [
                         { id: "stockmovementusagetypeid", json_field: "StockMovementUsageTypeID", label: "Stock movement usage type", type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"), callout: _("The pseudo usagetype used to represent internal movements") }, 
                         { id: "defaultproducttypeid", json_field: "StockDefaultProductTypeID", label: "Default product type", type: "select", options: html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME") }
