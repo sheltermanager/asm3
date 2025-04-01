@@ -2469,7 +2469,7 @@ $(function() {
                     ]}, 
                     { id: "tab-display", title: _("Display"), fields: [
                         { id: "disableeffects", json_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check" }, 
-                        //{ id: "fancytooltips", json_field: "FancyTooltips", label: _("Use fancy tooltips"), type: "check" }, 
+                        //{ id: "fancytooltips", json_field: "FancyTooltips", label: _("Use fancy tooltips"), type: "check" }, //This widget was present but commented out in the code I was refactoring so I refactored it and left it commented out - Adam
                         { id: "disablehtml5scaling", json_field: "rc:DontUseHTML5Scaling", label: _("Use HTML5 client side image scaling where available to speed up image uploads"), type: "check" }, 
                         { id: "picsinbooksclinic", json_field: "PicturesInBooksClinic", label: _("Show animal thumbnails in clinic books"), type: "check" }, 
                         { id: "picsinbooks", json_field: "PicturesInBooks", label: _("Show animal thumbnails in movement and medical books"), type: "check" }, 
@@ -2512,7 +2512,7 @@ $(function() {
                         { id: "includeincompletemedical", json_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check" }, 
                         { id: "notifycoordicatorondocsign", json_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check" }, 
                         { id: "generatedocumentlog", json_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { id: "pdfzoom", json_field: "PDFZoom", label: _("Default zoom level when converting documents to PDF"), type: "number", xmarkup: "%" }
+                        { type: "raw", markup: _("Default zoom level when converting documents to PDF") + '<input type="text" class="asm-field asm-textbox asm-numberbox controlshadow controlborder" style="" id="pdfzoom" data-json="PDFZoom"">%' }
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
                         { id: "emailaddress", json_field: "EmailAddress", label: _("Email address"), type: "text", callout: "This email address is the default From address when sending emails" }, 
