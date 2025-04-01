@@ -2100,7 +2100,7 @@ $(function() {
                         { type: "rowclose" },
                         { id: "olocale", json_field: "Locale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true), callout: _("The locale determines the language ASM will use when displaying text, dates and currencies."), classes: "asm-iconselectmenu" },
                         { type: "nextcol" },
-                        { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 400px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
+                        { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 400px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},// To do - Gave this widget an arbitary width, if not declared, defaulted to zero, check that Bob is happy with the value chosen
                     ], full_width: false},
                     { id: "tab-accounts", title: _("Accounts"), fields: [
                         { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check" },
@@ -2184,8 +2184,7 @@ $(function() {
                         { id: "aashowhold", json_field: "AddAnimalsShowHold", label: _("Show the hold fields"), type: "check" },
                         { id: "warnsimilaranimal", json_field: "WarnSimilarAnimalName", label: _("Warn if the name of the new animal is similar to one entered recently"), type: "check" }
                     ]},
-                    { id: "tab-ageegroups", title: _("Age Groups"), fields: [
-                        { type: "raw", markup: html.info(_("Age groups are assigned based on the age of an animal. The figure in the left column is the upper limit in years for that group.")) },
+                    { id: "tab-ageegroups", title: _("Age Groups"), info: _("Age groups are assigned based on the age of an animal. The figure in the left column is the upper limit in years for that group."), fields: [
                         { id: "agegroup1", json_field: "AgeGroup1", label: _("Age Group 1"), type: "text", 
                             xmarkup: "<input id='agegroup1name' type='text' class='asm-textbox' data='AgeGroup1Name' style='margin-left: 5px;' />"
                         },
@@ -2267,6 +2266,8 @@ $(function() {
                          { id: "uniquelicence", json_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check" }
                     ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
+                        // To do - do the titles look goofy?
+                        // To do - there is no gap between the icons and the labels, could add spaces, check with Bon in case he'd rather use css
                         { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
                         { id: "alwaysshowlocation", json_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + _("Location"), type: "check" },
                         { id: "showadoptable", json_field: "EmblemAdoptable", label: html.icon("adoptable") + _("Adoptable"), type: "check" },
@@ -2358,8 +2359,7 @@ $(function() {
                         { id: "boardingpaytype", json_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
                         }
                     ]},
-                    { id: "tab-checkout", title: _("Checkout"), fields: [
-                        { type: "raw", markup: html.info(_("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation.")) },
+                    { id: "tab-checkout", title: _("Checkout"), info: _("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation."), fields: [
                         { id: "AdoptionCheckoutProcessor", json_field: "AdoptionCheckoutProcessor", label: _("Payment processor"), type: "select", 
                             options: html.list_to_options([
                                 "paypal|" + _("PayPal"),
@@ -2396,8 +2396,7 @@ $(function() {
                         { id: "showcostamount", json_field: "ShowCostAmount", label: _("Show a cost field on medical/test/vaccination screens"), type: "check" },
                         { id: "showcostpaid", json_field: "ShowCostPaid", label: _("Show a separate paid date field with costs"), type: "check" }
                     ]},
-                    { id: "tab-daily-observations", title: _("Daily Observations"), fields: [
-                        { type: "raw", markup: html.info(_("These are the values that can be recorded for animals on the daily observations screen")) },
+                    { id: "tab-daily-observations", title: _("Daily Observations"), info: _("These are the values that can be recorded for animals on the daily observations screen"), fields: [
                         { id: "behavelogtype", json_field: "BehaveLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")
                         },
                         { id: "suppressblankobservations", json_field: "SuppressBlankObservations", label: _("Suppress blank observations"), type: "check" }, 
@@ -2423,8 +2422,7 @@ $(function() {
                         { id: "showgdprcontact", json_field: "ShowGDPRContactOptIn", label: _("Show GDPR Contact Opt-In field on person screens"), type: "check" }, 
                         { id: "gdprcontactchangelog", json_field: "GDPRContactChangeLog", label: _("When I set a new GDPR Opt-In contact option, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GDPRContactChangeLogType" id="gdprcontactchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }
                     ]}, 
-                    { id: "tab-defaults", title: _("Defaults"), fields: [
-                        { type: "raw", markup: html.info(_("These are the default values for these fields when creating new records.")) }, 
+                    { id: "tab-defaults", title: _("Defaults"), info:_("These are the default values for these fields when creating new records."), fields: [
                         { id: "defaultbreed", json_field: "AFDefaultBreed", label: _("Breed"), type: "select", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") }, 
                         { id: "defaultclinictype", json_field: "AFDefaultClinicType", label: _("Clinic Appointment"), type: "select", options: html.list_to_options(controller.clinictypes, "ID", "CLINICTYPENAME") }, 
                         { id: "defaultcoattype", json_field: "AFDefaultCoatType", label: _("Coat Type"), type: "select", options: html.list_to_options(controller.coattypes, "ID", "COATTYPE") }, 
@@ -2438,8 +2436,8 @@ $(function() {
                         { id: "defaultlocation", json_field: "AFDefaultLocation", label: _("Location"), type: "select", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME") }, 
                         { id: "defaultlog", json_field: "AFDefaultLogFilter", label: _("Log Filter"), type: "select", options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
                         { id: "defaultlogtype", json_field: "AFDefaultLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
-                        { id: "systemlogtype", json_field: "SystemLogType", label: _("System Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
                         { type: "nextcol" }, 
+                        { id: "systemlogtype", json_field: "SystemLogType", label: _("System Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
                         { id: "defaultpaymentmethod", json_field: "AFDefaultPaymentMethod", label: _("Payment Method"), type: "select", options: html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") }, 
                         { id: "defaultdonation", json_field: "AFDefaultDonationType", label: _("Payment Type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME") }, 
                         { id: "defaultreservation", json_field: "AFDefaultReservationStatus", label: _("Reservation Status"), type: "select", options: html.list_to_options(controller.reservationstatuses, "ID", "STATUSNAME") }, 
@@ -2451,8 +2449,8 @@ $(function() {
                         { id: "defaulttransport", json_field: "AFDefaultTransportType", label: _("Transport Type"), type: "select", options: html.list_to_options(controller.transporttypes, "ID", "TRANSPORTTYPENAME") }, 
                         { id: "defaulttype", json_field: "AFDefaultType", label: _("Type"), type: "select", options: html.list_to_options(controller.types, "ID", "ANIMALTYPE") }, 
                         { id: "defaultvaccination", json_field: "AFDefaultVaccinationType", label: _("Vaccination Type"), type: "select", options: html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE") }, 
-
                         { id: "DefaultAnimalAge", json_field: "DefaultAnimalAge", label: _("Default Age"), type: "text", classes: "asm-textbox asm-numberbox", xattr: 'data-min="2" data-max="10"' }, 
+                        { type: "nextcol"}, 
                         { id: "DefaultBroughtInBy", json_field: "DefaultBroughtInBy", label: _("Default Brought In By"), type: "person" }, 
                         { id: "defaultshift", json_field: "DefaultShiftStart", label: _("Default Rota Shift"), type: "text", classes: "asm-textbox asm-halftextbox asm-timebox", xmarkup: '<input id="defaultshiftend" data="DefaultShiftEnd" type="text" class="asm-textbox asm-halftextbox asm-timebox" />' }, 
 
