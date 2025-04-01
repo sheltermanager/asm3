@@ -2119,7 +2119,7 @@ $(function() {
                         { id: "olocale", json_field: "Locale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true), callout: _("The locale determines the language ASM will use when displaying text, dates and currencies."), classes: "asm-iconselectmenu" },
                         { type: "nextcol" },
                         { type: "raw", justwidget: true, markup: '<tr><td colspan="2"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
-                    ]},
+                    ], full_width: false},
                     { id: "tab-accounts", title: _("Accounts"), fields: [
                         { id: "disableaccounts", json_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", justwidget: true },
                         { type: "raw", justwidget: true, markup: '<br>'},
@@ -2833,7 +2833,7 @@ $(function() {
                         { id: "watermarkfontoffset", json_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", xattr: 'data-min="0" data-max="100"', callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", json_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", xattr: 'data-min="0" data-max="999"' }
                     ]}
-                ]),
+                ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
         },

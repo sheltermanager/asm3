@@ -1766,7 +1766,7 @@ const tableform = {
         return tableform._render_formfield(v, d);
     },
 
-    render_tabs: function(l) {
+    render_tabs: function(l, options={}) {
         let h = [];
         h.push('<div class="asm-tabbar asm-tabs">');
         h.push('<ul class="asm-tablist">');
@@ -1776,7 +1776,7 @@ const tableform = {
         h.push('</ul>');
         $.each(l, function(i, v) {
             h.push('<div id="tab-' + v.id + '">');
-            h.push( tableform.fields_render(v.fields ));
+            h.push( tableform.fields_render(v.fields, options ));
             h.push('</div>');
         });
         return h.join("\n");
