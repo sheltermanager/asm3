@@ -2788,7 +2788,17 @@ $(function() {
                         { id: "emptyreports", json_field: "EmailEmptyReports", label: "Email scheduled reports with no data", type: "check" }, 
                         { id: "reportmenuaccordion", json_field: "ReportMenuAccordion", label: "Show report menu items in collapsed categories", type: "check" }
                     ]}, 
-                    // To do - make sure that tab-search has turned up :)
+                    { id: "tab-search", title: _("Search"), fields: [
+                        { type: "raw", markup: html.info(_("These options change the behaviour of the search box at the top of the page.")) }, 
+                        { id: "showsearchgo", json_field: "ShowSearchGo", label: "Display a search button at the right side of the search box", type: "check" }, 
+                        { id: "searchsort", json_field: "SearchSort", label: "Search sort order", type: "select", 
+                            options:  '<option value="0">' + _("Alphabetically A-Z") + '</option>' + 
+                                '<option value="1">' + _("Alphabetically Z-A") + '</option>' + 
+                                '<option value="2">' + _("Least recently changed") + '</option>' + 
+                                '<option value="3">' + _("Most recently changed") + '</option>' + 
+                                '<option value="6">' + _("Most relevant") + '</option>'
+                        }, 
+                    ]}, 
                     { id: "tab-security", title: _("Security"), fields: [
                         { id: "force2fa", json_field: "Force2FA", label: "Force users to enable 2 factor authentication", type: "check" }, 
                         { id: "forcestrongpasswords", json_field: "ForceStrongPasswords", label: "Force users to set strong passwords (8+ characters of mixed case and numbers)", type: "check" }, 
