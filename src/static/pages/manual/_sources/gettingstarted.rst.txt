@@ -163,9 +163,13 @@ In this menu, the user can find:
 
 * Logout - Log out of the system.    
 
-The option "Change User Settings" contains the following settings:
+The option "Change User Settings" contains the following tabs and settings within
+them:
 
 .. image:: images/change_user_settings.png
+
+Preferences
+^^^^^^^^^^^
  
 * Username - Current username (cannot be edited).
 
@@ -178,16 +182,30 @@ The option "Change User Settings" contains the following settings:
 
 * Locale - Allows the user to choose a different language/currency.
 
+* Shelter view - Allows the user to set their own shelter view overiding the system
+  default view if one is set.
+
+* Default stock location - Allows the user to set their own default stock location.
+
+* Default stock usage type - Allows the user to set their own default stock usage 
+  type.
+
+Quicklinks
+^^^^^^^^^^
+
 * Quicklinks - Allows the user to create links at the top of the screen to 
   quickly access the parts of the system they use the most.
 
 * Quick Reports - This will add a dropdown menu of selected reports to the quicklinks 
   bar, reports will appear in the menu in the order they are selected here.
   
-* Shelter view - Allows the user to set their own shelter view overiding the system
-  default view if one is set.
+Signature
+^^^^^^^^^
 
 * Signature - The users electronic signature to be used in document templates.
+
+Security
+^^^^^^^^
 
 * Two-Factor Authentification (2FA) - Users can enable 2FA here using the 
   Google Authenticator app, see :ref:`Two-Factor Authentification`
