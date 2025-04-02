@@ -2139,7 +2139,7 @@ $.widget("asm.asmsignature", {
         this.element.after([
             '<div id=' + id + '>',
                 '<div>', 
-                    '<button class="button-asmsignchange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
+                    '<button class="button-asmsignchange asm-field" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
                     '<span class="asmsigntools" style="display: none;">', 
                         '<label>' + _("Draw") + '<input class="asmsigndraw" name="asmsigntype" type="radio" checked></label> ', 
                         '<label>' + _("Text") + '<input class="asmsigntext" name="asmsigntype" type="radio"></label> ', 
@@ -2165,6 +2165,7 @@ $.widget("asm.asmsignature", {
                 $("#" + id + " .asmsignimg").hide();
                 $("#" + id + " .asmsigntools").show();
                 $("#" + id + " .asmsignwidget").show();
+                validate.dirty(true);
             });
         $("#" + id + " .asmsigndraw").change(function() {
             $("#" + id + " .asmsigntextinput").hide();
