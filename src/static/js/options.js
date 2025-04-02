@@ -253,7 +253,7 @@ $(function() {
                         { id: "vatenabled", post_field: "VATEnabled", label: _("When receiving payments, allow recording of sales tax"), type: "check" },
                         { id: "vatexclusive", post_field: "VATExclusive", label: _("When calculating sales tax, assume the payment amount is net and add it"), type: "check" },
                         { id: "donationdateoverride", post_field: "DonationDateOverride", label: _("When receiving multiple payments, allow the due and received dates to be set"), type: "check" },
-                        { id: "accountperiodtotals", post_field: "AccountPeriodTotals", label: _("Only show account totals for the current period, which starts on "), type: "check", xmarkup: '<input type="text" class="asm-field asm-textbox asm-datebox controlshadow controlborder" id="accountingperiod" data-json="AccountingPeriod" autocomplete="off">' },
+                        { id: "accountperiodtotals", post_field: "AccountPeriodTotals", label: _("Only show account totals for the current period, which starts on "), type: "check", xmarkup: '<input type="text" class="asm-field asm-textbox asm-datebox controlshadow controlborder" id="accountingperiod" data-post="AccountingPeriod" autocomplete="off">' },
                         { id: "defaulttrxview", post_field: "DefaultAccountViewPeriod", label: _("Default transaction view"), type: "select", options:[
                             "0|" + _("This Month"),
                             "1|" + _("This Week"),
@@ -266,33 +266,35 @@ $(function() {
                         { id: "vataccount", post_field: "DonationVATAccount", label: _("Income account for sales tax"), type: "select", options: html.list_to_options(controller.accountsinc, "ID", "CODE") },
                         { id: "feeaccount", post_field: "DonationFeeAccount", label: _("Expense account for transaction fees"), type: "select", options: html.list_to_options(controller.accountsexp, "ID", "CODE") },
 
-                        { id: "mapdt1", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac1" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt1", xattr: 'data-idx="1"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac1" data-idx="1" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt2", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac2" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt2", xattr: 'data-idx="2"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac2" data-idx="2" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt3", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac3" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt3", xattr: 'data-idx="3"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac3" data-idx="3" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt4", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac4" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt4", xattr: 'data-idx="4"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac4" data-idx="4" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt5", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac5" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt5", xattr: 'data-idx="5"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac5" data-idx="5" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt6", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac6" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt6", xattr: 'data-idx="6"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac6" data-idx="6" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt7", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac7" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt7", xattr: 'data-idx="7"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac7" data-idx="7" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt8", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac8" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        { id: "mapdt8", xattr: 'data-idx="8"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac8" data-idx="8" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-                        { id: "mapdt9", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
-                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac9" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
-                        }
+                        { id: "mapdt9", xattr: 'data-idx="9"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            xmarkup: ' ' + _("are sent to") + ' <select id="mapac9" data-idx="9" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
+                        }, 
+
+                        
                     ]},
                     { id: "tab-adding", title: _("Add Animal"), fields: [
                         { id: "aashowbreed", post_field: "AddAnimalsShowBreed", label: _("Show the breed fields"), type: "check" },
@@ -408,7 +410,7 @@ $(function() {
                     ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
                         { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
-                        { id: "alwaysshowlocation", post_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + " " + _("Location"), type: "check" },
+                        { id: "alwaysshowlocation", post_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + " " + _("Location"), type: "check" },// To do check with Bob, this doesn't seem to do what we expect - Adam
                         { id: "showadoptable", post_field: "EmblemAdoptable", label: html.icon("adoptable") + " " + _("Adoptable"), type: "check" },
                         { id: "showboarding", post_field: "EmblemBoarding", label: html.icon("boarding") + " " + _("Boarding"), type: "check" },
                         { id: "showbonded", post_field: "EmblemBonded", label: html.icon("bonded") + " " + _("Bonded"), type: "check" },
@@ -562,6 +564,7 @@ $(function() {
                         { id: "gdprcontactchangelog", post_field: "GDPRContactChangeLog", label: _("When I set a new GDPR Opt-In contact option, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GDPRContactChangeLogType" id="gdprcontactchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }
                     ]}, 
                     { id: "tab-defaults", title: _("Defaults"), info:_("These are the default values for these fields when creating new records."), fields: [
+                        { id: "DefaultAnimalAge", post_field: "DefaultAnimalAge", label: _("Age"), type: "text", classes: "asm-textbox asm-numberbox", xattr: 'data-min="2" data-max="10"' }, 
                         { id: "defaultbreed", post_field: "AFDefaultBreed", label: _("Breed"), type: "select", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") }, 
                         { id: "defaultclinictype", post_field: "AFDefaultClinicType", label: _("Clinic Appointment"), type: "select", options: html.list_to_options(controller.clinictypes, "ID", "CLINICTYPENAME") }, 
                         { id: "defaultcoattype", post_field: "AFDefaultCoatType", label: _("Coat Type"), type: "select", options: html.list_to_options(controller.coattypes, "ID", "COATTYPE") }, 
@@ -574,8 +577,8 @@ $(function() {
                         { id: "defaultjurisdiction", post_field: "DefaultJurisdiction", label: _("Jurisdiction"), type: "select", options: html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME") }, 
                         { id: "defaultlocation", post_field: "AFDefaultLocation", label: _("Location"), type: "select", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME") }, 
                         { id: "defaultlog", post_field: "AFDefaultLogFilter", label: _("Log Filter"), type: "select", options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
-                        { id: "defaultlogtype", post_field: "AFDefaultLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
                         { type: "nextcol" }, 
+                        { id: "defaultlogtype", post_field: "AFDefaultLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
                         { id: "systemlogtype", post_field: "SystemLogType", label: _("System Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
                         { id: "defaultpaymentmethod", post_field: "AFDefaultPaymentMethod", label: _("Payment Method"), type: "select", options: html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") }, 
                         { id: "defaultdonation", post_field: "AFDefaultDonationType", label: _("Payment Type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME") }, 
@@ -588,7 +591,7 @@ $(function() {
                         { id: "defaulttransport", post_field: "AFDefaultTransportType", label: _("Transport Type"), type: "select", options: html.list_to_options(controller.transporttypes, "ID", "TRANSPORTTYPENAME") }, 
                         { id: "defaulttype", post_field: "AFDefaultType", label: _("Type"), type: "select", options: html.list_to_options(controller.types, "ID", "ANIMALTYPE") }, 
                         { id: "defaultvaccination", post_field: "AFDefaultVaccinationType", label: _("Vaccination Type"), type: "select", options: html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE") }, 
-                        { id: "DefaultAnimalAge", post_field: "DefaultAnimalAge", label: _("Default Age"), type: "text", classes: "asm-textbox asm-numberbox", xattr: 'data-min="2" data-max="10"' }, 
+                        
                         { type: "nextcol"}, 
                         { id: "DefaultBroughtInBy", post_field: "DefaultBroughtInBy", label: _("Default Brought In By"), type: "person" }, 
                         { id: "defaultshift", post_field: "DefaultShiftStart", label: _("Default Rota Shift"), type: "text", classes: "asm-textbox asm-halftextbox asm-timebox", xmarkup: '<input id="defaultshiftend" data="DefaultShiftEnd" type="text" class="asm-textbox asm-halftextbox asm-timebox" />' }, 
@@ -650,7 +653,7 @@ $(function() {
                         { id: "includeincompletemedical", post_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check" }, 
                         { id: "notifycoordicatorondocsign", post_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check" }, 
                         { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { type: "raw", markup: _("Default zoom level when converting documents to PDF") + '<input type="text" class="asm-field asm-textbox asm-numberbox controlshadow controlborder" style="" id="pdfzoom" data-json="PDFZoom"">%' }
+                        { type: "raw", markup: _("Default zoom level when converting documents to PDF") + '<input type="text" class="asm-field asm-textbox asm-numberbox controlshadow controlborder" style="" id="pdfzoom" data-post="PDFZoom"">%' }
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
                         { id: "emailaddress", post_field: "EmailAddress", label: _("Email address"), type: "text", callout: "This email address is the default From address when sending emails" }, 
@@ -694,7 +697,7 @@ $(function() {
                         { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrabies", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { type: "raw", markup: html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) },
+                        { type: "raw", markup: '<tr><td colspan="2">' + html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) + '</td></tr>' },
                         { id: "statmode", post_field: "ShowStatsHomePage", label: _("Stats period"), type: "select", options: 
                             '<option value="none">' + _("Do not show") + '</option>' + 
                             '<option value="today">' + _("Today") + '</option>' + 
@@ -824,7 +827,7 @@ $(function() {
                         { id: "squareaccesstoken", post_field: "SquareAccessToken", label: _("Square Access Token"), type: "text", rowclasses: "square-options" }, 
                         { id: "squarelocationid", post_field: "SquareLocationID", label: _("Square Location ID"), type: "text", rowclasses: "square-options" }, 
                         { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In your Square account, enable a webhook to send 'payment.updated' events to {0}").replace("{0}", "<br/><b>" + controller.pp_square + "</b>") + '</p></td></tr>', rowclasses: "square-options" }, 
-                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered strong">' + _("Cardcom Payment Gateway") + '</p></td></tr>', rowclasses: "cardcom-options israel" }, 
+                        { type: "raw", markup: '<tr class="cardcom-options israel"><td colspan="2"><p class="centered strong">' + _("Cardcom Payment Gateway") + '</p></td></tr>' }, 
                         { id: "CardcomTerminalNumber", post_field: "CardcomTerminalNumber", label: _("Cardcom Terminal Number"), type: "text", rowclasses: "cardcom-options israel" }, 
                         { id: "CardcomUserName", post_field: "CardcomUserName", label: _("Cardcom User Name"), type: "text", rowclasses: "cardcom-options israel"}, 
                         { id: "CardcomDocumentType", post_field: "CardcomDocumentType", label: _("Cardcom User Type"), type: "text", rowclasses: "cardcom-options israel" }, 
@@ -832,10 +835,9 @@ $(function() {
                         { id: "CardcomErrorURL", post_field: "CardcomErrorURL", label: _("Cardcom Error URL"), type: "text", rowclasses: "cardcom-options israel" }, 
                         { id: "cardcomusetoken", post_field: "CardcomUseToken", label: _("Allow use of tokens"), type: "check", rowclasses: "cardcom-options israel" }
                     ]}, 
-                    { id: "tab-quicklinks", title: _("Quick Links"), fields: [
+                    { id: "tab-quicklinks", title: _("Quick Links"), info: _("Quicklinks are shown on the home page and allow quick access to areas of the system."), fields: [
                         { id: "disablequicklinkshome", post_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check" }, 
                         { id: "disablequicklinksall", post_field: "QuicklinksAllScreens", label: _("Show quick links on all pages"), type: "check" }, 
-                        { type: "raw", markup: html.info(_("Quicklinks are shown on the home page and allow quick access to areas of the system.")) }, 
                         { id: "quicklinksid", post_field: "QuicklinksID", label: _("Show quick links on all pages"), type: "selectmulti", options: this.quicklink_options() }, 
 
                     ]}, 

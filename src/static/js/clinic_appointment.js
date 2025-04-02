@@ -62,7 +62,12 @@ $(function() {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     clinic_appointment.dialog_row = row;
                     clinic_appointment.show_person_animals(false);
+<<<<<<< Updated upstream
                     $("#vat").change();
+=======
+                    clinic_appointment.editmode = true;
+                    if (row.ISVAT == 1) {$("#vat").change();}
+>>>>>>> Stashed changes
                     $("#vatratechoicerow").hide();
                     try {
                         await tableform.dialog_show_edit(dialog, row);
@@ -178,10 +183,6 @@ $(function() {
                         onload: function() {
                             $("#status").select("value", "0");
                             $("#type").select("value", config.str("AFDefaultClinicType"));
-                            if (config.bool("VATEnabled")) {
-                                $("#vat").prop("checked", true);
-                                $("#vatrate").val(config.number("VATRate"));
-                            }
                             $("#person").personchooser("clear");
                             $("#animal").animalchooser("clear");
                             if (controller.person) {
@@ -429,16 +430,27 @@ $(function() {
 
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
+<<<<<<< Updated upstream
                     $("#vatratechoice").val(config.str("AFDefaultTaxRate"));
                     if (tableform.dialog_state == 1) {
                         // add dialog mode
+=======
+                    if (clinic_appointment.editmode == false) {
+                        $("#vatratechoice").val(config.str("AFDefaultTaxRate"));
+>>>>>>> Stashed changes
                         $("#vatratechoice").change();
                         $("#vatratechoicerow").fadeIn();
                         $("#vatraterow").fadeOut();
                     } else {
+<<<<<<< Updated upstream
                         $("#vatratechoicerow").fadeOut();
                         $("#vatraterow").fadeIn();
                     }
+=======
+                        $("#vatraterow").fadeIn();
+                    }
+                    $("#vatamountrow").fadeIn();
+>>>>>>> Stashed changes
                 }
                 else {
                     $("#vatamount").currency("value", "0");

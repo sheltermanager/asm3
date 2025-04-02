@@ -495,16 +495,20 @@ $(function() {
             });
 
             $("#vat").change(function() {
+                console.log("Change!");
                 if ($(this).is(":checked")) {
-                    //$("#vatratechoice").val(config.str("AFDefaultTaxRate"));
                     if (donations.editmode == false) {
+                        $("#vatratechoice").val(config.str("AFDefaultTaxRate"));
                         $("#vatratechoice").change();
                         $("#vatratechoicerow").fadeIn();
                         $("#vatraterow").fadeOut();
                     } else {
                         $("#vatraterow").fadeIn();
                     }
+<<<<<<< Updated upstream
                     
+=======
+>>>>>>> Stashed changes
                     $("#vatamountrow").fadeIn();
                 }
                 else {
