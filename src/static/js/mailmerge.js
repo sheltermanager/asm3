@@ -324,11 +324,17 @@ $(function() {
 
             // If there are more than MailMergeMaxEmails results, hide the 
             // email section and replace it with a message explaining why.
-            // The first clause is for sheltermanager.com only and means that the limit can be lifted
-            // by configuring the use of another SMTP server in sheltermanager.com accounts.
-            if (controller.issmcomsmtp && controller.numemails > controller.smcommaxemails) {
-                $("#sendemail").html( html.error( _("Please tighten the scope of your email campaign to {0} emails or less.").replace("{0}", controller.smcommaxemails) +
-                    " " + _("Sending {0} emails is considered abusive and will damage the reputation of the email server.").replace("{0}", controller.numemails) ) );
+            // The first condition is for sheltermanager.com only and means that the limit can be lifted
+            // by configuring the use of another SMTP server in sheltermanager.com options.
+            if (controller.issmcomsmtp) {
+                if (controller.numemails + controller.smcomsentemails > controller.smcommaxemails) {
+                    $("#sendemail").html( html.error( 
+                        _("To protect the server from abuse, sheltermanager.com limits sending to {0} emails over a {1} hour period. ({2} sent so far).")
+                        .replace("{0}", controller.smcommaxemails) 
+                        .replace("{1}", controller.smcommaxttl / 3600) 
+                        .replace("{2}", controller.smcomsentemails)
+                        ));
+                }
             }
             else if (controller.numemails > config.integer("MailMergeMaxEmails")) {
                 $("#sendemail").html( html.error( _("Please tighten the scope of your email campaign to {0} emails or less.").replace("{0}", config.str("MailMergeMaxEmails")) +

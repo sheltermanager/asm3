@@ -2,6 +2,7 @@
 import asm3.al
 import asm3.cachedisk
 import asm3.db
+
 from asm3.sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 from asm3.typehints import Database, Dict
 
@@ -11,9 +12,11 @@ import os, sys
 
 import web062 as web
 
-# The maximum number of emails allowed to be sent in one go through the
-# the sheltermanager.com email server
-MAX_EMAILS = 1500
+# The maximum number of emails allowed to be sent over a period (ttl)
+# through the the sheltermanager.com email server
+MAX_EMAILS_CACHE_KEY = "emails_sent"
+MAX_EMAILS_TTL = 3600 * 20 # Use a 20 hour reset period
+MAX_EMAILS = 3000
 
 # Regex to remove invalid chars from an entered database
 INVALID_REMOVE = re.compile(r'[\/\.\*\?\ ]')
@@ -96,6 +99,46 @@ def get_database_info(alias: str) -> Database:
 
     return dbo
 
+def check_bulk_email(dbo: Database, count: int) -> None:
+    """
+    Call before sending a bulk email (mail merge)
+    count: The number of emails that are about to be sent.
+    Checks how many emails have been sent in the period along with how many are about to be sent.
+    If the limit would be crossed, an exception is raised, otherwise returns nothing.
+    The count is added to the number of emails sent for next time.
+    """
+    sent = get_emails_sent(dbo)
+    if (sent + count) > MAX_EMAILS:
+        raise SmcomError(f"{sent} emails have been sent in the last {MAX_EMAILS_TTL/3600} hours. " \
+            f"The limit for the period is {MAX_EMAILS}. Cannot send a further {count} emails.")
+    else:
+        add_emails_sent(dbo, count)
+
+def get_emails_sent(dbo: Database) -> int:
+    """
+    Returns the number of emails sent in the ttl period
+    """
+    count = asm3.cachedisk.get(MAX_EMAILS_CACHE_KEY, dbo.name(), int)
+    if count is None: count = 0
+    return count
+
+def add_emails_sent(dbo: Database, sent: int) -> int:
+    """
+    sent: Add to our running count of emails sent 
+    returns the total emails sent in the ttl period
+    """
+    count = asm3.cachedisk.get(MAX_EMAILS_CACHE_KEY, dbo.name(), int)
+    if count is None: count = 0
+    count = count + sent
+    asm3.cachedisk.put(MAX_EMAILS_CACHE_KEY, dbo.name(), count, MAX_EMAILS_TTL)
+    return count
+
+def clear_emails_sent(dbo: Database) -> None:
+    """
+    Removes the cached value of emails sent. Used by unit tests.
+    """
+    asm3.cachedisk.delete(MAX_EMAILS_CACHE_KEY, dbo.name())
+
 def get_expiry_date(dbo: Database) -> datetime:
     """
     Returns the account expiry date or None for a problem.
@@ -136,4 +179,15 @@ def vacuum_full(dbo: Database) -> None:
     """ Performs a full vacuum on the database via command line (transaction problems via db.py) """
     os.system("psql -U %s -c \"VACUUM FULL;\"" % dbo.database)
 
-
+class SmcomError(web.HTTPError):
+    """
+    Custom error thrown by data modules 
+    """
+    msg = ""
+    def __init__(self, msg: str) -> None:
+        self.msg = msg
+        status = '500 Internal Server Error'
+        headers = { 'Content-Type': "text/html" }
+        data = "<h1>Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
+        web.HTTPError.__init__(self, status, headers, data)
