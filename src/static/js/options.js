@@ -816,17 +816,17 @@ $(function() {
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
                         { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
                         { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), type: "text" }, 
-                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p></td></tr>', rowclasses: "paypal-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2" class="paypal-options"><p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p></td></tr>', rowclasses: "paypal-options" }, 
                         { id: "paypalemail", post_field: "PayPalEmail", label: _("PayPal Business Email"), type: "text", rowclasses: "paypal-options" }, 
-                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}").replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>") + '</p></td></tr>', rowclasses: "paypal-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2" class="paypal-options"><p class="centered">' + _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}").replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>") + '</p></td></tr>' }, 
                         { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_stripe_103.png" /></p></td></tr>', rowclasses: "stripe-options" }, 
                         { id: "stripekey", post_field: "StripeKey", label: _("Stripe Key"), type: "text", rowclasses: "stripe-options" }, 
                         { id: "stripesecretkey", post_field: "StripeSecretKey", label: _("Stripe Secret Key"), type: "text", rowclasses: "stripe-options" }, 
                         { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}").replace("{0}", "<br/><b>" + controller.pp_stripe + "</b>") + '</p></td></tr>', rowclasses: "stripe-options" }, 
-                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered"><img height="25px" src="static/images/ui/logo_square_100.png" /></p></td></tr>', rowclasses: "square-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2" class="square-options"><p class="centered"><img height="25px" src="static/images/ui/logo_square_100.png" /></p></td></tr>', rowclasses: "square-options" }, 
                         { id: "squareaccesstoken", post_field: "SquareAccessToken", label: _("Square Access Token"), type: "text", rowclasses: "square-options" }, 
                         { id: "squarelocationid", post_field: "SquareLocationID", label: _("Square Location ID"), type: "text", rowclasses: "square-options" }, 
-                        { type: "raw", markup: '<tr><td colspan="2"><p class="centered">' + _("In your Square account, enable a webhook to send 'payment.updated' events to {0}").replace("{0}", "<br/><b>" + controller.pp_square + "</b>") + '</p></td></tr>', rowclasses: "square-options" }, 
+                        { type: "raw", markup: '<tr><td colspan="2" class="square-options"><p class="centered">' + _("In your Square account, enable a webhook to send 'payment.updated' events to {0}").replace("{0}", "<br/><b>" + controller.pp_square + "</b>") + '</p></td></tr>' }, 
                         { type: "raw", markup: '<tr class="cardcom-options israel"><td colspan="2"><p class="centered strong">' + _("Cardcom Payment Gateway") + '</p></td></tr>' }, 
                         { id: "CardcomTerminalNumber", post_field: "CardcomTerminalNumber", label: _("Cardcom Terminal Number"), type: "text", rowclasses: "cardcom-options israel" }, 
                         { id: "CardcomUserName", post_field: "CardcomUserName", label: _("Cardcom User Name"), type: "text", rowclasses: "cardcom-options israel"}, 
@@ -1057,10 +1057,10 @@ $(function() {
 
             // Hide other non-relevant options
             if (!controller.haspaypal) {
-                $("#paypal-options").hide();
+                $(".paypal-options").hide();
             }
             if (!controller.hassquare) {
-                $("#square-options").hide();
+                $(".square-options").hide();
             }
             if (!asm.smcom) {
                 $(".smcom").hide();

@@ -505,10 +505,6 @@ $(function() {
                     } else {
                         $("#vatraterow").fadeIn();
                     }
-<<<<<<< Updated upstream
-                    
-=======
->>>>>>> Stashed changes
                     $("#vatamountrow").fadeIn();
                 }
                 else {
