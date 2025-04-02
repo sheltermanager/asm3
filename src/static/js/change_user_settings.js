@@ -118,10 +118,9 @@ $(function() {
         bind: function() {
             $("#signature").asmsignature({ guideline: true, value: controller.user.SIGNATURE });
 
-            $("#button-save").button().click(async function() {
+            validate.save = async function(callback) {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                header.show_loading();
                 let formdata = $("input, select").toPOST();
                 try {
                     formdata += "&signature=" + encodeURIComponent($("#signature").asmsignature("value"));
@@ -129,13 +128,22 @@ $(function() {
                     log.error("failed reading signature canvas", excanvas);
                 }
                 try {
-                    await common.ajax_post("change_user_settings", formdata);
-                    common.route_reload(true); 
+                    let response = await common.ajax_post("change_user_settings", formdata);
+                    callback(response);
                 }
                 catch(err) {
                     log.error(err, err);
-                    $(".asm-content button").button("enable");
+                    validate.dirty(true); 
+                    $("#button-save").button("enable");
                 }
+            };
+
+            // Toolbar buttons
+            $("#button-save").button().click(function() {
+                header.show_loading(_("Saving..."));
+                validate.save(function() {
+                    common.route_reload();
+                });
             });
 
             $("#button-save").button("disable");
