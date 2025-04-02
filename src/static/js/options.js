@@ -971,11 +971,10 @@ $(function() {
                 validate.dirty(false);
                 let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
-                console.log(formdata);
                 header.show_loading(_("Saving..."));
                 await common.ajax_post("options", formdata);
                 // Needs to do full reload to get updated config.js
-                //common.route_reload(true); 
+                common.route_reload(true); 
             });
 
             // Components
