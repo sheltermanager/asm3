@@ -226,6 +226,10 @@ $(function() {
             validate.bind_dirty();
         },
 
+        destroy: function() {
+            validate.unbind_dirty();
+        },
+
         name: "change_user_settings",
         animation: "options",
         autofocus: "#realname",
