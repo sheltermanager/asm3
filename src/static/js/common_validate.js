@@ -33,12 +33,25 @@ const validate = {
         const dirtykey = function(event) { if (ctrl_keys.indexOf(event.keyCode) == -1) { validate.dirty(true); } };
         const dirtychange = function(event) { validate.dirty(true); };
         validate.active = true;
+        let clickselector = ".button-asmsignchange";
+        let changeselector = ".asm-checkbox, .asm-datebox, " +
+            ".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox, .asm-bsmselect, " +
+            ".asm-textbox, .asm-doubletextbox, .asm-halftextbox, .asm-textarea, .asm-richtextarea, .asm-textareafixed, .asm-textareafixeddouble";
+        let textselector = ".asm-textbox, .asm-doubletextbox, .asm-halftextbox, .asm-textarea, .asm-richtextarea, .asm-textareafixed, .asm-textareafixeddouble";
+        $("#asm-content").on("click", clickselector, dirtychange);
+        $("#asm-content").on("change", changeselector, dirtychange);
+        $("#asm-content").on("cut", textselector, dirtychange);
+        $("#asm-content").on("paste", textselector, dirtychange);
+        $("#asm-content").on("keyup", textselector, dirtykey);
+        /*
+        NOTE: old slow code that attached an event handler to every single control
         $("#asm-content .asm-checkbox").change(dirtychange);
         $("#asm-content .asm-datebox").change(dirtychange);
         $("#asm-content .asm-selectbox, #asm-content .asm-doubleselectbox, #asm-content .asm-halfselectbox, #asm-content .selectbox, #asm-content .asm-bsmselect").change(dirtychange);
         $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").change(dirtychange);
         $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").bind("paste", dirtychange).bind("cut", dirtychange);
         $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-richtextarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey);
+        */
         // Bind CTRL+S/META+S on Mac to clicking the save button
         Mousetrap.bind(["ctrl+s", "meta+s"], function(e) { $("#button-save").click(); return false; });
         // Watch for links being clicked and the page being navigated away from

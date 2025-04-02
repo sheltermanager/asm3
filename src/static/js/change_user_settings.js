@@ -119,7 +119,6 @@ $(function() {
             $("#signature").asmsignature({ guideline: true, value: controller.user.SIGNATURE });
 
             validate.save = async function(callback) {
-                $("#button-save").button("disable");
                 validate.dirty(false);
                 let formdata = $("input, select").toPOST();
                 try {
@@ -134,7 +133,6 @@ $(function() {
                 catch(err) {
                     log.error(err, err);
                     validate.dirty(true); 
-                    $("#button-save").button("enable");
                 }
             };
 
@@ -145,8 +143,6 @@ $(function() {
                     common.route_reload();
                 });
             });
-
-            $("#button-save").button("disable");
 
             $("#button-enable2fa").button().click(function() {
                 $(".enable2fa").show();
