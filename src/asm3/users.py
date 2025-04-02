@@ -691,9 +691,13 @@ def update_user_settings(dbo: Database, username: str, email: str = "", realname
         "LocaleOverride":           locale
     }
     user = dbo.first_row(dbo.query("SELECT ID, Password, OTPSecret, EnableTOTP FROM users WHERE Username = ?", [username]))
-    if twofavalidcode != "" and twofavalidcode == str(asm3.utils.totp(user.OTPSECRET)):
-        asm3.al.debug(f"{user}: valid 2fa code given, enabling 2FA/TOTP", "users.update_user_settings", dbo)
-        values["EnableTOTP"] = 1
+    if twofavalidcode != "":
+        if twofavalidcode == str(asm3.utils.totp(user.OTPSECRET)):
+            asm3.al.debug(f"{user}: valid 2fa code given, enabling 2FA/TOTP", "users.update_user_settings", dbo)
+            values["EnableTOTP"] = 1
+        else:
+            asm3.al.error(f"{user}: invalid 2fa code given", "users.update_user_settings", dbo)
+            raise asm3.utils.ASMValidationError("Invalid 2FA code")
     elif twofavalidpassword != "" and verify_password(twofavalidpassword, user.PASSWORD):
         asm3.al.debug(f"{user}: valid password given, disabling 2FA/TOTP", "users.update_user_settings", dbo)
         values["EnableTOTP"] = 0
