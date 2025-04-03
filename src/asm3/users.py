@@ -845,6 +845,15 @@ def web_login(post: PostedData, session: Session, remoteip: str, useragent: str,
     NOTE: ASM3 will no longer allow login on ASM2 databases due to update_session above calling
           get_user (which relies on the role tables existing). You should run cron.maint_db_update
           to update the database before attempting to login.
+    post: The posted data containing username, password, etc
+    session: The webpy session
+    remoteip: The user's IP address
+    useragent: The web browser the user is signing in with
+    path: The installed path for the software
+    use2fa: Whether to validate 2FA authentication - this will be set to false if the credentials being
+            supplied are coming from a remember me cookie. If this is false, session.force2fa will also be
+            false meaning the user will not be nagged to enable 2fa if logging in via remember me and
+            the option is turned on to force users to use 2fa.
     Returns the username on successful login, or:
         FAIL        - problem with user/pass/account/ip
         DISABLED    - The database is disabled
@@ -900,7 +909,9 @@ def web_login(post: PostedData, session: Session, remoteip: str, useragent: str,
         dbo.installpath = path
         dbo.locale = asm3.configuration.locale(dbo)
         session.nologconnection = nologconnection
-        session.force2fa = not asm3.smcom.is_master_user(user.USERNAME, dbo.name()) and asm3.configuration.force_2fa(dbo) and onetimepass == ""
+        session.force2fa = False
+        if use2fa:
+            session.force2fa = not asm3.smcom.is_master_user(user.USERNAME, dbo.name()) and asm3.configuration.force_2fa(dbo) and onetimepass == ""
         update_session(dbo, session, user.USERNAME)
     except:
         asm3.al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
