@@ -1160,9 +1160,9 @@ $(function() {
                         { id: "nodescription", post_field: "includewithoutdescription", label: _("Include animals who don't have a description"), type: "select", options: yesnooptions }, 
                         { id: "noimage", post_field: "includewithoutimage", label: _("Include animals who don't have a picture"), type: "select", options: yesnooptions }, 
                         { id: "bonded", post_field: "bondedassingle", label: _("Merge bonded animals into a single record"), type: "select", options: yesnooptions }, 
-                        { id: "excludeunder", post_field: "excludeunder", label: _("Exclude animals who are aged under"), type: "select", options: yesnooptions }, 
-                        { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "select", options: yesnooptions }, 
-                        { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "select", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), callout: _("If you don't select any locations, publishers will include animals in all locations.") }, 
+                        { id: "excludeunder", post_field: "excludeunder", label: _("Exclude animals who are aged under"), type: "number", halfsize: true, xattr: 'data-min="1" data-max="52"', xmarkup: ' ' + _("weeks") }, 
+                        { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "number", halfsize: true, xattr: 'data-min="0" data-max="50"', xmarkup: ' ' + _("active reservations") }, 
+                        { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "selectmulti", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), callout: _("If you don't select any locations, publishers will include animals in all locations.") }, 
                     ]},
                 ], {full_width: false}),
                 html.content_footer()
