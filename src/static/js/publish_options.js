@@ -1204,7 +1204,7 @@ $(function() {
                         }, 
                         { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }
                     ]}, 
-                    { id: "tab-htmlftp", title: _("HTML/FTP Publisher"), fields: [
+                    { id: "tab-htmlftp", title: _("HTML/FTP Publisher"), classes: "hashtmlftp", fields: [
                         { id: "enabledhtml", label: _("Enabled"), type: "check", fullrow: true }, 
                         { id: "generatejavascript", post_field: "generatejavascriptdb", label: _("Generate a javascript database for the search page"), type: "select", options: yesnooptions }, 
                         { id: "thumbnails", post_field: "thumbnails", label: _("Generate image thumbnails as tn_$$IMAGE$$"), type: "select", options: yesnooptions }, 
@@ -1279,7 +1279,7 @@ $(function() {
                         { id: "ftproot", post_field: "FTPRootDirectory", label: _("after connecting, chdir to"), type: "text" }, 
                         { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", options: yesnooptions }, 
                     ]}, 
-                    { id: "tab-adoptapet", title: _("AdoptAPet.com"), info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
+                    { id: "tab-adoptapet", title: _("AdoptAPet.com"), classes: "localeus localeca localemx", info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
                     'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM', fields: [
                         { id: "enabledap", label: _("Enabled"), type: "check" }, 
                         { id: "apftpuser", post_field: "SaveAPetFTPUser", label: 'Autoupload FTP username', type: "text" }, 
@@ -1292,6 +1292,31 @@ $(function() {
                             '<option value="0">Auto-generate and upload</option>' + 
                             '<option value="1">Do not generate and upload (not recommended)</option>'
                         }
+                    ]}, 
+                    { id: "tab-findpet", title: "FindPet.com", 
+                        info: 'Find out more at <a target="_blank" href="https://findpet.com">www.findpet.com</a> ' +
+                        'or contact hello@findpet.com for more information.<br>' +
+                        'Sign up by filling out form <a target="_blank" href="https://forms.gle/EA4jbPZEK1UKWWdy8">https://forms.gle/EA4jbPZEK1UKWWdy8</a> ' +
+                        'to get a Findpet Organization ID for:<br>' +
+                        '<ul><li>automatic microchip registration</li>' +
+                        '<li>automatic pet tag activation</li>' +
+                        '<li>to report your pets as found to facilitate lost pet reunification</li></ul>', 
+                        classes: 'localeus hasfindpet', fields: [
+                            { id: "enabledmf", label: _("Enabled"), type: "check" }, 
+                            { id: "fporgid", post_field: "FindPetOrgID", label: "FindPet Organization ID", type: "text" }, 
+                            { id: "fpintlevel", post_field: "FindPetIntLevel", label: "Integration Level", type: "select", options: 
+                                '<option value="0">Send stray/found pets and register microchips</option>' + 
+                                '<option value="1">Send stray/found pets only</option>'
+                            }, 
+                    ]}, 
+                    { id: "tab-maddiesfund", title: "Maddie's Fund", info: 'Signup at <a target="_blank" href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>', classes: 'english hasmaddiesfund', fields: [
+                        { id: "enabledfip", label: _("Enabled"), type: "check" }, 
+                        { id: "mfemail", post_field: "MaddiesFundUsername", label: "MPA API Username", type: "text" }, 
+                        { id: "mfpassword", post_field: "MaddiesFundPassword", label: "MPA API Password", type: "text" }
+                    ]}, 
+                    { id: "tab-petcademy", title: "Petcademy", info: 'Signup at <a target="_blank" href="https://petcademy.org/rescues-and-shelters/">https://petcademy.org/rescues-and-shelters/</a>', classes: 'english haspetcademy', fields: [
+                        { id: "enabledpc", label: _("Enabled"), type: "check" }, 
+                        { id: "pctoken", post_field: "PetcademyToken", label: "MPA API Username", type: "text" }, 
                     ]}, 
                     { id: "tab-petfbi", title: _("PetFBI.com"), info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', fields: [
                         { id: "enabledfbi", label: _("Enabled"), type: "check" }, 
