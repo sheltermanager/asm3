@@ -1278,6 +1278,20 @@ $(function() {
                         { id: "ftppass", post_field: "FTPPassword", label: _("FTP password"), type: "text" }, 
                         { id: "ftproot", post_field: "FTPRootDirectory", label: _("after connecting, chdir to"), type: "text" }, 
                         { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", options: yesnooptions }, 
+                    ]}, 
+                    { id: "tab-adoptapet", title: _("AdoptAPet.com"), info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
+                    'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM', fields: [
+                        { id: "enabledap", label: _("Enabled"), type: "check" }, 
+                        { id: "apftpuser", post_field: "SaveAPetFTPUser", label: 'Autoupload FTP username', type: "text" }, 
+                        { id: "apftppass", post_field: "SaveAPetFTPPassword", label: 'Autoupload FTP password', type: "text" }, 
+                        { id: "includecolours", post_field: "includecolours", label: 'Colors', type: "select", options:
+                            '<option value="0">Do not send colors</option>' + 
+                            '<option value="1">Send colors (not recommended, requires mapping)</option>'
+                        }, 
+                        { id: "noimportfile", post_field: "noimportfile", label: 'import.cfg', type: "select", options:
+                            '<option value="0">Auto-generate and upload</option>' + 
+                            '<option value="1">Do not generate and upload (not recommended)</option>'
+                        }
                     ]}
                 ], {full_width: false}),
                 html.content_footer()
