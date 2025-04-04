@@ -1201,9 +1201,84 @@ $(function() {
                         { id: "usecomments", post_field: "PublisherUseComments", label: _("Animal descriptions"), type: "select", options: 
                             '<option value="Yes">' + _("Use animal description") + '</option>' + 
                             '<option value="No">' + _("Use notes from preferred photo") + '</option>'
-                         }, 
-                        { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }, 
-                    ]},
+                        }, 
+                        { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }
+                    ]}, 
+                    { id: "tab-htmlftp", title: _("HTML/FTP Publisher"), fields: [
+                        { id: "enabledhtml", label: _("Enabled"), type: "check", fullrow: true }, 
+                        { id: "generatejavascript", post_field: "generatejavascriptdb", label: _("Generate a javascript database for the search page"), type: "select", options: yesnooptions }, 
+                        { id: "thumbnails", post_field: "thumbnails", label: _("Generate image thumbnails as tn_$$IMAGE$$"), type: "select", options: yesnooptions }, 
+                        { id: "scalethumb", post_field: "thumbnailsize", label: _("Thumbnail size"), type: "select", options: 
+                            '<option value="70x70">70 px</option>' + 
+                            '<option value="80x80">80 px</option>' + 
+                            '<option value="90x90">90 px</option>' + 
+                            '<option value="100x100">100 px</option>' + 
+                            '<option value="120x120">120 px</option>' + 
+                            '<option value="150x150">150 px</option>'
+                        }, 
+                        { id: "typesplit", post_field: "htmlbytype", label: _("Output a separate page for each animal type"), type: "select", options: yesnooptions }, 
+                        { id: "speciessplit", post_field: "htmlbyspecies", label: _("Output a separate page for each species"), type: "select", options: yesnooptions }, 
+                        { id: "childsplit", post_field: "childadultsplit", label: _("Split baby/adult age at"), type: "select", options: 
+                            '<option value="1">' + _("1 week") + '</option>' + 
+                            '<option value="2">' + _("2 weeks") + '</option>' + 
+                            '<option value="4">' + _("4 weeks") + '</option>' + 
+                            '<option value="8">' + _("8 weeks") + '</option>' + 
+                            '<option value="12">' + _("3 months") + '</option>' + 
+                            '<option value="26">' + _("6 months") + '</option>' + 
+                            '<option value="38">' + _("9 months") + '</option>' + 
+                            '<option value="52">' + _("1 year") + '</option>'
+                        }, 
+                        { id: "outputadopted", post_field: "outputadopted", label: _("Output an adopted animals page"), type: "select", options: yesnooptions }, 
+                        { id: "outputadopteddays", post_field: "outputadopteddays", label: _("Show animals adopted"), type: "select", options: 
+                            '<option value="7">' + _("In the last week") + '</option>' + 
+                            '<option value="31">' + _("In the last month") + '</option>' + 
+                            '<option value="93">' + _("In the last quarter") + '</option>' + 
+                            '<option value="365">' + _("In the last year") + '</option>'
+                        }, 
+                        { id: "outputdeceased", post_field: "outputdeceased", label: _("Output a deceased animals page"), type: "select", options: yesnooptions }, 
+                        { id: "outputforms", post_field: "outputforms", label: _("Output a page with links to available online forms"), type: "select", options: yesnooptions }, 
+                        { id: "outputrss", post_field: "outputrss", label: _("Output an rss.xml page"), type: "select", options: yesnooptions }, 
+                        { id: "animalsperpage", post_field: "animalsperpage", label: _("Animals per page"), type: "select", options: 
+                            '<option value="5">5</option>' + 
+                            '<option value="10" selected="selected">10</option>' + 
+                            '<option value="15">15</option>' + 
+                            '<option value="20">20</option>' + 
+                            '<option value="50">50</option>' + 
+                            '<option value="100">100</option>' + 
+                            '<option value="999999">Unlimited (one page)</option>'
+                        }, 
+                        { id: "extension", post_field: "extension", label: _("Page extension"), type: "select", options: 
+                            '<option value="html">html</option>' + 
+                            '<option value="xml">xml</option>' + 
+                            '<option value="cgi">cgi</option>' + 
+                            '<option value="php">php</option>' + 
+                            '<option value="py">py</option>' + 
+                            '<option value="rb">rb</option>' + 
+                            '<option value="jsp">jsp</option>' + 
+                            '<option value="asp">asp</option>' + 
+                            '<option value="aspx">aspx</option>'
+                        }, 
+                        { id: "template", post_field: "style", label: _("Publishing template"), type: "select", options: html.list_to_options(controller.styles) }, 
+                        { id: "scale", post_field: "scaleimages", label: _("Scale published animal images to"), type: "select", options: 
+                            '<option value="">' + _("Don't scale") + '</option>' + 
+                            '<option value="300x300">300 px</option>' + 
+                            '<option value="320x320">320 px</option>' + 
+                            '<option value="400x400">400 px</option>' + 
+                            '<option value="500x500">500 px</option>' + 
+                            '<option value="600x600">600 px</option>' + 
+                            '<option value="800x800">800 px</option>' + 
+                            '<option value="1024x1024">1024 px</option>'
+                        }, 
+                        { id: "publishdir", post_field: "publishdirectory", label: _("Publish to folder"), type: "text" }, // To do - the original table row that this replaced had id="plublishdirrow" make sure that this has been hooked up to the appropriate mechanism
+                        { type: "nextcol"},
+                        // To do - the following columns was originally contained in a table with id="ftpuploadtable" make sure that this has been hooked up to the appropriate mechanism
+                        { id: "uploaddirectly", post_field: "uploaddirectly", label: _("Enable FTP uploading"), type: "select", options: yesnooptions }, 
+                        { id: "ftphost", post_field: "FTPURL", label: _("FTP hostname"), type: "text" }, 
+                        { id: "ftpuser", post_field: "FTPUser", label: _("FTP username"), type: "text" }, 
+                        { id: "ftppass", post_field: "FTPPassword", label: _("FTP password"), type: "text" }, 
+                        { id: "ftproot", post_field: "FTPRootDirectory", label: _("after connecting, chdir to"), type: "text" }, 
+                        { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", options: yesnooptions }, 
+                    ]}
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
