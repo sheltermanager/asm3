@@ -1298,6 +1298,28 @@ $(function() {
                         { id: "fbiftpuser", post_field: "PetFBIFTPUser", label: 'PetFBI FTP username', type: "text" }, 
                         { id: "fbiftppass", post_field: "PetFBIFTPPassword", label: 'PetFBI FTP password', type: "text" }, 
                         { id: "fbiorgid", post_field: "PetFBIOrgID", label: 'PetFBI Organisation ID', type: "text" }, 
+                    ]}, 
+                    { id: "tab-petfinder", title: _("PetFinder.com"), info: 'Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>', fields: [
+                        { id: "enabledpf", label: _("Enabled"), type: "check" }, 
+                        { id: "pfftpuser", post_field: "PetFinderFTPUser", label: 'PetFinder shelter ID', type: "text" }, 
+                        { id: "pfftppass", post_field: "PetFinderFTPPassword", label: 'PetFinder FTP password', type: "text" }, 
+                        { id: "pfsendstrays", post_field: "PetFinderSendStrays", label: 'Stray shelter animals', type: "select", options:
+                            '<option value="No">Do not send</option>' + 
+                            '<option value="Yes">Send with status "F"</option>'
+                        }, 
+                        { id: "pfsendholds", post_field: "PetFinderSendHolds", label: 'Held shelter animals', type: "select", options:
+                            '<option value="No">Do not send</option>' + 
+                            '<option value="Yes">Send with status "H"</option>'
+                        }, 
+                        { id: "pfsendadopted", post_field: "PetFinderSendAdopted", label: 'Previously adopted animals', type: "select", options:
+                            '<option value="No">Do not send</option>' + 
+                            '<option value="Yes">Send with status "X"</option>'
+                        }, 
+                        { id: "pfsendadoptedphoto", post_field: "PetFinderSendAdoptedPhoto", label: 'Photo for adopted animals', type: "select", options:
+                            '<option value="No">No photo</option>' + 
+                            '<option value="Yes">Send the preferred photo</option>'
+                        }, 
+                        { type: "raw", markup: '<tr><td colspan="2">' + html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>It is <b>not</b> the same as your password for the members area.') + '</td></tr>' }
                     ]}
                 ], {full_width: false}),
                 html.content_footer()
