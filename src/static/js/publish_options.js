@@ -1346,12 +1346,20 @@ $(function() {
                         }, 
                         { type: "raw", markup: '<tr><td colspan="2">' + html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>It is <b>not</b> the same as your password for the members area.') + '</td></tr>' }
                     ]},
+
+                    { id: "tab-petslocated", title: _("PetsLocated"), info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', fields: [
+                            { id: "enabledrg", label: _("Enabled"), type: "check" }, 
+                            { id: "pcukcustid", post_field: "PetsLocatedCustomerID", label: 'petslocated.com customer number', type: "text" }, 
+                            { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', type: "select", options: yesnooptions }, 
+                            { id: "pcukanimalflag", post_field: "PetsLocatedAnimalFlag", label: 'Only shelter animals with this flag', type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") }
+                    ]}, 
+
                     { id: "tab-rescuegroups", title: _("RescueGroups.org"), info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                     'to them for republishing on to many other sites. Find out more at ' +
                     '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>', fields: [
                         { id: "enabledrg", label: _("Enabled"), type: "check" }, 
                         { id: "rgftpuser", post_field: "RescueGroupsFTPUser", label: 'RescueGroups FTP username', type: "text" }, 
-                        { id: "rgftppass", post_field: "RescueGroupsFTPPassword", label: 'RescueGroups FTP password', type: "text" }, 
+                        { id: "rgftppass", post_field: "RescueGroupsFTPPassword", label: 'RescueGroups FTP password', type: "text" }
                     ]}
                 ], {full_width: false}),
                 html.content_footer()
