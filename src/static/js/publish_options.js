@@ -1292,6 +1292,12 @@ $(function() {
                             '<option value="0">Auto-generate and upload</option>' + 
                             '<option value="1">Do not generate and upload (not recommended)</option>'
                         }
+                    ]}, 
+                    { id: "tab-petfbi", title: _("PetFBI.com"), info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', fields: [
+                        { id: "enabledfbi", label: _("Enabled"), type: "check" }, 
+                        { id: "fbiftpuser", post_field: "PetFBIFTPUser", label: 'PetFBI FTP username', type: "text" }, 
+                        { id: "fbiftppass", post_field: "PetFBIFTPPassword", label: 'PetFBI FTP password', type: "text" }, 
+                        { id: "fbiorgid", post_field: "PetFBIOrgID", label: 'PetFBI Organisation ID', type: "text" }, 
                     ]}
                 ], {full_width: false}),
                 html.content_footer()
