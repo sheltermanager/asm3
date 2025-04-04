@@ -1225,21 +1225,33 @@ has been issued to are also present and if the licence is linked to an animal,
 animal keys are also present.
 
 VoucherTypeName
-   The type of voucher
+    The type of voucher
 VoucherCode
-   The voucher's unique code
+    The voucher's unique code
 VoucherVetName
-   The vet or other organisation the voucher can be redeemed with
+    The vet or other organisation the voucher can be redeemed with
+VoucherVetAddress
+    The address of the vet or other organisation the voucher can be redeemed with
+VoucherVetTown / VoucherVetCity 
+    The city of the vet or other organisation the voucher can be redeemed with
+VoucherVetCounty / VoucherVetState 
+    The state of the vet or other organisation the voucher can be redeemed with
+VoucherVetPostcode / VoucherVetZipcode 
+    The zipcode of the vet or other organisation the voucher can be redeemed with 
+VoucherVetPhone 
+    The phone number recorded in the work phone field of the vet or other organisation the voucher can be redeemed with 
+VoucherVetEmailAddress 
+    The email address of the vet or other organisation the voucher can be redeemed with  
 VoucherValue
-   The amount the voucher can be redeemed for if appropriate
+    The amount the voucher can be redeemed for if appropriate
 VoucherIssued
-   The date the voucher was issued
+    The date the voucher was issued
 VoucherExpires
-   The date the voucher expires
+    The date the voucher expires
 VoucherRedeemed
-   The date the voucher was redeemed/used
+    The date the voucher was redeemed/used
 VoucherComments
-   Any comments about the voucher
+    Any comments about the voucher
 
 Incident Keys
 -------------
