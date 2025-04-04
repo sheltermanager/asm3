@@ -1164,6 +1164,43 @@ $(function() {
                         { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "number", halfsize: true, xattr: 'data-min="0" data-max="50"', xmarkup: ' ' + _("active reservations") }, 
                         { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "selectmulti", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), callout: _("If you don't select any locations, publishers will include animals in all locations.") }, 
                     ]},
+                    { id: "tab-allpublishers", title: _("All Publishers"), fields: [
+                        { id: "regmic", post_field: "MicrochipRegisterMovements", label: _("Register microchips after"), type: "selectmulti", options: 
+                            '<option value="0">' + _("Intake") + '</option>' + 
+                            '<option value="1">' + _("Adoption") + '</option>' + 
+                            '<option value="2">' + _("Foster") + '</option>' + 
+                            '<option value="3">' + _("Transfer") + '</option>' + 
+                            '<option value="5">' + _("Reclaim") + '</option>'+ 
+                            '<option value="11">' + _("Trial Adoption") + '</option>'
+                        }, 
+                        { id: "regfrom", post_field: "MicrochipRegisterFrom", label: _("Register microchips from"), type: "date", callout: _("Only register microchips where the animal moved after this date")
+                        }, 
+                        { id: "updatefreq", post_field: "PublisherSub24Frequency", label: _("Update adoption websites every"), type: "select", options: 
+                        '<option value="2">' + _("{0} hours").replace("{0}", "2") + '</option>' + 
+                        '<option value="4">' + _("{0} hours").replace("{0}", "4") + '</option>' + 
+                        '<option value="6">' + _("{0} hours").replace("{0}", "6") + '</option>' + 
+                        '<option value="8">' + _("{0} hours").replace("{0}", "8") + '</option>' + 
+                        '<option value="12">' + _("{0} hours").replace("{0}", "12") + '</option>' + 
+                        '<option value="0">' + _("{0} hours").replace("{0}", "24") + '</option>'
+                        }, 
+                        { id: "forcereupload", post_field: "forcereupload", label: _("Reupload animal images every time"), type: "select", options: yesnooptions }, 
+                        { id: "uploadall", post_field: "uploadall", label: _("Upload all available images for animals"), type: "select", options: yesnooptions }, 
+                        { id: "publishascrossbreed", post_field: "PublishAsCrossbreed", label: _("Always set the crossbreed/mix flag for these breeds"), type: "selectmulti", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") }, 
+                        { id: "order", post_field: "order", label: _("Order published animals by"), type: "select", options: 
+                            '<option value="0">' + _("Entered (oldest first)") + '</option>' + 
+                            '<option value="1">' + _("Entered (newest first)") + '</option>' + 
+                            '<option value="2">' + _("Animal Name") + '</option>'
+                        }, 
+                        { id: "thumbnailsize", post_field: "ThumbnailSize", label: _("Thumbnail size"), type: "select", options: 
+                            '<option value="100x100">100px</option>' + 
+                            '<option value="150x150">150px</option>' + 
+                            '<option value="200x200">200px</option>' + 
+                            '<option value="250x250">250px</option>' + 
+                            '<option value="300x300">300px</option>'
+                        }, 
+                        { id: "usecomments", post_field: "PublisherUseComments", label: _("Animal descriptions"), type: "select", options: yesnooptions }, 
+                        { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }, 
+                    ]},
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
