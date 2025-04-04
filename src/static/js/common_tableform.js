@@ -1257,7 +1257,12 @@ const tableform = {
         tr = '<tr ' + rowid + rowclasses + '>'; 
         td = '<td ' + colclasses + '>';
         if (v.type == "check") {
-            return tr + td + '</td>' + td + h + closer;
+            if (v.fullrow) {
+                return tr + '<td colspan="2">' + h + closer;
+            }
+            else {
+                return tr + td + '</td>' + td + h + closer;
+            }
         }
         else if (v.type == "hidden") {
             tr = '<tr ' + rowid + rowclasses + ' style="display: none">';
