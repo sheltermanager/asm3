@@ -1198,7 +1198,10 @@ $(function() {
                             '<option value="250x250">250px</option>' + 
                             '<option value="300x300">300px</option>'
                         }, 
-                        { id: "usecomments", post_field: "PublisherUseComments", label: _("Animal descriptions"), type: "select", options: yesnooptions }, 
+                        { id: "usecomments", post_field: "PublisherUseComments", label: _("Animal descriptions"), type: "select", options: 
+                            '<option value="Yes">' + _("Use animal description") + '</option>' + 
+                            '<option value="No">' + _("Use notes from preferred photo") + '</option>'
+                         }, 
                         { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }, 
                     ]},
                 ], {full_width: false}),
