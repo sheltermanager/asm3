@@ -30,6 +30,13 @@ $(function() {
                 '<input type="hidden" name="mergereport" data="mergereport" />',
                 '<input type="hidden" name="mergetitle" data="mergetitle" />'
             ].join("\n");
+            let smcomemailinfo = "";
+            if (controller.issmcomsmtp) {
+                smcomemailinfo = _("[ {0}/{1} in the last {2} hours ]")
+                    .replace("{0}", controller.smcomsentemails)
+                    .replace("{1}", controller.smcommaxemails)
+                    .replace("{2}", controller.smcommaxttl / 3600);
+            }
             return [
                 html.content_header(controller.title),
 
@@ -104,7 +111,7 @@ $(function() {
                 '</form>',
                 '</div>',
 
-                '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a> (' + controller.numemails + ')</h3>',
+                '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a> (' + controller.numemails + ') ' + smcomemailinfo + '</h3>',
                 '<div id="sendemail">',
                 hf.replace("{mode}", "email"),
                 '<table width="100%">',

@@ -15,7 +15,7 @@ import web062 as web
 # The maximum number of emails allowed to be sent over a period (ttl)
 # through the the sheltermanager.com email server
 MAX_EMAILS_CACHE_KEY = "emails_sent"
-MAX_EMAILS_TTL = 3600 * 20 # Use a 20 hour reset period
+MAX_EMAILS_TTL = 3600 * 12 # Use a 12 hour reset period
 MAX_EMAILS = 3000
 
 # Regex to remove invalid chars from an entered database

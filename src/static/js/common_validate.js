@@ -74,7 +74,7 @@ const validate = {
         $("#asm-content").off("change");
         $("#asm-content").off("cut");
         $("#asm-content").off("paste");
-        $("#asm-content").off("keyup")
+        $("#asm-content").off("keyup");
     },
 
     a_click_handler: function(event, href) {
