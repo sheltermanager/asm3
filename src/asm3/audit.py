@@ -194,7 +194,7 @@ def view_report(dbo: Database, username: str, reportid: int, reportname: str, cr
     action(dbo, VIEW_REPORT, username, "customreport", reportid, "", "%s - %s" % (reportname, criteria))
 
 def email(dbo: Database, username: str, fromadd: str, toadd: str, ccadd: str, bccadd: str, subject: str, body: str) -> None:
-    action(dbo, EMAIL, username, "email", 0, "", "from: %s, to: %s, cc: %s, bcc: %s, subject: %s - %s" % (fromadd, toadd, ccadd, bccadd, subject, body))
+    action(dbo, EMAIL, username, "email", 0, "", "(%s) from: %s, to: %s, cc: %s, bcc: %s, subject: %s - %s" % (toadd.count(","), fromadd, toadd, ccadd, bccadd, subject, body))
 
 def action(dbo: Database, action: str, username: str, tablename: str, linkid: int, parentlinks: str, description: str) -> None:
     """
