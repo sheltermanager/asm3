@@ -1491,6 +1491,14 @@ $(function() {
                                 'account email in this field.'
                             }
                         ]
+                    }, 
+                    { id: "tab-homeagain", title: "HomeAgain Microchips", classes: 'localeus hashomeagain',
+                        info: 'Signup at <a target="_blank" href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on <a target="_blank" href="tel:1-800-341-5785">(800) 341-5785</a> for more information.', 
+                        fields: [
+                            { id: "enabledha", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "hauserid", post_field: "HomeAgainUserId", label: "HomeAgain User ID", type: "text", doublesize: true }, 
+                            { id: "hauserpassword", post_field: "HomeAgainUserPassword", label: "HomeAgain User Password", type: "text", doublesize: true }
+                        ]
                     }
                 ], {full_width: false}),
                 html.content_footer()
