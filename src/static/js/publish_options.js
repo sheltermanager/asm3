@@ -1346,13 +1346,50 @@ $(function() {
                         }, 
                         { type: "raw", markup: '<tr><td colspan="2">' + html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>It is <b>not</b> the same as your password for the members area.') + '</td></tr>' }
                     ]},
-
                     { id: "tab-petslocated", title: "PetsLocated", info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', fields: [
                             { id: "enabledrg", label: _("Enabled"), type: "check" }, 
                             { id: "pcukcustid", post_field: "PetsLocatedCustomerID", label: 'petslocated.com customer number', type: "text" }, 
                             { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', type: "select", options: yesnooptions }, 
                             { id: "pcukanimalflag", post_field: "PetsLocatedAnimalFlag", label: 'Only shelter animals with this flag', type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") }
                     ]}, 
+                    { id: "tab-petrescue", title: "PetRescue.com.au", classes: 'localeau haspetrescue', info: 'Signup at <a target="_blank" href="http://petrescue.com.au">petrescue.com.au</a>', fields: [
+                        { id: "enabledpr", label: _("Enabled"), type: "check" }, 
+                        { id: "prtoken", post_field: "PetRescueToken", label: 'PetRescue Token', type: "text", doublesize: true }, 
+                        { id: "prdesex", post_field: "PetRescueAllDesexed", label: 'Send all animals as desexed', type: "select", options: yesnooptions, callout: 'PetRescue will not accept listings for non-desexed animals. Setting this to "Yes" will send all animals as if they are desexed.' }, 
+                        { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. Mandatory for dog listings in South Australia where "bredincareofgroup" is selected.' }, 
+                        { id: "nswrehomingorgid", post_field: "PetRescueNSWRehomingOrgID", label: 'NSW Rehoming Organisation ID', type: "text", callout: 'For cats and dogs being rehomed in NSW, a rehoming organisation ID is required OR microchip number OR breeder id' }, 
+                        { id: "vicpicnumber", post_field: "PetRescueVICPICNumber", label: 'VIC PIC Number', type: "text", callout: 'Property Identification Code for livestock listings in Victoria' }, 
+                        { id: "vicsourcenumber", post_field: "PetRescueVICSourceNumber", label: 'VIC Source Number', type: "text", callout: 'Source Number for the Victoria Pet Exchange Register. Mandatory for cat and dog listings in VIC.' }, 
+                        { id: "pradoptablein", post_field: "PetRescueAdoptableIn", label: 'Adoptable in states', type: "selectmulti", 
+                            options: '<option value="ACT">Australian Capital Territory</option>' + 
+                            '<option value="NSW">New South Wales</option>' + 
+                            '<option value="NT">Northern Territory</option>' + 
+                            '<option value="QLD">Queensland</option>' + 
+                            '<option value="SA">South Australia</option>' + 
+                            '<option value="TAS">Tasmania</option>' + 
+                            '<option value="VIC">Victoria</option>' + 
+                            '<option value="WA">Western Australia</option>', 
+                            callout: 'Choose the states your animals will be adoptable in. The state the animal is currently located in will be implicitly included.' 
+                        }, 
+                        { id: "premail", post_field: "PetRescueEmail", label: 'Contact email', type: "text", 
+                            callout: 'This is the contact email for PetRescue listings. If you do not set it, the option from Settings &#8594; Options &#8594; Email is used.' 
+                        }, 
+                        { id: "prphone", post_field: "PetRescuePhoneType", label: 'Contact phone', type: "select", 
+                            options: '<option value="org">Use organisation number</option>' + 
+                            '<option value="spec">Specify a number &#8594;</option>' + 
+                            '<option value="none">Do not send a number</option>', 
+                            callout: 'This controls the phone number included as a secondary contact with your listings', 
+                            xmarkup: ' <input type="text" class="asm-textbox cfg" title="The phone number to use" data="PetRescuePhoneNumber" />'
+                        }, 
+                        { id: "usecoord", post_field: "PetRescueUseCoordinator", label: 'Use adoption coordinator as contact', type: "select", 
+                            options: '<option value="0">No</option>' + 
+                            '<option value="1">Use coordinator\'s phone number and email address</option>' + 
+                            '<option value="2">Use coordinator\'s email address only</option>', 
+                            callout: 'Use the adoption coordinator\'s contact information instead of the options above if the animal has an adoption coordinator assigned.' ,
+                            doublesize: true
+                        }, 
+
+                ]}, 
 
                     { id: "tab-rescuegroups", title: "RescueGroups.org", info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                     'to them for republishing on to many other sites. Find out more at ' +
