@@ -1390,7 +1390,7 @@ $(function() {
                         }
                     ]}, 
 
-                    { id: "tab-savourlife", title: "SavourLife.com.au", info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
+                    { id: "tab-savourlife", title: "SavourLife.com.au", classes: 'localeau hassavourlife', info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
                         { id: "enabledsl", label: _("Enabled"), type: "check" }, 
                         { id: "sltoken", post_field: "SavourLifeToken", label: 'Authentication Token', type: "text" }, 
                         { id: "slinterstate", post_field: "SavourLifeInterstate", label: 'Mark as interstate', type: "select", callout: 'Set to yes if you will fly adoptable animals to other states', 
