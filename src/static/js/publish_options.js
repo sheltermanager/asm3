@@ -1499,6 +1499,25 @@ $(function() {
                             { id: "hauserid", post_field: "HomeAgainUserId", label: "HomeAgain User ID", type: "text", doublesize: true }, 
                             { id: "hauserpassword", post_field: "HomeAgainUserPassword", label: "HomeAgain User Password", type: "text", doublesize: true }
                         ]
+                    }, 
+                    { id: "tab-petlink", title: "PetLink Microchips", classes: 'localeus localeca localemx haspetlink',
+                        info: 'These settings are for uploading new owner information to the PetLink/DataMARS microchip database.<br />' +
+                        'Find out more at <a target="_blank" href="http://www.petlink.net/us/">www.petlink.net</a>', 
+                        fields: [
+                            { id: "enabledpl", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "plemail", post_field: "PetLinkEmail", label: "Professional/Vet Account Email", type: "text", 
+                                callout: 'This is the email address you use to log into the PetLink site as a professional/vet'
+                            }, 
+                            { id: "plpass", post_field: "PetLinkPassword", label: "Password", type: "text" }, 
+                            { id: "plowneremail", post_field: "PetLinkOwnerEmail", label: "Owner Account Email (Optional)", type: "text", 
+                                callout: 'If you are registering animals to the shelter on intake, ' + 
+                                'this is the email address of the PetLink owner account to register shelter animals to.'
+                            }, 
+                            { id: "plregisterall", post_field: "PetLinkRegisterAll", label: "Register", type: "select", 
+                                options: '<option value="No">PetLink pre-paid microchips (98102*)</option>' + 
+                                '<option value="Yes">ALL microchips (*)</option>'
+                            }
+                        ]
                     }
                 ], {full_width: false}),
                 html.content_footer()
