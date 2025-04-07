@@ -1456,7 +1456,22 @@ $(function() {
                             { id: "enabledmpuk", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "mypetpracticeid", post_field: "AnibaseMyPetUKPracticeIDPinNo", label: "Practice ID", type: "text", doublesize: true }
                         ]
-                    },
+                    }, 
+                    { id: "tab-akcreunite", title: "AKC Reunite Microchips", classes: '',
+                        info: 'Learn about AKC Reunite microchips and auto-uploading pet enrollment information at ' +
+                        '<a target="_blank" href="https://www.akcreunite.org/shelters">https://www.akcreunite.org/shelters</a>.<br/>' +
+                        'Request auto-uploads of pet microchip information to AKC Reunite at ' +
+                        '<a target="_blank" href="https://www.akcreunite.org/auto-upload/">https://www.akcreunite.org/auto-upload</a>.', 
+                        fields: [
+                            { id: "enabledak", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { type: "raw", markup: '<tr><td colspan="2"><button id="button-akenroll">Generate an Enrollment Source Id for AKC Reunite</button></td></tr>' }, // To do - check that this button is doing what it should
+                            { id: "akenrollmentid", post_field: "AKCEnrollmentSourceID", label: "AKC Reunite Enrollment Source ID", type: "text", doublesize: true }, 
+                            { id: "akregisterall", post_field: "AKCRegisterAll", label: "Register", type: "select", 
+                                options: '<option value="No">Only AKC Microchips</option>' + 
+                                '<option value="Yes">All Microchips</option>'
+                            }, 
+                        ]
+                    }
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
