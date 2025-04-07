@@ -140,7 +140,7 @@ $(function() {
             $("#button-save").button().click(function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    common.route_reload();
+                    common.route_reload(true);
                 });
             });
 
