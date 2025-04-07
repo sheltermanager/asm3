@@ -1479,6 +1479,18 @@ $(function() {
                             { id: "enabledbd", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "bdprovidercode", post_field: "BuddyIDProviderCode", label: "BuddyID Provider Code", type: "text", doublesize: true }
                         ]
+                    }, 
+                    { id: "tab-foundanimals", title: "Found/24Pet Microchips", classes: 'localeus localeca hasfoundanimals',
+                        info: 'Find out more at <a target="_blank" href="http://www.my24pet.com">www.my24pet.com</a><br/>' +
+                        'Contact clientcare@pethealthinc.com to get a folder for automatic batch registrations of microchips.', 
+                        fields: [
+                            { id: "enabledfa", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "fafolder", post_field: "FoundAnimalsFolder", label: "Folder name", type: "text", doublesize: true }, 
+                            { id: "faemail", post_field: "FoundAnimalsEmail", label: "Rescue group email", type: "text", doublesize: true, 
+                                callout: 'To stay on record for every pet you register as the permanent rescue contact, enter your group\'s registry ' + 
+                                'account email in this field.'
+                            }
+                        ]
                     }
                 ], {full_width: false}),
                 html.content_footer()
