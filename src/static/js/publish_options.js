@@ -1527,6 +1527,20 @@ $(function() {
                             { id: "enabledst", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "stuser", post_field: "SmartTagFTPUser", label: "SmartTag Account ID", type: "text" }
                         ]
+                    }, 
+                    { id: "tab-vetenvoy", title: "VetEnvoy Microchips", classes: 'localeus hasvetenvoy',
+                        info: 'VetEnvoy allow ASM to automatically register microchips provided by HomeAgain and AKC Reunite<br />' +
+                        'Find out more at <a target=_"blank" href="http://www.vetenvoy.com">www.vetenvoy.com</a>, ' +
+                        '<a target="_blank" href="http://www.homeagain.com">www.homeagain.com</a> and ' +
+                        '<a target="_blank" href="http://www.akcreunite.org">www.akcreunite.org</a>', 
+                        fields: [
+                            { type: "raw", markup: '<tr><td colspan="2"><button id="button-vesignup">Signup for VetEnvoy</button></td></tr>' }, // To do - check that this button is doing what it should
+                            { id: "enabledve", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "veuserid", post_field: "VetEnvoyUserId", label: "VetEnvoy User ID", type: "text", doublesize: true }, 
+                            { id: "veuserpassword", post_field: "VetEnvoyUserPassword", label: "VetEnvoy User Password", type: "text", doublesize: true }, 
+                            { id: "vehomeagain", post_field: "VetEnvoyHomeAgainEnabled", label: "Register HomeAgain Microchips", type: "select", options: yesnooptions }, // To do - the original widget had no ids for the options and the options were not in the same order as other yesno selects, check that this is plumbed in correctly
+                            { id: "veakc", post_field: "VetEnvoyAKCReuniteEnabled", label: "Register AKC Reunite Microchips", type: "select", options: yesnooptions }, // To do - the original widget had no ids for the options and the options were not in the same order as other yesno selects, check that this is plumbed in correctly
+                        ]
                     }
                 ], {full_width: false}),
                 html.content_footer()
