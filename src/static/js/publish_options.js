@@ -1422,7 +1422,7 @@ $(function() {
                             { id: "enabledsac", label: _("Enabled"), type: "check", classes: 'enablecheck' }
                         ]
                     }, 
-                    { id: "tab-pettrac", title: "AVID UK Microchips",
+                    { id: "tab-pettrac", title: "AVID UK Microchips", classes: 'localeus', 
                         info: 'These settings are for registering microchips with new owner information to the AVID PETtrac UK database. <br/>' + 
                         'Find out more at <a target="_blank" href="http://www.pettrac.co.uk">www.pettrac.co.uk</a>', 
                         fields: [
@@ -1439,7 +1439,14 @@ $(function() {
                                 "user has a real name on file."
 
                             }
-
+                        ]
+                    }, 
+                    { id: "tab-anibase", title: "Identibase UK Microchips",
+                        info: 'These settings are for uploading new owner information to the Identibase/Anibase UK microchip database. <br/>' + 
+                        'Find out more at <a target="_blank" href="http://www.animalcare.co.uk">www.animalcare.co.uk</a>', 
+                        fields: [
+                            { id: "enabledabuk", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "anibasepinno", post_field: "AnibasePinNo", label: "Vet Code", type: "text", doublesize: true }
                         ]
                     },
                 ], {full_width: false}),
