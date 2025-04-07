@@ -1457,7 +1457,7 @@ $(function() {
                             { id: "mypetpracticeid", post_field: "AnibaseMyPetUKPracticeIDPinNo", label: "Practice ID", type: "text", doublesize: true }
                         ]
                     }, 
-                    { id: "tab-akcreunite", title: "AKC Reunite Microchips", classes: '',
+                    { id: "tab-akcreunite", title: "AKC Reunite Microchips", classes: 'localeus hasakcreunite',
                         info: 'Learn about AKC Reunite microchips and auto-uploading pet enrollment information at ' +
                         '<a target="_blank" href="https://www.akcreunite.org/shelters">https://www.akcreunite.org/shelters</a>.<br/>' +
                         'Request auto-uploads of pet microchip information to AKC Reunite at ' +
@@ -1469,7 +1469,15 @@ $(function() {
                             { id: "akregisterall", post_field: "AKCRegisterAll", label: "Register", type: "select", 
                                 options: '<option value="No">Only AKC Microchips</option>' + 
                                 '<option value="Yes">All Microchips</option>'
-                            }, 
+                            }
+                        ]
+                    }, 
+                    { id: "tab-buddyid", title: "BuddyID Microchips", classes: 'localeus hasbuddyid',
+                        info: 'Find out more at ' + 
+                        '<a target="_blank" href="https://buddyid.com/pet-microchips-and-registration/">https://buddyid.com/pet-microchips-and-registration/</a>', 
+                        fields: [
+                            { id: "enabledbd", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "bdprovidercode", post_field: "BuddyIDProviderCode", label: "BuddyID Provider Code", type: "text", doublesize: true }
                         ]
                     }
                 ], {full_width: false}),
