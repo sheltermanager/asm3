@@ -1421,6 +1421,26 @@ $(function() {
                         fields: [
                             { id: "enabledsac", label: _("Enabled"), type: "check", classes: 'enablecheck' }
                         ]
+                    }, 
+                    { id: "tab-pettrac", title: "AVID UK Microchips",
+                        info: 'These settings are for registering microchips with new owner information to the AVID PETtrac UK database. <br/>' + 
+                        'Find out more at <a target="_blank" href="http://www.pettrac.co.uk">www.pettrac.co.uk</a>', 
+                        fields: [
+                            { id: "enabledptuk", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "avidorgname", post_field: "AvidOrgName", label: "Organisation Name", type: "text", doublesize: true }, 
+                            { id: "avidorgserial", post_field: "AvidOrgSerial", label: "Serial Number", type: "text", doublesize: true }, 
+                            { id: "avidorgpostcode", post_field: "AvidOrgPostcode", label: "Postcode", type: "text", doublesize: true }, 
+                            { id: "avidorgpassword", post_field: "AvidOrgPassword", label: "Password", type: "text", doublesize: true }, 
+                            { id: "avidrereg", post_field: "AvidReRegistration", label: "Re-register previously registered microchips", type: "select", options: yesnooptions }, 
+                            { id: "avidauthuser", post_field: "AvidAuthUser", label: "Password", type: "select", options: html.list_to_options(controller.users, "USERNAME", "USERNAME"), 
+                                callout: "An authorised user must be chosen and they must have an electronic signature on file.<br/>" + 
+                                "Their details will be used on an authorisation document transmitted to AVID when " +
+                                "re-registering previously registered microchips.<br/>Please also make sure the authorised " +
+                                "user has a real name on file."
+
+                            }
+
+                        ]
                     },
                 ], {full_width: false}),
                 html.content_footer()
