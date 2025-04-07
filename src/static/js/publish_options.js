@@ -1441,12 +1441,20 @@ $(function() {
                             }
                         ]
                     }, 
-                    { id: "tab-anibase", title: "Identibase UK Microchips",
+                    { id: "tab-anibase", title: "Identibase UK Microchips", classes: 'localegb', 
                         info: 'These settings are for uploading new owner information to the Identibase/Anibase UK microchip database. <br/>' + 
                         'Find out more at <a target="_blank" href="http://www.animalcare.co.uk">www.animalcare.co.uk</a>', 
                         fields: [
                             { id: "enabledabuk", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "anibasepinno", post_field: "AnibasePinNo", label: "Vet Code", type: "text", doublesize: true }
+                        ]
+                    }, 
+                    { id: "tab-mypet", title: "MyPet UK Microchips", classes: 'localegb',
+                        info: 'These settings are for uploading new owner information to the MyPet UK microchip database. <br/>' + 
+                        'Find out more at <a target="_blank" href="http://www.mypethq.io">www.mypethq.io</a>', 
+                        fields: [
+                            { id: "enabledmpuk", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "mypetpracticeid", post_field: "AnibaseMyPetUKPracticeIDPinNo", label: "Practice ID", type: "text", doublesize: true }
                         ]
                     },
                 ], {full_width: false}),
