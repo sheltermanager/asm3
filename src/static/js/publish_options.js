@@ -1279,7 +1279,7 @@ $(function() {
                         { id: "ftproot", post_field: "FTPRootDirectory", label: _("after connecting, chdir to"), type: "text" }, 
                         { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", options: yesnooptions }, 
                     ]}, 
-                    { id: "tab-adoptapet", title: _("AdoptAPet.com"), classes: "localeus localeca localemx", info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
+                    { id: "tab-adoptapet", title: "AdoptAPet.com", classes: "localeus localeca localemx", info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
                     'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM', fields: [
                         { id: "enabledap", label: _("Enabled"), type: "check" }, 
                         { id: "apftpuser", post_field: "SaveAPetFTPUser", label: 'Autoupload FTP username', type: "text" }, 
@@ -1318,13 +1318,13 @@ $(function() {
                         { id: "enabledpc", label: _("Enabled"), type: "check" }, 
                         { id: "pctoken", post_field: "PetcademyToken", label: "MPA API Username", type: "text" }, 
                     ]}, 
-                    { id: "tab-petfbi", title: _("PetFBI.com"), info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', fields: [
+                    { id: "tab-petfbi", title: "PetFBI.com", info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', fields: [
                         { id: "enabledfbi", label: _("Enabled"), type: "check" }, 
                         { id: "fbiftpuser", post_field: "PetFBIFTPUser", label: 'PetFBI FTP username', type: "text" }, 
                         { id: "fbiftppass", post_field: "PetFBIFTPPassword", label: 'PetFBI FTP password', type: "text" }, 
                         { id: "fbiorgid", post_field: "PetFBIOrgID", label: 'PetFBI Organisation ID', type: "text" }, 
                     ]}, 
-                    { id: "tab-petfinder", title: _("PetFinder.com"), info: 'Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>', fields: [
+                    { id: "tab-petfinder", title: "PetFinder.com", info: 'Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>', fields: [
                         { id: "enabledpf", label: _("Enabled"), type: "check" }, 
                         { id: "pfftpuser", post_field: "PetFinderFTPUser", label: 'PetFinder shelter ID', type: "text" }, 
                         { id: "pfftppass", post_field: "PetFinderFTPPassword", label: 'PetFinder FTP password', type: "text" }, 
@@ -1347,14 +1347,14 @@ $(function() {
                         { type: "raw", markup: '<tr><td colspan="2">' + html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>It is <b>not</b> the same as your password for the members area.') + '</td></tr>' }
                     ]},
 
-                    { id: "tab-petslocated", title: _("PetsLocated"), info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', fields: [
+                    { id: "tab-petslocated", title: "PetsLocated", info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', fields: [
                             { id: "enabledrg", label: _("Enabled"), type: "check" }, 
                             { id: "pcukcustid", post_field: "PetsLocatedCustomerID", label: 'petslocated.com customer number', type: "text" }, 
                             { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', type: "select", options: yesnooptions }, 
                             { id: "pcukanimalflag", post_field: "PetsLocatedAnimalFlag", label: 'Only shelter animals with this flag', type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") }
                     ]}, 
 
-                    { id: "tab-rescuegroups", title: _("RescueGroups.org"), info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
+                    { id: "tab-rescuegroups", title: "RescueGroups.org", info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                     'to them for republishing on to many other sites. Find out more at ' +
                     '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>', fields: [
                         { id: "enabledrg", label: _("Enabled"), type: "check" }, 
