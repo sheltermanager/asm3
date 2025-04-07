@@ -1387,9 +1387,27 @@ $(function() {
                             '<option value="2">Use coordinator\'s email address only</option>', 
                             callout: 'Use the adoption coordinator\'s contact information instead of the options above if the animal has an adoption coordinator assigned.' ,
                             doublesize: true
-                        }, 
+                        }
+                    ]}, 
 
-                ]}, 
+                    { id: "tab-savourlife", title: "SavourLife.com.au", info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
+                        { id: "enabledsl", label: _("Enabled"), type: "check" }, 
+                        { id: "sltoken", post_field: "SavourLifeToken", label: 'Authentication Token', type: "text" }, 
+                        { id: "slinterstate", post_field: "SavourLifeInterstate", label: 'Mark as interstate', type: "select", callout: 'Set to yes if you will fly adoptable animals to other states', 
+                            options: yesnooptions
+                        }, 
+                        { id: "slradius", post_field: "SavourLifeRadius", label: 'Distance restriction', type: "select",
+                            options: '<option value="0">No restriction</option>' + 
+                            '<option value="20">20 km</option>' + 
+                            '<option value="40">40 km</option>' + 
+                            '<option value="60">60 km</option>' + 
+                            '<option value="100">100 km</option>' + 
+                            '<option value="200">200 km</option>' + 
+                            '<option value="500">500 km</option>'
+                        }, 
+                        { id: "slmicrochips", post_field: "SavourLifeAllMicrochips", label: 'Send microchip numbers for all animals', type: "select", options: yesnooptions, callout: 'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. Settings this to "Yes" will send the microchip number for all animals'
+                        }, 
+                    ]}, 
 
                     { id: "tab-rescuegroups", title: "RescueGroups.org", info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                     'to them for republishing on to many other sites. Find out more at ' +
