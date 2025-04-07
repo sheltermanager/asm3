@@ -1408,14 +1408,20 @@ $(function() {
                         { id: "slmicrochips", post_field: "SavourLifeAllMicrochips", label: 'Send microchip numbers for all animals', type: "select", options: yesnooptions, callout: 'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. Settings this to "Yes" will send the microchip number for all animals'
                         }, 
                     ]}, 
-
                     { id: "tab-rescuegroups", title: "RescueGroups.org", info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                     'to them for republishing on to many other sites. Find out more at ' +
                     '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>', fields: [
                         { id: "enabledrg", label: _("Enabled"), type: "check" }, 
                         { id: "rgftpuser", post_field: "RescueGroupsFTPUser", label: 'RescueGroups FTP username', type: "text" }, 
                         { id: "rgftppass", post_field: "RescueGroupsFTPPassword", label: 'RescueGroups FTP password', type: "text" }
-                    ]}
+                    ]}, 
+                    { id: "tab-sac", title: "ShelterAnimalsCount.org", classes: 'localeus localeca hassac', 
+                        info: 'Signup at <a target="_blank" href="http://shelteranimalscount.org">shelteranimalscount.org</a><br>' + 
+                        'You will need to give SAC your account number of "' + asm.useraccount + '" in order for them to accept uploads from you.', 
+                        fields: [
+                            { id: "enabledsac", label: _("Enabled"), type: "check", classes: 'enablecheck' }
+                        ]
+                    },
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
