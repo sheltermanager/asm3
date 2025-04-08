@@ -65,6 +65,7 @@ $(function() {
         render: function() {
             let yesnooptions = '<option value="0">' + _("No") + '</option>' + '<option value="1">' + _("Yes") + '</option>';
             return [
+                this.render_vetenvoy_signup_dialog(), 
                 html.content_header(_("Publishing Options")),
                 tableform.buttons_render([
                     { id: "save", icon: "save", text: _("Save") }
@@ -521,13 +522,11 @@ $(function() {
                     let enabled = $(this).is(":checked");
                     if (enabled) {
                         $(this).closest("div").find("select").select("enable");
-                        $(this).closest("div").find("button").show();
                         $(this).closest("div").find(".asm-textbox, .asm-doubletextbox").removeAttr("disabled");
                         $(this).closest("div").find("textarea").removeAttr("disabled");
                     }
                     else {
                         $(this).closest("div").find("select").select("disable");
-                        $(this).closest("div").find("button").hide();
                         $(this).closest("div").find(".asm-textbox, .asm-doubletextbox").attr("disabled", "disabled");
                         $(this).closest("div").find("textarea").attr("disabled", "disabled");
                     }
@@ -570,7 +569,7 @@ $(function() {
             $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST(true);
+                let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").not(".preset").toPOST(true);
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
                 header.show_loading(_("Saving..."));
@@ -613,7 +612,7 @@ $(function() {
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
             */
             // Load default values from the config settings
-            $("input, select, textarea, .asm-richtextarea").not(".chooser").each(function() {
+            $("input, select, textarea, .asm-richtextarea").not(".chooser").not(".preset").each(function() {
                 if ($(this).attr("data-post")) {
                     let d = $(this).attr("data-post");
                     if ($(this).is("input:text")) {
