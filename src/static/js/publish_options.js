@@ -84,57 +84,69 @@ $(function() {
                         { id: "nodescription", post_field: "includewithoutdescription", label: _("Include animals who don't have a description"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "noimage", post_field: "includewithoutimage", label: _("Include animals who don't have a picture"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "bonded", post_field: "bondedassingle", label: _("Merge bonded animals into a single record"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "excludeunder", post_field: "excludeunder", label: _("Exclude animals who are aged under"), type: "number", halfsize: true, xattr: 'data-min="1" data-max="52"', xmarkup: ' ' + _("weeks"), classes: 'preset' }, 
-                        { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "number", halfsize: true, xattr: 'data-min="0" data-max="50"', xmarkup: ' ' + _("active reservations"), classes: 'preset' }, 
-                        { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "selectmulti", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), callout: _("If you don't select any locations, publishers will include animals in all locations."), classes: 'preset' }, 
+                        { id: "excludeunder", post_field: "excludeunder", label: _("Exclude animals who are aged under"), type: "number", halfsize: true, 
+                            xattr: 'data-min="1" data-max="52"', xmarkup: ' ' + _("weeks"), classes: 'preset'
+                        }, 
+                        { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "number", halfsize: true, 
+                            xattr: 'data-min="0" data-max="50"', xmarkup: ' ' + _("active reservations"), classes: 'preset' 
+                        }, 
+                        { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "selectmulti", 
+                            options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), 
+                            callout: _("If you don't select any locations, publishers will include animals in all locations."), classes: 'preset' 
+                        }, 
                     ]},
                     { id: "tab-allpublishers", title: _("All Publishers"), fields: [
-                        { id: "regmic", post_field: "MicrochipRegisterMovements", label: _("Register microchips after"), type: "selectmulti", options: 
-                            '<option value="0">' + _("Intake") + '</option>' + 
+                        { id: "regmic", post_field: "MicrochipRegisterMovements", label: _("Register microchips after"), type: "selectmulti", 
+                            options: '<option value="0">' + _("Intake") + '</option>' + 
                             '<option value="1">' + _("Adoption") + '</option>' + 
                             '<option value="2">' + _("Foster") + '</option>' + 
                             '<option value="3">' + _("Transfer") + '</option>' + 
                             '<option value="5">' + _("Reclaim") + '</option>'+ 
                             '<option value="11">' + _("Trial Adoption") + '</option>'
                         }, 
-                        { id: "regfrom", post_field: "MicrochipRegisterFrom", label: _("Register microchips from"), type: "date", callout: _("Only register microchips where the animal moved after this date")
+                        { id: "regfrom", post_field: "MicrochipRegisterFrom", label: _("Register microchips from"), 
+                            type: "date", callout: _("Only register microchips where the animal moved after this date")
                         }, 
-                        { id: "updatefreq", post_field: "PublisherSub24Frequency", label: _("Update adoption websites every"), type: "select", options: 
-                        '<option value="2">' + _("{0} hours").replace("{0}", "2") + '</option>' + 
-                        '<option value="4">' + _("{0} hours").replace("{0}", "4") + '</option>' + 
-                        '<option value="6">' + _("{0} hours").replace("{0}", "6") + '</option>' + 
-                        '<option value="8">' + _("{0} hours").replace("{0}", "8") + '</option>' + 
-                        '<option value="12">' + _("{0} hours").replace("{0}", "12") + '</option>' + 
-                        '<option value="0">' + _("{0} hours").replace("{0}", "24") + '</option>'
+                        { id: "updatefreq", post_field: "PublisherSub24Frequency", label: _("Update adoption websites every"), type: "select", 
+                            options: '<option value="2">' + _("{0} hours").replace("{0}", "2") + '</option>' + 
+                            '<option value="4">' + _("{0} hours").replace("{0}", "4") + '</option>' + 
+                            '<option value="6">' + _("{0} hours").replace("{0}", "6") + '</option>' + 
+                            '<option value="8">' + _("{0} hours").replace("{0}", "8") + '</option>' + 
+                            '<option value="12">' + _("{0} hours").replace("{0}", "12") + '</option>' + 
+                            '<option value="0">' + _("{0} hours").replace("{0}", "24") + '</option>'
                         }, 
                         { id: "forcereupload", post_field: "forcereupload", label: _("Reupload animal images every time"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "uploadall", post_field: "uploadall", label: _("Upload all available images for animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "publishascrossbreed", post_field: "PublishAsCrossbreed", label: _("Always set the crossbreed/mix flag for these breeds"), type: "selectmulti", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") }, 
-                        { id: "order", post_field: "order", label: _("Order published animals by"), type: "select", options: 
-                            '<option value="0">' + _("Entered (oldest first)") + '</option>' + 
+                        { id: "publishascrossbreed", post_field: "PublishAsCrossbreed", label: _("Always set the crossbreed/mix flag for these breeds"), 
+                            type: "selectmulti", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") 
+                        }, 
+                        { id: "order", post_field: "order", label: _("Order published animals by"), type: "select", 
+                            options: '<option value="0">' + _("Entered (oldest first)") + '</option>' + 
                             '<option value="1">' + _("Entered (newest first)") + '</option>' + 
                             '<option value="2">' + _("Animal Name") + '</option>', 
                             classes: 'preset'
                         }, 
-                        { id: "thumbnailsize", post_field: "ThumbnailSize", label: _("Thumbnail size"), type: "select", options: 
-                            '<option value="100x100">100px</option>' + 
+                        { id: "thumbnailsize", post_field: "ThumbnailSize", label: _("Thumbnail size"), type: "select", 
+                            options: '<option value="100x100">100px</option>' + 
                             '<option value="150x150">150px</option>' + 
                             '<option value="200x200">200px</option>' + 
                             '<option value="250x250">250px</option>' + 
                             '<option value="300x300">300px</option>'
                         }, 
-                        { id: "usecomments", post_field: "PublisherUseComments", label: _("Animal descriptions"), type: "select", options: 
-                            '<option value="Yes">' + _("Use animal description") + '</option>' + 
+                        { id: "usecomments", post_field: "PublisherUseComments", label: _("Animal descriptions"), type: "select", 
+                            options: '<option value="Yes">' + _("Use animal description") + '</option>' + 
                             '<option value="No">' + _("Use notes from preferred photo") + '</option>'
                         }, 
-                        { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }
+                        { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", 
+                            callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") 
+                        }
                     ]}, 
                     { id: "tab-htmlftp", title: _("HTML/FTP Publisher"), classes: "hashtmlftp", fields: [
                         { id: "enabledhtml", label: _("Enabled"), type: "check", fullrow: true, classes: 'enablecheck' }, 
                         { id: "generatejavascript", post_field: "generatejavascriptdb", label: _("Generate a javascript database for the search page"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "thumbnails", post_field: "thumbnails", label: _("Generate image thumbnails as tn_$$IMAGE$$"), type: "select", options: yesnooptions }, 
-                        { id: "scalethumb", post_field: "thumbnailsize", label: _("Thumbnail size"), type: "select", options: 
-                            '<option value="70x70">70 px</option>' + 
+                        { id: "scalethumb", post_field: "thumbnailsize", label: _("Thumbnail size"), type: "select", 
+                            options: '<option value="70x70">70 px</option>' + 
                             '<option value="80x80">80 px</option>' + 
                             '<option value="90x90">90 px</option>' + 
                             '<option value="100x100">100 px</option>' + 
@@ -142,11 +154,17 @@ $(function() {
                             '<option value="150x150">150 px</option>', 
                             classes: 'preset'
                         }, 
-                        { id: "typesplit", post_field: "htmlbytype", label: _("Output a separate page for each animal type"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "childadult", post_field: "htmlbychildadult", label: _("Split species pages with a baby/adult prefix"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "speciessplit", post_field: "htmlbyspecies", label: _("Output a separate page for each species"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "childsplit", post_field: "childadultsplit", label: _("Split baby/adult age at"), type: "select", options: 
-                            '<option value="1">' + _("1 week") + '</option>' + 
+                        { id: "typesplit", post_field: "htmlbytype", label: _("Output a separate page for each animal type"), 
+                            type: "select", options: yesnooptions, classes: 'pbool preset' 
+                        }, 
+                        { id: "childadult", post_field: "htmlbychildadult", label: _("Split species pages with a baby/adult prefix"), 
+                            type: "select", options: yesnooptions, classes: 'pbool preset' 
+                        }, 
+                        { id: "speciessplit", post_field: "htmlbyspecies", label: _("Output a separate page for each species"), 
+                            type: "select", options: yesnooptions, classes: 'pbool preset' 
+                        }, 
+                        { id: "childsplit", post_field: "childadultsplit", label: _("Split baby/adult age at"), type: "select", 
+                            options: '<option value="1">' + _("1 week") + '</option>' + 
                             '<option value="2">' + _("2 weeks") + '</option>' + 
                             '<option value="4">' + _("4 weeks") + '</option>' + 
                             '<option value="8">' + _("8 weeks") + '</option>' + 
@@ -157,18 +175,24 @@ $(function() {
                             classes: 'preset'
                         }, 
                         { id: "outputadopted", post_field: "outputadopted", label: _("Output an adopted animals page"), type: "select", options: yesnooptions }, 
-                        { id: "outputadopteddays", post_field: "outputadopteddays", label: _("Show animals adopted"), type: "select", options: 
-                            '<option value="7">' + _("In the last week") + '</option>' + 
+                        { id: "outputadopteddays", post_field: "outputadopteddays", label: _("Show animals adopted"), type: "select", 
+                            options: '<option value="7">' + _("In the last week") + '</option>' + 
                             '<option value="31">' + _("In the last month") + '</option>' + 
                             '<option value="93">' + _("In the last quarter") + '</option>' + 
                             '<option value="365">' + _("In the last year") + '</option>', 
                             classes: 'preset'
                         }, 
-                        { id: "outputdeceased", post_field: "outputdeceased", label: _("Output a deceased animals page"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "outputforms", post_field: "outputforms", label: _("Output a page with links to available online forms"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "outputrss", post_field: "outputrss", label: _("Output an rss.xml page"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "animalsperpage", post_field: "animalsperpage", label: _("Animals per page"), type: "select", options: 
-                            '<option value="5">5</option>' + 
+                        { id: "outputdeceased", post_field: "outputdeceased", label: _("Output a deceased animals page"), type: "select", 
+                            options: yesnooptions, classes: 'pbool preset' 
+                        }, 
+                        { id: "outputforms", post_field: "outputforms", label: _("Output a page with links to available online forms"), type: "select", 
+                            options: yesnooptions, classes: 'pbool preset' 
+                        }, 
+                        { id: "outputrss", post_field: "outputrss", label: _("Output an rss.xml page"), type: "select", options: yesnooptions, 
+                            classes: 'pbool preset' 
+                        }, 
+                        { id: "animalsperpage", post_field: "animalsperpage", label: _("Animals per page"), type: "select", 
+                            options: '<option value="5">5</option>' + 
                             '<option value="10" selected="selected">10</option>' + 
                             '<option value="15">15</option>' + 
                             '<option value="20">20</option>' + 
@@ -177,8 +201,8 @@ $(function() {
                             '<option value="999999">Unlimited (one page)</option>', 
                             classes: 'preset'
                         }, 
-                        { id: "extension", post_field: "extension", label: _("Page extension"), type: "select", options: 
-                            '<option value="html">html</option>' + 
+                        { id: "extension", post_field: "extension", label: _("Page extension"), type: "select", 
+                            options: '<option value="html">html</option>' + 
                             '<option value="xml">xml</option>' + 
                             '<option value="cgi">cgi</option>' + 
                             '<option value="php">php</option>' + 
@@ -190,8 +214,8 @@ $(function() {
                             classes: 'preset'
                         }, 
                         { id: "template", post_field: "style", label: _("Publishing template"), type: "select", options: html.list_to_options(controller.styles), classes: 'preset' }, 
-                        { id: "scale", post_field: "scaleimages", label: _("Scale published animal images to"), type: "select", options: 
-                            '<option value="">' + _("Don't scale") + '</option>' + 
+                        { id: "scale", post_field: "scaleimages", label: _("Scale published animal images to"), type: "select", 
+                            options: '<option value="">' + _("Don't scale") + '</option>' + 
                             '<option value="300x300">300 px</option>' + 
                             '<option value="320x320">320 px</option>' + 
                             '<option value="400x400">400 px</option>' + 
@@ -209,24 +233,29 @@ $(function() {
                         { id: "ftpuser", post_field: "FTPUser", label: _("FTP username"), type: "text" }, 
                         { id: "ftppass", post_field: "FTPPassword", label: _("FTP password"), type: "text" }, 
                         { id: "ftproot", post_field: "FTPRootDirectory", label: _("after connecting, chdir to"), type: "text" }, 
-                        { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
-                    ]}, 
-                    { id: "tab-adoptapet", title: "AdoptAPet.com", classes: "localeus localeca localemx", info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
-                    'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM', fields: [
-                        { id: "enabledap", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "apftpuser", post_field: "SaveAPetFTPUser", label: 'Autoupload FTP username', type: "text" }, 
-                        { id: "apftppass", post_field: "SaveAPetFTPPassword", label: 'Autoupload FTP password', type: "text" }, 
-                        { id: "includecolours", post_field: "includecolours", label: 'Colors', type: "select", options:
-                            '<option value="0">Do not send colors</option>' + 
-                            '<option value="1">Send colors (not recommended, requires mapping)</option>', 
-                            classes: 'pbool preset'
-                        }, 
-                        { id: "noimportfile", post_field: "noimportfile", label: 'import.cfg', type: "select", options:
-                            '<option value="0">Auto-generate and upload</option>' + 
-                            '<option value="1">Do not generate and upload (not recommended)</option>', 
-                            classes: 'pbool preset'
+                        { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", 
+                            options: yesnooptions, classes: 'pbool preset' 
                         }
                     ]}, 
+                    { id: "tab-adoptapet", title: "AdoptAPet.com", classes: "localeus localeca localemx", 
+                        info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
+                        'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM', 
+                        fields: [
+                            { id: "enabledap", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "apftpuser", post_field: "SaveAPetFTPUser", label: 'Autoupload FTP username', type: "text" }, 
+                            { id: "apftppass", post_field: "SaveAPetFTPPassword", label: 'Autoupload FTP password', type: "text" }, 
+                            { id: "includecolours", post_field: "includecolours", label: 'Colors', type: "select", options:
+                                '<option value="0">Do not send colors</option>' + 
+                                '<option value="1">Send colors (not recommended, requires mapping)</option>', 
+                                classes: 'pbool preset'
+                            }, 
+                            { id: "noimportfile", post_field: "noimportfile", label: 'import.cfg', type: "select", options:
+                                '<option value="0">Auto-generate and upload</option>' + 
+                                '<option value="1">Do not generate and upload (not recommended)</option>', 
+                                classes: 'pbool preset'
+                            }
+                        ]
+                    }, 
                     { id: "tab-findpet", title: "FindPet.com", 
                         info: 'Find out more at <a target="_blank" href="https://findpet.com">www.findpet.com</a> ' +
                         'or contact hello@findpet.com for more information.<br>' +
@@ -241,114 +270,162 @@ $(function() {
                             { id: "fpintlevel", post_field: "FindPetIntLevel", label: "Integration Level", type: "select", options: 
                                 '<option value="0">Send stray/found pets and register microchips</option>' + 
                                 '<option value="1">Send stray/found pets only</option>'
+                            }
+                        ]
+                    }, 
+                    { id: "tab-maddiesfund", title: "Maddie's Fund", 
+                        info: 'Signup at <a target="_blank" href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>', 
+                        classes: 'english hasmaddiesfund', 
+                        fields: [
+                            { id: "enabledfip", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "mfemail", post_field: "MaddiesFundUsername", label: "MPA API Username", type: "text" }, 
+                            { id: "mfpassword", post_field: "MaddiesFundPassword", label: "MPA API Password", type: "text" }
+                        ]
+                    }, 
+                    { id: "tab-petcademy", title: "Petcademy", 
+                        info: 'Signup at <a target="_blank" href="https://petcademy.org/rescues-and-shelters/">https://petcademy.org/rescues-and-shelters/</a>', 
+                        classes: 'english haspetcademy', 
+                        fields: [
+                            { id: "enabledpc", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "pctoken", post_field: "PetcademyToken", label: "MPA API Username", type: "text" }, 
+                        ]
+                    }, 
+                    { id: "tab-petfbi", title: "PetFBI.com", 
+                        info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', 
+                        fields: [
+                            { id: "enabledfbi", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "fbiftpuser", post_field: "PetFBIFTPUser", label: 'PetFBI FTP username', type: "text" }, 
+                            { id: "fbiftppass", post_field: "PetFBIFTPPassword", label: 'PetFBI FTP password', type: "text" }, 
+                            { id: "fbiorgid", post_field: "PetFBIOrgID", label: 'PetFBI Organisation ID', type: "text" }, 
+                        ]
+                    }, 
+                    { id: "tab-petfinder", title: "PetFinder.com", 
+                        info: 'Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>', 
+                        fields: [
+                            { id: "enabledpf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "pfftpuser", post_field: "PetFinderFTPUser", label: 'PetFinder shelter ID', type: "text" }, 
+                            { id: "pfftppass", post_field: "PetFinderFTPPassword", label: 'PetFinder FTP password', type: "text" }, 
+                            { id: "pfsendstrays", post_field: "PetFinderSendStrays", label: 'Stray shelter animals', type: "select", options:
+                                '<option value="No">Do not send</option>' + 
+                                '<option value="Yes">Send with status "F"</option>'
                             }, 
-                    ]}, 
-                    { id: "tab-maddiesfund", title: "Maddie's Fund", info: 'Signup at <a target="_blank" href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>', classes: 'english hasmaddiesfund', fields: [
-                        { id: "enabledfip", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "mfemail", post_field: "MaddiesFundUsername", label: "MPA API Username", type: "text" }, 
-                        { id: "mfpassword", post_field: "MaddiesFundPassword", label: "MPA API Password", type: "text" }
-                    ]}, 
-                    { id: "tab-petcademy", title: "Petcademy", info: 'Signup at <a target="_blank" href="https://petcademy.org/rescues-and-shelters/">https://petcademy.org/rescues-and-shelters/</a>', classes: 'english haspetcademy', fields: [
-                        { id: "enabledpc", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "pctoken", post_field: "PetcademyToken", label: "MPA API Username", type: "text" }, 
-                    ]}, 
-                    { id: "tab-petfbi", title: "PetFBI.com", info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', fields: [
-                        { id: "enabledfbi", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "fbiftpuser", post_field: "PetFBIFTPUser", label: 'PetFBI FTP username', type: "text" }, 
-                        { id: "fbiftppass", post_field: "PetFBIFTPPassword", label: 'PetFBI FTP password', type: "text" }, 
-                        { id: "fbiorgid", post_field: "PetFBIOrgID", label: 'PetFBI Organisation ID', type: "text" }, 
-                    ]}, 
-                    { id: "tab-petfinder", title: "PetFinder.com", info: 'Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>', fields: [
-                        { id: "enabledpf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "pfftpuser", post_field: "PetFinderFTPUser", label: 'PetFinder shelter ID', type: "text" }, 
-                        { id: "pfftppass", post_field: "PetFinderFTPPassword", label: 'PetFinder FTP password', type: "text" }, 
-                        { id: "pfsendstrays", post_field: "PetFinderSendStrays", label: 'Stray shelter animals', type: "select", options:
-                            '<option value="No">Do not send</option>' + 
-                            '<option value="Yes">Send with status "F"</option>'
-                        }, 
-                        { id: "pfsendholds", post_field: "PetFinderSendHolds", label: 'Held shelter animals', type: "select", options:
-                            '<option value="No">Do not send</option>' + 
-                            '<option value="Yes">Send with status "H"</option>'
-                        }, 
-                        { id: "pfsendadopted", post_field: "PetFinderSendAdopted", label: 'Previously adopted animals', type: "select", options:
-                            '<option value="No">Do not send</option>' + 
-                            '<option value="Yes">Send with status "X"</option>'
-                        }, 
-                        { id: "pfsendadoptedphoto", post_field: "PetFinderSendAdoptedPhoto", label: 'Photo for adopted animals', type: "select", options:
-                            '<option value="No">No photo</option>' + 
-                            '<option value="Yes">Send the preferred photo</option>'
-                        }, 
-                        { type: "raw", markup: '<tr><td colspan="2">' + html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>It is <b>not</b> the same as your password for the members area.') + '</td></tr>' }
-                    ]},
-                    { id: "tab-petslocated", title: "PetsLocated", info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', fields: [
+                            { id: "pfsendholds", post_field: "PetFinderSendHolds", label: 'Held shelter animals', type: "select", options:
+                                '<option value="No">Do not send</option>' + 
+                                '<option value="Yes">Send with status "H"</option>'
+                            }, 
+                            { id: "pfsendadopted", post_field: "PetFinderSendAdopted", label: 'Previously adopted animals', type: "select", options:
+                                '<option value="No">Do not send</option>' + 
+                                '<option value="Yes">Send with status "X"</option>'
+                            }, 
+                            { id: "pfsendadoptedphoto", post_field: "PetFinderSendAdoptedPhoto", label: 'Photo for adopted animals', type: "select", options:
+                                '<option value="No">No photo</option>' + 
+                                '<option value="Yes">Send the preferred photo</option>'
+                            }, 
+                            { type: "raw", markup: '<tr><td colspan="2">' + html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload ' + 
+                                'animals so that they can give you your FTP password.<br/>' + 
+                                'It is <b>not</b> the same as your password for the members area.') + '</td></tr>' 
+                            }
+                        ]
+                    },
+                    { id: "tab-petslocated", title: "PetsLocated", 
+                        info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', 
+                        fields: [
                             { id: "enabledrg", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "pcukcustid", post_field: "PetsLocatedCustomerID", label: 'petslocated.com customer number', type: "text" }, 
-                            { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', type: "select", options: yesnooptions }, 
-                            { id: "pcukanimalflag", post_field: "PetsLocatedAnimalFlag", label: 'Only shelter animals with this flag', type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") }
-                    ]}, 
-                    { id: "tab-petrescue", title: "PetRescue.com.au", classes: 'localeau haspetrescue', info: 'Signup at <a target="_blank" href="http://petrescue.com.au">petrescue.com.au</a>', fields: [
-                        { id: "enabledpr", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "prtoken", post_field: "PetRescueToken", label: 'PetRescue Token', type: "text", doublesize: true }, 
-                        { id: "prdesex", post_field: "PetRescueAllDesexed", label: 'Send all animals as desexed', type: "select", options: yesnooptions, callout: 'PetRescue will not accept listings for non-desexed animals. Setting this to "Yes" will send all animals as if they are desexed.' }, 
-                        { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. Mandatory for dog listings in South Australia where "bredincareofgroup" is selected.' }, 
-                        { id: "nswrehomingorgid", post_field: "PetRescueNSWRehomingOrgID", label: 'NSW Rehoming Organisation ID', type: "text", callout: 'For cats and dogs being rehomed in NSW, a rehoming organisation ID is required OR microchip number OR breeder id' }, 
-                        { id: "vicpicnumber", post_field: "PetRescueVICPICNumber", label: 'VIC PIC Number', type: "text", callout: 'Property Identification Code for livestock listings in Victoria' }, 
-                        { id: "vicsourcenumber", post_field: "PetRescueVICSourceNumber", label: 'VIC Source Number', type: "text", callout: 'Source Number for the Victoria Pet Exchange Register. Mandatory for cat and dog listings in VIC.' }, 
-                        { id: "pradoptablein", post_field: "PetRescueAdoptableIn", label: 'Adoptable in states', type: "selectmulti", 
-                            options: '<option value="ACT">Australian Capital Territory</option>' + 
-                            '<option value="NSW">New South Wales</option>' + 
-                            '<option value="NT">Northern Territory</option>' + 
-                            '<option value="QLD">Queensland</option>' + 
-                            '<option value="SA">South Australia</option>' + 
-                            '<option value="TAS">Tasmania</option>' + 
-                            '<option value="VIC">Victoria</option>' + 
-                            '<option value="WA">Western Australia</option>', 
-                            callout: 'Choose the states your animals will be adoptable in. The state the animal is currently located in will be implicitly included.' 
-                        }, 
-                        { id: "premail", post_field: "PetRescueEmail", label: 'Contact email', type: "text", 
-                            callout: 'This is the contact email for PetRescue listings. If you do not set it, the option from Settings &#8594; Options &#8594; Email is used.' 
-                        }, 
-                        { id: "prphone", post_field: "PetRescuePhoneType", label: 'Contact phone', type: "select", 
-                            options: '<option value="org">Use organisation number</option>' + 
-                            '<option value="spec">Specify a number &#8594;</option>' + 
-                            '<option value="none">Do not send a number</option>', 
-                            callout: 'This controls the phone number included as a secondary contact with your listings', 
-                            xmarkup: ' <input type="text" class="asm-textbox cfg" title="The phone number to use" data="PetRescuePhoneNumber" />'
-                        }, 
-                        { id: "usecoord", post_field: "PetRescueUseCoordinator", label: 'Use adoption coordinator as contact', type: "select", 
-                            options: '<option value="0">No</option>' + 
-                            '<option value="1">Use coordinator\'s phone number and email address</option>' + 
-                            '<option value="2">Use coordinator\'s email address only</option>', 
-                            callout: 'Use the adoption coordinator\'s contact information instead of the options above if the animal has an adoption coordinator assigned.' ,
-                            doublesize: true
-                        }
-                    ]}, 
+                            { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', 
+                                type: "select", options: yesnooptions 
+                            }, 
+                            { id: "pcukanimalflag", post_field: "PetsLocatedAnimalFlag", label: 'Only shelter animals with this flag', 
+                                type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") 
+                            }
+                        ]
+                    }, 
+                    { id: "tab-petrescue", title: "PetRescue.com.au", classes: 'localeau haspetrescue', 
+                        info: 'Signup at <a target="_blank" href="http://petrescue.com.au">petrescue.com.au</a>', 
+                        fields: [
+                            { id: "enabledpr", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "prtoken", post_field: "PetRescueToken", label: 'PetRescue Token', type: "text", doublesize: true }, 
+                            { id: "prdesex", post_field: "PetRescueAllDesexed", label: 'Send all animals as desexed', type: "select", options: yesnooptions, 
+                                callout: 'PetRescue will not accept listings for non-desexed animals. Setting this to "Yes" will send all animals as if they are desexed.' 
+                            }, 
+                            { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", 
+                                callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. ' + 
+                                'Mandatory for dog listings in South Australia where "bredincareofgroup" is selected.' 
+                            }, 
+                            { id: "nswrehomingorgid", post_field: "PetRescueNSWRehomingOrgID", label: 'NSW Rehoming Organisation ID', type: "text", 
+                                callout: 'For cats and dogs being rehomed in NSW, a rehoming organisation ID is required OR microchip number OR breeder id' 
+                            }, 
+                            { id: "vicpicnumber", post_field: "PetRescueVICPICNumber", label: 'VIC PIC Number', type: "text", 
+                                callout: 'Property Identification Code for livestock listings in Victoria' 
+                            }, 
+                            { id: "vicsourcenumber", post_field: "PetRescueVICSourceNumber", label: 'VIC Source Number', type: "text", 
+                                callout: 'Source Number for the Victoria Pet Exchange Register. Mandatory for cat and dog listings in VIC.' 
+                            }, 
+                            { id: "pradoptablein", post_field: "PetRescueAdoptableIn", label: 'Adoptable in states', type: "selectmulti", 
+                                options: '<option value="ACT">Australian Capital Territory</option>' + 
+                                '<option value="NSW">New South Wales</option>' + 
+                                '<option value="NT">Northern Territory</option>' + 
+                                '<option value="QLD">Queensland</option>' + 
+                                '<option value="SA">South Australia</option>' + 
+                                '<option value="TAS">Tasmania</option>' + 
+                                '<option value="VIC">Victoria</option>' + 
+                                '<option value="WA">Western Australia</option>', 
+                                callout: 'Choose the states your animals will be adoptable in. The state the animal is currently located in will be implicitly included.' 
+                            }, 
+                            { id: "premail", post_field: "PetRescueEmail", label: 'Contact email', type: "text", 
+                                callout: 'This is the contact email for PetRescue listings. If you do not set it, the option from Settings &#8594; Options &#8594; Email is used.' 
+                            }, 
+                            { id: "prphone", post_field: "PetRescuePhoneType", label: 'Contact phone', type: "select", 
+                                options: '<option value="org">Use organisation number</option>' + 
+                                '<option value="spec">Specify a number &#8594;</option>' + 
+                                '<option value="none">Do not send a number</option>', 
+                                callout: 'This controls the phone number included as a secondary contact with your listings', 
+                                xmarkup: ' <input type="text" class="asm-textbox cfg" title="The phone number to use" data="PetRescuePhoneNumber" />'
+                            }, 
+                            { id: "usecoord", post_field: "PetRescueUseCoordinator", label: 'Use adoption coordinator as contact', type: "select", 
+                                options: '<option value="0">No</option>' + 
+                                '<option value="1">Use coordinator\'s phone number and email address</option>' + 
+                                '<option value="2">Use coordinator\'s email address only</option>', 
+                                callout: 'Use the adoption coordinator\'s contact information instead of the options above if the animal has an adoption coordinator assigned.',
+                                doublesize: true
+                            }
+                        ]
+                    }, 
 
-                    { id: "tab-savourlife", title: "SavourLife.com.au", classes: 'localeau hassavourlife', info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
-                        { id: "enabledsl", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "sltoken", post_field: "SavourLifeToken", label: 'Authentication Token', type: "text" }, 
-                        { id: "slinterstate", post_field: "SavourLifeInterstate", label: 'Mark as interstate', type: "select", callout: 'Set to yes if you will fly adoptable animals to other states', 
-                            options: yesnooptions
-                        }, 
-                        { id: "slradius", post_field: "SavourLifeRadius", label: 'Distance restriction', type: "select",
-                            options: '<option value="0">No restriction</option>' + 
-                            '<option value="20">20 km</option>' + 
-                            '<option value="40">40 km</option>' + 
-                            '<option value="60">60 km</option>' + 
-                            '<option value="100">100 km</option>' + 
-                            '<option value="200">200 km</option>' + 
-                            '<option value="500">500 km</option>'
-                        }, 
-                        { id: "slmicrochips", post_field: "SavourLifeAllMicrochips", label: 'Send microchip numbers for all animals', type: "select", options: yesnooptions, callout: 'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. Settings this to "Yes" will send the microchip number for all animals'
-                        }, 
-                    ]}, 
-                    { id: "tab-rescuegroups", title: "RescueGroups.org", info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
-                    'to them for republishing on to many other sites. Find out more at ' +
-                    '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>', fields: [
-                        { id: "enabledrg", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                        { id: "rgftpuser", post_field: "RescueGroupsFTPUser", label: 'RescueGroups FTP username', type: "text" }, 
-                        { id: "rgftppass", post_field: "RescueGroupsFTPPassword", label: 'RescueGroups FTP password', type: "text" }
-                    ]}, 
+                    { id: "tab-savourlife", title: "SavourLife.com.au", classes: 'localeau hassavourlife', 
+                        info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
+                            { id: "enabledsl", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "sltoken", post_field: "SavourLifeToken", label: 'Authentication Token', type: "text" }, 
+                            { id: "slinterstate", post_field: "SavourLifeInterstate", label: 'Mark as interstate', type: "select", 
+                                callout: 'Set to yes if you will fly adoptable animals to other states', 
+                                options: yesnooptions
+                            }, 
+                            { id: "slradius", post_field: "SavourLifeRadius", label: 'Distance restriction', type: "select",
+                                options: '<option value="0">No restriction</option>' + 
+                                '<option value="20">20 km</option>' + 
+                                '<option value="40">40 km</option>' + 
+                                '<option value="60">60 km</option>' + 
+                                '<option value="100">100 km</option>' + 
+                                '<option value="200">200 km</option>' + 
+                                '<option value="500">500 km</option>'
+                            }, 
+                            { id: "slmicrochips", post_field: "SavourLifeAllMicrochips", label: 'Send microchip numbers for all animals', type: "select", 
+                                options: yesnooptions, 
+                                callout: 'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. ' + 
+                                'Settings this to "Yes" will send the microchip number for all animals'
+                            }
+                        ]
+                    }, 
+                    { id: "tab-rescuegroups", title: "RescueGroups.org", 
+                        info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
+                        'to them for republishing on to many other sites. Find out more at ' +
+                        '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>', 
+                        fields: [
+                            { id: "enabledrg", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "rgftpuser", post_field: "RescueGroupsFTPUser", label: 'RescueGroups FTP username', type: "text" }, 
+                            { id: "rgftppass", post_field: "RescueGroupsFTPPassword", label: 'RescueGroups FTP password', type: "text" }
+                        ]
+                    }, 
                     { id: "tab-sac", title: "ShelterAnimalsCount.org", classes: 'localeus localeca hassac', 
                         info: 'Signup at <a target="_blank" href="http://shelteranimalscount.org">shelteranimalscount.org</a><br>' + 
                         'You will need to give SAC your account number of "' + asm.useraccount + '" in order for them to accept uploads from you.', 
@@ -366,7 +443,8 @@ $(function() {
                             { id: "avidorgpostcode", post_field: "AvidOrgPostcode", label: "Postcode", type: "text", doublesize: true }, 
                             { id: "avidorgpassword", post_field: "AvidOrgPassword", label: "Password", type: "text", doublesize: true }, 
                             { id: "avidrereg", post_field: "AvidReRegistration", label: "Re-register previously registered microchips", type: "select", options: yesnooptions }, 
-                            { id: "avidauthuser", post_field: "AvidAuthUser", label: "Password", type: "select", options: html.list_to_options(controller.users, "USERNAME", "USERNAME"), 
+                            { id: "avidauthuser", post_field: "AvidAuthUser", label: "Password", type: "select", 
+                                options: html.list_to_options(controller.users, "USERNAME", "USERNAME"), 
                                 callout: "An authorised user must be chosen and they must have an electronic signature on file.<br/>" + 
                                 "Their details will be used on an authorisation document transmitted to AVID when " +
                                 "re-registering previously registered microchips.<br/>Please also make sure the authorised " +
@@ -427,7 +505,8 @@ $(function() {
                         ]
                     }, 
                     { id: "tab-homeagain", title: "HomeAgain Microchips", classes: 'localeus hashomeagain',
-                        info: 'Signup at <a target="_blank" href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on <a target="_blank" href="tel:1-800-341-5785">(800) 341-5785</a> for more information.', 
+                        info: 'Signup at <a target="_blank" href="http://homeagain.4act.com">http://homeagain.4act.com</a> or ' + 
+                        'contact HomeAgain Customer Service on <a target="_blank" href="tel:1-800-341-5785">(800) 341-5785</a> for more information.', 
                         fields: [
                             { id: "enabledha", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "hauserid", post_field: "HomeAgainUserId", label: "HomeAgain User ID", type: "text", doublesize: true }, 
