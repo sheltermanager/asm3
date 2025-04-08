@@ -650,7 +650,7 @@ $(function() {
                     "htmlbychildadult", "htmlbyspecies", "htmlbytype", "outputadopted", 
                     "outputdeceased", "outputrss", "noimportfile" ], 
                 function(bi, bo) {
-                    if (bo == o) { $("[data='" + bo + "']").select("value", "1"); }
+                    if (bo == o) { $("[data-post='" + bo + "']").select("value", "1"); }
                 });
                 // Deal with key/value pairs
                 $.each( [ "order", "excludeunder", "excludereserves", "animalsperpage", "limit", "style", "extension",
@@ -659,7 +659,7 @@ $(function() {
                 function(vi, vo) {
                     if (o.indexOf(vo) == 0) {
                         let v = o.split("=")[1];
-                        let node = $("[data='" + vo + "']");
+                        let node = $("[data-post='" + vo + "']");
                         if (node.hasClass("asm-selectbox")) {
                             node.select("value", v);
                         }
