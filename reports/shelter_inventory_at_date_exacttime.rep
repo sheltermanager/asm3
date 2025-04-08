@@ -2,7 +2,7 @@ Shelter Inventory at Date (Time on shelter to inventory date)
 ###
 Inventories
 ###
-2870/PostgreSQL rev02
+2870/PostgreSQL rev03
 ###
 Historical animal inventory for any date. Time on shelter is calculated upto the inventory date.
 ###
@@ -14,8 +14,12 @@ ShelterCode,
 IdentichipNumber,
 AnimalName,
 animal.ID AS AID,
-age('$@thedate$', MostRecentEntryDate)::text AS TimeOnShelter,
-EXTRACT(DAY FROM '$@thedate$'::timestamp - MostRecentEntryDate)::integer AS DaysOnShelter, 
+age('$@thedate$', 
+    COALESCE((SELECT MAX(ReturnDate) FROM adoption WHERE AnimalID = animal.ID AND ReturnDate Is Not Null AND ReturnDate <= '$@thedate$' AND MovementType NOT IN (2,8)), 
+    DateBroughtIn::date))::text AS TimeOnShelter,
+EXTRACT(DAY FROM '$@thedate$'::timestamp - 
+    COALESCE((SELECT MAX(ReturnDate) FROM adoption WHERE AnimalID = animal.ID AND ReturnDate Is Not Null AND ReturnDate <= '$@thedate$' AND MovementType NOT IN (2,8)), 
+    DateBroughtIn::date))::integer AS DaysOnShelter, 
 animaltype.AnimalType,
 species.SpeciesName,
 BreedName,
