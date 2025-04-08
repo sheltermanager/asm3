@@ -529,10 +529,10 @@ $(function() {
                 let pr = "";
                 $(".preset").each(function() {
                     if ($(this).is(".pbool")) {
-                        if ($(this).val() == "1") { pr += " " + $(this).attr("data"); }
+                        if ($(this).val() == "1") { pr += " " + $(this).attr("data-post"); }
                     }
                     else {
-                        pr += " " + $(this).attr("data") + "=" + $(this).val();
+                        pr += " " + $(this).attr("data-post") + "=" + $(this).val();
                     }
                 });
                 return encodeURIComponent(common.trim(pr));
@@ -558,12 +558,13 @@ $(function() {
             $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                let formdata = "mode=save&" + $(".cfg").toPOST(true);
+                let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST(true);
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
                 header.show_loading(_("Saving..."));
                 await common.ajax_post("publish_options", formdata);
                 // Needs to do a full reload to get config.js to update
+                console.log(formdata);
                 common.route_reload(true); 
             });
 
@@ -601,9 +602,9 @@ $(function() {
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
 
             // Load default values from the config settings
-            $(".cfg").each(function() {
-                if ($(this).attr("data")) {
-                    let d = $(this).attr("data");
+            $("input, select, textarea, .asm-richtextarea").not(".chooser").each(function() {
+                if ($(this).attr("data-post")) {
+                    let d = $(this).attr("data-post");
                     if ($(this).is("input:text")) {
                         $(this).val( html.decode(config.str(d)));
                     }
