@@ -71,21 +71,21 @@ $(function() {
                  ], { centered: false }),
                 tableform.render_tabs([
                     { id: "tab-animalselection", title: _("Animal Selection"), fields: [
-                        { id: "caseanimals", post_field: "includecase", label: _("Include cruelty case animals"), type: "select", options: yesnooptions }, 
-                        { id: "nonneutered", post_field: "includenonneutered", label: _("Include unaltered animals"), type: "select", options: yesnooptions }, 
-                        { id: "nonmicrochip", post_field: "includenonmicrochip", label: _("Include non-microchipped animals"), type: "select", options: yesnooptions }, 
-                        { id: "reservedanimals", post_field: "includereserved", label: _("Include reserved animals"), type: "select", options: yesnooptions }, 
-                        { id: "retaileranimals", post_field: "includeretailer", label: _("Include reserved animals"), type: "select", options: yesnooptions }, 
-                        { id: "fosteredanimals", post_field: "includefosters", label: _("Include fostered animals"), type: "select", options: yesnooptions }, 
-                        { id: "heldanimals", post_field: "includehold", label: _("Include held animals"), type: "select", options: yesnooptions }, 
-                        { id: "quarantinedanimals", post_field: "includequarantine", label: _("Include quarantined animals"), type: "select", options: yesnooptions }, 
-                        { id: "trialanimals", post_field: "includetrial", label: _("Include animals on trial adoption"), type: "select", options: yesnooptions }, 
-                        { id: "nodescription", post_field: "includewithoutdescription", label: _("Include animals who don't have a description"), type: "select", options: yesnooptions }, 
-                        { id: "noimage", post_field: "includewithoutimage", label: _("Include animals who don't have a picture"), type: "select", options: yesnooptions }, 
-                        { id: "bonded", post_field: "bondedassingle", label: _("Merge bonded animals into a single record"), type: "select", options: yesnooptions }, 
-                        { id: "excludeunder", post_field: "excludeunder", label: _("Exclude animals who are aged under"), type: "number", halfsize: true, xattr: 'data-min="1" data-max="52"', xmarkup: ' ' + _("weeks") }, 
-                        { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "number", halfsize: true, xattr: 'data-min="0" data-max="50"', xmarkup: ' ' + _("active reservations") }, 
-                        { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "selectmulti", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), callout: _("If you don't select any locations, publishers will include animals in all locations.") }, 
+                        { id: "caseanimals", post_field: "includecase", label: _("Include cruelty case animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "nonneutered", post_field: "includenonneutered", label: _("Include unaltered animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "nonmicrochip", post_field: "includenonmicrochip", label: _("Include non-microchipped animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "reservedanimals", post_field: "includereserved", label: _("Include reserved animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "retaileranimals", post_field: "includeretailer", label: _("Include reserved animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "fosteredanimals", post_field: "includefosters", label: _("Include fostered animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "heldanimals", post_field: "includehold", label: _("Include held animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "quarantinedanimals", post_field: "includequarantine", label: _("Include quarantined animals"), type: "select", options: yesnooptions , classes: 'pbool preset'}, 
+                        { id: "trialanimals", post_field: "includetrial", label: _("Include animals on trial adoption"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "nodescription", post_field: "includewithoutdescription", label: _("Include animals who don't have a description"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "noimage", post_field: "includewithoutimage", label: _("Include animals who don't have a picture"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "bonded", post_field: "bondedassingle", label: _("Merge bonded animals into a single record"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "excludeunder", post_field: "excludeunder", label: _("Exclude animals who are aged under"), type: "number", halfsize: true, xattr: 'data-min="1" data-max="52"', xmarkup: ' ' + _("weeks"), classes: 'preset' }, 
+                        { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "number", halfsize: true, xattr: 'data-min="0" data-max="50"', xmarkup: ' ' + _("active reservations"), classes: 'preset' }, 
+                        { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "selectmulti", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), callout: _("If you don't select any locations, publishers will include animals in all locations."), classes: 'preset' }, 
                     ]},
                     { id: "tab-allpublishers", title: _("All Publishers"), fields: [
                         { id: "regmic", post_field: "MicrochipRegisterMovements", label: _("Register microchips after"), type: "selectmulti", options: 
@@ -106,13 +106,14 @@ $(function() {
                         '<option value="12">' + _("{0} hours").replace("{0}", "12") + '</option>' + 
                         '<option value="0">' + _("{0} hours").replace("{0}", "24") + '</option>'
                         }, 
-                        { id: "forcereupload", post_field: "forcereupload", label: _("Reupload animal images every time"), type: "select", options: yesnooptions }, 
-                        { id: "uploadall", post_field: "uploadall", label: _("Upload all available images for animals"), type: "select", options: yesnooptions }, 
+                        { id: "forcereupload", post_field: "forcereupload", label: _("Reupload animal images every time"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "uploadall", post_field: "uploadall", label: _("Upload all available images for animals"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "publishascrossbreed", post_field: "PublishAsCrossbreed", label: _("Always set the crossbreed/mix flag for these breeds"), type: "selectmulti", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") }, 
                         { id: "order", post_field: "order", label: _("Order published animals by"), type: "select", options: 
                             '<option value="0">' + _("Entered (oldest first)") + '</option>' + 
                             '<option value="1">' + _("Entered (newest first)") + '</option>' + 
-                            '<option value="2">' + _("Animal Name") + '</option>'
+                            '<option value="2">' + _("Animal Name") + '</option>', 
+                            classes: 'preset'
                         }, 
                         { id: "thumbnailsize", post_field: "ThumbnailSize", label: _("Thumbnail size"), type: "select", options: 
                             '<option value="100x100">100px</option>' + 
@@ -128,8 +129,8 @@ $(function() {
                         { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }
                     ]}, 
                     { id: "tab-htmlftp", title: _("HTML/FTP Publisher"), classes: "hashtmlftp", fields: [
-                        { id: "enabledhtml", label: _("Enabled"), type: "check", fullrow: true }, 
-                        { id: "generatejavascript", post_field: "generatejavascriptdb", label: _("Generate a javascript database for the search page"), type: "select", options: yesnooptions }, 
+                        { id: "enabledhtml", label: _("Enabled"), type: "check", fullrow: true, classes: 'enablecheck' }, 
+                        { id: "generatejavascript", post_field: "generatejavascriptdb", label: _("Generate a javascript database for the search page"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "thumbnails", post_field: "thumbnails", label: _("Generate image thumbnails as tn_$$IMAGE$$"), type: "select", options: yesnooptions }, 
                         { id: "scalethumb", post_field: "thumbnailsize", label: _("Thumbnail size"), type: "select", options: 
                             '<option value="70x70">70 px</option>' + 
@@ -137,10 +138,12 @@ $(function() {
                             '<option value="90x90">90 px</option>' + 
                             '<option value="100x100">100 px</option>' + 
                             '<option value="120x120">120 px</option>' + 
-                            '<option value="150x150">150 px</option>'
+                            '<option value="150x150">150 px</option>', 
+                            classes: 'preset'
                         }, 
-                        { id: "typesplit", post_field: "htmlbytype", label: _("Output a separate page for each animal type"), type: "select", options: yesnooptions }, 
-                        { id: "speciessplit", post_field: "htmlbyspecies", label: _("Output a separate page for each species"), type: "select", options: yesnooptions }, 
+                        { id: "typesplit", post_field: "htmlbytype", label: _("Output a separate page for each animal type"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "childadult", post_field: "htmlbychildadult", label: _("Split species pages with a baby/adult prefix"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "speciessplit", post_field: "htmlbyspecies", label: _("Output a separate page for each species"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "childsplit", post_field: "childadultsplit", label: _("Split baby/adult age at"), type: "select", options: 
                             '<option value="1">' + _("1 week") + '</option>' + 
                             '<option value="2">' + _("2 weeks") + '</option>' + 
@@ -149,18 +152,20 @@ $(function() {
                             '<option value="12">' + _("3 months") + '</option>' + 
                             '<option value="26">' + _("6 months") + '</option>' + 
                             '<option value="38">' + _("9 months") + '</option>' + 
-                            '<option value="52">' + _("1 year") + '</option>'
+                            '<option value="52">' + _("1 year") + '</option>',
+                            classes: 'preset'
                         }, 
                         { id: "outputadopted", post_field: "outputadopted", label: _("Output an adopted animals page"), type: "select", options: yesnooptions }, 
                         { id: "outputadopteddays", post_field: "outputadopteddays", label: _("Show animals adopted"), type: "select", options: 
                             '<option value="7">' + _("In the last week") + '</option>' + 
                             '<option value="31">' + _("In the last month") + '</option>' + 
                             '<option value="93">' + _("In the last quarter") + '</option>' + 
-                            '<option value="365">' + _("In the last year") + '</option>'
+                            '<option value="365">' + _("In the last year") + '</option>', 
+                            classes: 'preset'
                         }, 
-                        { id: "outputdeceased", post_field: "outputdeceased", label: _("Output a deceased animals page"), type: "select", options: yesnooptions }, 
-                        { id: "outputforms", post_field: "outputforms", label: _("Output a page with links to available online forms"), type: "select", options: yesnooptions }, 
-                        { id: "outputrss", post_field: "outputrss", label: _("Output an rss.xml page"), type: "select", options: yesnooptions }, 
+                        { id: "outputdeceased", post_field: "outputdeceased", label: _("Output a deceased animals page"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "outputforms", post_field: "outputforms", label: _("Output a page with links to available online forms"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
+                        { id: "outputrss", post_field: "outputrss", label: _("Output an rss.xml page"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "animalsperpage", post_field: "animalsperpage", label: _("Animals per page"), type: "select", options: 
                             '<option value="5">5</option>' + 
                             '<option value="10" selected="selected">10</option>' + 
@@ -168,7 +173,8 @@ $(function() {
                             '<option value="20">20</option>' + 
                             '<option value="50">50</option>' + 
                             '<option value="100">100</option>' + 
-                            '<option value="999999">Unlimited (one page)</option>'
+                            '<option value="999999">Unlimited (one page)</option>', 
+                            classes: 'preset'
                         }, 
                         { id: "extension", post_field: "extension", label: _("Page extension"), type: "select", options: 
                             '<option value="html">html</option>' + 
@@ -179,9 +185,10 @@ $(function() {
                             '<option value="rb">rb</option>' + 
                             '<option value="jsp">jsp</option>' + 
                             '<option value="asp">asp</option>' + 
-                            '<option value="aspx">aspx</option>'
+                            '<option value="aspx">aspx</option>', 
+                            classes: 'preset'
                         }, 
-                        { id: "template", post_field: "style", label: _("Publishing template"), type: "select", options: html.list_to_options(controller.styles) }, 
+                        { id: "template", post_field: "style", label: _("Publishing template"), type: "select", options: html.list_to_options(controller.styles), classes: 'preset' }, 
                         { id: "scale", post_field: "scaleimages", label: _("Scale published animal images to"), type: "select", options: 
                             '<option value="">' + _("Don't scale") + '</option>' + 
                             '<option value="300x300">300 px</option>' + 
@@ -190,30 +197,33 @@ $(function() {
                             '<option value="500x500">500 px</option>' + 
                             '<option value="600x600">600 px</option>' + 
                             '<option value="800x800">800 px</option>' + 
-                            '<option value="1024x1024">1024 px</option>'
+                            '<option value="1024x1024">1024 px</option>', 
+                            classes: 'preset'
                         }, 
-                        { id: "publishdir", post_field: "publishdirectory", label: _("Publish to folder"), type: "text" }, // To do - the original table row that this replaced had id="plublishdirrow" make sure that this has been hooked up to the appropriate mechanism
+                        { id: "publishdir", post_field: "publishdirectory", label: _("Publish to folder"), type: "text", classes: 'preset' }, // To do - the original table row that this replaced had id="publishdirrow" make sure that this has been hooked up to the appropriate mechanism
                         { type: "nextcol"},
                         // To do - the following columns was originally contained in a table with id="ftpuploadtable" make sure that this has been hooked up to the appropriate mechanism
-                        { id: "uploaddirectly", post_field: "uploaddirectly", label: _("Enable FTP uploading"), type: "select", options: yesnooptions }, 
+                        { id: "uploaddirectly", post_field: "uploaddirectly", label: _("Enable FTP uploading"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "ftphost", post_field: "FTPURL", label: _("FTP hostname"), type: "text" }, 
                         { id: "ftpuser", post_field: "FTPUser", label: _("FTP username"), type: "text" }, 
                         { id: "ftppass", post_field: "FTPPassword", label: _("FTP password"), type: "text" }, 
                         { id: "ftproot", post_field: "FTPRootDirectory", label: _("after connecting, chdir to"), type: "text" }, 
-                        { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", options: yesnooptions }, 
+                        { id: "clearexisting", post_field: "clearexisting", label: _("Remove previously published files before uploading"), type: "select", options: yesnooptions, classes: 'pbool preset' }, 
                     ]}, 
                     { id: "tab-adoptapet", title: "AdoptAPet.com", classes: "localeus localeca localemx", info: 'Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
                     'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM', fields: [
-                        { id: "enabledap", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledap", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "apftpuser", post_field: "SaveAPetFTPUser", label: 'Autoupload FTP username', type: "text" }, 
                         { id: "apftppass", post_field: "SaveAPetFTPPassword", label: 'Autoupload FTP password', type: "text" }, 
                         { id: "includecolours", post_field: "includecolours", label: 'Colors', type: "select", options:
                             '<option value="0">Do not send colors</option>' + 
-                            '<option value="1">Send colors (not recommended, requires mapping)</option>'
+                            '<option value="1">Send colors (not recommended, requires mapping)</option>', 
+                            classes: 'pbool preset'
                         }, 
                         { id: "noimportfile", post_field: "noimportfile", label: 'import.cfg', type: "select", options:
                             '<option value="0">Auto-generate and upload</option>' + 
-                            '<option value="1">Do not generate and upload (not recommended)</option>'
+                            '<option value="1">Do not generate and upload (not recommended)</option>', 
+                            classes: 'pbool preset'
                         }
                     ]}, 
                     { id: "tab-findpet", title: "FindPet.com", 
@@ -225,7 +235,7 @@ $(function() {
                         '<li>automatic pet tag activation</li>' +
                         '<li>to report your pets as found to facilitate lost pet reunification</li></ul>', 
                         classes: 'localeus hasfindpet', fields: [
-                            { id: "enabledmf", label: _("Enabled"), type: "check" }, 
+                            { id: "enabledmf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "fporgid", post_field: "FindPetOrgID", label: "FindPet Organization ID", type: "text" }, 
                             { id: "fpintlevel", post_field: "FindPetIntLevel", label: "Integration Level", type: "select", options: 
                                 '<option value="0">Send stray/found pets and register microchips</option>' + 
@@ -233,22 +243,22 @@ $(function() {
                             }, 
                     ]}, 
                     { id: "tab-maddiesfund", title: "Maddie's Fund", info: 'Signup at <a target="_blank" href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>', classes: 'english hasmaddiesfund', fields: [
-                        { id: "enabledfip", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledfip", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "mfemail", post_field: "MaddiesFundUsername", label: "MPA API Username", type: "text" }, 
                         { id: "mfpassword", post_field: "MaddiesFundPassword", label: "MPA API Password", type: "text" }
                     ]}, 
                     { id: "tab-petcademy", title: "Petcademy", info: 'Signup at <a target="_blank" href="https://petcademy.org/rescues-and-shelters/">https://petcademy.org/rescues-and-shelters/</a>', classes: 'english haspetcademy', fields: [
-                        { id: "enabledpc", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledpc", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "pctoken", post_field: "PetcademyToken", label: "MPA API Username", type: "text" }, 
                     ]}, 
                     { id: "tab-petfbi", title: "PetFBI.com", info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', fields: [
-                        { id: "enabledfbi", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledfbi", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "fbiftpuser", post_field: "PetFBIFTPUser", label: 'PetFBI FTP username', type: "text" }, 
                         { id: "fbiftppass", post_field: "PetFBIFTPPassword", label: 'PetFBI FTP password', type: "text" }, 
                         { id: "fbiorgid", post_field: "PetFBIOrgID", label: 'PetFBI Organisation ID', type: "text" }, 
                     ]}, 
                     { id: "tab-petfinder", title: "PetFinder.com", info: 'Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>', fields: [
-                        { id: "enabledpf", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledpf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "pfftpuser", post_field: "PetFinderFTPUser", label: 'PetFinder shelter ID', type: "text" }, 
                         { id: "pfftppass", post_field: "PetFinderFTPPassword", label: 'PetFinder FTP password', type: "text" }, 
                         { id: "pfsendstrays", post_field: "PetFinderSendStrays", label: 'Stray shelter animals', type: "select", options:
@@ -270,13 +280,13 @@ $(function() {
                         { type: "raw", markup: '<tr><td colspan="2">' + html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>It is <b>not</b> the same as your password for the members area.') + '</td></tr>' }
                     ]},
                     { id: "tab-petslocated", title: "PetsLocated", info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', fields: [
-                            { id: "enabledrg", label: _("Enabled"), type: "check" }, 
+                            { id: "enabledrg", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "pcukcustid", post_field: "PetsLocatedCustomerID", label: 'petslocated.com customer number', type: "text" }, 
                             { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', type: "select", options: yesnooptions }, 
                             { id: "pcukanimalflag", post_field: "PetsLocatedAnimalFlag", label: 'Only shelter animals with this flag', type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") }
                     ]}, 
                     { id: "tab-petrescue", title: "PetRescue.com.au", classes: 'localeau haspetrescue', info: 'Signup at <a target="_blank" href="http://petrescue.com.au">petrescue.com.au</a>', fields: [
-                        { id: "enabledpr", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledpr", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "prtoken", post_field: "PetRescueToken", label: 'PetRescue Token', type: "text", doublesize: true }, 
                         { id: "prdesex", post_field: "PetRescueAllDesexed", label: 'Send all animals as desexed', type: "select", options: yesnooptions, callout: 'PetRescue will not accept listings for non-desexed animals. Setting this to "Yes" will send all animals as if they are desexed.' }, 
                         { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. Mandatory for dog listings in South Australia where "bredincareofgroup" is selected.' }, 
@@ -314,7 +324,7 @@ $(function() {
                     ]}, 
 
                     { id: "tab-savourlife", title: "SavourLife.com.au", classes: 'localeau hassavourlife', info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
-                        { id: "enabledsl", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledsl", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "sltoken", post_field: "SavourLifeToken", label: 'Authentication Token', type: "text" }, 
                         { id: "slinterstate", post_field: "SavourLifeInterstate", label: 'Mark as interstate', type: "select", callout: 'Set to yes if you will fly adoptable animals to other states', 
                             options: yesnooptions
@@ -334,7 +344,7 @@ $(function() {
                     { id: "tab-rescuegroups", title: "RescueGroups.org", info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                     'to them for republishing on to many other sites. Find out more at ' +
                     '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>', fields: [
-                        { id: "enabledrg", label: _("Enabled"), type: "check" }, 
+                        { id: "enabledrg", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                         { id: "rgftpuser", post_field: "RescueGroupsFTPUser", label: 'RescueGroups FTP username', type: "text" }, 
                         { id: "rgftppass", post_field: "RescueGroupsFTPPassword", label: 'RescueGroups FTP password', type: "text" }
                     ]}, 
@@ -511,11 +521,13 @@ $(function() {
                     let enabled = $(this).is(":checked");
                     if (enabled) {
                         $(this).closest("div").find("select").select("enable");
+                        $(this).closest("div").find("button").show();
                         $(this).closest("div").find(".asm-textbox, .asm-doubletextbox").removeAttr("disabled");
                         $(this).closest("div").find("textarea").removeAttr("disabled");
                     }
                     else {
                         $(this).closest("div").find("select").select("disable");
+                        $(this).closest("div").find("button").hide();
                         $(this).closest("div").find(".asm-textbox, .asm-doubletextbox").attr("disabled", "disabled");
                         $(this).closest("div").find("textarea").attr("disabled", "disabled");
                     }
@@ -564,12 +576,11 @@ $(function() {
                 header.show_loading(_("Saving..."));
                 await common.ajax_post("publish_options", formdata);
                 // Needs to do a full reload to get config.js to update
-                console.log(formdata);
                 common.route_reload(true); 
             });
 
             $("#button-save").button("disable");
-
+            /*
             // Enable services that are only present in certain locales
             $(".localeau").hide();
             $(".localeus").hide();
@@ -600,7 +611,7 @@ $(function() {
             if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
             if (!controller.hasvetenvoy) { $(".hasvetenvoy").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
-
+            */
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").not(".chooser").each(function() {
                 if ($(this).attr("data-post")) {
