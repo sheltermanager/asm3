@@ -516,7 +516,7 @@ $(function() {
                 }
             });
 
-            $("#vatrate").change(function() {
+            const calc_vat = function() {
                 if (!config.bool("VATExclusive")) {
                     $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
                 }
@@ -524,7 +524,10 @@ $(function() {
                     $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
                     $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
                 }
-            });
+            };
+
+            $("#amount").change(calc_vat);
+            $("#vatrate").change(calc_vat);
 
             $("#vatratechoice").change(function() {
                 let taxrate = 0.0;
@@ -535,13 +538,7 @@ $(function() {
                     }
                 });
                 $("#vatrate").val(taxrate);
-                if (!config.bool("VATExclusive")) {
-                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
-                }
-                else {
-                    $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
-                    //$("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
-                }
+                calc_vat();
             });
 
             $("#emailform").emailform();
