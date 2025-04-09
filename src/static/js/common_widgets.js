@@ -2170,6 +2170,8 @@ $.widget("asm.asmsignature", {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 $("#" + id + " .asmsigntextinput").val("");
                 $("#" + id + " .asmsignimg").hide();
+                $("#" + id + " .asmsigncanvas").hide();
+                $("#" + id + " .asmsigndraw").prop("checked", true);
                 $("#" + id + " .asmsigntools").show();
                 $("#" + id + " .asmsignwidget").show();
             });
