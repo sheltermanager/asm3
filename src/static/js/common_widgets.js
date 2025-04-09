@@ -2129,7 +2129,8 @@ $.fn.asmcontent = function(type) {
 $.widget("asm.asmsignature", {
     options: {
         guideline: false,
-        value: ''
+        value: '',
+        bootstrap: false
     },
     _create: function() {
         let self = this;
@@ -2139,7 +2140,7 @@ $.widget("asm.asmsignature", {
         this.element.after([
             '<div id=' + id + '>',
                 '<div>', 
-                    '<button class="button-asmsignchange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear and sign again") + '</button>', 
+                    '<button class="button-asmsignchange" type="button" style="vertical-align: middle;margin-right: 10px;">' + _("Clear") + '</button>', 
                     '<span class="asmsigntools" style="display: none;">', 
                         '<label>' + _("Draw") + '<input class="asmsigndraw" name="asmsigntype" type="radio" checked></label> ', 
                         '<label>' + _("Text") + '<input class="asmsigntext" name="asmsigntype" type="radio"></label> ', 
@@ -2154,8 +2155,14 @@ $.widget("asm.asmsignature", {
             '</div>'
         ].join("\n"));
         $("#" + id + " .asmsignwidget").signature({ guideline: this.options.guideline });
+        if (this.options.bootstrap) {
+            $("#" + id + " .button-asmsignchange").addClass("btn btn-primary").html("<i class='bi-x'>" + _("Clear") + "</i>");
+            $("#" + id + " input[name='asmsigntype']").addClass("m-1");
+            $("#" + id + " label").addClass("form-check-label");
+        } else {
+            $("#" + id + " .button-asmsignchange").button({ icons: { primary: "ui-icon-pencil" }, text: false });
+        }
         $("#" + id + " .button-asmsignchange")
-            .button({ icons: { primary: "ui-icon-pencil" }, text: false })
             .click(function() {
                 $("#" + id + " .asmsignwidget").signature("clear");
                 let canvas = $("#" + id + " .asmsigncanvas")[0];
@@ -2166,6 +2173,9 @@ $.widget("asm.asmsignature", {
                 $("#" + id + " .asmsigntools").show();
                 $("#" + id + " .asmsignwidget").show();
             });
+        if (this.options.value == "") {
+            $("#" + id + " .button-asmsignchange").click();
+        }
         $("#" + id + " .asmsigndraw").change(function() {
             $("#" + id + " .asmsigntextinput").hide();
             $("#" + id + " .asmsignwidget").show();
@@ -2229,5 +2239,18 @@ $.widget("asm.asmsignature", {
             canvas = $("#" + id + " .asmsignwidget canvas");
         }
         return canvas.get(0).toDataURL("image/png");
+    },
+    isEmpty: function() {
+        let id = "asmsign-" + this.element[0].id;
+        if ($("#" + id + " .asmsigndraw").prop("checked") == true ) {
+            return $("#" + id + " .asmsignwidget").signature("isEmpty");
+        } else {
+            if ($("#" + id + " .asmsigntextinput").val() == "") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
     }
 });

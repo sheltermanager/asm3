@@ -974,7 +974,7 @@ class media(ASMEndpoint):
     def post_sign(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
-            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signscreen")
+            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signscreen", self.remote_ip(), self.user_agent())
 
     def post_signpad(self, o):
         asm3.configuration.signpad_ids(o.dbo, o.user, o.post["ids"])
@@ -1416,7 +1416,7 @@ class mobile_sign(ASMEndpoint):
 
     def post_all(self, o):
         for mid in o.post.integer_list("ids"):
-            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signmobile")
+            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signmobile", self.remote_ip(), self.user_agent())
         asm3.configuration.signpad_ids(o.dbo, o.user, "")
 
 class main(JSONEndpoint):
@@ -7171,6 +7171,8 @@ class service(ASMEndpoint):
     session_cookie = False
 
     def handle(self, o):
+        o.post["remoteip"] = self.remote_ip()
+        o.post["useragent"] = self.user_agent()
         contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())
         if contenttype == "redirect":
             self.redirect(response)
