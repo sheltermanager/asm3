@@ -37,6 +37,7 @@ $.widget("asm.animalchooser", {
             '</td>',
             '<td valign="top" style="text-align: end; white-space: nowrap">',
             '<button class="animalchooser-link-find">' + _("Select an animal") + '</button>',
+            '<button class="animalchooser-link-new">' + _("Add an animal") + '</button>',
             '<button class="animalchooser-link-clear">' + _("Clear") + '</button>',
             '</td>',
             '</tr>',
@@ -97,6 +98,13 @@ $.widget("asm.animalchooser", {
             .click(function() {
                 dialog.dialog("open");
             });
+        
+        node.find(".animalchooser-link-new")
+            .button({ icons: { primary: "ui-icon-plus" }, text: false })
+            .click(function() {
+                //dialogadd.dialog("open");
+        });
+
         // Bind the clear button
         node.find(".animalchooser-link-clear")
             .button({ icons: { primary: "ui-icon-trash" }, text: false })
