@@ -36,7 +36,7 @@ from asm3.typehints import Database, PostedData, Results, ServiceResponse
 
 # Service methods that require authentication
 AUTH_METHODS = [
-    "csv_import", "csv_mail", "csv_report", 
+    "csv_adoptable_animals", "csv_import", "csv_mail", "csv_report", 
     "json_report", "jsonp_report", "json_mail", "jsonp_mail",
     "html_report", "rss_timeline", "upload_animal_image", 
     "xml_adoptable_animal", "json_adoptable_animal", 
@@ -78,6 +78,7 @@ CACHE_PROTECT_METHODS = {
     "html_held_animals": [ "template", "speciesid", "animaltypeid", "order" ],
     "html_permfoster_animals": [ "template", "speciesid", "animaltypeid", "order" ],
     "html_stray_animals": [ "template", "speciesid", "animaltypeid", "order" ],
+    "csv_adoptable_animals": [ "sensitive" ],
     "json_adoptable_animals": [ "sensitive" ],
     "json_adoptable_animals_xp": [ "sensitive" ],
     "xml_adoptable_animal": [ "animalid" ],
@@ -614,6 +615,13 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             return set_cached_response(cache_key, account, "text/html", 120, 120, checkout_licence_page(dbo, post["token"]))
         else:
             return ("text/plain", 0, 0, checkout_licence_post(dbo, post))
+
+    elif method == "csv_adoptable_animals":
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
+        rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
+        if strip_personal: rs = strip_personal_data(rs)
+        rs = asm3.media.embellish_photo_urls(dbo, rs)
+        return set_cached_response(cache_key, account, "text/csv", 600, 600, asm3.utils.csv(dbo.locale, rs))
 
     elif method == "csv_import":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.IMPORT_CSV_FILE)

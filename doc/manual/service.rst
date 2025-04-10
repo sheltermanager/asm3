@@ -1104,15 +1104,15 @@ JSON or XML::
 
 .. note:: If the animal with animalid is not adoptable, an empty result set will be returned.
 
-json_adoptable_animals and xml_adoptable_animals
-------------------------------------------------
+json_adoptable_animals, xml_adoptable_animals and csv_adoptable_animals
+-----------------------------------------------------------------------
 
 .. rubric:: Cache time: 10 minutes 
 .. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing all animals available for adoption. The method
-determines whether the format returned is JSON or XML::
+determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
 
