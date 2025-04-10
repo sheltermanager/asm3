@@ -856,12 +856,12 @@ $.widget("asm.createpayment", {
         });
         $("#pm-vat").change(function() {
             if ($(this).is(":checked")) {
-                if (!config.bool("VATExclusive")) {
-                    $("#pm-vatamount").currency("value", common.tax_from_inclusive($("#pm-amount").currency("value"), $("#pm-vatrate").val()));
-                }
-                else {
+                if (config.bool("VATExclusive")) {
                     $("#pm-vatamount").currency("value", common.tax_from_exclusive($("#pm-amount").currency("value"), $("#pm-vatrate").val()));
                     $("#pm-amount").currency("value", $("#pm-amount").currency("value") + $("#pm-vatamount").currency("value"));
+                }
+                else {
+                    $("#pm-vatamount").currency("value", common.tax_from_inclusive($("#pm-amount").currency("value"), $("#pm-vatrate").val()));
                 }
                 $("#dialog-payment .paymentsalestax").fadeIn();
             } else {
@@ -870,8 +870,10 @@ $.widget("asm.createpayment", {
                 $("#dialog-payment .paymentsalestax").fadeOut();
             }
         });
+        // NOTE: Trigger recalculating the vat on amount change - but only if the amount is inclusive of VAT
+        // otherwise, the amount will keep going up with each recalculation
         $("#pm-amount").change(function() {
-            $("#pm-vat").change();
+            if (!config.bool("VATExclusive")) { $("#pm-vat").change(); }
         });
         $("#pm-vatratechoice").change(function() {
             $("#pm-vatrate").val($("#pm-vatratechoice").val().split("|")[1]);
@@ -1354,7 +1356,7 @@ $.widget("asm.payments", {
             html.list_to_options(this.options.controller.taxrates, "ID", "TAXRATENAME"),
             '</select>',
             '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" style="display: none;" />',
-            '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" disabled="disabled" />',
+            '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
             '</span>',
             '</td>',
             '<td>',
