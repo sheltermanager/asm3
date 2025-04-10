@@ -1380,6 +1380,7 @@ $.widget("asm.payments", {
             $("#quantity" + i).val("1");
             $("#unitprice" + i).currency("value", dc);
             $("#amount" + i).currency("value", dc);
+            $("#vatratechoice" + i).val(config.number("AFDefaultTaxRate")); // triggers change
             $("#vat" + i).prop("checked", dv == 1);
             $("#vat" + i).change();
             self.update_totals();
@@ -1392,43 +1393,27 @@ $.widget("asm.payments", {
         });
         // Recalculate when amount or VAT changes
         $("#amount" + i).change(function() {
-            $("#vatratechoice" + i).change();
-            //self.update_totals();
+            self.update_totals();
         });
+        // Recalculate vat when taxrate select is changed
         $("#vatratechoice" + i).change(function() {
             let taxrate = 0.0;
             taxrate = common.get_field(self.options.controller.taxrates, $("#vatratechoice" + i).val(), "TAXRATE");
             $("#vatrate" + i).val(taxrate);
-            if (!config.bool("VATExclusive")) {
-                $("#vatamount" + i).currency("value", common.tax_from_inclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
-            }
-            else {
-                $("#vatamount" + i).currency("value", common.tax_from_exclusive($("#amount" + i).currency("value"), $("#vatrate" + i).val()));
-            }
+            self.update_vat(i, true);
             self.update_totals();
         });
         // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
         $("#vat" + i).change(function() {
             if ($(this).is(":checked")) {
-                
-                $("#vatrate" + i).val(config.number("VATRate"));
-                if (!config.bool("VATExclusive")) {
-                    $("#vatamount" + i).currency("value", 
-                        common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
-                }
-                else {
-                    $("#vatamount" + i).currency("value", 
-                        common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
-                    $("#amount" + i).currency("value", $("#amount" + i).currency("value") + $("#vatamount" + i).currency("value"));
-                }
                 $("#vatratechoice" + i).val(config.number("AFDefaultTaxRate"));
+                $("#vatratechoice" + i).change();
                 $("#vatboxes" + i).fadeIn();
             }
             else {
                 $("#vatrate" + i + ", #vatamount" + i).val("0");
                 $("#vatboxes" + i).fadeOut();
             }
-            $("#vatratechoice" + i).change();
             self.update_totals();
         });
         // Set the default for our new payment type
@@ -1480,6 +1465,21 @@ $.widget("asm.payments", {
         });
         $("#totalamount").html(format.currency(totalamt));
         $("#totalvat").html(format.currency(totalvat));
+    },
+
+    update_vat: function(i, update_amount) {
+        // Calculates the vatamount field. If update_amount is true, and vatexclusive is off, adds the vat to the amount
+        if (config.bool("VATExclusive")) {
+            $("#vatamount" + i).currency("value", 
+                common.tax_from_exclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
+            if (update_amount === undefined || update_amount === true) {
+                $("#amount" + i).currency("value", $("#amount" + i).currency("value") + $("#vatamount" + i).currency("value"));
+            }
+        }
+        else {
+            $("#vatamount" + i).currency("value", 
+                common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
+        }
     },
 
     destroy: function() {
