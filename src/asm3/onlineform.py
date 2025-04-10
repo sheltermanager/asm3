@@ -1391,10 +1391,9 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     # If the form has a breed, but no species, use the species from that breed
     # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
-    if "commentsanimal" in d:
-        d["comments"] = d["commentsanimal"]
     if "species" not in d and "breed1" in d:
         d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
+    if "commentsanimal" in d: d["comments"] = d["commentsanimal"]
     if "species" not in d: d["species"] = str(guess_species(dbo, "nomatchesusedefault"))
     if "breed1" not in d: d["breed1"] = str(guess_breed(dbo, "nomatchesusedefault"))
     if "animaltype" not in d: d["animaltype"] = str(guess_animaltype(dbo, "nomatchesusedefault"))
@@ -1511,13 +1510,13 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
     if "surname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a person record (need a surname).", l))
     status = 0 # created
+    # Override comments if more specific commentsperson given
+    if "commentsperson" in d: d["comments"] = d["commentsperson"]
     # Use the current user's site for our new person record if they have one assigned
     siteid = asm3.users.get_site(dbo, username)
     if siteid != 0: d["site"] = str(siteid)
     # Does this person already exist?
     personid = 0
-    if "commentsperson" in d:
-        d["comments"] = d["commentsperson"]
     if "surname" in d and "forenames" in d:
         demail = ""
         dmobile = ""
