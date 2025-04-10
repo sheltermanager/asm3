@@ -2121,6 +2121,23 @@ class animal_embed(ASMEndpoint):
     check_logged_in = False
     post_permissions = asm3.users.VIEW_ANIMAL
 
+    def content(self, o):
+        if not o.dbo: raise asm3.utils.ASMPermissionError("No session")
+        dbo = o.dbo
+        self.content_type("application/json")
+        self.cache_control(180) # Animal data can be cached for a few minutes, useful for multiple widgets on one page
+        return asm3.utils.json({
+            "sexes": asm3.lookups.get_sexes(dbo),
+            "animaltypes": asm3.lookups.get_animal_types(dbo),
+            "colours": asm3.lookups.get_basecolours(dbo),
+            "sizes": asm3.lookups.get_sizes(dbo),
+            "species": asm3.lookups.get_species(dbo),
+            "breeds": asm3.lookups.get_breeds(dbo),
+            "entrytypes": asm3.lookups.get_entry_types(dbo),
+            "entryreasons": asm3.lookups.get_entryreasons(dbo),
+            "flags": asm3.lookups.get_animal_flags(dbo)
+        })
+
     def post_find(self, o):
         self.content_type("application/json")
         q = o.post["q"]

@@ -76,8 +76,60 @@ $.widget("asm.animalchooser", {
             '<td><input data="animalname" type="text" class="asm-checkbox enablecheck" /></td>',
             '</tr>', 
             '<tr>',
+            '<td><label>' + _("Sex") + '</label></td>', 
+            '<td><select data="sex" class="asm-selectbox chooser sexes" /></select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Type") + '</label></td>', 
+            '<td><select data="animaltype" class="asm-selectbox chooser animaltypes" /></select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Color") + '</label></td>', 
+            '<td><select data=basecolour class="asm-selectbox chooser colours" /></select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Size") + '</label></td>', 
+            '<td><select data="size" class="asm-selectbox chooser sizes" /></select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Species") + '</label></td>', 
+            '<td><select data="species" class="asm-selectbox chooser species" /></select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Breed") + '</label></td>', 
+            '<td><select data="breed1" class="asm-selectbox chooser breeds" /></select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Flags") + '</label></td>',
+            '<td>',
+            '<select class="animalchooser-flags chooser" data="flags" multiple="multiple">',
+            '</select>',
+            '</td>',
+            '</tr>',
+            '<tr>', 
             '<td><label>' + _("Date of Birth") + '</label><span class="asm-has-validation">*</span></td>', 
             '<td><input id="dateofbirth" data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Entry Type") + '</label></td>', 
+            '<td><select data="entrytype" class="asm-selectbox chooser entrytypes" /></select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Entry Reason") + '</label></td>', 
+            '<td><select data="entryreason" class="asm-selectbox chooser entryreasons" /></select></td>',
+            '</tr>',
+            '<tr>', 
+            '<td><label>' + _("Date Brought In") + '</label></td>', 
+            '<td><input id="datebroughtin" data="datebroughtin" type="text" class="asm-textbox asm-datebox" /></td>',
+            '</tr>',
+            '<tr>',
+            '<td></td>', 
+            '<td><input data="hold" type="checkbox" class="asm-checkbox enablecheck" /><label for="hold">' + _("Hold until") + '</label> ', 
+            '<input id="holduntil" data="holduntil" type="text" class="asm-textbox asm-datebox" /></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Description") + '</label></td>', 
+            '<td><textarea class="asm-textareafixed chooser personchooser-address" data="comments" rows="3"></textarea></td>',
             '</tr>',
             '</table>',
             '</div>',
@@ -160,6 +212,8 @@ $.widget("asm.animalchooser", {
         
         // Enable date field
         $("#dateofbirth").date(); 
+        $("#datebroughtin").date(); 
+        $("#holduntil").date(); 
         
         // Bind the find button
         node.find(".animalchooser-link-find")
@@ -180,10 +234,60 @@ $.widget("asm.animalchooser", {
             .click(function() {
                 self.clear(true);
             });
-        // Was there a value already set by the markup? If so, use it
-        if (self.element.val() != "" && self.element.val() != "0") {
-            self.loadbyid(self.element.val());
-        }
+
+        /// Go to the backend to get the additional fields with lookup data
+        $.ajax({
+            type: "GET",
+            url:  "animal_embed",
+            cache: true, // this data can be cached for a few minutes
+            data: { mode: "lookup" },
+            dataType: "text",
+            success: function(data, textStatus, jqXHR) {
+                let h = "";
+                let d = jQuery.parseJSON(data);
+                self.options.sexes = d.sexes;
+                self.options.animaltypes = d.animaltypes;
+                self.options.colours = d.colours;
+                self.options.sizes = d.sizes;
+                self.options.species = d.species;
+                self.options.breeds = d.breeds;
+                self.options.entrytypes = d.entrytypes;
+                self.options.entryreasons = d.entryreasons;
+                self.options.animalflags = d.flags;
+
+                dialogadd.find(".sexes").html(html.list_to_options(self.options.sexes, "ID", "SEX"));
+                dialogadd.find(".animaltypes").html(html.list_to_options(self.options.animaltypes, "ID", "ANIMALTYPE"));
+                dialogadd.find(".colours").html(html.list_to_options(self.options.colours, "ID", "BASECOLOUR"));
+                dialogadd.find(".sizes").html(html.list_to_options(self.options.sizes, "ID", "SIZE"));
+                dialogadd.find(".species").html(html.list_to_options(self.options.species, "ID", "SPECIESNAME"));
+                dialogadd.find(".breeds").html(html.list_to_options(self.options.breeds, "ID", "BREEDNAME"));
+                dialogadd.find(".entrytypes").html(html.list_to_options(self.options.entrytypes, "ID", "ENTRYTYPENAME"));
+                dialogadd.find(".entryreasons").html(html.list_to_options(self.options.entryreasons, "ID", "REASONNAME"));
+
+                // Add person flag options to the screen
+                html.animal_flag_options(null, self.options.animalflags, dialogadd.find(".animalchooser-flags"));
+
+                // Setup person flag select widget
+                dialogadd.find(".animalchooser-flags").attr("title", _("Select"));
+                dialogadd.find(".animalchooser-flags").asmSelect({
+                    animate: true,
+                    sortable: true,
+                    removeLabel: '<strong>X</strong>',
+                    listClass: 'bsmList-custom',  
+                    listItemClass: 'bsmListItem-custom',
+                    listItemLabelClass: 'bsmListItemLabel-custom',
+                    removeClass: 'bsmListItemRemove-custom'
+                });
+
+                // Was there a value already set by the markup? If so, use it
+                if (self.element.val() != "" && self.element.val() != "0") {
+                    self.loadbyid(self.element.val());
+                }
+            },
+            error: function(jqxhr, textstatus, response) {
+                log.error(response);
+            }
+        });
     },
 
     /**
@@ -311,7 +415,7 @@ $.widget("asm.animalchooser", {
     }, 
 
     /**
-     * Posts the add dialog to the backend to create the owner
+     * Posts the add dialog to the backend to create the animal
      */
     add_animal: function() {
         let self = this, dialogadd = this.options.dialogadd, display = this.options.display, node = this.options.node;
