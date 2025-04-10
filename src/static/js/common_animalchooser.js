@@ -317,16 +317,18 @@ $.widget("asm.animalchooser", {
             data: formdata,
             dataType: "text",
             success: function(result) {
+                let animal = jQuery.parseJSON(result);
+                let rec = animal[0];
+                self.element.val(rec.ID);
+                self.selected = rec;
+                let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.SHELTERCODE + " " + rec.ANIMALNAME + "</a></span>";
+                display.html(disp);
                 try { 
                     validate.dirty(true); 
                 } 
                 catch(ev) { }
                 dialogadd.dialog("close");
                 common.inject_target();
-                try { 
-                    dialogsimilar.dialog("close"); 
-                } 
-                catch(es) { }
                 self._trigger("change", null, rec);
             },
             error: function(jqxhr, textstatus, response) {

@@ -2157,7 +2157,7 @@ class animal_embed(ASMEndpoint):
         self.content_type("application/json")
         dbo = o.dbo
         asm3.al.debug("add new animal", "main.animal_embed", dbo)
-        aid = asm3.animal.insert_animal_from_form(dbo, o.post, o.user)
+        aid = asm3.animal.insert_animal_from_form(dbo, o.post, o.user)[0]
         a = asm3.animal.get_animal(dbo, aid)
         return asm3.utils.json((a,))
 
