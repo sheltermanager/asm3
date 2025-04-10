@@ -104,12 +104,12 @@ FORM_FIELDS = [
     "worktelephone", "worktelephone2", "mobiletelephone", "mobiletelephone2", "celltelephone", "celltelephone2", 
     "emailaddress", "emailaddress2", "idnumber", "idnumber2", "dateofbirth", "dateofbirth2",
     "dateofbirthanimal", "dateofbirthperson", "dateofbirthperson2",
-    "excludefrombulkemail", "gdprcontactoptin",
+    "excludefrombulkemail", "gdprcontactoptin", "commentsperson", 
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "animalname2", "animalname3", "reserveanimalname", "reserveanimalname2", "reserveanimalname3",
     "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", "healthproblems", 
-    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", 
+    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", "commentsanimal", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
@@ -1343,8 +1343,8 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
-    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", 
-    "neutered", "weight"
+    "comments", "commentsanimal", "hiddencomments", "type", "species", "breed1", "breed2", 
+    "color", "sex", "neutered", "weight"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1365,6 +1365,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "age": d["estimatedage"] = f.VALUE
         if f.FIELDNAME == "markings": d["markings"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME == "commentsanimal": d["commentsanimal"] = f.VALUE
         if f.FIELDNAME == "microchip" and truncs(f.VALUE).strip() != "": 
             d["microchipped"] = "on"
             d["microchipnumber"] = truncs(f.VALUE)
@@ -1390,6 +1391,8 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     # If the form has a breed, but no species, use the species from that breed
     # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
+    if "commentsanimal" in d:
+        d["comments"] = d["commentsanimal"]
     if "species" not in d and "breed1" in d:
         d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
     if "species" not in d: d["species"] = str(guess_species(dbo, "nomatchesusedefault"))
@@ -1497,6 +1500,7 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
             flags += ",excludefrombulkemail"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = truncs(f.VALUE)
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME == "commentsperson": d["commentsperson"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
@@ -1512,6 +1516,8 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
     if siteid != 0: d["site"] = str(siteid)
     # Does this person already exist?
     personid = 0
+    if "commentsperson" in d:
+        d["comments"] = d["commentsperson"]
     if "surname" in d and "forenames" in d:
         demail = ""
         dmobile = ""
