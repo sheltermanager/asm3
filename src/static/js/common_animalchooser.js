@@ -146,7 +146,12 @@ $.widget("asm.animalchooser", {
             dialogClass: "dialogshadow",
             show: dlgfx.add_show,
             hide: dlgfx.add_hide,
-            buttons: acaddbuttons
+            buttons: acaddbuttons,
+            close: function() {
+                dialogadd.find("input, textarea").val("");
+                dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
+                dialogadd.enable_dialog_buttons();
+            }
         });
         dialog.find("table").table({ sticky_header: false });
         dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
