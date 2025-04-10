@@ -661,7 +661,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         cvid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                         a["currentvet"] = str(cvid)
                     # If both a current vet and neutering date has been given, set the neutering vet
-                    if "currentvet" in a and a["neutereddate"] in a and a["neutereddate"] != "":
+                    if "currentvet" in a and "neutereddate" in a and a["neutereddate"] != "":
                         a["neuteringvet"] = a["currentvet"]
                     # Identify any CURRENTVETADDITIONAL additional fields and create/merge them
                     if cvid > 0: create_additional_fields(dbo, row, errors, rowno, "CURRENTVETADDITIONAL", "person", cvid)
