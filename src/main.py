@@ -2151,6 +2151,15 @@ class animal_embed(ASMEndpoint):
         else:
             asm3.al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "main.animal_embed", dbo)
             return asm3.utils.json((a,))
+    
+    def post_add(self, o):
+        self.check(asm3.users.ADD_ANIMAL)
+        self.content_type("application/json")
+        dbo = o.dbo
+        asm3.al.debug("add new animal", "main.animal_embed", dbo)
+        aid = asm3.animal.insert_animal_from_form(dbo, o.post, o.user)
+        a = asm3.animal.get_animal(dbo, aid)
+        return asm3.utils.json((a,))
 
 class animal_find(JSONEndpoint):
     url = "animal_find"

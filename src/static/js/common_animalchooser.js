@@ -22,8 +22,10 @@ $.widget("asm.animalchooser", {
         rec: {},
         node: null,
         dialog: null,
+        dialogadd: null,
         display: null,
-        filter: "all"
+        filter: "all", 
+        addtitle: _("Add animal")
     },
 
     _create: function() {
@@ -62,13 +64,32 @@ $.widget("asm.animalchooser", {
             '<tbody></tbody>',
             '</table>',
             '</div>',
+
+            '<div class="animalchooser-add" style="display: none" title="' + this.options.addtitle + '">',
+            '<table width="100%">',
+            '<tr>',
+            '<td></td>', 
+            '<td><input id="nonshelter" type="checkbox" class="asm-checkbox enablecheck" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label>' + _("Name") + '</label><span class="asm-has-validation">*</span></td>', 
+            '<td><input data="animalname" type="text" class="asm-checkbox enablecheck" /></td>',
+            '</tr>', 
+            '<tr>',
+            '<td><label>' + _("Date of Birth") + '</label><span class="asm-has-validation">*</span></td>', 
+            '<td><input id="dateofbirth" data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
+            '</tr>',
+            '</table>',
+            '</div>',
             '</div>'
         ].join("\n");
         var node = $(h);
         var self = this;
         this.options.node = node;
         var dialog = node.find(".animalchooser-find");
+        var dialogadd = node.find(".animalchooser-add");
         this.options.dialog = dialog;
+        this.options.dialogadd = dialogadd;
         this.options.display = node.find(".animalchooser-display");
         this.element.parent().append(node);
         // Set the filter
@@ -88,10 +109,53 @@ $.widget("asm.animalchooser", {
             hide: dlgfx.edit_hide,
             buttons: acbuttons
         });
+        let acaddbuttons = {};
+        acaddbuttons[_("Create this animal")] = function() {
+            let valid = true, dialogadd = self.options.dialogadd;
+            // Validate fields that can't be blank
+            dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
+            dialogadd.find("input[data='animalname']").each(function() {
+                if (common.trim($(this).val()) == "") {
+                    $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
+                    $(this).focus();
+                    valid = false;
+                    return false;
+                }
+            });
+            dialogadd.find("input[data='dob']").each(function() {
+                if (common.trim($(this).val()) == "") {
+                    $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
+                    $(this).focus();
+                    valid = false;
+                    return false;
+                }
+            });
+            if (!valid) { return; }
+            if (!additional.validate_mandatory_node(dialogadd)) { return; }
+            // Disable the dialog buttons before we make any ajax requests
+            dialogadd.disable_dialog_buttons();
+            self.add_animal();
+        };
+        acaddbuttons[_("Cancel")] = function() {
+            $(this).dialog("close");
+        };
+        dialogadd.dialog({
+            autoOpen: false,
+            width: 600,
+            modal: true,
+            dialogClass: "dialogshadow",
+            show: dlgfx.add_show,
+            hide: dlgfx.add_hide,
+            buttons: acaddbuttons
+        });
         dialog.find("table").table({ sticky_header: false });
         dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
         dialog.find("button").button().click(function() { self.find(); });
         dialog.find(".animalchooser-spinner").hide();
+        
+        // Enable date field
+        $("#dateofbirth").date(); 
+        
         // Bind the find button
         node.find(".animalchooser-link-find")
             .button({ icons: { primary: "ui-icon-search" }, text: false })
@@ -102,7 +166,7 @@ $.widget("asm.animalchooser", {
         node.find(".animalchooser-link-new")
             .button({ icons: { primary: "ui-icon-plus" }, text: false })
             .click(function() {
-                //dialogadd.dialog("open");
+                dialogadd.dialog("open");
         });
 
         // Bind the clear button
@@ -239,7 +303,38 @@ $.widget("asm.animalchooser", {
 
     get_selected: function() {
         return this.selected;
-    }
+    }, 
+
+    /**
+     * Posts the add dialog to the backend to create the owner
+     */
+    add_animal: function() {
+        let self = this, dialogadd = this.options.dialogadd, display = this.options.display, node = this.options.node;
+        let formdata = "mode=add&" + dialogadd.find("input, textarea, select").toPOST();
+        $.ajax({
+            type: "POST",
+            url:  "animal_embed",
+            data: formdata,
+            dataType: "text",
+            success: function(result) {
+                try { 
+                    validate.dirty(true); 
+                } 
+                catch(ev) { }
+                dialogadd.dialog("close");
+                common.inject_target();
+                try { 
+                    dialogsimilar.dialog("close"); 
+                } 
+                catch(es) { }
+                self._trigger("change", null, rec);
+            },
+            error: function(jqxhr, textstatus, response) {
+                dialogadd.dialog("close");
+                log.error(response);
+            }
+        });
+    },
 
 });
 
