@@ -47,6 +47,8 @@ gdprcontactoptin
     The person's GDPR contact preference (Declined, Email, Post, SMS, Phone)   
 comments
     The comments field for the animal (for historical reasons, comments populates the animal's description field), person, lost, found or waiting list animal
+commentsanimal / commentsperson
+    If you intend to use this form to populate both an animal or a person, set the comments for the animal or person (overrides comments field)
 description
     The description for the lost, found or waiting list animal
 healthproblems

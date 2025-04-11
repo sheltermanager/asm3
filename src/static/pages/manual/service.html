@@ -100,7 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-stray-animals">html_stray_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-xml-adoptable-animals-and-csv-adoptable-animals">json_adoptable_animals, xml_adoptable_animals and csv_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adopted-animals-and-xml-adopted-animals">json_adopted_animals and xml_adopted_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals">json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-held-animals-and-xml-held-animals">json_held_animals and xml_held_animals</a></li>
@@ -1169,13 +1169,13 @@ JSON or XML:</p>
 <p>If the animal with animalid is not adoptable, an empty result set will be returned.</p>
 </div>
 </section>
-<section id="json-adoptable-animals-and-xml-adoptable-animals">
-<h2>json_adoptable_animals and xml_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-and-xml-adoptable-animals" title="Link to this heading">¶</a></h2>
+<section id="json-adoptable-animals-xml-adoptable-animals-and-csv-adoptable-animals">
+<h2>json_adoptable_animals, xml_adoptable_animals and csv_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-xml-adoptable-animals-and-csv-adoptable-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p class="rubric">Permissions required: VIEW_ANIMAL</p>
 <p class="rubric">Requires username/password: YES</p>
 <p>Returns a dataset containing all animals available for adoption. The method
-determines whether the format returned is JSON or XML:</p>
+determines whether the format returned is JSON, CSV or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
