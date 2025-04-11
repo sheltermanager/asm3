@@ -83,7 +83,7 @@ $.widget("asm.animalchooser", {
             '</tr>', 
             '<tr>',
             '<td><label>' + _("Name") + '</label><span class="asm-has-validation">*</span></td>', 
-            '<td><input data="animalname" type="text" class="asm-checkbox enablecheck" /></td>',
+            '<td><input data="animalname" type="text" class="asm-textbox" /></td>',
             '</tr>', 
             '<tr>',
             '<td><label>' + _("Sex") + '</label></td>', 
