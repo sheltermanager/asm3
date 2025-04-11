@@ -67,11 +67,20 @@ $.widget("asm.animalchooser", {
             '</div>',
 
             '<div class="animalchooser-add" style="display: none" title="' + this.options.addtitle + '">',
-            '<table width="100%">',
+            '<table width="100%" class="addanimaltable">',
             '<tr>',
             '<td></td>', 
             '<td><input data="nonshelter" type="checkbox" class="asm-checkbox enablecheck nonshelter" /><label>' + _("Non-Shelter") + '</label></td>',
             '</tr>',
+            '<tr class="holdrow">',
+            '<td></td>', 
+            '<td><input data="hold" type="checkbox" class="asm-checkbox enablecheck hold" /><label>' + _("Hold until") + '</label> ', 
+            '<input id="holduntil" data="holduntil" type="text" class="asm-textbox asm-datebox holduntil" /></td>',
+            '</tr>',
+            '<tr class="ownerrow">', 
+            '<td>' + _("Owner") + '</td>', 
+            '<td><input type="hidden"  class="asm-field asm-personchooser" class="owner" data="nsowner" /></td>', 
+            '</tr>', 
             '<tr>',
             '<td><label>' + _("Name") + '</label><span class="asm-has-validation">*</span></td>', 
             '<td><input data="animalname" type="text" class="asm-checkbox enablecheck" /></td>',
@@ -115,11 +124,6 @@ $.widget("asm.animalchooser", {
             '<tr class="datebroughtinrow">', 
             '<td><label>' + _("Date Brought In") + '</label></td>', 
             '<td><input id="datebroughtin" data="datebroughtin" type="text" class="asm-textbox asm-datebox datebroughtin" /></td>',
-            '</tr>',
-            '<tr class="holdrow">',
-            '<td></td>', 
-            '<td><input data="hold" type="checkbox" class="asm-checkbox enablecheck hold" /><label>' + _("Hold until") + '</label> ', 
-            '<input id="holduntil" data="holduntil" type="text" class="asm-textbox asm-datebox holduntil" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Description") + '</label></td>', 
@@ -194,6 +198,9 @@ $.widget("asm.animalchooser", {
             hide: dlgfx.add_hide,
             buttons: acaddbuttons,
             open: function() {
+                // Untick non-shelter
+                dialogadd.find(".nonshelter").prop("checked", false);
+                dialogadd.find(".nonshelter").change();
                 // Change sex to unknown
                 dialogadd.find(".sexes").val(2);
                 // Change animal type to default
@@ -234,19 +241,21 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".entryreasonsrow").hide();
                 dialogadd.find(".datebroughtinrow").hide();
                 dialogadd.find(".holdrow").hide();
+                dialogadd.find(".ownerrow").show();
             } else {
                 dialogadd.find(".animaltypes").val(config.str("AFDefaultType"));
                 dialogadd.find(".entrytypesrow").show();
                 dialogadd.find(".entryreasonsrow").show();
                 dialogadd.find(".datebroughtinrow").show();
                 dialogadd.find(".holdrow").show();
+                dialogadd.find(".ownerrow").hide();
             }
         });
         
-        // Enable date fields - To do, this is unreliable and I don't think was the best way to activate these widgets
-        $("#dateofbirth").date(); 
-        $("#datebroughtin").date(); 
-        $("#holduntil").date(); 
+        // Enable date fields - To do, this is unreliable and I don't think was the best way/place to activate these widgets
+        dialogadd.find(".dateofbirth").date(); 
+        dialogadd.find(".datebroughtin").date(); 
+        dialogadd.find(".holduntil").date(); 
         
         // Bind the find button
         node.find(".animalchooser-link-find")
@@ -296,7 +305,7 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".breeds").html(html.list_to_options(self.options.breeds, "ID", "BREEDNAME"));
                 dialogadd.find(".entrytypes").html(html.list_to_options(self.options.entrytypes, "ID", "ENTRYTYPENAME"));
                 dialogadd.find(".entryreasons").html(html.list_to_options(self.options.entryreasons, "ID", "REASONNAME"));
-                dialogadd.find("table").append(additional.additional_new_fields(self.options.additionalfields, false, "additional chooser"));
+                dialogadd.find(".addanimaltable").append(additional.additional_new_fields(self.options.additionalfields, false, "additional chooser"));
 
                 // Was there a value already set by the markup? If so, use it
                 if (self.element.val() != "" && self.element.val() != "0") {
