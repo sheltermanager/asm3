@@ -111,7 +111,7 @@ $.widget("asm.animalchooser", {
             '</tr>',
             '<tr>', 
             '<td><label>' + _("Date of Birth") + '</label><span class="asm-has-validation">*</span></td>', 
-            '<td><input id="dateofbirth" data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
+            '<td><input class="dateofbirth" data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
             '</tr>',
             '<tr class="entrytypesrow">',
             '<td><label>' + _("Entry Type") + '</label></td>', 
