@@ -183,6 +183,9 @@ $(function() {
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
+
+            // Change additional fields to default
+            additional.reset_default(controller.additional);
         },
 
         name: "incident_new",
