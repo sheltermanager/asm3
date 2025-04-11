@@ -404,6 +404,17 @@ $.widget("asm.personchooser", {
                 dialogadd.enable_dialog_buttons();
             }
         });
+
+        // Create any form controls based on classes used
+        // Choosers are initialised first as they inject more widgets into the DOM that will need initialising
+        $(".asm-animalchooser").animalchooser();
+        $(".asm-animalchoosermulti").animalchoosermulti();
+        $(".asm-personchooser").personchooser();
+        $(".asm-callout").callout();
+        $(".asm-datebox").date();
+        $(".asm-alphanumberbox").alphanumber();
+        $(".asm-autotext").autotext();
+        $(".asm-numberbox").number();
         
         node.find(".personchooser-link-find")
             .button({ icons: { primary: "ui-icon-search" }, text: false })

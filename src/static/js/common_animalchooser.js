@@ -111,7 +111,7 @@ $.widget("asm.animalchooser", {
             '</tr>',
             '<tr>', 
             '<td><label>' + _("Date of Birth") + '</label><span class="asm-has-validation">*</span></td>', 
-            '<td><input class="dateofbirth" data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
+            '<td><input data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
             '</tr>',
             '<tr class="entrytypesrow">',
             '<td><label>' + _("Entry Type") + '</label></td>', 
@@ -228,6 +228,18 @@ $.widget("asm.animalchooser", {
                 dialogadd.enable_dialog_buttons();
             }
         });
+
+        // Create any form controls based on classes used
+        // Choosers are initialised first as they inject more widgets into the DOM that will need initialising
+        $(".asm-animalchooser").animalchooser();
+        $(".asm-animalchoosermulti").animalchoosermulti();
+        $(".asm-personchooser").personchooser();
+        $(".asm-callout").callout();
+        $(".asm-datebox").date();
+        $(".asm-alphanumberbox").alphanumber();
+        $(".asm-autotext").autotext();
+        $(".asm-numberbox").number();
+
         dialog.find("table").table({ sticky_header: false });
         dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
         dialog.find("button").button().click(function() { self.find(); });
@@ -252,10 +264,7 @@ $.widget("asm.animalchooser", {
             }
         });
         
-        // Enable date fields - To do, this is unreliable and I don't think was the best way/place to activate these widgets
-        dialogadd.find(".dateofbirth").date(); 
-        dialogadd.find(".datebroughtin").date(); 
-        dialogadd.find(".holduntil").date(); 
+        
         
         // Bind the find button
         node.find(".animalchooser-link-find")
