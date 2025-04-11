@@ -2135,8 +2135,7 @@ class animal_embed(ASMEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds(dbo),
             "entrytypes": asm3.lookups.get_entry_types(dbo),
-            "entryreasons": asm3.lookups.get_entryreasons(dbo),
-            "flags": asm3.lookups.get_animal_flags(dbo)
+            "entryreasons": asm3.lookups.get_entryreasons(dbo)
         })
 
     def post_find(self, o):

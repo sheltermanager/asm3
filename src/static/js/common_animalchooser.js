@@ -70,7 +70,7 @@ $.widget("asm.animalchooser", {
             '<table width="100%">',
             '<tr>',
             '<td></td>', 
-            '<td><input id="nonshelter" type="checkbox" class="asm-checkbox enablecheck" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
+            '<td><input data="nonshelter" type="checkbox" class="asm-checkbox enablecheck nonshelter" /><label>' + _("Non-Shelter") + '</label></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Name") + '</label><span class="asm-has-validation">*</span></td>', 
@@ -100,33 +100,26 @@ $.widget("asm.animalchooser", {
             '<td><label>' + _("Breed") + '</label></td>', 
             '<td><select data="breed1" class="asm-selectbox chooser breeds" /></select></td>',
             '</tr>',
-            '<tr>',
-            '<td><label>' + _("Flags") + '</label></td>',
-            '<td>',
-            '<select class="animalchooser-flags chooser" data="flags" multiple="multiple">',
-            '</select>',
-            '</td>',
-            '</tr>',
             '<tr>', 
             '<td><label>' + _("Date of Birth") + '</label><span class="asm-has-validation">*</span></td>', 
             '<td><input id="dateofbirth" data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="entrytypesrow">',
             '<td><label>' + _("Entry Type") + '</label></td>', 
             '<td><select data="entrytype" class="asm-selectbox chooser entrytypes" /></select></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="entryreasonsrow">',
             '<td><label>' + _("Entry Reason") + '</label></td>', 
             '<td><select data="entryreason" class="asm-selectbox chooser entryreasons" /></select></td>',
             '</tr>',
-            '<tr>', 
+            '<tr class="datebroughtinrow">', 
             '<td><label>' + _("Date Brought In") + '</label></td>', 
-            '<td><input id="datebroughtin" data="datebroughtin" type="text" class="asm-textbox asm-datebox" /></td>',
+            '<td><input id="datebroughtin" data="datebroughtin" type="text" class="asm-textbox asm-datebox datebroughtin" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="holdrow">',
             '<td></td>', 
-            '<td><input data="hold" type="checkbox" class="asm-checkbox enablecheck" /><label for="hold">' + _("Hold until") + '</label> ', 
-            '<input id="holduntil" data="holduntil" type="text" class="asm-textbox asm-datebox" /></td>',
+            '<td><input data="hold" type="checkbox" class="asm-checkbox enablecheck hold" /><label>' + _("Hold until") + '</label> ', 
+            '<input id="holduntil" data="holduntil" type="text" class="asm-textbox asm-datebox holduntil" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Description") + '</label></td>', 
@@ -217,13 +210,13 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".entrytypes").val(config.str("AFDefaultEntryType"));
                 // Change entry reason to default
                 dialogadd.find(".entryreasons").val(config.str("AFDefaultEntryReason"));
+                // Setting date brought in today
+                dialogadd.find(".datebroughtin").val(format.date(new Date()));
                 // Change additional fields to default
                 additional.reset_default(self.options.additionalfields);
             }, 
             close: function() {
                 dialogadd.find("input, textarea").val("");
-                dialogadd.find(".animalchooser-flags option").prop("selected", false);
-                dialogadd.find(".animalchooser-flags").change();
                 dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
                 dialogadd.enable_dialog_buttons();
             }
@@ -232,6 +225,23 @@ $.widget("asm.animalchooser", {
         dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
         dialog.find("button").button().click(function() { self.find(); });
         dialog.find(".animalchooser-spinner").hide();
+
+        dialogadd.find(".nonshelter").change(function() {
+            dialogadd.find(".datebroughtin").val(format.date(new Date()));
+            if (dialogadd.find(".nonshelter").is(":checked")) {
+                dialogadd.find(".animaltypes").val(config.str("AFNonShelterType"));
+                dialogadd.find(".entrytypesrow").hide();
+                dialogadd.find(".entryreasonsrow").hide();
+                dialogadd.find(".datebroughtinrow").hide();
+                dialogadd.find(".holdrow").hide();
+            } else {
+                dialogadd.find(".animaltypes").val(config.str("AFDefaultType"));
+                dialogadd.find(".entrytypesrow").show();
+                dialogadd.find(".entryreasonsrow").show();
+                dialogadd.find(".datebroughtinrow").show();
+                dialogadd.find(".holdrow").show();
+            }
+        });
         
         // Enable date fields - To do, this is unreliable and I don't think was the best way to activate these widgets
         $("#dateofbirth").date(); 
@@ -277,7 +287,6 @@ $.widget("asm.animalchooser", {
                 self.options.breeds = d.breeds;
                 self.options.entrytypes = d.entrytypes;
                 self.options.entryreasons = d.entryreasons;
-                self.options.animalflags = d.flags;
 
                 dialogadd.find(".sexes").html(html.list_to_options(self.options.sexes, "ID", "SEX"));
                 dialogadd.find(".animaltypes").html(html.list_to_options(self.options.animaltypes, "ID", "ANIMALTYPE"));
@@ -288,21 +297,6 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".entrytypes").html(html.list_to_options(self.options.entrytypes, "ID", "ENTRYTYPENAME"));
                 dialogadd.find(".entryreasons").html(html.list_to_options(self.options.entryreasons, "ID", "REASONNAME"));
                 dialogadd.find("table").append(additional.additional_new_fields(self.options.additionalfields, false, "additional chooser"));
-
-                // Add animal flag options to the screen
-                html.animal_flag_options(null, self.options.animalflags, dialogadd.find(".animalchooser-flags"));
-
-                // Setup person flag select widget
-                dialogadd.find(".animalchooser-flags").attr("title", _("Select"));
-                dialogadd.find(".animalchooser-flags").asmSelect({
-                    animate: true,
-                    sortable: true,
-                    removeLabel: '<strong>X</strong>',
-                    listClass: 'bsmList-custom',  
-                    listItemClass: 'bsmListItem-custom',
-                    listItemLabelClass: 'bsmListItemLabel-custom',
-                    removeClass: 'bsmListItemRemove-custom'
-                });
 
                 // Was there a value already set by the markup? If so, use it
                 if (self.element.val() != "" && self.element.val() != "0") {
