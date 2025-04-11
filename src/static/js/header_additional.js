@@ -513,7 +513,7 @@ additional = {
             value: usedefault ? f.DEFAULTVALUE : f.VALUE,
             xlabel: f.MANDATORY ? '&nbsp;<span class="asm-has-validation">*</span>' : "",
             callout: f.TOOLTIP,
-            xattr: 'data-linktype="' + f.LINKTYPE + '"'
+            xattr: 'data-linktype="' + f.LINKTYPE + '" data-id="' + f.ID + '"'
         };
         if (f.FIELDTYPE == additional.YESNO) { return tableform.render_check(v); }
         else if (f.FIELDTYPE == additional.TEXT) { return tableform.render_text(v); }
@@ -562,9 +562,13 @@ additional = {
      * Reset additional fields to their default values
      */
     reset_default: function(fields) {
-        $.each(fields, function(i, v){
-            $("#add_" + v.ID).val(v.DEFAULTVALUE);
-            if(v.FIELDTYPE == additional.MONEY) { $("#add_" + v.ID).val(format.currency(v.DEFAULTVALUE)); }
+        $.each(fields, function(i, v) {
+            $(".additional").each(function() {
+                if ($(this).attr("data-id") == v.ID && v.DEFAULTVALUE) {
+                    if (v.FIELDTYPE == additional.MONEY) { $(this).val(format_currency(v.DEFAULTVALUE)); }
+                    else { $(this).val(v.DEFAULTVALUE); } 
+                }
+            });
         });
     },
 

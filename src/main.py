@@ -2127,6 +2127,7 @@ class animal_embed(ASMEndpoint):
         self.content_type("application/json")
         self.cache_control(180) # Animal data can be cached for a few minutes, useful for multiple widgets on one page
         return asm3.utils.json({
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "animal"),
             "sexes": asm3.lookups.get_sexes(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),

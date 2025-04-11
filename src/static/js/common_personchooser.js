@@ -386,6 +386,8 @@ $.widget("asm.personchooser", {
                         dialogadd.find(".personchooser-town").val( rows[0].town );
                         dialogadd.find(".personchooser-county").val( rows[0].county );
                     });
+                // Change additional fields to default
+                additional.reset_default(self.options.additionalfields);
                 // If we have a filter, set the appropriate person flags to match
                 if (self.options.filter) {
                     dialogadd.find(".personchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
@@ -394,9 +396,9 @@ $.widget("asm.personchooser", {
             },
             close: function() {
                 dialogadd.find("input, textarea").val("");
-                dialogadd.find(".personchooser-flags option:selected").removeAttr("selected");
+                dialogadd.find(".personchooser-flags option").prop("selected", false);
                 dialogadd.find(".personchooser-flags").change();
-                dialogadd.find(".personchooser-gdpr option:selected").removeAttr("selected");
+                dialogadd.find(".personchooser-gdpr option").prop("selected", false);
                 dialogadd.find(".personchooser-gdpr").change();
                 dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
                 dialogadd.enable_dialog_buttons();

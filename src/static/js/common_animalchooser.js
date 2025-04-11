@@ -20,6 +20,7 @@ $.widget("asm.animalchooser", {
     options: {
         id: 0,
         rec: {},
+        additionalfields: [], 
         node: null,
         dialog: null,
         dialogadd: null,
@@ -199,8 +200,30 @@ $.widget("asm.animalchooser", {
             show: dlgfx.add_show,
             hide: dlgfx.add_hide,
             buttons: acaddbuttons,
+            open: function() {
+                // Change sex to unknown
+                dialogadd.find(".sexes").val(2);
+                // Change animal type to default
+                dialogadd.find(".animaltypes").val(config.str("AFDefaultType"));
+                // Change colour to default
+                dialogadd.find(".colours").val(config.str("AFDefaultColour"));
+                // Change size to default
+                dialogadd.find(".sizes").val(config.str("AFDefaultSize"));
+                // Change species to default
+                dialogadd.find(".species").val(config.str("AFDefaultSpecies"));
+                // Change breed to default
+                dialogadd.find(".breeds").val(config.str("AFDefaultBreed"));
+                // Change entry type to default
+                dialogadd.find(".entrytypes").val(config.str("AFDefaultEntryType"));
+                // Change entry reason to default
+                dialogadd.find(".entryreasons").val(config.str("AFDefaultEntryReason"));
+                // Change additional fields to default
+                additional.reset_default(self.options.additionalfields);
+            }, 
             close: function() {
                 dialogadd.find("input, textarea").val("");
+                dialogadd.find(".animalchooser-flags option").prop("selected", false);
+                dialogadd.find(".animalchooser-flags").change();
                 dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
                 dialogadd.enable_dialog_buttons();
             }
@@ -210,7 +233,7 @@ $.widget("asm.animalchooser", {
         dialog.find("button").button().click(function() { self.find(); });
         dialog.find(".animalchooser-spinner").hide();
         
-        // Enable date field
+        // Enable date fields - To do, this is unreliable and I don't think was the best way to activate these widgets
         $("#dateofbirth").date(); 
         $("#datebroughtin").date(); 
         $("#holduntil").date(); 
@@ -245,6 +268,7 @@ $.widget("asm.animalchooser", {
             success: function(data, textStatus, jqXHR) {
                 let h = "";
                 let d = jQuery.parseJSON(data);
+                self.options.additionalfields = d.additional;
                 self.options.sexes = d.sexes;
                 self.options.animaltypes = d.animaltypes;
                 self.options.colours = d.colours;
@@ -263,8 +287,9 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".breeds").html(html.list_to_options(self.options.breeds, "ID", "BREEDNAME"));
                 dialogadd.find(".entrytypes").html(html.list_to_options(self.options.entrytypes, "ID", "ENTRYTYPENAME"));
                 dialogadd.find(".entryreasons").html(html.list_to_options(self.options.entryreasons, "ID", "REASONNAME"));
+                dialogadd.find("table").append(additional.additional_new_fields(self.options.additionalfields, false, "additional chooser"));
 
-                // Add person flag options to the screen
+                // Add animal flag options to the screen
                 html.animal_flag_options(null, self.options.animalflags, dialogadd.find(".animalchooser-flags"));
 
                 // Setup person flag select widget
