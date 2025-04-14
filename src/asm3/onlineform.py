@@ -756,7 +756,8 @@ def insert_onlineformfield_from_form(dbo: Database, username: str, post: PostedD
         "Lookups":          post["lookups"],
         "SpeciesID":        post.integer("species"),
         "VisibleIf":        post["visibleif"],
-        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"])
+        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"]),
+        "ValidationRule":   post["validationrule"]
     }, username, setCreated=False)
 
 def update_onlineformfield_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -779,7 +780,8 @@ def update_onlineformfield_from_form(dbo: Database, username: str, post: PostedD
         "Lookups":          post["lookups"],
         "SpeciesID":        post.integer("species"),
         "VisibleIf":        post["visibleif"],
-        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"])
+        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"]),
+        "ValidationRule":   post["validationrule"]
     }, username, setLastChanged=False)
 
 def delete_onlineformfield(dbo: Database, username: str, fieldid: int) -> None:
