@@ -156,13 +156,13 @@ $(document).ready(function() {
                 try {
                     let date = $.datepicker.parseDate(DATE_FORMAT, v);
                     let today = new Date();
-                    if ( $(this).hasClass("asm-date-nopast") && date < today ) {
+                    if ( $(this).hasClass("nopast") && date < today ) {
                         alert("Date cannot be in the past.");
                         $(this).focus();
                         rv = false;
                         return false;
                     }
-                    if ( $(this).hasClass("asm-date-nofuture") && date > today ) {
+                    if ( $(this).hasClass("nofuture") && date > today ) {
                         alert("Date cannot be in the future.");
                         $(this).focus();
                         rv = false;
@@ -382,7 +382,37 @@ $(document).ready(function() {
     };
 
     // Load all date and time picker widgets
-    $(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-90:+3" });
+    //$(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-90:+3" });
+    $(".asm-onlineform-date").each(function() {
+        ////
+
+        let nopast = $(this).hasClass("nopast");
+        let nofuture = $(this).hasClass("nofuture");
+        if (nopast || nofuture) {
+            $(this).datepicker({ 
+                changeMonth: true, 
+                changeYear: true,
+                //firstDay: config.integer("FirstDayOfWeek"),
+                yearRange: "-70:+10",
+                beforeShowDay: function(a) {
+                    let rv = true;
+                    if (nopast && a < new Date()) { rv = false; }
+                    if (nofuture && a > new Date()) { rv = false; }
+                    return [rv, ""];
+                }
+            });
+        } else {
+            $(this).datepicker({ 
+                changeMonth: true, 
+                changeYear: true,
+                yearRange: "-70:+10",
+                //firstDay: config.integer("FirstDayOfWeek")
+            });
+        }
+
+        ////
+    });
+
     $(".asm-onlineform-time").timepicker();
 
     // Load all signature widgets and implement the clear button functionality

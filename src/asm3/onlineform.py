@@ -233,9 +233,9 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             if f.VALIDATIONRULE == 1:
-                h.append('<input class="asm-onlineform-date asm-date-nopast" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
+                h.append('<input class="asm-onlineform-date nopast" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
             elif f.VALIDATIONRULE == 2:
-                h.append('<input class="asm-onlineform-date asm-date-nofuture" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
+                h.append('<input class="asm-onlineform-date nofuture" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
             else:
                 h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
