@@ -260,7 +260,7 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
     asm3.log.add_log(dbo, "service", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
-def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
+def checkout_adoption_post(dbo: Database, post: PostedData, remoteip: str, useragent: str) -> str:
     """
     Called by the adoption checkout frontend with the document signature and donation amount.
     Handles the document signing, triggers creation of the payment records, etc.
@@ -275,7 +275,7 @@ def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     # Sign the docs if they haven't been done already
     if not asm3.media.has_signature(dbo, mediaid):
         signdate = "%s %s" % (python2display(l, dbo.now()), format_time(dbo.now()))
-        asm3.media.sign_document(dbo, "service", mediaid, post["sig"], signdate, "signemail", post["remoteip"], post["useragent"])
+        asm3.media.sign_document(dbo, "service", mediaid, post["sig"], signdate, "signemail", remoteip, useragent)
         if post.boolean("sendsigned"):
             m = asm3.media.get_media_by_id(dbo, mediaid)
             if m is None: raise asm3.utils.ASMError("cannot find %s" % mediaid)
@@ -606,7 +606,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         elif post["sig"] == "":
             return set_cached_response(cache_key, account, "text/html", 120, 120, checkout_adoption_page(dbo, post["token"]))
         else:
-            return ("text/plain", 0, 0, checkout_adoption_post(dbo, post))
+            return ("text/plain", 0, 0, checkout_adoption_post(dbo, post, remoteip, useragent))
         
     elif method == "checkout_licence":
         if post["token"] == "":
@@ -997,7 +997,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         else:
             m = asm3.media.get_media_by_id(dbo, formid)
             signdate = "%s %s" % (python2display(l, dbo.now()), format_time(dbo.now()))
-            asm3.media.sign_document(dbo, "service", formid, post["sig"], signdate, "signemail", post["remoteip"], post["useragent"])
+            asm3.media.sign_document(dbo, "service", formid, post["sig"], signdate, "signemail", remoteip, useragent)
             asm3.media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
 
             if asm3.configuration.email_adoptioncoordinator_on_document_signed(dbo):

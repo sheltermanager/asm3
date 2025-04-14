@@ -7171,8 +7171,6 @@ class service(ASMEndpoint):
     session_cookie = False
 
     def handle(self, o):
-        o.post["remoteip"] = self.remote_ip()
-        o.post["useragent"] = self.user_agent()
         contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())
         if contenttype == "redirect":
             self.redirect(response)
