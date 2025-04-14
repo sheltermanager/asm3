@@ -154,7 +154,20 @@ $(document).ready(function() {
             let v = $(this).val();
             if (v) {
                 try {
-                    $.datepicker.parseDate(DATE_FORMAT, v);
+                    let date = $.datepicker.parseDate(DATE_FORMAT, v);
+                    let today = new Date();
+                    if ( $(this).hasClass("asm-date-nopast") && date < today ) {
+                        alert("Date cannot be in the past.");
+                        $(this).focus();
+                        rv = false;
+                        return false;
+                    }
+                    if ( $(this).hasClass("asm-date-nofuture") && date > today ) {
+                        alert("Date cannot be in the future.");
+                        $(this).focus();
+                        rv = false;
+                        return false;
+                    }
                 }
                 catch (e) {
                     alert("Date is not valid.");

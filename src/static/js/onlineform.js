@@ -54,8 +54,8 @@ $(function() {
                         valuefield: "ID", displayfield: "NAME", rows: fieldtypes }},
                     { json_field: "VALIDATIONRULE", post_field: "validationrule", label: _("Validation Rule"), type: "select", 
                         options: '<option value=0>' + _("None") + '</option>' + 
-                            '<option value=1>' + _("No future dates") + '</option>' + 
-                            '<option value=2>' + _("No past dates") + '</option>',
+                            '<option value=1>' + _("No past dates") + '</option>' + 
+                            '<option value=2>' + _("No future dates") + '</option>',
                         xattr: 'style="display: none;"'
                     },
                     { json_field: "LABEL", post_field: "label", label: _("Label"), type: "text", maxlength: 1000, validation: "notblank" }, 
@@ -217,7 +217,7 @@ $(function() {
 
             // Show/hide the lookup values box if type changes
             $("#fieldtype").change(function() {
-                this.check_controls;
+                this.check_controls();
                 if ($("#fieldtype").val() == "10") {
                     $("#validationrulerow").show();
                 } else {
