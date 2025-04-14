@@ -1286,6 +1286,7 @@ const tableform = {
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.animalfilter) { d += "data-filter=\"" + v.animalfilter + "\" "; }
+        if (v.nonshelter) { d += "data-nonshelter=\"" + v.nonshelter + "\" "; }
         if (v.validation) { d += tableform._render_validation_attr(v); }
         if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
         if (v.xattr) { d += v.xattr + " "; }

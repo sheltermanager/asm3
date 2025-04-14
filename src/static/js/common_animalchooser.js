@@ -26,6 +26,7 @@ $.widget("asm.animalchooser", {
         dialogadd: null,
         display: null,
         filter: "all", 
+        nonshelter: false,
         addtitle: _("Add animal")
     },
 
@@ -146,6 +147,10 @@ $.widget("asm.animalchooser", {
         if (this.element.attr("data-filter")) { 
             this.options.filter = this.element.attr("data-filter");
         }
+        // Look for nonshelter flag
+        if (this.element.attr("data-nonshelter") == "true" ) { 
+            this.options.nonshelter = true;
+        }
         // Create the dialog
         var acbuttons = {};
         acbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -198,8 +203,8 @@ $.widget("asm.animalchooser", {
             hide: dlgfx.add_hide,
             buttons: acaddbuttons,
             open: function() {
-                // Untick non-shelter
-                dialogadd.find(".nonshelter").prop("checked", false);
+                // Set non-shelter
+                dialogadd.find(".nonshelter").prop("checked", self.options.nonshelter);
                 dialogadd.find(".nonshelter").change();
                 // Change sex to unknown
                 dialogadd.find(".sexes").val(2);
@@ -221,6 +226,11 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".datebroughtin").val(format.date(new Date()));
                 // Change additional fields to default
                 additional.reset_default(self.options.additionalfields);
+                // If we have a filter, set the appropriate animal flags to match
+                if (self.options.filter) {
+                    dialogadd.find(".animalchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
+                    dialogadd.find(".animalchooser-flags").change();
+                }
             }, 
             close: function() {
                 dialogadd.find("input, textarea").val("");
