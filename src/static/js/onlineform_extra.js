@@ -392,7 +392,7 @@ $(document).ready(function() {
             $(this).datepicker({ 
                 changeMonth: true, 
                 changeYear: true,
-                //firstDay: config.integer("FirstDayOfWeek"),
+                firstDay: $(this).attr("data-firstday"),
                 yearRange: "-70:+10",
                 beforeShowDay: function(a) {
                     let rv = true;
@@ -406,7 +406,7 @@ $(document).ready(function() {
                 changeMonth: true, 
                 changeYear: true,
                 yearRange: "-70:+10",
-                //firstDay: config.integer("FirstDayOfWeek")
+                firstDay: $(this).prop("data-firstday")
             });
         }
 
