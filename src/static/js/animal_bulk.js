@@ -154,9 +154,9 @@ $(function() {
             return [
                 html.content_header(_("Bulk change animals")),
                 tableform.buttons_render([
-                    { id: "button-update", icon: "save", text: _("Update"), class: "ui-button ui-corner-all ui-widget" }, 
-                    { id: "button-delete", icon: "delete", text: _("Delete") }, 
-                    { type: "raw", markup: '<input type="hidden" class="asm-field asm-animalchoosermulti" id="animals" data-post="animals">' }, 
+                    { id: "update", icon: "save", text: _("Update")  }, 
+                    { id: "delete", icon: "delete", text: _("Delete") }, 
+                    { type: "raw", markup: '<label for="animals">' + _("Animals") + '</label><div style="display: inline-block; vertical-align: middle; width: 400px;"><input type="hidden" class="asm-field asm-animalchoosermulti" id="animals" data-post="animals"></div>' }, 
                  ], { centered: false }),
                  '<div id="asm-details-accordion">',
                  animal_bulk.render_details(), 
@@ -176,7 +176,7 @@ $(function() {
                 heightStyle: "content"
             });
 
-            $("#animals").animalchoosermulti();
+            //tableform.buttons_bind(buttons);
 
             validate.indicator([ "animals" ]);
 
