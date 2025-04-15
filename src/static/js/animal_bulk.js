@@ -5,7 +5,6 @@ $(function() {
     "use strict";
 
     const animal_bulk = {
-
         render_details: function() {
             return [
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
@@ -35,7 +34,7 @@ $(function() {
                         options: '<option value="-1">' + _("(no change)") + '</option>' +
                             '<option value="0">' + _("Register Microchip") + '</option>' +
                             '<option value="1">' + _("Do Not Register Microchip") + '</option>' }
-                ], { full_width: true }),
+                ], { full_width: false }),
                 '</div>' // end accordion section
             ].join("\n")
         }, 
@@ -68,7 +67,7 @@ $(function() {
                             "3|" + _("3 - Medium"),
                             "4|" + _("4 - High"),
                             "5|" + _("5 - Very high") ]) }
-                ], { full_width: true }),
+                ], { full_width: false }),
                 '</div>' // end accordion section
             ].join("\n")
         }, 
@@ -82,7 +81,7 @@ $(function() {
                     { post_field: "coordinator", label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator", colclasses: "bottomborder" },
                     { post_field: "currentvet", label: _("Current Vet"), type: "person", personfilter: "vet", colclasses: "bottomborder" },
                     { post_field: "ownersvet", label: _("Owners Vet"), type: "person", personfilter: "vet" }
-                ], { full_width: true }),
+                ], { full_width: false }),
                 '</div>' // end accordion section
             ].join("\n")
         }, 
@@ -100,7 +99,7 @@ $(function() {
                     },
                     { post_field: "diarysubject", label: _("Subject"), type: "text" },
                     { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
-                ], { full_width: true }),
+                ], { full_width: false }),
                 '</div>' // end accordion section
             ].join("\n")
         }, 
@@ -116,7 +115,7 @@ $(function() {
                             ].join("\n")
                     },
                     { post_field: "lognotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
-                ], { full_width: true }),
+                ], { full_width: false }),
                 '</div>' // end accordion section
             ].join("\n")
         }, 
@@ -145,11 +144,10 @@ $(function() {
                             ].join("\n")
                     },
                     { post_field: "moveto", label: _("to"), type: "person" },
-                ], { full_width: true }),
+                ], { full_width: false }),
                 '</div>' // end accordion section
             ].join("\n")
         }, 
-
         render: function() {
             return [
                 html.content_header(_("Bulk change animals")),
@@ -171,15 +169,11 @@ $(function() {
         }, 
 
         bind: function() {
-
             $("#asm-details-accordion").accordion({
                 heightStyle: "content"
             });
-
-            //tableform.buttons_bind(buttons);
-
             validate.indicator([ "animals" ]);
-
+            
             $("#button-update").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");
