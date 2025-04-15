@@ -40,9 +40,9 @@ $(function() {
                         { id: "bonded", post_field: "bondedassingle", label: _("Merge bonded animals into a single record"), type: "select", 
                             options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "excludeunder", post_field: "excludeunder", label: _("Exclude animals who are aged under"), type: "number", halfsize: true, 
-                            xattr: 'data-min="1" data-max="52"', xmarkup: ' ' + _("weeks"), classes: 'preset' }, 
+                            min: 1, max: 52, xmarkup: ' ' + _("weeks"), classes: 'preset' }, 
                         { id: "excludereserves", post_field: "excludereserves", label: _("Exclude animals with more than"), type: "number", halfsize: true, 
-                            xattr: 'data-min="0" data-max="50"', xmarkup: ' ' + _("active reservations"), classes: 'preset' }, 
+                            min: 0, max: 50, xmarkup: ' ' + _("active reservations"), classes: 'preset' }, 
                         { id: "locations", post_field: "includelocations", label: _("Include animals in the following locations"), type: "selectmulti", 
                             options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME"), 
                             callout: _("If you don't select any locations, publishers will include animals in all locations."), classes: 'preset' }

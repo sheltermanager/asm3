@@ -244,16 +244,16 @@ $(function() {
                         { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 474px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
                     ]},
                     { id: "tab-accounts", title: _("Accounts"), fields: [
-                        { id: "disableaccounts", post_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check" },
-                        { id: "createdonations", post_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check" },
-                        { id: "createcost", post_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check" },
-                        { id: "donationtrxoverride", post_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check" },
-                        { id: "donationquantities", post_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check" },
-                        { id: "donationfees", post_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check" },
-                        { id: "vatenabled", post_field: "VATEnabled", label: _("When receiving payments, allow recording of sales tax"), type: "check" },
-                        { id: "vatexclusive", post_field: "VATExclusive", label: _("When calculating sales tax, assume the payment amount is net and add it"), type: "check" },
-                        { id: "donationdateoverride", post_field: "DonationDateOverride", label: _("When receiving multiple payments, allow the due and received dates to be set"), type: "check" },
-                        { id: "accountperiodtotals", post_field: "AccountPeriodTotals", label: _("Only show account totals for the current period, which starts on "), type: "check", xmarkup: '<input type="text" class="asm-field asm-textbox asm-datebox controlshadow controlborder" id="accountingperiod" data-post="AccountingPeriod" autocomplete="off">' },
+                        { id: "disableaccounts", post_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", fullrow: true },
+                        { id: "createdonations", post_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check", fullrow: true },
+                        { id: "createcost", post_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check", fullrow: true },
+                        { id: "donationtrxoverride", post_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check", fullrow: true },
+                        { id: "donationquantities", post_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check", fullrow: true },
+                        { id: "donationfees", post_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check", fullrow: true },
+                        { id: "vatenabled", post_field: "VATEnabled", label: _("When receiving payments, allow recording of sales tax"), type: "check", fullrow: true },
+                        { id: "vatexclusive", post_field: "VATExclusive", label: _("When calculating sales tax, assume the payment amount is net and add it"), type: "check", fullrow: true },
+                        { id: "donationdateoverride", post_field: "DonationDateOverride", label: _("When receiving multiple payments, allow the due and received dates to be set"), type: "check", fullrow: true },
+                        { id: "accountperiodtotals", post_field: "AccountPeriodTotals", label: _("Only show account totals for the current period, which starts on "), type: "check", fullrow: true, xmarkup: '<input type="text" class="asm-field asm-textbox asm-datebox controlshadow controlborder" id="accountingperiod" data-post="AccountingPeriod" autocomplete="off">' },
                         { id: "defaulttrxview", post_field: "DefaultAccountViewPeriod", label: _("Default transaction view"), type: "select", options:[
                             "0|" + _("This Month"),
                             "1|" + _("This Week"),
@@ -400,17 +400,18 @@ $(function() {
                             _("OOO or OO = number unique for this month") + '<br />' +
                             _("Defaults formats for incident codes are YYMM-XXX")
                          },
-                         { id: "manualcodes", post_field: "ManualCodes", label: _("Manually enter codes (do not generate)"), type: "check" },
-                         { id: "shortcodes", post_field: "UseShortShelterCodes", label: _("Show short shelter codes on screens"), type: "check" },
-                         { id: "disableshortcodes", post_field: "DisableShortCodesControl", label: _("Remove short shelter code box from the animal details screen"), type: "check" },
-                         { id: "shelterviewshowcodes", post_field: "ShelterViewShowCodes", label: _("Show codes on the shelter view screen"), type: "check" },
-                         { id: "lockcodes", post_field: "LockCodes", label: _("Once assigned, codes cannot be changed"), type: "check" },
-                         { id: "duplicatechip", post_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check" },
-                         { id: "uniquelicence", post_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check" }
+                         { id: "manualcodes", post_field: "ManualCodes", label: _("Manually enter codes (do not generate)"), type: "check", fullrow: true },
+                         { id: "shortcodes", post_field: "UseShortShelterCodes", label: _("Show short shelter codes on screens"), type: "check", fullrow: true },
+                         { id: "disableshortcodes", post_field: "DisableShortCodesControl", label: _("Remove short shelter code box from the animal details screen"), type: "check", fullrow: true },
+                         { id: "shelterviewshowcodes", post_field: "ShelterViewShowCodes", label: _("Show codes on the shelter view screen"), type: "check", fullrow: true },
+                         { id: "lockcodes", post_field: "LockCodes", label: _("Once assigned, codes cannot be changed"), type: "check", fullrow: true },
+                         { id: "duplicatechip", post_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check", fullrow: true },
+                         { id: "uniquelicence", post_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check", fullrow: true }
                     ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
-                        { type: "raw", markup: html.info(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results.")) },
-                        { id: "alwaysshowlocation", post_field: "EmblemAlwaysLocation", label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + " " + _("Location"), type: "check" },// To do check with Bob, this doesn't seem to do what we expect - Adam
+                        { type: "raw", markup: html.textbar(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results."), {maxwidth: "470px"}) },
+                        { id: "alwaysshowlocation", post_field: "EmblemAlwaysLocation", type: "check", 
+                            label: html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + " " + _("Location") },
                         { id: "showadoptable", post_field: "EmblemAdoptable", label: html.icon("adoptable") + " " + _("Adoptable"), type: "check" },
                         { id: "showboarding", post_field: "EmblemBoarding", label: html.icon("boarding") + " " + _("Boarding"), type: "check" },
                         { id: "showbonded", post_field: "EmblemBonded", label: html.icon("bonded") + " " + _("Bonded"), type: "check" },
@@ -533,9 +534,9 @@ $(function() {
                             options: html.list_to_options(controller.costtypes, "ID", "COSTTYPENAME"), 
                             callout: _("The cost type used when creating a cost record of the total daily boarding cost for adopted animals")
                         },
-                        { id: "costonadoption", post_field: "CreateBoardingCostOnAdoption", label: _("Create boarding cost record when animal is adopted"), type: "check" },
-                        { id: "showcostamount", post_field: "ShowCostAmount", label: _("Show a cost field on medical/test/vaccination screens"), type: "check" },
-                        { id: "showcostpaid", post_field: "ShowCostPaid", label: _("Show a separate paid date field with costs"), type: "check" }
+                        { id: "costonadoption", post_field: "CreateBoardingCostOnAdoption", label: _("Create boarding cost record when animal is adopted"), type: "check", fullrow: true },
+                        { id: "showcostamount", post_field: "ShowCostAmount", label: _("Show a cost field on medical/test/vaccination screens"), type: "check", fullrow: true },
+                        { id: "showcostpaid", post_field: "ShowCostPaid", label: _("Show a separate paid date field with costs"), type: "check", fullrow: true }
                     ]},
                     { id: "tab-daily-observations", title: _("Daily Observations"), info: _("These are the values that can be recorded for animals on the daily observations screen"), fields: [
                         { id: "behavelogtype", post_field: "BehaveLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")
@@ -564,7 +565,7 @@ $(function() {
                         { id: "gdprcontactchangelog", post_field: "GDPRContactChangeLog", label: _("When I set a new GDPR Opt-In contact option, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GDPRContactChangeLogType" id="gdprcontactchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }
                     ]}, 
                     { id: "tab-defaults", title: _("Defaults"), info:_("These are the default values for these fields when creating new records."), fields: [
-                        { id: "DefaultAnimalAge", post_field: "DefaultAnimalAge", label: _("Age"), type: "text", classes: "asm-textbox asm-numberbox", xattr: 'data-min="2" data-max="10"' }, 
+                        { id: "DefaultAnimalAge", post_field: "DefaultAnimalAge", label: _("Age"), type: "number", min: 0, max: 10 }, 
                         { id: "defaultbreed", post_field: "AFDefaultBreed", label: _("Breed"), type: "select", options: html.list_to_options(controller.breeds, "ID", "BREEDNAME") }, 
                         { id: "defaultclinictype", post_field: "AFDefaultClinicType", label: _("Clinic Appointment"), type: "select", options: html.list_to_options(controller.clinictypes, "ID", "CLINICTYPENAME") }, 
                         { id: "defaultcoattype", post_field: "AFDefaultCoatType", label: _("Coat Type"), type: "select", options: html.list_to_options(controller.coattypes, "ID", "COATTYPE") }, 
@@ -596,10 +597,10 @@ $(function() {
                         { id: "DefaultBroughtInBy", post_field: "DefaultBroughtInBy", label: _("Default Brought In By"), type: "person" }, 
                         { id: "defaultshift", post_field: "DefaultShiftStart", label: _("Default Rota Shift"), type: "text", classes: "asm-textbox asm-halftextbox asm-timebox", xmarkup: '<input id="defaultshiftend" data="DefaultShiftEnd" type="text" class="asm-textbox asm-halftextbox asm-timebox" />' }, 
 
-                        { id: "autonotadopt", post_field: "AutoNotForAdoption", label: _("Mark new animals as not for adoption"), type: "check" }, 
-                        { id: "autoimagesnotforpublish", post_field: "AutoNewImagesNotForPublish", label: _("Exclude new animal photos from publishing"), type: "check" }, 
-                        { id: "automedianotes", post_field: "AutoMediaNotes", label: _("Prefill new media notes for animal images with animal comments if left blank"), type: "check" },
-                        { id: "medianotesfile", post_field: "DefaultMediaNotesFromFile", label: _("Prefill new media notes with the filename if left blank"), type: "check" }
+                        { id: "autonotadopt", post_field: "AutoNotForAdoption", label: _("Mark new animals as not for adoption"), type: "check", fullrow: true }, 
+                        { id: "autoimagesnotforpublish", post_field: "AutoNewImagesNotForPublish", label: _("Exclude new animal photos from publishing"), type: "check", fullrow: true }, 
+                        { id: "automedianotes", post_field: "AutoMediaNotes", label: _("Prefill new media notes for animal images with animal comments if left blank"), type: "check", fullrow: true },
+                        { id: "medianotesfile", post_field: "DefaultMediaNotesFromFile", label: _("Prefill new media notes with the filename if left blank"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-diaryandmessages", title: _("Diary and Messages"), fields: [
                         { id: "alldiaryhomepage", post_field: "AllDiaryHomePage", label: _("Show the full diary (instead of just my notes) on the home page"), type: "check" }, 
@@ -678,21 +679,21 @@ $(function() {
                         { id: "findincidentcols", post_field: "IncidentSearchColumns", label: _("Find incident columns"), type: "selectmulti", options: this.two_pair_options(controller.incidentfindcolumns) }, 
                         { id: "findpersoncols", post_field: "OwnerSearchColumns", label: _("Find person columns"), type: "selectmulti", options: this.two_pair_options(controller.personfindcolumns) }, 
                         { id: "findeventcols", post_field: "EventSearchColumns", label: _("Find event columns"), type: "selectmulti", options: this.two_pair_options(controller.eventfindcolumns) }, 
-                        { id: "advancedfindanimal", post_field: "AdvancedFindAnimal", label: _("Default to advanced find animal screen"), type: "check" }, 
-                        { id: "advancedfindanimalos", post_field: "AdvancedFindAnimalOnShelter", label: _("Advanced find animal screen defaults to on shelter"), type: "check" }, 
-                        { id: "advancedfindperson", post_field: "AdvancedFindOwner", label: _("Default to advanced find person screen"), type: "check" }, 
-                        { id: "aficomplete", post_field: "AdvancedFindIncidentIncomplete", label: _("Find an incident screen defaults to incomplete incidents"), type: "check" }, 
-                        { id: "animalsearchnewtab", post_field: "AnimalSearchResultsNewTab", label: _("Open animal find screens in a new tab"), type: "check" }, 
-                        { id: "personsearchnewtab", post_field: "PersonSearchResultsNewTab", label: _("Open person find screens in a new tab"), type: "check" }
+                        { id: "advancedfindanimal", post_field: "AdvancedFindAnimal", label: _("Default to advanced find animal screen"), type: "check", fullrow: true }, 
+                        { id: "advancedfindanimalos", post_field: "AdvancedFindAnimalOnShelter", label: _("Advanced find animal screen defaults to on shelter"), type: "check", fullrow: true }, 
+                        { id: "advancedfindperson", post_field: "AdvancedFindOwner", label: _("Default to advanced find person screen"), type: "check", fullrow: true }, 
+                        { id: "aficomplete", post_field: "AdvancedFindIncidentIncomplete", label: _("Find an incident screen defaults to incomplete incidents"), type: "check", fullrow: true }, 
+                        { id: "animalsearchnewtab", post_field: "AnimalSearchResultsNewTab", label: _("Open animal find screens in a new tab"), type: "check", fullrow: true }, 
+                        { id: "personsearchnewtab", post_field: "PersonSearchResultsNewTab", label: _("Open person find screens in a new tab"), type: "check", fullrow: true }
 
                     ]}, 
                     { id: "tab-homepage", title: _("Home page"), fields: [
-                        { id: "disabletips", post_field: "rc:DisableTips", label: _("Show tips on the home page"), type: "check" }, 
-                        { id: "showalerts", post_field: "ShowAlertsHomePage", label: _("Show alerts on the home page"), type: "check" }, 
-                        { id: "showoverview", post_field: "ShowOverviewHomePage", label: _("Show overview counts on the home page"), type: "check" }, 
-                        { id: "showtimeline", post_field: "ShowTimelineHomePage", label: _("Show timeline on the home page"), type: "check" }, 
-                        { id: "showhdeceased", post_field: "rc:ShowDeceasedHomePage", label: _("Hide deceased animals from the home page"), type: "check" }, 
-                        { id: "showhfinancial", post_field: "rc:ShowFinancialHomePage", label: _("Hide financial stats from the home page"), type: "check" }, 
+                        { id: "disabletips", post_field: "rc:DisableTips", label: _("Show tips on the home page"), type: "check", fullrow: true }, 
+                        { id: "showalerts", post_field: "ShowAlertsHomePage", label: _("Show alerts on the home page"), type: "check", fullrow: true }, 
+                        { id: "showoverview", post_field: "ShowOverviewHomePage", label: _("Show overview counts on the home page"), type: "check", fullrow: true }, 
+                        { id: "showtimeline", post_field: "ShowTimelineHomePage", label: _("Show timeline on the home page"), type: "check", fullrow: true }, 
+                        { id: "showhdeceased", post_field: "rc:ShowDeceasedHomePage", label: _("Hide deceased animals from the home page"), type: "check", fullrow: true }, 
+                        { id: "showhfinancial", post_field: "rc:ShowFinancialHomePage", label: _("Hide financial stats from the home page"), type: "check", fullrow: true }, 
                         { id: "alertmicrochip", post_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
@@ -715,7 +716,7 @@ $(function() {
                             '<option value="adoptable">' + _("Up for adoption") + '</option>' + 
                             '<option value="longestonshelter">' + _("Longest On Shelter") + '</option>'
                         }, 
-                        { id: "linkmax", post_field: "MainScreenAnimalLinkMax", label: _("Number of animal links to show"), type: "number", xattr: 'data-min="0" data-max="200"' }, 
+                        { id: "linkmax", post_field: "MainScreenAnimalLinkMax", label: _("Number of animal links to show"), type: "number", min: 0, max: 200 }, 
                     ]}, 
                     { id: "tab-insurance", title: _("Insurance"), info: _("These numbers are for shelters who have agreements with insurance companies and are given blocks of policy numbers to allocate."), fields: [
                         { id: "autoinsurance", post_field: "UseAutoInsurance", label: _("Use Automatic Insurance Numbers"), type: "check" }, 
@@ -735,8 +736,8 @@ $(function() {
                         { id: "logemailbydefault", post_field: "LogEmailByDefault", label: _("When I send an email, record it in the log with this type"), type: "check", xmarkup: '<select data="EmailLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                     ]}, 
                     { id: "tab-lostandfound", title: _("Lost and Found"), fields: [
-                        { id: "disablelostfound", post_field: "rc:DisableLostAndFound", label: _("Enable lost and found functionality"), type: "check" }, 
-                        { id: "matchshelter", post_field: "MatchIncludeShelter", label: _("When matching lost animals, include shelter animals"), type: "check" }, 
+                        { id: "disablelostfound", post_field: "rc:DisableLostAndFound", label: _("Enable lost and found functionality"), type: "check", fullrow: true }, 
+                        { id: "matchshelter", post_field: "MatchIncludeShelter", label: _("When matching lost animals, include shelter animals"), type: "check", fullrow: true }, 
                         { id: "matchpointfloor", post_field: "MatchPointFloor", label: _("Points required to appear on match report"), type: "number", classes: "strong" }, 
                         { id: "matchmicrochip", post_field: "MatchMicrochip", label: _("Points for matching microchip"), type: "number" }, 
                         { id: "matchspecies", post_field: "MatchSpecies", label: _("Points for matching species"), type: "number" }, 
@@ -750,12 +751,12 @@ $(function() {
                         { id: "match2weeks", post_field: "MatchWithin2Weeks", label: _("Points for being found within 2 weeks of being lost"), type: "number" }, 
                     ]}, 
                     { id: "tab-medical", title: _("Medical"), fields: [
-                        { id: "includeoffsheltermedical", post_field: "IncludeOffShelterMedical", label: _("Include off-shelter animals in medical calendar and books"), type: "check" }, 
-                        { id: "precreatetreat", post_field: "MedicalPrecreateTreatments", label: _("Pre-create all treatments when creating fixed-length medical regimens"), type: "check" }, 
-                        { id: "reloadmedical", post_field: "ReloadMedical", label: _("Reload the medical book/tab automatically after adding new medical items"), type: "check" }, 
-                        { id: "autodefaultvaccbatch", post_field: "AutoDefaultVaccBatch", label: _("When entering vaccinations, default the last batch number and manufacturer for that type"), type: "check" }, 
-                        { id: "fostereremails", post_field: "FostererEmails", label: _("Send a weekly email to fosterers with medical information about their animals"), type: "check" }, 
-                        { id: "fostereremailskipnomedical", post_field: "FostererEmailSkipNoMedical", label: _("Do not send an email if there are no medical items due for animals in the care of this fosterer"), type: "check" }, 
+                        { id: "includeoffsheltermedical", post_field: "IncludeOffShelterMedical", label: _("Include off-shelter animals in medical calendar and books"), type: "check", fullrow: true }, 
+                        { id: "precreatetreat", post_field: "MedicalPrecreateTreatments", label: _("Pre-create all treatments when creating fixed-length medical regimens"), type: "check", fullrow: true }, 
+                        { id: "reloadmedical", post_field: "ReloadMedical", label: _("Reload the medical book/tab automatically after adding new medical items"), type: "check", fullrow: true }, 
+                        { id: "autodefaultvaccbatch", post_field: "AutoDefaultVaccBatch", label: _("When entering vaccinations, default the last batch number and manufacturer for that type"), type: "check", fullrow: true }, 
+                        { id: "fostereremails", post_field: "FostererEmails", label: _("Send a weekly email to fosterers with medical information about their animals"), type: "check", fullrow: true }, 
+                        { id: "fostereremailskipnomedical", post_field: "FostererEmailSkipNoMedical", label: _("Do not send an email if there are no medical items due for animals in the care of this fosterer"), type: "check", fullrow: true }, 
                         { id: "femailreplyto", post_field: "FostererEmailsReplyTo", label: _("Replies to the fosterer email should go to"), type: "text", callout: _("If blank, the address from the Email tab will be used") }, 
                         { id: "femailsendday", post_field: "FostererEmailSendDay", label: _("Send the email on"), type: "select", 
                             options: '<option value="0">' + _("Monday") + '</option>' + 
@@ -774,48 +775,48 @@ $(function() {
                         { id: "autoremoveholddays", post_field: "AutoRemoveHoldDays", label: _("Remove holds after"), type: "number", callout: _("Cancel holds on animals this many days after the brought in date, or 0 to never cancel"), xmarkup: _(" days.") }, 
                         { id: "defaulttriallength", post_field: "DefaultTrialLength", label: _("Trial adoptions last for"), type: "number", callout: _("When creating trial adoptions, default the end date to this many days from the trial start"), xmarkup: _(" days.") }, 
                         { id: "longtermdays", post_field: "LongTermDays", label: _("Animals are long term after"), type: "number", callout: _("Show an alert and emblem for animals who have been on shelter for this period"), xmarkup: _(" days.") }, 
-                        { id: "futureonshelter", post_field: "FutureOnShelter", label: _("Treat animals with a future intake date as part of the shelter inventory"), type: "check" }, 
-                        { id: "fosteronshelter", post_field: "FosterOnShelter", label: _("Treat foster animals as part of the shelter inventory"), type: "check" }, 
-                        { id: "retaileronshelter", post_field: "RetailerOnShelter", label: _("Treat animals at retailers as part of the shelter inventory"), type: "check" }, 
-                        { id: "trialadoptions", post_field: "TrialAdoptions", label: _("Our shelter does trial adoptions, allow us to mark these on movement screens"), type: "check" }, 
-                        { id: "trialonshelter", post_field: "TrialOnShelter", label: _("Treat trial adoptions as part of the shelter inventory"), type: "check" }, 
-                        { id: "softreleases", post_field: "SoftReleases", label: _("Our shelter does soft releases, allow us to mark these on movement screens"), type: "check" }, 
-                        { id: "softreleaseonshelter", post_field: "SoftReleaseOnShelter", label: _("Treat soft releases as part of the shelter inventory"), type: "check" }, 
-                        { id: "persononlyreserve", post_field: "MovementPersonOnlyReserves", label: _("Allow reservations to be created that are not linked to an animal"), type: "check" }, 
-                        { id: "cancelresadopt", post_field: "CancelReservesOnAdoption", label: _("Automatically cancel any outstanding reservations on an animal when it is adopted"), type: "check" }, 
-                        { id: "returnfosteradopt", post_field: "ReturnFostersOnAdoption", label: _("Automatically return any outstanding foster movements on an animal when it is adopted"), type: "check" }, 
-                        { id: "returnfostertransfer", post_field: "ReturnFostersOnTransfer", label: _("Automatically return any outstanding foster movements on an animal when it is transferred"), type: "check" }, 
-                        { id: "returnretaileradopt", post_field: "ReturnRetailerOnAdoption", label: _("Automatically return any outstanding retailer movements on an animal when it is adopted"), type: "check" }, 
-                        { id: "donationsdue", post_field: "MovementDonationsDefaultDue", label: _("When creating payments from the Move menu screens, mark them due instead of received"), type: "check" }, 
-                        { id: "donationmovereserve", post_field: "DonationOnMoveReserve", label: _("Allow creation of payments on the Move{0}Reserve screen").replace("{0}", html.icon("right")), type: "check" }, 
-                        { id: "moveadoptdonationsenabled", post_field: "MoveAdoptDonationsEnabled", label: _("Allow editing of payments after creating an adoption on the Move{0}Adopt an animal screen").replace("{0}", html.icon("right")), type: "check" }, 
-                        { id: "moveadoptgeneratepaperwork", post_field: "MoveAdoptGeneratePaperwork", label: _("Allow requesting signed paperwork when creating an adoption on the Move{0}Adopt an animal screen").replace("{0}", html.icon("right")), type: "check" }, 
-                        { id: "movementoverride", post_field: "MovementNumberOverride", label: _("Allow overriding of the movement number on the Move menu screens"), type: "check" }, 
+                        { id: "futureonshelter", post_field: "FutureOnShelter", label: _("Treat animals with a future intake date as part of the shelter inventory"), type: "check", fullrow: true }, 
+                        { id: "fosteronshelter", post_field: "FosterOnShelter", label: _("Treat foster animals as part of the shelter inventory"), type: "check", fullrow: true }, 
+                        { id: "retaileronshelter", post_field: "RetailerOnShelter", label: _("Treat animals at retailers as part of the shelter inventory"), type: "check", fullrow: true }, 
+                        { id: "trialadoptions", post_field: "TrialAdoptions", label: _("Our shelter does trial adoptions, allow us to mark these on movement screens"), type: "check", fullrow: true }, 
+                        { id: "trialonshelter", post_field: "TrialOnShelter", label: _("Treat trial adoptions as part of the shelter inventory"), type: "check", fullrow: true }, 
+                        { id: "softreleases", post_field: "SoftReleases", label: _("Our shelter does soft releases, allow us to mark these on movement screens"), type: "check", fullrow: true }, 
+                        { id: "softreleaseonshelter", post_field: "SoftReleaseOnShelter", label: _("Treat soft releases as part of the shelter inventory"), type: "check", fullrow: true }, 
+                        { id: "persononlyreserve", post_field: "MovementPersonOnlyReserves", label: _("Allow reservations to be created that are not linked to an animal"), type: "check", fullrow: true }, 
+                        { id: "cancelresadopt", post_field: "CancelReservesOnAdoption", label: _("Automatically cancel any outstanding reservations on an animal when it is adopted"), type: "check", fullrow: true }, 
+                        { id: "returnfosteradopt", post_field: "ReturnFostersOnAdoption", label: _("Automatically return any outstanding foster movements on an animal when it is adopted"), type: "check", fullrow: true }, 
+                        { id: "returnfostertransfer", post_field: "ReturnFostersOnTransfer", label: _("Automatically return any outstanding foster movements on an animal when it is transferred"), type: "check", fullrow: true }, 
+                        { id: "returnretaileradopt", post_field: "ReturnRetailerOnAdoption", label: _("Automatically return any outstanding retailer movements on an animal when it is adopted"), type: "check", fullrow: true }, 
+                        { id: "donationsdue", post_field: "MovementDonationsDefaultDue", label: _("When creating payments from the Move menu screens, mark them due instead of received"), type: "check", fullrow: true }, 
+                        { id: "donationmovereserve", post_field: "DonationOnMoveReserve", label: _("Allow creation of payments on the Move{0}Reserve screen").replace("{0}", html.icon("right")), type: "check", fullrow: true }, 
+                        { id: "moveadoptdonationsenabled", post_field: "MoveAdoptDonationsEnabled", label: _("Allow editing of payments after creating an adoption on the Move{0}Adopt an animal screen").replace("{0}", html.icon("right")), type: "check", fullrow: true }, 
+                        { id: "moveadoptgeneratepaperwork", post_field: "MoveAdoptGeneratePaperwork", label: _("Allow requesting signed paperwork when creating an adoption on the Move{0}Adopt an animal screen").replace("{0}", html.icon("right")), type: "check", fullrow: true }, 
+                        { id: "movementoverride", post_field: "MovementNumberOverride", label: _("Allow overriding of the movement number on the Move menu screens"), type: "check", fullrow: true }, 
                         { type: "raw", markup: '<tr><td colspan="2"><p class="asm-header">' + _("Warnings") + "</p></td></tr>"}, 
-                        { id: "warnunaltered", post_field: "WarnUnaltered", label: _("Warn when adopting an unaltered animal"), type: "check" }, 
-                        { id: "warnnomicrochip", post_field: "WarnNoMicrochip", label: _("Warn when adopting an animal who has not been microchipped"), type: "check" }, 
-                        { id: "warnosmedical", post_field: "WarnOSMedical", label: _("Warn when adopting an animal who has outstanding medical treatments"), type: "check" }, 
-                        { id: "warnnohomecheck", post_field: "WarnNoHomeCheck", label: _("Warn when adopting to a person who has not been homechecked"), type: "check" }, 
-                        { id: "warnbaddress", post_field: "WarnBannedAddress", label: _("Warn when adopting to a person who lives at the same address as a banned person"), type: "check" }, 
-                        { id: "warnbanned", post_field: "WarnBannedOwner", label: _("Warn when adopting to a person who has been banned from adopting animals"), type: "check" }, 
-                        { id: "warnoopostcode", post_field: "WarnOOPostcode", label: _("Warn when adopting to a person who lives in the same area as the original owner"), type: "check" }, 
-                        { id: "warnbroughtin", post_field: "WarnBroughtIn", label: _("Warn when adopting to a person who has previously brought an animal to the shelter"), type: "check" }, 
-                        { id: "warnnoreserve", post_field: "WarnNoReserve", label: _("Warn when adopting an animal with reservations and this person is not one of them"), type: "check" }, 
-                        { id: "warnmultiplereseves", post_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check" }
+                        { id: "warnunaltered", post_field: "WarnUnaltered", label: _("Warn when adopting an unaltered animal"), type: "check", fullrow: true }, 
+                        { id: "warnnomicrochip", post_field: "WarnNoMicrochip", label: _("Warn when adopting an animal who has not been microchipped"), type: "check", fullrow: true }, 
+                        { id: "warnosmedical", post_field: "WarnOSMedical", label: _("Warn when adopting an animal who has outstanding medical treatments"), type: "check", fullrow: true }, 
+                        { id: "warnnohomecheck", post_field: "WarnNoHomeCheck", label: _("Warn when adopting to a person who has not been homechecked"), type: "check", fullrow: true }, 
+                        { id: "warnbaddress", post_field: "WarnBannedAddress", label: _("Warn when adopting to a person who lives at the same address as a banned person"), type: "check", fullrow: true }, 
+                        { id: "warnbanned", post_field: "WarnBannedOwner", label: _("Warn when adopting to a person who has been banned from adopting animals"), type: "check", fullrow: true }, 
+                        { id: "warnoopostcode", post_field: "WarnOOPostcode", label: _("Warn when adopting to a person who lives in the same area as the original owner"), type: "check", fullrow: true }, 
+                        { id: "warnbroughtin", post_field: "WarnBroughtIn", label: _("Warn when adopting to a person who has previously brought an animal to the shelter"), type: "check", fullrow: true }, 
+                        { id: "warnnoreserve", post_field: "WarnNoReserve", label: _("Warn when adopting an animal with reservations and this person is not one of them"), type: "check", fullrow: true }, 
+                        { id: "warnmultiplereseves", post_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-onlineforms", title: _("Online Forms"), fields: [
                         { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", xmarkup: _(" days.") }, 
-                        { id: "deleteonprocess", post_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check" }, 
-                        { id: "removeprocessedforms", post_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check" }, 
-                        { id: "hashprocessedforms", post_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check" }, 
-                        { id: "spamhoneytrap", post_field: "OnlineFormSpamHoneyTrap", label: _("Spambot protection: Invisible textbox"), type: "check" }, 
-                        { id: "spamuacheck", post_field: "OnlineFormSpamUACheck", label: _("Spambot protection: UserAgent check"), type: "check" }, 
-                        { id: "spamfirstname", post_field: "OnlineFormSpamFirstnameMixCase", label: _("Spambot protection: Person name mixed case"), type: "check" }, 
-                        { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check" }
+                        { id: "deleteonprocess", post_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check", fullrow: true }, 
+                        { id: "removeprocessedforms", post_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check", fullrow: true }, 
+                        { id: "hashprocessedforms", post_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check", fullrow: true }, 
+                        { id: "spamhoneytrap", post_field: "OnlineFormSpamHoneyTrap", label: _("Spambot protection: Invisible textbox"), type: "check", fullrow: true }, 
+                        { id: "spamuacheck", post_field: "OnlineFormSpamUACheck", label: _("Spambot protection: UserAgent check"), type: "check", fullrow: true }, 
+                        { id: "spamfirstname", post_field: "OnlineFormSpamFirstnameMixCase", label: _("Spambot protection: Person name mixed case"), type: "check", fullrow: true }, 
+                        { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
                         { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
-                        { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), type: "text" }, 
+                        { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), type: "text", colclasses: "bottomborder" }, 
                         { type: "raw", markup: '<tr><td colspan="2" class="paypal-options"><p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p></td></tr>', rowclasses: "paypal-options" }, 
                         { id: "paypalemail", post_field: "PayPalEmail", label: _("PayPal Business Email"), type: "text", rowclasses: "paypal-options" }, 
                         { type: "raw", markup: '<tr><td colspan="2" class="paypal-options"><p class="centered">' + _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}").replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>") + '</p></td></tr>' }, 
@@ -836,8 +837,8 @@ $(function() {
                         { id: "cardcomusetoken", post_field: "CardcomUseToken", label: _("Allow use of tokens"), type: "check", rowclasses: "cardcom-options israel" }
                     ]}, 
                     { id: "tab-quicklinks", title: _("Quick Links"), info: _("Quicklinks are shown on the home page and allow quick access to areas of the system."), fields: [
-                        { id: "disablequicklinkshome", post_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check" }, 
-                        { id: "disablequicklinksall", post_field: "QuicklinksAllScreens", label: _("Show quick links on all pages"), type: "check" }, 
+                        { id: "disablequicklinkshome", post_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check", fullrow: true }, 
+                        { id: "disablequicklinksall", post_field: "QuicklinksAllScreens", label: _("Show quick links on all pages"), type: "check", fullrow: true }, 
                         { id: "quicklinksid", post_field: "QuicklinksID", label: _("Show quick links on all pages"), type: "selectmulti", options: this.quicklink_options() }, 
 
                     ]}, 
@@ -921,31 +922,31 @@ $(function() {
                     ]}, 
                     { id: "tab-shelterview", title: _("Shelter view"), fields: [
                         { id: "shelterviewdefault", post_field: "ShelterViewDefault", label: _("Default view"), type: "select", options: html.shelter_view_options() }, 
-                        { id: "shelterviewdragdrop", post_field: "ShelterViewDragDrop", label: _("Allow drag and drop to move animals between locations"), type: "check" }, 
-                        { id: "shelterviewreserves", post_field: "ShelterViewReserves", label: _("Allow units to be reserved and sponsored"), type: "check" }, 
-                        { id: "shelterviewempty", post_field: "ShelterViewShowEmpty", label: _("Show empty locations"), type: "check" }
+                        { id: "shelterviewdragdrop", post_field: "ShelterViewDragDrop", label: _("Allow drag and drop to move animals between locations"), type: "check", fullrow: true }, 
+                        { id: "shelterviewreserves", post_field: "ShelterViewReserves", label: _("Allow units to be reserved and sponsored"), type: "check", fullrow: true }, 
+                        { id: "shelterviewempty", post_field: "ShelterViewShowEmpty", label: _("Show empty locations"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-stock", title: _("Stock"), fields: [
                         { id: "stockmovementusagetypeid", post_field: "StockMovementUsageTypeID", label: _("Stock movement usage type"), type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"), callout: _("The pseudo usagetype used to represent internal movements") }, 
                         { id: "defaultproducttypeid", post_field: "StockDefaultProductTypeID", label: _("Default product type"), type: "select", options: html.list_to_options(controller.producttypes, "ID", "PRODUCTTYPENAME") }
                     ]}, 
                     { id: "tab-waitinglist", title: _("Waiting List"), fields: [
-                        { id: "disablewl", post_field: "rc:DisableWaitingList", label: _("Enable the waiting list functionality"), type: "check" }, 
-                        { id: "wlrank", post_field: "WaitingListRankBySpecies", label: _("Separate waiting list rank by species"), type: "check" }, 
-                        { id: "wlupdate", post_field: "WaitingListUrgencyUpdatePeriod", label: _("Waiting list urgency update period in days"), type: "number", xattr: 'data-min="0" data-max="365"', callout: _("Set to 0 to never update urgencies.") }, 
+                        { id: "disablewl", post_field: "rc:DisableWaitingList", label: _("Enable the waiting list functionality"), type: "check", fullrow: true }, 
+                        { id: "wlrank", post_field: "WaitingListRankBySpecies", label: _("Separate waiting list rank by species"), type: "check", fullrow: true }, 
+                        { id: "wlupdate", post_field: "WaitingListUrgencyUpdatePeriod", label: _("Waiting list urgency update period in days"), type: "number", min: 0, max: 365, callout: _("Set to 0 to never update urgencies.") }, 
                         { id: "wldu", post_field: "WaitingListDefaultUrgency", label: _("Default urgency"), type: "select", options: html.list_to_options(controller.urgencies, "ID", "URGENCY") }, 
-                        { id: "wlremoval", post_field: "WaitingListDefaultRemovalWeeks", label: _("Default removal after weeks without contact"), type: "number", xattr: 'data-min="0" data-max="52"', callout: _("Set to 0 to never auto remove.") }, 
+                        { id: "wlremoval", post_field: "WaitingListDefaultRemovalWeeks", label: _("Default removal after weeks without contact"), type: "number", min: 0, max: 52, callout: _("Set to 0 to never auto remove.") }, 
                         { id: "wlcolumns", post_field: "WaitingListViewColumns", label: _("Columns displayed"), type: "selectmulti", options: this.two_pair_options(controller.waitinglistcolumns) }
                     ]}, 
                     { id: "tab-watermark", title: _("Watermark"), fields: [
-                        { id: "watermarkxoffset", post_field: "WatermarkXOffset", label: _("Watermark logo X offset"), type: "number", xattr: 'data-min="0" data-max="9999"', callout: _("Relative to bottom right corner of the image") }, 
-                        { id: "watermarkyoffset", post_field: "WatermarkYOffset", label: _("Watermark logo Y offset"), type: "number", xattr: 'data-min="0" data-max="9999"', callout: _("Relative to bottom right corner of the image") }, 
+                        { id: "watermarkxoffset", post_field: "WatermarkXOffset", label: _("Watermark logo X offset"), type: "number", min: 0, max: 9999, callout: _("Relative to bottom right corner of the image") }, 
+                        { id: "watermarkyoffset", post_field: "WatermarkYOffset", label: _("Watermark logo Y offset"), type: "number", min: 0, max: 9999, callout: _("Relative to bottom right corner of the image") }, 
                         { id: "watermarkfontfillcolor", post_field: "WatermarkFontFillColor", label: _("Watermark font fill color"), type: "select", options: html.list_to_options_array(this.watermark_colors), xmarkup: '<span id="fontfillcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontFillColor')) + '" />' }, 
                         { id: "watermarkfontshadowcolor", post_field: "WatermarkFontShadowColor", label: _("Watermark font outline color"), type: "select", options: html.list_to_options_array(this.watermark_colors), xmarkup: '<span id="fontshadowcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontShadowColor')) + '" />' }, 
-                        { id: "watermarkfontstroke", post_field: "WatermarkFontStroke", label: _("Watermark font outline width"), type: "number", xattr: 'data-min="0" data-max="20"' }, 
+                        { id: "watermarkfontstroke", post_field: "WatermarkFontStroke", label: _("Watermark font outline width"), type: "number", min: 0, max: 20 }, 
                         { id: "watermarkfontfile", post_field: "WatermarkFontFile", label: _("Watermark font"), type: "select", options: html.list_to_options_array(asm.fontfiles), xmarkup: '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />' }, 
-                        { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", xattr: 'data-min="0" data-max="100"', callout: _("Offset from left edge of the image") }, 
-                        { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", xattr: 'data-min="0" data-max="999"' }
+                        { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
+                        { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
                     ]}
                 ], {full_width: false}),
                 html.content_footer()
