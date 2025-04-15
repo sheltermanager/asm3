@@ -56,15 +56,6 @@ $(function() {
             return this.two_pair_options(ql);
         },
 
-        /** Renders a checkbox option */
-        cb: function(coptions) {
-            let o = { data: "", id: "", label: "", br: true };
-            if (coptions !== undefined) { o = common.copy_object(o, coptions); }
-            let s = '<input data="' + o.data + '" id="' + o.id + '" type="checkbox" class="asm-checkbox" /> ' +
-                '<label for="' + o.data + '">' + o.label + '</label>' + (o.br ? '<br>': "");
-            return s;
-        },
-
         watermark_colors: [
             "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue",
             "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
@@ -262,10 +253,9 @@ $(function() {
                             "4|" + _("Last Week"),
                         ] },
                         { id: "csourceaccount", post_field: "CostSourceAccount", label: _("Default source account for costs"), type: "select", options: html.list_to_options(controller.accounts, "ID", "CODE") },
-                        { id: "destinationaccount", post_field: "DonationTargetAccount", label: _("efault destination account for payments"), type: "select", options: html.list_to_options(controller.accounts, "ID", "CODE") },
+                        { id: "destinationaccount", post_field: "DonationTargetAccount", label: _("Default destination account for payments"), type: "select", options: html.list_to_options(controller.accounts, "ID", "CODE") },
                         { id: "vataccount", post_field: "DonationVATAccount", label: _("Income account for sales tax"), type: "select", options: html.list_to_options(controller.accountsinc, "ID", "CODE") },
                         { id: "feeaccount", post_field: "DonationFeeAccount", label: _("Expense account for transaction fees"), type: "select", options: html.list_to_options(controller.accountsexp, "ID", "CODE") },
-
                         { id: "mapdt1", xattr: 'data-idx="1"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
                             xmarkup: ' ' + _("are sent to") + ' <select id="mapac1" data-idx="1" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
@@ -293,8 +283,6 @@ $(function() {
                         { id: "mapdt9", xattr: 'data-idx="9"', classes: "donmap", label: _("Payments of type"), type: "select", options: '<option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
                             xmarkup: ' ' + _("are sent to") + ' <select id="mapac9" data-idx="9" class="asm-selectbox"><option value="-1">' + _("[None]") + '</option>' + html.list_to_options(controller.accounts, "ID", "CODE") + '</select>'
                         }, 
-
-                        
                     ]},
                     { id: "tab-adding", title: _("Add Animal"), fields: [
                         { id: "aashowbreed", post_field: "AddAnimalsShowBreed", label: _("Show the breed fields"), type: "check" },
@@ -684,7 +672,6 @@ $(function() {
                         { id: "aficomplete", post_field: "AdvancedFindIncidentIncomplete", label: _("Find an incident screen defaults to incomplete incidents"), type: "check", fullrow: true }, 
                         { id: "animalsearchnewtab", post_field: "AnimalSearchResultsNewTab", label: _("Open animal find screens in a new tab"), type: "check", fullrow: true }, 
                         { id: "personsearchnewtab", post_field: "PersonSearchResultsNewTab", label: _("Open person find screens in a new tab"), type: "check", fullrow: true }
-
                     ]}, 
                     { id: "tab-homepage", title: _("Home page"), fields: [
                         { id: "disabletips", post_field: "rc:DisableTips", label: _("Show tips on the home page"), type: "check", fullrow: true }, 
@@ -855,7 +842,6 @@ $(function() {
                         { id: "clinicreminder", post_field: "EmailClinicReminder", label: _("Send a reminder email to people with clinic appointments in X days"), type: "check", xmarkup: '</td><td><input data="EmailClinicReminderDays" id="clinicreminderdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailClinicReminderTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templatesclinic) + '</select>' }, 
                         { id: "duepayment", post_field: "EmailDuePayment", label: _("Send a reminder email to people with payments due in X days"), type: "check", xmarkup: '</td><td><input data="EmailDuePaymentDays" id="duepaymentdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailDuePaymentTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templateslicence) + '</select>' }, 
                         { id: "licencereminder", post_field: "EmailLicenceReminder", label: _("Send a reminder email to people with licenses expiring in X days"), type: "check", xmarkup: '</td><td><input data="EmailLicenceReminderDays" id="licencereminderdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailLicenceReminderTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templateslicence) + '</select>' }, 
-
                     ]}, 
                     { id: "tab-unwanted", title: _("Remove"), fields: [
                         { type: "raw", markup: '<p class="asm-header">' + _("System") + '</p>' }, 
