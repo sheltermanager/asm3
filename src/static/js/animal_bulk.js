@@ -154,11 +154,9 @@ $(function() {
             return [
                 html.content_header(_("Bulk change animals")),
                 tableform.buttons_render([
-                    { id: "save", icon: "save", text: _("Update") }, 
-                    { id: "delete", icon: "delete", text: _("Delete") }, 
-                    tableform.fields_render([
-                        { post_field: "animals", label: _("Animals"), type: "animalmulti" },
-                    ]),
+                    { id: "button-update", icon: "save", text: _("Update"), class: "ui-button ui-corner-all ui-widget" }, 
+                    { id: "button-delete", icon: "delete", text: _("Delete") }, 
+                    { type: "raw", markup: '<input type="hidden" class="asm-field asm-animalchoosermulti" id="animals" data-post="animals">' }, 
                  ], { centered: false }),
                  '<div id="asm-details-accordion">',
                  animal_bulk.render_details(), 
@@ -167,29 +165,18 @@ $(function() {
                  animal_bulk.render_diary(), 
                  animal_bulk.render_log(), 
                  animal_bulk.render_movement(), 
-                 '</div>'
+                 '</div>',
+                 html.content_footer()
             ].join("\n")
         }, 
-
-                /*tableform.fields_render([
-
-
-                    
-
-                ], { full_width: false }),
-                tableform.buttons_render([
-                    { id: "update", text: _("Update"), icon: "save" },
-                    { id: "delete", text: _("Delete"), icon: "delete" }
-                ], { centered: true}),
-                html.content_footer()
-            ].join("\n");
-        },*/
 
         bind: function() {
 
             $("#asm-details-accordion").accordion({
                 heightStyle: "content"
             });
+
+            $("#animals").animalchoosermulti();
 
             validate.indicator([ "animals" ]);
 
