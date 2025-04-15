@@ -807,7 +807,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     # Check our spambot checkbox/honey trap
     if asm3.configuration.onlineform_spam_honeytrap(dbo):
         if post[SPAMBOT_TXT] != "": 
-            asm3.al.error(f"identified spam (honeytrap): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            asm3.al.error(f"identified spam (honeytrap: {SPAMBOT_TXT}={post[SPAMBOT_TXT]}): {post.data}", "insert_onlineformincoming_from_form", dbo)
             spam = True
 
     # Check that the useragent looks like an actual browser
