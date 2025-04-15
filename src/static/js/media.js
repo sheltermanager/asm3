@@ -254,7 +254,7 @@ $(function() {
                         + ' href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
                         + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
-                    '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
+                    '<li id="button-signlink" class="sharebutton asm-menu-item"><a '
                         + ' href="#">' + html.icon("link") + ' ' + _("Signing link") + '</a></li>',
                 '</ul>',
                 '</div>',
@@ -303,7 +303,11 @@ $(function() {
                 '<input type="hidden" name="linkid" value="' + controller.linkid + '" />',
                 '<input type="hidden" name="linktypeid" value="' + controller.linktypeid + '" />',
                 '<input type="hidden" name="mode" value="createdoc" />',
-                '</form>'
+                '</form>', 
+
+                '<div id="dialog-signlink" style="display: none" title="' + _("Signature link") + '">',
+                '<div id="signature" style="width: 500px; height: 200px;"></div>',
+                '</div>',
             ];
 
             if (controller.name == "animal_media") {
@@ -786,6 +790,16 @@ $(function() {
                 buttons: signbuttons
             });
 
+            $("#dialog-signlink").dialog({
+                autoOpen: false,
+                width: 550,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.edit_show,
+                hide: dlgfx.edit_hide,
+                //buttons: signbuttons
+            });
+
            $("#button-viewmode").button().click(function() {
                 if (media.icon_mode_active) {
                     media.mode_table();
@@ -993,6 +1007,12 @@ $(function() {
             $("#button-signscreen").click(function() {
                 $("#button-sign").asmmenu("hide_all");
                 $("#dialog-sign").dialog("open");
+                return false;
+            });
+
+            $("#button-signlink").click(function() {
+                $("#button-sign").asmmenu("hide_all");
+                $("#dialog-signlink").dialog("open");
                 return false;
             });
 
