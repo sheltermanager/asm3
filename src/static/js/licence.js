@@ -16,7 +16,7 @@ $(function() {
                 width: 550,
                 fields: [
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
-                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal (optional)"), type: "animal" },
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal (optional)"), type: "animal", nonshelter: true },
                     { json_field: "LICENCETYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "LICENCETYPENAME", valuefield: "ID", rows: controller.licencetypes }},
                     { json_field: "LICENCENUMBER", post_field: "number", label: _("License Number"), type: "text", validation: "notblank" },
                     { json_field: "LICENCEFEE", post_field: "fee", label: _("Fee"), type: "currency" },

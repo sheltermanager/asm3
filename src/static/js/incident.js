@@ -135,7 +135,7 @@ $(function() {
                 '<div id="emailform"></div>',
                 '<div id="dialog-linkanimal" style="display: none" title="' + html.title(_("Link an animal")) + '">',
                 tableform.fields_render([
-                    { post_field: "linkanimal", type: "animal", label: _("Animal") }
+                    { post_field: "linkanimal", type: "animal", nonshelter: true, label: _("Animal") }
                 ]),
                 '</div>',
                 edit_header.incident_edit_header(controller.incident, "details", controller.tabcounts),

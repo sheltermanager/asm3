@@ -1087,6 +1087,10 @@ const common = {
             }
         }
         // Create any form controls based on classes used
+        // Choosers are initialised first as they inject more widgets into the DOM
+        $(".asm-animalchooser").animalchooser();
+        $(".asm-animalchoosermulti").animalchoosermulti();
+        $(".asm-personchooser").personchooser();
         $(".asm-callout").callout();
         $(".asm-datebox").date();
         $(".asm-alphanumberbox").alphanumber();
@@ -1099,9 +1103,6 @@ const common = {
         $(".asm-currencybox").currency();
         $(".asm-phone").phone();
         $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();
-        $(".asm-animalchooser").animalchooser();
-        $(".asm-animalchoosermulti").animalchoosermulti();
-        $(".asm-personchooser").personchooser();
         $(".asm-htmleditor").htmleditor();
         $(".asm-sqleditor").sqleditor();
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();

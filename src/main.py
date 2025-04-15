@@ -2131,6 +2131,7 @@ class animal_embed(ASMEndpoint):
             "sexes": asm3.lookups.get_sexes(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
+            "locations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds(dbo),

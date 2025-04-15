@@ -76,11 +76,11 @@ $.widget("asm.animalchooser", {
             '<tr class="holdrow">',
             '<td></td>', 
             '<td><input data="hold" type="checkbox" class="asm-checkbox enablecheck hold" /><label>' + _("Hold until") + '</label> ', 
-            '<input id="holduntil" data="holduntil" type="text" class="asm-textbox asm-datebox holduntil" /></td>',
+            '<input id="holduntil" data="holduntil" type="text" class="asm-textbox asm-halftextbox asm-datebox holduntil" /></td>',
             '</tr>',
             '<tr class="ownerrow">', 
-            '<td>' + _("Owner") + '</td>', 
-            '<td><input type="hidden"  class="asm-field asm-personchooser" class="owner" data="nsowner" /></td>', 
+            '<td><label>' + _("Owner") + '</label><span class="asm-has-validation">*</span></td>', 
+            '<td><input type="hidden" class="asm-field asm-personchooser" class="owner" data="nsowner" /></td>', 
             '</tr>', 
             '<tr>',
             '<td><label>' + _("Name") + '</label><span class="asm-has-validation">*</span></td>', 
@@ -114,6 +114,10 @@ $.widget("asm.animalchooser", {
             '<td><label>' + _("Date of Birth") + '</label><span class="asm-has-validation">*</span></td>', 
             '<td><input data="dateofbirth" type="text" class="asm-textbox asm-datebox" /></td>',
             '</tr>',
+            '<tr class="datebroughtinrow">', 
+            '<td><label>' + _("Date Brought In") + '</label><span class="asm-has-validation">*</span></td>', 
+            '<td><input data="datebroughtin" type="text" class="asm-textbox asm-datebox datebroughtin" /></td>',
+            '</tr>',
             '<tr class="entrytypesrow">',
             '<td><label>' + _("Entry Type") + '</label></td>', 
             '<td><select data="entrytype" class="asm-selectbox chooser entrytypes" /></select></td>',
@@ -122,9 +126,9 @@ $.widget("asm.animalchooser", {
             '<td><label>' + _("Entry Reason") + '</label></td>', 
             '<td><select data="entryreason" class="asm-selectbox chooser entryreasons" /></select></td>',
             '</tr>',
-            '<tr class="datebroughtinrow">', 
-            '<td><label>' + _("Date Brought In") + '</label></td>', 
-            '<td><input id="datebroughtin" data="datebroughtin" type="text" class="asm-textbox asm-datebox datebroughtin" /></td>',
+            '<tr class="locationsrow">',
+            '<td><label>' + _("Location") + '</label></td>', 
+            '<td><select data="internallocation" class="asm-selectbox chooser locations" /></select></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Description") + '</label></td>', 
@@ -167,24 +171,28 @@ $.widget("asm.animalchooser", {
         let acaddbuttons = {};
         acaddbuttons[_("Create this animal")] = function() {
             let valid = true, dialogadd = self.options.dialogadd;
+            const validate_field = function() {
+                if (common.trim($(this).val()) == "") {
+                    $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
+                    $(this).focus();
+                    valid = false;
+                    return false;
+                }
+            };
             // Validate fields that can't be blank
             dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
-            dialogadd.find("input[data='animalname']").each(function() {
-                if (common.trim($(this).val()) == "") {
+            dialogadd.find("input[data='animalname']").each(validate_field);
+            dialogadd.find("input[data='dateofbirth']").each(validate_field);
+            dialogadd.find("input[data='datebroughtin']").each(validate_field);
+            dialogadd.find("input[data='nsowner']").each(function() {
+                if (dialogadd.find(".ownerrow").is(":visible") && common.trim($(this).val()) == "") {
                     $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
                     $(this).focus();
                     valid = false;
                     return false;
                 }
             });
-            dialogadd.find("input[data='dob']").each(function() {
-                if (common.trim($(this).val()) == "") {
-                    $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
-                    $(this).focus();
-                    valid = false;
-                    return false;
-                }
-            });
+
             if (!valid) { return; }
             if (!additional.validate_mandatory_node(dialogadd)) { return; }
             // Disable the dialog buttons before we make any ajax requests
@@ -206,25 +214,16 @@ $.widget("asm.animalchooser", {
                 // Set non-shelter
                 dialogadd.find(".nonshelter").prop("checked", self.options.nonshelter);
                 dialogadd.find(".nonshelter").change();
-                // Change sex to unknown
-                dialogadd.find(".sexes").val(2);
-                // Change animal type to default
+                dialogadd.find(".sexes").val(2); // unknown
                 dialogadd.find(".animaltypes").val(config.str("AFDefaultType"));
-                // Change colour to default
                 dialogadd.find(".colours").val(config.str("AFDefaultColour"));
-                // Change size to default
                 dialogadd.find(".sizes").val(config.str("AFDefaultSize"));
-                // Change species to default
                 dialogadd.find(".species").val(config.str("AFDefaultSpecies"));
-                // Change breed to default
                 dialogadd.find(".breeds").val(config.str("AFDefaultBreed"));
-                // Change entry type to default
+                dialogadd.find(".location").val(config.str("AFDefaultLocation"));
                 dialogadd.find(".entrytypes").val(config.str("AFDefaultEntryType"));
-                // Change entry reason to default
                 dialogadd.find(".entryreasons").val(config.str("AFDefaultEntryReason"));
-                // Setting date brought in today
                 dialogadd.find(".datebroughtin").val(format.date(new Date()));
-                // Change additional fields to default
                 additional.reset_default(self.options.additionalfields);
                 // If we have a filter, set the appropriate animal flags to match
                 if (self.options.filter) {
@@ -239,17 +238,6 @@ $.widget("asm.animalchooser", {
             }
         });
 
-        // Create any form controls based on classes used
-        // Choosers are initialised first as they inject more widgets into the DOM that will need initialising
-        $(".asm-animalchooser").animalchooser();
-        $(".asm-animalchoosermulti").animalchoosermulti();
-        $(".asm-personchooser").personchooser();
-        $(".asm-callout").callout();
-        $(".asm-datebox").date();
-        $(".asm-alphanumberbox").alphanumber();
-        $(".asm-autotext").autotext();
-        $(".asm-numberbox").number();
-
         dialog.find("table").table({ sticky_header: false });
         dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
         dialog.find("button").button().click(function() { self.find(); });
@@ -259,22 +247,22 @@ $.widget("asm.animalchooser", {
             dialogadd.find(".datebroughtin").val(format.date(new Date()));
             if (dialogadd.find(".nonshelter").is(":checked")) {
                 dialogadd.find(".animaltypes").val(config.str("AFNonShelterType"));
-                dialogadd.find(".entrytypesrow").hide();
-                dialogadd.find(".entryreasonsrow").hide();
-                dialogadd.find(".datebroughtinrow").hide();
-                dialogadd.find(".holdrow").hide();
-                dialogadd.find(".ownerrow").show();
+                dialogadd.find(".entrytypesrow").fadeOut();
+                dialogadd.find(".entryreasonsrow").fadeOut();
+                dialogadd.find(".datebroughtinrow").fadeOut();
+                dialogadd.find(".locationsrow").fadeOut();
+                dialogadd.find(".holdrow").fadeOut();
+                dialogadd.find(".ownerrow").fadeIn();
             } else {
                 dialogadd.find(".animaltypes").val(config.str("AFDefaultType"));
-                dialogadd.find(".entrytypesrow").show();
-                dialogadd.find(".entryreasonsrow").show();
-                dialogadd.find(".datebroughtinrow").show();
-                dialogadd.find(".holdrow").show();
-                dialogadd.find(".ownerrow").hide();
+                dialogadd.find(".entrytypesrow").fadeIn();
+                dialogadd.find(".entryreasonsrow").fadeIn();
+                dialogadd.find(".datebroughtinrow").fadeIn();
+                dialogadd.find(".locationsrow").fadeIn();
+                dialogadd.find(".holdrow").fadeIn();
+                dialogadd.find(".ownerrow").fadeOut();
             }
         });
-        
-        
         
         // Bind the find button
         node.find(".animalchooser-link-find")
@@ -312,6 +300,7 @@ $.widget("asm.animalchooser", {
                 self.options.colours = d.colours;
                 self.options.sizes = d.sizes;
                 self.options.species = d.species;
+                self.options.locations = d.locations;
                 self.options.breeds = d.breeds;
                 self.options.entrytypes = d.entrytypes;
                 self.options.entryreasons = d.entryreasons;
@@ -321,6 +310,7 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".colours").html(html.list_to_options(self.options.colours, "ID", "BASECOLOUR"));
                 dialogadd.find(".sizes").html(html.list_to_options(self.options.sizes, "ID", "SIZE"));
                 dialogadd.find(".species").html(html.list_to_options(self.options.species, "ID", "SPECIESNAME"));
+                dialogadd.find(".locations").html(html.list_to_options(self.options.locations, "ID", "LOCATIONNAME"));
                 dialogadd.find(".breeds").html(html.list_to_options(self.options.breeds, "ID", "BREEDNAME"));
                 dialogadd.find(".entrytypes").html(html.list_to_options(self.options.entrytypes, "ID", "ENTRYTYPENAME"));
                 dialogadd.find(".entryreasons").html(html.list_to_options(self.options.entryreasons, "ID", "REASONNAME"));

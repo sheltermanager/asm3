@@ -13,7 +13,7 @@ $(function() {
                 '<div id="asm-content">',
                 html.content_header(_("Renew license"), true),
                 tableform.fields_render([
-                    { post_field: "animal", type: "animal", label: _("Animal (optional)") },
+                    { post_field: "animal", type: "animal", label: _("Animal (optional)"), nonshelter: true },
                     { post_field: "person", type: "person", label: _("Person") },
                     { post_field: "issuedate", type: "date", label: _("Issued") },
                     { post_field: "expirydate", type: "date", label: _("Expiry") },
