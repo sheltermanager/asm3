@@ -272,7 +272,7 @@ const html = {
                 s.push(html.icon("movement", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
             }
         }
-        if (config.bool("EmblemAdoptable") && a.DATEOFBIRTH && html.is_animal_adoptable(a)[0]) {
+        if (config.bool("EmblemAdoptable") && a.DATEOFBIRTH && a.ADOPTABLE) {
             s.push(html.icon("adoptable", _("Adoptable")));
         }
         if (config.bool("EmblemBonded") && (a.BONDEDANIMALID || a.BONDEDANIMAL2ID)) {
@@ -354,11 +354,14 @@ const html = {
             s.push(html.icon("warning", String(a.POPUPWARNING)));
         }
         $.each([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], function(i, v) {
-            var cflag = config.str("EmblemsCustomFlag" + v), ccond = config.str("EmblemsCustomCond" + v), cemblem = config.str("EmblemsCustomValue" + v);
-            if (cflag && cemblem && (ccond == "has" || !ccond) && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+            let cflag = config.str("EmblemsCustomFlag" + v), 
+                ccond = config.str("EmblemsCustomCond" + v), 
+                cemblem = config.str("EmblemsCustomValue" + v),
+                aflags = a.ANIMALFLAGS || a.ADDITIONALFLAGS;
+            if (cflag && cemblem && (ccond == "has" || !ccond) && html.is_animal_flag(aflags, cflag)) {
                 s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
             }
-            if (cflag && cemblem && ccond == "not" && !html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
+            if (cflag && cemblem && ccond == "not" && !html.is_animal_flag(aflags, cflag)) {
                 s.push('<span class="custom" title="' + html.title(_("Not {0}").replace("{0}", cflag)) + '">' + cemblem + '</span>');
             }
         });

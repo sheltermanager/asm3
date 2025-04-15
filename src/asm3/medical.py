@@ -31,11 +31,8 @@ DESCENDING_REQUIRED = 1
 DESCENDING_GIVEN = 2
 
 def get_medicaltreatment_query(dbo: Database) -> str:
-    return "SELECT a.ShelterCode, a.ShortCode, a.AnimalName, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
-        "a.Weight, a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+    return "SELECT " \
+        f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
         "CASE " \
         "WHEN a.Archived = 0 AND a.ActiveMovementType = 8 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=8) " \
@@ -67,7 +64,6 @@ def get_medicaltreatment_query(dbo: Database) -> str:
         "ELSE il.LocationName END AS LocationName, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
-        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "%(compositeid)s AS CompositeID, " \
         "%(givenremaining)s AS NamedGivenRemaining, " \
         "CASE " \
@@ -106,13 +102,7 @@ def get_medicaltreatment_query(dbo: Database) -> str:
 def get_medicalcombined_query(dbo: Database) -> str:
     return "SELECT * FROM (" \
         "SELECT " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
-        "a.Weight, a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
-        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
-        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
         "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
         "adv.OwnerName AS AdministeringVetName, " \
@@ -129,13 +119,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "" \
         "UNION SELECT " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
-        "a.Weight, a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
-        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
-        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
         "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
         "adv.OwnerName AS AdministeringVetName, " \
@@ -152,13 +136,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "" \
         "UNION SELECT " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
-        "a.Weight, a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
-        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
-        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
         "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
         "adv.OwnerName AS AdministeringVetName, " \
@@ -177,11 +155,8 @@ def get_medicalcombined_query(dbo: Database) -> str:
         ") dummy " 
 
 def get_test_query(dbo: Database) -> str:
-    return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
-        "a.Weight, a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+    return "SELECT at.*, " \
+        f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
         "CASE " \
         "WHEN a.Archived = 0 AND a.ActiveMovementType = 8 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=8) " \
@@ -208,7 +183,6 @@ def get_test_query(dbo: Database) -> str:
         "ELSE il.LocationName END AS LocationName, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
-        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "adv.OwnerName AS AdministeringVetName, " \
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence " \
@@ -223,11 +197,8 @@ def get_test_query(dbo: Database) -> str:
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_vaccination_query(dbo: Database) -> str:
-    return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
-        "a.Weight, a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+    return "SELECT av.*, " \
+        f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
         "CASE " \
         "WHEN a.Archived = 0 AND a.ActiveMovementType = 8 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=8) " \
@@ -253,7 +224,6 @@ def get_vaccination_query(dbo: Database) -> str:
         "ELSE il.LocationName END AS LocationName, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
-        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "adv.OwnerName AS AdministeringVetName, " \
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence " \

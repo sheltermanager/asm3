@@ -94,7 +94,7 @@ $(function() {
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            return html.animal_link(row, { noemblems: controller.name == "animal_vaccination" });
+                            return html.animal_link(row, { noemblems: controller.name == "animal_vaccination", emblemsright: true });
                         },
                         hideif: function(row) {
                             // Don't show for animal records

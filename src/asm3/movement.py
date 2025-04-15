@@ -47,17 +47,11 @@ def get_movement_query(dbo: Database) -> str:
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.SiteID AS OwnerSiteID, " \
         "o.AdditionalFlags AS OwnerFlags, " \
         "rs.StatusName AS ReservationStatusName, " \
-        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
-        "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \
-        "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
-        "a.ActiveMovementType, a.Archived, a.DaysOnShelter, a.IsNotAvailableForAdoption, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, a.Identichipped, a.IdentichipNumber, " \
-        "a.AcceptanceNumber AS LitterID, a.Weight, sz.Size, " \
-        "er.ReasonName AS EntryReasonName, et.EntryTypeName, " \
-        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
+        f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
+        "sz.Size, er.ReasonName AS EntryReasonName, et.EntryTypeName, " \
         "r.OwnerName AS RetailerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.Sex, bc.BaseColour, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
+        "a.Sex, bc.BaseColour, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
         "CASE WHEN m.EventID > 0 THEN 1 ELSE 0 END AS IsEventLinked, " \
