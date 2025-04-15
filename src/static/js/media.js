@@ -254,6 +254,8 @@ $(function() {
                         + ' href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
                         + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
+                    '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
+                        + ' href="#">' + html.icon("link") + ' ' + _("Signing link") + '</a></li>',
                 '</ul>',
                 '</div>',
 
