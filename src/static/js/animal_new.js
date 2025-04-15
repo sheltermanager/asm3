@@ -351,6 +351,9 @@ $(function() {
 
             // Currency defaults
             $("#fee").currency("value", 0);
+
+            // Change additional fields to default
+            additional.reset_default(controller.additional);
         },
 
         validation: function() {

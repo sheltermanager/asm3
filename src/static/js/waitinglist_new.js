@@ -156,6 +156,9 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
 
+            // Change additional fields to default
+            additional.reset_default(controller.additional);
+
         },
 
         destroy: function() {

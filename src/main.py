@@ -2121,6 +2121,23 @@ class animal_embed(ASMEndpoint):
     check_logged_in = False
     post_permissions = asm3.users.VIEW_ANIMAL
 
+    def content(self, o):
+        if not o.dbo: raise asm3.utils.ASMPermissionError("No session")
+        dbo = o.dbo
+        self.content_type("application/json")
+        self.cache_control(180) # Animal data can be cached for a few minutes, useful for multiple widgets on one page
+        return asm3.utils.json({
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "animal"),
+            "sexes": asm3.lookups.get_sexes(dbo),
+            "animaltypes": asm3.lookups.get_animal_types(dbo),
+            "colours": asm3.lookups.get_basecolours(dbo),
+            "sizes": asm3.lookups.get_sizes(dbo),
+            "species": asm3.lookups.get_species(dbo),
+            "breeds": asm3.lookups.get_breeds(dbo),
+            "entrytypes": asm3.lookups.get_entry_types(dbo),
+            "entryreasons": asm3.lookups.get_entryreasons(dbo)
+        })
+
     def post_find(self, o):
         self.content_type("application/json")
         q = o.post["q"]
@@ -2151,6 +2168,15 @@ class animal_embed(ASMEndpoint):
         else:
             asm3.al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "main.animal_embed", dbo)
             return asm3.utils.json((a,))
+    
+    def post_add(self, o):
+        self.check(asm3.users.ADD_ANIMAL)
+        self.content_type("application/json")
+        dbo = o.dbo
+        asm3.al.debug("add new animal", "main.animal_embed", dbo)
+        aid = asm3.animal.insert_animal_from_form(dbo, o.post, o.user)[0]
+        a = asm3.animal.get_animal(dbo, aid)
+        return asm3.utils.json((a,))
 
 class animal_find(JSONEndpoint):
     url = "animal_find"
