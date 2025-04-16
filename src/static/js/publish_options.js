@@ -83,7 +83,7 @@ $(function() {
                         { id: "usecomments", post_field: "PublisherUseComments", label: _("Animal descriptions"), type: "select", 
                             options: '<option value="Yes">' + _("Use animal description") + '</option>' + 
                             '<option value="No">' + _("Use notes from preferred photo") + '</option>' }, 
-                        { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", 
+                        { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", doublesize: true, 
                             callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }
                     ]}, 
                     { id: "tab-htmlftp", title: _("HTML/FTP Publisher"), classes: "hashtmlftp", fields: [
@@ -190,7 +190,7 @@ $(function() {
                         classes: 'localeus hasfindpet', fields: [
                             { id: "enabledmf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "fporgid", post_field: "FindPetOrgID", label: "FindPet Organization ID", type: "text" }, 
-                            { id: "fpintlevel", post_field: "FindPetIntLevel", label: "Integration Level", type: "select", options: 
+                            { id: "fpintlevel", post_field: "FindPetIntLevel", label: "Integration Level", type: "select", doublesize: true, options: 
                                 '<option value="0">Send stray/found pets and register microchips</option>' + 
                                 '<option value="1">Send stray/found pets only</option>' }
                         ]}, 
@@ -209,7 +209,7 @@ $(function() {
                             { id: "enabledpc", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "pctoken", post_field: "PetcademyToken", label: "MPA API Username", type: "text" }, 
                         ]}, 
-                    { id: "tab-petfbi", title: "PetFBI.com", 
+                    { id: "tab-petfbi", title: "PetFBI.com", classes: "localeus localeca", 
                         info: 'Signup at <a target="_blank" href="https://petfbi.org/info-for-shelters/sheltermanager/">https://petfbi.org/info-for-shelters/sheltermanager/</a>', 
                         fields: [
                             { id: "enabledfbi", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
@@ -217,7 +217,7 @@ $(function() {
                             { id: "fbiftppass", post_field: "PetFBIFTPPassword", label: 'PetFBI FTP password', type: "text" }, 
                             { id: "fbiorgid", post_field: "PetFBIOrgID", label: 'PetFBI Organisation ID', type: "text" }, 
                         ]}, 
-                    { id: "tab-petfinder", title: "PetFinder.com", 
+                    { id: "tab-petfinder", title: "PetFinder.com", classes: "localeus localeca localemx", 
                         info: 'Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>', 
                         fields: [
                             { id: "enabledpf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
@@ -244,10 +244,10 @@ $(function() {
                                 'It is <b>not</b> the same as your password for the members area.') + '</td></tr>' 
                             }
                         ]},
-                    { id: "tab-petslocated", title: "PetsLocated", 
+                    { id: "tab-petslocated", title: "PetsLocated", classes: 'localegb haspetslocated', 
                         info: 'Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>', 
                         fields: [
-                            { id: "enabledrg", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "enabledpcuk", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "pcukcustid", post_field: "PetsLocatedCustomerID", label: 'petslocated.com customer number', type: "text" }, 
                             { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', 
                                 type: "select", options: yesnooptions 
@@ -319,7 +319,7 @@ $(function() {
                                 'Settings this to "Yes" will send the microchip number for all animals' }
                         ]
                     }, 
-                    { id: "tab-rescuegroups", title: "RescueGroups.org", 
+                    { id: "tab-rescuegroups", title: "RescueGroups.org", classes: "localeus", 
                         info: 'RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                         'to them for republishing on to many other sites. Find out more at ' +
                         '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>', 
@@ -334,7 +334,7 @@ $(function() {
                         fields: [
                             { id: "enabledsac", label: _("Enabled"), type: "check", classes: 'enablecheck' }
                         ]}, 
-                    { id: "tab-pettrac", title: "AVID UK Microchips", classes: 'localeus', 
+                    { id: "tab-pettrac", title: "AVID UK Microchips", classes: 'localegb', 
                         info: 'These settings are for registering microchips with new owner information to the AVID PETtrac UK database. <br/>' + 
                         'Find out more at <a target="_blank" href="http://www.pettrac.co.uk">www.pettrac.co.uk</a>', 
                         fields: [
@@ -500,7 +500,7 @@ $(function() {
             });
 
             $("#button-save").button("disable");
-            /*
+
             // Enable services that are only present in certain locales
             $(".localeau").hide();
             $(".localeus").hide();
@@ -530,7 +530,7 @@ $(function() {
             if (!controller.hassac) { $(".hassac").hide(); }
             if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
-            */
+
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").not(".chooser").not(".preset").each(function() {
                 if ($(this).attr("data-post")) {
