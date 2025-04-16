@@ -1018,6 +1018,9 @@ class media(ASMEndpoint):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
             asm3.media.set_excluded(o.dbo, o.user, mid, 1)
+    
+    def post_signlink(self, o):
+        return asm3.media.get_signature_link(o.dbo, o.post.integer("mediaid"), o.post)
 
 class mobile(ASMEndpoint):
     url = "mobile"

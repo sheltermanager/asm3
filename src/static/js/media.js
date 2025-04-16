@@ -306,7 +306,7 @@ $(function() {
                 '</form>', 
 
                 '<div id="dialog-signlink" style="display: none" title="' + _("Signature link") + '">',
-                '<div id="signature" style="width: 500px; height: 200px;"></div>',
+                '<div id="signaturelinks" style="width: 500px; height: 200px;"></div>',
                 '</div>',
             ];
 
@@ -796,8 +796,15 @@ $(function() {
                 modal: true,
                 dialogClass: "dialogshadow",
                 show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                //buttons: signbuttons
+                hide: dlgfx.edit_hide
+            });
+
+            $("#signaturelinks").on("click", ".copylink", function(event) {
+                console.log($(this));
+                console.log($(this).attr("data-url"));
+                common.copy_to_clipboard($(this).attr("data-url"));
+                header.show_info(_("Successfully copied to the clipboard."));
+                return false;
             });
 
            $("#button-viewmode").button().click(function() {
@@ -1012,7 +1019,35 @@ $(function() {
 
             $("#button-signlink").click(function() {
                 $("#button-sign").asmmenu("hide_all");
-                $("#dialog-signlink").dialog("open");
+                let mediaitems = media.table.rows;
+                let mediaids = tableform.table_ids(media.table).split(",");
+                $("#signaturelinks").empty();
+                $.each(mediaids, function(i, mid) {
+                    if ( mid != "" ) {
+                        $.each(mediaitems, async function(i, m) {
+                            if (m.ID == mid) {
+                                let mediadesc = m.MEDIANOTES;
+                                if ( mediadesc == "" ) {
+                                    mediadesc = m.MEDIANAME;
+                                }
+                                let formdata = "mode=signlink&mediaid=" + mid;
+                                let signaturelink = await common.ajax_post("media", formdata);
+                                $("#signaturelinks").append(
+                                    "<div><button data-icon='clipboard' data-text='false' data-url='" + signaturelink + "' " + 
+                                    "class='ui-button ui-corner-all ui-widget ui-button-icon-only' " + 
+                                    "title='" + _("Copy URL to the clipboard") + "'>" + 
+                                    "<span class='copylink ui-button-icon ui-icon ui-icon-clipboard' data-url='" + signaturelink + "'></span> " + 
+                                    "<span class='ui-button-icon-space'> </span>" + _("Copy URL to the clipboard") + "</button>&nbsp;" + 
+                                    "<a href='" + signaturelink + "' target='_blank'>" + mediadesc + "</a></div>"
+                                );
+                                return false;
+                            }
+                        });
+                    }
+                });
+
+                //console.log(dialogcontent);
+                tableform.show_okcancel_dialog("#dialog-signlink", _("Ok"), {width: 550});
                 return false;
             });
 
