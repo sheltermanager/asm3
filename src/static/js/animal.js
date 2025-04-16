@@ -213,12 +213,24 @@ $(function() {
                         label: tableform.render_check({ post_field: "microchipped", json_field: "IDENTICHIPPED", label: _("Microchipped"), justwidget: true }), 
                         markup: [
                         tableform.render_date({ post_field: "microchipdate", json_field: "IDENTICHIPDATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                        tableform.render_select({ post_field: "microchipstatus", json_field: "IDENTICHIPSTATUS", placeholder: _("Status"), justwidget: true, halfsize: true, 
+                            options: '<option value="0">' + _("Not attempted") + '</option>' + 
+                            '<option value="1">' + _("Readable") + '</option>' + 
+                            '<option value="2">' + _("Unreadable") + '</option>' 
+
+                        }), 
                         tableform.render_text({ post_field: "microchipnumber", json_field: "IDENTICHIPNUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
                         '<span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>'
                         ].join("\n") },
                     { rowid: "microchiprow2", type: "raw", label: "", 
                         markup: [
                         tableform.render_date({ post_field: "microchipdate2", json_field: "IDENTICHIP2DATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                        tableform.render_select({ post_field: "microchipstatus2", json_field: "IDENTICHIP2STATUS", placeholder: _("Status"), justwidget: true, halfsize: true, 
+                            options: '<option value="0">' + _("Not attempted") + '</option>' + 
+                            '<option value="1">' + _("Readable") + '</option>' + 
+                            '<option value="2">' + _("Unreadable") + '</option>' 
+
+                        }), 
                         tableform.render_text({ post_field: "microchipnumber2", json_field: "IDENTICHIP2NUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
                         '<span id="microchipbrand2"></span> <button id="button-microchipcheck2">' + microchip.check_site_name() + '</button>'
                     ].join("\n") },
@@ -671,7 +683,7 @@ $(function() {
             if ($("#species").select("value") == 2) { $(".cats").show(); }
 
             // Enable/disable health and identification fields based on checkboxes
-            $("#microchipdate, #microchipnumber, #microchiprow2, #microchipbrand, #button-microchipcheck").toggle($("#microchipped").is(":checked"));
+            $("#microchipdate, #microchipstatus, #microchipnumber, #microchiprow2, #microchipbrand, #button-microchipcheck").toggle($("#microchipped").is(":checked"));
             $("#tattoodate, #tattoonumber").toggle($("#tattoo").is(":checked"));
             $("#smarttagnumber, #smarttagtype").toggle($("#smarttag").is(":checked"));
             $("#neutereddate").parent().toggle($("#neutered").is(":checked"));
@@ -873,6 +885,7 @@ $(function() {
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
             if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("DontShowMicrochip")) { $("#microchiprow, #microchiprow2").hide(); }
+            if (config.bool("DontShowMicrochipStatus")) { $("#microchipstatus, #microchipstatus2").hide(); }
             if (config.bool("DontShowTattoo")) { $("#tattoorow").hide(); }
             if (config.str("SmartTagFTPUser") == "") { $("#smarttagrow").hide(); }
             if (config.bool("DontShowBonded")) { $(".bondedwith").hide(); }
