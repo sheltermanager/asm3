@@ -916,6 +916,9 @@ def default_entry_reason(dbo: Database) -> int:
 def default_entry_type(dbo: Database) -> int:
     return cint(dbo, "AFDefaultEntryType", 1)
 
+def default_first_day(dbo: Database) -> int:
+    return cint(dbo, "FirstDayOfWeek", 1)
+
 def default_incident(dbo: Database) -> int:
     return cint(dbo, "DefaultIncidentType", 1)
 
