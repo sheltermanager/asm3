@@ -1257,7 +1257,12 @@ const tableform = {
         tr = '<tr ' + rowid + rowclasses + '>'; 
         td = '<td ' + colclasses + '>';
         if (v.type == "check") {
-            return tr + td + '</td>' + td + h + closer;
+            if (v.fullrow) {
+                return tr + '<td colspan="2">' + h + closer;
+            } 
+            else {
+                return tr + td + '</td>' + td + h + closer;
+            }
         }
         else if (v.type == "hidden") {
             tr = '<tr ' + rowid + rowclasses + ' style="display: none">';
@@ -1772,7 +1777,8 @@ const tableform = {
         h.push('<div class="asm-tabbar asm-tabs">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
-            h.push('<li><a href="#tab-' + v.id + '">' + v.title + '</a></li>');
+            if (!v.classes) { v.classes = ''; }
+            h.push('<li class="' + v.classes + '"><a href="#tab-' + v.id + '">' + v.title + '</a></li>');
         });
         h.push('</ul>');
         $.each(l, function(i, v) {
