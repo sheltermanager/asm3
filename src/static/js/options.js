@@ -598,28 +598,28 @@ $(function() {
                         { id: "emailmessages", post_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check" }, 
                     ]}, 
                     { id: "tab-display", title: _("Display"), fields: [
-                        { id: "disableeffects", post_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check" }, 
-                        { id: "disablehtml5scaling", post_field: "rc:DontUseHTML5Scaling", label: _("Use HTML5 client side image scaling where available to speed up image uploads"), type: "check" }, 
-                        { id: "picsinbooksclinic", post_field: "PicturesInBooksClinic", label: _("Show animal thumbnails in clinic books"), type: "check" }, 
-                        { id: "picsinbooks", post_field: "PicturesInBooks", label: _("Show animal thumbnails in movement and medical books"), type: "check" }, 
-                        { id: "sexborder", post_field: "ShowSexBorder", label: _("Show pink and blue borders around animal thumbnails to indicate sex"), type: "check" }, 
-                        { id: "minimap", post_field: "ShowPersonMiniMap", label: _("Show a minimap of the address on person screens"), type: "check" }, 
-                        { id: "usstatecodes", post_field: "USStateCodes", label: _("When entering addresses, restrict states to valid US 2 letter state codes"), type: "check", hideif: function() { return asm.locale != "en" } },
-                        { id: "latlong", post_field: "ShowLatLong", label: _("Allow editing of latitude/longitude with minimaps"), type: "check" }, 
-                        { id: "mediatablemode", post_field: "MediaTableMode", label: _("Default to table mode when viewing media tabs"), type: "check" }, 
-                        { id: "showlbs", post_field: "ShowWeightInLbs", label: _("Show weights as lb and oz"), type: "check" }, 
-                        { id: "showlbsf", post_field: "ShowWeightInLbsFraction", label: _("Show weights as decimal lb"), type: "check" }, 
-                        { id: "showfullcommentstables", post_field: "ShowFullCommentsInTables", label: _("Show complete comments in table views"), type: "check" }, 
-                        { id: "showviewsaudittrail", post_field: "ShowViewsInAuditTrail", label: _("Show record views in the audit trail"), type: "check" }, 
-                        { id: "showlookupdataid", post_field: "ShowLookupDataID", label: _("Show ID numbers when editing lookup data"), type: "check" }, 
-                        { id: "floatingheaders", post_field: "StickyTableHeaders", label: _("Keep table headers visible when scrolling"), type: "check" }, 
-                        { id: "tablesreflow", post_field: "TablesReflow", label: _("Tables stack vertically on portrait smartphones"), type: "check" }, 
-                        { id: "recordnewbrowsertab", post_field: "RecordNewBrowserTab", label: _("Open records in a new browser tab"), type: "check" }, 
-                        { id: "reportnewbrowsertab", post_field: "ReportNewBrowserTab", label: _("Open reports in a new browser tab"), type: "check" }, 
-                        { id: "locationfilters", post_field: "LocationFiltersEnabled", label: _("Enable location filters"), type: "check" }, 
-                        { id: "multisite", post_field: "MultiSiteEnabled", label: _("Enable multiple sites"), type: "check" }, 
-                        { id: "formatphonenumbers", post_field: "FormatPhoneNumbers", label: _("Format telephone numbers according to my locale"), type: "check" }, 
-                        { id: "inactivitytimer", post_field: "InactivityTimer", label: _("Auto log users out after this many minutes of inactivity"), type: "check", xmarkup: '<input data="InactivityTimeout" id="inactivitytimeout" data-min="0" data-max="1440" class="asm-textbox asm-numberbox" />' }, 
+                        { id: "disableeffects", post_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check", fullrow: true }, 
+                        { id: "disablehtml5scaling", post_field: "rc:DontUseHTML5Scaling", label: _("Use HTML5 client side image scaling where available to speed up image uploads"), type: "check", fullrow: true }, 
+                        { id: "picsinbooksclinic", post_field: "PicturesInBooksClinic", label: _("Show animal thumbnails in clinic books"), type: "check", fullrow: true }, 
+                        { id: "picsinbooks", post_field: "PicturesInBooks", label: _("Show animal thumbnails in movement and medical books"), type: "check", fullrow: true }, 
+                        { id: "sexborder", post_field: "ShowSexBorder", label: _("Show pink and blue borders around animal thumbnails to indicate sex"), type: "check", fullrow: true }, 
+                        { id: "minimap", post_field: "ShowPersonMiniMap", label: _("Show a minimap of the address on person screens"), type: "check", fullrow: true }, 
+                        { id: "usstatecodes", post_field: "USStateCodes", label: _("When entering addresses, restrict states to valid US 2 letter state codes"), type: "check", fullrow: true, hideif: function() { return asm.locale != "en" } },
+                        { id: "latlong", post_field: "ShowLatLong", label: _("Allow editing of latitude/longitude with minimaps"), type: "check", fullrow: true }, 
+                        { id: "mediatablemode", post_field: "MediaTableMode", label: _("Default to table mode when viewing media tabs"), type: "check", fullrow: true }, 
+                        { id: "showlbs", post_field: "ShowWeightInLbs", label: _("Show weights as lb and oz"), type: "check", fullrow: true }, 
+                        { id: "showlbsf", post_field: "ShowWeightInLbsFraction", label: _("Show weights as decimal lb"), type: "check", fullrow: true }, 
+                        { id: "showfullcommentstables", post_field: "ShowFullCommentsInTables", label: _("Show complete comments in table views"), type: "check", fullrow: true }, 
+                        { id: "showviewsaudittrail", post_field: "ShowViewsInAuditTrail", label: _("Show record views in the audit trail"), type: "check", fullrow: true }, 
+                        { id: "showlookupdataid", post_field: "ShowLookupDataID", label: _("Show ID numbers when editing lookup data"), type: "check", fullrow: true }, 
+                        { id: "floatingheaders", post_field: "StickyTableHeaders", label: _("Keep table headers visible when scrolling"), type: "check", fullrow: true }, 
+                        { id: "tablesreflow", post_field: "TablesReflow", label: _("Tables stack vertically on portrait smartphones"), type: "check", fullrow: true }, 
+                        { id: "recordnewbrowsertab", post_field: "RecordNewBrowserTab", label: _("Open records in a new browser tab"), type: "check", fullrow: true }, 
+                        { id: "reportnewbrowsertab", post_field: "ReportNewBrowserTab", label: _("Open reports in a new browser tab"), type: "check", fullrow: true }, 
+                        { id: "locationfilters", post_field: "LocationFiltersEnabled", label: _("Enable location filters"), type: "check", fullrow: true }, 
+                        { id: "multisite", post_field: "MultiSiteEnabled", label: _("Enable multiple sites"), type: "check", fullrow: true }, 
+                        { id: "formatphonenumbers", post_field: "FormatPhoneNumbers", label: _("Format telephone numbers according to my locale"), type: "check", fullrow: true }, 
+                        { id: "inactivitytimer", post_field: "InactivityTimer", label: _("Auto log users out after this many minutes of inactivity"), type: "check", fullrow: true, xmarkup: '<input data="InactivityTimeout" id="inactivitytimeout" data-min="0" data-max="1440" class="asm-textbox asm-numberbox" />' }, 
                         { id: "ownernameformat", post_field: "OwnerNameFormat", label: _("When displaying person names, use the format"), type: "select", options:
                             '<option value="{ownertitle} {ownerforenames} {ownersurname}">' + _("Title First Last") + '</option>' + 
                             '<option value="{ownertitle} {ownerinitials} {ownersurname}">' + _("Title Initials Last") + '</option>' + 
@@ -640,16 +640,21 @@ $(function() {
                         { id: "pdfinline", post_field: "PDFInline", label: _("Show PDF files inline instead of sending them as attachments"), type: "check" }, 
                         { id: "includeincompletemedical", post_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check" }, 
                         { id: "notifycoordicatorondocsign", post_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check" }, 
-                        { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { type: "raw", markup: _("Default zoom level when converting documents to PDF") + '<input type="text" class="asm-field asm-textbox asm-numberbox controlshadow controlborder" style="" id="pdfzoom" data-post="PDFZoom"">%' }
+                        { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { type: "raw", markup: _("Default zoom level when converting documents to PDF") + ' <input type="text" class="asm-field asm-textbox asm-numberbox controlshadow controlborder" style="" id="pdfzoom" data-post="PDFZoom"">%' }
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
-                        { id: "emailaddress", post_field: "EmailAddress", label: _("Email address"), type: "text", callout: "This email address is the default From address when sending emails" }, 
-                        { id: "emailbcc", post_field: "EmailBCC", label: _("BCC messages to"), type: "text", callout: "BCC this address when sending email. This is useful if you want to archive your emails with another service." }, 
-                        { id: "emailsig", post_field: "EmailSignature", label: _("Email signature"), type: "richtextarea", callout: "This text will be added to the bottom of all send email dialogs" }, 
+                        { id: "emailaddress", post_field: "EmailAddress", label: _("Email address"), type: "text", doublesize: true, 
+                            callout: "This email address is the default From address when sending emails" }, 
+                        { id: "emailbcc", post_field: "EmailBCC", label: _("BCC messages to"), type: "text", doublesize: true, 
+                            callout: "BCC this address when sending email. This is useful if you want to archive your emails with another service." }, 
+                        { id: "emailsig", post_field: "EmailSignature", label: _("Email signature"), type: "richtextarea", doublesize: true, height: "150px", 
+                            callout: "This text will be added to the bottom of all send email dialogs" }, 
                         { type: "nextcol" },
-                        { id: "emailfromadd", post_field: "EmailFromAddresses", label: _("From address book"), type: "textarea", callout: "Comma separated list of extra addresses that the From email field of send email dialogs will prompt with" }, 
-                        { id: "emailtoadd", post_field: "EmailToAddresses", label: _("To address book"), type: "textarea", callout: "Comma separated list of extra addresses that the To and CC email fields of send email dialogs will prompt with" }, 
+                        { id: "emailfromadd", post_field: "EmailFromAddresses", label: _("From address book"), type: "textarea", doublesize: true, 
+                            callout: "Comma separated list of extra addresses that the From email field of send email dialogs will prompt with" }, 
+                        { id: "emailtoadd", post_field: "EmailToAddresses", label: _("To address book"), type: "textarea", doublesize: true, 
+                            callout: "Comma separated list of extra addresses that the To and CC email fields of send email dialogs will prompt with" }, 
                         { type: "nextcol" },
                         { id: "smtpoverride", post_field: "SMTPOverride", label: _("Specify an SMTP server for sending emails"), type: "check", callout: _("Please do not enable this option if you do not understand what this means."), rowclasses: "smcom" }, 
                         { id: "smtpserver", post_field: "SMTPServer", label: _("SMTP Server"), type: "text", rowclasses: "smcom" }, 
@@ -680,11 +685,13 @@ $(function() {
                         { id: "showtimeline", post_field: "ShowTimelineHomePage", label: _("Show timeline on the home page"), type: "check", fullrow: true }, 
                         { id: "showhdeceased", post_field: "rc:ShowDeceasedHomePage", label: _("Hide deceased animals from the home page"), type: "check", fullrow: true }, 
                         { id: "showhfinancial", post_field: "rc:ShowFinancialHomePage", label: _("Hide financial stats from the home page"), type: "check", fullrow: true }, 
+                        { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Alerts") + '</p>' },
                         { id: "alertmicrochip", post_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrabies", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { type: "raw", markup: '<tr><td colspan="2">' + html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) + '</td></tr>' },
+                        { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Stats") + '</p>' },
+                        { type: "raw", fullrow: true, markup: html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) },
                         { id: "statmode", post_field: "ShowStatsHomePage", label: _("Stats period"), type: "select", options: 
                             '<option value="none">' + _("Do not show") + '</option>' + 
                             '<option value="today">' + _("Today") + '</option>' + 
@@ -693,6 +700,7 @@ $(function() {
                             '<option value="thisyear">' + _("This year") + '</option>' + 
                             '<option value="alltime">' + _("All time") + '</option>'
                         }, 
+                        { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Animal Links") + '</p>' },
                         { id: "linkmode", post_field: "MainScreenAnimalLinkMode", label: _("Type of animal links to show"), type: "select", options: 
                             '<option value="none">' + _("Do not show") + '</option>' + 
                             '<option value="recentlychanged">' + _("Recently Changed") + '</option>' + 
@@ -711,20 +719,18 @@ $(function() {
                         { id: "insurancenext", post_field: "AutoInsuranceNext", label: _("Next"), type: "number" } 
                     ]}, 
                     { id: "tab-logs", title: _("Logs"), fields: [
-                        { id: "flagchangelog", post_field: "FlagChangeLog", label: _("When I change the flags on an animal or person, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="FlagChangeLogType" id="flagchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { id: "holdchangelog", post_field: "HoldChangeLog", label: _("When I mark an animal held, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="HoldChangeLogType" id="holdchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { id: "locationchangelog", post_field: "LocationChangeLog", label: _("When I change the location of an animal, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="LocationChangeLogType" id="locationchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { id: "animalnamechangelog", post_field: "AnimalNameChangeLog", label: _("When I change the name of an animal, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="AnimalNameChangeLogType" id="animalnamechangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { id: "weightchangelog", post_field: "WeightChangeLog", label: _("When I change the weight of an animal, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="WeightChangeLogType" id="weightchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-
-                        { id: "addresschangelog", post_field: "AddressChangeLog", label: _("When I change the address of a person, make a note of it in the log with this type"), type: "check", xmarkup: '<select data="AddressChangeLogType" id="addresschangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-
-                        { id: "logemailbydefault", post_field: "LogEmailByDefault", label: _("When I send an email, record it in the log with this type"), type: "check", xmarkup: '<select data="EmailLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "flagchangelog", post_field: "FlagChangeLog", label: _("When I change the flags on an animal or person, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="FlagChangeLogType" id="flagchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "holdchangelog", post_field: "HoldChangeLog", label: _("When I mark an animal held, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="HoldChangeLogType" id="holdchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "locationchangelog", post_field: "LocationChangeLog", label: _("When I change the location of an animal, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="LocationChangeLogType" id="locationchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "animalnamechangelog", post_field: "AnimalNameChangeLog", label: _("When I change the name of an animal, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AnimalNameChangeLogType" id="animalnamechangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "weightchangelog", post_field: "WeightChangeLog", label: _("When I change the weight of an animal, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="WeightChangeLogType" id="weightchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "addresschangelog", post_field: "AddressChangeLog", label: _("When I change the address of a person, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AddressChangeLogType" id="addresschangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "logemailbydefault", post_field: "LogEmailByDefault", label: _("When I send an email, record it in the log with this type"), type: "check", xmarkup: ' <select data="EmailLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                     ]}, 
                     { id: "tab-lostandfound", title: _("Lost and Found"), fields: [
                         { id: "disablelostfound", post_field: "rc:DisableLostAndFound", label: _("Enable lost and found functionality"), type: "check", fullrow: true }, 
                         { id: "matchshelter", post_field: "MatchIncludeShelter", label: _("When matching lost animals, include shelter animals"), type: "check", fullrow: true }, 
-                        { id: "matchpointfloor", post_field: "MatchPointFloor", label: _("Points required to appear on match report"), type: "number", classes: "strong" }, 
+                        { id: "matchpointfloor", post_field: "MatchPointFloor", label: _("Points required to appear on match report"), type: "number", colclasses: "bottomborder", classes: "strong" }, 
                         { id: "matchmicrochip", post_field: "MatchMicrochip", label: _("Points for matching microchip"), type: "number" }, 
                         { id: "matchspecies", post_field: "MatchSpecies", label: _("Points for matching species"), type: "number" }, 
                         { id: "matchbreed", post_field: "MatchBreed", label: _("Points for matching breed"), type: "number" }, 
@@ -741,6 +747,7 @@ $(function() {
                         { id: "precreatetreat", post_field: "MedicalPrecreateTreatments", label: _("Pre-create all treatments when creating fixed-length medical regimens"), type: "check", fullrow: true }, 
                         { id: "reloadmedical", post_field: "ReloadMedical", label: _("Reload the medical book/tab automatically after adding new medical items"), type: "check", fullrow: true }, 
                         { id: "autodefaultvaccbatch", post_field: "AutoDefaultVaccBatch", label: _("When entering vaccinations, default the last batch number and manufacturer for that type"), type: "check", fullrow: true }, 
+                        { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Weekly Fosterer Email") + '</p>' },
                         { id: "fostereremails", post_field: "FostererEmails", label: _("Send a weekly email to fosterers with medical information about their animals"), type: "check", fullrow: true }, 
                         { id: "fostereremailskipnomedical", post_field: "FostererEmailSkipNoMedical", label: _("Do not send an email if there are no medical items due for animals in the care of this fosterer"), type: "check", fullrow: true }, 
                         { id: "femailreplyto", post_field: "FostererEmailsReplyTo", label: _("Replies to the fosterer email should go to"), type: "text", callout: _("If blank, the address from the Email tab will be used") }, 
@@ -756,11 +763,11 @@ $(function() {
                         { id: "femailmsg", post_field: "FostererEmailsMsg", label: _("Add an extra message to the fosterer email"), type: "richtextarea" }
                     ]}, 
                     { id: "tab-movements", title: _("Movements"), fields: [
-                        { id: "cancelunadopted", post_field: "AutoCancelReservesDays", label: _("Cancel unadopted reservations after"), type: "number", callout: _("Cancel unadopted reservations after this many days, or 0 to never cancel"), xmarkup: _(" days.") }, 
-                        { id: "reservesoverdue", post_field: "ReservesOverdueDays", label: _("Highlight unadopted reservations after"), type: "number", xmarkup: _(" days.") }, 
-                        { id: "autoremoveholddays", post_field: "AutoRemoveHoldDays", label: _("Remove holds after"), type: "number", callout: _("Cancel holds on animals this many days after the brought in date, or 0 to never cancel"), xmarkup: _(" days.") }, 
-                        { id: "defaulttriallength", post_field: "DefaultTrialLength", label: _("Trial adoptions last for"), type: "number", callout: _("When creating trial adoptions, default the end date to this many days from the trial start"), xmarkup: _(" days.") }, 
-                        { id: "longtermdays", post_field: "LongTermDays", label: _("Animals are long term after"), type: "number", callout: _("Show an alert and emblem for animals who have been on shelter for this period"), xmarkup: _(" days.") }, 
+                        { id: "cancelunadopted", post_field: "AutoCancelReservesDays", label: _("Cancel unadopted reservations after"), type: "number", halfsize: true, callout: _("Cancel unadopted reservations after this many days, or 0 to never cancel"), xmarkup: _(" days.") }, 
+                        { id: "reservesoverdue", post_field: "ReservesOverdueDays", label: _("Highlight unadopted reservations after"), type: "number", halfsize: true, xmarkup: _(" days.") }, 
+                        { id: "autoremoveholddays", post_field: "AutoRemoveHoldDays", label: _("Remove holds after"), type: "number", halfsize: true, callout: _("Cancel holds on animals this many days after the brought in date, or 0 to never cancel"), xmarkup: _(" days.") }, 
+                        { id: "defaulttriallength", post_field: "DefaultTrialLength", label: _("Trial adoptions last for"), type: "number", halfsize: true, callout: _("When creating trial adoptions, default the end date to this many days from the trial start"), xmarkup: _(" days.") }, 
+                        { id: "longtermdays", post_field: "LongTermDays", label: _("Animals are long term after"), type: "number", halfsize: true, callout: _("Show an alert and emblem for animals who have been on shelter for this period"), xmarkup: _(" days.") }, 
                         { id: "futureonshelter", post_field: "FutureOnShelter", label: _("Treat animals with a future intake date as part of the shelter inventory"), type: "check", fullrow: true }, 
                         { id: "fosteronshelter", post_field: "FosterOnShelter", label: _("Treat foster animals as part of the shelter inventory"), type: "check", fullrow: true }, 
                         { id: "retaileronshelter", post_field: "RetailerOnShelter", label: _("Treat animals at retailers as part of the shelter inventory"), type: "check", fullrow: true }, 
@@ -791,7 +798,7 @@ $(function() {
                         { id: "warnmultiplereseves", post_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-onlineforms", title: _("Online Forms"), fields: [
-                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", xmarkup: _(" days.") }, 
+                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", halfsize: true, xmarkup: _(" days.") }, 
                         { id: "deleteonprocess", post_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check", fullrow: true }, 
                         { id: "removeprocessedforms", post_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check", fullrow: true }, 
                         { id: "hashprocessedforms", post_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check", fullrow: true }, 
@@ -801,22 +808,23 @@ $(function() {
                         { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
-                        { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
-                        { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), type: "text", colclasses: "bottomborder" }, 
-                        { type: "raw", markup: '<tr><td colspan="2" class="paypal-options"><p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p></td></tr>', rowclasses: "paypal-options" }, 
-                        { id: "paypalemail", post_field: "PayPalEmail", label: _("PayPal Business Email"), type: "text", rowclasses: "paypal-options" }, 
+                        { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), doublesize: true, type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
+                        { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), doublesize: true, type: "text", colclasses: "bottomborder" }, 
+                        { type: "raw", fullrow: true, rowclasses: "paypal-options", 
+                            markup: '<p class="centered"><img height="25px" src="static/images/ui/logo_paypal_100.png" /></p>' }, 
+                        { id: "paypalemail", post_field: "PayPalEmail", label: _("PayPal Business Email"), doublesize: true, type: "text", rowclasses: "paypal-options" }, 
                         { type: "raw", fullrow: true, rowclasses: "paypal-options", colclasses: "bottomborder",
                             markup: '<p class="centered">' + _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}").replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>") + '</p>' }, 
                         { type: "raw", fullrow: true, rowclasses: "stripe-options", 
                             markup: '<p class="centered"><img height="25px" src="static/images/ui/logo_stripe_103.png" /></p>' }, 
-                        { id: "stripekey", post_field: "StripeKey", label: _("Stripe Key"), type: "text", rowclasses: "stripe-options" }, 
-                        { id: "stripesecretkey", post_field: "StripeSecretKey", label: _("Stripe Secret Key"), type: "text", rowclasses: "stripe-options" }, 
+                        { id: "stripekey", post_field: "StripeKey", label: _("Stripe Key"), type: "text", doublesize: true, rowclasses: "stripe-options" }, 
+                        { id: "stripesecretkey", post_field: "StripeSecretKey", label: _("Stripe Secret Key"), type: "text", doublesize: true, rowclasses: "stripe-options" }, 
                         { type: "raw", fullrow: true, rowclasses: "stripe-options", colclasses: "bottomborder",
                             markup: '<p class="centered">' + _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}").replace("{0}", "<br/><b>" + controller.pp_stripe + "</b>") + '</p>' }, 
                         { type: "raw", fullrow: true, rowclasses: "square-options", 
                             markup: '<p class="centered"><img height="25px" src="static/images/ui/logo_square_100.png" /></p>' }, 
-                        { id: "squareaccesstoken", post_field: "SquareAccessToken", label: _("Square Access Token"), type: "text", rowclasses: "square-options" }, 
-                        { id: "squarelocationid", post_field: "SquareLocationID", label: _("Square Location ID"), type: "text", rowclasses: "square-options" }, 
+                        { id: "squareaccesstoken", post_field: "SquareAccessToken", label: _("Square Access Token"), type: "text", doublesize: true, rowclasses: "square-options" }, 
+                        { id: "squarelocationid", post_field: "SquareLocationID", label: _("Square Location ID"), type: "text", doublesize: true, rowclasses: "square-options" }, 
                         { type: "raw", fullrow: true, rowclasses: "square-options", colclasses: "bottomborder", 
                             markup: '<p class="centered">' + _("In your Square account, enable a webhook to send 'payment.updated' events to {0}").replace("{0}", "<br/><b>" + controller.pp_square + "</b>") + '</p>' }, 
                         { type: "raw", fullrow: true, rowclasses: "cardcom-options israel", 
@@ -935,7 +943,7 @@ $(function() {
                         { id: "watermarkfontfillcolor", post_field: "WatermarkFontFillColor", label: _("Watermark font fill color"), type: "select", options: html.list_to_options_array(this.watermark_colors), xmarkup: '<span id="fontfillcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontFillColor')) + '" />' }, 
                         { id: "watermarkfontshadowcolor", post_field: "WatermarkFontShadowColor", label: _("Watermark font outline color"), type: "select", options: html.list_to_options_array(this.watermark_colors), xmarkup: '<span id="fontshadowcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontShadowColor')) + '" />' }, 
                         { id: "watermarkfontstroke", post_field: "WatermarkFontStroke", label: _("Watermark font outline width"), type: "number", min: 0, max: 20 }, 
-                        { id: "watermarkfontfile", post_field: "WatermarkFontFile", label: _("Watermark font"), type: "select", options: html.list_to_options_array(asm.fontfiles), xmarkup: '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />' }, 
+                        { id: "watermarkfontfile", post_field: "WatermarkFontFile", label: _("Watermark font"), type: "select", doublesize: true, options: html.list_to_options_array(asm.fontfiles), xmarkup: '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />' }, 
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
                     ]}
@@ -1082,6 +1090,11 @@ $(function() {
                 $("#watermarkfontpreview").prop("src", "options_font_preview?fontfile=" + $("#watermarkfontfile").val());
             });
             $("#watermarkfontfile").change();
+
+            // By default, we have a style that constrains the width of 
+            // multi-select widgets to 300px - remove it for this screen so that
+            // the find screens and quick links can take up more room.
+            $(".asmContainer").css("max-width", "800px");
 
             validate.bind_dirty();
 
