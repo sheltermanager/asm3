@@ -5,25 +5,11 @@ $(function() {
     "use strict";
 
     const animal_bulk = {
-
-        render: function() {
-            let choosetypes = [];
-            $.each(controller.movementtypes, function(i, v) {
-                if (v.ID == 8 && !config.bool("DisableRetailer")) {
-                    choosetypes.push(v);
-                }
-                else if (v.ID == 0) {
-                    v.MOVEMENTTYPE = _("Reservation");
-                    choosetypes.push(v);
-                }
-                else if (v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
-                    choosetypes.push(v);
-                }
-            });
+        render_details: function() {
             return [
-                html.content_header(_("Bulk change animals")),
+                '<h3><a href="#">' + _("Details") + '</a></h3>',
+                '<div>',
                 tableform.fields_render([
-                    { post_field: "animals", label: _("Animals"), type: "animalmulti" },
                     { post_field: "litterid", label: _("Litter"), type: "autotext",
                         options: { rows: controller.autolitters, displayfield: "label", valuefield: "value" }},
                     { post_field: "animaltype", label: _("Type"), type: "select", 
@@ -47,7 +33,16 @@ $(function() {
                     { post_field: "notforregistration", label: _("Do Not Register Microchip"), type: "select", 
                         options: '<option value="-1">' + _("(no change)") + '</option>' +
                             '<option value="0">' + _("Register Microchip") + '</option>' +
-                            '<option value="1">' + _("Do Not Register Microchip") + '</option>' },
+                            '<option value="1">' + _("Do Not Register Microchip") + '</option>' }
+                ], { full_width: false }),
+                '</div>' // end accordion section
+            ].join("\n")
+        }, 
+        render_notes: function() {
+            return [
+                '<h3><a href="#">' + _("Notes") + '</a></h3>',
+                '<div>',
+                tableform.fields_render([
                     { post_field: "goodwithcats", label: _("Good with cats"), type: "select", rowclasses: "goodwith",
                         options: animal_bulk.options(controller.ynun, "ID", "NAME") },
                     { post_field: "goodwithdogs", label: _("Good with dogs"), type: "select", rowclasses: "goodwith",
@@ -71,16 +66,30 @@ $(function() {
                             "2|" + _("2 - Low"),
                             "3|" + _("3 - Medium"),
                             "4|" + _("4 - High"),
-                            "5|" + _("5 - Very high") ]) },
-
-                    { type: "nextcol" },
-
+                            "5|" + _("5 - Very high") ]) }
+                ], { full_width: false }),
+                '</div>' // end accordion section
+            ].join("\n")
+        }, 
+        render_healthandid: function() {
+            return [
+                '<h3><a href="#">' + _("Health and Identification") + '</a></h3>',
+                '<div>',
+                tableform.fields_render([
                     { post_field: "neutereddate", label: _("Altered"), type: "date" },
                     { post_field: "neuteringvet", label: _("By"), type: "person", personfilter: "vet", colclasses: "bottomborder" },
                     { post_field: "coordinator", label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator", colclasses: "bottomborder" },
                     { post_field: "currentvet", label: _("Current Vet"), type: "person", personfilter: "vet", colclasses: "bottomborder" },
-                    { post_field: "ownersvet", label: _("Owners Vet"), type: "person", personfilter: "vet" },
-
+                    { post_field: "ownersvet", label: _("Owners Vet"), type: "person", personfilter: "vet" }
+                ], { full_width: false }),
+                '</div>' // end accordion section
+            ].join("\n")
+        }, 
+        render_diary: function() {
+            return [
+                '<h3><a href="#">' + _("Diary") + '</a></h3>',
+                '<div>',
+                tableform.fields_render([
                     { post_field: "diaryfor", label: _("Add Diary"), type: "select", halfsize: true, 
                         options: animal_bulk.options(controller.forlist, "USERNAME", "USERNAME", 3),
                         xmarkup: [ " ", _("on"), 
@@ -89,16 +98,45 @@ $(function() {
                             ].join("\n")
                     },
                     { post_field: "diarysubject", label: _("Subject"), type: "text" },
-                    { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" },
-
+                    { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
+                ], { full_width: false }),
+                '</div>' // end accordion section
+            ].join("\n")
+        }, 
+        render_log: function() {
+            return [
+                '<h3><a href="#">' + _("Log") + '</a></h3>',
+                '<div>',
+                tableform.fields_render([
                     { post_field: "logtype", label: _("Add Log"), type: "select", halfsize: true, 
                         options: animal_bulk.options(controller.logtypes, "ID", "LOGTYPENAME", 3),
                         xmarkup: [ " ", _("on"), 
                             tableform.render_date({ post_field: "logdate", halfsize: true, justwidget: true}),
                             ].join("\n")
                     },
-                    { post_field: "lognotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" },
-
+                    { post_field: "lognotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
+                ], { full_width: false }),
+                '</div>' // end accordion section
+            ].join("\n")
+        }, 
+        render_movement: function() {
+            let choosetypes = [];
+            $.each(controller.movementtypes, function(i, v) {
+                if (v.ID == 8 && !config.bool("DisableRetailer")) {
+                    choosetypes.push(v);
+                }
+                else if (v.ID == 0) {
+                    v.MOVEMENTTYPE = _("Reservation");
+                    choosetypes.push(v);
+                }
+                else if (v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
+                    choosetypes.push(v);
+                }
+            });
+            return [
+                '<h3><a href="#">' + _("Movements") + '</a></h3>',
+                '<div>',
+                tableform.fields_render([
                     { post_field: "movementtype", label: _("Add Movement"), type: "select", halfsize: true, 
                         options: animal_bulk.options(choosetypes, "ID", "MOVEMENTTYPE", 3),
                         xmarkup: [ " ", _("on"), 
@@ -106,20 +144,36 @@ $(function() {
                             ].join("\n")
                     },
                     { post_field: "moveto", label: _("to"), type: "person" },
-
                 ], { full_width: false }),
+                '</div>' // end accordion section
+            ].join("\n")
+        }, 
+        render: function() {
+            return [
+                html.content_header(_("Bulk change animals")),
                 tableform.buttons_render([
-                    { id: "update", text: _("Update"), icon: "save" },
-                    { id: "delete", text: _("Delete"), icon: "delete" }
-                ], { centered: true}),
-                html.content_footer()
-            ].join("\n");
-        },
+                    { id: "update", icon: "save", text: _("Update")  }, 
+                    { id: "delete", icon: "delete", text: _("Delete") }, 
+                    { type: "raw", markup: '<label for="animals">' + _("Animals") + '</label><div style="display: inline-block; vertical-align: middle; width: 400px;"><input type="hidden" class="asm-field asm-animalchoosermulti" id="animals" data-post="animals"></div>' }, 
+                 ], { centered: false }),
+                 '<div id="asm-details-accordion">',
+                 animal_bulk.render_details(), 
+                 animal_bulk.render_notes(), 
+                 animal_bulk.render_healthandid(), 
+                 animal_bulk.render_diary(), 
+                 animal_bulk.render_log(), 
+                 animal_bulk.render_movement(), 
+                 '</div>',
+                 html.content_footer()
+            ].join("\n")
+        }, 
 
         bind: function() {
-
+            $("#asm-details-accordion").accordion({
+                heightStyle: "content"
+            });
             validate.indicator([ "animals" ]);
-
+            
             $("#button-update").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");
