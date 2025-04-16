@@ -346,7 +346,9 @@ def sql_structure(dbo: Database) -> str:
         fint("TotalDaysOnShelter", True),
         fstr("AgeGroupActiveMovement", True),
         fint("DailyBoardingCost", True),
-        fstr("AnimalAge", True) ))
+        fstr("AnimalAge", True), 
+        fint("IdentichipStatus", True), 
+        fint("Identichip2Status", True) ))
     sql += index("animal_AnimalShelterCode", "animal", "ShelterCode", True)
     sql += index("animal_AnimalExtraIDs", "animal", "ExtraIDs")
     sql += index("animal_AnimalTypeID", "animal", "AnimalTypeID")
@@ -402,6 +404,8 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animal_UniqueCodeID", "animal", "UniqueCodeID")
     sql += index("animal_Weight", "animal", "Weight")
     sql += index("animal_YearCodeID", "animal", "YearCodeID")
+    sql += index("animal_IdentichipStatus", "animal", "IdentichipStatus")
+    sql += index("animal_Identichip2Status", "animal", "Identichip2Status")
 
     sql += table("animalboarding", (
         fid(),
