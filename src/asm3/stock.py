@@ -411,7 +411,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                     quantity = 0
                 slpost = {}
                 slpost["stocklevelid"] = stocklevel["ID"]
-                slpost["productid"] = post.integer("productid")
+                slpost["productid"] = post["productid"]
                 slpost["name"] = post["productname"]
                 slpost["description"] = post["productdescription"]
                 slpost["location"] = tolocation
@@ -435,7 +435,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                 quantity = quantity - unitratio
                 remaining = unitratio
             slpost = {}
-            slpost["productlist"] = post.integer("productid")
+            slpost["productlist"] = post["productid"]
             slpost["name"] = post["productname"]
             slpost["description"] = post["productdescription"]
             slpost["location"] = tolocation
@@ -443,7 +443,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["total"] = unitratio
             slpost["balance"] = remaining
             slpost["low"] = 0
-            slpost["expiry"] = post.date("expiry")
+            slpost["expiry"] = post["expiry"]
             slpost["batchnumber"] = post["batch"]
             slpost["cost"] = post.integer("COSTPRICE")
             slpost["unitprice"] = post.integer("RETAILPRICE")
