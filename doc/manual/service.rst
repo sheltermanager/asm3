@@ -880,6 +880,7 @@ results to be in. The default is adoption date descending. Options are:
 
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is anihttps://service.sheltermanager.com/asmservice?account=robin&method=html_found_animals&order=code_asc
+
 html_deceased_animals
 ----------------------
 
@@ -1089,8 +1090,8 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
     http://localhost:5000/service?method=html_stray_animals&template=littlebox&speciesid=1&order=holduntildate_desc
     http://localhost:5000/service?method=html_stray_animals
 
-json_adoptable_animal and xml_adoptable_animal
-----------------------------------------------
+json_adoptable_animal, xml_adoptable_animal and csv_adoptable_animal
+--------------------------------------------------------------------
 
 .. rubric:: Cache time: 1 hour
 .. rubric:: Permissions required: VIEW_ANIMAL
@@ -1098,7 +1099,7 @@ json_adoptable_animal and xml_adoptable_animal
 
 Returns a dataset containing a single animal record from the list of animals
 available for adoption. The method determines whether the format returned is
-JSON or XML::
+JSON, CSV or XML::
 
     http://localhost:5000/service?method=xml_adoptable_animal&animalid=123&username=user&password=letmein
 
@@ -1116,8 +1117,8 @@ determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
 
-json_adopted_animals and xml_adopted_animals
---------------------------------------------
+json_adopted_animals, xml_adopted_animals and csv_adopted_animals
+-----------------------------------------------------------------
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
@@ -1130,12 +1131,12 @@ Y/M/D for some Asian locales, etc).
 
 Note that the "View Movement" permission is required to call this method.
 
-The method name determines whether the format returned is JSON or XML::
+The method name determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=json_adopted_animals&username=user&password=letmein&fromdate=01/01/2020&todate=12/31/2021
 
-json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals
---------------------------------------------------------------------------
+json_lost_animals, xml_lost_animals, csv_lost_animals, json_found_animals, xml_found_animals, csv_found_animals
+---------------------------------------------------------------------------------------------------------------
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_LOST_ANIMAL, VIEW_FOUND_ANIMAL
@@ -1143,57 +1144,57 @@ json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals
 
 Returns a dataset containing all lost or found animals reported in the last 90
 days that are still active.  The method determines whether the format returned
-is JSON or XML::
+is JSON, CSV or XML::
 
     http://localhost:5000/service?method=xml_found_animals&username=user&password=letmein
 
-json_held_animals and xml_held_animals
---------------------------------------
+json_held_animals, xml_held_animals, csv_held_animals
+-----------------------------------------------------
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing all animals currently held. The method
-determines whether the format returned is JSON or XML::
+determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=json_held_animals&username=user&password=letmein
 
-json_recent_adoptions and xml_recent_adoptions
-----------------------------------------------
+json_recent_adoptions, xml_recent_adoptions, csv_recent_adoptions
+-----------------------------------------------------------------
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing all recently adopted animals with their new owner
-information. The method name determines whether the format returned is JSON or
-XML::
+information. The method name determines whether the format returned is JSON,
+CSV or XML::
     
     http://localhost:5000/service?method=xml_recent_adoptions&username=user&password=letmein
 
-json_recent_changes and xml_recent_changes
---------------------------------------------
+json_recent_changes, xml_recent_changes and csv_recent_changes
+--------------------------------------------------------------
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing all animals who have been modified in the last
-month. The method determines whether the format returned is JSON or XML::
+month. The method determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=xml_recent_changes&username=user&password=letmein
 
 
-json_shelter_animals and xml_shelter_animals
---------------------------------------------
+json_shelter_animals, xml_shelter_animals and csv_shelter_animals
+-----------------------------------------------------------------
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing all animals currently in the care of the shelter.
-The method determines whether the format returned is JSON or XML::
+The method determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein
 
@@ -1203,15 +1204,15 @@ you wish them to be included, pass an extra sensitive=1 parameter::
 
     http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein&sensitive=1
 
-json_stray_animals and xml_stray_animals
---------------------------------------
+json_stray_animals, xml_stray_animals and csv_stray_animals
+-----------------------------------------------------------
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing all stray animals in the care of the shelter. The method
-determines whether the format returned is JSON or XML::
+determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=json_stray_animals&username=user&password=letmein
 
