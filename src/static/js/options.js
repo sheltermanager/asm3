@@ -177,7 +177,7 @@ $(function() {
                         { id: "organisation", post_field: "Organisation", label: _("Organization"), type: "text", doublesize: true },
                         { id: "address", post_field: "OrganisationAddress", label: _("Address"), type: "textarea", doublesize: true },
                         { id: "city", post_field: "OrganisationTown", label: _("City"), type: "text" },
-                        { id: "state", post_field: "OrganisationCounty", label: _("State"), type: "text", hideif: function() { return config.bool("USStateCodes") }},
+                        { id: "state", post_field: "OrganisationCounty", label: _("State"), type: "text", hideif: function() { return config.bool("USStateCodes"); }},
                         { id: "state", post_field: "OrganisationCounty", label: _("State"), type: "select", options: html.states_us_options(), hideif: function() { if (config.bool("USStateCodes") == true) {return false;} else {return true;} }},
                         { id: "zipcode", post_field: "OrganisationPostcode", label: _("Zipcode"), type: "text" },
                         { id: "country", post_field: "OrganisationCountry", label: _("Country"), type: "text" },
@@ -604,7 +604,7 @@ $(function() {
                         { id: "picsinbooks", post_field: "PicturesInBooks", label: _("Show animal thumbnails in movement and medical books"), type: "check", fullrow: true }, 
                         { id: "sexborder", post_field: "ShowSexBorder", label: _("Show pink and blue borders around animal thumbnails to indicate sex"), type: "check", fullrow: true }, 
                         { id: "minimap", post_field: "ShowPersonMiniMap", label: _("Show a minimap of the address on person screens"), type: "check", fullrow: true }, 
-                        { id: "usstatecodes", post_field: "USStateCodes", label: _("When entering addresses, restrict states to valid US 2 letter state codes"), type: "check", fullrow: true, hideif: function() { return asm.locale != "en" } },
+                        { id: "usstatecodes", post_field: "USStateCodes", label: _("When entering addresses, restrict states to valid US 2 letter state codes"), type: "check", fullrow: true, hideif: function() { return asm.locale != "en"; } },
                         { id: "latlong", post_field: "ShowLatLong", label: _("Allow editing of latitude/longitude with minimaps"), type: "check", fullrow: true }, 
                         { id: "mediatablemode", post_field: "MediaTableMode", label: _("Default to table mode when viewing media tabs"), type: "check", fullrow: true }, 
                         { id: "showlbs", post_field: "ShowWeightInLbs", label: _("Show weights as lb and oz"), type: "check", fullrow: true }, 
@@ -968,7 +968,6 @@ $(function() {
             };
 
             validate.save = async function(callback) {
-                $("#button-save").button("disable");
                 validate.dirty(false);
                 let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
@@ -980,20 +979,16 @@ $(function() {
                     console.log(err);
                     log.error(err, err);
                     validate.dirty(true);
-                    $("#button-save").button("disable");
                 }
-            }
+            };
 
             // Toolbar buttons
             $("#button-save").button().click(async function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    common.route_reload(true);
+                    common.route_reload(true); // Needs full reload to get config.js to update
                 }); 
             });
-
-            // Components
-            $("#button-save").button("disable");
 
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").each(function() {

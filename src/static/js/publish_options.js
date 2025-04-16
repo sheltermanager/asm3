@@ -442,7 +442,7 @@ $(function() {
             const change_checkbox = function() {
                 $(".enablecheck").each(function() {
                     let enabled = $(this).is(":checked");
-                    let t = $(this).closest(".asm-fields-container")
+                    let t = $(this).closest(".asm-fields-container");
                     if (enabled) {
                         t.find("select").select("enable");
                         t.find(".asm-textbox, .asm-doubletextbox").removeAttr("disabled");
@@ -486,20 +486,29 @@ $(function() {
             // Disable publisher panels when the checkbox says they're disabled
             $(".enablecheck").change(change_checkbox);
 
-            // Toolbar buttons
-            $("#button-save").button().click(async function() {
-                $("#button-save").button("disable");
+            validate.save = async function(callback) {
                 validate.dirty(false);
                 let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").not(".preset").toPOST(true);
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
-                header.show_loading(_("Saving..."));
-                await common.ajax_post("publish_options", formdata);
-                // Needs to do a full reload to get config.js to update
-                common.route_reload(true); 
-            });
+                try {
+                    let response = await common.ajax_post("publish_options", formdata);
+                    callback(response);
+                }
+                catch(err) {
+                    console.log(err);
+                    log.error(err, err);
+                    validate.dirty(true);
+                }
+            };
 
-            $("#button-save").button("disable");
+            // Toolbar buttons
+            $("#button-save").button().click(async function() {
+                header.show_loading(_("Saving..."));
+                validate.save(function() {
+                    common.route_reload(true); // Needs full reload to get config.js to update
+                }); 
+            });
 
             // Enable services that are only present in certain locales
             $(".localeau").hide();
