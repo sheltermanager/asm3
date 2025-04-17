@@ -36,7 +36,7 @@ $(function() {
                             '<option value="1">' + _("Do Not Register Microchip") + '</option>' }
                 ], { full_width: false }),
                 '</div>' // end accordion section
-            ].join("\n")
+            ].join("\n");
         }, 
         render_notes: function() {
             return [
@@ -69,7 +69,7 @@ $(function() {
                             "5|" + _("5 - Very high") ]) }
                 ], { full_width: false }),
                 '</div>' // end accordion section
-            ].join("\n")
+            ].join("\n");
         }, 
         render_healthandid: function() {
             return [
@@ -83,7 +83,7 @@ $(function() {
                     { post_field: "ownersvet", label: _("Owners Vet"), type: "person", personfilter: "vet" }
                 ], { full_width: false }),
                 '</div>' // end accordion section
-            ].join("\n")
+            ].join("\n");
         }, 
         render_diary: function() {
             return [
@@ -101,7 +101,7 @@ $(function() {
                     { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
                 ], { full_width: false }),
                 '</div>' // end accordion section
-            ].join("\n")
+            ].join("\n");
         }, 
         render_log: function() {
             return [
@@ -117,7 +117,7 @@ $(function() {
                     { post_field: "lognotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
                 ], { full_width: false }),
                 '</div>' // end accordion section
-            ].join("\n")
+            ].join("\n");
         }, 
         render_movement: function() {
             let choosetypes = [];
@@ -146,7 +146,7 @@ $(function() {
                     { post_field: "moveto", label: _("to"), type: "person" },
                 ], { full_width: false }),
                 '</div>' // end accordion section
-            ].join("\n")
+            ].join("\n");
         }, 
         render: function() {
             return [
@@ -165,7 +165,7 @@ $(function() {
                  animal_bulk.render_movement(), 
                  '</div>',
                  html.content_footer()
-            ].join("\n")
+            ].join("\n");
         }, 
 
         bind: function() {

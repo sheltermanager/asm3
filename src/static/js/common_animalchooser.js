@@ -1,5 +1,5 @@
 /*global $, jQuery */
-/*global asm, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
+/*global asm, additional, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
 
 "use strict";
 
