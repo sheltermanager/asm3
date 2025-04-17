@@ -699,6 +699,12 @@ def anibase_pin_no(dbo: Database) -> str:
 def animal_figures_split_entryreason(dbo: Database) -> bool:
     return cboolean(dbo, "AnimalFiguresSplitEntryReason", DEFAULTS["AnimalFiguresSplitEntryReason"] == "Yes")
 
+def animal_flag_change_log(dbo: Database) -> bool:
+    return cboolean(dbo, "AnimalFlagChangeLog", DEFAULTS["AnimalFlagChangeLog"] == "Yes")
+
+def animal_flag_change_log_type(dbo: Database) -> int:
+    return cint(dbo, "AnimalFlagChangeLogType", DEFAULTS["AnimalFlagChangeLogType"])
+
 def animalname_change_log(dbo: Database) -> bool:
     return cboolean(dbo, "AnimalNameChangeLog", DEFAULTS["AnimalNameChangeLog"] == "Yes")
 
@@ -1070,12 +1076,6 @@ def findpet_int_level(dbo: Database) -> str:
 def findpet_org_id(dbo: Database) -> str:
     return cstring(dbo, "FindPetOrgID")
 
-def flag_change_log(dbo: Database) -> bool:
-    return cboolean(dbo, "FlagChangeLog", DEFAULTS["FlagChangeLog"] == "Yes")
-
-def flag_change_log_type(dbo: Database) -> int:
-    return cint(dbo, "FlagChangeLogType", DEFAULTS["FlagChangeLogType"])
-
 def force_2fa(dbo: Database) -> bool:
     return cboolean(dbo, "Force2FA", DEFAULTS["Force2FA"] == "Yes")
 
@@ -1356,6 +1356,12 @@ def paypal_email(dbo: Database) -> str:
 
 def payment_return_url(dbo: Database) -> str:
     return cstring(dbo, "PaymentReturnUrl")
+
+def person_flag_change_log(dbo: Database) -> bool:
+    return cboolean(dbo, "PersonFlagChangeLog", DEFAULTS["PersonFlagChangeLog"] == "Yes")
+
+def person_flag_change_log_type(dbo: Database) -> int:
+    return cint(dbo, "PersonFlagChangeLogType", DEFAULTS["PersonFlagChangeLogType"])
 
 def petrescue_adoptable_in(dbo: Database) -> str:
     return cstring(dbo, "PetRescueAdoptableIn")
