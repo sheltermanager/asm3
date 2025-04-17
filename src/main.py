@@ -1949,6 +1949,7 @@ class animal_bulk(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additional": asm3.additional.get_field_definitions(dbo, "animal"),
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
