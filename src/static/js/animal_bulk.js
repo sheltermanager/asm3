@@ -148,6 +148,32 @@ $(function() {
                 '</div>' // end accordion section
             ].join("\n");
         }, 
+        render_additional: function() {
+            let choosetypes = [];
+            $.each(controller.movementtypes, function(i, v) {
+                if (v.ID == 8 && !config.bool("DisableRetailer")) {
+                    choosetypes.push(v);
+                }
+                else if (v.ID == 0) {
+                    v.MOVEMENTTYPE = _("Reservation");
+                    choosetypes.push(v);
+                }
+                else if (v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
+                    choosetypes.push(v);
+                }
+            });
+            return [
+                '<h3><a href="#">' + _("Additional") + '</a></h3>',
+                '<div>',
+                tableform.fields_render([
+                    { post_field: "additionalfield", label: _("Additional Field"), type: "select", halfsize: true, 
+                        options: "<option value='-1'></option>" + html.list_to_options(controller.additional, "ID", "FIELDLABEL"), 
+                        xmarkup: ' <input id="additionalvalue" data-post="additionalvalue" type="text" class=""asm-field asm-textbox asm-autotext ui-autocomplete-input controlshadow controlborder>'
+                    },
+                ], { full_width: false }),
+                '</div>' // end accordion section
+            ].join("\n");
+        }, 
         render: function() {
             return [
                 html.content_header(_("Bulk change animals")),
@@ -163,6 +189,7 @@ $(function() {
                  animal_bulk.render_diary(), 
                  animal_bulk.render_log(), 
                  animal_bulk.render_movement(), 
+                 animal_bulk.render_additional(), 
                  '</div>',
                  html.content_footer()
             ].join("\n");
