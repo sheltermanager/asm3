@@ -102,8 +102,6 @@ $(function() {
                     { post_field: "membershipexpires", json_field: "MEMBERSHIPEXPIRYDATE", type: "date", label: _("Membership Expiry") },
                     { post_field: "fostercapacity", json_field: "FOSTERCAPACITY", type: "number", label: _("Foster Capacity"), 
                         callout: _("If this person is a fosterer, the maximum number of animals they can care for.") },
-                    { post_field: "accountnumber", json_field: "ACCOUNTNUMBER", type: "text", label: _("Account number")},
-                    { post_field: "minimumorder", json_field: "MINIMUMORDER", type: "currency", label: _("Minimum number")},
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 8) },
 
                     { type: "nextcol" },
@@ -326,8 +324,19 @@ $(function() {
                 $("#membershipexpiresrow").fadeOut();
             }
 
-            // If neither member or vet flag is set, hide the membership number field
-            if (!$("#flags option[value='vet']").is(":selected") && !$("#flags option[value='member']").is(":selected")) {
+            // If the supplier flag is set, change the membership number label
+            // and hide the expiry field so we can use membership for account number
+            if ($("#flags option[value='supplier']").is(":selected")) {
+                $("label[for='membershipnumber']").html(_("Account Number"));
+                $("#membershipnumber").prop("title", "");
+                $("#membershipnumberrow").fadeIn();
+                $("#membershipexpiresrow").fadeOut();
+            }
+
+            // If neither supplier, member or vet flag is set, hide the membership fields
+            if (!$("#flags option[value='vet']").is(":selected") 
+                && !$("#flags option[value='member']").is(":selected")
+                && !$("#flags option[value='supplier']").is(":selected")) {
                 $("#membershipnumberrow").fadeOut();
                 $("#membershipexpiresrow").fadeOut();
             }
@@ -338,16 +347,6 @@ $(function() {
             }
             else {
                 $("#fostercapacityrow").fadeOut();
-            }
-
-            // If the supplier flag is set, show/hide the account number and minimum order fields
-            if ($("#flags option[value='supplier']").is(":selected")) {
-                $("#accountnumberrow").fadeIn();
-                $("#minimumorderrow").fadeIn();
-            }
-            else {
-                $("#accountnumberrow").fadeOut();
-                $("#minimumorderrow").fadeOut();
             }
 
             // If the homechecked flag is set, or the option is not on to
