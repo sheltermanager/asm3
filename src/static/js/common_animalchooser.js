@@ -344,9 +344,8 @@ $.widget("asm.animalchooser", {
     },
 
     destroy: function() {
-        try {
-            this.options.dialog.dialog("destroy");
-        } catch (ex) {}
+        try { this.options.dialog.dialog("destroy"); } catch (ex) {}
+        try { this.options.dialogadd.dialog("destroy"); } catch (exa) {}
     },
 
     /**
