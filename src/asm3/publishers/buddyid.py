@@ -1,8 +1,6 @@
 
-import asm3.additional
 import asm3.animal
 import asm3.configuration
-import asm3.medical
 import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
@@ -10,9 +8,13 @@ from asm3.sitedefs import BUDDYID_BASE_URL, BUDDYID_EMAIL, BUDDYID_PASSWORD
 from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import sys
+import time
 
 # ID type keys used in the ExtraIDs column
 IDTYPE_BUDDYID = "buddyid"
+
+# Number of seconds to delay between requests (BuddyID have a throttle of 60 per minute)
+REQUEST_DELAY = 1
 
 class BuddyIDPublisher(AbstractPublisher):
     """
@@ -94,6 +96,9 @@ class BuddyIDPublisher(AbstractPublisher):
                 if not self.validate(an): continue
                 data = self.processAnimal(an, provider_code)
                 jsondata = asm3.utils.json(data)
+
+                # Add a delay between requests due to BuddyID throttling
+                if REQUEST_DELAY > 0: time.sleep(REQUEST_DELAY)
 
                 # If we had a registration_id, update the existing registration, otherwise create a new one.
                 if registration_id == "":
