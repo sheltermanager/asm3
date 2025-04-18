@@ -386,7 +386,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["total"] = unitratio
             slpost["balance"] = quantity * -1
             slpost["low"] = 0
-            slpost["expiry"] = post.date("expiry")
+            slpost["expiry"] = post["expiry"]
             slpost["batchnumber"] = post["batch"]
             slpost["cost"] = post.integer("COSTPRICE")
             slpost["unitprice"] = post.integer("RETAILPRICE")

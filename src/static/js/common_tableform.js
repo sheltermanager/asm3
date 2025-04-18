@@ -2293,7 +2293,8 @@ const tableform = {
             };
         }
 
-        $(selector).dialog(o).dialog("open");
+        $(selector).dialog(o);
+        $(selector).dialog("open");
 
         return deferred.promise();
     }

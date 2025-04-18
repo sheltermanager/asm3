@@ -139,10 +139,10 @@ $(function() {
                 { id: "new", text: _("New Product"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { product.new_product(); }},
                 { id: "move", text: _("Move Stock"), icon: "stock-usage", enabled: "one", perm: "asl", 
-                    click: async function() {
+                    click: function() {
                         product.move_product_init();
-                        await tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { width: 500, notblank: [ "movementfrom", "movementto" ] });
-                        product.move_product();
+                        tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { 
+                            width: 500, okclick: product.move_product, notblank: [ "movementfrom", "movementto" ] });
                     }
                 },
                 { id: "showusage", text: _("Usage"), icon: "stock-usage", enabled: "one", perm: "asl", 
@@ -178,10 +178,12 @@ $(function() {
             this.table = table;
         },
 
-        render: function() {
-            let s = '<div id="dialog-moveproduct" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">';
-            s += html.info(_("Adjust stock levels of this product in bulk."));
-            s += tableform.fields_render([
+        render_moveproduct: function() {
+            return [
+                '<div id="dialog-moveproduct" style="display: none;width: 800px;" title="' + html.title(_("Move Product")) + '">',
+                html.info(_("Adjust stock levels of this product in bulk.")),
+                tableform.fields_render([
+                { type: "raw", markup: '<span class="strong" id="moveproductname"></span>' },
                 { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true, validation: "notzero" },
                 { post_field: "movementunit", json_field: "MOVEMENTUNIT", type: "select", justwidget: true, halfsize: true },
                 { type: "rowclose" },
@@ -191,9 +193,14 @@ $(function() {
                 { post_field: "batch", json_field: "BATCH", label: _("Batch"), type: "text" },
                 { post_field: "expiry", json_field: "EXPIRY", label: _("Expiry"), type: "date" },
                 { post_field: "comments", json_field: "COMMENTS", label: _("Comments"), type: "textarea" }
-            ]);
-            s += '</div>';
+                ]),
+                '</div>'
+            ].join("\n");
+        },
+
+        render: function() {
             this.model();
+            let s = this.render_moveproduct();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Products"));
             s += tableform.buttons_render(this.buttons);
@@ -214,7 +221,6 @@ $(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             product.set_extra_fields(row);
                             controller.rows.push(row);
-                            
                             tableform.table_update(table);
                             tableform.dialog_close();
                         })
@@ -259,6 +265,7 @@ $(function() {
             if (activeproduct.UNITTYPEID != 0) {
                 units.push("1|" + unit);
             }
+            $("#moveproductname").html(activeproduct.PRODUCTNAME);
             $("#movementunit").html(html.list_to_options(units));
             $("#movementunit").val($("#movementunit option").last().val());
             $("#movementfrom").val("L$" + config.integer(asm.user + "_DefaultStockLocationID"));
@@ -300,15 +307,7 @@ $(function() {
                 comments: _("Move: {0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
             };
             await common.ajax_post("product", formdata);
-            console.log($("#dialog-moveproduct"));
-            if (fromtype == 0 && totype == 1) {
-                activeproduct.BALANCE = activeproduct.BALANCE - quantity;
-            } else if (fromtype == 1 && totype == 0) {
-                activeproduct.BALANCE = activeproduct.BALANCE + quantity;
-            }
-            //tableform.fields_update_row(this.dialog.fields, activeproduct);
-            tableform.buttons_default_state(this.buttons);
-            tableform.table_update(this.table);
+            common.route_reload();
         },
 
         clone_product: function() { 
@@ -395,6 +394,7 @@ $(function() {
         },
 
         destroy: function() {
+            common.widget_destroy("#dialog-moveproduct");
             tableform.dialog_destroy();
         },
 
