@@ -3135,9 +3135,9 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     flagstr = "|".join(flags) + "|"
 
     # If the option is on and the flags have changed, log it
-    if asm3.configuration.flag_change_log(dbo):
+    if asm3.configuration.animal_flag_change_log(dbo):
         if flagstr != prerow.ADDITIONALFLAGS:
-            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.flag_change_log_type(dbo),
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.animal_flag_change_log_type(dbo),
                 _("Flags changed from '{0}' to '{1}'", l).format(prerow.ADDITIONALFLAGS, flagstr))
 
     # If the animal is non-shelter, make sure that any movements are returned on the same
