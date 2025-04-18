@@ -768,8 +768,17 @@ edit_header = {
         if (p.ISSHELTER == 1) {
             flags.push(_("Shelter"));
         }
+        if (p.ISSPONSOR == 1){
+            flags.push(_("Sponsor"));
+        }
         if (p.ISSTAFF == 1) {
             flags.push(_("Staff"));
+        }
+        if (p.ISSUPPLIER == 1) {
+            flags.push(_("Supplier"));
+        }
+        if (p.ISGIFTAID == 1) {
+            flags.push(_("UK Giftaid"));
         }
         if (p.ISVET == 1) {
             flags.push(_("Vet"));
@@ -780,12 +789,9 @@ edit_header = {
         if (p.EXCLUDEFROMBULKEMAIL == 1) {
             flags.push(_("Exclude from bulk email"));
         }
-        if (p.ISSPONSOR == 1){
-            flags.push(_("Sponsor"));
-        }
         if (p.ADDITIONALFLAGS != null) {
             var stock = [ "aco", "adopter", "banned", "dangerous", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
-                "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "sponsor", "staff", "giftaid",
+                "fosterer", "giftaid", "homechecked", "homechecker", "member", "retailer", "shelter", "sponsor", "supplier", "staff", 
                 "vet", "volunteer"];
             $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
                 if (v != "" && $.inArray(v, stock) == -1) {
