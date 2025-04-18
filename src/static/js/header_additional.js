@@ -512,7 +512,7 @@ additional = {
             rowclasses: f.HIDDEN ? "hidden" : "",
             value: usedefault ? f.DEFAULTVALUE : f.VALUE,
             xlabel: f.MANDATORY ? '&nbsp;<span class="asm-has-validation">*</span>' : "",
-            callout: f.TOOLTIP,
+            callout: (includeids == undefined || includeids == true) ? f.TOOLTIP : "", // callouts can't work without an id
             xattr: 'data-linktype="' + f.LINKTYPE + '" data-id="' + f.ID + '"'
         };
         if (f.FIELDTYPE == additional.YESNO) { return tableform.render_check(v); }
