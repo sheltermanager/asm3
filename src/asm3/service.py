@@ -243,10 +243,13 @@ def method_output(method: str, locale: str, rows: Results) -> str:
     of the method and if it starts with csv, xml or json.
     """
     if method.startswith("csv"):
+        if rows is None or len(rows) == 0: return ""
         return asm3.utils.csv(locale, rows)
     elif method.startswith("xml"):
+        if rows is None or len(rows) == 0: return '<?xml version="1.0" standalone="yes" ?>\n<xml></xml>'
         return asm3.html.xml(rows)
     elif method.startswith("json"):
+        if rows is None or len(rows) == 0: return "[]"
         return asm3.utils.json(rows)
     else:
         raise asm3.utils.ASMValidationError("cannot format output, method does not start with csv, xml or json")
