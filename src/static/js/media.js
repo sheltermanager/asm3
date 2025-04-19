@@ -255,7 +255,7 @@ $(function() {
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
                         + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
                     '<li id="button-signlink" class="sharebutton asm-menu-item"><a '
-                        + ' href="#">' + html.icon("link") + ' ' + _("Signing link") + '</a></li>',
+                        + ' href="#">' + html.icon("link") + ' ' + _("Signing links") + '</a></li>',
                 '</ul>',
                 '</div>',
 
@@ -305,7 +305,7 @@ $(function() {
                 '<input type="hidden" name="mode" value="createdoc" />',
                 '</form>', 
 
-                '<div id="dialog-signlink" style="display: none" title="' + _("Signature link") + '">',
+                '<div id="dialog-signlink" style="display: none" title="' + _("Signing links") + '">',
                 '<div id="signaturelinks" style="width: 500px; height: 200px;"></div>',
                 '</div>',
             ];
@@ -790,23 +790,6 @@ $(function() {
                 buttons: signbuttons
             });
 
-            $("#dialog-signlink").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide
-            });
-
-            $("#signaturelinks").on("click", ".copylink", function(event) {
-                console.log($(this));
-                console.log($(this).attr("data-url"));
-                common.copy_to_clipboard($(this).attr("data-url"));
-                header.show_info(_("Successfully copied to the clipboard."));
-                return false;
-            });
-
            $("#button-viewmode").button().click(function() {
                 if (media.icon_mode_active) {
                     media.mode_table();
@@ -1017,37 +1000,25 @@ $(function() {
                 return false;
             });
 
-            $("#button-signlink").click(function() {
+            $("#button-signlink").click(async function() {
                 $("#button-sign").asmmenu("hide_all");
-                let mediaitems = media.table.rows;
-                let mediaids = tableform.table_ids(media.table).split(",");
+                let signaturelinks = await common.ajax_post("media", "mode=signlink&ids=" + tableform.table_ids(media.table));
                 $("#signaturelinks").empty();
-                $.each(mediaids, function(i, mid) {
-                    if ( mid != "" ) {
-                        $.each(mediaitems, async function(i, m) {
-                            if (m.ID == mid) {
-                                let mediadesc = m.MEDIANOTES;
-                                if ( mediadesc == "" ) {
-                                    mediadesc = m.MEDIANAME;
-                                }
-                                let formdata = "mode=signlink&mediaid=" + mid;
-                                let signaturelink = await common.ajax_post("media", formdata);
-                                $("#signaturelinks").append(
-                                    "<div><button data-icon='clipboard' data-text='false' data-url='" + signaturelink + "' " + 
-                                    "class='ui-button ui-corner-all ui-widget ui-button-icon-only' " + 
-                                    "title='" + _("Copy URL to the clipboard") + "'>" + 
-                                    "<span class='copylink ui-button-icon ui-icon ui-icon-clipboard' data-url='" + signaturelink + "'></span> " + 
-                                    "<span class='ui-button-icon-space'> </span>" + _("Copy URL to the clipboard") + "</button>&nbsp;" + 
-                                    "<a href='" + signaturelink + "' target='_blank'>" + mediadesc + "</a></div>"
-                                );
-                                return false;
-                            }
+                $.each(signaturelinks.split("||"), function(i, link) {
+                    let [mediadesc, signaturelink] = link.split("==");
+                    let signid = "signlink-" + i;
+                    $("#signaturelinks").append(
+                        '<div><button id="' + signid + '" data-url="' + signaturelink + '">' + _("Copy URL to the clipboard") + '</button>' + 
+                        '&nbsp;<a href="' + signaturelink + '" target="_blank">' + mediadesc + '</a></div>');
+                    $("#" + signid)
+                        .button({ icons: { primary: "ui-icon-clipboard" }, text: false })
+                        .click(function() {
+                            common.copy_to_clipboard($(this).attr("data-url"));
+                            header.show_info(_("Successfully copied to the clipboard."));
+                            return false;
                         });
-                    }
                 });
-
-                //console.log(dialogcontent);
-                tableform.show_okcancel_dialog("#dialog-signlink", _("Ok"), {width: 550});
+                tableform.show_okcancel_dialog("#dialog-signlink", _("Ok"), {width: 550, hidecancel: true });
                 return false;
             });
 
@@ -1205,6 +1176,7 @@ $(function() {
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
             common.widget_destroy("#dialog-sign");
+            common.widget_destroy("#dialog-signlink");
             common.widget_destroy("#dialog-copyanimal");
             common.widget_destroy("#dialog-copyperson");
             common.widget_destroy("#dialog-moveanimal");
