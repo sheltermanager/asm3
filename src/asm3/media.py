@@ -712,6 +712,16 @@ def embellish_photo_urls(dbo: Database, rows: Results, linktypeid: int = ANIMAL)
                 r.PHOTOURLS.append(url)
     return rows
 
+def get_signature_link(dbo: Database, mid: int, post: PostedData) -> str:
+    m = get_media_by_id(dbo, mid)
+    if m is None: 
+        raise asm3.utils.ASMValidationError("cannot find media with ID %s" % mid)
+    if m.MEDIAMIMETYPE != "text/html": 
+        raise asm3.utils.ASMValidationError("invalid mime type for document signing %s" % m.MEDIAMIMETYPE)
+    token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
+    url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.name(), asm3.utils.strip_email_address(post["to"]).replace("@", "%40"), mid, token)
+    return url
+
 def send_signature_request(dbo: Database, username: str, mid: int, post: PostedData) -> None:
     """
     Sends a request for a document to be signed by email. 

@@ -254,6 +254,8 @@ $(function() {
                         + ' href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
                         + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
+                    '<li id="button-signlink" class="sharebutton asm-menu-item"><a '
+                        + ' href="#">' + html.icon("link") + ' ' + _("Signing link") + '</a></li>',
                 '</ul>',
                 '</div>',
 
@@ -301,7 +303,11 @@ $(function() {
                 '<input type="hidden" name="linkid" value="' + controller.linkid + '" />',
                 '<input type="hidden" name="linktypeid" value="' + controller.linktypeid + '" />',
                 '<input type="hidden" name="mode" value="createdoc" />',
-                '</form>'
+                '</form>', 
+
+                '<div id="dialog-signlink" style="display: none" title="' + _("Signature link") + '">',
+                '<div id="signaturelinks" style="width: 500px; height: 200px;"></div>',
+                '</div>',
             ];
 
             if (controller.name == "animal_media") {
@@ -784,6 +790,23 @@ $(function() {
                 buttons: signbuttons
             });
 
+            $("#dialog-signlink").dialog({
+                autoOpen: false,
+                width: 550,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.edit_show,
+                hide: dlgfx.edit_hide
+            });
+
+            $("#signaturelinks").on("click", ".copylink", function(event) {
+                console.log($(this));
+                console.log($(this).attr("data-url"));
+                common.copy_to_clipboard($(this).attr("data-url"));
+                header.show_info(_("Successfully copied to the clipboard."));
+                return false;
+            });
+
            $("#button-viewmode").button().click(function() {
                 if (media.icon_mode_active) {
                     media.mode_table();
@@ -991,6 +1014,40 @@ $(function() {
             $("#button-signscreen").click(function() {
                 $("#button-sign").asmmenu("hide_all");
                 $("#dialog-sign").dialog("open");
+                return false;
+            });
+
+            $("#button-signlink").click(function() {
+                $("#button-sign").asmmenu("hide_all");
+                let mediaitems = media.table.rows;
+                let mediaids = tableform.table_ids(media.table).split(",");
+                $("#signaturelinks").empty();
+                $.each(mediaids, function(i, mid) {
+                    if ( mid != "" ) {
+                        $.each(mediaitems, async function(i, m) {
+                            if (m.ID == mid) {
+                                let mediadesc = m.MEDIANOTES;
+                                if ( mediadesc == "" ) {
+                                    mediadesc = m.MEDIANAME;
+                                }
+                                let formdata = "mode=signlink&mediaid=" + mid;
+                                let signaturelink = await common.ajax_post("media", formdata);
+                                $("#signaturelinks").append(
+                                    "<div><button data-icon='clipboard' data-text='false' data-url='" + signaturelink + "' " + 
+                                    "class='ui-button ui-corner-all ui-widget ui-button-icon-only' " + 
+                                    "title='" + _("Copy URL to the clipboard") + "'>" + 
+                                    "<span class='copylink ui-button-icon ui-icon ui-icon-clipboard' data-url='" + signaturelink + "'></span> " + 
+                                    "<span class='ui-button-icon-space'> </span>" + _("Copy URL to the clipboard") + "</button>&nbsp;" + 
+                                    "<a href='" + signaturelink + "' target='_blank'>" + mediadesc + "</a></div>"
+                                );
+                                return false;
+                            }
+                        });
+                    }
+                });
+
+                //console.log(dialogcontent);
+                tableform.show_okcancel_dialog("#dialog-signlink", _("Ok"), {width: 550});
                 return false;
             });
 
