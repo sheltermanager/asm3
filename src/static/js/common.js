@@ -239,18 +239,28 @@ const common = {
 
     /**
      * Copies 'text' to the clipboard.
-     * Uses a temporarily created textarea. Note that this has
-     * to be called by code spawned from a click event so that
-     * a user interaction started it.
      */
-    copy_to_clipboard: function(text) {
-        var input = document.createElement('textarea');
-        input.innerHTML = text;
-        document.body.appendChild(input);
-        input.select();
-        var result = document.execCommand('copy');
-        document.body.removeChild(input);
-        return result;
+    copy_to_clipboard: async function(text) {
+        if (!navigator.clipboard) {
+            // If clipboard API is unavailable, use old fashioned
+            // execCommand method (this requires the
+            // this call to be spawned from a user interaction event)
+            let input = document.createElement('textarea');
+            input.innerHTML = text;
+            document.body.appendChild(input);
+            input.select();
+            let result = document.execCommand('copy');
+            document.body.removeChild(input);
+            return result;
+        }
+        else {
+            try {
+                await navigator.clipboard.writeText(text);
+            }
+            catch (err) {
+                alert(err);
+            }
+        }
     },
 
     /**
@@ -258,7 +268,7 @@ const common = {
      * Basically Object.assign
      */
     copy_object: function(target, source) {
-        for (var key in source) {
+        for (let key in source) {
             if (source.hasOwnProperty(key)) {
                 target[key] = source[key];
             }
