@@ -1348,6 +1348,17 @@ const html = {
     },
 
     /**
+     * Turns excess whitespace in a string into single spaces
+     * in a similar way to how HTML does.
+     */
+    strip_whitespace: function(s) {
+        if (!s) { return ""; }
+        s = String(s);
+        s = s.replace(/\s+/g, ' ').trim();
+        return s;
+    },
+
+    /**
      * Santises a string to go in an HTML title
      */
     title: function(s) {
@@ -1361,16 +1372,16 @@ const html = {
     /**
      * Truncates a string to length. If the string is longer
      * than length, appends ...
-     * Throws away html tags too.
+     * Throws away html tags and excess whitespace too.
      */
     truncate: function(s, length) {
         if (length === undefined) {
             length = 100;
         }
-        if (s == null) {
-            return "";
-        }
+        if (!s) { return ""; }
+        s = String(s);
         s = this.strip_tags(s);
+        s = this.strip_whitespace(s);
         if (s.length > length) {
             return s.substring(0, length) + "...";
         }
