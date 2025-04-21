@@ -23,7 +23,7 @@ $(function() {
                             options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "reservedanimals", post_field: "includereserved", label: _("Include reserved animals"), type: "select", 
                             options: yesnooptions, classes: 'pbool preset' }, 
-                        { id: "retaileranimals", post_field: "includeretailer", label: _("Include reserved animals"), type: "select", 
+                        { id: "retaileranimals", post_field: "includeretailer", label: _("Include retailer animals"), type: "select", 
                             options: yesnooptions, classes: 'pbool preset' }, 
                         { id: "fosteredanimals", post_field: "includefosters", label: _("Include fostered animals"), type: "select", 
                             options: yesnooptions, classes: 'pbool preset' }, 
