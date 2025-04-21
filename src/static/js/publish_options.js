@@ -476,7 +476,7 @@ $(function() {
                 // Read the enable checkboxes and build a list of enabled publishers 
                 // for storing as a configuration option.
                 let ep = [];
-                $(".enablecheck").each(function() {
+                $(".enablecheck:checked").each(function() {
                     let c = $(this), k = c.attr("id").replace("enabled", "");
                     ep.push(k);
                 });
