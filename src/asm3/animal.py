@@ -997,7 +997,6 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_id("entrytype", "a.EntryTypeID")
     ss.add_id("pickuplocation", "a.PickupLocationID")
     ss.add_id("jurisdiction", "a.JurisdictionID")
-    ss.add_str("sheltercode", "a.ShelterCode")
     ss.add_str("litterid", "a.AcceptanceNumber")
     ss.add_date_pair("inbetweenfrom", "inbetweento", "a.DateBroughtIn", "a.MostRecentEntryDate")
     ss.add_filter("goodwithchildren", "a.IsGoodWithChildren = 0")
@@ -1037,6 +1036,13 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     if post["diet"] != "-1" and post["diet"] != "":
         dietid = post["diet"]
         ss.ands.append(f"EXISTS (SELECT ID FROM animaldiet WHERE DietID={dietid} AND AnimalID = a.ID)")
+
+    if post["sheltercode"] != "":
+        ilike1 = dbo.sql_ilike("a.ShelterCode", "?")
+        ilike2 = dbo.sql_ilike("ShelterCode", "?")
+        ss.ands.append(f"({ilike1} OR EXISTS (SELECT ShelterCode FROM animalentry WHERE {ilike2} AND AnimalID = a.ID))")
+        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
+        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
 
     if post["insuranceno"] != "":
         ilike = dbo.sql_ilike("InsuranceNumber", "?")
