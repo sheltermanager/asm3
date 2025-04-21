@@ -196,8 +196,9 @@ def due_payment(dbo: Database, user = "system") -> None:
     asm3.al.info(f"Sent {len(rows)} due payment emails.", "automail.due_payment", dbo)
 
 def _fosterer_weekly_activefosterers(dbo: Database):
-    return dbo.query("SELECT ID, OwnerName, EmailAddress FROM owner " \
-        "WHERE EmailAddress <> '' AND EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 2 AND MovementDate <= ? " \
+    return dbo.query("SELECT ID, OwnerName, EmailAddress, EmailAddress2 FROM owner " \
+        "WHERE EmailAddress <> '' " \
+        "AND EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 2 AND MovementDate <= ? " \
         "AND (ReturnDate Is Null OR ReturnDate > ?)) ORDER BY OwnerName", ( dbo.today(), dbo.today() ))
 
 def _fosterer_weekly_animals(dbo: Database, personid: int):
@@ -318,6 +319,10 @@ def fosterer_weekly(dbo: Database, user = "system") -> None:
             asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject=subject, body=body, contenttype="html", exceptions=False)
             if asm3.configuration.audit_on_send_email(dbo): 
                 asm3.audit.email(dbo, user, replyto, f.EMAILADDRESS, "", "", subject, body)
+            if f.EMAILADDRESS2 is not None and f.EMAILADDRESS2 != "":
+                asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS2, subject=subject, body=body, contenttype="html", exceptions=False)
+                if asm3.configuration.audit_on_send_email(dbo): 
+                    asm3.audit.email(dbo, user, replyto, f.EMAILADDRESS2, "", "", subject, body)
 
 def _licence_reminder_query(dbo: Database, cutoff: datetime) -> Results:
     return dbo.query("SELECT ol.ID, ol.OwnerID, o.EmailAddress " \
