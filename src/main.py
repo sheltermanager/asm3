@@ -4226,6 +4226,7 @@ class incident_citations(JSONEndpoint):
             "incident": a,
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
             "citationtypes": asm3.lookups.get_citation_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")
         }
 
