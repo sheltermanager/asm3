@@ -123,7 +123,6 @@
 15 | ^9900000             | nanoChip
 15 | ^9910010             | HomeSafe | en_AU
 15 | ^991001911           | 911PetChip | en
-15 | ^9910010             | AKC Reunite | en
 15 | ^991001              | Medinfar-Sorológico | en_PT pt
 15 | ^9910030             | PEEVA | en
 15 | ^9910030             | Allflex | en_AU
