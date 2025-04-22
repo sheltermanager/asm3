@@ -36,16 +36,13 @@ $(function() {
                         onload: function() {
                             additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, row));
                             tableform.fields_populate_from_json(dialog.fields, row);
-                            //console.log(row);
                         },
                         onchange: async function() {
-                            tableform.fields_update_row(dialog.fields, row);
-
                             let afpost = additional.additional_fields_post(controller.additional, 19);
-                            console.log(afpost);
                             row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
                             row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                             await tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID + afpost, "citations");
+                            tableform.fields_update_row(dialog.fields, row);
                             tableform.table_update(table);
                             tableform.dialog_close();
                         }
@@ -106,12 +103,9 @@ $(function() {
                                     var row = {};
                                     row.ID = response;
                                     tableform.fields_update_row(dialog.fields, row);
-
                                     additional.additional_fields_update_row(
                                         additional.merge_definitions_and_values(controller.additional, row), row
                                     );
-
-                                    //console.log(row);
                                     row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
                                     row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                                     controller.rows.push(row);
@@ -122,9 +116,8 @@ $(function() {
                                 });
                             },
                             onload: function() {
+                                additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, {}));
                                 citations.type_change();
-
-                                //additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, {}));
 
                                 $("#citationnumber").val(format.padleft(controller.nextid, 6));
 
