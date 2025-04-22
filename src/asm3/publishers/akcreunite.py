@@ -19,7 +19,7 @@ class AKCReunitePublisher(AbstractPublisher):
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("akcreunite", "AKC Reunite Publisher")
-        self.microchipPatterns = ['0006', '0007', '956', '9910010']
+        self.microchipPatterns = ['0006', '0007', '956' ]
 
     def get_akc_species(self, asmspeciesid: int) -> str:
         if asmspeciesid == 1: return "DOG"
