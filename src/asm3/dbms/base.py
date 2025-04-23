@@ -924,6 +924,22 @@ class Database(object):
             values.append(self.sql_value(r[k]))
         donefields = True
         return "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
+    
+    def row_to_update_sql(self, table: str, r: ResultRow, escapeCR: str = "") -> str:
+        """
+        function that Writes an UPDATE query for a result row
+        """
+        donefields = False # Don't know what the purpose of donefields is, code based on row_to_insert_sql(), left in as looked important - Adam.
+        cdata = []
+        rid = 0
+        for k in sorted(r.keys()):
+            if not donefields:
+                if k == "ID":
+                    rid = self.sql_value(r[k])
+                else:
+                    cdata.append(k + " = " + self.sql_value(r[k]))
+        donefields = True
+        return "UPDATE " + table + " SET " + ",".join(cdata) + " WHERE ID = " + str(rid)
 
     def split_queries(self, sql: str) -> List[str]:
         """

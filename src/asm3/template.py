@@ -148,10 +148,15 @@ def rename_document_template(dbo: Database, username: str, dtid: int, newname: s
 
 def update_document_template_content(dbo: Database, username: str, dtid: int, content: bytes) -> None:
     """ Changes the content of a template """
+    row = dbo.first_row(dbo.query("SELECT * FROM templatedocument WHERE ID = ?", (dtid,)))
+    sql = dbo.row_to_update_sql("templatedocument", row)
+
     dbo.update("templatedocument", dtid, {
         "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
     name = get_document_template_name(dbo, dtid)
+
+    asm3.audit.insert_deletion(dbo, username, "templatedocument", dtid, "", sql)
     asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "changed content of template %s (%s)" % (dtid, name))
 
 def update_document_template_show(dbo: Database, username: str, dtid: int, newshow: str) -> None:
