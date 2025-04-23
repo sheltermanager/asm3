@@ -31,6 +31,8 @@ def get_html_template_names(dbo: Database) -> List[str]:
 
 def update_html_template(dbo: Database, username: str, name: str, head: str, body: str, foot: str, builtin: bool = False) -> None:
     """ Creates/updates an HTML publishing template """
+    row = dbo.first_row(dbo.query("SELECT * FROM templatehtml WHERE Name = ?", (name,)))
+    sql = dbo.row_to_update_sql("templatehtml", row, "NAME")
     dbo.execute("DELETE FROM templatehtml WHERE Name = ?", [name])
     htid = dbo.insert("templatehtml", {
         "Name":     name,
@@ -39,6 +41,9 @@ def update_html_template(dbo: Database, username: str, name: str, head: str, bod
         "*Footer":  foot,
         "IsBuiltIn": builtin and 1 or 0
     })
+
+    asm3.audit.insert_deletion(dbo, username, "templatehtml", row.ID, "", sql)
+
     asm3.audit.create(dbo, username, "templatehtml", htid, "", "id: %d, name: %s" % (htid, name))
 
 def delete_html_template(dbo: Database, username: str, name: str) -> None:
