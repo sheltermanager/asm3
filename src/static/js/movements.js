@@ -338,7 +338,6 @@ $(function() {
                                         tableform.fields_update_row(dialog.fields, row);
                                         movements.set_extra_fields(row);
                                         additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
-                                        console.log(row);
                                         row.ADOPTIONNUMBER = format.padleft(response, 6);
                                         controller.rows.push(row);
                                         tableform.table_update(table);
