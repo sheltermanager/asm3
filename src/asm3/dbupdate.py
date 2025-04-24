@@ -703,6 +703,7 @@ def sql_structure(dbo: Database) -> str:
         fint("Cost"),
         fint("CostPerTreatment", True),
         fdate("CostPaidDate", True),
+        fint("MedicalTypeID"), # To do - check if this needs to be nullable - Adam.
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
         fint("TimingRuleNoFrequencies"),
@@ -715,6 +716,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animalmedical_AnimalID", "animalmedical", "AnimalID")
     sql += index("animalmedical_MedicalProfileID", "animalmedical", "MedicalProfileID")
     sql += index("animalmedical_CostPaidDate", "animalmedical", "CostPaidDate")
+    sql += index("animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID") # To do - check that this index is necessary
 
     sql += table("animalmedicaltreatment", (
         fid(),
