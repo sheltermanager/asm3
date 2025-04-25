@@ -17,7 +17,7 @@ $(function() {
                 fields: [
                     { json_field: "PROFILENAME", post_field: "profilename", label: _("Profile"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" }, 
-                    //{ json_field: "MEDICALTYPE", post_field: "medicaltype", label: _("Type"), type: "select", options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
+                    { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), type: "select", options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
                         callout: _("The total cost of all treatments.") },
@@ -80,6 +80,7 @@ $(function() {
                 columns: [
                     { field: "PROFILENAME", display: _("Profile"), initialsort: true },
                     { field: "TREATMENTNAME", display: _("Name") },
+                    { field: "MEDICALTYPENAME", display: _("Type") },
                     { field: "DOSAGE", display: _("Dosage") },
                     { field: "COST", display: _("Cost"), 
                         formatter: function(row) {

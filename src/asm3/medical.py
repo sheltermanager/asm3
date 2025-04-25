@@ -426,7 +426,7 @@ def get_profiles(dbo: Database, sort: int = ASCENDING_NAME) -> Results:
     TIMINGRULE, TIMINGRULEFREQUENCY, TIMINGRULENOFREQUENCIES, TREATMENTRULE, TOTALNUMBEROFTREATMENTS
     """
     l = dbo.locale
-    sql = "SELECT m.* FROM medicalprofile m "
+    sql = "SELECT m.*, t.MedicalTypeName FROM medicalprofile m LEFT JOIN lksmedicaltype t ON m.MedicalTypeID = t.ID "
     if sort == ASCENDING_NAME:
         sql += "ORDER BY ProfileName"
     elif sort == DESCENDING_NAME:
@@ -1273,6 +1273,7 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
         "CostPerTreatment":         post.integer("costpertreatment"),
+        "MedicalTypeID":            post.integer("medicaltype"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
@@ -1311,6 +1312,7 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
         "CostPerTreatment":         post.integer("costpertreatment"),
+        "MedicalTypeID":            post.integer("medicaltype"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,

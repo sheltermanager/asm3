@@ -5121,7 +5121,8 @@ class medical(JSONEndpoint):
             "stockitems": asm3.stock.get_stock_items(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "templates": asm3.template.get_document_templates(dbo, "medical"),
-            "users": asm3.users.get_users(dbo)
+            "users": asm3.users.get_users(dbo),
+            "medicaltypes": asm3.lookups.get_medicaltypes(dbo)
         }
 
     def post_create(self, o):
@@ -5182,6 +5183,7 @@ class medicalprofile(JSONEndpoint):
         med = asm3.medical.get_profiles(o.dbo)
         asm3.al.debug("got %d medical profiles" % len(med), "main.medical_profile", o.dbo)
         return {
+            "medicaltypes": asm3.lookups.get_medicaltypes(o.dbo),
             "rows": med
         }
 
