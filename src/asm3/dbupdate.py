@@ -3453,7 +3453,7 @@ def _dbupdates_exec(dbo: Database, stdout = False, stoponexception = False) -> i
                     print(msg)
                 else:
                     asm3.al.info(msg, "dbupdate._dbupdates_exec", dbo)
-                src = asm3.utils.read_text_file(f"{dbo.installpath}/asm3/dbupdates/{i}.py")
+                src = asm3.utils.read_text_file(f"{dbo.installpath}/src/asm3/dbupdates/{i}.py") # To do - check that altering this is accceptable
                 exec(src)
                 alreadyrun.append(i)
                 execute(dbo, "INSERT INTO dbupdates (ID, Date) VALUES (?, ?)", [i, dbo.now()])
@@ -3481,7 +3481,7 @@ def _dbupdates_list(dbo: Database) -> List[int]:
     ordered from oldest to newest.
     """
     updates = []
-    for i in asm3.utils.listdir(f"{dbo.installpath}/asm3/dbupdates/"):
+    for i in asm3.utils.listdir(f"{dbo.installpath}/src/asm3/dbupdates/"): # To do - check that altering this is accceptable
         if i.endswith(".py"): updates.append(asm3.utils.atoi(i))
     updates = sorted(updates)
     return updates
