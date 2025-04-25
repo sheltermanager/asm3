@@ -1289,12 +1289,15 @@ def sql_structure(dbo: Database) -> str:
         fstr("Dosage"),
         fint("Cost"),
         fint("CostPerTreatment", True),
+        fint("MedicalTypeID"), # To do - check if this needs to be nullable - Adam.
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
         fint("TimingRuleNoFrequencies"),
         fint("TreatmentRule"),
         fint("TotalNumberOfTreatments"),
         flongstr("Comments") ))
+    
+    sql += index("medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID") # To do - check that this index is necessary
 
     sql += table("messages", (
         fid(),

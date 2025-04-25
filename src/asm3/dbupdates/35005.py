@@ -2,6 +2,7 @@ from asm3.dbupdate import execute, add_column
 
 add_column(dbo, "animalmedical", "MedicalTypeID", dbo.type_integer)
 add_index(dbo, "animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID")
+
 #execute(dbo, "UPDATE animalmedical SET MedicalTypeID = 1")
 
 # Add the lkmedicaltype table
@@ -13,6 +14,12 @@ fields = ",".join([
 ])
 execute(dbo, dbo.ddl_add_table("lkmedicaltype", fields) )
 
-execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicaclTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 1, _("General", l), "", 0 ])
+execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicalTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 1, _("Allergy treatment", l), "", 0 ])
+execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicalTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 2, _("Examination", l), "", 0 ])
+execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicalTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 3, _("Flea treatment", l), "", 0 ])
+execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicalTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 4, _("Pain relief", l), "", 0 ])
+execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicalTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 5, _("Skin treatment", l), "", 0 ])
+execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicalTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 6, _("Surgery", l), "", 0 ])
+execute(dbo, "INSERT INTO lkmedicaltype (ID, MedicalTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [ 7, _("Wormer", l), "", 0 ])
 
 #execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockDefaultProductTypeID", "1"])

@@ -150,6 +150,7 @@ DEFAULTS = {
     "DefaultIncidentType": "1",
     "DefaultJurisdiction": "1",
     "DefaultMediaNotesFromFile": "Yes",
+    "DefaultMedicalTypeID": "2",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
     "DefaultTrialLength": "30",
