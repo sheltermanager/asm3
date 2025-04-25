@@ -17,7 +17,7 @@ $(function() {
                 fields: [
                     { json_field: "PROFILENAME", post_field: "profilename", label: _("Profile"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" }, 
-                    { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), type: "select", options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
+                    { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), type: "select", doublesize: true, options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
                         callout: _("The total cost of all treatments.") },
@@ -70,6 +70,7 @@ $(function() {
                         medicalprofile.set_extra_fields(row);
                         await tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile");
                         tableform.table_update(table);
+                        common.route_reload();// To do - type doesn't update without this but am sure that there is a more efficient way to do this - Adam.
                         tableform.dialog_close();
                     }
                     catch(err) {
@@ -126,6 +127,7 @@ $(function() {
 
         new_medicalprofile: async function() { 
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+            $("#medicaltype").val(config.integer("AFDefaultMedicalType"));
             try {
                 await tableform.dialog_show_add(medicalprofile.dialog);
                 await tableform.fields_post(medicalprofile.dialog.fields, "mode=create", "medicalprofile");
