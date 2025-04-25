@@ -5995,6 +5995,9 @@ class options(JSONEndpoint):
             "locations": asm3.lookups.get_internal_locations(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "lostanimalfindcolumns": asm3.html.json_lostanimalfindcolumns(dbo),
+
+            "medicaltypes": asm3.lookups.get_medicaltypes(dbo),
+
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
             "pp_paypal": pp_paypal,
