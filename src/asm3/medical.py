@@ -983,6 +983,7 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "AnimalID":                 post.integer("animal"),
         "MedicalProfileID":         post.integer("profileid"),
         "TreatmentName":            post["treatmentname"],
+        "MedicalTypeID":            post.integer("medicaltype"), 
         "Dosage":                   post["dosage"],
         "StartDate":                post.date("startdate"),
         "Status":                   ACTIVE,
@@ -1043,6 +1044,7 @@ def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     dbo.update("animalmedical", regimenid, {
         "AnimalID":         post.integer("animal"),
         "TreatmentName":    post["treatmentname"],
+        "MedicalTypeID":    post.integer("medicaltype"), 
         "Dosage":           post["dosage"],
         "StartDate":        post.date("startdate"),
         "Status":           post.integer("status"),

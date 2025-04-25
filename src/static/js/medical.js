@@ -24,6 +24,7 @@ $(function() {
                         options: '<option value="0"></option>' +
                         html.list_to_options(controller.profiles, "ID", "PROFILENAME") },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), type: "select", options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: 0, 
                         callout: _("The total cost of all treatments."),

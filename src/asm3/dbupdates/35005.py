@@ -3,6 +3,9 @@ from asm3.dbupdate import execute, add_column
 add_column(dbo, "animalmedical", "MedicalTypeID", dbo.type_integer)
 add_index(dbo, "animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID")
 
+add_column(dbo, "medicalprofile", "MedicalTypeID", dbo.type_integer)
+add_index(dbo, "medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID")
+
 #execute(dbo, "UPDATE animalmedical SET MedicalTypeID = 1")
 
 # Add the lkmedicaltype table
