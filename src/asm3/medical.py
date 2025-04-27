@@ -176,7 +176,7 @@ def get_test_query(dbo: Database) -> str:
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
         "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
-        "a.AnimalName, ma.MediaName AS WebsiteMediaName, tt.TestName, tt.TestDescription, " \
+        "ma.MediaName AS WebsiteMediaName, tt.TestName, tt.TestDescription, " \
         "tr.ResultName, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "(SELECT mt.MovementType FROM lksmovementtype mt WHERE mt.ID = a.ActiveMovementType) " \
@@ -218,7 +218,7 @@ def get_vaccination_query(dbo: Database) -> str:
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
         "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
-        "a.AnimalName, ma.MediaName AS WebsiteMediaName, vt.VaccinationType, vt.VaccinationDescription, " \
+        "ma.MediaName AS WebsiteMediaName, vt.VaccinationType, vt.VaccinationDescription, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "(SELECT mt.MovementType FROM lksmovementtype mt WHERE mt.ID = a.ActiveMovementType) " \
         "ELSE il.LocationName END AS LocationName, " \

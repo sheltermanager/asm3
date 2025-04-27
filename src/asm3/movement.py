@@ -51,7 +51,7 @@ def get_movement_query(dbo: Database) -> str:
         "sz.Size, er.ReasonName AS EntryReasonName, et.EntryTypeName, " \
         "r.OwnerName AS RetailerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.Sex, bc.BaseColour, rr.ReasonName AS ReturnedReasonName, " \
+        "bc.BaseColour, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
         "CASE WHEN m.EventID > 0 THEN 1 ELSE 0 END AS IsEventLinked, " \
