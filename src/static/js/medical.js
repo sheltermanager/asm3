@@ -188,7 +188,13 @@ $(function() {
 
             const buttons = [
                 { id: "new", text: _("New Regimen"), icon: "new", enabled: "always", perm: "maam",
-                     click: function() { medical.new_medical(); }},
+                     click: function() {
+                        medical.new_medical();
+                        $("#singlemulti").prop("disabled", false);
+                        $("#medicaltype").val(config.integer("AFDefaultMedicalType"));
+                        medical.change_singlemulti();
+                    }
+                },
                 { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
                     hideif: function() { return controller.animal; }, click: function() { medical.new_bulk_medical(); }},
                 { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", perm: "mdam", 
@@ -458,7 +464,9 @@ $(function() {
                     $("#profileid").select("value", "");
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
+
                     $("#medicaltype").val(config.integer("AFDefaultMedicalType"));
+                    medical.change_medicaltype();
                 }
             });
         },
@@ -633,11 +641,11 @@ $(function() {
             if (forcesingletx) {
                 $("#singlemulti").val(0);
                 $("#singlemulti").prop("disabled", true);
+                medicalprofile.change_singlemulti();
             }
             else {
                 $("#singlemulti").prop("disabled", false);
             }
-            medical.change_singlemulti();
         },
 
 
@@ -724,6 +732,7 @@ $(function() {
                 $("#cost").currency("value", p.COST );
                 $("#costpertreatment").currency("value", p.COSTPERTREATMENT );
                 $("#comments").val( html.decode(p.COMMENTS) );
+                $("#medicaltype").val(p.MEDICALTYPEID);
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
                 $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
                 medical.change_singlemulti();
@@ -733,6 +742,7 @@ $(function() {
                 $("#treatmentrule").val( p.TREATMENTRULE );
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
                 medical.change_values();
+                medical.change_medicaltype();
             });
 
             $("#timingrule").change(medical.change_values);

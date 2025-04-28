@@ -59,20 +59,21 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    console.log("medicaltypeid = " + row.MEDICALTYPEID);
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    $("#singlemulti").select("value", (row.TOTALNUMBEROFTREATMENTS == 1 ? 0 : 1));
+                    $("#singlemulti").prop("disabled", false);
+                    $("#singlemulti").select("value", (row.TOTALNUMBEROFTREATMENTS == 1 ? 0 : 1));// To do - understand this syntax - Adam.
                     $("#treatmentrule").select("value", row.TREATMENTRULE);
                     medicalprofile.change_singlemulti();
                     medicalprofile.change_values();
+                    medicalprofile.change_medicaltype();
                     try {
                         await tableform.dialog_show_edit(dialog, row);
                         tableform.fields_update_row(dialog.fields, row);
                         medicalprofile.set_extra_fields(row);
                         await tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile");
                         tableform.table_update(table);
-                        common.route_reload();// To do - type doesn't update without this but am sure that there is a more efficient way to do this - Adam.
                         tableform.dialog_close();
+                        common.route_reload();// To do - type doesn't update without this but am sure that there is a more efficient way to do this - Adam.
                     }
                     catch(err) {
                         log.error(err, err);
@@ -156,11 +157,11 @@ $(function() {
             if (forcesingletx) {
                 $("#singlemulti").val(0);
                 $("#singlemulti").prop("disabled", true);
+                medicalprofile.change_singlemulti();
             }
             else {
                 $("#singlemulti").prop("disabled", false);
             }
-            medicalprofile.change_singlemulti();
         },
         
         /* What to do when we switch between single/multiple treatments */
