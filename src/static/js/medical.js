@@ -619,6 +619,27 @@ $(function() {
 
         },
 
+        change_medicaltype: function() {
+            let forcesingletx = false;
+            let mtid = $("#medicaltype").val();
+            $.each(controller.medicaltypes, function(i, mt) {
+                if (mt.ID == mtid) {
+                    if (mt.FORCESINGLEUSE == 1) {
+                        forcesingletx = true;
+                    }
+                    return false;
+                }
+            });
+            if (forcesingletx) {
+                $("#singlemulti").val(0);
+                $("#singlemulti").prop("disabled", true);
+            }
+            else {
+                $("#singlemulti").prop("disabled", false);
+            }
+            medical.change_singlemulti();
+        },
+
 
         /* What to do when we switch between single/multiple treatments */
         change_singlemulti: function() {
@@ -674,6 +695,7 @@ $(function() {
             $("#animal").bind("animalchooserchange", function(event, rec) { medical.lastanimal = rec; });
             $("#animal").bind("animalchooserloaded", function(event, rec) { medical.lastanimal = rec; });
 
+            $("#medicaltype").change(medical.change_medicaltype);
             $("#singlemulti").change(function() {
                 medical.change_singlemulti();
             });

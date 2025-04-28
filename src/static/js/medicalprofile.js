@@ -59,6 +59,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
+                    console.log("medicaltypeid = " + row.MEDICALTYPEID);
                     tableform.fields_populate_from_json(dialog.fields, row);
                     $("#singlemulti").select("value", (row.TOTALNUMBEROFTREATMENTS == 1 ? 0 : 1));
                     $("#treatmentrule").select("value", row.TREATMENTRULE);
@@ -75,6 +76,7 @@ $(function() {
                     }
                     catch(err) {
                         log.error(err, err);
+                        console.log(err);
                         tableform.dialog_enable_buttons();
                     }
                 },
@@ -126,6 +128,7 @@ $(function() {
         },
 
         new_medicalprofile: async function() { 
+            $("#singlemulti").prop("disabled", false);
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#medicaltype").val(config.integer("AFDefaultMedicalType"));
             try {
@@ -139,6 +142,27 @@ $(function() {
             }
         },
 
+        change_medicaltype: function() {
+            let forcesingletx = false;
+            let mtid = $("#medicaltype").val();
+            $.each(controller.medicaltypes, function(i, mt) {
+                if (mt.ID == mtid) {
+                    if (mt.FORCESINGLEUSE == 1) {
+                        forcesingletx = true;
+                    }
+                    return false;
+                }
+            });
+            if (forcesingletx) {
+                $("#singlemulti").val(0);
+                $("#singlemulti").prop("disabled", true);
+            }
+            else {
+                $("#singlemulti").prop("disabled", false);
+            }
+            medicalprofile.change_singlemulti();
+        },
+        
         /* What to do when we switch between single/multiple treatments */
         change_singlemulti: function() {
             if ($("#singlemulti").val() == 0) {
@@ -187,6 +211,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
+            $("#medicaltype").change(medicalprofile.change_medicaltype);
             $("#singlemulti").change(medicalprofile.change_singlemulti);
             $("#treatmentrule").change(medicalprofile.change_values);
             $("#timingrule").change(medicalprofile.change_values);
