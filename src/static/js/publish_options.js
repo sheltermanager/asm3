@@ -188,7 +188,7 @@ $(function() {
                         '<li>automatic pet tag activation</li>' +
                         '<li>to report your pets as found to facilitate lost pet reunification</li></ul>', 
                         classes: 'localeus hasfindpet', fields: [
-                            { id: "enabledmf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "enabledfip", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "fporgid", post_field: "FindPetOrgID", label: "FindPet Organization ID", type: "text" }, 
                             { id: "fpintlevel", post_field: "FindPetIntLevel", label: "Integration Level", type: "select", doublesize: true, options: 
                                 '<option value="0">Send stray/found pets and register microchips</option>' + 
@@ -198,7 +198,7 @@ $(function() {
                         info: 'Signup at <a target="_blank" href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>', 
                         classes: 'english hasmaddiesfund', 
                         fields: [
-                            { id: "enabledfip", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "enabledmf", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "mfemail", post_field: "MaddiesFundUsername", label: "MPA API Username", type: "text" }, 
                             { id: "mfpassword", post_field: "MaddiesFundPassword", label: "MPA API Password", type: "text" }
                         ]}, 
@@ -478,7 +478,7 @@ $(function() {
                 let ep = [];
                 $(".enablecheck").each(function() {
                     let c = $(this), k = c.attr("id").replace("enabled", "");
-                    if (c.is(":visible") && c.is(":checked")) { ep.push(k); }
+                    if (c.is(":checked")) { ep.push(k); }
                 });
                 return encodeURIComponent(ep.join(" "));
             };
