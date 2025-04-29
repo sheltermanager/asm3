@@ -1277,6 +1277,7 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
+        "CustomTimingRule":         post["customtiming"],
         "TreatmentRule":            post.integer("treatmentrule"),
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "Comments":                 post["comments"]
@@ -1316,6 +1317,7 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
+        "CustomTimingRule":         post["customtiming"],
         "TreatmentRule":            post.integer("treatmentrule"),
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "Comments":                 post["comments"]

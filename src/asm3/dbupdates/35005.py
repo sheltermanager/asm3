@@ -9,7 +9,8 @@ add_index(dbo, "animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID")
 add_column(dbo, "medicalprofile", "MedicalTypeID", dbo.type_integer)
 add_index(dbo, "medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID")
 
-#execute(dbo, "UPDATE animalmedical SET MedicalTypeID = 1")
+add_column(dbo, "animalmedical", "CustomTimingRule", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
+add_column(dbo, "medicalprofile", "CustomTimingRule", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
 
 # Add the lkmedicaltype table
 fields = ",".join([

@@ -25,8 +25,8 @@ $(function() {
                         callout: _("If this field has a value, the cost field above will be automatically calculated after each treatment is given.") },
                     { post_field: "singlemulti", label: _("Frequency"), type: "select",  
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
-                        '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
-
+                        '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' + 
+                        '<option value="2">' + _("Custom Frequency") + '</option>' },
                     { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", label: "", halfsize: true, defaultval: "1", 
                         xmarkup: ' ' + _("treatments, every") + ' ',
                         rowclose: false },
@@ -38,7 +38,6 @@ $(function() {
                                 '<option value="2">' + _("months") + '</option>' + 
                                 '<option value="3">' + _("years") + '</option>' },
                     { type: "rowclose" },
-
                     { json_field: "TREATMENTRULE", post_field: "treatmentrule", label: _("Duration"), type: "select", halfsize: true,  
                         options: '<option value="0">' + _("Ends after") + '</option>' +
                             '<option value="1">' + _("Unspecified") + '</option>',
@@ -50,7 +49,8 @@ $(function() {
                             '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
                             '</span>'},
                     { type: "rowclose" },
-
+                    { json_field: "CUSTOMTIMINGRULE", post_field: "customtiming", label: _("Treatments"), type: "text", classes: "asm-doubletextbox", 
+                        callout: _("A comma separated list of treatments. Each treatment made up of {title}={no of days since start of course}") },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -61,7 +61,14 @@ $(function() {
                 edit: async function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     $("#singlemulti").prop("disabled", false);
-                    $("#singlemulti").select("value", (row.TOTALNUMBEROFTREATMENTS == 1 ? 0 : 1));// To do - understand this syntax - Adam.
+                    if (row.CUSTOMTIMINGRULE) {
+                        $("#singlemulti").val(2);
+                    } else if (row.TOTALNUMBEROFTREATMENTS == 1) {
+                        $("#singlemulti").val(0);
+                    } else {
+                        $("#singlemulti").val(1);
+                    }
+                    //$("#singlemulti").select("value", (row.TOTALNUMBEROFTREATMENTS == 1 ? 0 : 1));// To do - understand this syntax - Adam.
                     $("#treatmentrule").select("value", row.TREATMENTRULE);
                     medicalprofile.change_singlemulti();
                     medicalprofile.change_values();
@@ -132,6 +139,7 @@ $(function() {
             $("#singlemulti").prop("disabled", false);
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#medicaltype").val(config.integer("AFDefaultMedicalType"));
+            medicalprofile.change_singlemulti();
             try {
                 await tableform.dialog_show_add(medicalprofile.dialog);
                 await tableform.fields_post(medicalprofile.dialog.fields, "mode=create", "medicalprofile");
@@ -176,8 +184,8 @@ $(function() {
                 $("#totalnumberoftreatments").val("1");
                 $("#timingrulerow").fadeOut();
                 $("#treatmentrulerow").fadeOut();
-            }
-            else {
+                $("#customtimingrow").fadeOut();
+            } else if ($("#singlemulti").val() == 1) {
                 $("#timingrule").val("1");
                 $("#timingrulenofrequencies").val("1");
                 $("#timingrulefrequency").select("value", "0");
@@ -187,6 +195,18 @@ $(function() {
                 $("#totalnumberoftreatments").val("1");
                 $("#timingrulerow").fadeIn();
                 $("#treatmentrulerow").fadeIn();
+                $("#customtimingrow").fadeOut();
+            } else {
+                $("#timingrule").val("1");
+                $("#timingrulenofrequencies").val("1");
+                $("#timingrulefrequency").select("value", "0");
+                $("#timingrulefrequency").select("disable");
+                $("#treatmentrule").select("value", "0");
+                $("#treatmentrule").select("disable");
+                $("#totalnumberoftreatments").val("1");
+                $("#timingrulerow").fadeOut();
+                $("#treatmentrulerow").fadeOut();
+                $("#customtimingrow").fadeIn();
             }
         },
 
