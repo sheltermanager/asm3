@@ -1254,18 +1254,29 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
-    totalnumberoftreatments = post.integer("totalnumberoftreatments")
-    treatmentrule = post.integer("treatmentrule")
-    singlemulti = post.integer("singlemulti")
-    if singlemulti == 0:
-        timingrule = 0
-        timingrulenofrequencies = 0
-        timingrulefrequency = 0
-        totalnumberoftreatments = 1
-    if totalnumberoftreatments == 0:
-        totalnumberoftreatments = 1
-    if treatmentrule != 0:
-        totalnumberoftreatments = 0
+    customtimingrule = post["customtiming"].strip()
+
+    # Remove trailing comma if it exists
+    if len(customtimingrule) > 0:
+        if customtimingrule[-1] == ",":
+            customtimingrule = customtimingrule[:-1]
+    
+    if post.integer("singlemulti") == 2:
+        totalnumberoftreatments = len(customtimingrule.split(","))
+    else:
+        totalnumberoftreatments = post.integer("totalnumberoftreatments")
+
+        treatmentrule = post.integer("treatmentrule")
+        singlemulti = post.integer("singlemulti")
+        if singlemulti == 0:
+            timingrule = 0
+            timingrulenofrequencies = 0
+            timingrulefrequency = 0
+            totalnumberoftreatments = 1
+        if totalnumberoftreatments == 0:
+            totalnumberoftreatments = 1
+        if treatmentrule != 0:
+            totalnumberoftreatments = 0
 
     return dbo.insert("medicalprofile", {
         "ProfileName":              post["profilename"],
@@ -1277,7 +1288,7 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
-        "CustomTimingRule":         post["customtiming"],
+        "CustomTimingRule":         customtimingrule,
         "TreatmentRule":            post.integer("treatmentrule"),
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "Comments":                 post["comments"]
@@ -1297,15 +1308,26 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
-    totalnumberoftreatments = post.integer("totalnumberoftreatments")
-    treatmentrule = post.integer("treatmentrule")
-    singlemulti = post.integer("singlemulti")
-    if singlemulti == 0:
-        timingrule = 0
-        timingrulenofrequencies = 0
-        timingrulefrequency = 0
-    if treatmentrule != 0:
-        totalnumberoftreatments = 0
+    customtimingrule = post["customtiming"].strip()
+
+    # Remove trailing comma if it exists
+    if len(customtimingrule) > 0:
+        if customtimingrule[-1] == ",":
+            customtimingrule = customtimingrule[:-1]
+    
+    if post.integer("singlemulti") == 2:
+        totalnumberoftreatments = len(customtimingrule.split(","))
+    else:
+        totalnumberoftreatments = post.integer("totalnumberoftreatments")
+        
+        treatmentrule = post.integer("treatmentrule")
+        singlemulti = post.integer("singlemulti")
+        if singlemulti == 0:
+            timingrule = 0
+            timingrulenofrequencies = 0
+            timingrulefrequency = 0
+        if treatmentrule != 0:
+            totalnumberoftreatments = 0
 
     dbo.update("medicalprofile", profileid, {
         "ProfileName":              post["profilename"],
@@ -1317,7 +1339,7 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
-        "CustomTimingRule":         post["customtiming"],
+        "CustomTimingRule":         customtimingrule,
         "TreatmentRule":            post.integer("treatmentrule"),
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "Comments":                 post["comments"]

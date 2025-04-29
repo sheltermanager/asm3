@@ -77,10 +77,16 @@ $(function() {
                         await tableform.dialog_show_edit(dialog, row);
                         tableform.fields_update_row(dialog.fields, row);
                         medicalprofile.set_extra_fields(row);
-                        await tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile");
-                        tableform.table_update(table);
-                        tableform.dialog_close();
-                        common.route_reload();// To do - type doesn't update without this but am sure that there is a more efficient way to do this - Adam.
+                        if (medicalprofile.validate_custom_timing_rule() == true) {
+                            await tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile");
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                            common.route_reload();// To do - type doesn't update without this but am sure that there is a more efficient way to do this - Adam.
+                        } else {
+                            console.log("Invalid custom rule!");
+                            alert("Invalid custom rule");// To do - find out how to keep the dialog open and inform user of the issue - Adam.
+                            tableform.dialog_enable_buttons();
+                        }
                     }
                     catch(err) {
                         log.error(err, err);
@@ -251,6 +257,44 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
+        },
+
+        validate_custom_timing_rule: function() {
+            let valid = true;
+            let customtiming = $("#customtiming").val().trim();
+            if (customtiming.length == 0) {
+                console.log("Empty string");
+                valid = false;
+            } else {
+                if (customtiming.slice(-1) == ",") {
+                    customtiming = customtiming.slice(0, -1); //Remove trailing comma
+                }
+                $.each(customtiming.split(","), function(i, v) {
+                    if (v.includes("=") == false) {
+                        console.log("Missing =");
+                        valid = false;
+                        return false;
+                    }
+                    let label = v.split("=")[0].trim();
+                    let value = v.split("=")[1].trim();
+                    let intvalue = parseInt(value);
+                    if (label == "") {
+                        console.log("Missing label");
+                        valid = false;
+                        return false;
+                    }
+                    if (value == "") {
+                        console.log("Missing value");
+                        valid = false;
+                        return false;
+                    } else if (Number.isInteger(intvalue) == false) {
+                        console.log("Value '" + value + "' is not an integer");
+                        valid = false;
+                        return false;
+                    }
+                });
+            }
+            return valid;
         },
 
         name: "medicalprofile",
