@@ -103,7 +103,15 @@ $(function() {
                     return !row.DATEGIVEN && row.STATUS == 0 && format.date_js(row.DATEREQUIRED) < common.today_no_time();
                 },
                 columns: [
-                    { field: "TREATMENTNAME", display: _("Name") },
+                    { field: "TREATMENTNAME", display: _("Name"),
+                        /*formatter: function(row) {
+                            if (row.CUSTOMTIMINGRULE && row.CUSTOMTIMINGRULE != "") {
+                                return row.TREATMENTNAME + "<div class='asm-smallertext'>" + row.CUSTOMTREATMENTNAME + "</div>";
+                            } else {
+                                return row.TREATMENTNAME;
+                            }
+                        }*/
+                    },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             return html.animal_link_thumb_bare(row);
@@ -157,8 +165,13 @@ $(function() {
                     { field: "DOSAGE", display: _("Dosage") },
                     { field: "STARTDATE", display: _("Started"), formatter: tableform.format_date },
                     { field: "NAMEDSTATUS", display: _("Status"), formatter: function(row) {
-                        return row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS +
-                            " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")<br/>" +
+                        let status = "";
+                        if (row.CUSTOMTIMINGRULE != "") {
+                            status = row.NAMEDSTATUS + ", " + _("Custom timing");
+                        } else {
+                            status = row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS;
+                        }
+                        return status + " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")<br/>" +
                             (row.TREATMENTSREMAINING > 0 ? 
                                 _("({0} given, {1} remaining)").replace("{0}", row.TREATMENTSGIVEN).replace("{1}", row.TREATMENTSREMAINING) 
                                 : "");

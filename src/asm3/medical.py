@@ -52,7 +52,7 @@ def get_medicaltreatment_query(dbo: Database) -> str:
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
         "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
-        "am.*, amt.DateRequired, amt.DateGiven, amt.Comments AS TreatmentComments, " \
+        "am.*, amt.DateRequired, amt.CustomTreatmentName, amt.DateGiven, amt.Comments AS TreatmentComments, " \
         "amt.TreatmentNumber, amt.TotalTreatments, ma.MediaName AS WebsiteMediaName, " \
         "am.ID AS RegimenID, amt.ID AS TreatmentID, " \
         "amt.GivenBy, amt.AdministeringVetID, adv.OwnerName AS AdministeringVetName, " \
@@ -367,6 +367,7 @@ def get_regimens_treatments(dbo: Database, animalid: int, sort: int = DESCENDING
         sql += "ORDER BY amt.DateGiven DESC"
     rows = dbo.query(sql, limit=limit)
     # Now add our extra named fields
+        
     return embellish_regimen(l, rows)
 
 def get_medical_export(dbo: Database) -> Results:
@@ -442,6 +443,12 @@ def embellish_regimen(l: str, rows: Results) -> Results:
     NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, NAMEDGIVENREMAINING, COMPOSITEID
     """
     for r in rows:
+        try:
+            if r.CUSTOMTREATMENTNAME:
+                if r.CUSTOMTREATMENTNAME != "":
+                    r.TREATMENTNAME = '<div style="display: inline-block;">' + r.TREATMENTNAME + '<br><span class="asm-smallertext">' + r.CUSTOMTREATMENTNAME + '</span></div>'
+        except:
+            pass # To do - remove this try/except block. Kept failing due to CUSTOMTREATMENTNAME not being able to be found on some records. Didn't manage to figure out how that could be possible - Adam.
         st = 0
         if "REGIMENID" in r: r.COMPOSITEID = "%d_%d" % (r.REGIMENID, r.TREATMENTID)
         if "STATUS" in r: st = r.STATUS
@@ -909,7 +916,7 @@ def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
         ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
         insert_treatments(dbo, username, amid, ldg, False)
 
-def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True, customcount: int = 0) -> datetime:
+def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True, customlabel: str = "") -> datetime:
     """
     Creates new treatment records for the given medical record
     with the required date given. isstart says that the date passed
@@ -935,14 +942,15 @@ def insert_treatments(dbo: Database, username: str, amid: int, requireddate: dat
 
     for x in range(1, norecs+1):
         dbo.insert("animalmedicaltreatment", {
-            "AnimalID":         am.ANIMALID,
-            "AnimalMedicalID":  amid,
-            "DateRequired":     requireddate,
-            "DateGiven":        None,
-            "GivenBy":          "",
-            "TreatmentNumber":  x,
-            "TotalTreatments":  norecs,
-            "Comments":         ""
+            "AnimalID":             am.ANIMALID,
+            "AnimalMedicalID":      amid,
+            "CustomTreatmentName":  customlabel,
+            "DateRequired":         requireddate,
+            "DateGiven":            None,
+            "GivenBy":              "",
+            "TreatmentNumber":      x,
+            "TotalTreatments":      norecs,
+            "Comments":             ""
         }, username)
 
     # Update the number of treatments given and remaining
@@ -1012,7 +1020,7 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
                     label = a.split("=")[0].strip()
                     value = int(a.split("=")[1].strip())
                     reqdate = add_days(reqdate, value)
-                    insert_treatments(dbo, username, nregid, reqdate, False)
+                    insert_treatments(dbo, username, nregid, reqdate, False, label)
                     
             else:
                 created = 1

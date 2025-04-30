@@ -11,8 +11,10 @@ add_index(dbo, "medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID"
 
 add_column(dbo, "animalmedical", "CustomTimingRule", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
 add_column(dbo, "medicalprofile", "CustomTimingRule", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
+add_column(dbo, "animalmedicaltreatment", "CustomTreatmentName", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
 
-# Add the lkmedicaltype table
+
+# Add the lksmedicaltype table
 fields = ",".join([
     dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
     dbo.ddl_add_table_column("MedicalTypeName", dbo.type_shorttext, False),
@@ -29,5 +31,3 @@ execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, Forc
 execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 5, _("Skin treatment", l), "", 0, 0 ])
 execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 6, _("Surgery", l), "", 1, 0 ])
 execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 7, _("Wormer", l), "", 0, 0 ])
-
-#execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", ["StockDefaultProductTypeID", "1"])
