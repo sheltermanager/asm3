@@ -909,7 +909,7 @@ def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
         ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
         insert_treatments(dbo, username, amid, ldg, False)
 
-def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True) -> datetime:
+def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True, customcount: int = 0) -> datetime:
     """
     Creates new treatment records for the given medical record
     with the required date given. isstart says that the date passed
@@ -994,6 +994,7 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
         "TreatmentRule":            post.integer("treatmentrule"),
+        "CustomTimingRule":         post["customtiming"],
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "TreatmentsGiven":          0,
         "TreatmentsRemaining":      treatmentsremaining,
@@ -1005,12 +1006,21 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         if timingrule == ONEOFF:
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
         else:
-            created = 1
-            reqdate = post.date("startdate")
-            insert_treatments(dbo, username, nregid, reqdate, isstart = True)
-            while created < totalnumberoftreatments:
-                reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False)
-                created += 1
+            if post["customtiming"] != "":
+                reqdate = post.date("startdate")
+                for a in post["customtiming"].split(","):
+                    label = a.split("=")[0].strip()
+                    value = int(a.split("=")[1].strip())
+                    reqdate = add_days(reqdate, value)
+                    insert_treatments(dbo, username, nregid, reqdate, False)
+                    
+            else:
+                created = 1
+                reqdate = post.date("startdate")
+                insert_treatments(dbo, username, nregid, reqdate, isstart = True)
+                while created < totalnumberoftreatments:
+                    reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False)
+                    created += 1
     else:
         # We aren't pre-creating, or we have an unspecified length regimen,
         # just create the first treatment(s).

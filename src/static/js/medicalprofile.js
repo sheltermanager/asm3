@@ -17,7 +17,8 @@ $(function() {
                 fields: [
                     { json_field: "PROFILENAME", post_field: "profilename", label: _("Profile"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" }, 
-                    { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), type: "select", doublesize: true, options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
+                    { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), type: "select", doublesize: true, 
+                        options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
                         callout: _("The total cost of all treatments.") },
@@ -77,7 +78,7 @@ $(function() {
                         await tableform.dialog_show_edit(dialog, row);
                         tableform.fields_update_row(dialog.fields, row);
                         medicalprofile.set_extra_fields(row);
-                        if (medicalprofile.validate_custom_timing_rule() == true) {
+                        if ($("#singlemulti").val() != "2" || medicalprofile.validate_custom_timing_rule() == true) {
                             await tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile");
                             tableform.table_update(table);
                             tableform.dialog_close();
@@ -148,8 +149,15 @@ $(function() {
             medicalprofile.change_singlemulti();
             try {
                 await tableform.dialog_show_add(medicalprofile.dialog);
-                await tableform.fields_post(medicalprofile.dialog.fields, "mode=create", "medicalprofile");
-                common.route_reload();
+                
+                if ($("#singlemulti").val() != "2" || medicalprofile.validate_custom_timing_rule() == true) {
+                    await tableform.fields_post(medicalprofile.dialog.fields, "mode=create", "medicalprofile");
+                    common.route_reload();
+                } else {
+                    console.log("Invalid custom rule!");
+                    alert("Invalid custom rule");// To do - find out how to keep the dialog open and inform user of the issue - Adam.
+                    tableform.dialog_enable_buttons();
+                }
             }
             catch(err) {
                 log.error(err, err);

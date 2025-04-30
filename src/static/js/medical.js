@@ -38,7 +38,8 @@ $(function() {
                             + _("Paused") + '</option><option value="2">' + _("Completed") + '</option>' },
                     { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
-                        '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
+                        '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' + 
+                        '<option value="2">' + _("Custom Frequency") + '</option>' },
 
                     { json_field: "TIMINGRULE", post_field: "timingrule", type: "intnumber", label: "", 
                         readonly: true, halfsize: true, defaultval: 1, 
@@ -67,7 +68,8 @@ $(function() {
                             '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
                             '</span>'},
                     { type: "rowclose" },
-
+                    { json_field: "CUSTOMTIMINGRULE", post_field: "customtiming", label: _("Treatments"), type: "text", classes: "asm-doubletextbox", 
+                        callout: _("A comma separated list of treatments. Each treatment made up of {title}={no of days since start of course}") },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -405,44 +407,50 @@ $(function() {
                 },
                 onadd: async function() {
                     try {
-                        await tableform.fields_post(dialog.fields, "mode=create", "medical");
-                        tableform.dialog_close();
-                        if (config.bool("ReloadMedical")) {
-                            common.route_reload();
-                        }
-                        else {
-                            // If we aren't reloading automatically, show a placeholder row that
-                            // cannot be interacted with so the user knows their record was
-                            // created and they need to reload the screen.
-                            let a = controller.animal;
-                            if (!a) { a = $("#animal").animalchooser("get_selected"); }
-                            let nr = {
-                                TREATMENTID: 0,
-                                COMPOSITEID: "",
-                                ANIMALID: a.ID,
-                                ANIMALNAME: a.ANIMALNAME,
-                                SHORTCODE: a.SHORTCODE,
-                                SHELTERCODE: a.SHELTERCODE,
-                                ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
-                                SPECIESNAME: a.SPECIESNAME,
-                                LOCATIONNAME: a.LOCATIONNAME,
-                                WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
-                                WEBSITEMEDIADATE: a.WEBSITEMEDIADATE,
-                                TREATMENTNAME: $("#treatmentname").val(),
-                                DOSAGE: $("#dosage").val(),
-                                COMMENTS: $("#comments").val(),
-                                TREATMENTCOMMENTS: "",
-                                STARTDATE: format.date_iso($("#startdate").val()),
-                                NAMEDSTATUS: '<a href="javascript:location.reload(true)">' + _("Reload page ...") + '</a>',
-                                NAMEDFREQUENCY: "",
-                                NAMEDNUMBEROFTREATMENTS: "",
-                                TREATMENTNUMBER: "",
-                                TOTALTREATMENTS: "",
-                                TREATMENTSREMAINING: "",
-                                TREATMENTSGIVEN: ""
-                            };
-                            controller.rows.unshift(nr);
-                            tableform.table_update(medical.table);
+                        if ($("#singlemulti").val() != "2" || medical.validate_custom_timing_rule() == true) {
+                            await tableform.fields_post(dialog.fields, "mode=create", "medical");
+                            tableform.dialog_close();
+                            if (config.bool("ReloadMedical")) {
+                                common.route_reload();
+                            }
+                            else {
+                                // If we aren't reloading automatically, show a placeholder row that
+                                // cannot be interacted with so the user knows their record was
+                                // created and they need to reload the screen.
+                                let a = controller.animal;
+                                if (!a) { a = $("#animal").animalchooser("get_selected"); }
+                                let nr = {
+                                    TREATMENTID: 0,
+                                    COMPOSITEID: "",
+                                    ANIMALID: a.ID,
+                                    ANIMALNAME: a.ANIMALNAME,
+                                    SHORTCODE: a.SHORTCODE,
+                                    SHELTERCODE: a.SHELTERCODE,
+                                    ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
+                                    SPECIESNAME: a.SPECIESNAME,
+                                    LOCATIONNAME: a.LOCATIONNAME,
+                                    WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
+                                    WEBSITEMEDIADATE: a.WEBSITEMEDIADATE,
+                                    TREATMENTNAME: $("#treatmentname").val(),
+                                    DOSAGE: $("#dosage").val(),
+                                    COMMENTS: $("#comments").val(),
+                                    TREATMENTCOMMENTS: "",
+                                    STARTDATE: format.date_iso($("#startdate").val()),
+                                    NAMEDSTATUS: '<a href="javascript:location.reload(true)">' + _("Reload page ...") + '</a>',
+                                    NAMEDFREQUENCY: "",
+                                    NAMEDNUMBEROFTREATMENTS: "",
+                                    TREATMENTNUMBER: "",
+                                    TOTALTREATMENTS: "",
+                                    TREATMENTSREMAINING: "",
+                                    TREATMENTSGIVEN: ""
+                                };
+                                controller.rows.unshift(nr);
+                                tableform.table_update(medical.table);
+                            }
+                        } else {
+                            console.log("Invalid custom rule!");
+                            alert("Invalid custom rule");
+                            tableform.dialog_enable_buttons();
                         }
                     }
                     catch(err) {
@@ -641,7 +649,7 @@ $(function() {
             if (forcesingletx) {
                 $("#singlemulti").val(0);
                 $("#singlemulti").prop("disabled", true);
-                medicalprofile.change_singlemulti();
+                medical.change_singlemulti();
             }
             else {
                 $("#singlemulti").prop("disabled", false);
@@ -659,11 +667,10 @@ $(function() {
                 $("#treatmentrule").select("value", "0");
                 $("#treatmentrule").select("disable");
                 $("#totalnumberoftreatments").val("1");
-
                 $("#timingrulerow").fadeOut();
                 $("#treatmentrulerow").fadeOut();
-            }
-            else {
+                $("#customtimingrow").fadeOut();
+            } else if ($("#singlemulti").val() == 1) {
                 $("#timingrule").val("1");
                 $("#timingrulenofrequencies").val("1");
                 $("#timingrulefrequency").select("value", "0");
@@ -671,9 +678,20 @@ $(function() {
                 $("#treatmentrule").select("value", "0");
                 $("#treatmentrule").select("enable");
                 $("#totalnumberoftreatments").val("1");
-
                 $("#timingrulerow").fadeIn();
                 $("#treatmentrulerow").fadeIn();
+                $("#customtimingrow").fadeOut();
+            } else {
+                $("#timingrule").val("1");
+                $("#timingrulenofrequencies").val("1");
+                $("#timingrulefrequency").select("value", "0");
+                $("#timingrulefrequency").select("disable");
+                $("#treatmentrule").select("value", "0");
+                $("#treatmentrule").select("disable");
+                $("#totalnumberoftreatments").val("1");
+                $("#timingrulerow").fadeOut();
+                $("#treatmentrulerow").fadeOut();
+                $("#customtimingrow").fadeIn();
             }
         },
 
@@ -734,7 +752,15 @@ $(function() {
                 $("#comments").val( html.decode(p.COMMENTS) );
                 $("#medicaltype").val(p.MEDICALTYPEID);
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
-                $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
+                if (p.CUSTOMTIMINGRULE) {
+                    $("#singlemulti").val(2);
+                    $("#customtiming").val(p.CUSTOMTIMINGRULE);
+                } else if (p.TOTALNUMBEROFTREATMENTS == 1) {
+                    $("#singlemulti").val(0);
+                } else {
+                    $("#singlemulti").val(1);
+                }
+                //$("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
                 medical.change_singlemulti();
                 $("#timingrule").val( p.TIMINGRULE );
                 $("#timingrulenofrequencies").val( p.TIMINGRULENOFREQUENCIES );
@@ -803,6 +829,44 @@ $(function() {
                 row.SHELTERCODE = medical.lastanimal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = medical.lastanimal.WEBSITEMEDIANAME;
             }
+        },
+
+        validate_custom_timing_rule: function() {
+            let valid = true;
+            let customtiming = $("#customtiming").val().trim();
+            if (customtiming.length == 0) {
+                console.log("Empty string");
+                valid = false;
+            } else {
+                if (customtiming.slice(-1) == ",") {
+                    customtiming = customtiming.slice(0, -1); //Remove trailing comma
+                }
+                $.each(customtiming.split(","), function(i, v) {
+                    if (v.includes("=") == false) {
+                        console.log("Missing =");
+                        valid = false;
+                        return false;
+                    }
+                    let label = v.split("=")[0].trim();
+                    let value = v.split("=")[1].trim();
+                    let intvalue = parseInt(value);
+                    if (label == "") {
+                        console.log("Missing label");
+                        valid = false;
+                        return false;
+                    }
+                    if (value == "") {
+                        console.log("Missing value");
+                        valid = false;
+                        return false;
+                    } else if (Number.isInteger(intvalue) == false) {
+                        console.log("Value '" + value + "' is not an integer");
+                        valid = false;
+                        return false;
+                    }
+                });
+            }
+            return valid;
         },
 
         destroy: function() {
