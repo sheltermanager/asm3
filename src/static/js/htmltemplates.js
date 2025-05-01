@@ -38,8 +38,9 @@ $(function() {
                         onchange: async function() {
                             tableform.fields_update_row(dialog.fields, row);
                             await tableform.fields_post(dialog.fields, "mode=update&name=" + row.NAME, "htmltemplates");
-                            tableform.dialog_close();
                             tableform.table_update(table);
+                            tableform.dialog_enable_buttons();
+                            tableform.dialog_info(_("Saved"));
                         },
                         ondelete: function() {
                             //Revert to default
