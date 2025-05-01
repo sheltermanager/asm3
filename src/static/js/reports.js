@@ -108,7 +108,8 @@ $(function() {
                             reports.set_extra_fields(row);
                             tableform.fields_post(dialog.fields, "mode=update&reportid=" + row.ID, "reports", function(response) {
                                 tableform.table_update(table);
-                                tableform.dialog_close();
+                                tableform.dialog_enable_buttons();
+                                tableform.dialog_info(_("Saved"));
                             });
                         },
                         onload: function(row) {
