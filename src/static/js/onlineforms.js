@@ -97,12 +97,18 @@ $(function() {
                 idcolumn: "ID",
                 edit: async function(row) {
                     try {
-                        await tableform.dialog_show_edit(dialog, row);
-                        onlineforms.check_redirect_url();
-                        tableform.fields_update_row(dialog.fields, row);
-                        await tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms");
-                        tableform.table_update(table);
-                        tableform.dialog_close();
+                        await tableform.dialog_show_edit(dialog, row, {
+                            onchange: async function() {
+                                onlineforms.check_redirect_url();
+                                tableform.fields_update_row(dialog.fields, row);
+                                await tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms");
+                                tableform.table_update(table);
+                                tableform.dialog_enable_buttons();
+                                tableform.dialog_info(_("Saved"));
+                            }
+                        });
+                        
+                        
                     }
                     catch(err) {
                         log.error(err, err);
