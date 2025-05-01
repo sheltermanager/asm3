@@ -488,6 +488,7 @@ def get_animal_brief_query(dbo: Database) -> str:
     return "SELECT a.AcceptanceNumber, a.ActiveMovementID, a.ActiveMovementType, " \
         "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
         "a.AdditionalFlags, " \
+        "a.Adoptable, " \
         "a.AdoptionCoordinatorID, " \
         "ao.OwnerName AS AdoptionCoordinatorName, " \
         "a.AgeGroup, " \
