@@ -233,7 +233,7 @@ $(function() {
                     $("#checkoutcreate").closest(".ui-widget").show();
                 }
                 // If it isnt, show the request signed contract section if that is configured
-                else if (config.str("MoveAdoptGeneratePaperwork")) {
+                else if (config.bool("MoveAdoptGeneratePaperwork")) {
                     $("#sigemailaddress").val(p.EMAILADDRESS);
                     $("#sigtemplateid").select("value", config.str("AdoptionCheckoutTemplateID"));
                     $("#sigpaperwork").closest(".ui-widget").show();
