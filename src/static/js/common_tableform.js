@@ -634,6 +634,8 @@ const tableform = {
      *      delete_button: false,
      *      delete_button_text: _("Delete"),
      *      delete_perm: 'da',
+     *      add_button_text: _("Add"),
+     *      edit_button_text: _("Edit"), 
      *      edit_perm: 'ca',
      *      width: 500,
      *      height: 200, (omit for auto)
@@ -788,7 +790,7 @@ const tableform = {
         });
 
         b[_("Add")] = {
-            text: _("Add"),
+            text: dialog.add_button_text || _("Add"),
             "class": 'asm-dialog-actionbutton',
             click: function() {
                 if (o && o.onvalidate) { 
@@ -929,7 +931,7 @@ const tableform = {
         }
         if (!dialog.edit_perm || (dialog.edit_perm && common.has_permission(dialog.edit_perm))) {
             b[_("Change")] = {
-                text: _("Change"),
+                text: dialog.edit_button_text || _("Change"),
                 "class": 'asm-dialog-actionbutton',
                 click: function() {
                     if (o && o.onvalidate) { 

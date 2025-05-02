@@ -44,6 +44,7 @@ $(function() {
             const dialog = {
                 add_title: _("Add online form"),
                 edit_title: _("Edit online form"),
+                edit_button_text: _("Update"),
                 edit_perm: 'eof',
                 close_on_ok: false,
                 columns: 1,
@@ -104,7 +105,7 @@ $(function() {
                                 await tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms");
                                 tableform.table_update(table);
                                 tableform.dialog_enable_buttons();
-                                tableform.dialog_info(_("Saved"));
+                                tableform.dialog_info(_("Updated"));
                             }
                         });
                         

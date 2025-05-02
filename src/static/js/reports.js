@@ -56,6 +56,7 @@ $(function() {
             const dialog = {
                 add_title: _("Add report"),
                 edit_title: _("Edit report"),
+                edit_button_text: _("Update"), 
                 edit_perm: 'hcr',
                 close_on_ok: false,
                 columns: 1,
@@ -109,7 +110,7 @@ $(function() {
                             tableform.fields_post(dialog.fields, "mode=update&reportid=" + row.ID, "reports", function(response) {
                                 tableform.table_update(table);
                                 tableform.dialog_enable_buttons();
-                                tableform.dialog_info(_("Saved"));
+                                tableform.dialog_info(_("Updated"));
                             });
                         },
                         onload: function(row) {

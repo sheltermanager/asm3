@@ -10,6 +10,7 @@ $(function() {
             const dialog = {
                 add_title: _("Add template"),
                 edit_title: _("Edit template"),
+                edit_button_text: _("Update"), 
                 close_on_ok: false,
                 columns: 1,
                 width: 800,
@@ -40,7 +41,7 @@ $(function() {
                             await tableform.fields_post(dialog.fields, "mode=update&name=" + row.NAME, "htmltemplates");
                             tableform.table_update(table);
                             tableform.dialog_enable_buttons();
-                            tableform.dialog_info(_("Saved"));
+                            tableform.dialog_info(_("Updated"));
                         },
                         ondelete: function() {
                             //Revert to default
