@@ -150,6 +150,12 @@ select:disabled, input:disabled, textarea:disabled {
     */
 }
 
+.asm-menu-filter {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .asm-menu-icon {
     display: inline-block;
     cursor: pointer;

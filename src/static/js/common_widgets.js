@@ -1616,6 +1616,7 @@ $.widget("asm.asmmenu", {
                 let t = $(e.target);
                 if (t.hasClass("asm-menu-icon") || t.parent().hasClass("asm-menu-icon")) { return true; }
                 if (t.hasClass("asm-menu-button") || t.parent().hasClass("asm-menu-button")) { return true; }
+                if (t.hasClass("asm-menu-filter") || t.parent().hasClass("asm-menu-filter")) { return true; }
                 if (t.closest(".asm-menu-accordion").length > 0) { return true; }
                 if (e.target.offsetParent && e.target.offsetParent.classList &&
                     e.target.offsetParent.classList.contains("asm-menu-button")) { return true; }
