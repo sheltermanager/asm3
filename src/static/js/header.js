@@ -236,10 +236,10 @@ header = {
                 // If the option is on or there are more than 120 items to show, 
                 // render report and mail merge menus in accordions by category instead
                 if ((config.bool("ReportMenuAccordion") || items.length > 120) && (name == "reports" || name == "mailmerge")) {
-                    menus.push("<input type=\"text\" id=\"search" + name + "\" placeholder=\"" + _("Filter") + "\" style=\"margin: 10px;\"><br>");
+                    menus.push('<input id="search-' + name + '" type="text" placeholder="' + _("Filter") + '" class="asm-menu-filter asm-textbox">');
                     self.menu_html_accordion_renderer(menus, items, name);
                 } else if (name == "reports" || name == "mailmerge") {
-                    menus.push("<input type=\"text\" id=\"search" + name + "\" placeholder=\"" + _("Filter") + "\" style=\"margin: 10px;margin-bottom: 0;\"><br>");
+                    menus.push('<input id="search-' + name + '" type="text" placeholder="' + _("Filter") + '" class="asm-menu-filter asm-textbox">');
                     self.menu_html_flat_renderer(menus, items, { breakafter: 25 });
                 } else {
                     self.menu_html_flat_renderer(menus, items, { breakafter: 25 });
@@ -642,35 +642,28 @@ header = {
             $("#asm-topline-locked").fadeIn().delay(20000).slideUp();
         }
 
-        //Bind report search inputs
-        $("#searchreports, #searchmailmerge").on("keyup change", function(e) {
+        // Bind report filter inputs
+        $(".asm-menu-filter").on("keyup change", function(e) {
             let activereportmenu = $("#asm-menu-reports-body");
-            if ($(this).attr("ID") == "searchmailmerge") {
-                activereportmenu = $("#asm-menu-mailmerge-body");
-            }
+            if ($(this).attr("id") == "search-mailmerge") { activereportmenu = $("#asm-menu-mailmerge-body"); }
             let searchkey = $(this).val();
-            if (searchkey != "") {
-                activereportmenu.find(".ui-accordion-content").css("padding", "0").css("border", "0").css("overflow", "hidden");
-                activereportmenu.find(".asm-menu-list").css("padding", "0").css("margin", "0");
-                activereportmenu.find(".ui-accordion-content").show();
-                activereportmenu.find(".ui-accordion-header").hide();
-                $.each($(".asm-menu-item"), function(i, v) {
-                    if (v.innerHTML.toLowerCase().includes(searchkey.toLowerCase())) {
-                        v.style.display = 'block';
-                    } else {
-                        v.style.display = 'none';
-                    }
-                });
-                
-
-            } else {
+            activereportmenu.find(".asm-menu-category").hide();
+            activereportmenu.find(".ui-accordion-content").css("padding", "0").css("border", "0").css("overflow", "hidden");
+            activereportmenu.find(".ui-accordion-content .asm-menu-list").css("padding", "0").css("margin", "0");
+            activereportmenu.find(".ui-accordion-content").show();
+            activereportmenu.find(".ui-accordion-header").hide();
+            activereportmenu.find(".asm-menu-item").each(function() {
+                let v = $(this);
+                v.toggle( v.html().toLowerCase().includes(searchkey.toLowerCase()) );
+            });
+            if (searchkey == "") {
+                activereportmenu.find(".asm-menu-category").show();
                 activereportmenu.find(".ui-accordion-content").css("padding", "1em 2.2em").css("border", "1px solid #aaaaaa").css("overflow", "auto");
-                activereportmenu.find(".asm-menu-list").css("padding", "5px");
+                activereportmenu.find(".ui-accordion-content .asm-menu-list").css("padding", "5px");
                 activereportmenu.find(".ui-accordion-content").hide();
                 activereportmenu.find(".ui-accordion-header").show();
                 activereportmenu.find(".ui-accordion").accordion({active: false});
             }
-
         });
 
         // If there's an emergency notice, show it
