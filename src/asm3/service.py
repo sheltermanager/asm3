@@ -37,18 +37,18 @@ from asm3.typehints import Database, PostedData, Results, ServiceResponse
 # Service methods that require authentication
 AUTH_METHODS = [
     "csv_adoptable_animals", "csv_import", "csv_mail", "csv_report", 
-    "json_report", "jsonp_report", "json_mail", "jsonp_mail",
+    "json_report", "json_mail", 
     "html_report", "rss_timeline", "upload_animal_image", 
-    "xml_adoptable_animal", "json_adoptable_animal", 
-    "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals", 
-    "xml_adopted_animals", "json_adopted_animals", 
-    "xml_found_animals", "json_found_animals", "jsonp_found_animals", 
-    "xml_held_animals", "json_held_animals", "jsonp_held_animals", 
-    "xml_lost_animals", "json_lost_animals", "jsonp_lost_animals", 
-    "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions", 
-    "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes", 
-    "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals", 
-    "xml_stray_animals", "json_stray_animals"
+    "xml_adoptable_animal", "json_adoptable_animal", "csv_adoptable_animal", 
+    "xml_adoptable_animals", "json_adoptable_animals", "csv_adoptable_animals", 
+    "xml_adopted_animals", "json_adopted_animals", "csv_adopted_animals",
+    "xml_found_animals", "json_found_animals", "csv_found_animals", 
+    "xml_held_animals", "json_held_animals", "csv_held_animals", 
+    "xml_lost_animals", "json_lost_animals", "csv_lost_animals", 
+    "xml_recent_adoptions", "json_recent_adoptions", "csv_recent_adoptions", 
+    "xml_recent_changes", "json_recent_changes", "csv_recent_changes", 
+    "xml_shelter_animals", "json_shelter_animals", "csv_shelter_animals", 
+    "xml_stray_animals", "json_stray_animals", "csv_stray_animals"
 ]
 
 # These are service methods that are defended against cache busting
@@ -126,9 +126,7 @@ FLOOD_PROTECT_METHODS = {
     "csv_report": [ 10, 60, 60 ],
     "html_report": [ 5, 60, 60 ],
     "json_report": [ 5, 60, 60 ],
-    "jsonp_report": [ 5, 60, 60 ],
     "json_mail": [ 5, 60, 60 ],
-    "jsonp_mail": [ 5, 60, 60 ],
     "online_form_post": [ 1, 15, 15 ]
 }
 
