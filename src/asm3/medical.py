@@ -443,12 +443,6 @@ def embellish_regimen(l: str, rows: Results) -> Results:
     NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, NAMEDGIVENREMAINING, COMPOSITEID
     """
     for r in rows:
-        try:
-            if r.CUSTOMTREATMENTNAME:
-                if r.CUSTOMTREATMENTNAME != "":
-                    r.TREATMENTNAME = '<div style="display: inline-block;">' + r.TREATMENTNAME + '<br><span class="asm-smallertext">' + r.CUSTOMTREATMENTNAME + '</span></div>'
-        except:
-            pass # To do - remove this try/except block. Kept failing due to CUSTOMTREATMENTNAME not being able to be found on some records. Didn't manage to figure out how that could be possible - Adam.
         st = 0
         if "REGIMENID" in r: r.COMPOSITEID = "%d_%d" % (r.REGIMENID, r.TREATMENTID)
         if "STATUS" in r: st = r.STATUS
@@ -967,10 +961,16 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     if post["treatmentname"] == "":
         raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
 
-    l = dbo.locale
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
+    customtimingrule = post["customtiming"].strip()
+
+    # Remove trailing comma if it exists
+    if len(customtimingrule) > 0:
+        while customtimingrule[-1] == ",":
+            customtimingrule = customtimingrule[:-1]
+
     totalnumberoftreatments = post.integer("totalnumberoftreatments")
     treatmentsremaining = int(totalnumberoftreatments) * int(timingrule)
     treatmentrule = post.integer("treatmentrule")
@@ -1015,12 +1015,20 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
         else:
             if post["customtiming"] != "":
-                reqdate = post.date("startdate")
-                for a in post["customtiming"].split(","):
-                    label = a.split("=")[0].strip()
-                    value = int(a.split("=")[1].strip())
-                    reqdate = add_days(reqdate, value)
-                    insert_treatments(dbo, username, nregid, reqdate, False, label)
+                startdate = post.date("startdate")
+                customtiming = post["customtiming"].strip()
+                if customtiming[-1] == ",":
+                    customtiming = customtiming[:-1]
+                for a in customtiming.split(","):
+                    if "=" in a:
+                        label = a.split("=")[0].strip()
+                        value = int(a.split("=")[1].strip())
+                    else:
+                        label = ""
+                        value = int(a.strip())
+                    reqdate = add_days(startdate, value)
+                    print(str(reqdate))
+                    insert_treatments(dbo, username, nregid, reqdate, True, label)
                     
             else:
                 created = 1
@@ -1276,7 +1284,7 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
 
     # Remove trailing comma if it exists
     if len(customtimingrule) > 0:
-        if customtimingrule[-1] == ",":
+        while customtimingrule[-1] == ",":
             customtimingrule = customtimingrule[:-1]
     
     if post.integer("singlemulti") == 2:
@@ -1330,7 +1338,7 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
 
     # Remove trailing comma if it exists
     if len(customtimingrule) > 0:
-        if customtimingrule[-1] == ",":
+        while customtimingrule[-1] == ",":
             customtimingrule = customtimingrule[:-1]
     
     if post.integer("singlemulti") == 2:

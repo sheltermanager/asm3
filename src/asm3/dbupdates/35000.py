@@ -33,14 +33,12 @@ fields = ",".join([
     dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False),
     dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
 ])
-print("Creating product table")
 execute(dbo, dbo.ddl_add_table("product", fields) )
 add_index(dbo, "product_SupplierID", "product", "SupplierID")
 add_index(dbo, "product_ProductName", "product", "ProductName")
 add_index(dbo, "product_ProductTypeID", "product", "ProductTypeID")
 add_index(dbo, "product_Barcode", "product", "Barcode")
 add_index(dbo, "product_PLU", "product", "PLU")
-print("Created product table")
 
 # Add the lkproducttype table
 fields = ",".join([

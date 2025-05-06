@@ -703,11 +703,11 @@ def sql_structure(dbo: Database) -> str:
         fint("Cost"),
         fint("CostPerTreatment", True),
         fdate("CostPaidDate", True),
-        fint("MedicalTypeID"),
+        fint("MedicalTypeID", True),
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
         fint("TimingRuleNoFrequencies"),
-        fstr("CustomTimingRule"),
+        fstr("CustomTimingRule", True),
         fint("TreatmentRule"),
         fint("TotalNumberOfTreatments"),
         fint("TreatmentsGiven"),
@@ -717,7 +717,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animalmedical_AnimalID", "animalmedical", "AnimalID")
     sql += index("animalmedical_MedicalProfileID", "animalmedical", "MedicalProfileID")
     sql += index("animalmedical_CostPaidDate", "animalmedical", "CostPaidDate")
-    sql += index("animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID") # To do - check that this index is necessary
+    sql += index("animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID")
 
     sql += table("animalmedicaltreatment", (
         fid(),
@@ -1188,6 +1188,9 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lksentrytype", (
         fid(), fstr("EntryTypeName") ), False)
+    
+    sql += table("lksmedicaltype", (
+        fid(), fstr("MedicalTypeName"), fstr("Description"), fint("ForceSingleUse"), fint("IsRetired") ), False)
 
     sql += table("lksloglink", (
         fid(), fstr("LinkType") ), False)
@@ -1291,16 +1294,16 @@ def sql_structure(dbo: Database) -> str:
         fstr("Dosage"),
         fint("Cost"),
         fint("CostPerTreatment", True),
-        fint("MedicalTypeID"),
+        fint("MedicalTypeID", True),
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
-        fstr("CustomTimingRule"),
+        fstr("CustomTimingRule", True),
         fint("TimingRuleNoFrequencies"),
         fint("TreatmentRule"),
         fint("TotalNumberOfTreatments"),
         flongstr("Comments") ))
     
-    sql += index("medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID") # To do - check that this index is necessary
+    sql += index("medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID")
 
     sql += table("messages", (
         fid(),
@@ -1863,6 +1866,8 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
             "ProfileName, RecordVersion, TimingRule, TimingRuleFrequency, TimingRuleNoFrequencies, TotalNumberOfTreatments, " \
             f"TreatmentName, TreatmentRule) VALUES ({str(pid)}, '', 0, 0, 'system', {dbo.sql_now()}, '{dbo.escape(dosage)}', {dbo.sql_now()}, 'system', " \
             f"'{dbo.escape(name)}', 0, 0, 0, 0, 1, '{dbo.escape(name)}', 0)|=\n"
+    def medicaltype(tid: int, name: str, forcesingle: int) -> str:
+        return "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (%s, '%s', %s, '', 0)|=\n" % ( tid, name, forcesingle )
     def role(tid: int, name: str, perms: str) -> str:
         return "INSERT INTO role (ID, Rolename, SecurityMap) VALUES (%s, '%s', '%s')|=\n" % (tid, dbo.escape(name), perms)
     def species(tid: int, name: str, petfinder: str) -> str:
@@ -2599,6 +2604,24 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksloglink", "LinkType", 4, _("Waiting List", l))
     sql += lookup1("lksloglink", "LinkType", 5, _("Movement", l))
     sql += lookup1("lksloglink", "LinkType", 6, _("Incident", l))
+    sql += medicaltype(1, _("Worm treatment", l), 0)
+    sql += medicaltype(2, _("Flea treatment", l), 0)
+    sql += medicaltype(3, _("Other parasite treatment", l), 0)
+    sql += medicaltype(4, _("Allery treatment", l), 0)
+    sql += medicaltype(5, _("Anti inflammatory", l), 0)
+    sql += medicaltype(6, _("Antibiotic", l), 0)
+    sql += medicaltype(7, _("Antiviral", l), 0)
+    sql += medicaltype(8, _("Pain relief", l), 0)
+    sql += medicaltype(9, _("Euthanasia", l), 1)
+    sql += medicaltype(10, _("Anaesthesia", l), 1)
+    sql += medicaltype(11, _("Medicated bath", l), 0)
+    sql += medicaltype(12, _("Examination", l), 1)
+    sql += medicaltype(13, _("Neuter", l), 1)
+    sql += medicaltype(14, _("C section", l), 1)
+    sql += medicaltype(15, _("X Ray / scan", l), 1)
+    sql += medicaltype(16, _("Amputation", l), 1)
+    sql += medicaltype(17, _("Other surgery", l), 1)
+    sql += medicaltype(18, _("Other medication", l), 0)
     sql += lookup1("lksoutcome", "Outcome", 1, _("On Shelter", l))
     sql += lookup1("lksoutcome", "Outcome", 2, _("Died", l))
     sql += lookup1("lksoutcome", "Outcome", 3, _("DOA", l))
@@ -2749,6 +2772,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2money("vaccinationtype", "VaccinationType", 12, _("FeLV", l))
     sql += lookup2money("vaccinationtype", "VaccinationType", 13, _("FIPV", l))
     sql += lookup2money("vaccinationtype", "VaccinationType", 14, _("FECV/FeCoV", l))
+    print(sql)
     return sql
 
 def install_db_structure(dbo: Database) -> None:
@@ -3456,7 +3480,7 @@ def _dbupdates_exec(dbo: Database, stdout = False, stoponexception = False) -> i
                     print(msg)
                 else:
                     asm3.al.info(msg, "dbupdate._dbupdates_exec", dbo)
-                src = asm3.utils.read_text_file(f"{dbo.installpath}/src/asm3/dbupdates/{i}.py") # To do - check that altering this is accceptable
+                src = asm3.utils.read_text_file(f"{dbo.installpath}/asm3/dbupdates/{i}.py")
                 exec(src)
                 alreadyrun.append(i)
                 execute(dbo, "INSERT INTO dbupdates (ID, Date) VALUES (?, ?)", [i, dbo.now()])
@@ -3484,7 +3508,7 @@ def _dbupdates_list(dbo: Database) -> List[int]:
     ordered from oldest to newest.
     """
     updates = []
-    for i in asm3.utils.listdir(f"{dbo.installpath}/src/asm3/dbupdates/"): # To do - check that altering this is accceptable
+    for i in asm3.utils.listdir(f"{dbo.installpath}/asm3/dbupdates/"):
         if i.endswith(".py"): updates.append(asm3.utils.atoi(i))
     updates = sorted(updates)
     return updates

@@ -9,9 +9,9 @@ add_index(dbo, "animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID")
 add_column(dbo, "medicalprofile", "MedicalTypeID", dbo.type_integer)
 add_index(dbo, "medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID")
 
-add_column(dbo, "animalmedical", "CustomTimingRule", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
-add_column(dbo, "medicalprofile", "CustomTimingRule", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
-add_column(dbo, "animalmedicaltreatment", "CustomTreatmentName", dbo.type_shorttext)# To do - check that shorttext will be long enough - Adam.
+add_column(dbo, "animalmedical", "CustomTimingRule", dbo.type_shorttext)
+add_column(dbo, "medicalprofile", "CustomTimingRule", dbo.type_shorttext)
+add_column(dbo, "animalmedicaltreatment", "CustomTreatmentName", dbo.type_shorttext)
 
 
 # Add the lksmedicaltype table
@@ -24,10 +24,26 @@ fields = ",".join([
 ])
 execute(dbo, dbo.ddl_add_table("lksmedicaltype", fields) )
 
-execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 1, _("Allergy treatment", l), "", 0, 0 ])
-execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 2, _("Examination", l), "", 1, 0 ])
-execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 3, _("Flea treatment", l), "", 0, 0 ])
-execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 4, _("Pain relief", l), "", 0, 0 ])
-execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 5, _("Skin treatment", l), "", 0, 0 ])
-execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 6, _("Surgery", l), "", 1, 0 ])
-execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ 7, _("Wormer", l), "", 0, 0 ])
+data = (
+    (1, "Worm treatment", 0),
+    (2, "Flea treatment", 0),
+    (3, "Other parasite treatment", 0),
+    (4, "Allery treatment", 0),
+    (5, "Anti inflammatory", 0),
+    (6, "Antibiotic", 0),
+    (7, "Antiviral", 0),
+    (8, "Pain relief", 0),
+    (9, "Euthanasia", 1),
+    (10, "Anaesthesia", 1),
+    (11, "Medicated bath", 0),
+    (12, "Examination", 1),
+    (13, "Neuter", 1),
+    (14, "C section", 1),
+    (15, "X Ray / scan", 1),
+    (16, "Amputation", 1),
+    (17, "Other surgery", 1),
+    (18, "Other medication", 0),
+)
+
+for d in data:
+    execute(dbo, "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (?, ?, ?, ?, ?)", [ d[0], _(d[1], l), "", d[2], 0 ])

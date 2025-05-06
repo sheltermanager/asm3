@@ -69,7 +69,13 @@ $(function() {
                             '</span>'},
                     { type: "rowclose" },
                     { json_field: "CUSTOMTIMINGRULE", post_field: "customtiming", label: _("Treatments"), type: "text", classes: "asm-doubletextbox", 
-                        callout: _("A comma separated list of treatments. Each treatment made up of {title}={no of days since start of course}") },
+                        callout: _("A comma separated list of treatment timings.<br>" + 
+                            "An optional label may be applied to each Each treatment made up of '{title}={no of days since start of course}'.<br>" + 
+                            "Examples:<br>" + 
+                            "'1,3,5,7,9'<br>" + 
+                            "'first=1,second=3,third=5,fourth=7,final=9'"
+                        )// To do - sort out linebreaks in this callout - Adam.
+                    },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -87,6 +93,7 @@ $(function() {
                     $("#animalsrow").hide();
                     $("#profileidrow").hide();
                     $("#treatmentrulecalc").hide();
+                    $("#customtimingrow").hide();
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -104,13 +111,13 @@ $(function() {
                 },
                 columns: [
                     { field: "TREATMENTNAME", display: _("Name"),
-                        /*formatter: function(row) {
-                            if (row.CUSTOMTIMINGRULE && row.CUSTOMTIMINGRULE != "") {
-                                return row.TREATMENTNAME + "<div class='asm-smallertext'>" + row.CUSTOMTREATMENTNAME + "</div>";
+                        formatter: function(row) {
+                            if (row.CUSTOMTREATMENTNAME) {
+                                return tableform.table_render_edit_link(row.COMPOSITEID, row.TREATMENTNAME, " <span class='asm-smallertext'>" + row.CUSTOMTREATMENTNAME + "</span>");
                             } else {
-                                return row.TREATMENTNAME;
+                                return tableform.table_render_edit_link(row.COMPOSITEID, row.TREATMENTNAME);
                             }
-                        }*/
+                        }
                     },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
@@ -416,54 +423,63 @@ $(function() {
             const dialog = medical.dialog;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
-                    return validate.notzero([ "animal" ]);
+                    if (!validate.notzero(["animal"])) {
+                        return false;
+                    };
+                    if ($("#singlemulti").val() == "2") {
+                        let valoutput = medical.validate_custom_timing_rule();
+                        if (valoutput == "") {
+                            return true;
+                        } else {
+                            tableform.dialog_error(valoutput);
+                            tableform.dialog_enable_buttons();
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                    
                 },
                 onadd: async function() {
                     try {
-                        if ($("#singlemulti").val() != "2" || medical.validate_custom_timing_rule() == true) {
-                            await tableform.fields_post(dialog.fields, "mode=create", "medical");
-                            tableform.dialog_close();
-                            if (config.bool("ReloadMedical")) {
-                                common.route_reload();
-                            }
-                            else {
-                                // If we aren't reloading automatically, show a placeholder row that
-                                // cannot be interacted with so the user knows their record was
-                                // created and they need to reload the screen.
-                                let a = controller.animal;
-                                if (!a) { a = $("#animal").animalchooser("get_selected"); }
-                                let nr = {
-                                    TREATMENTID: 0,
-                                    COMPOSITEID: "",
-                                    ANIMALID: a.ID,
-                                    ANIMALNAME: a.ANIMALNAME,
-                                    SHORTCODE: a.SHORTCODE,
-                                    SHELTERCODE: a.SHELTERCODE,
-                                    ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
-                                    SPECIESNAME: a.SPECIESNAME,
-                                    LOCATIONNAME: a.LOCATIONNAME,
-                                    WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
-                                    WEBSITEMEDIADATE: a.WEBSITEMEDIADATE,
-                                    TREATMENTNAME: $("#treatmentname").val(),
-                                    DOSAGE: $("#dosage").val(),
-                                    COMMENTS: $("#comments").val(),
-                                    TREATMENTCOMMENTS: "",
-                                    STARTDATE: format.date_iso($("#startdate").val()),
-                                    NAMEDSTATUS: '<a href="javascript:location.reload(true)">' + _("Reload page ...") + '</a>',
-                                    NAMEDFREQUENCY: "",
-                                    NAMEDNUMBEROFTREATMENTS: "",
-                                    TREATMENTNUMBER: "",
-                                    TOTALTREATMENTS: "",
-                                    TREATMENTSREMAINING: "",
-                                    TREATMENTSGIVEN: ""
-                                };
-                                controller.rows.unshift(nr);
-                                tableform.table_update(medical.table);
-                            }
-                        } else {
-                            console.log("Invalid custom rule!");
-                            alert("Invalid custom rule");
-                            tableform.dialog_enable_buttons();
+                        await tableform.fields_post(dialog.fields, "mode=create", "medical");
+                        tableform.dialog_close();
+                        if (config.bool("ReloadMedical")) {
+                            common.route_reload();
+                        }
+                        else {
+                            // If we aren't reloading automatically, show a placeholder row that
+                            // cannot be interacted with so the user knows their record was
+                            // created and they need to reload the screen.
+                            let a = controller.animal;
+                            if (!a) { a = $("#animal").animalchooser("get_selected"); }
+                            let nr = {
+                                TREATMENTID: 0,
+                                COMPOSITEID: "",
+                                ANIMALID: a.ID,
+                                ANIMALNAME: a.ANIMALNAME,
+                                SHORTCODE: a.SHORTCODE,
+                                SHELTERCODE: a.SHELTERCODE,
+                                ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
+                                SPECIESNAME: a.SPECIESNAME,
+                                LOCATIONNAME: a.LOCATIONNAME,
+                                WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
+                                WEBSITEMEDIADATE: a.WEBSITEMEDIADATE,
+                                TREATMENTNAME: $("#treatmentname").val(),
+                                DOSAGE: $("#dosage").val(),
+                                COMMENTS: $("#comments").val(),
+                                TREATMENTCOMMENTS: "",
+                                STARTDATE: format.date_iso($("#startdate").val()),
+                                NAMEDSTATUS: '<a href="javascript:location.reload(true)">' + _("Reload page ...") + '</a>',
+                                NAMEDFREQUENCY: "",
+                                NAMEDNUMBEROFTREATMENTS: "",
+                                TREATMENTNUMBER: "",
+                                TOTALTREATMENTS: "",
+                                TREATMENTSREMAINING: "",
+                                TREATMENTSGIVEN: ""
+                            };
+                            controller.rows.unshift(nr);
+                            tableform.table_update(medical.table);
                         }
                     }
                     catch(err) {
@@ -845,41 +861,41 @@ $(function() {
         },
 
         validate_custom_timing_rule: function() {
-            let valid = true;
+            let problem = "";
             let customtiming = $("#customtiming").val().trim();
+            while (customtiming.slice(-1) == ",") {
+                customtiming = customtiming.slice(0, -1); //Remove trailing commas
+            }
+            $("#customtiming").val(customtiming);
             if (customtiming.length == 0) {
-                console.log("Empty string");
-                valid = false;
+                problem = _("No custom rules found");
             } else {
-                if (customtiming.slice(-1) == ",") {
-                    customtiming = customtiming.slice(0, -1); //Remove trailing comma
-                }
                 $.each(customtiming.split(","), function(i, v) {
-                    if (v.includes("=") == false) {
-                        console.log("Missing =");
-                        valid = false;
-                        return false;
-                    }
-                    let label = v.split("=")[0].trim();
-                    let value = v.split("=")[1].trim();
-                    let intvalue = parseInt(value);
-                    if (label == "") {
-                        console.log("Missing label");
-                        valid = false;
-                        return false;
-                    }
-                    if (value == "") {
-                        console.log("Missing value");
-                        valid = false;
-                        return false;
-                    } else if (Number.isInteger(intvalue) == false) {
-                        console.log("Value '" + value + "' is not an integer");
-                        valid = false;
-                        return false;
+                    if (v.includes("=")) {
+                        let label = v.split("=")[0].trim();
+                        let value = v.split("=")[1].trim();
+                        if (label == "") {
+                            problem = _("Missing label");
+                            return false;
+                        }
+                        if (value == "") {
+                            problem = _("Missing value");
+                            return false;
+                        } else if (!common.is_integer(value)) {
+                            problem = _("Value '" + value + "' is not an integer");
+                            return false;
+                        }
+                    } else {
+                        let value = v.trim()
+                        if (!common.is_integer(value)) {
+                            problem = _("Value '" + value + "' is not an integer");
+                            return false;
+                        }
+
                     }
                 });
             }
-            return valid;
+            return problem;
         },
 
         destroy: function() {
