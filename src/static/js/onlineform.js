@@ -217,7 +217,7 @@ $(function() {
 
             // Show/hide the lookup values box if type changes
             $("#fieldtype").change(function() {
-                this.check_controls();
+                onlineform.check_controls();
                 if ($("#fieldtype").val() == "10") {
                     $("#validationrulerow").show();
                 } else {
