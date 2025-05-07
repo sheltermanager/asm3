@@ -454,8 +454,8 @@ $(function() {
                 if (v.EXTRA) { 
                     err = " : <span style='color: red'>" + v.EXTRA + "</span>"; 
                 }
-                else if (common.has_permission("uipb")) { 
-                    err = ' <button type="button" class="forgetlink" data-service="' + v.PUBLISHEDTO + '">' + _("Forget") + '</button>'; 
+                if (common.has_permission("uipb")) { 
+                    err += ' <button type="button" class="forgetlink" data-service="' + v.PUBLISHEDTO + '">' + _("Forget") + '</button>'; 
                 }
                 h.push('<p>' + format.date(v.SENTDATE) + ' - ' + pname(v.PUBLISHEDTO) + err + '</p>');
             });
