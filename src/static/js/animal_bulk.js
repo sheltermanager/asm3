@@ -149,19 +149,6 @@ $(function() {
             ].join("\n");
         }, 
         render_additional: function() {
-            let choosetypes = [];
-            $.each(controller.movementtypes, function(i, v) {
-                if (v.ID == 8 && !config.bool("DisableRetailer")) {
-                    choosetypes.push(v);
-                }
-                else if (v.ID == 0) {
-                    v.MOVEMENTTYPE = _("Reservation");
-                    choosetypes.push(v);
-                }
-                else if (v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
-                    choosetypes.push(v);
-                }
-            });
             return [
                 '<h3><a href="#">' + _("Additional") + '</a></h3>',
                 '<div>',
