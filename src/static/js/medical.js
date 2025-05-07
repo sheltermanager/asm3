@@ -883,13 +883,13 @@ $(function() {
                             problem = _("Missing value");
                             return false;
                         } else if (!common.is_integer(value)) {
-                            problem = _("Value '" + value + "' is not an integer");
+                            problem = _("Value '{0}' is not an integer".replace("{0}", value));
                             return false;
                         }
                     } else {
                         let value = v.trim()
                         if (!common.is_integer(value)) {
-                            problem = _("Value '" + value + "' is not an integer");
+                            problem = _("Value '{0}' is not an integer".replace("{0}", value));
                             return false;
                         }
 
