@@ -842,6 +842,13 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             ( "COMMENTS", _("Comments", l)) 
         ))
 
+        medicaltypes = asm3.medical.get_medical_types(dbo, a["ID"])
+        tags["ANIMALMEDICALTYPES"] = html_table(l, medicaltypes, (
+            ( "MEDICALTYPENAME", _("Medical Type", l) ),
+            ( "DATEREQUIRED", _("Next due", l) ),
+            ( "DATEGIVEN", _("Last Given", l) )
+        ))
+
     # Diary
     if includeDiary:
         d = {

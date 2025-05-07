@@ -281,6 +281,32 @@ def get_batch_for_vaccination_types(dbo: Database) -> Results:
         "AND DateOfVaccination Is Not Null AND DateOfVaccination >= ? " \
         "ORDER BY animalvaccination.ID DESC, VaccinationID", [ dbo.today(offset=-31) ], distincton="ID")
 
+def get_medical_types(dbo: Database, animalid: int) -> Results:
+    """
+    Returns a recordset of medicaltypes for an animal:
+    MEDICALTYPE, DATEREQUIRED, LASTGIVEN
+    """
+
+    sql = "SELECT mt.MedicalTypeName, " \
+        "(" \
+            "SELECT DateRequired " \
+            "FROM animalmedicaltreatment " \
+            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
+            "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
+            "ORDER BY DateRequired desc " \
+            "LIMIT 1" \
+        ") AS DateRequired," \
+        "(" \
+            "SELECT DateGiven " \
+            "FROM animalmedicaltreatment " \
+            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
+            "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID ORDER BY DateGiven desc LIMIT 1" \
+        ") AS DateGiven " \
+        "FROM lksmedicaltype mt"
+    return dbo.query(sql, [animalid, dbo.today(), animalid ])
+
 def get_regimens(dbo: Database, animalid: int, onlycomplete: bool = False, onlyactive: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
     """
     Returns a recordset of medical regimens for an animal:
