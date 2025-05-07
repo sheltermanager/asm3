@@ -1348,10 +1348,10 @@ def update_flags(dbo: Database, username: str, personid: int, flags: str) -> Non
     flagstr = "|".join(sorted(flags)) + "|"
 
     # If the option is on and the flags have changed, log it
-    if asm3.configuration.flag_change_log(dbo):
+    if asm3.configuration.person_flag_change_log(dbo):
         oldflags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID=?", [personid])
         if oldflags != flagstr:
-            asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.flag_change_log_type(dbo),
+            asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.person_flag_change_log_type(dbo),
                 _("Flags changed from '{0}' to '{1}'", l).format(oldflags, flagstr))
 
     dbo.update("owner", personid, {
