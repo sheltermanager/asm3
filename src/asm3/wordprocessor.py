@@ -849,6 +849,12 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             ( "DATEGIVEN", _("Last Given", l) )
         ))
 
+        for mt in medicaltypes:
+            tagname = "MEDICALTYPE" + mt["MEDICALTYPENAME"].replace(" ", "").replace("/", "").upper()
+            tags[tagname] = mt["MEDICALTYPENAME"].upper()
+            tags[tagname + "GIVEN"] = python2display(l, mt["DATEGIVEN"])
+            tags[tagname + "DUE"] = python2display(l, mt["DATEREQUIRED"])
+
     # Diary
     if includeDiary:
         d = {

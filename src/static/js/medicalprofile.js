@@ -51,12 +51,10 @@ $(function() {
                             '</span>'},
                     { type: "rowclose" },
                     { json_field: "CUSTOMTIMINGRULE", post_field: "customtiming", label: _("Treatments"), type: "text", classes: "asm-doubletextbox", 
-                        callout: _("A comma separated list of treatment timings.<br>" + 
-                            "An optional label may be applied to each Each treatment made up of '{title}={no of days since start of course}'.<br>" + 
-                            "Examples:<br>" + 
-                            "'1,3,5,7,9'<br>" + 
+                        callout: _("A comma separated list of treatment timings.") + "<br>" + 
+                            _("An optional label may be applied to each treatment using '{title}={no of days since start of course}'") + "<br>" + 
+                            _("Examples") + "<br>" + "'1,3,5,7,9'<br>" + 
                             "'first=1,second=3,third=5,fourth=7,final=9'"
-                        )// To do - sort out linebreaks in this callout - Adam.
                     },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]

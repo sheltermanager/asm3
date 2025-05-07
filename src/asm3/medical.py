@@ -80,13 +80,15 @@ def get_medicaltreatment_query(dbo: Database) -> str:
         "CASE " \
         "WHEN am.Status = 0 THEN 'Active' " \
         "WHEN am.Status = 1 THEN 'Held' " \
-        "WHEN am.Status = 2 THEN 'Completed' END AS NamedStatus " \
+        "WHEN am.Status = 2 THEN 'Completed' END AS NamedStatus, " \
+        "lksmedicaltype.MedicalTypeName " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "LEFT OUTER JOIN lksmedicaltype ON am.MedicalTypeID = lksmedicaltype.ID " \
         "LEFT OUTER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
@@ -1053,7 +1055,6 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
                         label = ""
                         value = int(a.strip())
                     reqdate = add_days(startdate, value)
-                    print(str(reqdate))
                     insert_treatments(dbo, username, nregid, reqdate, True, label)
                     
             else:
