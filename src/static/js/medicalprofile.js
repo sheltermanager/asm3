@@ -168,7 +168,7 @@ $(function() {
             try {
                 await tableform.dialog_show_add(medicalprofile.dialog, {
                     onvalidate: function() {
-                        if ($("#singlemulti").val() == "2") {
+                        if ($("#singlemulti").val() == medicalprofile.TREATMENT_CUSTOM) {
                             let valoutput = medicalprofile.validate_custom_timing_rule();
                             if (valoutput == "") {
                                 return true;
@@ -205,7 +205,7 @@ $(function() {
                 }
             });
             if (forcesingletx) {
-                $("#singlemulti").val(0);
+                $("#singlemulti").val(medicalprofile.TREATMENT_SINGLE);
                 $("#singlemulti").prop("disabled", true);
                 medicalprofile.change_singlemulti();
             }
