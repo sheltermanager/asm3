@@ -565,8 +565,9 @@ $(function() {
                         { id: "defaultjurisdiction", post_field: "DefaultJurisdiction", label: _("Jurisdiction"), type: "select", options: html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME") }, 
                         { id: "defaultlocation", post_field: "AFDefaultLocation", label: _("Location"), type: "select", options: html.list_to_options(controller.locations, "ID", "LOCATIONNAME") }, 
                         { id: "defaultlog", post_field: "AFDefaultLogFilter", label: _("Log Filter"), type: "select", options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
-                        { type: "nextcol" }, 
                         { id: "defaultlogtype", post_field: "AFDefaultLogType", label: _("Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
+                        { type: "nextcol" }, 
+                        { id: "defaultmedicaltype", post_field: "AFDefaultMedicalType", label: _("Medical Type"), type: "select", options: html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") }, 
                         { id: "systemlogtype", post_field: "SystemLogType", label: _("System Log Type"), type: "select", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }, 
                         { id: "defaultpaymentmethod", post_field: "AFDefaultPaymentMethod", label: _("Payment Method"), type: "select", options: html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") }, 
                         { id: "defaultdonation", post_field: "AFDefaultDonationType", label: _("Payment Type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME") }, 
@@ -579,7 +580,6 @@ $(function() {
                         { id: "defaulttransport", post_field: "AFDefaultTransportType", label: _("Transport Type"), type: "select", options: html.list_to_options(controller.transporttypes, "ID", "TRANSPORTTYPENAME") }, 
                         { id: "defaulttype", post_field: "AFDefaultType", label: _("Type"), type: "select", options: html.list_to_options(controller.types, "ID", "ANIMALTYPE") }, 
                         { id: "defaultvaccination", post_field: "AFDefaultVaccinationType", label: _("Vaccination Type"), type: "select", options: html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE") }, 
-                        
                         { type: "nextcol"}, 
                         { id: "DefaultBroughtInBy", post_field: "DefaultBroughtInBy", label: _("Default Brought In By"), type: "person" }, 
                         { id: "defaultshift", post_field: "DefaultShiftStart", label: _("Default Rota Shift"), type: "text", classes: "asm-textbox asm-halftextbox asm-timebox", xmarkup: '<input id="defaultshiftend" data="DefaultShiftEnd" type="text" class="asm-textbox asm-halftextbox asm-timebox" />' }, 

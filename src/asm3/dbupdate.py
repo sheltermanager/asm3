@@ -703,9 +703,11 @@ def sql_structure(dbo: Database) -> str:
         fint("Cost"),
         fint("CostPerTreatment", True),
         fdate("CostPaidDate", True),
+        fint("MedicalTypeID", True),
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
         fint("TimingRuleNoFrequencies"),
+        fstr("CustomTimingRule", True),
         fint("TreatmentRule"),
         fint("TotalNumberOfTreatments"),
         fint("TreatmentsGiven"),
@@ -715,6 +717,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animalmedical_AnimalID", "animalmedical", "AnimalID")
     sql += index("animalmedical_MedicalProfileID", "animalmedical", "MedicalProfileID")
     sql += index("animalmedical_CostPaidDate", "animalmedical", "CostPaidDate")
+    sql += index("animalmedical_MedicalTypeID", "animalmedical", "MedicalTypeID")
 
     sql += table("animalmedicaltreatment", (
         fid(),
@@ -723,6 +726,7 @@ def sql_structure(dbo: Database) -> str:
         fint("AdministeringVetID", True),
         fdate("DateRequired"),
         fdate("DateGiven", True),
+        fstr("CustomTreatmentName"),
         fint("TreatmentNumber"),
         fint("TotalTreatments"),
         fstr("GivenBy"),
@@ -1184,6 +1188,9 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lksentrytype", (
         fid(), fstr("EntryTypeName") ), False)
+    
+    sql += table("lksmedicaltype", (
+        fid(), fstr("MedicalTypeName"), fstr("Description"), fint("ForceSingleUse"), fint("IsRetired") ), False)
 
     sql += table("lksloglink", (
         fid(), fstr("LinkType") ), False)
@@ -1287,12 +1294,16 @@ def sql_structure(dbo: Database) -> str:
         fstr("Dosage"),
         fint("Cost"),
         fint("CostPerTreatment", True),
+        fint("MedicalTypeID", True),
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
+        fstr("CustomTimingRule", True),
         fint("TimingRuleNoFrequencies"),
         fint("TreatmentRule"),
         fint("TotalNumberOfTreatments"),
         flongstr("Comments") ))
+    
+    sql += index("medicalprofile_MedicalTypeID", "medicalprofile", "MedicalTypeID")
 
     sql += table("messages", (
         fid(),
@@ -1855,6 +1866,8 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
             "ProfileName, RecordVersion, TimingRule, TimingRuleFrequency, TimingRuleNoFrequencies, TotalNumberOfTreatments, " \
             f"TreatmentName, TreatmentRule) VALUES ({str(pid)}, '', 0, 0, 'system', {dbo.sql_now()}, '{dbo.escape(dosage)}', {dbo.sql_now()}, 'system', " \
             f"'{dbo.escape(name)}', 0, 0, 0, 0, 1, '{dbo.escape(name)}', 0)|=\n"
+    def medicaltype(tid: int, name: str, forcesingle: int) -> str:
+        return "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (%s, '%s', %s, '', 0)|=\n" % ( tid, name, forcesingle )
     def role(tid: int, name: str, perms: str) -> str:
         return "INSERT INTO role (ID, Rolename, SecurityMap) VALUES (%s, '%s', '%s')|=\n" % (tid, dbo.escape(name), perms)
     def species(tid: int, name: str, petfinder: str) -> str:
@@ -2591,6 +2604,34 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksloglink", "LinkType", 4, _("Waiting List", l))
     sql += lookup1("lksloglink", "LinkType", 5, _("Movement", l))
     sql += lookup1("lksloglink", "LinkType", 6, _("Incident", l))
+    sql += medicaltype(1, _("Worm treatment", l), 0)
+    sql += medicaltype(2, _("Flea treatment", l), 0)
+    sql += medicaltype(3, _("Other parasite treatment", l), 0)
+    sql += medicaltype(4, _("Allergy treatment", l), 0)
+    sql += medicaltype(5, _("Anti-inflammatory", l), 0)
+    sql += medicaltype(6, _("Antibiotic", l), 0)
+    sql += medicaltype(7, _("Antiviral", l), 0)
+    sql += medicaltype(8, _("Pain relief", l), 0)
+    sql += medicaltype(9, _("Euthanasia", l), 1)
+    sql += medicaltype(10, _("Anesthesia", l), 1)
+    sql += medicaltype(11, _("Medicated bath", l), 0)
+    sql += medicaltype(12, _("Examination", l), 1)
+    sql += medicaltype(13, _("Sterilization", l), 1)
+    sql += medicaltype(14, _("C-Section", l), 1)
+    sql += medicaltype(15, _("X-Ray / Scan", l), 1)
+    sql += medicaltype(16, _("Amputation", l), 1)
+    sql += medicaltype(17, _("Other", l), 0)
+    sql += medicaltype(18, _("Microchip", l), 1)
+    sql += medicaltype(19, _("Tattoo", l), 1)
+    sql += medicaltype(20, _("Antifungal", l), 1)
+    sql += medicaltype(21, _("Heartworm", l), 0)
+    sql += medicaltype(22, _("Dietary supplement", l), 0)
+    sql += medicaltype(23, _("Appetite stimulant", l), 0)
+    sql += medicaltype(24, _("Anti-nausea", l), 0)
+    sql += medicaltype(25, _("Anti-diarrhea", l), 0)
+    sql += medicaltype(26, _("Dental procedure", l), 1)
+    sql += medicaltype(27, _("Surgical procedure", l), 1)
+    sql += medicaltype(28, _("Topical treatment", l), 0)
     sql += lookup1("lksoutcome", "Outcome", 1, _("On Shelter", l))
     sql += lookup1("lksoutcome", "Outcome", 2, _("Died", l))
     sql += lookup1("lksoutcome", "Outcome", 3, _("DOA", l))

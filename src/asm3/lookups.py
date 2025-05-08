@@ -52,6 +52,7 @@ LOOKUP_TABLES = {
     "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",)),
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
     "lkmediaflags":     (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", ""),
+    "lksmedicaltype":   (_("Medical Types"), "MedicalTypeName", _("Type"), "Description", ""),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
     "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
     "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
@@ -1205,6 +1206,9 @@ def delete_lookup(dbo: Database, username: str, lookup: str, iid: int) -> None:
         if 0 < dbo.query_int("SELECT COUNT(*) FROM %s WHERE %s = %s" % (table, field, iid)):
             raise asm3.utils.ASMValidationError(_("This item is referred to in the database ({0}) and cannot be deleted until it is no longer in use.", l).format(fv))
     dbo.delete(lookup, iid, username)
+
+def get_medicaltypes(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lksmedicaltype ORDER BY MedicalTypeName")
 
 def get_microchip_manufacturer(l: str, chipno: str) -> str:
     """
