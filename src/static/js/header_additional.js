@@ -223,7 +223,7 @@ additional = {
         // return additional.map((item) => ({ ...item, VALUE: (row.hasOwnProperty(item.FIELDNAME.toUpperCase()) ? row[item.FIELDNAME.toUpperCase()] : "") }));
         $.each(additional, function(i, a) {
             let fieldname = a.FIELDNAME.toUpperCase();
-            a.VALUE = "";
+            a.VALUE = a.DEFAULTVALUE;
             if (row.hasOwnProperty(fieldname)) { 
                 a.VALUE = row[fieldname];
             }

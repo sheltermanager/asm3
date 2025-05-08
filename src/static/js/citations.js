@@ -42,6 +42,7 @@ $(function() {
                             row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
                             row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                             await tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID + afpost, "citations");
+                            additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), 19, row);
                             tableform.fields_update_row(dialog.fields, row);
                             tableform.table_update(table);
                             tableform.dialog_close();
@@ -103,12 +104,11 @@ $(function() {
                                     var row = {};
                                     row.ID = response;
                                     tableform.fields_update_row(dialog.fields, row);
-                                    additional.additional_fields_update_row(
-                                        additional.merge_definitions_and_values(controller.additional, row), row
-                                    );
+                                    additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), 19, row);
                                     row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
                                     row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                                     controller.rows.push(row);
+                                    
                                     tableform.table_update(table);
                                     tableform.dialog_close();
                                     controller.nextid++;
