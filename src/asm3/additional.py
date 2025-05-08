@@ -44,9 +44,10 @@ WAITINGLIST_REMOVAL = 15
 
 # IN clauses
 ANIMAL_IN = "0, 2, 3, 4, 5, 6"
+CITATION_IN = "19"
 EVENT_IN = "21"
 FOUNDANIMAL_IN = "11, 12"
-INCIDENT_IN = "16, 17, 18, 19, 20"
+INCIDENT_IN = "16, 17, 18, 20"
 LOSTANIMAL_IN = "9, 10"
 MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30'
 PERSON_IN = "1, 7, 8"
@@ -100,6 +101,8 @@ def clause_for_linktype(linktype: str) -> str:
         inclause = WAITINGLIST_IN
     elif linktype == "movement":
         inclause = MOVEMENT_IN
+    elif linktype == "citation":
+        inclause = CITATION_IN
     return inclause
 
 def table_for_linktype(linktype: str) -> str:
