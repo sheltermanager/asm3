@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import asm, csv, sys, datetime
 
@@ -15,8 +15,9 @@ Complete rewrite for new library and customer, 18th July 2017
 Add ability to get placements from animals file if placements not available 17th Jan 2020
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/trackabeast_ps2478"
-USE_PLACEMENTS_FILE = True
+PATH = "/home/robin/tmp/asm3_import_data/trackabeast_ed3451"
+USE_PLACEMENTS_FILE = False
+START_ID = 100
 
 def getspecies(s):
     """ Looks up the species, returns Cat if nothing matches """
@@ -47,21 +48,22 @@ def getsize(s):
 def getdate(s):
     return asm.getdate_mmddyyyy(s)
 
-# --- START OF CONVERSION ---
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM animalmedical WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM animalmedicaltreatment WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
-asm.setid("animal", 100)
-asm.setid("animalmedical", 100)
-asm.setid("animalmedicaltreatment", 100)
-asm.setid("animalvaccination", 100)
-asm.setid("owner", 100)
-asm.setid("adoption", 100)
+# --- START OF CONVERSION ---
+print("\\set ON_ERROR_STOP\nBEGIN;")
+print(f"DELETE FROM animal WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM owner WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM adoption WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM animalvaccination WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM animalmedical WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+print(f"DELETE FROM animalmedicaltreatment WHERE ID >= {START_ID} AND CreatedBy = 'conversion';")
+
+asm.setid("animal", START_ID)
+asm.setid("animalmedical", START_ID)
+asm.setid("animalmedicaltreatment", START_ID)
+asm.setid("animalvaccination", START_ID)
+asm.setid("owner", START_ID)
+asm.setid("adoption", START_ID)
 
 owners = []
 movements = []
@@ -76,36 +78,35 @@ ppa = {}
 ppo = {}
 pponame = {}
 
-for d in asm.csv_to_list("%s/people.csv" % PATH):
-
-    # New owner record if we haven't seen this trackid before
-    trackid = d["TrackID"].strip()
-    if not trackid in ppo:
-        extradata = ""
-        o = asm.Owner()
-        ppo[trackid] = o
-        o.OwnerForeNames = d["First Name"]
-        o.OwnerSurname = d["Last Name"]
-        o.OwnerName = "%s %s" % (o.OwnerForeNames, o.OwnerSurname)
-        pponame[o.OwnerName] = o
-        o.EmailAddress = d["Email 1"]
-        o.OwnerAddress = "%s %s %s" % (d["Address 1"], d["Address 2"], d["Address 3"])
-        o.OwnerTown = d["City"]
-        o.OwnerCounty = d["State"]
-        o.OwnerPostcode = d["Zip"]
-        o.HomeTelephone = d["Home Phone"]
-        o.MobileTelephone = d["Cell Phone"]
-        o.WorkTelephone = d["Work Phone"]
-        o.IsVolunteer = d["Vol"] == "Y" and 1 or 0
-        o.IsFosterer = d["Foster"] == "Y" and 1 or 0
-        o.IsStaff = d["Staff"] == "Y" and 1 or 0
-        o.IsBanned = d["Do Not Adopt"].strip() == "Y" and 1 or 0
-        o.ExcludeFromBulkEmail = d["Send Mail"] == "Y" and 0 or 1
-        o.Comments = d["Comments"]
-        owners.append(o)
+if asm.file_exists("%s/people.csv" % PATH):
+    for d in asm.csv_to_list("%s/people.csv" % PATH):
+        # New owner record if we haven't seen this trackid before
+        trackid = d["TrackID"].strip()
+        if not trackid in ppo:
+            extradata = ""
+            o = asm.Owner()
+            ppo[trackid] = o
+            o.OwnerForeNames = d["First Name"]
+            o.OwnerSurname = d["Last Name"]
+            o.OwnerName = "%s %s" % (o.OwnerForeNames, o.OwnerSurname)
+            pponame[o.OwnerName] = o
+            o.EmailAddress = d["Email 1"]
+            o.OwnerAddress = "%s %s %s" % (d["Address 1"], d["Address 2"], d["Address 3"])
+            o.OwnerTown = d["City"]
+            o.OwnerCounty = d["State"]
+            o.OwnerPostcode = d["Zip"]
+            o.HomeTelephone = d["Home Phone"]
+            o.MobileTelephone = d["Cell Phone"]
+            o.WorkTelephone = d["Work Phone"]
+            o.IsVolunteer = d["Vol"] == "Y" and 1 or 0
+            o.IsFosterer = d["Foster"] == "Y" and 1 or 0
+            o.IsStaff = d["Staff"] == "Y" and 1 or 0
+            o.IsBanned = d["Do Not Adopt"].strip() == "Y" and 1 or 0
+            o.ExcludeFromBulkEmail = d["Send Mail"] == "Y" and 0 or 1
+            o.Comments = d["Comments"]
+            owners.append(o)
 
 for d in asm.csv_to_list("%s/animals.csv" % PATH):
-
     # New animal record if we haven't seen this trackid before
     trackid = d["TrackID"].strip()
     if trackid == "": continue # No TrackID - blank record
@@ -150,7 +151,7 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
         a.Markings = d["Description"]
         a.BaseColourID = asm.colour_id_for_name(d["Color"])
         a.ShelterLocation = 1
-        a.generateCode("Dog")
+        a.generateCode()
         if d["Placement Status"] == "Deceased": 
             a.DeceasedDate = getdate(d["Placement Date"])
             a.Archived = 1
@@ -192,9 +193,8 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
                 a.ActiveMovementDate = m.MovementDate
                 a.ActiveMovementType = m.MovementType
 
-if USE_PLACEMENTS_FILE:
+if USE_PLACEMENTS_FILE and asm.file_exists("%s/placements.csv" % PATH):
     for d in asm.csv_to_list("%s/placements.csv" % PATH):
-
         # Find the animal and owner for this placement
         a = None
         o = None
@@ -244,54 +244,53 @@ vaccmap = {
     "DHLPP": 8,
     "Bordetella": 6
 }
+if asm.file_exists("%s/medical.csv" % PATH):
+    for d in asm.csv_to_list("%s/medical.csv" % PATH):
+        # Find the animal 
+        a = None
+        if d["AnimalID"] in ppa:
+            a = ppa[d["AnimalID"]]
+        else:
+            continue
 
-for d in asm.csv_to_list("%s/medical.csv" % PATH):
+        td = getdate(d["Treatment Date"])
+        if td is None: td = a.DateBroughtIn
+        t = d["Treatments"]
 
-    # Find the animal 
-    a = None
-    if d["AnimalID"] in ppa:
-        a = ppa[d["AnimalID"]]
-    else:
-        continue
+        if t == "": continue
 
-    td = getdate(d["Treatment Date"])
-    if td is None: td = a.DateBroughtIn
-    t = d["Treatments"]
+        wasvacc = False
+        for k, v in vaccmap.iteritems():
+            if t.find(k) != -1:
+                av = asm.AnimalVaccination()
+                animalvaccinations.append(av)
+                av.AnimalID = a.ID
+                av.VaccinationID = v
+                av.DateRequired = td
+                av.DateOfVaccination = td
+                av.Comments = d["Comments"]
+                wasvacc = True
+                break
 
-    if t == "": continue
-
-    wasvacc = False
-    for k, v in vaccmap.iteritems():
-        if t.find(k) != -1:
-            av = asm.AnimalVaccination()
-            animalvaccinations.append(av)
-            av.AnimalID = a.ID
-            av.VaccinationID = v
-            av.DateRequired = td
-            av.DateOfVaccination = td
-            av.Comments = d["Comments"]
-            wasvacc = True
-            break
-
-    if not wasvacc:
-        animalmedicals.append(asm.animal_regimen_single(a.ID, td, t, comments = d["Comments"]))
+        if not wasvacc:
+            animalmedicals.append(asm.animal_regimen_single(a.ID, td, t, comments = d["Comments"]))
 
 # Now that everything else is done, output stored records
 for a in animals:
-    print a
+    print(a)
 for av in animalvaccinations:
-    print av
+    print(av)
 for am in animalmedicals:
-    print am
+    print(am)
 for o in owners:
-    print o
+    print(o)
 for m in movements:
-    print m
+    print(m)
 
 #asm.stderr_allanimals(animals)
 #asm.stderr_onshelter(animals)
 asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, movements=movements)
 
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
 

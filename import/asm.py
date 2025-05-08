@@ -2339,11 +2339,11 @@ class Animal:
             to the default schemes.
             typename is the animaltype name (eg: Unwanted Cat). The
             year is got from DateBroughtIn, the index maintained
-            internally. """
+            internally. A suffix of -CV is added to indicate conversion and prevent conflicts"""
         global nextyearcode
         if typename == "": typename = type_name_for_id(self.AnimalTypeID)
         self.YearCodeID = nextyearcode
-        self.ShelterCode = "%s%d%03d" % ( typename[0:1], self.DateBroughtIn.year, nextyearcode)
+        self.ShelterCode = "%s%d%03d-CV" % ( typename[0:1], self.DateBroughtIn.year, nextyearcode)
         if self.ShortCode == "": self.ShortCode = "%03d%s" % (nextyearcode, typename[0:1]) # check so it can be assigned before generating code
         nextyearcode += 1
     def infoLine(self):
