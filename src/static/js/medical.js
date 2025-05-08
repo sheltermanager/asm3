@@ -7,7 +7,9 @@ $(function() {
     const medical = {
 
         lastanimal: null,
-
+        TREATMENT_SINGLE: 0,
+        TREATMENT_MULTI: 1,
+        TREATMENT_CUSTOM: 2,
         model: function() {
             const dialog = {
                 add_title: _("Add medical regimen"),
@@ -174,8 +176,8 @@ $(function() {
                     { field: "STARTDATE", display: _("Started"), formatter: tableform.format_date },
                     { field: "NAMEDSTATUS", display: _("Status"), formatter: function(row) {
                         let status = "";
-                        if (row.CUSTOMTIMINGRULE != "") {
-                            status = row.NAMEDSTATUS + ", " + _("Custom timing");
+                        if (row.CUSTOMTIMINGRULE && row.CUSTOMTIMINGRULE != "") {
+                            status = row.NAMEDSTATUS + ", " + row.CUSTOMTIMINGRULE;
                         } else {
                             status = row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS;
                         }
@@ -427,7 +429,7 @@ $(function() {
                     if (!validate.notzero(["animal"])) {
                         return false;
                     };
-                    if ($("#singlemulti").val() == "2") {
+                    if ($("#singlemulti").val() == medical.TREATMENT_CUSTOM) {
                         let valoutput = medical.validate_custom_timing_rule();
                         if (valoutput == "") {
                             return true;
@@ -677,7 +679,7 @@ $(function() {
                 }
             });
             if (forcesingletx) {
-                $("#singlemulti").val(0);
+                $("#singlemulti").val(medical.TREATMENT_SINGLE);
                 $("#singlemulti").prop("disabled", true);
                 medical.change_singlemulti();
             }
@@ -873,8 +875,9 @@ $(function() {
             } else {
                 $.each(customtiming.split(","), function(i, v) {
                     if (v.includes("=")) {
-                        let label = v.split("=")[0].trim();
-                        let value = v.split("=")[1].trim();
+                        let [label, value] = v.split("=");
+                        label = label.trim();
+                        value = value.trim();
                         if (label == "") {
                             problem = _("Missing label");
                             return false;
@@ -883,13 +886,13 @@ $(function() {
                             problem = _("Missing value");
                             return false;
                         } else if (!common.is_integer(value)) {
-                            problem = _("Value '{0}' is not an integer".replace("{0}", value));
+                            problem = _("Value '{0}' is not an integer").replace("{0}", value);
                             return false;
                         }
                     } else {
                         let value = v.trim()
                         if (!common.is_integer(value)) {
-                            problem = _("Value '{0}' is not an integer".replace("{0}", value));
+                            problem = _("Value '{0}' is not an integer").replace("{0}", value);
                             return false;
                         }
 

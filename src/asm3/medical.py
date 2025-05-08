@@ -30,6 +30,11 @@ DESCENDING_NAME = 1
 DESCENDING_REQUIRED = 1
 DESCENDING_GIVEN = 2
 
+# Treatment timings
+TREATMENT_SINGLE = 0
+TREATMENT_MULTI = 1
+TREATMENT_CUSTOM = 2
+
 def get_medicaltreatment_query(dbo: Database) -> str:
     return "SELECT " \
         f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
@@ -1314,14 +1319,14 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         while customtimingrule[-1] == ",":
             customtimingrule = customtimingrule[:-1]
     
-    if post.integer("singlemulti") == 2:
+    if post.integer("singlemulti") == TREATMENT_CUSTOM:
         totalnumberoftreatments = len(customtimingrule.split(","))
     else:
         totalnumberoftreatments = post.integer("totalnumberoftreatments")
 
         treatmentrule = post.integer("treatmentrule")
         singlemulti = post.integer("singlemulti")
-        if singlemulti == 0:
+        if singlemulti == TREATMENT_SINGLE:
             timingrule = 0
             timingrulenofrequencies = 0
             timingrulefrequency = 0
