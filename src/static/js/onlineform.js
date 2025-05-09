@@ -154,7 +154,12 @@ $(function() {
             if (ft == 3 || ft == 12 || ft == 14 || ft == 18) {
                 $("#lookupsrow").fadeIn();
             }
+            else if (ft == 19) {
+                $("label[for='lookups']").html(_("Confirm email label"));
+                $("#lookupsrow").fadeIn();
+            }
             else {
+                $("label[for='lookups']").html(_("Lookups"));
                 $("#lookupsrow").fadeOut();
             }
             if (ft == 4 || ft == 5 || ft == 21) {
