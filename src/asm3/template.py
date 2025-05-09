@@ -31,6 +31,8 @@ def get_html_template_names(dbo: Database) -> List[str]:
 
 def update_html_template(dbo: Database, username: str, name: str, head: str, body: str, foot: str, builtin: bool = False) -> None:
     """ Creates/updates an HTML publishing template """
+    row = dbo.first_row(dbo.query("SELECT * FROM templatehtml WHERE Name = ?", (name,)))
+    sql = dbo.row_to_update_sql("templatehtml", row, "NAME")
     dbo.execute("DELETE FROM templatehtml WHERE Name = ?", [name])
     htid = dbo.insert("templatehtml", {
         "Name":     name,
@@ -39,6 +41,9 @@ def update_html_template(dbo: Database, username: str, name: str, head: str, bod
         "*Footer":  foot,
         "IsBuiltIn": builtin and 1 or 0
     })
+
+    asm3.audit.insert_deletion(dbo, username, "templatehtml", row.ID, "", sql)
+
     asm3.audit.create(dbo, username, "templatehtml", htid, "", "id: %d, name: %s" % (htid, name))
 
 def delete_html_template(dbo: Database, username: str, name: str) -> None:
@@ -148,10 +153,15 @@ def rename_document_template(dbo: Database, username: str, dtid: int, newname: s
 
 def update_document_template_content(dbo: Database, username: str, dtid: int, content: bytes) -> None:
     """ Changes the content of a template """
+    row = dbo.first_row(dbo.query("SELECT * FROM templatedocument WHERE ID = ?", (dtid,)))
+    sql = dbo.row_to_update_sql("templatedocument", row)
+
     dbo.update("templatedocument", dtid, {
         "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
     name = get_document_template_name(dbo, dtid)
+
+    asm3.audit.insert_deletion(dbo, username, "templatedocument", dtid, "", sql)
     asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "changed content of template %s (%s)" % (dtid, name))
 
 def update_document_template_show(dbo: Database, username: str, dtid: int, newshow: str) -> None:
