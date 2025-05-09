@@ -234,7 +234,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append(
                 '<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext) + 
                 '</td></tr><tr class=" class="asm-onlineform-tr"><td class="asm-onlineform-td">' + 
-                '<label for="%s">Confirm email</label>' % (fid + "verify",) + # To do - check that this non-translatable label is acceptable - Adam.
+                '<label for="%s">%s</label>' % (fid + "verify", f.LOOKUPS) + # To do - check that this non-translatable label is acceptable - Adam.
                 '</td><td class="asm-onlineform-td">' + 
                 '<input class="asm-onlineform-email" type="email" id="%s" %s %s />' % ( fid + "verify", autocomplete, requiredtext)
             )
