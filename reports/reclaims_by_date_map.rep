@@ -1,0 +1,27 @@
+Reclaims by Date Map
+###
+Maps
+###
+34703/Any rev01
+###
+Reclaims between two dates with the owners plotted on a map.
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT o.LatLong, 
+'<a target="_blank" href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
+'<br>Adopted on ',m.MovementDate, '<br>', 
+'<b><a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+o.OwnerAddress, '<br />', 
+o.OwnerTown, ' ', o.OwnerCounty, ' ', o.OwnerPostcode 
+FROM adoption m
+INNER JOIN animal a ON m.AnimalID = a.ID
+INNER JOIN owner o ON m.OwnerID = o.ID
+WHERE m.MovementType = 5 AND m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' 
+AND o.LatLong <> '' 
+ORDER BY m.MovementDate
+###
+MAP
