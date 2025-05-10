@@ -1,0 +1,150 @@
+Export: Animal/Movement Data
+###
+Export
+###
+Any/34908 rev01
+###
+Export animals and movement data.
+###
+en
+###
+SELECT * FROM v_animal 
+WHERE createddate >= '$ASK DATE Created between$' 
+AND createddate <= '$ASK DATE and$' 
+ORDER BY createddate
+###
+$$HEADER
+<p>Use the CSV or Excel export button above to save the data.</p>
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Export: Incident Data
+###
+Export
+###
+Any/34908 rev01
+###
+Export incident data.
+###
+en
+###
+SELECT * FROM v_animalcontrol
+WHERE createddate >= '$ASK DATE Created between$' 
+AND createddate <= '$ASK DATE and$' 
+ORDER BY createddate
+###
+$$HEADER
+<p>Use the CSV or Excel export button above to save the data.</p>
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Export: License Data
+###
+Export
+###
+Any/34908 rev01
+###
+Export incident data.
+###
+en
+###
+SELECT * FROM v_ownerlicence
+WHERE createddate >= '$ASK DATE Created between$' 
+AND createddate <= '$ASK DATE and$' 
+ORDER BY createddate
+###
+$$HEADER
+<p>Use the CSV or Excel export button above to save the data.</p>
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Export: Medical Data
+###
+Export
+###
+Any/34908 rev01
+###
+Export animal medical data.
+###
+en
+###
+SELECT * FROM v_animalmedicalcombined 
+WHERE daterequired >= '$ASK DATE Due between$' 
+AND daterequired <= '$ASK DATE and$' 
+ORDER BY daterequired
+###
+$$HEADER
+<p>Use the CSV or Excel export button above to save the data.</p>
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Export: Payment Data
+###
+Export
+###
+Any/34908 rev01
+###
+Export payment data.
+###
+en
+###
+SELECT * FROM v_ownerdonation
+WHERE createddate >= '$ASK DATE Created between$' 
+AND createddate <= '$ASK DATE and$' 
+ORDER BY createddate
+###
+$$HEADER
+<p>Use the CSV or Excel export button above to save the data.</p>
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Export: Person Data
+###
+Export
+###
+Any/34908 rev01
+###
+Export person data.
+###
+en
+###
+SELECT * FROM v_owner 
+WHERE createddate >= '$ASK DATE Created between$' 
+AND createddate <= '$ASK DATE and$' 
+ORDER BY createddate
+###
+$$HEADER
+<p>Use the CSV or Excel export button above to save the data.</p>
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
