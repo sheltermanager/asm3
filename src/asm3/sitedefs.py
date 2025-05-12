@@ -245,7 +245,7 @@ MAP_LINK = get_string("map_link", "https://www.openstreetmap.org/search?query={0
 
 # Target for viewing an a route on a map, {0} is the origin address/postcode, {1} is to destination address/postcode
 ROUTE_LINK = get_string("route_link", "https://www.openstreetmap.org/directions?from={0}&to={1}")
-#ROUTE_LINK = get_string("route_link", "https://maps.google.com/?q={0}%20to%20{1}") # Google URL
+#ROUTE_LINK = get_string("route_link", "https://www.google.com/maps/dir/{0}/{1}") # Google URL
 
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = get_string("map_provider", "osm")
