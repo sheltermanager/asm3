@@ -119,7 +119,7 @@ $(function() {
                             if (row.CUSTOMTREATMENTNAME) {
                                 txname += " <div class='asm-smallertext' style='display: inline-block;'>" + row.CUSTOMTREATMENTNAME + "</div>";
                             }
-                            return tableform.table_render_edit_link(row.COMPOSITEID, "<div style='width: 90%;overflow-wrap: anywhere!important;display: block;white-space: normal;'>" + txname + "</div>");
+                            return tableform.table_render_edit_link(row.COMPOSITEID, "<div style='overflow-wrap: anywhere!important;display: inline-block;white-space: normal;'>" + txname + "</div>");
                         }
                     },
                     { field: "IMAGE", display: "", 
