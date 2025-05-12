@@ -3501,6 +3501,7 @@ class document_template_edit(ASMEndpoint):
         if sz > MAX_DOCUMENT_TEMPLATE_SIZE:
             raise asm3.utils.ASMValidationError(f"Error: {sz} > {MAX_DOCUMENT_TEMPLATE_SIZE}. Use extra images instead of pasting images.")
         dtid = post.integer("dtid")
+        
         asm3.template.update_document_template_content(dbo, o.user, dtid, post["document"])
         self.redirect("document_templates")
 
