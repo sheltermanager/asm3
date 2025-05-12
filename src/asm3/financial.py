@@ -565,9 +565,10 @@ def get_incident_citations(dbo: Database, iid: int, sort: int = ASCENDING) -> Re
     order = "oc.CitationDate DESC"
     if sort == ASCENDING:
         order = "oc.CitationDate"
-    return dbo.query(get_citation_query(dbo) + \
+    rows = dbo.query(get_citation_query(dbo) + \
         "WHERE oc.AnimalControlID = ? " \
         "ORDER BY %s" % order, [iid])
+    return asm3.additional.append_to_results(dbo, rows, "citation")
 
 def get_person_citations(dbo: Database, oid: int, sort: int = ASCENDING) -> Results:
     """
@@ -1462,7 +1463,7 @@ def insert_citation_from_form(dbo: Database, username: str, post: PostedData) ->
     """
     Creates a citation record from posted form data 
     """
-    return dbo.insert("ownercitation", {
+    cid = dbo.insert("ownercitation", {
         "OwnerID":              post.integer("person"),
         "AnimalControlID":      post.integer("incident"),
         "CitationTypeID":       post.integer("type"),
@@ -1473,6 +1474,12 @@ def insert_citation_from_form(dbo: Database, username: str, post: PostedData) ->
         "FinePaidDate":         post.date("finepaid"),
         "Comments":             post["comments"]
     }, username)
+
+    # Save any additional field values given
+    # save_values_for_link(dbo: Database, post: PostedData, username: str, linkid: int, linktype: str = "animal", setdefaults: bool = False)
+    asm3.additional.save_values_for_link(dbo, post, username, cid, "citation")
+
+    return cid
 
 def update_citation_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
@@ -1487,6 +1494,9 @@ def update_citation_from_form(dbo: Database, username: str, post: PostedData) ->
         "FinePaidDate":         post.date("finepaid"),
         "Comments":             post["comments"]
     }, username)
+
+    # Save any additional field values given
+    asm3.additional.save_values_for_link(dbo, post, username, post.integer("citationid"), "citation")
 
 def delete_citation(dbo: Database, username: str, cid: int) -> None:
     """

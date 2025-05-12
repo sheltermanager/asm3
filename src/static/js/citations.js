@@ -23,7 +23,8 @@ $(function() {
                     { json_field: "FINEAMOUNT", post_field: "fineamount", label: _("Fine Amount"), type: "currency" },
                     { json_field: "FINEDUEDATE", post_field: "finedue", label: _("Due"), type: "date" },
                     { json_field: "FINEPAIDDATE", post_field: "finepaid", label: _("Paid"), type: "date" },
-                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { type: "additional", markup: additional.additional_fields_tableform(additional.merge_definitions_and_values(controller.additional, {}),  -1, true, "additionaldialog")},
                 ]
             };
 
@@ -31,13 +32,24 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    await tableform.dialog_show_edit(dialog, row);
-                    tableform.fields_update_row(dialog.fields, row);
-                    row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
-                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                    await tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, "citations");
-                    tableform.table_update(table);
-                    tableform.dialog_close();
+                    tableform.dialog_show_edit(dialog, row, {
+                        onload: function() {
+                            additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, row));
+                            tableform.fields_populate_from_json(dialog.fields, row);
+                        },
+                        onchange: async function() {
+                            let afpost = additional.additional_fields_post(controller.additional, 19);
+                            row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
+                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                            await tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID + afpost, "citations");
+                            additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), 19, row);
+                            tableform.fields_update_row(dialog.fields, row);
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        }
+                    });
+                    
+                    
                 },
                 complete: function(row) {
                     if (row.FINEPAIDDATE) { return true; }
@@ -80,31 +92,46 @@ $(function() {
 
             var buttons = [
                 { id: "new", text: _("New Citation"), icon: "new", enabled: "always", perm: "aacc", 
-                    click: async function() { 
-                        $("#person").personchooser("clear");
-                        if (controller.person) {
-                            $("#person").personchooser("loadbyid", controller.person.ID);
-                        }
-                        if (controller.incident && controller.incident.OWNERID) {
-                            $("#person").personchooser("loadbyid", controller.incident.OWNERID);
-                        }
-                        await tableform.dialog_show_add(dialog, { onload: function() {
-                            citations.type_change();
-                            $("#citationnumber").val(format.padleft(controller.nextid, 6));
-                        } });
-                        var incid = "";
-                        if (controller.incident) { incid = controller.incident.ACID; }
-                        let response = await tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, "citations");
-                        var row = {};
-                        row.ID = response;
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
-                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                        controller.rows.push(row);
-                        tableform.table_update(table);
-                        tableform.dialog_close();
-                        controller.nextid++;
-                        $("#citationnumber").val(format.padleft(controller.nextid, 6));
+                    click: function() { 
+                        tableform.dialog_show_add(dialog, {
+                            onload: function() {
+                                additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, {}));
+                                additional.reset_default(controller.additional);
+                                citations.type_change();
+
+                                $("#citationnumber").val(format.padleft(controller.nextid, 6));
+
+                                $("#person").personchooser("clear");
+                                if (controller.person) {
+                                    $("#person").personchooser("loadbyid", controller.person.ID);
+                                }
+                                if (controller.incident && controller.incident.OWNERID) {
+                                    $("#person").personchooser("loadbyid", controller.incident.OWNERID);
+                                }
+                            },
+                            onadd: function() {
+                                let incid = "";
+                                if (controller.incident) { incid = controller.incident.ACID; }
+                                
+                                let afpost = additional.additional_fields_post(controller.additional, 19);
+                                
+                                tableform.fields_post(dialog.fields, "mode=create&incident=" + incid + afpost, "citations").then(function(response) {
+                                    let row = {};
+                                    row.ID = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), 19, row);
+                                    row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
+                                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                                    controller.rows.push(row);
+                                    
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                    controller.nextid++;
+                                    $("#citationnumber").val(format.padleft(controller.nextid, 6));
+                                });
+                            }
+                        });
+                        
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dacc", 
