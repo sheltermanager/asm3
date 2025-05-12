@@ -197,6 +197,16 @@ $(document).ready(function() {
                     return false;
                 }
             }
+            let vid = $(this).attr("ID");
+            if ( !vid.includes("verify") ) {
+                let v2 = $("#" + vid + "verify").val();
+                if (v != v2) {
+                    alert("Email addresses do not match.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
         });
         return rv;
     };
