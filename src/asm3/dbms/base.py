@@ -916,7 +916,6 @@ class Database(object):
         function that Writes an INSERT query for a result row
         """
         fields = []
-        donefields = False
         values = []
         for k in sorted(r.keys()):
             if not donefields:
@@ -929,7 +928,6 @@ class Database(object):
         """
         function that Writes an UPDATE query for a result row
         """
-        donefields = False # Don't know what the purpose of donefields is, code based on row_to_insert_sql(), left in as looked important - Adam.
         cdata = []
         rid = 0
         for k in sorted(r.keys()):

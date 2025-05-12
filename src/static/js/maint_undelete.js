@@ -14,7 +14,7 @@ $(function() {
                     header.show_loading(_("Loading..."));
                     try {
                         let result = await common.ajax_post("maint_undelete", "mode=view&key=" + row.KEY);
-                        $("#dialog-viewer-content").html(result); 
+                        $("#dialog-viewer-content").text(result); 
                         $("#dialog-viewer").dialog("open");
                     }
                     finally {
