@@ -249,6 +249,27 @@ $(function() {
                         //    return true;
                         //}
                     }
+                },
+                { id: "mapview", text: _("Map"), icon: "map", enabled: "one", perm: "atr",
+                    click: function() {
+                        let row = tableform.table_selected_row(table);
+                        let fromlocation = row.PICKUPADDRESS;
+                        if (row.PICKUPTOWN) {
+                            fromlocation += " " + row.PICKUPTOWN;
+                        }
+                        if (row.PICKUPPOSTCODE) {
+                            fromlocation += " " + row.PICKUPPOSTCODE;
+                        }
+                        let tolocation = row.DROPOFFADDRESS;
+                        if (row.DROPOFFTOWN) {
+                            tolocation += " " + row.DROPOFFTOWN;
+                        }
+                        if (row.DROPOFFPOSTCODE) {
+                            tolocation += " " + row.DROPOFFPOSTCODE;
+                        }
+                        let url = encodeURI(controller.routemapurl.replace("{0}", fromlocation).replace("{1}", tolocation));
+                        window.open(url, '_blank');
+                    }
                 }
 
             ];

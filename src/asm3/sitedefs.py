@@ -243,6 +243,10 @@ HTML_TO_PDF = get_string("html_to_pdf", "wkhtmltopdf --orientation %(orientation
 # Target for viewing an address on a map, {0} is the address
 MAP_LINK = get_string("map_link", "https://www.openstreetmap.org/search?query={0}")
 
+# Target for viewing an a route on a map, {0} is the origin address/postcode, {1} is to destination address/postcode
+ROUTE_LINK = get_string("route_link", "https://www.openstreetmap.org/directions?from={0}&to={1}")
+#ROUTE_LINK = get_string("route_link", "https://www.google.com/maps/dir/{0}/{1}") # Google URL
+
 # Map provider for rendering maps on the client, can be "osm" or "google"
 MAP_PROVIDER = get_string("map_provider", "osm")
 MAP_PROVIDER_KEY = get_string("map_provider_key", "") # For google, the API key to use when making map requests

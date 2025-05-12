@@ -2472,7 +2472,8 @@ class animal_transport(JSONEndpoint):
             "statuses": asm3.lookups.get_transport_statuses(dbo),
             "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
-            "rows": transports
+            "rows": transports,
+            "routemapurl": asm3.sitedefs.ROUTE_LINK
         }
 
 class animal_vaccination(JSONEndpoint):
@@ -7696,7 +7697,8 @@ class transport(JSONEndpoint):
             "statuses": asm3.lookups.get_transport_statuses(dbo),
             "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
-            "rows": transports
+            "rows": transports,
+            "routemapurl": asm3.sitedefs.ROUTE_LINK
         }
 
     def post_create(self, o):
