@@ -32,7 +32,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    await tableform.dialog_show_edit(dialog, row, {
+                    tableform.dialog_show_edit(dialog, row, {
                         onload: function() {
                             additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, row));
                             tableform.fields_populate_from_json(dialog.fields, row);
@@ -94,14 +94,29 @@ $(function() {
                 { id: "new", text: _("New Citation"), icon: "new", enabled: "always", perm: "aacc", 
                     click: function() { 
                         tableform.dialog_show_add(dialog, {
+                            onload: function() {
+                                additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, {}));
+                                additional.reset_default(controller.additional);
+                                citations.type_change();
+
+                                $("#citationnumber").val(format.padleft(controller.nextid, 6));
+
+                                $("#person").personchooser("clear");
+                                if (controller.person) {
+                                    $("#person").personchooser("loadbyid", controller.person.ID);
+                                }
+                                if (controller.incident && controller.incident.OWNERID) {
+                                    $("#person").personchooser("loadbyid", controller.incident.OWNERID);
+                                }
+                            },
                             onadd: function() {
-                                var incid = "";
+                                let incid = "";
                                 if (controller.incident) { incid = controller.incident.ACID; }
                                 
                                 let afpost = additional.additional_fields_post(controller.additional, 19);
                                 
                                 tableform.fields_post(dialog.fields, "mode=create&incident=" + incid + afpost, "citations").then(function(response) {
-                                    var row = {};
+                                    let row = {};
                                     row.ID = response;
                                     tableform.fields_update_row(dialog.fields, row);
                                     additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), 19, row);
@@ -114,20 +129,6 @@ $(function() {
                                     controller.nextid++;
                                     $("#citationnumber").val(format.padleft(controller.nextid, 6));
                                 });
-                            },
-                            onload: function() {
-                                additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, {}));
-                                citations.type_change();
-
-                                $("#citationnumber").val(format.padleft(controller.nextid, 6));
-
-                                $("#person").personchooser("clear");
-                                if (controller.person) {
-                                    $("#person").personchooser("loadbyid", controller.person.ID);
-                                }
-                                if (controller.incident && controller.incident.OWNERID) {
-                                    $("#person").personchooser("loadbyid", controller.incident.OWNERID);
-                                }
                             }
                         });
                         

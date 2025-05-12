@@ -223,7 +223,8 @@ additional = {
         // return additional.map((item) => ({ ...item, VALUE: (row.hasOwnProperty(item.FIELDNAME.toUpperCase()) ? row[item.FIELDNAME.toUpperCase()] : "") }));
         $.each(additional, function(i, a) {
             let fieldname = a.FIELDNAME.toUpperCase();
-            a.VALUE = a.DEFAULTVALUE;
+            //a.VALUE = a.DEFAULTVALUE;
+            a.VALUE = "";
             if (row.hasOwnProperty(fieldname)) { 
                 a.VALUE = row[fieldname];
             }
@@ -563,7 +564,7 @@ additional = {
      */
     reset_default: function(fields) {
         $.each(fields, function(i, v) {
-            $(".additional").each(function() {
+            $(".additional, .additionaldialog").each(function() {
                 if ($(this).attr("data-id") == v.ID && v.DEFAULTVALUE) {
                     if (v.FIELDTYPE == additional.MONEY) { $(this).val(format_currency(v.DEFAULTVALUE)); }
                     else { $(this).val(v.DEFAULTVALUE); } 
