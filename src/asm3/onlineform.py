@@ -215,7 +215,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<td class="asm-onlineform-td">')
             h.append('<label for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
             if f.TOOLTIP: h.append('<span class="asm-onlineform-tooltip">%s</span>' % f.TOOLTIP)
-            if f.FIELDTYPE == FIELDTYPE_EMAIL: h.append('<div class="asm-onlineform-tooltip">Please repeat your email address</div>')
             h.append('</td>')
             h.append('<td class="asm-onlineform-td">')
         if f.FIELDTYPE == FIELDTYPE_YESNO:
@@ -231,13 +230,14 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_NUMBER:
             h.append('<input class="asm-onlineform-number" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
-            h.append(
-                '<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext) + 
-                '</td></tr><tr class=" class="asm-onlineform-tr"><td class="asm-onlineform-td">' + 
-                '<label for="%s">%s</label>' % (fid + "verify", f.LOOKUPS) + # To do - check that this non-translatable label is acceptable - Adam.
-                '</td><td class="asm-onlineform-td">' + 
-                '<input class="asm-onlineform-email" type="email" id="%s" %s %s />' % ( fid + "verify", autocomplete, requiredtext)
-            )
+            confirmlabel = f.LOOKUPS 
+            if confirmlabel is None or confirmlabel == "": confirmlabel =  asm3.i18n._("Confirm email", l)
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
+            h.append('</td></tr>')
+            h.append('<tr class=" class="asm-onlineform-tr"><td class="asm-onlineform-td">')
+            h.append('<label for="%s">%s</label>' % (fid + "verify", confirmlabel))
+            h.append('</td><td class="asm-onlineform-td">')
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" %s %s />' % ( fid + "verify", autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
