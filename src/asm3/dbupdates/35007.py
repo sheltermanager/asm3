@@ -25,9 +25,9 @@ fields = ",".join([
 execute(dbo, dbo.ddl_add_table("lksmedicaltype", fields) )
 
 data = (
-    (1, "Worm treatment", 0),
-    (2, "Flea treatment", 0),
-    (3, "Other parasite treatment", 0),
+    (1, "Parasite: Worm treatment", 0),
+    (2, "Parasite: Flea treatment", 0),
+    (3, "Parasite: Other", 0),
     (4, "Allergy treatment", 0),
     (5, "Anti-inflammatory", 0),
     (6, "Antibiotic", 0),
@@ -37,21 +37,21 @@ data = (
     (10, "Anesthesia", 1),
     (11, "Medicated bath", 0),
     (12, "Examination", 1),
-    (13, "Sterilization", 1),
-    (14, "C-Section", 1),
+    (13, "Surgery: Sterilization", 1),
+    (14, "Surgery: C-Section", 1),
     (15, "X-Ray / Scan", 1),
-    (16, "Amputation", 1),
+    (16, "Surgery: Amputation", 1),
     (17, "Other", 0),
     (18, "Microchip", 1),
     (19, "Tattoo", 1),
-    (20, "Antifungal", 0),
-    (21, "Heartworm", 0),
+    (20, "Parasite: Antifungal", 0),
+    (21, "Parasite: Heartworm", 0),
     (22, "Dietary supplement", 0),
     (23, "Appetite stimulant", 0),
     (24, "Anti-nausea", 0),
     (25, "Anti-diarrhea", 0),
-    (26, "Dental procedure", 1),
-    (27, "Surgical procedure", 1),
+    (26, "Surgery: Dental procedure", 1),
+    (27, "Surgery: Other", 1),
     (28, "Topical treatment", 0)
 )
 

@@ -1047,32 +1047,31 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         if timingrule == ONEOFF:
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
         else:
-            if post["customtiming"] != "":
-                startdate = post.date("startdate")
-                customtiming = post["customtiming"].strip()
-                if customtiming[-1] == ",":
-                    customtiming = customtiming[:-1]
-                for a in customtiming.split(","):
-                    if "=" in a:
-                        label = a.split("=")[0].strip()
-                        value = int(a.split("=")[1].strip())
-                    else:
-                        label = ""
-                        value = int(a.strip())
-                    reqdate = add_days(startdate, value)
-                    insert_treatments(dbo, username, nregid, reqdate, True, label)
-                    
-            else:
-                created = 1
-                reqdate = post.date("startdate")
-                insert_treatments(dbo, username, nregid, reqdate, isstart = True)
-                while created < totalnumberoftreatments:
-                    reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False)
-                    created += 1
+            created = 1
+            reqdate = post.date("startdate")
+            insert_treatments(dbo, username, nregid, reqdate, isstart = True)
+            while created < totalnumberoftreatments:
+                reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False)
+                created += 1
     else:
         # We aren't pre-creating, or we have an unspecified length regimen,
         # just create the first treatment(s).
         update_medical_treatments(dbo, username, nregid)
+
+    if post["customtiming"] != "":
+        startdate = post.date("startdate")
+        customtiming = post["customtiming"].strip()
+        if customtiming[-1] == ",":
+            customtiming = customtiming[:-1]
+        for a in customtiming.split(","):
+            if a.find("=") != -1:
+                label = a.split("=")[0].strip()
+                value = asm3.utils.cint(a.split("=")[1].strip())
+            else:
+                label = ""
+                value = asm3.utils.cint(a.strip())
+            reqdate = add_days(startdate, value)
+            insert_treatments(dbo, username, nregid, reqdate, True, label)
 
     # If the user chose a completed status, mark the regimen completed
     # and mark any treatments we created as given on the start date

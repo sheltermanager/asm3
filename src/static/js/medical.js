@@ -668,16 +668,8 @@ $(function() {
         },
 
         change_medicaltype: function() {
-            let forcesingletx = false;
             let mtid = $("#medicaltype").val();
-            $.each(controller.medicaltypes, function(i, mt) {
-                if (mt.ID == mtid) {
-                    if (mt.FORCESINGLEUSE == 1) {
-                        forcesingletx = true;
-                    }
-                    return false;
-                }
-            });
+            let forcesingletx = common.get_field(controller.medicaltypes, mtid, "FORCESINGLEUSE");
             if (forcesingletx) {
                 $("#singlemulti").val(medical.TREATMENT_SINGLE);
                 $("#singlemulti").prop("disabled", true);
@@ -691,7 +683,7 @@ $(function() {
 
         /* What to do when we switch between single/multiple treatments */
         change_singlemulti: function() {
-            if ($("#singlemulti").val() == 0) {
+            if ($("#singlemulti").val() == medical.TREATMENT_SINGLE) {
                 $("#timingrule").val("1");
                 $("#timingrulenofrequencies").val("1");
                 $("#timingrulefrequency").select("value", "0");
@@ -702,7 +694,7 @@ $(function() {
                 $("#timingrulerow").fadeOut();
                 $("#treatmentrulerow").fadeOut();
                 $("#customtimingrow").fadeOut();
-            } else if ($("#singlemulti").val() == 1) {
+            } else if ($("#singlemulti").val() == medical.TREATMENT_MULTI) {
                 $("#timingrule").val("1");
                 $("#timingrulenofrequencies").val("1");
                 $("#timingrulefrequency").select("value", "0");
