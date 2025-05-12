@@ -152,6 +152,11 @@ hold multiple values::
 
     fieldname*email
 
+The opposite of ^, which will test for the opposite of * where
+the value given is NOT present somewhere in the value of the field.
+
+    fieldname^email
+
 If a value is not supplied, the system will compare against an empty
 string, so you can test that a field is or isn't empty::
 

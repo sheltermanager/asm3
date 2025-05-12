@@ -290,8 +290,8 @@ $(document).ready(function() {
             let clauses = (mode == "and" ? expr.split("&") : expr.split("|"));
             let andshow = true, orshow = false; // evaluate all clauses for or/and, only one can be used
             $.each(clauses, function(ci, cv) {
-                // Separate condition into field, operator (=!<>), value
-                let m = cv.trim().match(new RegExp("(.*)([=!<>\*])(.*)"));
+                // Separate condition into field, operator (=!<>*^), value
+                let m = cv.trim().match(new RegExp("(.*)([=!<>\*\^])(.*)"));
                 let field = "", cond = "=", value = "";
                 if (!m) { return; } // The condition does not match our regex and is invalid, skip
                 if (m.length >= 2) { field = m[1]; }
@@ -310,11 +310,13 @@ $(document).ready(function() {
                         else if (cond == ">" && v <= value) { andshow = false; }
                         else if (cond == "<" && v >= value) { andshow = false; }
                         else if (cond == "*" && String(v).indexOf(value) == -1) { andshow = false; }
+                        else if (cond == "^" && String(v).indexOf(value) != -1) { andshow = false; }
                         if (cond == "=" && v == value) { orshow = true; }
                         else if (cond == "!" && v != value) { orshow = true; }
                         else if (cond == ">" && v >= value) { orshow = true; }
                         else if (cond == "<" && v <= value) { orshow = true; }
                         else if (cond == "*" && String(v).indexOf(value) != -1) { orshow = true; }
+                        else if (cond == "^" && String(v).indexOf(value) == -1) { orshow = true; }
                         return false; // stop iterating fields, we found it
                     }
                 });
