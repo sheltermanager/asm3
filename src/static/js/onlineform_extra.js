@@ -154,7 +154,20 @@ $(document).ready(function() {
             let v = $(this).val();
             if (v) {
                 try {
-                    $.datepicker.parseDate(DATE_FORMAT, v);
+                    let date = $.datepicker.parseDate(DATE_FORMAT, v);
+                    let today = new Date();
+                    if ( $(this).hasClass("nopast") && date < today ) {
+                        alert("Date cannot be in the past.");
+                        $(this).focus();
+                        rv = false;
+                        return false;
+                    }
+                    if ( $(this).hasClass("nofuture") && date > today ) {
+                        alert("Date cannot be in the future.");
+                        $(this).focus();
+                        rv = false;
+                        return false;
+                    }
                 }
                 catch (e) {
                     alert("Date is not valid.");
@@ -379,7 +392,33 @@ $(document).ready(function() {
     };
 
     // Load all date and time picker widgets
-    $(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-90:+3" });
+    //$(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-90:+3" });
+    $(".asm-onlineform-date").each(function() {
+        let nopast = $(this).hasClass("nopast");
+        let nofuture = $(this).hasClass("nofuture");
+        if (nopast || nofuture) {
+            $(this).datepicker({ 
+                changeMonth: true, 
+                changeYear: true,
+                firstDay: $(this).attr("data-firstday"),
+                yearRange: "-90:+3",
+                beforeShowDay: function(a) {
+                    let rv = true;
+                    if (nopast && a < new Date()) { rv = false; }
+                    if (nofuture && a > new Date()) { rv = false; }
+                    return [rv, ""];
+                }
+            });
+        } else {
+            $(this).datepicker({ 
+                changeMonth: true, 
+                changeYear: true,
+                yearRange: "-90:+3",
+                firstDay: $(this).prop("data-firstday")
+            });
+        }
+    });
+
     $(".asm-onlineform-time").timepicker();
 
     // Load all signature widgets and implement the clear button functionality

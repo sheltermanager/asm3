@@ -239,7 +239,13 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('</td><td class="asm-onlineform-td">')
             h.append('<input class="asm-onlineform-email" type="email" id="%s" %s %s />' % ( fid + "verify", autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
-            h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
+            firstday = asm3.configuration.default_first_day(dbo)
+            if f.VALIDATIONRULE == 1:
+                h.append('<input class="asm-onlineform-date nopast" type="text" id="%s" data-firstday="%s" name="%s" %s />' % ( fid, firstday, cname, requiredtext))
+            elif f.VALIDATIONRULE == 2:
+                h.append('<input class="asm-onlineform-date nofuture" type="text" id="%s" data-firstday="%s" name="%s" %s />' % ( fid, firstday, cname, requiredtext))
+            else:
+                h.append('<input class="asm-onlineform-date" type="text" id="%s" data-firstday="%s" name="%s" %s />' % ( fid, firstday, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
             h.append('<input class="asm-onlineform-time" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NOTES:
@@ -763,7 +769,8 @@ def insert_onlineformfield_from_form(dbo: Database, username: str, post: PostedD
         "Lookups":          post["lookups"],
         "SpeciesID":        post.integer("species"),
         "VisibleIf":        post["visibleif"],
-        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"])
+        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"]),
+        "ValidationRule":   post["validationrule"]
     }, username, setCreated=False)
 
 def update_onlineformfield_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -786,7 +793,8 @@ def update_onlineformfield_from_form(dbo: Database, username: str, post: PostedD
         "Lookups":          post["lookups"],
         "SpeciesID":        post.integer("species"),
         "VisibleIf":        post["visibleif"],
-        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"])
+        "ValidationRule":   post["validationrule"],
+        "*Tooltip":         asm3.utils.iif(post.integer("fieldtype") == FIELDTYPE_RAWMARKUP, post["rawmarkup"], post["tooltip"]),
     }, username, setLastChanged=False)
 
 def delete_onlineformfield(dbo: Database, username: str, fieldid: int) -> None:

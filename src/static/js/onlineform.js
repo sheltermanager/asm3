@@ -52,6 +52,12 @@ $(function() {
                         options: controller.formfields },
                     { json_field: "FIELDTYPE", post_field: "fieldtype", label: _("Type"), type: "select", options: {
                         valuefield: "ID", displayfield: "NAME", rows: fieldtypes }},
+                    { json_field: "VALIDATIONRULE", post_field: "validationrule", label: _("Validation Rule"), type: "select", 
+                        options: '<option value=0>' + _("None") + '</option>' + 
+                            '<option value=1>' + _("No past dates") + '</option>' + 
+                            '<option value=2>' + _("No future dates") + '</option>',
+                        xattr: 'style="display: none;"'
+                    },
                     { json_field: "LABEL", post_field: "label", label: _("Label"), type: "text", maxlength: 1000, validation: "notblank" }, 
                     { json_field: "DISPLAYINDEX", post_field: "displayindex", label: _("Display Index"), type: "number" }, 
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
@@ -79,6 +85,11 @@ $(function() {
                 idcolumn: "ID",
                 edit: async function(row) {
                     try {
+                        if ( row.FIELDTYPE == 10 ) {
+                            $("#validationrulerow").show();
+                        } else {
+                            $("#validationrulerow").hide();
+                        }
                         await tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls });
                         tableform.fields_update_row(dialog.fields, row);
                         await tableform.fields_post(dialog.fields, "mode=update&formid=" + controller.formid + "&formfieldid=" + row.ID, "onlineform");
@@ -210,7 +221,14 @@ $(function() {
             });
 
             // Show/hide the lookup values box if type changes
-            $("#fieldtype").change(this.check_controls);
+            $("#fieldtype").change(function() {
+                onlineform.check_controls();
+                if ($("#fieldtype").val() == "10") {
+                    $("#validationrulerow").show();
+                } else {
+                    $("#validationrulerow").hide();
+                }
+            });
 
         },
 
