@@ -176,6 +176,7 @@ DEFAULTS = {
     "DonationTrxOverride": "No",
     "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
+    "DontShowMicrochipStatus": "Yes",
     "DontShowRabies": "Yes",
     "DontShowSize": "No",
     "EmailAdopterFollowup": "No",

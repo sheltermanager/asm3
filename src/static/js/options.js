@@ -884,6 +884,7 @@ $(function() {
                         { id: "size", post_field: "DontShowSize", label: _("Remove the size field from animal details"), type: "check" }, 
                         { id: "weight", post_field: "DontShowWeight", label: _("Remove the weight field from animal details"), type: "check" }, 
                         { id: "microchip", post_field: "DontShowMicrochip", label: _("Remove the microchip fields from animal identification details"), type: "check" }, 
+                        { id: "microchipstatus", post_field: "DontShowMicrochipStatus", label: _("Remove the microchip status from animal identification details"), type: "check" }, 
                         { id: "microchipmf", post_field: "DontShowMicrochipSupplier", label: _("Remove the microchip supplier info from animal identification details"), type: "check" }, 
                         { id: "tattoo", post_field: "DontShowTattoo", label: _("Remove the tattoo fields from animal identification details"), type: "check" }, 
                         { id: "neutered", post_field: "DontShowNeutered", label: _("Remove the neutered fields from animal health details"), type: "check" }, 
