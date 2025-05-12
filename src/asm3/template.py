@@ -31,27 +31,20 @@ def get_html_template_names(dbo: Database) -> List[str]:
 
 def update_html_template(dbo: Database, username: str, name: str, head: str, body: str, foot: str, builtin: bool = False) -> None:
     """ Creates/updates an HTML publishing template """
-    #row = dbo.first_row(dbo.query("SELECT * FROM templatehtml WHERE Name = ?", (name,)))
-    #sql = dbo.row_to_update_sql("templatehtml", row, "NAME")
-    #dbo.execute("DELETE FROM templatehtml WHERE Name = ?", [name])
-
     htid = dbo.query_int("SELECT ID FROM templatehtml WHERE Name=?", [name])
     if htid == 0: 
         htid = dbo.get_id("templatehtml")
     else:
+        # deleting and reinserting allows reversion to the previous revision in the deletion table
         dbo.delete("templatehtml", htid, username, True)
-
     dbo.insert("templatehtml", {
         "ID":       htid,
         "Name":     name,
         "*Header":  head,
         "*Body":    body,
         "*Footer":  foot,
-        "IsBuiltIn": builtin and 1 or 0
-    })
-
-    #asm3.audit.insert_deletion(dbo, username, "templatehtml", row.ID, "", sql)
-
+        "IsBuiltIn": asm3.utils.iif(builtin, 1, 0)
+    }, generateID=False)
     asm3.audit.create(dbo, username, "templatehtml", htid, "", "id: %d, name: %s" % (htid, name))
 
 def delete_html_template(dbo: Database, username: str, name: str) -> None:
