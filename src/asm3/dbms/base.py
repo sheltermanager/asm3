@@ -918,10 +918,8 @@ class Database(object):
         fields = []
         values = []
         for k in sorted(r.keys()):
-            if not donefields:
-                fields.append(k)
+            fields.append(k)
             values.append(self.sql_value(r[k]))
-        donefields = True
         return "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
     
     def row_to_update_sql(self, table: str, r: ResultRow, uniquecol = "ID", escapeCR: str = "") -> str:
@@ -931,14 +929,12 @@ class Database(object):
         cdata = []
         rid = 0
         for k in sorted(r.keys()):
-            if not donefields:
-                if k == uniquecol:
-                    rid = self.sql_value(r[k])
-                elif k == "ID" and uniquecol != "ID":
-                    pass
-                else:
-                    cdata.append(k + " = " + self.sql_value(r[k]))
-        donefields = True
+            if k == uniquecol:
+                rid = self.sql_value(r[k])
+            elif k == "ID" and uniquecol != "ID":
+                pass
+            else:
+                cdata.append(k + " = " + self.sql_value(r[k]))
         return "UPDATE " + table + " SET " + ",".join(cdata) + " WHERE " + uniquecol + " = " + str(rid)
 
     def split_queries(self, sql: str) -> List[str]:
