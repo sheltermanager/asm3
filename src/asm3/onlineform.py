@@ -231,7 +231,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input class="asm-onlineform-number" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
             confirmlabel = f.LOOKUPS 
-            if confirmlabel is None or confirmlabel == "": confirmlabel =  asm3.i18n._("Confirm email", l)
+            if confirmlabel is None or confirmlabel == "": confirmlabel = asm3.i18n._("Confirm email", l)
             h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
             h.append('</td></tr>')
             h.append('<tr class=" class="asm-onlineform-tr"><td class="asm-onlineform-td">')
