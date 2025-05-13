@@ -657,6 +657,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
+        "InternalUse":          post.boolean("internaluse"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -677,10 +678,11 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
+        "InternalUse":          post.boolean("internaluse"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
-        "*Description":         post["description"]
+        "*Description":         post["description"],
     }, username, setLastChanged=False)
 
 def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
