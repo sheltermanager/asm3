@@ -42,8 +42,8 @@ data = (
     (15, "X-Ray / Scan", 1),
     (16, "Surgery: Amputation", 1),
     (17, "Other", 0),
-    (18, "Microchip", 1),
-    (19, "Tattoo", 1),
+    (18, "Identification: Microchip", 1),
+    (19, "Identification: Tattoo", 1),
     (20, "Parasite: Antifungal", 0),
     (21, "Parasite: Heartworm", 0),
     (22, "Dietary supplement", 0),
@@ -52,7 +52,8 @@ data = (
     (25, "Anti-diarrhea", 0),
     (26, "Surgery: Dental procedure", 1),
     (27, "Surgery: Other", 1),
-    (28, "Topical treatment", 0)
+    (28, "Topical treatment", 0),
+    (29, "Identification: Other", 1)
 )
 
 for d in data:

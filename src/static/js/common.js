@@ -304,11 +304,7 @@ const common = {
      * Returns true if v is an integer
      */
     is_integer: function(v) {
-        if (!$.isNumeric(v) || Math.floor(v) != v) {
-            return false;
-        } else {
-            return true;
-        }
+        return $.isNumeric(v) && Math.floor(v) == v;
     },
 
     /** 
