@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-01-03 09:29+0000\n"
-"PO-Revision-Date: 2025-01-08 16:01+0200\n"
+"POT-Creation-Date: 2025-02-04 10:02+0000\n"
+"PO-Revision-Date: 2025-05-13 16:50+0300\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -33,9 +33,9 @@ msgstr "‘{0}’ הוא שם שמור ולא יכול לשמש כשם שדה נ
 msgid "'{0}' is not a valid time"
 msgstr "'{0}' אינו זמן תקין"
 
-#: log.js onlineform.js incident_find.js person_new.js common_html.js
-#: incident.js options.js stocklevel.js animal_find.js users.js incident_new.js
-#: clinic_appointment.js common_personchooser.js
+#: users.js log.js incident.js incident_new.js person_new.js onlineform.js
+#: incident_find.js clinic_appointment.js common_personchooser.js
+#: common_html.js options.js animal_find.js stocklevel.js
 msgid "(all)"
 msgstr "(הכל)"
 
@@ -43,7 +43,7 @@ msgstr "(הכל)"
 msgid "(any)"
 msgstr "(כלשהו)"
 
-#: animal_find.js person_find.js
+#: person_find.js animal_find.js
 msgid "(anyone)"
 msgstr "(כל אחד)"
 
@@ -51,7 +51,7 @@ msgstr "(כל אחד)"
 msgid "(available)"
 msgstr "(זמין)"
 
-#: common_tableform.js person_find_results.js event_animals.js
+#: person_find_results.js event_animals.js common_tableform.js
 msgid "(blank)"
 msgstr "(ריק)"
 
@@ -67,7 +67,7 @@ msgstr "(מובנה)"
 msgid "(depleted)"
 msgstr "(מלאי מדולדל)"
 
-#: mobile2.js main.js clinic_calendar.js
+#: main.js mobile2.js clinic_calendar.js
 msgid "(everyone)"
 msgstr "(כולם)"
 
@@ -107,7 +107,7 @@ msgstr "(אף מקום)"
 msgid "(task creator)"
 msgstr "(יוצר משימות)"
 
-#: lostfound.js lostfound_new.js incident.js
+#: incident.js lostfound_new.js lostfound.js
 msgid "(unknown)"
 msgstr "(לא ידוע)"
 
@@ -127,7 +127,7 @@ msgstr "({0} ניתנו, {1} נותרו)"
 msgid ".odt templates are not permitted by the system options."
 msgstr "תבניות odt אינן מותרות לפי אפשרויות המערכת."
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "1 - Very low"
 msgstr "1 - נמוך מאוד"
 
@@ -135,11 +135,11 @@ msgstr "1 - נמוך מאוד"
 msgid "1 treatment"
 msgstr "טיפול אחד"
 
-#: lookups.js publish_options.js
+#: publish_options.js lookups.js
 msgid "1 week"
 msgstr "שבוע אחד"
 
-#: lookups.js media.js publish_options.js onlineforms.js
+#: onlineforms.js publish_options.js lookups.js media.js
 msgid "1 year"
 msgstr "שנה אחת"
 
@@ -147,7 +147,7 @@ msgstr "שנה אחת"
 msgid "1. Choose Animal"
 msgstr "1. בחר חיה"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "2 - Low"
 msgstr "2 - נמוך"
 
@@ -167,7 +167,7 @@ msgstr "קוד 2FA"
 msgid "2FA Enabled"
 msgstr "2FA פעיל"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "3 - Medium"
 msgstr "3 - בינוני/ת"
 
@@ -179,7 +179,7 @@ msgstr "3 חודשים"
 msgid "3. Capture Photo"
 msgstr "3. צלם תמונה"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "4 - High"
 msgstr "4 - גבוהה"
 
@@ -187,13 +187,9 @@ msgstr "4 - גבוהה"
 msgid "4 weeks"
 msgstr "4 שבועות"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "5 - Very high"
 msgstr "5 - גבוה מאוד"
-
-#: animal.js
-msgid "5 Year"
-msgstr "5 שנים"
 
 #: publish_options.js
 msgid "6 months"
@@ -243,8 +239,8 @@ msgstr "תהליך כבר רץ."
 msgid "A template with this name already exists"
 msgstr "תבנית עם שם זה כבר קיימת"
 
-#: movements.js move_foster.js move_retailer.js move_reclaim.js move_adopt.js
-#: move_reserve.js move_transfer.js
+#: move_transfer.js move_retailer.js movements.js move_foster.js move_adopt.js
+#: move_reclaim.js move_reserve.js
 msgid "A unique number to identify this movement"
 msgstr "מספר ייחודי לזיהוי התנועה"
 
@@ -260,8 +256,8 @@ msgstr "מספר ייחודי לשגר זה"
 msgid "A4"
 msgstr "A4"
 
-#: html.py incident_find_results.js header_edit_header.js lookups.js
-#: person_find_results.js common_html.js reports_querybuilder.js
+#: html.py person_find_results.js common_html.js header_edit_header.js
+#: lookups.js incident_find_results.js reports_querybuilder.js
 msgid "ACO"
 msgstr "קצין טיפול בבע״ח"
 
@@ -269,7 +265,7 @@ msgstr "קצין טיפול בבע״ח"
 msgid "AM"
 msgstr "AM"
 
-#: html.py mobile2.js main.js
+#: html.py main.js mobile2.js
 msgid "ASM"
 msgstr "ASM"
 
@@ -332,7 +328,7 @@ msgstr "חתול אבסיני (חבשי)"
 msgid "Access Settings Menu"
 msgstr "תפריט גישה למערכת"
 
-#: lookups.js accounts_trx.js
+#: accounts_trx.js lookups.js
 msgid "Account"
 msgstr "חשבון"
 
@@ -360,7 +356,7 @@ msgstr "החשבון משובת."
 msgid "Accountant"
 msgstr "הנהלת חשבונות"
 
-#: html.py roles.js header.js accounts.js options.js
+#: html.py accounts.js header.js roles.js options.js
 msgid "Accounts"
 msgstr "חשבונות"
 
@@ -368,8 +364,8 @@ msgstr "חשבונות"
 msgid "Action"
 msgstr "פעולה"
 
-#: medical.py medical.js lookups.js accounts.js litters.js traploan.js
-#: person.js boarding.js reports_querybuilder.js
+#: medical.py medical.js accounts.js person.js boarding.js lookups.js
+#: litters.js reports_querybuilder.js traploan.js
 msgid "Active"
 msgstr "פעיל"
 
@@ -385,7 +381,7 @@ msgstr "רשיונות פעילים"
 msgid "Active users: {0}"
 msgstr "משתמשים פעילים: {0}"
 
-#: common_tableform.js event_animals.js common_html.js accounts_trx.js
+#: event_animals.js common_html.js accounts_trx.js common_tableform.js
 msgid "Add"
 msgstr "הוסף"
 
@@ -393,7 +389,7 @@ msgstr "הוסף"
 msgid "Add Accounts"
 msgstr "הוספת חשבונות"
 
-#: event_animals.js mobile2.js options.js
+#: event_animals.js options.js mobile2.js
 msgid "Add Animal"
 msgstr "הוספת חיה"
 
@@ -425,7 +421,7 @@ msgstr "הוספת תור למרפאה"
 msgid "Add Cost"
 msgstr "הוסף הוצאה"
 
-#: roles.js animal_bulk.js
+#: animal_bulk.js roles.js
 msgid "Add Diary"
 msgstr "הוספת משימות"
 
@@ -469,7 +465,7 @@ msgstr "הוספת רשיונות"
 msgid "Add Litter"
 msgstr "הוספת שגר (גורים)"
 
-#: roles.js animal_bulk.js mobile2.js
+#: animal_bulk.js roles.js mobile2.js
 msgid "Add Log"
 msgstr "הוספת הערות"
 
@@ -486,11 +482,11 @@ msgstr "הוספת קבצים"
 msgid "Add Medical Records"
 msgstr "הוספת טיפולים רפואיים"
 
-#: mobile2.js main.js
+#: main.js mobile2.js
 msgid "Add Message"
 msgstr "הוסף הודעה"
 
-#: roles.js animal_bulk.js
+#: animal_bulk.js roles.js
 msgid "Add Movement"
 msgstr "הוספת תנועות"
 
@@ -546,7 +542,7 @@ msgstr "הוספת שוברים"
 msgid "Add Waiting List"
 msgstr "הוספה לרשימת המתנה"
 
-#: html.py header.js main.js
+#: html.py main.js header.js
 msgid "Add a diary note"
 msgstr "הוסף משימה"
 
@@ -578,7 +574,7 @@ msgstr "הוסף אירוע חדש"
 msgid "Add a new log"
 msgstr "הוספת הערה נוספת"
 
-#: html.py header.js person_new.js
+#: html.py person_new.js header.js
 msgid "Add a new person"
 msgstr "הוסף אדם חדש"
 
@@ -613,6 +609,10 @@ msgstr "הוסף חיה לרשימת ההמתנה"
 #: options.js
 msgid "Add an extra message to the fosterer email"
 msgstr "הוסף הודעה נוספת למייל לאומנות"
+
+#: mailmerge.js
+msgid "Add an unsubscribe link to the bottom of emails"
+msgstr "הוסף קישור להסרה מרשימת התפוצה בתחתית האימיילים"
 
 #: event_animals.js
 msgid "Add animal"
@@ -666,7 +666,7 @@ msgstr "הוסף השאלת ציוד"
 msgid "Add event"
 msgstr "הוסף אירוע"
 
-#: document_templates.js reports.js
+#: reports.js document_templates.js
 msgid "Add extra images for use in reports and documents"
 msgstr "הוסף תמונות נוספות לשימוש בדוחות ומסמכים"
 
@@ -790,16 +790,16 @@ msgstr "הוסף לרשימת המתנה"
 msgid "Add {0}"
 msgstr "הוסף {0}"
 
-#: media.js person.js
+#: person.js media.js
 msgid "Added"
 msgstr "נוסף"
 
-#: common_tableform.js header_edit_header.js main.js
+#: main.js header_edit_header.js common_tableform.js
 msgid "Added by {0} on {1}"
 msgstr "הוסף ע״ {0} ב {1}"
 
-#: animal.js onlineform.js lostfound.js mobile2.js incident.js waitinglist.js
-#: person.js
+#: incident.js onlineform.js animal.js person.js mobile2.js waitinglist.js
+#: lostfound.js
 msgid "Additional"
 msgstr "בנוסף"
 
@@ -841,11 +841,11 @@ msgid ""
 "form field"
 msgstr "טקסט נוסף להציג עם התווית על מנת לסייע למשתמש למלא את השדה בטופס"
 
-#: html.py dbupdate.py event_find_results.js animal.js event.js
-#: incident_find.js incident_find_results.js header_edit_header.js
-#: waitinglist_results.js person_find_results.js person_new.js mobile2.js
-#: incident.js event_new.js options.js event_find.js transport.js person.js
-#: common_personchooser.js
+#: html.py dbupdate.py incident.js transport.js person_find_results.js
+#: person_new.js incident_find.js event_find.js common_personchooser.js
+#: event_find_results.js animal.js waitinglist_results.js person.js
+#: header_edit_header.js options.js mobile2.js event.js
+#: incident_find_results.js event_new.js
 msgid "Address"
 msgstr "כתובת"
 
@@ -873,12 +873,12 @@ msgstr "הוטרינר המטפל"
 msgid "Adopt"
 msgstr "אימוץ"
 
-#: html.py header.js move_adopt.js
+#: html.py move_adopt.js header.js
 msgid "Adopt an animal"
 msgstr "אימוץ חיה"
 
-#: html.py animal_find_results.js animal_bulk.js shelterview.js common_html.js
-#: options.js main.js animal_find.js reports_querybuilder.js
+#: html.py main.js animal_find_results.js shelterview.js common_html.js
+#: animal_bulk.js options.js animal_find.js reports_querybuilder.js
 msgid "Adoptable"
 msgstr "ניתן לאימוץ"
 
@@ -890,7 +890,7 @@ msgstr "חיה לאימוץ"
 msgid "Adoptable and published for the first time"
 msgstr "ניתן לאימוץ ומפורסם בפעם הראשונה"
 
-#: animal.py dbupdate.py animal.js event_animals.js common_html.js
+#: animal.py dbupdate.py event_animals.js animal.js common_html.js
 #: animal_find.js reports_querybuilder.js
 msgid "Adopted"
 msgstr "מאומץ"
@@ -903,7 +903,7 @@ msgstr "חיות מאומצות"
 msgid "Adopted Transferred In {0}"
 msgstr "מאומצים שהועברו בשנת {0}"
 
-#: header_edit_header.js lookups.js common_html.js reports_querybuilder.js
+#: common_html.js header_edit_header.js lookups.js reports_querybuilder.js
 msgid "Adopter"
 msgstr "מאמץ"
 
@@ -927,8 +927,8 @@ msgstr "אימוץ"
 msgid "Adoption Checkout"
 msgstr "אימוץ עצמי"
 
-#: dbupdate.py animal.js header_edit_header.js lookups.js animal_bulk.js
-#: person_links.js common_html.js animal_new.js reports_querybuilder.js
+#: dbupdate.py person_links.js animal.js common_html.js animal_bulk.js
+#: header_edit_header.js lookups.js reports_querybuilder.js animal_new.js
 msgid "Adoption Coordinator"
 msgstr "יועץ אימוץ"
 
@@ -940,7 +940,7 @@ msgstr "אומנה ויועץ אימוץ"
 msgid "Adoption Event"
 msgstr "אירוע אימוץ"
 
-#: dbupdate.py animal.js animal_bulk.js service_checkout_adoption.js
+#: dbupdate.py service_checkout_adoption.js animal.js animal_bulk.js
 #: animal_new.js
 msgid "Adoption Fee"
 msgstr "סל אימוץ"
@@ -989,7 +989,7 @@ msgstr "אימוצים {0}"
 msgid "Adult"
 msgstr "בוגר"
 
-#: animal_find.js person_find.js
+#: person_find.js animal_find.js
 msgid "Advanced"
 msgstr "מתקדם"
 
@@ -1015,13 +1015,13 @@ msgid ""
 "user to this URL"
 msgstr "לאחר שהמשתמש לוחץ על שלח והטופס התקבל, נתב את המשתמש לכתובת הזו"
 
-#: person.py html.py movements.js animal_find_results.js mobile2.js
+#: html.py person.py animal_find_results.js movements.js mobile2.js
 msgid "Age"
 msgstr "גיל"
 
-#: html.py lostfound_find_results.js lostfound.js incident_find.js
-#: lostfound_find.js lostfound_new.js event_animals.js mobile2.js
-#: common_html.js incident.js animal_find.js
+#: html.py incident.js event_animals.js incident_find.js lostfound_find.js
+#: common_html.js lostfound_find_results.js mobile2.js animal_find.js
+#: lostfound_new.js lostfound.js
 msgid "Age Group"
 msgstr "קבוצת גיל"
 
@@ -1113,7 +1113,7 @@ msgstr "אקיטה"
 msgid "Alaskan Malamute"
 msgstr "אלסקן מלמוט"
 
-#: publish_logs.js options.js main.js
+#: main.js options.js publish_logs.js
 msgid "Alerts"
 msgstr "התראות"
 
@@ -1247,7 +1247,7 @@ msgstr "כל החנויות הרשומות."
 msgid "All staff on file."
 msgstr "כל אנשי הצוות הרשומים."
 
-#: litters.js options.js
+#: options.js litters.js
 msgid "All time"
 msgstr "כל זמן"
 
@@ -1347,9 +1347,9 @@ msgstr "כבר נחתם"
 msgid "Already fostered to this person."
 msgstr "כבר הועבר לאומנה זו."
 
-#: html.py animal.js animal_find_results.js animal_bulk.js waitinglist_new.js
-#: waitinglist_results.js shelterview.js common_html.js animal_new.js
-#: waitinglist.js reports_querybuilder.js
+#: html.py animal_find_results.js waitinglist_new.js shelterview.js animal.js
+#: waitinglist_results.js common_html.js animal_bulk.js waitinglist.js
+#: reports_querybuilder.js animal_new.js
 msgid "Altered"
 msgstr "מסורס/מעוקר"
 
@@ -1429,8 +1429,8 @@ msgstr "ספניאל מים אמריקאי"
 msgid "American Wirehair"
 msgstr "חתול אמריקני מקורזל"
 
-#: wordprocessor.py common_widgets.js donations.js clinic_invoice.js
-#: vouchers.js clinic_appointment.js
+#: wordprocessor.py clinic_invoice.js clinic_appointment.js vouchers.js
+#: donations.js common_widgets.js
 msgid "Amount"
 msgstr "סכום"
 
@@ -1452,13 +1452,13 @@ msgstr "רועה אנטולי"
 msgid "Angora Rabbit"
 msgstr "ארנב אנגורה"
 
-#: reports.py onlineform.py dbupdate.py move_deceased.js medical.js
-#: movements.js log_new.js animal.js vaccination.js mobile_report.js
-#: donations.js move_foster.js header_edit_header.js vouchers.js media.js
-#: move_retailer.js move_reclaim.js event_animals.js move_adopt.js mobile2.js
-#: move_reserve.js onlineform_incoming.js incident.js diarytasks.js licence.js
-#: search.js animal_observations.js test.js move_transfer.js report_criteria.js
-#: transport.js boarding.js reports_querybuilder.js clinic_appointment.js
+#: onlineform.py reports.py dbupdate.py move_deceased.js incident.js log_new.js
+#: transport.js event_animals.js move_transfer.js move_retailer.js movements.js
+#: licence.js clinic_appointment.js medical.js vouchers.js search.js
+#: move_foster.js report_criteria.js donations.js animal_observations.js
+#: animal.js onlineform_incoming.js vaccination.js move_adopt.js
+#: move_reclaim.js move_reserve.js header_edit_header.js mobile2.js test.js
+#: boarding.js diarytasks.js reports_querybuilder.js media.js mobile_report.js
 msgid "Animal"
 msgstr "חיה"
 
@@ -1474,7 +1474,7 @@ msgstr "חיה ׳{0}׳ סומנה מתה."
 msgid "Animal (non-shelter with owner)"
 msgstr "חיה (אינה של המקלט עם בעלים)"
 
-#: licence_renewal.js vouchers.js licence.js donation_receive.js
+#: licence.js donation_receive.js vouchers.js licence_renewal.js
 msgid "Animal (optional)"
 msgstr "חיה (לא חובה)"
 
@@ -1658,10 +1658,10 @@ msgstr ""
 msgid "Animal shortcode format"
 msgstr "פורמט קוד מקוצר לחיה"
 
-#: html.py reports.py medical.js htmltemplates.js roles.js vaccination.js
-#: header_edit_header.js animal_bulk.js event_animals.js mobile2.js
-#: document_templates.js incident.js options.js test.js report_criteria.js
-#: transport.js csvexport.js
+#: html.py reports.py incident.js transport.js event_animals.js medical.js
+#: report_criteria.js htmltemplates.js csvexport.js document_templates.js
+#: vaccination.js animal_bulk.js header_edit_header.js roles.js options.js
+#: mobile2.js test.js
 msgid "Animals"
 msgstr "חיות"
 
@@ -1684,10 +1684,6 @@ msgstr "חיות מתאימות ‘{0}’."
 #: publish_options.js
 msgid "Animals per page"
 msgstr "חיות בעמוד"
-
-#: animal.js
-msgid "Annual"
-msgstr "שנתי"
 
 #: dbupdate.py
 msgid "Annually"
@@ -1765,15 +1761,15 @@ msgstr "ערבי"
 msgid "Are you sure?"
 msgstr "בטוח?"
 
-#: html.py lostfound_find_results.js lostfound_find.js
+#: html.py lostfound_find.js lostfound_find_results.js
 msgid "Area"
 msgstr "אזור"
 
-#: lostfound.py lostfound.js lostfound_new.js
+#: lostfound.py lostfound_new.js lostfound.js
 msgid "Area Found"
 msgstr "האזור בו נמצא"
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js lostfound.js
 msgid "Area Lost"
 msgstr "אזור אבידה"
 
@@ -1785,7 +1781,7 @@ msgstr "המיקוד באזור"
 msgid "Areas"
 msgstr "אזורים"
 
-#: animal.js event_animals.js
+#: event_animals.js animal.js
 msgid "Arrival"
 msgstr "הגעה"
 
@@ -1853,7 +1849,7 @@ msgstr "נכס"
 msgid "Asset::Premises"
 msgstr "נכס::שטחים_ומבנים"
 
-#: media.js onlineform_incoming.js
+#: onlineform_incoming.js media.js
 msgid "Attach"
 msgstr "צרף"
 
@@ -1970,7 +1966,7 @@ msgid ""
 "is adopted"
 msgstr "החזר אוטומטית כל תנועת חנות כאשר חיה מאומצת"
 
-#: header_edit_header.js mobile2.js common_html.js
+#: common_html.js header_edit_header.js mobile2.js
 msgid "Available for adoption"
 msgstr "זמין לאימוץ"
 
@@ -2006,11 +2002,11 @@ msgstr ""
 msgid "Baby"
 msgstr "גור"
 
-#: mobile_report.js mobile2.js mobile_photo_uploader.js
+#: mobile2.js mobile_photo_uploader.js mobile_report.js
 msgid "Back"
 msgstr "אחורה"
 
-#: accounts.js stocklevel.js accounts_trx.js
+#: accounts.js accounts_trx.js stocklevel.js
 msgid "Balance"
 msgstr "יתרה"
 
@@ -2050,8 +2046,8 @@ msgstr "בנק::פקדון"
 msgid "Bank::Savings"
 msgstr "בנק::חסכון"
 
-#: html.py header_edit_header.js lookups.js person_find_results.js
-#: common_html.js reports_querybuilder.js
+#: html.py person_find_results.js common_html.js header_edit_header.js
+#: lookups.js reports_querybuilder.js
 msgid "Banned"
 msgstr "אסור למסור לו חיות"
 
@@ -2203,8 +2199,8 @@ msgstr "בלוטיק קונהאונד"
 msgid "Board and Food"
 msgstr "מחייה ומזון"
 
-#: html.py dbupdate.py roles.js calendarview.js header_edit_header.js
-#: common_html.js options.js
+#: html.py dbupdate.py calendarview.js common_html.js header_edit_header.js
+#: roles.js options.js
 msgid "Boarding"
 msgstr "שהייה"
 
@@ -2216,7 +2212,7 @@ msgstr "חיה בשהייה"
 msgid "Boarding Book"
 msgstr "רשימת חיות בשהייה"
 
-#: move_reclaim.js move_adopt.js
+#: move_adopt.js move_reclaim.js
 msgid "Boarding Cost"
 msgstr "עלות שהייה"
 
@@ -2332,11 +2328,11 @@ msgstr "בוקסר"
 msgid "Boykin Spaniel"
 msgstr "ספניאל בויקין"
 
-#: person.py html.py lookups.py movements.js animal.js onlineform.js
-#: lostfound_find_results.js lostfound.js animal_find_results.js
-#: lostfound_find.js waitinglist_new.js lostfound_new.js mobile2.js
-#: common_animalchooser.js animal_new.js waitinglist.js options.js
-#: animal_find.js person.js
+#: lookups.py html.py person.py animal_find_results.js onlineform.js
+#: lostfound_find.js movements.js waitinglist_new.js animal.js
+#: lostfound_find_results.js person.js options.js mobile2.js animal_find.js
+#: lostfound_new.js waitinglist.js common_animalchooser.js animal_new.js
+#: lostfound.js
 msgid "Breed"
 msgstr "גזע"
 
@@ -2384,13 +2380,9 @@ msgstr "תוכי ברוטוגריס"
 msgid "Brought In"
 msgstr "תאריך קליטה"
 
-#: animal.js mobile2.js person_links.js animal_new.js
+#: person_links.js animal.js mobile2.js animal_new.js
 msgid "Brought In By"
 msgstr "הובא למקלט על ידי"
-
-#: animal.js
-msgid "BroughtInBy"
-msgstr "הובאעלידי"
 
 #: dbupdate.py
 msgid "Brown"
@@ -2483,8 +2475,8 @@ msgstr "בורמזי"
 msgid "Burmilla"
 msgstr "בורמילה"
 
-#: wordprocessor.py log.js medical.js animal.js vaccination.js animal_bulk.js
-#: diary.js maint_undelete.js person_investigation.js
+#: wordprocessor.py log.js medical.js person_investigation.js animal.js
+#: vaccination.js animal_bulk.js maint_undelete.js diary.js
 msgid "By"
 msgstr "ע״י"
 
@@ -2536,7 +2528,7 @@ msgstr "קאירן טרייר"
 msgid "Calendar View"
 msgstr "תצוגת לוח שנה"
 
-#: calendarview.js header.js main.js
+#: main.js calendarview.js header.js
 msgid "Calendar view"
 msgstr "תצוגת לוח שנה"
 
@@ -2552,7 +2544,7 @@ msgstr "ארנב קליפורני"
 msgid "Call"
 msgstr "שיחה"
 
-#: mobile2.js incident.js incident_new.js
+#: incident.js incident_new.js mobile2.js
 msgid "Call Date/Time"
 msgstr "זמן ותאריך שיחה"
 
@@ -2564,7 +2556,7 @@ msgstr "שיחה בין"
 msgid "Call between two dates"
 msgstr "שיחה בין התאריכים"
 
-#: html.py incident_find_results.js mobile2.js incident.js incident_new.js
+#: html.py incident.js incident_new.js mobile2.js incident_find_results.js
 msgid "Caller"
 msgstr "מתקשר"
 
@@ -2604,13 +2596,12 @@ msgstr "ספינקס קנדי"
 msgid "Canary"
 msgstr "קנרית"
 
-#: medical.js common_tableform.js movements.js htmltemplates.js roles.js
-#: common_widgets.js animal.js vaccination.js media.js publish_options.js
-#: onlineforms.js person_new.js common.js mobile2.js shelterview.js
-#: document_templates.js report_toolbar.js onlineform_incoming.js
-#: document_repository.js common_animalchoosermulti.js common_animalchooser.js
-#: report_images.js reports.js main.js test.js users.js accounts_trx.js
-#: diary.js person.js sql.js reports_querybuilder.js common_personchooser.js
+#: common_animalchoosermulti.js users.js main.js report_toolbar.js
+#: person_new.js movements.js medical.js sql.js shelterview.js
+#: common_personchooser.js publish_options.js onlineform_incoming.js
+#: vaccination.js person.js roles.js mobile2.js test.js accounts_trx.js
+#: common.js common_animalchooser.js common_widgets.js common_tableform.js
+#: reports_querybuilder.js media.js
 msgid "Cancel"
 msgstr "ביטול"
 
@@ -2706,7 +2697,7 @@ msgstr "חתול"
 msgid "Catahoula Leopard Dog"
 msgstr "כלב נמרים קאתאהולי"
 
-#: move_deceased.js animal.js report_export.js reports.js
+#: move_deceased.js reports.js animal.js report_export.js
 msgid "Category"
 msgstr "קטגוריה"
 
@@ -2730,8 +2721,8 @@ msgstr "קבליר קינג צ'ארלס ספנייל"
 msgid "Cell"
 msgstr "תא"
 
-#: waitinglist_results.js person_find_results.js person_new.js mobile2.js
-#: person.js common_personchooser.js
+#: person_find_results.js person_new.js common_personchooser.js
+#: waitinglist_results.js person.js mobile2.js
 msgid "Cell Phone"
 msgstr "טלפון נייד"
 
@@ -2739,7 +2730,8 @@ msgstr "טלפון נייד"
 msgid "Champagne D'Argent"
 msgstr "ארנב כסף משמפניה"
 
-#: common_tableform.js common.js document_templates.js
+#: medical.js document_templates.js vaccination.js common.js
+#: common_tableform.js
 msgid "Change"
 msgstr "שינוי"
 
@@ -2827,7 +2819,7 @@ msgstr "שינוי תנועות"
 msgid "Change Online Forms"
 msgstr "שנה טפסים מקוונים"
 
-#: change_password.js header.js users.js
+#: users.js header.js change_password.js
 msgid "Change Password"
 msgstr "החלף סיסמא"
 
@@ -2943,7 +2935,7 @@ msgstr "בדוק רשיון"
 msgid "Check Microchip"
 msgstr "בדוק שבב"
 
-#: common_widgets.js donations.js
+#: donations.js accounts_trx.js common_widgets.js
 msgid "Check No"
 msgstr "מספר צ׳ק"
 
@@ -3048,14 +3040,14 @@ msgstr "סוג דוח"
 msgid "Citation Types"
 msgstr "סוגי דוחות"
 
-#: roles.js header_edit_header.js mobile2.js
+#: header_edit_header.js roles.js mobile2.js
 msgid "Citations"
 msgstr "דוחות (קנסות)"
 
-#: html.py event_find_results.js event.js incident_find.js
-#: incident_find_results.js waitinglist_results.js person_find_results.js
-#: person_new.js mobile2.js incident.js event_new.js options.js event_find.js
-#: transport.js person.js incident_new.js common_personchooser.js
+#: html.py incident.js transport.js person_find_results.js incident_new.js
+#: person_new.js incident_find.js event_find.js common_personchooser.js
+#: event_find_results.js waitinglist_results.js person.js options.js mobile2.js
+#: event.js incident_find_results.js event_new.js
 msgid "City"
 msgstr "עיר"
 
@@ -3063,13 +3055,13 @@ msgstr "עיר"
 msgid "City contains"
 msgstr "העיר מכילה"
 
-#: person_new.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js
 msgid "Class"
 msgstr "סוג"
 
-#: onlineform.py mobile_sign.js media.js common.js shelterview.js
-#: service_sign_document.js common_animalchoosermulti.js
-#: common_animalchooser.js service_checkout_adoption.js common_personchooser.js
+#: onlineform.py common_animalchoosermulti.js service_checkout_adoption.js
+#: shelterview.js common_personchooser.js mobile_sign.js common.js
+#: common_animalchooser.js service_sign_document.js media.js
 msgid "Clear"
 msgstr "נקה"
 
@@ -3081,7 +3073,7 @@ msgstr "נקה וחתום שוב"
 msgid "Click here to pay"
 msgstr "לחץ כאן לתשלום"
 
-#: html.py roles.js calendarview.js header_edit_header.js document_templates.js
+#: html.py document_templates.js calendarview.js header_edit_header.js roles.js
 msgid "Clinic"
 msgstr "מרפאה"
 
@@ -3109,9 +3101,9 @@ msgstr "תזכורת מרפאה"
 msgid "Clinic Statuses"
 msgstr "סטטוס קליניקה"
 
-#: staff_rota.js htmltemplates.js roles.js animal.js onlineforms.js
-#: document_templates.js incident.js waitinglist.js reports.js stocklevel.js
-#: transport.js
+#: incident.js transport.js onlineforms.js htmltemplates.js reports.js
+#: document_templates.js animal.js staff_rota.js roles.js waitinglist.js
+#: stocklevel.js
 msgid "Clone"
 msgstr "שכפל"
 
@@ -3147,14 +3139,14 @@ msgstr "שכפל רשומת רשימת המתנה זו"
 msgid "Clone this waiting list record?"
 msgstr "שכפל רשומת רשימת המתנה זו?"
 
-#: animal.js incident.js waitinglist.js
+#: incident.js animal.js waitinglist.js
 msgid "Cloning..."
 msgstr "משכפל..."
 
-#: common_widgets.js mobile_report.js mobile_sign.js mobile_login.js mobile2.js
-#: onlineform_incoming.js service_sign_document.js mobile_photo_uploader.js
-#: service_checkout_adoption.js animal_new.js service_checkout_licence.js
-#: main.js maint_undelete.js
+#: main.js service_checkout_adoption.js onlineform_incoming.js mobile_login.js
+#: mobile2.js mobile_sign.js common_widgets.js mobile_photo_uploader.js
+#: service_sign_document.js maint_undelete.js service_checkout_licence.js
+#: animal_new.js mobile_report.js
 msgid "Close"
 msgstr "סגור"
 
@@ -3170,8 +3162,8 @@ msgstr "סוס קליידסדייל"
 msgid "Coat"
 msgstr "פרווה"
 
-#: lookups.py animal.js animal_find_results.js mobile2.js animal_new.js
-#: options.js
+#: lookups.py animal_find_results.js animal.js options.js mobile2.js
+#: animal_new.js
 msgid "Coat Type"
 msgstr "סוג הפרווה"
 
@@ -3195,10 +3187,10 @@ msgstr "קקדו"
 msgid "Cocker Spaniel"
 msgstr "קוקר ספניאל"
 
-#: wordprocessor.py person.py html.py animal.js animal_find_results.js
-#: incident_find.js incident_find_results.js vouchers.js accounts.js mobile2.js
-#: common_animalchooser.js incident.js animal_new.js animal_find.js person.js
-#: common_personchooser.js
+#: html.py person.py wordprocessor.py incident.js animal_find_results.js
+#: incident_find.js vouchers.js common_personchooser.js accounts.js animal.js
+#: person.js mobile2.js animal_find.js common_animalchooser.js
+#: incident_find_results.js animal_new.js
 msgid "Code"
 msgstr "קוד"
 
@@ -3214,10 +3206,10 @@ msgstr "אותיות פורמט לקוד:"
 msgid "Collie"
 msgstr "קולי"
 
-#: person.py html.py lookups.py animal.js onlineform.js
-#: lostfound_find_results.js lostfound.js animal_find_results.js
-#: lostfound_find.js lostfound_new.js event_animals.js mobile2.js
-#: common_html.js options.js animal_find.js person.js
+#: lookups.py html.py person.py animal_find_results.js event_animals.js
+#: onlineform.js lostfound_find.js animal.js common_html.js
+#: lostfound_find_results.js person.js options.js mobile2.js animal_find.js
+#: lostfound_new.js lostfound.js
 msgid "Color"
 msgstr "צבע"
 
@@ -3256,16 +3248,15 @@ msgid ""
 "Comma separated list of units for this location, eg: 1,2,3,4,Isolation,Pen 5"
 msgstr "רשימה מופרדת בפסיקים של יחידות למיקום זה, למשל: 1,2,3,4,בידוד,כלוב 5"
 
-#: wordprocessor.py person.py html.py rota.js move_deceased.js log.js
-#: staff_rota.js medical.js movements.js common_widgets.js animal.js
-#: vaccination.js lostfound.js donations.js move_foster.js
-#: header_edit_header.js waitinglist_new.js medicalprofile.js vouchers.js
-#: accounts.js move_retailer.js move_reclaim.js lostfound_new.js
-#: waitinglist_results.js person_find_results.js event_animals.js move_adopt.js
-#: mobile2.js animal_diet.js move_reserve.js litters.js licence.js
-#: waitinglist.js citations.js stocklevel.js test.js traploan.js
-#: move_transfer.js diary.js transport.js person.js boarding.js
-#: clinic_appointment.js
+#: html.py person.py wordprocessor.py animal_diet.js log.js move_deceased.js
+#: citations.js transport.js person_find_results.js event_animals.js rota.js
+#: move_transfer.js move_retailer.js movements.js licence.js
+#: clinic_appointment.js medical.js vouchers.js waitinglist_new.js
+#: move_foster.js medicalprofile.js donations.js accounts.js animal.js
+#: vaccination.js staff_rota.js waitinglist_results.js move_adopt.js
+#: move_reclaim.js move_reserve.js person.js header_edit_header.js mobile2.js
+#: test.js lostfound_new.js boarding.js waitinglist.js stocklevel.js
+#: common_widgets.js litters.js diary.js lostfound.js traploan.js
 msgid "Comments"
 msgstr "הערות"
 
@@ -3285,7 +3276,7 @@ msgstr "ההערות הועתקו לקובץ המועדף."
 msgid "Complaint"
 msgstr "תלונה"
 
-#: dbupdate.py mobile2.js incident.js diary.js clinic_appointment.js
+#: dbupdate.py incident.js clinic_appointment.js mobile2.js diary.js
 msgid "Complete"
 msgstr "הושלמה"
 
@@ -3297,9 +3288,8 @@ msgstr "סיים משימות"
 msgid "Complete adoption date before linking to event."
 msgstr "מלאו תאריך אימוץ לפני קישור לאירוע."
 
-#: medical.py dbupdate.py medical.js animal.js incident_find.js
-#: header_edit_header.js mobile2.js diary.js transport.js
-#: reports_querybuilder.js
+#: dbupdate.py medical.py transport.js incident_find.js medical.js animal.js
+#: header_edit_header.js mobile2.js reports_querybuilder.js diary.js
 msgid "Completed"
 msgstr "הושלמה"
 
@@ -3311,7 +3301,7 @@ msgstr "סוים בין"
 msgid "Completed Date"
 msgstr "מועד סיום"
 
-#: html.py lookups.py incident_find.js
+#: lookups.py html.py incident_find.js
 msgid "Completed Type"
 msgstr "סוג סיום"
 
@@ -3339,7 +3329,7 @@ msgstr "מועד סיום"
 msgid "Completion Date/Time"
 msgstr "תאריך וזמן סיום"
 
-#: incident_find_results.js incident.js
+#: incident.js incident_find_results.js
 msgid "Completion Type"
 msgstr "סוג סיום"
 
@@ -3351,7 +3341,7 @@ msgstr "תצורה"
 msgid "Confirm"
 msgstr "אשר"
 
-#: change_password.js change_user_settings.js users.js
+#: users.js change_user_settings.js change_password.js
 msgid "Confirm Password"
 msgstr "אשר סיסמא"
 
@@ -3379,8 +3369,8 @@ msgstr "חדר ייעוץ - {0}"
 msgid "Consumed"
 msgstr "נצרך"
 
-#: lostfound.py html.py lostfound_find_results.js lostfound.js
-#: waitinglist_new.js lostfound_new.js waitinglist.js
+#: lostfound.py html.py waitinglist_new.js lostfound_find_results.js
+#: lostfound_new.js waitinglist.js lostfound.js
 msgid "Contact"
 msgstr "איש קשר"
 
@@ -3404,7 +3394,7 @@ msgstr "המר שריון זה לאימוץ"
 msgid "Coonhound"
 msgstr "קונהאונד"
 
-#: html.py movements.js animal.js animal_find_results.js
+#: html.py animal_find_results.js movements.js animal.js
 msgid "Coordinator"
 msgstr "מתאם"
 
@@ -3412,7 +3402,7 @@ msgstr "מתאם"
 msgid "Copy"
 msgstr "העתק"
 
-#: document_repository.js report_images.js
+#: report_images.js document_repository.js
 msgid ""
 "Copy absolute service URL to the clipboard (for external use in web pages "
 "and emails)"
@@ -3433,7 +3423,7 @@ msgstr "העתק כתובת טופס ללוח העריכה"
 msgid "Copy from animal comments"
 msgstr "העתק מהערות חיה"
 
-#: animal.py onlineform.py waitinglist.py roles.js reports.js stocklevel.js
+#: onlineform.py animal.py waitinglist.py reports.js roles.js stocklevel.js
 msgid "Copy of {0}"
 msgstr "עותק של {0}"
 
@@ -3465,8 +3455,8 @@ msgstr "קורגי"
 msgid "Cornish Rex"
 msgstr "קורניש רקס"
 
-#: medical.js vaccination.js medicalprofile.js animal_costs.js stocklevel.js
-#: test.js transport.js
+#: transport.js medical.js medicalprofile.js animal_costs.js vaccination.js
+#: test.js stocklevel.js
 msgid "Cost"
 msgstr "עלות"
 
@@ -3490,7 +3480,7 @@ msgstr "תאריך הוצאה אינו חוקי"
 msgid "Cost per Treatment"
 msgstr "עלות לטיפול"
 
-#: roles.js header_edit_header.js options.js
+#: header_edit_header.js roles.js options.js
 msgid "Costs"
 msgstr "עלויות"
 
@@ -3502,8 +3492,8 @@ msgstr "קוטון דה טוליאר"
 msgid "Could not find animal with name '{0}'"
 msgstr "לא נמצאה חיה בשם '{0}'"
 
-#: html.py event_find_results.js event.js person_new.js event_new.js options.js
-#: event_find.js transport.js person.js common_personchooser.js
+#: html.py transport.js person_new.js event_find.js common_personchooser.js
+#: event_find_results.js person.js options.js event.js event_new.js
 msgid "Country"
 msgstr "ארץ"
 
@@ -3511,11 +3501,11 @@ msgstr "ארץ"
 msgid "County"
 msgstr "מחוז"
 
-#: person_new.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js
 msgid "Couple"
 msgstr "זוג"
 
-#: wordprocessor.py header_edit_header.js lookups.js common_html.js options.js
+#: wordprocessor.py common_html.js header_edit_header.js options.js lookups.js
 msgid "Courtesy Listing"
 msgstr "מחפש בית חדש"
 
@@ -3523,7 +3513,7 @@ msgstr "מחפש בית חדש"
 msgid "Cow"
 msgstr "פרה"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "Crate trained"
 msgstr "מאולף לכלוב"
 
@@ -3531,13 +3521,13 @@ msgstr "מאולף לכלוב"
 msgid "Cream"
 msgstr "קרם"
 
-#: roles.js waitinglist_new.js lostfound_new.js person_new.js mobile2.js
-#: onlineform_incoming.js event_new.js animal_new.js incident_new.js
-#: common_personchooser.js
+#: incident_new.js person_new.js waitinglist_new.js common_personchooser.js
+#: onlineform_incoming.js roles.js mobile2.js lostfound_new.js event_new.js
+#: animal_new.js
 msgid "Create"
 msgstr "צור"
 
-#: lostfound.js incident.js waitinglist.js
+#: incident.js waitinglist.js lostfound.js
 msgid "Create Animal"
 msgstr "יצירת חיה"
 
@@ -3545,7 +3535,7 @@ msgstr "יצירת חיה"
 msgid "Create Log"
 msgstr "יצירת הערה"
 
-#: common_widgets.js boarding.js clinic_appointment.js
+#: clinic_appointment.js boarding.js common_widgets.js
 msgid "Create Payment"
 msgstr "צור תשלום"
 
@@ -3557,7 +3547,7 @@ msgstr "צור רשימת המתנה"
 msgid "Create a PDF of this image"
 msgstr "צור קובץ PDF מהתמונה"
 
-#: move_reclaim.js move_adopt.js
+#: move_adopt.js move_reclaim.js
 msgid "Create a cost record"
 msgstr "יצירת רשומת הוצאה"
 
@@ -3597,8 +3587,8 @@ msgstr "צור תבנית חדשה ע״י העתקת התבנית שנבחרה"
 msgid "Create a new waiting list entry from this found animal record"
 msgstr "צור רשומת רשימת המתנה מרשומת מציאות זו"
 
-#: waitinglist_new.js lostfound_new.js person_new.js event_new.js animal_new.js
-#: incident_new.js
+#: incident_new.js person_new.js waitinglist_new.js lostfound_new.js
+#: event_new.js animal_new.js
 msgid "Create and edit"
 msgstr "צור וערוך"
 
@@ -3662,12 +3652,12 @@ msgstr "צור הסעה"
 msgid "Create waiting list"
 msgstr "צור רשימת המתנה"
 
-#: html.py event_find_results.js animal_find_results.js waitinglist_results.js
-#: person_find_results.js animal_find.js person_find.js
+#: html.py person_find.js animal_find_results.js person_find_results.js
+#: event_find_results.js waitinglist_results.js animal_find.js
 msgid "Created By"
 msgstr "נוצר על ידי"
 
-#: html.py event_find_results.js person_find_results.js
+#: html.py person_find_results.js event_find_results.js
 msgid "Created Date"
 msgstr "נוצר בתאריך"
 
@@ -3689,11 +3679,10 @@ msgid ""
 "transactions"
 msgstr "יצירת תשלומים וסוגי תשלומים יוצרת חשבונות ועסקאות תואמות"
 
-#: log_new.js common_widgets.js licence_renewal.js move_foster.js
-#: waitinglist_new.js move_retailer.js move_reclaim.js lostfound_new.js
-#: person_new.js move_adopt.js move_reserve.js onlineform_incoming.js
-#: event_new.js animal_new.js move_transfer.js incident_new.js
-#: donation_receive.js
+#: log_new.js incident_new.js person_new.js move_transfer.js move_retailer.js
+#: donation_receive.js waitinglist_new.js move_foster.js licence_renewal.js
+#: onlineform_incoming.js move_adopt.js move_reclaim.js move_reserve.js
+#: lostfound_new.js common_widgets.js event_new.js animal_new.js
 msgid "Creating..."
 msgstr "שומר..."
 
@@ -3725,8 +3714,8 @@ msgstr "קריטריונים:"
 msgid "Crossbreed"
 msgstr "מעורב"
 
-#: wordprocessor.py header_edit_header.js lookups.js shelterview.js
-#: common_html.js options.js reports_querybuilder.js
+#: wordprocessor.py shelterview.js common_html.js header_edit_header.js
+#: options.js lookups.js reports_querybuilder.js
 msgid "Cruelty Case"
 msgstr "התעללות"
 
@@ -3746,7 +3735,7 @@ msgstr "נוכחי"
 msgid "Current Owner"
 msgstr "בעלים נוכחי"
 
-#: animal.js animal_bulk.js mobile2.js person_links.js
+#: person_links.js animal.js animal_bulk.js mobile2.js
 msgid "Current Vet"
 msgstr "וטרינר נוכחי"
 
@@ -3798,7 +3787,7 @@ msgstr "ת. לידה"
 msgid "Dachshund"
 msgstr "תחש (דקל)"
 
-#: animal_bulk.js animal_costs.js
+#: animal_costs.js animal_bulk.js
 msgid "Daily Boarding Cost"
 msgstr "עלות שהייה יומית"
 
@@ -3806,7 +3795,7 @@ msgstr "עלות שהייה יומית"
 msgid "Daily Fee"
 msgstr "תעריף יומי"
 
-#: dbupdate.py header.js options.js animal_observations.js
+#: dbupdate.py animal_observations.js header.js options.js
 msgid "Daily Observations"
 msgstr "תצפיות יומיות"
 
@@ -3822,7 +3811,7 @@ msgstr "דלמטי"
 msgid "Dandi Dinmont Terrier"
 msgstr "דנדי דינמונט טרייר"
 
-#: html.py header_edit_header.js lookups.js common_html.js
+#: html.py common_html.js header_edit_header.js lookups.js
 msgid "Dangerous"
 msgstr "מסוכן"
 
@@ -3842,12 +3831,12 @@ msgstr "הגנה על פרטיות מידע"
 msgid "Database"
 msgstr "מסד נתונים"
 
-#: wordprocessor.py html.py dbupdate.py log.js movements.js log_new.js
-#: publish_logs.js animal.js onlineform.js lostfound_find_results.js
-#: animal_find_results.js move_foster.js move_retailer.js move_reclaim.js
-#: move_adopt.js move_reserve.js person_links.js common_html.js animal_new.js
-#: citations.js animal_costs.js traploan.js move_transfer.js accounts_trx.js
-#: diary.js person.js maint_undelete.js person_investigation.js
+#: html.py wordprocessor.py dbupdate.py log.js log_new.js citations.js
+#: animal_find_results.js onlineform.js move_transfer.js move_retailer.js
+#: movements.js person_investigation.js move_foster.js person_links.js
+#: animal_costs.js animal.js common_html.js move_adopt.js move_reclaim.js
+#: lostfound_find_results.js move_reserve.js person.js accounts_trx.js
+#: maint_undelete.js animal_new.js diary.js traploan.js publish_logs.js
 msgid "Date"
 msgstr "תאריך"
 
@@ -3855,20 +3844,20 @@ msgstr "תאריך"
 msgid "Date '{0}' is not valid."
 msgstr "תאריך '{0}' אינו תקין."
 
-#: html.py animal.js mobile2.js common_html.js animal_new.js
+#: html.py animal.js common_html.js mobile2.js animal_new.js
 msgid "Date Brought In"
 msgstr "תאריך קליטה במקלט"
 
-#: lostfound.py lostfound.js header_edit_header.js lostfound_new.js
+#: lostfound.py header_edit_header.js lostfound_new.js lostfound.js
 msgid "Date Found"
 msgstr "התאריך בו נמצא"
 
-#: lostfound.js header_edit_header.js lostfound_new.js
+#: header_edit_header.js lostfound_new.js lostfound.js
 msgid "Date Lost"
 msgstr "תאריך אבידה"
 
-#: html.py animal_find_results.js person_new.js person.js
-#: common_personchooser.js
+#: html.py animal_find_results.js person_new.js common_personchooser.js
+#: person.js
 msgid "Date Of Birth"
 msgstr "תאריך לידה"
 
@@ -3880,7 +3869,7 @@ msgstr "תאריך הכנסה לרשימה"
 msgid "Date Removed"
 msgstr "תאריך הסרה"
 
-#: lostfound.js header_edit_header.js lostfound_new.js
+#: header_edit_header.js lostfound_new.js lostfound.js
 msgid "Date Reported"
 msgstr "תאריך דיווח"
 
@@ -3916,8 +3905,8 @@ msgstr "יש למלא תאריך אבידה"
 msgid "Date lost cannot be blank."
 msgstr "יש למלא תאריך אבידה."
 
-#: animal.js waitinglist_new.js waitinglist_results.js animal_new.js
-#: waitinglist.js
+#: waitinglist_new.js animal.js waitinglist_results.js waitinglist.js
+#: animal_new.js
 msgid "Date of Birth"
 msgstr "תאריך לידה"
 
@@ -4037,8 +4026,8 @@ msgstr "כרטיס חיוב (דביט)"
 msgid "Dec"
 msgstr "דצמ'"
 
-#: animal.py header_edit_header.js lookups.js person_links.js common_html.js
-#: options.js search.js animal_find.js reports_querybuilder.js
+#: animal.py search.js person_links.js common_html.js header_edit_header.js
+#: options.js animal_find.js lookups.js reports_querybuilder.js
 msgid "Deceased"
 msgstr "מת"
 
@@ -4050,7 +4039,7 @@ msgstr "תאריך פטירה"
 msgid "December"
 msgstr "דצמבר"
 
-#: html.py animal.js animal_find_results.js mobile2.js
+#: html.py animal_find_results.js animal.js mobile2.js
 msgid "Declawed"
 msgstr "ללא ציפורניים"
 
@@ -4154,16 +4143,16 @@ msgstr "פורמט ברירת מחדל לקוד תקרית הוא YYMM-XXX"
 msgid "Deflea"
 msgstr "הדברת פרעושים"
 
-#: rota.js diarytask.js log.js staff_rota.js common_tableform.js movements.js
-#: htmltemplates.js roles.js animal.js vaccination.js onlineform.js
-#: lostfound.js event.js donations.js additional.js lookups.js animal_bulk.js
-#: clinic_invoice.js medicalprofile.js vouchers.js media.js accounts.js
-#: onlineforms.js waitinglist_results.js animal_diet.js document_templates.js
-#: onlineform_incoming.js document_repository.js common_html.js incident.js
-#: diarytasks.js report_images.js litters.js licence.js waitinglist.js
-#: citations.js animal_costs.js reports.js stocklevel.js main.js test.js
-#: traploan.js users.js accounts_trx.js diary.js transport.js person.js
-#: boarding.js clinic_appointment.js person_investigation.js
+#: animal_diet.js users.js log.js incident.js main.js citations.js transport.js
+#: rota.js onlineform.js clinic_invoice.js onlineforms.js movements.js
+#: licence.js clinic_appointment.js vouchers.js person_investigation.js
+#: diarytask.js medicalprofile.js report_images.js htmltemplates.js reports.js
+#: donations.js animal_costs.js accounts.js document_templates.js animal.js
+#: onlineform_incoming.js vaccination.js staff_rota.js waitinglist_results.js
+#: common_html.js person.js animal_bulk.js roles.js test.js event.js
+#: accounts_trx.js boarding.js additional.js waitinglist.js stocklevel.js
+#: lookups.js diarytasks.js litters.js common_tableform.js
+#: document_repository.js media.js diary.js lostfound.js traploan.js
 msgid "Delete"
 msgstr "מחק"
 
@@ -4279,6 +4268,10 @@ msgstr "מחיקת דוחות"
 msgid "Delete Rota"
 msgstr "מחיקת סידור עבודה"
 
+#: onlineform_incoming.js
+msgid "Delete Spam"
+msgstr "מחק ספאם"
+
 #: roles.js
 msgid "Delete Stock"
 msgstr "מחיקת מלאי"
@@ -4355,7 +4348,7 @@ msgstr "נדחה"
 msgid "Deposit"
 msgstr "פקדון"
 
-#: common_widgets.js donations.js
+#: donations.js common_widgets.js
 msgid "Deposit Account"
 msgstr "חשבון פקדון"
 
@@ -4363,11 +4356,11 @@ msgstr "חשבון פקדון"
 msgid "Deposit Returned"
 msgstr "פקדון הוחזר"
 
-#: lostfound.py html.py animal.js event.js animal_find_results.js
-#: incident_find.js lookups.js clinic_invoice.js waitinglist_new.js
-#: report_export.js accounts.js onlineforms.js waitinglist_results.js
-#: mobile2.js animal_diet.js incident.js event_new.js waitinglist.js
-#: animal_costs.js reports.js stocklevel.js accounts_trx.js
+#: lostfound.py html.py animal_diet.js incident.js animal_find_results.js
+#: incident_find.js clinic_invoice.js onlineforms.js waitinglist_new.js
+#: reports.js animal_costs.js accounts.js animal.js waitinglist_results.js
+#: mobile2.js event.js accounts_trx.js waitinglist.js stocklevel.js lookups.js
+#: event_new.js report_export.js
 msgid "Description"
 msgstr "תיאור"
 
@@ -4387,8 +4380,8 @@ msgstr "בטל בחירה"
 msgid "Desktop/Tablet UI"
 msgstr "ממשק למחשב/טבלט"
 
-#: animal.js lostfound.js event.js header_edit_header.js common_html.js
-#: incident.js waitinglist.js
+#: incident.js animal.js common_html.js header_edit_header.js event.js
+#: waitinglist.js lostfound.js
 msgid "Details"
 msgstr "פרטים"
 
@@ -4400,7 +4393,7 @@ msgstr "דבון רקס"
 msgid "Dialog title"
 msgstr "כותרת תיבת דו-שיח"
 
-#: html.py roles.js calendarview.js header_edit_header.js mobile2.js options.js
+#: html.py calendarview.js header_edit_header.js roles.js options.js mobile2.js
 msgid "Diary"
 msgstr "משימות"
 
@@ -4528,7 +4521,7 @@ msgstr "מתו היום"
 msgid "Died {0}"
 msgstr "מת {0}"
 
-#: html.py lookups.py animal_find_results.js header_edit_header.js mobile2.js
+#: lookups.py html.py animal_find_results.js header_edit_header.js mobile2.js
 #: animal_find.js
 msgid "Diet"
 msgstr "הוראות תזונה"
@@ -4541,7 +4534,7 @@ msgstr "הוראות תזונה"
 msgid "Disable 2FA"
 msgstr "השבת 2FA"
 
-#: header_edit_header.js mobile2.js incident.js
+#: incident.js header_edit_header.js mobile2.js
 msgid "Dispatch"
 msgstr "שילוח"
 
@@ -4553,7 +4546,7 @@ msgstr "כתובת שילוח"
 msgid "Dispatch Between"
 msgstr "שילוח בין"
 
-#: html.py incident_find_results.js mobile2.js incident.js incident_new.js
+#: html.py incident.js incident_new.js mobile2.js incident_find_results.js
 msgid "Dispatch Date/Time"
 msgstr "תאריך וזמן שילוח"
 
@@ -4565,7 +4558,7 @@ msgstr "שיגור לאירוע"
 msgid "Dispatch {0}: {1}"
 msgstr "שילוח {0}: {1}"
 
-#: incident_find.js mobile2.js incident.js incident_new.js
+#: incident.js incident_new.js incident_find.js mobile2.js
 msgid "Dispatched ACO"
 msgstr "קצין טיפול בבע״ח שנשלח"
 
@@ -4585,11 +4578,11 @@ msgstr "הצג כפתור חיפוש ליד תיבת החיפוש"
 msgid "Distemper"
 msgstr "כלבלבת"
 
-#: lookups.js common_html.js
+#: common_html.js lookups.js
 msgid "Do Not Publish"
 msgstr "לא לפרסום"
 
-#: wordprocessor.py lookups.js animal_bulk.js common_html.js
+#: wordprocessor.py common_html.js animal_bulk.js lookups.js
 msgid "Do Not Register Microchip"
 msgstr "לא לרשום שבב"
 
@@ -4619,9 +4612,9 @@ msgstr "לא להציג"
 msgid "Doberman Pinscher"
 msgstr "דוברמן"
 
-#: dbupdate.py medical.js movements.js animal.js lostfound.js vouchers.js
-#: incident.js licence.js waitinglist.js transport.js person.js boarding.js
-#: clinic_appointment.js
+#: dbupdate.py incident.js transport.js movements.js licence.js
+#: clinic_appointment.js medical.js vouchers.js animal.js person.js boarding.js
+#: waitinglist.js lostfound.js
 msgid "Document"
 msgstr "מסמך"
 
@@ -4745,8 +4738,8 @@ msgstr "חמור"
 msgid "Donkey/Mule"
 msgstr "חמור/פרד"
 
-#: html.py header_edit_header.js lookups.js person_find_results.js
-#: common_html.js reports_querybuilder.js
+#: html.py person_find_results.js common_html.js header_edit_header.js
+#: lookups.js reports_querybuilder.js
 msgid "Donor"
 msgstr "תורם"
 
@@ -4770,7 +4763,7 @@ msgstr "הורד קובץ"
 msgid "Draft"
 msgstr "טיוטה"
 
-#: header_edit_header.js lookups.js person_links.js common_html.js transport.js
+#: transport.js person_links.js common_html.js header_edit_header.js lookups.js
 #: reports_querybuilder.js
 msgid "Driver"
 msgstr "נהג"
@@ -4779,7 +4772,7 @@ msgstr "נהג"
 msgid "Driving license, passport or other identification number"
 msgstr "מספר זהות, רשיון נהיגה, דרכון או מספר מזהה אחר"
 
-#: media.js document_repository.js
+#: document_repository.js media.js
 msgid "Drop files here..."
 msgstr "שחרר קבצים כאן..."
 
@@ -4795,8 +4788,8 @@ msgstr "כתובת למסירה"
 msgid "Duck"
 msgstr "ברווז"
 
-#: wordprocessor.py common_widgets.js donations.js citations.js traploan.js
-#: reports_querybuilder.js
+#: wordprocessor.py citations.js donations.js common_widgets.js
+#: reports_querybuilder.js traploan.js
 msgid "Due"
 msgstr "תאריך יעד"
 
@@ -4808,19 +4801,19 @@ msgstr "תאריך יעד בין"
 msgid "Due between two dates"
 msgstr "תאריך יעד בין שני תאריכים"
 
-#: medical.js vaccination.js donations.js test.js
+#: medical.js donations.js vaccination.js test.js
 msgid "Due in next month"
 msgstr "מיועד לחודש הבא"
 
-#: medical.js vaccination.js donations.js test.js transport.js
+#: transport.js medical.js donations.js vaccination.js test.js
 msgid "Due in next week"
 msgstr "מיועד לשבוע הבא"
 
-#: medical.js vaccination.js donations.js test.js
+#: medical.js donations.js vaccination.js test.js
 msgid "Due in next year"
 msgstr "מיועד לשנה הבאה"
 
-#: medical.js vaccination.js test.js transport.js
+#: transport.js medical.js vaccination.js test.js
 msgid "Due today"
 msgstr "מיועד להיום"
 
@@ -5096,14 +5089,15 @@ msgstr "מאו מצרי"
 msgid "Electricity Bills"
 msgstr "חשבונות חשמל"
 
-#: html.py onlineform.py movements.js animal.js onlineform.js lostfound.js
-#: header_edit_header.js media.js waitinglist_results.js person_find_results.js
-#: mobile2.js report_toolbar.js document_repository.js common_html.js
-#: incident.js waitinglist.js options.js users.js person.js
+#: onlineform.py html.py users.js incident.js person_find_results.js
+#: report_toolbar.js onlineform.js movements.js animal.js
+#: waitinglist_results.js common_html.js person.js header_edit_header.js
+#: options.js mobile2.js waitinglist.js document_repository.js media.js
+#: lostfound.js
 msgid "Email"
 msgstr "מייל"
 
-#: person_new.js change_user_settings.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js change_user_settings.js
 msgid "Email Address"
 msgstr "כתובת מייל"
 
@@ -5169,11 +5163,11 @@ msgstr "שלח לינק לקופת אימוץ במייל"
 msgid "Email link to license checkout"
 msgstr "שלח לינק לתשלום על רישוי"
 
-#: service_sign_document.js service_checkout_adoption.js
+#: service_checkout_adoption.js service_sign_document.js
 msgid "Email me a signed copy of the document at {0}"
 msgstr "שלח עותק חתום של המסמך ב {0}"
 
-#: media.js document_repository.js
+#: document_repository.js media.js
 msgid "Email media"
 msgstr "שלח קבצים"
 
@@ -5213,7 +5207,7 @@ msgstr "שלח משתמש/סיסמא במייל למשתמש"
 msgid "Email this note to recipients now"
 msgstr "שלח משימה זו לנמענים"
 
-#: lostfound.js waitinglist.js person.js
+#: person.js waitinglist.js lostfound.js
 msgid "Email this person"
 msgstr "שלח מייל לאדם זה"
 
@@ -5242,6 +5236,14 @@ msgstr "הפעל 2FA"
 #: publish_options.js
 msgid "Enable FTP uploading"
 msgstr "אפשר להעלות קבצים באמצעות FTP"
+
+#: options.js
+msgid "Enable access permissions for incident records"
+msgstr "הפעל הרשאות גישה לרשומות תקריות"
+
+#: options.js
+msgid "Enable access permissions for person records"
+msgstr "הפעל הרשאות גישה לרשומות אנשים"
 
 #: options.js
 msgid "Enable accounts functionality"
@@ -5327,7 +5329,7 @@ msgstr "מסתיים"
 msgid "Ends after"
 msgstr "מסתיים לאחר"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "Energy level"
 msgstr "רמות אנרגיה"
 
@@ -5451,8 +5453,8 @@ msgstr "אנטלבוכר זננהונד"
 msgid "Entry"
 msgstr "קליטה"
 
-#: reports.py animal.js mobile_report.js animal_bulk.js mobile2.js
-#: common_html.js animal_new.js animal_find.js report_criteria.js
+#: reports.py report_criteria.js animal.js common_html.js animal_bulk.js
+#: mobile2.js animal_find.js animal_new.js mobile_report.js
 msgid "Entry Category"
 msgstr "קטגוריית קליטה"
 
@@ -5464,7 +5466,7 @@ msgstr "תרומה לקליטה"
 msgid "Entry History"
 msgstr "היסטוריית קליטה"
 
-#: html.py animal_find_results.js mobile2.js options.js
+#: html.py animal_find_results.js options.js mobile2.js
 msgid "Entry Reason"
 msgstr "סיבת קליטה"
 
@@ -5476,8 +5478,8 @@ msgstr "קטגוריית סיבת קליטה"
 msgid "Entry Reasons"
 msgstr "סיבות קליטה"
 
-#: html.py animal.js animal_find_results.js mobile2.js common_html.js
-#: animal_new.js options.js animal_find.js
+#: html.py animal_find_results.js animal.js common_html.js options.js
+#: mobile2.js animal_find.js animal_new.js
 msgid "Entry Type"
 msgstr "סוג קליטה"
 
@@ -5541,7 +5543,7 @@ msgstr "הערכה"
 msgid "Estimated age '{0}' is not valid."
 msgstr "גיל משוער '{0}' אינו חוקי."
 
-#: animal.py dbupdate.py move_deceased.js animal.js animal_find_results.js
+#: animal.py dbupdate.py move_deceased.js animal_find_results.js animal.js
 #: reports_querybuilder.js
 msgid "Euthanized"
 msgstr "הורדם"
@@ -5570,15 +5572,15 @@ msgstr "אירוע בין"
 msgid "Event Name"
 msgstr "שם אירוע"
 
-#: event.py event.js event_animals.js event_new.js
+#: event.py event_animals.js event.js event_new.js
 msgid "Event must have a start date."
 msgstr "יש למלא תאריך התחלה לאירוע."
 
-#: event.py event.js event_animals.js event_new.js
+#: event.py event_animals.js event.js event_new.js
 msgid "Event must have an address."
 msgstr "יש למלא כתובת לאירוע."
 
-#: event.py event.js event_animals.js event_new.js
+#: event.py event_animals.js event.js event_new.js
 msgid "Event must have an end date."
 msgstr "יש למלא תאריך סיום לאירוע."
 
@@ -5586,7 +5588,7 @@ msgstr "יש למלא תאריך סיום לאירוע."
 msgid "Event successfully created"
 msgstr "אירוע נוצר בהצלחה"
 
-#: html.py roles.js animal.js
+#: html.py animal.js roles.js
 msgid "Events"
 msgstr "אירועים"
 
@@ -5606,7 +5608,7 @@ msgstr "אין לכלול חיות צעירות מ-"
 msgid "Exclude animals with more than"
 msgstr "אין לכלול חיות עם יותר מ"
 
-#: header_edit_header.js lookups.js common_html.js
+#: common_html.js header_edit_header.js lookups.js
 msgid "Exclude from bulk email"
 msgstr "לא לכלול במייל לתפוצה"
 
@@ -5710,8 +5712,8 @@ msgstr "חיסונים שפג תוקפם בחודש שעבר"
 msgid "Expired in the last week"
 msgstr "חיסונים שפג תוקפם בשבוע שעבר"
 
-#: wordprocessor.py vaccination.js vouchers.js litters.js licence.js main.js
-#: person.js
+#: wordprocessor.py main.js licence.js vouchers.js vaccination.js person.js
+#: litters.js
 msgid "Expires"
 msgstr "תפוגה"
 
@@ -5719,7 +5721,7 @@ msgstr "תפוגה"
 msgid "Expiring in next month"
 msgstr "חיסונים שפג תוקפם בחודש הבא"
 
-#: licence_renewal.js person_find_results.js stocklevel.js
+#: person_find_results.js licence_renewal.js stocklevel.js
 msgid "Expiry"
 msgstr "תפוגה"
 
@@ -5731,7 +5733,7 @@ msgstr "תאריך תפוגה"
 msgid "Export"
 msgstr "ייצוא"
 
-#: main.py html.py roles.js csvexport.js
+#: main.py html.py csvexport.js roles.js
 msgid "Export Animals as CSV"
 msgstr "יצא חיות כ-CSV"
 
@@ -5771,7 +5773,7 @@ msgstr "יצוא כל בסיס הנתונים עלול לקחת זמן וליי�
 msgid "External"
 msgstr "חיצוני"
 
-#: document_templates.js reports.js
+#: reports.js document_templates.js
 msgid "Extra Images"
 msgstr "תמונות נוספות"
 
@@ -5819,7 +5821,7 @@ msgstr "FIV-"
 msgid "FIV/L Test Date"
 msgstr "תאריך בדיקת FIV/L"
 
-#: html.py animal.js animal_find_results.js mobile2.js
+#: html.py animal_find_results.js animal.js mobile2.js
 msgid "FIV/L Tested"
 msgstr "נבדק ל-FIV/L"
 
@@ -5879,8 +5881,8 @@ msgstr "טורטישל חום בהיר"
 msgid "FeLV"
 msgstr "FeLV"
 
-#: html.py lostfound_find_results.js lostfound.js animal_find_results.js
-#: lostfound_find.js lostfound_new.js
+#: html.py animal_find_results.js lostfound_find.js lostfound_find_results.js
+#: lostfound_new.js lostfound.js
 msgid "Features"
 msgstr "תכונות"
 
@@ -5892,7 +5894,7 @@ msgstr "פבר'"
 msgid "February"
 msgstr "פברואר"
 
-#: licence_renewal.js donations.js licence.js boarding.js
+#: licence.js licence_renewal.js donations.js accounts_trx.js boarding.js
 msgid "Fee"
 msgstr "עמלה"
 
@@ -5928,7 +5930,7 @@ msgstr "שדות"
 msgid "Fila Brasileiro"
 msgstr "פילה ברזילרו"
 
-#: dbupdate.py csvimport.js media.js csvimport_stripe.js csvimport_paypal.js
+#: dbupdate.py csvimport_stripe.js csvimport.js media.js csvimport_paypal.js
 msgid "File"
 msgstr "קובץ"
 
@@ -5936,8 +5938,8 @@ msgstr "קובץ"
 msgid "File types accepted: {0}"
 msgstr "סוגי קבצים אפשריים: {0}"
 
-#: common_tableform.js incident_find.js common_animalchoosermulti.js
-#: animal_find.js csvexport.js
+#: common_animalchoosermulti.js incident_find.js csvexport.js animal_find.js
+#: common_tableform.js
 msgid "Filter"
 msgstr "סינון"
 
@@ -5957,7 +5959,7 @@ msgstr "פרוש"
 msgid "Find Animal"
 msgstr "חיפוש חיה"
 
-#: header.js event_find.js
+#: event_find.js header.js
 msgid "Find Event"
 msgstr "חפש אירוע"
 
@@ -5973,7 +5975,7 @@ msgstr "חיפוש תקרית"
 msgid "Find Lost Animal"
 msgstr "חיפוש אבידות"
 
-#: mobile2.js person_find.js
+#: person_find.js mobile2.js
 msgid "Find Person"
 msgstr "חיפוש אנשים"
 
@@ -6081,7 +6083,7 @@ msgstr "חפש חבר מועדון"
 msgid "Find organization"
 msgstr "חיפוש ארגון"
 
-#: html.py header.js common_personchooser.js
+#: html.py common_personchooser.js header.js
 msgid "Find person"
 msgstr "חיפוש אנשים"
 
@@ -6145,7 +6147,7 @@ msgstr "פרטי משפחה"
 msgid "First Names"
 msgstr "שמות פרטיים"
 
-#: person_new.js mobile2.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js mobile2.js
 msgid "First name(s)"
 msgstr "שם או שמות פרטיים"
 
@@ -6157,7 +6159,7 @@ msgstr "עבירה ראשונה"
 msgid "Fish"
 msgstr "דג"
 
-#: lookups.py reports.py mobile_report.js report_criteria.js
+#: lookups.py reports.py report_criteria.js mobile_report.js
 msgid "Flag"
 msgstr "תגית"
 
@@ -6169,10 +6171,10 @@ msgstr "תגית {0} חסרה"
 msgid "Flag {0}"
 msgstr "תגית {0}"
 
-#: person.py html.py animal.js onlineform.js animal_find_results.js
-#: person_find_results.js person_new.js common_animalchoosermulti.js
-#: common_html.js csvimport_stripe.js csvimport_paypal.js animal_find.js
-#: person.js common_personchooser.js person_find.js
+#: html.py person.py common_animalchoosermulti.js person_find.js
+#: animal_find_results.js person_find_results.js person_new.js onlineform.js
+#: common_personchooser.js csvimport_stripe.js animal.js common_html.js
+#: person.js animal_find.js media.js csvimport_paypal.js
 msgid "Flags"
 msgstr "תגיות"
 
@@ -6192,6 +6194,10 @@ msgstr "ארנב פלמי ענק"
 msgid "Florida White"
 msgstr "ארנב לבן"
 
+#: incident.js mobile2.js
+msgid "Follow Up"
+msgstr "מעקב"
+
 #: dbupdate.py header_edit_header.js
 msgid "Followup"
 msgstr "מעקב"
@@ -6204,7 +6210,7 @@ msgstr "בצע מעקב בין"
 msgid "Followup Date"
 msgstr "תאריך מעקב"
 
-#: mobile2.js incident.js
+#: incident.js mobile2.js
 msgid "Followup Date/Time"
 msgstr "תאריך וזמן מעקב"
 
@@ -6220,15 +6226,15 @@ msgstr "בצע מעקב בין"
 msgid "Font Size (pt)"
 msgstr "גודל פונט (נקודות)"
 
-#: htmltemplates.js onlineforms.js reports.js
+#: onlineforms.js htmltemplates.js reports.js
 msgid "Footer"
 msgstr "כותרת תחתונה"
 
-#: diarytask.js main.js diary.js clinic_appointment.js
+#: main.js clinic_appointment.js diarytask.js diary.js
 msgid "For"
 msgstr "עבור"
 
-#: users.py common_html.js common_personchooser.js
+#: users.py common_personchooser.js common_html.js
 msgid "Forbidden"
 msgstr "פעולה לא חוקית"
 
@@ -6263,16 +6269,20 @@ msgstr "התאם תבנית מספרי טלפון לאזור שלי"
 msgid "Fortnightly"
 msgstr "כל שבועיים"
 
-#: dbupdate.py move_foster.js publish_options.js common_animalchoosermulti.js
+#: dbupdate.py common_animalchoosermulti.js move_foster.js publish_options.js
 #: common_html.js
 msgid "Foster"
 msgstr "אומנה"
+
+#: onlineform.js
+msgid "Foster Animal"
+msgstr "חיה לאומנה"
 
 #: movements.js
 msgid "Foster Book"
 msgstr "רשימת האומנות"
 
-#: html.py person_find_results.js mobile2.js person.js
+#: html.py person_find_results.js person.js mobile2.js
 msgid "Foster Capacity"
 msgstr "קיבולת אומנה"
 
@@ -6316,8 +6326,8 @@ msgstr "באומנה בין התאריכים"
 msgid "Fostered to {0} since {1}"
 msgstr "נמסר לאומנה אצל {0} מאז {1}"
 
-#: html.py animal_find_results.js header_edit_header.js lookups.js
-#: person_find_results.js common_html.js animal_new.js reports_querybuilder.js
+#: html.py animal_find_results.js person_find_results.js common_html.js
+#: header_edit_header.js lookups.js reports_querybuilder.js animal_new.js
 msgid "Fosterer"
 msgstr "אומנה"
 
@@ -6333,11 +6343,11 @@ msgstr "אומנה (מקום פנוי)"
 msgid "Fosterer Medical Report"
 msgstr "דוח רפואי לאומנה"
 
-#: header_edit_header.js search.js
+#: search.js header_edit_header.js
 msgid "Found"
 msgstr "מציאות"
 
-#: dbupdate.py onlineform_incoming.js search.js
+#: dbupdate.py search.js onlineform_incoming.js
 msgid "Found Animal"
 msgstr "מציאות"
 
@@ -6365,7 +6375,7 @@ msgstr "מציאות: {0}"
 msgid "Found Animals"
 msgstr "מציאות"
 
-#: log.js lostfound.js media.js diary.js
+#: log.js media.js diary.js lostfound.js
 msgid "Found animal - {0} {1} [{2}]"
 msgstr "מציאות - {0} {1} [{2}]"
 
@@ -6413,7 +6423,7 @@ msgstr "בולדוג צרפתי"
 msgid "French-Lop"
 msgstr "ארנב לופ צרפתי"
 
-#: medical.js donations.js medicalprofile.js
+#: medical.js medicalprofile.js donations.js
 msgid "Frequency"
 msgstr "תדירות"
 
@@ -6425,12 +6435,12 @@ msgstr "שאלות נפוצות"
 msgid "Fri"
 msgstr "ו׳"
 
-#: calendarview.js common.js reports.js options.js clinic_calendar.js
+#: reports.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Friday"
 msgstr "שישי"
 
-#: common_widgets.js onlineform_incoming.js mailmerge.js
-#: giftaid_hmrc_spreadsheet.js
+#: giftaid_hmrc_spreadsheet.js onlineform_incoming.js mailmerge.js
+#: common_widgets.js
 msgid "From"
 msgstr "מ"
 
@@ -6466,8 +6476,8 @@ msgstr "קליטה עתידית"
 msgid "Future notes"
 msgstr "משימות עתידיות"
 
-#: dbupdate.py onlineform.js person_new.js person.js common_personchooser.js
-#: person_find.js
+#: dbupdate.py person_find.js person_new.js onlineform.js
+#: common_personchooser.js person.js
 msgid "GDPR Contact Opt-In"
 msgstr "GDPR הצטרפות ליצירת קשר"
 
@@ -6491,7 +6501,7 @@ msgstr "שממית"
 msgid "General"
 msgstr "כללי"
 
-#: mobile_report.js report_criteria.js giftaid_hmrc_spreadsheet.js
+#: giftaid_hmrc_spreadsheet.js report_criteria.js mobile_report.js
 msgid "Generate"
 msgstr "צור דוח"
 
@@ -6527,7 +6537,7 @@ msgstr "צור מסמך מתנועה זו"
 msgid "Generate a document from this person"
 msgstr "צור מסמך מאדם זה"
 
-#: lostfound.js waitinglist.js
+#: waitinglist.js lostfound.js
 msgid "Generate a document from this record"
 msgstr "צור מסמך מרשומה זו"
 
@@ -6547,7 +6557,7 @@ msgstr "צור קוד חדש ושמור בארכיון את הרשומה הנו�
 msgid "Generate a random name for this animal"
 msgstr "הגרל שם אקראי לחיה זו"
 
-#: licence_renewal.js licence.js
+#: licence.js licence_renewal.js
 msgid "Generate a unique license number"
 msgstr "צור מספר רשיון ייחודי"
 
@@ -6619,9 +6629,13 @@ msgstr "ווירהרד פוינטר גרמני"
 msgid "Get more reports from sheltermanager.com"
 msgstr "יבא עוד דוחות מ- sheltermanager.com"
 
-#: common_widgets.js donations.js
+#: donations.js common_widgets.js
 msgid "Gift Aid"
 msgstr "סיוע במתנה"
+
+#: accounts_trx.js
+msgid "Gift Aid Applied"
+msgstr "החזר מס (Gift Aid) הוחל"
 
 #: html.py person_find_results.js reports_querybuilder.js
 msgid "GiftAid"
@@ -6726,13 +6740,13 @@ msgstr "ידידותי לילדים"
 msgid "Good With Dogs"
 msgstr "ידידותי לכלבים"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "Good on lead"
 msgstr "טוב עם רצועה"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "Good traveller"
-msgstr "מטייל טוב"
+msgstr "מתנהג יפה ברכב"
 
 #: common_html.js
 msgid "Good with"
@@ -6750,12 +6764,12 @@ msgstr "ידידותי לילדים"
 msgid "Good with Dogs"
 msgstr "ידידותי לכלבים"
 
-#: person.py animal.js animal_bulk.js shelterview.js animal_find.js person.js
+#: person.py shelterview.js animal.js person.js animal_bulk.js animal_find.js
 #: reports_querybuilder.js
 msgid "Good with cats"
 msgstr "ידידותי לחתולים"
 
-#: person.py animal.js shelterview.js animal_find.js person.js
+#: person.py shelterview.js animal.js person.js animal_find.js
 #: reports_querybuilder.js
 msgid "Good with children"
 msgstr "ידידותי לילדים"
@@ -6768,16 +6782,16 @@ msgstr "ידידותי לילדים מעל גיל 12"
 msgid "Good with children over 5"
 msgstr "ידידותי לילדים מעל גיל 5"
 
-#: person.py animal.js animal_bulk.js shelterview.js animal_find.js person.js
+#: person.py shelterview.js animal.js person.js animal_bulk.js animal_find.js
 #: reports_querybuilder.js
 msgid "Good with dogs"
 msgstr "ידידותי לכלבים"
 
-#: animal.js
+#: shelterview.js animal.js animal_bulk.js
 msgid "Good with elderly"
-msgstr "ידידותי לקשישים"
+msgstr "מתאים לאימוץ ע״י קשישים"
 
-#: person.py lookups.py animal_bulk.js
+#: lookups.py person.py animal_bulk.js
 msgid "Good with kids"
 msgstr "ידידותי לחתולים"
 
@@ -6829,6 +6843,10 @@ msgstr "גרייהאונד"
 msgid "Gross"
 msgstr "ברוטו"
 
+#: reports_querybuilder.js
+msgid "Group (optional)"
+msgstr "קבוצה (לא חובה)"
+
 #: dbupdate.py
 msgid "Guinea Pig"
 msgstr "שרקן/קביה"
@@ -6877,11 +6895,11 @@ msgstr "הוואנז"
 msgid "Havanese"
 msgstr "הוואנז"
 
-#: htmltemplates.js onlineforms.js reports.js
+#: onlineforms.js htmltemplates.js reports.js
 msgid "Header"
 msgstr "כותרת עליונה"
 
-#: html.py animal.js animal_find_results.js mobile2.js
+#: html.py animal_find_results.js animal.js mobile2.js
 msgid "Health Problems"
 msgstr "בעיות בריאות"
 
@@ -6905,7 +6923,7 @@ msgstr "תאריך בדיקת תולעת הפארק"
 msgid "Heartworm Test Result"
 msgstr "תוצאות בדיקת תולעת הפארק"
 
-#: html.py animal.js animal_find_results.js mobile2.js reports_querybuilder.js
+#: html.py animal_find_results.js animal.js mobile2.js reports_querybuilder.js
 msgid "Heartworm Tested"
 msgstr "נבדק לתולעת הפארק"
 
@@ -6921,7 +6939,7 @@ msgstr "תולעת הפארק-"
 msgid "Hedgehog"
 msgstr "קיפוד"
 
-#: medical.py medical.js main.js reports_querybuilder.js
+#: medical.py main.js medical.js reports_querybuilder.js
 msgid "Held"
 msgstr "נשמר"
 
@@ -6981,8 +6999,8 @@ msgstr "הימלאיה"
 msgid "History"
 msgstr "היסטוריה"
 
-#: html.py dbupdate.py animal.js animal_find_results.js shelterview.js
-#: common_html.js options.js animal_find.js transport.js
+#: html.py dbupdate.py animal_find_results.js transport.js shelterview.js
+#: animal.js common_html.js options.js animal_find.js
 msgid "Hold"
 msgstr "החזקה"
 
@@ -6990,8 +7008,8 @@ msgstr "החזקה"
 msgid "Hold the animal until this date or blank to hold indefinitely"
 msgstr "החזק את החיה עד תאריך זה או השאר ריק כדי להחזיק אותה ללא גבול"
 
-#: html.py animal.js animal_find_results.js header_edit_header.js
-#: animal_bulk.js animal_new.js
+#: html.py animal_find_results.js animal.js animal_bulk.js
+#: header_edit_header.js animal_new.js
 msgid "Hold until"
 msgstr "החזק עד"
 
@@ -7003,7 +7021,7 @@ msgstr "החזק עד {0}"
 msgid "Holland Lop"
 msgstr "ארנב שמוט אוזניים הולנדי"
 
-#: html.py mobile_sign.js header.js
+#: html.py header.js mobile_sign.js
 msgid "Home"
 msgstr "בית"
 
@@ -7011,8 +7029,8 @@ msgstr "בית"
 msgid "Home Checker"
 msgstr "בודק בתים"
 
-#: waitinglist_results.js person_find_results.js person_new.js mobile2.js
-#: person.js common_personchooser.js
+#: person_find_results.js person_new.js common_personchooser.js
+#: waitinglist_results.js person.js mobile2.js
 msgid "Home Phone"
 msgstr "טלפון בבית"
 
@@ -7036,8 +7054,8 @@ msgstr "היסטוריית בדיקות הבית"
 msgid "Homecheck areas"
 msgstr "אזורי בדיקות בית"
 
-#: html.py header_edit_header.js lookups.js person_find_results.js mobile2.js
-#: common_html.js reports_querybuilder.js
+#: html.py person_find_results.js common_html.js header_edit_header.js
+#: mobile2.js lookups.js reports_querybuilder.js
 msgid "Homechecked"
 msgstr "עבר בדק בית"
 
@@ -7057,8 +7075,8 @@ msgstr "הבית נבדק בין"
 msgid "Homechecked by"
 msgstr "הבית נבדק על ידי"
 
-#: html.py header_edit_header.js lookups.js person_find_results.js
-#: common_html.js person.js
+#: html.py person_find_results.js common_html.js person.js
+#: header_edit_header.js lookups.js
 msgid "Homechecker"
 msgstr "בודק בתים"
 
@@ -7082,8 +7100,8 @@ msgstr "האונד"
 msgid "Hours"
 msgstr "שעות"
 
-#: person.py html.py animal.js animal_find_results.js animal_bulk.js mobile2.js
-#: shelterview.js animal_find.js person.js reports_querybuilder.js
+#: html.py person.py animal_find_results.js shelterview.js animal.js person.js
+#: animal_bulk.js mobile2.js animal_find.js reports_querybuilder.js
 msgid "Housetrained"
 msgstr "מאולף לצרכים"
 
@@ -7103,7 +7121,7 @@ msgstr "סיימתי, אל תציג תיבה זו שוב."
 msgid "ID"
 msgstr "מזהה"
 
-#: person_new.js mobile2.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js mobile2.js
 msgid "ID Number"
 msgstr "מספר זהות"
 
@@ -7201,6 +7219,14 @@ msgid ""
 "locations."
 msgstr "אם לא נבחרו מיקומים, יפורסמו חיות בכל המיקומים."
 
+#: header.js
+msgid ""
+"If you haven't already, you should create and use an individual user account "
+"for data entry at {0}."
+msgstr ""
+"אם עדיין לא עשית זאת, כדאי ליצור ולהשתמש בחשבון משתמש אישי להזנת נתונים "
+"ב־{0}."
+
 #: donations.js
 msgid ""
 "If you were charged a transaction fee for receiving this payment, the amount"
@@ -7214,7 +7240,7 @@ msgstr "איגואנה"
 msgid "Illyrian Sheepdog"
 msgstr "שרפלנינה (כלב רועים יוגוסלבי)"
 
-#: html.py onlineform.js animal_find_results.js media.js waitinglist_results.js
+#: html.py animal_find_results.js onlineform.js waitinglist_results.js media.js
 msgid "Image"
 msgstr "תמונה"
 
@@ -7222,7 +7248,11 @@ msgstr "תמונה"
 msgid "Image file"
 msgstr "קובץ תמונה"
 
-#: csvimport.js onlineforms.js csvimport_stripe.js csvimport_paypal.js
+#: mobile2.js
+msgid "Images"
+msgstr "תמונות"
+
+#: onlineforms.js csvimport_stripe.js csvimport.js csvimport_paypal.js
 msgid "Import"
 msgstr "ייבוא"
 
@@ -7312,6 +7342,13 @@ msgid ""
 "{0}"
 msgstr "בחשבון פייפל, אפשר התראות תשלום מיידיות עם הכתובת {0}"
 
+#: options.js
+msgid ""
+"In your Square account, enable a webhook to send 'payment.updated' events to "
+"{0}"
+msgstr ""
+"בחשבון Square, צור webhook שישלח אירועי 'checkout.session.completed' ל {0}"
+
 #: dbupdate.py
 msgid "In-Kind Donation"
 msgstr "תרומה לא כספית (מזון, ציוד וכו׳)"
@@ -7324,8 +7361,8 @@ msgstr "לא פעיל"
 msgid "Inactive - do not include"
 msgstr "לא פעיל – לא לכלול"
 
-#: dbupdate.py header_edit_header.js mobile2.js onlineform_incoming.js
-#: citations.js search.js reports_querybuilder.js
+#: dbupdate.py citations.js search.js onlineform_incoming.js
+#: header_edit_header.js mobile2.js reports_querybuilder.js
 msgid "Incident"
 msgstr "תקרית"
 
@@ -7357,8 +7394,8 @@ msgstr "תקרית בין"
 msgid "Incident Completed Types"
 msgstr "סוגי סיום תקרית"
 
-#: html.py animal.js incident_find_results.js mobile2.js incident.js
-#: incident_new.js
+#: html.py incident.js incident_new.js animal.js mobile2.js
+#: incident_find_results.js
 msgid "Incident Date/Time"
 msgstr "תאריך וזמן תקרית"
 
@@ -7366,7 +7403,7 @@ msgstr "תאריך וזמן תקרית"
 msgid "Incident Number"
 msgstr "מספר תקרית"
 
-#: html.py incident_find.js incident_find_results.js options.js
+#: html.py incident_find.js options.js incident_find_results.js
 msgid "Incident Type"
 msgstr "סוג תקרית"
 
@@ -7398,7 +7435,7 @@ msgstr "מעקב אחרי תקרית"
 msgid "Incident {0} successfully created."
 msgstr "תקרית {0} נוצרה בהצלחה."
 
-#: log.js media.js incident.js citations.js diary.js
+#: log.js incident.js citations.js media.js diary.js
 msgid "Incident {0}, {1}: {2}"
 msgstr "תקרית {0}, {1}: {2}"
 
@@ -7406,7 +7443,7 @@ msgstr "תקרית {0}, {1}: {2}"
 msgid "Incident: {0}"
 msgstr "תקרית: {0}"
 
-#: animal.js document_templates.js
+#: document_templates.js animal.js
 msgid "Incidents"
 msgstr "תקריות"
 
@@ -7614,7 +7651,7 @@ msgstr "תקריות שלא נסגרו"
 msgid "Incomplete notes upto today"
 msgstr "משימות פתוחות עד היום"
 
-#: media.js onlineforms.js
+#: onlineforms.js media.js
 msgid "Indefinitely"
 msgstr "ללא הגבלת זמן"
 
@@ -7622,7 +7659,7 @@ msgstr "ללא הגבלת זמן"
 msgid "Index"
 msgstr "אינדקס"
 
-#: person_new.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js
 msgid "Individual"
 msgstr "יחיד"
 
@@ -7634,8 +7671,8 @@ msgstr "הוסף חיה חדשה"
 msgid "Information"
 msgstr "מידע"
 
-#: html.py person_find_results.js person_new.js mobile2.js person.js
-#: common_personchooser.js
+#: html.py person_find_results.js person_new.js common_personchooser.js
+#: person.js mobile2.js
 msgid "Initials"
 msgstr "ראשי תיבות"
 
@@ -7663,7 +7700,7 @@ msgstr "קליטה"
 msgid "Intakes {0}"
 msgstr "קליטות {0}"
 
-#: animal_new.js animal_find.js
+#: animal_find.js animal_new.js
 msgid "Internal Location"
 msgstr "מיקום פנימי"
 
@@ -7679,7 +7716,7 @@ msgstr "קוד 2FA לא חוקי."
 msgid "Invalid email address"
 msgstr "כתובת מייל לא חוקית"
 
-#: person_new.js report_toolbar.js person.js
+#: report_toolbar.js person_new.js person.js
 msgid "Invalid email address '{0}'"
 msgstr "כתובת מייל לא חוקית ‘{0}’"
 
@@ -7751,7 +7788,7 @@ msgstr "הפק מספר פוליסת ביטוח חדשה לחיה זו/אימו�
 msgid "Issue date and expiry date must be valid dates."
 msgstr "תאריך ההנפקה ותאריך התפוגה אינם חוקיים."
 
-#: licence_renewal.js vouchers.js licence.js
+#: licence.js vouchers.js licence_renewal.js
 msgid "Issued"
 msgstr "הונפק"
 
@@ -7843,10 +7880,10 @@ msgstr "יונ'"
 msgid "June"
 msgstr "יוני"
 
-#: html.py lookups.py animal.js animal_find_results.js incident_find.js
-#: incident_find_results.js person_find_results.js person_new.js mobile2.js
-#: animal_new.js options.js animal_find.js person.js incident_new.js
-#: common_personchooser.js person_find.js
+#: lookups.py html.py person_find.js animal_find_results.js
+#: person_find_results.js incident_new.js person_new.js incident_find.js
+#: common_personchooser.js animal.js person.js options.js mobile2.js
+#: animal_find.js incident_find_results.js animal_new.js
 msgid "Jurisdiction"
 msgstr "תחום שיפוט"
 
@@ -7974,7 +8011,7 @@ msgstr "שם משפחה"
 msgid "Last Week"
 msgstr "שבוע אחרון"
 
-#: common_tableform.js header_edit_header.js
+#: header_edit_header.js common_tableform.js
 msgid "Last changed by {0} on {1}"
 msgstr "שונה לאחרונה ע״י {0} ב {1}"
 
@@ -7982,7 +8019,7 @@ msgstr "שונה לאחרונה ע״י {0} ב {1}"
 msgid "Last entered shelter"
 msgstr "נכנס למקלט לאחרונה"
 
-#: person_new.js mobile2.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js mobile2.js
 msgid "Last name"
 msgstr "שם משפחה"
 
@@ -8062,7 +8099,7 @@ msgstr "התחיבות"
 msgid "Licence for {0} successfully renewed {1} - {2}"
 msgstr "רשיון ל{0} חודש בהצלחה {1} - {2}"
 
-#: header_edit_header.js mobile2.js search.js
+#: search.js header_edit_header.js mobile2.js
 msgid "License"
 msgstr "רשיון"
 
@@ -8074,7 +8111,7 @@ msgstr "רישוי עצמי"
 msgid "License Fee"
 msgstr "דמי רישוי"
 
-#: mobile2.js licence.js person.js
+#: licence.js person.js mobile2.js
 msgid "License Number"
 msgstr "מספר רשיון"
 
@@ -8122,17 +8159,13 @@ msgstr "יש למלא תאריך הפקה ותאריך תפוגה לרשיון"
 msgid "Licensed"
 msgstr "רשיון"
 
-#: roles.js document_templates.js
+#: document_templates.js roles.js
 msgid "Licenses"
 msgstr "רשיונות"
 
 #: html.py licence.js
 msgid "Licensing"
 msgstr "רישוי"
-
-#: animal.js
-msgid "Lifetime"
-msgstr "לכל החיים"
 
 #: lookups.py
 msgid "Light"
@@ -8150,11 +8183,11 @@ msgstr "לילך"
 msgid "Lilac Tortie"
 msgstr "טורטי לילך"
 
-#: person.py lostfound.py
+#: lostfound.py person.py
 msgid "Limited to {0} matches"
 msgstr "מוגבל ל {0} תוצאות"
 
-#: additional.js onlineform_incoming.js incident.js diary.js
+#: incident.js onlineform_incoming.js additional.js diary.js
 msgid "Link"
 msgstr "קישור"
 
@@ -8194,9 +8227,9 @@ msgstr "קישורים"
 msgid "List"
 msgstr "רשימה"
 
-#: reports.py medical.js animal.js vaccination.js mobile_report.js
-#: animal_bulk.js event_animals.js common_html.js animal_new.js test.js
-#: animal_find.js report_criteria.js
+#: reports.py event_animals.js medical.js report_criteria.js animal.js
+#: vaccination.js common_html.js animal_bulk.js test.js animal_find.js
+#: animal_new.js mobile_report.js
 msgid "Litter"
 msgstr "שגר (גורים)"
 
@@ -8216,7 +8249,7 @@ msgstr "יצירת שגר מוגבלת ל-20 חיות"
 msgid "Littermates"
 msgstr "גורים בשגר"
 
-#: animal.py roles.js common_animalchoosermulti.js mobile_photo_uploader.js
+#: animal.py common_animalchoosermulti.js roles.js mobile_photo_uploader.js
 #: litters.js
 msgid "Litters"
 msgstr "שגרים (גורים)"
@@ -8241,9 +8274,9 @@ msgstr "לטאה"
 msgid "Llama"
 msgstr "לאמה"
 
-#: common_widgets.js common_microchip.js header.js common.js
-#: onlineform_incoming.js service_checkout_adoption.js
-#: service_checkout_licence.js mailmerge.js maint_undelete.js
+#: service_checkout_adoption.js common_microchip.js onlineform_incoming.js
+#: header.js mailmerge.js common.js common_widgets.js maint_undelete.js
+#: service_checkout_licence.js
 msgid "Loading..."
 msgstr "נצלו את הזמן ללטף גור בזמן שהמסך עולה..."
 
@@ -8255,16 +8288,15 @@ msgstr "השאלה"
 msgid "Local"
 msgstr "מקומי"
 
-#: change_user_settings.js reports.js options.js
+#: reports.js change_user_settings.js options.js
 msgid "Locale"
 msgstr "אזור"
 
-#: html.py lookups.py reports.py event_find_results.js medical.js animal.js
-#: vaccination.js mobile_report.js event.js animal_find_results.js
-#: incident_find_results.js header_edit_header.js animal_bulk.js
-#: event_animals.js mobile2.js common_html.js event_new.js options.js
-#: event_find.js stocklevel.js test.js animal_find.js report_criteria.js
-#: boarding.js
+#: lookups.py html.py reports.py animal_find_results.js event_animals.js
+#: medical.js event_find.js report_criteria.js event_find_results.js animal.js
+#: vaccination.js common_html.js animal_bulk.js header_edit_header.js
+#: options.js mobile2.js test.js animal_find.js event.js boarding.js
+#: stocklevel.js incident_find_results.js event_new.js mobile_report.js
 msgid "Location"
 msgstr "מיקום"
 
@@ -8316,7 +8348,7 @@ msgstr "מיקומים"
 msgid "Locked"
 msgstr "נעול"
 
-#: roles.js header_edit_header.js mobile2.js search.js
+#: search.js header_edit_header.js roles.js mobile2.js
 msgid "Log"
 msgstr "הערות"
 
@@ -8328,7 +8360,7 @@ msgstr "סינון הערות"
 msgid "Log Text"
 msgstr "טקסט הערה"
 
-#: reports.py mobile_report.js mobile2.js options.js report_criteria.js
+#: reports.py report_criteria.js options.js mobile2.js mobile_report.js
 msgid "Log Type"
 msgstr "סוג הערה"
 
@@ -8368,7 +8400,7 @@ msgstr "כניסה"
 msgid "Login not allowed from this IP address."
 msgstr "הכניסה אינה מותרת מכתובת IP זו."
 
-#: mobile_sign.js header.js mobile2.js common_html.js
+#: common_html.js header.js mobile2.js mobile_sign.js
 msgid "Logout"
 msgstr "התנתק"
 
@@ -8388,7 +8420,7 @@ msgstr "ארוכה"
 msgid "Long term"
 msgstr "טווח ארוך"
 
-#: options.js main.js
+#: main.js options.js
 msgid "Longest On Shelter"
 msgstr "נמצאים הכי הרבה זמן במקלט"
 
@@ -8432,11 +8464,11 @@ msgstr "ארנב עם אוזניים שמוטות"
 msgid "Lory/Lorikeet"
 msgstr "לורים"
 
-#: header_edit_header.js search.js
+#: search.js header_edit_header.js
 msgid "Lost"
 msgstr "אבידות"
 
-#: dbupdate.py onlineform_incoming.js search.js
+#: dbupdate.py search.js onlineform_incoming.js
 msgid "Lost Animal"
 msgstr "אבידות"
 
@@ -8464,11 +8496,11 @@ msgstr "אבידות"
 msgid "Lost and Found"
 msgstr "אבידות ומציאות"
 
-#: lostfound.js lostfound_new.js
+#: lostfound_new.js lostfound.js
 msgid "Lost and found entries must have a contact"
 msgstr "יש להוסיף איש קשר לרשומות אבידות ומציאות"
 
-#: log.js lostfound.js media.js diary.js
+#: log.js media.js diary.js lostfound.js
 msgid "Lost animal - {0} {1} [{2}]"
 msgstr "אבידה - {0} {1} [{2}]"
 
@@ -8630,7 +8662,11 @@ msgstr "סימון חיה כמתה"
 
 #: incident.js
 msgid "Mark dispatched now"
-msgstr "סמן שנשלח כעת"
+msgstr "סמן כנשלח כעת"
+
+#: incident.js
+msgid "Mark follow up now"
+msgstr "סמן למעקב"
 
 #: options.js
 msgid "Mark new animals as not for adoption"
@@ -8712,7 +8748,7 @@ msgstr "מאי"
 msgid "McNab"
 msgstr "מקנאב"
 
-#: roles.js header_edit_header.js csvexport.js
+#: csvexport.js header_edit_header.js roles.js
 msgid "Media"
 msgstr "קבצים"
 
@@ -8728,8 +8764,8 @@ msgstr "הערות על קבצים"
 msgid "Media notes contain"
 msgstr "הערות קבצים מכילות"
 
-#: html.py roles.js calendarview.js header_edit_header.js mobile2.js
-#: document_templates.js options.js reports_querybuilder.js
+#: html.py document_templates.js calendarview.js header_edit_header.js roles.js
+#: options.js mobile2.js reports_querybuilder.js
 msgid "Medical"
 msgstr "טיפולים רפואיים"
 
@@ -8789,16 +8825,16 @@ msgstr "בינוני - אדום"
 msgid "Medium - Teal"
 msgstr "בינוני - טורקיז"
 
-#: html.py header_edit_header.js lookups.js person_find_results.js
-#: common_html.js reports_querybuilder.js
+#: html.py person_find_results.js common_html.js header_edit_header.js
+#: lookups.js reports_querybuilder.js
 msgid "Member"
 msgstr "חבר מועדון"
 
-#: html.py mobile2.js person.js
+#: html.py person.js mobile2.js
 msgid "Membership Expiry"
 msgstr "תפוגת תוקף החברות"
 
-#: html.py mobile2.js person.js
+#: html.py person.js mobile2.js
 msgid "Membership Number"
 msgstr "מספר כרטיס חבר"
 
@@ -8826,7 +8862,7 @@ msgstr "מזג אדם אחר לרשומה זו"
 msgid "Merge bonded animals into a single record"
 msgstr "מזג חיות קשורות לרשומת פרסום אחת"
 
-#: mobile2.js main.js
+#: main.js mobile2.js
 msgid "Message"
 msgstr "הודעה"
 
@@ -8850,7 +8886,7 @@ msgstr "הודעה נשלחה."
 msgid "Message successfully sent to {0}"
 msgstr "הודעה נשלחה בהצלחה ל {0}"
 
-#: mobile2.js options.js
+#: options.js mobile2.js
 msgid "Messages"
 msgstr "הודעות"
 
@@ -8858,14 +8894,15 @@ msgstr "הודעות"
 msgid "Messages successfully sent"
 msgstr "הודעות נשלחו בהצלחה"
 
-#: wordprocessor.py common_widgets.js donations.js csvimport_stripe.js
-#: csvimport_paypal.js
+#: wordprocessor.py csvimport_stripe.js donations.js accounts_trx.js
+#: common_widgets.js csvimport_paypal.js
 msgid "Method"
 msgstr "אמצעי תשלום"
 
-#: lostfound.py html.py lostfound_find_results.js lostfound.js
-#: animal_find_results.js lostfound_find.js header_edit_header.js
-#: waitinglist_new.js lostfound_new.js common_animalchooser.js waitinglist.js
+#: lostfound.py html.py animal_find_results.js lostfound_find.js
+#: waitinglist_new.js lostfound_find_results.js header_edit_header.js
+#: mobile2.js lostfound_new.js waitinglist.js common_animalchooser.js
+#: lostfound.js
 msgid "Microchip"
 msgstr "שבב"
 
@@ -8945,7 +8982,7 @@ msgstr "שינוי טבלאות חיפוש"
 msgid "Mon"
 msgstr "ב׳"
 
-#: calendarview.js common.js reports.js options.js clinic_calendar.js
+#: reports.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Monday"
 msgstr "שני"
 
@@ -9013,7 +9050,7 @@ msgstr "ברנר זננהונד"
 msgid "Mouse"
 msgstr "עכבר"
 
-#: html.py media.js move_retailer.js common_html.js
+#: html.py move_retailer.js common_html.js media.js
 msgid "Move"
 msgstr "תנועות"
 
@@ -9037,7 +9074,7 @@ msgstr "הזז/העתק"
 msgid "Moved to animal record {0}"
 msgstr "הועבר לרשומת חיה {0}"
 
-#: dbupdate.py donations.js donation_receive.js
+#: dbupdate.py donation_receive.js donations.js
 msgid "Movement"
 msgstr "תנועה"
 
@@ -9081,8 +9118,8 @@ msgstr "תנועה - העברה"
 msgid "Movement Date"
 msgstr "תאריך תנועה"
 
-#: movements.js move_foster.js move_retailer.js move_reclaim.js move_adopt.js
-#: move_reserve.js animal_find.js move_transfer.js
+#: move_transfer.js move_retailer.js movements.js move_foster.js move_adopt.js
+#: move_reclaim.js move_reserve.js animal_find.js
 msgid "Movement Number"
 msgstr "מזהה תנועה"
 
@@ -9106,7 +9143,7 @@ msgstr "תאריכי התנועה מתנגשים עם תנועה קיימת אח
 msgid "Movement numbers must be unique."
 msgstr "מזהה תנועה חייב להיות ייחודי."
 
-#: roles.js header_edit_header.js document_templates.js options.js
+#: document_templates.js header_edit_header.js roles.js options.js
 msgid "Movements"
 msgstr "תנועות"
 
@@ -9182,13 +9219,13 @@ msgstr "לא רלוונטי"
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr "NNN או NN = מספר ייחודי לסוג זה של חיה בשנה נוכחית"
 
-#: wordprocessor.py person.py html.py onlineform.py medical.js htmltemplates.js
-#: roles.js animal.js onlineform.js animal_find_results.js additional.js
-#: waitinglist_new.js medicalprofile.js onlineforms.js waitinglist_results.js
-#: person_find_results.js mobile2.js onlineform_incoming.js
-#: common_animalchooser.js common_html.js diarytasks.js animal_new.js
-#: waitinglist.js options.js event_find.js stocklevel.js animal_find.js
-#: common_personchooser.js
+#: onlineform.py html.py person.py wordprocessor.py animal_find_results.js
+#: person_find_results.js onlineform.js onlineforms.js medical.js event_find.js
+#: waitinglist_new.js common_personchooser.js medicalprofile.js
+#: htmltemplates.js animal.js onlineform_incoming.js waitinglist_results.js
+#: common_html.js roles.js options.js mobile2.js animal_find.js additional.js
+#: waitinglist.js stocklevel.js common_animalchooser.js diarytasks.js
+#: animal_new.js
 msgid "Name"
 msgstr "שם"
 
@@ -9200,7 +9237,7 @@ msgstr "השם מכיל"
 msgid "Name and Address"
 msgstr "שם וכתובת"
 
-#: animal.py animal.js animal_new.js person.js
+#: animal.py animal.js person.js animal_new.js
 msgid "Name cannot be blank"
 msgstr "יש למלא את השם"
 
@@ -9260,8 +9297,8 @@ msgstr "לא חוסנו מעולם"
 msgid "Never anonymize people who adopted an animal"
 msgstr "אל תהפוך מאמצים לאנונימיים"
 
-#: dbupdate.py rota.js lookups.js document_templates.js document_repository.js
-#: report_images.js transport.js person_investigation.js
+#: dbupdate.py transport.js rota.js person_investigation.js report_images.js
+#: document_templates.js lookups.js document_repository.js
 msgid "New"
 msgstr "חדש"
 
@@ -9341,7 +9378,7 @@ msgstr "תנועה חדשה"
 msgid "New Owner"
 msgstr "בעלים חדשים"
 
-#: change_password.js users.js
+#: users.js change_password.js
 msgid "New Password"
 msgstr "סיסמא חדשה"
 
@@ -9417,7 +9454,7 @@ msgstr "תבנית משימה חדשה"
 msgid "New form field"
 msgstr "שדה טופס חדש"
 
-#: document_templates.js document_repository.js report_images.js
+#: report_images.js document_templates.js document_repository.js
 msgid "New name"
 msgstr "שם חדש"
 
@@ -9425,7 +9462,7 @@ msgstr "שם חדש"
 msgid "New online form"
 msgstr "טופס מקוון חדש"
 
-#: change_password.js users.js
+#: users.js change_password.js
 msgid "New password and confirmation password don't match."
 msgstr "הסיסמאות אינן תואמות."
 
@@ -9445,14 +9482,14 @@ msgstr "חשבון משתמש חדש"
 msgid "Newfoundland Dog"
 msgstr "כלב ניופאונדלנד"
 
-#: donations.js common.js service_checkout_adoption.js options.js
+#: service_checkout_adoption.js donations.js options.js common.js
 msgid "Next"
 msgstr "הבא"
 
-#: main.py wordprocessor.py i18n.py onlineform.py dbupdate.py
-#: event_find_results.js lostfound_find_results.js animal_find_results.js
-#: incident_find_results.js lostfound_find.js lookups.js publish_options.js
-#: accounts.js waitinglist_results.js person_find_results.js users.js sql.js
+#: main.py i18n.py onlineform.py wordprocessor.py dbupdate.py users.js
+#: animal_find_results.js person_find_results.js lostfound_find.js sql.js
+#: event_find_results.js publish_options.js accounts.js waitinglist_results.js
+#: lostfound_find_results.js lookups.js incident_find_results.js
 #: reports_querybuilder.js
 msgid "No"
 msgstr "לא"
@@ -9489,7 +9526,7 @@ msgstr "ללא רשיון"
 msgid "No longer retained"
 msgstr "כבר לא נשמר"
 
-#: person.py lostfound.py
+#: lostfound.py person.py
 msgid "No matches found."
 msgstr "לא נמצאו התאמות."
 
@@ -9501,7 +9538,7 @@ msgstr "אין תמונה"
 msgid "No publishers are running."
 msgstr "אין מפרסמים פעילים."
 
-#: timeline.js search.js
+#: search.js timeline.js
 msgid "No results found."
 msgstr "לא נמצאו תוצאות."
 
@@ -9529,12 +9566,12 @@ msgstr "אין הרשאת צפייה בדוח זה"
 msgid "Noise"
 msgstr "רעש"
 
-#: wordprocessor.py header_edit_header.js lookups.js common_html.js
-#: animal_new.js options.js
+#: wordprocessor.py common_html.js header_edit_header.js options.js lookups.js
+#: animal_new.js
 msgid "Non-Shelter"
 msgstr "לא של המקלט"
 
-#: header_edit_header.js search.js
+#: search.js header_edit_header.js
 msgid "Non-Shelter Animal"
 msgstr "חיה לא מהמקלט"
 
@@ -9594,8 +9631,8 @@ msgstr "אינו זמין לאימוץ"
 msgid "Not Available for Adoption"
 msgstr "אינו זמין לאימוץ"
 
-#: wordprocessor.py header_edit_header.js lookups.js animal_bulk.js
-#: shelterview.js common_html.js options.js
+#: wordprocessor.py shelterview.js common_html.js animal_bulk.js
+#: header_edit_header.js options.js lookups.js
 msgid "Not For Adoption"
 msgstr "לא לאימוץ"
 
@@ -9659,13 +9696,13 @@ msgstr "לא מתואם"
 msgid "Not {0}"
 msgstr "לא {0}"
 
-#: diarytask.js log.js log_new.js diary.js
+#: log.js log_new.js diarytask.js diary.js
 msgid "Note"
 msgstr "הערה"
 
-#: html.py dbupdate.py move_deceased.js animal.js onlineform.js
-#: incident_find.js incident_find_results.js media.js mobile2.js incident.js
-#: incident_new.js person_investigation.js
+#: html.py dbupdate.py move_deceased.js incident.js incident_new.js
+#: onlineform.js incident_find.js person_investigation.js animal.js mobile2.js
+#: incident_find_results.js media.js
 msgid "Notes"
 msgstr "הערות"
 
@@ -9689,11 +9726,11 @@ msgstr "נובמבר"
 msgid "Now"
 msgstr "עכשיו"
 
-#: lostfound.py html.py dbupdate.py animal.js onlineform.js
-#: lostfound_find_results.js lostfound.js licence_renewal.js incident_find.js
-#: incident_find_results.js lostfound_find.js waitinglist_results.js
-#: person_find_results.js mobile2.js incident.js animal_new.js waitinglist.js
-#: traploan.js boarding.js
+#: lostfound.py html.py dbupdate.py incident.js person_find_results.js
+#: onlineform.js incident_find.js lostfound_find.js licence_renewal.js
+#: animal.js waitinglist_results.js lostfound_find_results.js mobile2.js
+#: boarding.js waitinglist.js incident_find_results.js animal_new.js
+#: lostfound.js traploan.js
 msgid "Number"
 msgstr "מספר"
 
@@ -9745,7 +9782,7 @@ msgstr "משרד"
 msgid "Offset from left edge of the image"
 msgstr "אופסט מהקצה השמאלי של התמונה"
 
-#: animal.js common_microchip.js event_animals.js person.js
+#: event_animals.js common_microchip.js animal.js person.js
 msgid "Ok"
 msgstr "אישור"
 
@@ -9769,7 +9806,7 @@ msgstr "השמט כותרת עליונה/תחתונה"
 msgid "On Foster"
 msgstr "באומנה"
 
-#: animal.py dbupdate.py animal_find_results.js common_html.js main.js
+#: animal.py dbupdate.py main.js animal_find_results.js common_html.js
 #: animal_find.js
 msgid "On Shelter"
 msgstr "במקלט"
@@ -9827,7 +9864,7 @@ msgid ""
 "Once linked, a user account cannot access and edit its linked person record."
 msgstr "לאחר יצירת קישור, לא ניתן לגשת או לערוך את רשומת האדם המקושרת."
 
-#: mobile_sign.js service_sign_document.js service_checkout_adoption.js
+#: service_checkout_adoption.js mobile_sign.js service_sign_document.js
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr "לאחר חתימה, לא ניתן לערוך או לשנות את המסמך."
 
@@ -9847,7 +9884,7 @@ msgstr "טופס מקוון"
 msgid "Online Form: {0}"
 msgstr "טופס מקוון: {0}"
 
-#: html.py roles.js onlineforms.js options.js
+#: html.py onlineforms.js roles.js options.js
 msgid "Online Forms"
 msgstr "טפסים מקוונים"
 
@@ -9868,6 +9905,10 @@ msgstr "רק חשבונות פעילים"
 #: incident.js incident_new.js
 msgid "Only allow users with one of these roles to view this incident"
 msgstr "אפשר רק למשתמשים המשויכים לאחד מהתפקידים האלה לצפות בתקרית זו"
+
+#: person.js
+msgid "Only allow users with one of these roles to view this person record"
+msgstr "אפשר רק למשתמשים המשויכים לאחד מהתפקידים האלה לצפות ברשומת אדם זו"
 
 #: options.js
 msgid "Only for these species of adopted animal"
@@ -9931,7 +9972,7 @@ msgid ""
 "administered again"
 msgstr "שדה רשות, התאריך בו יש לחדש את החיסון"
 
-#: html.py additional.js options.js main.js
+#: html.py main.js options.js additional.js
 msgid "Options"
 msgstr "אפשרויות"
 
@@ -9943,11 +9984,11 @@ msgstr "סדר חיות שפורסמו לפי"
 msgid "Organisation"
 msgstr "ארגון"
 
-#: person_new.js options.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js options.js
 msgid "Organization"
 msgstr "ארגון"
 
-#: person_new.js person.js common_personchooser.js
+#: person_new.js common_personchooser.js person.js
 msgid "Organization name"
 msgstr "שם הארגון"
 
@@ -9963,7 +10004,7 @@ msgstr "אוריינטלי קצר שיער"
 msgid "Oriental Tabby"
 msgstr "טאבי אוריינטלי"
 
-#: animal.js mobile2.js person_links.js animal_new.js animal_find.js
+#: person_links.js animal.js mobile2.js animal_find.js animal_new.js
 msgid "Original Owner"
 msgstr "בעלים מקוריים"
 
@@ -9983,7 +10024,7 @@ msgstr "חשבון אחר"
 msgid "Other Organisation"
 msgstr "ארגון אחר"
 
-#: lookups.js common_html.js
+#: common_html.js lookups.js
 msgid "Other Shelter"
 msgstr "מקלט אחר"
 
@@ -10077,8 +10118,8 @@ msgstr "סקירה כללית"
 msgid "Owl"
 msgstr "ינשוף"
 
-#: html.py dbupdate.py animal.js animal_find_results.js header_edit_header.js
-#: move_reclaim.js animal_new.js search.js
+#: html.py dbupdate.py animal_find_results.js search.js animal.js
+#: move_reclaim.js header_edit_header.js animal_new.js
 msgid "Owner"
 msgstr "בעלים"
 
@@ -10118,7 +10159,7 @@ msgstr "PM"
 msgid "Page extension"
 msgstr "סיומת העמוד"
 
-#: medical.js vaccination.js citations.js animal_costs.js test.js transport.js
+#: citations.js transport.js medical.js animal_costs.js vaccination.js test.js
 msgid "Paid"
 msgstr "שולם"
 
@@ -10166,7 +10207,7 @@ msgstr "פרוו"
 msgid "Paso Fino"
 msgstr "פאסו פינו"
 
-#: users.py mobile_login.js options.js users.js
+#: users.py users.js mobile_login.js options.js
 msgid "Password"
 msgstr "סיסמא"
 
@@ -10221,7 +10262,7 @@ msgstr "מייל עסקי בפייפאל"
 msgid "Payee"
 msgstr "מקבל התשלום"
 
-#: common_widgets.js calendarview.js reports_querybuilder.js
+#: calendarview.js accounts_trx.js common_widgets.js reports_querybuilder.js
 msgid "Payment"
 msgstr "תשלום"
 
@@ -10237,7 +10278,7 @@ msgstr "לתשלום"
 msgid "Payment From"
 msgstr "תשלום מ"
 
-#: reports.py mobile_report.js options.js report_criteria.js
+#: reports.py report_criteria.js options.js mobile_report.js
 msgid "Payment Method"
 msgstr "אמצעי תשלום"
 
@@ -10249,7 +10290,7 @@ msgstr "אמצעי תשלום"
 msgid "Payment Processors"
 msgstr "שירותי תשלומים"
 
-#: reports.py mobile_report.js options.js report_criteria.js
+#: reports.py report_criteria.js options.js mobile_report.js
 msgid "Payment Type"
 msgstr "סוג תשלום"
 
@@ -10305,7 +10346,7 @@ msgstr "סוג תשלום {0}"
 msgid "Payment {0} created for {1}"
 msgstr "תשלום {0} נוצר עבור {1}"
 
-#: html.py roles.js donations.js header_edit_header.js document_templates.js
+#: html.py donations.js document_templates.js header_edit_header.js roles.js
 msgid "Payments"
 msgstr "תשלומים"
 
@@ -10349,7 +10390,7 @@ msgstr "ממתין לבדיקת וטרינר"
 msgid "Pension"
 msgstr "פנסיה"
 
-#: html.py roles.js document_templates.js options.js
+#: html.py document_templates.js roles.js options.js
 msgid "People"
 msgstr "אנשים"
 
@@ -10389,7 +10430,7 @@ msgstr "בצע בדיקה"
 msgid "Performed"
 msgstr "בוצע"
 
-#: dbupdate.py movements.js move_foster.js shelterview.js common_html.js
+#: dbupdate.py movements.js shelterview.js move_foster.js common_html.js
 #: animal_find.js
 msgid "Permanent Foster"
 msgstr "אומנה קבועה"
@@ -10398,12 +10439,11 @@ msgstr "אומנה קבועה"
 msgid "Persian"
 msgstr "פרסי"
 
-#: reports.py dbupdate.py rota.js staff_rota.js movements.js log_new.js
-#: mobile_report.js licence_renewal.js donations.js header_edit_header.js
-#: vouchers.js media.js mobile2.js onlineform_incoming.js diarytasks.js
-#: licence.js citations.js search.js traploan.js report_criteria.js person.js
-#: boarding.js donation_receive.js reports_querybuilder.js
-#: clinic_appointment.js
+#: reports.py dbupdate.py log_new.js citations.js rota.js movements.js
+#: licence.js clinic_appointment.js donation_receive.js vouchers.js search.js
+#: report_criteria.js licence_renewal.js donations.js onlineform_incoming.js
+#: staff_rota.js person.js header_edit_header.js mobile2.js boarding.js
+#: diarytasks.js reports_querybuilder.js media.js traploan.js mobile_report.js
 msgid "Person"
 msgstr "אדם"
 
@@ -10475,7 +10515,7 @@ msgstr "הטלפון מכיל"
 msgid "Photo Uploader"
 msgstr "מעלה התמונות"
 
-#: html.py animal.js animal_find_results.js animal_new.js
+#: html.py animal_find_results.js animal.js animal_new.js
 msgid "Picked Up"
 msgstr "נאסף"
 
@@ -10483,17 +10523,17 @@ msgstr "נאסף"
 msgid "Picked Up By"
 msgstr "נאסף על ידי"
 
-#: animal.js transport.js reports_querybuilder.js
+#: transport.js animal.js reports_querybuilder.js
 msgid "Pickup"
 msgstr "איסוף"
 
-#: html.py animal.js animal_find_results.js person_links.js animal_new.js
-#: animal_find.js
+#: html.py animal_find_results.js person_links.js animal.js animal_find.js
+#: animal_new.js
 msgid "Pickup Address"
 msgstr "כתובת לאיסוף"
 
-#: html.py animal.js animal_find_results.js incident_find.js common_html.js
-#: incident.js animal_find.js incident_new.js
+#: html.py incident.js animal_find_results.js incident_new.js incident_find.js
+#: animal.js common_html.js animal_find.js
 msgid "Pickup Location"
 msgstr "מיקום איסוף"
 
@@ -10542,7 +10582,7 @@ msgid ""
 "Please do not enable this option if you do not understand what this means."
 msgstr "נא לא להפעיל אפשרות זו אם אינך מבין מה המשמעות של זה."
 
-#: csvimport.js csvexport.js
+#: csvexport.js csvimport.js
 msgid "Please see the manual for more information."
 msgstr "אנא עיין במדריך למידע נוסף."
 
@@ -10819,7 +10859,7 @@ msgstr "פרסם לתיקיה"
 msgid "Published to Website"
 msgstr "פורסם לאינטרנט"
 
-#: dbupdate.py publish_logs.js lookups.js
+#: dbupdate.py lookups.js publish_logs.js
 msgid "Publisher"
 msgstr "מפרסם"
 
@@ -10899,13 +10939,14 @@ msgstr "כמות"
 msgid "Quaker Parakeet"
 msgstr "תוכי נזירי"
 
-#: move_deceased.js medical.js common_widgets.js vaccination.js donations.js
-#: stocklevel.js test.js
+#: move_deceased.js medical.js donations.js vaccination.js test.js
+#: stocklevel.js common_widgets.js
 msgid "Quantity"
 msgstr "כמות"
 
-#: wordprocessor.py html.py animal_find_results.js header_edit_header.js
-#: lookups.js shelterview.js common_html.js options.js reports_querybuilder.js
+#: html.py wordprocessor.py animal_find_results.js shelterview.js
+#: common_html.js header_edit_header.js options.js lookups.js
+#: reports_querybuilder.js
 msgid "Quarantine"
 msgstr "הסגר"
 
@@ -10976,7 +11017,7 @@ msgstr "רגמפין"
 msgid "Ragdoll"
 msgstr "רגדול"
 
-#: html.py header_edit_header.js waitinglist_results.js
+#: html.py waitinglist_results.js header_edit_header.js
 msgid "Rank"
 msgstr "דירוג"
 
@@ -11000,12 +11041,12 @@ msgstr "אינדוקס מחדש"
 msgid "Read the manual for more information about Animal Shelter Manager."
 msgstr "קרא את המדריך למידע נוסף על Animal Shelter Manager."
 
-#: change_user_settings.js users.js
+#: users.js change_user_settings.js
 msgid "Real name"
 msgstr "שם אמיתי"
 
-#: html.py lookups.py movements.js animal.js header_edit_header.js
-#: waitinglist_results.js clinic_appointment.js
+#: lookups.py html.py movements.js clinic_appointment.js animal.js
+#: waitinglist_results.js header_edit_header.js
 msgid "Reason"
 msgstr "סיבה"
 
@@ -11053,7 +11094,7 @@ msgstr "חשב מחדש את מיקומי החיות במקלט"
 msgid "Receipt"
 msgstr "קבלה"
 
-#: donations.js
+#: donations.js accounts_trx.js
 msgid "Receipt No"
 msgstr "קבלה מס"
 
@@ -11061,15 +11102,15 @@ msgstr "קבלה מס"
 msgid "Receipt/Invoice"
 msgstr "חשבונית-קבלה"
 
-#: donations.js donation_receive.js
+#: donation_receive.js donations.js
 msgid "Receive"
 msgstr "קבל"
 
-#: html.py header.js donation_receive.js
+#: html.py donation_receive.js header.js
 msgid "Receive a payment"
 msgstr "קבל תשלום"
 
-#: common_widgets.js donations.js onlineform_incoming.js donation_receive.js
+#: donation_receive.js donations.js onlineform_incoming.js common_widgets.js
 #: reports_querybuilder.js
 msgid "Received"
 msgstr "התקבלה"
@@ -11102,15 +11143,15 @@ msgstr "התקבלו בשנה האחרונה"
 msgid "Received today"
 msgstr "התקבלו היום"
 
-#: options.js main.js
+#: main.js options.js
 msgid "Recently Adopted"
 msgstr "אומצו לאחרונה"
 
-#: options.js main.js
+#: main.js options.js
 msgid "Recently Changed"
 msgstr "שונה לאחרונה"
 
-#: options.js main.js
+#: main.js options.js
 msgid "Recently Entered Shelter"
 msgstr "נכנסו למקלט לאחרונה"
 
@@ -11154,7 +11195,7 @@ msgstr "קבלה"
 msgid "Reclaim"
 msgstr "נדרש על ידי הבעלים"
 
-#: html.py header.js move_reclaim.js
+#: html.py move_reclaim.js header.js
 msgid "Reclaim an animal"
 msgstr "השבת חיה לבעלים"
 
@@ -11216,8 +11257,8 @@ msgstr "הפנה לכתובת זו לאחר תשלום"
 msgid "Reference"
 msgstr "מספר מזהה"
 
-#: waitinglist_results.js event_animals.js accounts_trx.js
-#: clinic_appointment.js
+#: event_animals.js clinic_appointment.js waitinglist_results.js
+#: accounts_trx.js
 msgid "Refresh"
 msgstr "רענון"
 
@@ -11277,9 +11318,13 @@ msgstr "שוחרר לחופשי {0}"
 msgid "Released to Wild"
 msgstr "שוחרר לטבע"
 
-#: mobile_sign.js
+#: document_templates.js mobile_sign.js
 msgid "Reload"
 msgstr "טען מחדש"
+
+#: document_templates.js
+msgid "Reload Defaults"
+msgstr "טען מחדש ברירות מחדל"
 
 #: medical.js
 msgid "Reload page ..."
@@ -11333,7 +11378,7 @@ msgstr "סיבת הסרה"
 msgid "Removal reason"
 msgstr "סיבת ההסרה"
 
-#: waitinglist_results.js event_animals.js incident.js options.js
+#: incident.js event_animals.js waitinglist_results.js options.js
 msgid "Remove"
 msgstr "הסר"
 
@@ -11358,10 +11403,6 @@ msgstr "הסר פונקציונליות שהייה מהמסכים והתפריט
 #: options.js
 msgid "Remove clinic functionality from screens and menus"
 msgstr "הסר פונקציונליות מרפאה מהמסכים והתפריטים"
-
-#: options.js
-msgid "Remove fine-grained animal control incident permissions"
-msgstr "הסר הרשאות פרטניות על תקריות בקרת בע״ח"
 
 #: options.js
 msgid "Remove forms immediately when I process them"
@@ -11555,7 +11596,7 @@ msgstr "הסר את פונקציונליות הסעות מהתפריטים וה�
 msgid "Remove the weight field from animal details"
 msgstr "הסר שדה משקל מפרטי החיות"
 
-#: header_edit_header.js waitinglist_results.js
+#: waitinglist_results.js header_edit_header.js
 msgid "Removed"
 msgstr "הוסר"
 
@@ -11567,7 +11608,7 @@ msgstr "הוסר מהרשימה בין"
 msgid "Removed from the list between two dates"
 msgstr "הוסר מהרשימה בין שני תאריכים"
 
-#: document_templates.js document_repository.js report_images.js
+#: report_images.js document_templates.js document_repository.js
 msgid "Rename"
 msgstr "שנה שם"
 
@@ -11595,19 +11636,19 @@ msgstr "חודש"
 msgid "Replies to the fosterer email should go to"
 msgstr "תגובות למייל אומנה יועברו ל"
 
-#: reports.py common_html.js reports.js
+#: reports.py reports.js common_html.js
 msgid "Report"
 msgstr "דוח"
 
-#: report_export.js reports.js
+#: reports.js report_export.js
 msgid "Report Title"
 msgstr "כותרת דוח"
 
-#: html.py header.js incident_new.js
+#: html.py incident_new.js header.js
 msgid "Report a new incident"
 msgstr "דווח על תקרית חדשה"
 
-#: html.py roles.js mobile2.js reports.js options.js main.js
+#: html.py main.js reports.js roles.js options.js mobile2.js
 msgid "Reports"
 msgstr "דוחות"
 
@@ -11703,7 +11744,7 @@ msgstr "תאריך שריון אינו חוקי."
 msgid "Reserve"
 msgstr "שריין"
 
-#: html.py header.js move_reserve.js
+#: html.py move_reserve.js header.js
 msgid "Reserve an animal"
 msgstr "שריין חיה"
 
@@ -11711,8 +11752,8 @@ msgstr "שריין חיה"
 msgid "Reserve/Sponsor Units"
 msgstr "שריין/תן חסות ליחידות"
 
-#: html.py animal_find_results.js shelterview.js common_html.js options.js
-#: main.js animal_find.js reports_querybuilder.js
+#: html.py main.js animal_find_results.js shelterview.js common_html.js
+#: options.js animal_find.js reports_querybuilder.js
 msgid "Reserved"
 msgstr "משוריין"
 
@@ -11724,8 +11765,8 @@ msgstr "משוריין עבור"
 msgid "Reserved for {0}"
 msgstr "משוריין עבור {0}"
 
-#: waitinglist_new.js lostfound_new.js person_new.js event_new.js animal_new.js
-#: incident_new.js
+#: incident_new.js person_new.js waitinglist_new.js lostfound_new.js
+#: event_new.js animal_new.js
 msgid "Reset"
 msgstr "אפס"
 
@@ -11741,7 +11782,7 @@ msgstr "איפוס סיסמא"
 msgid "Reset password request"
 msgstr "בקש לאפס סיסמא"
 
-#: mobile2.js incident.js
+#: incident.js mobile2.js
 msgid "Respond"
 msgstr "הגב"
 
@@ -11757,7 +11798,7 @@ msgstr "הגיב"
 msgid "Responded Between"
 msgstr "תגובה בין"
 
-#: html.py incident_find_results.js mobile2.js incident.js
+#: html.py incident.js mobile2.js incident_find_results.js
 msgid "Responded Date/Time"
 msgstr "תאריך/זמן תגובה"
 
@@ -11765,12 +11806,12 @@ msgstr "תאריך/זמן תגובה"
 msgid "Restore"
 msgstr "שחזר"
 
-#: wordprocessor.py lookups.py test.js
+#: lookups.py wordprocessor.py test.js
 msgid "Result"
 msgstr "תוצאה"
 
-#: event_find_results.js lostfound_find_results.js animal_find_results.js
-#: incident_find_results.js person_find_results.js
+#: animal_find_results.js person_find_results.js event_find_results.js
+#: lostfound_find_results.js incident_find_results.js
 msgid "Results"
 msgstr "תוצאות"
 
@@ -11778,9 +11819,9 @@ msgstr "תוצאות"
 msgid "Results for '{0}'."
 msgstr "תוצאות ל '{0}'."
 
-#: html.py dbupdate.py movements.js header_edit_header.js move_retailer.js
-#: person_find_results.js common_animalchoosermulti.js common_html.js main.js
-#: animal_find.js reports_querybuilder.js
+#: html.py dbupdate.py common_animalchoosermulti.js main.js
+#: person_find_results.js move_retailer.js movements.js common_html.js
+#: header_edit_header.js animal_find.js reports_querybuilder.js
 msgid "Retailer"
 msgstr "חנות"
 
@@ -11808,7 +11849,7 @@ msgstr "תאריך תנועה אינו חוקי."
 msgid "Retain Until"
 msgstr "החזק עד"
 
-#: media.js onlineforms.js
+#: onlineforms.js media.js
 msgid "Retain for"
 msgstr "שמור ל"
 
@@ -11917,11 +11958,7 @@ msgstr "החזרות (לבעלים) {0}"
 msgid "Reupload animal images every time"
 msgstr "העלאת תמונות החיות בכל פעם מחדש"
 
-#: onlineforms.js reports.js
-msgid "Revert"
-msgstr "החזר"
-
-#: htmltemplates.js onlineforms.js reports.js
+#: onlineforms.js htmltemplates.js reports.js
 msgid "Revert to default"
 msgstr "חזור לברירת המחדל"
 
@@ -11957,7 +11994,7 @@ msgstr "דררה"
 msgid "Role is in use and cannot be deleted."
 msgstr "התפקיד נמצא בשימוש ולא ניתן למחוק אותו."
 
-#: reports.js users.js
+#: users.js reports.js
 msgid "Roles"
 msgstr "תפקידים"
 
@@ -11969,7 +12006,7 @@ msgstr "רוזלה"
 msgid "Rostered day off"
 msgstr "יום חופש בתשלום (RDO)"
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Rota"
 msgstr "סידור עבודה"
 
@@ -12045,7 +12082,7 @@ msgstr "SQL dump"
 msgid "SQL dump (ASM2 HSQLDB Format)"
 msgstr "SQL dump (ASM2 HSQLDB Format)"
 
-#: reports.js sql.js
+#: sql.js reports.js
 msgid ""
 "SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete "
 "table and column names"
@@ -12077,8 +12114,8 @@ msgstr "סאדלברד"
 msgid "Saint Bernard St. Bernard"
 msgstr "סאן ברנרד"
 
-#: financial.py dbupdate.py common_widgets.js donations.js lookups.js
-#: clinic_appointment.js
+#: financial.py dbupdate.py clinic_appointment.js donations.js accounts_trx.js
+#: lookups.js common_widgets.js
 msgid "Sales Tax"
 msgstr "מע״מ"
 
@@ -12098,13 +12135,13 @@ msgstr "ש׳"
 msgid "Satin"
 msgstr "סאטין"
 
-#: calendarview.js common.js reports.js options.js clinic_calendar.js
+#: reports.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Saturday"
 msgstr "שבת"
 
-#: medical.js roles.js animal.js vaccination.js lostfound.js event.js
-#: publish_options.js onlineforms.js change_user_settings.js shelterview.js
-#: incident.js waitinglist.js reports.js test.js accounts_trx.js person.js
+#: incident.js onlineforms.js shelterview.js reports.js publish_options.js
+#: animal.js person.js change_user_settings.js roles.js event.js
+#: accounts_trx.js waitinglist.js lostfound.js
 msgid "Save"
 msgstr "שמור"
 
@@ -12136,8 +12173,8 @@ msgstr "שמור רשומה זו"
 msgid "Save this waiting list entry"
 msgstr "שמור רשימת המתנה"
 
-#: animal.js lostfound.js event.js publish_options.js incident.js
-#: waitinglist.js animal_costs.js animal_observations.js person.js
+#: incident.js publish_options.js animal_costs.js animal_observations.js
+#: animal.js person.js event.js waitinglist.js lostfound.js
 msgid "Saving..."
 msgstr "שומר..."
 
@@ -12192,9 +12229,9 @@ msgstr "כלב ים"
 msgid "Sealyham Terrier"
 msgstr "סיליהם טרייר"
 
-#: incident_find.js header.js lostfound_find.js mobile2.js
-#: common_animalchooser.js options.js event_find.js animal_find.js
-#: common_personchooser.js person_find.js
+#: person_find.js incident_find.js lostfound_find.js event_find.js
+#: common_personchooser.js header.js options.js mobile2.js animal_find.js
+#: common_animalchooser.js
 msgid "Search"
 msgstr "חיפוש"
 
@@ -12226,13 +12263,14 @@ msgstr "אבטחה"
 msgid "Seized"
 msgstr "נתפס"
 
-#: common_tableform.js common_widgets.js accounts.js onlineforms.js
-#: event_animals.js common.js common_animalchoosermulti.js common_html.js
-#: diarytasks.js reports.js accounts_trx.js diary.js common_personchooser.js
+#: common_animalchoosermulti.js event_animals.js onlineforms.js
+#: common_personchooser.js reports.js accounts.js common_html.js
+#: accounts_trx.js common.js common_widgets.js diarytasks.js
+#: common_tableform.js diary.js
 msgid "Select"
 msgstr "בחירה"
 
-#: onlineform_incoming.js common_personchooser.js
+#: common_personchooser.js onlineform_incoming.js
 msgid "Select a person"
 msgstr "בחר אדם"
 
@@ -12249,7 +12287,7 @@ msgstr ""
 "בחר אדם למזג לתוך רשומה זו. האדם הנבחר יוסר, וכל הרשומות הקשורות שלו "
 "(תנועות, משימות, הערות וכו׳) יחוברו לרשומה זו."
 
-#: common_tableform.js reports.js animal_observations.js
+#: reports.js animal_observations.js common_tableform.js
 msgid "Select all"
 msgstr "בחר הכל"
 
@@ -12310,7 +12348,7 @@ msgstr "תלוי"
 msgid "Selkirk Rex"
 msgstr "סלקירק רקס"
 
-#: common_widgets.js report_toolbar.js
+#: report_toolbar.js common_widgets.js
 msgid "Send"
 msgstr "שלח"
 
@@ -12490,11 +12528,11 @@ msgstr "הגדרות"
 msgid "Settle Payments"
 msgstr "הסדר תשלומים"
 
-#: person.py html.py lookups.py animal.js lostfound_find_results.js
-#: lostfound.js animal_find_results.js incident_find.js lostfound_find.js
-#: waitinglist_new.js lostfound_new.js waitinglist_results.js mobile2.js
-#: common_animalchooser.js common_html.js incident.js animal_new.js
-#: waitinglist.js animal_find.js person.js
+#: lookups.py html.py person.py incident.js animal_find_results.js
+#: incident_find.js lostfound_find.js waitinglist_new.js animal.js
+#: waitinglist_results.js common_html.js lostfound_find_results.js person.js
+#: mobile2.js animal_find.js lostfound_new.js waitinglist.js
+#: common_animalchooser.js animal_new.js lostfound.js
 msgid "Sex"
 msgstr "מין (ז/נ)"
 
@@ -12546,8 +12584,8 @@ msgstr "כבשה"
 msgid "Sheep Dog"
 msgstr "כלב רועים"
 
-#: html.py dbupdate.py header_edit_header.js clinic_invoice.js
-#: person_find_results.js
+#: html.py dbupdate.py person_find_results.js clinic_invoice.js
+#: header_edit_header.js
 msgid "Shelter"
 msgstr "מקלט"
 
@@ -12599,7 +12637,7 @@ msgstr "סטטיסטיקות מקלט (שנה נוכחית)"
 msgid "Shelter stats (today)"
 msgstr "סטטיסטיקות מקלט (היום)"
 
-#: html.py header.js change_user_settings.js shelterview.js options.js
+#: html.py shelterview.js header.js change_user_settings.js options.js
 msgid "Shelter view"
 msgstr "תצוגת מקלט"
 
@@ -12891,8 +12929,8 @@ msgstr "חולה/פצוע"
 msgid "Sick/injured animal"
 msgstr "חיה חולה/פצועה"
 
-#: mobile_sign.js media.js service_sign_document.js
-#: service_checkout_adoption.js
+#: service_checkout_adoption.js mobile_sign.js service_sign_document.js
+#: media.js
 msgid "Sign"
 msgstr "חתום"
 
@@ -12912,7 +12950,7 @@ msgstr "חתום על המסך"
 msgid "Signature"
 msgstr "חתימה"
 
-#: mobile_sign.js service_sign_document.js service_checkout_adoption.js
+#: service_checkout_adoption.js mobile_sign.js service_sign_document.js
 msgid "Signature is required"
 msgstr "חתימה נדרשת"
 
@@ -12980,7 +13018,7 @@ msgstr "אירוע דומה"
 msgid "Similar Person"
 msgstr "אדם דומה"
 
-#: animal_find.js person_find.js
+#: person_find.js animal_find.js
 msgid "Simple"
 msgstr "פשוט"
 
@@ -12992,9 +13030,9 @@ msgstr "סינגפורה"
 msgid "Single Treatment"
 msgstr "טיפול חד־פעמי"
 
-#: lookups.py reports.py mobile_report.js lookups.js person_new.js
-#: common_html.js incident.js users.js report_criteria.js person.js
-#: incident_new.js common_personchooser.js person_find.js
+#: lookups.py reports.py users.js person_find.js incident.js incident_new.js
+#: person_new.js common_personchooser.js report_criteria.js common_html.js
+#: person.js lookups.js mobile_report.js
 msgid "Site"
 msgstr "אתר"
 
@@ -13010,9 +13048,9 @@ msgstr "האתר תואם למשתמש הנוכחי"
 msgid "Sites"
 msgstr "אתרים"
 
-#: person.py html.py lookups.py animal.js animal_find_results.js
-#: waitinglist_new.js media.js waitinglist_results.js mobile2.js animal_new.js
-#: waitinglist.js options.js animal_find.js person.js
+#: lookups.py html.py person.py animal_find_results.js waitinglist_new.js
+#: document_templates.js animal.js waitinglist_results.js person.js options.js
+#: mobile2.js animal_find.js waitinglist.js media.js animal_new.js
 msgid "Size"
 msgstr "גודל"
 
@@ -13129,34 +13167,38 @@ msgid "South Russian Ovcharka"
 msgstr "רועה דרום רוסי"
 
 #: options.js
-msgid "Spambot protection: First name mixed case"
-msgstr "‫Spambot protection: First name mixed case"
-
-#: options.js
 msgid "Spambot protection: Invisible checkbox"
 msgstr "‫Spambot protection: Invisible checkbox"
+
+#: options.js
+msgid "Spambot protection: Person name mixed case"
+msgstr "הגנה מפני בוטים: שם פרטי באותיות גדולות וקטנות מעורבות"
 
 #: options.js
 msgid "Spambot protection: UserAgent check"
 msgstr "‫Spambot protection: UserAgent check"
 
+#: options.js
+msgid "Spambot protection: Zipcode contains numbers"
+msgstr "הגנה מפני בוטים: מיקוד כולל ספרות"
+
 #: dbupdate.py
 msgid "Spaniel"
 msgstr "ספניאל"
 
-#: html.py animal.js animal_find_results.js mobile2.js common_html.js
-#: options.js
+#: html.py animal_find_results.js animal.js common_html.js options.js
+#: mobile2.js
 msgid "Special Needs"
 msgstr "צרכים מיוחדים"
 
-#: person.py html.py lookups.py reports.py medical.js movements.js animal.js
-#: vaccination.js mobile_report.js onlineform.js lostfound_find_results.js
-#: lostfound.js animal_find_results.js incident_find.js lostfound_find.js
-#: lookups.js waitinglist_new.js lostfound_new.js waitinglist_results.js
-#: event_animals.js mobile2.js common_animalchoosermulti.js
-#: common_animalchooser.js common_html.js incident.js litters.js animal_new.js
-#: waitinglist.js options.js test.js animal_find.js report_criteria.js
-#: person.js
+#: lookups.py html.py person.py reports.py common_animalchoosermulti.js
+#: incident.js animal_find_results.js event_animals.js onlineform.js
+#: incident_find.js lostfound_find.js movements.js medical.js
+#: waitinglist_new.js report_criteria.js animal.js vaccination.js
+#: waitinglist_results.js common_html.js lostfound_find_results.js person.js
+#: options.js mobile2.js test.js animal_find.js lostfound_new.js waitinglist.js
+#: lookups.js common_animalchooser.js litters.js animal_new.js lostfound.js
+#: mobile_report.js
 msgid "Species"
 msgstr "זן"
 
@@ -13224,7 +13266,7 @@ msgstr "פצל גילאי גיל גור/בגיר בגיל"
 msgid "Split species pages with a baby/adult prefix"
 msgstr "פצל דפי זנים עם קידומת גור/בוגר"
 
-#: html.py dbupdate.py header_edit_header.js lookups.js common_html.js
+#: html.py dbupdate.py common_html.js header_edit_header.js lookups.js
 msgid "Sponsor"
 msgstr "נותן חסות"
 
@@ -13240,8 +13282,20 @@ msgstr "בחסות {0}"
 msgid "Sponsorship donations"
 msgstr "תרומות חסות"
 
-#: html.py dbupdate.py staff_rota.js header_edit_header.js lookups.js
-#: person_find_results.js common_html.js reports_querybuilder.js
+#: donations.js
+msgid "Square"
+msgstr "‫Square"
+
+#: options.js
+msgid "Square Access Token"
+msgstr "‫Square Access Token"
+
+#: options.js
+msgid "Square Location ID"
+msgstr "‫Square Location ID"
+
+#: html.py dbupdate.py person_find_results.js staff_rota.js common_html.js
+#: header_edit_header.js lookups.js reports_querybuilder.js
 msgid "Staff"
 msgstr "צוות"
 
@@ -13269,8 +13323,8 @@ msgstr "רגיל"
 msgid "Standardbred"
 msgstr "סוס כרכרות"
 
-#: wordprocessor.py html.py event_find_results.js medical.js animal.js event.js
-#: animal_diet.js event_new.js
+#: html.py wordprocessor.py animal_diet.js medical.js event_find_results.js
+#: animal.js event.js event_new.js
 msgid "Start Date"
 msgstr "תאריך התחלה"
 
@@ -13322,10 +13376,9 @@ msgstr "מתחיל בעוד 3 חודשים"
 msgid "Starts in next 6 months"
 msgstr "מתחיל ב-6 חודשים הקרובים"
 
-#: html.py event_find_results.js event.js waitinglist_results.js
-#: person_find_results.js person_new.js mobile2.js incident.js event_new.js
-#: options.js event_find.js transport.js person.js incident_new.js
-#: common_personchooser.js
+#: html.py incident.js transport.js person_find_results.js incident_new.js
+#: person_new.js event_find.js common_personchooser.js event_find_results.js
+#: waitinglist_results.js person.js options.js mobile2.js event.js event_new.js
 msgid "State"
 msgstr "מדינה/מחוז"
 
@@ -13352,8 +13405,8 @@ msgid ""
 msgstr ""
 "סטטיסטיקות המוצגות בדף הבית לגבי חיות שנכנסו ויצאו מהמקלט בתקופה הנבחרת."
 
-#: wordprocessor.py lookups.py medical.js movements.js mobile2.js
-#: move_reserve.js common_html.js transport.js person.js clinic_appointment.js
+#: lookups.py wordprocessor.py transport.js movements.js clinic_appointment.js
+#: medical.js common_html.js move_reserve.js person.js mobile2.js
 msgid "Status"
 msgstr "סטטוס"
 
@@ -13369,7 +13422,7 @@ msgstr "סטטוס וזן"
 msgid "Stay"
 msgstr "השאר במסך זה"
 
-#: html.py move_deceased.js medical.js vaccination.js stocklevel.js test.js
+#: html.py move_deceased.js medical.js vaccination.js test.js stocklevel.js
 msgid "Stock"
 msgstr "מלאי"
 
@@ -13461,7 +13514,7 @@ msgstr "א׳"
 msgid "SubTotal"
 msgstr "סיכום ביניים"
 
-#: diarytask.js common_widgets.js animal_bulk.js mailmerge.js diary.js
+#: diarytask.js animal_bulk.js mailmerge.js common_widgets.js diary.js
 msgid "Subject"
 msgstr "נושא"
 
@@ -13485,7 +13538,7 @@ msgstr "חיוב לפי אסימון בוצע בהצלחה."
 msgid "Successfully attached to {0}"
 msgstr "קושר בהצלחה ל {0}"
 
-#: onlineforms.js document_repository.js report_images.js mailmerge.js
+#: onlineforms.js report_images.js mailmerge.js document_repository.js
 msgid "Successfully copied to the clipboard."
 msgstr "הועתק בהצלחה ללוח העריכה."
 
@@ -13497,7 +13550,7 @@ msgstr "כיסנאי דואה"
 msgid "Sun"
 msgstr "א׳"
 
-#: calendarview.js common.js reports.js options.js clinic_calendar.js
+#: reports.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Sunday"
 msgstr "ראשון"
 
@@ -13537,23 +13590,23 @@ msgstr "הבעלים ויתרו על החיה"
 msgid "Surrender Pickup"
 msgstr "איסוף חיה שבעליה ויתרו עליה"
 
-#: html.py animal.js incident_find_results.js incident.js incident_new.js
+#: html.py incident.js incident_new.js animal.js incident_find_results.js
 msgid "Suspect"
 msgstr "חשוד"
 
-#: mobile2.js incident.js
+#: incident.js mobile2.js
 msgid "Suspect 1"
 msgstr "חשוד 1"
 
-#: mobile2.js incident.js
+#: incident.js mobile2.js
 msgid "Suspect 2"
 msgstr "חשוד 2"
 
-#: mobile2.js incident.js
+#: incident.js mobile2.js
 msgid "Suspect 3"
 msgstr "חשוד 3"
 
-#: mobile2.js incident.js
+#: incident.js mobile2.js
 msgid "Suspect/Animal"
 msgstr "חשודים/חיות"
 
@@ -13589,7 +13642,7 @@ msgstr "סוג הערת מערכת"
 msgid "System Options"
 msgstr "אפשרויות מערכת"
 
-#: html.py main.js
+#: html.py main.js header.js
 msgid "System user accounts"
 msgstr "חשבונות משתמשי מערכת"
 
@@ -13637,7 +13690,7 @@ msgstr "צלם תמונה"
 msgid "Take another payment"
 msgstr "קלוט עוד תשלום"
 
-#: mobile2.js incident_new.js
+#: incident_new.js mobile2.js
 msgid "Taken By"
 msgstr "נלקח ע״י"
 
@@ -13661,7 +13714,7 @@ msgstr "משימה הושלמה."
 msgid "Task items are executed in order of index, lowest to highest"
 msgstr "פרטי המשימה מיוצרים לפי סדר האינדקס, מהנמוך לגבוה"
 
-#: animal.js animal_find_results.js mobile2.js animal_new.js
+#: animal_find_results.js animal.js mobile2.js animal_new.js
 msgid "Tattoo"
 msgstr "קעקוע"
 
@@ -13673,15 +13726,15 @@ msgstr "תאריך קעקוע"
 msgid "Tattoo Number"
 msgstr "מספר קעקוע"
 
-#: donations.js clinic_appointment.js
+#: clinic_appointment.js donations.js
 msgid "Tax"
 msgstr "מס"
 
-#: common_widgets.js donations.js
+#: donations.js common_widgets.js
 msgid "Tax Amount"
 msgstr "סכום מס"
 
-#: common_widgets.js donations.js clinic_appointment.js
+#: clinic_appointment.js donations.js common_widgets.js
 msgid "Tax Rate %"
 msgstr "שיעור מס %"
 
@@ -13693,7 +13746,7 @@ msgstr "טלפון"
 msgid "Telephone Bills"
 msgstr "חשבונות טלפון"
 
-#: common_widgets.js document_templates.js options.js mailmerge.js
+#: document_templates.js mailmerge.js options.js common_widgets.js
 msgid "Template"
 msgstr "תבנית"
 
@@ -13706,6 +13759,10 @@ msgid ""
 "Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 msgstr ""
 "ניתן לייצר היררכיה באמצעות שימוש ב-/ בשם התבנית, לדוגמא: וטרינרים/אישור כלבת"
+
+#: document_templates.js
+msgid "Templates"
+msgstr "תבניות"
 
 #: dbupdate.py
 msgid "Tennessee Walker"
@@ -13767,11 +13824,11 @@ msgstr "בדיקה בוצעה {0}"
 msgid "Tests"
 msgstr "בדיקות"
 
-#: dbupdate.py common_tableform.js onlineform.js
+#: dbupdate.py onlineform.js common_tableform.js
 msgid "Text"
 msgstr "טקסט"
 
-#: csvimport.js csvimport_stripe.js csvimport_paypal.js
+#: csvimport_stripe.js csvimport.js csvimport_paypal.js
 msgid "Text Encoding"
 msgstr "קידוד טקסט"
 
@@ -14124,7 +14181,7 @@ msgstr "שנה זו"
 msgid "This animal already has an active reservation."
 msgstr "לחיה יש כבר שריון פעיל."
 
-#: move_reclaim.js move_adopt.js
+#: move_adopt.js move_reclaim.js
 msgid "This animal has active reservations, they will be cancelled."
 msgstr "לחיה זו יש שריונים פעילים, הם יבוטלו."
 
@@ -14163,13 +14220,13 @@ msgid ""
 "for all bonded animals."
 msgstr "חיה זו נקשרה עם {0}. תנועות אימוץ יווצרו לכל החיות הקשורות."
 
-#: move_reclaim.js move_adopt.js
+#: move_adopt.js move_reclaim.js
 msgid ""
 "This animal is currently at a retailer, it will be automatically returned "
 "first."
 msgstr "חיה זו נמצאת כרגע בחנות והיא תוחזר אוטומטית תחילה."
 
-#: move_reclaim.js move_adopt.js
+#: move_adopt.js move_reclaim.js
 msgid ""
 "This animal is currently fostered, it will be automatically returned first."
 msgstr "חיה זו נמצאת באומנה, היא תוחזר אוטומטית תחילה."
@@ -14186,7 +14243,7 @@ msgstr "חיה זו בהסגר כרגע ולא יכולה לעזוב את המק
 msgid "This animal is marked not for adoption."
 msgstr "חיה זו מסומנת לא לאימוץ."
 
-#: move_foster.js move_retailer.js move_reserve.js common_html.js
+#: move_retailer.js move_foster.js common_html.js move_reserve.js
 msgid "This animal is not on the shelter."
 msgstr "חיה זו לא במקלט."
 
@@ -14236,6 +14293,10 @@ msgid ""
 msgstr ""
 "באמצעות תכונה זו, תוכל לשלוח מייל למאמצים כדי לאפשר להם לחתום על מסמכי "
 "האימוץ, לשלם את סל האימוץ ולהוסיף תרומה במידה וירצו."
+
+#: onlineform_incoming.js
+msgid "This form has been marked as spam"
+msgstr "טופס זה סומן כספאם"
 
 #: onlineform_incoming.js
 msgid "This form has been previously processed"
@@ -14381,7 +14442,7 @@ msgid ""
 "the shelter."
 msgstr "אדם זה חי באותו אזור בו חי האדם שהביא את החיה למקלט."
 
-#: person.py lostfound.py event.py animalcontrol.py animal.py waitinglist.py
+#: event.py lostfound.py person.py animalcontrol.py animal.py waitinglist.py
 msgid "This record has been changed by another user, please reload."
 msgstr "רשומה זו עודכנה ע״י משתמש אחר. אנא טען מחדש."
 
@@ -14510,7 +14571,7 @@ msgstr "ה׳"
 msgid "Thumbnail size"
 msgstr "גודל תמונה ממוזערת"
 
-#: calendarview.js common.js reports.js options.js clinic_calendar.js
+#: reports.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Thursday"
 msgstr "חמישי"
 
@@ -14554,11 +14615,11 @@ msgstr "זמן ברשימה"
 msgid "Time on shelter"
 msgstr "זמן במקלט"
 
-#: html.py timeline.js header.js
+#: html.py header.js timeline.js
 msgid "Timeline"
 msgstr "ציר הזמן"
 
-#: mobile2.js main.js
+#: main.js mobile2.js
 msgid "Timeline ({0})"
 msgstr "ציר הזמן ({0})"
 
@@ -14566,8 +14627,8 @@ msgstr "ציר הזמן ({0})"
 msgid "Times should be in HH:MM format, eg: 09:00, 16:30"
 msgstr "זמנים צריכים להיות בפורמט HH:MM, למשל: 09:00, 16:30"
 
-#: html.py person_find_results.js person_new.js mobile2.js reports.js person.js
-#: common_personchooser.js
+#: html.py person_find_results.js person_new.js common_personchooser.js
+#: reports.js person.js mobile2.js
 msgid "Title"
 msgstr "כותרת/תואר"
 
@@ -14579,7 +14640,7 @@ msgstr "תואר פרטי משפחה"
 msgid "Title Initials Last"
 msgstr "תואר ראשי-תיבות משפחה"
 
-#: common_widgets.js giftaid_hmrc_spreadsheet.js
+#: giftaid_hmrc_spreadsheet.js common_widgets.js
 msgid "To"
 msgstr "אל"
 
@@ -14622,7 +14683,7 @@ msgstr "על מנת לאפס סיסמא למערכת לחץ על קישור זה
 msgid "To week beginning"
 msgstr "לתחילת השבוע"
 
-#: calendarview.js common.js options.js clinic_calendar.js
+#: calendarview.js options.js common.js clinic_calendar.js
 msgid "Today"
 msgstr "היום"
 
@@ -14642,7 +14703,7 @@ msgstr "טונקינזי"
 msgid "Too Many Animals"
 msgstr "יותר מדי חיות"
 
-#: common_tableform.js additional.js
+#: additional.js common_tableform.js
 msgid "Tooltip"
 msgstr "רמז"
 
@@ -14698,11 +14759,11 @@ msgstr "דמי עסקה"
 msgid "Transactions"
 msgstr "עסקאות"
 
-#: dbupdate.py publish_options.js move_transfer.js
+#: dbupdate.py move_transfer.js publish_options.js
 msgid "Transfer"
 msgstr "העברה"
 
-#: dbupdate.py animal.js animal_new.js reports_querybuilder.js
+#: dbupdate.py animal.js reports_querybuilder.js animal_new.js
 msgid "Transfer In"
 msgstr "הועבר ממקלט אחר"
 
@@ -14710,7 +14771,7 @@ msgstr "הועבר ממקלט אחר"
 msgid "Transfer To"
 msgstr "העבר ל"
 
-#: html.py header.js move_transfer.js
+#: html.py move_transfer.js header.js
 msgid "Transfer an animal"
 msgstr "העבר חיה"
 
@@ -14758,12 +14819,12 @@ msgstr "הועברו אל מחוץ למקלט {0}"
 msgid "Transfers must have a valid transfer date."
 msgstr "תאריך העברה אינו חוקי."
 
-#: dbupdate.py roles.js calendarview.js header_edit_header.js
-#: onlineform_incoming.js
+#: dbupdate.py onlineform_incoming.js calendarview.js header_edit_header.js
+#: roles.js
 msgid "Transport"
 msgstr "הסעות"
 
-#: header.js transport.js
+#: transport.js header.js
 msgid "Transport Book"
 msgstr "רשימת הסעות"
 
@@ -14840,8 +14901,8 @@ msgstr "קונהאונד ווקר"
 msgid "Trial"
 msgstr "ניסיון"
 
-#: dbupdate.py movements.js publish_options.js shelterview.js
-#: common_animalchoosermulti.js common_html.js main.js
+#: dbupdate.py common_animalchoosermulti.js main.js movements.js shelterview.js
+#: publish_options.js common_html.js
 msgid "Trial Adoption"
 msgstr "אימוץ ניסיון"
 
@@ -14877,7 +14938,7 @@ msgstr "ג׳"
 msgid "Tue"
 msgstr "ג׳"
 
-#: calendarview.js common.js reports.js options.js clinic_calendar.js
+#: reports.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Tuesday"
 msgstr "שלישי"
 
@@ -14909,16 +14970,17 @@ msgstr "טוויטר"
 msgid "Two factor authentication (2FA)"
 msgstr "אימות דו-גורמי (2FA)"
 
-#: wordprocessor.py lookups.py reports.py rota.js log.js staff_rota.js
-#: movements.js log_new.js common_widgets.js animal.js vaccination.js
-#: mobile_report.js onlineform.js licence_renewal.js animal_find_results.js
-#: donations.js additional.js animal_bulk.js vouchers.js media.js accounts.js
-#: mobile2.js animal_diet.js document_repository.js person_links.js
-#: common_animalchooser.js common_html.js incident.js diarytasks.js
-#: animal_new.js licence.js citations.js animal_costs.js reports.js options.js
-#: csvimport_stripe.js csvimport_paypal.js mailmerge.js test.js traploan.js
-#: animal_find.js users.js report_criteria.js transport.js person.js
-#: incident_new.js boarding.js reports_querybuilder.js clinic_appointment.js
+#: lookups.py reports.py wordprocessor.py animal_diet.js users.js log.js
+#: incident.js log_new.js citations.js animal_find_results.js transport.js
+#: incident_new.js rota.js onlineform.js movements.js licence.js
+#: clinic_appointment.js vouchers.js report_criteria.js person_links.js
+#: licence_renewal.js csvimport_stripe.js reports.js donations.js
+#: animal_costs.js accounts.js animal.js vaccination.js staff_rota.js
+#: common_html.js person.js animal_bulk.js mailmerge.js options.js mobile2.js
+#: test.js animal_find.js accounts_trx.js boarding.js additional.js
+#: common_animalchooser.js common_widgets.js diarytasks.js
+#: document_repository.js reports_querybuilder.js media.js animal_new.js
+#: csvimport_paypal.js traploan.js mobile_report.js
 msgid "Type"
 msgstr "סוג"
 
@@ -14938,7 +15000,7 @@ msgstr "U (חתול לא רצוי)"
 msgid "UK Giftaid"
 msgstr "UK Giftaid (שוברי מתנה אנגליים)"
 
-#: users.py media.js report_images.js
+#: users.py report_images.js media.js
 msgid "URL"
 msgstr "כתובת"
 
@@ -14990,13 +15052,13 @@ msgstr "בטל"
 msgid "Undo given treatments"
 msgstr "בטל טיפולים שניתנו"
 
-#: html.py animal.js animal_find_results.js header_edit_header.js
-#: animal_bulk.js mobile2.js common_html.js animal_new.js search.js
-#: animal_observations.js stocklevel.js boarding.js
+#: html.py animal_find_results.js search.js animal_observations.js animal.js
+#: common_html.js animal_bulk.js header_edit_header.js mobile2.js boarding.js
+#: stocklevel.js animal_new.js
 msgid "Unit"
 msgstr "יחידה"
 
-#: common_widgets.js donations.js stocklevel.js
+#: donations.js stocklevel.js common_widgets.js
 msgid "Unit Price"
 msgstr "מחיר יחידה"
 
@@ -15008,7 +15070,7 @@ msgstr "יחידה וזן"
 msgid "Unit within the location, eg: pen or cage number"
 msgstr "יחידה במיקום, לדוגמא: מספר מכלאה או כלוב"
 
-#: lookups.js stocklevel.js mailmerge.js
+#: mailmerge.js stocklevel.js lookups.js
 msgid "Units"
 msgstr "יחידות"
 
@@ -15040,11 +15102,15 @@ msgstr "שינויים שלא נשמרו"
 msgid "Unspecified"
 msgstr "לא מוגדר"
 
+#: utils.py
+msgid "Unsubscribe from future messages"
+msgstr "הסירו אותי מהרשימה לקבלת הודעות עתידיות"
+
 #: dbupdate.py
 msgid "Unsuitable Accomodation"
 msgstr "סביבה לא מתאימה"
 
-#: header.js options.js main.js
+#: main.js header.js options.js
 msgid "Up for adoption"
 msgstr "מפורסמים לאימוץ"
 
@@ -15067,6 +15133,10 @@ msgstr "עדכן אתרי אימוץ כל"
 #: publish_options.js
 msgid "Update publishing options"
 msgstr "עדכן הגדרות פרסום"
+
+#: movements.js
+msgid "Update reservation status"
+msgstr "עדכן סטטוס שריון"
 
 #: event_animals.js
 msgid "Update selected animals arrival time?"
@@ -15104,7 +15174,7 @@ msgstr "עודכן."
 msgid "Updating..."
 msgstr "מעדכן..."
 
-#: mobile2.js document_templates.js
+#: document_templates.js mobile2.js
 msgid "Upload"
 msgstr "העלה"
 
@@ -15132,7 +15202,7 @@ msgstr ""
 "העלה splash.jpg ו- logo.jpg על מנת להחליף את התמונות במסך הכניסה ובפינה "
 "העליונה של המערכת."
 
-#: media.js document_repository.js
+#: document_repository.js media.js
 msgid "Uploading..."
 msgstr "מעלה..."
 
@@ -15140,7 +15210,7 @@ msgstr "מעלה..."
 msgid "Urgencies"
 msgstr "דחיפויות"
 
-#: html.py lookups.py waitinglist_new.js waitinglist_results.js waitinglist.js
+#: lookups.py html.py waitinglist_new.js waitinglist_results.js waitinglist.js
 msgid "Urgency"
 msgstr "דחיפות"
 
@@ -15152,12 +15222,12 @@ msgstr "דחיפות היא {0}"
 msgid "Urgent"
 msgstr "דחופה"
 
-#: move_deceased.js medical.js vaccination.js stocklevel.js test.js
+#: move_deceased.js medical.js vaccination.js test.js stocklevel.js
 msgid "Usage Date"
 msgstr "תאריך שימוש"
 
-#: lookups.py move_deceased.js medical.js vaccination.js mobile2.js
-#: stocklevel.js test.js
+#: lookups.py move_deceased.js medical.js vaccination.js mobile2.js test.js
+#: stocklevel.js
 msgid "Usage Type"
 msgstr "סוג שימוש"
 
@@ -15212,6 +15282,11 @@ msgstr "השתמש בסמל בחלק התחתון של שדה הערות כדי 
 msgid "Use the query builder"
 msgstr "השתמש בבונה השאילתות"
 
+#: document_templates.js
+msgid ""
+"Use this dialog to reload default document templates that have been deleted"
+msgstr "השתמש בחלון זה זה כדי לטעון מחדש תבניות מסמכים ברירת מחדל שנמחקו"
+
 #: common_html.js
 msgid "User"
 msgstr "משתמש"
@@ -15237,8 +15312,8 @@ msgstr "המשתמש אינו קיים או שאין לו כתובת מייל ח
 msgid "User roles"
 msgstr "תפקידים"
 
-#: users.py change_password.js mobile_login.js change_user_settings.js
-#: options.js users.js
+#: users.py users.js change_user_settings.js mobile_login.js options.js
+#: change_password.js
 msgid "Username"
 msgstr "שם משתמש"
 
@@ -15352,8 +15427,8 @@ msgstr "חלוקה אנכית"
 msgid "Very Large"
 msgstr "גדול מאוד"
 
-#: wordprocessor.py html.py dbupdate.py header_edit_header.js lookups.js
-#: vouchers.js person_find_results.js common_html.js test.js
+#: html.py wordprocessor.py dbupdate.py person_find_results.js vouchers.js
+#: common_html.js header_edit_header.js test.js lookups.js
 #: reports_querybuilder.js
 msgid "Vet"
 msgstr "וטרינר"
@@ -15366,7 +15441,7 @@ msgstr "וטרינר (לא חובה)"
 msgid "Vet Visit"
 msgstr "ביקור וטרינר"
 
-#: html.py incident_find_results.js mobile2.js incident.js incident_new.js
+#: html.py incident.js incident_new.js mobile2.js incident_find_results.js
 msgid "Victim"
 msgstr "קורבן"
 
@@ -15382,8 +15457,8 @@ msgstr "לינק לוידאו"
 msgid "Vietnamese Pot Bellied"
 msgstr "חזיר ננסי ויאטנמי"
 
-#: mobile_sign.js onlineform_incoming.js service_sign_document.js
-#: common_html.js service_checkout_adoption.js maint_undelete.js
+#: service_checkout_adoption.js onlineform_incoming.js common_html.js
+#: mobile_sign.js service_sign_document.js maint_undelete.js
 msgid "View"
 msgstr "הצג"
 
@@ -15511,7 +15586,7 @@ msgstr "צפיה בקישורי האנשים"
 msgid "View Report"
 msgstr "צפיה בדוחות"
 
-#: accounts.js incident.js reports.js incident_new.js
+#: incident.js incident_new.js reports.js accounts.js person.js
 msgid "View Roles"
 msgstr "תפקידים לצפיה"
 
@@ -15603,8 +15678,8 @@ msgstr "נושא חזותי"
 msgid "Vizsla"
 msgstr "ויסלה"
 
-#: html.py staff_rota.js header_edit_header.js lookups.js
-#: person_find_results.js common_html.js reports_querybuilder.js
+#: html.py person_find_results.js staff_rota.js common_html.js
+#: header_edit_header.js lookups.js reports_querybuilder.js
 msgid "Volunteer"
 msgstr "מתנדב/ת"
 
@@ -15628,7 +15703,7 @@ msgstr "רשימת השוברים"
 msgid "Voucher codes matching '{0}'."
 msgstr "קודי שובר מתאימים ל ‘{0}’."
 
-#: roles.js header_edit_header.js document_templates.js
+#: document_templates.js header_edit_header.js roles.js
 msgid "Vouchers"
 msgstr "שוברים"
 
@@ -15649,8 +15724,8 @@ msgstr "WHERE clause"
 msgid "Waiting"
 msgstr "בהמתנה"
 
-#: html.py dbupdate.py roles.js header_edit_header.js waitinglist_results.js
-#: document_templates.js onlineform_incoming.js options.js search.js
+#: html.py dbupdate.py search.js document_templates.js onlineform_incoming.js
+#: waitinglist_results.js header_edit_header.js roles.js options.js
 #: reports_querybuilder.js
 msgid "Waiting List"
 msgstr "רשימת המתנה"
@@ -15687,7 +15762,7 @@ msgstr "רשימת המתנה {0}"
 msgid "Waiting List: {0}"
 msgstr "רשימת המתנה: {0}"
 
-#: html.py header.js clinic_appointment.js
+#: html.py clinic_appointment.js header.js
 msgid "Waiting Room"
 msgstr "רשימת המתנה"
 
@@ -15707,7 +15782,7 @@ msgstr "רשומות רשימת המתנה מתאימות '{0}'."
 msgid "Waiting list entries must have a contact"
 msgstr "יש למלא איש קשר לרשימת המתנה"
 
-#: log.js media.js waitinglist.js diary.js
+#: log.js waitinglist.js media.js diary.js
 msgid "Waiting list entry for {0} ({1})"
 msgstr "רשומת רשימת המתנה עבור {0} ({1})"
 
@@ -15777,7 +15852,7 @@ msgstr "הזהר לפני אימוץ ע״י אדם שחי באזור קרוב ל
 msgid "Warn when creating multiple reservations on the same animal"
 msgstr "הזהר לפני יצירת מספר שיריונים לאותה חיה"
 
-#: animal.js mobile2.js person.js
+#: animal.js person.js mobile2.js
 msgid "Warning"
 msgstr "אזהרה"
 
@@ -15841,7 +15916,7 @@ msgstr "ד׳"
 msgid "Wed"
 msgstr "ד׳"
 
-#: calendarview.js common.js reports.js options.js clinic_calendar.js
+#: reports.js calendarview.js options.js common.js clinic_calendar.js
 msgid "Wednesday"
 msgstr "רביעי"
 
@@ -16121,8 +16196,8 @@ msgstr "שבוע"
 msgid "Work"
 msgstr "עבודה"
 
-#: waitinglist_results.js person_find_results.js person_new.js mobile2.js
-#: person.js common_personchooser.js
+#: person_find_results.js person_new.js common_personchooser.js
+#: waitinglist_results.js person.js mobile2.js
 msgid "Work Phone"
 msgstr "טלפון בעבודה"
 
@@ -16158,11 +16233,11 @@ msgstr "לברדור רטריבר צהוב"
 msgid "Yellow and Grey"
 msgstr "צהוב ואפור"
 
-#: main.py wordprocessor.py i18n.py onlineform.py dbupdate.py
-#: event_find_results.js lostfound_find_results.js animal_find_results.js
-#: donations.js incident_find_results.js lostfound_find.js lookups.js
-#: publish_options.js accounts.js waitinglist_results.js person_find_results.js
-#: users.js sql.js reports_querybuilder.js
+#: main.py i18n.py onlineform.py wordprocessor.py dbupdate.py users.js
+#: animal_find_results.js person_find_results.js lostfound_find.js sql.js
+#: event_find_results.js publish_options.js donations.js accounts.js
+#: waitinglist_results.js lostfound_find_results.js lookups.js
+#: incident_find_results.js reports_querybuilder.js
 msgid "Yes"
 msgstr "כן"
 
@@ -16177,6 +16252,12 @@ msgstr "כן/לא/בלתי ידוע"
 #: dbupdate.py
 msgid "Yorkshire Terrier Yorkie"
 msgstr "יורקשייר טרייר"
+
+#: header.js
+msgid ""
+"You are logged in as the master user. This account should ONLY be used for "
+"emergency administration."
+msgstr "אתה מחובר כמשתמש הראשי. חשבון זה מיועד לשימוש בניהול מקרי חירום בלבד."
 
 #: options.js
 msgid "You can assign a custom emblem to your additional animal flags"
@@ -16289,11 +16370,11 @@ msgid ""
 "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr "תוקף חשבונך במערכת יפוג ב {0}. אנא חדש {1}"
 
-#: html.py event_find_results.js lostfound_find_results.js lostfound.js
-#: event.js incident_find.js incident_find_results.js lostfound_find.js
-#: lostfound_new.js waitinglist_results.js person_find_results.js person_new.js
-#: mobile2.js incident.js event_new.js options.js event_find.js transport.js
-#: person.js incident_new.js common_personchooser.js
+#: html.py incident.js transport.js person_find_results.js incident_new.js
+#: person_new.js incident_find.js lostfound_find.js event_find.js
+#: common_personchooser.js event_find_results.js waitinglist_results.js
+#: lostfound_find_results.js person.js options.js mobile2.js event.js
+#: lostfound_new.js incident_find_results.js event_new.js lostfound.js
 msgid "Zipcode"
 msgstr "מיקוד"
 
@@ -16321,7 +16402,7 @@ msgstr "ו"
 msgid "are sent to"
 msgstr "נשלחים ל"
 
-#: rota.js staff_rota.js reports.js transport.js
+#: transport.js rota.js reports.js staff_rota.js
 msgid "at"
 msgstr "ב"
 
@@ -16333,7 +16414,7 @@ msgstr "התאמה אוטומטית לשעון קיץ"
 msgid "cm"
 msgstr "ס״מ"
 
-#: medical.py medical.js header_edit_header.js medicalprofile.js
+#: medical.py medical.js medicalprofile.js header_edit_header.js
 msgid "days"
 msgstr "ימים"
 
@@ -16389,7 +16470,7 @@ msgstr "חודשים"
 msgid "more"
 msgstr "יותר"
 
-#: animal_bulk.js transport.js person.js
+#: transport.js person.js animal_bulk.js
 msgid "on"
 msgstr "בתאריך"
 
@@ -16404,10 +16485,6 @@ msgstr "או גיל מוערך בשנים"
 #: wordprocessor.py animal.js animal_new.js
 msgid "oz"
 msgstr "אונקיה"
-
-#: diary.py
-msgid "taskcreator"
-msgstr ""
 
 #: animal_bulk.js accounts_trx.js
 msgid "to"
@@ -16425,7 +16502,7 @@ msgstr "טיפולים"
 msgid "treatments, every"
 msgstr "טיפולים, כל"
 
-#: medical.py medical.js
+#: medical.py medical.js medicalprofile.js
 msgid "weekdays"
 msgstr "ימות השבוע"
 
@@ -16457,9 +16534,9 @@ msgstr "{0} ({1})"
 msgid "{0} - {1} ({2} days at {3})"
 msgstr "{0} - {1} ({2} ימים ב {3})"
 
-#: log.js medical.js movements.js animal.js vaccination.js donations.js
-#: vouchers.js media.js animal_diet.js licence.js animal_costs.js test.js
-#: diary.js transport.js boarding.js clinic_appointment.js
+#: animal_diet.js log.js transport.js movements.js licence.js
+#: clinic_appointment.js medical.js vouchers.js donations.js animal_costs.js
+#: animal.js vaccination.js test.js boarding.js media.js diary.js
 msgid "{0} - {1} ({2} {3} aged {4})"
 msgstr "{0} - {1} ({2} {3} בגיל {4})"
 
@@ -16592,7 +16669,7 @@ msgstr "תאריך מתן חיסון {0}"
 msgid "{0} weeks"
 msgstr "{0} שבועות"
 
-#: lookups.js media.js onlineforms.js
+#: onlineforms.js lookups.js media.js
 msgid "{0} years"
 msgstr "{0} שנים"
 
@@ -16604,7 +16681,7 @@ msgstr "{0} {1} ({2} טיפולים)"
 msgid "{0} {1} aged {2}"
 msgstr "{0} {1} בגיל {2}"
 
-#: automail.py mobile2.js search.js
+#: automail.py search.js mobile2.js
 msgid "{0} {1} {2} aged {3}"
 msgstr "{0} {1} {2} בגיל {3}"
 
@@ -17582,6 +17659,24 @@ msgstr "{plural3} שבועות."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} שנים."
+
+#~ msgid "5 Year"
+#~ msgstr "5 שנים"
+
+#~ msgid "Annual"
+#~ msgstr "שנתי"
+
+#~ msgid "BroughtInBy"
+#~ msgstr "הובאעלידי"
+
+#~ msgid "Lifetime"
+#~ msgstr "לכל החיים"
+
+#~ msgid "Remove fine-grained animal control incident permissions"
+#~ msgstr "הסר הרשאות פרטניות על תקריות בקרת בע״ח"
+
+#~ msgid "Revert"
+#~ msgstr "החזר"
 
 #~ msgid "A short version of the reference number"
 #~ msgstr "גרסה קצרה של מזהה החיה"
