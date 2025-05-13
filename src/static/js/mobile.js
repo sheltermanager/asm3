@@ -43,13 +43,13 @@ const mobile = {
 
     markup_online_forms: function() {
         let fitems = "";
-        $.each(controller.internalforms, function(i, v) {
+        $.each(controller.internalforms, function(i, form) {
             let furl = asm.serviceurl + "?";
             if (asm.useraccountalias) { furl += "account=" + asm.useraccountalias + "&"; }
-            furl += "method=online_form_html&formid=" + v.ID;
-            fitems += '<a id="stocktake-nav" class="dropdown-item hideifzero internal-link" data-perm="csl" data-link="onlineforms" href="' + furl + '" target="_blank">' + v.NAME + '</a>';
+            furl += "method=online_form_html&formid=" + form.ID;
+            fitems += '<a id="stocktake-nav" class="dropdown-item hideifzero internal-link" data-perm="csl" data-link="onlineforms" href="' + furl + '" target="_blank">' + form.NAME + '</a>';
         });
-        return fitems
+        return fitems;
     },
 
     render: function() {
