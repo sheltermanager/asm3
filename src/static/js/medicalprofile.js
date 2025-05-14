@@ -95,7 +95,9 @@ $(function() {
                                     return true;
                                 }
                             },
-                            onload: function() {},
+                            onload: function() {
+                                medicalprofile.change_values();
+                            },
                             onchange: async function() {
                                 medicalprofile.set_extra_fields(row);
                                 await tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile");
@@ -314,7 +316,7 @@ $(function() {
                             return false;
                         }
                     } else {
-                        let value = v.trim()
+                        let value = v.trim();
                         if (!common.is_integer(value)) {
                             problem = _("Value '{0}' is not an integer").replace("{0}", value);
                             return false;

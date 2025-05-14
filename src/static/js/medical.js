@@ -428,7 +428,7 @@ $(function() {
                 onvalidate: function() {
                     if (!validate.notzero(["animal"])) {
                         return false;
-                    };
+                    }
                     if ($("#singlemulti").val() == medical.TREATMENT_CUSTOM) {
                         let valoutput = medical.validate_custom_timing_rule();
                         if (valoutput == "") {
@@ -705,6 +705,7 @@ $(function() {
                 $("#totalnumberoftreatments").val("1");
                 $("#timingrulerow").fadeIn();
                 $("#treatmentrulerow").fadeIn();
+                $("#treatmentrule").change();
                 $("#customtiming").val("");
                 $("#customtimingrow").fadeOut();
             } else {
@@ -729,6 +730,9 @@ $(function() {
             if ($("#treatmentrule").val() == "0") {
                 $("#displaytotalnumberoftreatments").text( format.to_int($("#timingrule").val()) * format.to_int($("#totalnumberoftreatments").val()));
                 $("#timingrulefrequencyagain").text($("#timingrulefrequency option[value=\"" + $("#timingrulefrequency").val() + "\"]").text());
+                $("#treatmentrulecalc").show();
+            } else {
+                $("#treatmentrulecalc").hide();
             }
         },
 
@@ -782,9 +786,9 @@ $(function() {
                     $("#singlemulti").val(medical.TREATMENT_CUSTOM);
                     $("#customtiming").val(p.CUSTOMTIMINGRULE);
                 } else if (p.TOTALNUMBEROFTREATMENTS == 1) {
-                    $("#singlemulti").val(TREATMENT_SINGLE);
+                    $("#singlemulti").val(medical.TREATMENT_SINGLE);
                 } else {
-                    $("#singlemulti").val(TREATMENT_MULTI);
+                    $("#singlemulti").val(medical.TREATMENT_MULTI);
                 }
                 medical.change_singlemulti();
                 $("#timingrule").val( p.TIMINGRULE );
@@ -794,6 +798,7 @@ $(function() {
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
                 medical.change_values();
                 medical.change_medicaltype();
+                
             });
 
             $("#timingrule").change(medical.change_values);
@@ -883,7 +888,7 @@ $(function() {
                             return false;
                         }
                     } else {
-                        let value = v.trim()
+                        let value = v.trim();
                         if (!common.is_integer(value)) {
                             problem = _("Value '{0}' is not an integer").replace("{0}", value);
                             return false;

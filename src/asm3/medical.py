@@ -1075,14 +1075,12 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
                     txdays[value] = [label,]
                 else:
                     txdays[value].append(label)
-            print(str(txdays))
             for txday, txlist in txdays.items():
                 reqdate = add_days(startdate, txday)
                 dailycount = 1
                 dailytotal = len(txlist)
                 for tx in txlist:
                     insert_treatments(dbo, username, nregid, reqdate, True, tx, dailycount, dailytotal)
-                    print("Treatment inserted")
                     dailycount += 1
     elif asm3.configuration.medical_precreate_treatments(dbo) and treatmentrule == FIXED_LENGTH:
         if timingrule == ONEOFF:
