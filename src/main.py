@@ -6308,6 +6308,7 @@ class person_citations(JSONEndpoint):
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
             "citationtypes": asm3.lookups.get_citation_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")
         }
 
