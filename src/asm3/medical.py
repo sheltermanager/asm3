@@ -943,7 +943,7 @@ def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
         ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
         insert_treatments(dbo, username, amid, ldg, False)
 
-def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True, customlabel: str = "") -> datetime:
+def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True, customlabel: str = "", customtxnumber: int = 0, customtxtotal: int = 0) -> datetime:
     """
     Creates new treatment records for the given medical record
     with the required date given. isstart says that the date passed
@@ -964,10 +964,19 @@ def insert_treatments(dbo: Database, username: str, amid: int, requireddate: dat
             while requireddate.weekday() == 5 or requireddate.weekday() == 6: requireddate = add_days(requireddate, 1)
 
     # Create correct number of records
-    norecs = am.TIMINGRULE
-    if norecs == 0: norecs = 1
-
+    if customtxtotal:
+        norecs = 1
+        dailyrecs = customtxtotal
+    else:
+        norecs = am.TIMINGRULE
+        if norecs == 0: norecs = 1
+        dailyrecs = norecs
+    
     for x in range(1, norecs+1):
+        if customtxnumber == 0:
+            txnumber = x
+        else:
+            txnumber = customtxnumber
         dbo.insert("animalmedicaltreatment", {
             "AnimalID":             am.ANIMALID,
             "AnimalMedicalID":      amid,
@@ -975,8 +984,8 @@ def insert_treatments(dbo: Database, username: str, amid: int, requireddate: dat
             "DateRequired":         requireddate,
             "DateGiven":            None,
             "GivenBy":              "",
-            "TreatmentNumber":      x,
-            "TotalTreatments":      norecs,
+            "TreatmentNumber":      txnumber,
+            "TotalTreatments":      dailyrecs,
             "Comments":             ""
         }, username)
 
@@ -1008,17 +1017,24 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     treatmentsremaining = int(totalnumberoftreatments) * int(timingrule)
     treatmentrule = post.integer("treatmentrule")
     singlemulti = post.integer("singlemulti")
-    if singlemulti == 0:
+    if singlemulti == TREATMENT_SINGLE:
         timingrule = 0
         timingrulenofrequencies = 0
         timingrulefrequency = 0
         treatmentsremaining = 1
         totalnumberoftreatments = 1
+    elif singlemulti == TREATMENT_CUSTOM:
+        treatmentrule = FIXED_LENGTH
+        customtiming = post["customtiming"].strip()
+        while customtiming[-1] == ",":
+            customtiming = customtiming[:-1]
+        treatmentsremaining = len(customtiming.split(","))
+        totalnumberoftreatments = len(customtiming.split(","))
     if totalnumberoftreatments == 0:
         totalnumberoftreatments = 1
-    if treatmentrule != 0:
+    """if treatmentrule != 0:
         totalnumberoftreatments = 0
-        treatmentsremaining = 0
+        treatmentsremaining = 0"""
 
     nregid = dbo.insert("animalmedical", {
         "AnimalID":                 post.integer("animal"),
@@ -1042,8 +1058,33 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Comments":                 post["comments"]
     }, username)
 
-    # If the option to pre-create all fixed-length treatments up-front is on, do that
-    if asm3.configuration.medical_precreate_treatments(dbo) and treatmentrule == FIXED_LENGTH:
+    if singlemulti == TREATMENT_CUSTOM:
+            startdate = post.date("startdate")
+            customtiming = post["customtiming"].strip()
+            if customtiming[-1] == ",":
+                customtiming = customtiming[:-1]
+            txdays = {}
+            for tx in customtiming.split(","):
+                if tx.find("=") != -1:
+                    label = tx.split("=")[0].strip()
+                    value = asm3.utils.cint(tx.split("=")[1].strip())
+                else:
+                    label = ""
+                    value = asm3.utils.cint(tx.strip())
+                if value not in txdays.keys():
+                    txdays[value] = [label,]
+                else:
+                    txdays[value].append(label)
+            print(str(txdays))
+            for txday, txlist in txdays.items():
+                reqdate = add_days(startdate, txday)
+                dailycount = 1
+                dailytotal = len(txlist)
+                for tx in txlist:
+                    insert_treatments(dbo, username, nregid, reqdate, True, tx, dailycount, dailytotal)
+                    print("Treatment inserted")
+                    dailycount += 1
+    elif asm3.configuration.medical_precreate_treatments(dbo) and treatmentrule == FIXED_LENGTH:
         if timingrule == ONEOFF:
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
         else:
@@ -1058,7 +1099,7 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         # just create the first treatment(s).
         update_medical_treatments(dbo, username, nregid)
 
-    if post["customtiming"] != "":
+    """if post["customtiming"] != "":
         startdate = post.date("startdate")
         customtiming = post["customtiming"].strip()
         if customtiming[-1] == ",":
@@ -1071,7 +1112,7 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
                 label = ""
                 value = asm3.utils.cint(a.strip())
             reqdate = add_days(startdate, value)
-            insert_treatments(dbo, username, nregid, reqdate, True, label)
+            insert_treatments(dbo, username, nregid, reqdate, True, label)"""
 
     # If the user chose a completed status, mark the regimen completed
     # and mark any treatments we created as given on the start date

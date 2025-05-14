@@ -693,6 +693,7 @@ $(function() {
                 $("#totalnumberoftreatments").val("1");
                 $("#timingrulerow").fadeOut();
                 $("#treatmentrulerow").fadeOut();
+                $("#customtiming").val("");
                 $("#customtimingrow").fadeOut();
             } else if ($("#singlemulti").val() == medical.TREATMENT_MULTI) {
                 $("#timingrule").val("1");
@@ -704,6 +705,7 @@ $(function() {
                 $("#totalnumberoftreatments").val("1");
                 $("#timingrulerow").fadeIn();
                 $("#treatmentrulerow").fadeIn();
+                $("#customtiming").val("");
                 $("#customtimingrow").fadeOut();
             } else {
                 $("#timingrule").val("1");
@@ -777,14 +779,13 @@ $(function() {
                 $("#medicaltype").val(p.MEDICALTYPEID);
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
                 if (p.CUSTOMTIMINGRULE) {
-                    $("#singlemulti").val(2);
+                    $("#singlemulti").val(medical.TREATMENT_CUSTOM);
                     $("#customtiming").val(p.CUSTOMTIMINGRULE);
                 } else if (p.TOTALNUMBEROFTREATMENTS == 1) {
-                    $("#singlemulti").val(0);
+                    $("#singlemulti").val(TREATMENT_SINGLE);
                 } else {
-                    $("#singlemulti").val(1);
+                    $("#singlemulti").val(TREATMENT_MULTI);
                 }
-                //$("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
                 medical.change_singlemulti();
                 $("#timingrule").val( p.TIMINGRULE );
                 $("#timingrulenofrequencies").val( p.TIMINGRULENOFREQUENCIES );
