@@ -4,7 +4,7 @@ import asm3.animal
 import asm3.configuration
 import asm3.utils
 from asm3.i18n import _, add_days
-from asm3.typehints import datetime, Database, List, LocationFilter, PostedData, ResultRow, Results
+from asm3.typehints import datetime, Database, Dict, List, LocationFilter, PostedData, ResultRow, Results
 
 # Medical treatment rules
 FIXED_LENGTH = 0
@@ -884,6 +884,29 @@ def reschedule_vaccination(dbo: Database, username: str, vaccinationid: int, new
         "Comments":             "" 
     }, username)
 
+def parse_custom_timing(timing: str) -> Dict[int, str]:
+    """
+    Parses a custom timing string into a dict. 
+    The day the treatment occurs is the key, the value is a list of labels for treatments on that day
+    eg: 1,2,3,10 = { 1: [""], 2: [""], 3: [""], 10: [""] }
+        First=1,Second=1,Third=10 = { 1: ["First", "Second"], 10: ["Third"] }
+    """
+    customtiming = timing.strip()
+    if customtiming.endswith(","): customtiming = customtiming[:-1]
+    txdays = {}
+    for tx in customtiming.split(","):
+        if tx.find("=") != -1:
+            label = tx.split("=")[0].strip()
+            value = asm3.utils.cint(tx.split("=")[1].strip())
+        else:
+            label = ""
+            value = asm3.utils.cint(tx.strip())
+        if value not in txdays.keys():
+            txdays[value] = [label,]
+        else:
+            txdays[value].append(label)
+    return txdays
+
 def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
     """
     Called on creation of an animalmedical record and after the saving
@@ -943,7 +966,7 @@ def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
         ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
         insert_treatments(dbo, username, amid, ldg, False)
 
-def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True, customlabel: str = "", customtxnumber: int = 0, customtxtotal: int = 0) -> datetime:
+def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True) -> datetime:
     """
     Creates new treatment records for the given medical record
     with the required date given. isstart says that the date passed
@@ -964,34 +987,47 @@ def insert_treatments(dbo: Database, username: str, amid: int, requireddate: dat
             while requireddate.weekday() == 5 or requireddate.weekday() == 6: requireddate = add_days(requireddate, 1)
 
     # Create correct number of records
-    if customtxtotal:
-        norecs = 1
-        dailyrecs = customtxtotal
-    else:
-        norecs = am.TIMINGRULE
-        if norecs == 0: norecs = 1
-        dailyrecs = norecs
+    norecs = am.TIMINGRULE
+    if norecs == 0: norecs = 1
     
     for x in range(1, norecs+1):
-        if customtxnumber == 0:
-            txnumber = x
-        else:
-            txnumber = customtxnumber
         dbo.insert("animalmedicaltreatment", {
             "AnimalID":             am.ANIMALID,
             "AnimalMedicalID":      amid,
-            "CustomTreatmentName":  customlabel,
             "DateRequired":         requireddate,
             "DateGiven":            None,
             "GivenBy":              "",
-            "TreatmentNumber":      txnumber,
-            "TotalTreatments":      dailyrecs,
+            "TreatmentNumber":      x,
+            "TotalTreatments":      norecs,
             "Comments":             ""
         }, username)
 
     # Update the number of treatments given and remaining
     calculate_given_remaining(dbo, amid)
     return requireddate
+
+def insert_treatments_custom(dbo: Database, username: str, amid: int, startdate: datetime, txdays: Dict[int, str]) -> None:
+    """
+    Creates new treatment records for the given medical record to a custom scheme.
+    """
+    am = dbo.first_row(dbo.query("SELECT * FROM animalmedical WHERE ID = ?", [amid]))
+    for txday, txlist in txdays.items():
+        reqdate = add_days(startdate, txday)
+        for x, label in enumerate(txlist):
+            dbo.insert("animalmedicaltreatment", {
+                "AnimalID":             am.ANIMALID,
+                "AnimalMedicalID":      amid,
+                "CustomTreatmentName":  label,
+                "DateRequired":         reqdate,
+                "DateGiven":            None,
+                "GivenBy":              "",
+                "TreatmentNumber":      x+1,
+                "TotalTreatments":      len(txlist),
+                "Comments":             ""
+            }, username)
+
+    # Update the number of treatments given and remaining
+    calculate_given_remaining(dbo, amid)
 
 def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
@@ -1006,35 +1042,30 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
-    customtimingrule = post["customtiming"].strip()
-
-    # Remove trailing comma if it exists
-    if len(customtimingrule) > 0:
-        while customtimingrule[-1] == ",":
-            customtimingrule = customtimingrule[:-1]
-
     totalnumberoftreatments = post.integer("totalnumberoftreatments")
     treatmentsremaining = int(totalnumberoftreatments) * int(timingrule)
     treatmentrule = post.integer("treatmentrule")
     singlemulti = post.integer("singlemulti")
-    if singlemulti == TREATMENT_SINGLE:
-        timingrule = 0
-        timingrulenofrequencies = 0
-        timingrulefrequency = 0
-        treatmentsremaining = 1
-        totalnumberoftreatments = 1
-    elif singlemulti == TREATMENT_CUSTOM:
-        treatmentrule = FIXED_LENGTH
-        customtiming = post["customtiming"].strip()
-        while customtiming[-1] == ",":
-            customtiming = customtiming[:-1]
-        treatmentsremaining = len(customtiming.split(","))
-        totalnumberoftreatments = len(customtiming.split(","))
-    if totalnumberoftreatments == 0:
-        totalnumberoftreatments = 1
-    """if treatmentrule != 0:
-        totalnumberoftreatments = 0
-        treatmentsremaining = 0"""
+    customtimingrule = post["customtiming"].strip()
+    if customtimingrule.endswith(","): customtimingrule = customtimingrule[:-1]
+
+    if post.integer("singlemulti") == TREATMENT_CUSTOM:
+        treatmentrule =- FIXED_LENGTH
+        treatmentsremaining = customtimingrule.count(",")+1
+        totalnumberoftreatments = treatmentsremaining
+    else:
+        totalnumberoftreatments = post.integer("totalnumberoftreatments")
+        treatmentrule = post.integer("treatmentrule")
+        singlemulti = post.integer("singlemulti")
+        if singlemulti == TREATMENT_SINGLE:
+            timingrule = 0
+            timingrulenofrequencies = 0
+            timingrulefrequency = 0
+            totalnumberoftreatments = 1
+        if totalnumberoftreatments == 0:
+            totalnumberoftreatments = 1
+        if treatmentrule != 0:
+            totalnumberoftreatments = 0
 
     nregid = dbo.insert("animalmedical", {
         "AnimalID":                 post.integer("animal"),
@@ -1051,7 +1082,7 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
         "TreatmentRule":            post.integer("treatmentrule"),
-        "CustomTimingRule":         post["customtiming"],
+        "CustomTimingRule":         customtimingrule,
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "TreatmentsGiven":          0,
         "TreatmentsRemaining":      treatmentsremaining,
@@ -1059,30 +1090,9 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     }, username)
 
     if singlemulti == TREATMENT_CUSTOM:
-            startdate = post.date("startdate")
-            customtiming = post["customtiming"].strip()
-            if customtiming[-1] == ",":
-                customtiming = customtiming[:-1]
-            txdays = {}
-            for tx in customtiming.split(","):
-                if tx.find("=") != -1:
-                    label = tx.split("=")[0].strip()
-                    value = asm3.utils.cint(tx.split("=")[1].strip())
-                else:
-                    label = ""
-                    value = asm3.utils.cint(tx.strip())
-                if value not in txdays.keys():
-                    txdays[value] = [label,]
-                else:
-                    txdays[value].append(label)
-            for txday, txlist in txdays.items():
-                reqdate = add_days(startdate, txday)
-                dailycount = 1
-                dailytotal = len(txlist)
-                for tx in txlist:
-                    insert_treatments(dbo, username, nregid, reqdate, True, tx, dailycount, dailytotal)
-                    dailycount += 1
-    elif asm3.configuration.medical_precreate_treatments(dbo) and treatmentrule == FIXED_LENGTH:
+        txdays = parse_custom_timing(post["customtiming"])
+        insert_treatments_custom(dbo, username, nregid, post.date("startdate"), txdays)
+    elif treatmentrule == FIXED_LENGTH and asm3.configuration.medical_precreate_treatments(dbo):
         if timingrule == ONEOFF:
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
         else:
@@ -1096,21 +1106,6 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         # We aren't pre-creating, or we have an unspecified length regimen,
         # just create the first treatment(s).
         update_medical_treatments(dbo, username, nregid)
-
-    """if post["customtiming"] != "":
-        startdate = post.date("startdate")
-        customtiming = post["customtiming"].strip()
-        if customtiming[-1] == ",":
-            customtiming = customtiming[:-1]
-        for a in customtiming.split(","):
-            if a.find("=") != -1:
-                label = a.split("=")[0].strip()
-                value = asm3.utils.cint(a.split("=")[1].strip())
-            else:
-                label = ""
-                value = asm3.utils.cint(a.strip())
-            reqdate = add_days(startdate, value)
-            insert_treatments(dbo, username, nregid, reqdate, True, label)"""
 
     # If the user chose a completed status, mark the regimen completed
     # and mark any treatments we created as given on the start date
@@ -1351,17 +1346,12 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
     customtimingrule = post["customtiming"].strip()
-
-    # Remove trailing comma if it exists
-    if len(customtimingrule) > 0:
-        while customtimingrule[-1] == ",":
-            customtimingrule = customtimingrule[:-1]
+    if customtimingrule.endswith(","): customtimingrule = customtimingrule[:-1]
     
     if post.integer("singlemulti") == TREATMENT_CUSTOM:
-        totalnumberoftreatments = len(customtimingrule.split(","))
+        totalnumberoftreatments = customtimingrule.count(",")+1
     else:
         totalnumberoftreatments = post.integer("totalnumberoftreatments")
-
         treatmentrule = post.integer("treatmentrule")
         singlemulti = post.integer("singlemulti")
         if singlemulti == TREATMENT_SINGLE:

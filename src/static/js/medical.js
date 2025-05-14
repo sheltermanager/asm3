@@ -112,14 +112,11 @@ $(function() {
                 columns: [
                     { field: "TREATMENTNAME", display: _("Name"),
                         formatter: function(row) {
-                            let txname = row.TREATMENTNAME;
-                            if (row.MEDICALTYPENAME) {
-                                txname += " <div class='asm-smallertext' style='display: inline-block;white-space: normal;'>" + row.MEDICALTYPENAME + "</div>";
-                            }
-                            if (row.CUSTOMTREATMENTNAME) {
-                                txname += " <div class='asm-smallertext' style='display: inline-block;'>" + row.CUSTOMTREATMENTNAME + "</div>";
-                            }
-                            return tableform.table_render_edit_link(row.COMPOSITEID, "<div style='overflow-wrap: anywhere!important;display: inline-block;white-space: normal;'>" + txname + "</div>");
+                            let txname = row.TREATMENTNAME, extras = [];
+                            if (row.MEDICALTYPENAME) { extras.push(row.MEDICALTYPENAME); }
+                            if (row.CUSTOMTREATMENTNAME) { extras.push(row.CUSTOMTREATMENTNAME); }
+                            if (extras.length > 0) { txname += ' <span class="asm-smallertext">' + extras.join(" | ") + '</span>'; }
+                            return tableform.table_render_edit_link(row.COMPOSITEID, txname);
                         }
                     },
                     { field: "IMAGE", display: "", 
