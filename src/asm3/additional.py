@@ -338,6 +338,35 @@ def insert_additional(dbo: Database, linktype: int, linkid: int, additionalfield
     except Exception as err:
         asm3.al.error("Failed saving additional field: %s" % err, "additional.insert_additional", dbo, sys.exc_info())
 
+def save_bulk_values_for_link(dbo: Database, post: PostedData, username: str, linkid: int, linktype: str = "animal", setdefaults: bool = False) -> None:
+    audits = []
+    
+    for f in get_field_definitions(dbo, linktype):
+
+        key = "a.%s.%s" % (f.mandatory, f.id)
+        key2 = "additional%s" % f.fieldname
+
+        if key not in post and key2 not in post:
+            if setdefaults and f.DEFAULTVALUE and f.DEFAULTVALUE != "": 
+                insert_additional(dbo, f.LINKTYPE, linkid, f.ID, f.DEFAULTVALUE)
+                audits.append("%s='%s'" % (f.FIELDNAME, f.DEFAULTVALUE))
+            continue
+
+        elif key not in post: key = key2
+
+        val = post[key]
+        if f.fieldtype == YESNO:
+            val = str(post.boolean(key))
+        elif f.fieldtype == MONEY:
+            val = str(post.integer(key))
+        elif f.fieldtype == DATE:
+            val = python2display(dbo.locale, post.date(key))
+        audits.append("%s='%s'" % (f.FIELDNAME, val))
+        insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
+
+    if len(audits) > 0:
+        asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
+
 def save_values_for_link(dbo: Database, post: PostedData, username: str, linkid: int, linktype: str = "animal", setdefaults: bool = False) -> None:
     """
     Saves incoming additional field values from a record.

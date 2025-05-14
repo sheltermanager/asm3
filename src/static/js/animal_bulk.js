@@ -153,10 +153,12 @@ $(function() {
                 '<h3><a href="#">' + _("Additional") + '</a></h3>',
                 '<div>',
                 tableform.fields_render([
-                    { post_field: "additionalfield", label: _("Additional Field"), type: "select", halfsize: true, 
-                        options: "<option value='-1'></option>" + html.list_to_options(controller.additional, "ID", "FIELDLABEL"), 
-                        xmarkup: ' <input id="additionalvalue" data-post="additionalvalue" type="text" class=""asm-field asm-textbox asm-autotext ui-autocomplete-input controlshadow controlborder>'
-                    },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 0) },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 2) },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 4) },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 5) },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 6) }
                 ], { full_width: false }),
                 '</div>' // end accordion section
             ].join("\n");
@@ -193,6 +195,7 @@ $(function() {
                 $("#button-update").button("disable");
                 header.show_loading(_("Updating..."));
                 let formdata = "mode=update&" + $("input, select, textarea").toPOST();
+                console.log(formdata);
                 try {
                     let response = await common.ajax_post("animal_bulk", formdata);
                     header.hide_loading();
