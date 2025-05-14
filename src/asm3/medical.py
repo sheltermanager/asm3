@@ -288,7 +288,7 @@ def get_batch_for_vaccination_types(dbo: Database) -> Results:
         "AND DateOfVaccination Is Not Null AND DateOfVaccination >= ? " \
         "ORDER BY animalvaccination.ID DESC, VaccinationID", [ dbo.today(offset=-31) ], distincton="ID")
 
-def get_medical_types(dbo: Database, animalid: int) -> Results:
+def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
     """
     Returns a recordset of medicaltypes for an animal:
     MEDICALTYPE, DATEREQUIRED, LASTGIVEN
