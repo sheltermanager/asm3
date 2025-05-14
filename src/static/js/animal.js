@@ -402,6 +402,7 @@ $(function() {
                         rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
                     { post_field: "energylevel", json_field: "ENERGYLEVEL", label: _("Energy level"), type: "select", 
                         rowclasses: "goodwith dogs", options: html.list_to_options([
+                            "0|" + _("Unknown"),
                             "1|" + _("1 - Very low"),
                             "2|" + _("2 - Low"),
                             "3|" + _("3 - Medium"),

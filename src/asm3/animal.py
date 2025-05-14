@@ -2859,7 +2859,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     if "goodtraveller" in post: goodtraveller = post.integer("goodtraveller")
     goodonlead = 2
     if "goodonlead" in post: goodonlead = post.integer("goodonlead")
-    energylevel = 3
+    energylevel = 0
     if "energylevel" in post: energylevel = post.integer("energylevel")
 
     unknown = 0
