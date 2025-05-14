@@ -310,6 +310,13 @@ const common = {
     },
 
     /** 
+     * Returns true if v is an integer
+     */
+    is_integer: function(v) {
+        return $.isNumeric(v) && Math.floor(v) == v;
+    },
+
+    /** 
      * Returns true if v is a string
      */
     is_string: function(v) {

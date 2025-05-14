@@ -4,7 +4,7 @@ import asm3.animal
 import asm3.configuration
 import asm3.utils
 from asm3.i18n import _, add_days
-from asm3.typehints import datetime, Database, List, LocationFilter, PostedData, ResultRow, Results
+from asm3.typehints import datetime, Database, Dict, List, LocationFilter, PostedData, ResultRow, Results
 
 # Medical treatment rules
 FIXED_LENGTH = 0
@@ -30,6 +30,11 @@ DESCENDING_NAME = 1
 DESCENDING_REQUIRED = 1
 DESCENDING_GIVEN = 2
 
+# Treatment timings
+TREATMENT_SINGLE = 0
+TREATMENT_MULTI = 1
+TREATMENT_CUSTOM = 2
+
 def get_medicaltreatment_query(dbo: Database) -> str:
     return "SELECT " \
         f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
@@ -52,7 +57,7 @@ def get_medicaltreatment_query(dbo: Database) -> str:
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
         "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
-        "am.*, amt.DateRequired, amt.DateGiven, amt.Comments AS TreatmentComments, " \
+        "am.*, amt.DateRequired, amt.CustomTreatmentName, amt.DateGiven, amt.Comments AS TreatmentComments, " \
         "amt.TreatmentNumber, amt.TotalTreatments, ma.MediaName AS WebsiteMediaName, " \
         "am.ID AS RegimenID, amt.ID AS TreatmentID, " \
         "amt.GivenBy, amt.AdministeringVetID, adv.OwnerName AS AdministeringVetName, " \
@@ -80,13 +85,15 @@ def get_medicaltreatment_query(dbo: Database) -> str:
         "CASE " \
         "WHEN am.Status = 0 THEN 'Active' " \
         "WHEN am.Status = 1 THEN 'Held' " \
-        "WHEN am.Status = 2 THEN 'Completed' END AS NamedStatus " \
+        "WHEN am.Status = 2 THEN 'Completed' END AS NamedStatus, " \
+        "lksmedicaltype.MedicalTypeName " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "LEFT OUTER JOIN lksmedicaltype ON am.MedicalTypeID = lksmedicaltype.ID " \
         "LEFT OUTER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
@@ -281,6 +288,32 @@ def get_batch_for_vaccination_types(dbo: Database) -> Results:
         "AND DateOfVaccination Is Not Null AND DateOfVaccination >= ? " \
         "ORDER BY animalvaccination.ID DESC, VaccinationID", [ dbo.today(offset=-31) ], distincton="ID")
 
+def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
+    """
+    Returns a recordset of medicaltypes for an animal:
+    MEDICALTYPE, DATEREQUIRED, LASTGIVEN
+    """
+
+    sql = "SELECT mt.MedicalTypeName, " \
+        "(" \
+            "SELECT DateRequired " \
+            "FROM animalmedicaltreatment " \
+            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
+            "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
+            "ORDER BY DateRequired desc " \
+            "LIMIT 1" \
+        ") AS DateRequired," \
+        "(" \
+            "SELECT DateGiven " \
+            "FROM animalmedicaltreatment " \
+            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
+            "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID ORDER BY DateGiven desc LIMIT 1" \
+        ") AS DateGiven " \
+        "FROM lksmedicaltype mt"
+    return dbo.query(sql, [animalid, dbo.today(), animalid ])
+
 def get_regimens(dbo: Database, animalid: int, onlycomplete: bool = False, onlyactive: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
     """
     Returns a recordset of medical regimens for an animal:
@@ -367,6 +400,7 @@ def get_regimens_treatments(dbo: Database, animalid: int, sort: int = DESCENDING
         sql += "ORDER BY amt.DateGiven DESC"
     rows = dbo.query(sql, limit=limit)
     # Now add our extra named fields
+        
     return embellish_regimen(l, rows)
 
 def get_medical_export(dbo: Database) -> Results:
@@ -426,7 +460,7 @@ def get_profiles(dbo: Database, sort: int = ASCENDING_NAME) -> Results:
     TIMINGRULE, TIMINGRULEFREQUENCY, TIMINGRULENOFREQUENCIES, TREATMENTRULE, TOTALNUMBEROFTREATMENTS
     """
     l = dbo.locale
-    sql = "SELECT m.* FROM medicalprofile m "
+    sql = "SELECT m.*, t.MedicalTypeName FROM medicalprofile m LEFT JOIN lksmedicaltype t ON m.MedicalTypeID = t.ID "
     if sort == ASCENDING_NAME:
         sql += "ORDER BY ProfileName"
     elif sort == DESCENDING_NAME:
@@ -850,6 +884,29 @@ def reschedule_vaccination(dbo: Database, username: str, vaccinationid: int, new
         "Comments":             "" 
     }, username)
 
+def parse_custom_timing(timing: str) -> Dict[int, str]:
+    """
+    Parses a custom timing string into a dict. 
+    The day the treatment occurs is the key, the value is a list of labels for treatments on that day
+    eg: 1,2,3,10 = { 1: [""], 2: [""], 3: [""], 10: [""] }
+        First=1,Second=1,Third=10 = { 1: ["First", "Second"], 10: ["Third"] }
+    """
+    customtiming = timing.strip()
+    if customtiming.endswith(","): customtiming = customtiming[:-1]
+    txdays = {}
+    for tx in customtiming.split(","):
+        if tx.find("=") != -1:
+            label = tx.split("=")[0].strip()
+            value = asm3.utils.cint(tx.split("=")[1].strip())
+        else:
+            label = ""
+            value = asm3.utils.cint(tx.strip())
+        if value not in txdays.keys():
+            txdays[value] = [label,]
+        else:
+            txdays[value].append(label)
+    return txdays
+
 def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
     """
     Called on creation of an animalmedical record and after the saving
@@ -932,22 +989,45 @@ def insert_treatments(dbo: Database, username: str, amid: int, requireddate: dat
     # Create correct number of records
     norecs = am.TIMINGRULE
     if norecs == 0: norecs = 1
-
+    
     for x in range(1, norecs+1):
         dbo.insert("animalmedicaltreatment", {
-            "AnimalID":         am.ANIMALID,
-            "AnimalMedicalID":  amid,
-            "DateRequired":     requireddate,
-            "DateGiven":        None,
-            "GivenBy":          "",
-            "TreatmentNumber":  x,
-            "TotalTreatments":  norecs,
-            "Comments":         ""
+            "AnimalID":             am.ANIMALID,
+            "AnimalMedicalID":      amid,
+            "DateRequired":         requireddate,
+            "DateGiven":            None,
+            "GivenBy":              "",
+            "TreatmentNumber":      x,
+            "TotalTreatments":      norecs,
+            "Comments":             ""
         }, username)
 
     # Update the number of treatments given and remaining
     calculate_given_remaining(dbo, amid)
     return requireddate
+
+def insert_treatments_custom(dbo: Database, username: str, amid: int, startdate: datetime, txdays: Dict[int, str]) -> None:
+    """
+    Creates new treatment records for the given medical record to a custom scheme.
+    """
+    am = dbo.first_row(dbo.query("SELECT * FROM animalmedical WHERE ID = ?", [amid]))
+    for txday, txlist in txdays.items():
+        reqdate = add_days(startdate, txday)
+        for x, label in enumerate(txlist):
+            dbo.insert("animalmedicaltreatment", {
+                "AnimalID":             am.ANIMALID,
+                "AnimalMedicalID":      amid,
+                "CustomTreatmentName":  label,
+                "DateRequired":         reqdate,
+                "DateGiven":            None,
+                "GivenBy":              "",
+                "TreatmentNumber":      x+1,
+                "TotalTreatments":      len(txlist),
+                "Comments":             ""
+            }, username)
+
+    # Update the number of treatments given and remaining
+    calculate_given_remaining(dbo, amid)
 
 def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
@@ -959,7 +1039,6 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     if post["treatmentname"] == "":
         raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
 
-    l = dbo.locale
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
@@ -967,22 +1046,32 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     treatmentsremaining = int(totalnumberoftreatments) * int(timingrule)
     treatmentrule = post.integer("treatmentrule")
     singlemulti = post.integer("singlemulti")
-    if singlemulti == 0:
-        timingrule = 0
-        timingrulenofrequencies = 0
-        timingrulefrequency = 0
-        treatmentsremaining = 1
-        totalnumberoftreatments = 1
-    if totalnumberoftreatments == 0:
-        totalnumberoftreatments = 1
-    if treatmentrule != 0:
-        totalnumberoftreatments = 0
-        treatmentsremaining = 0
+    customtimingrule = post["customtiming"].strip()
+    if customtimingrule.endswith(","): customtimingrule = customtimingrule[:-1]
+
+    if post.integer("singlemulti") == TREATMENT_CUSTOM:
+        treatmentrule =- FIXED_LENGTH
+        treatmentsremaining = customtimingrule.count(",")+1
+        totalnumberoftreatments = treatmentsremaining
+    else:
+        totalnumberoftreatments = post.integer("totalnumberoftreatments")
+        treatmentrule = post.integer("treatmentrule")
+        singlemulti = post.integer("singlemulti")
+        if singlemulti == TREATMENT_SINGLE:
+            timingrule = 0
+            timingrulenofrequencies = 0
+            timingrulefrequency = 0
+            totalnumberoftreatments = 1
+        if totalnumberoftreatments == 0:
+            totalnumberoftreatments = 1
+        if treatmentrule != 0:
+            totalnumberoftreatments = 0
 
     nregid = dbo.insert("animalmedical", {
         "AnimalID":                 post.integer("animal"),
         "MedicalProfileID":         post.integer("profileid"),
         "TreatmentName":            post["treatmentname"],
+        "MedicalTypeID":            post.integer("medicaltype"), 
         "Dosage":                   post["dosage"],
         "StartDate":                post.date("startdate"),
         "Status":                   ACTIVE,
@@ -993,14 +1082,17 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
         "TreatmentRule":            post.integer("treatmentrule"),
+        "CustomTimingRule":         customtimingrule,
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "TreatmentsGiven":          0,
         "TreatmentsRemaining":      treatmentsremaining,
         "Comments":                 post["comments"]
     }, username)
 
-    # If the option to pre-create all fixed-length treatments up-front is on, do that
-    if asm3.configuration.medical_precreate_treatments(dbo) and treatmentrule == FIXED_LENGTH:
+    if singlemulti == TREATMENT_CUSTOM:
+        txdays = parse_custom_timing(post["customtiming"])
+        insert_treatments_custom(dbo, username, nregid, post.date("startdate"), txdays)
+    elif treatmentrule == FIXED_LENGTH and asm3.configuration.medical_precreate_treatments(dbo):
         if timingrule == ONEOFF:
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
         else:
@@ -1043,6 +1135,7 @@ def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     dbo.update("animalmedical", regimenid, {
         "AnimalID":         post.integer("animal"),
         "TreatmentName":    post["treatmentname"],
+        "MedicalTypeID":    post.integer("medicaltype"), 
         "Dosage":           post["dosage"],
         "StartDate":        post.date("startdate"),
         "Status":           post.integer("status"),
@@ -1252,18 +1345,24 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
-    totalnumberoftreatments = post.integer("totalnumberoftreatments")
-    treatmentrule = post.integer("treatmentrule")
-    singlemulti = post.integer("singlemulti")
-    if singlemulti == 0:
-        timingrule = 0
-        timingrulenofrequencies = 0
-        timingrulefrequency = 0
-        totalnumberoftreatments = 1
-    if totalnumberoftreatments == 0:
-        totalnumberoftreatments = 1
-    if treatmentrule != 0:
-        totalnumberoftreatments = 0
+    customtimingrule = post["customtiming"].strip()
+    if customtimingrule.endswith(","): customtimingrule = customtimingrule[:-1]
+    
+    if post.integer("singlemulti") == TREATMENT_CUSTOM:
+        totalnumberoftreatments = customtimingrule.count(",")+1
+    else:
+        totalnumberoftreatments = post.integer("totalnumberoftreatments")
+        treatmentrule = post.integer("treatmentrule")
+        singlemulti = post.integer("singlemulti")
+        if singlemulti == TREATMENT_SINGLE:
+            timingrule = 0
+            timingrulenofrequencies = 0
+            timingrulefrequency = 0
+            totalnumberoftreatments = 1
+        if totalnumberoftreatments == 0:
+            totalnumberoftreatments = 1
+        if treatmentrule != 0:
+            totalnumberoftreatments = 0
 
     return dbo.insert("medicalprofile", {
         "ProfileName":              post["profilename"],
@@ -1271,9 +1370,11 @@ def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
         "CostPerTreatment":         post.integer("costpertreatment"),
+        "MedicalTypeID":            post.integer("medicaltype"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
+        "CustomTimingRule":         customtimingrule,
         "TreatmentRule":            post.integer("treatmentrule"),
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "Comments":                 post["comments"]
@@ -1293,15 +1394,26 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
     timingrulefrequency = post.integer("timingrulefrequency")
-    totalnumberoftreatments = post.integer("totalnumberoftreatments")
-    treatmentrule = post.integer("treatmentrule")
-    singlemulti = post.integer("singlemulti")
-    if singlemulti == 0:
-        timingrule = 0
-        timingrulenofrequencies = 0
-        timingrulefrequency = 0
-    if treatmentrule != 0:
-        totalnumberoftreatments = 0
+    customtimingrule = post["customtiming"].strip()
+
+    # Remove trailing comma if it exists
+    if len(customtimingrule) > 0:
+        while customtimingrule[-1] == ",":
+            customtimingrule = customtimingrule[:-1]
+    
+    if post.integer("singlemulti") == 2:
+        totalnumberoftreatments = len(customtimingrule.split(","))
+    else:
+        totalnumberoftreatments = post.integer("totalnumberoftreatments")
+        
+        treatmentrule = post.integer("treatmentrule")
+        singlemulti = post.integer("singlemulti")
+        if singlemulti == 0:
+            timingrule = 0
+            timingrulenofrequencies = 0
+            timingrulefrequency = 0
+        if treatmentrule != 0:
+            totalnumberoftreatments = 0
 
     dbo.update("medicalprofile", profileid, {
         "ProfileName":              post["profilename"],
@@ -1309,9 +1421,11 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
         "CostPerTreatment":         post.integer("costpertreatment"),
+        "MedicalTypeID":            post.integer("medicaltype"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
+        "CustomTimingRule":         customtimingrule,
         "TreatmentRule":            post.integer("treatmentrule"),
         "TotalNumberOfTreatments":  totalnumberoftreatments,
         "Comments":                 post["comments"]

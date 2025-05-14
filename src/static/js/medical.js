@@ -7,7 +7,9 @@ $(function() {
     const medical = {
 
         lastanimal: null,
-
+        TREATMENT_SINGLE: 0,
+        TREATMENT_MULTI: 1,
+        TREATMENT_CUSTOM: 2,
         model: function() {
             const dialog = {
                 add_title: _("Add medical regimen"),
@@ -24,6 +26,7 @@ $(function() {
                         options: '<option value="0"></option>' +
                         html.list_to_options(controller.profiles, "ID", "PROFILENAME") },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), doublesize: true, type: "select", options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: 0, 
                         callout: _("The total cost of all treatments."),
@@ -37,7 +40,8 @@ $(function() {
                             + _("Paused") + '</option><option value="2">' + _("Completed") + '</option>' },
                     { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
-                        '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
+                        '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' + 
+                        '<option value="2">' + _("Custom Frequency") + '</option>' },
 
                     { json_field: "TIMINGRULE", post_field: "timingrule", type: "intnumber", label: "", 
                         readonly: true, halfsize: true, defaultval: 1, 
@@ -66,7 +70,12 @@ $(function() {
                             '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
                             '</span>'},
                     { type: "rowclose" },
-
+                    { json_field: "CUSTOMTIMINGRULE", post_field: "customtiming", label: _("Treatments"), type: "text", classes: "asm-doubletextbox", 
+                        callout: _("A comma separated list of treatment timings.") + "<br>" + 
+                            _("An optional label may be applied to each treatment using '{title}={no of days since start of course}'") + "<br>" + 
+                            _("Examples") + "<br>" + "'1,3,5,7,9'<br>" + 
+                            "'first=1,second=3,third=5,fourth=7,final=9'"
+                    },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -84,6 +93,7 @@ $(function() {
                     $("#animalsrow").hide();
                     $("#profileidrow").hide();
                     $("#treatmentrulecalc").hide();
+                    $("#customtimingrow").hide();
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -100,7 +110,15 @@ $(function() {
                     return !row.DATEGIVEN && row.STATUS == 0 && format.date_js(row.DATEREQUIRED) < common.today_no_time();
                 },
                 columns: [
-                    { field: "TREATMENTNAME", display: _("Name") },
+                    { field: "TREATMENTNAME", display: _("Name"),
+                        formatter: function(row) {
+                            let txname = row.TREATMENTNAME, extras = [];
+                            if (row.MEDICALTYPENAME) { extras.push(row.MEDICALTYPENAME); }
+                            if (row.CUSTOMTREATMENTNAME) { extras.push(row.CUSTOMTREATMENTNAME); }
+                            if (extras.length > 0) { txname += ' <span class="asm-smallertext">' + extras.join(" | ") + '</span>'; }
+                            return tableform.table_render_edit_link(row.COMPOSITEID, txname);
+                        }
+                    },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             return html.animal_link_thumb_bare(row);
@@ -154,8 +172,13 @@ $(function() {
                     { field: "DOSAGE", display: _("Dosage") },
                     { field: "STARTDATE", display: _("Started"), formatter: tableform.format_date },
                     { field: "NAMEDSTATUS", display: _("Status"), formatter: function(row) {
-                        return row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS +
-                            " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")<br/>" +
+                        let status = "";
+                        if (row.CUSTOMTIMINGRULE && row.CUSTOMTIMINGRULE != "") {
+                            status = row.NAMEDSTATUS + ", " + row.CUSTOMTIMINGRULE;
+                        } else {
+                            status = row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS;
+                        }
+                        return status + " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")<br/>" +
                             (row.TREATMENTSREMAINING > 0 ? 
                                 _("({0} given, {1} remaining)").replace("{0}", row.TREATMENTSGIVEN).replace("{1}", row.TREATMENTSREMAINING) 
                                 : "");
@@ -187,7 +210,13 @@ $(function() {
 
             const buttons = [
                 { id: "new", text: _("New Regimen"), icon: "new", enabled: "always", perm: "maam",
-                     click: function() { medical.new_medical(); }},
+                     click: function() {
+                        medical.new_medical();
+                        $("#singlemulti").prop("disabled", false);
+                        $("#medicaltype").val(config.integer("AFDefaultMedicalType"));
+                        medical.change_singlemulti();
+                    }
+                },
                 { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
                     hideif: function() { return controller.animal; }, click: function() { medical.new_bulk_medical(); }},
                 { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", perm: "mdam", 
@@ -394,7 +423,22 @@ $(function() {
             const dialog = medical.dialog;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
-                    return validate.notzero([ "animal" ]);
+                    if (!validate.notzero(["animal"])) {
+                        return false;
+                    }
+                    if ($("#singlemulti").val() == medical.TREATMENT_CUSTOM) {
+                        let valoutput = medical.validate_custom_timing_rule();
+                        if (valoutput == "") {
+                            return true;
+                        } else {
+                            tableform.dialog_error(valoutput);
+                            tableform.dialog_enable_buttons();
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                    
                 },
                 onadd: async function() {
                     try {
@@ -457,6 +501,9 @@ $(function() {
                     $("#profileid").select("value", "");
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
+
+                    $("#medicaltype").val(config.integer("AFDefaultMedicalType"));
+                    medical.change_medicaltype();
                 }
             });
         },
@@ -617,10 +664,23 @@ $(function() {
 
         },
 
+        change_medicaltype: function() {
+            let mtid = $("#medicaltype").val();
+            let forcesingletx = common.get_field(controller.medicaltypes, mtid, "FORCESINGLEUSE");
+            if (forcesingletx) {
+                $("#singlemulti").val(medical.TREATMENT_SINGLE);
+                $("#singlemulti").prop("disabled", true);
+                medical.change_singlemulti();
+            }
+            else {
+                $("#singlemulti").prop("disabled", false);
+            }
+        },
+
 
         /* What to do when we switch between single/multiple treatments */
         change_singlemulti: function() {
-            if ($("#singlemulti").val() == 0) {
+            if ($("#singlemulti").val() == medical.TREATMENT_SINGLE) {
                 $("#timingrule").val("1");
                 $("#timingrulenofrequencies").val("1");
                 $("#timingrulefrequency").select("value", "0");
@@ -628,11 +688,11 @@ $(function() {
                 $("#treatmentrule").select("value", "0");
                 $("#treatmentrule").select("disable");
                 $("#totalnumberoftreatments").val("1");
-
                 $("#timingrulerow").fadeOut();
                 $("#treatmentrulerow").fadeOut();
-            }
-            else {
+                $("#customtiming").val("");
+                $("#customtimingrow").fadeOut();
+            } else if ($("#singlemulti").val() == medical.TREATMENT_MULTI) {
                 $("#timingrule").val("1");
                 $("#timingrulenofrequencies").val("1");
                 $("#timingrulefrequency").select("value", "0");
@@ -640,9 +700,22 @@ $(function() {
                 $("#treatmentrule").select("value", "0");
                 $("#treatmentrule").select("enable");
                 $("#totalnumberoftreatments").val("1");
-
                 $("#timingrulerow").fadeIn();
                 $("#treatmentrulerow").fadeIn();
+                $("#treatmentrule").change();
+                $("#customtiming").val("");
+                $("#customtimingrow").fadeOut();
+            } else {
+                $("#timingrule").val("1");
+                $("#timingrulenofrequencies").val("1");
+                $("#timingrulefrequency").select("value", "0");
+                $("#timingrulefrequency").select("disable");
+                $("#treatmentrule").select("value", "0");
+                $("#treatmentrule").select("disable");
+                $("#totalnumberoftreatments").val("1");
+                $("#timingrulerow").fadeOut();
+                $("#treatmentrulerow").fadeOut();
+                $("#customtimingrow").fadeIn();
             }
         },
 
@@ -654,6 +727,9 @@ $(function() {
             if ($("#treatmentrule").val() == "0") {
                 $("#displaytotalnumberoftreatments").text( format.to_int($("#timingrule").val()) * format.to_int($("#totalnumberoftreatments").val()));
                 $("#timingrulefrequencyagain").text($("#timingrulefrequency option[value=\"" + $("#timingrulefrequency").val() + "\"]").text());
+                $("#treatmentrulecalc").show();
+            } else {
+                $("#treatmentrulecalc").hide();
             }
         },
 
@@ -672,6 +748,7 @@ $(function() {
             $("#animal").bind("animalchooserchange", function(event, rec) { medical.lastanimal = rec; });
             $("#animal").bind("animalchooserloaded", function(event, rec) { medical.lastanimal = rec; });
 
+            $("#medicaltype").change(medical.change_medicaltype);
             $("#singlemulti").change(function() {
                 medical.change_singlemulti();
             });
@@ -700,8 +777,16 @@ $(function() {
                 $("#cost").currency("value", p.COST );
                 $("#costpertreatment").currency("value", p.COSTPERTREATMENT );
                 $("#comments").val( html.decode(p.COMMENTS) );
+                $("#medicaltype").val(p.MEDICALTYPEID);
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
-                $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
+                if (p.CUSTOMTIMINGRULE) {
+                    $("#singlemulti").val(medical.TREATMENT_CUSTOM);
+                    $("#customtiming").val(p.CUSTOMTIMINGRULE);
+                } else if (p.TOTALNUMBEROFTREATMENTS == 1) {
+                    $("#singlemulti").val(medical.TREATMENT_SINGLE);
+                } else {
+                    $("#singlemulti").val(medical.TREATMENT_MULTI);
+                }
                 medical.change_singlemulti();
                 $("#timingrule").val( p.TIMINGRULE );
                 $("#timingrulenofrequencies").val( p.TIMINGRULENOFREQUENCIES );
@@ -709,6 +794,8 @@ $(function() {
                 $("#treatmentrule").val( p.TREATMENTRULE );
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
                 medical.change_values();
+                medical.change_medicaltype();
+                
             });
 
             $("#timingrule").change(medical.change_values);
@@ -769,6 +856,45 @@ $(function() {
                 row.SHELTERCODE = medical.lastanimal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = medical.lastanimal.WEBSITEMEDIANAME;
             }
+        },
+
+        validate_custom_timing_rule: function() {
+            let problem = "";
+            let customtiming = $("#customtiming").val().trim();
+            while (customtiming.slice(-1) == ",") {
+                customtiming = customtiming.slice(0, -1); //Remove trailing commas
+            }
+            $("#customtiming").val(customtiming);
+            if (customtiming.length == 0) {
+                problem = _("No custom rules found");
+            } else {
+                $.each(customtiming.split(","), function(i, v) {
+                    if (v.includes("=")) {
+                        let [label, value] = v.split("=");
+                        label = label.trim();
+                        value = value.trim();
+                        if (label == "") {
+                            problem = _("Missing label");
+                            return false;
+                        }
+                        if (value == "") {
+                            problem = _("Missing value");
+                            return false;
+                        } else if (!common.is_integer(value)) {
+                            problem = _("Value '{0}' is not an integer").replace("{0}", value);
+                            return false;
+                        }
+                    } else {
+                        let value = v.trim();
+                        if (!common.is_integer(value)) {
+                            problem = _("Value '{0}' is not an integer").replace("{0}", value);
+                            return false;
+                        }
+
+                    }
+                });
+            }
+            return problem;
         },
 
         destroy: function() {
