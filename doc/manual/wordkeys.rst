@@ -527,6 +527,10 @@ AnimalIsReserved
 AnimalIsVaccinated
     "Yes" if the animal has at least one vaccination given and no vaccinations
     due before today that have not been given
+MedicalType[type]Due
+    The date that the animal's next medical treatment of type is due. type is one from the fixed dropdown list of medical types, eg: MedicalTypeParasite:FleaTreatmentDue
+MedicalType[type]Given
+    The date that the animal's last treatment of type was given
 OutcomeDate
     If the animal has left the care of the shelter, the date it left
 OutcomeType
