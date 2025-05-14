@@ -68,7 +68,7 @@ $.widget("asm.animalchooser", {
             '</div>',
 
             '<div class="animalchooser-add" style="display: none" title="' + this.options.addtitle + '">',
-            '<table width="100%" class="addanimaltable">',
+            '<table width="100%" class="chooser-addfields">',
             '<tr>',
             '<td></td>', 
             '<td><input data="nonshelter" type="checkbox" class="asm-checkbox enablecheck nonshelter chooser" /><label>' + _("Non-Shelter") + '</label></td>',
@@ -314,7 +314,15 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".breeds").html(html.list_to_options(self.options.breeds, "ID", "BREEDNAME"));
                 dialogadd.find(".entrytypes").html(html.list_to_options(self.options.entrytypes, "ID", "ENTRYTYPENAME"));
                 dialogadd.find(".entryreasons").html(html.list_to_options(self.options.entryreasons, "ID", "REASONNAME"));
-                dialogadd.find(".addanimaltable").append(additional.additional_new_fields(self.options.additionalfields, false, "additional chooser"));
+                dialogadd.find(".chooser-addfields").append(additional.additional_new_fields(self.options.additionalfields, false, "additional chooser"));
+
+                // Bind additional fields that are themselves embedded choosers
+                // NOTE: We count how many times we have been embedded via parent classes to stop infinite recursion
+                if (common.count_parents_with_class(node, "chooser-addfields") < 1) {
+                    dialogadd.find(".asm-animalchooser").animalchooser();
+                    dialogadd.find(".asm-animalchoosermulti").animalchoosermulti();
+                    dialogadd.find(".asm-personchooser").personchooser();
+                }
 
                 // Was there a value already set by the markup? If so, use it
                 if (self.element.val() != "" && self.element.val() != "0") {
@@ -344,6 +352,9 @@ $.widget("asm.animalchooser", {
     },
 
     destroy: function() {
+        try { this.options.dialogadd.find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
+        try { this.options.dialogadd.find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
+        try { this.options.dialogadd.find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
         try { this.options.dialog.dialog("destroy"); } catch (ex) {}
         try { this.options.dialogadd.dialog("destroy"); } catch (exa) {}
     },

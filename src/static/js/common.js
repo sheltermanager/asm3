@@ -20,6 +20,15 @@ const common = {
         return str.split(find).length - 1;
     },
 
+    /** Counts all of the parents of node and returns how many have the class classname */
+    count_parents_with_class: function(node, classname) {
+        let count = 0;
+        node.parents().each(function() {
+            if ($(this).hasClass(classname)) { count++; }
+        });
+        return count;
+    },
+
     /** Substitutes {token} in str for token key in sub dict */
     substitute: function(str, sub) {
         /*jslint regexp: true */

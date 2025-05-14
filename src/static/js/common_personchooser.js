@@ -106,7 +106,7 @@ $.widget("asm.personchooser", {
             '</table>',
             '</div>',
             '<div class="personchooser-add" style="display: none" title="' + this.options.addtitle + '">',
-            '<table width="100%">',
+            '<table width="100%" class="chooser-addfields">',
             '<tr>',
             '<td><label>' + _("Class") + '</label></td>',
             '<td><select data="ownertype" class="asm-selectbox chooser">',
@@ -405,13 +405,6 @@ $.widget("asm.personchooser", {
             }
         });
 
-        /*
-        // Handle additional fields that are themselves embedded choosers
-        node.find(".asm-animalchooser").animalchooser();
-        node.find(".asm-animalchoosermulti").animalchoosermulti();
-        node.find(".asm-personchooser").personchooser();
-        */
-        
         node.find(".personchooser-link-find")
             .button({ icons: { primary: "ui-icon-search" }, text: false })
             .click(function() {
@@ -495,7 +488,14 @@ $.widget("asm.personchooser", {
                 dialogadd.find(".personchooser-jurisdiction").select("value", config.str("DefaultJurisdiction"));
                 dialogadd.find(".personchooser-jurisdiction").select("removeRetiredOptions", "all");
                 // Add new additional fields
-                dialogadd.find("table").append(additional.additional_new_fields(d.additional, false, "additional chooser"));
+                dialogadd.find(".chooser-addfields").append(additional.additional_new_fields(d.additional, false, "additional chooser"));
+                // Bind additional fields that are themselves embedded choosers
+                // NOTE: We count how many times we have been embedded via parent classes to stop infinite recursion
+                if (common.count_parents_with_class(node, "chooser-addfields") < 1) {
+                    dialogadd.find(".asm-animalchooser").animalchooser();
+                    dialogadd.find(".asm-animalchoosermulti").animalchoosermulti();
+                    dialogadd.find(".asm-personchooser").personchooser();
+                }
 
                 // Was there a value already set by the markup? If so, use it
                 if (self.element.val() != "" && self.element.val() != "0") {
@@ -509,6 +509,9 @@ $.widget("asm.personchooser", {
     },
 
     destroy: function() {
+        try { this.options.dialogadd.find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
+        try { this.options.dialogadd.find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
+        try { this.options.dialogadd.find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
         try { this.options.dialog.dialog("destroy"); } catch (ex) {}
         try { this.options.dialogadd.dialog("destroy"); } catch (exa) {}
         try { this.options.dialogsimilar.dialog("destroy"); } catch (exs) {}
