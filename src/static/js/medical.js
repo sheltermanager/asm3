@@ -71,10 +71,9 @@ $(function() {
                             '</span>'},
                     { type: "rowclose" },
                     { json_field: "CUSTOMTIMINGRULE", post_field: "customtiming", label: _("Treatments"), type: "text", classes: "asm-doubletextbox", 
-                        callout: _("A comma separated list of treatment timings.") + "<br>" + 
-                            _("An optional label may be applied to each treatment using '{title}={no of days since start of course}'") + "<br>" + 
-                            _("Examples") + "<br>" + "'1,3,5,7,9'<br>" + 
-                            "'first=1,second=3,third=5,fourth=7,final=9'"
+                        callout: _("A comma separated list of daily treatment timings for this regimen.") + "<br>" + 
+                            _("An optional label may be applied with '{label}={days since start}'") + "<br>" + 
+                            _("Examples") + "<br>'1,2,10'<br>'first=1,second=2,final=10'<br>'morning=0,evening=0,after 3 days=3'"
                     },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
@@ -112,10 +111,10 @@ $(function() {
                 columns: [
                     { field: "TREATMENTNAME", display: _("Name"),
                         formatter: function(row) {
-                            let txname = row.TREATMENTNAME, extras = [];
+                            let txname = row.TREATMENTNAME, extras = [], spacer = '<input type="checkbox" style="visibility: hidden" />';
                             if (row.MEDICALTYPENAME) { extras.push(row.MEDICALTYPENAME); }
                             if (row.CUSTOMTREATMENTNAME) { extras.push(row.CUSTOMTREATMENTNAME); }
-                            if (extras.length > 0) { txname += ' <span class="asm-smallertext">' + extras.join(" | ") + '</span>'; }
+                            if (extras.length > 0) { txname += '<div class="asm-smallertext">' + spacer + extras.join(" | ") + '</div>'; }
                             return tableform.table_render_edit_link(row.COMPOSITEID, txname);
                         }
                     },
