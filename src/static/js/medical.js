@@ -10,6 +10,8 @@ $(function() {
         TREATMENT_SINGLE: 0,
         TREATMENT_MULTI: 1,
         TREATMENT_CUSTOM: 2,
+        MEDICAL_TYPES_WITHOUT_DOSAGE: [ 11,12,13,14,15,16,18,19,26,27,29 ],
+
         model: function() {
             const dialog = {
                 add_title: _("Add medical regimen"),
@@ -27,7 +29,7 @@ $(function() {
                         html.list_to_options(controller.profiles, "ID", "PROFILENAME") },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), doublesize: true, type: "select", options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
-                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: 0, 
                         callout: _("The total cost of all treatments."),
                         hideif: function() { return !config.bool("ShowCostAmount"); } },
@@ -94,6 +96,7 @@ $(function() {
                     $("#treatmentrulecalc").hide();
                     $("#customtimingrow").hide();
                     tableform.fields_populate_from_json(dialog.fields, row);
+                    medical.change_medicaltype();
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     medical.set_extra_fields(row);
@@ -669,13 +672,15 @@ $(function() {
             if (forcesingletx) {
                 $("#singlemulti").val(medical.TREATMENT_SINGLE);
                 $("#singlemulti").prop("disabled", true);
+                $("#costpertreatmentrow").hide();
                 medical.change_singlemulti();
             }
             else {
+                $("#costpertreatmentrow").show();
                 $("#singlemulti").prop("disabled", false);
             }
+            $("#dosagerow").toggle( !medical.MEDICAL_TYPES_WITHOUT_DOSAGE.includes(format.to_int(mtid)) );
         },
-
 
         /* What to do when we switch between single/multiple treatments */
         change_singlemulti: function() {
@@ -834,6 +839,7 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
+            row.MEDICALTYPENAME = common.get_field(controller.medicaltypes, row.MEDICALTYPEID, "MEDICALTYPENAME");
             if (row.STATUS == 0) { row.NAMEDSTATUS = _("Active"); }
             if (row.STATUS == 1) { row.NAMEDSTATUS = _("Paused"); }
             if (row.STATUS == 2) { row.NAMEDSTATUS = _("Completed"); }

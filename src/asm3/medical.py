@@ -1066,6 +1066,10 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
             totalnumberoftreatments = 1
         if treatmentrule != 0:
             totalnumberoftreatments = 0
+    
+    cost = post.integer("cost")
+    costpertreatment = post.integer("costpertreatment")
+    if costpertreatment == 0 and cost > 0: costpertreatment = cost
 
     nregid = dbo.insert("animalmedical", {
         "AnimalID":                 post.integer("animal"),
@@ -1075,8 +1079,8 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Dosage":                   post["dosage"],
         "StartDate":                post.date("startdate"),
         "Status":                   ACTIVE,
-        "Cost":                     post.integer("cost"),
-        "CostPerTreatment":         post.integer("costpertreatment"),
+        "Cost":                     cost,
+        "CostPerTreatment":         costpertreatment,
         "CostPaidDate":             post.date("costpaid"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
@@ -1131,7 +1135,7 @@ def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         raise asm3.utils.ASMValidationError(_("Start date must be a valid date", l))
     if post["treatmentname"] == "":
         raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
-
+    
     dbo.update("animalmedical", regimenid, {
         "AnimalID":         post.integer("animal"),
         "TreatmentName":    post["treatmentname"],

@@ -5,9 +5,12 @@ $(function() {
     "use strict";
 
     const medicalprofile = {
+
         TREATMENT_SINGLE: 0,
         TREATMENT_MULTI: 1,
         TREATMENT_CUSTOM: 2,
+        MEDICAL_TYPES_WITHOUT_DOSAGE: [ 11,12,13,14,15,16,18,19,26,27,29 ],
+
         model: function() {
             const dialog = {
                 add_title: _("Add medical profile"),
@@ -21,7 +24,7 @@ $(function() {
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" }, 
                     { json_field: "MEDICALTYPEID", post_field: "medicaltype", label: _("Type"), type: "select", doublesize: true, 
                         options: "<option></option>" + html.list_to_options(controller.medicaltypes, "ID", "MEDICALTYPENAME") },
-                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
                         callout: _("The total cost of all treatments.") },
                     { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency",
@@ -199,13 +202,14 @@ $(function() {
             let mtid = $("#medicaltype").val();
             let forcesingletx = common.get_field(controller.medicaltypes, mtid, "FORCESINGLEUSE");
             if (forcesingletx) {
-                $("#singlemulti").val(medical.TREATMENT_SINGLE);
+                $("#singlemulti").val(medicalprofile.TREATMENT_SINGLE);
                 $("#singlemulti").prop("disabled", true);
-                medical.change_singlemulti();
+                medicalprofile.change_singlemulti();
             }
             else {
                 $("#singlemulti").prop("disabled", false);
             }
+            $("#dosagerow").toggle( !medicalprofile.MEDICAL_TYPES_WITHOUT_DOSAGE.includes(format.to_int(mtid)) );
         },
         
         /* What to do when we switch between single/multiple treatments */
