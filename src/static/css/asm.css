@@ -487,8 +487,8 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-staff-rota th { top: 0; position: sticky; } 
 .asm-staff-rota-day { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
 .asm-staff-rota-today { background-color: #f5f5dc !important; color: #000 !important; }
-.asm-staff-rota { width: 100%; border-collapse: collapse; }
-.asm-staff-rota td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
+.asm-staff-rota, .asm-boarding-availability { width: 100%; border-collapse: collapse; }
+.asm-staff-rota td, .asm-boarding-availability td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
 .asm-staff-rota td:first-child { text-align: right !important; }
 .asm-staff-rota-cell { background-color: #fff; cursor: pointer; }
 .asm-staff-rota-cell:hover { background-color: #eee; }

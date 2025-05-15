@@ -2603,9 +2603,15 @@ class boarding_availability(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
+        startdate = o.post.date("start")
+        if startdate is None: startdate = monday_of_week(dbo.today())
         rows = asm3.financial.get_boarding(dbo, o.post["filter"])
         asm3.al.debug("got %d boarding records" % (len(rows)), "main.boarding", dbo)
         return {
+            "name": "boarding_availability",
+            "startdate": startdate,
+            "prevdate": subtract_days(startdate, 7),
+            "nextdate": add_days(startdate, 7),
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "rows": rows,
