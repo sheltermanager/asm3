@@ -7,6 +7,7 @@ import asm3.users
 
 from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SERVICE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union
+from asm3.__version__ import VERSION
 
 import web062 as web
 
@@ -1348,6 +1349,11 @@ def get_asm_news(dbo: Database) -> str:
     except Exception as err:
         asm3.al.error("Failed reading ASM news: %s" % err, "utils.get_asm_news", dbo)
 
+def _add_http_headers(headers: Dict):
+    """ Adds any necessary HTTP headers when making requests """
+    if "User-Agent" not in headers: headers["User-Agent"] = f"Animal Shelter Manager/{VERSION}"
+    return headers
+
 def get_url(url: str, headers: Dict = {}, cookies: Dict = {}, timeout: float = None, params: Dict = None, exceptions: bool = True) -> Dict:
     """
     Retrieves a URL as text/str
@@ -1364,6 +1370,7 @@ def get_url(url: str, headers: Dict = {}, cookies: Dict = {}, timeout: float = N
         # handle file:// urls since requests module doesn't
         if url.startswith("file://"):
             return { "status": 200, "response": read_text_file(url[7:]), "headers": {}, "cookies": {}, "requestheaders": {}, "requestbody": "" }
+        headers = _add_http_headers(headers)
         r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, params=params)
     except Exception as err:
         if exceptions: raise err
@@ -1382,6 +1389,7 @@ def get_url_bytes(url: str, headers: Dict = {}, cookies: Dict = {}, timeout: flo
         # handle file:// urls since requests module doesn't
         if url.startswith("file://"):
             return { "status": 200, "response": read_binary_file(url[7:]), "headers": {}, "cookies": {}, "requestheaders": {}, "requestbody": "" }
+        headers = _add_http_headers(headers)
         r = requests.get(url, headers=headers, cookies=cookies, timeout=timeout, allow_redirects=True, stream=True)
     except Exception as err:
         if exceptions: raise err
@@ -1400,6 +1408,7 @@ def post_data(url: str, data: bytes, contenttype: str = "", httpmethod: str = "P
     try:
         if contenttype != "": headers["Content-Type"] = contenttype
         if isinstance(data, str): data = str2bytes(data)
+        headers = _add_http_headers(headers)
         if httpmethod == "POST":
             r = requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
         elif httpmethod == "PATCH":
@@ -1421,6 +1430,7 @@ def post_form(url: str, fields: Dict, headers: Dict = {}, cookies: Dict = {}) ->
     headers: A map of { name: value } headers
     Returns dict of requestheaders (dict), requestbody (bytes), headers (str), response (str) and status (int)
     """
+    headers = _add_http_headers(headers)
     r = requests.post(url, data=fields, headers=headers, cookies=cookies)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
@@ -1433,6 +1443,7 @@ def post_multipart(url: str, fields: Dict = None, files: Dict = None, headers: D
     headers: A map of { name: value } headers
     Returns dict of requestheaders (dict), requestbody (bytes), headers (str), response (str) and status (int)
     """
+    headers = _add_http_headers(headers)
     r = requests.post(url, files=files, data=fields, headers=headers, cookies=cookies)
     return { 
         "cookies": r.cookies, 
