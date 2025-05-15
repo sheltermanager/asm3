@@ -8,19 +8,65 @@ $(function() {
 
         model: function() {
             const dialog = {
-                add_title: _("Add booking"),
-                edit_title: _("Edit booking"),
-                edit_perm: 'coro',
+                add_title: _("Add Boarding"),
+                edit_title: _("Edit Boarding"),
+                helper_text: "",
                 close_on_ok: false,
-                delete_button: true,
-                delete_perm: 'doro',
                 columns: 1,
                 width: 550,
                 fields: [
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal", validation: "notzero" },
+                    { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
+                    { json_field: "BOARDINGTYPEID", post_field: "type", label: _("Type"), type: "select", 
+                        options: { displayfield: "BOARDINGNAME", valuefield: "ID", rows: controller.boardingtypes }},
+                    { json_field: "INDATETIME", post_field: "in", label: _("In Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
+                    { json_field: "OUTDATETIME", post_field: "out", label: _("Out Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
+                    { json_field: "DAILYFEE", post_field: "dailyfee", label: _("Daily Fee"), type: "currency" },
+                    { json_field: "SHELTERLOCATION", post_field: "location", label: _("Location"), type: "select", 
+                        options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.internallocations }},
+                    { json_field: "SHELTERLOCATIONUNIT", post_field: "unit", label: _("Unit"), type: "select" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
             this.dialog = dialog;
+        },
+
+        set_extra_fields: function(row) {
+            if (controller.animal) {
+                row.ANIMALNAME = controller.animal.ANIMALNAME;
+                row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
+                row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
+            }
+            else if (boarding_availability.lastanimal) {
+                row.ANIMALNAME = boarding_availability.lastanimal.ANIMALNAME;
+                row.SHELTERCODE = boarding_availability.lastanimal.SHELTERCODE;
+                row.SHORTCODE = boarding_availability.lastanimal.SHORTCODE;
+                row.WEBSITEMEDIANAME = boarding_availability.lastanimal.WEBSITEMEDIANAME;
+            }
+            if (controller.person) {
+                row.OWNERCODE = controller.person.OWNERCODE;
+                row.OWNERNAME = controller.person.OWNERNAME;
+                row.OWNERSURNAME = controller.person.OWNERSURNAME;
+                row.OWNERADDRESS = controller.person.OWNERADDRESS;
+                row.EMAILADDRESS = controller.person.EMAILADDRESS;
+                row.HOMETELEPHONE = controller.person.HOMETELEPHONE;
+                row.WORKTELEPHONE = controller.person.WORKTELEPHONE;
+                row.MOBILETELEPHONE = controller.person.MOBILETELEPHONE;
+            }
+            else if (boarding_availability.lastperson) {
+                row.OWNERCODE = boarding_availability.lastperson.OWNERCODE;
+                row.OWNERNAME = boarding_availability.lastperson.OWNERNAME;
+                row.OWNERSURNAME = boarding_availability.lastperson.OWNERSURNAME;
+                row.OWNERADDRESS = boarding_availability.lastperson.OWNERADDRESS;
+                row.EMAILADDRESS = boarding_availability.lastperson.EMAILADDRESS;
+                row.HOMETELEPHONE = boarding_availability.lastperson.HOMETELEPHONE;
+                row.WORKTELEPHONE = boarding_availability.lastperson.WORKTELEPHONE;
+                row.MOBILETELEPHONE = boarding_availability.lastperson.MOBILETELEPHONE;
+            }
+            row.BOARDINGTYPENAME = common.get_field(controller.boardingtypes, row.BOARDINGTYPEID, "BOARDINGNAME");
+            row.SHELTERLOCATIONNAME = common.get_field(controller.internallocations, row.SHELTERLOCATION, "LOCATIONNAME");
+            row.DAYS = format.date_diff_days( $("#indate").datepicker("getDate"), $("#outdate").datepicker("getDate") );
         },
 
         render: function() {
@@ -31,21 +77,101 @@ $(function() {
                 tableform.buttons_render([
                     { id: "prev", icon: "rotate-anti", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.prevdate)) },
                     { id: "today", icon: "diary", tooltip: _("This week") },
-                    { id: "next", icon: "rotate-clock", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.nextdate)) },
-                    //{ id: "clone", text: _("Clone"), icon: "copy", perm: 'aoro', tooltip: _("Clone the rota this week to another week") },
-                    //{ id: "delete", text: _("Delete"), icon: "delete", perm: 'doro', tooltip: _("Delete all rota entries for this week") }
+                    { id: "next", icon: "rotate-clock", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.nextdate)) }
                 ]),
                 '<table class="asm-boarding-availability">',
                 '<thead></thead>',
                 '<tbody></tbody>',
                 '</table>',
-                //html.info(_("To add people to the rota, create new person records with the staff or volunteer flag."), "emptyhint"), 
                 html.content_footer()
             ].join("\n");
         },
 
         sync: function() {
             boarding_availability.generate_table();
+
+            $.each($(".asm-boarding-location-row"), function(i, location) {
+                let locationid = location.attributes["data-locationid"].value;
+                $.each($(location).find(".asm-boarding-availability-cell"), function(i, cell) {
+                    let date = cell.attributes["data-date"].value;
+                    let bookings = $(".asm-boarding-unit-row[data-locationid='" + locationid + "'] .asm-boarding-availability-cell[data-date='" + date + "'] .asm-boarding-item");
+                    $(cell).find('meter').val(bookings.length);//bookings.length;
+                });
+            });
+
+            $(".asm-boarding-location-row").click(function() {
+                let locationid = $(this).attr("data-locationid");
+                $(".asm-boarding-unit-row[data-locationid='" + locationid + "']").toggle();
+            });
+
+            $(".asm-boarding-unit-row .asm-boarding-availability-cell").click(function() {
+                let date = this.attributes["data-date"].value;
+                let locationid = this.parentElement.attributes["data-locationid"].value;
+                let unit = this.parentElement.firstElementChild.innerHTML.trim();
+                boarding_availability.new_boarding(date, locationid, unit, this);
+            });
+        },
+
+        new_boarding: function(date, locationid, unit, cell) {
+            tableform.dialog_show_add(boarding_availability.dialog, {
+                onadd: async function() {
+                    try {
+                        let response = await tableform.fields_post(boarding_availability.dialog.fields, "mode=create", "boarding");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(boarding_availability.dialog.fields, row);
+                        boarding_availability.set_extra_fields(row);
+                        controller.rows.push(row);
+                        cell.innerHTML = row.ANIMALNAME + " " + row.OWNERSURNAME;
+                        let value = parseInt($(".asm-boarding-location-row[data-locationid='" + locationid + "'] td[data-date='" + date + "'] meter")[0].attributes["value"].value);
+                        value = value + 1;
+                        console.log(value);
+                        $(".asm-boarding-location-row[data-locationid='" + locationid + "'] td[data-date='" + date + "'] meter")[0].attributes["value"].value = value;
+                        //console.log(meter);
+                        //meter.attributes["value"]++;
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
+                },
+                onload: function() {
+                    tableform.dialog_enable_buttons();
+                    $("#animal").animalchooser("clear");
+                    $("#person").personchooser("clear");
+                    if (controller.animal) {
+                        $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                    }
+                    if (controller.person) {
+                        $("#person").personchooser("loadbyid", controller.person.ID);
+                    }
+                    console.log(date);
+                    $("#indate").val(date);
+                    $("#outdate").val(date);
+                    $("#intime").val("00:00");
+                    $("#outtime").val("00:00");
+                    $("#location").val(locationid);
+                    boarding_availability.location_change();
+                    console.log("Setting unit to '" + unit + "'");
+                    $("#unit").val(unit);
+                    //boarding_availability.type_change();
+                }
+            });
+        },
+
+        location_change: function() {
+            let units = common.get_field(controller.internallocations, $("#location").val(), "UNITS");
+            let unitlist = [];
+            $.each(units.split(","), function(i, unit) {
+                unitlist.push(unit.trim());
+            });
+            if (units && units.indexOf(",") != -1) {
+                $("#unit").html(html.list_to_options(unitlist));
+            }
+            else {
+                $("#unit").html("");
+            }
         },
 
         days: [],
@@ -81,7 +207,7 @@ $(function() {
             boarding_availability.days = [];
             for (i = 0; i < 7; i += 1) {
                 css = "";
-                if (format.date(d) == format.date(new Date())) { css = 'asm-staff-rota-today'; } else { css = 'asm-staff-rota-day'; }
+                if (format.date(d) == format.date(new Date())) { css = 'asm-boarding-availability-today'; } else { css = 'asm-boarding-availability-day'; }
                 h.push('<th class="' + css + '">' + format.weekdayname(i) + '. ' + format.monthname(d.getMonth()) + ' ' + d.getDate() + '</th>');
                 boarding_availability.days.push(d);
                 d = common.add_days(d, 1);
@@ -89,31 +215,47 @@ $(function() {
             h.push('</tr>');
             $(".asm-boarding-availability thead").html(h.join("\n"));
             
-            // Render a row for each person with their rota for the week
             h = [];
             $.each(controller.internallocations, function(i, location) {
-                h.push("<tr>");
-                h.push('<td class="' + css + '" title="' + html.title(title) + '">');
+                css = "asm-boarding-availability-odd";
+                if (i % 2 == 0) { css = "asm-boarding-availability-even"; }
+                h.push('<tr class="asm-boarding-location-row" data-locationid=' + location.ID + '>');
+                h.push('<td class="' + css + '" title="' + html.title(title) + '" style="cursor: pointer;">');
                 h.push(location.LOCATIONNAME);
                 h.push("</td>");
                 $.each(boarding_availability.days, function(id, d) {
-                    h.push('<td data-date="' + format.date(d) + '" class="asm-staff-rota-cell">');
-                    
+                    h.push('<td data-date="' + format.date(d) + '" class="asm-boarding-availability-cell">');
+                    h.push('<meter min="0" max="' + location.UNITS.split(",").length + '" value="0" style="width: 100%;"></meter>');
                     h.push('</td>');
                 });
                 h.push("</tr>");
+                $.each(location.UNITS.split(","), function(i, unit) {
+                    h.push('<tr class="asm-boarding-unit-row" data-locationid=' + location.ID + ' style="display: none;">');
+                    h.push('<td class="' + css + '" title="' + html.title(title) + '">');
+                    h.push(unit);
+                    h.push("</td>");
+                    $.each(boarding_availability.days, function(id, d) {
+                        h.push('<td data-date="' + format.date(d) + '" class="asm-boarding-availability-cell">');
+                            $.each(controller.rows, function(i, b) {
+                                if ( b.SHELTERLOCATION == location.ID && b.SHELTERLOCATIONUNIT.trim() == unit.trim() && format.date_in_range(d, b.INDATETIME, b.OUTDATETIME, true) ) {
+                                    h.push('<div class="asm-boarding-item">' + b.ANIMALNAME + ' ' + b.OWNERSURNAME + '</div>');
+                                }
+                            });
+                        h.push('</td>');
+                    });
+                    h.push("</tr>");
+                });
             });
-            console.log(h.join("\n"));
             $(".asm-boarding-availability tbody").html(h.join("\n"));
         },
 
         bind: function() {
-            /*$("#button-delete").button().click(async function() {
-                let startdate = format.date(staff_rota.days[0]);
-                //await tableform.delete_dialog(null, _("This will remove ALL rota entries for the week beginning {0}. This action is irreversible, are you sure?").replace("{0}", startdate));
-                //await common.ajax_post(controller.name, "mode=deleteweek&startdate=" + startdate);
-                //common.route(controller.name + "?flags=" + staff_rota.get_flags_param() + "&start=" + startdate);
-            });*/
+
+            $("#location").change(boarding_availability.location_change);
+
+            $(".asm-boarding-availability").on("change", "#weekselector", function() {
+                common.route(controller.name + "?start=" + $("#weekselector").select("value"));
+            });
 
             $("#button-prev").button().click(function() {
                 common.route(controller.name + "?start=" + format.date(controller.prevdate));
@@ -125,6 +267,32 @@ $(function() {
 
             $("#button-next").button().click(function() { 
                 common.route(controller.name + "?start=" + format.date(controller.nextdate));
+            });
+
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+                boarding_availability.lastanimal = rec;
+                // if person is not set, load from the current owner if animal has one
+                if ($("#person").val() == "0" && rec.OWNERID) {
+                    $("#person").val(rec.OWNERID);
+                    $("#person").personchooser("loadbyid", rec.OWNERID);
+                }
+            });
+
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
+                boarding_availability.lastanimal = rec;
+                // if person is not set, load from the current owner if animal has one
+                if ($("#person").val() == "0" && rec.OWNERID) {
+                    $("#person").val(rec.OWNERID);
+                    $("#person").personchooser("loadbyid", rec.OWNERID);
+                }
+            });
+
+            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+                boarding_availability.lastperson = rec;
+            });
+
+            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
+                boarding_availability.lastperson = rec;
             });
         },
 

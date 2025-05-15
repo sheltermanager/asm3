@@ -2605,7 +2605,7 @@ class boarding_availability(JSONEndpoint):
         dbo = o.dbo
         startdate = o.post.date("start")
         if startdate is None: startdate = monday_of_week(dbo.today())
-        rows = asm3.financial.get_boarding(dbo, o.post["filter"])
+        rows = asm3.financial.get_boarding_due_two_dates(dbo, startdate, add_days(startdate, 7))
         asm3.al.debug("got %d boarding records" % (len(rows)), "main.boarding", dbo)
         return {
             "name": "boarding_availability",
