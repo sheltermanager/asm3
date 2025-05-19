@@ -36,23 +36,20 @@ $(function() {
         insert_booking: function(row) {
             let locationid = row.SHELTERLOCATION;
             let tablerow = $(".asm-boarding-unit-row[data-locationid='" + locationid + "'][data-unit='" + row.SHELTERLOCATIONUNIT + "']").first();
-            console.log(tablerow);
             let tablecells = tablerow.find(".asm-boarding-availability-cell");
             $.each(tablecells, function(i, tablecell) {
                 let celldate = $(tablecell).attr("data-date");
                 celldate = format.date_iso(celldate);
                 if (format.date_in_range(celldate, row.INDATETIME, row.OUTDATETIME, true)) {
                     tablecell.innerHTML += '<div class="asm-boarding-item"><a href=# data-id="' + row.ID + '">' + row.ANIMALNAME + " " + row.OWNERSURNAME + '</a></div>';
-                } else {
-                    console.log(celldate + " not in date range " + row.INDATETIME + " to " + row.OUTDATETIME);
                 }
             });
-            boarding_availability.refresh_meters()
+            boarding_availability.refresh_meters();
         },
 
         remove_booking: function(id) {
             $(".asm-boarding-item a[data-id='" + id + "']").closest(".asm-boarding-item").remove();
-            boarding_availability.refresh_meters()
+            boarding_availability.refresh_meters();
         },
 
         refresh_meters: function() {
@@ -131,9 +128,9 @@ $(function() {
             boarding_availability.generate_table();
 
             $.each($(".asm-boarding-location-row"), function(i, location) {
-                let locationid = location.attributes["data-locationid"].value;
+                let locationid = $(location).attr("data-locationid");
                 $.each($(location).find(".asm-boarding-availability-cell"), function(i, cell) {
-                    let date = cell.attributes["data-date"].value;
+                    let date = $(cell).attr("data-date");
                     let bookingcells = $(".asm-boarding-unit-row[data-locationid='" + locationid + "'] .asm-boarding-availability-cell[data-date='" + date + "']");
                     let bookings = 0;
                     $.each(bookingcells, function(i, bookingcell) {
@@ -151,14 +148,14 @@ $(function() {
             });
 
             $(".asm-boarding-unit-row .asm-boarding-availability-cell").click(function() {
-                let date = this.attributes["data-date"].value;
-                let locationid = this.parentElement.attributes["data-locationid"].value;
-                let unit = this.parentElement.firstElementChild.innerHTML.trim();
-                boarding_availability.new_boarding(date, locationid, unit, this);
+                let date = $(this).attr("data-date");
+                let locationid = $(this).closest(".asm-boarding-unit-row").attr("data-locationid");
+                let unit = $(this).closest(".asm-boarding-unit-row").children().first().html().trim();
+                boarding_availability.new_boarding(date, locationid, unit);
             });
         },
 
-        new_boarding: function(date, locationid, unit, cell) {
+        new_boarding: function(date, locationid, unit) {
             tableform.dialog_show_add(boarding_availability.dialog, {
                 onadd: async function() {
                     try {
@@ -263,7 +260,7 @@ $(function() {
                 css = "asm-boarding-availability-odd";
                 if (i % 2 == 0) { css = "asm-boarding-availability-even"; }
                 h.push('<tr class="asm-boarding-location-row" data-locationid=' + location.ID + '>');
-                h.push('<td class="' + css + '" title="' + html.title(title) + '" style="cursor: pointer;">');
+                h.push('<td title="' + html.title(title) + '" style="cursor: pointer;">');
                 h.push(location.LOCATIONNAME);
                 h.push("</td>");
                 $.each(boarding_availability.days, function(id, d) {
@@ -278,7 +275,7 @@ $(function() {
                 h.push("</tr>");
                 $.each(location.UNITS.split(","), function(i, unit) {
                     h.push('<tr class="asm-boarding-unit-row" data-locationid=' + location.ID + ' data-unit="' + unit.trim() + '" style="display: none;">');
-                    h.push('<td class="' + css + '" title="' + html.title(title) + '">');
+                    h.push('<td title="' + html.title(title) + '">');
                     h.push(unit);
                     h.push("</td>");
                     $.each(boarding_availability.days, function(id, d) {
@@ -323,14 +320,6 @@ $(function() {
                                 .then(function() {
                                     common.delete_row(controller.rows, id, "ID");
                                     boarding_availability.remove_booking(id);
-                                    /*cell.find("a[data-id='" + id + "']").closest(".asm-boarding-item").remove();
-                                    if ( cell.find(".asm-boarding-item").length == 0 ) {
-                                        let date = cell.attr("data-date");
-                                        let locationid = cell.closest("tr").attr("data-locationid");
-                                        let value = parseInt($(".asm-boarding-location-row[data-locationid='" + locationid + "'] td[data-date='" + date + "'] meter")[0].attributes["value"].value);
-                                        value--;
-                                        $(".asm-boarding-location-row[data-locationid='" + locationid + "'] td[data-date='" + date + "'] meter")[0].attributes["value"].value = value;
-                                    }*/
                                 })
                                 .always(function() {
                                     tableform.dialog_close();
