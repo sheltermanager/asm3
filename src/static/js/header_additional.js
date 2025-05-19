@@ -566,7 +566,7 @@ additional = {
         $.each(fields, function(i, v) {
             $(".additional, .additionaldialog").each(function() {
                 if ($(this).attr("data-id") == v.ID && v.DEFAULTVALUE) {
-                    if (v.FIELDTYPE == additional.MONEY) { $(this).val(format_currency(v.DEFAULTVALUE)); }
+                    if (v.FIELDTYPE == additional.MONEY) { $(this).val(format.currency(v.DEFAULTVALUE)); }
                     else { $(this).val(v.DEFAULTVALUE); } 
                 }
             });
