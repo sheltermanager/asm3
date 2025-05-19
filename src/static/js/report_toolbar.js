@@ -23,7 +23,8 @@ $(function() {
         '<button id="button-email">' + _("Email") + '</button>',
         '<button id="button-csv">' + _ ("CSV") + '</button>',
         '<button id="button-excel">' + _ ("Excel") + '</button>',
-        '<button id="button-pdf">' + _("PDF") + '</button>',
+        '<button id="button-pdf-portrait">' + _("PDF (Portrait)") + '</button>',
+        '<button id="button-pdf-landscape">' + _("PDF (Landscape") + '</button>',
         '</div>'
     ].join("\n");
 
@@ -77,11 +78,18 @@ $(function() {
         window.location = "report_export_excel?" + qs();
     });
 
-    $("#button-pdf").button({
+    $("#button-pdf-portrait").button({
         icons: { primary: "ui-icon-document" },
         text: true
     }).click(function() {
         window.location = "report_export_pdf?" + qs();
+    });
+
+    $("#button-pdf-landscape").button({
+        icons: { primary: "ui-icon-document" },
+        text: true
+    }).click(function() {
+        window.location = "report_export_pdf?landscape=true&" + qs();
     });
 
     if (String(window.location).indexOf("sent=1") != -1) { alert(_("Message sent.")); }

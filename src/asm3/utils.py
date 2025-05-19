@@ -1589,10 +1589,12 @@ def html_to_text(htmldata: str) -> str:
     p.feed(htmldata)
     return "".join(p.s)
 
-def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
+def html_to_pdf(dbo: Database, htmldata: str, orientation: str = "portrait") -> bytes:
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     """
+    if orientation == "landscape":
+        htmldata = "<!-- pdf orientation landscape -->" + htmldata
     if HTML_TO_PDF == "pisa" or htmldata.find("pdf renderer pisa") != -1:
         return html_to_pdf_pisa(dbo, htmldata)
     else:
