@@ -338,7 +338,8 @@ def insert_additional(dbo: Database, linktype: int, linkid: int, additionalfield
     except Exception as err:
         asm3.al.error("Failed saving additional field: %s" % err, "additional.insert_additional", dbo, sys.exc_info())
 
-def save_values_for_link(dbo: Database, post: PostedData, username: str, linkid: int, linktype: str = "animal", setdefaults: bool = False, removeallforlink: bool = True) -> None:
+def save_values_for_link(dbo: Database, post: PostedData, username: str, linkid: int, linktype: str = "animal", 
+                         setdefaults: bool = False, removeallforlink: bool = True, skipblanks: bool = False) -> None:
     """
     Saves incoming additional field values from a record.
     Clears existing additional field values before saving (this is because forms
@@ -347,6 +348,10 @@ def save_values_for_link(dbo: Database, post: PostedData, username: str, linkid:
     linktype: The class of parent record
     setdefaults: If True, will set default values for any keys not supplied
         (Should be True for calls from insert_X_from_form methods)
+    removeallforlink: If True, will delete all additional fields for the 
+        link given before applying the new values
+    skipblanks: If True, will not assign an additional field if the value
+        is an empty string
     Keys of either a.MANDATORY.ID can be used (ASM internal forms)
         or keys of the form additionalFIELDNAME (ASM online forms)
     """
@@ -369,6 +374,8 @@ def save_values_for_link(dbo: Database, post: PostedData, username: str, linkid:
         elif key not in post: key = key2
 
         val = post[key]
+        if skipblanks and (val == "" or val == "0"): continue
+
         if f.fieldtype == YESNO:
             val = str(post.boolean(key))
         elif f.fieldtype == MONEY:
