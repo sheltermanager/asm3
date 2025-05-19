@@ -1323,7 +1323,7 @@ def attach_animalbyname(dbo: Database, username: str, collationid: int, attachme
     has_name = False
     animalid = 0
     for f in fields:
-        if f.FIELDNAME == "animalname" or f.FIELDNAME == "reserveanimalname": 
+        if f.FIELDNAME == "animalname" or f.FIELDNAME.startswith("reserveanimalname") and f.VALUE != "": 
             animalname = f.VALUE
             animalid = get_animal_id_from_field(dbo, animalname)
             has_name = True
