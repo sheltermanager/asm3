@@ -13,7 +13,7 @@ $(function() {
                 helper_text: "",
                 close_on_ok: false,
                 delete_button: true,
-                delete_perm: 'doro',
+                delete_perm: 'dbi',
                 columns: 1,
                 width: 550,
                 fields: [
