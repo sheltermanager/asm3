@@ -41,7 +41,7 @@ $(function() {
                 let celldate = $(tablecell).attr("data-date");
                 celldate = format.date_iso(celldate);
                 if (format.date_in_range(celldate, row.INDATETIME, row.OUTDATETIME, true)) {
-                    tablecell.innerHTML += '<div class="asm-boarding-item"><a href=# data-id="' + row.ID + '">' + row.ANIMALNAME + " " + row.OWNERSURNAME + '</a></div>';
+                    $(tablecell).html($(tablecell).html() + '<div class="asm-boarding-item"><a href=# data-id="' + row.ID + '">' + row.ANIMALNAME + " " + row.OWNERSURNAME + '</a></div>');
                 }
             });
             boarding_availability.refresh_meters();
@@ -177,12 +177,6 @@ $(function() {
                     tableform.dialog_enable_buttons();
                     $("#animal").animalchooser("clear");
                     $("#person").personchooser("clear");
-                    if (controller.animal) {
-                        $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                    }
-                    if (controller.person) {
-                        $("#person").personchooser("loadbyid", controller.person.ID);
-                    }
                     $("#indate").val(date);
                     $("#outdate").val(date);
                     $("#intime").val("00:00");
