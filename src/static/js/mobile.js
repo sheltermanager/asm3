@@ -41,13 +41,13 @@ const mobile = {
         });
     },
 
-    markup_online_forms: function() {
+    render_online_forms: function() {
         let fitems = "";
         $.each(controller.internalforms, function(i, form) {
             let furl = asm.serviceurl + "?";
             if (asm.useraccountalias) { furl += "account=" + asm.useraccountalias + "&"; }
             furl += "method=online_form_html&formid=" + form.ID;
-            fitems += '<a id="stocktake-nav" class="dropdown-item hideifzero internal-link" data-perm="csl" data-link="onlineforms" href="' + furl + '" target="_blank">' + form.NAME + '</a>';
+            fitems += '<a class="dropdown-item" data-perm="vof" href="' + furl + '" target="_blank">' + form.NAME + '</a>';
         });
         return fitems;
     },
@@ -457,7 +457,7 @@ const mobile = {
                         '<a class="nav-link dropdown-toggle" href="#" id="dropdown-onlineforms" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                         _("Online Forms") + '</a>',
                         '<div class="dropdown-menu shadow-sm" aria-labelledby="dropdown-onlineforms">',
-                            mobile.markup_online_forms(),
+                            mobile.render_online_forms(),
                         '</div>',
                     '</li>',
                     '<li class="nav-item dropdown">',

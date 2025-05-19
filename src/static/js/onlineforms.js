@@ -143,11 +143,7 @@ $(function() {
                         }},
                     { field: "INTERNALUSE", display: _("Internal use"),
                         formatter: function(row) {
-                            if (row.INTERNALUSE) {
-                                return _("Yes");
-                            } else {
-                                return _("No");
-                            }
+                            return row.INTERNALUSE ? _("Yes") : _("No");
                         }
                     },
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
