@@ -5039,7 +5039,7 @@ class maint_sac_metrics(ASMEndpoint):
             else:
                 for s in species:
                     data = p.processStats(month, year, s, externalid)
-                p.putData(data)
+                    p.putData(data)
             return "\n".join(p.logBuffer)
         except Exception as err:
             return str(err)
