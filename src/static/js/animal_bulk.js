@@ -195,7 +195,6 @@ $(function() {
                 $("#button-update").button("disable");
                 header.show_loading(_("Updating..."));
                 let formdata = "mode=update&" + $("input, select, textarea").toPOST();
-                console.log(formdata);
                 try {
                     let response = await common.ajax_post("animal_bulk", formdata);
                     header.hide_loading();
