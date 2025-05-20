@@ -3427,8 +3427,9 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
                 move_dict["reservationstatus"] = asm3.configuration.default_reservation_status(dbo)
                 move_dict["reservationdate"] = post["movementdate"]
             asm3.movement.insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, dbo.locale))
-    for animalid in post.integer_list("animals"):
-        asm3.additional.save_values_for_link(dbo, post, username, animalid, "animal", setdefaults=False, removeallforlink=False, skipblanks=True)
+    if post.boolean("updateadditional"):
+        for animalid in post.integer_list("animals"):
+            asm3.additional.save_values_for_link(dbo, post, username, animalid, "animal", setdefaults=False, removeallforlink=False, skipblanks=True)
     
     # Record the user as making the last change to this record and create audit records for the changes
     dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["animals"]))

@@ -153,6 +153,7 @@ $(function() {
                 '<h3><a href="#">' + _("Additional") + '</a></h3>',
                 '<div>',
                 tableform.fields_render([
+                    { post_field: "updateadditional", type: "check", label: _("Update additional fields") },
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 0) },
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 2) },
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) },
@@ -245,6 +246,18 @@ $(function() {
             if (!common.has_permission("adn")) { $("#diaryforrow, #diarysubjectrow, #diarynotesrow").hide(); }
             if (!common.has_permission("ale")) { $("#logtyperow, #lognotesrow").hide(); }
 
+            $("#updateadditional").change(animal_bulk.updateadditional_change);
+            animal_bulk.updateadditional_change();
+
+        },
+
+        updateadditional_change: function() {
+            if ($("#updateadditional").prop("checked")) {
+                $(".additional").closest("tr").show();
+            }
+            else {
+                $(".additional").closest("tr").hide();
+            }
         },
 
         /**
