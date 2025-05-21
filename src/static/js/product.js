@@ -23,8 +23,8 @@ $(function() {
                         '<img id="productimage" class="asm-thumbnail thumbnailshadow " src="image?db=asmtestdbdb&amp;mode=nopic" style="margin-left: 0;">' + 
                         '</a> ' + 
                         '<div style="display: inline-block;">' + 
-                        '<div id="addimage" style="white-space: nowrap; cursor: pointer;">[ ' + _("Add image") + ' ]</div> ' + 
-                        '<div id="removeimage" style="white-space: nowrap; cursor: pointer;display : none;">[ ' + _("Remove image") + ']</div>' + 
+                        '<button id="addimage" style="white-space: nowrap; cursor: pointer;" title="' + _("Choose an image") + '"><span class="ui-button-icon ui-icon ui-icon-search"></span></button><br>' + 
+                        '<button id="removeimage" style="white-space: nowrap; cursor: pointer;display: none;" title="' + _("Remove image") + '"><span class="ui-button-icon ui-icon ui-icon-trash"></span></button>' + 
                         '</div>' + 
                         '<input type="file" id="imageinput" style="display: none;">'
                     },
@@ -73,11 +73,9 @@ $(function() {
                     $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID);
                     $("#mediaid").val(row.MEDIAID);
                     if (row.MEDIAID) {
-                        $("#addimage").html("[ " + _("Change image") + " ]");
                         $("#removeimage").show();
                     }
                     else {
-                        $("#addimage").html("[ " + _("Add image") + " ]");
                         $("#removeimage").hide();
                     }
                     tableform.dialog_show_edit(dialog, row, {
@@ -241,7 +239,6 @@ $(function() {
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#productimage").prop("src", "image?db=asmtestdbdb&mode=noimage");
             $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=noimage");
-            $("#addimage").html("[ " + _("Add image") + " ]");
             $("#removeimage").hide();
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -395,15 +392,14 @@ $(function() {
                 }
             });
 
-            $("#addimage").click(function() {
+            $("#addimage").button().click(function() {
                 $("#imageinput").click();
             });
 
-            $("#removeimage").click(function() {
+            $("#removeimage").button().click(function() {
                 $("#productimage").prop("src", "image?db=asmtestdbdb&mode=noimage");
                 $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=noimage");
                 $("#mediaid").val("");
-                $("#addimage").html("[ " + _("Add image") + " ]");
                 $("#removeimage").hide();
             });
 
@@ -425,7 +421,6 @@ $(function() {
             let imagedata = await common.read_file_as_data_url(selectedfile);
             $("#productimage").prop("src", imagedata);
             $("#productimage").closest("a").prop("href", imagedata);
-            $("#addimage").html("[ " + _("Change image") + " ]");
             $("#removeimage").show();
         },
 
