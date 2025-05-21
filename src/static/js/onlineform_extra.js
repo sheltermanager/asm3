@@ -394,12 +394,12 @@ $(document).ready(function() {
     };
 
     // Load all date and time picker widgets
-    //$(".asm-onlineform-date").datepicker({ dateFormat: DATE_FORMAT, changeMonth: true, changeYear: true, yearRange: "-90:+3" });
     $(".asm-onlineform-date").each(function() {
         let nopast = $(this).hasClass("nopast");
         let nofuture = $(this).hasClass("nofuture");
         if (nopast || nofuture) {
             $(this).datepicker({ 
+                dateFormat: DATE_FORMAT,
                 changeMonth: true, 
                 changeYear: true,
                 firstDay: $(this).attr("data-firstday"),
@@ -413,6 +413,7 @@ $(document).ready(function() {
             });
         } else {
             $(this).datepicker({ 
+                dateFormat: DATE_FORMAT,
                 changeMonth: true, 
                 changeYear: true,
                 yearRange: "-90:+3",
