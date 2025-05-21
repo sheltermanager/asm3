@@ -6819,7 +6819,17 @@ class product(JSONEndpoint):
     def post_delete(self, o):
         self.check(asm3.users.DELETE_STOCKLEVEL)
         for pid in o.post.integer_list("ids"):
+            o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [asm3.media.PRODUCT, pid])
             asm3.stock.delete_product(o.dbo, o.user, pid)
+    
+    def post_image(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        linkid = o.post.integer("linkid")
+        linktypeid = o.post.integer("linktypeid")
+        sourceid = o.post.integer("sourceid")
+        o.post["mode"] = "media"
+        o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [linktypeid, linkid])
+        return asm3.media.attach_file_from_form(o.dbo, o.user, linktypeid, linkid, sourceid, o.post)
 
 class publish(JSONEndpoint):
     url = "publish"

@@ -16,9 +16,11 @@ def get_product_query(dbo: Database, retired = False) -> str:
         "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID=product.UnitTypeID) " \
         "ELSE product.CustomUnit " \
         "END AS Unit, " \
-        "CASE WHEN product.IsRetired=0 THEN 1 ELSE 0 END AS Active " \
+        "CASE WHEN product.IsRetired=0 THEN 1 ELSE 0 END AS Active, " \
+        "media.ID AS MediaID " \
         "FROM product " \
         "LEFT OUTER JOIN lkproducttype pt ON pt.ID = product.ProductTypeID " \
+        f"LEFT OUTER JOIN media ON media.LinkID = product.ID AND media.LinkTypeID = {asm3.media.PRODUCT} " \
         f"{retiredclause} "
 
 def get_stocklevel_query(dbo: Database) -> str:
@@ -233,7 +235,8 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":        post["globalminimum"]
+        "GlobalMinimum":        post["globalminimum"],
+        "DBFSID":               post["mediaid"]
     }, username)
 
 def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
@@ -297,7 +300,8 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":        post["globalminimum"]
+        "GlobalMinimum":        post["globalminimum"],
+        "DBFSID":               post["mediaid"]
     }, username)
 
     return pid

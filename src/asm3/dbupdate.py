@@ -1665,7 +1665,8 @@ def sql_structure(dbo: Database) -> str:
         fstr("Barcode"),
         fstr("PLU"),
         fint("GlobalMinimum"),
-        fint("IsRetired") ), True)
+        fint("IsRetired"),
+        fint("DBFSID", True) ), True)
     sql += index("product_SupplierID", "product", "SupplierID")
     sql += index("product_ProductName", "product", "ProductName")
     sql += index("product_ProductTypeID", "product", "ProductTypeID")
@@ -1721,7 +1722,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("Barcode", True),
         fint("Cost", True),
         fint("UnitPrice", True),
-        fdate("CreatedDate") ), False)
+        fdate("CreatedDate"), ), False)
     sql += index("stocklevel_Name", "stocklevel", "Name")
     sql += index("stocklevel_UnitName", "stocklevel", "UnitName")
     sql += index("stocklevel_ProductID", "stocklevel", "ProductID")

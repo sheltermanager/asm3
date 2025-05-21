@@ -7,6 +7,7 @@ $(function() {
     const stock_level = {
 
         model: function() {
+
             const dialog = {
                 add_title: _("Add stock"),
                 edit_title: _("Edit stock"),
@@ -53,7 +54,12 @@ $(function() {
                     { json_field: "", post_field: "usagetype", label: _("Usage Type"), type: "select",
                         options: { displayfield: "USAGETYPENAME", valuefield: "ID", rows: controller.stockusagetypes }},
                     { json_field: "", post_field: "usagedate", label: _("Usage Date"), type: "date", validation: "notblank", defaultval: new Date() },
-                    { json_field: "", post_field: "comments", label: _("Comments"), type: "textarea" }
+                    { json_field: "", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { type: "raw",
+                        markup: '<a target="_blank" href="image?db=asmtestdbdb&amp;mode=nopic">' + 
+                        '<img id="stocklevelimage" class="asm-thumbnail thumbnailshadow " src="image?db=asmtestdbdb&amp;mode=nopic" style="margin-left: 0;">' + 
+                        '</a>'
+                    }
                 ]
             };
 
@@ -63,6 +69,13 @@ $(function() {
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     stock_level.active_row_id = row.ID;
+                    if (row.PRODUCTID) {
+                        $("#productlist").val(row.PRODUCTID);
+                        $("#productlist").change();
+                    } else {
+                        $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&amp;mode=nopic");
+                        $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&amp;mode=nopic");
+                    }
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
@@ -138,10 +151,7 @@ $(function() {
                         let barcodefilter = $(".tablesorter-filter-row input[data-column='4']");
                         barcodefilter.val(code);
                         barcodefilter.change();
-                        //$("#tableform-toggle-filter").click();
                         table.filter_toggle = true;
-                        //$(".tablesorter-filter-row").toggle(table.filter_toggle);
-                        console.log(table.filter_toggle);
                         $(".tablesorter-filter-row").show();
                     } 
                 },
@@ -173,8 +183,6 @@ $(function() {
 
         new_level: function() { 
             let dialog = stock_level.dialog, table = stock_level.table;
-            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#productlist").val(-1);
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=create", "stock_level")
@@ -189,6 +197,8 @@ $(function() {
                 onload: function() {
                     stock_level.show_usage_fields();
                     $("#usagetype").select("firstvalue");
+                    $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&amp;mode=nopic");
+                    $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&amp;mode=nopic");
                 }
             });
         },
@@ -311,6 +321,8 @@ $(function() {
                 $("#total").val(activeproduct.UNITRATIO);
                 $("#balance").val(activeproduct.UNITRATIO);
                 $("#low").val(0);
+                $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&mode=media&id=" + activeproduct.MEDIAID);
+                $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=media&id=" + activeproduct.MEDIAID);
                 $("#namerow").fadeIn();
             });
 
