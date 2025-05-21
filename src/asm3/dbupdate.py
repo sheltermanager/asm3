@@ -1665,8 +1665,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("Barcode"),
         fstr("PLU"),
         fint("GlobalMinimum"),
-        fint("IsRetired"),
-        fint("DBFSID", True) ), True)
+        fint("IsRetired") ), True)
     sql += index("product_SupplierID", "product", "SupplierID")
     sql += index("product_ProductName", "product", "ProductName")
     sql += index("product_ProductTypeID", "product", "ProductTypeID")
