@@ -300,7 +300,7 @@ $(function() {
                     onchange: async function() {
                         tableform.fields_update_row(boarding_availability.dialog.fields, row);
                         boarding_availability.set_extra_fields(row);
-                        await tableform.fields_post(boarding_availability.dialog.fields, "mode=update&boardingid=" + row.ID, controller.name);
+                        await tableform.fields_post(boarding_availability.dialog.fields, "mode=update&boardingid=" + row.ID, "boarding");
 
                         boarding_availability.remove_booking(row.ID);
                         boarding_availability.insert_booking(row);
@@ -310,7 +310,7 @@ $(function() {
                     ondelete: function() {
                         tableform.dialog_enable_buttons();
                         tableform.delete_dialog(function() {
-                            common.ajax_post(controller.name, "mode=delete&ids=" + id)
+                            common.ajax_post("boarding", "mode=delete&ids=" + id)
                                 .then(function() {
                                     common.delete_row(controller.rows, id, "ID");
                                     boarding_availability.remove_booking(id);

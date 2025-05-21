@@ -2618,15 +2618,6 @@ class boarding_availability(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
         }
     
-    def post_update(self, o):
-        self.check(asm3.users.CHANGE_BOARDING)
-        asm3.financial.update_boarding_from_form(o.dbo, o.user, o.post)
-    
-    def post_delete(self, o):
-        self.check(asm3.users.DELETE_BOARDING)
-        for did in o.post.integer_list("ids"):
-            asm3.financial.delete_boarding(o.dbo, o.user, did)
-
 class calendarview(JSONEndpoint):
     url = "calendarview"
     get_permissions = asm3.users.VIEW_ANIMAL
