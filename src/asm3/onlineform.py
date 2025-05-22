@@ -1533,6 +1533,8 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
     # Does this person already exist?
     personid = 0
     if "surname" in d and "forenames" in d:
+        dforenames = d["forenames"]
+        dsurname = d["surname"]
         demail = ""
         dmobile = ""
         daddress = ""
@@ -1540,6 +1542,7 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if "mobiletelephone" in d: dmobile = d["mobiletelephone"]
         if "address" in d: daddress = d["address"]
         similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], daddress, siteid)
+        asm3.al.debug(f"similar person check: {len(similar)} results (email={demail}, mobile={dmobile}, surname={dsurname}, forenames={dforenames}, address={daddress}, site={siteid})", "onlineform.create_person", dbo)
         if merge and len(similar) > 0:
             personid = similar[0].ID
             status = 1 # updated existing record
