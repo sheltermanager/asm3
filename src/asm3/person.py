@@ -165,7 +165,7 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
     If checkmobilehome is True, the mobile number given will be checked against the home telephone too.
     """
     siteclause = ""
-    if siteid != 0: siteclause = "(o.SiteID=0 OR o.SiteID=%s) AND " % siteid
+    if siteid != 0: siteclause = "o.SiteID=%s AND " % siteid
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
     if address.find(" ") != -1: address = address[0:address.find(" ")]
