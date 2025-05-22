@@ -6799,7 +6799,8 @@ class product(JSONEndpoint):
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "units": asm3.lookups.get_unit_types(dbo),
             "yesno": asm3.lookups.get_yesno(dbo),
-            "rows": products
+            "rows": products,
+            "imagedimesions": asm3.configuration.DEFAULTS["ProductImageScale"]
         }
     
     def post_create(self, o):

@@ -435,6 +435,7 @@ DEFAULTS = {
     "WatermarkYOffset": "10",
     "WeightChangeLog": "Yes",
     "WeightChangeLogType": "4",
+    "ProductImageScale": "200x200",
 }
 
 def cstring(dbo, key: str, default: str = "") -> str:

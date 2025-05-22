@@ -24,7 +24,7 @@ $(function() {
                         '</a> ' + 
                         '<div style="display: inline-block;">' + 
                         '<button id="addimage" style="white-space: nowrap; cursor: pointer;" title="' + _("Choose an image") + '"><span class="ui-button-icon ui-icon ui-icon-search"></span></button><br>' + 
-                        '<button id="removeimage" style="white-space: nowrap; cursor: pointer;display: none;" title="' + _("Remove image") + '"><span class="ui-button-icon ui-icon ui-icon-trash"></span></button>' + 
+                        '<button id="removeimage" style="white-space: nowrap; cursor: pointer;display: none;" title="' + _("Remove image") + '" class="ui-button ui-corner-all ui-widget ui-button-icon-only"><span class="ui-button-icon ui-icon ui-icon-trash"></span><span class="ui-button-icon-space"> </span></button>' + 
                         '</div>' + 
                         '<input type="file" id="imageinput" style="display: none;">'
                     },
@@ -428,8 +428,8 @@ $(function() {
 
             let deferred = $.Deferred();
 
-            let max_width = 200;
-            let max_height = 200;
+            let max_width = parseInt(controller.imagedimesions.split("x")[0]);
+            let max_height = parseInt(controller.imagedimesions.split("x")[1]);
 
             // Read the file to an image tag, then scale it
             let img, img_width, img_height;
