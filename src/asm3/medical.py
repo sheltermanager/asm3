@@ -994,6 +994,7 @@ def insert_treatments(dbo: Database, username: str, amid: int, requireddate: dat
         dbo.insert("animalmedicaltreatment", {
             "AnimalID":             am.ANIMALID,
             "AnimalMedicalID":      amid,
+            "CustomTreatmentName":  "",
             "DateRequired":         requireddate,
             "DateGiven":            None,
             "GivenBy":              "",
