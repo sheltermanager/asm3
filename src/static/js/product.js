@@ -23,8 +23,8 @@ $(function() {
                         '<img id="productimage" class="asm-thumbnail thumbnailshadow " src="image?db=asmtestdbdb&amp;mode=nopic" style="margin-left: 0;">' + 
                         '</a> ' + 
                         '<div style="display: inline-block;">' + 
-                        '<button id="addimage" style="white-space: nowrap; cursor: pointer;" title="' + _("Choose an image") + '"><span class="ui-button-icon ui-icon ui-icon-search"></span></button><br>' + 
-                        '<button id="removeimage" style="white-space: nowrap; cursor: pointer;display: none;" title="' + _("Remove image") + '" class="ui-button ui-corner-all ui-widget ui-button-icon-only"><span class="ui-button-icon ui-icon ui-icon-trash"></span><span class="ui-button-icon-space"> </span></button>' + 
+                        '<button id="addimage" style="white-space: nowrap; cursor: pointer;" title="' + _("Choose an image") + '">' + _("Choose image") +  ' ' + 
+                        '<button id="removeimage" style="white-space: nowrap; cursor: pointer;display: none;margin-left: 3px;" title="' + _("Remove image") + '" class="ui-button">' + _("Remove image") + '</button>' + 
                         '</div>' + 
                         '<input type="file" id="imageinput" style="display: none;">'
                     },
@@ -392,11 +392,11 @@ $(function() {
                 }
             });
 
-            $("#addimage").button().click(function() {
+            $("#addimage").button({ icons: { primary: "ui-icon-search" }, text: false }).click(function() {
                 $("#imageinput").click();
             });
 
-            $("#removeimage").button().click(function() {
+            $("#removeimage").button({ icons: { primary: "ui-icon-trash" }, text: false }).click(function() {
                 $("#productimage").prop("src", "image?db=asmtestdbdb&mode=noimage");
                 $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=noimage");
                 $("#mediaid").val("");
