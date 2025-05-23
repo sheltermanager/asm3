@@ -1333,8 +1333,11 @@ def sql_structure(dbo: Database) -> str:
         flongstr("EmailMessage", True),
         flongstr("Header", True),
         flongstr("Footer", True),
-        flongstr("Description", True)), False)
+        flongstr("Description", True),
+        fint("InternalUse", True)), False)
+
     sql += index("onlineform_Name", "onlineform", "Name")
+    sql += index("onlineform_InternalUse", "onlineform", "InternalUse")
 
     sql += table("onlineformfield", (
         fid(),
