@@ -213,6 +213,8 @@ const tableform = {
      *        sorttext: function(row) { overrides table.textExtraction and sets sort text }
      *        field: "jsonfield", 
      *        classes: "", // extra classes to add to the td
+     *        style: "", // extra CSS to add to the td
+     *        maxwidth: "100px", // writes max-width directive to the style attribute (convenience)
      *        display: _("Text"),      
      *        formatter: tableform.format_date, 
      *        hideif: function(row) 
@@ -242,12 +244,12 @@ const tableform = {
         }
         $.each(table.rows, function(ir, vr) {
             if (table.hideif && table.hideif(vr)) { return; }
-            var rowid = vr[table.idcolumn];
+            let rowid = vr[table.idcolumn];
             t.push("<tr id=\"row-" + rowid + "\">");
             $.each(table.columns, function(ic, vc) {
-                var formatter = vc.formatter;
+                let formatter = vc.formatter;
                 if (vc.hideif && vc.hideif(vr)) { return; }
-                var extraclasses = "";
+                let extraclasses = "", extrastyles = "";
                 if (table.complete) {
                     if (table.complete(vr)) {
                         extraclasses += " asm-completerow";
@@ -264,7 +266,13 @@ const tableform = {
                 if (formatter === tableform.format_currency) {
                     extraclasses += " rightalign";
                 }
-                t.push("<td class=\"" + extraclasses + "\">");
+                if (vc.style) {
+                    extrastyles += " " + vc.style;
+                }
+                if (vc.maxwidth) {
+                    extrastyles += " max-width: " + vc.maxwidth + ";";
+                }
+                t.push("<td class=\"" + extraclasses + "\" style=\"" + extrastyles + "\">");
                 if (vc.sorttext) {
                     t.push("<span data-sort=\"" + html.title(html.truncate(vc.sorttext(vr))) + "\"></span>");
                 }
