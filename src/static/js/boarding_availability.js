@@ -41,7 +41,7 @@ $(function() {
                 let celldate = $(tablecell).attr("data-date");
                 celldate = format.date_iso(celldate);
                 if (format.date_in_range(celldate, row.INDATETIME, row.OUTDATETIME, true)) {
-                    $(tablecell).html($(tablecell).html() + '<div class="asm-boarding-item"><a href=# data-id="' + row.ID + '">' + row.ANIMALNAME + " " + row.OWNERSURNAME + '</a></div>');
+                    $(tablecell).html($(tablecell).html() + '<div class="asm-boarding-item"><a href=# data-id="' + row.ID + '">' + row.ANIMALNAME + ' [' + row.BOARDINGTYPENAME + ']<br><span class="asm-boarding-ownername">' + row.OWNERNAME + '</span></a></div>');
                 }
             });
             boarding_availability.refresh_meters();
@@ -64,34 +64,18 @@ $(function() {
                         occupiedunits++;
                     }
                 });
-                $(meter).val(occupiedunits);
+                $(meter).val($(meter).prop("max") - occupiedunits);
             });
         },
 
         set_extra_fields: function(row) {
-            if (controller.animal) {
-                row.ANIMALNAME = controller.animal.ANIMALNAME;
-                row.SHELTERCODE = controller.animal.SHELTERCODE;
-                row.SHORTCODE = controller.animal.SHORTCODE;
-                row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
-            }
-            else if (boarding_availability.lastanimal) {
+            if (boarding_availability.lastanimal) {
                 row.ANIMALNAME = boarding_availability.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = boarding_availability.lastanimal.SHELTERCODE;
                 row.SHORTCODE = boarding_availability.lastanimal.SHORTCODE;
                 row.WEBSITEMEDIANAME = boarding_availability.lastanimal.WEBSITEMEDIANAME;
             }
-            if (controller.person) {
-                row.OWNERCODE = controller.person.OWNERCODE;
-                row.OWNERNAME = controller.person.OWNERNAME;
-                row.OWNERSURNAME = controller.person.OWNERSURNAME;
-                row.OWNERADDRESS = controller.person.OWNERADDRESS;
-                row.EMAILADDRESS = controller.person.EMAILADDRESS;
-                row.HOMETELEPHONE = controller.person.HOMETELEPHONE;
-                row.WORKTELEPHONE = controller.person.WORKTELEPHONE;
-                row.MOBILETELEPHONE = controller.person.MOBILETELEPHONE;
-            }
-            else if (boarding_availability.lastperson) {
+            if (boarding_availability.lastperson) {
                 row.OWNERCODE = boarding_availability.lastperson.OWNERCODE;
                 row.OWNERNAME = boarding_availability.lastperson.OWNERNAME;
                 row.OWNERSURNAME = boarding_availability.lastperson.OWNERSURNAME;
@@ -127,20 +111,7 @@ $(function() {
         sync: function() {
             boarding_availability.generate_table();
 
-            $.each($(".asm-boarding-location-row"), function(i, location) {
-                let locationid = $(location).attr("data-locationid");
-                $.each($(location).find(".asm-boarding-availability-cell"), function(i, cell) {
-                    let date = $(cell).attr("data-date");
-                    let bookingcells = $(".asm-boarding-unit-row[data-locationid='" + locationid + "'] .asm-boarding-availability-cell[data-date='" + date + "']");
-                    let bookings = 0;
-                    $.each(bookingcells, function(i, bookingcell) {
-                        if ($(bookingcell).find(".asm-boarding-item").length > 0) {
-                            bookings++;
-                        }
-                    });
-                    $(cell).find('meter').val(bookings);
-                });
-            });
+            boarding_availability.refresh_meters();
 
             $(".asm-boarding-location-row").click(function() {
                 let locationid = $(this).attr("data-locationid");
@@ -263,20 +234,20 @@ $(function() {
                     let low = max;
                     let high = max;
                     let optimum = max - 1;
-                    h.push('<meter min="0" max="' + max + '" low="' + low + '" value="0"></meter>');
+                    h.push('<meter min="0" max="' + max + '" value="0"></meter>');
                     h.push('</td>');
                 });
                 h.push("</tr>");
                 $.each(location.UNITS.split(","), function(i, unit) {
                     h.push('<tr class="asm-boarding-unit-row" data-locationid=' + location.ID + ' data-unit="' + unit.trim() + '" style="display: none;">');
-                    h.push('<td title="' + html.title(title) + '">');
+                    h.push('<td title="' + html.title(title) + '" class="asm-shelterview-unit-name">');
                     h.push(unit);
                     h.push("</td>");
                     $.each(boarding_availability.days, function(id, d) {
                         h.push('<td data-date="' + format.date(d) + '" class="asm-boarding-availability-cell">');
                             $.each(controller.rows, function(i, b) {
                                 if ( b.SHELTERLOCATION == location.ID && b.SHELTERLOCATIONUNIT.trim() == unit.trim() && format.date_in_range(d, b.INDATETIME, b.OUTDATETIME, true) ) {
-                                    h.push('<div class="asm-boarding-item"><a href=# data-id="' + b.ID + '">' + b.ANIMALNAME + ' ' + b.OWNERSURNAME + '</a></div>');
+                                    h.push('<div class="asm-boarding-item"><a href=# data-id="' + b.ID + '">' + b.ANIMALNAME + ' [' + b.BOARDINGTYPENAME + ']<br><span class="asm-boarding-ownername">' + b.OWNERNAME + '</span></a></div>');
                                 }
                             });
                         h.push('</td>');
