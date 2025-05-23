@@ -195,7 +195,7 @@ $(function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");
                 header.show_loading(_("Updating..."));
-                let formdata = "mode=update&" + $("input, select, textarea").toPOST();
+                let formdata = "mode=update&" + $("input, select, textarea").not(".chooser").toPOST();
                 try {
                     let response = await common.ajax_post("animal_bulk", formdata);
                     header.hide_loading();
