@@ -730,7 +730,7 @@ def sql_structure(dbo: Database) -> str:
         fint("AdministeringVetID", True),
         fdate("DateRequired"),
         fdate("DateGiven", True),
-        fstr("CustomTreatmentName"),
+        fstr("CustomTreatmentName", True),
         fint("TreatmentNumber"),
         fint("TotalTreatments"),
         fstr("GivenBy"),
