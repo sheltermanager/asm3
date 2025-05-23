@@ -287,6 +287,8 @@ def get_dbfs_path(linkid: int, linktype: int) -> str:
         path = "/waitinglist/%d" % int(linkid)
     elif linktype == ANIMALCONTROL:
         path = "/animalcontrol/%d" % int(linkid)
+    elif linktype == PRODUCT:
+        path = "/product/%d" % int(linkid)
     return path
 
 def get_log_from_media_type(x: int) -> int:
