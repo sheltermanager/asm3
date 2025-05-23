@@ -16,15 +16,18 @@ def get_product_query(dbo: Database, retired = False) -> str:
         "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID=product.UnitTypeID) " \
         "ELSE product.CustomUnit " \
         "END AS Unit, " \
-        "CASE WHEN product.IsRetired=0 THEN 1 ELSE 0 END AS Active " \
+        "CASE WHEN product.IsRetired=0 THEN 1 ELSE 0 END AS Active, " \
+        "media.ID AS MediaID " \
         "FROM product " \
         "LEFT OUTER JOIN lkproducttype pt ON pt.ID = product.ProductTypeID " \
+        f"LEFT OUTER JOIN media ON media.LinkID = product.ID AND media.LinkTypeID = {asm3.media.PRODUCT} " \
         f"{retiredclause} "
 
 def get_stocklevel_query(dbo: Database) -> str:
-    return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName " \
+    return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName, media.ID AS MediaID " \
         "FROM stocklevel s " \
-        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID "
+        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID " \
+        f"LEFT OUTER JOIN media ON media.LinkID = s.ProductID AND media.LinkTypeID = {asm3.media.PRODUCT} "
 
 def get_products(dbo: Database, retired: bool = False) -> Results:
     """
