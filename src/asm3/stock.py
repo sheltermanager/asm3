@@ -24,9 +24,10 @@ def get_product_query(dbo: Database, retired = False) -> str:
         f"{retiredclause} "
 
 def get_stocklevel_query(dbo: Database) -> str:
-    return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName " \
+    return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName, media.ID AS MediaID " \
         "FROM stocklevel s " \
-        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID "
+        "INNER JOIN stocklocation l ON s.StockLocationID = l.ID " \
+        f"LEFT OUTER JOIN media ON media.LinkID = s.ProductID AND media.LinkTypeID = {asm3.media.PRODUCT} "
 
 def get_products(dbo: Database, retired: bool = False) -> Results:
     """
@@ -235,8 +236,7 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":        post["globalminimum"],
-        "DBFSID":               post["mediaid"]
+        "GlobalMinimum":        post["globalminimum"]
     }, username)
 
 def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
@@ -300,8 +300,7 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":        post["globalminimum"],
-        "DBFSID":               post["mediaid"]
+        "GlobalMinimum":        post["globalminimum"]
     }, username)
 
     return pid

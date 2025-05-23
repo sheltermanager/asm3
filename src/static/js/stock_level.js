@@ -17,6 +17,11 @@ $(function() {
                 columns: 1,
                 width: 800,
                 fields: [
+                    { type: "raw",
+                        markup: '<a target="_blank" href="image?db=asmtestdbdb&amp;mode=nopic">' + 
+                        '<img id="stocklevelimage" class="asm-thumbnail thumbnailshadow " src="image?db=asmtestdbdb&amp;mode=nopic" style="margin-left: 0;">' + 
+                        '</a>'
+                    },
                     { json_field: "PRODUCTLIST", post_field: "productlist", label: _("Product templates"), type: "select", readonly: true, 
                         options: { rows: controller.products, displayfield: "PRODUCTNAME", prepend: '<option value=""></option>' }},
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "autotext", validation: "notblank",
@@ -54,12 +59,7 @@ $(function() {
                     { json_field: "", post_field: "usagetype", label: _("Usage Type"), type: "select",
                         options: { displayfield: "USAGETYPENAME", valuefield: "ID", rows: controller.stockusagetypes }},
                     { json_field: "", post_field: "usagedate", label: _("Usage Date"), type: "date", validation: "notblank", defaultval: new Date() },
-                    { json_field: "", post_field: "comments", label: _("Comments"), type: "textarea" },
-                    { type: "raw",
-                        markup: '<a target="_blank" href="image?db=asmtestdbdb&amp;mode=nopic">' + 
-                        '<img id="stocklevelimage" class="asm-thumbnail thumbnailshadow " src="image?db=asmtestdbdb&amp;mode=nopic" style="margin-left: 0;">' + 
-                        '</a>'
-                    }
+                    { json_field: "", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
 
@@ -75,6 +75,7 @@ $(function() {
                     } else {
                         $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&amp;mode=nopic");
                         $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&amp;mode=nopic");
+                        $("#stocklevelimage").closest("a").hide();
                     }
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
@@ -108,6 +109,14 @@ $(function() {
                 },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: controller.sortexp != 1 },
+                    { field: "PRODUCTIMAGE", full_width: false, display: _("Image"), 
+                        formatter: function(row) {
+                            let imageurl = "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID;
+                            return '<a target="_blank" href="' + imageurl + '">' + 
+                            '<img class="asm-thumbnail thumbnailshadow " src="' + imageurl + '" style="margin-left: 0;">' + 
+                            '</a>';
+                        }
+                    },
                     { field: "STOCKLOCATIONNAME", display: _("Location") },
                     { field: "UNITNAME", display: _("Unit") },
                     { field: "BALANCE", display: _("Balance"), formatter: function(row) {
@@ -199,6 +208,7 @@ $(function() {
                     $("#usagetype").select("firstvalue");
                     $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&amp;mode=nopic");
                     $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&amp;mode=nopic");
+                    $("#stocklevelimage").closest("a").hide();
                 }
             });
         },
@@ -321,8 +331,17 @@ $(function() {
                 $("#total").val(activeproduct.UNITRATIO);
                 $("#balance").val(activeproduct.UNITRATIO);
                 $("#low").val(0);
-                $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&mode=media&id=" + activeproduct.MEDIAID);
-                $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=media&id=" + activeproduct.MEDIAID);
+                if (activeproduct.MEDIAID) {
+                    $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&mode=media&id=" + activeproduct.MEDIAID);
+                    $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=media&id=" + activeproduct.MEDIAID);
+                    $("#stocklevelimage").closest("a").show();
+                }
+                else {
+                    $("#stocklevelimage").prop("src", "image?db=asmtestdbdb&amp;mode=nopic");
+                    $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&amp;mode=nopic");
+                    $("#stocklevelimage").closest("a").hide();
+                }
+                
                 $("#namerow").fadeIn();
             });
 

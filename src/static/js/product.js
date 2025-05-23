@@ -28,7 +28,7 @@ $(function() {
                         '</div>' + 
                         '<input type="file" id="imageinput" style="display: none;">'
                     },
-                    { json_field: "DBFSID", post_field: "mediaid", type: "hidden" },
+                    { json_field: "MEDIAID", post_field: "mediaid", type: "hidden" },
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", 
                         options: { rows: controller.producttypes, displayfield: "PRODUCTTYPENAME" }},
@@ -79,15 +79,19 @@ $(function() {
                         $("#removeimage").hide();
                     }
                     tableform.dialog_show_edit(dialog, row, {
-                        onchange: function() {
+                        onchange: async function() {
+                            let selectedfile = $("#imageinput")[0].files[0];
+                            if (selectedfile) {
+                                row.MEDIAID = await product.attach_image(selectedfile, "imageinput", row.ID);
+                            } else {
+                                row.MEDIAID = "";
+                            }
+                            $("#mediaid").val(row.MEDIAID);
                             tableform.fields_update_row(dialog.fields, row);
                             tableform.fields_post(dialog.fields, "mode=update&productid=" + row.ID, "product")
-                                .then(async function() {
-                                    let selectedfile = $("#imageinput")[0].files[0];
-                                    row.MEDIAID = await product.attach_image(selectedfile, "imageinput", row.ID);
+                                .then(function() {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
-                                    
                                 })
                                 .fail(function(response) {
                                     tableform.dialog_error(response);
@@ -120,6 +124,14 @@ $(function() {
                 },
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
+                    { field: "PRODUCTIMAGE", full_width: false, display: _("Image"), 
+                        formatter: function(row) {
+                            let imageurl = "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID;
+                            return '<a target="_blank" href="' + imageurl + '">' + 
+                            '<img class="asm-thumbnail thumbnailshadow " src="' + imageurl + '" style="margin-left: 0;">' + 
+                            '</a>';
+                        }
+                    },
                     { field: "UNIT", display: _("Unit"), formatter: function(row) {
                         if (row.UNITTYPEID == 0) {
                             if (row.PURCHASEUNITTYPEID == 0) {
@@ -243,11 +255,14 @@ $(function() {
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=create", "product")
-                        .then(function(response) {
+                        .then(async function(response) {
                             let row = {};
                             row.ID = response;
                             let selectedfile = $("#imageinput")[0].files[0];
-                            product.attach_image(selectedfile, "imageinput", row.ID);
+                            if (selectedfile) {
+                                let mediaid = await product.attach_image(selectedfile, "imageinput", row.ID);
+                                $("#mediaid").val(mediaid);
+                             }
                             tableform.fields_update_row(dialog.fields, row);
                             product.set_extra_fields(row);
                             controller.rows.push(row);
@@ -465,7 +480,7 @@ $(function() {
                         "&sourceid=" + sourceid +
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
-                        "&filedata=" + encodeURIComponent(finalfile)
+                        "&filedata=" + encodeURIComponent(finalfile);
                     let mediaid = await common.ajax_post("product", formdata);
                     return mediaid;
                     

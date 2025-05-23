@@ -6816,6 +6816,8 @@ class product(JSONEndpoint):
     def post_update(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
         asm3.stock.update_product_from_form(o.dbo, o.post, o.user)
+        if not o.post["mediaid"]:
+            o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [asm3.media.PRODUCT, o.post.integer("productid")])
     
     def post_delete(self, o):
         self.check(asm3.users.DELETE_STOCKLEVEL)
