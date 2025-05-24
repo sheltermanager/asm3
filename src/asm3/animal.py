@@ -3952,9 +3952,10 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
     # Deal with other selected animal fields from the template
     p = {
         "Fee":                      copyfrom.fee,
-        "CurrentVetID":             copyfrom.currentvetid,
-        "AnimalComments":           copyfrom.animalcomments
+        "CurrentVetID":             copyfrom.currentvetid
     }
+    if asm3.utils.nulltostr(copyfrom.animalcomments) != "":
+        p["AnimalComments"] = copyfrom.animalcomments
     if copyfrom.ishold == 1:
         p["IsHold"] = 1
         if copyfrom.holduntildate is not None:
