@@ -230,14 +230,16 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_NUMBER:
             h.append('<input class="asm-onlineform-number" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
-            confirmlabel = f.LOOKUPS 
-            if confirmlabel is None or confirmlabel == "": confirmlabel = asm3.i18n._("Confirm email", l)
             h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
-            h.append('</td></tr>')
-            h.append('<tr class=" class="asm-onlineform-tr"><td class="asm-onlineform-td">')
-            h.append('<label for="%s">%s</label>' % (fid + "verify", confirmlabel))
-            h.append('</td><td class="asm-onlineform-td">')
-            h.append('<input class="asm-onlineform-email" type="email" id="%s" %s %s />' % ( fid + "verify", autocomplete, requiredtext))
+            if f.FIELDNAME == "emailaddress":
+                confirmlabel = f.LOOKUPS 
+                if confirmlabel is None or confirmlabel == "": confirmlabel = asm3.i18n._("Confirm email", l)
+                h.append('</td></tr>')
+                h.append('<tr class="asm-onlineform-tr" %s>' % visibleif)
+                h.append('<td class="asm-onlineform-td">')
+                h.append('<label for="%s">%s</label>' % (fid + "verify", confirmlabel))
+                h.append('</td><td class="asm-onlineform-td">')
+                h.append('<input class="asm-onlineform-email" type="email" id="%s" %s %s />' % ( fid + "verify", autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             firstday = asm3.configuration.default_first_day(dbo)
             if f.VALIDATIONRULE == 1:
