@@ -212,12 +212,15 @@ $(document).ready(function() {
             }
             let vid = $(this).attr("ID");
             if ( !vid.includes("verify") ) {
-                let v2 = $("#" + vid + "verify").val();
-                if (v != v2) {
-                    alert("Email addresses do not match.");
-                    $(this).focus();
-                    rv = false;
-                    return false;
+                let vnode = $("#" + vid + "verify");
+                if (vnode.length > 0) {
+                    let v2 = vnode.val();
+                    if (v != v2) {
+                        alert("Email addresses do not match.");
+                        $(this).focus();
+                        rv = false;
+                        return false;
+                    }
                 }
             }
         });
