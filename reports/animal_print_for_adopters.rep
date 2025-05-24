@@ -2,7 +2,7 @@ Print Animal Record (for adopters)
 ###
 Auditing
 ###
-34018/Any rev09
+34018/Any rev10
 ###
 A complete printout of an animal record for giving to adopters.
 ###
@@ -24,7 +24,7 @@ internallocation.LocationName AS CurrentLocation,
 lkcoattype.CoatType,
 ba1.ShelterCode AS Bonded1Code, ba1.AnimalName AS Bonded1Name,
 ba2.ShelterCode AS Bonded2Code, ba2.AnimalName AS Bonded2Name,
-CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName = 'ShowWeightInLbs' AND ItemValue = 'Yes') THEN 'lbs' ELSE 'kg' END AS WeightUnit,
+CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName LIKE 'ShowWeightInLbs%' AND ItemValue = 'Yes') THEN 'lbs' ELSE 'kg' END AS WeightUnit,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS withdogs,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS withcats,
 (SELECT Name FROM lksynunk WHERE ID = a.IsGoodWithChildren) AS withchildren,
