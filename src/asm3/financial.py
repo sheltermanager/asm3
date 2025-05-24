@@ -1048,8 +1048,10 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
     # still having the same ownerdonation.ID for display/report purposes.
     trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE OwnerDonationID = ? ORDER BY ID", [odid])
     if trxid != 0:
-        asm3.al.debug("Already have an existing transaction, updating amount to %d" % abs(d.DONATION), "financial.update_matching_donation_transaction", dbo)
-        dbo.execute("UPDATE accountstrx SET Amount = ? WHERE ID = ?", (abs(d.DONATION), trxid))
+        amount = d.DONATION
+        if d.VATAMOUNT is not None and d.VATAMOUNT > 0 and amount > 0: amount -= d.VATAMOUNT
+        asm3.al.debug("Already have an existing transaction, updating amount to %d" % abs(amount), "financial.update_matching_donation_transaction", dbo)
+        dbo.execute("UPDATE accountstrx SET Amount = ? WHERE ID = ?", (abs(amount), trxid))
         return
 
     # Get the source account for this type of donation
