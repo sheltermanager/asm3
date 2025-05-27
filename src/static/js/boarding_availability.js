@@ -225,7 +225,7 @@ $(function() {
                 css = "asm-boarding-availability-odd";
                 if (i % 2 == 0) { css = "asm-boarding-availability-even"; }
                 h.push('<tr class="asm-boarding-location-row" data-locationid=' + location.ID + '>');
-                h.push('<td title="' + html.title(title) + '" style="cursor: pointer;">');
+                h.push('<td class="asm-boarding-location-cell" title="' + html.title(title) + '" style="cursor: pointer;">');
                 h.push(location.LOCATIONNAME);
                 h.push("</td>");
                 $.each(boarding_availability.days, function(id, d) {

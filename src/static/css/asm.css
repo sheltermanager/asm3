@@ -486,7 +486,6 @@ select:disabled, input:disabled, textarea:disabled {
 /** ROTA ======================== */
 .asm-staff-rota th { top: 0; position: sticky; } 
 .asm-staff-rota-day { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
-.asm-boarding-availability-day { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
 .asm-staff-rota-today { background-color: #f5f5dc !important; color: #000 !important; }
 .asm-staff-rota { width: 100%; border-collapse: collapse; }
 .asm-staff-rota td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
@@ -510,6 +509,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-staff-rota-volunteer-even a { background-color: #3d633e; color: #fff; }
 
 /** BOARDING ======================== */
+.asm-boarding-availability-day { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
 .asm-boarding-availability { width: 100%; max-width: 1600px; border-collapse: collapse; }
 .asm-boarding-availability-today { background-color: #f5f5dc !important; color: #000 !important; }
 .asm-boarding-availability td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
@@ -527,6 +527,7 @@ select:disabled, input:disabled, textarea:disabled {
     overflow: hidden;
 }
 .asm-boarding-ownername { font-size: 80%; }
+.asm-boarding-location-cell { background-color: #fff; cursor: pointer; }
 
 
 
