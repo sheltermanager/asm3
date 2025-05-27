@@ -80,7 +80,7 @@ $.widget("asm.animalchooser", {
             '</tr>',
             '<tr class="ownerrow">', 
             '<td><label>' + _("Owner") + '</label><span class="asm-has-validation">*</span></td>', 
-            '<td><input type="hidden" class="asm-field asm-personchooser" class="owner chooser" data="nsowner" /></td>', 
+            '<td><input type="hidden" class="asm-field asm-personchooser chooser" class="owner chooser" data="nsowner" /></td>', 
             '</tr>', 
             '<tr>',
             '<td><label>' + _("Name") + '</label><span class="asm-has-validation">*</span></td>', 
