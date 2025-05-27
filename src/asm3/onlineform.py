@@ -45,6 +45,7 @@ FIELDTYPE_CHECKBOXGROUP = 18
 FIELDTYPE_EMAIL = 19
 FIELDTYPE_NUMBER = 20
 FIELDTYPE_FOSTERANIMAL = 21
+FIELDTYPE_LOOKINGFOR_SEX = 22
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -69,7 +70,11 @@ FIELDTYPE_MAP = {
     "CHECKBOXGROUP": 18,
     "EMAIL": 19,
     "NUMBER": 20,
-    "FOSTERANIMAL": 21
+    "FOSTERANIMAL": 21,
+    "LOOKINGFORSEX": 22,
+    "LOOKINGOFRSPECIES": 23,
+    "LOOKINGFORYOUNGERTHAN": 24,
+    "LOOKINGFOROLDERTHAN": 25
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -112,7 +117,8 @@ FORM_FIELDS = [
     "type", "breed1", "breed2", "color", "sex", "neutered", "weight", "commentsanimal", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
-    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
+    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime",
+    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan"
 ]
 
 AUTOCOMPLETE_MAP = {
@@ -337,6 +343,11 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BREEDNAME)
             h.append('</select>')
+        elif f.FIELDTYPE == FIELDTYPE_LOOKINGFOR_SEX:
+            h.append('<select class="asm-onlineform-sex" id="%s" name="%s" %s>' % ( fid, cname, required))
+            h.append('<option value="-1"></option>')
+            for l in asm3.lookups.get_sexes(dbo):
+                h.append('<option value=%s>%s</option>' % ( l.ID, l.SEX ))
         elif f.FIELDTYPE == FIELDTYPE_SPECIES:
             h.append('<select class="asm-onlineform-species" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
@@ -354,6 +365,12 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_IMAGE:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<input class="asm-onlineform-image" type="file" id="%s" data-name="%s" data-required="%s" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
+        elif f.FIELDTYPE == FIELDTYPE_LOOKINGFOR_SEX:
+            h.append('<select class="asm-onlineform-lookingfor-sex" id="%s" name="%s" %s>' % ( fid, cname, required))
+            h.append('<option value="-1">(' + _("any") + ')</option>')
+            for l in asm3.lookups.get_species(dbo):
+                if l.ISRETIRED != 1:
+                    h.append('<option>%s</option>' % l.SPECIESNAME)
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
@@ -1010,6 +1027,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             if fld.FIELDNAME in SYSTEM_FIELDS: continue
             if fld.FIELDNAME in ("firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
+            #if fld.FIELDNAME in ("lookingforsex",): continue# Could exclude this from preview as value is a number
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
 
@@ -1517,6 +1535,18 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = truncs(f.VALUE)
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME == "commentsperson": d["commentsperson"] = f.VALUE
+        if f.FIELDNAME == "lookingforsex":
+            d["matchactive"] = "1"
+            d["matchsex"] = f.VALUE
+        if f.FIELDNAME == "lookingforspecies":
+            d["matchactive"] = "1"
+            d["matchspecies"] = str(guess_species(dbo, f.VALUE))
+        if f.FIELDNAME == "lookingforyoungerthan":
+            d["matchactive"] = "1"
+            d["agedfrom"] = f.VALUE
+        if f.FIELDNAME == "lookingforolderthan":
+            d["matchactive"] = "1"
+            d["agedto"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
