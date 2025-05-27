@@ -365,12 +365,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_IMAGE:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<input class="asm-onlineform-image" type="file" id="%s" data-name="%s" data-required="%s" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
-        elif f.FIELDTYPE == FIELDTYPE_LOOKINGFOR_SEX:
-            h.append('<select class="asm-onlineform-lookingfor-sex" id="%s" name="%s" %s>' % ( fid, cname, required))
-            h.append('<option value="-1">(' + _("any") + ')</option>')
-            for l in asm3.lookups.get_species(dbo):
-                if l.ISRETIRED != 1:
-                    h.append('<option>%s</option>' % l.SPECIESNAME)
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
