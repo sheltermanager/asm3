@@ -45,7 +45,6 @@ FIELDTYPE_CHECKBOXGROUP = 18
 FIELDTYPE_EMAIL = 19
 FIELDTYPE_NUMBER = 20
 FIELDTYPE_FOSTERANIMAL = 21
-FIELDTYPE_LOOKINGFOR_SEX = 22
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -343,11 +342,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BREEDNAME)
             h.append('</select>')
-        elif f.FIELDTYPE == FIELDTYPE_LOOKINGFOR_SEX:
-            h.append('<select class="asm-onlineform-sex" id="%s" name="%s" %s>' % ( fid, cname, required))
-            h.append('<option value="-1"></option>')
-            for l in asm3.lookups.get_sexes(dbo):
-                h.append('<option value=%s>%s</option>' % ( l.ID, l.SEX ))
         elif f.FIELDTYPE == FIELDTYPE_SPECIES:
             h.append('<select class="asm-onlineform-species" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
@@ -1240,9 +1234,12 @@ def guess_entrytype(dbo: Database, s: str) -> int:
 
 def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
-    if s.lower().startswith("m"):
+    if s.lower() == asm3.i18n._("Male").lower():
         return 1
-    return 0
+    elif s.lower() == asm3.i18n._("Female").lower():
+        return 0
+    else:
+        return 2
 
 def guess_size(dbo: Database, s: str) -> int:
     """ Guesses a size """
@@ -1531,7 +1528,9 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "commentsperson": d["commentsperson"] = f.VALUE
         if f.FIELDNAME == "lookingforsex":
             d["matchactive"] = "1"
-            d["matchsex"] = f.VALUE
+            d["matchsex"] = str(guess_sex(dbo, f.VALUE))
+            if d["matchsex"] == "2":
+              d["matchsex"] = "-1"
         if f.FIELDNAME == "lookingforspecies":
             d["matchactive"] = "1"
             d["matchspecies"] = str(guess_species(dbo, f.VALUE))

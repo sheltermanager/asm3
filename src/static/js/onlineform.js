@@ -22,7 +22,6 @@ $(function() {
         { "ID": 21, "NAME": _("Foster Animal") },
         { "ID": 6, "NAME": _("Color") },
         { "ID": 7, "NAME": _("Breed") },
-        { "ID": 22, "NAME": _("Sex") },
         { "ID": 8, "NAME": _("Species") },
         { "ID": 9, "NAME": _("Raw Markup") },
         { "ID": 17, "NAME": _("Image") },
