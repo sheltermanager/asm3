@@ -316,6 +316,9 @@ def _get_media_filename(m: ResultRow) -> str:
         Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
     s = m.MEDIANOTES
     s = s.replace("\n", "_").replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_")
+    if s.find("\r\n") != -1: s = s.replace("\r\n", " ")
+    if s.find("\r") != -1: s = s.replace("\r", " ")
+    if s.find("\n") != -1: s = s.replace("\n", " ")
     s = asm3.utils.truncate(s, 20)
     ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
     if not s.endswith(ext): s += ext
