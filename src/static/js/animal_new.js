@@ -581,15 +581,12 @@ $(function() {
             });
 
             $("#species").change(function() {
-                console.log("Species changed");
                 let speciesid = $("#species").val();
                 $.each($(".additional"), function(i, af) {
                     if ($(af).attr("data-speciesids").split(",").includes(speciesid)) {
-                        console.log("showing");
                         $(af).closest("tr").show();
                     }
                     else {
-                        console.log("hiding");
                         $(af).closest("tr").hide();
                     }
                 });

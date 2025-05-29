@@ -599,9 +599,7 @@ additional = {
                 var d = String(t.attr("data-post"));
                 // mandatory additional fields have a post attribute prefixed with a.1
                 if (d.indexOf("a.1") != -1) {
-                    console.log("Checking species");
                     if ($("#species").val() && !t.attr("data-speciesids").split(",").includes($("#species").val()) ) {
-                            console.log("Safe to ignore field");
                     }
                     else if (common.trim(t.val()) == "") {
                         header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
