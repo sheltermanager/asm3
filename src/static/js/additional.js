@@ -48,7 +48,7 @@ $(function() {
                     });
                     try {
                         if ($("#speciesids").val()) {
-                            dialog.fields["speciesids"] = $("#speciesids").val().join(",");
+                            dialog.fields["speciesids"] = $("#speciesids").val();
                         }
                         await tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional");
                         tableform.fields_update_row(dialog.fields, row);
@@ -97,7 +97,7 @@ $(function() {
                         });
                         try {
                             if ($("#speciesids").val()) {
-                                dialog.fields["speciesids"] = $("#speciesids").val().join(",");
+                                dialog.fields["speciesids"] = $("#speciesids").val();
                             }
                             let response = await tableform.fields_post(dialog.fields, "mode=create", "additional");
                             let row = {};
