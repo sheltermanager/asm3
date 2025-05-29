@@ -3,6 +3,16 @@
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
 
+const PHONE_RULES = [
+    { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+    { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}" },
+    { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}" },
+    { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+    { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+    { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}" },
+    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}" }
+];
+
 $(document).ready(function() {
 
     "use strict";
@@ -510,6 +520,26 @@ $(document).ready(function() {
 
     // Watch text input fields for change so we can fix bad case/etc
     $("body").on("change", "input", fix_case_on_change);
+
+    // Watch phone input fields for change so they can be formatted according to locale
+    $(".asm-onlineform-phone").on("blur", function() {
+        if ( $(this).attr("data-locale") ) {
+            let locale = $(this).attr("data-locale");
+            let t = $(this);
+            let num = String(t.val()).replace(/\D/g, ''); // Throw away all but the numbers
+            $.each(PHONE_RULES, function(i, rules) {
+                if (rules.locale != locale) { return; }
+                if (rules.prefix && num.indexOf(rules.prefix) != 0) { return; }
+                if (num.length != rules.length) { return; }
+                let s = rules.display, m = num.match(rules.extract), x=1;
+                for (x=1; x <= rules.elements; x++) {
+                    s = s.replace("{" + x + "}", m[x]);
+                }
+                t.val(s);
+                return false;
+            });
+        }
+    });
 
     // Multi-lookup fields should copy their values into the corresponding hidden field when changed
     // so that showif pattern matching on them still works

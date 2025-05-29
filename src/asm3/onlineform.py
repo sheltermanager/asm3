@@ -369,7 +369,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             elif dbo.locale == "en_GB":
                 placeholder = "NNNN NNNNNNN"
 
-            h.append('<input class="asm-onlineform-phone" placeholder="%s" type="text" id="%s" name="%s" %s %s />' % ( placeholder, fid, cname, autocomplete, requiredtext))
+            h.append('<input class="asm-onlineform-phone" placeholder="%s" type="text" data-locale="%s" id="%s" name="%s" %s %s />' % ( placeholder, dbo.locale, fid, cname, autocomplete, requiredtext))
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
