@@ -22,6 +22,10 @@ $(function() {
                         options: { displayfield: "FIELDTYPE", valuefield: "ID", rows: controller.fieldtypes }},
                     { json_field: "LINKTYPE", post_field: "link", label: _("Link"), type: "select", 
                         options: { displayfield: "LINKTYPE", valuefield: "ID", rows: controller.linktypes }},
+                    { json_field: "SPECIESIDS", post_field: "speciesids", label: _("Species"), type: "selectmulti",
+                        options: { displayfield: "SPECIESNAME", valuefield: "ID", rows: controller.species },
+                        callout: _("Only show for included species. Leave blank for all species.")
+                    },
                     { json_field: "NEWRECORD", post_field: "newrecord", label: _("Show on new record screens"), type: "check" },
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
                     { json_field: "SEARCHABLE", post_field: "searchable", label: _("Searchable"), type: "check" },
@@ -36,8 +40,16 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    await tableform.dialog_show_edit(dialog, row, { onload: additional.check_type });
+                    await tableform.dialog_show_edit(dialog, row, {
+                        onload: function() {
+                            additional.check_type();
+                            additional.check_link();
+                        }
+                    });
                     try {
+                        if ($("#speciesids").val()) {
+                            dialog.fields["speciesids"] = $("#speciesids").val().join(",");
+                        }
                         await tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional");
                         tableform.fields_update_row(dialog.fields, row);
                         row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
@@ -77,8 +89,16 @@ $(function() {
             const buttons = [
                 { id: "new", text: _("New Field"), icon: "new", enabled: "always", 
                     click: async function() { 
-                        await tableform.dialog_show_add(dialog, { onload: additional.check_type });
+                        await tableform.dialog_show_add(dialog, {
+                            onload: function() {
+                                additional.check_type();
+                                additional.check_link();
+                            }
+                        });
                         try {
+                            if ($("#speciesids").val()) {
+                                dialog.fields["speciesids"] = $("#speciesids").val().join(",");
+                            }
                             let response = await tableform.fields_post(dialog.fields, "mode=create", "additional");
                             let row = {};
                             row.ID = response;
@@ -147,6 +167,15 @@ $(function() {
             }
         },
 
+        check_link: function() {
+            let link = $("#link").val();
+            if ([0, 2, 3, 4, 5, 6].includes(parseInt(link))) {
+                $("#speciesidsrow").fadeIn();
+            } else {
+                $("#speciesidsrow").fadeOut();
+            }
+        },
+
         bind: function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
@@ -159,6 +188,9 @@ $(function() {
 
             // Show/hide fields if type changes
             $("#type").change(additional.check_type);
+
+            // Show/hide species selector if type changes
+            $("#link").change(additional.check_link);
 
         },
 

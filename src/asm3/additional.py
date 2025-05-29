@@ -257,7 +257,8 @@ def insert_field_from_form(dbo: Database, username: str, post: PostedData) -> in
         "Hidden":           post.boolean("hidden"),
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
-        "DisplayIndex":     post.integer("displayindex")
+        "DisplayIndex":     post.integer("displayindex"),
+        "SpeciesIDs":       post["speciesids"]
     }, username, setRecordVersion=False, setCreated=False)
 
 def update_field_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -279,7 +280,8 @@ def update_field_from_form(dbo: Database, username: str, post: PostedData) -> No
         "Hidden":           post.boolean("hidden"),
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
-        "DisplayIndex":     post.integer("displayindex")
+        "DisplayIndex":     post.integer("displayindex"),
+        "SpeciesIDs":       post["speciesids"]
     }, username, setRecordVersion=False, setLastChanged=False)
 
 def validate_field(dbo: Database, post: PostedData) -> None:
