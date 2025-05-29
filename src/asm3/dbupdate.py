@@ -1348,7 +1348,7 @@ def sql_structure(dbo: Database) -> str:
         fint("SpeciesID", True),
         fstr("VisibleIf", True),
         flongstr("Tooltip", True),
-        fint("ValidationRule")), False)
+        fint("ValidationRule", True)), False)
     sql += index("onlineformfield_OnlineFormID", "onlineformfield", "OnlineFormID")
 
     sql += table("onlineformincoming", (
