@@ -243,6 +243,22 @@ $(document).ready(function() {
         return rv;
     };
 
+    const validate_phone = function() {
+        let rv = true;
+        $(".asm-onlineform-phone").each(function() {
+            let v = $(this).val();
+            if (v) {
+                if (v.replace(/\D/g, '').length < 6) {
+                    alert("Telephone number is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
     // Validate HTML5 required input fields 
     // (only does anything for browsers that don't support html5 required)
     const validate_required = function() {
@@ -521,6 +537,7 @@ $(document).ready(function() {
         if (!validate_number()) { enable(); return false; }
         if (!validate_required()) { enable(); return false; }
         if (!validate_images()) { enable(); return false; }
+        if (!validate_phone()) { enable(); return false; }
         if (html5_required && !$("form")[0].checkValidity()) { 
             enable(); // the default behaviour highlights the required fields so we need it to happen
         }

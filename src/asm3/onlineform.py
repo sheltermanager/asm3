@@ -45,6 +45,7 @@ FIELDTYPE_CHECKBOXGROUP = 18
 FIELDTYPE_EMAIL = 19
 FIELDTYPE_NUMBER = 20
 FIELDTYPE_FOSTERANIMAL = 21
+FIELDTYPE_TELEPHONE = 22
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -69,7 +70,8 @@ FIELDTYPE_MAP = {
     "CHECKBOXGROUP": 18,
     "EMAIL": 19,
     "NUMBER": 20,
-    "FOSTERANIMAL": 21
+    "FOSTERANIMAL": 21,
+    "TELEPHONE": 22
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -354,6 +356,20 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_IMAGE:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<input class="asm-onlineform-image" type="file" id="%s" data-name="%s" data-required="%s" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
+        elif f.FIELDTYPE == FIELDTYPE_TELEPHONE:
+            placeholder = ""
+            if dbo.locale == "en":
+                placeholder = "NNN NNN-NNNN"
+            elif dbo.locale == "en_AU":
+                placeholder = "NN NNNN NNNN"
+            elif dbo.locale == "en_CA":
+                placeholder = "NNN NNN-NNNN"
+            elif dbo.locale == "fr_CA":
+                placeholder = "NNN NNN-NNNN"
+            elif dbo.locale == "en_GB":
+                placeholder = "NNNN NNNNNNN"
+
+            h.append('<input class="asm-onlineform-phone" placeholder="%s" type="text" id="%s" name="%s" %s %s />' % ( placeholder, fid, cname, autocomplete, requiredtext))
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
