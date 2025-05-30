@@ -1255,8 +1255,9 @@ const tableform = {
         else if (v.id) {
             rowid = ' id="' + v.id + "row" + '" ';
         }
+        rowclasses = ' class="asm-formfield" ';
         if (v.rowclasses) {
-            rowclasses = ' class="' + v.rowclasses + '" ';
+            rowclasses = ' class="asm-formfield ' + v.rowclasses + '" ';
         }
         if (v.colclasses) {
             colclasses = ' class="' + v.colclasses + '" ';

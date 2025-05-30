@@ -253,10 +253,10 @@ $(function() {
 
         updateadditional_change: function() {
             if ($("#updateadditional").prop("checked")) {
-                $(".additional").closest("tr").show();
+                $(".additional").closest(".asm-formfield").show();
             }
             else {
-                $(".additional").closest("tr").hide();
+                $(".additional").closest(".asm-formfield").hide();
             }
         },
 

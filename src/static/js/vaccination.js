@@ -322,13 +322,13 @@ $(function() {
                 onload: function() {
                     if (controller.animal) {
                         $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                        $("#animal").closest("tr").hide();
+                        $("#animalrow").hide();
                     }
                     else {
-                        $("#animal").closest("tr").show();
+                        $("#animalrow").show();
                         $("#animal").animalchooser("clear");
                     }
-                    $("#animals").closest("tr").hide();
+                    $("#animalsrow").hide();
                     $("#administeringvet").personchooser("clear");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
@@ -358,8 +358,8 @@ $(function() {
                     }
                 },
                 onload: function() {
-                    $("#animal").closest("tr").hide();
-                    $("#animals").closest("tr").show();
+                    $("#animalrow").hide();
+                    $("#animalsrow").show();
                     $("#animals").animalchoosermulti("clear");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));

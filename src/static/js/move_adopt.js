@@ -324,10 +324,10 @@ $(function() {
 
             // Events related stuff
             if ($("#eventlink").is(":checked")) {
-                $("#event").closest("tr").fadeIn();
+                $("#eventrow").fadeIn();
             }
             else {
-                $("#event").closest("tr").fadeOut();
+                $("#eventrow").fadeOut();
             }
             $("#eventlink, #movementdate").change(function() {
                 if (config.bool("DisableEvents")) { return; }
@@ -339,11 +339,11 @@ $(function() {
                 }
                 $("#event").empty();
                 if ($("#eventlink").prop("checked")) {
-                    $("#event").closest("tr").fadeIn();
+                    $("#eventrow").fadeIn();
                     move_adopt.populate_event_dates();
                 }
                 else {
-                    $("#event").closest("tr").fadeOut();
+                    $("#eventrow").fadeOut();
                 }
             });
 
