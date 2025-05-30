@@ -432,11 +432,11 @@ from animal movements each year. Following our scheme, the Year column being
 first is the X axis label, TotalAmount is the first datapoint for that item on
 the X axis::
 
-     SELECT YEAR(DateReceived) AS Year, 
+     SELECT $SQL YEAR DateReceived$ AS Year, 
      SUM(ownerdonation.Donation) AS TotalAmount 
      FROM ownerdonation
      WHERE MovementID > 0
-     GROUP BY YEAR(DateReceived) 
+     GROUP BY $SQL YEAR DateReceived$
      ORDER BY Year
     
 Would produce data that might look something like: 
@@ -469,14 +469,14 @@ for over a year by internal location. Each location becomes a series with a set
 of data points for each month of the year::
 
     SELECT i.LocationName, 
-    MONTH(ad.MovementDate) AS bimonth,
+    $SQL MONTH ad.MovementDate$ AS bimonth,
     COUNT(ad.Donation) AS total
     FROM adoption ad
     INNER JOIN animal a ON ad.AnimalID = a.ID
     INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-    WHERE YEAR(ad.MovementDate) = $ASK STRING Which year to display for?$
+    WHERE $SQL YEAR ad.MovementDate$ = $ASK STRING Which year to display for?$
     AND ad.MovementType = 1
-    GROUP BY i.LocationName, MONTH(ad.MovementDate)
+    GROUP BY i.LocationName, $SQL MONTH ad.MovementDate$
 
 Maps
 ----
