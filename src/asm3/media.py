@@ -22,6 +22,7 @@ FOUNDANIMAL = 2
 PERSON = 3
 WAITINGLIST = 5
 ANIMALCONTROL = 6
+PRODUCT = 7
 
 MEDIASOURCE_ATTACHFILE = 1
 MEDIASOURCE_DRAGNDROP = 2
@@ -286,6 +287,8 @@ def get_dbfs_path(linkid: int, linktype: int) -> str:
         path = "/waitinglist/%d" % int(linkid)
     elif linktype == ANIMALCONTROL:
         path = "/animalcontrol/%d" % int(linkid)
+    elif linktype == PRODUCT:
+        path = "/product/%d" % int(linkid)
     return path
 
 def get_log_from_media_type(x: int) -> int:

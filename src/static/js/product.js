@@ -6,6 +6,8 @@ $(function() {
 
     const product = {
 
+        LINKTYPEID: 7,
+
         model: function() {
             const dialog = {
                 add_title: _("Add product"),
@@ -16,6 +18,17 @@ $(function() {
                 columns: 1,
                 width: 500,
                 fields: [
+                    { json_field: "PRODUCTIMAGE", post_field: "productimage", type: "raw",
+                        markup: '<a target="_blank" href="image?db=asmtestdbdb&amp;mode=nopic">' + 
+                        '<img id="productimage" class="asm-thumbnail thumbnailshadow " src="image?db=asmtestdbdb&amp;mode=nopic" style="margin-left: 0;">' + 
+                        '</a> ' + 
+                        '<div style="display: inline-block;">' + 
+                        '<button id="addimage" style="white-space: nowrap; cursor: pointer;" title="' + _("Choose an image") + '">' + _("Choose image") +  ' ' + 
+                        '<button id="removeimage" style="white-space: nowrap; cursor: pointer;display: none;margin-left: 3px;" title="' + _("Remove image") + '" class="ui-button">' + _("Remove image") + '</button>' + 
+                        '</div>' + 
+                        '<input type="file" id="imageinput" style="display: none;">'
+                    },
+                    { json_field: "MEDIAID", post_field: "mediaid", type: "hidden" },
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", 
                         options: { rows: controller.producttypes, displayfield: "PRODUCTTYPENAME" }},
@@ -56,11 +69,27 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
+                    $("#productimage").prop("src", "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID);
+                    $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID);
+                    $("#mediaid").val(row.MEDIAID);
+                    if (row.MEDIAID) {
+                        $("#removeimage").show();
+                    }
+                    else {
+                        $("#removeimage").hide();
+                    }
                     tableform.dialog_show_edit(dialog, row, {
-                        onchange: function() {
+                        onchange: async function() {
+                            let selectedfile = $("#imageinput")[0].files[0];
+                            if (selectedfile) {
+                                row.MEDIAID = await product.attach_image(selectedfile, "imageinput", row.ID);
+                            } else {
+                                row.MEDIAID = "";
+                            }
+                            $("#mediaid").val(row.MEDIAID);
                             tableform.fields_update_row(dialog.fields, row);
                             tableform.fields_post(dialog.fields, "mode=update&productid=" + row.ID, "product")
-                                .then(function(response) {
+                                .then(function() {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
                                 })
@@ -95,6 +124,14 @@ $(function() {
                 },
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
+                    { field: "PRODUCTIMAGE", full_width: false, display: _("Image"), 
+                        formatter: function(row) {
+                            let imageurl = "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID;
+                            return '<a target="_blank" href="' + imageurl + '">' + 
+                            '<img class="asm-thumbnail thumbnailshadow " src="' + imageurl + '" style="margin-left: 0;">' + 
+                            '</a>';
+                        }
+                    },
                     { field: "UNIT", display: _("Unit"), formatter: function(row) {
                         if (row.UNITTYPEID == 0) {
                             if (row.PURCHASEUNITTYPEID == 0) {
@@ -211,13 +248,21 @@ $(function() {
 
         new_product: function() { 
             let dialog = product.dialog, table = product.table;
-
+            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+            $("#productimage").prop("src", "image?db=asmtestdbdb&mode=noimage");
+            $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=noimage");
+            $("#removeimage").hide();
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
                     tableform.fields_post(dialog.fields, "mode=create", "product")
-                        .then(function(response) {
+                        .then(async function(response) {
                             let row = {};
                             row.ID = response;
+                            let selectedfile = $("#imageinput")[0].files[0];
+                            if (selectedfile) {
+                                let mediaid = await product.attach_image(selectedfile, "imageinput", row.ID);
+                                $("#mediaid").val(mediaid);
+                             }
                             tableform.fields_update_row(dialog.fields, row);
                             product.set_extra_fields(row);
                             controller.rows.push(row);
@@ -362,6 +407,91 @@ $(function() {
                 }
             });
 
+            $("#addimage").button({ icons: { primary: "ui-icon-search" }, text: false }).click(function() {
+                $("#imageinput").click();
+            });
+
+            $("#removeimage").button({ icons: { primary: "ui-icon-trash" }, text: false }).click(function() {
+                $("#productimage").prop("src", "image?db=asmtestdbdb&mode=noimage");
+                $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=noimage");
+                $("#mediaid").val("");
+                $("#removeimage").hide();
+            });
+
+            $("#imageinput").change(function() {
+                let selectedfile = $("#imageinput")[0].files[0];
+                if (!selectedfile.type.match('image.*')) {
+                    header.show_error(_("Only image files can be attached."));
+                    return false;
+                }
+                else {
+                    product.display_image(selectedfile);
+                }
+            });
+
+        },
+
+        display_image: async function(file) {
+            let selectedfile = $("#imageinput")[0].files[0];
+            let imagedata = await common.read_file_as_data_url(selectedfile);
+            $("#productimage").prop("src", imagedata);
+            $("#productimage").closest("a").prop("href", imagedata);
+            $("#removeimage").show();
+        },
+
+        attach_image: function(file, sourceid, productid) {
+
+            let deferred = $.Deferred();
+
+            let max_width = parseInt(controller.imagedimesions.split("x")[0]);
+            let max_height = parseInt(controller.imagedimesions.split("x")[1]);
+
+            // Read the file to an image tag, then scale it
+            let img, img_width, img_height;
+            html.load_img(file)
+                .then(function(nimg) {
+                    img = nimg;
+                    // Calculate the new image dimensions based on our max
+                    img_width = img.width; 
+                    img_height = img.height;
+                    if (img_width > img_height) {
+                        if (img_width > max_width) {
+                            img_height *= max_width / img_width;
+                            img_width = max_width;
+                        }
+                    }
+                    else {
+                        if (img_height > max_height) {
+                            img_width *= max_height / img_height;
+                            img_height = max_height;
+                        }
+                    }
+                    // Read the exif orientation so we can correct any rotation
+                    // before scaling
+                    return html.get_exif_orientation(file);
+                })
+                .then(async function(orientation) {
+                    // Scale and rotate the image
+                    let finalfile = html.scale_image(img, img_width, img_height, orientation);
+                    // Post the transformed image
+                    let formdata = "mode=image&transformed=1&" +
+                        "linkid=" + productid + 
+                        "&linktypeid=" + product.LINKTYPEID + 
+                        "&sourceid=" + sourceid +
+                        "&filename=" + encodeURIComponent(file.name) +
+                        "&filetype=" + encodeURIComponent(file.type) + 
+                        "&filedata=" + encodeURIComponent(finalfile);
+                    let mediaid = await common.ajax_post("product", formdata);
+                    return mediaid;
+                    
+                })
+                .then(function(result) {
+                    deferred.resolve(result);
+                })
+                .fail(function() {
+                    deferred.reject(); 
+                });
+            return deferred.promise();
         },
 
         sync: function() {
