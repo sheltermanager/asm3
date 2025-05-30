@@ -70,10 +70,7 @@ FIELDTYPE_MAP = {
     "EMAIL": 19,
     "NUMBER": 20,
     "FOSTERANIMAL": 21,
-    "LOOKINGFORSEX": 22,
-    "LOOKINGOFRSPECIES": 23,
-    "LOOKINGFORYOUNGERTHAN": 24,
-    "LOOKINGFOROLDERTHAN": 25
+    "LOOKINGFORSEX": 22
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -1533,7 +1530,10 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
               d["matchsex"] = "-1"
         if f.FIELDNAME == "lookingforspecies":
             d["matchactive"] = "1"
-            d["matchspecies"] = str(guess_species(dbo, f.VALUE))
+            if f.VALUE == "":
+                d["matchspecies"] = "-1"
+            else:
+                d["matchspecies"] = str(guess_species(dbo, f.VALUE))
         if f.FIELDNAME == "lookingforyoungerthan":
             d["matchactive"] = "1"
             d["agedfrom"] = f.VALUE

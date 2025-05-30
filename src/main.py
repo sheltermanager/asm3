@@ -5881,7 +5881,6 @@ class onlineform(JSONEndpoint):
             "formname": formname,
             "formfields": asm3.utils.deduplicate_list(asm3.onlineform.FORM_FIELDS + addf),
             "species": asm3.lookups.get_species(dbo),
-            "sexes": asm3.lookups.get_sexes(dbo),
             "title": title
         }
 
