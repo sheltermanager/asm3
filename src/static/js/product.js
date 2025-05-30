@@ -6,7 +6,7 @@ $(function() {
 
     const product = {
 
-        LINKTYPEID: 7,
+        MEDIA_LINKTYPEID: 7,
 
         model: function() {
             const dialog = {
@@ -57,7 +57,7 @@ $(function() {
                     { json_field: "UNITRATIO", post_field: "unitratio", label: _("Unit Ratio"), type: "number", validation: "notblank", defaultval: 1,
                         callout: _("The number of 'units' per 'purchase unit' for example, if you get 24 tins per tray and have purchase unit 'tray' and unit 'tin' your unit ratio would be '24'")
                      },
-                    { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: "0", validation: "notblank",
+                    { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: "0",
                         callout: _("Show an alert if the total balance of all stock levels for this product falls below this amount"),
                     }
 
@@ -84,7 +84,7 @@ $(function() {
                             if (selectedfile) {
                                 row.MEDIAID = await product.attach_image(selectedfile, "imageinput", row.ID);
                             } else {
-                                row.MEDIAID = "";
+                                row.MEDIAID = 0;
                             }
                             $("#mediaid").val(row.MEDIAID);
                             tableform.fields_update_row(dialog.fields, row);
@@ -476,7 +476,7 @@ $(function() {
                     // Post the transformed image
                     let formdata = "mode=image&transformed=1&" +
                         "linkid=" + productid + 
-                        "&linktypeid=" + product.LINKTYPEID + 
+                        "&linktypeid=" + product.MEDIA_LINKTYPEID + 
                         "&sourceid=" + sourceid +
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
