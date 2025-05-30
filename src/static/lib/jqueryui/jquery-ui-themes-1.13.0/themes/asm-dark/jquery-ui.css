@@ -62,6 +62,7 @@ a.asm-quickreport, #asm-menu-quickreports .ui-button-text {
 .asm-selectbox, .asm-halfselectbox, .asm-halftextbox, .asm-textbox, .asm-doubleselectbox, .asm-doubletextbox, 
 .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble, .asmSelect, .tablesorter-filter, 
 .asm-staff-rota-cell, .asm-staff-rota-shift, .asm-staff-rota-day,
+.asm-boarding-availability-day, .asm-boarding-availability-cell, .asm-boarding-item, .asm-shelterview-unit-name, .asm-boarding-location-cell, 
 #asm-login-window, #asm-login-window a {
     background: #111 !important;
     color: #ddd !important;
