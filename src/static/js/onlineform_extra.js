@@ -4,13 +4,13 @@
 // widgets and implement validation behaviour, etc.
 
 const PHONE_RULES = [
-    { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
-    { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}" },
-    { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}" },
-    { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
-    { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
-    { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}" },
-    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}" }
+    { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNNN NNN NNN" },
+    { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}", placeholder: "NN NNNN NNNN" },
+    { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}", placeholder: "NNNNN NNNNNN" },
+    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}", placeholder: "NNNNN NNNNNN" }
 ];
 
 $(document).ready(function() {
@@ -465,6 +465,17 @@ $(document).ready(function() {
             $("div[data-name='" + signame + "']").signature("clear");
         });
     } catch (ex) {}
+
+    // Insert phone number input placeholders
+    $.each($(".asm-onlineform-phone"), function(i, phoneinput) {
+        let inputlocale = $(this).attr("data-locale");
+        $.each(PHONE_RULES, function(i, rule) {
+            if (rule.locale == inputlocale) {
+                phoneinput.placeholder = rule.placeholder;
+                return false;
+            }
+        });
+    });
 
     // Load all multi-lookup widgets
     $(".asm-onlineform-lookupmulti").asmSelect({

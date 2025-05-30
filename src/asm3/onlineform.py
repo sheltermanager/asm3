@@ -357,19 +357,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<input class="asm-onlineform-image" type="file" id="%s" data-name="%s" data-required="%s" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
         elif f.FIELDTYPE == FIELDTYPE_TELEPHONE:
-            placeholder = ""
-            if dbo.locale == "en":
-                placeholder = "NNN NNN-NNNN"
-            elif dbo.locale == "en_AU":
-                placeholder = "NN NNNN NNNN"
-            elif dbo.locale == "en_CA":
-                placeholder = "NNN NNN-NNNN"
-            elif dbo.locale == "fr_CA":
-                placeholder = "NNN NNN-NNNN"
-            elif dbo.locale == "en_GB":
-                placeholder = "NNNN NNNNNNN"
-
-            h.append('<input class="asm-onlineform-phone" placeholder="%s" type="text" data-locale="%s" id="%s" name="%s" %s %s />' % ( placeholder, dbo.locale, fid, cname, autocomplete, requiredtext))
+            h.append('<input class="asm-onlineform-phone" type="text" data-locale="%s" id="%s" name="%s" %s %s />' % ( dbo.locale, fid, cname, autocomplete, requiredtext))
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
