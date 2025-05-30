@@ -7216,8 +7216,8 @@ class service(ASMEndpoint):
     check_logged_in = False
     session_cookie = False
 
-    def handle(self, o):
-        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())
+    def handle(self, o, ispost):
+        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query(), ispost)
         if contenttype == "redirect":
             self.redirect(response)
         else:
@@ -7227,10 +7227,10 @@ class service(ASMEndpoint):
             return response
 
     def content(self, o):
-        return self.handle(o)
+        return self.handle(o, False)
 
     def post_all(self, o):
-        return self.handle(o)
+        return self.handle(o, True)
 
 class shelterview(JSONEndpoint):
     url = "shelterview"

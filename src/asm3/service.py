@@ -204,7 +204,7 @@ def get_cached_response(cache_key: str, path: str) -> ServiceResponse:
     """ Gets a service call response from the cache based on its key.
     If no entry is found, None is returned.
     """
-    if not CACHE_SERVICE_RESPONSES: return None
+    if not CACHE_SERVICE_RESPONSES or cache_key == "": return None
     response = asm3.cachedisk.get(cache_key, path)
     if response is None or len(response) != 4: return None
     # asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[3])), "service.get_cached_response")
@@ -220,7 +220,7 @@ def set_cached_response(cache_key: str, path: str, mime: str, clientage: int, se
     content: The response (str or bytes)
     """
     response = (mime, clientage, serverage, content)
-    if not CACHE_SERVICE_RESPONSES: return response
+    if not CACHE_SERVICE_RESPONSES or cache_key == "": return response
     # asm3.al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
     asm3.cachedisk.put(cache_key, path, response, serverage)
     return response
@@ -500,7 +500,7 @@ def strip_personal_data(rows: Results) -> Results:
     """ Shorthand to save typing the module name repeatedly """
     return asm3.publishers.base.strip_sensitive_data(rows)
 
-def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, dbo: Database = None) -> ServiceResponse:
+def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, ispost: bool, dbo: Database = None) -> ServiceResponse:
     """ Handles the various service method types.
     post:        The GET/POST parameters
     path:        The current system path/code.PATH
@@ -508,6 +508,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     referer:     The referer HTTP header
     useragent:   The user-agent HTTP header
     querystring: The complete querystring
+    ispost:      True if the method was POST rather than GET
     dbo:         Used by unit test callers in order to bypass authentication and use a known database
     return value is a tuple containing MIME type, clientcachettl, edgecachettl, content
     """
@@ -522,19 +523,21 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     seq = post.integer("seq")
     title = post["title"]
     strip_personal = post.integer("sensitive") == 0
+    cache_key = ""
 
-    # If this method is in the cache protected list, only use
-    # whitelisted parameters for the key to prevent callers 
-    # cache-busting by adding junk parameters
-    cache_key = querystring.replace(" ", "")
-    if method in CACHE_PROTECT_METHODS:
-        cache_key = safe_cache_key(method, cache_key)
+    if not ispost:
+        # If this method is in the cache protected list, only use
+        # whitelisted parameters for the key to prevent callers 
+        # cache-busting by adding junk parameters
+        cache_key = querystring.replace(" ", "")
+        if method in CACHE_PROTECT_METHODS:
+            cache_key = safe_cache_key(method, cache_key)
 
-    # Do we have a cached response for these parameters?
-    cached_response = get_cached_response(cache_key, account)
-    if cached_response is not None:
-        asm3.al.debug("cache hit: %s (%d bytes)" % (cache_key, len(cached_response[3])), "service.handler", account)
-        return cached_response
+        # Do we have a cached response for these parameters?
+        cached_response = get_cached_response(cache_key, account)
+        if cached_response is not None:
+            asm3.al.debug("cache hit: %s (%d bytes)" % (cache_key, len(cached_response[3])), "service.handler", account)
+            return cached_response
 
     # Are we dealing with multiple databases, but no account was specified?
     if account == "" and MULTIPLE_DATABASES:

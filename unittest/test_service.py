@@ -89,7 +89,8 @@ class TestService(unittest.TestCase):
             for i in items:
                 k, v = i.split("=")
                 d[k] = v
-            asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", dbo)
+            asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", False, dbo)
+            asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", True, dbo)
     
     def test_handler_sign_document(self):
 
