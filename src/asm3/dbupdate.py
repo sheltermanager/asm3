@@ -174,7 +174,8 @@ def sql_structure(dbo: Database) -> str:
         fint("Mandatory"),
         fint("NewRecord"),
         fint("Searchable", True),
-        fint("Hidden", True) ), False)
+        fint("Hidden", True),
+        fstr("SpeciesIDs", True) ), False)
     sql += index("additionalfield_LinkType", "additionalfield", "LinkType")
 
     sql += table("additional", (
