@@ -44,6 +44,9 @@ class TestFinancial(unittest.TestCase):
         asm3.financial.get_boarding(base.get_dbo(), "m90")
         asm3.financial.get_boarding(base.get_dbo(), "p90")
 
+    def test_get_boarding_due_two_dates(self):
+        asm3.financial.get_boarding_due_two_dates(base.get_dbo(), base.today(), base.today())
+
     def test_get_donations(self):
         asm3.financial.get_donations(base.get_dbo())
 
