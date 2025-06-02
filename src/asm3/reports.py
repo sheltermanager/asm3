@@ -1612,8 +1612,78 @@ class Report:
             self._p(e)
             raise asm3.utils.ASMError(str(e))
         return (rs, cols)
-
+    
     def _GenerateGraph(self) -> str:
+        l = self.dbo.locale
+
+        htmlheader = self._ReadHeader()
+        htmlfooter = self._ReadFooter()
+
+        # Inject the script tags needed into the header
+        htmlheader = htmlheader.replace("</head>", asm3.html.graph_js(l) + "\n</head>")
+
+        # Start the graph off with the HTML header
+        self._Append(htmlheader)
+        self._Append('<canvas id="placeholder" style="display: none; width: 100%; height: 500px;"></canvas>')
+
+        # Run the graph query, bail out if we have an error
+        try:
+            rs, cols = self.dbo.query_tuple_columns(self.sql)
+        except Exception as e:
+            self._p(e)
+            self._Append(htmlfooter)
+            return self.output
+
+        # Output any criteria given at the top of the chart
+        self.OutputCriteria()
+
+        # Check for no data
+        if len(rs) == 0:
+            self._Append("<!-- NODATA -->")
+            self._p(asm3.i18n._("No data.", l))
+            self._Append(htmlfooter)
+            return self.output
+
+        self._Append("""
+            <script type="text/javascript">
+            $(function() {
+                $("#placeholder").show();
+        """)
+        
+        chartdata = [
+            "{",
+            "   type: 'bar',",
+            "   data: {",
+            "       labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],",
+            "       datasets: [{",
+            "           label: '# of Votes',",
+            "           data: [12, 19, 3, 5, 2, 3],",
+            "           borderWidth: 1",
+            "       }]",
+            "   },",
+            "   options: {",
+            "       scales: {",
+            "           y: {",
+            "               beginAtZero: true",
+            "           }",
+            "       }",
+            "   }"
+            "}"
+        ]
+
+        self._Append(
+            "let ctx = document.getElementById('placeholder');\n\n" \
+            "new Chart(ctx, %s)" % "\n".join(chartdata)
+        )
+        self._Append("""
+            });
+            </script>""")
+        self._Append(htmlfooter)
+
+        return self.output
+
+
+    def _GenerateGraphOld(self) -> str:
         """
         Does the work of generating a graph. Graph queries have to return rows that
         have two or three columns and obey either of the following patterns:
@@ -1746,6 +1816,7 @@ class Report:
             });
             </script>""")
         self._Append(htmlfooter)
+
         return self.output
 
     def _GenerateMap(self) -> str:

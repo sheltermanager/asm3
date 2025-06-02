@@ -378,6 +378,7 @@ CODEMIRROR_CSS = get_string("codemirror_css", 'static/lib/codemirror/5.65.2.asm/
 CODEMIRROR_BASE = get_string("codemirror_base", 'static/lib/codemirror/5.65.2.asm/')
 FLOT_JS = get_string("flot_js", 'static/lib/flot/0.8.3/jquery.flot.min.js')
 FLOT_PIE_JS = get_string("flot_pie_js", 'static/lib/flot/0.8.3/jquery.flot.pie.min.js')
+CHART_JS = get_string("chart_js", 'static/lib/chart/4.4.9/chart.js')
 FULLCALENDAR_CSS = get_string("fullcalendar_css", 'static/lib/fullcalendar/3.10.2/fullcalendar.min.css')
 FULLCALENDAR_JS = get_string("fullcalendar_js", 'static/lib/fullcalendar/3.10.2/fullcalendar.min.js')
 JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.13.0/themes/%(theme)s/jquery-ui.css')
