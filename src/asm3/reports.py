@@ -1652,14 +1652,18 @@ class Report:
 
         # Check for plot type
         mode = "bar"
+        showline = ""
+        step = ""
         if self.html.find("LINES") != -1:
             mode = "line"
         elif self.html.find("BARS") != -1:
             mode = "bar"
         elif self.html.find("POINTS") != -1:
-            mode = "scatter"
+            mode = "line"
+            showline = "showLine: false"
         elif self.html.find("STEPS") != -1:
-            mode = "bar"
+            mode = "line"
+            step = "Chart.defaults.elements.line.stepped = true"
         elif self.html.find("PIE") != -1:
             mode = "pie"
 
@@ -1678,7 +1682,8 @@ class Report:
             "       datasets: [{",
             "           label: '" + self.title + "',",
             "           data: " + str(data) + ",",
-            "           borderWidth: 1",
+            "           borderWidth: 1,",
+            "           " + showline,
             "       }]",
             "   },",
             "   options: {",
@@ -1687,13 +1692,17 @@ class Report:
             "               beginAtZero: true",
             "           }",
             "       }",
-            "   }"
-            "}"
+            "   }",
+            "}",
         ]
 
         self._Append(
-            "let ctx = document.getElementById('placeholder');\n\n" \
-            "new Chart(ctx, %s)" % "\n".join(chartdata)
+        "\n".join([
+            #"Chart.defaults.elements.line.stepped = true",
+            step,
+            "let ctx = document.getElementById('placeholder');\n",
+            "new Chart(ctx, %s);" % "\n".join(chartdata)
+            ])
         )
         self._Append("""
             });
