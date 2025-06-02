@@ -1659,7 +1659,7 @@ class Report:
         elif self.html.find("POINTS") != -1:
             mode = "scatter"
         elif self.html.find("STEPS") != -1:
-            mode = "lines"
+            mode = "bar"
         elif self.html.find("PIE") != -1:
             mode = "pie"
 
