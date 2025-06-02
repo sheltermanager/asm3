@@ -3,6 +3,16 @@
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
 
+const PHONE_RULES = [
+    { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNNN NNN NNN" },
+    { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}", placeholder: "NN NNNN NNNN" },
+    { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}", placeholder: "NNNNN NNNNNN" },
+    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}", placeholder: "NNNNN NNNNNN" }
+];
+
 $(document).ready(function() {
 
     "use strict";
@@ -243,6 +253,22 @@ $(document).ready(function() {
         return rv;
     };
 
+    const validate_phone = function() {
+        let rv = true;
+        $(".asm-onlineform-phone").each(function() {
+            let v = $(this).val();
+            if (v) {
+                if (v.replace(/\D/g, '').length < 6) {
+                    alert("Telephone number is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
     // Validate HTML5 required input fields 
     // (only does anything for browsers that don't support html5 required)
     const validate_required = function() {
@@ -440,6 +466,17 @@ $(document).ready(function() {
         });
     } catch (ex) {}
 
+    // Insert phone number input placeholders
+    $.each($(".asm-onlineform-phone"), function(i, phoneinput) {
+        let inputlocale = $(this).attr("data-locale");
+        $.each(PHONE_RULES, function(i, rule) {
+            if (rule.locale == inputlocale) {
+                phoneinput.placeholder = rule.placeholder;
+                return false;
+            }
+        });
+    });
+
     // Load all multi-lookup widgets
     $(".asm-onlineform-lookupmulti").asmSelect({
         animate: true,
@@ -495,6 +532,26 @@ $(document).ready(function() {
     // Watch text input fields for change so we can fix bad case/etc
     $("body").on("change", "input", fix_case_on_change);
 
+    // Watch phone input fields for change so they can be formatted according to locale
+    $(".asm-onlineform-phone").on("blur", function() {
+        if ( $(this).attr("data-locale") ) {
+            let locale = $(this).attr("data-locale");
+            let t = $(this);
+            let num = String(t.val()).replace(/\D/g, ''); // Throw away all but the numbers
+            $.each(PHONE_RULES, function(i, rules) {
+                if (rules.locale != locale) { return; }
+                if (rules.prefix && num.indexOf(rules.prefix) != 0) { return; }
+                if (num.length != rules.length) { return; }
+                let s = rules.display, m = num.match(rules.extract), x=1;
+                for (x=1; x <= rules.elements; x++) {
+                    s = s.replace("{" + x + "}", m[x]);
+                }
+                t.val(s);
+                return false;
+            });
+        }
+    });
+
     // Multi-lookup fields should copy their values into the corresponding hidden field when changed
     // so that showif pattern matching on them still works
     $("body").on("change", ".asm-onlineform-lookupmulti", function() {
@@ -521,6 +578,7 @@ $(document).ready(function() {
         if (!validate_number()) { enable(); return false; }
         if (!validate_required()) { enable(); return false; }
         if (!validate_images()) { enable(); return false; }
+        if (!validate_phone()) { enable(); return false; }
         if (html5_required && !$("form")[0].checkValidity()) { 
             enable(); // the default behaviour highlights the required fields so we need it to happen
         }
