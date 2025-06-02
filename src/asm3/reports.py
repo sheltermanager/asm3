@@ -1649,15 +1649,35 @@ class Report:
             $(function() {
                 $("#placeholder").show();
         """)
+
+        # Check for plot type
+        mode = "bar"
+        if self.html.find("LINES") != -1:
+            mode = "line"
+        elif self.html.find("BARS") != -1:
+            mode = "bar"
+        elif self.html.find("POINTS") != -1:
+            mode = "scatter"
+        elif self.html.find("STEPS") != -1:
+            mode = "lines"
+        elif self.html.find("PIE") != -1:
+            mode = "pie"
+
+        labels = []
+        data = []
+
+        for column in rs:
+            labels.append(column[0])
+            data.append(column[1])
         
         chartdata = [
             "{",
-            "   type: 'bar',",
+            "   type: '" + mode + "',",
             "   data: {",
-            "       labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],",
+            "       labels: " + str(labels) + ",",
             "       datasets: [{",
-            "           label: '# of Votes',",
-            "           data: [12, 19, 3, 5, 2, 3],",
+            "           label: '" + self.title + "',",
+            "           data: " + str(data) + ",",
             "           borderWidth: 1",
             "       }]",
             "   },",
