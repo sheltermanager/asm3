@@ -508,6 +508,30 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-staff-rota-volunteer-even { background-color: #3d633e; color: #fff; }
 .asm-staff-rota-volunteer-even a { background-color: #3d633e; color: #fff; }
 
+/** BOARDING ======================== */
+.asm-boarding-availability-day { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
+.asm-boarding-availability { width: 100%; max-width: 1600px; border-collapse: collapse; }
+.asm-boarding-availability-today { background-color: #f5f5dc !important; color: #000 !important; }
+.asm-boarding-availability td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
+.asm-boarding-availability-cell { background-color: #fff; cursor: pointer; }
+.asm-boarding-availability-cell:hover { background-color: #fafafa; }
+.asm-boarding-availability-odd { background-color: #619a62; color: #fff; }
+.asm-boarding-item { background-color: #eee; margin: 2px; }
+.asm-boarding-location-row .asm-boarding-availability-cell { margin: 0; padding: 5; }
+.asm-boarding-availability-cell meter {
+    background: #00000000;
+    width: 100%;
+    height: 30px;
+    border-radius: 2px;
+    margin: 0;
+    overflow: hidden;
+}
+.asm-boarding-ownername { font-size: 80%; }
+.asm-boarding-location-cell { background-color: #fff; cursor: pointer; }
+
+
+
+
 /** SHELTERVIEW ================= */
 .asm-shelterview-animal {
     vertical-align: top;

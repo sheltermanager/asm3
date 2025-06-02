@@ -2597,6 +2597,28 @@ class boarding(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_boarding(o.dbo, o.user, did)
 
+class boarding_availability(JSONEndpoint):
+    url = "boarding_availability"
+    js_module = "boarding_availability"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        startdate = o.post.date("start")
+        if startdate is None: startdate = monday_of_week(dbo.today())
+        rows = asm3.financial.get_boarding_due_two_dates(dbo, startdate, add_days(startdate, 7))
+        asm3.al.debug("got %d boarding records" % (len(rows)), "main.boarding", dbo)
+        return {
+            "name": "boarding_availability",
+            "startdate": startdate,
+            "prevdate": subtract_days(startdate, 7),
+            "nextdate": add_days(startdate, 7),
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+        }
+    
 class calendarview(JSONEndpoint):
     url = "calendarview"
     get_permissions = asm3.users.VIEW_ANIMAL
