@@ -1645,9 +1645,9 @@ class Report:
             return self.output
 
         self._Append("""
-            <script type="text/javascript">
-            $(function() {
-                $("#placeholder").show();
+<script type="text/javascript">
+$(function() {
+    $("#placeholder").show();
         """)
 
         # Check for plot type
@@ -1668,23 +1668,43 @@ class Report:
             mode = "pie"
 
         labels = []
-        data = []
+        datasets = "[\n"
 
-        for column in rs:
-            labels.append(column[0])
-            data.append(column[1])
+        if len(rs[0]) == 2:
+            data = []
+            for row in rs:
+                if row[1] not in labels:
+                    labels.append(row[0])
+                data.append(row[1])
+            datasets += '           {label: "' + self.title + '",data: ' + str(data) + ',' + showline + '},\n'
+        else:
+            data = {}
+            for row in rs:
+                if row[0] not in data.keys():
+                    data[row[0]] = []
+                data[row[0]].append((row[1], row[2]))
+                if row[1] not in labels:
+                    labels.append(row[1])
+            for ds in data.items():
+                datasetname = ds[0]
+                dsdata = []
+                for label in labels:
+                    dpvalue = 0
+                    for dp in ds[1]:
+                        if dp[0] == label:
+                            dpvalue += dp[1]
+                    dsdata.append(dpvalue)
+                datasets += '           {label: "' + datasetname + '",data: ' + str(dsdata) + ',' + showline + '},\n'
+
+
+        datasets += "       ]\n"
         
         chartdata = [
             "{",
             "   type: '" + mode + "',",
             "   data: {",
             "       labels: " + str(labels) + ",",
-            "       datasets: [{",
-            "           label: '" + self.title + "',",
-            "           data: " + str(data) + ",",
-            "           borderWidth: 1,",
-            "           " + showline,
-            "       }]",
+            "       datasets: " + datasets + ",",
             "   },",
             "   options: {",
             "       scales: {",
@@ -1705,8 +1725,8 @@ class Report:
             ])
         )
         self._Append("""
-            });
-            </script>""")
+});
+</script>""")
         self._Append(htmlfooter)
 
         return self.output
@@ -1772,7 +1792,7 @@ class Report:
         elif self.html.find("STEPS") != -1:
             mode = "lines: { show: true, steps: true }"
         elif self.html.find("PIE") != -1:
-            mode = "pie: { show: true }"
+            mode = "pie: { show: trhttp://localhost:5000/report?id=189&hascriteria=true&ASK1=2024ue }"
 
         ticks = []
         i = 0
