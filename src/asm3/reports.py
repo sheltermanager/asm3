@@ -1695,8 +1695,6 @@ $(function() {
                             dpvalue += dp[1]
                     dsdata.append(dpvalue)
                 datasets += '           {label: "' + datasetname + '",data: ' + str(dsdata) + ',' + showline + '},\n'
-
-
         datasets += "       ]\n"
         
         chartdata = [
