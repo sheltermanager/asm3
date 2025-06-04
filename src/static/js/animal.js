@@ -1388,6 +1388,17 @@ $(function() {
                     await common.ajax_post("animal", "mode=deleteentryhistory&id=" + aeid);
                     t.closest("tr").fadeOut();
                 });
+            $("#species").change(function() {
+                let speciesid = $("#species").val();
+                $.each($(".additional"), function(i, af) {
+                    if ($(af).attr("data-speciesids").split(",").includes(speciesid)) {
+                        $(af).closest("tr").show();
+                    }
+                    else {
+                        $(af).closest("tr").hide();
+                    }
+                });
+            });
 
         },
 
@@ -1415,6 +1426,8 @@ $(function() {
 
             // Share button/links
             animal.set_sharinglinks();
+
+            $("#species").change();
 
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
