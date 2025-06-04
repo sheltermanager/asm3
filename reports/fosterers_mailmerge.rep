@@ -2,7 +2,7 @@ All Fosterers
 ###
 Fosterers
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Person info for all people flagged as fosterers.
 ###
@@ -12,7 +12,7 @@ SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCo
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
-WHERE o.IsFosterer = 1 AND o.ExcludeFromBulkEmail = 0
+WHERE o.IsFosterer = 1 AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 ORDER BY o.OwnerSurname
 ###
 MAIL
@@ -21,7 +21,7 @@ New Fosterers
 ###
 Fosterers
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Person info for fosterers added between two dates
 ###
@@ -31,7 +31,7 @@ SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerP
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
-WHERE o.IsFosterer = 1 AND o.ExcludeFromBulkEmail = 0
+WHERE o.IsFosterer = 1 AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 AND o.CreatedDate >= '$ASK DATE Entered between$'
 AND o.CreatedDate <= '$ASK DATE and$'
 ORDER BY o.OwnerSurname
