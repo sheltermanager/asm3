@@ -216,10 +216,9 @@ def append_to_results(dbo: Database, rows: Results, linktype: str = "animal") ->
     Goes through each row in rows and adds any additional fields to the resultset.
     Requires an ID column in the rows.
     """
-    add = get_additional_fields_ids(dbo, rows, linktype)
     for r in rows:
+        add = get_additional_fields(dbo, r.ID, linktype)
         for af in add:
-            if r.ID != add.LINKID: continue
             tn = af.FIELDNAME.upper()
             if tn.find("&") != -1:
                 # We've got unicode chars for the tag name - not allowed
