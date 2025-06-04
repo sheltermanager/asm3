@@ -1645,14 +1645,13 @@ class Report:
             return self.output
 
         self._Append("""
-<script type="text/javascript">
-$(function() {
-    $("#placeholder").show();
+        <script type="text/javascript">
+        $(function() {
+            $("#placeholder").show();
         """)
 
         # Check for plot type
         mode = "bar"
-        showline = ""
         step = ""
         if self.html.find("LINES") != -1:
             mode = "line"
@@ -1660,15 +1659,14 @@ $(function() {
             mode = "bar"
         elif self.html.find("POINTS") != -1:
             mode = "line"
-            showline = "showLine: false"
         elif self.html.find("STEPS") != -1:
             mode = "line"
-            step = "Chart.defaults.elements.line.stepped = true"
+            step = "Chart.defaults.elements.line.stepped = true;\n"
         elif self.html.find("PIE") != -1:
             mode = "pie"
 
         labels = []
-        datasets = "[\n"
+        datasets = []
 
         if len(rs[0]) == 2:
             data = []
@@ -1676,7 +1674,13 @@ $(function() {
                 if row[1] not in labels:
                     labels.append(row[0])
                 data.append(row[1])
-            datasets += '           {label: "' + self.title + '",data: ' + str(data) + ',' + showline + '},\n'
+            dataset = {
+                'label': self.title,
+                'data': data
+            }
+            if mode == 'line':
+                dataset["showLine"] = False
+            datasets.append(dataset)
         else:
             data = {}
             for row in rs:
@@ -1686,7 +1690,8 @@ $(function() {
                 if row[1] not in labels:
                     labels.append(row[1])
             for ds in data.items():
-                datasetname = ds[0]
+                if mode == 'line':
+                    dataset["showLine"] = False
                 dsdata = []
                 for label in labels:
                     dpvalue = 0
@@ -1694,174 +1699,28 @@ $(function() {
                         if dp[0] == label:
                             dpvalue += dp[1]
                     dsdata.append(dpvalue)
-                datasets += '           {label: "' + datasetname + '",data: ' + str(dsdata) + ',' + showline + '},\n'
-        datasets += "       ]\n"
-        
-        chartdata = [
-            "{",
-            "   type: '" + mode + "',",
-            "   data: {",
-            "       labels: " + str(labels) + ",",
-            "       datasets: " + datasets + ",",
-            "   },",
-            "   options: {",
-            "       scales: {",
-            "           y: {",
-            "               beginAtZero: true",
-            "           }",
-            "       }",
-            "   }",
-            "}",
-        ]
+                dataset = {
+                    'label': ds[0],
+                    'data': dsdata
+                }
+                datasets.append(dataset)
+        chartdata = {}
+        chartdata['type'] = mode
+        chartdata['data'] = {
+            'labels': labels,
+            'datasets': datasets
+        }
 
         self._Append(
         "\n".join([
-            #"Chart.defaults.elements.line.stepped = true",
             step,
             "let ctx = document.getElementById('placeholder');\n",
-            "new Chart(ctx, %s);" % "\n".join(chartdata)
+            "new Chart(ctx, %s);" % asm3.utils.json(chartdata ,True)
             ])
         )
         self._Append("""
-});
-</script>""")
-        self._Append(htmlfooter)
-
-        return self.output
-
-
-    def _GenerateGraphOld(self) -> str:
-        """
-        Does the work of generating a graph. Graph queries have to return rows that
-        have two or three columns and obey either of the following patterns:
-        ( X_AXIS_LABEL, VALUE ) - assumed for two columns
-        ( SERIES_LABEL, X_AXIS_VALUE, Y_AXIS_VALUE ) - assumed for three columns, all items with the
-                                                same series label will be plotted on a separate line
-                                                and both VALUE columns must be numbers
-        The html can be just the word GRAPH for a bar chart
-        alternatively, a type can be specified as well:
-        GRAPH [ LINES | BARS | POINTS | STEPS ]
-        """
-        
-        l = self.dbo.locale
-
-        htmlheader = self._ReadHeader()
-        htmlfooter = self._ReadFooter()
-
-        # Inject the script tags needed into the header
-        htmlheader = htmlheader.replace("</head>", asm3.html.graph_js(l) + "\n</head>")
-
-        # Start the graph off with the HTML header
-        self._Append(htmlheader)
-        self._Append('<div id="placeholder" style="display: none; width: 100%; height: 500px;"></div>')
-
-        # Run the graph query, bail out if we have an error
-        try:
-            rs, cols = self.dbo.query_tuple_columns(self.sql)
-        except Exception as e:
-            self._p(e)
-            self._Append(htmlfooter)
-            return self.output
-
-        # Output any criteria given at the top of the chart
-        self.OutputCriteria()
-
-        # Check for no data
-        if len(rs) == 0:
-            self._Append("<!-- NODATA -->")
-            self._p(asm3.i18n._("No data.", l))
-            self._Append(htmlfooter)
-            return self.output
-
-        self._Append("""<script type="text/javascript">
-            $(function() {
-                $("#placeholder").show();
-                $.plot($("#placeholder"), [
-        """)
-
-        # Check for plot type
-        mode = "bars: { show: true }"
-        if self.html.find("LINES") != -1:
-            mode = "lines: { show: true }"
-        elif self.html.find("BARS") != -1:
-            mode = "bars: { show: true }"
-        elif self.html.find("POINTS") != -1:
-            mode = "points: { show: true }"
-        elif self.html.find("STEPS") != -1:
-            mode = "lines: { show: true, steps: true }"
-        elif self.html.find("PIE") != -1:
-            mode = "pie: { show: trhttp://localhost:5000/report?id=189&hascriteria=true&ASK1=2024ue }"
-
-        ticks = []
-        i = 0
-
-        def label(s):
-            s = self.dbo.encode_str_after_read(s)
-            s = str(s).replace("'", "\\'") # fix apostrophes breaking javascript
-            return s
-
-        # Two column (axis/value) mode for pie charts
-        if len(rs[0]) == 2 and mode.startswith("pie"):
-            values = []
-            for r in rs:
-                values.append("{ label: '%s (%s)', data: %s }" % ( label(r[0]), str(r[1]), str(r[1]) ))
-            self._Append(",".join(values))
-            self._Append("]")
-            # Handle using pie chart plugin if selected 
-            if mode.startswith("pie"):
-                self._Append("""
-                , { series: { pie: { show: true } }
-                """)
-
-        # Two column (axis/value) mode for plot charts
-        elif len(rs[0]) == 2:
-            values = []
-            for r in rs:
-                values.append("[%d, %s]" % (i, r[1]))
-                ticks.append("[%d, '%s']" % (i, label(r[0])))
-                i += 1
-            self._Append("{ label: '%s', \n" % label(cols[1]))
-            self._Append("data: [%s], \n%s\n }" % (",".join(values), mode))
-            self._Append("""\n], {
-                xaxis: {
-                    ticks: [%s]
-                }
-            """ % ",".join(ticks))
-            # Handle using pie chart plugin if selected 
-            if mode.startswith("pie"):
-                self._Append("""
-                , series: { pie: { show: true } }
-                """)
-
-        # Three column (label/axis/value) mode for either type
-        else:
-            values = {}
-            for r in rs:
-                if r[0] not in values:
-                    values[r[0]] = []
-                values[r[0]].append("[%s, %s]" % (self.dbo.encode_str_after_read(r[1]), r[2]))
-            for k, v in values.items():
-                self._Append("{ label: '%s', \n" % label(k))
-                self._Append("data: [%s], \n%s\n },\n" % (",".join(v), mode))
-            # Remove trailing comma
-            self.output = self.output[0:len(self.output)-1]
-            self._Append("""\n], {
-                xaxis: {
-                    tickDecimals: 0 
-                }
-            """)
-            # Handle using pie chart plugin if selected 
-            if mode.startswith("pie"):
-                self._Append("""
-                , series: { pie: { show: true } }
-                """)
-        
-        self._Append("""
-            });
-        """)
-        self._Append("""
-            });
-            </script>""")
+        });
+        </script>""")
         self._Append(htmlfooter)
 
         return self.output
