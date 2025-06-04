@@ -662,6 +662,10 @@ def get_animal_id_from_field(dbo: Database, name: str) -> int:
         aid = dbo.query_int("SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE ? ORDER BY ID DESC", [name.lower()])
     return aid
 
+def get_internal_forms(dbo: Database) -> Results:
+    forms = dbo.query("SELECT * FROM onlineform WHERE InternalUse = 1")
+    return forms
+
 def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Create an onlineform record from posted data
@@ -676,6 +680,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
+        "InternalUse":          post.boolean("internaluse"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -696,10 +701,11 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
+        "InternalUse":          post.boolean("internaluse"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
-        "*Description":         post["description"]
+        "*Description":         post["description"],
     }, username, setLastChanged=False)
 
 def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
