@@ -114,7 +114,8 @@ FORM_FIELDS = [
     "type", "breed1", "breed2", "color", "sex", "neutered", "weight", "commentsanimal", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
-    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
+    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime",
+    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan"
 ]
 
 AUTOCOMPLETE_MAP = {
@@ -1014,6 +1015,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             if fld.FIELDNAME in SYSTEM_FIELDS: continue
             if fld.FIELDNAME in ("firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
+            #if fld.FIELDNAME in ("lookingforsex",): continue# Could exclude this from preview as value is a number
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
 
@@ -1232,9 +1234,12 @@ def guess_entrytype(dbo: Database, s: str) -> int:
 
 def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
-    if s.lower().startswith("m"):
+    if s.lower() == asm3.i18n._("Male").lower():
         return 1
-    return 0
+    elif s.lower() == asm3.i18n._("Female").lower():
+        return 0
+    else:
+        return 2
 
 def guess_size(dbo: Database, s: str) -> int:
     """ Guesses a size """
@@ -1521,6 +1526,23 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = truncs(f.VALUE)
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME == "commentsperson": d["commentsperson"] = f.VALUE
+        if f.FIELDNAME == "lookingforsex":
+            d["matchactive"] = "1"
+            d["matchsex"] = str(guess_sex(dbo, f.VALUE))
+            if d["matchsex"] == "2":
+              d["matchsex"] = "-1"
+        if f.FIELDNAME == "lookingforspecies":
+            d["matchactive"] = "1"
+            if f.VALUE == "":
+                d["matchspecies"] = "-1"
+            else:
+                d["matchspecies"] = str(guess_species(dbo, f.VALUE))
+        if f.FIELDNAME == "lookingforyoungerthan":
+            d["matchactive"] = "1"
+            d["agedfrom"] = f.VALUE
+        if f.FIELDNAME == "lookingforolderthan":
+            d["matchactive"] = "1"
+            d["agedto"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 

@@ -194,6 +194,9 @@ $(function() {
                 $("#tooltiprow").fadeIn();
                 $("#rawmarkuprow").fadeOut();
             }
+            if (ft != 10) {
+                $("#validationrulerow").fadeOut();
+            }
         },
 
         render: function() {
