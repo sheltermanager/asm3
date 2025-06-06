@@ -887,7 +887,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             m["comments"] = gks(row, "MOVEMENTCOMMENTS")
             m["returncategory"] = str(asm3.configuration.default_entry_reason(dbo))
             try:
-                if not prevalidate:
+                if prevalidate:
+                    asm3.movement.validate_movement_form_data(dbo, user, asm3.utils.PostedData(m, dbo.locale))
+                else:
                     movementid = asm3.movement.insert_movement_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "movement", rowno, row, e, dbo, sys.exc_info())
