@@ -38,9 +38,9 @@ lookingforolderthan
 lookingforsex
     The person's "looking for" animal sex preference (Use lookup type field with values (any)|Female|Male)
 lookingforyoungerthan 
-    The persons "looking for" animal age preference (use number type field for years value)
+    The person's "looking for" animal age preference (use number type field for years value)
 lookingforspecies
-    The persons "looking for" animal species preference (use species type field)
+    The person's "looking for" animal species preference (use species type field)
 dateofbirth / dateofbirth2
     The person or animal's date of birth
 dateofbirthanimal
