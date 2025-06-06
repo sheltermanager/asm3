@@ -1015,7 +1015,6 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             if fld.FIELDNAME in SYSTEM_FIELDS: continue
             if fld.FIELDNAME in ("firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
-            #if fld.FIELDNAME in ("lookingforsex",): continue# Could exclude this from preview as value is a number
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
 

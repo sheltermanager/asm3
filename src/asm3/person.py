@@ -1415,6 +1415,9 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
         if dictfield.startswith("date") and (p[fieldname] is None or force):
             uv[fieldname] = display2python(dbo.locale, d[dictfield])
             p[fieldname] = uv[fieldname]
+        elif fieldname.startswith("MATCH") and (p[fieldname] is None or force):
+            uv[fieldname] = asm3.utils.cint(d[dictfield])
+            p[fieldname] = uv[fieldname]
         elif p[fieldname] is None or p[fieldname] == "" or force:
             uv[fieldname] = d[dictfield]
             p[fieldname] = uv[fieldname]
@@ -1443,6 +1446,11 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
     merge("dateofbirth2", "DATEOFBIRTH2")
     merge("membershipnumber", "MEMBERSHIPNUMBER")
     merge("comments", "COMMENTS")
+    merge("matchactive", "MATCHACTIVE")
+    merge("matchsex", "MATCHSEX")
+    merge("matchspecies", "MATCHSPECIES")
+    merge("agedfrom", "MATCHAGEFROM")
+    merge("agedto", "MATCHAGETO")
     uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", "", \
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
     dbo.update("owner", personid, uv, username)
