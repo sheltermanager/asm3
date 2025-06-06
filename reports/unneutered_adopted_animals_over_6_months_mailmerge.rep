@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals Aged Over 6 Months
 ###
 Auditing
 ###
-34701/Any rev07
+34701/Any rev08
 ###
 Adopted animals aged over 6 months who have not been neutered/spayed.
 ###
@@ -24,6 +24,7 @@ AND a.ActiveMovementDate >= '$ASK DATE Adopted between$'
 AND a.ActiveMovementDate <= '$ASK DATE and$'
 AND a.Neutered = 0 AND a.DateOfBirth <= '$CURRENT_DATE-182$'
 AND a.SpeciesID IN (1,2)
+AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 ORDER BY o.OwnerName
 ###
 MAIL

@@ -331,6 +331,7 @@ DEFAULTS = {
     "PicturesInBooksClinic": "No",
     "PDFInline": "Yes",
     "PDFZoom": "100",
+    "ProductImageScale": "200x200",
     "PublishAsCrossbreed": "243,252,261,442",
     "PublisherUseComments": "Yes",
     "PublisherPresets": "includefosters excludeunder=12",
@@ -434,7 +435,7 @@ DEFAULTS = {
     "WatermarkXOffset": "10",
     "WatermarkYOffset": "10",
     "WeightChangeLog": "Yes",
-    "WeightChangeLogType": "4",
+    "WeightChangeLogType": "4"
 }
 
 def cstring(dbo, key: str, default: str = "") -> str:
@@ -1502,6 +1503,9 @@ def petslocated_includeshelter(dbo: Database) -> bool:
 
 def petslocated_animalflag(dbo: Database) -> str:
     return cstring(dbo, "PetsLocatedAnimalFlag", DEFAULTS["PetsLocatedAnimalFlag"])
+
+def product_image_scale(dbo: Database) -> str:
+    return cstring(dbo, "ProductImageScale", DEFAULTS["ProductImageScale"])
 
 def publish_as_crossbreed(dbo: Database) -> List[int]:
     return cintlist(dbo, "PublishAsCrossbreed", DEFAULTS["PublishAsCrossbreed"])

@@ -2,7 +2,7 @@ Fosterers inactive for 12 months
 ###
 Fosterers
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 All fosterers who haven't fostered an animal in the last 12 months.
 ###
@@ -12,7 +12,7 @@ SELECT DISTINCT o.OwnerName, o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCo
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
-WHERE o.IsFosterer = 1 AND o.ExcludeFromBulkEmail = 0
+WHERE o.IsFosterer = 1 AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType=2 AND MovementDate > '$CURRENT_DATE-365$')
 ORDER BY o.OwnerSurname
 ###

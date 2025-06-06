@@ -2,7 +2,7 @@ Microchip Cancellations
 ###
 Microchip
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Owner, microchip and animal information for all animals returned from adoption between two dates
 ###
@@ -25,5 +25,6 @@ AND m.ReturnDate <= '$ASK DATE Enter the latest return date$'
 AND m.MovementType = 1 
 AND m.MovementDate Is Not Null
 AND o.ExcludeFromBulkEmail = 0
+AND o.IsDeceased = 0
 ###
 MAIL

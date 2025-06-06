@@ -2,7 +2,7 @@ Adopted animals without microchips
 ###
 Movements
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Mailmerge source of owner and animal information for all adoptions where the animal is not microchipped between two dates
 ###
@@ -20,6 +20,7 @@ AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND animal.Identichipped = 0
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL

@@ -2,7 +2,7 @@ Birthday List Mailer (Adopted)
 ###
 Auditing
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -30,6 +30,8 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE adoption.ReturnDate Is Not Null
 AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
+AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 AND $SQL MONTH animal.DateofBirth$ = $@monthno$
 ORDER BY $SQL MONTH animal.DateofBirth$
 ###

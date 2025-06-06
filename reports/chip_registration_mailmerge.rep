@@ -2,7 +2,7 @@ Microchip Registration (mail)
 ###
 Microchip
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Owner, microchip and animal information for all animals adopted between two dates
 ###
@@ -25,5 +25,6 @@ AND m.MovementDate <= '$ASK DATE Enter the latest adoption date$'
 AND m.MovementType = 1 
 AND a.DeceasedDate Is Null
 AND o.ExcludeFromBulkEmail = 0
+AND o.IsDeceased = 0
 ###
 MAIL

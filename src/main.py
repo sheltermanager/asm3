@@ -2597,6 +2597,28 @@ class boarding(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_boarding(o.dbo, o.user, did)
 
+class boarding_availability(JSONEndpoint):
+    url = "boarding_availability"
+    js_module = "boarding_availability"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        startdate = o.post.date("start")
+        if startdate is None: startdate = monday_of_week(dbo.today())
+        rows = asm3.financial.get_boarding_due_two_dates(dbo, startdate, add_days(startdate, 7))
+        asm3.al.debug("got %d boarding records" % (len(rows)), "main.boarding", dbo)
+        return {
+            "name": "boarding_availability",
+            "startdate": startdate,
+            "prevdate": subtract_days(startdate, 7),
+            "nextdate": add_days(startdate, 7),
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+        }
+    
 class calendarview(JSONEndpoint):
     url = "calendarview"
     get_permissions = asm3.users.VIEW_ANIMAL
@@ -4918,6 +4940,17 @@ class maint_be_user(ASMEndpoint):
         asm3.users.update_session(o.dbo, o.session, o.post["user"])
         self.redirect("main")
 
+class maint_db_diagnostic(ASMEndpoint):
+    url = "maint_db_diagnostic"
+    
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        s = []
+        for k, v in asm3.dbupdate.diagnostic(o.dbo).items():
+            s.append(f"{k}: {v}")
+        return "\n".join(s)
+
 class maint_db_stats(ASMEndpoint):
     url = "maint_db_stats"
 
@@ -6799,7 +6832,8 @@ class product(JSONEndpoint):
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "units": asm3.lookups.get_unit_types(dbo),
             "yesno": asm3.lookups.get_yesno(dbo),
-            "rows": products
+            "rows": products,
+            "imagedimesions": asm3.configuration.product_image_scale(dbo)
         }
     
     def post_create(self, o):
@@ -6815,11 +6849,23 @@ class product(JSONEndpoint):
     def post_update(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
         asm3.stock.update_product_from_form(o.dbo, o.post, o.user)
+        if o.post["mediaid"] != "":
+            o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [asm3.media.PRODUCT, o.post.integer("productid")])
     
     def post_delete(self, o):
         self.check(asm3.users.DELETE_STOCKLEVEL)
         for pid in o.post.integer_list("ids"):
+            o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [asm3.media.PRODUCT, pid])
             asm3.stock.delete_product(o.dbo, o.user, pid)
+    
+    def post_image(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        linkid = o.post.integer("linkid")
+        linktypeid = o.post.integer("linktypeid")
+        sourceid = o.post.integer("sourceid")
+        o.post["mode"] = "media"
+        o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [linktypeid, linkid])
+        return asm3.media.attach_file_from_form(o.dbo, o.user, linktypeid, linkid, sourceid, o.post)
 
 class publish(JSONEndpoint):
     url = "publish"
@@ -7216,8 +7262,8 @@ class service(ASMEndpoint):
     check_logged_in = False
     session_cookie = False
 
-    def handle(self, o):
-        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())
+    def handle(self, o, ispost):
+        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query(), ispost)
         if contenttype == "redirect":
             self.redirect(response)
         else:
@@ -7227,10 +7273,10 @@ class service(ASMEndpoint):
             return response
 
     def content(self, o):
-        return self.handle(o)
+        return self.handle(o, False)
 
     def post_all(self, o):
-        return self.handle(o)
+        return self.handle(o, True)
 
 class shelterview(JSONEndpoint):
     url = "shelterview"

@@ -22,6 +22,7 @@ FOUNDANIMAL = 2
 PERSON = 3
 WAITINGLIST = 5
 ANIMALCONTROL = 6
+PRODUCT = 7
 
 MEDIASOURCE_ATTACHFILE = 1
 MEDIASOURCE_DRAGNDROP = 2
@@ -286,6 +287,8 @@ def get_dbfs_path(linkid: int, linktype: int) -> str:
         path = "/waitinglist/%d" % int(linkid)
     elif linktype == ANIMALCONTROL:
         path = "/animalcontrol/%d" % int(linkid)
+    elif linktype == PRODUCT:
+        path = "/product/%d" % int(linkid)
     return path
 
 def get_log_from_media_type(x: int) -> int:
@@ -315,7 +318,10 @@ def _get_media_filename(m: ResultRow) -> str:
     """ Constructs a filename from media notes.
         Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
     s = m.MEDIANOTES
-    s = s.replace("\n", "_").replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_")
+    s = s.replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_").replace("$", "_").replace("*", "_").replace("?", "_")
+    if s.find("\r\n") != -1: s = s.replace("\r\n", "_")
+    if s.find("\r") != -1: s = s.replace("\r", "_")
+    if s.find("\n") != -1: s = s.replace("\n", "_")
     s = asm3.utils.truncate(s, 20)
     ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
     if not s.endswith(ext): s += ext

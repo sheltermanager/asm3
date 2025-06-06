@@ -2,7 +2,7 @@ Adopted animals with a due vaccination
 ###
 Medical
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Mailmerge source of owner and animal information for all adoptions where the animal has a vaccination due
 ###
@@ -21,6 +21,7 @@ WHERE animal.ActiveMovementType = 1 AND animal.Archived = 1
 AND animal.DeceasedDate Is Null
 AND animalvaccination.DateOfVaccination Is Null AND animalvaccination.DateRequired <= '$CURRENT_DATE$'
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL

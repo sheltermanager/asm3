@@ -2,7 +2,7 @@ Adopted animals with a vacc, test or medical due between two dates
 ###
 Medical
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Mailmerge source of owner and animal information for all adoptions where the animal has a vaccination, test or medical item due between two dates
 ###
@@ -27,6 +27,7 @@ AND animalvaccination.DateOfVaccination Is Null
 AND animalvaccination.DateRequired >= '$@from$'
 AND animalvaccination.DateRequired <= '$@to$'
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 
 UNION SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, owner.OwnerCode,
@@ -44,6 +45,7 @@ AND animaltest.DateOfTest Is Null
 AND animaltest.DateRequired >= '$@from$'
 AND animaltest.DateRequired <= '$@to$'
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 
 UNION SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, owner.OwnerCode,
@@ -61,6 +63,7 @@ AND animalmedicaltreatment.DateGiven Is Null
 AND animalmedicaltreatment.DateRequired >= '$@from$'
 AND animalmedicaltreatment.DateRequired <= '$@to$'
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 
 ORDER BY OwnerSurname
 ###

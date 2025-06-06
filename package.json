@@ -1,6 +1,6 @@
 {
   "name": "asm3",
-  "version": "46.0.0",
+  "version": "50.0.0",
   "description": "Animal Shelter Manager v3 (sheltermanager3)",
   "main": "src/static/js/login.js",
   "directories": {
@@ -29,12 +29,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bobintetley/asm3.git"
+    "url": "git+https://github.com/sheltermanager/asm3.git"
   },
   "author": "Robin Rawson-Tetley",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/bobintetley/asm3/issues"
+    "url": "https://github.com/sheltermanager/asm3/issues"
   },
-  "homepage": "https://github.com/bobintetley/asm3#readme"
+  "homepage": "https://github.com/sheltermanager/asm3#readme"
 }

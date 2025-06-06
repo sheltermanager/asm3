@@ -2,7 +2,7 @@ Expiring licenses between two dates
 ###
 Animal Control
 ###
-34800/Any rev05
+34800/Any rev06
 ###
 Licenses that expire between the two dates given with owner details, excludes people who have renewed and deceased animals
 ###
@@ -21,6 +21,7 @@ LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
 AND ol.ExpiryDate <= '$ASK DATE Enter the to date$' AND a.DeceasedDate Is Null 
 AND ol.Renewed = 0
+AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 AND (ol.AnimalID = 0 OR a.DeceasedDate Is Null)
 ORDER BY ol.ExpiryDate
 ###

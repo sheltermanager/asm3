@@ -597,7 +597,7 @@ def delete_orphaned_media(dbo: Database) -> None:
     """
     where = "WHERE " \
         "(Path LIKE '/animal%' OR Path LIKE '/owner%' OR Path LIKE '/lostanimal%' OR Path LIKE '/foundanimal%' " \
-        "OR Path LIKE '/waitinglist%' OR Path LIKE '/animalcontrol%') " \
+        "OR Path LIKE '/waitinglist%' OR Path LIKE '/animalcontrol%' OR Path LIKE '/product%') " \
         "AND (LOWER(Name) LIKE '%.jpg' OR LOWER(Name) LIKE '%.jpeg' OR LOWER(Name) LIKE '%.pdf' OR LOWER(Name) LIKE '%.html') " \
         "AND ID NOT IN (SELECT DBFSID FROM media)"
     rows = dbo.query("SELECT ID, Name, Path, URL FROM dbfs %s" % where) 

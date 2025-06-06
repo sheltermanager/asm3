@@ -82,7 +82,7 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
     "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
     "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", 
-    "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", 
+    "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", 
     "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
     "lkwaitinglistremoval", "lkworktype", 
     "logtype", "medicalprofile", "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", 
@@ -1348,7 +1348,7 @@ def sql_structure(dbo: Database) -> str:
         fint("SpeciesID", True),
         fstr("VisibleIf", True),
         flongstr("Tooltip", True),
-        fint("ValidationRule")), False)
+        fint("ValidationRule", True)), False)
     sql += index("onlineformfield_OnlineFormID", "onlineformfield", "OnlineFormID")
 
     sql += table("onlineformincoming", (
@@ -1872,18 +1872,15 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
             f"TreatmentName, TreatmentRule) VALUES ({str(pid)}, '', 0, 0, 'system', {dbo.sql_now()}, '{dbo.escape(dosage)}', {dbo.sql_now()}, 'system', " \
             f"'{dbo.escape(name)}', 0, 0, 0, 0, 1, '{dbo.escape(name)}', 0)|=\n"
     def medicaltype(tid: int, name: str, forcesingle: int) -> str:
-        return "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (%s, '%s', %s, '', 0)|=\n" % ( tid, name, forcesingle )
+        return "INSERT INTO lksmedicaltype (ID, MedicalTypeName, Description, ForceSingleUse, IsRetired) VALUES (%s, '%s', '', %s, 0)|=\n" % ( tid, name, forcesingle )
     def role(tid: int, name: str, perms: str) -> str:
         return "INSERT INTO role (ID, Rolename, SecurityMap) VALUES (%s, '%s', '%s')|=\n" % (tid, dbo.escape(name), perms)
     def species(tid: int, name: str, petfinder: str) -> str:
         return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( tid, dbo.escape(name), petfinder )
-    
     def taxrate(tid: int, name: str, taxrate: float) -> str:
         return "INSERT INTO lktaxrate (ID, TaxRateName, Description, TaxRate, IsRetired) VALUES (%s, '%s', '', %f, 0)|=\n" % ( tid, name, taxrate )
-
     def unittype(tid: int, name: str) -> str:
         return "INSERT INTO lksunittype (ID, UnitName, Description, IsRetired) VALUES (%s, '%s', '', 0)|=\n" % ( tid, name )
-    
     def user(tid: int, username: str, realname: str, password: str, superuser: bool) -> str:
         return "INSERT INTO users (ID, UserName, RealName, EmailAddress, Password, SuperUser, OwnerID, SecurityMap, IPRestriction, Signature, LocaleOverride, ThemeOverride, SiteID, DisableLogin, LocationFilter, RecordVersion) VALUES (%s,'%s','%s', '', 'plain:%s', %s, 0,'', '', '', '', '', 0, 0, '', 0)|=\n" % (tid, username, realname, password, superuser and 1 or 0)
 

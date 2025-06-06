@@ -2,7 +2,7 @@ Non-Returned Adoptions
 ###
 Movements
 ###
-34701/Any rev04
+34701/Any rev03
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions between two dates
 ###
@@ -19,6 +19,7 @@ AND adoption.MovementDate <= '$ASK DATE Enter to date$'
 AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL
@@ -27,7 +28,7 @@ Non-Returned Adoptions (Puppies)
 ###
 Movements
 ###
-34701/Any rev05
+34701/Any rev06
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of puppies between two dates
 ###
@@ -45,6 +46,7 @@ AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND animal.SpeciesID = 1 AND animal.DateOfBirth >= $SQL INTERVAL adoption.MovementDate,-,6,months$
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL
@@ -53,7 +55,7 @@ Non-Returned Adoptions (Adult Dogs)
 ###
 Movements
 ###
-34701/Any rev05
+34701/Any rev06
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of adult dogs between two dates
 ###
@@ -71,6 +73,7 @@ AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND animal.SpeciesID = 1 AND animal.DateOfBirth < $SQL INTERVAL adoption.MovementDate,-,6,months$
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL
@@ -79,7 +82,7 @@ Non-Returned Adoptions (Kittens)
 ###
 Movements
 ###
-34701/Any rev05
+34701/Any rev06
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of kittens between two dates
 ###
@@ -97,6 +100,7 @@ AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND animal.SpeciesID = 2 AND animal.DateOfBirth >= $SQL INTERVAL adoption.MovementDate,-,6,months$
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL
@@ -105,7 +109,7 @@ Non-Returned Adoptions (Adult Cats)
 ###
 Movements
 ###
-34701/Any rev05
+34701/Any rev06
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of adult cats between two dates
 ###
@@ -123,6 +127,7 @@ AND adoption.MovementType = 1
 AND animal.DeceasedDate Is Null
 AND animal.SpeciesID = 2 AND animal.DateOfBirth < $SQL INTERVAL adoption.MovementDate,-,6,months$
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL
@@ -131,7 +136,7 @@ Fosterers of Non-Returned Adoptions
 ###
 Movements
 ###
-34701/Any rev05
+34701/Any rev06
 ###
 Mailmerge source of fosterer contact info and animal information for non-returned adoptions between two dates
 ###
@@ -146,6 +151,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID AND adoption.MovementType=2
 WHERE animal.ActiveMovementType=1 AND animal.ActiveMovementDate >= '$ASK DATE Enter from date$' AND animal.ActiveMovementDate <= '$ASK DATE Enter to date$' 
 AND animal.DeceasedDate Is Null
 AND owner.ExcludeFromBulkEmail = 0
+AND owner.IsDeceased = 0
 ORDER BY owner.OwnerSurname
 ###
 MAIL

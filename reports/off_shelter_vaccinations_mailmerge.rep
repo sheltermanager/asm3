@@ -2,7 +2,7 @@ Off-Shelter Vaccinations
 ###
 Vaccinations
 ###
-34701/Any rev03
+34701/Any rev04
 ###
 Owner/vaccination info for animals that need vaccinating between two dates
 ###
@@ -18,6 +18,7 @@ INNER JOIN animal a ON a.ID = av.AnimalID
 INNER JOIN adoption m ON m.ID = a.ActiveMovementID
 INNER JOIN owner o ON m.OwnerID = o.ID
 WHERE a.DeceasedDate Is Null 
+AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 AND av.DateOfVaccination Is Null
 AND av.DateRequired >= '$ASK DATE Vaccinations required from$'
 AND av.DateRequired <= '$ASK DATE Vaccinations required to$'

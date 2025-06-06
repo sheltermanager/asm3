@@ -530,8 +530,10 @@ def get_boarding_due_two_dates(dbo: Database, start: datetime, end: datetime) ->
     Returns a recordset of boarding records that are active between two dates
     """
     return dbo.query(get_boarding_query(dbo) + \
-        "WHERE ab.InDateTime >= ? AND ab.InDateTime <= ? " \
-        "ORDER BY ab.InDateTime DESC", (start, end))
+        "WHERE ( ab.InDateTime >= ? AND ab.InDateTime <= ? ) " \
+        " OR ( ab.OutDateTime >= ? AND ab.OutDateTime <= ? ) " \
+        " OR ( ab.InDateTime < ? AND ab.OutDateTime > ? ) " \
+        "ORDER BY ab.InDateTime DESC", (start, end, start, end, start, end))
 
 def get_boarding_id(dbo: Database, bid: int) -> ResultRow:
     """

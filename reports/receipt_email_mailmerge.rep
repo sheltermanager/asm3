@@ -1,7 +1,8 @@
 Receipt Email
 ###
 Financial
-34701/Any rev02
+###
+34701/Any rev03
 ###
 Receipt mail merge for payments of a selected type made between two dates
 ###
@@ -22,6 +23,7 @@ INNER JOIN ownerdonation ON owner.ID = ownerdonation.ownerID
 LEFT OUTER JOIN animal ON ownerdonation.animalID = animal.ID
 INNER JOIN donationtype ON ownerdonation.DonationTypeID = donationtype.ID  
 WHERE ownerdonation.donationtypeid = $ASK PAYMENTTYPE$ 
+AND owner.ExcludeFromBulkEmail = 0 AND owner.IsDeceased = 0
 AND ownerdonation.date >= '$ASK DATE Payments received between$'
 AND ownerdonation.date <= '$ASK DATE and$'  
 ORDER BY ownername
