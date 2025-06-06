@@ -124,8 +124,9 @@ $(function() {
                 },
                 columns: [
                     { field: "PRODUCTNAME", display: _("Name") },
-                    { field: "PRODUCTIMAGE", full_width: false, display: _("Image"), 
+                    { field: "PRODUCTIMAGE", display: _("Image"), 
                         formatter: function(row) {
+                            if (!row.MEDIAID || row.MEDIAID == "0") { return ""; }
                             let imageurl = "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID;
                             return '<a target="_blank" href="' + imageurl + '">' + 
                             '<img class="asm-thumbnail thumbnailshadow " src="' + imageurl + '" style="margin-left: 0;">' + 
