@@ -4940,6 +4940,17 @@ class maint_be_user(ASMEndpoint):
         asm3.users.update_session(o.dbo, o.session, o.post["user"])
         self.redirect("main")
 
+class maint_db_diagnostic(ASMEndpoint):
+    url = "maint_db_diagnostic"
+    
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        s = []
+        for k, v in asm3.dbupdate.diagnostic(o.dbo).items():
+            s.append(f"{k}: {v}")
+        return "\n".join(s)
+
 class maint_db_stats(ASMEndpoint):
     url = "maint_db_stats"
 
