@@ -477,12 +477,12 @@ data on the legend.</p></li>
 from animal movements each year. Following our scheme, the Year column being
 first is the X axis label, TotalAmount is the first datapoint for that item on
 the X axis:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">YEAR</span><span class="p">(</span><span class="n">DateReceived</span><span class="p">)</span> <span class="n">AS</span> <span class="n">Year</span><span class="p">,</span>
-<span class="n">SUM</span><span class="p">(</span><span class="n">ownerdonation</span><span class="o">.</span><span class="n">Donation</span><span class="p">)</span> <span class="n">AS</span> <span class="n">TotalAmount</span>
-<span class="n">FROM</span> <span class="n">ownerdonation</span>
-<span class="n">WHERE</span> <span class="n">MovementID</span> <span class="o">&gt;</span> <span class="mi">0</span>
-<span class="n">GROUP</span> <span class="n">BY</span> <span class="n">YEAR</span><span class="p">(</span><span class="n">DateReceived</span><span class="p">)</span>
-<span class="n">ORDER</span> <span class="n">BY</span> <span class="n">Year</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SELECT $SQL YEAR DateReceived$ AS Year,
+SUM(ownerdonation.Donation) AS TotalAmount
+FROM ownerdonation
+WHERE MovementID &gt; 0
+GROUP BY $SQL YEAR DateReceived$
+ORDER BY Year
 </pre></div>
 </div>
 <p>Would produce data that might look something like:</p>
@@ -525,14 +525,14 @@ series.</p></li>
 for over a year by internal location. Each location becomes a series with a set
 of data points for each month of the year:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SELECT i.LocationName,
-MONTH(ad.MovementDate) AS bimonth,
+$SQL MONTH ad.MovementDate$ AS bimonth,
 COUNT(ad.Donation) AS total
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-WHERE YEAR(ad.MovementDate) = $ASK STRING Which year to display for?$
+WHERE $SQL YEAR ad.MovementDate$ = $ASK STRING Which year to display for?$
 AND ad.MovementType = 1
-GROUP BY i.LocationName, MONTH(ad.MovementDate)
+GROUP BY i.LocationName, $SQL MONTH ad.MovementDate$
 </pre></div>
 </div>
 </section>

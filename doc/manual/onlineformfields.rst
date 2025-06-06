@@ -36,7 +36,7 @@ emailaddress / emailaddress2
 lookingforolderthan
     The person's "looking for" animal age preference (use number type field for years value)
 lookingforsex
-    The person's "looking for" animal sex preference (Use lookup type field with values (any)|Female|Male)
+    The person's "looking for" animal sex preference (use lookup type field with values (any)|Female|Male)
 lookingforyoungerthan 
     The person's "looking for" animal age preference (use number type field for years value)
 lookingforspecies
