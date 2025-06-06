@@ -261,7 +261,7 @@ def row_error(errors: List, rowtype: str, rowno: int, row: Dict, e: Any, dbo: Da
 def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: str = "", 
               createmissinglookups: bool = False, cleartables: bool = False, 
               checkduplicates: bool = True, prefixanimalcodes: bool = False, 
-              entrytoday: bool = False, htmlresults: bool = True) -> str:
+              entrytoday: bool = False, htmlresults: bool = True, prevalidate: bool = False) -> str:
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -395,7 +395,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     asm3.al.debug("reading CSV data, found %d rows" % len(rows), "csvimport.csvimport", dbo)
 
     # If we're clearing down tables first, do it now
-    if cleartables:
+    if cleartables and not prevalidate:
         asm3.al.warn("Resetting the database by removing all non-lookup data", "csvimport.csvimport", dbo)
         asm3.dbupdate.reset_db(dbo)
 
@@ -620,7 +620,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                     if originalownerid == 0:
                         originalownerid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                     # Identify any ORIGINALOWNERADDITIONAL additional fields and create/merge them
-                    if originalownerid > 0: 
+                    if originalownerid > 0 and not prevalidate: 
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", originalownerid)
                     if "transferin" in a and a["transferin"] == "on":
                         a["broughtinby"] = str(originalownerid) # set original owner as transferor for transfers in
@@ -658,7 +658,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                             cvid = dups[0]["ID"]
                             a["currentvet"] = str(cvid)
                     if "currentvet" not in a:
-                        cvid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+                        if not prevalidate:
+                            cvid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+                        
                         a["currentvet"] = str(cvid)
                     # If both a current vet and neutering date has been given, set the neutering vet
                     if "currentvet" in a and "neutereddate" in a and a["neutereddate"] != "":
@@ -687,23 +689,24 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         # Update flags if present
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
-                if animalid == 0:
+                if animalid == 0 and not prevalidate:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Add any flags that were set
                     if a["flags"] != "":
                         asm3.animal.update_flags(dbo, user, animalid, a["flags"].split(","))
                 # Identify any ANIMALADDITIONAL additional fields and create/merge them
-                create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
+                if not prevalidate:
+                    create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                 # If we have some image data, add it to the animal
-                if len(imagedata) > 0:
+                if len(imagedata) > 0 and not prevalidate:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
                 # If we have some PDF data, add that to the animal
-                if len(pdfdata) > 0:
+                if len(pdfdata) > 0 and not prevalidate:
                     pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
                 # If we have some HTML data, add that to the animal
-                if len(htmldata) > 0:
+                if len(htmldata) > 0 and not prevalidate:
                     htmlpost = asm3.utils.PostedData({ "filename": htmlname, "filetype": "text/html", "filedata": htmldata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, htmlpost)
             except Exception as e:
@@ -840,7 +843,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                             dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
                             if len(dups) > 0:
                                 personid = dups[0].ID
-                        if personid != 0:
+                        if personid != 0 and not prevalidate:
                             # Merge flags and any extra details
                             asm3.person.merge_flags(dbo, user, personid, flags)
                             asm3.person.merge_gdpr_flags(dbo, user, personid, p["gdprcontactoptin"])
@@ -850,16 +853,17 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                             # otherwise we do a regular merge which only fills in any blanks)
                             force = dbo.query_string("SELECT EmailAddress FROM owner WHERE ID=?", [personid]) == p["emailaddress"]
                             asm3.person.merge_person_details(dbo, user, personid, p, force=force)
-                    if personid == 0:
+                    if personid == 0 and not prevalidate:
                         personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create/merge them
-                    create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
+                    if not prevalidate:
+                        create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
                     # If we have some image data, add it to the person
-                    if len(imagedata) > 0:
+                    if len(imagedata) > 0 and not prevalidate:
                         imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
                         asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
                     # If we have some PDF data, add that to the person
-                    if len(pdfdata) > 0:
+                    if len(pdfdata) > 0 and not prevalidate:
                         pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
                         asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
                 except Exception as e:
@@ -883,7 +887,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             m["comments"] = gks(row, "MOVEMENTCOMMENTS")
             m["returncategory"] = str(asm3.configuration.default_entry_reason(dbo))
             try:
-                movementid = asm3.movement.insert_movement_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
+                if not prevalidate:
+                    movementid = asm3.movement.insert_movement_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "movement", rowno, row, e, dbo, sys.exc_info())
 
@@ -906,7 +911,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             if d["payment"] == "0":
                 d["payment"] = "1"
             try:
-                asm3.financial.insert_donation_from_form(dbo, user, asm3.utils.PostedData(d, dbo.locale))
+                if not prevalidate:
+                    asm3.financial.insert_donation_from_form(dbo, user, asm3.utils.PostedData(d, dbo.locale))
             except Exception as e:
                 row_error(errors, "payment", rowno, row, e, dbo, sys.exc_info())
             if movementid != 0: asm3.movement.update_movement_donation(dbo, movementid)
@@ -938,7 +944,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["completedtime"] = gks(row, "INCIDENTCOMPLETEDTIME")
             d["completedtype"] = gkl(dbo, row, "INCIDENTCOMPLETEDTYPE", "incidentcompleted", "CompletedName", True)
             try:
-                incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
+                if not prevalidate:
+                    incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
             except Exception as e:
                 row_error(errors, "incident", rowno, row, e, dbo, sys.exc_info())
         
@@ -954,7 +961,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             c["finedue"] = gkd(dbo, row, "FINEDUEDATE")
             c["finepaid"] = gkd(dbo, row, "FINEPAIDDATE")
             c["comments"] = gks(row, "CITATIONCOMMENTS")
-            asm3.financial.insert_citation_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+            if not prevalidate:
+                asm3.financial.insert_citation_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
         
         # Clinic appointments
         if hasclinic and personid != 0 and gkd(dbo, row, "CLINICAPPOINTMENTDATE") != "":
@@ -987,8 +995,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
 
             c["vatamount"] = asm3.utils.cint(row["CLINICAPPOINTMENTVATAMOUNT"])
 
-
-            asm3.clinic.insert_appointment_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+            if not prevalidate:
+                asm3.clinic.insert_appointment_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
         
         # Diary note
         if hasdiary:
@@ -998,7 +1006,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["subject"] = gks(row, "DIARYSUBJECT")
             d["note"] = gks(row, "DIARYNOTE")
 
-            if d["diarydate"] == "":
+            if d["diarydate"] == "" or prevalidate:
                 pass
             elif animalid != 0:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMAL, animalid, asm3.utils.PostedData(d, dbo.locale))
@@ -1020,7 +1028,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             t["returndate"] = gkd(dbo, row, "RETURNDATE")
             t["comments"] = gks(row, "TRAPLOANCOMMENTS")
 
-            asm3.animalcontrol.insert_traploan_from_form(dbo, user, asm3.utils.PostedData(t, dbo.locale))
+            if not prevalidate:
+                asm3.animalcontrol.insert_traploan_from_form(dbo, user, asm3.utils.PostedData(t, dbo.locale))
 
         # Vaccination
         if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
@@ -1037,7 +1046,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             v["rabiestag"] = gks(row, "VACCINATIONRABIESTAG")
             v["comments"] = gks(row, "VACCINATIONCOMMENTS")
             try:
-                asm3.medical.insert_vaccination_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+                if not prevalidate:
+                    asm3.medical.insert_vaccination_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
 
@@ -1051,7 +1061,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             v["given"] = gkd(dbo, row, "TESTPERFORMEDDATE")
             v["comments"] = gks(row, "TESTCOMMENTS")
             try:
-                asm3.medical.insert_test_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+                if not prevalidate:
+                    asm3.medical.insert_test_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "test", rowno, row, e, dbo, sys.exc_info())
 
@@ -1066,7 +1077,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             m["singlemulti"] = "0" # single treatment
             m["status"] = "2" # completed
             try:
-                asm3.medical.insert_regimen_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
+                if not prevalidate:
+                    asm3.medical.insert_regimen_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
 
@@ -1079,7 +1091,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             c["cost"] = str(gkc(row, "COSTAMOUNT"))
             c["description"] = gks(row, "COSTDESCRIPTION")
             try:
-                asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+                if not prevalidate:
+                    asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
             except Exception as e:
                 row_error(errors, "cost", rowno, row, e, dbo, sys.exc_info())
 
@@ -1090,7 +1103,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             i["date"] = gkd(dbo, row, "INVESTIGATIONDATE", True)
             i["notes"] = gks(row, "INVESTIGATIONNOTES")
             try:
-                asm3.person.insert_investigation_from_form(dbo, user, asm3.utils.PostedData(i, dbo.locale))
+                if not prevalidate:
+                    asm3.person.insert_investigation_from_form(dbo, user, asm3.utils.PostedData(i, dbo.locale))
             except Exception as e:
                 row_error(errors, "investigation", rowno, row, e, dbo, sys.exc_info())
         
@@ -1110,7 +1124,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 linkid = personid
 
             try:
-                asm3.log.insert_log_from_form(dbo, user, linktype, linkid, asm3.utils.PostedData(l, dbo.locale))
+                if not prevalidate:
+                    asm3.log.insert_log_from_form(dbo, user, linktype, linkid, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
 
@@ -1127,7 +1142,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
             l["comments"] = gks(row, "LICENSECOMMENTS")
             try:
-                asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
+                if not prevalidate:
+                    asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
 
@@ -1144,7 +1160,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
             l["comments"] = gks(row, "LICENSECOMMENTS")
             try:
-                asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
+                if not prevalidate:
+                    asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
         
@@ -1163,7 +1180,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             v["comments"] = gks(row, "VOUCHERCOMMENTS")
 
             try:
-                asm3.financial.insert_voucher_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+                if not prevalidate:
+                    asm3.financial.insert_voucher_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "voucher", rowno, row, e, dbo, sys.exc_info())
         
@@ -1188,7 +1206,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             s["comments"] = asm3.i18n._("Imported from CSV", dbo.locale)
 
             try:
-                asm3.stock.insert_stocklevel_from_form(dbo, asm3.utils.PostedData(s, dbo.locale), user)
+                if not prevalidate:
+                    asm3.stock.insert_stocklevel_from_form(dbo, asm3.utils.PostedData(s, dbo.locale), user)
             except Exception as e:
                 row_error(errors, "stocklevel", rowno, row, e, dbo, sys.exc_info())
 

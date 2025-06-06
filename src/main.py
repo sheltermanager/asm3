@@ -3088,7 +3088,8 @@ class csvimport(JSONEndpoint):
             o.post.boolean("cleartables") == 1, 
             True,
             o.post.boolean("prefixanimalcodes") == 1,
-            o.post.boolean("entrytoday") == 1)
+            o.post.boolean("entrytoday") == 1,
+            o.post.boolean("prevalidate") == 1)
         self.redirect("task")
 
 class csvimport_paypal(JSONEndpoint):
