@@ -1529,8 +1529,7 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "lookingforsex":
             d["matchactive"] = "1"
             d["matchsex"] = str(guess_sex(dbo, f.VALUE))
-            if d["matchsex"] == "2":
-              d["matchsex"] = "-1"
+            if d["matchsex"] == "2": d["matchsex"] = "-1"
         if f.FIELDNAME == "lookingforspecies":
             d["matchactive"] = "1"
             if f.VALUE == "":
