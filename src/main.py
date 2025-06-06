@@ -6832,7 +6832,8 @@ class product(JSONEndpoint):
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "units": asm3.lookups.get_unit_types(dbo),
             "yesno": asm3.lookups.get_yesno(dbo),
-            "rows": products
+            "rows": products,
+            "imagedimesions": asm3.configuration.product_image_scale(dbo)
         }
     
     def post_create(self, o):
@@ -6848,11 +6849,23 @@ class product(JSONEndpoint):
     def post_update(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
         asm3.stock.update_product_from_form(o.dbo, o.post, o.user)
+        if o.post["mediaid"] != "":
+            o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [asm3.media.PRODUCT, o.post.integer("productid")])
     
     def post_delete(self, o):
         self.check(asm3.users.DELETE_STOCKLEVEL)
         for pid in o.post.integer_list("ids"):
+            o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [asm3.media.PRODUCT, pid])
             asm3.stock.delete_product(o.dbo, o.user, pid)
+    
+    def post_image(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        linkid = o.post.integer("linkid")
+        linktypeid = o.post.integer("linktypeid")
+        sourceid = o.post.integer("sourceid")
+        o.post["mode"] = "media"
+        o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [linktypeid, linkid])
+        return asm3.media.attach_file_from_form(o.dbo, o.user, linktypeid, linkid, sourceid, o.post)
 
 class publish(JSONEndpoint):
     url = "publish"
