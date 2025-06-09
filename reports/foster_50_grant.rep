@@ -2,7 +2,7 @@ Foster 50 Challenge Grant
 ###
 Figures
 ###
-3000/Any rev01
+3000/Any rev02
 ###
 Figures needed to complete the foster 50 challenge grant application
 ###
@@ -76,11 +76,11 @@ AND EXISTS(SELECT ID FROM adoption subm WHERE subm.ReturnDate = adoption.Movemen
 
 (SELECT COUNT(DISTINCT ownerID) 
 FROM adoption
-WHERE MovementType = 2 AND MovementDate = '$@year$-07-01') AS ActiveFostersJuly,
+WHERE MovementType = 2 AND MovementDate <= '$@year$-07-01' AND (ReturnDate >'$@year$-07-01' OR ReturnDate IS NULL)) AS ActiveFostersJuly,
 
 (SELECT COUNT(DISTINCT ownerID) 
 FROM adoption
-WHERE MovementType = 2 AND MovementDate = '$@year$-08-31') AS ActiveFostersAug
+WHERE MovementType = 2 AND MovementDate <= '$@year$-08-31' AND (ReturnDate >'$@year$-08-31' OR ReturnDate IS NULL)) AS ActiveFostersAug
 ###
 $$HEADER
 HEADER$$
@@ -102,7 +102,7 @@ $$BODY
 <p></p>
 <p>How many dogs were adopted directly from foster homes from July 1 – August 31,2024: <b>$DOGSADOPTED</b>
 <p></p>
-<p>How many dogs were adopted directly from foster homes from July 1 – August 31,2024: <b>$CATSADOPTED</b>
+<p>How many cats were adopted directly from foster homes from July 1 – August 31,2024: <b>$CATSADOPTED</b>
 <p></p>
 <p>Number of active foster volunteers as of July 1, 2024: <b>$ACTIVEFOSTERSJULY</b> 
 <p></p>
