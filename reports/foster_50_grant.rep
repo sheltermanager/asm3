@@ -1,0 +1,114 @@
+Foster 50 Challenge Grant
+###
+Figures
+###
+3000/Any rev01
+###
+Figures needed to complete the foster 50 challenge grant application
+###
+en
+###
+$VAR year NUMBER Enter the year, eg: 2024$
+
+SELECT
+
+'$@year$' AS year,
+
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+AND SpeciesID = 1 
+AND NonShelterAnimal = 0) AS DogsIntakeTotal,
+ 
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+AND SpeciesID = 2 
+AND NonShelterAnimal = 0) AS CatsIntakeTotal,
+ 
+(SELECT COUNT(*) 
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+WHERE SpeciesID = 1 
+AND MovementType = 2 AND MovementDate > '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59') AS DogsInFoster,
+
+(SELECT COUNT(*) 
+FROM adoption
+LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
+WHERE SpeciesID = 2 
+AND MovementType = 2 AND MovementDate > '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59') AS CatsInFoster,
+
+(SELECT ROUND(AVG(DaysOnShelter))
+FROM animal
+WHERE SpeciesID = 1
+AND EXISTS(SELECT ID FROM adoption WHERE adoption.AnimalID = animal.ID
+AND MovementType=2
+AND MovementDate >= '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59')
+AND ((DeceasedDate >= '$@year$-07-01' AND DeceasedDate <= '$@year$-08-31 23:59:59')
+OR
+EXISTS(SELECT MovementDate FROM adoption WHERE MovementType NOT IN (2,8)
+AND MovementDate >= '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59'))) AS DogsAvg,
+
+(SELECT ROUND(AVG(DaysOnShelter))
+FROM animal
+WHERE SpeciesID = 2
+AND EXISTS(SELECT ID FROM adoption WHERE adoption.AnimalID = animal.ID
+AND MovementType=2
+AND MovementDate >= '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59')
+AND ((DeceasedDate >= '$@year$-07-01' AND DeceasedDate <= '$@year$-08-31 23:59:59')
+OR
+EXISTS(SELECT MovementDate FROM adoption WHERE MovementType NOT IN (2,8)
+AND MovementDate >= '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59'))) AS CatsAvg,
+
+(SELECT COUNT(*)
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+WHERE SpeciesID = 1
+AND MovementType = 1
+AND (MovementDate >= '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59')
+AND EXISTS(SELECT ID FROM adoption subm WHERE subm.ReturnDate = adoption.MovementDate AND subm.AnimalID=animal.ID AND subm.MovementType=2)) AS DogsAdopted,
+
+(SELECT COUNT(*)
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+WHERE SpeciesID = 2
+AND MovementType = 1
+AND (MovementDate >= '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59')
+AND EXISTS(SELECT ID FROM adoption subm WHERE subm.ReturnDate = adoption.MovementDate AND subm.AnimalID=animal.ID AND subm.MovementType=2)) AS CatsAdopted,
+
+(SELECT COUNT(DISTINCT ownerID) 
+FROM adoption
+WHERE MovementType = 2 AND MovementDate = '$@year$-07-01') AS ActiveFostersJuly,
+
+(SELECT COUNT(DISTINCT ownerID) 
+FROM adoption
+WHERE MovementType = 2 AND MovementDate = '$@year$-08-31') AS ActiveFostersAug
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h3>Section 3: Baseline Foster Program Data</h3>
+<p></p>
+<p>What was your organization’s annual intake of dogs last year?: <b>$DOGSINTAKETOTAL</b>
+<p></p>
+<p>What was your organization’s annual intake of cats last year?: <b>$CATSINTAKETOTAL</b>
+<p></p>
+<p>Number of dogs placed in foster care July 1 – August 31, 2024: <b>$DOGSINFOSTER</b>
+<p></p>
+<p>Number of cats placed in foster care July 1 – August 31, 2024: <b>$CATSINFOSTER</b>
+<p></p>
+<p>Average length of stay in foster care for dogs with outcomes between July 1 – August 31, 2024: <b>$DOGSAVG</b> days
+<p></p>
+<p>Average length of stay in foster care for cats with outcomes between July 1 – August 31, 2024: <b>$CATSAVG</b> days
+<p></p>
+<p>How many dogs were adopted directly from foster homes from July 1 – August 31,2024: <b>$DOGSADOPTED</b>
+<p></p>
+<p>How many dogs were adopted directly from foster homes from July 1 – August 31,2024: <b>$CATSADOPTED</b>
+<p></p>
+<p>Number of active foster volunteers as of July 1, 2024: <b>$ACTIVEFOSTERSJULY</b> 
+<p></p>
+<p>Number of active foster volunteers as of August 31, 2024: <b>$ACTIVEFOSTERSAUG</b>
+
+BODY$$
+
+$$FOOTER
+FOOTER$$
