@@ -93,7 +93,7 @@ ANIMALCRATETRAINED
 ANIMALHOUSETRAINED
     Y/N/U to indicate yes/no/unknown.
 ANIMALENERGYLEVEL
-    Y/N/U to indicate yes/no/unknown.
+    The animal's energy level (1 = Very low, 2 = Low, 3 = Medium, 4 = High, 5 = Very high).
 ANIMALGOODWITHCATS
     Y/N/U to indicate yes/no/unknown.
 ANIMALGOODWITHDOGS
