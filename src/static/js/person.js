@@ -190,7 +190,7 @@ $(function() {
                     { post_field: "matchgoodwithchildren", json_field: "MATCHGOODWITHCHILDREN", type: "select", label: _("Good with children"), rowclasses: "lfs", 
                         options: { displayfield: "NAME", rows: controller.ynunk, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchgoodwithelderly", json_field: "MATCHGOODWITHELDERLY", type: "select", label: _("Good with elderly"), rowclasses: "lfs", 
-                        options: { displayfield: "NAME", rows: controller.ynunk, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                        options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchgoodonlead", json_field: "MATCHGOODONLEAD", type: "select", label: _("Good on lead"), rowclasses: "lfs", 
                         options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchgoodtraveller", json_field: "MATCHGOODTRAVELLER", type: "select", label: _("Good traveller"), rowclasses: "lfs", 
