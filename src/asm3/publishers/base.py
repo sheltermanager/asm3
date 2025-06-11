@@ -503,6 +503,8 @@ def get_microchip_data_query(dbo: Database, patterns: List[str], publishername: 
             pclauses.append("(%s)" % p)
     if registerfrom is None:
         registerfrom = dbo.today(offset=-365*20) # No register from date set, go back 20 years
+    # Do not register chips where the event/service date is later than today
+    registerto = dbo.today(settime="23:59:59")
     trialclause = ""
     if movementtypes.find("11") == -1:
         trialclause = "AND a.HasTrialAdoption = 0"
@@ -513,14 +515,14 @@ def get_microchip_data_query(dbo: Database, patterns: List[str], publishername: 
             "AND (a.ActiveMovementID = 0 OR a.ActiveMovementType = 2) " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
             "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate) " \
-            "AND a.MostRecentEntryDate > %(regfrom)s " \
-            ")" % { "publishername": publishername, "regfrom": dbo.sql_value(registerfrom) }
+            "AND a.MostRecentEntryDate > %(regfrom)s AND a.MostRecentEntryDate <= %(regto)s" \
+            ")" % { "publishername": publishername, "regfrom": dbo.sql_value(registerfrom), "regto": dbo.sql_value(registerto) }
     nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null " \
         "AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate) " \
-        "AND a.IdentichipDate > %(regfrom)s " \
-        ")" % { "publishername": publishername, "regfrom": dbo.sql_value(registerfrom) }
+        "AND a.IdentichipDate > %(regfrom)s AND a.IdentichipDate <= %(regto)s" \
+        ")" % { "publishername": publishername, "regfrom": dbo.sql_value(registerfrom), "regto": dbo.sql_value(registerto) }
     where = " WHERE (%(patterns)s) " \
         "AND a.DeceasedDate Is Null " \
         "AND a.Identichipped=1 " \
@@ -528,7 +530,8 @@ def get_microchip_data_query(dbo: Database, patterns: List[str], publishername: 
         "AND (" \
         "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-        "AND AnimalID = a.ID AND SentDate >= %(movementdate)s ) AND a.ActiveMovementDate > %(regfrom)s ) " \
+        "AND AnimalID = a.ID AND SentDate >= %(movementdate)s ) " \
+        "AND a.ActiveMovementDate > %(regfrom)s AND a.ActiveMovementDate <= %(regto)s ) " \
         "%(nonshelterclause)s " \
         "%(intakeclause)s " \
         ")" % { 
@@ -540,6 +543,7 @@ def get_microchip_data_query(dbo: Database, patterns: List[str], publishername: 
             "intakeclause": intakeclause,
             "nonshelterclause": nonshelterclause,
             "regfrom": dbo.sql_value(registerfrom), 
+            "regto": dbo.sql_value(registerto),
             "trialclause": trialclause,
             "publishername": publishername }
     sql = asm3.animal.get_animal_query(dbo) + where
