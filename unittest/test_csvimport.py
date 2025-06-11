@@ -135,7 +135,7 @@ class TestCSVImport(unittest.TestCase):
             'VACCINATIONMANUFACTURER': 'Acme',
             'VACCINATIONBATCHNUMBER': '12345AA',
             'VACCINATIONRABIESTAG': '12345RR',
-            'VACCINATIONCOMMENTS': 'This movement was created by the CSV Import unit test.'
+            'VACCINATIONCOMMENTS': 'This vaccination was created by the CSV Import unit test.'
         },
     )
     minimalpersoncsvdata = (
@@ -314,6 +314,15 @@ class TestCSVImport(unittest.TestCase):
         base.execute("DELETE FROM owner WHERE OwnerName = 'Baron Barry Gibb'")
         base.execute("DELETE FROM animalcontrol WHERE CallNotes = 'This incident was created as part of the CSV import unit test.'")
         base.execute("DELETE FROM ownerlicence WHERE Comments = 'This license was created as part of the CSV import unit test.'")
+        base.execute("DELETE FROM stocklevel WHERE Description = 'This stock level was created as part of the CSV import unit test.'")
+        base.execute("DELETE FROM animalcost WHERE Description = 'This cost was created by the csvimport unit test.'")
+        base.execute("DELETE FROM log WHERE Comments = 'This log was created by the CSV Import unit test.'")
+        base.execute("DELETE FROM animalmedical WHERE Comments = 'This regimen was created by the CSV Import unit test.'")
+        base.execute("DELETE FROM adoption WHERE Comments = 'This movement was created by the CSV Import unit test.'")
+        base.execute("DELETE FROM animaltest WHERE Comments = 'This test was created by the CSV Import unit test.'")
+        base.execute("DELETE FROM animalvaccination WHERE Comments = 'This vaccination was created by the CSV Import unit test.'")
+
+
 
         asm3.additional.delete_field(base.get_dbo(), "test", self.aafid)
         asm3.additional.delete_field(base.get_dbo(), "test", self.apfid)
