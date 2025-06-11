@@ -21,10 +21,11 @@ $(document).ready(function() {
         chrome: navigator.userAgent.match(/Chrome/i) != null,
         safari: navigator.userAgent.match(/Safari/i) != null,
         ios:    navigator.userAgent.match(/iPad|iPhone|iPod/i) != null,
-        ie9:    navigator.userAgent.match(/MSIE 9/i) != null
+        ie9:    navigator.userAgent.match(/MSIE 9/i) != null,
+        mobileff: navigator.userAgent.match(/Firefox/i) != null && navigator.userAgent.match(/Mobile/i) != null
     };
 
-    const html5_required = !browser_is.ie9;
+    const html5_required = !browser_is.ie9 && !browser_is.mobileff;
 
     // Loads and scales an image into an image form field for upload
     const process_image = function(field) {
