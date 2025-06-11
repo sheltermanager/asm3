@@ -2,7 +2,7 @@ Foster 50 Challenge Grant
 ###
 Figures
 ###
-3000/Any rev02
+3000/Any rev03
 ###
 Figures needed to complete the foster 50 challenge grant application
 ###
@@ -74,13 +74,17 @@ AND MovementType = 1
 AND (MovementDate >= '$@year$-07-01' AND MovementDate <= '$@year$-08-31 23:59:59')
 AND EXISTS(SELECT ID FROM adoption subm WHERE subm.ReturnDate = adoption.MovementDate AND subm.AnimalID=animal.ID AND subm.MovementType=2)) AS CatsAdopted,
 
-(SELECT COUNT(DISTINCT ownerID) 
+(SELECT COUNT(DISTINCT adoption.ownerID) 
 FROM adoption
-WHERE MovementType = 2 AND MovementDate <= '$@year$-07-01' AND (ReturnDate >'$@year$-07-01' OR ReturnDate IS NULL)) AS ActiveFostersJuly,
+INNER JOIN animal ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 2 AND MovementDate <= '$@year$-07-01' AND (ReturnDate >'$@year$-07-01' OR ReturnDate IS NULL)
+AND (DeceasedDate IS NULL OR DeceasedDate > '$@year$-07-01')) AS ActiveFostersJuly,
 
-(SELECT COUNT(DISTINCT ownerID) 
+(SELECT COUNT(DISTINCT adoption.ownerID) 
 FROM adoption
-WHERE MovementType = 2 AND MovementDate <= '$@year$-08-31' AND (ReturnDate >'$@year$-08-31' OR ReturnDate IS NULL)) AS ActiveFostersAug
+INNER JOIN animal ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 2 AND MovementDate <= '$@year$-08-31' AND (ReturnDate >'$@year$-08-31' OR ReturnDate IS NULL)
+AND (DeceasedDate IS NULL OR DeceasedDate > '$@year$-08-31')) AS ActiveFostersAug
 ###
 $$HEADER
 HEADER$$
