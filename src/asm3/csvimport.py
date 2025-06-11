@@ -386,6 +386,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         ( hasincident and not hasperson, "Your CSV file has incident fields, but no person to set as the caller" ),
         ( haslicence and not haslicencenumber, "Your CSV file has license fields, but no LICENSENUMBER column" ),
         ( haslicence and not (haspersonlastname or haspersonname), "Your CSV file has license fields, but no person to apply the license to" )
+        ## To do - stock level rules??
     ]
     for cond, msg in rules:
         if cond:
