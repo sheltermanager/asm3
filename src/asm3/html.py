@@ -11,7 +11,7 @@ import asm3.utils
 
 from asm3.i18n import _, translate, now, python2unix, real_locale
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
-from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CHART_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
 from asm3.typehints import Any, ColumnList, Database, Dict, List, MenuItems, MenuStructure, ResultRow, Results, Session
 from asm3.__version__ import BUILD
 
@@ -377,16 +377,14 @@ def graph_js(l: str) -> str:
     """
     return """
         %(jquery)s
-        %(flot)s
-        %(flotpie)s
+        %(chart)s
         %(jqueryui)s
         %(jqueryuicss)s
         %(i18n)s
         %(asmcss)s
     """ % { "asmcss": asm_css_tag("asm.css"),
-            "jquery": script_tag(JQUERY_JS), 
-            "flot": script_tag(FLOT_JS), 
-            "flotpie": script_tag(FLOT_PIE_JS),
+            "jquery": script_tag(JQUERY_JS),
+            "chart": script_tag(CHART_JS),
             "i18n": script_i18n(l),
             "jqueryui": script_tag(JQUERY_UI_JS),
             "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" })
