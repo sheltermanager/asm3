@@ -938,11 +938,6 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                         displayindex = fld.DISPLAYINDEX
                         fieldtype = fld.FIELDTYPE
                         tooltip = fld.TOOLTIP
-                        mandatory = fld.MANDATORY
-                        # If the option is on and a blank has been fed to a mandatory field, flag as spam
-                        if asm3.configuration.onlineform_spam_mandatory(dbo) and mandatory == 1 and v == "":
-                            asm3.al.error("identified spam (empty value found in mandatory field '{fieldname}')", "insert_onlineformincoming_from_form", dbo)
-                            post.data["spam"] = "1"
                         # Store a few known fields for access later
                         if fieldname == "address":
                             address = v
