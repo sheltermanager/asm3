@@ -891,8 +891,9 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     if fid != 0 and v == "":
                         fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
                         if fld is not None and fld.MANDATORY == 1:
-                            asm3.al.error("identified spam (empty value found in mandatory field '{fieldname}')", "insert_onlineformincoming_from_form", dbo)
+                            asm3.al.error(f"identified spam (empty value found in mandatory field '{fieldname}')", "insert_onlineformincoming_from_form", dbo)
                             spam = True
+                            break
 
     collationid = get_collationid(dbo)
 
