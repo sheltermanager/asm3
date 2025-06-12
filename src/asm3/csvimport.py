@@ -1199,10 +1199,16 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             s["unitname"] = gks(row, "STOCKLEVELUNITNAME")
             s["total"] = asm3.utils.cfloat(row["STOCKLEVELTOTAL"])
             s["balance"] = asm3.utils.cfloat(row["STOCKLEVELBALANCE"])
+            if 'STOCKLEVELLOW' not in row.keys():
+                row["STOCKLEVELLOW"] = 0
             s["low"] = asm3.utils.cfloat(row["STOCKLEVELLOW"])
             s["expiry"] = gkd(dbo, row, "STOCKLEVELEXPIRY")
             s["batchnumber"] = gks(row, "STOCKLEVELBATCHNUMBER")
+            if 'STOCKLEVELCOST' not in row.keys():
+                row["STOCKLEVELCOST"] = 0
             s["cost"] = asm3.utils.cint(row["STOCKLEVELCOST"])
+            if 'STOCKLEVELUNITPRICE' not in row.keys():
+                row["STOCKLEVELUNITPRICE"] = 0
             s["unitprice"] = asm3.utils.cint(row["STOCKLEVELUNITPRICE"])
             s["usagedate"] = asm3.i18n.python2display(dbo.locale, dbo.today())
             s["usagetype"] = asm3.configuration.product_movement_usage_type(dbo)

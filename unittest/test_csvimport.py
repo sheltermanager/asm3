@@ -179,8 +179,8 @@ class TestCSVImport(unittest.TestCase):
             'PERSONMATCHSPECIES': 'Dog',
             'PERSONMATCHBREED1': 'French Bulldog',
             'PERSONMATCHBREED2': 'Great Dane',
-            'PERSONMATCHGOODWITHCATS': '0',
-            'PERSONMATCHGOODWITHDOGS': '0',
+            'PERSONMATCHGOODWITHCATS': 'Yes',
+            'PERSONMATCHGOODWITHDOGS': 'No',
             'PERSONMATCHGOODWITHCHILDREN': '0',
             'PERSONMATCHHOUSETRAINED': '0',
             'PERSONMATCHCOMMENTSCONTAIN': 'aglet',
@@ -248,9 +248,6 @@ class TestCSVImport(unittest.TestCase):
             'STOCKLEVELUNITNAME': 'plumbus',
             'STOCKLEVELTOTAL': '1',
             'STOCKLEVELBALANCE': '1',
-            'STOCKLEVELCOST': '1',# To do - should this be required??
-            'STOCKLEVELUNITPRICE': '1',# To do - should this be required??
-            'STOCKLEVELLOW': '0',# To do - should this be required??
             'STOCKLEVELDESCRIPTION': 'This stock level was created as part of the CSV import unit test.'
         },
     )
@@ -321,8 +318,8 @@ class TestCSVImport(unittest.TestCase):
         base.execute("DELETE FROM adoption WHERE Comments = 'This movement was created by the CSV Import unit test.'")
         base.execute("DELETE FROM animaltest WHERE Comments = 'This test was created by the CSV Import unit test.'")
         base.execute("DELETE FROM animalvaccination WHERE Comments = 'This vaccination was created by the CSV Import unit test.'")
-
-
+        base.execute("DELETE FROM species WHERE SpeciesName = 'Unicorn'")
+        base.execute("DELETE FROM jurisdiction WHERE JurisdictionName = 'Atlantis'")
 
         asm3.additional.delete_field(base.get_dbo(), "test", self.aafid)
         asm3.additional.delete_field(base.get_dbo(), "test", self.apfid)
@@ -342,91 +339,107 @@ class TestCSVImport(unittest.TestCase):
     def test_simple_animal_import(self):
         rows = self.minimalanimalcsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
     
     def test_complex_animal_import(self):
         rows = self.complexanimalcsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
+    
+    def test_complex_animal_import_missing_lookups_insert_on(self):
+        rows = self.complexanimalcsvdata
+        rows[0]['ANIMALSPECIES'] = 'Unicorn'
+        csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", True, False, True, False, False, False, True)
+        self.assertEqual(0, len(json.loads(result)['errors']))
+        self.assertEqual(1, json.loads(result)['success'])
+        result = base.query("SELECT ID FROM species WHERE SpeciesName = '%s'" % 'Unicorn')
+        self.assertEqual(1, len(result))
+    
+    def test_complex_animal_import_missing_lookups_insert_off(self):
+        rows = self.complexanimalcsvdata
+        rows[0]['ANIMALSPECIES'] = 'Unicorn'
+        csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
+        self.assertEqual(0, len(json.loads(result)['errors']))
+        self.assertEqual(1, json.loads(result)['success'])
+        result = base.query("SELECT ID FROM species WHERE SpeciesName = '%s'" % 'Unicorn')
+        self.assertEqual(0, len(result))
     
     def test_simple_person_import(self):
         rows = self.minimalpersoncsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
     
     def test_complex_person_import(self):
         rows = self.complexpersoncsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
+    
+    def test_complex_person_import_missing_lookups_insert_on(self):
+        rows = self.complexpersoncsvdata
+        rows[0]['PERSONJURISDICTION'] = 'Atlantis'
+        csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", True, False, True, False, False, False, True)
+        self.assertEqual(0, len(json.loads(result)['errors']))
+        self.assertEqual(1, json.loads(result)['success'])
+        result = base.query("SELECT ID FROM jurisdiction WHERE JurisdictionName = '%s'" % 'Atlantis')
+    
+    def test_complex_person_import_missing_lookups_insert_off(self):
+        rows = self.complexpersoncsvdata
+        rows[0]['PERSONJURISDICTION'] = 'Atlantis'
+        csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
+        self.assertEqual(0, len(json.loads(result)['errors']))
+        self.assertEqual(1, json.loads(result)['success'])
+        result = base.query("SELECT ID FROM jurisdiction WHERE JurisdictionName = '%s'" % 'Atlantis')
     
     def test_simple_incident_import(self):
         rows = self.minimalincidentcsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
     
     def test_complex_incident_import(self):
         rows = self.complexincidentcsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
     
     def test_simple_license_import(self):
         rows = self.minimallicensecsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
     
     def test_complex_license_import(self):
         rows = self.complexlicensecsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
     
     def test_simple_stocklevel_import(self):
         rows = self.minimalstocklevelcsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
     
     def test_complex_stocklevel_import(self):
         rows = self.complexstocklevelcsvdata
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
-        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "", False, False, True, False, False, False, True)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
         self.assertEqual(0, len(json.loads(result)['errors']))
         self.assertEqual(1, json.loads(result)['success'])
-
-    def test_csvimport(self):
-        csvdata = "ANIMALNAME,ANIMALSEX,ANIMALAGE,PERSONNAME,INCIDENTDATE,DIARYDATE,DIARYFOR,DIARYSUBJECT,DIARYNOTE\n" \
-            "\"TestioCSV\",\"Male\",\"2\",\"Sir Bob Hoskins\",\"2001-09-11\",\"2020-01-20\",\"Baldrick\",\"Test diary note from csv import\",\"This note was created as part of the CSV import unit test.\"\n" \
-            "\"\",\"\",\"\",\"Sir Bob Hoskins\",\"\",\"2020-01-20\",\"Nanny\",\"Test diary note from csv import\",\"This note was created as part of the CSV import unit test.\"\n" \
-            "\"\",\"\",\"\",\"Sir Bob Hoskins\",\"2001-09-11\",\"2020-01-20\",\"The Prince\",\"Test diary note from csv import\",\"This note was created as part of the CSV import unit test.\"\n"
-        asm3.csvimport.csvimport(base.get_dbo(), csvdata)
-
-        aid = base.get_dbo().query_int("SELECT ID FROM animal WHERE AnimalName = 'TestioCSV' ORDER BY ID DESC LIMIT 1")
-        pid = base.get_dbo().query_int("SELECT ID FROM owner WHERE OwnerName = 'Sir Bob Hoskins' ORDER BY ID DESC LIMIT 1")
-        
-        f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
-        data = f.read()
-        f.close()
-        post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(data) }, "en")
-        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, aid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
-
-        f = open(base.PATH + "../src/static/images/splash/splash_logo.jpg", "rb")
-        data = f.read()
-        f.close()
-
-        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.PERSON, pid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
