@@ -322,6 +322,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasdiary = False
     hasvoucher = False
     hasstocklevel = False
+    hasstocklevelname = False
+    hasstockleveltotal = False
+    hasstocklevelbalance = False
 
     cols = rows[0].keys()
     for col in cols:
@@ -361,6 +364,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col == "DIARYDATE": hasdiary = True
         if col.startswith("VOUCHER"): hasvoucher = True
         if col.startswith("STOCKLEVEL"): hasstocklevel = True
+        if col.startswith("STOCKLEVELNAME"): hasstocklevelname = True
+        if col.startswith("STOCKLEVELTOTAL"): hasstockleveltotal = True
+        if col.startswith("STOCKLEVELBALANCE"): hasstocklevelbalance = True
 
     rules = [
         ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
@@ -385,8 +391,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         ( hasincident and not hasincidentdate, "Your CSV file has incident fields, but no INCIDENTDATE column" ),
         ( hasincident and not hasperson, "Your CSV file has incident fields, but no person to set as the caller" ),
         ( haslicence and not haslicencenumber, "Your CSV file has license fields, but no LICENSENUMBER column" ),
-        ( haslicence and not (haspersonlastname or haspersonname), "Your CSV file has license fields, but no person to apply the license to" )
-        ## To do - stock level rules??
+        ( haslicence and not (haspersonlastname or haspersonname), "Your CSV file has license fields, but no person to apply the license to" ),
+        ( hasstocklevel and not hasstocklevelname, "Your CSV file has stock level fields, but no STOCKLEVELNAME column" ),
+        ( hasstocklevel and not hasstockleveltotal, "Your CSV file has stock level fields, but no STOCKLEVELTOTAL column" ),
+        ( hasstocklevel and not hasstocklevelbalance, "Your CSV file has stock level fields, but no STOCKLEVELBALANCE column" )
     ]
     for cond, msg in rules:
         if cond:
