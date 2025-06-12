@@ -1635,7 +1635,7 @@ class Report:
 
         # Start the graph off with the HTML header
         self._Append(htmlheader)
-        self._Append('<canvas id="placeholder" style="display: none; width: 100%; height: 500px;"></canvas>')
+        self._Append('<canvas id="placeholder" style="display: none; max-width: 100%; max-height: 80%;"></canvas>')
 
         # Run the graph query, bail out if we have an error
         try:
