@@ -306,6 +306,7 @@ DEFAULTS = {
     "OnlineFormSpamHoneyTrap": "Yes",
     "OnlineFormSpamUACheck": "No",
     "OnlineFormSpamFirstnameMixCase": "Yes",
+    "OnlineFormSpamMandatory": "No",
     "OnlineFormSpamPostcode": "No",
     "OnlineFormDeleteOnProcess": "No",
     "Organisation": "Organisation",
@@ -1314,6 +1315,9 @@ def onlineform_spam_ua_check(dbo: Database) -> bool:
 
 def onlineform_spam_firstname_mixcase(dbo: Database) -> bool:
     return cboolean(dbo, "OnlineFormSpamFirstnameMixCase", DEFAULTS["OnlineFormSpamFirstnameMixCase"] == "Yes")
+
+def onlineform_spam_mandatory(dbo: Database) -> bool:
+    return cboolean(dbo, "OnlineFormSpamMandatory", DEFAULTS["OnlineFormSpamMandatory"] == "Yes")
 
 def onlineform_spam_postcode(dbo: Database) -> bool:
     return cboolean(dbo, "OnlineFormSpamPostcode", DEFAULTS["OnlineFormSpamPostcode"] == "Yes")

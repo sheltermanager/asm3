@@ -95,6 +95,9 @@ SPAMBOT_TXT = 'a_emailaddress'
 # Fields that are added to forms by the system and are not user enterable
 SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
 
+# Hidden fields that are sent with forms, but are not part of the form data
+IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method" ]
+
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
 FORM_FIELDS = [
@@ -870,9 +873,29 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             asm3.al.error(f"identified spam (non-numeric postcode/zipcode={postcode}): {post.data}", "insert_onlineformincoming_from_form", dbo)
             spam = True
 
+    # Make sure that mandatory fields have values
+    if asm3.configuration.onlineform_spam_mandatory(dbo):
+        for k, v in post.data.items():
+            if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
+                label = ""
+                displayindex = 0
+                fieldname = k
+                fieldtype = FIELDTYPE_TEXT
+                tooltip = ""
+                # We're only interested in fields that have definitions in onlineformfield
+                if k.find("_") != -1:
+                    fid = asm3.utils.cint(k[k.rfind("_")+1:])
+                    fieldname = k[0:k.rfind("_")]
+                    v = v.strip() 
+                    # Only bother checking where the field value is blank
+                    if fid != 0 and v == "":
+                        fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
+                        if fld is not None and fld.MANDATORY == 1:
+                            asm3.al.error("identified spam (empty value found in mandatory field '{fieldname}')", "insert_onlineformincoming_from_form", dbo)
+                            spam = True
+
     collationid = get_collationid(dbo)
 
-    IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
     formname = post["formname"]
     posteddate = dbo.now()
@@ -908,12 +931,17 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                 fieldname = k[0:k.rfind("_")]
                 v = v.strip() # no reason for whitespace, can't see it in preview and in address fields it makes a mess
                 if fid != 0:
-                    fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = ?", [fid]))
+                    fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
                     if fld is not None:
                         label = fld.LABEL
                         displayindex = fld.DISPLAYINDEX
                         fieldtype = fld.FIELDTYPE
                         tooltip = fld.TOOLTIP
+                        mandatory = fld.MANDATORY
+                        # If the option is on and a blank has been fed to a mandatory field, flag as spam
+                        if asm3.configuration.onlineform_spam_mandatory(dbo) and mandatory == 1 and v == "":
+                            asm3.al.error("identified spam (empty value found in mandatory field '{fieldname}')", "insert_onlineformincoming_from_form", dbo)
+                            post.data["spam"] = "1"
                         # Store a few known fields for access later
                         if fieldname == "address":
                             address = v

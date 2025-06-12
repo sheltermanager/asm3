@@ -806,6 +806,7 @@ $(function() {
                         { id: "spamhoneytrap", post_field: "OnlineFormSpamHoneyTrap", label: _("Spambot protection: Invisible textbox"), type: "check", fullrow: true }, 
                         { id: "spamuacheck", post_field: "OnlineFormSpamUACheck", label: _("Spambot protection: UserAgent check"), type: "check", fullrow: true }, 
                         { id: "spamfirstname", post_field: "OnlineFormSpamFirstnameMixCase", label: _("Spambot protection: Person name mixed case"), type: "check", fullrow: true }, 
+                        { id: "spammandatory", post_field: "OnlineFormSpamMandatory", label: _("Spambot protection: Mandatory fields are blank"), type: "check", fullrow: true }, 
                         { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
