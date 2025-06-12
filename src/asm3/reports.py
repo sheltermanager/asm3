@@ -1614,6 +1614,17 @@ class Report:
         return (rs, cols)
     
     def _GenerateGraph(self) -> str:
+        """
+        Does the work of generating a graph. Graph queries have to return rows that
+        have two or three columns and obey either of the following patterns:
+        ( X_AXIS_LABEL, VALUE ) - assumed for two columns
+        ( SERIES_LABEL, X_AXIS_VALUE, Y_AXIS_VALUE ) - assumed for three columns, all items with the
+                                                same series label will be plotted on a separate line
+                                                and both VALUE columns must be numbers
+        The html can be just the word GRAPH for a bar chart
+        alternatively, a type can be specified as well:
+        GRAPH [ LINES | BARS | POINTS | STEPS ]
+        """
         l = self.dbo.locale
 
         htmlheader = self._ReadHeader()
