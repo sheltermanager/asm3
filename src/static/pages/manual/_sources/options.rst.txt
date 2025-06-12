@@ -985,6 +985,11 @@ the preview column and deleted in one click using the "Delete Spam" button.
   useragent string they use to identify themselves. This option will mark the form
   as spam if we don't recognise the submission as coming from a browser.
 
+* Spambot protection: Mandatory fields are blank: The online form will validate
+  that mandatory fields are not blank on the client, however bots will quite
+  happily post forms with blanks in mandatory fields. This option flags any 
+  forms that contain blanks in mandatory fields as spam.
+
 * Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
   and lower case letters in the applicants name fields and marks these as spam.
 
