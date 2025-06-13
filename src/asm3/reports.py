@@ -1633,9 +1633,27 @@ class Report:
         # Inject the script tags needed into the header
         htmlheader = htmlheader.replace("</head>", asm3.html.graph_js(l) + "\n</head>")
 
+        # Check for plot type
+        mode = "bar"
+        step = ""
+        chartcss = "max-width: 1024px;max-height: 600px;"
+        if self.html.find("LINES") != -1:
+            mode = "line"
+        elif self.html.find("BARS") != -1:
+            mode = "bar"
+        elif self.html.find("POINTS") != -1:
+            mode = "line"
+        elif self.html.find("STEPS") != -1:
+            mode = "line"
+            step = "Chart.defaults.elements.line.stepped = true;\n"
+        elif self.html.find("PIE") != -1:
+            mode = "pie"
+            chartcss = "max-width: 800px;max-height: 800px;"
         # Start the graph off with the HTML header
         self._Append(htmlheader)
-        self._Append('<canvas id="placeholder" style="display: none; max-width: 100%; max-height: 80%;"></canvas>')
+        #canvashtml = '<canvas class="chartplaceholder" style="display: none; max-width: 100%;' + chartcss + '"></canvas>'
+        canvashtml = '<canvas class="chartplaceholder" style="display: none;%s"></canvas>' % chartcss
+        self._Append(canvashtml)
 
         # Run the graph query, bail out if we have an error
         try:
@@ -1658,23 +1676,10 @@ class Report:
         self._Append("""
         <script type="text/javascript">
         $(function() {
-            $("#placeholder").show();
+            $(".chartplaceholder").show();
         """)
 
-        # Check for plot type
-        mode = "bar"
-        step = ""
-        if self.html.find("LINES") != -1:
-            mode = "line"
-        elif self.html.find("BARS") != -1:
-            mode = "bar"
-        elif self.html.find("POINTS") != -1:
-            mode = "line"
-        elif self.html.find("STEPS") != -1:
-            mode = "line"
-            step = "Chart.defaults.elements.line.stepped = true;\n"
-        elif self.html.find("PIE") != -1:
-            mode = "pie"
+        
 
         labels = []
         datasets = []
@@ -1725,8 +1730,7 @@ class Report:
         self._Append(
         "\n".join([
             step,
-            "let ctx = document.getElementById('placeholder');\n",
-            "new Chart(ctx, %s);" % asm3.utils.json(chartdata ,True)
+            "$.each($('.chartplaceholder'), function(i, ctx) {new Chart(ctx, %s);});\n" % asm3.utils.json(chartdata ,True)
             ])
         )
         self._Append("""
