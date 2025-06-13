@@ -1651,7 +1651,6 @@ class Report:
             chartcss = "max-width: 800px;max-height: 800px;"
         # Start the graph off with the HTML header
         self._Append(htmlheader)
-        #canvashtml = '<canvas class="chartplaceholder" style="display: none; max-width: 100%;' + chartcss + '"></canvas>'
         canvashtml = '<canvas class="chartplaceholder" style="display: none;%s"></canvas>' % chartcss
         self._Append(canvashtml)
 
