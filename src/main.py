@@ -1037,6 +1037,7 @@ class mobile(ASMEndpoint):
         c = {
             "animals":      animals,
             "reports":      asm3.reports.get_available_reports(dbo),
+            "internalforms": asm3.onlineform.get_internal_forms(dbo),
             "vaccinations": asm3.medical.get_vaccinations_outstanding(dbo, "m31", o.lf),
             "tests":        asm3.medical.get_tests_outstanding(dbo, "m31", o.lf),
             "medicals":     asm3.medical.get_treatments_outstanding(dbo, "m31", o.lf),
