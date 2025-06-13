@@ -821,6 +821,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     """
     # Do some spam/junk tests, we need to extract some values from the form first
     spam = False
+    spamreason = ""
     firstname = ""
     lastname = ""
     postcode = ""
@@ -831,15 +832,15 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
 
     # Check our spambot checkbox/honey trap
     if asm3.configuration.onlineform_spam_honeytrap(dbo):
-        if post[SPAMBOT_TXT] != "": 
-            asm3.al.error(f"identified spam (honeytrap: {SPAMBOT_TXT}={post[SPAMBOT_TXT]}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+        if post[SPAMBOT_TXT] != "":
+            spamreason = f"honeytrap: {SPAMBOT_TXT}={post[SPAMBOT_TXT]}"
             spam = True
 
     # Check that the useragent looks like an actual browser
     # had a few bots that identified as python-requests, etc.
     if asm3.configuration.onlineform_spam_ua_check(dbo):
         if not useragent.strip().startswith("Mozilla"):
-            asm3.al.error(f"identified spam (bad ua: {useragent}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            spamreason = f"bad ua: {useragent}"
             spam = True
 
     # Check for junk in the name fields.
@@ -861,16 +862,16 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # There should never realistically be more than 4 upper case chars in a combined name
         # and there should never be more upper case than lower case
         if (uc > lc and sp == 0) or (lc >= 4 and uc >= 4 and sp == 0):
-            asm3.al.error(f"identified spam (mixed caps, firstname={firstname}, lastname={lastname}, uc={uc}, lc={lc}, sp={sp}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            spamreason = f"mixed caps, firstname={firstname}, lastname={lastname}, uc={uc}, lc={lc}, sp={sp}"
             spam = True
         if firstname.find("@") != -1 and firstname.find(".") != -1:
-            asm3.al.error(f"identified spam (email in firstname, firstname={firstname}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            spamreason = f"email in firstname, firstname={firstname}"
             spam = True
 
     # Make sure that the postcode/zipcode actually contains some numbers
     if asm3.configuration.onlineform_spam_postcode(dbo) and postcode != "":
         if asm3.utils.atoi(postcode) == 0:
-            asm3.al.error(f"identified spam (non-numeric postcode/zipcode={postcode}): {post.data}", "insert_onlineformincoming_from_form", dbo)
+            spamreason = f"identified spam (non-numeric postcode/zipcode={postcode}): {post.data}"
             spam = True
 
     # Make sure that mandatory fields have values
@@ -891,7 +892,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     if fid != 0 and v == "":
                         fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
                         if fld is not None and fld.MANDATORY == 1:
-                            asm3.al.error(f"identified spam (empty value found in mandatory field '{fieldname}'): {post.data}", "insert_onlineformincoming_from_form", dbo)
+                            spamreason = f"empty value found in mandatory field '{fieldname}'"
                             spam = True
                             break
 
@@ -914,7 +915,9 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
     post.data["ipaddress"] = remoteip
     post.data["useragent"] = useragent
-    if spam: post.data["spam"] = "1"
+    if spam: 
+        post.data["spam"] = f"YES: {spamreason}"
+        asm3.al.error(f"spam detected ({spamreason}): {post.data}", "insert_onlineformincoming_from_form", dbo)
 
     for k, v in post.data.items():
 
