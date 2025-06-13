@@ -855,6 +855,7 @@ class Report:
         if len(rs) == 0: return False
 
         r = rs[0]
+        self.reportId = reportId
         self.title = r.TITLE
         self.category = r.CATEGORY
         self.html = r.HTMLBODY
@@ -1651,7 +1652,7 @@ class Report:
             chartcss = "max-width: 800px;max-height: 800px;"
         # Start the graph off with the HTML header
         self._Append(htmlheader)
-        canvashtml = '<canvas class="chartplaceholder" style="display: none;%s"></canvas>' % chartcss
+        canvashtml = '<canvas id="chart%s" class="chartplaceholder" style="display: none;%s"></canvas>' % (self.reportId, chartcss)
         self._Append(canvashtml)
 
         # Run the graph query, bail out if we have an error
@@ -1729,11 +1730,11 @@ class Report:
         self._Append(
         "\n".join([
             step,
-            "$.each($('.chartplaceholder'), function(i, ctx) {new Chart(ctx, %s);});\n" % asm3.utils.json(chartdata ,True)
+            "let ctx = $('#chart%s');" % self.reportId,
+            "new Chart(ctx, %s);});\n" % asm3.utils.json(chartdata ,True)
             ])
         )
         self._Append("""
-        });
         </script>""")
         self._Append(htmlfooter)
 
