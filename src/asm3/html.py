@@ -377,17 +377,17 @@ def graph_js(l: str) -> str:
     """
     return """
         %(jquery)s
-        %(chart)s
         %(jqueryui)s
         %(jqueryuicss)s
+        %(chartjs)s
         %(i18n)s
         %(asmcss)s
     """ % { "asmcss": asm_css_tag("asm.css"),
             "jquery": script_tag(JQUERY_JS),
-            "chart": script_tag(CHART_JS),
             "i18n": script_i18n(l),
             "jqueryui": script_tag(JQUERY_UI_JS),
-            "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" })
+            "chartjs": script_tag(CHART_JS),
+            "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" }),
           }
 
 def map_js() -> str:
@@ -414,12 +414,14 @@ def report_js(l: str) -> str:
         %(jqueryuicss)s
         %(jquery)s
         %(jqueryui)s
+        %(chartjs)s
         %(i18n)s
         %(asmcss)s
         %(report_toolbar)s
     """ % { "asmcss": asm_css_tag("asm.css"),
             "jquery": script_tag(JQUERY_JS),
             "jqueryui": script_tag(JQUERY_UI_JS),
+            "chartjs": script_tag(CHART_JS),
             "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" }),
             "i18n": script_i18n(l),
             "report_toolbar": asm_script_tag("report_toolbar.js") }
