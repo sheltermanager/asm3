@@ -1701,8 +1701,6 @@ class Report:
                 if row[1] not in labels:
                     labels.append(row[1])
             for ds in data.items():
-                if mode == 'line':
-                    dataset["showLine"] = False
                 dsdata = []
                 for label in labels:
                     dpvalue = 0
@@ -1714,6 +1712,8 @@ class Report:
                     'label': ds[0],
                     'data': dsdata
                 }
+                if mode == 'line':
+                    dataset["showLine"] = False
                 datasets.append(dataset)
         chartdata = {}
         chartdata['type'] = mode
