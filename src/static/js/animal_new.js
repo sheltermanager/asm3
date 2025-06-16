@@ -225,8 +225,6 @@ $(function() {
                 $("#broughtinby").personchooser("set_filter", "all");
             }
 
-            $("#species").change();
-    
         },
 
         /* Update the breed selects to only show the breeds for the selected species.
@@ -324,6 +322,7 @@ $(function() {
             $("#animaltype").select("value", config.str("AFDefaultType"));
             animal_new.set_nonsheltertype_once = false;
             $("#species").select("value", config.str("AFDefaultSpecies"));
+            $("#species").change();
             animal_new.update_breed_select();
             $("#breed1, #breed2").select("value", config.str("AFDefaultBreed"));
             $("#basecolour").select("value", config.str("AFDefaultColour"));

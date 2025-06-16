@@ -1408,6 +1408,7 @@ $(function() {
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.animal);
 
             // Update the breeds to match the species we just loaded and reload the breed values
+            $("#species").change();
             animal.update_breed_list();
             $("#breed1, #breed2").fromJSON(controller.animal);
 
@@ -1426,8 +1427,6 @@ $(function() {
 
             // Share button/links
             animal.set_sharinglinks();
-
-            $("#species").change();
 
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
