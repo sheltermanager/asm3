@@ -583,7 +583,7 @@ $(function() {
             $("#species").change(function() {
                 let speciesid = $("#species").val();
                 $.each($(".additional"), function(i, af) {
-                    if ($(af).attr("data-speciesids").split(",").includes(speciesid)) {
+                    if (!$(af).attr("data-speciesids") || $(af).attr("data-speciesids").split(",").includes(speciesid)) {
                         $(af).closest("tr").show();
                     }
                     else {
