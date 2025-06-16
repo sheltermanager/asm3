@@ -51,7 +51,8 @@ $(function() {
                 width: 850,
                 fields: [
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
-                    { json_field: "INTERNALUSE", post_field: "internaluse", label: _("Internal use"), type: "check" },
+                    { json_field: "INTERNALUSE", post_field: "internaluse", label: _("Internal use"), type: "check",
+                        callout: _("This form is for shelter staff and volunteers to complete") },
                     { json_field: "REDIRECTURLAFTERPOST", post_field: "redirect", label: _("Redirect to URL after POST"), 
                         type: "text", classes: "asm-doubletextbox", 
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
