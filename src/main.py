@@ -3764,11 +3764,23 @@ class donation(JSONEndpoint):
             return (asm3.utils.json({"url": url}))
         except Exception as e:
             return (asm3.utils.json({"error": str(e)}))
+    
+    def post_paymenturl(self, o):
+        dbo = o.dbo
+        post = o.post
+        params = { 
+            "account": dbo.name(), 
+            "method": "checkout",
+            "processor": post["processor"],
+            "payref": post["payref"],
+            "title": post["subject"] 
+        }
+        url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
+        return url
 
     def post_emailrequest(self, o):
         self.check(asm3.users.EMAIL_PERSON)
         dbo = o.dbo
-        l = o.locale
         post = o.post
         emailadd = post["to"]
         body = post["body"]
@@ -3779,8 +3791,6 @@ class donation(JSONEndpoint):
             "payref": post["payref"],
             "title": post["subject"] 
         }
-        url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
-        body = asm3.utils.replace_url_token(body, url, _("Click here to pay", l))
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], body)
