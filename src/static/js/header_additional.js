@@ -514,7 +514,7 @@ additional = {
             value: usedefault ? f.DEFAULTVALUE : f.VALUE,
             xlabel: f.MANDATORY ? '&nbsp;<span class="asm-has-validation">*</span>' : "",
             callout: (includeids == undefined || includeids == true) ? f.TOOLTIP : "", // callouts can't work without an id
-            xattr: 'data-linktype="' + f.LINKTYPE + '" data-id="' + f.ID + '"'
+            xattr: 'data-linktype="' + f.LINKTYPE + '" data-id="' + f.ID + '" data-speciesids="' + f.SPECIESIDS + '"'
         };
         if (f.FIELDTYPE == additional.YESNO) { return tableform.render_check(v); }
         else if (f.FIELDTYPE == additional.TEXT) { return tableform.render_text(v); }
@@ -599,7 +599,9 @@ additional = {
                 var d = String(t.attr("data-post"));
                 // mandatory additional fields have a post attribute prefixed with a.1
                 if (d.indexOf("a.1") != -1) {
-                    if (common.trim(t.val()) == "") {
+                    if ($("#species").val() && !t.attr("data-speciesids").split(",").includes($("#species").val()) ) {
+                    }
+                    else if (common.trim(t.val()) == "") {
                         header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
                         // Find the index of the accordion section this element is in and activate it
                         $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));

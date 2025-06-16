@@ -1803,7 +1803,8 @@ class additional(JSONEndpoint):
         return {
             "rows": fields,
             "fieldtypes": asm3.lookups.get_additionalfield_types(dbo),
-            "linktypes": asm3.lookups.get_additionalfield_links(dbo)
+            "linktypes": asm3.lookups.get_additionalfield_links(dbo),
+            "species": asm3.lookups.get_species(dbo)
         }
 
     def post_create(self, o):

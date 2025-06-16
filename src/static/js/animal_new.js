@@ -224,6 +224,8 @@ $(function() {
                 $("label[for='broughtinby']").html(_("Brought In By")); 
                 $("#broughtinby").personchooser("set_filter", "all");
             }
+
+            $("#species").change();
     
         },
 
@@ -576,6 +578,18 @@ $(function() {
                 let formdata = "mode=randomname&sex=" + $("#sex").val();
                 const response = await common.ajax_post("animal", formdata);
                 $("#animalname").val(response); 
+            });
+
+            $("#species").change(function() {
+                let speciesid = $("#species").val();
+                $.each($(".additional"), function(i, af) {
+                    if ($(af).attr("data-speciesids").split(",").includes(speciesid)) {
+                        $(af).closest("tr").show();
+                    }
+                    else {
+                        $(af).closest("tr").hide();
+                    }
+                });
             });
 
         },
