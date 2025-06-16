@@ -21,6 +21,8 @@ $(function() {
                         callout: _("Animal records in the file will have a prefix added to their ANIMALCODE column to prevent clashes with existing animals in your database.") },
                     { name: "entrytoday", type: "check", label: _("Set entry date to today"), 
                         callout: _("Animal records in the file will have their ANIMALENTRYDATE overridden to today. Useful if the animals are being transferred into your shelter.") },
+                    { name: "dryrun", type: "check", label: _("Dry run"), 
+                        callout: _("CSV data will be validated and checked for any problems, but no changes will be made to the database.") },
                     { name: "encoding", type: "select", label: _("Text Encoding"), 
                         options: '<option value="utf-8-sig" selected="selected">UTF-8</option>' +
                             '<option value="utf16">UTF-16</option>' +
@@ -36,6 +38,13 @@ $(function() {
         },
 
         bind: function() {
+            $("#dryrun").change(function() {
+                $("#cleartablesrow").toggle();
+                $("#createmissinglookupsrow").toggle();
+                $("#prefixanimalcodesrow").toggle();
+                $("#entrytodayrow").toggle();
+            });
+
             $("#button-import").button().click(function() {
                 if (!$("#filechooser").val()) { validate.highlight("filechooser"); return; }
                 $("#button-import").button("disable");
