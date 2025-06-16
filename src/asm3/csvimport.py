@@ -1059,6 +1059,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
             m = {}
             m["animal"] = str(animalid)
+            m["medicaltype"] = gkl(dbo, row, "MEDICALTYPE", "lksmedicaltype", "MedicalTypeName", createmissinglookups)
             m["treatmentname"] = gks(row, "MEDICALNAME")
             m["dosage"] = gks(row, "MEDICALDOSAGE")
             m["startdate"] = gkd(dbo, row, "MEDICALGIVENDATE")
@@ -1525,7 +1526,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS",
         "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
         "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
-        "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS" ]
+        "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS", "MEDICALTYPE" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1703,18 +1704,19 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))
 
-        for m in asm3.medical.get_regimens(dbo, a["ID"]):
+        for m in asm3.medical.get_regimens(dbo, a["ID"], True):
             row = {}
             row["MEDICALNAME"] = m["TREATMENTNAME"]
             row["MEDICALDOSAGE"] = m["DOSAGE"]
             row["MEDICALGIVENDATE"] = asm3.i18n.python2display(l, m["STARTDATE"])
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
+            row["MEDICALTYPE"] = m["MEDICALTYPENAME"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))
 
         for c in asm3.animal.get_costs(dbo, a["ID"]):
-            row = {}
+            row = {} 
             row["COSTDATE"] = asm3.i18n.python2display(l, c["COSTDATE"])
             row["COSTTYPE"] = c["COSTTYPENAME"]
             row["COSTAMOUNT"] = asm3.utils.cint(c["COSTAMOUNT"]) / 100.0

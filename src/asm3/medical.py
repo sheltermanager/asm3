@@ -319,8 +319,9 @@ def get_regimens(dbo: Database, animalid: int, onlycomplete: bool = False, onlya
     Returns a recordset of medical regimens for an animal:
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS,
     NAMEDSTATUS, DOSAGE, STARTDATE, TREATMENTSGIVEN, TREATMENTSREMAINING,
-    TIMINGRULE, TIMINGRULEFREQUENCY, TIMINGRULENOFREQUENCIES, TREATMENTRULE
-    TOTALNUMBEROFTREATMENTS, NEXTTREATMENTDUE, LASTTREATMENTGIVEN
+    TIMINGRULE, TIMINGRULEFREQUENCY, TIMINGRULENOFREQUENCIES, TREATMENTRULE,
+    TOTALNUMBEROFTREATMENTS, NEXTTREATMENTDUE, LASTTREATMENTGIVEN, LASTTREATMENTCOMMENTS,
+    LASTTREATMENTVETNAME
     """
     l = dbo.locale
     sc = ""
@@ -336,9 +337,12 @@ def get_regimens(dbo: Database, animalid: int, onlycomplete: bool = False, onlya
         f"ORDER BY amt.DateGiven DESC {limit1}) AS LastTreatmentGiven, " \
         "(SELECT amt.Comments FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
         f"ORDER BY amt.DateGiven DESC {limit1}) AS LastTreatmentComments, " \
-        "(SELECT adv.OwnerName FROM animalmedicaltreatment amt INNER JOIN owner adv ON adv.ID=amt.AdministeringVetID " \
+        "(SELECT adv.OwnerName FROM animalmedicaltreatment amt INNER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
         "WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
-        f"ORDER BY amt.DateGiven DESC {limit1}) AS LastTreatmentVetName " \
+        f"ORDER BY amt.DateGiven DESC {limit1}) AS LastTreatmentVetName, " \
+        "(SELECT mt.MedicalTypeName FROM animalmedicaltreatment amt " \
+        "INNER JOIN lksmedicaltype mt ON am.MedicalTypeID = mt.ID WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null  " \
+        f"ORDER BY amt.DateRequired DESC {limit1}) AS MedicalTypeName " \
         f"FROM animalmedical am WHERE am.AnimalID = {animalid} {sc} "
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY am.StartDate"
