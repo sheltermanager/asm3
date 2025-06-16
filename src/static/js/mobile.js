@@ -1,5 +1,5 @@
 /*global $, jQuery, controller */
-/*global common, config, format, html */
+/*global asm, common, config, format, html */
 /*global _, mobile_ui_addanimal, mobile_ui_animal, mobile_ui_incident, mobile_ui_person, mobile_ui_stock */
 
 "use strict";
@@ -39,6 +39,17 @@ const mobile = {
                 mobile.show_error(textstatus, response);
             }
         });
+    },
+
+    render_online_forms: function() {
+        let fitems = "";
+        $.each(controller.internalforms, function(i, form) {
+            let furl = asm.serviceurl + "?";
+            if (asm.useraccountalias) { furl += "account=" + asm.useraccountalias + "&"; }
+            furl += "method=online_form_html&formid=" + form.ID;
+            fitems += '<a class="dropdown-item" data-perm="vof" href="' + furl + '" target="_blank">' + form.NAME + '</a>';
+        });
+        return fitems;
     },
 
     render: function() {
@@ -440,6 +451,13 @@ const mobile = {
                                 _("Stock Take"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.stocklocations.length + '</span>',
                             '</a>',
+                        '</div>',
+                    '</li>',
+                    '<li class="nav-item dropdown">',
+                        '<a class="nav-link dropdown-toggle" href="#" id="dropdown-onlineforms" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
+                        _("Online Forms") + '</a>',
+                        '<div class="dropdown-menu shadow-sm" aria-labelledby="dropdown-onlineforms">',
+                            mobile.render_online_forms(),
                         '</div>',
                     '</li>',
                     '<li class="nav-item dropdown">',

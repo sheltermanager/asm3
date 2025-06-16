@@ -51,6 +51,7 @@ $(function() {
                 width: 850,
                 fields: [
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "INTERNALUSE", post_field: "internaluse", label: _("Internal use"), type: "check" },
                     { json_field: "REDIRECTURLAFTERPOST", post_field: "redirect", label: _("Redirect to URL after POST"), 
                         type: "text", classes: "asm-doubletextbox", 
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
@@ -147,6 +148,11 @@ $(function() {
                                 '">' + _("View the form in development mode without caching") + '</button>' +
                                 '</span>';
                         }},
+                    { field: "INTERNALUSE", display: _("Internal use"),
+                        formatter: function(row) {
+                            return row.INTERNALUSE ? _("Yes") : _("No");
+                        }
+                    },
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
                     { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {
                         return common.replace_all(row.EMAILADDRESS, ",", "<br/>");
