@@ -24,8 +24,7 @@ $(function() {
                         options: { displayfield: "LINKTYPE", valuefield: "ID", rows: controller.linktypes }},
                     { json_field: "SPECIESIDS", post_field: "speciesids", label: _("Species"), type: "selectmulti",
                         options: { displayfield: "SPECIESNAME", valuefield: "ID", rows: controller.species },
-                        callout: _("Only show for included species. Leave blank for all species.")
-                    },
+                        callout: _("Only show this field for the selected species. Leave blank to show for all species.") },
                     { json_field: "NEWRECORD", post_field: "newrecord", label: _("Show on new record screens"), type: "check" },
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
                     { json_field: "SEARCHABLE", post_field: "searchable", label: _("Searchable"), type: "check" },

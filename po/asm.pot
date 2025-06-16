@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-06-16 09:56+0000\n"
+"POT-Creation-Date: 2025-06-16 10:00+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -10119,10 +10119,6 @@ msgstr ""
 msgid "Only show declawed"
 msgstr ""
 
-#: additional.js
-msgid "Only show for included species. Leave blank for all species."
-msgstr ""
-
 #: animal_find.js
 msgid "Only show pickups"
 msgstr ""
@@ -10133,6 +10129,12 @@ msgstr ""
 
 #: onlineform.js
 msgid "Only show this field based on a conditional expression, eg: field1=dog"
+msgstr ""
+
+#: additional.js
+msgid ""
+"Only show this field for the selected species. Leave blank to show for all "
+"species."
 msgstr ""
 
 #: animal_find.js
