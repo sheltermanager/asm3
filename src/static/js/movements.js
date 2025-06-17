@@ -566,7 +566,7 @@ $(function() {
                             config.integer("AdoptionCheckoutPaymentMethod") == 0 ||
                             config.integer("AdoptionCheckoutTemplateID") == 0;
                     },
-                    click: function() {
+                    click: async function() {
                         let row = tableform.table_selected_row(table);
                         if (row.MOVEMENTTYPE > 1) { 
                             header.show_error(_("Adopter checkout only applies to reservation and adoption movements."));
@@ -576,6 +576,7 @@ $(function() {
                             header.show_error(_("No adoption fee has been set for this animal."));
                             return;
                         }
+                        let paymentlink = await common.ajax_post("movement", "mode=checkouturl&id=" + row.ID + "&animalid=" + row.ANIMALID + "&personid=" + row.OWNERID)
                         $("#emailform").emailform("show", {
                             title: _("Email link to adopter checkout"),
                             post: "movement",
@@ -587,7 +588,7 @@ $(function() {
                             personid: row.OWNERID,
                             templates: controller.templatesemail,
                             logtypes: controller.logtypes,
-                            message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.")
+                            message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.") + "<br><br><a href='" + paymentlink + "' target='_blank'>"  + paymentlink + "</a>"
                         });
                     }
                 }

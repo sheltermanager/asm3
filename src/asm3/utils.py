@@ -1228,6 +1228,15 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
             asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
     return s
 
+def fix_tinymce_uris(dbo: Database, s: str) -> str:
+    o = ""
+    for chunk in s.split("<"):
+        if chunk != '':
+            snippet = chunk.split(">")[0]
+            snippet = snippet.replace('&amp;', '&')
+            o += "<" + snippet + ">" + chunk.split(">")[1]
+    return o
+
 def generator2str(fn: Callable, *args: Any) -> str:
     """ Iterates a generator function, passing args and returning the output as a buffer """
     out = stringio()

@@ -3783,14 +3783,7 @@ class donation(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         emailadd = post["to"]
-        body = post["body"]
-        params = { 
-            "account": dbo.name(), 
-            "method": "checkout",
-            "processor": post["processor"],
-            "payref": post["payref"],
-            "title": post["subject"] 
-        }
+        body = asm3.utils.fix_tinymce_uris(dbo, post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], body)
@@ -5710,6 +5703,12 @@ class movement(JSONEndpoint):
         self.check(asm3.users.CHANGE_MOVEMENT)
         for mid in o.post.integer_list("ids"):
             asm3.movement.trial_to_full_adoption(o.dbo, o.user, mid)
+    
+    def post_checkouturl(self, o):
+        aid = o.post.integer("animalid")
+        pid = o.post.integer("personid")
+        key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
+        return "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, o.dbo.name(), key)
 
     def post_checkout(self, o):
         asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post)
