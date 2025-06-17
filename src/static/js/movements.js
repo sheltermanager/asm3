@@ -576,7 +576,7 @@ $(function() {
                             header.show_error(_("No adoption fee has been set for this animal."));
                             return;
                         }
-                        let paymentlink = await common.ajax_post("movement", "mode=checkouturl&id=" + row.ID + "&animalid=" + row.ANIMALID + "&personid=" + row.OWNERID)
+                        let paymentlink = await common.ajax_post("movement", "mode=checkouturl&id=" + row.ID + "&animalid=" + row.ANIMALID + "&personid=" + row.OWNERID);
                         $("#emailform").emailform("show", {
                             title: _("Email link to adopter checkout"),
                             post: "movement",

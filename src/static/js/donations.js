@@ -554,7 +554,7 @@ $(function() {
                 header.hide_error();
                 if (!row) { return; }
                 if (row.DATE) { header.show_error(_("This payment has already been received")); return; }
-                let paymentlink = await common.ajax_post("donation", "mode=paymenturl&processor=" + processor_name + "&person=" + row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER + "&subject=" + row.DONATIONNAME)
+                let paymentlink = await common.ajax_post("donation", "mode=paymenturl&processor=" + processor_name + "&person=" + row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER + "&subject=" + row.DONATIONNAME);
                 $("#emailform").emailform("show", {
                     title: _("Email request for payment"),
                     post: "donation",
