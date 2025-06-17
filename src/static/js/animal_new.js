@@ -580,15 +580,7 @@ $(function() {
             });
 
             $("#species").change(function() {
-                let speciesid = $("#species").val();
-                $.each($(".additional"), function(i, af) {
-                    if (!$(af).attr("data-speciesids") || $(af).attr("data-speciesids").split(",").includes(speciesid)) {
-                        $(af).closest("tr").show();
-                    }
-                    else {
-                        $(af).closest("tr").hide();
-                    }
-                });
+                additional.toggle_elements_by_species("additional", $("#species").val());
             });
 
         },

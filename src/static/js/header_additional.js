@@ -233,15 +233,32 @@ additional = {
     },
 
     /**
+     * 
+     * Toggles the visibility of elements by their species
+     * classname: The additional field class to identify additional fields with typically "additional"
+     */
+    toggle_elements_by_species: function(classname, speciesid) {
+        let elements = $('.' + classname);
+        elements.each(function() {
+            let show = true;
+            if ($(this).attr("data-hidden") == "1") { show = false; }
+            else if (!$(this).attr("data-speciesids")) { show = true; }
+            else if (!common.array_in(speciesid, $(this).attr("data-speciesids").split(","))) { show = false; }
+            $(this).closest(".asm-formfield").toggle(show);
+        });
+    },
+
+    /**
      * Toggles visibility of elements by their linktype data attribute
+     * classname: The additional field class to identify additional fields with typically "additional"
      **/
     toggle_elements_by_linktype: function(classname, linktype) {
-        var elements = $('.' + classname);
+        let elements = $('.' + classname);
         elements.each(function() {
-            if ($(this).data('linktype') === linktype) {
-                $(this).closest('tr').show();
+            if ($(this).data("linktype") === linktype) {
+                $(this).closest(".asm-formfield").show();
             } else {
-                $(this).closest('tr').hide();
+                $(this).closest(".asm-formfield").hide();
             }
         });        
     },
@@ -514,7 +531,10 @@ additional = {
             value: usedefault ? f.DEFAULTVALUE : f.VALUE,
             xlabel: f.MANDATORY ? '&nbsp;<span class="asm-has-validation">*</span>' : "",
             callout: (includeids == undefined || includeids == true) ? f.TOOLTIP : "", // callouts can't work without an id
-            xattr: 'data-linktype="' + f.LINKTYPE + '" data-id="' + f.ID + '" data-speciesids="' + f.SPECIESIDS + '"'
+            xattr: 'data-linktype="' + f.LINKTYPE + '" ' +
+                'data-id="' + f.ID + '" ' +
+                'data-speciesids="' + f.SPECIESIDS + '" ' +
+                'data-hidden="' + f.HIDDEN + '" '
         };
         if (f.FIELDTYPE == additional.YESNO) { return tableform.render_check(v); }
         else if (f.FIELDTYPE == additional.TEXT) { return tableform.render_text(v); }
@@ -597,19 +617,22 @@ additional = {
             // ignore checkboxes
             if (t.attr("type") != "checkbox") {
                 var d = String(t.attr("data-post"));
-                // mandatory additional fields have a post attribute prefixed with a.1
-                if (d.indexOf("a.1") != -1) {
-                    if ($("#species").val() && !t.attr("data-speciesids").split(",").includes($("#species").val()) ) {
-                    }
-                    else if (common.trim(t.val()) == "") {
-                        header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
-                        // Find the index of the accordion section this element is in and activate it
-                        $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
-                        label.addClass(validate.ERROR_LABEL_CLASS);
-                        t.focus();
-                        valid = false;
-                        return false;
-                    }
+                // mandatory fields have a prefix of a.1 in their post attribute - skip those without
+                if (d.indexOf("a.1") == -1) { return; }
+                // skip checking fields that have been hidden
+                if (t.attr("data-hidden") == "1") { return; }
+                // skip checking mandatory fields that are for a particular species if the species on screen does not match 
+                // NOTE: relies on a #species dropdown, this is poor encapsulation/design, 
+                // but the alternatives were far more complex to implement
+                if ($("#species").val() && !common.array_in($("#species").val(), t.attr("data-speciesids").split(","))) { return; }
+                if (common.trim(t.val()) == "") {
+                    header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
+                    // Find the index of the accordion section this element is in and activate it
+                    $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
+                    label.addClass(validate.ERROR_LABEL_CLASS);
+                    t.focus();
+                    valid = false;
+                    return false;
                 }
             }
         });
@@ -664,7 +687,7 @@ additional = {
         var valid = true;
         node.find(".additional").each(function() {
             var t = $(this), 
-                label = t.closest("tr").find("label");
+                label = t.closest(".asm-formfield").find("label");
             // ignore checkboxes
             if (t.attr("type") != "checkbox") {
                 var d = String(t.attr("data-post"));
