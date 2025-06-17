@@ -1097,7 +1097,7 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> No
     }
     asm3.cachedisk.put(key, dbo.name(), co, 86400 * 2) # persist for 2 days
     # Send the email to the adopter
-    body = post["body"]
+    body = asm3.utils.fix_tinymce_uris(dbo, post["body"])
     asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
     # Record that the checkout email was sent in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
@@ -1122,7 +1122,7 @@ def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool
     subject = post["subject"]
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
-    body = asm3.utils.fix_tinymce_uris(dbo, post["body"])
+    body = post["body"]
     rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)

@@ -1031,6 +1031,7 @@ $.widget("asm.emailform", {
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 header.show_loading(_("Sending..."));
+                console.log(o.post);
                 common.ajax_post(o.post, o.formdata, function() {
                     let recipients = $("#em-to").val();
                     if ($("#em-cc").val() != "") { recipients += ", " + $("#em-cc").val(); }
