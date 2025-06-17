@@ -5093,6 +5093,11 @@ msgstr "La catégorie d'entrée est {0}"
 msgid "Entry reason"
 msgstr "Motif d'entrée"
 
+#: html.py animal_find_results.js animal.js common_html.js options.js
+#: animal_find.js common_animalchooser.js animal_new.js mobile_ui_animal.js
+msgid "Entry Type"
+msgstr "Type d'entrée"
+
 #: lookups.py
 msgid "Equipment Loan Types"
 msgstr "Types de prêt d'équipement"
