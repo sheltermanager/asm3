@@ -264,6 +264,7 @@ class ASMEndpoint(object):
     get_permissions = ( )  # List of permissions needed to GET
     post_permissions = ( ) # List of permissions needed to POST
     check_logged_in = True # Check whether we have a valid login
+    locked_can_post  = False # Whether locked databases can POST to this endpoint
     session_cookie = True  # Whether to send a session cookie
     user_activity = True   # Hitting this endpoint qualifies as user activity
     use_web_input = True   # Unpack values with webpy's web.input()
@@ -470,7 +471,7 @@ class ASMEndpoint(object):
 
     def POST(self) -> str:
         """ Handle a POST, deal with permissions and locked databases """
-        if self.check_logged_in:
+        if self.check_logged_in and not self.locked_can_post:
             self.check_locked_db()
         self.check(self.post_permissions)
         o = self._params()
@@ -6874,6 +6875,7 @@ class product(JSONEndpoint):
 class publish(JSONEndpoint):
     url = "publish"
     get_permissions = asm3.users.USE_INTERNET_PUBLISHER
+    locked_can_post = True
 
     def controller(self, o):
         dbo = o.dbo
@@ -7666,6 +7668,7 @@ class systemusers(JSONEndpoint):
 
 class task(JSONEndpoint):
     url = "task"
+    locked_can_post = True
 
     def controller(self, o):
         return { }
