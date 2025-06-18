@@ -248,7 +248,7 @@ IsGoodWithDogs
     Link to the lksynun table for yes/no/unknown 
 IsGoodWithChildren 
     INTEGER 
-    Link to the lksynun table for yes/no/unknown 
+    Link to the lksynunk table for yes/no/unknown/over 5/over 12 
 IsHouseTrained 
     INTEGER 
     Link to the lksynun table for yes/no/unknown 
