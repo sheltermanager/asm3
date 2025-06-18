@@ -513,7 +513,7 @@ const html = {
                     }
                 });
             }
-            return '<option ' + sel + '>' + flag + '</option>';
+            return '<option ' + sel + ' value="' + html.title(flag) + '">' + flag + '</option>';
         };
 
         var h = [
@@ -1506,7 +1506,7 @@ const html = {
     media_flag_options: function(flags, node) {
         var opt = [];
         $.each(flags, function(i, v) {
-            opt.push('<option>' + v.FLAG + '</option>');    
+            opt.push('<option value="' + v.FLAG + '">' + v.FLAG + '</option>');    
         });
         node.html(opt.join("\n"));
         node.change();
