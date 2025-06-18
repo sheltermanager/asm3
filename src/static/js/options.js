@@ -994,6 +994,8 @@ $(function() {
                 }); 
             });
 
+            html.person_flag_options(null, controller.personflags, $("#defaultrotaflags"));
+
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").each(function() {
                 if ($(this).attr("data") || $(this).attr("data-post")) {
@@ -1100,12 +1102,7 @@ $(function() {
         },
 
         sync: function() {
-            html.person_flag_options(null, controller.personflags, $("#defaultrotaflags"));
-            //let rotaflags = config.str('DefaultRotaFlags').split(',');
-            //console.log(rotaflags);
-            //$("#defaultrotaflags").val(rotaflags);
-            //$("#defaultrotaflags").change();
-            //$("#button-save").disabled(true);
+            
         },
 
         delay: function() {

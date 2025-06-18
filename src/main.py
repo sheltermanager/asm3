@@ -7518,8 +7518,8 @@ class staff_rota(JSONEndpoint):
         if startdate is None: startdate = monday_of_week(dbo.today())
         rota = asm3.person.get_rota(dbo, startdate, add_days(startdate, 7))
         asm3.al.debug("got %d rota items" % len(rota), "main.staff_rota", dbo)
-        #if o.post["flags"] == '':
-        #    o.post["flags"] = 
+        if "flags" not in o.post.data:
+            o.post["flags"] = asm3.configuration.default_rota_flags(dbo)
         return {
             "name": "staff_rota",
             "rows": rota,
