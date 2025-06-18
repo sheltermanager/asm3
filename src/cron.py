@@ -129,9 +129,6 @@ def daily(dbo: Database):
         # Update the generated lost/found match report
         ttask(lostfound.update_match_report, dbo)
 
-        # Email any reports set to run with batch
-        ttask(extreports.email_daily_reports, dbo)
-
         # Send automated person emails
         ttask(automail.send_all, dbo)
 
@@ -145,7 +142,7 @@ def reports_email(dbo: Database):
     """
     try:
         # Email any daily reports for local time of now
-        extreports.email_daily_reports(dbo, dbo.now())
+        extreports.email_daily_reports(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running daily email of reports_email: %s" % em, "cron.reports_email", dbo, sys.exc_info())

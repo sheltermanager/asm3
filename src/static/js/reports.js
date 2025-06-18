@@ -5,7 +5,6 @@ $(function() {
     "use strict";
 
     const emailhours = [
-        { display: _("With overnight batch"), value: -1 },
         { display: "00:00", value: 0 },
         { display: "01:00", value: 1 },
         { display: "02:00", value: 2 },

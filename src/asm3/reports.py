@@ -13,7 +13,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 from asm3.sitedefs import BASE_URL, SERVICE_URL, URL_REPORTS
-from asm3.typehints import Any, CriteriaParams, datetime, Database, List, MenuItems, PostedData, ReportParams, ResultRow, Results, Session, Tuple
+from asm3.typehints import Any, CriteriaParams, Database, List, MenuItems, PostedData, ReportParams, ResultRow, Results, Session, Tuple
 
 HEADER = 0
 FOOTER = 1
@@ -702,7 +702,7 @@ def get_mailmerges_menu(dbo: Database, roleids: str = "", superuser: bool = Fals
             mv.append( ( asm3.users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m.ID, "", m.TITLE ) )
     return mv
 
-def email_daily_reports(dbo: Database, now: datetime = None) -> None:
+def email_daily_reports(dbo: Database) -> None:
     """
     Finds all reports that have addresses set in DailyEmail 
     and no criteria. It will execute each of those reports in 
@@ -710,28 +710,21 @@ def email_daily_reports(dbo: Database, now: datetime = None) -> None:
     It also takes into account the hour of the day set if any and 
     a frequency, so instead of emailing every day, it can be set to
     a particular weekday or the first/last of the month/year.
-    now: The time right now in local time. If now is None, then we run anything
-         with a dailyemailhour of -1, which is "batch".
     """
     rs = get_available_reports(dbo, False)
-    hour = -1
-    weekday = -1
-    day = -1
-    month = -1
-    lastdayofmonth = -1
-    if now is not None:
-        hour = now.hour
-        weekday = now.weekday()
-        day = now.day
-        month = now.month
-        lastdayofmonth = asm3.i18n.last_of_month(now).day
+    now = dbo.now()
+    hour = now.hour
+    weekday = now.weekday()
+    day = now.day
+    month = now.month
+    lastdayofmonth = asm3.i18n.last_of_month(now).day
     for r in rs:
         emails = asm3.utils.nulltostr(r.DAILYEMAIL)
         runhour = r.DAILYEMAILHOUR
+        if runhour == -1: runhour = 1 # Translate the old "with overnight batch" option to 1am local time
         freq = r.DAILYEMAILFREQUENCY
         if emails == "": continue # No emails to send to, don't do anything
-        if now is None and runhour != -1: continue # We're running for the batch, but an hour is set on the report
-        if now is not None and hour != runhour: continue # It's not the right hour to send
+        if hour != runhour: continue # It's not the right hour to send
         if freq == 1 and weekday != 0: continue # Freq is Mon and that's not today
         if freq == 2 and weekday != 1: continue # Freq is Tue and that's not today
         if freq == 3 and weekday != 2: continue # Freq is Wed and that's not today
