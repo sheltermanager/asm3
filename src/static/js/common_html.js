@@ -643,7 +643,7 @@ const html = {
                     }
                 });
             }
-            return '<option ' + sel + '>' + flag + '</option>';
+            return '<option ' + sel + ' value="' + html.title(flag) + '">' + flag + '</option>';
         };
 
         var h = [

@@ -286,9 +286,9 @@ $(function() {
             });
             $("#flags").change();
             // Mark set any flags that were passed from the backend as params to the page
-            if (controller.flagsel) {
-                $.each(controller.flagsel.split("|"), function(i, v) {
-                    $("#flags option[value='" + v + "']").prop("selected", true); 
+            if (config.str('DefaultRotaFlags')) {
+                $.each(config.str('DefaultRotaFlags').split(','), function(i, v) {
+                    $("#flags option[value='" + v + "']").prop("selected", true);
                 });
                 $("#flags").change();
             }
