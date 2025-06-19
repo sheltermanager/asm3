@@ -268,7 +268,15 @@ class TestCSVImport(unittest.TestCase):
             'STOCKLEVELUNITPRICE': '1'
         },
     )
-
+    accountssvdata = (
+        {
+            'ACCOUNTSTRXDATE': '09/11/2001',
+            'ACCOUNTSSOURCE': 'Bank::Savings',
+            'ACCOUNTSDESTINATION': 'Expenses::Electricity',
+            'ACCOUNTSAMOUNT': '500',
+            'ACCOUNTSDESCRIPTION': 'This transaction was created as part of the CSV import unit test.'
+        },
+    )
     def setUp(self):
         data = {
             "name":   "cuteness",
@@ -320,6 +328,7 @@ class TestCSVImport(unittest.TestCase):
         base.execute("DELETE FROM animalvaccination WHERE Comments = '%s'" % 'This vaccination was created by the CSV Import unit test.')
         base.execute("DELETE FROM species WHERE SpeciesName = '%s'" % 'Unicorn')
         base.execute("DELETE FROM jurisdiction WHERE JurisdictionName = '%s'" % 'Atlantis')
+        base.execute("DELETE FROM accountstrx WHERE Description = '%s'" % 'This transaction was created as part of the CSV import unit test.')
 
         asm3.additional.delete_field(base.get_dbo(), "test", self.aafid)
         asm3.additional.delete_field(base.get_dbo(), "test", self.apfid)
@@ -335,6 +344,22 @@ class TestCSVImport(unittest.TestCase):
     
     def test_csvexport_people_photos(self):
         asm3.csvimport.csvexport_people(base.get_dbo(), "all", "", "", "photos")
+    
+    def test_accounts_import(self):
+        rows = self.accountssvdata
+        csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", False, False, True, False, False, False, True)
+        self.assertEqual(0, len(json.loads(result)['errors']))
+        self.assertEqual(1, json.loads(result)['success'])
+    
+    def test_accounts_import_missing_lookups_insert_on(self):
+        rows = self.accountssvdata
+        rows[0]['ACCOUNTSSOURCE'] = 'Back of sofa'
+        rows[0]['ACCOUNTSDESTINATION'] = 'Stormy Daniels hush money'
+        csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
+        result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", True, False, True, False, False, False, True)
+        print("\n" + str(result) + "\n")
+        self.assertEqual(1, len(json.loads(result)['errors']))
     
     def test_simple_animal_import(self):
         rows = self.minimalanimalcsvdata
