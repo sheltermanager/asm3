@@ -22,6 +22,7 @@ import re
 import sys
 
 VALID_FIELDS = [
+    "ACCOUNTSTRXDATE", "ACCOUNTSSOURCE", "ACCOUNTSDESTINATION", "ACCOUNTSDESCRIPTION", 
     "ANIMALCODE", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", "ANIMALBREED2", "ANIMALDOB", 
     "ANIMALLITTER", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
     "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALSPECIES", "ANIMALAGE", 
@@ -325,6 +326,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasstocklevelname = False
     hasstockleveltotal = False
     hasstocklevelbalance = False
+    hasaccounts = False
+    hasaccountsdate = False
+    hasaccountssource = False
+    hasaccountsdest = False
 
     cols = rows[0].keys()
     for col in cols:
@@ -367,6 +372,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col.startswith("STOCKLEVELNAME"): hasstocklevelname = True
         if col.startswith("STOCKLEVELTOTAL"): hasstockleveltotal = True
         if col.startswith("STOCKLEVELBALANCE"): hasstocklevelbalance = True
+        if col.startswith("ACCOUNTS"): hasaccounts = True
+        if col == "ACCOUNTSTRXDATE": hasaccountsdate = True
+        if col == "ACCOUNTSSOURCE": hasaccountssource = True
+        if col == "ACCOUNTSDESTINATION": hasaccountsdest = True
 
     rules = [
         ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
@@ -394,7 +403,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         ( haslicence and not (haspersonlastname or haspersonname), "Your CSV file has license fields, but no person to apply the license to" ),
         ( hasstocklevel and not hasstocklevelname, "Your CSV file has stock level fields, but no STOCKLEVELNAME column" ),
         ( hasstocklevel and not hasstockleveltotal, "Your CSV file has stock level fields, but no STOCKLEVELTOTAL column" ),
-        ( hasstocklevel and not hasstocklevelbalance, "Your CSV file has stock level fields, but no STOCKLEVELBALANCE column" )
+        ( hasstocklevel and not hasstocklevelbalance, "Your CSV file has stock level fields, but no STOCKLEVELBALANCE column" ),
+        ( hasaccounts and not hasaccountsdate, "Your CSV file has accounts fields, but no ACCOUNTSTRXDATE column" ),
+        ( hasaccounts and not hasaccountssource, "Your CSV file has accounts fields, but no ACCOUNTSSOURCE column" ),
+        ( hasaccounts and not hasaccountsdest, "Your CSV file has accounts fields, but no ACCOUNTSDESTINATION column" )
     ]
     for cond, msg in rules:
         if cond:
