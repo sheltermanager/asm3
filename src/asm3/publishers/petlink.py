@@ -161,6 +161,7 @@ class PetLinkPublisher(AbstractPublisher):
                 message = ""
                 try:
                     # Prefer microchip= in location column, then fall back to id=/microchip= in column
+                    # PetLink now also have an Animal/Chip/Person format in column too
                     if e["location"].find("microchip=") != -1:
                         chip = e["location"]
                         chip = chip[chip.find("microchip=")+10:]
@@ -168,6 +169,8 @@ class PetLinkPublisher(AbstractPublisher):
                         chip = e["column"].replace("id=", "")
                     elif e["column"].find("microchip=") != -1:
                         chip = e["column"].replace("microchip=", "")
+                    elif e["column"].count("/") == 2:
+                        chip = e["column"].split("/")[1]
                     message = e["message"]
                 except Exception as erj:
                     try:
