@@ -1681,7 +1681,10 @@ class Report:
             data = []
             for row in rs:
                 if row[1] not in labels:
-                    labels.append(row[0])
+                    if mode == "pie":
+                        labels.append(f"{row[0]} ({row[1]})") # include totals in legend for pie charts
+                    else:
+                        labels.append(row[0])
                 data.append(row[1])
             dataset = {
                 'label': self.title,
