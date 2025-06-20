@@ -854,6 +854,9 @@ def get_breeds_by_species(dbo: Database) -> Results:
         "LEFT OUTER JOIN species ON breed.SpeciesID = species.ID " \
         "ORDER BY species.SpeciesName, breed.BreedName")
 
+def get_clinic_invoice_items(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lkclinicinvoiceitems ORDER BY ClinicInvoiceItemName")
+
 def get_clinic_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkclinictype ORDER BY ClinicTypeName")
 

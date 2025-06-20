@@ -10,20 +10,14 @@ $(function() {
             const dialog = {
                 add_title: _("Add Invoice Item"),
                 edit_title: _("Edit Invoice Item"),
+                width: '550px',
                 edit_perm: 'ccl',
                 close_on_ok: false,
                 fields: [
-                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "autotext", validation: "notblank", autocomplete: "on" },
-                    { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" },
-                    { type: "nextcol" },
-                    { type: "raw", markup: _('Include recent charges') + '<br>' }
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "autotext", validation: "notblank", autocomplete: "on", doublesize: true },
+                    { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" }
                 ]
             };
-            $.each(controller.recentdescriptions, function(i, v) {
-                dialog.fields.push(
-                    { label: v.DESCRIPTION + ' ' + tableform.format_currency(null, v.AMOUNT), type: "check", rowclasses: 'recentinvoiceitem' }
-                )
-            });
             const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
@@ -113,10 +107,29 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            $("#description").on("change", function() {
+                $.each(controller.invoiceitems, function(i, v) {
+                    if (v.CLINICINVOICEITEMNAME == $("#description").val()) {
+                        $("#amount").val(format.currency(v.DEFAULTCOST));
+                        return false;
+                    }
+                });
+            });
         },
 
         sync: function() {
-            $("#description").autocomplete({source: ['Adam', 'Bob', 'Jon']});
+            let sourcelist = [];
+            clinic_invoice.invoiceitemsdict = {};
+            console.log(controller.invoiceitems);
+            $.each(controller.invoiceitems, function(i, v) {
+                console.log(v);
+                sourcelist.push(v.CLINICINVOICEITEMNAME);
+                clinic_invoice.invoiceitemsdict[v.CLINICINVOICEITEMNAME] = v.DEFAULTCOST;
+            });
+            console.log("sourcelist = " + sourcelist);
+            $("#description").autocomplete({source: sourcelist});
+            console.log(clinic_invoice.invoiceitemsdict);
         },
 
         validation: function() {
