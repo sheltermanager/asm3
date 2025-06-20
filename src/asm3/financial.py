@@ -1228,7 +1228,7 @@ def insert_account_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Code":             post["code"],
         "Archived":         post.integer("archived"),
         "AccountType":      post.integer("type"),
-        "Description":      post["description"],
+        "Description":      post.string["description"],
         "DonationTypeID":   0, # ASM2_COMPATIBILITY
         "CostTypeID":       0 # ASM2_COMPATIBILITY
     }, username)
