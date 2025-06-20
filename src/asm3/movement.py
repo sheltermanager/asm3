@@ -1097,7 +1097,10 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> No
     }
     asm3.cachedisk.put(key, dbo.name(), co, 86400 * 2) # persist for 2 days
     # Send the email to the adopter
-    body = asm3.utils.fix_tinymce_uris(dbo, post["body"])
+    url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.name(), key)
+    body = post["body"]
+    body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
+    body = asm3.utils.fix_tinymce_uris(body)
     asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
     # Record that the checkout email was sent in the log
     logtypeid = asm3.configuration.system_log_type(dbo)

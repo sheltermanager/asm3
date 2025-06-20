@@ -3783,7 +3783,7 @@ class donation(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         emailadd = post["to"]
-        body = asm3.utils.fix_tinymce_uris(dbo, post["body"])
+        body = asm3.utils.fix_tinymce_uris(post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], body)
