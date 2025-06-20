@@ -28,59 +28,60 @@ import re
 #   vat - has an IsVAT column (donationtype)
 #   taxrate - has a TaxRate column
 LOOKUP_TABLES = {
-    "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",)),
-    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", ""),
-    "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",)),
-    "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
-    "lkboardingtype":   (_("Boarding Types"), "BoardingName", _("Boarding Type"), "BoardingDescription", "add del ret cost", ("animalboarding.BoardingTypeID",)),
-    "lkclinictype":     (_("Clinic Appointment Types"), "ClinicTypeName", _("Appointment Type"), "ClinicTypeDescription", "add del ret", ("clinicappointment.ClinicTypeID",)),
-    "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", "add del ret species pubbreed", ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
-    "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
-    "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
-    "lksclinicstatus":  (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
-    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
-    "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
-    "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
-    "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", "add del ret", ("ownerdonation.DonationPaymentID",)),
-    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat acc", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
-    "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
-    "lksentrytype":     (_("Entry Types"), "EntryTypeName", _("Type"), "", "", ("animal.EntryTypeID", "animalentry.EntryTypeID") ),
-    "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", "add del ret", ("animalcontrol.IncidentCompletedID",)),
-    "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", "add del ret", ("animalcontrol.IncidentTypeID",)),
-    "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret units site", ("animal.ShelterLocation",)),
-    "jurisdiction":     (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animal.JurisdictionID", "animalcontrol.JurisdictionID","owner.JurisdictionID")),
-    "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",)),
-    "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
-    "lkmediaflags":     (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", ""),
-    "lksmedicaltype":   (_("Medical Types"), "MedicalTypeName", _("Type"), "Description", ""),
-    "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
-    "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
-    "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
-    "lkproducttype":    (_("Product Types"), "ProductTypeName", _("Name"), _("Description"), "add del ret", ""),
-    "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", "", ("ownerrota.RotaTypeID",)),
-    "lksex":            (_("Sexes"), "Sex", _("Sex"), "", "", ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
-    "lksize":           (_("Sizes"), "Size", _("Size"), "", "", ("animal.Size",)),
-    "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", "", ("animal.Neutered",)),
-    "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", "", ("animal.IsHouseTrained",)),
-    "lksynunk":         (_("Good with kids"), "Name", _("Good with kids"), "", "", ("animal.IsGoodWithChildren",)),
-    "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", "", ("animal.CombiTestResult",)),
-    "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID", "animalcontrol.PickupLocationID")),
-    "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",)),
-    "site":             (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID")),
-    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
-    "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
-    "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
-    "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
-    "lktaxrate":        (_("Tax Rate"), "TaxRateName", _("Name"), _("Description"), "add del ret taxrate", ("lktaxrate.TaxRate",)),
-    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost sched", ("animaltest.TestTypeID",)),
-    "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
-    "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
-    "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
-    "traptype":         (_("Equipment Loan Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
-    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",)),
-    "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",)),
+    "lksaccounttype":       (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",)),
+    "lkanimalflags":        (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", ""),
+    "animaltype":           (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",)),
+    "basecolour":           (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
+    "lkboardingtype":       (_("Boarding Types"), "BoardingName", _("Boarding Type"), "BoardingDescription", "add del ret cost", ("animalboarding.BoardingTypeID",)),
+    "lkclinictype":         (_("Clinic Appointment Types"), "ClinicTypeName", _("Appointment Type"), "ClinicTypeDescription", "add del ret", ("clinicappointment.ClinicTypeID",)),
+    "lkclinicinvoiceitems": (_("Clinic Invoice Items"), "ClinicInvoiceItemName", _("Item Name"), "ClinicInvoiceItemDescription", "add del ret cost", ""),
+    "breed":                (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", "add del ret species pubbreed", ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
+    "lkcoattype":           (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
+    "citationtype":         (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
+    "lksclinicstatus":      (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
+    "costtype":             (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
+    "deathreason":          (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
+    "diet":                 (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
+    "donationpayment":      (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", "add del ret", ("ownerdonation.DonationPaymentID",)),
+    "donationtype":         (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat acc", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
+    "entryreason":          (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
+    "lksentrytype":         (_("Entry Types"), "EntryTypeName", _("Type"), "", "", ("animal.EntryTypeID", "animalentry.EntryTypeID") ),
+    "incidentcompleted":    (_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", "add del ret", ("animalcontrol.IncidentCompletedID",)),
+    "incidenttype":         (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", "add del ret", ("animalcontrol.IncidentTypeID",)),
+    "internallocation":     (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret units site", ("animal.ShelterLocation",)),
+    "jurisdiction":         (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animal.JurisdictionID", "animalcontrol.JurisdictionID","owner.JurisdictionID")),
+    "licencetype":          (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",)),
+    "logtype":              (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
+    "lkmediaflags":         (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", ""),
+    "lksmedicaltype":       (_("Medical Types"), "MedicalTypeName", _("Type"), "Description", ""),
+    "lksmovementtype":      (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
+    "lksoutcome":           (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
+    "lkownerflags":         (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
+    "lkproducttype":        (_("Product Types"), "ProductTypeName", _("Name"), _("Description"), "add del ret", ""),
+    "lksrotatype":          (_("Rota Types"), "RotaType", _("Type"), "", "", ("ownerrota.RotaTypeID",)),
+    "lksex":                (_("Sexes"), "Sex", _("Sex"), "", "", ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
+    "lksize":               (_("Sizes"), "Size", _("Size"), "", "", ("animal.Size",)),
+    "lksyesno":             (_("Yes/No"), "Name", _("Yes/No"), "", "", ("animal.Neutered",)),
+    "lksynun":              (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", "", ("animal.IsHouseTrained",)),
+    "lksynunk":             (_("Good with kids"), "Name", _("Good with kids"), "", "", ("animal.IsGoodWithChildren",)),
+    "lksposneg":            (_("Positive/Negative"), "Name", _("Positive/Negative"), "", "", ("animal.CombiTestResult",)),
+    "pickuplocation":       (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID", "animalcontrol.PickupLocationID")),
+    "reservationstatus":    (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",)),
+    "site":                 (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID")),
+    "species":              (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
+    "stocklocation":        (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
+    "stockusagetype":       (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
+    "lkurgency":            (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
+    "lktaxrate":            (_("Tax Rate"), "TaxRateName", _("Name"), _("Description"), "add del ret taxrate", ("lktaxrate.TaxRate",)),
+    "testtype":             (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost sched", ("animaltest.TestTypeID",)),
+    "testresult":           (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
+    "lkstransportstatus":   (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
+    "transporttype":        (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
+    "traptype":             (_("Equipment Loan Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
+    "vaccinationtype":      (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",)),
+    "voucher":              (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",)),
     "lkwaitinglistremoval": (_("Waiting List Removal"), "RemovalName", _("Type"), "", "add del", ("animalwaitinglist.WaitingListRemovalID",)),
-    "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", "add del ret", ("ownerrota.WorkTypeID",))
+    "lkworktype":           (_("Work Types"), "WorkType", _("Type"), "", "add del ret", ("ownerrota.WorkTypeID",))
 }
 LOOKUP_TABLELABEL = 0
 LOOKUP_NAMEFIELD = 1
@@ -853,6 +854,9 @@ def get_breeds_by_species(dbo: Database) -> Results:
         "LEFT OUTER JOIN species ON breed.SpeciesID = species.ID " \
         "ORDER BY species.SpeciesName, breed.BreedName")
 
+def get_clinic_invoice_items(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lkclinicinvoiceitems ORDER BY ClinicInvoiceItemName")
+
 def get_clinic_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkclinictype ORDER BY ClinicTypeName")
 
@@ -1053,7 +1057,7 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
             "IsRetired":            retired
         }, username, setCreated=False)
         return nid
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype" or lookup == "lkclinicinvoiceitems":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1149,7 +1153,7 @@ def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype" or lookup == "lkclinicinvoiceitems":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
