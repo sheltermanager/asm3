@@ -113,6 +113,9 @@ def get_invoice_items(dbo: Database, appointmentid: int) -> Results:
     """
     return dbo.query(get_clinic_invoice_query(dbo) + " WHERE ClinicAppointmentID = ? ORDER BY ID", [appointmentid])
 
+def get_recent_invoice_descriptions(dbo: Database, limit=20) -> Results:
+    return dbo.query("SELECT DISTINCT Description, Amount FROM clinicinvoiceitem ORDER BY LastChangedDate desc LIMIT %s" % limit)
+
 def insert_appointment_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a clinic appointment from posted form data

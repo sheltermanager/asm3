@@ -2956,11 +2956,13 @@ class clinic_invoice(JSONEndpoint):
         appointment = asm3.clinic.get_appointment(dbo, appointmentid)
         if appointment is None: self.notfound()
         rows = asm3.clinic.get_invoice_items(dbo, appointmentid)
+        recentdescriptions = asm3.clinic.get_recent_invoice_descriptions(dbo)
         asm3.al.debug("got %d invoice items for appointment %d" % (len(rows), appointmentid), "main.clinic_invoice", dbo)
         return {
             "appointment": appointment,
             "appointmentid": appointmentid,
-            "rows": rows
+            "rows": rows,
+            "recentdescriptions": recentdescriptions
         }
 
     def post_create(self, o):

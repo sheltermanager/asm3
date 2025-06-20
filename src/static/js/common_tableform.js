@@ -1855,6 +1855,8 @@ const tableform = {
         d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
+        //if (v.autocomplete) { d += "autocomplete=\"" + v.autocomplete + "\" "; }
+        d += "autocomplete=\"on\" ";
         if (v.rows) { d += "rows=\"" + v.rows + "\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }

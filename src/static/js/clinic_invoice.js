@@ -13,11 +13,17 @@ $(function() {
                 edit_perm: 'ccl',
                 close_on_ok: false,
                 fields: [
-                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea", validation: "notblank" },
-                    { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" }
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "autotext", validation: "notblank", autocomplete: "on" },
+                    { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" },
+                    { type: "nextcol" },
+                    { type: "raw", markup: _('Include recent charges') + '<br>' }
                 ]
             };
-
+            $.each(controller.recentdescriptions, function(i, v) {
+                dialog.fields.push(
+                    { label: v.DESCRIPTION + ' ' + tableform.format_currency(null, v.AMOUNT), type: "check", rowclasses: 'recentinvoiceitem' }
+                )
+            });
             const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
@@ -45,8 +51,19 @@ $(function() {
                     click: async function() { 
                         try {
                             await tableform.dialog_show_add(dialog);
+                            $.each($(".recentinvoiceitem"), function(i, v) {
+
+                                console.log('Inserting recent invoice');
+                                let response = tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
+                                let row = {};
+                                row.ID = response;
+                                console.log(dialog.fields);
+                                tableform.fields_update_row(dialog.fields, row);
+                                controller.rows.push(row);
+                            });
+                            console.log('Inserting manual invoice');
                             let response = await tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
-                            var row = {};
+                            let row = {};
                             row.ID = response;
                             tableform.fields_update_row(dialog.fields, row);
                             controller.rows.push(row);
@@ -99,6 +116,7 @@ $(function() {
         },
 
         sync: function() {
+            $("#description").autocomplete({source: ['Adam', 'Bob', 'Jon']});
         },
 
         validation: function() {
