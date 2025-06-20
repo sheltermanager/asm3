@@ -1147,8 +1147,8 @@ $.widget("asm.emailform", {
         else {
             $("#em-docreporow").hide();
         }
-        fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
-        toaddresses = toaddresses.concat(config.str("EmailToAddresses").split(","));
+        fromaddresses = fromaddresses.concat(html.decode(config.str("EmailFromAddresses")).split(","));
+        toaddresses = toaddresses.concat(html.decode(config.str("EmailToAddresses")).split(","));
         const add_address = function(n, s) {
             // build a list of valid existing addresses in the textbox (n: node) so far, then add the new one (s: String)
             let existing = [], xs = String(n.val());
