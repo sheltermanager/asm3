@@ -121,15 +121,11 @@ $(function() {
         sync: function() {
             let sourcelist = [];
             clinic_invoice.invoiceitemsdict = {};
-            console.log(controller.invoiceitems);
             $.each(controller.invoiceitems, function(i, v) {
-                console.log(v);
                 sourcelist.push(v.CLINICINVOICEITEMNAME);
                 clinic_invoice.invoiceitemsdict[v.CLINICINVOICEITEMNAME] = v.DEFAULTCOST;
             });
-            console.log("sourcelist = " + sourcelist);
             $("#description").autocomplete({source: sourcelist});
-            console.log(clinic_invoice.invoiceitemsdict);
         },
 
         validation: function() {
