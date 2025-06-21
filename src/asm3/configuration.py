@@ -151,6 +151,7 @@ DEFAULTS = {
     "DefaultJurisdiction": "1",
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultMedicalTypeID": "2",
+    "DefaultRotaFlags": "",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
     "DefaultTrialLength": "30",
@@ -954,6 +955,9 @@ def default_payment_method(dbo: Database) -> int:
 
 def default_reservation_status(dbo: Database) -> int:
     return cint(dbo, "AFDefaultReservationStatus", 1)
+
+def default_rota_flags(dbo: Database) -> int:
+    return cstring(dbo, "DefaultRotaFlags", '')
 
 def default_return_reason(dbo: Database) -> int:
     return cint(dbo, "AFDefaultReturnReason", 4)
