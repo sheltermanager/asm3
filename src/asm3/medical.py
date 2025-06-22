@@ -115,11 +115,13 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerName AS AdministeringVetName, " \
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "lksmedicaltype.MedicalTypeName, " \
         "am.TreatmentName, '' AS TreatmentResult, am.Dosage, amt.TreatmentNumber, " \
         "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, NULL AS DateExpires, am.Comments " \
         "FROM animal a " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "LEFT OUTER JOIN lksmedicaltype ON am.MedicalTypeID = lksmedicaltype.ID " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
@@ -132,6 +134,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerName AS AdministeringVetName, " \
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "'Vaccination' AS MedicalTypeName, " \
         "v.VaccinationType AS TreatmentName, '' AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
         "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.DateExpires, av.Comments " \
         "FROM animal a " \
@@ -149,6 +152,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerName AS AdministeringVetName, " \
         "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "'Test' AS MedicalTypeName, " \
         "tt.TestName AS TreatmentName, tr.ResultName AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
         "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, NULL AS DateExpires, at.Comments " \
         "FROM animal a " \
