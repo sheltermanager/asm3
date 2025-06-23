@@ -50,6 +50,20 @@ echo "/var/log/asm3.log
         endscript
 }" > sheltermanager3/etc/logrotate.d/asm3
 
+# Generate the sheltermanager3.cron.daily script
+echo "#!/bin/sh
+cd /usr/lib/sheltermanager3
+python3 cron.py all 2>/dev/null
+" > sheltermanager3/etc/cron.daily/sheltermanager3
+chmod +x sheltermanager3/etc/cron.daily/sheltermanager3
+
+# Build the list of config files
+echo "/etc/asm3.conf" > sheltermanager3/DEBIAN/conffiles
+echo "/etc/cron.daily/sheltermanager3" >> sheltermanager3/DEBIAN/conffiles
+echo "/etc/apache2/sites-available/asm3.conf" >> sheltermanager3/DEBIAN/conffiles
+echo "/etc/rsyslog.d/asm3.conf" >> sheltermanager3/DEBIAN/conffiles
+echo "/etc/logrotate.d/asm3" >> sheltermanager3/DEBIAN/conffiles
+
 # Add our repository to the list file
 echo "deb [trusted=yes] https://public.sheltermanager.com/deb/ ./" > sheltermanager3/etc/apt/sources.list.d/sheltermanager3.list
 
@@ -70,13 +84,6 @@ Description: Web-based management solution for animal shelters and sanctuaries
  Animal Shelter Manager is the most popular, free management package
  for animal sanctuaries and welfare charities. This is version 3, built
  around Python and HTML5." > sheltermanager3/DEBIAN/control
-
-# Generate the sheltermanager3.cron.daily script
-echo "#!/bin/sh
-cd /usr/lib/sheltermanager3
-python3 cron.py all 2>/dev/null
-" > sheltermanager3/etc/cron.daily/sheltermanager3
-chmod +x sheltermanager3/etc/cron.daily/sheltermanager3
 
 # Build the deb package
 # NOTE: -Zxz is specify xz compression for compatibility with Debian systems, Ubuntu uses zstd compression by default
