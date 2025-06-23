@@ -179,6 +179,15 @@ $(function() {
                                 '<option value="1">Do not generate and upload (not recommended)</option>', 
                                 classes: 'pbool preset' }
                         ]}, 
+                    { id: "tab-avidus", title: "AVID US Microchips", classes: 'localeus', 
+                        info: 'These settings are for registering microchips with new owner information to the AVID database. <br/>' + 
+                        'Find out more at <a target="_blank" href="https://www.avidid.com/">www.avidid.com</a>', 
+                        fields: [
+                            { id: "enabledavidus", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "avidusemail", post_field: "AVIDUSEmail", label: 'Email Address', type: "text" }, 
+                            { id: "aviduspass", post_field: "AVIDUSPassword", label: 'Password', type: "text" }, 
+                            { id: "aviduskey", post_field: "AVIDUSKey", label: 'API Key', type: "text" }
+                        ]},
                     { id: "tab-findpet", title: "FindPet.com", 
                         info: 'Find out more at <a target="_blank" href="https://findpet.com">www.findpet.com</a> ' +
                         'or contact hello@findpet.com for more information.<br>' +
