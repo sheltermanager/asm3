@@ -50,13 +50,13 @@ $(function() {
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
               
                 // Hide things before we start
-                $("#notonshelter").fadeOut();
+                $("#notonshelter").hide();
                 $("#button-foster").button("enable");
 
                 // If the animal is not on the shelter and not already fostered, show
                 // that warning and stop everything else
                 if (rec.ARCHIVED == "1" && rec.ACTIVEMOVEMENTTYPE != "2") {
-                    $("#notonshelter").fadeIn();
+                    $("#notonshelter").show();
                     $("#button-foster").button("disable");
                     return;
                 }

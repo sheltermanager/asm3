@@ -59,11 +59,11 @@ $(function() {
             $("#animal").animalchooser().bind("animalchooserchange", async function(event, a) {
                 
                 // Hide things before we start
-                $("#costdisplay").closest(".ui-widget").fadeOut();
-                $("#fosterinfo").fadeOut();
-                $("#reserveinfo").fadeOut();
-                $("#retailerinfo").fadeOut();
-                $("#animalwarn").fadeOut();
+                $("#costdisplay").closest(".ui-widget").hide();
+                $("#fosterinfo").hide();
+                $("#reserveinfo").hide();
+                $("#retailerinfo").hide();
+                $("#animalwarn").hide();
                 $("#button-reclaim").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
@@ -73,15 +73,15 @@ $(function() {
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == "2") {
-                    $("#fosterinfo").fadeIn();
+                    $("#fosterinfo").show();
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == "8") {
-                    $("#retailerinfo").fadeIn();
+                    $("#retailerinfo").show();
                 }
 
                 if (a.HASACTIVERESERVE == "1" && config.bool("CancelReservesOnAdoption")) {
-                    $("#reserveinfo").fadeIn();
+                    $("#reserveinfo").show();
                 }
 
                 // Grab cost information if option is on
@@ -93,13 +93,13 @@ $(function() {
                     $("#costdata").html(costdata);
                     $("#costamount").val(format.currency_to_int(costamount));
                     $("#costtype").val(config.str("BoardingCostType"));
-                    $("#costdisplay").closest(".ui-widget").fadeIn();
+                    $("#costdisplay").closest(".ui-widget").show();
                 }
 
                 let warn = html.animal_movement_warnings(a);
                 if (warn.length > 0) {
                     $("#awarntext").html(warn.join("<br>"));
-                    $("#animalwarn").fadeIn();
+                    $("#animalwarn").show();
                 }
 
             });
@@ -116,7 +116,7 @@ $(function() {
                 let warn = html.person_movement_warnings(p);
                 if (warn.length > 0) {
                     $("#warntext").html(warn.join("<br>"));
-                    $("#ownerwarn").fadeIn();
+                    $("#ownerwarn").show();
                 }
             });
 

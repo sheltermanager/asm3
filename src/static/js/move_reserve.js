@@ -53,9 +53,9 @@ $(function() {
             $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
               
                 // Hide things before we start
-                $("#notonshelter").fadeOut();
-                $("#animalwarn").fadeOut();
-                $("#feeinfo").fadeOut();
+                $("#notonshelter").hide();
+                $("#animalwarn").hide();
+                $("#feeinfo").hide();
                 $("#button-reserve").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, show that warning
@@ -68,13 +68,13 @@ $(function() {
                 if (!config.bool("DontShowAdoptionFee") && a.FEE) {
                     // $("#amount").currency("value", a.FEE); #122 disabled due to less relevant for reserves
                     $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(a.FEE)));
-                    $("#feeinfo").fadeIn();
+                    $("#feeinfo").show();
                 }
 
                 let warn = html.animal_movement_warnings(a, true);
                 if (warn.length > 0) {
                     $("#awarntext").html(warn.join("<br>"));
-                    $("#animalwarn").fadeIn();
+                    $("#animalwarn").show();
                 }
 
             });
@@ -84,7 +84,7 @@ $(function() {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
 
-                $("#ownerwarn").fadeOut();
+                $("#ownerwarn").hide();
          
                 // Default giftaid if the person is registered
                 if (common.has_permission("oaod")) {
@@ -97,7 +97,7 @@ $(function() {
                 let warn = html.person_movement_warnings(p, oopostcode, bipostcode);
                 if (warn.length > 0) {
                     $("#warntext").html(warn.join("<br>"));
-                    $("#ownerwarn").fadeIn();
+                    $("#ownerwarn").show();
                 }
             });
 

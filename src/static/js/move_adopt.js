@@ -138,13 +138,13 @@ $(function() {
             $("#animal").animalchooser().bind("animalchooserchange", async function(event, a) {
                 lastanimal = a;
                 // Hide things before we start
-                $("#bonddisplay").fadeOut();
-                $("#costdisplay").closest(".ui-widget").fadeOut();
-                $("#fosterinfo").fadeOut();
-                $("#reserveinfo").fadeOut();
-                $("#retailerinfo").fadeOut();
-                $("#feeinfo").fadeOut();
-                $("#animalwarn").fadeOut();
+                $("#bonddisplay").hide();
+                $("#costdisplay").closest(".ui-widget").hide();
+                $("#fosterinfo").hide();
+                $("#reserveinfo").hide();
+                $("#retailerinfo").hide();
+                $("#feeinfo").hide();
+                $("#animalwarn").hide();
                 $("#button-adopt").button("enable");
 
                 // Disable the adoption button if the animal cannot be adopted because it isn't
@@ -155,15 +155,15 @@ $(function() {
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == 2) {
-                    $("#fosterinfo").fadeIn();
+                    $("#fosterinfo").show();
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == 8) {
-                    $("#retailerinfo").fadeIn();
+                    $("#retailerinfo").show();
                 }
 
                 if (a.HASACTIVERESERVE == 1 && config.bool("CancelReservesOnAdoption")) {
-                    $("#reserveinfo").fadeIn();
+                    $("#reserveinfo").show();
                 }
 
                 // Show bonded animal info
@@ -178,7 +178,7 @@ $(function() {
                     }
                     if (bw != "") {
                         $("#bonddata").html(_("This animal is bonded with {0}. Adoption movement records will be created for all bonded animals.").replace("{0}", bw));
-                        $("#bonddisplay").fadeIn();
+                        $("#bonddisplay").show();
                     }
                 }
 
@@ -191,7 +191,7 @@ $(function() {
                     $("#costdata").html(costdata);
                     $("#costamount").val(format.currency_to_int(costamount));
                     $("#costtype").val(config.str("BoardingCostType"));
-                    $("#costdisplay").closest(".ui-widget").fadeIn();
+                    $("#costdisplay").closest(".ui-widget").show();
                 }
 
                 // If we have adoption fee fields, override the first donation
@@ -203,13 +203,13 @@ $(function() {
                         $("#vat1").change();
                     }
                     $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(a.FEE)));
-                    $("#feeinfo").fadeIn();
+                    $("#feeinfo").show();
                 }
 
                 let warn = html.animal_movement_warnings(a, true);
                 if (warn.length > 0) {
                     $("#awarntext").html(warn.join("<br>"));
-                    $("#animalwarn").fadeIn();
+                    $("#animalwarn").show();
                 }
 
             });
@@ -220,9 +220,9 @@ $(function() {
                 let p = jQuery.parseJSON(response)[0];
                 lastperson = p;
 
-                $("#ownerwarn").fadeOut();
-                $("#checkoutcreate").closest(".ui-widget").fadeOut();
-                $("#sigpaperwork").closest(".ui-widget").fadeOut();
+                $("#ownerwarn").hide();
+                $("#checkoutcreate").closest(".ui-widget").hide();
+                $("#sigpaperwork").closest(".ui-widget").hide();
 
                 // Show the checkout section if it's configured and there's an animal with 
                 // a non-zero adoption fee
@@ -242,7 +242,7 @@ $(function() {
                 // Show tickbox if owner not homechecked
                 if (p.IDCHECK == 0) {
                     $("#markhomechecked").attr("checked", false);
-                    $("#homecheckrow").fadeIn();
+                    $("#homecheckrow").show();
                 }
 
                 // Default giftaid if the person is registered
@@ -265,7 +265,7 @@ $(function() {
 
                 if (warn.length > 0) {
                     $("#warntext").html(warn.join("<br>"));
-                    $("#ownerwarn").fadeIn();
+                    $("#ownerwarn").show();
                 }
 
             });
@@ -324,10 +324,10 @@ $(function() {
 
             // Events related stuff
             if ($("#eventlink").is(":checked")) {
-                $("#eventrow").fadeIn();
+                $("#eventrow").show();
             }
             else {
-                $("#eventrow").fadeOut();
+                $("#eventrow").hide();
             }
             $("#eventlink, #movementdate").change(function() {
                 if (config.bool("DisableEvents")) { return; }
@@ -339,11 +339,11 @@ $(function() {
                 }
                 $("#event").empty();
                 if ($("#eventlink").prop("checked")) {
-                    $("#eventrow").fadeIn();
+                    $("#eventrow").show();
                     move_adopt.populate_event_dates();
                 }
                 else {
-                    $("#eventrow").fadeOut();
+                    $("#eventrow").hide();
                 }
             });
 

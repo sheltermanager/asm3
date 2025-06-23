@@ -50,7 +50,7 @@ $(function() {
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
               
-                $("#animalwarn").fadeOut();
+                $("#animalwarn").hide();
                 $("#button-transfer").button("enable");
 
                 // Disable the transfer button if the animal is not in care
@@ -61,7 +61,7 @@ $(function() {
                 let warn = html.animal_movement_warnings(a);
                 if (warn.length > 0) {
                     $("#awarntext").html(warn.join("<br>"));
-                    $("#animalwarn").fadeIn();
+                    $("#animalwarn").show();
                 }
 
             });
@@ -72,7 +72,7 @@ $(function() {
                 let warn = html.person_movement_warnings(p);
                 if (warn.length > 0) {
                     $("#warntext").html(warn.join("<br>"));
-                    $("#ownerwarn").fadeIn();
+                    $("#ownerwarn").show();
                 }
             });
 

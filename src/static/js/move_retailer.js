@@ -47,13 +47,13 @@ $(function() {
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
               
                 // Hide things before we start
-                $("#notonshelter").fadeOut();
+                $("#notonshelter").hide();
                 $("#button-retailer").button("enable");
 
                 // If the animal is not on the shelter, show that warning
                 // and stop everything else
                 if (rec.ARCHIVED == "1") {
-                    $("#notonshelter").fadeIn();
+                    $("#notonshelter").show();
                     $("#button-retailer").button("disable");
                     return;
                 }
