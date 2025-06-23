@@ -141,6 +141,8 @@ $(function() {
         const QB_MEDICAL_CRITERIA = [ 
             [ _("Ask the user for a treatment"), "asktreatment", "TreatmentName LIKE '%$ASK STRING {0}$%'"
                 .replace("{0}", _("Enter a treatment name")) ],
+            [ _("Ask the user for a medical type"), "askmedicaltype", "MedicalTypeName LIKE '%$ASK STRING {0}$%'"
+                .replace("{0}", _("Enter a medical type name")) ],
             [ _("Due"), "duenow", "DateGiven Is Null" ],
             [ _("Due between two dates"), "duetwo", 
                 "DateRequired>='$ASK DATE {0}$' AND DateRequired<='$ASK DATE {1}$'"
@@ -515,6 +517,14 @@ $(function() {
             $.each(controller.incidenttypes, function(i, v) {
                 reports_querybuilder.qb_incident_criteria.push(
                     [_("Type is {0}").replace("{0}", v.INCIDENTNAME), "incident" + v.ID, "IncidentTypeID=" + v.ID]);
+            });
+            reports_querybuilder.qb_medical_criteria.push(
+                [_("Type is {0}").replace("{0}", _("Vaccination")), "medical-1", "MedicalTypeID=-1"]);
+            reports_querybuilder.qb_medical_criteria.push(
+                [_("Type is {0}").replace("{0}", _("Test")), "medical-2", "MedicalTypeID=-2"]);
+            $.each(controller.medicaltypes, function(i, v) {
+                reports_querybuilder.qb_medical_criteria.push(
+                    [_("Type is {0}").replace("{0}", v.MEDICALTYPENAME), "medical" + v.ID, "MedicalTypeID=" + v.ID]);
             });
             $.each(controller.completedtypes, function(i, v) {
                 reports_querybuilder.qb_incident_criteria.push(

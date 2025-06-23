@@ -2340,7 +2340,7 @@ class animal_medical(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "medical"),
             "users": asm3.users.get_users(dbo),
             "animal": a,
-            "medicaltypes": asm3.lookups.get_medicaltypes(dbo)
+            "medicaltypes": asm3.lookups.get_medical_types(dbo)
         }
 
 class animal_movements(JSONEndpoint):
@@ -5164,7 +5164,7 @@ class medical(JSONEndpoint):
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "templates": asm3.template.get_document_templates(dbo, "medical"),
             "users": asm3.users.get_users(dbo),
-            "medicaltypes": asm3.lookups.get_medicaltypes(dbo)
+            "medicaltypes": asm3.lookups.get_medical_types(dbo)
         }
 
     def post_create(self, o):
@@ -5225,7 +5225,7 @@ class medicalprofile(JSONEndpoint):
         med = asm3.medical.get_profiles(o.dbo)
         asm3.al.debug("got %d medical profiles" % len(med), "main.medical_profile", o.dbo)
         return {
-            "medicaltypes": asm3.lookups.get_medicaltypes(o.dbo),
+            "medicaltypes": asm3.lookups.get_medical_types(o.dbo),
             "rows": med
         }
 
@@ -6040,7 +6040,7 @@ class options(JSONEndpoint):
             "locations": asm3.lookups.get_internal_locations(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "lostanimalfindcolumns": asm3.html.json_lostanimalfindcolumns(dbo),
-            "medicaltypes": asm3.lookups.get_medicaltypes(dbo),
+            "medicaltypes": asm3.lookups.get_medical_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
             "pp_paypal": pp_paypal,
@@ -7174,6 +7174,7 @@ class reports(JSONEndpoint):
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "medicalprofiles": asm3.medical.get_profiles(o.dbo),
+            "medicaltypes": asm3.lookups.get_medical_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personflags": asm3.lookups.get_person_flags(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),

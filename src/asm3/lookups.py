@@ -1207,7 +1207,7 @@ def delete_lookup(dbo: Database, username: str, lookup: str, iid: int) -> None:
             raise asm3.utils.ASMValidationError(_("This item is referred to in the database ({0}) and cannot be deleted until it is no longer in use.", l).format(fv))
     dbo.delete(lookup, iid, username)
 
-def get_medicaltypes(dbo: Database) -> Results:
+def get_medical_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksmedicaltype ORDER BY MedicalTypeName")
 
 def get_microchip_manufacturer(l: str, chipno: str) -> str:
