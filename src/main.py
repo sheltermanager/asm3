@@ -5291,7 +5291,7 @@ class move_adopt(JSONEndpoint):
                 "subject":      tokens["SUBJECT"] or _("Adoption Checkout", l),
                 "body":         tokens["BODY"]
             }
-            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale))
+            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale), True)
         elif paperwork:
             # Generate the adoption paperwork and save it to the animal/person
             dtid = post.integer("sigtemplateid")

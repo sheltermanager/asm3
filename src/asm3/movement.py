@@ -1045,7 +1045,7 @@ def auto_cancel_reservations(dbo: Database) -> None:
         "MovementType = 0 AND ReservationDate < ?", (dbo.today(), dbo.now(), cancelcutoff))
     asm3.al.debug("cancelled %d reservations older than %s days" % (count, cancelafter), "movement.auto_cancel_reservations", dbo)
 
-def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> None:
+def send_adoption_checkout(dbo: Database, username: str, post: PostedData, substitute_url: bool = False) -> None:
     """
     Sets up an adoption checkout cache object and sends the email 
     with the checkout link to the adopter.
@@ -1099,8 +1099,9 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> No
     # Send the email to the adopter
     url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.name(), key)
     body = post["body"]
-    body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
-    body = asm3.utils.fix_tinymce_uris(body)
+    if substitute_url:
+        body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
+        body = asm3.utils.fix_tinymce_uris(body)
     asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
     # Record that the checkout email was sent in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
