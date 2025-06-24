@@ -7255,7 +7255,7 @@ class search(JSONEndpoint):
         results, timetaken, explain, sortname = asm3.search.search(o.dbo, o, q)
         is_large_db = ""
         if o.dbo.is_large_db: is_large_db = " (indexed only)"
-        asm3.al.debug("searched for '%s', got %d results in %s, sorted %s %s" % (q, len(results), timetaken, sortname, is_large_db), "main.search", o.dbo)
+        asm3.al.debug("searched for '%s', got %d results in %0.2fs, sorted %s %s" % (q, len(results), timetaken, sortname, is_large_db), "main.search", o.dbo)
         return {
             "q": q,
             "results": results,

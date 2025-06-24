@@ -1244,9 +1244,9 @@ def get_microchip_prefixes() -> List[Dict[str, str]]:
         s = asm3.cachedisk.get("chipprefixes", "chipprefixes")
         if s is None:
             s = asm3.utils.get_url(URL_MICROCHIP_PREFIXES)["response"]
+            asm3.al.debug("read chipprefixes.txt (%s bytes)" % len(s), "lookups.get_microchip_prefixes")
             if not URL_MICROCHIP_PREFIXES.startswith("file:"):
                 asm3.cachedisk.put("chipprefixes", "chipprefixes", s, CACHE_TTL)
-        asm3.al.debug("read chipprefixes.txt (%s bytes)" % len(s), "lookups.get_microchip_prefixes")
         prefixes = []
         for p in s.split("\n"):
             if p.startswith("#"): continue
