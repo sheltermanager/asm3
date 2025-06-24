@@ -1040,7 +1040,7 @@ def scale_image(imagedata: bytes, resizespec: str) -> bytes:
         # Load the image data and scale it
         file_data = asm3.utils.bytesio(imagedata)
         im = Image.open(file_data)
-        im.thumbnail(size, Image.ANTIALIAS)
+        im.thumbnail(size, Image.Resampling.LANCZOS)
         if im.mode in ("RGBA", "P"): im = im.convert("RGB") # throw away alpha layer so we can output as JPEG
         # Save the scaled down image data 
         output = asm3.utils.bytesio()
@@ -1226,7 +1226,7 @@ def scale_image_file(inimage: bytes, outimage: bytes, resizespec: str) -> None:
     if h > w: size = h, h
     # Scale and save
     im = Image.open(inimage)
-    im.thumbnail(size, Image.ANTIALIAS)
+    im.thumbnail(size, Image.Resampling.LANCZOS)
     im.save(outimage, "JPEG")
 
 def scale_pdf(filedata: bytes) -> bytes:
