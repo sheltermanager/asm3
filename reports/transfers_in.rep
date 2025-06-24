@@ -2,7 +2,7 @@ Transfers In
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Animals transferred into the shelter between two dates by transferor.
 ###
@@ -11,7 +11,7 @@ en
 SELECT a.DateBroughtIn, a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, 
 s.SpeciesName, i.LocationName, bi.OwnerName, bi.ID AS OID, bi.OwnerAddress, bi.OwnerTown,
 bi.OwnerCounty, bi.OwnerPostCode,
-$SQL AGE DateBroughtIn,DateOfBirth$ AS AnimalAge
+$SQL AGE a.DateBroughtIn,a.DateOfBirth$ AS AnimalAge
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
