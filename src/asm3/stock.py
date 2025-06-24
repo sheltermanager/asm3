@@ -236,7 +236,7 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":        post["globalminimum"]
+        "GlobalMinimum":        post.integer("globalminimum")
     }, username)
 
 def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
@@ -300,7 +300,7 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "IsRetired":            asm3.utils.iif(post.integer("active") == 0, 1, 0),
         "Barcode":              post["barcode"],
         "PLU":                  post["plu"],
-        "GlobalMinimum":        post["globalminimum"]
+        "GlobalMinimum":        post.integer("globalminimum")
     }, username)
 
     return pid
