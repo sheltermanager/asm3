@@ -72,7 +72,7 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
     RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
-    SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
+    SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_API_KEY, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT
 
 from asm3.typehints import Any, Dict, Generator, List, ResultRow, Session
@@ -6942,7 +6942,7 @@ class publish_options(JSONEndpoint):
             "haspetlink": PETLINK_BASE_URL != "",
             "haspetslocated": PETSLOCATED_FTP_USER != "",
             "hassac": SAC_METRICS_URL != "",
-            "hassmarttag": SMARTTAG_FTP_USER != "",
+            "hassmarttag": SMARTTAG_API_KEY != "",
             "hasvetenvoy": False, # Disabled. VETENVOY_US_BASE_URL != "",
             "haspetrescue": PETRESCUE_URL != "",
             "hassavourlife": SAVOURLIFE_URL != "",
