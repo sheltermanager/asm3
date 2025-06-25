@@ -1433,7 +1433,7 @@ def post_form(url: str, fields: Dict, headers: Dict = {}, cookies: Dict = {}) ->
     Returns dict of requestheaders (dict), requestbody (bytes), headers (str), response (str) and status (int)
     """
     headers = _add_http_headers(headers)
-    r = requests.post(url, data=fields, headers=headers, cookies=cookies)
+    r = requests.post(url, data=fields, headers=headers, cookies=cookies, verify=False)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def post_multipart(url: str, fields: Dict = None, files: Dict = None, headers: Dict = {}, cookies: Dict = {}) -> Dict:

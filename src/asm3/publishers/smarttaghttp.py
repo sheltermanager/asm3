@@ -30,27 +30,19 @@ class SmartTagPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        avidemail = asm3.configuration.avidus_email(self.dbo)
-        avidpassword = asm3.configuration.avidus_password(self.dbo)
-        avidkey = asm3.configuration.avidus_apikey(self.dbo)
+        smarttagapikey = asm3.configuration.smarttag_api_key(self.dbo)
 
-        if avidemail == "" or avidpassword == "" or avidkey == "":
-            self.setLastError("email address, password and api key all need to be set for AVID publisher")
+        if smarttagapikey == "":
+            self.setLastError("api key needs to be set for SmartTag publisher")
             return
 
-        usercredentials = "Basic " + base64.b64encode(avidemail + ":" + avidpassword)
-        registeroverseas = asm3.configuration.avid_register_overseas(self.dbo)
-
         headers = {
-            "x-api-key": avidkey,
-            "Authorization": usercredentials
+            "x-api-key": smarttagapikey
         }
 
-        chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
-        if registeroverseas: 
-            chipprefix = ["0","1","2","3","4","5","6","7","8","9"] # If overseas registration is on, send all chips to AVID US
+        chipprefix = ["987%", "900139%", "900141%", "900074%"]
 
-        animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake = False or registeroverseas)
+        animals = get_microchip_data(self.dbo, chipprefix, "smarttag", allowintake = False)
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
             return
@@ -72,14 +64,14 @@ class SmartTagPublisher(AbstractPublisher):
                     return
 
                 if not self.validate(an): continue
-                fields = self.processAnimal(an, registeroverseas)
+                fields = self.processAnimal(an)
 
-                self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
-                r = asm3.utils.post_form(AVID_US_POST_URL, fields, headers)
+                self.log("HTTP POST request %s: %s" % (SMARTTAG_HOST, str(fields)))
+                r = asm3.utils.post_form(SMARTTAG_HOST, fields, headers)
                 self.log("HTTP response: %s" % r["response"])
 
                 # Return value is an XML fragment, look for "Registration completed successfully"
-                if r["response"].find("COMPLETE") != -1:
+                if r["response"].find("success") != -1:
                     self.log("successful response, marking processed")
                     processed_animals.append(an)
                     # Mark success in the log
@@ -97,7 +89,7 @@ class SmartTagPublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
     
-    def processAnimal(self, an: ResultRow, registeroverseas=False) -> Dict:
+    def processAnimal(self, an: ResultRow) -> Dict:
         """ Generate a dictionary of data to post from an animal record """
         # Sort out breed
         breed = an["BREEDNAME"]
@@ -114,14 +106,11 @@ class SmartTagPublisher(AbstractPublisher):
         elif species.find("Reptile") != -1: species = "Reptilian"
         else: species = "Other"
 
-        address = an["CURRENTOWNERADDRESS"].split("\n")[0].split(" ")
-        premise = " ".join(address[:-1])
-        thoroughfare = address[-1]
+        address1 = an["CURRENTOWNERADDRESS"].split("\n")[0]
+        if "\n" in an["CURRENTOWNERADDRESS"]:
+            address2 = an["CURRENTOWNERADDRESS"].split("\n")[1]
 
         firstname = an["CURRENTOWNERFORENAMES"].split(" ")[0]
-        middlenames = ""
-        if " " in an["CURRENTOWNERFORENAMES"]:
-            middlenames = " ".join(an["CURRENTOWNERFORENAMES"].split(" ")[1:])
         
         phones = []
         for phone in (an["CURRENTOWNERHOMETELEPHONE"], an["CURRENTOWNERWORKTELEPHONE"], an["CURRENTOWNERMOBILETELEPHONE"]):
@@ -134,64 +123,61 @@ class SmartTagPublisher(AbstractPublisher):
                     }
                 )
         
-        sex = an["SEXNAME"].upper()
-        if sex == "UNKNOWN":
-            sex = "OTHER"
+        neutered = "No"
+        if an["NEUTERED"] == 1: neutered = "Yes"
 
         # Build the POST data
         ro = {
             "pets": [
                 {
-                    "breeds": [
-                        breed
-                    ],
-                    "color": an["BASECOLOURNAME"],
-                    "dob": asm3.i18n.format_date(an["DATEOFBIRTH"], "%m-%d-%Y"),
-                    "fixed": an["NEUTERED"] == 1 and "true" or "false",
-                    "marking": "",
-                    "medication": "",
-                    "microchips": [
-                        {
-                            "number": an["IDENTICHIPNUMBER"],# To do - add second microchip if exists?
-                            "protocol": "AVID"
-                        }
-                    ],
-                    "name": an["ANIMALNAME"],
-                    "sex": sex,
-                    "species": species.upper(),
-                    "status": "HOME",# To do - find out if this can be excluded - Adam.
-                    # Have excluded weight as must be in pounds, could add it if required
+                    "microchip_number": an["IDENTICHIPNUMBER"],
+                    "pet_name": an["ANIMALNAME"],
+                    "pet_breed": breed,
+                    "pet_sec_breed": "",
+                    "pet_color": an["BASECOLOURNAME"],
+                    "pet_sec_color": "",
+                    "pet_gender": an["SEXNAME"],
+                    "pet_weight": "",
+                    "pet_dob": asm3.i18n.format_date(an["IDENTICHIPDATE"], "%Y-%m-%d"),
+                    "pet_neutered": neutered,
+                    "pet_allergies": "",
+                    "pet_unique_features": "",
+                    "pet_special_needs": "",
+                    "pet_images": [],
+                    "pet_owner": {
+                        "email": an["CURRENTOWNEREMAILADDRESS"],
+                        "first_name": firstname,
+                        "last_name": an["CURRENTOWNERSURNAME"],
+                        "address_1": address1,
+                        "address_2": address2,
+                        "city": an["CURRENTOWNERTOWN"],
+                        "state": an["CURRENTOWNERCOUNTY"],
+                        "zip": an["CURRENTOWNERPOSTCODE"],
+                        "country": "US",
+                        "phone": an["CURRENTOWNERHOMETELEPHONE"],
+                        "mobile_phone": an["CURRENTOWNERMOBILETELEPHONE"]
+                    }
+                    #Can add a secondary and/or vet contact here - Adam.
                 }
-            ],
-            "contacts": [
-                {
-                    "firstName": firstname,
-                    "middleName": middlenames,
-                    "lastName": an["CURRENTOWNERSURNAME"],
-                    "addresses": [
-                        {
-                            "administrativeArea": an["CURRENTOWNERCOUNTY"],
-                            "country": "US",
-                            "locality": an["CURRENTOWNERTOWN"],
-                            "premise": premise,
-                            "thoroughfare": thoroughfare,
-                            "postalCode": an["CURRENTOWNERPOSTCODE"],
-                            "type": "HOME"# To do - find out if this can be excluded - Adam.
-                        }
-                    ],
-                    "emails": [
-                        {
-                            "address": an["CURRENTOWNEREMAILADDRESS"],
-                            "type": "PERSONAL"
-                        }
-                    ],
-                    "phones": phones,
-                    "type": "PRIMARY"
-
-                }
-            ],
-            "facility": orgname,
-            "registrationDatetime": dbo.now()
+            ]
         }
 
         return ro
+    
+    def validate(self, an: ResultRow) -> bool:
+        """ Validate an animal record is ok to send """
+        # Validate certain items aren't blank so we aren't registering bogus data
+        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+            self.logError("Address for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+            self.logError("Postal code for the new owner is blank, cannot process")
+            return False
+
+        # Make sure the length is actually suitable
+        if len(an.IDENTICHIPNUMBER) != 15:
+            self.logError("Microchip length is not 15, cannot process")
+            return False
+    
+        return True

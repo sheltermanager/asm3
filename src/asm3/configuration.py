@@ -1529,8 +1529,8 @@ def return_fosters_on_transfer(dbo: Database) -> bool:
 def return_retailer_on_adoption(dbo: Database) -> bool:
     return cboolean(dbo, "ReturnRetailerOnAdoption", DEFAULTS["ReturnRetailerOnAdoption"] == "Yes")
 
-def smarttag_accountid(dbo: Database) -> str:
-    return cstring(dbo, "SmartTagFTPUser")
+def smarttag_api_key(dbo: Database) -> str:
+    return cstring(dbo, "SmartTagAPIKey")
 
 def publisher_presets(dbo: Database) -> str:
     return cstring(dbo, "PublisherPresets", DEFAULTS["PublisherPresets"])
