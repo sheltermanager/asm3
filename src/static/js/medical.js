@@ -672,11 +672,11 @@ $(function() {
             if (forcesingletx) {
                 $("#singlemulti").val(medical.TREATMENT_SINGLE);
                 $("#singlemulti").prop("disabled", true);
-                $("#costpertreatmentrow").hide();
+                //$("#costpertreatmentrow").hide();
                 medical.change_singlemulti();
             }
             else {
-                $("#costpertreatmentrow").show();
+                //$("#costpertreatmentrow").show();
                 $("#singlemulti").prop("disabled", false);
             }
             $("#dosagerow").toggle( !medical.MEDICAL_TYPES_WITHOUT_DOSAGE.includes(format.to_int(mtid)) );
