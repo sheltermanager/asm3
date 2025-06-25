@@ -191,7 +191,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 }
             ],
             "facility": orgname,
-            "registrationDatetime": asm3.utils.iso_datetime()
+            "registrationDatetime": dbo.now()
         }
 
         return ro

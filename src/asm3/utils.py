@@ -683,10 +683,6 @@ def unixtime() -> float:
     """ Returns Unix time (seconds since epoch 01/01/1970) """
     return time.time()
 
-def iso_datetime() -> str:
-    """ Returns the current datetime in iso format"""
-    return datetime.datetime.now().isoformat()
-
 def padleft(num: Union[float, int], digits: int) -> str:
     """
     leftpads a number to digits
