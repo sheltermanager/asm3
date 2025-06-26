@@ -9,7 +9,7 @@ $(function() {
         render: function() {
             let h = [], lastdate, modifier = "";
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
-            h.push('<p><input type="text" id="timelinefilter" placeholder="' + _('Filter') + '"></p>');
+            h.push('<p><input type="text" id="timelinefilter" class="asm-textbox" placeholder="' + _('Filter') + '"></p>');
             h.push('<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">' +
                 '<p><span class="ui-icon ui-icon-search"></span><span id="timelineresultcount">' +
                 _("Showing {0} timeline events.").replace("{0}", controller.resultcount)  +
