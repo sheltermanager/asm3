@@ -37,6 +37,13 @@ const common = {
         });
     },
 
+    /** Returns True if searchkey is present outside of any element tags  */
+    inner_string_present: function(searchkey, container) {
+        return str.replace(/\{(.+?)\}/g, function($0, $1) {
+            return sub.hasOwnProperty($1) ? sub[$1] : $0;
+        });
+    },
+
     /** Looks for {0}, {1}, {2} etc and replaces them with that element of array arr */
     sub_arr: function(str, arr) {
         $.each(arr, function(i, l) {
