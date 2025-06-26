@@ -40,7 +40,7 @@ $(function() {
 
                 // Hide items that don't contain the filter key
                 let filterkey = $("#timelinefilter").val();
-                let filteredcount = 0
+                let filteredcount = 0;
                 $.each($(".asm-timeline-item a"), function(i, v) {
                     if (!$(v).text().includes(filterkey)) {
                         $(v).parents(".asm-timeline-item").hide();
