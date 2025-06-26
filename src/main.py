@@ -6043,6 +6043,7 @@ class options(JSONEndpoint):
             "medicaltypes": asm3.lookups.get_medical_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
+            "personflags": asm3.lookups.get_person_flags(dbo),
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
             "pp_square": pp_square,
@@ -7522,6 +7523,8 @@ class staff_rota(JSONEndpoint):
         if startdate is None: startdate = monday_of_week(dbo.today())
         rota = asm3.person.get_rota(dbo, startdate, add_days(startdate, 7))
         asm3.al.debug("got %d rota items" % len(rota), "main.staff_rota", dbo)
+        if "flags" not in o.post.data:
+            o.post["flags"] = asm3.configuration.default_rota_flags(dbo)
         return {
             "name": "staff_rota",
             "rows": rota,
