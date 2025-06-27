@@ -19,7 +19,6 @@ def send_all(dbo: Database) -> None:
     """
     Single function for the batch to call, checks and sends all automated emails
     """
-    print("Sending all")
     adopter_followup(dbo)
     vaccination_followup(dbo)
     clinic_reminder(dbo)
