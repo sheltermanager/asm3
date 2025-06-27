@@ -8,8 +8,11 @@ copy it from scripts/asm3.conf.example
 """
 
 # Provides site-wide definitions, reading them from a configuration file
-import codecs, os, sys, json
+import codecs, os, json
 from asm3.typehints import Dict
+
+# The file that config is being read from
+cfg_file = ""
 
 # The map of values loaded from the config file
 cfg = None
@@ -24,6 +27,7 @@ def read_config_file() -> None:
     4. /etc/asm3.conf
     """
     global cfg
+    global cfg_file
     fname = ""
     insconf = os.path.dirname(os.path.abspath(__file__)) + os.sep + ".." + os.sep + "asm3.conf"
     homeconf = os.path.expanduser("~") + os.sep + ".asm3.conf"
@@ -32,10 +36,9 @@ def read_config_file() -> None:
     elif os.path.exists(homeconf): fname = homeconf
     elif os.path.exists("/etc/asm3.conf"): fname = "/etc/asm3.conf"
     if fname == "":
-        sys.stderr.write("no config found, using defaults\n")
         cfg = {}
     else:
-        sys.stderr.write("config: %s\n" % fname)
+        cfg_file = fname
         cfg = {}
         with codecs.open(fname, 'r', encoding='utf8') as f:
             lines = f.readlines()

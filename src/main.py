@@ -73,7 +73,7 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
     RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
-    SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT
+    SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT, cfg_file
 
 from asm3.typehints import Any, Dict, Generator, List, ResultRow, Session
 
@@ -8118,6 +8118,7 @@ app.internalerror = asm_500
 if EMAIL_ERRORS:
     app.internalerror = asm_500_email
 session = session_manager()
+sys.stderr.write(f"config file: {cfg_file}\n")
 
 # Choose startup mode
 if DEPLOYMENT_TYPE == "wsgi":
