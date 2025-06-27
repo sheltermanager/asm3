@@ -10,14 +10,14 @@ $(function() {
             const dialog = {
                 add_title: _("Add Invoice Item"),
                 edit_title: _("Edit Invoice Item"),
+                width: '550px',
                 edit_perm: 'ccl',
                 close_on_ok: false,
                 fields: [
-                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea", validation: "notblank" },
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "autotext", validation: "notblank", autocomplete: "on", doublesize: true },
                     { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" }
                 ]
             };
-
             const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
@@ -45,8 +45,19 @@ $(function() {
                     click: async function() { 
                         try {
                             await tableform.dialog_show_add(dialog);
+                            $.each($(".recentinvoiceitem"), function(i, v) {
+
+                                console.log('Inserting recent invoice');
+                                let response = tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
+                                let row = {};
+                                row.ID = response;
+                                console.log(dialog.fields);
+                                tableform.fields_update_row(dialog.fields, row);
+                                controller.rows.push(row);
+                            });
+                            console.log('Inserting manual invoice');
                             let response = await tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
-                            var row = {};
+                            let row = {};
                             row.ID = response;
                             tableform.fields_update_row(dialog.fields, row);
                             controller.rows.push(row);
@@ -96,9 +107,25 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            $("#description").on("change", function() {
+                $.each(controller.invoiceitems, function(i, v) {
+                    if (v.CLINICINVOICEITEMNAME == $("#description").val()) {
+                        $("#amount").val(format.currency(v.DEFAULTCOST));
+                        return false;
+                    }
+                });
+            });
         },
 
         sync: function() {
+            let sourcelist = [];
+            clinic_invoice.invoiceitemsdict = {};
+            $.each(controller.invoiceitems, function(i, v) {
+                sourcelist.push(v.CLINICINVOICEITEMNAME);
+                clinic_invoice.invoiceitemsdict[v.CLINICINVOICEITEMNAME] = v.DEFAULTCOST;
+            });
+            $("#description").autocomplete({source: sourcelist});
         },
 
         validation: function() {
