@@ -466,6 +466,8 @@ DisplayXIfNotNeutered / DisplayXIfEntireMale / DisplayXIfEntireFemale
     Outputs an X if this animal is not neutered/spayed
 EntryCategory
     The entry category of the animal 
+EntryType
+    The animal's entry type from the fixed list (Surrender, Stray, Transfer, etc).
 ReasonForEntry
     The reason the animal was brought to the shelter 
 ReasonNotBroughtByOwner
