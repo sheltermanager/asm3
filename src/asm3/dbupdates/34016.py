@@ -11,4 +11,4 @@ sql = "CREATE TABLE jurisdiction ( ID INTEGER NOT NULL, " \
 execute(dbo,sql)
 execute(dbo,"UPDATE owner SET JurisdictionID = 0")
 execute(dbo,"UPDATE animalcontrol SET JurisdictionID = 0")
-execute(dbo,"INSERT INTO jurisdiction VALUES (1, '%s', '', 0)" % _("Local", l))
+execute(dbo,"INSERT INTO jurisdiction VALUES (1, ?, '', 0)", [ _("Local", l) ])

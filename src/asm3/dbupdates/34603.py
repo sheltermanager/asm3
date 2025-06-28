@@ -14,4 +14,4 @@ add_index(dbo, "event_EventName", "event", "EventName")
 add_index(dbo, "eventanimal_EventAnimalID", "eventanimal", "EventID,AnimalID", True)
 add_index(dbo, "eventanimal_ArrivalDate", "eventanimal", "ArrivalDate")
 # add events to the additional field links
-execute(dbo,"INSERT INTO lksfieldlink VALUES (21, '%s')" % _("Event - Details", l))
+execute(dbo,"INSERT INTO lksfieldlink VALUES (21, ?)", [ _("Event - Details", l) ])
