@@ -1854,6 +1854,7 @@ class animal(JSONEndpoint):
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.user, a.ID),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
+            "links": asm3.animal.get_links(dbo, a["ID"], a["ACCEPTANCENUMBER"]),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
