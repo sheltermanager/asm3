@@ -559,6 +559,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "RESERVEDOWNERIDNUMBER"  : a["RESERVEDOWNERIDNUMBER"],
         "RESERVEDOWNERJURISDICTION" : a["RESERVEDOWNERJURISDICTION"],
         "ENTRYCATEGORY"         : a["ENTRYREASONNAME"],
+        "ENTRYTYPE"             : a["ENTRYTYPENAME"],
         "MOSTRECENTENTRYCATEGORY" : a["ENTRYREASONNAME"],
         "REASONFORENTRY"        : a["REASONFORENTRY"],
         "REASONFORENTRYBR"      : a["REASONFORENTRY"],
