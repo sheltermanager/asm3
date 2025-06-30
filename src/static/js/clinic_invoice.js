@@ -14,7 +14,7 @@ $(function() {
                 edit_perm: 'ccl',
                 close_on_ok: false,
                 fields: [
-                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "autotext", validation: "notblank", autocomplete: "on", doublesize: true },
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "autotext", validation: "notblank", doublesize: true },
                     { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" }
                 ]
             };
@@ -46,16 +46,12 @@ $(function() {
                         try {
                             await tableform.dialog_show_add(dialog);
                             $.each($(".recentinvoiceitem"), function(i, v) {
-
-                                console.log('Inserting recent invoice');
                                 let response = tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
                                 let row = {};
                                 row.ID = response;
-                                console.log(dialog.fields);
                                 tableform.fields_update_row(dialog.fields, row);
                                 controller.rows.push(row);
                             });
-                            console.log('Inserting manual invoice');
                             let response = await tableform.fields_post(dialog.fields, "mode=create&appointmentid=" + controller.appointmentid, "clinic_invoice");
                             let row = {};
                             row.ID = response;
@@ -109,12 +105,9 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
 
             $("#description").on("change", function() {
-                $.each(controller.invoiceitems, function(i, v) {
-                    if (v.CLINICINVOICEITEMNAME == $("#description").val()) {
-                        $("#amount").val(format.currency(v.DEFAULTCOST));
-                        return false;
-                    }
-                });
+                if ($("#description").val() in clinic_invoice.invoiceitemsdict) {
+                    $("#amount").val(format.currency(clinic_invoice.invoiceitemsdict[$("#description").val()]));
+                }
             });
         },
 
