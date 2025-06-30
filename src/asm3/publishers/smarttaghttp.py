@@ -65,9 +65,9 @@ class SmartTagPublisher(AbstractPublisher):
 
                 if not self.validate(an): continue
                 fields = self.processAnimal(an)
-
-                self.log("HTTP POST request %s: %s" % (SMARTTAG_HOST, str(fields)))
-                r = asm3.utils.post_form(SMARTTAG_HOST, fields, headers)
+                j = asm3.utils.json(fields)
+                self.log("HTTP POST request %s: %s" % (SMARTTAG_HOST, j))
+                r = asm3.utils.post_json(SMARTTAG_HOST, j, headers=headers)
                 self.log("HTTP response: %s" % r["response"])
 
                 # Return value is an XML fragment, look for "Registration completed successfully"
