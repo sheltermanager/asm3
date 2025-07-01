@@ -361,10 +361,14 @@ class SimpleSearchBuilder(object):
                 self.add_field(f)
 
     def add_large_text_fields(self, fieldlist: str) -> None:
-        """ Add clauses for many large text fields (only search in smaller databases) in one list """
-        if not self.dbo.is_large_db:
-            for f in fieldlist:
-                self.add_field(f)
+        """ Add clauses for many large text fields (only search in smaller databases) in one list 
+            NOTE: No longer does anything. It seems silly to search these fields in smaller databases
+                  when eventually this functionality will be lost as the database grows.
+        """
+        #if not self.dbo.is_large_db:
+        #    for f in fieldlist:
+        #        self.add_field(f)
+        return
 
     def add_words(self, field: str) -> None:
         """ Adds each word in the term as and clauses so that each word is separately matched and has to be present """
