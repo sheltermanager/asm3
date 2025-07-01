@@ -32,6 +32,7 @@ $(function() {
                         options: { displayfield: "SITENAME", rows: controller.sites }},
                     { post_field: "ownertype", json_field: "OWNERTYPE", type: "select", label: _("Class"), 
                         options: html.list_to_options([ '1|' + _("Individual"), '3|' + _("Couple"), '2|' + _("Organization") ])},
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 31, false, "additionalcouples") },
                     { post_field: "viewroles", json_field: "VIEWROLEIDS", type: "selectmulti", label: _("View Roles"), 
                         callout: _("Only allow users with one of these roles to view this person record"),
                         options: { displayfield: "ROLENAME", rows: controller.roles }},
@@ -285,18 +286,21 @@ $(function() {
                 $(".tag-organisation").fadeOut();
                 $(".tag-couple").fadeOut();
                 $(".tag-individual").fadeIn();
+                $(".additionalcouples").closest("tr").fadeOut();
             }
             // Organisation
             else if ($("#ownertype").val() == 2) {
                 $(".tag-couple").fadeOut();
                 $(".tag-individual").fadeOut();
                 $(".tag-organisation").fadeIn();
+                $(".additionalcouples").closest("tr").fadeOut();
             }
             // Couple
             else if ($("#ownertype").val() == 3) {
                 $(".tag-organisation").fadeOut();
                 $(".tag-individual").fadeIn();
                 $(".tag-couple").fadeIn();
+                $(".additionalcouples").closest("tr").fadeIn();
             }
 
             // if the member flag is selected and membership number is blank,
@@ -608,6 +612,13 @@ $(function() {
 
             // If a popup warning has been set, display it
             person.show_popup_warning();
+
+            // If couple show additional couple fields
+            /*if ($("#ownertype").val() == 3) {
+                $(".additionalcouples").closest("tr").show();
+            } else {
+                $(".additionalcouples").closest("tr").hide();
+            }*/
 
         },
 

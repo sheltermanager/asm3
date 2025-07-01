@@ -2564,6 +2564,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksfieldlink", "LinkType", 5, _("Animal - Health and Identification", l))
     sql += lookup1("lksfieldlink", "LinkType", 6, _("Animal - Death", l))
     sql += lookup1("lksfieldlink", "LinkType", 1, _("Person - Additional", l))
+    sql += lookup1("lksfieldlink", "LinkType", 31, _("Person - Couple", l))
     sql += lookup1("lksfieldlink", "LinkType", 7, _("Person - Name and Address", l))
     sql += lookup1("lksfieldlink", "LinkType", 8, _("Person - Type", l))
     sql += lookup1("lksfieldlink", "LinkType", 9, _("Lost Animal - Additional", l))

@@ -50,7 +50,7 @@ FOUNDANIMAL_IN = "11, 12"
 INCIDENT_IN = "16, 17, 18, 20"
 LOSTANIMAL_IN = "9, 10"
 MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30'
-PERSON_IN = "1, 7, 8"
+PERSON_IN = "1, 7, 8, 31"
 WAITINGLIST_IN = "13, 14, 15"
 
 # Movement mapping 
