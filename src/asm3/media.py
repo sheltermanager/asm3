@@ -91,7 +91,7 @@ def get_media_by_seq(dbo: Database, linktype: int, linkid: int, seq: int) -> Res
         "WHERE LinkTypeID = ? AND LinkID = ? " \
         "AND MediaMimeType = 'image/jpeg' " \
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
-        "ORDER BY WebsitePhoto DESC, ID", (linktype, linkid))
+        "ORDER BY WebsitePhoto DESC, Date DESC", (linktype, linkid))
     if len(rows) >= seq:
         return rows[seq-1]
     else:
