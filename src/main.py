@@ -1091,6 +1091,12 @@ class mobile(ASMEndpoint):
         self.check(asm3.users.VIEW_LICENCE)
         rows = asm3.financial.get_licence_find_simple(o.dbo, o.post["licencenumber"])
         return asm3.utils.json(rows)
+    
+    def post_checkmicrochip(self, o):
+        self.check(asm3.users.VIEW_ANIMAL)
+        self.check(asm3.users.VIEW_PERSON)
+        rows = asm3.animal.get_microchip_find_simple(o.dbo, o.post["microchipnumber"])
+        return asm3.utils.json(rows)
 
     def post_diarycomplete(self, o):
         self.check(asm3.users.EDIT_MY_DIARY_NOTES)

@@ -2623,6 +2623,12 @@ def get_litter_mothers(dbo: Database, litters: Results = []) -> Results:
     if len(motherids) == 0: return []
     return dbo.query(get_animal_brief_query(dbo) + " WHERE a.ID IN ( " + ",".join(motherids) + ") ORDER BY a.ID")
 
+def get_microchip_find_simple(dbo: Database, microchipnumber: str):
+    """ Returns info on animal(s) with provided microchip number"""
+    query = get_animal_query(dbo) + "WHERE a.IdentichipNumber = ? OR a.Identichip2Number = ? "
+    return dbo.query(
+        query, [microchipnumber, microchipnumber])
+
 def get_satellite_counts(dbo: Database, animalid: int) -> Results:
     """
     Returns a resultset containing the number of each type of satellite

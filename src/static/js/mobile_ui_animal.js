@@ -263,6 +263,57 @@ const mobile_ui_animal = {
 
     bind: function() {
 
+        // Handle clicking on check microchip button
+        $("#btn-check-microchip").click(function() {
+            if ($("#microchipnumbersearch").val() == '') {
+                mobile.show_error(_("Error"), _("A microchip number must be supplied"));
+            } else {
+                let spinner = $(this).find(".spinner-border");
+                spinner.show();
+                // Retrieve results
+                let formdata = {
+                    "mode": "checkmicrochip",
+                    "microchipnumber": $("#microchipnumbersearch").val()
+                };
+                mobile.ajax_post(formdata, function(response) {
+                    spinner.hide();
+                    controller.microchipresults = jQuery.parseJSON(response);
+                    // Display person list
+                    $("#content-microchipresults .list-group").empty();
+                    $.each(controller.microchipresults, function(i, v) {
+                        let a = '"' + v.ANIMALNAME + '": ' + common.substitute(_("{0} {1} aged {2}"), { "0": v.SEX, "1": v.SPECIESNAME, "2": v.ANIMALAGE }) + '<br>';
+                        if (!v.ANIMALNAME) { a = ""; }
+                        let h = '<div data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                            '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
+                            '<h5 class="mb-1">' + v.SHELTERCODE + ' ' + v.ANIMALNAME + ' - ' + v.ANIMALAGE + '</h5>';
+                        if (v.CURRENTOWNERID) {
+                            h += '<small>' + _("Current Owner") + ': ' + v.CURRENTOWNERNAME + '<br>' + v.CURRENTOWNERADDRESS + ', ' + v.CURRENTOWNERTOWN + ' ' + v.CURRENTOWNERCOUNTY + ' ' + v.CURRENTOWNERPOSTCODE
+                            $.each([v.CURRENTOWNERHOMETELEPHONE, v.CURRENTOWNERWORKTELEPHONE, v.CURRENTOWNERMOBILETELEPHONE], function(i, v) {
+                                if (v) {
+                                    h += '<br><a href=tel:' + v.replace(/ /g, '') + '>' + v + '</a>';
+                                }
+                            });
+                            if (v.CURRENTOWNEREMAILADDRESS) {
+                                h += '<br><a href=mailto:' + v.CURRENTOWNEREMAILADDRESS + '>' + v.CURRENTOWNEREMAILADDRESS + '</a>';
+                            }
+                            h += '</small>';
+                            
+                        } else {
+                            h += '<small>' + _("No current owner found") + '</small>';
+                        }
+                        h += '</div>';
+                        $("#content-microchipresults .list-group").append(h);
+                    });
+                    if (controller.microchipresults.length == 0) {
+                        let h = '<p>' + _("No results found") + '</p>';
+                        $("#content-microchipresults .list-group").append(h);
+                    }
+                    $(".container").hide();
+                    $("#content-microchipresults").show();
+                });
+            }
+        });
+
         // When a shelter animal link is clicked, display the record
         $("#content-shelteranimals").on("click", "a", function() {
             let animalid = format.to_int($(this).attr("data-id")), a = null;
