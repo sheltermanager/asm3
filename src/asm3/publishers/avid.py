@@ -20,6 +20,7 @@ class AVIDUSPublisher(AbstractPublisher):
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("avidus", "AVID US Publisher")
+        self.dbo = dbo
     
     def run(self) -> None:
         
@@ -38,7 +39,8 @@ class AVIDUSPublisher(AbstractPublisher):
             self.setLastError("email address, password and api key all need to be set for AVID publisher")
             return
 
-        usercredentials = "Basic " + base64.b64encode(avidemail + ":" + avidpassword)
+
+        usercredentials = "Basic " + str(base64.b64encode((avidemail + ":" + avidpassword).encode("utf-8")))
         registeroverseas = asm3.configuration.avid_register_overseas(self.dbo)
 
         headers = {
@@ -71,7 +73,7 @@ class AVIDUSPublisher(AbstractPublisher):
                     self.stopPublishing()
                     return
 
-                if not self.validate(an): continue
+                #if not self.validate(an): continue
                 fields = self.processAnimal(an, registeroverseas)
 
                 self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
@@ -190,8 +192,8 @@ class AVIDUSPublisher(AbstractPublisher):
 
                 }
             ],
-            "facility": orgname,
-            "registrationDatetime": dbo.now()
+            "facility": asm3.configuration.organisation(self.dbo),
+            "registrationDatetime": self.dbo.now()
         }
 
         return ro
