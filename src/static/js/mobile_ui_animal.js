@@ -104,12 +104,12 @@ const mobile_ui_animal = {
             ].join("\n")),
 
             aci("health", _("Health and Identification"), [
-                i(_("Microchipped"), format.date(a.IDENTICHIPDATE) + " " + a.IDENTICHIPPED==1 ? a.IDENTICHIPNUMBER : "", "DontShowMicrochip"),
-                i(_("Tattoo"), format.date(a.TATTOODATE) + " " + a.TATTOO==1 ? a.TATTOONUMBER : "", "DontShowTattoo"),
+                i(_("Microchipped"), format.date(a.IDENTICHIPDATE) + " " + (a.IDENTICHIPPED==1 ? a.IDENTICHIPNUMBER : ""), "DontShowMicrochip"),
+                i(_("Tattoo"), format.date(a.TATTOODATE) + " " + (a.TATTOO==1 ? a.TATTOONUMBER : ""), "DontShowTattoo"),
                 i(_("Neutered"), a.NEUTEREDNAME + " " + format.date(a.NEUTEREDDATE), "DontShowNeutered"),
                 i(_("Declawed"), a.DECLAWEDNAME, "DontShowDeclawed"),
-                i(_("Heartworm Tested"), format.date(a.HEARTWORMTESTDATE) + " " + a.HEARTWORMTESTED==1 ? a.HEARTWORMTESTRESULTNAME : "", "DontShowHeartworm"),
-                i(_("FIV/L Tested"), format.date(a.COMBITESTDATE) + " " + a.COMBITESTED==1 ? a.COMBITESTRESULTNAME + " " + a.FLVRESULTNAME : "", "DontShowCombi"),
+                i(_("Heartworm Tested"), format.date(a.HEARTWORMTESTDATE) + " " + (a.HEARTWORMTESTED==1 ? a.HEARTWORMTESTRESULTNAME : ""), "DontShowHeartworm"),
+                i(_("FIV/L Tested"), format.date(a.COMBITESTDATE) + " " + (a.COMBITESTED==1 ? a.COMBITESTRESULTNAME + " " + a.FLVRESULTNAME : ""), "DontShowCombi"),
                 i(_("Health Problems"), a.HEALTHPROBLEMS),
                 i(_("Rabies Tag"), a.RABIESTAG),
                 i(_("Special Needs"), a.HASSPECIALNEEDSNAME),

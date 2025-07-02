@@ -545,6 +545,7 @@ def get_animal_brief_query(dbo: Database) -> str:
         "a.HoldUntilDate, " \
         "a.ID, " \
         "a.Identichipped, " \
+        "a.IdentichipDate, " \
         "a.IdentichipNumber, " \
         "a.IsCourtesy, " \
         "a.IsGoodWithCats, " \
@@ -884,7 +885,7 @@ def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", 
     ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % asm3.additional.ANIMAL_IN)
-    s.add_large_text_fields([ "a.Markings", "a.HiddenAnimalDetails", "a.AnimalComments", "a.ReasonNO", 
+    ss.add_large_text_fields([ "a.Markings", "a.HiddenAnimalDetails", "a.AnimalComments", "a.ReasonNO", 
        "a.HealthProblems", "a.PTSReason" ])
     if asm3.utils.is_numeric(query) and len(query) > 4:
         ss.add_clause("EXISTS(SELECT ID FROM animalvaccination av WHERE av.AnimalID = a.ID AND av.RabiesTag LIKE ?)")
