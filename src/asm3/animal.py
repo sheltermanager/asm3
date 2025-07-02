@@ -545,6 +545,7 @@ def get_animal_brief_query(dbo: Database) -> str:
         "a.HoldUntilDate, " \
         "a.ID, " \
         "a.Identichipped, " \
+        "a.IdentichipDate, " \
         "a.IdentichipNumber, " \
         "a.IsCourtesy, " \
         "a.IsGoodWithCats, " \
