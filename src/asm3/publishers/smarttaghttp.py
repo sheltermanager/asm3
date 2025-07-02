@@ -107,6 +107,7 @@ class SmartTagPublisher(AbstractPublisher):
         else: species = "Other"
 
         address1 = an["CURRENTOWNERADDRESS"].split("\n")[0]
+        address2 = ""
         if "\n" in an["CURRENTOWNERADDRESS"]:
             address2 = an["CURRENTOWNERADDRESS"].split("\n")[1]
 
@@ -132,6 +133,7 @@ class SmartTagPublisher(AbstractPublisher):
                 {
                     "microchip_number": an["IDENTICHIPNUMBER"],
                     "pet_name": an["ANIMALNAME"],
+                    "pet_type": species,
                     "pet_breed": breed,
                     "pet_sec_breed": "",
                     "pet_color": an["BASECOLOURNAME"],
