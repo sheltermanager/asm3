@@ -1,0 +1,53 @@
+Current Product levels
+###
+Stock Control
+###
+35000/Any rev01
+###
+All current products held
+###
+en
+###
+SELECT ProductName, RetailPrice AS moneyUnitPrice, p.Description,
+CostPrice AS moneyPurchasePrice,
+(SELECT SUM(Total) FROM stocklevel WHERE stocklevel.ProductID = p.ID) AS Balance,
+CASE WHEN UnitTypeID < 0 THEN CustomUnit ELSE (SELECT UnitName FROM lksunittype 
+WHERE lksunittype.ID = p.UnitTypeID) END AS Unit,
+CASE WHEN PurchaseUnitTypeID < 0 THEN CustomPurchaseUnit ELSE (SELECT UnitName FROM lksunittype 
+WHERE lksunittype.ID = p.PurchaseUnitTypeID) END AS PurchaseUnit
+FROM product p
+WHERE (SELECT SUM(Total) FROM stocklevel WHERE stocklevel.ProductID = p.ID) > 0 
+ORDER BY ProductName
+###
+$$HEADER
+<table border=1>
+<thead>
+<tr>
+<th>Product Name</th>
+<th>Description</th>  
+<th>Purchase Unit Type</th>  
+<th>Purchase Unit Price</th>    
+<th>Unit Type</th> 
+<th>Unit Price</th>   
+<th>Balance</th>   
+</tr>
+</thead>
+<tbody>  
+HEADER$$
+
+$$BODY
+<tr>
+<td>$PRODUCTNAME</td>  
+<td>$DESCRIPTION</td>  
+<td>$PURCHASEUNIT</td>  
+<td>$MONEYPURCHASEPRICE</td>     
+<td>$UNIT</td>
+<td>$MONEYUNITPRICE</td>  
+<td>$BALANCE</td>  
+</tr>
+BODY$$
+
+$$FOOTER
+</tbody>
+</table>
+FOOTER$$
