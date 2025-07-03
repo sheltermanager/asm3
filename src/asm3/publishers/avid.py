@@ -41,7 +41,7 @@ class AVIDUSPublisher(AbstractPublisher):
         registeroverseas = asm3.configuration.avid_register_overseas(self.dbo)
 
         credentials = asm3.utils.base64encode(asm3.utils.str2bytes(f"{avidemail}:{avidpassword}"))
-        self.log("AVID US Publisher credentials " + credentials)
+        self.log("AVID US Publisher credentials " + credentials)# To do - remove when finished debugging - Adam.
         headers = {
             "x-api-key": avidkey,
             "Authorization": f"Basic {credentials}"
