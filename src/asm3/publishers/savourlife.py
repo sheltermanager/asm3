@@ -407,7 +407,7 @@ class SavourLifePublisher(AbstractPublisher):
             d["DogName2"] = an.BONDEDNAME2.title()
             d["IsMale2"] = an.BONDEDSEX == 1
             d["BreedId2"] = self.get_breed_id(an.BONDEDBREEDNAME, an.CROSSBREED == 1)
-            d["DOB2"] = an.DATEOFBIRTH
+            d["DOB2"] = an.BONDEDDATEOFBIRTH
 
             # MicrochipDetails2 should be "No" if we don't have one, 
             # the actual number if all_microchips is set or we're in VIC or NSW (2XXX or 3XXX postcode)
