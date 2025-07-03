@@ -287,7 +287,8 @@ const mobile_ui_animal = {
                             '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
                             '<h5 class="mb-1">' + v.SHELTERCODE + ' ' + v.ANIMALNAME + ' - ' + v.ANIMALAGE + '</h5>';
                         if (v.CURRENTOWNERID) {
-                            h += '<small>' + _("Current Owner") + ': ' + v.CURRENTOWNERNAME + '<br>' + v.CURRENTOWNERADDRESS + ', ' + v.CURRENTOWNERTOWN + ' ' + v.CURRENTOWNERCOUNTY + ' ' + v.CURRENTOWNERPOSTCODE
+                            h += '<small>' + _("Current Owner") + ': ' + 
+                                v.CURRENTOWNERNAME + '<br>' + v.CURRENTOWNERADDRESS + ', ' + v.CURRENTOWNERTOWN + ' ' + v.CURRENTOWNERCOUNTY + ' ' + v.CURRENTOWNERPOSTCODE;
                             $.each([v.CURRENTOWNERHOMETELEPHONE, v.CURRENTOWNERWORKTELEPHONE, v.CURRENTOWNERMOBILETELEPHONE], function(i, v) {
                                 if (v) {
                                     h += '<br><a href=tel:' + v.replace(/ /g, '') + '>' + v + '</a>';
