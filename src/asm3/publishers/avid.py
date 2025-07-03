@@ -9,7 +9,6 @@ from asm3.sitedefs import AVID_US_POST_URL
 from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
 import sys
-import base64
 
 class AVIDUSPublisher(AbstractPublisher):
     """
@@ -39,13 +38,12 @@ class AVIDUSPublisher(AbstractPublisher):
             self.setLastError("email address, password and api key all need to be set for AVID publisher")
             return
 
-
-        usercredentials = "Basic " + str(base64.b64encode((avidemail + ":" + avidpassword).encode("utf-8")))
         registeroverseas = asm3.configuration.avid_register_overseas(self.dbo)
 
+        credentials = asm3.utils.base64encode(asm3.utils.str2bytes(f"{avidemail}:{avidpassword}"))
         headers = {
             "x-api-key": avidkey,
-            "Authorization": usercredentials
+            "Authorization": f"Basic {credentials}"
         }
 
         chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
@@ -72,8 +70,8 @@ class AVIDUSPublisher(AbstractPublisher):
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
-
-                #if not self.validate(an): continue
+                valdebug = self.validate(an)
+                if not self.validate(an): continue
                 fields = self.processAnimal(an, registeroverseas)
 
                 self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
@@ -197,3 +195,21 @@ class AVIDUSPublisher(AbstractPublisher):
         }
 
         return ro
+    
+    def validate(self, an: ResultRow) -> bool:
+        """ Validate an animal record is ok to send """
+        # Validate certain items aren't blank so we aren't registering bogus data
+        if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":
+            self.logError("Address for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an.CURRENTOWNERPOSTCODE).strip() == "":
+            self.logError("Postal code for the new owner is blank, cannot process")
+            return False
+
+        # Make sure the length is actually suitable
+        if not len(an.IDENTICHIPNUMBER) in (9, 10, 15):
+            self.logError("Microchip length is not 9, 10 or 15, cannot process")
+            return False
+    
+        return True
