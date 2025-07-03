@@ -219,7 +219,8 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.animal.get_animal(base.get_dbo(), self.animals[2][0])
         self.assertNotEqual(False, asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).validate(a))
-        self.assertNotEqual(False, asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).validate(a))
+        self.assertNotEqual(False, asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).processAnimal(a))
+        #self.assertIsNotNone(asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).processAnimal(a))
         
 
     # buddyid

@@ -184,7 +184,7 @@ $(function() {
                         'Find out more at <a target="_blank" href="https://www.avidid.com/">www.avidid.com</a>', 
                         fields: [
                             { id: "enabledavidus", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                            { id: "avidusemail", post_field: "AVIDUSEmail", label: 'Email Address', type: "text" }, 
+                            { id: "avidususername", post_field: "AVIDUSUsername", label: 'Username', type: "text" }, 
                             { id: "aviduspass", post_field: "AVIDUSPassword", label: 'Password', type: "text" }, 
                             { id: "aviduskey", post_field: "AVIDUSKey", label: 'API Key', type: "text" }
                         ]},

@@ -824,8 +824,8 @@ def avid_overseas_origin_country(dbo: Database) -> str:
 def avid_reregistration(dbo: Database) -> bool:
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
 
-def avidus_email(dbo: Database) -> str:
-    return cstring(dbo, "AVIDUSEmail")
+def avidus_username(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSUsername")
 
 def avidus_password(dbo: Database) -> str:
     return cstring(dbo, "AVIDUSPassword")

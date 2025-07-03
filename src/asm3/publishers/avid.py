@@ -30,17 +30,18 @@ class AVIDUSPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        avidemail = asm3.configuration.avidus_email(self.dbo)
+        avidusername = asm3.configuration.username(self.dbo)
         avidpassword = asm3.configuration.avidus_password(self.dbo)
         avidkey = asm3.configuration.avidus_apikey(self.dbo)
 
-        if avidemail == "" or avidpassword == "" or avidkey == "":
-            self.setLastError("email address, password and api key all need to be set for AVID publisher")
+        if avidusername == "" or avidpassword == "" or avidkey == "":
+            self.setLastError("Username, password and api key all need to be set for AVID publisher")
             return
 
         registeroverseas = asm3.configuration.avid_register_overseas(self.dbo)
 
         credentials = asm3.utils.base64encode(asm3.utils.str2bytes(f"{avidemail}:{avidpassword}"))
+        self.log("AVID US Publisher credentials " + credentials)
         headers = {
             "x-api-key": avidkey,
             "Authorization": f"Basic {credentials}"
@@ -73,7 +74,6 @@ class AVIDUSPublisher(AbstractPublisher):
                 valdebug = self.validate(an)
                 if not self.validate(an): continue
                 fields = self.processAnimal(an, registeroverseas)
-
                 self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
                 r = asm3.utils.post_form(AVID_US_POST_URL, fields, headers)
                 self.log("HTTP response: %s" % r["response"])
