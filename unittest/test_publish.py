@@ -220,8 +220,6 @@ class TestPublish(unittest.TestCase):
         a = asm3.animal.get_animal(base.get_dbo(), self.animals[2][0])
         self.assertNotEqual(False, asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).validate(a))
         self.assertNotEqual(False, asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).processAnimal(a))
-        #self.assertIsNotNone(asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).processAnimal(a))
-        
 
     # buddyid
     def test_buddyid(self):
