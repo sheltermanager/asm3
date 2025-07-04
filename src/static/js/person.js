@@ -612,14 +612,6 @@ $(function() {
 
             // If a popup warning has been set, display it
             person.show_popup_warning();
-
-            // If couple show additional couple fields
-            /*if ($("#ownertype").val() == 3) {
-                $(".additionalcouples").closest("tr").show();
-            } else {
-                $(".additionalcouples").closest("tr").hide();
-            }*/
-
         },
 
         delay: function() {
