@@ -2348,6 +2348,90 @@ def delete_animal_entry(dbo: Database, username: str, aeid: int) -> int:
     """ Deletes the animal entry history item aeid """
     return dbo.delete("animalentry", aeid, username)
 
+def get_links(dbo: Database, aid: int, litterid: str = '') -> Results:
+    """
+    Gets a list of all records that link to this animal
+    """
+    animallinkdisplay = dbo.sql_concat(("a.ShelterCode", "' - '", "a.AnimalName"))
+    animalextra = dbo.sql_concat(("a.BreedName", "' '", "s.SpeciesName", "' ('", 
+        "CASE WHEN a.Archived = 0 AND a.ActiveMovementType = 2 THEN mt.MovementType " \
+        "WHEN a.NonShelterAnimal = 1 THEN '' " \
+        "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null AND a.ActiveMovementID = 0 THEN dr.ReasonName " \
+        "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN mt.MovementType " \
+        "ELSE il.LocationName END", "')'")
+    )
+    litterextra = dbo.sql_concat(("'" + _("Number in Litter") + "'", "': '", "al.NumberInLitter"))
+
+    # Additional field (link from animal)
+    sql = "SELECT 'AFA' AS TYPE, " \
+        "aff.FieldLabel AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \
+        "%s AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM additional af " \
+        "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "INNER JOIN animal a ON a.ID = af.LinkID " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % \
+            ( animallinkdisplay, animalextra, int(aid), asm3.additional.ANIMAL_LOOKUP, asm3.additional.clause_for_linktype("animal") ) 
+    # Additional field (link from person)
+    sql += "UNION SELECT 'AFP' AS TYPE, " \
+        "aff.FieldLabel AS TYPEDISPLAY, o.LastChangedDate AS DDATE, o.ID AS LINKID, " \
+        "o.OwnerName AS LINKDISPLAY, " \
+        "o.OwnerAddress AS FIELD2, " \
+        "CASE WHEN o.IsDeceased=1 THEN 'D' ELSE '' END AS DMOD " \
+        "FROM additional af " \
+        "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "INNER JOIN owner o ON o.ID = af.LinkID " \
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % \
+            ( int(aid), asm3.additional.ANIMAL_LOOKUP, asm3.additional.clause_for_linktype("person") )
+    # Additional field (link from waiting list)
+    sql += "UNION SELECT 'AFW' AS TYPE, " \
+        "'%s' AS TYPEDISPLAY, aw.LastChangedDate AS DDATE, aw.ID AS LINKID, " \
+        "o.OwnerName AS LINKDISPLAY, " \
+        "o.OwnerAddress AS FIELD2, " \
+        "CASE WHEN o.IsDeceased=1 THEN 'D' ELSE '' END AS DMOD " \
+        "FROM additional af " \
+        "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "INNER JOIN animalwaitinglist aw ON aw.ID = af.LinkID " \
+        "INNER JOIN owner o ON o.ID = aw.OwnerID " \
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % \
+            ( _("Waiting list"), int(aid), asm3.additional.ANIMAL_LOOKUP, asm3.additional.clause_for_linktype("waitinglist") )
+    # Littermates
+    sql += "UNION SELECT 'AIL' AS TYPE, " \
+        "'%s' AS TYPEDISPLAY, " \
+        "a.LastChangedDate AS DDATE, " \
+        "a.ID AS LINKID, " \
+        "%s AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animal a " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE a.AcceptanceNumber != '' AND a.AcceptanceNumber = '%s' AND a.ID != %s " % \
+            ( _("Littermate"), animallinkdisplay, animalextra, litterid, int(aid) )
+    # Litters parented by animal
+    sql += "UNION SELECT 'APL' AS TYPE, " \
+        "'%s' AS TYPEDISPLAY, " \
+        "al.LastChangedDate AS DDATE, " \
+        "al.ID AS LINKID, " \
+        "al.AcceptanceNumber AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animallitter al " \
+        "INNER JOIN animal a ON al.ParentAnimalID = a.ID " \
+        "WHERE a.ID != %s " % \
+            ( _("Parent to litter"), litterextra, int(aid) )
+    # Sort and done
+    sql += "ORDER BY DDATE DESC, LINKDISPLAY "
+    result = dbo.query(sql)
+    return result
+
 def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
     """
     Copies the current values from the entry fields in the animal table to the animalentry table.
