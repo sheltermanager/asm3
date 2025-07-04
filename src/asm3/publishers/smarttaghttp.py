@@ -5,11 +5,10 @@ import asm3.users
 import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
-from asm3.sitedefs import SMARTTAG_HOST, SMARTTAG_API_KEY
+from asm3.sitedefs import SMARTTAG_HOST
 from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
 import sys
-import base64
 
 class SmartTagPublisher(AbstractPublisher):
     """
