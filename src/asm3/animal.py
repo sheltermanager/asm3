@@ -2387,6 +2387,18 @@ def get_links(dbo: Database, aid: int, litterid: str = '') -> Results:
         "INNER JOIN owner o ON o.ID = af.LinkID " \
         "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % \
             ( int(aid), asm3.additional.ANIMAL_LOOKUP, asm3.additional.clause_for_linktype("person") )
+    # Additional field (link from waiting list)
+    sql += "UNION SELECT 'AFW' AS TYPE, " \
+        "'%s' AS TYPEDISPLAY, aw.LastChangedDate AS DDATE, aw.ID AS LINKID, " \
+        "o.OwnerName AS LINKDISPLAY, " \
+        "o.OwnerAddress AS FIELD2, " \
+        "CASE WHEN o.IsDeceased=1 THEN 'D' ELSE '' END AS DMOD " \
+        "FROM additional af " \
+        "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "INNER JOIN animalwaitinglist aw ON aw.ID = af.LinkID " \
+        "INNER JOIN owner o ON o.ID = aw.OwnerID " \
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " % \
+            ( _("Waiting list"), int(aid), asm3.additional.ANIMAL_LOOKUP, asm3.additional.clause_for_linktype("waitinglist") )
     # Littermates
     sql += "UNION SELECT 'AIL' AS TYPE, " \
         "'%s' AS TYPEDISPLAY, " \

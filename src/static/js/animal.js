@@ -393,7 +393,8 @@ $(function() {
             let typemap = {
                 "AIL": [ _("Littermate"), "animal?id=" ],
                 "AFA": [ "", "animal?id=" ],
-                "AFP": [ "", "person?id=" ]
+                "AFP": [ "", "person?id=" ],
+                "AFW": [ "", "waitinglist?id=" ]
             };
 
             $.each(controller.links, function(i, v) {
