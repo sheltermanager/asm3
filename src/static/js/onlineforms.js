@@ -259,7 +259,7 @@ $(function() {
                 '<div id="dialog-import" style="display: none" title="' + html.title(_("Import from file")) + '">',
                 '<form id="importform" action="onlineforms" method="post" enctype="multipart/form-data">',
                 '<input name="mode" value="import" type="hidden" />',
-                '<input id="filechooser" name="filechooser" type="file" />',
+                '<input id="filechooser" name="filechooser" type="file" accept=".csv,.json" />',
                 '</form>',
                 '</div>'
             ].join("\n");
