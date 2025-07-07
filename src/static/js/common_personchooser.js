@@ -644,7 +644,7 @@ $.widget("asm.personchooser", {
      * @param rec The person record.
      */
     render_display: function(rec) {
-        let disp = "<span class=\"justlink\">"
+        let disp = "<span class=\"justlink\">";
         if (this.options.mode == "brief") {
             disp += "<span class='personchooser-briefexpander ui-icon ui-icon-triangle-1-e'></span>";
         }
