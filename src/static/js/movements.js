@@ -588,7 +588,9 @@ $(function() {
                             personid: row.OWNERID,
                             templates: controller.templatesemail,
                             logtypes: controller.logtypes,
-                            message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.") + "<br><br><a href='" + paymentlink + "' target='_blank'>"  + paymentlink + "</a>"
+                            url: paymentlink, 
+                            urltext: _("Adoption Checkout"),
+                            message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.")
                         });
                     }
                 }

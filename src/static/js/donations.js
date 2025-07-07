@@ -566,7 +566,9 @@ $(function() {
                     subject: row.COMMENTS || row.DONATIONNAME,
                     templates: controller.templates,
                     logtypes: controller.logtypes,
-                    message: _("Please use the link below to pay.") + "<br><br><a href='" + paymentlink + "' target='_blank'>"  + paymentlink + "</a>"
+                    url: paymentlink,
+                    urltext: _("Pay Here"),
+                    message: _("Please use the link below to pay.")
                 });
             };
             $("#button-paypal").click(function() {

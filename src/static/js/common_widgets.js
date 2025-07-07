@@ -1061,6 +1061,9 @@ $.widget("asm.emailform", {
             header.show_loading(_("Loading..."));
             common.ajax_post("document_gen", formdata, function(response) {
                 let j = jQuery.parseJSON(response);
+                let link = '<a target="blank" href="' + o.url + '">' + o.urltext + '</a>';
+                if (j.BODY.indexOf("$URL") == -1 && o.url) { j.BODY = j.BODY += link; }
+                if (j.BODY.indexOf("$URL") != -1 && o.url) { j.BODY = j.BODY.replace("$URL", link); }
                 if (j.TO) { $("#em-to").val(j.TO); }
                 if (j.SUBJECT) { $("#em-subject").val(j.SUBJECT); }
                 if (j.FROM) { $("#em-from").val(j.FROM); }
@@ -1183,9 +1186,17 @@ $.widget("asm.emailform", {
         if (o.bccemail) {
             $("#em-bcc").val(o.bccemail);
         }
-        let msg = config.str("EmailSignature");
-        if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
-        else { msg = "<p>&nbsp;</p>" + msg; }
+        let msg = "";
+        if (o.message) { 
+            msg = "<p>" + o.message + "</p>" + msg; 
+        }
+        else { 
+            msg = "<p>&nbsp;</p>" + msg; 
+        }
+        if (o.url) {
+            msg += '<p><a target="blank" href="' + o.url + '">' + o.urltext + '</a></p>';
+        }
+        msg += config.str("EmailSignature");
         if (msg) {
             $("#em-body").richtextarea("value", msg);
         }
