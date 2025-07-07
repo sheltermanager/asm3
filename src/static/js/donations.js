@@ -548,12 +548,13 @@ $(function() {
             $("#emailform").emailform();
 
             // Payment processor handling
-            const payment_processor_email_dialog = function(processor_name) {
+            const payment_processor_email_dialog = async function(processor_name) {
                 let row = tableform.table_selected_row(donations.table);
                 $("#button-processor").asmmenu("hide_all");
                 header.hide_error();
                 if (!row) { return; }
                 if (row.DATE) { header.show_error(_("This payment has already been received")); return; }
+                let paymentlink = await common.ajax_post("donation", "mode=paymenturl&processor=" + processor_name + "&person=" + row.OWNERID + "&payref=" + row.OWNERCODE + "-" + row.RECEIPTNUMBER + "&subject=" + row.DONATIONNAME);
                 $("#emailform").emailform("show", {
                     title: _("Email request for payment"),
                     post: "donation",
@@ -565,7 +566,7 @@ $(function() {
                     subject: row.COMMENTS || row.DONATIONNAME,
                     templates: controller.templates,
                     logtypes: controller.logtypes,
-                    message: _("Please use the link below to pay.")
+                    message: _("Please use the link below to pay.") + "<br><br><a href='" + paymentlink + "' target='_blank'>"  + paymentlink + "</a>"
                 });
             };
             $("#button-paypal").click(function() {

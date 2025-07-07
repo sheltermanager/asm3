@@ -3774,14 +3774,10 @@ class donation(JSONEndpoint):
             return (asm3.utils.json({"url": url}))
         except Exception as e:
             return (asm3.utils.json({"error": str(e)}))
-
-    def post_emailrequest(self, o):
-        self.check(asm3.users.EMAIL_PERSON)
+    
+    def post_paymenturl(self, o):
         dbo = o.dbo
-        l = o.locale
         post = o.post
-        emailadd = post["to"]
-        body = post["body"]
         params = { 
             "account": dbo.name(), 
             "method": "checkout",
@@ -3790,7 +3786,14 @@ class donation(JSONEndpoint):
             "title": post["subject"] 
         }
         url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
-        body = asm3.utils.replace_url_token(body, url, _("Click here to pay", l))
+        return url
+
+    def post_emailrequest(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        dbo = o.dbo
+        post = o.post
+        emailadd = post["to"]
+        body = asm3.utils.fix_tinymce_uris(post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], body)
@@ -5298,7 +5301,7 @@ class move_adopt(JSONEndpoint):
                 "subject":      tokens["SUBJECT"] or _("Adoption Checkout", l),
                 "body":         tokens["BODY"]
             }
-            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale))
+            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale), substitute_url=True)
         elif paperwork:
             # Generate the adoption paperwork and save it to the animal/person
             dtid = post.integer("sigtemplateid")
@@ -5710,6 +5713,12 @@ class movement(JSONEndpoint):
         self.check(asm3.users.CHANGE_MOVEMENT)
         for mid in o.post.integer_list("ids"):
             asm3.movement.trial_to_full_adoption(o.dbo, o.user, mid)
+    
+    def post_checkouturl(self, o):
+        aid = o.post.integer("animalid")
+        pid = o.post.integer("personid")
+        key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
+        return "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, o.dbo.name(), key)
 
     def post_checkout(self, o):
         asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post)
