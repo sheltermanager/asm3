@@ -537,6 +537,18 @@ $.widget("asm.personchooser", {
                 let rec = people[0];
                 self.element.val(rec.ID);
                 display.html(self.render_display(rec));
+                node.find(".personchooser-briefexpander").click(function() {
+                    let widget = $(this);
+                    if (widget.hasClass("ui-icon-triangle-1-e")) {
+                        widget.removeClass("ui-icon-triangle-1-e");
+                        widget.addClass("ui-icon-triangle-1-s");
+                        widget.closest(".personchooser-display").find(".personchooser-ownerinfo").show();
+                    } else {
+                        widget.removeClass("ui-icon-triangle-1-s");
+                        widget.addClass("ui-icon-triangle-1-e");
+                        widget.closest(".personchooser-display").find(".personchooser-ownerinfo").hide();
+                    }
+                });
                 node.find(".personchooser-banned").val(rec.ISBANNED);
                 node.find(".personchooser-idcheck").val(rec.IDCHECK);
                 node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
@@ -592,6 +604,18 @@ $.widget("asm.personchooser", {
                     self.element.val(rec.ID);
                     self.options.rec = rec;
                     display.html(self.render_display(rec));
+                    node.find(".personchooser-briefexpander").click(function() {
+                        let widget = $(this);
+                        if (widget.hasClass("ui-icon-triangle-1-e")) {
+                            widget.removeClass("ui-icon-triangle-1-e");
+                            widget.addClass("ui-icon-triangle-1-s");
+                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").show();
+                        } else {
+                            widget.removeClass("ui-icon-triangle-1-s");
+                            widget.addClass("ui-icon-triangle-1-e");
+                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").hide();
+                        }
+                    });
                     node.find(".personchooser-banned").val(rec.ISBANNED);
                     node.find(".personchooser-idcheck").val(rec.IDCHECK);
                     node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
@@ -620,17 +644,26 @@ $.widget("asm.personchooser", {
      * @param rec The person record.
      */
     render_display: function(rec) {
-        let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + 
-            rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
+        let disp = "<span class=\"justlink\">"
+        if (this.options.mode == "brief") {
+            disp += "<span class='personchooser-briefexpander ui-icon ui-icon-triangle-1-e'></span>";
+        }
+        disp += "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
         if (rec.POPUPWARNING) {
             disp += " " + html.icon("warning", rec.POPUPWARNING);
         }
         if (this.options.mode == "full") {
-            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
+            disp += rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
                 "<br/>" + rec.OWNERPOSTCODE + 
                 (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
                 "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
                 "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+        } else {
+            disp += "<div class='personchooser-ownerinfo' style='display: none;'>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
+                "<br/>" + rec.OWNERPOSTCODE + 
+                (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
+                "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
+                "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS + "</div>";
         }
         return disp;
     },
