@@ -45,6 +45,7 @@ def _send_email_from_template(dbo: Database, to: str, subject: str, body: str,
     cc = mt["CC"] or ""
     bcc = mt["BCC"] or ""
     subject = mt["SUBJECT"] or subject
+    body = mt["BODY"]
     try:
         asm3.utils.send_email(dbo, fromadd, to, cc, bcc, subject, body, "html")
         if asm3.configuration.audit_on_send_email(dbo): 
