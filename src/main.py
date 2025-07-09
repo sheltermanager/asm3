@@ -5715,10 +5715,8 @@ class movement(JSONEndpoint):
             asm3.movement.trial_to_full_adoption(o.dbo, o.user, mid)
     
     def post_checkouturl(self, o):
-        aid = o.post.integer("animalid")
-        pid = o.post.integer("personid")
-        # This is the token/cache key that will be created by movement.send_adoption_checkout
-        key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
+        # Create our cache entry for this checkout session
+        key = asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post, cache_only = True)
         return "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, o.dbo.name(), key)
 
     def post_checkout(self, o):

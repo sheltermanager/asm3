@@ -1045,10 +1045,17 @@ def auto_cancel_reservations(dbo: Database) -> None:
         "MovementType = 0 AND ReservationDate < ?", (dbo.today(), dbo.now(), cancelcutoff))
     asm3.al.debug("cancelled %d reservations older than %s days" % (count, cancelafter), "movement.auto_cancel_reservations", dbo)
 
-def send_adoption_checkout(dbo: Database, username: str, post: PostedData, substitute_url: bool = False) -> None:
+def send_adoption_checkout(dbo: Database, username: str, post: PostedData, substitute_url: bool = False, cache_only: bool = False) -> str:
     """
     Sets up an adoption checkout cache object and sends the email 
     with the checkout link to the adopter.
+    post: Data posted from the UI, needs to include id (movement), animalid and personid
+    substitute_url: If True, substitutes any $URL token or appends the checkout URL to the email body
+                    If False, assumes that the client already did this and there's a link in the body
+    cache_only: If True, creates the cache entry/token for the checkout, but does not send an email
+                This is used by calls from the client to generate the checkout link so the user
+                can see it but before the checkout email has been sent.
+    returns the token/cache key for this checkout session
     """
     l = dbo.locale
     aid = post.integer("animalid")
@@ -1096,6 +1103,8 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData, subst
         "payref":       "" # payref for the payment processor, generated in next step
     }
     asm3.cachedisk.put(key, dbo.name(), co, 86400 * 2) # persist for 2 days
+    # If we're only creating the cache for the token, stop now
+    if cache_only: return key
     # Send the email to the adopter
     url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.name(), key)
     body = post["body"]
@@ -1113,6 +1122,7 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData, subst
             post["to"], post["subject"], body)
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
+    return key
 
 def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool:
     """
