@@ -651,6 +651,268 @@ def get_animal_entry_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner bo ON bo.ID = ae.BroughtInByOwnerID " \
         "LEFT OUTER JOIN owner ac ON ac.ID = ae.AdoptionCoordinatorID "
 
+def get_animal_export_query(dbo: Database) -> str:
+    """
+    A query to get animal records for export. The biggest difference between this
+    and get_animal_query is that this does not have the references to the media
+    table for speed when exporting.
+    """
+    return "SELECT a.*, " \
+        "at.AnimalType AS AnimalTypeName, " \
+        "ba1.AnimalName AS BondedAnimal1Name, " \
+        "ba1.ShelterCode AS BondedAnimal1Code, " \
+        "ba1.Archived AS BondedAnimal1Archived, " \
+        "ba1.IdentichipNumber AS BondedAnimal1IdentichipNumber, " \
+        "ba2.AnimalName AS BondedAnimal2Name, " \
+        "ba2.ShelterCode AS BondedAnimal2Code, " \
+        "ba2.Archived AS BondedAnimal2Archived, " \
+        "ba2.IdentichipNumber AS BondedAnimal2IdentichipNumber, " \
+        "bc.BaseColour AS BaseColourName, " \
+        "bc.AdoptAPetColour, " \
+        "sp.SpeciesName AS SpeciesName, " \
+        "sp.PetFinderSpecies, " \
+        "bd.BreedName AS BreedName1, "\
+        "bd2.BreedName AS BreedName2, "\
+        "bd.PetFinderBreed, " \
+        "bd2.PetFinderBreed AS PetFinderBreed2, " \
+        "ct.CoatType AS CoatTypeName, " \
+        "sx.Sex AS SexName, " \
+        "sz.Size AS SizeName, " \
+        "o.OwnerName AS OwnerName, " \
+        "ov.OwnerName AS OwnersVetName, " \
+        "ov.OwnerAddress AS OwnersVetAddress, " \
+        "ov.OwnerTown AS OwnersVetTown, " \
+        "ov.OwnerCounty AS OwnersVetCounty, " \
+        "ov.OwnerPostcode AS OwnersVetPostcode, " \
+        "ov.WorkTelephone AS OwnersVetWorkTelephone, " \
+        "ov.EmailAddress AS OwnersVetEmailAddress, " \
+        "ov.MembershipNumber AS OwnersVetLicenceNumber, " \
+        "cv.OwnerName AS CurrentVetName, " \
+        "cv.OwnerForeNames AS CurrentVetForeNames, " \
+        "cv.OwnerSurname AS CurrentVetSurname, " \
+        "cv.OwnerAddress AS CurrentVetAddress, " \
+        "cv.OwnerTown AS CurrentVetTown, " \
+        "cv.OwnerCounty AS CurrentVetCounty, " \
+        "cv.OwnerPostcode AS CurrentVetPostcode, " \
+        "cv.WorkTelephone AS CurrentVetWorkTelephone, " \
+        "cv.EmailAddress AS CurrentVetEmailAddress, " \
+        "cv.MembershipNumber AS CurrentVetLicenceNumber, " \
+        "nv.OwnerName AS NeuteringVetName, " \
+        "nv.OwnerAddress AS NeuteringVetAddress, " \
+        "nv.OwnerTown AS NeuteringVetTown, " \
+        "nv.OwnerCounty AS NeuteringVetCounty, " \
+        "nv.OwnerPostcode AS NeuteringVetPostcode, " \
+        "nv.WorkTelephone AS NeuteringVetWorkTelephone, " \
+        "nv.EmailAddress AS NeuteringVetEmailAddress, " \
+        "nv.MembershipNumber AS NeuteringVetLicenceNumber, " \
+        "oo.OwnerName AS OriginalOwnerName, " \
+        "oo.OwnerTitle AS OriginalOwnerTitle, " \
+        "oo.OwnerInitials AS OriginalOwnerInitials, " \
+        "oo.OwnerForeNames AS OriginalOwnerForeNames, " \
+        "oo.OwnerSurname AS OriginalOwnerSurname, " \
+        "oo.OwnerAddress AS OriginalOwnerAddress, " \
+        "oo.OwnerTown AS OriginalOwnerTown, " \
+        "oo.OwnerCounty AS OriginalOwnerCounty, " \
+        "oo.OwnerPostcode AS OriginalOwnerPostcode, " \
+        "oo.OwnerCountry AS OriginalOwnerCountry, " \
+        "oo.HomeTelephone AS OriginalOwnerHomeTelephone, " \
+        "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
+        "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
+        "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
+        "oo.IdentificationNumber AS OriginalOwnerIDNumber, " \
+        "oo.LatLong AS OriginalOwnerLatLong, " \
+        "oo.PopupWarning AS OriginalOwnerPopupWarning, " \
+        "oj.JurisdictionName AS OriginalOwnerJurisdiction, " \
+        "co.ID AS CurrentOwnerID, " \
+        "co.OwnerName AS CurrentOwnerName, " \
+        "co.OwnerTitle AS CurrentOwnerTitle, " \
+        "co.OwnerInitials AS CurrentOwnerInitials, " \
+        "co.OwnerForeNames AS CurrentOwnerForeNames, " \
+        "co.OwnerSurname AS CurrentOwnerSurname, " \
+        "co.OwnerAddress AS CurrentOwnerAddress, " \
+        "co.OwnerTown AS CurrentOwnerTown, " \
+        "co.OwnerCounty AS CurrentOwnerCounty, " \
+        "co.OwnerPostcode AS CurrentOwnerPostcode, " \
+        "co.OwnerCountry AS CurrentOwnerCountry, " \
+        "co.HomeTelephone AS CurrentOwnerHomeTelephone, " \
+        "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
+        "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
+        "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
+        "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
+        "co.AdditionalFlags AS CurrentOwnerAdditionalFlags, " \
+        "co.Comments AS CurrentOwnerComments, " \
+        "co.PopupWarning AS CurrentOwnerPopupWarning, " \
+        "co.LatLong AS CurrentOwnerLatLong, " \
+        "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
+        "bo.OwnerName AS BroughtInByOwnerName, " \
+        "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
+        "bo.OwnerTown AS BroughtInByOwnerTown, " \
+        "bo.OwnerCounty AS BroughtInByOwnerCounty, " \
+        "bo.OwnerPostcode AS BroughtInByOwnerPostcode, " \
+        "bo.HomeTelephone AS BroughtInByHomeTelephone, " \
+        "bo.WorkTelephone AS BroughtInByWorkTelephone, " \
+        "bo.MobileTelephone AS BroughtInByMobileTelephone, " \
+        "bo.EmailAddress AS BroughtInByEmailAddress, " \
+        "bo.LatLong AS BroughtInByLatLong, " \
+        "bo.IdentificationNumber AS BroughtInByIDNumber, " \
+        "bj.JurisdictionName AS BroughtInByJurisdiction, " \
+        "ro.ID AS ReservedOwnerID, " \
+        "ro.OwnerName AS ReservedOwnerName, " \
+        "ro.OwnerTitle AS ReservedOwnerTitle, " \
+        "ro.OwnerInitials AS ReservedOwnerInitials, " \
+        "ro.OwnerForeNames AS ReservedOwnerForeNames, " \
+        "ro.OwnerSurname AS ReservedOwnerSurname, " \
+        "ro.OwnerAddress AS ReservedOwnerAddress, " \
+        "ro.OwnerTown AS ReservedOwnerTown, " \
+        "ro.OwnerCounty AS ReservedOwnerCounty, " \
+        "ro.OwnerPostcode AS ReservedOwnerPostcode, " \
+        "ro.HomeTelephone AS ReservedOwnerHomeTelephone, " \
+        "ro.WorkTelephone AS ReservedOwnerWorkTelephone, " \
+        "ro.MobileTelephone AS ReservedOwnerMobileTelephone, " \
+        "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
+        "ro.IdentificationNumber AS ReservedOwnerIDNumber, " \
+        "ro.LatLong AS ReservedOwnerLatLong, " \
+        "rj.JurisdictionName AS ReservedOwnerJurisdiction, " \
+        "ar.ReservationDate AS ReservationDate, " \
+        "ars.StatusName AS ReservationStatusName, " \
+        "ao.OwnerName AS AdoptionCoordinatorName, " \
+        "ao.OwnerForeNames AS AdoptionCoordinatorForenames, " \
+        "ao.OwnerSurname AS AdoptionCoordinatorSurname, " \
+        "ao.HomeTelephone AS AdoptionCoordinatorHomeTelephone, " \
+        "ao.WorkTelephone AS AdoptionCoordinatorWorkTelephone, " \
+        "ao.MobileTelephone AS AdoptionCoordinatorMobileTelephone, " \
+        "ao.EmailAddress AS AdoptionCoordinatorEmailAddress, " \
+        "er.ReasonName AS EntryReasonName, " \
+        "et.EntryTypeName AS EntryTypeName, " \
+        "dr.ReasonName AS PTSReasonName, " \
+        "il.LocationName AS ShelterLocationName, " \
+        "il.LocationDescription AS ShelterLocationDescription, " \
+        "il.SiteID AS SiteID, " \
+        "se.SiteName AS SiteName, " \
+        "pl.LocationName AS PickupLocationName, " \
+        "j.JurisdictionName, " \
+        "ac.ID AS AnimalControlIncidentID, " \
+        "itn.IncidentName AS AnimalControlIncidentName, " \
+        "ac.IncidentDateTime AS AnimalControlIncidentDate, " \
+        "diet.DietName AS ActiveDietName, " \
+        "diet.DietDescription AS ActiveDietDescription, " \
+        "adi.DateStarted AS ActiveDietStartDate, " \
+        "adi.Comments AS ActiveDietComments, " \
+        "mt.MovementType AS ActiveMovementTypeName, " \
+        "am.AdoptionNumber AS ActiveMovementAdoptionNumber, " \
+        "am.ReturnDate AS ActiveMovementReturnDate, " \
+        "am.InsuranceNumber AS ActiveMovementInsuranceNumber, " \
+        "am.ReasonForReturn AS ActiveMovementReasonForReturn, " \
+        "am.TrialEndDate AS ActiveMovementTrialEndDate, " \
+        "am.Comments AS ActiveMovementComments, " \
+        "am.ReservationDate AS ActiveMovementReservationDate, " \
+        "am.Donation AS ActiveMovementDonation, " \
+        "am.CreatedBy AS ActiveMovementCreatedBy, " \
+        "au.RealName AS ActiveMovementCreatedByName, " \
+        "am.CreatedDate AS ActiveMovementCreatedDate, " \
+        "am.LastChangedBy AS ActiveMovementLastChangedBy, " \
+        "am.LastChangedDate AS ActiveMovementLastChangedDate, " \
+        "CASE WHEN a.DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 2) " \
+            "WHEN a.DeceasedDate Is Not Null AND a.IsDOA = 1 THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 3) " \
+            "WHEN a.DeceasedDate Is Not Null AND a.PutToSleep = 1 THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 4) " \
+            "WHEN a.ActiveMovementDate Is Not Null THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = a.ActiveMovementType + 10) " \
+            "ELSE " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 1) " \
+        "END AS OutcomeName, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate " \
+            "WHEN a.ActiveMovementDate Is Not Null THEN a.ActiveMovementDate " \
+            "ELSE Null " \
+        "END AS OutcomeDate, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN " \
+                "(SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID) " \
+            "WHEN a.ActiveMovementDate Is Not Null THEN co.OwnerName " \
+            "ELSE '' " \
+        "END AS OutcomeQualifier, " \
+        "rvac.DateOfVaccination AS VaccRabiesDate, " \
+        "rvact.VaccinationType AS VaccRabiesName, " \
+        "rvac.RabiesTag AS VaccRabiesTag, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.EstimatedDOB) AS EstimatedDOBName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.Identichipped) AS IdentichippedName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.Tattoo) AS TattooName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.Neutered) AS NeuteredName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.CombiTested) AS CombiTestedName, " \
+        "(SELECT Name FROM lksposneg l WHERE l.ID = a.CombiTestResult) AS CombiTestResultName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.HeartwormTested) AS HeartwormTestedName, " \
+        "(SELECT Name FROM lksposneg l WHERE l.ID = a.HeartwormTestResult) AS HeartwormTestResultName, " \
+        "(SELECT Name FROM lksposneg l WHERE l.ID = a.FLVResult) AS FLVResultName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.Declawed) AS DeclawedName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.PutToSleep) AS PutToSleepName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsDOA) AS IsDOAName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsTransfer) AS IsTransferName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsPickup) AS IsPickupName, " \
+        "(SELECT Name FROM lksynunk l WHERE l.ID = a.IsGoodWithChildren) AS IsGoodWithChildrenName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithCats) AS IsGoodWithCatsName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithDogs) AS IsGoodWithDogsName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithElderly) AS IsGoodWithElderlyName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsHouseTrained) AS IsHouseTrainedName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsCrateTrained) AS IsCrateTrainedName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodTraveller) AS IsGoodTravellerName, " \
+        "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodOnLead) AS IsGoodOnLeadName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotAvailableForAdoption) AS IsNotAvailableForAdoptionName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotForRegistration) AS IsNotForRegistrationName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasSpecialNeeds) AS HasSpecialNeedsName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.DiedOffShelter) AS DiedOffShelterName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasActiveReserve) AS HasActiveReserveName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasTrialAdoption) AS HasTrialAdoptionName, " \
+        "(SELECT SentDate FROM animalpublished WHERE PublishedTo='first' AND AnimalID=a.ID) AS DateAvailableForAdoption " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN animal ba1 ON ba1.ID = a.BondedAnimalID " \
+        "LEFT OUTER JOIN animalvaccination rvac ON rvac.ID = (SELECT MAX(ID) FROM animalvaccination rvaci WHERE rvaci.AnimalID = a.ID AND " \
+            "rvaci.RabiesTag Is Not Null AND rvaci.RabiesTag <> '' AND rvaci.DateOfVaccination Is Not Null) " \
+        "LEFT OUTER JOIN vaccinationtype rvact ON rvact.ID = rvac.VaccinationID " \
+        "LEFT OUTER JOIN animal ba2 ON ba2.ID = a.BondedAnimal2ID " \
+        "LEFT OUTER JOIN animaltype at ON at.ID = a.AnimalTypeID " \
+        "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
+        "LEFT OUTER JOIN species sp ON sp.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
+        "LEFT OUTER JOIN entryreason er ON er.ID = a.EntryReasonID " \
+        "LEFT OUTER JOIN lksentrytype et ON et.ID = a.EntryTypeID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN site se ON se.ID = il.SiteID " \
+        "LEFT OUTER JOIN pickuplocation pl ON pl.ID = a.PickupLocationID " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = a.JurisdictionID " \
+        "LEFT OUTER JOIN breed bd ON bd.ID = a.BreedID " \
+        "LEFT OUTER JOIN breed bd2 ON bd2.ID = a.Breed2ID " \
+        "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
+        "LEFT OUTER JOIN owner ov ON ov.ID = a.OwnersVetID " \
+        "LEFT OUTER JOIN owner cv ON cv.ID = a.CurrentVetID " \
+        "LEFT OUTER JOIN owner nv ON nv.ID = a.NeuteredByVetID " \
+        "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
+        "LEFT OUTER JOIN jurisdiction oj ON oj.ID = oo.JurisdictionID " \
+        "LEFT OUTER JOIN owner bo ON bo.ID = a.BroughtInByOwnerID " \
+        "LEFT OUTER JOIN jurisdiction bj ON bj.ID = bo.JurisdictionID " \
+        "LEFT OUTER JOIN owner ao ON ao.ID = a.AdoptionCoordinatorID " \
+        "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
+        "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
+        "LEFT OUTER JOIN jurisdiction cj ON cj.ID = co.JurisdictionID " \
+        "LEFT OUTER JOIN animaldiet adi ON adi.ID = (SELECT MAX(ID) FROM animaldiet sadi WHERE sadi.AnimalID = a.ID) " \
+        "LEFT OUTER JOIN diet ON diet.ID = adi.DietID " \
+        "LEFT OUTER JOIN animalcontrolanimal aca ON a.ID=aca.AnimalID and aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
+        "LEFT OUTER JOIN animalcontrol ac ON ac.ID = aca.AnimalControlID " \
+        "LEFT OUTER JOIN incidenttype itn ON itn.ID = ac.IncidentTypeID " \
+        "LEFT OUTER JOIN adoption ar ON ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
+        "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
+        "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID " \
+        "LEFT OUTER JOIN jurisdiction rj ON rj.ID = ro.JurisdictionID "
+
 def get_animal_status_query(dbo: Database) -> str:
     today = dbo.sql_today()
     endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
@@ -862,10 +1124,6 @@ def get_animals_brief(animals: Results) -> Results:
             "WEBSITEMEDIANOTES": a["WEBSITEMEDIANOTES"] 
         })
     return r
-
-def get_animal_export_query(dbo: Database):
-    """ Used by the sql_dump endpoint to export animals """
-    return f"{get_animal_query(dbo)} ORDER BY ID"
 
 def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, lf: LocationFilter = None, brief: bool = False) -> Results:
     """

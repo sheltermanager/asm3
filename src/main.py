@@ -7460,12 +7460,9 @@ class sql_dump(ASMEndpoint):
         i = 0
         out = asm3.utils.stringio()
         rows = []
-        asm3.al.debug("Building csv_rows for export", "sqldump.csv_rows_task", dbo)
-        for r in dbo.query_generator_chunked(sql):
+        for r in dbo.query_generator_chunked(sql, chunksize=500):
             if additionallinktype != "": asm3.additional.append_to_results(dbo, r, additionallinktype)
-            asm3.al.debug(f"Adding {len(r)} rows", "sqldump.csv_rows_task", dbo)
             rows.extend(r)
-        asm3.al.debug(f"Finished building rows: {len(rows)} total", "sqldump.csv_rows_task", dbo)
         asm3.asynctask.set_progress_max(dbo, len(rows))
         for r in rows:
             out.write(asm3.utils.csv(dbo.locale, [r], includeheader = i==0).decode("utf-8"))
@@ -7535,7 +7532,7 @@ class sql_dump(ASMEndpoint):
             asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
             # Task based version
             asm3.asynctask.function_task(dbo, _("CSV of animal/adopter data", l), self.csv_rows_task,
-                dbo, asm3.animal.get_animal_export_query(dbo), "animal", "animal.csv")
+                dbo, asm3.animal.get_animal_export_query(dbo) + " ORDER BY ID", "animal", "animal.csv")
             self.redirect("task")
             # Old version
             #self.content_disposition("attachment", "animal.csv")
