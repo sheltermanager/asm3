@@ -7461,9 +7461,9 @@ class sql_dump(ASMEndpoint):
         out = asm3.utils.stringio()
         rows = []
         for r in dbo.query_generator_chunked(sql):
-            rows.append(r)
+            if additionallinktype != "": asm3.additional.append_to_results(dbo, r, additionallinktype)
+            rows.extend(r)
         asm3.asynctask.set_progress_max(dbo, len(rows))
-        if additionallinktype != "": asm3.additional.append_to_results(dbo, rows, additionallinktype)
         for r in rows:
             out.write(asm3.utils.csv(dbo.locale, [r], includeheader = i==0).decode("utf-8"))
             i += 1

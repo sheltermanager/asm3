@@ -769,7 +769,7 @@ class Database(object):
             except:
                 pass
 
-    def query_generator_chunked(self, sql: str, params: List = None, chunksize = 1000) -> Generator[ResultRow, None, None]:
+    def query_generator_chunked(self, sql: str, params: List = None, chunksize = 500) -> Generator[ResultRow, None, None]:
         """ Runs the query given and returns the resultset as a list of dictionaries. 
             Uses LIMIT and OFFSET clauses to run the query multiple times and yield the results - makes this ideal
             for large/long running queries that take longer than our database timeout.
@@ -777,8 +777,7 @@ class Database(object):
         offset = 0
         while True:
             rows = self.query(sql, params, limit=chunksize, offset=offset)
-            for r in rows:
-                yield r
+            yield rows
             offset += len(rows)
             if len(rows) < chunksize: break
 
