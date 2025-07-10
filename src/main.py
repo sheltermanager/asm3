@@ -7459,7 +7459,9 @@ class sql_dump(ASMEndpoint):
         l = dbo.locale
         i = 0
         out = asm3.utils.stringio()
-        rows = dbo.query(sql)
+        rows = []
+        for r in dbo.query_generator_chunked(sql):
+            rows.append(r)
         asm3.asynctask.set_progress_max(dbo, len(rows))
         if additionallinktype != "": asm3.additional.append_to_results(dbo, rows, additionallinktype)
         for r in rows:
