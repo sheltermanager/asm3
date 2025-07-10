@@ -7452,6 +7452,8 @@ class sql_dump(ASMEndpoint):
     def csv_rows_task(self, dbo: Any, sql: str, table: str, additionallinktype: str, filename: str):
         """ This method should be run in a new thread by asynctask.
             It runs the sql given, turns the result rows into CSV and saves it to the disk cache for download.
+            Uses query_generator_chunked, which runs the same query multiple times using OFFSET and LIMIT
+            to help avoid issues with statement timeouts.
             sql: The query to run
             table: The table being exported so we can get a row count
             additionallinktype: If additional fields need to be merged into the rows, the link name (animal, person, etc)
@@ -7465,7 +7467,7 @@ class sql_dump(ASMEndpoint):
         for r in dbo.query_generator_chunked(sql):
             if additionallinktype != "": asm3.additional.append_to_results(dbo, r, additionallinktype)
             rows.extend(r)
-            i += 1000
+            i += len(r)
             asm3.asynctask.set_progress_value(dbo, i)
             if asm3.asynctask.get_cancel(dbo): 
                 asm3.asynctask.reset(dbo)
@@ -7530,11 +7532,11 @@ class sql_dump(ASMEndpoint):
             return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
-            # Task based version
+            # Task based version using csv_rows_task to run async
             asm3.asynctask.function_task(dbo, _("CSV of animal/adopter data", l), self.csv_rows_task,
                 dbo, asm3.animal.get_animal_export_query(dbo) + " ORDER BY ID", "animal", "animal", "animal.csv")
             self.redirect("task")
-            # Old version
+            # Old version - too slow for the 60s statement timeout on some databases
             #self.content_disposition("attachment", "animal.csv")
             #rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
             #asm3.additional.append_to_results(dbo, rows, "animal")
