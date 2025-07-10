@@ -863,6 +863,10 @@ def get_animals_brief(animals: Results) -> Results:
         })
     return r
 
+def get_animal_export_query(dbo: Database):
+    """ Used by the sql_dump endpoint to export animals """
+    return f"{get_animal_query(dbo)} ORDER BY ID"
+
 def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, lf: LocationFilter = None, brief: bool = False) -> Results:
     """
     Returns rows for simple animal searches.

@@ -7448,11 +7448,44 @@ class sql(JSONEndpoint):
 class sql_dump(ASMEndpoint):
     url = "sql_dump"
     get_permissions = asm3.users.USE_SQL_INTERFACE
-
+    
+    def csv_rows_task(self, dbo: Any, sql: str, additionallinktype: str, filename: str):
+        """ This method should be run in a new thread by asynctask.
+            It runs the sql given, turns the result rows into CSV and saves it to the disk cache for download.
+            sql: The query to run
+            additionallinktype: If additional fields need to be merged into the rows, the link name (animal, person, etc)
+            filename: The file name to use when the user saves the data
+        """
+        l = dbo.locale
+        i = 0
+        out = asm3.utils.stringio()
+        rows = dbo.query(sql)
+        asm3.asynctask.set_progress_max(dbo, len(rows))
+        if additionallinktype != "": asm3.additional.append_to_results(dbo, rows, additionallinktype)
+        for r in rows:
+            out.write(asm3.utils.csv(dbo.locale, [r], includeheader = i==0).decode("utf-8"))
+            i += 1
+            asm3.asynctask.set_progress_value(dbo, i)
+            if asm3.asynctask.get_cancel(dbo): 
+                asm3.asynctask.reset(dbo)
+                break
+        key = asm3.utils.uuid_str()
+        asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
+        h = '<p>%s <a target="_blank" href="sql_dump?getcsv=%s&filename=%s"><b>%s</b></p>' % ( \
+            asm3.i18n._("Export complete ({0} entries).", l).format(len(rows)), key, filename, asm3.i18n._("Download File", l) )
+        return h
+    
     def content(self, o):
         l = o.locale
         dbo = o.dbo
         mode = o.post["mode"]
+        # If we're retrieving an already saved CSV export, serve it.
+        if o.post["getcsv"] != "":
+            self.content_type("text/csv")
+            self.content_disposition("attachment", o.post["filename"])
+            v = asm3.cachedisk.get(o.post["getcsv"], o.dbo.name())
+            if v is None: self.notfound()
+            return v
         self.content_type("text/plain")
         if mode == "dumpsql":
             asm3.al.info("%s executed SQL database dump" % o.user, "main.sql", dbo)
@@ -7495,10 +7528,15 @@ class sql_dump(ASMEndpoint):
             return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "animal.csv")
-            rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
-            asm3.additional.append_to_results(dbo, rows, "animal")
-            return asm3.utils.csv_generator(l, rows)
+            # Task based version
+            asm3.asynctask.function_task(dbo, _("CSV of animal/adopter data", l), self.csv_rows_task,
+                dbo, asm3.animal.get_animal_export_query(dbo), "animal", "animal.csv")
+            self.redirect("task")
+            # Old version
+            #self.content_disposition("attachment", "animal.csv")
+            #rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
+            #asm3.additional.append_to_results(dbo, rows, "animal")
+            #return asm3.utils.csv_generator(l, rows)
         elif mode == "mediacsv":
             asm3.al.debug("%s executed CSV media dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "media.csv")
