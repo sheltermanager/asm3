@@ -7460,9 +7460,12 @@ class sql_dump(ASMEndpoint):
         i = 0
         out = asm3.utils.stringio()
         rows = []
+        asm3.al.debug("Building csv_rows for export", "sqldump.csv_rows_task", dbo)
         for r in dbo.query_generator_chunked(sql):
             if additionallinktype != "": asm3.additional.append_to_results(dbo, r, additionallinktype)
+            asm3.al.debug(f"Adding {len(r)} rows", "sqldump.csv_rows_task", dbo)
             rows.extend(r)
+        asm3.al.debug(f"Finished building rows: {len(rows)} total", "sqldump.csv_rows_task", dbo)
         asm3.asynctask.set_progress_max(dbo, len(rows))
         for r in rows:
             out.write(asm3.utils.csv(dbo.locale, [r], includeheader = i==0).decode("utf-8"))
