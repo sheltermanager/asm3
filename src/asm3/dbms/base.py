@@ -598,11 +598,12 @@ class Database(object):
         """
         try:
             c, s = self.cursor_open()
-            # Add limit clause if set
-            if limit > 0:
-                sql = "%s %s" % (sql, self.sql_limit(limit))
+            # Add offset and limit clauses if set - note that the order is important
+            # and OFFSET must appear before LIMIT in PostgreSQL
             if offset > 0:
                 sql = "%s %s" % (sql, self.sql_offset(offset))
+            if limit > 0:
+                sql = "%s %s" % (sql, self.sql_limit(limit))
             # Explain the query if the option is on
             if DB_EXPLAIN_QUERIES:
                 esql = "EXPLAIN %s" % sql
@@ -769,7 +770,7 @@ class Database(object):
             except:
                 pass
 
-    def query_generator_chunked(self, sql: str, params: List = None, chunksize = 500) -> Generator[ResultRow, None, None]:
+    def query_generator_chunked(self, sql: str, params: List = None, chunksize = 1000) -> Generator[ResultRow, None, None]:
         """ Runs the query given and returns the resultset as a list of dictionaries. 
             Uses LIMIT and OFFSET clauses to run the query multiple times and yield the results - makes this ideal
             for large/long running queries that take longer than our database timeout.
