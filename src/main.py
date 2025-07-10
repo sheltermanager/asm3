@@ -7449,30 +7449,30 @@ class sql_dump(ASMEndpoint):
     url = "sql_dump"
     get_permissions = asm3.users.USE_SQL_INTERFACE
     
-    def csv_rows_task(self, dbo: Any, sql: str, additionallinktype: str, filename: str):
+    def csv_rows_task(self, dbo: Any, sql: str, table: str, additionallinktype: str, filename: str):
         """ This method should be run in a new thread by asynctask.
             It runs the sql given, turns the result rows into CSV and saves it to the disk cache for download.
             sql: The query to run
+            table: The table being exported so we can get a row count
             additionallinktype: If additional fields need to be merged into the rows, the link name (animal, person, etc)
             filename: The file name to use when the user saves the data
         """
         l = dbo.locale
         i = 0
-        out = asm3.utils.stringio()
+        total = dbo.query_int(f"SELECT COUNT(*) FROM {table}")
+        asm3.asynctask.set_progress_max(dbo, total)
         rows = []
-        for r in dbo.query_generator_chunked(sql, chunksize=500):
+        for r in dbo.query_generator_chunked(sql):
             if additionallinktype != "": asm3.additional.append_to_results(dbo, r, additionallinktype)
             rows.extend(r)
-        asm3.asynctask.set_progress_max(dbo, len(rows))
-        for r in rows:
-            out.write(asm3.utils.csv(dbo.locale, [r], includeheader = i==0).decode("utf-8"))
-            i += 1
+            i += 1000
             asm3.asynctask.set_progress_value(dbo, i)
             if asm3.asynctask.get_cancel(dbo): 
                 asm3.asynctask.reset(dbo)
                 break
+        csvdata = asm3.utils.csv(dbo.locale, rows)
         key = asm3.utils.uuid_str()
-        asm3.cachedisk.put(key, dbo.name(), out.getvalue(), 3600)
+        asm3.cachedisk.put(key, dbo.name(), csvdata, 3600)
         h = '<p>%s <a target="_blank" href="sql_dump?getcsv=%s&filename=%s"><b>%s</b></p>' % ( \
             asm3.i18n._("Export complete ({0} entries).", l).format(len(rows)), key, filename, asm3.i18n._("Download File", l) )
         return h
@@ -7532,7 +7532,7 @@ class sql_dump(ASMEndpoint):
             asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
             # Task based version
             asm3.asynctask.function_task(dbo, _("CSV of animal/adopter data", l), self.csv_rows_task,
-                dbo, asm3.animal.get_animal_export_query(dbo) + " ORDER BY ID", "animal", "animal.csv")
+                dbo, asm3.animal.get_animal_export_query(dbo) + " ORDER BY ID", "animal", "animal", "animal.csv")
             self.redirect("task")
             # Old version
             #self.content_disposition("attachment", "animal.csv")
