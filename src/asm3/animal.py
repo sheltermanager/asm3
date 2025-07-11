@@ -2675,8 +2675,8 @@ def get_links(dbo: Database, aid: int, litterid: str = '') -> Results:
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE a.AcceptanceNumber != '' AND a.AcceptanceNumber = '%s' AND a.ID != %s " % \
-            ( _("Littermate"), animallinkdisplay, animalextra, litterid, int(aid) )
+        "WHERE a.AcceptanceNumber != '' AND a.AcceptanceNumber = %s AND a.ID != %s " % \
+            ( _("Littermate"), animallinkdisplay, animalextra, dbo.sql_value(litterid), int(aid) )
     # Litters parented by animal
     sql += "UNION SELECT 'APL' AS TYPE, " \
         "'%s' AS TYPEDISPLAY, " \
