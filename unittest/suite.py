@@ -77,7 +77,7 @@ fullsuite = [
 ]
 
 # Running a single suite of tests
-# fullsuite = [ lt(test_checkmicrochip) ]
+# fullsuite = [ lt(test_animal) ]
 
 if __name__ == "__main__":
     s = unittest.TestSuite(fullsuite)

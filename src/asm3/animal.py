@@ -2680,7 +2680,7 @@ def get_links(dbo: Database, aid: int, litterid: str = '') -> Results:
     # Litters parented by animal
     sql += "UNION SELECT 'APL' AS TYPE, " \
         "'%s' AS TYPEDISPLAY, " \
-        "al.LastChangedDate AS DDATE, " \
+        "al.Date AS DDATE, " \
         "al.ID AS LINKID, " \
         "al.AcceptanceNumber AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
