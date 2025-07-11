@@ -48,7 +48,7 @@ def get_animalcontrol_query(dbo: Database) -> str:
         "LEFT OUTER JOIN media doc ON doc.LinkID = ac.ID AND doc.LinkTypeID = %d AND doc.DocPhoto = 1 " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " \
-        "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID" % (asm3.media.ANIMALCONTROL, asm3.media.ANIMALCONTROL)
+        "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID " % (asm3.media.ANIMALCONTROL, asm3.media.ANIMALCONTROL)
 
 def get_animalcontrol_animals_query(dbo: Database) -> str:
     return "SELECT a.ID, aca.AnimalID, a.ShelterCode, a.ShortCode, a.IdentichipNumber, a.AgeGroup, a.AnimalName, " \
@@ -66,6 +66,29 @@ def get_animalcontrol_animals_query(dbo: Database) -> str:
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
         "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
+        
+def get_animalcontrol_export_query(dbo: Database) -> str:
+    return "SELECT ac.*, ac.ID AS ACID, s.SpeciesName, x.Sex AS SexName, " \
+        "co.OwnerName AS CallerName, co.OwnerAddress AS CallerAddress, co.OwnerTown AS CallerTown, co.OwnerCounty AS CallerCounty, co.OwnerPostcode AS CallerPostcode," \
+        "co.HomeTelephone AS CallerHomeTelephone, co.WorkTelephone AS CallerWorkTelephone, co.MobileTelephone AS CallerMobileTelephone, " \
+        "o1.OwnerName AS OwnerName, o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, " \
+        "o1.OwnerName AS SuspectName, o1.OwnerAddress AS SuspectAddress, o1.OwnerTown AS SuspectTown, o1.OwnerCounty AS SuspectCounty, o1.OwnerPostcode AS SuspectPostcode, " \
+        "o1.HomeTelephone AS SuspectHomeTelephone, o1.WorkTelephone AS SuspectWorkTelephone, o1.MobileTelephone AS SuspectMobileTelephone, " \
+        "vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress, vo.OwnerTown AS VictimTown, vo.OwnerCounty AS VictimCounty, vo.OwnerPostcode AS VictimPostcode," \
+        "vo.HomeTelephone AS VictimHomeTelephone, vo.WorkTelephone AS VictimWorkTelephone, vo.MobileTelephone AS VictimMobileTelephone, " \
+        "ti.IncidentName, ci.CompletedName, pl.LocationName, j.JurisdictionName " \
+        "FROM animalcontrol ac " \
+        "LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID " \
+        "LEFT OUTER JOIN lksex x ON x.ID = ac.Sex " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = ac.JurisdictionID " \
+        "LEFT OUTER JOIN owner co ON co.ID = ac.CallerID " \
+        "LEFT OUTER JOIN owner o1 ON o1.ID = ac.OwnerID " \
+        "LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID " \
+        "LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID " \
+        "LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID " \
+        "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID " \
+        "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " \
+        "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID "
 
 def get_traploan_query(dbo: Database) -> str:
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \

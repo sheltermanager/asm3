@@ -59,7 +59,7 @@ def get_person_query(dbo: Database) -> str:
 
 def get_person_export_query(dbo: Database) -> str:
     """ Used by the sql_dump endpoint to export people """
-    return f"{get_person_query(dbo)} ORDER BY ID"
+    return get_person_query(dbo)
 
 def get_rota_query(dbo: Database) -> str:
     """

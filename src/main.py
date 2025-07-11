@@ -7449,19 +7449,21 @@ class sql_dump(ASMEndpoint):
     url = "sql_dump"
     get_permissions = asm3.users.USE_SQL_INTERFACE
     
-    def csv_rows_task(self, dbo: Any, sql: str, table: str, additionallinktype: str, filename: str):
+    def csv_rows_task(self, dbo: Any, sql: str, tables: str, additionallinktype: str, filename: str):
         """ This method should be run in a new thread by asynctask.
             It runs the sql given, turns the result rows into CSV and saves it to the disk cache for download.
             Uses query_generator_chunked, which runs the same query multiple times using OFFSET and LIMIT
             to help avoid issues with statement timeouts.
             sql: The query to run
-            table: The table being exported so we can get a row count
+            tables: Comma separated list of tables being exported so we can get a total row count
             additionallinktype: If additional fields need to be merged into the rows, the link name (animal, person, etc)
             filename: The file name to use when the user saves the data
         """
         l = dbo.locale
         i = 0
-        total = dbo.query_int(f"SELECT COUNT(*) FROM {table}")
+        total = 0
+        for t in tables.split(","):
+            total += dbo.query_int(f"SELECT COUNT(*) FROM {t}")
         asm3.asynctask.set_progress_max(dbo, total)
         rows = []
         for r in dbo.query_generator_chunked(sql):
@@ -7505,21 +7507,21 @@ class sql_dump(ASMEndpoint):
             dbo2 = asm3.db.get_dbo("MYSQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
-            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            #return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
             asm3.al.info("%s executed DDL dump PostgreSQL" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "ddl_postgresql.sql")
             dbo2 = asm3.db.get_dbo("POSTGRESQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
-            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            #return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddldb2":
             asm3.al.info("%s executed DDL dump DB2" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "ddl_db2.sql")
             dbo2 = asm3.db.get_dbo("DB2")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
-            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            #return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "main.sql", dbo)
@@ -7532,9 +7534,8 @@ class sql_dump(ASMEndpoint):
             return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
-            # Task based version using csv_rows_task to run async
             asm3.asynctask.function_task(dbo, _("CSV of animal/adopter data", l), self.csv_rows_task,
-                dbo, asm3.animal.get_animal_export_query(dbo) + " ORDER BY ID", "animal", "animal", "animal.csv")
+                dbo, asm3.animal.get_animal_export_query(dbo) + " ORDER BY a.ID", "animal", "animal", "animal.csv")
             self.redirect("task")
             # Old version - too slow for the 60s statement timeout on some databases
             #self.content_disposition("attachment", "animal.csv")
@@ -7547,28 +7548,48 @@ class sql_dump(ASMEndpoint):
             return asm3.utils.csv_generator(l, asm3.media.get_media_export(dbo))
         elif mode == "medicalcsv":
             asm3.al.debug("%s executed CSV medical dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "medical.csv")
-            return asm3.utils.csv_generator(l, asm3.medical.get_medical_export(dbo))
+            asm3.asynctask.function_task(dbo, _("CSV of animal/medical data", l), self.csv_rows_task,
+                dbo, asm3.medical.get_medical_export_query(dbo) + " ORDER BY DateRequired", 
+                "animalmedicaltreatment,animalvaccination,animaltest", "", "medical.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "medical.csv")
+            #return asm3.utils.csv_generator(l, asm3.medical.get_medical_export(dbo))
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "person.csv")
-            rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
-            asm3.additional.append_to_results(dbo, rows, "person")
-            return asm3.utils.csv_generator(l, rows)
+            asm3.asynctask.function_task(dbo, _("CSV of person data", l), self.csv_rows_task,
+                dbo, asm3.person.get_person_export_query(dbo) + " ORDER BY o.ID", 
+                "owner", "person", "person.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "person.csv")
+            #rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
+            #asm3.additional.append_to_results(dbo, rows, "person")
+            #return asm3.utils.csv_generator(l, rows)
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "incident.csv")
-            rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
-            asm3.additional.append_to_results(dbo, rows, "incident")
-            return asm3.utils.csv_generator(l, rows)
+            asm3.asynctask.function_task(dbo, _("CSV of incident data", l), self.csv_rows_task,
+                dbo, asm3.animalcontrol.get_animalcontrol_export_query(dbo) + " ORDER BY ac.ID", 
+                "animalcontrol", "incident", "incident.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "incident.csv")
+            #rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
+            #asm3.additional.append_to_results(dbo, rows, "incident")
+            #return asm3.utils.csv_generator(l, rows)
         elif mode == "licencecsv":
             asm3.al.debug("%s executed CSV licence dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "licence.csv")
-            return asm3.utils.csv_generator(l, asm3.financial.get_licence_find_simple(dbo, ""))
+            asm3.asynctask.function_task(dbo, _("CSV of license data", l), self.csv_rows_task,
+                dbo, asm3.financial.get_licence_query(dbo) + " ORDER BY ol.ID", 
+                "ownerlicence", "", "licence.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "licence.csv")
+            #return asm3.utils.csv_generator(l, asm3.financial.get_licence_find_simple(dbo, ""))
         elif mode == "paymentcsv":
             asm3.al.debug("%s executed CSV payment dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "payment.csv")
-            return asm3.utils.csv_generator(l, asm3.financial.get_donations(dbo, "m10000"))
+            asm3.asynctask.function_task(dbo, _("CSV of payment data", l), self.csv_rows_task,
+                dbo, asm3.financial.get_donation_query(dbo) + " ORDER BY od.ID", 
+                "ownerdonation", "", "payment.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "payment.csv")
+            #return asm3.utils.csv_generator(l, asm3.financial.get_donations(dbo, "m10000"))
 
 class staff_rota(JSONEndpoint):
     url = "staff_rota"
