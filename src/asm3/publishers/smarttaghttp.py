@@ -69,8 +69,8 @@ class SmartTagPublisher(AbstractPublisher):
                 r = asm3.utils.post_json(SMARTTAG_HOST, j, headers=headers)
                 self.log("HTTP response: %s" % r["response"])
 
-                # Return value is an XML fragment, look for "Registration completed successfully"
-                if r["response"].find("success") != -1:
+                # SmartTag API uses different variable names to store success on dev and production servers but both use the same varaible name for errors
+                if asm3.utils.json_parse(r["response"])["summary"]["errors"] == 0: 
                     self.log("successful response, marking processed")
                     processed_animals.append(an)
                     # Mark success in the log
