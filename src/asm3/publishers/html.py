@@ -308,11 +308,12 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
     s = asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     return s
 
-def get_animal_view_adoptable_html(dbo: Database) -> str:
+def get_animal_view_adoptable_html(dbo: Database, style: str = "animalviewadoptable") -> str:
     """ Returns an HTML wrapper around get_animal_view_adoptable_js - uses
         a template called animalviewadoptable if it exists. 
     """
-    head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptable")
+    if style == "": style = "animalviewadoptable" 
+    head, body, foot = asm3.template.get_html_template(dbo, style) 
     # Template doesn't exist, read it from the file system instead
     if head == "": head, body, foot = asm3.template.get_html_template_from_file(dbo, "animalviewadoptable")
     body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name()))

@@ -849,10 +849,11 @@ iframes.</p>
 <p class="rubric">Permissions required: None</p>
 <p class="rubric">Requires username/password: NO</p>
 <p>Returns a complete HTML document that references animal_view_adoptable_js to
-show a list of adoptable animals. It looks for an HTML template called
-“animalviewadoptable” and falls back to a basic internal template if it does
-not exist:</p>
+show a list of adoptable animals. If no template is specified, it will look
+for an HTML template called “animalviewadoptable”. If that doesn’t exist, it
+will use a default, basic template:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view_adoptable_html
+http://localhost:5000/service?method=animal_view_adoptable_html&amp;template=onlyflags
 </pre></div>
 </div>
 </section>

@@ -617,7 +617,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "application/javascript", 3600, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method == "animal_view_adoptable_html":
-        return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
+        return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view_adoptable_html(dbo, style=post["template"]))
     
     elif method == "barcode_scan_result":
         barcode = post["barcode"]
