@@ -74,6 +74,7 @@ DEFAULTS = {
     "AutoInsuranceNext": "0",
     "AutoNewImagesNotForPublish": "No",
     "AutoNotForAdoption": "No",
+    "AutoNonShelter": "No",
     "AutoRemoveAnimalMediaExit": "No",
     "AutoRemoveAMExitYears": "0",
     "AutoRemoveDocumentMedia": "No",
@@ -775,6 +776,9 @@ def auto_new_images_not_for_publish(dbo: Database) -> bool:
 
 def auto_not_for_adoption(dbo: Database) -> bool:
     return cboolean(dbo, "AutoNotForAdoption", DEFAULTS["AutoNotForAdoption"] == "Yes")
+
+def auto_non_shelter(dbo: Database) -> bool:
+    return cboolean(dbo, "AutoNonShelter", DEFAULTS["AutoNonShelter"] == "Yes")
 
 def auto_remove_animal_media_exit(dbo: Database) -> bool:
     return cboolean(dbo, "AutoRemoveAnimalMediaExit", DEFAULTS["AutoRemoveAnimalMediaExit"] == "Yes")
