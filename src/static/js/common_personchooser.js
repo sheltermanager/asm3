@@ -542,11 +542,11 @@ $.widget("asm.personchooser", {
                     if (widget.hasClass("ui-icon-triangle-1-e")) {
                         widget.removeClass("ui-icon-triangle-1-e");
                         widget.addClass("ui-icon-triangle-1-s");
-                        widget.closest(".personchooser-display").find(".personchooser-ownerinfo").show();
+                        widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideDown(common.fx_speed);
                     } else {
                         widget.removeClass("ui-icon-triangle-1-s");
                         widget.addClass("ui-icon-triangle-1-e");
-                        widget.closest(".personchooser-display").find(".personchooser-ownerinfo").hide();
+                        widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideUp(common.fx_speed);
                     }
                 });
                 node.find(".personchooser-banned").val(rec.ISBANNED);
@@ -609,11 +609,11 @@ $.widget("asm.personchooser", {
                         if (widget.hasClass("ui-icon-triangle-1-e")) {
                             widget.removeClass("ui-icon-triangle-1-e");
                             widget.addClass("ui-icon-triangle-1-s");
-                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").show();
+                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideDown(common.fx_speed);
                         } else {
                             widget.removeClass("ui-icon-triangle-1-s");
                             widget.addClass("ui-icon-triangle-1-e");
-                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").hide();
+                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideUp(common.fx_speed);
                         }
                     });
                     node.find(".personchooser-banned").val(rec.ISBANNED);
@@ -653,7 +653,7 @@ $.widget("asm.personchooser", {
             disp += " " + html.icon("warning", rec.POPUPWARNING);
         }
         if (this.options.mode == "full") {
-            disp += rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
+            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
                 "<br/>" + rec.OWNERPOSTCODE + 
                 (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
                 "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
