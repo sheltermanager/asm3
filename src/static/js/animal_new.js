@@ -318,6 +318,9 @@ $(function() {
                 $("#estimatedage").val(config.str("DefaultAnimalAge"));
             }
 
+            // If auto non shelter is on click checkbox
+            if (config.bool("AutoNonShelter")) { $("#nonshelter").click() };
+
             // Set select box default values
             $("#animaltype").select("value", config.str("AFDefaultType"));
             animal_new.set_nonsheltertype_once = false;
