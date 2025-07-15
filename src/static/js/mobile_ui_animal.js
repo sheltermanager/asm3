@@ -263,6 +263,42 @@ const mobile_ui_animal = {
 
     bind: function() {
 
+        // Handle a change of internal location on daily observations
+        $("#dailyobslocation").change(function() {
+            $("#content-dailyobs .list-group").empty();
+            $.each(controller.animals, function(i, v) {
+                if (v.SHELTERLOCATION == $("#dailyobslocation").val()) {
+                    let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                        '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
+                        '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.CODE + ' - ' + v.SHELTERLOCATIONUNIT + '</h5>';
+                        let colnames = [], colwidgets = [];
+                        for (let i = 0; i < 50; i++) {
+                            let name = config.str("Behave" + i + "Name"), value = config.str("Behave" + i + "Values");
+                            if (name) { 
+                                colnames.push(name);
+                                if (value) {
+                                    colwidgets.push('<select class="asm-selectbox asm-halfselectbox widget" data-name="' + html.title(name) + '">' +
+                                        '<option value="">' + name + '</option>' + html.list_to_options(value.split("|")) + '</select>');
+                                }
+                                else {
+                                    colwidgets.push('<input type="text" class="asm-textbox widget" data-name="' + html.title(name) + '" placeholder="' + name + '" />');
+                                }
+                            }
+                        }
+                        $.each(colnames, function(i, c) {
+                            h += colwidgets[i];
+                        });
+                        '</a>';
+                    $("#content-dailyobs .list-group").append(h);
+                }
+            });
+        });
+
+        // Handle clicking on the clear daily obs button
+        $("#btn-clear-dailyobs").click(function() {
+            $("#content-dailyobs .list-group .widget").val('');
+        });
+
         // Handle clicking on check microchip button
         $("#btn-check-microchip").click(function() {
             if ($("#microchipnumbersearch").val() == '') {
@@ -421,6 +457,9 @@ const mobile_ui_animal = {
                 '</a>';
             $("#content-vaccinate .list-group").append(h);
         });
+
+        // Load list of animals for daily obs
+        $("#dailyobslocation").change();
 
     }
 
