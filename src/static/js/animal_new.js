@@ -319,7 +319,7 @@ $(function() {
             }
 
             // If auto non shelter is on click checkbox
-            if (config.bool("AutoNonShelter")) { $("#nonshelter").click() };
+            if (config.bool("AutoNonShelter")) { $("#nonshelter").prop("checked", true).change() };
 
             // Set select box default values
             $("#animaltype").select("value", config.str("AFDefaultType"));
