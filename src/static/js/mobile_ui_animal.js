@@ -263,6 +263,83 @@ const mobile_ui_animal = {
 
     bind: function() {
 
+        // Handle a change of internal location on daily observations
+        $("#dailyobslocation").change(function() {
+            $("#content-dailyobs .list-group").empty();
+            controller.animals.sort(common.sort_single("SHELTERLOCATIONUNIT"));
+            $.each(controller.animals, function(i, v) {
+                if (v.SHELTERLOCATION == $("#dailyobslocation").val()) {
+                    let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                        '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
+                        '<h5 class="mb-1"><input type=checkbox class="dailyobsselector">&nbsp;' + v.ANIMALNAME + ' - ' + v.CODE + ' - ' + v.SHELTERLOCATIONUNIT + '</h5>';
+                        let colnames = [], colwidgets = [];
+                        for (let i = 0; i < 50; i++) {
+                            let name = config.str("Behave" + i + "Name"), value = config.str("Behave" + i + "Values");
+                            if (name) { 
+                                colnames.push(name);
+                                if (value) {
+                                    colwidgets.push('<select class="asm-selectbox asm-halfselectbox widget" data-name="' + html.title(name) + '" disabled>' +
+                                        '<option value="">' + name + '</option>' + html.list_to_options(value.split("|")) + '</select>');
+                                }
+                                else {
+                                    colwidgets.push('<input type="text" class="asm-textbox widget" data-name="' + html.title(name) + '" placeholder="' + name + '"  disabled />');
+                                }
+                            }
+                        }
+                        $.each(colnames, function(i, c) {
+                            h += colwidgets[i];
+                        });
+                        '</a>';
+                    $("#content-dailyobs .list-group").append(h);
+                }
+            });
+        });
+
+        // Handle clicking on the clear daily obs button
+        $("#btn-clear-dailyobs").click(function() {
+            $("#content-dailyobs .list-group .widget").val('');
+            $("#content-dailyobs .list-group .widget").prop('disabled', true);
+            $("#content-dailyobs .list-group .dailyobsselector").prop('checked', false);
+        });
+
+        $("#content-dailyobs").on('click', '.dailyobsselector', function() {
+            console.log("Clicked!");
+            if ($(this).closest('.list-group-item').find('.widget').first().prop('disabled')) {
+                $(this).closest('.list-group-item').find('.widget').prop('disabled', false);
+            } else {
+                $(this).closest('.list-group-item').find('.widget').prop('disabled', true);
+            }
+        });
+
+        $("#btn-commit-dailyobs").click(async function() {
+            // Send the logs to the backend in the format:
+            //    ANIMALID==FIELD1=VALUE1, FIELD2=VALUE2^^ANIMALID==FIELD1=VALUE1,
+            //    52==Wet food=Mostly, Pen state=Dirty
+            // means the backend can split by ^^ to get animals, then by == to get 
+            // animalid and value string for the log.
+            let formdata = { "mode": "save", "logtype": config.str("BehaveLogType") }, logs = [];
+            $("#content-dailyobs .list-group .list-group-item").each(function() {
+                if (! $(this).find(".dailyobsselector").is(":checked")) { return; } // skip unselected rows
+                let animalid = $(this).attr("data-id"), avs = [];
+                // Build a packed set of values for this animal
+                $(this).find(".widget").each(function() {
+                    if (config.bool("SuppressBlankObservations") && !$(this).val()) { return; }
+                    avs.push( $(this).attr("data-name") + "=" + $(this).val() );
+                });
+                logs.push( animalid + "==" + avs.join(", ") );
+            });
+            formdata.logs = logs.join("^^");
+            if (formdata.logs == "") { return; }
+            //header.show_loading(_("Saving..."));
+            let response = await common.ajax_post("animal_observations", formdata);
+            //header.hide_loading();
+            //header.show_info(_("{0} observation logs successfully written.").replace("{0}", response));
+            // Unselect the previously selected values
+            $("#content-dailyobs .list-group .widget").val('');
+            $("#content-dailyobs .list-group .widget").prop('disabled', true);
+            $("#content-dailyobs .list-group .dailyobsselector").prop('checked', false);
+        });
+
         // Handle clicking on check microchip button
         $("#btn-check-microchip").click(function() {
             if ($("#microchipnumbersearch").val() == '') {
@@ -421,6 +498,9 @@ const mobile_ui_animal = {
                 '</a>';
             $("#content-vaccinate .list-group").append(h);
         });
+
+        // Load list of animals for daily obs
+        $("#dailyobslocation").change();
 
     }
 
