@@ -2687,7 +2687,7 @@ def get_links(dbo: Database, aid: int, litterid: str = '') -> Results:
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
         "FROM animallitter al " \
         "INNER JOIN animal a ON al.ParentAnimalID = a.ID " \
-        "WHERE a.ID != %s " % \
+        "WHERE al.ParentAnimalID = %s " % \
             ( _("Parent to litter"), litterextra, int(aid) )
     # Sort and done
     sql += "ORDER BY DDATE DESC, LINKDISPLAY "
