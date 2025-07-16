@@ -6978,22 +6978,6 @@ class publish_options(JSONEndpoint):
         userid, userpwd = asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher.signup(o.dbo, o.post)
         return "%s,%s" % (userid, userpwd)
 
-class receipt_bulk(ASMEndpoint):
-    url = "receipt_bulk"
-    js_module = "receipt_bulk"
-    get_permissions = asm3.users.VIEW_DONATION
-
-    def content(self, o):
-        import datetime # To do - I'm sure that there's a built in function that I can use instead, need to check with Bob
-        dbo = o.dbo
-        post = o.post
-
-        fromdatetime = datetime.datetime(2025, 1, 1, 0, 0, 0)
-        todatetime = datetime.datetime.now()
-        return {
-            "rows": asm3.financial.get_donations_paid_two_dates(dbo, fromdatetime, todatetime)
-        }
-
 class report(ASMEndpoint):
     url = "report"
     get_permissions = asm3.users.VIEW_REPORT

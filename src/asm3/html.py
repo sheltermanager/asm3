@@ -615,7 +615,6 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
         )),
         ("", "financial", _("Financial", l), (
             ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
-            ( asm3.users.VIEW_DONATION, "", "", "receipt_bulk", "asm-icon-batch", _("Bulk receipts", l) ),
             ( asm3.users.VIEW_VOUCHER, "", "", "voucher", "asm-icon-blank", _("Voucher book", l) ),
             ( asm3.users.VIEW_BOARDING, "", "tagboarding", "--cat", "", _("Boarding", l) ),
             ( asm3.users.VIEW_BOARDING, "", "tagboarding", "boarding_availability", "asm-icon-blank", _("Boarding availability", l) ),
