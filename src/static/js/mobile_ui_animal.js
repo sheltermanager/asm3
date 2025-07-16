@@ -266,6 +266,7 @@ const mobile_ui_animal = {
         // Handle a change of internal location on daily observations
         $("#dailyobslocation").change(function() {
             $("#content-dailyobs .list-group").empty();
+            controller.animals.sort(common.sort_single("SHELTERLOCATIONUNIT"));
             $.each(controller.animals, function(i, v) {
                 if (v.SHELTERLOCATION == $("#dailyobslocation").val()) {
                     let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
