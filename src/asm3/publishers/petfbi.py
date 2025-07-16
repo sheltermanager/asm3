@@ -81,7 +81,8 @@ class PetFBIPublisher(FTPPublisher):
         lostanimals = self.fbiGetLost()
 
         if len(animals) == 0 and len(foundanimals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.logSuccess("No animals found to publish.")
+            self.setLastError("No animals found to publish.", log_error = False)
             self.cleanup()
             return
 

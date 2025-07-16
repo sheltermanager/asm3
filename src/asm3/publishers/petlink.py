@@ -116,8 +116,7 @@ class PetLinkPublisher(AbstractPublisher):
         # If we excluded our only animals and have nothing to send, stop now
         if len(csv) == 1:
             self.log("No animals left to send to PetLink.")
-            self.saveLog()
-            self.setPublisherComplete()
+            self.cleanup()
             return
 
         # POST the csv data
