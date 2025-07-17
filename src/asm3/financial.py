@@ -474,6 +474,17 @@ def get_donations_due_two_dates(dbo: Database, start: datetime, end: datetime) -
         "WHERE od.DateDue >= ? AND od.DateDue <= ? AND od.Date Is Null " \
         "ORDER BY od.DateDue DESC", (start, end))
 
+def get_donations_paid_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
+    """
+    Returns a recordset of paid donations between two dates
+    ID, DONATIONTYPEID, DONATIONNAME, DATE, DATEDUE, DONATION,
+    ISGIFTAID, FREQUENCY, FREQUENCYNAME, NEXTCREATED, COMMENTS, OWNERNAME, 
+    ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
+    """
+    return dbo.query(get_donation_query(dbo) + \
+        "WHERE od.Date >= ? AND od.Date <= ? " \
+        "ORDER BY od.Date DESC", (start, end))
+
 def get_animal_donations(dbo: Database, aid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the owner donation records for an animal, along with

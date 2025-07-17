@@ -6978,6 +6978,45 @@ class publish_options(JSONEndpoint):
         userid, userpwd = asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher.signup(o.dbo, o.post)
         return "%s,%s" % (userid, userpwd)
 
+class receipt_bulk(JSONEndpoint):
+    url = "receipt_bulk"
+    js_module = "receipt_bulk"
+    get_permissions = asm3.users.VIEW_DONATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        post = o.post
+
+        if post.date('fromdate'):
+            fromdate = post.date('fromdate')
+        else:
+            fromdate = dbo.today(offset=-30)
+
+        if post.date('todate'):
+            todate = post.date('todate')
+        else:
+            todate = dbo.today()
+        
+        paymentmethods = []
+        for paymentmethodrow in asm3.lookups.get_payment_methods(dbo):
+            paymentmethods.append(
+                '|'.join([str(paymentmethodrow['ID']), paymentmethodrow['PAYMENTNAME']])
+            )
+        
+        paymenttemplates = []
+        for paymenttemplaterow in asm3.template.get_document_templates(dbo, "payment"):
+            paymenttemplates.append(
+                '|'.join([str(paymenttemplaterow['ID']), paymenttemplaterow['NAME']])
+            )
+        
+        return {
+            "rows": asm3.financial.get_donations_paid_two_dates(dbo, fromdate, todate),
+            "fromdate": fromdate,
+            "todate": todate,
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "payment")
+        }
+
 class report(ASMEndpoint):
     url = "report"
     get_permissions = asm3.users.VIEW_REPORT
