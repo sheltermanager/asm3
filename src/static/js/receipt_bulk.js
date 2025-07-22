@@ -10,11 +10,22 @@ $(function() {
             const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
+                overdue: function(row) {
+                    if (!row.EMAILADDRESS) {return true};
+                },
                 columns: [
                     { field: "DATE", display: _("Date"), formatter: function(row) {
-                        //return format.date(row.DATE);
-                        return tableform.table_render_edit_link(row.ID, format.date(row.DATE), '')
-                    }  },
+                            if (row.EMAILADDRESS) {
+                                return tableform.table_render_edit_link(row.ID, '&nbsp;', format.date(row.DATE))
+                            } else {
+                                return '<input type=checkbox style="visibility: hidden;">&nbsp;' + format.date(row.DATE)
+                            }
+                        }
+                    },
+                    { field: "TYPE", display: _("Type"), formatter: function(row) {
+                            return row.PAYMENTNAME
+                        }
+                    },
                     { field: "OWNERNAME", display: _("Person"), formatter: function(row) {
                         return row.OWNERNAME;
                     } },
@@ -26,7 +37,20 @@ $(function() {
             };
 
             const buttons = [
-                { type: "raw",  markup: tableform.render_select({
+                { id: "send", text: _("Send"), icon: "email", enabled: "multi", 
+                    click: async function() { 
+                        $('#button-send').prop('disabled', true);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("receipt_bulk", "mode=send&ids=" + ids + "&tid=" + $("#paymenttemplate").val() + "&username=" + asm.user);
+                        setTimeout(() => { header.show_info(_('Receipts emailed')); }, 850);
+                    } 
+                },
+                { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
+                    click: function() {
+                        common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val() + "&paymentmethod=" + $("#paymentmethod").val() + "&templateid=" + $("#paymenttemplate").val());
+                    }
+                },
+                { type: "raw",  markup: '<span style="float: right;">' + tableform.render_select({
                         'id': 'paymenttemplate',
                         'justwidget': true,
                         'options': { displayfield: "NAME", valuefield: "ID", rows: controller.templates }
@@ -38,22 +62,10 @@ $(function() {
                         'options': { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }
                     }) + '</div>'
                 },
-                { id: "complete", text: _("Complete"), icon: "complete", enabled: "multi", 
-                    click: async function() { 
-                        let ids = tableform.table_ids(table);
-                        await common.ajax_post("diary", "mode=complete&ids=" + ids);
-                        $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.ID)) {
-                            v.DATECOMPLETED = format.date_iso(new Date());
-                        }
-                        });
-                        tableform.table_update(table);
-                    } 
-                },
-                { type: "raw", markup: '<span style="float: right;">' + _("from") + ' '},
+                { type: "raw", markup: _("from") + ' '},
                 { type: "raw", markup: tableform.render_date({'id': "fromdate",'justwidget': true, 'halfsize': true, value: format.date(controller.fromdate)}) },
                 { type: "raw", markup: ' ' + _('to') + ' ' },
-                { id: "todate", type: "raw", markup: tableform.render_date({'id': "todate",'justwidget': true, 'halfsize': true, value: format.date(controller.todate)}) + '</span>' },
+                { id: "todate", type: "raw", markup: tableform.render_date({'id': "todate",'justwidget': true, 'halfsize': true, value: format.date(controller.todate)}) + '</span>' }
             ];
 
             this.buttons = buttons;
@@ -73,17 +85,16 @@ $(function() {
         bind: function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-
-            $("#fromdate").change(function() {
-                common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val());
-            });
-
-            $("#todate").change(function() {
-                common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val());
-            });
         },
 
         sync: function() {
+            $("#paymentmethod").val(controller.paymentmethod);
+            $("#paymentmethod").change();
+            if (controller.template > 0) {
+                $("#paymenttemplate").val(controller.template);
+                $("#paymenttemplate").change();
+            }
+
         },
 
         destroy: function() {

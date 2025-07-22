@@ -6986,36 +6986,65 @@ class receipt_bulk(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         post = o.post
-
         if post.date('fromdate'):
             fromdate = post.date('fromdate')
         else:
             fromdate = dbo.today(offset=-30)
-
         if post.date('todate'):
             todate = post.date('todate')
         else:
             todate = dbo.today()
-        
-        paymentmethods = []
-        for paymentmethodrow in asm3.lookups.get_payment_methods(dbo):
-            paymentmethods.append(
-                '|'.join([str(paymentmethodrow['ID']), paymentmethodrow['PAYMENTNAME']])
-            )
-        
-        paymenttemplates = []
-        for paymenttemplaterow in asm3.template.get_document_templates(dbo, "payment"):
-            paymenttemplates.append(
-                '|'.join([str(paymenttemplaterow['ID']), paymenttemplaterow['NAME']])
-            )
-        
+        if post.integer_list('paymentmethod'):
+            paymentmethod = post.integer_list('paymentmethod')
+        else:
+            paymentmethod = [asm3.configuration.default_payment_method(dbo)]
+        if post.integer('templateid'):
+            template = post.integer('templateid')
+        else:
+            template = 0
+        paymentmethods = asm3.lookups.get_payment_methods(dbo)
         return {
-            "rows": asm3.financial.get_donations_paid_two_dates(dbo, fromdate, todate),
+            "rows": asm3.financial.get_donations_paid_two_dates(dbo, fromdate, todate, paymentmethod),
             "fromdate": fromdate,
             "todate": todate,
-            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "paymentmethod": paymentmethod,
+            "paymentmethods": paymentmethods,
+            "template": template,
             "templates": asm3.template.get_document_templates(dbo, "payment")
         }
+    
+    def post_send(self, o):
+        dbo = o.dbo
+        post = o.post
+        user = post["username"]
+        donationids = o.post.integer_list('ids')
+        templateid = o.post.integer('tid')
+
+        fromadd = asm3.configuration.email(dbo)
+        receipt = asm3.wordprocessor.generate_donation_doc(dbo, templateid, donationids, user)
+        body = receipt
+        mt = asm3.wordprocessor.extract_mail_tokens(body)
+        cc = mt["CC"] or ""
+        bcc = mt["BCC"] or ""
+        subject = mt["SUBJECT"] or _("Thank you")
+        logmsg = _("Bulk payment receipt emailed")
+        for donationid in donationids:
+            p = asm3.financial.get_email_from_donation_id(dbo, donationid)
+            if p:
+                pid = p['ID']
+                to = p['EMAILADDRESS']
+                attachments = [('receipt.pdf', 'application/pdf', asm3.utils.html_to_pdf_pisa(dbo, receipt))]
+                try:
+                    asm3.utils.send_email(dbo, fromadd, to, cc, bcc, subject, body, "html", attachments)
+                    if asm3.configuration.audit_on_send_email(dbo): 
+                        asm3.audit.email(dbo, user, fromadd, to, cc, bcc, subject, body)
+                    logtypeid = asm3.configuration.system_log_type(dbo)
+                    if logtypeid > 0:
+                        asm3.log.add_log(dbo, user, asm3.log.PERSON, pid, logtypeid, logmsg)
+                except Exception as err:
+                    asm3.al.error(f"failed sending message '{subject}' to '{to}': {err}", "automail._send_email_from_template", dbo)
+
+        return True
 
 class report(ASMEndpoint):
     url = "report"

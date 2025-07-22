@@ -431,6 +431,12 @@ def get_donations_by_ids(dbo: Database, dids: List[int]) -> Results:
     """
     return dbo.query(get_donation_query(dbo) + "WHERE od.ID IN (%s) ORDER BY od.Date" % ",".join(str(x) for x in dids))
 
+def get_email_from_donation_id(dbo, donationid) -> tuple:
+    """
+    Returns (ID, EmailAddress) of owner from donationid
+    """
+    return dbo.first_row( dbo.query("SELECT o.ID, o.EmailAddress FROM ownerdonation od INNER JOIN owner o ON od.OwnerID = o.ID WHERE od.ID = ?", [donationid]) )
+
 def get_movement_donation(dbo: Database, mid: int) -> ResultRow:
     """
     Returns the most recent donation with movement id mid
@@ -474,16 +480,28 @@ def get_donations_due_two_dates(dbo: Database, start: datetime, end: datetime) -
         "WHERE od.DateDue >= ? AND od.DateDue <= ? AND od.Date Is Null " \
         "ORDER BY od.DateDue DESC", (start, end))
 
-def get_donations_paid_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
+def get_donations_paid_two_dates(dbo: Database, start: datetime, end: datetime, paymentmethods: list) -> Results:
     """
     Returns a recordset of paid donations between two dates
     ID, DONATIONTYPEID, DONATIONNAME, DATE, DATEDUE, DONATION,
     ISGIFTAID, FREQUENCY, FREQUENCYNAME, NEXTCREATED, COMMENTS, OWNERNAME, 
     ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
     """
-    return dbo.query(get_donation_query(dbo) + \
-        "WHERE od.Date >= ? AND od.Date <= ? " \
-        "ORDER BY od.Date DESC", (start, end))
+    pmv = [start, end]
+    ql = [
+            get_donation_query(dbo),
+            'WHERE od.Date >= ? AND od.Date <= ?',
+            'AND ('
+        ]
+    pl = []
+    for pm in paymentmethods:
+        pl.append('DonationPaymentID = ?')
+        pmv.append(pm)
+    ql.append(' OR '.join(pl))
+    ql.append(')')
+    ql.append('ORDER BY od.Date DESC')
+
+    return dbo.query(' '.join(ql), pmv)
 
 def get_animal_donations(dbo: Database, aid: int, sort: int = ASCENDING) -> Results:
     """
