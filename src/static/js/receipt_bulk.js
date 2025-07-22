@@ -37,6 +37,23 @@ $(function() {
             };
 
             const buttons = [
+                { type: "raw", markup: '<center>'},
+                { type: "raw",  markup: tableform.render_select({
+                        'id': 'paymenttemplate',
+                        'justwidget': true,
+                        'options': { displayfield: "NAME", valuefield: "ID", rows: controller.templates },
+                        'tooltip': _("Template")
+                    })
+                },
+                { type: "raw", markup: _("from") + ' '},
+                { type: "raw", markup: tableform.render_date({'id': "fromdate",'justwidget': true, 'halfsize': true, value: format.date(controller.fromdate), tooltip: _("From date")}) },
+                { type: "raw", markup: ' ' + _('to') + ' ' },
+                { id: "todate", type: "raw", markup: tableform.render_date({'id': "todate",'justwidget': true, 'halfsize': true, value: format.date(controller.todate), tooltip: _("To date")}) },
+                { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
+                    click: function() {
+                        common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val() + "&paymentmethod=" + $("#paymentmethod").val() + "&templateid=" + $("#paymenttemplate").val());
+                    }
+                },
                 { id: "send", text: _("Send"), icon: "email", enabled: "multi", 
                     click: async function() { 
                         $('#button-send').prop('disabled', true);
@@ -45,27 +62,15 @@ $(function() {
                         setTimeout(() => { header.show_info(_('Receipts emailed')); }, 850);
                     } 
                 },
-                { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
-                    click: function() {
-                        common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val() + "&paymentmethod=" + $("#paymentmethod").val() + "&templateid=" + $("#paymenttemplate").val());
-                    }
-                },
-                { type: "raw",  markup: '<span style="float: right;">' + tableform.render_select({
-                        'id': 'paymenttemplate',
-                        'justwidget': true,
-                        'options': { displayfield: "NAME", valuefield: "ID", rows: controller.templates }
-                    })
-                },
+                { type: "raw", markup: '<br>'},
                 { type: "raw", markup: '<div style="display: inline-block;vertical-align: top;">' + tableform.render_selectmulti({
                         'id': 'paymentmethod',
                         'justwidget': true,
-                        'options': { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }
+                        'options': { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods },
+                        tooltip: _("Payment methods")
                     }) + '</div>'
                 },
-                { type: "raw", markup: _("from") + ' '},
-                { type: "raw", markup: tableform.render_date({'id': "fromdate",'justwidget': true, 'halfsize': true, value: format.date(controller.fromdate)}) },
-                { type: "raw", markup: ' ' + _('to') + ' ' },
-                { id: "todate", type: "raw", markup: tableform.render_date({'id': "todate",'justwidget': true, 'halfsize': true, value: format.date(controller.todate)}) + '</span>' }
+                { type: "raw", markup: '</center>'}
             ];
 
             this.buttons = buttons;
