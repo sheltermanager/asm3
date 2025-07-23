@@ -14,7 +14,13 @@ $(function() {
                 edit_perm: 'ccl',
                 close_on_ok: false,
                 fields: [
-                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "autotext", validation: "notblank", doublesize: true },
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), 
+                        type: "autotext", validation: "notblank", doublesize: true,
+                        change: function() { 
+                            if ($("#description").val() in clinic_invoice.invoiceitemsdict) {
+                                $("#amount").val(format.currency(clinic_invoice.invoiceitemsdict[$("#description").val()]));
+                            }
+                        } },
                     { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" }
                 ]
             };
@@ -103,12 +109,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-
-            $("#description").on("change", function() {
-                if ($("#description").val() in clinic_invoice.invoiceitemsdict) {
-                    $("#amount").val(format.currency(clinic_invoice.invoiceitemsdict[$("#description").val()]));
-                }
-            });
         },
 
         sync: function() {
