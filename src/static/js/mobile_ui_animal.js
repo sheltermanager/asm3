@@ -289,7 +289,7 @@ const mobile_ui_animal = {
                         $.each(colnames, function(i, c) {
                             h += colwidgets[i];
                         });
-                        '</a>';
+                        h += '</a>';
                     $("#content-dailyobs .list-group").append(h);
                 }
             });
@@ -303,7 +303,6 @@ const mobile_ui_animal = {
         });
 
         $("#content-dailyobs").on('click', '.dailyobsselector', function() {
-            console.log("Clicked!");
             if ($(this).closest('.list-group-item').find('.widget').first().prop('disabled')) {
                 $(this).closest('.list-group-item').find('.widget').prop('disabled', false);
             } else {
