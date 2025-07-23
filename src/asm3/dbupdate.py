@@ -32,14 +32,14 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
-    "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", 
+    "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", 
     "lkownerflags", "lkproducttype", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lktaxrate", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", 
     "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", 
     "lkstransportstatus", "lkurgency", "lkwaitinglistremoval", "lkworktype", 
     "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
-"ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "product", "publishlog", 
+    "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "product", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
     "vaccinationtype", "voucher" )
@@ -80,7 +80,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
     "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", 
     "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", 
     "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
@@ -1130,6 +1130,13 @@ def sql_structure(dbo: Database) -> str:
         fid(),
         fstr("BoardingName"),
         fstr("BoardingDescription", True),
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
+    
+    sql += table("lkclinicinvoiceitems", (
+        fid(),
+        fstr("ClinicInvoiceItemName"),
+        fstr("ClinicInvoiceItemDescription", True),
         fint("DefaultCost", True),
         fint("IsRetired", True) ), False)
 
