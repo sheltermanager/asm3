@@ -32,7 +32,6 @@ $(function() {
                         options: { displayfield: "SITENAME", rows: controller.sites }},
                     { post_field: "ownertype", json_field: "OWNERTYPE", type: "select", label: _("Class"), 
                         options: html.list_to_options([ '1|' + _("Individual"), '3|' + _("Couple"), '2|' + _("Organization") ])},
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 31, false, "additionalcouples") },
                     { post_field: "viewroles", json_field: "VIEWROLEIDS", type: "selectmulti", label: _("View Roles"), 
                         callout: _("Only allow users with one of these roles to view this person record"),
                         options: { displayfield: "ROLENAME", rows: controller.roles }},
@@ -66,6 +65,7 @@ $(function() {
                     { post_field: "gdprcontactoptin", json_field: "GDPRCONTACTOPTIN", type: "selectmulti", label: _("GDPR Contact Opt-In"), 
                         options: edit_header.gdpr_contact_options() },
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 7) },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 31, false, "additionalcouples") },
 
                     { type: "nextcol" },
 
