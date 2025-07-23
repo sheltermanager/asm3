@@ -292,7 +292,7 @@ $(function() {
             this.load_person_flags();
             $("#filechooser").change(function() {
                 let importfile = $("#filechooser").val();
-                if (['html', 'json'].includes(importfile.split(".").slice(-1)[0].toLowerCase()) == false) {
+                if ( !importfile.toLowerCase().endsWith(".html") && !importfile.toLowerCase().endsWith(".json") ) {
                     $("#dialog-import .ui-state-error").show();
                     $("#filechooser").val('');
                 }

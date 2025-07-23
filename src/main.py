@@ -5977,9 +5977,12 @@ class onlineforms(JSONEndpoint):
         fd = asm3.utils.bytes2str(o.post.filedata())
         if fd.startswith("{"):
             asm3.onlineform.import_onlineform_json(o.dbo, fd)
-        else:
+            self.redirect("onlineforms")
+        elif '<html' in fd:
             asm3.onlineform.import_onlineform_html(o.dbo, fd)
-        self.redirect("onlineforms")
+            self.redirect("onlineforms")
+        else:
+            raise Exception("File content neither valid JSON or HTML")
 
 class onlineform_json(ASMEndpoint):
     url = "onlineform_json"
