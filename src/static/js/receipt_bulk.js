@@ -11,19 +11,19 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 overdue: function(row) {
-                    if (!row.EMAILADDRESS) {return true};
+                    if (!row.EMAILADDRESS) {return true;}
                 },
                 columns: [
                     { field: "DATE", display: _("Date"), formatter: function(row) {
                             if (row.EMAILADDRESS) {
-                                return tableform.table_render_edit_link(row.ID, '&nbsp;', format.date(row.DATE))
+                                return tableform.table_render_edit_link(row.ID, '&nbsp;', format.date(row.DATE));
                             } else {
-                                return '<input type=checkbox style="visibility: hidden;">&nbsp;' + format.date(row.DATE)
+                                return '<input type=checkbox style="visibility: hidden;">&nbsp;' + format.date(row.DATE);
                             }
                         }
                     },
                     { field: "TYPE", display: _("Type"), formatter: function(row) {
-                            return row.PAYMENTNAME
+                            return row.PAYMENTNAME;
                         }
                     },
                     { field: "OWNERNAME", display: _("Person"), formatter: function(row) {
@@ -108,7 +108,7 @@ $(function() {
 
         name: "receipt_bulk",
         animation: "book",
-        title: function() {return _("Bulk receipts")},
+        title: function() {return _("Bulk receipts");},
         routes: {
             "receipt_bulk": function() { common.module_loadandstart("receipt_bulk", "receipt_bulk?" + this.rawqs); }
         }
