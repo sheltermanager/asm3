@@ -7021,21 +7021,29 @@ class receipt_bulk(JSONEndpoint):
         templateid = o.post.integer('tid')
 
         fromadd = asm3.configuration.email(dbo)
-        receipt = asm3.wordprocessor.generate_donation_doc(dbo, templateid, donationids, user)
-        body = receipt
-        mt = asm3.wordprocessor.extract_mail_tokens(body)
-        cc = mt["CC"] or ""
-        bcc = mt["BCC"] or ""
-        subject = mt["SUBJECT"] or _("Thank you")
         logmsg = _("Bulk payment receipt emailed")
+        emailaddresses = {}
         for donationid in donationids:
             p = asm3.financial.get_email_from_donation_id(dbo, donationid)
             if p:
                 pid = p['ID']
                 to = p['EMAILADDRESS']
-                attachments = [('receipt.pdf', 'application/pdf', asm3.utils.html_to_pdf_pisa(dbo, receipt))]
+                if to in emailaddresses:
+                    emailaddresses[to].append(donationid)
+                else:
+                    emailaddresses[to] = [donationid]
+        count = len(emailaddresses.keys())
+        if count > asm3.configuration.mail_merge_max_emails(dbo):
+            raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
+        else:
+            for emailaddress in emailaddresses.keys():
+                body = asm3.wordprocessor.generate_donation_doc(dbo, templateid, emailaddresses[emailaddress], user)
+                mt = asm3.wordprocessor.extract_mail_tokens(body)
+                cc = mt["CC"] or ""
+                bcc = mt["BCC"] or ""
+                subject = mt["SUBJECT"] or _("Thank you")
                 try:
-                    asm3.utils.send_email(dbo, fromadd, to, cc, bcc, subject, body, "html", attachments)
+                    asm3.utils.send_email(dbo, fromadd, to, cc, bcc, subject, body, "html")
                     if asm3.configuration.audit_on_send_email(dbo): 
                         asm3.audit.email(dbo, user, fromadd, to, cc, bcc, subject, body)
                     logtypeid = asm3.configuration.system_log_type(dbo)

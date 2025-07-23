@@ -55,10 +55,11 @@ $(function() {
                     }
                 },
                 { id: "send", text: _("Send"), icon: "email", enabled: "multi", 
-                    click: async function() { 
-                        $('#button-send').prop('disabled', true);
+                    click: async function() {
+                        $("#button-send").button('disable');
                         let ids = tableform.table_ids(table);
                         await common.ajax_post("receipt_bulk", "mode=send&ids=" + ids + "&tid=" + $("#paymenttemplate").val() + "&username=" + asm.user);
+                        $("#button-send").button('enable');
                         setTimeout(() => { header.show_info(_('Receipts emailed')); }, 850);
                     } 
                 },
