@@ -1881,12 +1881,7 @@ const tableform = {
     fields_bind: function(fields) {
         $.each(fields, function(i, v) {
             if (v.change) {
-                if (v.type == "autotext") {
-                    $("#" + v.post_field).autocomplete({ close: v.change });
-                }
-                else {
-                    $("#" + v.post_field).change(v.change);
-                }
+                $("#" + v.post_field).change(v.change);
             }
             if (v.blur) {
                 $("#" + v.post_field).blur(v.blur);
