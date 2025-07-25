@@ -907,12 +907,12 @@ def delete_media(dbo: Database, username: str, mid: int) -> None:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
-        if ml: dbo.update("media", ml.ID, { "WebsitePhoto": 1 })
+        if ml: set_web_preferred(dbo, username, ml.ID)
     if mr.DOCPHOTO == 1:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
-        if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
+        if ml: set_doc_preferred(dbo, username, ml.ID)
 
 def convert_media_jpg2pdf(dbo: Database, username: str, mid: int) -> int:
     """
