@@ -204,6 +204,8 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
     foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
     # Substitute the special ADOPTABLEJSURL token if present so animalviewadoptable can be tested/previewed
     body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name()))
+    # Substitute the special COUNT token for the total number of animals in the page
+    body = body.replace("$$COUNT$$", str(len(animals)))
     # Run through each animal and generate body sections
     bodies = []
     for a in animals:
