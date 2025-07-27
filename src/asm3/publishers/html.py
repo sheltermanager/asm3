@@ -120,7 +120,7 @@ def get_held_animals(dbo: Database, style="", speciesid=0, animaltypeid=0, order
         "ORDER BY %s" % orderby)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_html_template_tags(dbo: Database, animals: Results) -> Dict[str, str]:
+def get_html_template_tags(dbo: Database, rows: Results) -> Dict[str, str]:
     """
     Creates the HTML template tags. Most of these are for compatibility
     with the old static HTML publisher, but ADOPTABLEJSURL is needed
@@ -139,7 +139,7 @@ def get_html_template_tags(dbo: Database, animals: Results) -> Dict[str, str]:
         "VERSION":      asm3.i18n.get_version(),
         "NAV":          "",
         "TITLE":        asm3.i18n._("Available for adoption", l),
-        "TOTAL":        len(animals),
+        "TOTAL":        len(rows),
         "ADOPTABLEJSURL": "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name())
     }
     return tags
@@ -279,6 +279,7 @@ def lostfound_animals_to_page(dbo: Database, rows: Results, lostorfound="found",
             raise asm3.utils.ASMError(f"template {style} does not exist")
     # Substitute the header and footer tags
     org_tags = asm3.wordprocessor.org_tags(dbo, "system")
+    org_tags = asm3.wordprocessor.append_tags(org_tags, get_html_template_tags(dbo, rows))
     head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
     foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
     # Run through each animal and generate body sections
@@ -288,7 +289,6 @@ def lostfound_animals_to_page(dbo: Database, rows: Results, lostorfound="found",
             speciesname = asm3.lookups.get_species_name(dbo, speciesid)
             if a.SPECIESNAME != speciesname: continue
         # Generate tags for this row
-
         if lostorfound == "lost":
             tags = asm3.wordprocessor.lostanimal_tags(dbo, a)
         else:
