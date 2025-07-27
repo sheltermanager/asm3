@@ -63,6 +63,7 @@ def org_tags(dbo: Database, username: str) -> Tags:
         "ORGANIZATIONTELEPHONE" : orgtel,
         "ORGANIZATIONEMAIL"     : orgemail,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
+        "TIME"                  : format_time(now(dbo.timezone)),
         "SIGNATURE"             : '<img src="signature:placeholder" width="150px" />',
         "SIGNATURE100"          : '<img src="signature:placeholder" width="100px" />',
         "SIGNATURE150"          : '<img src="signature:placeholder" width="150px" />',
