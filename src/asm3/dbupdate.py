@@ -636,7 +636,9 @@ def sql_structure(dbo: Database) -> str:
         fstr("ToUnit"), 
         fint("PrevAnimalLocationID", True),
         fstr("MovedBy"),
-        fstr("Description")), False)
+        fstr("Description"),
+        fint("MovementID"),
+        fint("IsDeath")), False)
     sql += index("animallocation_AnimalID", "animallocation", "AnimalID")
     sql += index("animallocation_FromLocationID", "animallocation", "FromLocationID")
     sql += index("animallocation_ToLocationID", "animallocation", "ToLocationID")

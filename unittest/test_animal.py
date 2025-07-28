@@ -3,24 +3,42 @@ import unittest
 import base
 import asm3.animal
 import asm3.utils
+import asm3.lookups
 
 class TestAnimal(unittest.TestCase):
    
     nid = 0
 
     def setUp(self):
+        self.lid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "internallocation", "The Dungeon", "Just a test location")
+
         data = {
             "animalname": "Testio",
             "estimatedage": "1",
             "animaltype": "1",
             "entryreason": "1",
-            "species": "1"
+            "species": "1",
+            "internallocation": str(self.lid)
         }
         post = asm3.utils.PostedData(data, "en")
         self.nid, self.code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
 
     def tearDown(self):
+        base.get_dbo().execute(
+            "DELETE FROM animallocation WHERE AnimalID = ?",
+            (self.nid,)
+        )
         asm3.animal.delete_animal(base.get_dbo(), "test", self.nid)
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "internallocation", self.lid)
+    
+    def test_sync_animallocation(self):
+        asm3.animal.sync_animallocation(base.get_dbo(), self.nid, "test")
+        animallocationrows = base.get_dbo().query(
+            "SELECT *  FROM animallocation WHERE AnimalID = ?",
+            (self.nid,)
+        )
+        for row in animallocationrows:
+            print(str(row))
 
     def test_get_animal(self):
         self.assertIsNotNone(asm3.animal.get_animal(base.get_dbo(), self.nid))
