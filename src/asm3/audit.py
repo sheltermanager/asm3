@@ -133,7 +133,7 @@ def get_deletions(dbo: Database, days: int = 0) -> Results:
     if days > 0:
         datefilter = " AND Date >= %s " % dbo.sql_date(dbo.today(offset = -1 * days))
     rows = dbo.query("SELECT ID, TableName, DeletedBy, Date, IDList FROM deletion WHERE TableName IN " \
-        "('animal', 'animalcontrol', 'animalfound', 'animallost', 'customreport', 'onlineformincoming', " \
+        "('animal', 'animalcontrol', 'animalfound', 'animallost', 'customreport', 'dbfs', 'onlineformincoming', " \
         f"'owner', 'templatedocument', 'templatehtml', 'waitinglist') {datefilter}")
     for r in rows:
         r["KEY"] = "%s:%s" % (r.TABLENAME, r.ID)
