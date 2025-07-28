@@ -23,8 +23,14 @@ READABLE_FIELDS = {
     "additionalfield": [ "FIELDNAME" ],
     "animal":       [ "ANIMALNAME", "SHELTERCODE", "SHORTCODE" ],
     "customreport": [ "TITLE" ],
+    "medicalprofile": [ "PROFILENAME" ],
+    "onlineform":   [ "NAME" ],
+    "onlineformfield": [ "FIELDNAME" ],
     "owner":        [ "OWNERNAME" ],
+    "ownertraploan": [ "TRAPNUMBER" ],
+    "product":      [ "PRODUCTNAME" ],
     "role":         [ "ROLENAME" ],
+    "stocklevel":   [ "NAME" ],
     "users":        [ "USERNAME", "REALNAME" ]
 }
 
@@ -61,7 +67,7 @@ def get_parent_links(row: ResultRow, tablename: str = "") -> str:
 def get_readable_fields_for_table(tablename: str) -> List[str]:
     """
     Given a tablename, returns the list of fields that are human readable and can
-    be supplied to the ref argument of map_diff
+    be supplied to the ref argument of map_diff by the caller (typically Database.update())
     """
     if tablename in READABLE_FIELDS:
         return READABLE_FIELDS[tablename]
