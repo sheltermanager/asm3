@@ -144,7 +144,62 @@ class TestAnimal(unittest.TestCase):
         print_animallocation_rows(animallocationrows)
         self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has now been called so new movement represented but old internal movement removed as was impossible given adoption date
 
-        
+        ## Return from adoption
+        print("Return animal from adoption")
+        data = {
+            "movementid": str(mid),
+            "animal": str(self.nid),
+            "person": "1",
+            "movementdate": "02/02/2025",
+            "type": "1",
+            "returndate": "03/03/2025"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.movement.update_movement_from_form(dbo, "test", post)
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows(animallocationrows)
+        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has not been called since return created
+
+        print("Run sync function")
+
+        asm3.animal.sync_animallocation(dbo, self.nid, "test")
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows(animallocationrows)
+        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function has now been called so return from adoption now represented
+
+        print("Kill animal")
+
+        arv = dbo.query(
+            "SELECT RecordVersion FROM animal WHERE ID = ?",
+            (self.nid,)
+        )[0]["RECORDVERSION"]
+        ## Kill animal
+        data = {
+            "id": str(self.nid),
+            "animalname": "Testio",
+            "sheltercode": self.code,
+            "dateofbirth": "01/01/2020",
+            "datebroughtin": "01/01/2025",
+            "deceaseddate": "04/04/2025",
+            "animaltype": "1",
+            "entryreason": "1",
+            "species": "1",
+            "internallocation": str(self.lid2),
+            "unit": "Cubicle 3",
+            "recordversion": str(arv)
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.animal.update_animal_from_form(dbo, post, "test")
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows(animallocationrows)
+        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function not been called since animal marked as deceased
+
+        print("Run sync function")
+
+        asm3.animal.sync_animallocation(dbo, self.nid, "test")
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows(animallocationrows)
+        self.assertEqual(4, len(animallocationrows)) ## Expect four rows as sync function has now been called so death now represented
 
 
     def test_get_animal(self):
