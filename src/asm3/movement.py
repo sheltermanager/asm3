@@ -499,6 +499,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         asm3.animal.update_variable_animal_data(dbo, animalid)
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
+        asm3.animal.update_animallocation(dbo, animalid, username)
     return movementid
 
 def update_movement_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -545,6 +546,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
+        asm3.animal.update_animallocation(dbo, post.integer("animal"), username)
 
 def delete_movement(dbo: Database, username: str, mid: int) -> None:
     """
@@ -560,6 +562,7 @@ def delete_movement(dbo: Database, username: str, mid: int) -> None:
         asm3.animal.update_animal_status(dbo, m.ANIMALID)
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
+        asm3.animal.update_animallocation(dbo, m.ANIMALID, username)
 
 def cancel_reservation(dbo: Database, username: str, movementid: int) -> None:
     """

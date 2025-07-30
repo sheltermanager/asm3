@@ -40,7 +40,7 @@ class TestAnimal(unittest.TestCase):
         asm3.lookups.delete_lookup(base.get_dbo(), "test", "internallocation", self.lid)
         asm3.lookups.delete_lookup(base.get_dbo(), "test", "internallocation", self.lid2)
     
-    def test_sync_animallocation(self):
+    def test_update_animallocation(self):
         def get_animallocation_rows(dbo, animalid):
             return dbo.query(
                 "SELECT * FROM animallocation WHERE AnimalID = ?",
@@ -83,7 +83,7 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows)) ## Expect two rows representing the animal entering the shelter and then moving to a second internal location
+        self.assertEqual(2, len(animallocationrows))
 
         ## Adopt out animal
         print("Adopt out animal")
@@ -97,30 +97,15 @@ class TestAnimal(unittest.TestCase):
         mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
 
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has not been called to new movement not represented
+        self.assertEqual(3, len(animallocationrows))
         print_animallocation_rows(animallocationrows)
-
-        print("Run sync function")
-
-        asm3.animal.sync_animallocation(dbo, self.nid, "test")
-
-        animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function has now been called so movement now represented
 
         print("Delete movement")
 
         asm3.movement.delete_movement(dbo, "test", mid)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function has not beencalled since movement deleted
-
-        print("Run sync function")
-
-        asm3.animal.sync_animallocation(dbo, self.nid, "test")
-        animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has now been called so deleted movement now removed
+        self.assertEqual(2, len(animallocationrows))
 
         ## Adopt out animal BEFORE most recent movement
         print("Adopt out animal BEFORE most recent movement")
@@ -134,15 +119,8 @@ class TestAnimal(unittest.TestCase):
         mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
 
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has not been called to new movement not represented
+        self.assertEqual(2, len(animallocationrows))
         print_animallocation_rows(animallocationrows)
-
-        print("Run sync function")
-
-        asm3.animal.sync_animallocation(dbo, self.nid, "test")
-        animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has now been called so new movement represented but old internal movement removed as was impossible given adoption date
 
         ## Return from adoption
         print("Return animal from adoption")
@@ -158,14 +136,7 @@ class TestAnimal(unittest.TestCase):
         asm3.movement.update_movement_from_form(dbo, "test", post)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has not been called since return created
-
-        print("Run sync function")
-
-        asm3.animal.sync_animallocation(dbo, self.nid, "test")
-        animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function has now been called so return from adoption now represented
+        self.assertEqual(3, len(animallocationrows))
 
         print("Kill animal")
 
@@ -192,15 +163,58 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function not been called since animal marked as deceased
+        self.assertEqual(4, len(animallocationrows))
 
-        print("Run sync function")
-
-        asm3.animal.sync_animallocation(dbo, self.nid, "test")
+        print("Change deceased date")
+        ## Change deceased date
+        arv = dbo.query(
+            "SELECT RecordVersion FROM animal WHERE ID = ?",
+            (self.nid,)
+        )[0]["RECORDVERSION"]
+        data = {
+            "id": str(self.nid),
+            "animalname": "Testio",
+            "sheltercode": self.code,
+            "dateofbirth": "01/01/2020",
+            "datebroughtin": "01/01/2025",
+            "deceaseddate": "05/05/2025",
+            "animaltype": "1",
+            "entryreason": "1",
+            "species": "1",
+            "internallocation": str(self.lid2),
+            "unit": "Cubicle 3",
+            "recordversion": str(arv)
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(4, len(animallocationrows)) ## Expect four rows as sync function has now been called so death now represented
+        self.assertEqual(4, len(animallocationrows)) ## Expect four rows as number of movements has not changed
 
+        print("Remove deceased date")
+        ## Remove deceased date
+        arv = dbo.query(
+            "SELECT RecordVersion FROM animal WHERE ID = ?",
+            (self.nid,)
+        )[0]["RECORDVERSION"]
+        data = {
+            "id": str(self.nid),
+            "animalname": "Testio",
+            "sheltercode": self.code,
+            "dateofbirth": "01/01/2020",
+            "datebroughtin": "01/01/2025",
+            "animaltype": "1",
+            "entryreason": "1",
+            "species": "1",
+            "internallocation": str(self.lid2),
+            "unit": "Cubicle 3",
+            "recordversion": str(arv)
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.animal.update_animal_from_form(dbo, post, "test")
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows(animallocationrows)
+        self.assertEqual(3, len(animallocationrows))
 
     def test_get_animal(self):
         self.assertIsNotNone(asm3.animal.get_animal(base.get_dbo(), self.nid))
