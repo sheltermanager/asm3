@@ -9,9 +9,9 @@ Import script for ARK DBF databases, covers people, animals, payments, events, l
 Last changed: 2nd Feb, 2023
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_dn2494"
+PATH = "/home/robin/tmp/asm3_import_data/ark_tr3485"
 START_ID = 1000
-PICTURE_IMPORT = False
+PICTURE_IMPORT = True
 SKIP_BLANK_NAME_ADDRESS = True # Don't create people if they don't have a lastname and address
 SKIP_BLANK_ANIMAL_NAME = True # Don't create animals if they don't have a name
 
