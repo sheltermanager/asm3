@@ -5,6 +5,7 @@ import asm3.animal
 import asm3.utils
 import asm3.lookups
 import asm3.movement
+import asm3.al
 
 class TestAnimal(unittest.TestCase):
    
@@ -53,6 +54,7 @@ class TestAnimal(unittest.TestCase):
         
         dbo = base.get_dbo()
         ## Create an animal
+        asm3.al.debug("Test animal created", "main.main", dbo)
         print()
         print()
         print("Animal created")
