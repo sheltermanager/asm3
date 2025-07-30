@@ -3274,7 +3274,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
             shelterlocation = dbo.query_int("SELECT ID FROM internallocation WHERE SiteID=? ORDER BY ID", [usite])
 
     # Record the initial location 
-    insert_animallocation(dbo, username, nextid, post["animalname"], sheltercode, 0, "*", shelterlocation, post["unit"])
+    insert_animallocation(dbo, username, nextid, post["animalname"], sheltercode, 0, "*", shelterlocation, post["unit"], date=datebroughtin)
 
     dbo.insert("animal", {
         "ID":               nextid,
@@ -3869,7 +3869,7 @@ def sync_animallocation(dbo: Database, animalid: int, username: str):
     ])
     movementrows = dbo.query(query, (animalid,))
     animallocations = dbo.query("SELECT ID, DATE(Date) AS Date, MovementID, IsDeath, ToLocationID, ToUnit FROM animallocation WHERE AnimalID = ? ORDER BY DATE desc", (animalid,))
-
+    #asm3.i18n.remove_time()
     ## Detect and remove impossible internal movements
     indates = [entrydate]
     outdates = []
@@ -3992,7 +3992,7 @@ def sync_animallocation(dbo: Database, animalid: int, username: str):
             insert_animallocation(dbo, username, animalid, animalname, sheltercode, fromid, fromunit, 0, '*')
 
 def insert_animallocation(dbo: Database, username: str, animalid: int, animalname: str, sheltercode: str, 
-                          fromid: int, fromunit: str, toid: int, tounit: str, isdeath: int = 0, movementid: int = 0) -> int:
+                          fromid: int, fromunit: str, toid: int, tounit: str, isdeath: int = 0, movementid: int = 0, date: datetime = None) -> int:
     """
     Adds a new entry to the animallocation table when an animal changes internal location.
     Also handles writing to the log if the option is on.
@@ -4012,9 +4012,11 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
     prevlocationid = dbo.query_int("SELECT ID FROM animallocation WHERE AnimalID=? " \
         "AND ToLocationID=? AND ToUnit=? ORDER BY Date DESC", [ animalid, fromid, fromunit])
     msg = _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, fromlocation, tolocation)
+    if not date:
+        date = dbo.now()
     alid = dbo.insert("animallocation", {
         "AnimalID":         animalid,
-        "Date":             dbo.now(),
+        "Date":             date,
         "FromLocationID":   fromid,
         "FromUnit":         fromunit,
         "ToLocationID":     toid,

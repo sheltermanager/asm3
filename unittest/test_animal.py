@@ -21,7 +21,8 @@ class TestAnimal(unittest.TestCase):
             "entryreason": "1",
             "species": "1",
             "internallocation": str(self.lid),
-            "unit": "Iron Maiden"
+            "unit": "Iron Maiden",
+            "datebroughtin": "01/01/2025"
         }
         post = asm3.utils.PostedData(data, "en")
         self.nid, self.code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
@@ -57,7 +58,7 @@ class TestAnimal(unittest.TestCase):
         print("Animal created")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(1, len(animallocationrows))
+        self.assertEqual(1, len(animallocationrows)) ## Expect a single row representing the animal entering the shelter
         
         arv = dbo.query(
             "SELECT RecordVersion FROM animal WHERE ID = ?",
@@ -70,7 +71,7 @@ class TestAnimal(unittest.TestCase):
             "animalname": "Testio",
             "sheltercode": self.code,
             "dateofbirth": "01/01/2020",
-            "datebroughtin": "01/01/2020",
+            "datebroughtin": "01/01/2025",
             "animaltype": "1",
             "entryreason": "1",
             "species": "1",
@@ -82,7 +83,7 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows))
+        self.assertEqual(2, len(animallocationrows)) ## Expect two rows representing the animal entering the shelter and then moving to a second internal location
 
         ## Adopt out animal
         print("Adopt out animal")
@@ -96,7 +97,7 @@ class TestAnimal(unittest.TestCase):
         mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
 
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        self.assertEqual(2, len(animallocationrows))
+        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has not been called to new movement not represented
         print_animallocation_rows(animallocationrows)
 
         print("Run sync function")
@@ -105,21 +106,45 @@ class TestAnimal(unittest.TestCase):
 
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows))
+        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function has now been called so movement now represented
 
         print("Delete movement")
 
         asm3.movement.delete_movement(dbo, "test", mid)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows))
+        self.assertEqual(3, len(animallocationrows)) ## Expect three rows as sync function has not beencalled since movement deleted
 
         print("Run sync function")
 
         asm3.animal.sync_animallocation(dbo, self.nid, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows))
+        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has now been called so deleted movement now removed
+
+        ## Adopt out animal BEFORE most recent movement
+        print("Adopt out animal BEFORE most recent movement")
+        data = {
+            "animal": str(self.nid),
+            "person": "1",
+            "movementdate": "02/02/2025",
+            "type": "1"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
+
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has not been called to new movement not represented
+        print_animallocation_rows(animallocationrows)
+
+        print("Run sync function")
+
+        asm3.animal.sync_animallocation(dbo, self.nid, "test")
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows(animallocationrows)
+        self.assertEqual(2, len(animallocationrows)) ## Expect two rows as sync function has now been called so new movement represented but old internal movement removed as was impossible given adoption date
+
+        
 
 
     def test_get_animal(self):
