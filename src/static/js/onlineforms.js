@@ -257,7 +257,7 @@ $(function() {
         render_import: function() {
             return [
                 '<div id="dialog-import" style="display: none" title="' + html.title(_("Import from file")) + '">',
-                html.error('File must be html or json format'),
+                html.error("File must be html or json format", "formaterror"),
                 '<form id="importform" action="onlineforms" method="post" enctype="multipart/form-data">',
                 '<input name="mode" value="import" type="hidden" />',
                 '<input id="filechooser" name="filechooser" type="file" accept=".html,.json" />',
@@ -293,11 +293,11 @@ $(function() {
             $("#filechooser").change(function() {
                 let importfile = $("#filechooser").val();
                 if ( !importfile.toLowerCase().endsWith(".html") && !importfile.toLowerCase().endsWith(".json") ) {
-                    $("#dialog-import .ui-state-error").show();
+                    $("#formaterror").show();
                     $("#filechooser").val('');
                 }
             });
-            $("#dialog-import .ui-state-error").hide();
+            $("#formaterror").hide();
         },
 
         destroy: function() {
