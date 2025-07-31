@@ -80,6 +80,8 @@ class AVIDUSPublisher(AbstractPublisher):
                 self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
                 r = asm3.utils.post_form(AVID_US_POST_URL, fields, headers)
                 self.log("HTTP response: %s" % r["response"])
+                self.log("HTTP status: %s" % r["status"])
+                self.log("HTTP headers: %s" % r["headers"])
 
                 # Return value is an XML fragment, look for "Registration completed successfully"
                 if r["response"].find("COMPLETE") != -1:
