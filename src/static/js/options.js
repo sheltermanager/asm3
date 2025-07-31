@@ -633,7 +633,18 @@ $(function() {
                             '<option value="{ownersurname}, {ownerforenames1} & {ownerforenames2}">' + _("Last, First & First") + '</option>' + 
                             '</select> '
                         }, 
-                        { id: "ownernameformat", post_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) }
+                        { id: "ownernameformat", post_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) },
+                        { id: "resizeimagesspec", post_field: "ResizeImagesSpec", label: _("Scale images to"), type: "select", options: html.list_to_options(
+                            [
+                                "(system)",
+                                "1024x1024|1MP (1024px)",
+                                "1414x1414|2MP (1414px)",
+                                "1732x1732|3MP (1732px)",
+                                "2048x2048|4MP (2048px)",
+                                "2236x2236|5MP (2236px)",
+                                "2828x2828|8MP (2828px)",
+                                "4096z4096|16MP (4096px)"
+                            ]) }
                     ]}, 
                     { id: "tab-documents", title: _("Documents"), fields: [
                         { id: "allowodttemp", post_field: "AllowODTDocumentTemplates", label: _("Allow use of OpenOffice document templates"), type: "check" }, 

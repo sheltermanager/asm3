@@ -73,6 +73,12 @@ def mime_type(filename: str) -> str:
         return types[ext]
     return "application/octet-stream"
 
+def get_resize_images_spec(dbo: Database):
+    scaleto = asm3.configuration.cstring(dbo, "ResizeImagesSpec")
+    if not scaleto:
+        scaleto = RESIZE_IMAGES_SPEC
+    return scaleto
+
 def get_web_preferred_name(dbo: Database, linktype: int, linkid: int) -> str:
     return dbo.query_string("SELECT MediaName FROM media " \
         "WHERE LinkTypeID = ? AND WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
@@ -412,8 +418,9 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
         filedata = auto_rotate_image(dbo, filedata)
         # Scale it down to the system set size 
         if RESIZE_IMAGES_DURING_ATTACH:
-            filedata = scale_image(filedata, RESIZE_IMAGES_SPEC)
-            asm3.al.debug("scaled image to %s (%d bytes)" % (RESIZE_IMAGES_SPEC, len(filedata)), "media.attach_file_from_form", dbo)
+            resizeimagesspec = get_resize_images_spec(dbo)
+            filedata = scale_image(filedata, resizeimagesspec)
+            asm3.al.debug("scaled image to %s (%d bytes)" % (resizeimagesspec, len(filedata)), "media.attach_file_from_form", dbo)
 
     # Is it a PDF? If so, compress it if we can and the option is on 
     if ispdf and SCALE_PDF_DURING_ATTACH and asm3.configuration.scale_pdfs(dbo):
@@ -1314,6 +1321,7 @@ def scale_all_animal_images(dbo: Database) -> None:
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
     """
+    resizeimagesspec = get_resize_images_spec(dbo)
     mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0 ORDER BY ID")
     for i, m in enumerate(mp):
         try:
@@ -1325,7 +1333,7 @@ def scale_all_animal_images(dbo: Database) -> None:
             inputfile.close()
             outputfile.close()
             asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mp)), "media.scale_all_animal_images", dbo)
-            scale_image_file(inputfile.name, outputfile.name, RESIZE_IMAGES_SPEC)
+            scale_image_file(inputfile.name, outputfile.name, resizeimagesspec)
             data = asm3.utils.read_binary_file(outputfile.name)
             os.unlink(inputfile.name)
             os.unlink(outputfile.name)

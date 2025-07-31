@@ -346,6 +346,7 @@ DEFAULTS = {
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",
+    "ResizeImagesSpec": "",
     "ReservesOverdueDays": "7",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
