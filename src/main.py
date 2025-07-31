@@ -71,7 +71,7 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
-    RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
+    RESIZE_IMAGES_DURING_ATTACH, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT, cfg_file
 
@@ -2317,7 +2317,7 @@ class animal_media(JSONEndpoint):
             "newmedia": o.post.integer("newmedia") == 1,
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
-            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4094,7 +4094,7 @@ class foundanimal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
-            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4393,7 +4393,7 @@ class incident_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
-            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4765,7 +4765,7 @@ class lostanimal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url, 
             "flags": asm3.lookups.get_media_flags(dbo),
-            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -6700,7 +6700,7 @@ class person_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
-            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -8116,7 +8116,7 @@ class waitinglist_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
-            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
