@@ -46,9 +46,9 @@ $(function() {
                     })
                 },
                 { type: "raw", markup: _("from") + ' '},
-                { type: "raw", markup: tableform.render_date({'id': "fromdate",'justwidget': true, 'halfsize': true, value: format.date(controller.fromdate), tooltip: _("From date")}) },
+                { type: "raw", markup: tableform.render_date({id: "fromdate", justwidget: true, halfsize: true, value: format.date(controller.fromdate), tooltip: _("From date")}) },
                 { type: "raw", markup: ' ' + _('to') + ' ' },
-                { id: "todate", type: "raw", markup: tableform.render_date({'id': "todate",'justwidget': true, 'halfsize': true, value: format.date(controller.todate), tooltip: _("To date")}) },
+                { id: "todate", type: "raw", markup: tableform.render_date({id: "todate", justwidget: true, halfsize: true, value: format.date(controller.todate), tooltip: _("To date")}) },
                 { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
                     click: function() {
                         common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val() + "&paymentmethod=" + $("#paymentmethod").val() + "&templateid=" + $("#paymenttemplate").val());
@@ -60,14 +60,14 @@ $(function() {
                         let ids = tableform.table_ids(table);
                         await common.ajax_post("receipt_bulk", "mode=send&ids=" + ids + "&tid=" + $("#paymenttemplate").val() + "&username=" + asm.user);
                         $("#button-send").button('enable');
-                        setTimeout(() => { header.show_info(_('Receipts emailed')); }, 850);
+                        header.show_info(_('Receipts emailed'));
                     } 
                 },
                 { type: "raw", markup: '<br>'},
                 { type: "raw", markup: '<div style="display: inline-block;vertical-align: top;">' + tableform.render_selectmulti({
-                        'id': 'paymentmethod',
-                        'justwidget': true,
-                        'options': { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods },
+                        id: 'paymentmethod',
+                        justwidget: true,
+                        options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods },
                         tooltip: _("Payment methods")
                     }) + '</div>'
                 },
