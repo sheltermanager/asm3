@@ -112,17 +112,6 @@ class SmartTagPublisher(AbstractPublisher):
 
         firstname = an["CURRENTOWNERFORENAMES"].split(" ")[0]
         
-        phones = []
-        for phone in (an["CURRENTOWNERHOMETELEPHONE"], an["CURRENTOWNERWORKTELEPHONE"], an["CURRENTOWNERMOBILETELEPHONE"]):
-            if phone:
-                phones.append(
-                    {
-                        "extension": "",
-                        "number": phone,
-                        "type": "UNKNOWN"
-                    }
-                )
-        
         neutered = "No"
         if an["NEUTERED"] == 1: neutered = "Yes"
 
