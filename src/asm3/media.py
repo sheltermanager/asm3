@@ -74,7 +74,7 @@ def mime_type(filename: str) -> str:
     return "application/octet-stream"
 
 def get_resize_images_spec(dbo: Database):
-    scaleto = asm3.configuration.cstring(dbo, "ResizeImagesSpec")
+    scaleto = asm3.configuration.resize_images_spec(dbo)
     if not scaleto:
         scaleto = RESIZE_IMAGES_SPEC
     return scaleto

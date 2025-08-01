@@ -346,7 +346,6 @@ DEFAULTS = {
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",
-    "ResizeImagesSpec": "",
     "ReservesOverdueDays": "7",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
@@ -1570,6 +1569,9 @@ def rescuegroups_user(dbo: Database) -> str:
 
 def rescuegroups_password(dbo: Database) -> str:
     return cstring(dbo, "RescueGroupsFTPPassword")
+
+def resize_images_spec(dbo: Database) -> str:
+    return cstring(dbo, "ResizeImagesSpec")
 
 def retailer_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")

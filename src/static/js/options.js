@@ -636,7 +636,7 @@ $(function() {
                         { id: "ownernameformat", post_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) },
                         { id: "resizeimagesspec", post_field: "ResizeImagesSpec", label: _("Scale images to"), type: "select", options: html.list_to_options(
                             [
-                                "(system)",
+                                _("(use system)"),
                                 "1024x1024|1MP (1024px)",
                                 "1414x1414|2MP (1414px)",
                                 "1732x1732|3MP (1732px)",
