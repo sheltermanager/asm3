@@ -628,7 +628,6 @@ $(function() {
             else {
                 $("#button-akenroll").hide();
             }
-            console.log("Validating");
             validate.bind_dirty();
 
         },
