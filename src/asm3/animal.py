@@ -1125,6 +1125,11 @@ def get_animals_brief(animals: Results) -> Results:
         })
     return r
 
+def get_animalcost_find_simple(dbo: Database, invnum: str, dummy: int = 0) -> Results:
+    return dbo.query(get_animal_brief_query(dbo) + \
+        "INNER JOIN animalcost ac ON ac.AnimalID = a.ID "
+        "WHERE UPPER(ac.InvoiceNumber) = UPPER(?)", [invnum])
+
 def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, lf: LocationFilter = None, brief: bool = False) -> Results:
     """
     Returns rows for simple animal searches.

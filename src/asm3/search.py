@@ -477,6 +477,12 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         explain = _("Found animal entries matching '{0}'.", l).format(q)
         if cp(asm3.users.VIEW_FOUND_ANIMAL):
             ar( asm3.lostfound.get_foundanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "FOUNDANIMAL", fasort )
+    
+    elif q.startswith("co:") or q.startswith("animalcost:"):
+        q = q[q.find(":")+1:].strip()
+        explain = _("Costs with invoice numbers matching '{0}'.", l).format(q)
+        if cp(asm3.users.VIEW_COST):
+            ar( asm3.animal.get_animalcost_find_simple(dbo, q, limit), "ANIMAL", lisort )
 
     elif q.startswith("li:") or q.startswith("license:"):
         q = q[q.find(":")+1:].strip()
