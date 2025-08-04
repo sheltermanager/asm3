@@ -171,3 +171,4 @@ class SmartTagPublisher(AbstractPublisher):
             return False
     
         return True
+
