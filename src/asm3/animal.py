@@ -3933,7 +3933,8 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
 
     ## Sync external movements
     for movementrow in movementrows:
-        if find_movement(movementrow.ID):
+        locationrow = find_movement(movementrow.ID)
+        if flocationrow:
             ## Found movement in animallocation table
             if asm3.i18n.remove_time(locationrow["DATE"]) != asm3.i18n.remove_time(movementrow["MOVEMENTDATE"]):
                 ## Date of movement in animallocation table out of sync, need to update it
@@ -3986,7 +3987,8 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
         deathfound = False
         fromid = 0
         fromunit = ""
-        for locationrow in animallocations.copy():
+
+        for locationrow in animallocations:
             if locationrow["ISDEATH"]:
                 deathfound = True
                 ## Found row in animallocations representing the death
@@ -4001,12 +4003,12 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                 fromid = locationrow["TOLOCATIONID"]
                 fromunit = locationrow["TOUNIT"]
         if not deathfound:
-            ## No row found representing the death, need to create one
+            ## No row found representing the death, creating one
             fromid = 0
             insert_animallocation(dbo, username, animalid, animalname, sheltercode, fromid, fromunit, 0, '*', isdeath=1, date=deceaseddate)
     else:
         ## This animal is alive, make sure that there are no rows in animallocations refering to death
-        for locationrow in animallocations.copy():
+        for locationrow in animallocations:
             if locationrow["ISDEATH"]:
                 ## Row found representing death, removing it
                 dbo.execute(
