@@ -49,6 +49,8 @@ DEFAULTS = {
     "AddAnimalsShowWeight": "No",
     "AdoptionCheckoutDonationMsg": "Our organization depends on the kind donations of individuals to provide animals with medical care, food and shelter.\n<br/><br/><b>We need your help!</b>",
     "AdoptionCheckoutDonationTiers": "$0=No thanks\n$10=Microchip one pet\n$25=One week of milk for a litter of kittens\n$50=Vaccinate a litter of puppies\n$100=Spay/neuter and vaccinate one pet\n$200=Contribute to surgery for pets in need",
+    "AnimalCommentsChangeLog": "Yes",
+    "AnimalCommentsChangeLogType": "3",
     "AnimalNameChangeLog": "No",
     "AnimalNameChangeLogType": "1",
     "AnimalFiguresSplitEntryReason": "No",
@@ -701,6 +703,12 @@ def anibase_practice_id(dbo: Database) -> str:
 
 def anibase_pin_no(dbo: Database) -> str:
     return cstring(dbo, "AnibasePinNo")
+
+def animalcomments_change_log(dbo: Database) -> bool:
+    return cboolean(dbo, "AnimalCommentsChangeLog", DEFAULTS["AnimalCommentsChangeLog"] == "Yes")
+
+def animalcomments_change_log_type(dbo: Database) -> int:
+    return cint(dbo, "AnimalCommentsChangeLogType", DEFAULTS["AnimalCommentsChangeLogType"])
 
 def animal_figures_split_entryreason(dbo: Database) -> bool:
     return cboolean(dbo, "AnimalFiguresSplitEntryReason", DEFAULTS["AnimalFiguresSplitEntryReason"] == "Yes")

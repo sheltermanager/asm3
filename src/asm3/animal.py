@@ -3461,7 +3461,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName FROM animal WHERE ID=?", [aid]))
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails FROM animal WHERE ID=?", [aid]))
 
     # Record the location if it has changed
     insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
@@ -3471,6 +3471,9 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         if prerow.ISHOLD == 0 and post.boolean("hold"):
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.hold_change_log_type(dbo),
                 _("Hold until {0}", l).format(post["holduntil"]))
+
+    # If the option is on and the comments/hidden comments have changed, log it
+    insert_commentschange_log(dbo, username, aid, post["comments"], prerow.ANIMALCOMMENTS, post["hiddencomments"], prerow.HIDDENANIMALDETAILS)
 
     # If the option is on and the name has changed, log it
     insert_namechange_log(dbo, username, aid, post["animalname"], prerow.ANIMALNAME)
@@ -3891,6 +3894,18 @@ def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: 
         if newname != oldname:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalname_change_log_type(dbo),
                 _("Name changed from '%s' to '%s'", l) % (oldname, newname))
+
+def insert_commentschange_log(dbo: Database, username: str, animalid: int, newcomments: str, oldcomments: str, newhiddencomments: str, oldhiddencomments: str) -> None:
+    """ Writes an entry to the log when an animal's comments/hidden comments change."""
+    # If the option is on and the name has changed, log it
+    l = dbo.locale
+    if asm3.configuration.animalcomments_change_log(dbo):
+        if newcomments != oldcomments:
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalcomments_change_log_type(dbo),
+                _("Commments changed from '%s' to '%s'", l) % (oldcomments, newcomments))
+        if newhiddencomments != oldhiddencomments:
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalcomments_change_log_type(dbo),
+                _("Hidden Commments changed from '%s' to '%s'", l) % (oldhiddencomments, newhiddencomments))
 
 def insert_weight_log(dbo: Database, username: str, animalid: int, newweight: float = 0, oldweight: float = -1) -> None:
     """ Writes an entry to the log when an animal's weight changes. 
