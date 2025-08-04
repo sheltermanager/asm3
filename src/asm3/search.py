@@ -482,7 +482,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         q = q[q.find(":")+1:].strip()
         explain = _("Costs with invoice numbers matching '{0}'.", l).format(q)
         if cp(asm3.users.VIEW_COST):
-            ar( asm3.animal.get_animalcost_find_simple(dbo, q, limit), "ANIMAL", lisort )
+            ar( asm3.animal.get_animalcost_find_simple(dbo, q, limit), "COST", lisort )
 
     elif q.startswith("li:") or q.startswith("license:"):
         q = q[q.find(":")+1:].strip()

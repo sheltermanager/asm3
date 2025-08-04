@@ -93,7 +93,26 @@ $(function() {
                     h.push(html.truncate(search.description(r)));
                     h.push('</p>');
                 }
-                if (r.RESULTTYPE == "LICENCE") {
+                if (r.RESULTTYPE == "COST") {
+                    if (controller.results.length == 1) {
+                        common.route("animal_costs?id=" + r.ID);
+                    }
+                    h.push('<p class="asm-search-result"><span class="asm-search-name">');
+                    h.push(html.animal_link_thumb_bare(r));
+                    h.push(html.icon("cost", _("Cost")));
+                    h.push('<a href="animal_costs?id=' + r.ID + '">' + r.INVOICENUMBER + ' | ' + r.ANIMALNAME + ' - ' + r.CODE + '</a> ');
+                    h.push('<a href="animal_media?id=' + r.ID + '">' + html.icon("media", _("Jump to media")) + '</a>');
+                    h.push('<a href="animal_diary?id=' + r.ID + '">' + html.icon("diary", _("Jump to diary")) + '</a>');
+                    h.push('<a href="animal_movements?id=' + r.ID + '">' + html.icon("movement", _("Jump to movements")) + '</a>');
+                    h.push('</span>');
+                    h.push('<br/>');
+                    h.push(format.date(r.COSTDATE) + ' ' + r.COSTTYPENAME + ' ' + format.currency(r.COSTAMOUNT));
+                    h.push('<br/>');
+                    h.push('<span class="asm-search-detail">' + common.substitute(_("{0} {1} {2} aged {3}"), { "0": r.SEXNAME, "1": r.BREEDNAME, "2": r.SPECIESNAME, "3": r.ANIMALAGE }));
+                    h.push('</span>');
+                    h.push('</p>');
+                }
+                else if (r.RESULTTYPE == "LICENCE") {
                     if (controller.results.length == 1) {
                         common.route("person_licence?id=" + r.OWNERID);
                     }
