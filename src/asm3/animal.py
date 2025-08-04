@@ -3933,16 +3933,19 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
 
     ## Sync external movements
     for movementrow in movementrows:
-        locationrow = find_movement(movementrow.ID)
-        if locationrow:
-            ## Found movement in animallocation table
-            if asm3.i18n.remove_time(locationrow["DATE"]) != asm3.i18n.remove_time(movementrow["MOVEMENTDATE"]):
-                ## Date of movement in animallocation table out of sync, need to update it
-                dbo.execute(
-                    "UPDATE animallocation SET Date = ? WHERE ID = ?",
-                    (movementrow["MOVEMENTDATE"], locationrow["ID"])
-                )
-        else:
+        for locationrow in animallocations:
+            movementfound = False
+            if locationrow["MOVEMENTID"] == movementrow["ID"]:    
+                movementfound = True
+                ## Found movement in animallocation table
+                if asm3.i18n.remove_time(locationrow["DATE"]) != asm3.i18n.remove_time(movementrow["MOVEMENTDATE"]):
+                    ## Date of movement in animallocation table out of sync, need to update it
+                    dbo.execute(
+                        "UPDATE animallocation SET Date = ? WHERE ID = ?",
+                        (movementrow["MOVEMENTDATE"], locationrow["ID"])
+                    )
+                    break
+        if not movementfound:
             ## Movement not found in animallocation table, need to create it
             ## Need to find out out where most recent location was before this date so the fromid and fromunit on new row can be filled in
             fromid = 0

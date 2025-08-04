@@ -99,8 +99,8 @@ class TestAnimal(unittest.TestCase):
         mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
 
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        self.assertEqual(3, len(animallocationrows))
         print_animallocation_rows(animallocationrows)
+        self.assertEqual(3, len(animallocationrows))
 
         print("Delete movement")
 
