@@ -26,7 +26,7 @@ import asm3.publishers.pettracuk
 import asm3.publishers.rescuegroups
 import asm3.publishers.sacmetrics
 import asm3.publishers.savourlife
-import asm3.publishers.smarttaghttp
+import asm3.publishers.smarttag
 
 from asm3.publishers.base import PublishCriteria
 from asm3.typehints import Database, Results
@@ -156,7 +156,7 @@ PUBLISHER_LIST["pl"] = {
 }
 PUBLISHER_LIST["st"] = {
     "label":    "Register microchips with SmartTag Pet ID",
-    "class":    asm3.publishers.smarttaghttp.SmartTagPublisher,
+    "class":    asm3.publishers.smarttag.SmartTagPublisher,
     "locales":  "en",
     "sub24hour": False
 }
