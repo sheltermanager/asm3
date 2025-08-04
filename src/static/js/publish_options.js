@@ -426,12 +426,10 @@ $(function() {
                             }
                         ]}, 
                     { id: "tab-smarttag", title: "SmartTag Tags/Microchips", classes: 'localeus hassmarttag',
-                        info: 'Find out more at <a target="_blank" href="http://www.idtag.com">www.idtag.com</a><br/>' +
-                        'Contact SmartTag to get your account ID for automatic registration of chips and tags ' +
-                        '212-868-2559 x136 (Mike Cotti) or email mikec@idtag.com', 
+                        info: 'Find out more at <a target="_blank" href="http://www.idtag.com">www.idtag.com</a>', 
                         fields: [
                             { id: "enabledst", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                            { id: "stuser", post_field: "SmartTagFTPUser", label: "SmartTag Account ID", type: "text" }
+                            { id: "stapikey", post_field: "SmartTagAPIKey", label: "API Key", type: "text" }
                         ]}
                 ], {full_width: false}),
                 html.content_footer()
@@ -628,7 +626,6 @@ $(function() {
             else {
                 $("#button-akenroll").hide();
             }
-            console.log("Validating");
             validate.bind_dirty();
 
         },

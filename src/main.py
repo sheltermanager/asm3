@@ -6963,7 +6963,7 @@ class publish_options(JSONEndpoint):
             "haspetlink": PETLINK_BASE_URL != "",
             "haspetslocated": PETSLOCATED_FTP_USER != "",
             "hassac": SAC_METRICS_URL != "",
-            "hassmarttag": SMARTTAG_FTP_USER != "",
+            "hassmarttag": SMARTTAG_HOST != "",
             "hasvetenvoy": False, # Disabled. VETENVOY_US_BASE_URL != "",
             "haspetrescue": PETRESCUE_URL != "",
             "hassavourlife": SAVOURLIFE_URL != "",
