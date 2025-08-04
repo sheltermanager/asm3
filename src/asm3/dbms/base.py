@@ -586,18 +586,22 @@ class Database(object):
         if version < 0: return True
         return version == self.query_int("SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
 
-    def query(self, sql: str, params: List = None, limit: int = 0, distincton: str = "") -> List[ResultRow]:
+    def query(self, sql: str, params: List = None, limit: int = 0, offset: int = 0, distincton: str = "") -> List[ResultRow]:
         """ Runs the query given and returns the resultset as a list of ResultRow objects. 
             All fieldnames are uppercased when returned.
             params: tuple of parameters for the query
             limit: limit results to X rows
+            offset: return rows starting at offset
             distincton: If set and the field exists, ignores any dups for this field during result construction.
                         This is faster than doing DISTINCT on the full row at the database level
                         (the only thing all RDBMS are guaranteed to support)
         """
         try:
             c, s = self.cursor_open()
-            # Add limit clause if set
+            # Add offset and limit clauses if set - note that the order is important
+            # and OFFSET must appear before LIMIT in PostgreSQL
+            if offset > 0:
+                sql = "%s %s" % (sql, self.sql_offset(offset))
             if limit > 0:
                 sql = "%s %s" % (sql, self.sql_limit(limit))
             # Explain the query if the option is on
@@ -722,10 +726,9 @@ class Database(object):
         for r in rows:
             o.append(r[0])
         return "\n".join(o)
-
+    
     def query_generator(self, sql: str, params: List = None) -> Generator[ResultRow, None, None]:
         """ Runs the query given and returns the resultset as a list of dictionaries. 
-            All fieldnames are uppercased when returned. 
             generator function version that uses a forward cursor.
         """
         try:
@@ -744,7 +747,7 @@ class Database(object):
             row = s.fetchone()
             while row:
                 # Intialise a map for each row
-                rowmap = {}
+                rowmap = ResultRow()
                 for i in range(0, len(row)):
                     v = self.encode_str_after_read(row[i])
                     rowmap[cols[i]] = v
@@ -766,6 +769,18 @@ class Database(object):
                 self.cursor_close(c, s)
             except:
                 pass
+
+    def query_generator_chunked(self, sql: str, params: List = None, chunksize = 1000) -> Generator[ResultRow, None, None]:
+        """ Runs the query given and returns the resultset as a list of dictionaries. 
+            Uses LIMIT and OFFSET clauses to run the query multiple times and yield the results - makes this ideal
+            for large/long running queries that take longer than our database timeout.
+        """
+        offset = 0
+        while True:
+            rows = self.query(sql, params, limit=chunksize, offset=offset)
+            yield rows
+            offset += len(rows)
+            if len(rows) < chunksize: break
 
     def query_named_params(self, sql: str, params: Dict, age: int = 0) -> List[ResultRow]:
         """ Allows use of :named :params in a query (must terminate with space, comma or right parentheses). params should be a dict. 
@@ -1076,6 +1091,10 @@ class Database(object):
     def sql_md5(self, s: str) -> str:
         """ Writes an MD5 function for expression s """
         return "MD5(%s)" % s
+    
+    def sql_offset(self, x: int) -> str:
+        """ Writes an offset clause """
+        return "OFFSET %s" % x
 
     def sql_regexp_replace(self, fieldexpr: str, pattern: str = "?", replacestr: str = "?") -> str:
         """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """

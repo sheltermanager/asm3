@@ -165,6 +165,44 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         ") dummy " 
 
+def get_medical_export_query(dbo: Database) -> Results:
+    """
+    Produces a dataset of basic animal info with all medical items for export
+    """
+    return "SELECT * FROM " \
+        "(" \
+        "SELECT " \
+        "'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
+        "t.AnimalType, s.SpeciesName, a.DisplayLocation, " \
+        "am.TreatmentName, am.Dosage, amt.TreatmentNumber, " \
+        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
+        "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "UNION SELECT " \
+        "'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
+        "t.AnimalType, sp.SpeciesName, a.DisplayLocation, " \
+        "v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
+        "INNER JOIN species sp ON sp.ID = a.SpeciesID " \
+        "INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID " \
+        "UNION SELECT " \
+        "'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
+        "t.AnimalType, sp.SpeciesName, a.DisplayLocation, " \
+        "tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
+        "INNER JOIN species sp ON sp.ID = a.SpeciesID " \
+        "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
+     ") dummy " 
+
 def get_test_query(dbo: Database) -> str:
     return "SELECT at.*, " \
         f"{asm3.animal.get_animal_emblem_query(dbo)}, " \
@@ -410,45 +448,6 @@ def get_regimens_treatments(dbo: Database, animalid: int, sort: int = DESCENDING
     # Now add our extra named fields
         
     return embellish_regimen(l, rows)
-
-def get_medical_export(dbo: Database) -> Results:
-    """
-    Produces a dataset of basic animal info with all medical items for export
-    """
-    return dbo.query("SELECT * FROM " \
-        "(" \
-        "SELECT " \
-        "'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
-        "t.AnimalType, s.SpeciesName, a.DisplayLocation, " \
-        "am.TreatmentName, am.Dosage, amt.TreatmentNumber, " \
-        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments " \
-        "FROM animal a " \
-        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
-        "INNER JOIN species s ON s.ID = a.SpeciesID " \
-        "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
-        "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
-        "UNION SELECT " \
-        "'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
-        "t.AnimalType, sp.SpeciesName, a.DisplayLocation, " \
-        "v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments " \
-        "FROM animal a " \
-        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
-        "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
-        "INNER JOIN species sp ON sp.ID = a.SpeciesID " \
-        "INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID " \
-        "UNION SELECT " \
-        "'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
-        "t.AnimalType, sp.SpeciesName, a.DisplayLocation, " \
-        "tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments " \
-        "FROM animal a " \
-        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
-        "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
-        "INNER JOIN species sp ON sp.ID = a.SpeciesID " \
-        "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
-     ") dummy " \
-     "ORDER BY DateRequired")
 
 def get_profile(dbo: Database, pfid: int) -> ResultRow:
     """

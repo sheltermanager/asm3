@@ -152,7 +152,7 @@ $.widget("asm.animalchooser", {
             this.options.filter = this.element.attr("data-filter");
         }
         // Look for nonshelter flag
-        if (this.element.attr("data-nonshelter") == "true" ) { 
+        if (this.element.attr("data-nonshelter") == "true" || config.bool("AutoNonShelter")) { 
             this.options.nonshelter = true;
         }
         // Create the dialog

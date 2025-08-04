@@ -65,6 +65,7 @@ $(function() {
                     { post_field: "gdprcontactoptin", json_field: "GDPRCONTACTOPTIN", type: "selectmulti", label: _("GDPR Contact Opt-In"), 
                         options: edit_header.gdpr_contact_options() },
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 7) },
+                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 31, false, "additionalcouples") },
 
                     { type: "nextcol" },
 
@@ -285,18 +286,21 @@ $(function() {
                 $(".tag-organisation").fadeOut();
                 $(".tag-couple").fadeOut();
                 $(".tag-individual").fadeIn();
+                $(".additionalcouples").closest("tr").fadeOut();
             }
             // Organisation
             else if ($("#ownertype").val() == 2) {
                 $(".tag-couple").fadeOut();
                 $(".tag-individual").fadeOut();
                 $(".tag-organisation").fadeIn();
+                $(".additionalcouples").closest("tr").fadeOut();
             }
             // Couple
             else if ($("#ownertype").val() == 3) {
                 $(".tag-organisation").fadeOut();
                 $(".tag-individual").fadeIn();
                 $(".tag-couple").fadeIn();
+                $(".additionalcouples").closest("tr").fadeIn();
             }
 
             // if the member flag is selected and membership number is blank,
@@ -608,7 +612,6 @@ $(function() {
 
             // If a popup warning has been set, display it
             person.show_popup_warning();
-
         },
 
         delay: function() {

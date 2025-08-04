@@ -58,8 +58,13 @@ additional = {
                 if (addidx == 1) { col1.push(fm); }
                 else if (addidx == 2) { col2.push(fm); }
                 else if (addidx == 3) { col3.push(fm); }
-                addidx += 1;
-                if (addidx == 4) { addidx = 1; }
+                // Only advance the column if the field was visible, otherwise it will
+                // throw the displayindex out of whack when hidden fields appear before
+                // visible ones
+                if (!f.HIDDEN) {
+                    addidx += 1;
+                    if (addidx == 4) { addidx = 1; }
+                }
             }
         });
         col1.push(col_end);

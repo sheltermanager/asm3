@@ -74,6 +74,7 @@ DEFAULTS = {
     "AutoInsuranceNext": "0",
     "AutoNewImagesNotForPublish": "No",
     "AutoNotForAdoption": "No",
+    "AutoNonShelter": "No",
     "AutoRemoveAnimalMediaExit": "No",
     "AutoRemoveAMExitYears": "0",
     "AutoRemoveDocumentMedia": "No",
@@ -151,6 +152,7 @@ DEFAULTS = {
     "DefaultJurisdiction": "1",
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultMedicalTypeID": "2",
+    "DefaultRotaFlags": "",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
     "DefaultTrialLength": "30",
@@ -775,6 +777,9 @@ def auto_new_images_not_for_publish(dbo: Database) -> bool:
 def auto_not_for_adoption(dbo: Database) -> bool:
     return cboolean(dbo, "AutoNotForAdoption", DEFAULTS["AutoNotForAdoption"] == "Yes")
 
+def auto_non_shelter(dbo: Database) -> bool:
+    return cboolean(dbo, "AutoNonShelter", DEFAULTS["AutoNonShelter"] == "Yes")
+
 def auto_remove_animal_media_exit(dbo: Database) -> bool:
     return cboolean(dbo, "AutoRemoveAnimalMediaExit", DEFAULTS["AutoRemoveAnimalMediaExit"] == "Yes")
 
@@ -954,6 +959,9 @@ def default_payment_method(dbo: Database) -> int:
 
 def default_reservation_status(dbo: Database) -> int:
     return cint(dbo, "AFDefaultReservationStatus", 1)
+
+def default_rota_flags(dbo: Database) -> int:
+    return cstring(dbo, "DefaultRotaFlags", '')
 
 def default_return_reason(dbo: Database) -> int:
     return cint(dbo, "AFDefaultReturnReason", 4)

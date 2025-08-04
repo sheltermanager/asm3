@@ -45,7 +45,7 @@ $(function() {
                 },
                 { id: "bulk", type: "dropdownfilter", 
                     options: [ "(select)", "animal", "animalcontrol", "animallost", "animalfound", "customreport", 
-                        "onlineformincoming", "owner", "templatedocument", "templatehtml", "waitinglist" ],
+                        "dbfs", "onlineformincoming", "owner", "templatedocument", "templatehtml", "waitinglist" ],
                     click: function(selval) {
                         $("#tableform input[type='checkbox']").each(function() {
                             if (String($(this).attr("data-id")).indexOf(selval) == 0) { 

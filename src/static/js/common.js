@@ -1420,7 +1420,7 @@ const format = {
      * correct currency symbol and decimal places.
      */
     currency: function(v, commagroups) {
-        var nv = parseInt(v, 10) / 100,
+        var nv = parseInt(v, 10) / Math.pow(10, asm.currencydp), // Turn whole pence back into decimal amount
             cs = format.decode_html_str(asm.currencysymbol),
             rv = "";
         if (isNaN(nv)) { nv = 0; }
@@ -1459,7 +1459,7 @@ const format = {
     },
 
     currency_to_int: function(c) {
-        var f = format.currency_to_float(c) * 100;
+        var f = format.currency_to_float(c) * Math.pow(10, asm.currencydp); // Turn decimal number into whole pence
         // Adding 0.5 corrects IEEE rounding errors in multiplication
         if (f > 0) { f += 0.5; }
         if (f < 0) { f -= 0.5; }

@@ -151,8 +151,8 @@ $(function() {
         get_flags_param: function(encode) {
             let flags = $("#flags").val();
             if (!flags) { flags = []; }
-            if (encode === undefined || encode === true) { return encodeURIComponent(flags.join("|")); }
-            return flags.join("|");
+            if (encode === undefined || encode === true) { return encodeURIComponent(flags.join(",")); }
+            return flags.join(",");
         },
 
         render_clonedialog: function() {
@@ -261,7 +261,7 @@ $(function() {
             });
 
             $("#button-today").button().click(function() {
-                common.route(controller.name);
+                common.route(controller.name + "?flags=" + staff_rota.get_flags_param());
             });
 
             $("#button-next").button().click(function() { 
@@ -279,15 +279,15 @@ $(function() {
         sync: function() {
             // Load the full set of flags into the select
             html.person_flag_options(null, controller.flags, $("#flags"));
-            // Now remove irrelevant built in flags (staff/volunteer are a given,
-            // banned, donor, deceased and homechecked don't make sense)
-            $.each([ "banned", "deceased", "donor", "homechecked" ], function(i, v) {
+            // Now remove irrelevant built in flags 
+            $.each([ "adopter", "banned", "deceased", "donor", "excludefrombulkemail", 
+                "giftaid", "homechecked", "member", "retailer", "shelter", "sponsor", "supplier" ], function(i, v) {
                 $("#flags option[value='" + v + "']").remove();
             });
             $("#flags").change();
             // Mark set any flags that were passed from the backend as params to the page
             if (controller.flagsel) {
-                $.each(controller.flagsel.split("|"), function(i, v) {
+                $.each(controller.flagsel.split(","), function(i, v) {
                     $("#flags option[value='" + v + "']").prop("selected", true); 
                 });
                 $("#flags").change();

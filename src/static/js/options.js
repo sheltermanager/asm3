@@ -583,8 +583,9 @@ $(function() {
                         { type: "nextcol"}, 
                         { id: "DefaultBroughtInBy", post_field: "DefaultBroughtInBy", label: _("Default Brought In By"), type: "person" }, 
                         { id: "defaultshift", post_field: "DefaultShiftStart", label: _("Default Rota Shift"), type: "text", classes: "asm-textbox asm-halftextbox asm-timebox", xmarkup: '<input id="defaultshiftend" data="DefaultShiftEnd" type="text" class="asm-textbox asm-halftextbox asm-timebox" />' }, 
-
+                        { id: "defaultrotaflags", post_field: "DefaultRotaFlags", label: _("Default Rota Flags"), type: "selectmulti"}, 
                         { id: "autonotadopt", post_field: "AutoNotForAdoption", label: _("Mark new animals as not for adoption"), type: "check", fullrow: true }, 
+                        { id: "autononshelter", post_field: "AutoNonShelter", label: _("Mark new animals as non-shelter"), type: "check", fullrow: true }, 
                         { id: "autoimagesnotforpublish", post_field: "AutoNewImagesNotForPublish", label: _("Exclude new animal photos from publishing"), type: "check", fullrow: true }, 
                         { id: "automedianotes", post_field: "AutoMediaNotes", label: _("Prefill new media notes for animal images with animal comments if left blank"), type: "check", fullrow: true },
                         { id: "medianotesfile", post_field: "DefaultMediaNotesFromFile", label: _("Prefill new media notes with the filename if left blank"), type: "check", fullrow: true }
@@ -956,6 +957,7 @@ $(function() {
         },
 
         bind: function() {
+            //html.person_flag_options(null, controller.personflags, $("#defaultrotaflags"));
             const get_donation_mappings = function() {
                 let mappings = "";
                 $(".donmap").each(function() {
@@ -992,6 +994,8 @@ $(function() {
                     common.route_reload(true); // Needs full reload to get config.js to update
                 }); 
             });
+
+            html.person_flag_options(null, controller.personflags, $("#defaultrotaflags"));
 
             // Load default values from the config settings
             $("input, select, textarea, .asm-richtextarea").each(function() {
@@ -1099,7 +1103,7 @@ $(function() {
         },
 
         sync: function() {
-
+            
         },
 
         delay: function() {

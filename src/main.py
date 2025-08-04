@@ -71,9 +71,9 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
-    RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, SMARTTAG_HOST, \
-    SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, \
-    SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT
+    RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
+    SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
+    SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT, cfg_file
 
 from asm3.typehints import Any, Dict, Generator, List, ResultRow, Session
 
@@ -1091,6 +1091,12 @@ class mobile(ASMEndpoint):
         self.check(asm3.users.VIEW_LICENCE)
         rows = asm3.financial.get_licence_find_simple(o.dbo, o.post["licencenumber"])
         return asm3.utils.json(rows)
+    
+    def post_checkmicrochip(self, o):
+        self.check(asm3.users.VIEW_ANIMAL)
+        self.check(asm3.users.VIEW_PERSON)
+        rows = asm3.animal.get_microchip_find_simple(o.dbo, o.post["microchipnumber"])
+        return asm3.utils.json(rows)
 
     def post_diarycomplete(self, o):
         self.check(asm3.users.EDIT_MY_DIARY_NOTES)
@@ -1854,6 +1860,7 @@ class animal(JSONEndpoint):
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.user, a.ID),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
+            "links": asm3.animal.get_links(dbo, a["ID"], a["ACCEPTANCENUMBER"]),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
@@ -2956,11 +2963,13 @@ class clinic_invoice(JSONEndpoint):
         appointment = asm3.clinic.get_appointment(dbo, appointmentid)
         if appointment is None: self.notfound()
         rows = asm3.clinic.get_invoice_items(dbo, appointmentid)
+        invoiceitems = asm3.lookups.get_clinic_invoice_items(dbo)
         asm3.al.debug("got %d invoice items for appointment %d" % (len(rows), appointmentid), "main.clinic_invoice", dbo)
         return {
             "appointment": appointment,
             "appointmentid": appointmentid,
-            "rows": rows
+            "rows": rows,
+            "invoiceitems": invoiceitems
         }
 
     def post_create(self, o):
@@ -3767,14 +3776,10 @@ class donation(JSONEndpoint):
             return (asm3.utils.json({"url": url}))
         except Exception as e:
             return (asm3.utils.json({"error": str(e)}))
-
-    def post_emailrequest(self, o):
-        self.check(asm3.users.EMAIL_PERSON)
+    
+    def post_paymenturl(self, o):
         dbo = o.dbo
-        l = o.locale
         post = o.post
-        emailadd = post["to"]
-        body = post["body"]
         params = { 
             "account": dbo.name(), 
             "method": "checkout",
@@ -3783,7 +3788,14 @@ class donation(JSONEndpoint):
             "title": post["subject"] 
         }
         url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
-        body = asm3.utils.replace_url_token(body, url, _("Click here to pay", l))
+        return url
+
+    def post_emailrequest(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        dbo = o.dbo
+        post = o.post
+        emailadd = post["to"]
+        body = asm3.utils.fix_tinymce_uris(post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], body)
@@ -5291,7 +5303,7 @@ class move_adopt(JSONEndpoint):
                 "subject":      tokens["SUBJECT"] or _("Adoption Checkout", l),
                 "body":         tokens["BODY"]
             }
-            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale))
+            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale), substitute_url=True)
         elif paperwork:
             # Generate the adoption paperwork and save it to the animal/person
             dtid = post.integer("sigtemplateid")
@@ -5703,6 +5715,11 @@ class movement(JSONEndpoint):
         self.check(asm3.users.CHANGE_MOVEMENT)
         for mid in o.post.integer_list("ids"):
             asm3.movement.trial_to_full_adoption(o.dbo, o.user, mid)
+    
+    def post_checkouturl(self, o):
+        # Create our cache entry for this checkout session
+        key = asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post, cache_only = True)
+        return "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, o.dbo.name(), key)
 
     def post_checkout(self, o):
         asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post)
@@ -5977,9 +5994,12 @@ class onlineforms(JSONEndpoint):
         fd = asm3.utils.bytes2str(o.post.filedata())
         if fd.startswith("{"):
             asm3.onlineform.import_onlineform_json(o.dbo, fd)
-        else:
+            self.redirect("onlineforms")
+        elif '<html' in fd:
             asm3.onlineform.import_onlineform_html(o.dbo, fd)
-        self.redirect("onlineforms")
+            self.redirect("onlineforms")
+        else:
+            raise Exception("File content neither valid JSON or HTML")
 
 class onlineform_json(ASMEndpoint):
     url = "onlineform_json"
@@ -6043,6 +6063,7 @@ class options(JSONEndpoint):
             "medicaltypes": asm3.lookups.get_medical_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
+            "personflags": asm3.lookups.get_person_flags(dbo),
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
             "pp_square": pp_square,
@@ -7432,11 +7453,50 @@ class sql(JSONEndpoint):
 class sql_dump(ASMEndpoint):
     url = "sql_dump"
     get_permissions = asm3.users.USE_SQL_INTERFACE
-
+    
+    def csv_rows_task(self, dbo: Any, sql: str, tables: str, additionallinktype: str, filename: str):
+        """ This method should be run in a new thread by asynctask.
+            It runs the sql given, turns the result rows into CSV and saves it to the disk cache for download.
+            Uses query_generator_chunked, which runs the same query multiple times using OFFSET and LIMIT
+            to help avoid issues with statement timeouts.
+            sql: The query to run
+            tables: Comma separated list of tables being exported so we can get a total row count
+            additionallinktype: If additional fields need to be merged into the rows, the link name (animal, person, etc)
+            filename: The file name to use when the user saves the data
+        """
+        l = dbo.locale
+        i = 0
+        total = 0
+        for t in tables.split(","):
+            total += dbo.query_int(f"SELECT COUNT(*) FROM {t}")
+        asm3.asynctask.set_progress_max(dbo, total)
+        rows = []
+        for r in dbo.query_generator_chunked(sql):
+            if additionallinktype != "": asm3.additional.append_to_results(dbo, r, additionallinktype)
+            rows.extend(r)
+            i += len(r)
+            asm3.asynctask.set_progress_value(dbo, i)
+            if asm3.asynctask.get_cancel(dbo): 
+                asm3.asynctask.reset(dbo)
+                break
+        csvdata = asm3.utils.csv(dbo.locale, rows)
+        key = asm3.utils.uuid_str()
+        asm3.cachedisk.put(key, dbo.name(), csvdata, 3600)
+        h = '<p>%s <a target="_blank" href="sql_dump?getcsv=%s&filename=%s"><b>%s</b></p>' % ( \
+            asm3.i18n._("Export complete ({0} entries).", l).format(len(rows)), key, filename, asm3.i18n._("Download File", l) )
+        return h
+    
     def content(self, o):
         l = o.locale
         dbo = o.dbo
         mode = o.post["mode"]
+        # If we're retrieving an already saved CSV export, serve it.
+        if o.post["getcsv"] != "":
+            self.content_type("text/csv")
+            self.content_disposition("attachment", o.post["filename"])
+            v = asm3.cachedisk.get(o.post["getcsv"], o.dbo.name())
+            if v is None: self.notfound()
+            return v
         self.content_type("text/plain")
         if mode == "dumpsql":
             asm3.al.info("%s executed SQL database dump" % o.user, "main.sql", dbo)
@@ -7452,21 +7512,21 @@ class sql_dump(ASMEndpoint):
             dbo2 = asm3.db.get_dbo("MYSQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
-            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            #return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
             asm3.al.info("%s executed DDL dump PostgreSQL" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "ddl_postgresql.sql")
             dbo2 = asm3.db.get_dbo("POSTGRESQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
-            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            #return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddldb2":
             asm3.al.info("%s executed DDL dump DB2" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "ddl_db2.sql")
             dbo2 = asm3.db.get_dbo("DB2")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
-            return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
+            #return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "main.sql", dbo)
@@ -7479,38 +7539,62 @@ class sql_dump(ASMEndpoint):
             return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "animal.csv")
-            rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
-            asm3.additional.append_to_results(dbo, rows, "animal")
-            return asm3.utils.csv_generator(l, rows)
+            asm3.asynctask.function_task(dbo, _("CSV of animal/adopter data", l), self.csv_rows_task,
+                dbo, asm3.animal.get_animal_export_query(dbo) + " ORDER BY a.ID", "animal", "animal", "animal.csv")
+            self.redirect("task")
+            # Old version - too slow for the 60s statement timeout on some databases
+            #self.content_disposition("attachment", "animal.csv")
+            #rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
+            #asm3.additional.append_to_results(dbo, rows, "animal")
+            #return asm3.utils.csv_generator(l, rows)
         elif mode == "mediacsv":
             asm3.al.debug("%s executed CSV media dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "media.csv")
             return asm3.utils.csv_generator(l, asm3.media.get_media_export(dbo))
         elif mode == "medicalcsv":
             asm3.al.debug("%s executed CSV medical dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "medical.csv")
-            return asm3.utils.csv_generator(l, asm3.medical.get_medical_export(dbo))
+            asm3.asynctask.function_task(dbo, _("CSV of animal/medical data", l), self.csv_rows_task,
+                dbo, asm3.medical.get_medical_export_query(dbo) + " ORDER BY DateRequired", 
+                "animalmedicaltreatment,animalvaccination,animaltest", "", "medical.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "medical.csv")
+            #return asm3.utils.csv_generator(l, asm3.medical.get_medical_export(dbo))
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "person.csv")
-            rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
-            asm3.additional.append_to_results(dbo, rows, "person")
-            return asm3.utils.csv_generator(l, rows)
+            asm3.asynctask.function_task(dbo, _("CSV of person data", l), self.csv_rows_task,
+                dbo, asm3.person.get_person_export_query(dbo) + " ORDER BY o.ID", 
+                "owner", "person", "person.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "person.csv")
+            #rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
+            #asm3.additional.append_to_results(dbo, rows, "person")
+            #return asm3.utils.csv_generator(l, rows)
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "incident.csv")
-            rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
-            asm3.additional.append_to_results(dbo, rows, "incident")
-            return asm3.utils.csv_generator(l, rows)
+            asm3.asynctask.function_task(dbo, _("CSV of incident data", l), self.csv_rows_task,
+                dbo, asm3.animalcontrol.get_animalcontrol_export_query(dbo) + " ORDER BY ac.ID", 
+                "animalcontrol", "incident", "incident.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "incident.csv")
+            #rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
+            #asm3.additional.append_to_results(dbo, rows, "incident")
+            #return asm3.utils.csv_generator(l, rows)
         elif mode == "licencecsv":
             asm3.al.debug("%s executed CSV licence dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "licence.csv")
-            return asm3.utils.csv_generator(l, asm3.financial.get_licence_find_simple(dbo, ""))
+            asm3.asynctask.function_task(dbo, _("CSV of license data", l), self.csv_rows_task,
+                dbo, asm3.financial.get_licence_query(dbo) + " ORDER BY ol.ID", 
+                "ownerlicence", "", "licence.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "licence.csv")
+            #return asm3.utils.csv_generator(l, asm3.financial.get_licence_find_simple(dbo, ""))
         elif mode == "paymentcsv":
             asm3.al.debug("%s executed CSV payment dump" % o.user, "main.sql", dbo)
-            self.content_disposition("attachment", "payment.csv")
-            return asm3.utils.csv_generator(l, asm3.financial.get_donations(dbo, "m10000"))
+            asm3.asynctask.function_task(dbo, _("CSV of payment data", l), self.csv_rows_task,
+                dbo, asm3.financial.get_donation_query(dbo) + " ORDER BY od.ID", 
+                "ownerdonation", "", "payment.csv")
+            self.redirect("task")
+            #self.content_disposition("attachment", "payment.csv")
+            #return asm3.utils.csv_generator(l, asm3.financial.get_donations(dbo, "m10000"))
 
 class staff_rota(JSONEndpoint):
     url = "staff_rota"
@@ -7522,6 +7606,8 @@ class staff_rota(JSONEndpoint):
         if startdate is None: startdate = monday_of_week(dbo.today())
         rota = asm3.person.get_rota(dbo, startdate, add_days(startdate, 7))
         asm3.al.debug("got %d rota items" % len(rota), "main.staff_rota", dbo)
+        if "flags" not in o.post.data:
+            o.post["flags"] = asm3.configuration.default_rota_flags(dbo)
         return {
             "name": "staff_rota",
             "rows": rota,
@@ -8115,6 +8201,7 @@ app.internalerror = asm_500
 if EMAIL_ERRORS:
     app.internalerror = asm_500_email
 session = session_manager()
+sys.stderr.write(f"config file: {cfg_file}\n")
 
 # Choose startup mode
 if DEPLOYMENT_TYPE == "wsgi":

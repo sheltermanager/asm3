@@ -5,12 +5,31 @@
 
 const PHONE_RULES = [
     { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "en", prefix: "1", length: 11, elements: 3, extract: /(?<=1)(\d{3})(\d{3})(\d{4})/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
     { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNNN NNN NNN" },
     { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}", placeholder: "NN NNNN NNNN" },
+    { locale: "en_AU", prefix: "61", length: 11, elements: 3, extract: /(?<=61)(\d{1})(\d{4})(\d{4})/, display: "0{1} {2} {3}", placeholder: "NN NNNN NNNN" },
     { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "en_CA", prefix: "1", length: 11, elements: 3, extract: /(?<=1)(\d{3})(\d{3})(\d{4})/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
     { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
+    { locale: "fr_CA", prefix: "1", length: 11, elements: 3, extract: /(?<=1)(\d{3})(\d{3})(\d{4})/, display: "({1}) {2}-{3}", placeholder: "(NNN) NNN-NNNN" },
     { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}", placeholder: "NNNNN NNNNNN" },
-    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}", placeholder: "NNNNN NNNNNN" }
+    { locale: "en_GB", prefix: "44", length: 12 , elements: 2, extract: /(?<=44)(\d{4})(\d{6})/, display: "0{1} {2}", placeholder: "NNNNN NNNNNN" },
+    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}", placeholder: "NNNNN NNNNNN" },
+    { locale: "en_IE", prefix: "01", length: 9, elements: 3, extract: /^(\d{2})(\d{3})(\d{4})$/, display: "{1} {2} {3}", placeholder: "NN NNN NNNN" },
+    { locale: "en_IE", prefix: "08", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "{1} {2} {3}", placeholder: "NNN NNN NNNN" },
+    { locale: "en_IE", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "{1} {2} {3}", placeholder: "NNN NNN NNNN" },
+    { locale: "en_IE", prefix: "", length: 9, elements: 3, extract: /^(\d{3})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" },
+    { locale: "en_IE", prefix: "", length: 8, elements: 2, extract: /^(\d{3})(\d{5})$/, display: "{1} {2}", placeholder: "NNN NNNNN" },
+    { locale: "en_IE", prefix: "", length: 7, elements: 2, extract: /^(\d{3})(\d{4})$/, display: "{1} {2}", placeholder: "NNN NNNN" },
+    { locale: "en_IE", prefix: "+353", length: 13, elements: 3,extract: /(?<=353)(\d{3})(\d{3})(\d{4})/, display: "0{1} {2} {3}", placeholder: "NNN NNN NNNN" },
+    { locale: "en_IE", prefix: "+353", length: 12, elements: 3,extract: /(?<=353)(\d{3})(\d{3})(\d{3})/, display: "0{1} {2} {3}", placeholder: "NNN NNN NNN" },
+    { locale: "en_IE", prefix: "+353", length: 11, elements: 2,extract: /(?<=353)(\d{3})(\d{5})/, display: "0{1} {2}", placeholder: "NNN NNNNN" },
+    { locale: "en_IE", prefix: "+353", length: 10, elements: 2,extract: /(?<=353)(\d{3})(\d{4})/, display: "0{1} {2}", placeholder: "NNN NNNN" },
+    { locale: "es", prefix: "", length: 9, elements: 3,extract: /^(\d{3})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" },
+    { locale: "es", prefix: "34", length: 11, elements: 3,extract: /(?<=34)(\d{3})(\d{3})(\d{3})/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" },
+    { locale: "en_ES", prefix: "", length: 9, elements: 3,extract: /^(\d{3})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" },
+    { locale: "en_ES", prefix: "34", length: 11, elements: 3,extract: /(?<=34)(\d{3})(\d{3})(\d{3})/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" }
 ];
 
 $(document).ready(function() {

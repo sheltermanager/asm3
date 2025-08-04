@@ -288,6 +288,7 @@ def validate_movement_form_data(dbo: Database, username: str, post: PostedData) 
     animalid = post.integer("animal")
     retailerid = post.integer("retailer")
     datebroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
+    deceaseddate = dbo.query_date("SELECT DeceasedDate FROM animal WHERE ID = ?", [animalid])
     if datebroughtin is not None: datebroughtin = datebroughtin.replace(hour=0, minute=0, second=0, microsecond=0)
     asm3.al.debug("validating saved movement %d for animal %d" % (movementid, animalid), "movement.validate_movement_form_data", dbo)
     # If we have a date but no type, get rid of it
@@ -349,6 +350,10 @@ def validate_movement_form_data(dbo: Database, username: str, post: PostedData) 
     if movementdate is not None and datebroughtin is not None and movementdate < datebroughtin:
         asm3.al.debug("movement date is before date brought in", "movement.validate_movement_form_data", dbo)
         raise asm3.utils.ASMValidationError(asm3.i18n._("Movement date cannot be before brought in date.", l))
+    # Movement date cannot be after deceased date
+    if movementdate is not None and deceaseddate is not None and movementdate > deceaseddate:
+        asm3.al.debug("movement date is after deceased date", "movement.validate_movement_form_data", dbo)
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Movement date cannot be after deceased date.", l))
     # You can't have a return without a movement
     if movementdate is None and returndate is not None:
         asm3.al.debug("movement is returned without a movement date.", "movement.validate_movement_form_data", dbo)
@@ -1045,10 +1050,17 @@ def auto_cancel_reservations(dbo: Database) -> None:
         "MovementType = 0 AND ReservationDate < ?", (dbo.today(), dbo.now(), cancelcutoff))
     asm3.al.debug("cancelled %d reservations older than %s days" % (count, cancelafter), "movement.auto_cancel_reservations", dbo)
 
-def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> None:
+def send_adoption_checkout(dbo: Database, username: str, post: PostedData, substitute_url: bool = False, cache_only: bool = False) -> str:
     """
     Sets up an adoption checkout cache object and sends the email 
     with the checkout link to the adopter.
+    post: Data posted from the UI, needs to include id (movement), animalid and personid
+    substitute_url: If True, substitutes any $URL token or appends the checkout URL to the email body
+                    If False, assumes that the client already did this and there's a link in the body
+    cache_only: If True, creates the cache entry/token for the checkout, but does not send an email
+                This is used by calls from the client to generate the checkout link so the user
+                can see it but before the checkout email has been sent.
+    returns the token/cache key for this checkout session
     """
     l = dbo.locale
     aid = post.integer("animalid")
@@ -1096,10 +1108,14 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> No
         "payref":       "" # payref for the payment processor, generated in next step
     }
     asm3.cachedisk.put(key, dbo.name(), co, 86400 * 2) # persist for 2 days
+    # If we're only creating the cache for the token, stop now
+    if cache_only: return key
     # Send the email to the adopter
-    body = post["body"]
     url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.name(), key)
-    body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
+    body = post["body"]
+    if substitute_url:
+        body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
+        body = asm3.utils.fix_tinymce_uris(body)
     asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
     # Record that the checkout email was sent in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
@@ -1111,6 +1127,7 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> No
             post["to"], post["subject"], body)
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
+    return key
 
 def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool:
     """

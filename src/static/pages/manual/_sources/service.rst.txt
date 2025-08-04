@@ -731,11 +731,12 @@ animal_view_adoptable_html
 .. rubric:: Requires username/password: NO
 
 Returns a complete HTML document that references animal_view_adoptable_js to
-show a list of adoptable animals. It looks for an HTML template called
-"animalviewadoptable" and falls back to a basic internal template if it does
-not exist::
+show a list of adoptable animals. If no template is specified, it will look
+for an HTML template called "animalviewadoptable". If that doesn't exist, it
+will use a default, basic template::
 
     http://localhost:5000/service?method=animal_view_adoptable_html
+    http://localhost:5000/service?method=animal_view_adoptable_html&template=onlyflags
 
 csv_import
 ----------

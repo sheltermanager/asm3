@@ -361,10 +361,14 @@ class SimpleSearchBuilder(object):
                 self.add_field(f)
 
     def add_large_text_fields(self, fieldlist: str) -> None:
-        """ Add clauses for many large text fields (only search in smaller databases) in one list """
-        if not self.dbo.is_large_db:
-            for f in fieldlist:
-                self.add_field(f)
+        """ Add clauses for many large text fields (only search in smaller databases) in one list 
+            NOTE: No longer does anything. It seems silly to search these fields in smaller databases
+                  when eventually this functionality will be lost as the database grows.
+        """
+        #if not self.dbo.is_large_db:
+        #    for f in fieldlist:
+        #        self.add_field(f)
+        return
 
     def add_words(self, field: str) -> None:
         """ Adds each word in the term as and clauses so that each word is separately matched and has to be present """
@@ -1227,6 +1231,18 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
             s = s.replace(l, "") # cannot use this type of url
             asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
     return s
+
+def fix_tinymce_uris(s: str) -> str:
+    """
+    Replaces '&amp;' with '&' within triangular brackets.
+    """
+    o = []
+    for chunk in s.split("<"):
+        if chunk != '':
+            snippet = chunk.split(">")[0]
+            snippet = snippet.replace('&amp;', '&')
+            o.append("<" + snippet + ">" + chunk.split(">")[1])
+    return "".join(o)
 
 def generator2str(fn: Callable, *args: Any) -> str:
     """ Iterates a generator function, passing args and returning the output as a buffer """

@@ -57,6 +57,10 @@ def get_person_query(dbo: Database) -> str:
         "LEFT OUTER JOIN site si ON o.SiteID = si.ID " \
         "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % ( dbo.sql_today(), dbo.sql_today() )
 
+def get_person_export_query(dbo: Database) -> str:
+    """ Used by the sql_dump endpoint to export people """
+    return get_person_query(dbo)
+
 def get_rota_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting from rota hours

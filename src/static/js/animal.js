@@ -370,6 +370,49 @@ $(function() {
             return h.join("\n");
         },
 
+        render_links: function() {
+            
+            if (controller.links.length == 0) {
+                return;
+            }
+
+            let h = [
+                '<h3><a href="#">' + _("Links") + '</a></h3>',
+                '<div>',
+                '<table class="asm-table">',
+                '<thead>',
+                '<tr>',
+                '<th>' + _("Type") + '</th>',
+                '<th>' + _("Link") + '</th>',
+                '<th>' + _("Details") + '</th>',
+                '</tr>',
+                '</thead>',
+                '<tbody>'
+            ];
+            
+            let typemap = {
+                "AIL": [ _("Littermate"), "animal?id=" ],
+                "AFA": [ "", "animal?id=" ],
+                "AFP": [ "", "person?id=" ],
+                "AFW": [ "", "waitinglist?id=" ]
+            };
+
+            $.each(controller.links, function(i, v) {
+                h.push('<tr>');
+                h.push('<td>' + v.TYPEDISPLAY + '</td>');
+                if (v.TYPE == "APL") {
+                    h.push('<td>' + v.LINKDISPLAY + '</td>');
+                } else {
+                    h.push('<td><b><a href="' + typemap[v.TYPE][1] + v.LINKID + '">' + v.LINKDISPLAY + '</a></b></td>');
+                }
+                h.push('<td>' + v.FIELD2 + '</td>');
+                h.push('</tr>');
+            });
+
+            h.push('</table></div>');
+            return h.join("\n");
+        },
+
         render_notes: function() {
             return [
                 '<h3><a href="#">' + _("Notes") + '</a></h3>',
@@ -554,6 +597,7 @@ $(function() {
                 this.render_incidents(),
                 this.render_events(),
                 this.render_publish_history(),
+                this.render_links(),
                 html.audit_trail_accordion(controller),
                 '</div>', // accordion
                 '</div>', // asmcontent

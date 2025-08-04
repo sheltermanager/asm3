@@ -303,12 +303,12 @@ $.fn.autotext = function(method, newval) {
             let defaultsearch = self.attr("data-defaultsearch");
             let appendto = self.attr("data-appendto");
             let source = tableform._unpack_ac_source(self.attr("data-source"));
-            if (!appendto && $("#dialog-tableform").length > 0) { appendto = "#dialog-tableform"; }
             self.autocomplete({
                 source: newval || source,
+                autoFocus: true,
                 minLength: minlength, // number of chars to enter before searching starts
-                select: function() {
-                    // fire the change event when something is selected from the dropdown
+                close: function() {
+                    // fire the change event when the dropdown closes (ie. something selected) 
                     self.change();
                 }
             });
@@ -322,7 +322,7 @@ $.fn.autotext = function(method, newval) {
             }
             else {
                 // If we don't have an appendTo, fall back to manipulating the z-index
-                self.autocomplete("widget").css("z-index", 1000);
+                self.autocomplete("widget").css("z-index", 9999);
             }
         });
     }
@@ -1061,6 +1061,9 @@ $.widget("asm.emailform", {
             header.show_loading(_("Loading..."));
             common.ajax_post("document_gen", formdata, function(response) {
                 let j = jQuery.parseJSON(response);
+                let link = '<a target="blank" href="' + o.url + '">' + o.urltext + '</a>';
+                if (j.BODY.indexOf("$URL") == -1 && o.url) { j.BODY = j.BODY += link; }
+                if (j.BODY.indexOf("$URL") != -1 && o.url) { j.BODY = j.BODY.replace("$URL", link); }
                 if (j.TO) { $("#em-to").val(j.TO); }
                 if (j.SUBJECT) { $("#em-subject").val(j.SUBJECT); }
                 if (j.FROM) { $("#em-from").val(j.FROM); }
@@ -1183,9 +1186,17 @@ $.widget("asm.emailform", {
         if (o.bccemail) {
             $("#em-bcc").val(o.bccemail);
         }
-        let msg = config.str("EmailSignature");
-        if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
-        else { msg = "<p>&nbsp;</p>" + msg; }
+        let msg = "";
+        if (o.message) { 
+            msg = "<p>" + o.message + "</p>" + msg; 
+        }
+        else { 
+            msg = "<p>&nbsp;</p>" + msg; 
+        }
+        if (o.url) {
+            msg += '<p><a target="blank" href="' + o.url + '">' + o.urltext + '</a></p>';
+        }
+        msg += config.str("EmailSignature");
         if (msg) {
             $("#em-body").richtextarea("value", msg);
         }

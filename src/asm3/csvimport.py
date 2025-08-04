@@ -22,6 +22,7 @@ import re
 import sys
 
 VALID_FIELDS = [
+    "ACCOUNTSTRXDATE", "ACCOUNTSSOURCE", "ACCOUNTSDESTINATION", "ACCOUNTSAMOUNT", "ACCOUNTSDESCRIPTION", 
     "ANIMALCODE", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", "ANIMALBREED2", "ANIMALDOB", 
     "ANIMALLITTER", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
     "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALSPECIES", "ANIMALAGE", 
@@ -325,6 +326,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     hasstocklevelname = False
     hasstockleveltotal = False
     hasstocklevelbalance = False
+    hasaccounts = False
+    hasaccountsamount = False
+    hasaccountsdate = False
+    hasaccountssource = False
+    hasaccountsdest = False
 
     cols = rows[0].keys()
     for col in cols:
@@ -367,6 +373,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if col.startswith("STOCKLEVELNAME"): hasstocklevelname = True
         if col.startswith("STOCKLEVELTOTAL"): hasstockleveltotal = True
         if col.startswith("STOCKLEVELBALANCE"): hasstocklevelbalance = True
+        if col.startswith("ACCOUNTS"): hasaccounts = True
+        if col == "ACCOUNTSTRXDATE": hasaccountsdate = True
+        if col == "ACCOUNTSSOURCE": hasaccountssource = True
+        if col == "ACCOUNTSDESTINATION": hasaccountsdest = True
+        if col == "ACCOUNTSAMOUNT": hasaccountsamount = True
 
     rules = [
         ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
@@ -394,7 +405,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         ( haslicence and not (haspersonlastname or haspersonname), "Your CSV file has license fields, but no person to apply the license to" ),
         ( hasstocklevel and not hasstocklevelname, "Your CSV file has stock level fields, but no STOCKLEVELNAME column" ),
         ( hasstocklevel and not hasstockleveltotal, "Your CSV file has stock level fields, but no STOCKLEVELTOTAL column" ),
-        ( hasstocklevel and not hasstocklevelbalance, "Your CSV file has stock level fields, but no STOCKLEVELBALANCE column" )
+        ( hasstocklevel and not hasstocklevelbalance, "Your CSV file has stock level fields, but no STOCKLEVELBALANCE column" ),
+        ( hasaccounts and not hasaccountsdate, "Your CSV file has accounts fields, but no ACCOUNTSTRXDATE column" ),
+        ( hasaccounts and not hasaccountssource, "Your CSV file has accounts fields, but no ACCOUNTSSOURCE column" ),
+        ( hasaccounts and not hasaccountsdest, "Your CSV file has accounts fields, but no ACCOUNTSDESTINATION column" ),
+        ( hasaccounts and not hasaccountsamount, "Your CSV file has accounts fields, but no ACCOUNTSAMOUNT column" )
     ]
     for cond, msg in rules:
         if cond:
@@ -421,6 +436,23 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
 
         # Should we stop?
         if asm3.asynctask.get_cancel(dbo): break
+
+        # Do we have accounts data to read?
+        if hasaccounts:
+            a = {}
+            a["trxdate"] = gkd(dbo, row, "ACCOUNTSTRXDATE")
+            a["withdrawal"] = asm3.utils.cint(row["ACCOUNTSAMOUNT"])
+            a["accountid"] = asm3.financial.get_account_id(dbo, gks(row, "ACCOUNTSSOURCE"))
+            a["otheraccount"] = gks(row, "ACCOUNTSDESTINATION")
+            a["description"] = gks(row, "ACCOUNTSDESCRIPTION")
+
+            if a["accountid"] == 0:
+                errors.append( (rowno, str(row), 'Account "%s" not found' % row["ACCOUNTSSOURCE"]) )
+            elif asm3.financial.get_account_id(dbo, gks(row, "ACCOUNTSDESTINATION")) == 0:
+                errors.append( (rowno, str(row), 'Account "%s" not found' % row["ACCOUNTSDESTINATION"]) )
+            elif not dryrun:
+                asm3.financial.insert_trx_from_form(dbo, user, asm3.utils.PostedData(a, dbo.locale))
+
 
         # Do we have animal data to read?
         animalid = 0
@@ -1071,7 +1103,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
             m = {}
             m["animal"] = str(animalid)
-            m["medicaltype"] = gkl(dbo, row, "MEDICALTYPE", "lksmedicaltype", "MedicalTypeName", createmissinglookups)
+            m["medicaltype"] = gkl(dbo, row, "MEDICALTYPE", "lksmedicaltype", "MedicalTypeName", False)
             m["treatmentname"] = gks(row, "MEDICALNAME")
             m["dosage"] = gks(row, "MEDICALDOSAGE")
             m["startdate"] = gkd(dbo, row, "MEDICALGIVENDATE")
