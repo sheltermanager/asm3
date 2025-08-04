@@ -28,6 +28,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     a:term      Only search animals for term
     ac:term     Only search animal control incidents for term
     ci:term     Only search citations for term
+    co:term     Only search animal costs for term
     p:term      Only search people for term
     la:term     Only search lost animals for term
     li:num      Only search licence numbers for term
@@ -96,6 +97,10 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
                     r["SORTON"] = r["ISSUEDATE"]
                     if r["SORTON"] is None: r["SORTON"] = THE_PAST
                     if r["LICENCENUMBER"].lower() == qlow: r["SORTON"] = now()
+                elif rtype == "COST":
+                    r["SORTON"] = r["LASTCHANGEDDATE"]
+                    if r["SORTON"] is None: r["SORTON"] = THE_PAST
+                    if r["INVOICENUMBER"].lower() == qlow: r["SORTON"] = now()
                 else:
                     r["SORTON"] = r["LASTCHANGEDDATE"]
             else:
@@ -161,6 +166,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     lasort = ""
     lisort = ""
     cisort = ""
+    cosort = ""
     fasort = ""
     vosort = ""
     losort = ""
@@ -175,6 +181,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lasort = "OWNERNAME"
         lisort = "OWNERNAME"
         cisort = "OWNERNAME"
+        cosort = "INVOICENUMBER"
         fasort = "OWNERNAME"
         vosort = "OWNERNAME"
         losort = "RECORDDETAIL"
@@ -189,6 +196,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lasort = "OWNERNAME"
         lisort = "OWNERNAME"
         cisort = "OWNERNAME"
+        cosort = "INVOICENUMBER"
         fasort = "OWNERNAME"
         vosort = "OWNERNAME"
         losort = "RECORDDETAIL"
@@ -203,6 +211,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lasort = "LASTCHANGEDDATE"
         lisort = "ISSUEDATE"
         cisort = "CITATIONDATE"
+        cosort = "LASTCHANGEDDATE"
         fasort = "LASTCHANGEDDATE"
         vosort = "DATEISSUED"
         losort = "LASTCHANGEDDATE"
@@ -217,6 +226,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lasort = "LASTCHANGEDDATE"
         lisort = "ISSUEDATE"
         cisort = "CITATIONDATE"
+        cosort = "LASTCHANGEDDATE"
         fasort = "LASTCHANGEDDATE"
         vosort = "DATEISSUED"
         losort = "LASTCHANGEDDATE"
@@ -231,6 +241,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lasort = "SPECIESNAME"
         lisort = "COMMENTS"
         cisort = "COMMENTS"
+        cosort = "SPECIESNAME"
         fasort = "SPECIESNAME"
         vosort = "COMMENTS"
         losort = "RECORDDETAIL"
@@ -244,6 +255,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lasort = "SPECIESNAME"
         lisort = "COMMENTS"
         cisort = "COMMENTS"
+        cosort = "SPECIESNAME"
         fasort = "SPECIESNAME"
         vosort = "COMMENTS"
         losort = "RECORDDETAIL"
@@ -257,6 +269,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lasort = "RELEVANCE"
         lisort = "RELEVANCE"
         cisort = "RELEVANCE"
+        cosort = "RELEVANCE"
         fasort = "RELEVANCE"
         vosort = "RELEVANCE"
         losort = "RELEVANCE"
@@ -477,6 +490,12 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         explain = _("Found animal entries matching '{0}'.", l).format(q)
         if cp(asm3.users.VIEW_FOUND_ANIMAL):
             ar( asm3.lostfound.get_foundanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "FOUNDANIMAL", fasort )
+    
+    elif q.startswith("co:") or q.startswith("animalcost:"):
+        q = q[q.find(":")+1:].strip()
+        explain = _("Costs with invoice numbers matching '{0}'.", l).format(q)
+        if cp(asm3.users.VIEW_COST):
+            ar( asm3.animal.get_animalcost_find_simple(dbo, q, limit), "COST", cosort )
 
     elif q.startswith("li:") or q.startswith("license:"):
         q = q[q.find(":")+1:].strip()

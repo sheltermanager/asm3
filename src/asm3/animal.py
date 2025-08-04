@@ -1125,6 +1125,23 @@ def get_animals_brief(animals: Results) -> Results:
         })
     return r
 
+def get_animalcost_find_simple(dbo: Database, invnum: str, dummy: int = 0) -> Results:
+    return dbo.query(
+        "SELECT a.ID, a.AnimalName, a.ShelterCode, a.BreedName, sx.Sex AS SexName, sp.SpeciesName, ac.LastChangedDate, a.AnimalAge, " \
+        "web.MediaName AS WebsiteMediaName, ct.CostTypeName, ac.CostDate, ac.CostAmount, ac.InvoiceNumber, " \
+        "web.Date AS WebsiteMediaDate, " \
+        "CASE " \
+            "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
+            "THEN a.ShortCode ELSE a.ShelterCode " \
+        "END AS Code " \
+        "FROM animalcost ac " \
+        "INNER JOIN animal a ON ac.AnimalID = a.ID " \
+        "LEFT OUTER JOIN costtype ct ON ac.CostTypeID = ct.ID " \
+        "LEFT OUTER JOIN species sp ON sp.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN media web ON web.ID = (SELECT MAX(ID) FROM media WHERE LinkID = a.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) " \
+        "WHERE UPPER(ac.InvoiceNumber) = UPPER(?)", [invnum])
+
 def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, lf: LocationFilter = None, brief: bool = False) -> Results:
     """
     Returns rows for simple animal searches.
