@@ -1,7 +1,6 @@
 
 import asm3.configuration
 import asm3.i18n
-import asm3.users
 import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
@@ -39,7 +38,7 @@ class SmartTagPublisher(AbstractPublisher):
             "x-api-key": smarttagapikey
         }
 
-        chipprefix = ["987%", "900139%", "900141%", "900074%"]
+        chipprefix = [ "987", "900139", "900141", "900074" ]
 
         animals = get_microchip_data(self.dbo, chipprefix, "smarttag", allowintake = False)
         if len(animals) == 0:
@@ -65,11 +64,12 @@ class SmartTagPublisher(AbstractPublisher):
                 if not self.validate(an): continue
                 fields = self.processAnimal(an)
                 j = asm3.utils.json(fields)
-                self.log("HTTP POST request %s: %s" % (SMARTTAG_HOST, j))
-                r = asm3.utils.post_json(SMARTTAG_HOST, j, headers=headers)
+                url = f"{SMARTTAG_HOST}/pets"
+                self.log("HTTP POST request %s: %s" % (url, j))
+                r = asm3.utils.post_json(url, j, headers=headers)
                 self.log("HTTP response: %s" % r["response"])
 
-                # SmartTag API uses different variable names to store success on dev and production servers but both use the same varaible name for errors
+                # SmartTag API uses different variable names to store success on dev and production servers but both use the same variable name for errors
                 if asm3.utils.json_parse(r["response"])["summary"]["errors"] == 0: 
                     self.log("successful response, marking processed")
                     processed_animals.append(an)
