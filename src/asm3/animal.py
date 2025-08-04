@@ -3934,7 +3934,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
     ## Sync external movements
     for movementrow in movementrows:
         locationrow = find_movement(movementrow.ID)
-        if flocationrow:
+        if locationrow:
             ## Found movement in animallocation table
             if asm3.i18n.remove_time(locationrow["DATE"]) != asm3.i18n.remove_time(movementrow["MOVEMENTDATE"]):
                 ## Date of movement in animallocation table out of sync, need to update it
