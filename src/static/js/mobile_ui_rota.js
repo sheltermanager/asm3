@@ -16,18 +16,13 @@ const mobile_ui_rota = {
             let daysofweek = [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")];
             let date = new Date();
             date = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-            // date.setHours(0);
-            // date.setMinutes(0);
-            // date.setSeconds(0);
             while (date.getDay() != controller.firstdow) {
                 date.setDate(date.getDate() - 1); // To do - tested this in Chrome. Need to check that this is globally acceptable
             }
             let o = '<table cellpadding=5>'
             let count = 0;
-            console.log("Starting date " + date);
             while (count < 7) {
                 o += '<tr><th>' + daysofweek[date.getDay()] + '</th><td>';
-                console.log("Date " + date);
                 controller.rotadata.forEach(function(rotarow) {
                     let fromyear = parseInt(rotarow.STARTDATETIME.split("-")[0]);
                     let frommonth = parseInt(rotarow.STARTDATETIME.split("-")[1]) - 1;
@@ -52,14 +47,12 @@ const mobile_ui_rota = {
                         }
                         o += ' ' + starttime + ' to ' + endtime;
                     }
-                    console.log("\n");
                 });
                 o += '</td></tr>';
                 date.setDate(date.getDate() + 1); // To do - tested this in Chrome. Need to check that this is globally acceptable
                 count++;
             }
             o += '</table>';
-            console.log(o);
             $("#hp-rota").append(o);
         } else {
             $("#hp-rota").hide();
