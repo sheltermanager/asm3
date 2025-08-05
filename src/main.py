@@ -1034,6 +1034,13 @@ class mobile(ASMEndpoint):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile", dbo)
+        
+        firstdow = asm3.configuration.default_first_day(dbo)
+        userdata = asm3.users.get_user(dbo, o.user)
+        if userdata["OWNERID"]:
+            rotadata = asm3.person.get_person_rota(dbo, userdata["OWNERID"])
+        else:
+            rotadata = False
 
         c = {
             "animals":      animals,
@@ -1065,13 +1072,15 @@ class mobile(ASMEndpoint):
             "species":      asm3.lookups.get_species(dbo),
             "timeline":     asm3.animal.get_timeline(dbo, 30, age=300),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
+            "rotadata":     rotadata,
+            "firstdow":     firstdow,
             "user":         o.user,
             "locale":       o.locale
         }
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile.js", 
             "mobile_ui_addanimal.js", "mobile_ui_animal.js", "mobile_ui_image.js", "mobile_ui_incident.js", 
-            "mobile_ui_person.js", "mobile_ui_stock.js" ], c)
+            "mobile_ui_person.js", "mobile_ui_stock.js", "mobile_ui_rota.js" ], c)
 
     def post_addanimal(self, o):
         self.check(asm3.users.ADD_ANIMAL)
