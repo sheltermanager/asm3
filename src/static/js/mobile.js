@@ -154,7 +154,8 @@ const mobile = {
                     '<div id="hp-rota" class="col-sm">',
                         '<div class="card shadow-sm mt-3">',
                             '<div class="card-header">' + _("Rota"), 
-                            
+                            '</div>',
+                            '<div class="card-body">',
                             '</div>',
                             //'<div class="card-footer">',
                             //'</div>',
@@ -392,15 +393,7 @@ const mobile = {
             '<div class="spinner-border spinner-border-sm" style="display: none"></div> ',
             '</button>',
             '</div>',
-            '</div>',
-            '<div id="content-rota" class="container" style="display: none">',
-            '<h2 class="mt-3">' + _("My Rota") + '</h2>',
-            '<div class="mb-3">',
-            '<input class="form-control search" type="text" placeholder="' + _("My Rota") + '">',
-            '</div>',
-            '<div class="list-group">',
-            '</div>',
-            '</div>',
+            '</div>'
         ].join("\n");
     },
 
@@ -590,7 +583,6 @@ const mobile = {
     bind: function() {
 
         // Add rota panel to home
-        console.log("Binding");
         mobile_ui_rota.sync();
 
         // Delegate handler for internal links

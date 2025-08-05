@@ -53,7 +53,7 @@ const mobile_ui_rota = {
                 count++;
             }
             o += '</table>';
-            $("#hp-rota").append(o);
+            $("#hp-rota .card-body").append(o);
         } else {
             $("#hp-rota").hide();
         }
