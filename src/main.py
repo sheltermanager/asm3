@@ -60,7 +60,7 @@ from asm3.i18n import _, translate, get_version, get_display_date_format, \
     get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, \
     get_currency_digit_grouping, get_dst, get_locales, parse_date, python2display, \
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
-    monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
+    monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, today
 
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
@@ -1035,10 +1035,9 @@ class mobile(ASMEndpoint):
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile", dbo)
         
-        firstdow = asm3.configuration.default_first_day(dbo)
         userdata = asm3.users.get_user(dbo, o.user)
         if userdata["OWNERID"]:
-            rotadata = asm3.person.get_person_rota(dbo, userdata["OWNERID"])
+            rotadata = asm3.person.get_rota(dbo, today(), add_days(today(), 7), userdata["OWNERID"])
         else:
             rotadata = False
 
@@ -1073,7 +1072,6 @@ class mobile(ASMEndpoint):
             "timeline":     asm3.animal.get_timeline(dbo, 30, age=300),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
             "rotadata":     rotadata,
-            "firstdow":     firstdow,
             "user":         o.user,
             "locale":       o.locale
         }

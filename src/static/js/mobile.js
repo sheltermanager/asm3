@@ -1,6 +1,6 @@
 /*global $, jQuery, controller */
 /*global asm, common, config, format, html */
-/*global _, mobile_ui_addanimal, mobile_ui_animal, mobile_ui_incident, mobile_ui_person, mobile_ui_stock */
+/*global _, mobile_ui_addanimal, mobile_ui_animal, mobile_ui_incident, mobile_ui_person, mobile_ui_stock, mobile_ui_rota */
 
 "use strict";
 
