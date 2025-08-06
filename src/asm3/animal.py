@@ -3897,7 +3897,6 @@ def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: 
 
 def insert_commentschange_log(dbo: Database, username: str, animalid: int, newcomments: str, oldcomments: str, newhiddencomments: str, oldhiddencomments: str) -> None:
     """ Writes an entry to the log when an animal's comments/hidden comments change."""
-    # If the option is on and the name has changed, log it
     l = dbo.locale
     if asm3.configuration.animalcomments_change_log(dbo):
         if newcomments != oldcomments:
