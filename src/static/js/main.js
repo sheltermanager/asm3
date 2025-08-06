@@ -85,7 +85,7 @@ $(function() {
                         _("{plural3} vaccinations have expired")
                     ]));
             }
-            if (alerts.NOTRAB > 0 && common.has_permission("va") && common.has_permission("vav") && config.bool("EmblemRabies") ) {
+            if (alerts.NOTRAB > 0 && common.has_permission("va") && common.has_permission("vav")) {
                 totalalerts += alerts.NOTRAB;
                 oa("search?q=norabies", "rabies", 
                     common.ntranslate(alerts.NOTRAB, [
@@ -95,7 +95,7 @@ $(function() {
                         _("{plural3} animals have not had a rabies vaccination")
                     ]));
             }
-            if (alerts.NEVERVACC > 0 && common.has_permission("va") && common.has_permission("vav") && config.bool("EmblemNeverVacc") ) {
+            if (alerts.NEVERVACC > 0 && common.has_permission("va") && common.has_permission("vav")) {
                 totalalerts += alerts.NEVERVACC;
                 oa("search?q=nevervacc", "novaccination",
                     common.ntranslate(alerts.NEVERVACC, [
@@ -185,7 +185,7 @@ $(function() {
                         _("{plural3} reservations have been active over a week without adoption")
                     ]));
             }
-            if (alerts.NOTNEU > 0 && common.has_permission("va") && config.bool("EmblemUnneutered") ) {
+            if (alerts.NOTNEU > 0 && common.has_permission("va")) {
                 totalalerts += alerts.NOTNEU;
                 oa("move_book_unneutered", "unneutered",
                     common.ntranslate(alerts.NOTNEU, [
@@ -195,7 +195,7 @@ $(function() {
                         _("{plural3} unaltered animals have been adopted in the last month")
                     ]));
             }
-            if (alerts.NOTCHIP > 0 && common.has_permission("va") && config.bool("EmblemNotMicrochipped") ) {
+            if (alerts.NOTCHIP > 0 && common.has_permission("va")) {
                 totalalerts += alerts.NOTCHIP;
                 oa("search?q=notmicrochipped", "microchip",
                     common.ntranslate(alerts.NOTCHIP, [
