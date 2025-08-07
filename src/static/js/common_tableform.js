@@ -1654,7 +1654,8 @@ const tableform = {
         if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
         if (v.xattr) { d += v.xattr + " "; }
         d += "/>";
-        d += " <button id=\"button-" + v.id + "\"><span class=\"ui-button-icon ui-icon ui-icon-refresh\"></span></button>";
+        //d += " <button id=\"button-" + v.id + "\"><span class=\"ui-button-icon ui-icon ui-icon-refresh\"></span></button>";
+        if (v.xbutton) { d += " <button id=\"button-" + v.id + "\">" + v.xbutton + "</button>"; }
         if (v.xmarkup) { d += v.xmarkup; }
         return tableform._render_formfield(v, d);
     },
