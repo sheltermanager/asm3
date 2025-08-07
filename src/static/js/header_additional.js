@@ -548,7 +548,7 @@ additional = {
         else if (f.FIELDTYPE == additional.TIME) { return tableform.render_time(v); }
         else if (f.FIELDTYPE == additional.NOTES) { v.classes += " asm-textareafixed"; return tableform.render_textarea(v); }
         else if (f.FIELDTYPE == additional.NUMBER) { return tableform.render_number(v); }
-        else if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) { return tableform.render_number(v); }
+        else if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) { return tableform.render_number_incremented(v); }
         else if (f.FIELDTYPE == additional.MONEY) { return tableform.render_currency(v); }
         else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) { return tableform.render_animal(v); }
         else if (f.FIELDTYPE == additional.PERSON_LOOKUP) { return tableform.render_person(v); }

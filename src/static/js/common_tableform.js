@@ -1635,6 +1635,30 @@ const tableform = {
         return tableform._render_formfield(v, d);
     },
 
+    render_number_incremented: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"text\" ";
+        d += tableform._render_class(v, "asm-textbox asm-numberbox");
+        d += tableform._render_style(v, "");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
+        if (v.max) { d += "data-max=\"" + v.max + "\" " ;}
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.validation) { d += tableform._render_validation_attr(v); }
+        if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+        if (v.placeholder) { d += "placeholder=\"" + v.placeholder + "\" "; }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
+        d += " <button id=\"button-" + v.id + "\"><span class=\"ui-button-icon ui-icon ui-icon-refresh\"></span></button>";
+        if (v.xmarkup) { d += v.xmarkup; }
+        return tableform._render_formfield(v, d);
+    },
+
     render_person: function(v) {
         let d = "";
         tableform._check_id(v);
