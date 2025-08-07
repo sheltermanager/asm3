@@ -1841,6 +1841,7 @@ def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[
         if f.FIELDNAME == "description": d["description"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME == "canafforddonation": d["canafforddonation"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "breed" not in d and "breed1" not in d: d["breed"] = guess_breed(dbo, "nomatchesusedefault")
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
