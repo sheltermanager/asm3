@@ -84,6 +84,7 @@ PERSON_SPONSOR = 11
 PERSON_VET = 12
 PERSON_ADOPTIONCOORDINATOR = 13
 TELEPHONE = 14
+NUMBER_INCREMENTED = 15
 
 def clause_for_linktype(linktype: str) -> str:
     """ Returns the appropriate clause for a link type """

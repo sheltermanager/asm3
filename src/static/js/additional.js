@@ -151,7 +151,7 @@ $(function() {
             }
             // Show searchable for correct field types
             // of text, notes, number, lookup or multi-lookup
-            if (ft == 1 || ft == 2 || ft == 3 || ft == 6 || ft == 7) {
+            if (ft == 1 || ft == 2 || ft == 3 || ft == 6 || ft == 7 || ft == 15) {
                 $("#searchablerow").fadeIn();
             }
             else {
