@@ -527,7 +527,7 @@ additional = {
      * classes: one or more classes to give fields - undefined="additional" 
      * usedefault: if true, outputs the default value instead of the actual value
      */
-    render_field: function(f, includeids, classes, usedefault) {
+    render_field: async function(f, includeids, classes, usedefault) {
         let v = {
             id: (includeids === undefined || includeids == true) ? "add_" + f.ID : "",
             post_field: "a." + f.MANDATORY + "." + f.ID,
@@ -548,7 +548,17 @@ additional = {
         else if (f.FIELDTYPE == additional.TIME) { return tableform.render_time(v); }
         else if (f.FIELDTYPE == additional.NOTES) { v.classes += " asm-textareafixed"; return tableform.render_textarea(v); }
         else if (f.FIELDTYPE == additional.NUMBER) { return tableform.render_number(v); }
-        else if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) { v.xbutton = "<span class=\"ui-button-icon ui-icon ui-icon-refresh\" onclick='console.log($(this).parent().prev().val(\"Number\"))'></span>"; return tableform.render_number(v); }
+        else if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
+            let formdata = { "mode": "nextid", "afid": v.ID };
+            let response = await common.ajax_post("additional", formdata);
+            console.log(response);
+            v.readonly = true;
+            if (!v.value) {
+                v.value = response;
+            }
+            console.log("Rendering");
+            return tableform.render_number(v);
+        }
         else if (f.FIELDTYPE == additional.MONEY) { return tableform.render_currency(v); }
         else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) { return tableform.render_animal(v); }
         else if (f.FIELDTYPE == additional.PERSON_LOOKUP) { return tableform.render_person(v); }
@@ -584,6 +594,7 @@ additional = {
             v.options = mopts.join("\n");
             return tableform.render_selectmulti(v); 
         }
+        console.log("Rendered");
     },
 
     /**

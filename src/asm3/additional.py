@@ -123,6 +123,10 @@ def is_person_fieldtype(fieldtype: int) -> bool:
     """ Returns true if the field type given is a person """
     return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET, PERSON_ADOPTIONCOORDINATOR)
 
+def get_next_additional_field_number(dbo: Database, afid: int) -> str:
+    """ Returns the next ID number for the frontend """
+    return dbo.get_id_cache_pk(f"additional_{afid}", "SELECT 1")
+
 def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", linktypeid: int = -1) -> Results:
     """
     Returns a list of additional fields for the link
@@ -136,8 +140,11 @@ def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", 
         inclause = f"({linktypeid})"
     else:
         inclause = clause_for_linktype(linktype)
+    nextadditionalid = dbo.get_id_cache_pk(f"additional_{linkid}", "SELECT 1")
+    #nextadditionalid = 666
     return dbo.query("SELECT af.*, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
+        #"CASE WHEN af.FieldType = 15 THEN %s END AS NumberIncrement, " \
         "CASE WHEN af.FieldType IN (9, 11, 12) AND a.Value <> '' AND a.Value <> '0' " \
             "THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additionalfield af " \
