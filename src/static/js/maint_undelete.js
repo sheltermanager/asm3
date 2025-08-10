@@ -32,8 +32,9 @@ $(function() {
             const buttons = [
                 { id: "restore", text: _("Restore"), icon: "new", enabled: "multi", perm: "", 
                     click: async function() { 
-                        await common.ajax_post("maint_undelete", "mode=undelete&ids=" + tableform.table_ids(table));
-                        header.show_info("Restored.");
+                        let response = await common.ajax_post("maint_undelete", "mode=undelete&ids=" + tableform.table_ids(table));
+                        let [success,errors] = response.split(",");
+                        header.show_info(success + " sucessfully restored, " + errors + " errors.");
                      } 
                 },
                 { id: "offset", type: "dropdownfilter",

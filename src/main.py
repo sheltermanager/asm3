@@ -5142,10 +5142,18 @@ class maint_undelete(JSONEndpoint):
 
     def post_undelete(self, o):
         self.check(asm3.users.USE_SQL_INTERFACE)
+        errors = 0
+        success = 0
         for i in o.post["ids"].split(","):
             if i == "": continue
             tablename, iid = i.split(":")
-            asm3.audit.undelete(o.dbo, asm3.utils.cint(iid), tablename)
+            try:
+                asm3.audit.undelete(o.dbo, asm3.utils.cint(iid), tablename)
+                success += 1
+            except:
+                errors += 1
+        self.content_type("text/plain")
+        return f"{success},{errors}"
 
 class maint_update_reports(ASMEndpoint):
     url = "maint_update_reports"
