@@ -716,7 +716,7 @@ def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
     """
     Deletes the specified onlineform and fields
     """
-    dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
+    dbo.delete("onlineformfield", f"OnlineFormID={formid}", username)
     dbo.delete("onlineform", formid, username)
 
 def reindex_onlineform(dbo: Database, username: str, formid: int) -> None:
