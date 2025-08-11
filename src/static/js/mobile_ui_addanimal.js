@@ -144,16 +144,21 @@ const mobile_ui_addanimal = {
                 "internallocation": $("#internallocation").val(),
                 "unit": $("#unit").val()
             };
-            mobile.ajax_post(formdata, function(response) {
-                let a = jQuery.parseJSON(response);
-                controller.animals.push(a);
-                // TODO: This needs to point to mobile_ui_animal instead
-                mobile_ui_animal.render(a);
-                mobile_ui_animal.render_shelteranimalslist();
-                $(".container").hide();
-                $("#content-animal").show();
+            if (formdata.animalname) {
+                mobile.ajax_post(formdata, function(response) {
+                    let a = jQuery.parseJSON(response);
+                    controller.animals.push(a);
+                    // TODO: This needs to point to mobile_ui_animal instead
+                    mobile_ui_animal.render(a);
+                    mobile_ui_animal.render_shelteranimalslist();
+                    $(".container").hide();
+                    $("#content-animal").show();
+                    $("#addanimal-submit .spinner-border").hide();
+                });
+            } else {
+                mobile.show_error(_("Error"), _("Name cannot be blank"));
                 $("#addanimal-submit .spinner-border").hide();
-            });
+            }
         });
    
     },
