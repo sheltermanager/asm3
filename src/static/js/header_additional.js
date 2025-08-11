@@ -594,7 +594,6 @@ additional = {
             v.options = mopts.join("\n");
             return tableform.render_selectmulti(v); 
         }
-        console.log("Rendered");
     },
 
     /**

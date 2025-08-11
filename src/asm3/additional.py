@@ -140,11 +140,8 @@ def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", 
         inclause = f"({linktypeid})"
     else:
         inclause = clause_for_linktype(linktype)
-    nextadditionalid = dbo.get_id_cache_pk(f"additional_{linkid}", "SELECT 1")
-    #nextadditionalid = 666
     return dbo.query("SELECT af.*, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
-        #"CASE WHEN af.FieldType = 15 THEN %s END AS NumberIncrement, " \
         "CASE WHEN af.FieldType IN (9, 11, 12) AND a.Value <> '' AND a.Value <> '0' " \
             "THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additionalfield af " \
