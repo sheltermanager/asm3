@@ -1547,32 +1547,32 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertnevervacc = asm3.configuration.alert_species_never_vacc(dbo)
     alertrabies = asm3.configuration.alert_species_rabies(dbo)
     alertduevacc = asm3.configuration.alert_species_due_vacc(dbo)
-    alertexpvacc = asm3.configuration.alert_species_exp_vacc(dbo)
-    alertduetest = asm3.configuration.alert_species_due_test(dbo)
-    alertduemed = asm3.configuration.alert_species_due_med(dbo)
-    alertboardintoday = asm3.configuration.alert_species_board_in_today(dbo)
-    alertboardouttoday = asm3.configuration.alert_species_board_in_today(dbo)
-    alertdueclinic = asm3.configuration.alert_species_due_clinic(dbo)
-    alerturgentwl = asm3.configuration.alert_species_urgent_wl(dbo)
-    alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
-    alertduedon = asm3.configuration.alert_species_due_don(dbo)
-    alertendtrial = asm3.configuration.alert_species_end_trial(dbo)
-    alertdocunsigned = asm3.configuration.alert_species_doc_unsigned(dbo)
-    alertdocsigned = asm3.configuration.alert_species_doc_signed(dbo)
-    alertopencheckout = asm3.configuration.alert_species_open_checkout(dbo)
-    alertlongrsv = asm3.configuration.alert_species_long_rsv(dbo)
-    alertholdtoday = asm3.configuration.alert_species_hold_today(dbo)
-    alertinform = asm3.configuration.alert_species_incoming_form(dbo)
-    alertacunfine = asm3.configuration.alert_species_ac_unfine(dbo)
-    alertacundisp = asm3.configuration.alert_species_ac_undisp(dbo)
-    alertacuncomp = asm3.configuration.alert_species_ac_uncomp(dbo)
-    alertacfoll = asm3.configuration.alert_species_ac_foll(dbo)
-    alerttlover = asm3.configuration.alert_species_tl_over(dbo)
-    alertstexpsoon = asm3.configuration.alert_species_st_exp_soon(dbo)
-    alertstlowbal = asm3.configuration.alert_species_st_low_bal(dbo)
-    alertsgloballows = asm3.configuration.alert_species_global_lows(dbo)
-    alertstrnodrv = asm3.configuration.alert_species_tr_nodrv(dbo)
-    alertpublish = asm3.configuration.alert_species_publish(dbo)
+    # alertexpvacc = asm3.configuration.alert_species_exp_vacc(dbo)
+    # alertduetest = asm3.configuration.alert_species_due_test(dbo)
+    # alertduemed = asm3.configuration.alert_species_due_med(dbo)
+    # alertboardintoday = asm3.configuration.alert_species_board_in_today(dbo)
+    # alertboardouttoday = asm3.configuration.alert_species_board_in_today(dbo)
+    # alertdueclinic = asm3.configuration.alert_species_due_clinic(dbo)
+    # alerturgentwl = asm3.configuration.alert_species_urgent_wl(dbo)
+    # alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
+    # alertduedon = asm3.configuration.alert_species_due_don(dbo)
+    # alertendtrial = asm3.configuration.alert_species_end_trial(dbo)
+    # alertdocunsigned = asm3.configuration.alert_species_doc_unsigned(dbo)
+    # alertdocsigned = asm3.configuration.alert_species_doc_signed(dbo)
+    # alertopencheckout = asm3.configuration.alert_species_open_checkout(dbo)
+    # alertlongrsv = asm3.configuration.alert_species_long_rsv(dbo)
+    # alertholdtoday = asm3.configuration.alert_species_hold_today(dbo)
+    # alertinform = asm3.configuration.alert_species_incoming_form(dbo)
+    # alertacunfine = asm3.configuration.alert_species_ac_unfine(dbo)
+    # alertacundisp = asm3.configuration.alert_species_ac_undisp(dbo)
+    # alertacuncomp = asm3.configuration.alert_species_ac_uncomp(dbo)
+    # alertacfoll = asm3.configuration.alert_species_ac_foll(dbo)
+    # alerttlover = asm3.configuration.alert_species_tl_over(dbo)
+    # alertstexpsoon = asm3.configuration.alert_species_st_exp_soon(dbo)
+    # alertstlowbal = asm3.configuration.alert_species_st_low_bal(dbo)
+    # alertsgloballows = asm3.configuration.alert_species_global_lows(dbo)
+    # alertstrnodrv = asm3.configuration.alert_species_tr_nodrv(dbo)
+    # alertpublish = asm3.configuration.alert_species_publish(dbo)
 
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (Archived = 0 OR ActiveMovementType = 2)"
@@ -1580,7 +1580,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateOfVaccination Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duevacc," \
+            "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND SpeciesID IN ( %(alertduevacc)s )) AS duevacc," \
         "(SELECT COUNT(*) FROM animalvaccination av1 INNER JOIN animal ON animal.ID = av1.AnimalID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
@@ -1646,11 +1646,22 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s) AS lngterm, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
-            % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
-                "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
-                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, 
-                "alertchip": alertchip, "longterm": longterm, "alertneuter": alertneuter, 
-                "alertnevervacc": alertnevervacc, "alertrabies": alertrabies }
+            % { "today": today, 
+               "endoftoday": endoftoday, 
+               "tomorrow": tomorrow, 
+                "oneweek": oneweek, 
+                "oneyear": oneyear, 
+                "onemonth": onemonth, 
+                "futuremonth": futuremonth, 
+                "locfilter": locationfilter, 
+                "shelterfilter": shelterfilter, 
+                "alertchip": alertchip, 
+                "longterm": longterm, 
+                "alertneuter": alertneuter, 
+                "alertnevervacc": alertnevervacc, 
+                "alertrabies": alertrabies,
+                "alertduevacc": alertduevacc
+                }
     return dbo.query_cache(sql, age=age)
 
 def get_overview(dbo: Database, age: int = 120) -> Results:

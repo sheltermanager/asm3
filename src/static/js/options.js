@@ -691,6 +691,10 @@ $(function() {
                         { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrabies", post_field: "AlertSpeciesRabies", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+
+                        { id: "alertduevacc", post_field: "AlertSpeciesDueVacc", label: _("Show an alert when these species of animals have a vaccination due"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+
+
                         { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Stats") + '</p>' },
                         { type: "raw", fullrow: true, markup: html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) },
                         { id: "statmode", post_field: "ShowStatsHomePage", label: _("Stats period"), type: "select", options: 

@@ -107,6 +107,7 @@ DEFAULTS = {
     "AFNonShelterType": "40",
     "AKCRegisterAll": "No",
     "AlertSpeciesMicrochip": "1,2",
+    "AlertSpeciesDueVacc": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesNeverVacc": "1,2",
     "AlertSpeciesRabies": "1,2",
