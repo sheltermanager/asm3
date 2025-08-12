@@ -36,7 +36,7 @@ const mobile = {
                 if (errorfunc) {
                     errorfunc(textstatus, response);
                 }
-                mobile.show_error(textstatus, response);
+                mobile.show_error(textstatus, jqxhr.responseText);
             }
         });
     },

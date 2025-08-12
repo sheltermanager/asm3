@@ -1075,8 +1075,11 @@ class mobile(ASMEndpoint):
 
     def post_addanimal(self, o):
         self.check(asm3.users.ADD_ANIMAL)
-        nid, dummy = asm3.animal.insert_animal_from_form(o.dbo, o.post, o.user)
-        return asm3.utils.json( asm3.animal.get_animal(o.dbo, nid) )
+        try:
+            nid, dummy = asm3.animal.insert_animal_from_form(o.dbo, o.post, o.user)
+            return asm3.utils.json( asm3.animal.get_animal(o.dbo, nid) )
+        except asm3.utils.ASMValidationError as e:
+            return e.data
 
     def post_addlog(self, o):
         self.check(asm3.users.ADD_LOG)
