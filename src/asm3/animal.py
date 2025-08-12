@@ -1547,32 +1547,32 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertnevervacc = asm3.configuration.alert_species_never_vacc(dbo)
     alertrabies = asm3.configuration.alert_species_rabies(dbo)
     alertduevacc = asm3.configuration.alert_species_due_vacc(dbo)
-    # alertexpvacc = asm3.configuration.alert_species_exp_vacc(dbo)
-    # alertduetest = asm3.configuration.alert_species_due_test(dbo)
-    # alertduemed = asm3.configuration.alert_species_due_med(dbo)
-    # alertboardintoday = asm3.configuration.alert_species_board_in_today(dbo)
-    # alertboardouttoday = asm3.configuration.alert_species_board_in_today(dbo)
-    # alertdueclinic = asm3.configuration.alert_species_due_clinic(dbo)
-    # alerturgentwl = asm3.configuration.alert_species_urgent_wl(dbo)
-    # alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
-    # alertduedon = asm3.configuration.alert_species_due_don(dbo)
-    # alertendtrial = asm3.configuration.alert_species_end_trial(dbo)
-    # alertdocunsigned = asm3.configuration.alert_species_doc_unsigned(dbo)
-    # alertdocsigned = asm3.configuration.alert_species_doc_signed(dbo)
-    # alertopencheckout = asm3.configuration.alert_species_open_checkout(dbo)
-    # alertlongrsv = asm3.configuration.alert_species_long_rsv(dbo)
-    # alertholdtoday = asm3.configuration.alert_species_hold_today(dbo)
-    # alertinform = asm3.configuration.alert_species_incoming_form(dbo)
-    # alertacunfine = asm3.configuration.alert_species_ac_unfine(dbo)
-    # alertacundisp = asm3.configuration.alert_species_ac_undisp(dbo)
-    # alertacuncomp = asm3.configuration.alert_species_ac_uncomp(dbo)
-    # alertacfoll = asm3.configuration.alert_species_ac_foll(dbo)
-    # alerttlover = asm3.configuration.alert_species_tl_over(dbo)
-    # alertstexpsoon = asm3.configuration.alert_species_st_exp_soon(dbo)
-    # alertstlowbal = asm3.configuration.alert_species_st_low_bal(dbo)
-    # alertsgloballows = asm3.configuration.alert_species_global_lows(dbo)
-    # alertstrnodrv = asm3.configuration.alert_species_tr_nodrv(dbo)
-    # alertpublish = asm3.configuration.alert_species_publish(dbo)
+    alertexpvacc = asm3.configuration.alert_species_exp_vacc(dbo)
+    alertduetest = asm3.configuration.alert_species_due_test(dbo)
+    alertduemed = asm3.configuration.alert_species_due_med(dbo)
+    alertboardintoday = asm3.configuration.alert_species_board_in_today(dbo)
+    alertboardouttoday = asm3.configuration.alert_species_board_in_today(dbo)
+    alertdueclinic = asm3.configuration.alert_species_due_clinic(dbo)
+    alerturgentwl = asm3.configuration.alert_species_urgent_wl(dbo)
+    alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
+    alertduedon = asm3.configuration.alert_species_due_don(dbo)
+    alertendtrial = asm3.configuration.alert_species_end_trial(dbo)
+    alertdocunsigned = asm3.configuration.alert_species_doc_unsigned(dbo)
+    alertdocsigned = asm3.configuration.alert_species_doc_signed(dbo)
+    alertopencheckout = asm3.configuration.alert_species_open_checkout(dbo)
+    alertlongrsv = asm3.configuration.alert_species_long_rsv(dbo)
+    alertholdtoday = asm3.configuration.alert_species_hold_today(dbo)
+    alertinform = asm3.configuration.alert_species_incoming_form(dbo)
+    alertacunfine = asm3.configuration.alert_species_ac_unfine(dbo)
+    alertacundisp = asm3.configuration.alert_species_ac_undisp(dbo)
+    alertacuncomp = asm3.configuration.alert_species_ac_uncomp(dbo)
+    alertacfoll = asm3.configuration.alert_species_ac_foll(dbo)
+    alerttlover = asm3.configuration.alert_species_tl_over(dbo)
+    alertstexpsoon = asm3.configuration.alert_species_st_exp_soon(dbo)
+    alertstlowbal = asm3.configuration.alert_species_st_low_bal(dbo)
+    alertsgloballows = asm3.configuration.alert_species_global_lows(dbo)
+    alertstrnodrv = asm3.configuration.alert_species_tr_nodrv(dbo)
+    alertpublish = asm3.configuration.alert_species_publish(dbo)
 
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (Archived = 0 OR ActiveMovementType = 2)"
@@ -1586,24 +1586,24 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "av1.DateExpires  >= %(oneyear)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
             "0 = (SELECT COUNT(*) FROM animalvaccination av2 WHERE av2.AnimalID = av1.AnimalID AND " \
-            "av2.ID <> av1.ID AND av2.DateRequired >= av1.DateOfVaccination AND av2.VaccinationID = av1.VaccinationID)) AS expvacc," \
+            "av2.ID <> av1.ID AND av2.DateRequired >= av1.DateOfVaccination AND av2.VaccinationID = av1.VaccinationID) AND SpeciesID IN ( %(alertexpvacc)s )) AS expvacc," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived=0 %(locfilter)s AND SpeciesID IN ( %(alertnevervacc)s ) AND " \
             "NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=animal.ID AND DateOfVaccination Is Not Null)) AS nevervacc," \
         "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateOfTest Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duetest," \
+            "DateRequired >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND SpeciesID IN ( %(alertduetest)s )) AS duetest," \
         "(SELECT COUNT(*) FROM animalmedicaltreatment INNER JOIN animal ON animal.ID = animalmedicaltreatment.AnimalID " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateGiven Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duemed," \
-        "(SELECT COUNT(*) FROM animalboarding WHERE InDateTime >= %(today)s AND InDateTime < %(tomorrow)s) AS boardintoday, " \
-        "(SELECT COUNT(*) FROM animalboarding WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s) AS boardouttoday, " \
-        "(SELECT COUNT(*) FROM clinicappointment WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s) AS dueclinic," \
+            "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND SpeciesID IN ( %(alertduemed)s )) AS duemed," \
+        "(SELECT COUNT(*) FROM animalboarding WHERE InDateTime >= %(today)s AND InDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardintoday)s )) AS boardintoday, " \
+        "(SELECT COUNT(*) FROM animalboarding WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardouttoday)s )) AS boardouttoday, " \
+        "(SELECT COUNT(*) FROM clinicappointment WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s AND SpeciesID IN ( %(alertdueclinic)s )) AS dueclinic," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
-            "WHERE Urgency = 1 AND DateRemovedFromList Is Null) AS urgentwl," \
+            "WHERE Urgency = 1 AND DateRemovedFromList Is Null AND SpeciesID IN ( %(alerturgentwl)s )) AS urgentwl," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID WHERE " \
             "MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0) AS rsvhck," \
         "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE DateDue <= %(today)s AND Date Is Null) AS duedon," \
@@ -1660,7 +1660,14 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
                 "alertneuter": alertneuter, 
                 "alertnevervacc": alertnevervacc, 
                 "alertrabies": alertrabies,
-                "alertduevacc": alertduevacc
+                "alertduevacc": alertduevacc,
+                "alertexpvacc": alertexpvacc,
+                "alertduetest": alertduetest,
+                "alertduemed": alertduemed,
+                "alertboardintoday": alertboardintoday,
+                "alertboardouttoday": alertboardouttoday,
+                "alertdueclinic": alertdueclinic,
+                "alerturgentwl": alerturgentwl
                 }
     return dbo.query_cache(sql, age=age)
 

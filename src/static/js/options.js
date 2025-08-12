@@ -693,6 +693,14 @@ $(function() {
                         { id: "alertrabies", post_field: "AlertSpeciesRabies", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
 
                         { id: "alertduevacc", post_field: "AlertSpeciesDueVacc", label: _("Show an alert when these species of animals have a vaccination due"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertexpvacc", post_field: "AlertSpeciesExpVacc", label: _("Show an alert when these species of animals have an expired vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertduetest", post_field: "AlertSpeciesDueTest", label: _("Show an alert when these species of animals have a test due"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertduemed", post_field: "AlertSpeciesDueMed", label: _("Show an alert when these species of animals have a medical treatment due"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertduemed", post_field: "AlertSpeciesDueMed", label: _("Show an alert when these species of animals have a medical treatment due"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertboardintoday", post_field: "AlertSpeciesBoardInToday", label: _("Show an alert when these species of animals have are due to board"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertboardouttoday", post_field: "AlertSpeciesBoardOutToday", label: _("Show an alert when these species of animals are due to end their boarding"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertdueclinic", post_field: "AlertSpeciesBoardOutToday", label: _("Show an alert when these species of animals are have a clinic appointment"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alerturgentwl", post_field: "AlertSpeciesUrgentWL", label: _("Show an alert when these species of animals are are marked as urgent on the waiting list"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
 
 
                         { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Stats") + '</p>' },
