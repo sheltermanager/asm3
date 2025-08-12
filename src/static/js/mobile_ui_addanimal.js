@@ -147,12 +147,10 @@ const mobile_ui_addanimal = {
             mobile.ajax_post(
                 formdata, 
                 function(response) {
-                    if (response.responseText) {
-                        $("#addanimal-submit .spinner-border").hide();
-                    } else {
+                    $("#addanimal-submit .spinner-border").hide();
+                    if (!response.responseText) {
                         let a = jQuery.parseJSON(response);
                         controller.animals.push(a);
-                        // TODO: This needs to point to mobile_ui_animal instead
                         mobile_ui_animal.render(a);
                         mobile_ui_animal.render_shelteranimalslist();
                         $(".container").hide();
