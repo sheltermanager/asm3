@@ -109,33 +109,35 @@ DEFAULTS = {
     "AlertSpeciesACFoll": "1,2",
     "AlertSpeciesACUncomp": "1,2",
     "AlertSpeciesACUndisp": "1,2",
-    "AlertSpeciesACUnfine": "1,2",
+    "AlertACUnfine": "Yes",
     "AlertSpeciesBoardInToday": "1,2",
     "AlertSpeciesBoardOutToday": "1,2",
-    "AlertSpeciesDocSigned": "1,2",
-    "AlertSpeciesDocUnsigned": "1,2",
+    "AlertDocSigned": "Yes",
+    "AlertDocUnsigned": "Yes",
     "AlertSpeciesEndTrial": "1,2",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesDueClinic": "1,2",
-    "AlertSpeciesDueDon": "1,2",
+    "AlertDueDon": "Yes",
     "AlertSpeciesDueMed": "1,2",
     "AlertSpeciesDueTest": "1,2",
     "AlertSpeciesDueVacc": "1,2",
     "AlertSpeciesExpVacc": "1,2",
-    "AlertSpeciesGlobalLows": "1,2", # Not animal related - to sort
+    "AlertGlobalLows": "1,2", 
     "AlertSpeciesHoldToday": "1,2",
-    "AlertSpeciesIncomingForm": "1,2",
+    "AlertIncomingForm": "Yes",
     "AlertSpeciesLongRsv": "1,2",
+    "AlertSpeciesLongTerm": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesNeverVacc": "1,2",
-    "AlertSpeciesOpenCheckout": "1,2",
-    "AlertSpeciesPublish": "1,2",
+    "AlertOpenCheckout": "Yes",
+    "AlertPublish": "Yes",
     "AlertSpeciesRabies": "1,2",
     "AlertSpeciesRsvHck": "1,2",
-    "AlertSpeciesSTExpSoon": "1,2",
-    "AlertSpeciesSTLowBal": "1,2",
-    "AlertSpeciesTLOver": "1,2",
-    "AlertSpeciesTRNoDrv": "1,2",
+    "AlertSTExpired": "Yes",
+    "AlertSTExpSoon": "Yes",
+    "AlertSTLowBal": "Yes",
+    "AlertTLOver": "Yes",
+    "AlertTRNoDrv": "Yes",
     "AlertSpeciesUrgentWL": "1,2",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
@@ -709,8 +711,8 @@ def alert_species_ac_undisp(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_ac_unfine(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesACUnfine", DEFAULTS["AlertSpeciesACUnfine"])
+def alert_ac_unfine(dbo: Database) -> str:
+    s = cstring(dbo, "AlertACUnfine", DEFAULTS["AlertACUnfine"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
@@ -724,14 +726,14 @@ def alert_species_board_out_today(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_doc_signed(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesDocSigned", DEFAULTS["AlertSpeciesDocSigned"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_doc_signed(dbo: Database) -> str:
+    s = cstring(dbo, "AlertDocSigned", DEFAULTS["AlertDocSigned"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_doc_unsigned(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesDocUnsigned", DEFAULTS["AlertSpeciesDocUnsigned"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_doc_unsigned(dbo: Database) -> str:
+    s = cstring(dbo, "AlertDocUnsigned", DEFAULTS["AlertDocUnsigned"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_species_due_clinic(dbo: Database) -> str:
@@ -739,9 +741,9 @@ def alert_species_due_clinic(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_due_don(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesDueDon", DEFAULTS["AlertSpeciesDueDon"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_due_don(dbo: Database) -> str:
+    s = cstring(dbo, "AlertDueDon", DEFAULTS["AlertDueDon"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_species_due_med(dbo: Database) -> str:
@@ -759,34 +761,44 @@ def alert_species_due_vacc(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_global_lows(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesGlobalLows", DEFAULTS["AlertSpeciesGlobalLows"])
+def alert_global_lows(dbo: Database) -> str:
+    s = cstring(dbo, "AlertGlobalLows", DEFAULTS["AlertGlobalLows"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
+    return s
+
+def alert_species_lng_term(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSpeciesLongTerm", DEFAULTS["AlertSpeciesLongTerm"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_publish(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesPublish", DEFAULTS["AlertSpeciesPublish"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_publish(dbo: Database) -> str:
+    s = cstring(dbo, "AlertPublish", DEFAULTS["AlertPublish"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_st_exp_soon(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesSTExpSoon", DEFAULTS["AlertSpeciesSTExpSoon"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_st_exp_soon(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSTExpSoon", DEFAULTS["AlertSTExpSoon"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_st_low_bal(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesSTLowBal", DEFAULTS["AlertSpeciesSTLowBal"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_st_expired(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSTExpired", DEFAULTS["AlertSTExpired"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_tl_over(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesTLOver", DEFAULTS["AlertSpeciesTLOver"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_st_low_bal(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSTLowBal", DEFAULTS["AlertSTLowBal"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_tr_nodrv(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesTRNoDrv", DEFAULTS["AlertSpeciesTRNoDrv"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_tl_over(dbo: Database) -> str:
+    s = cstring(dbo, "AlertTLOver", DEFAULTS["AlertTLOver"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
+    return s
+
+def alert_tr_nodrv(dbo: Database) -> str:
+    s = cstring(dbo, "AlertTRNoDrv", DEFAULTS["AlertTRNoDrv"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_species_end_trial(dbo: Database) -> str:
@@ -804,9 +816,9 @@ def alert_species_hold_today(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_incoming_form(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesIncomingForm", DEFAULTS["AlertSpeciesIncomingForm"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_incoming_form(dbo: Database) -> str:
+    s = cstring(dbo, "AlertIncomingForm", DEFAULTS["AlertIncomingForm"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_species_long_rsv(dbo: Database) -> str:
@@ -829,9 +841,9 @@ def alert_species_neuter(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_open_checkout(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesOpenCheckout", DEFAULTS["AlertSpeciesOpenCheckout"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_open_checkout(dbo: Database) -> str:
+    s = cstring(dbo, "AlertOpenCheckout", DEFAULTS["AlertOpenCheckout"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_species_rabies(dbo: Database) -> str:

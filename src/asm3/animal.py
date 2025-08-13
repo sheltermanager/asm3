@@ -1555,24 +1555,26 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertdueclinic = asm3.configuration.alert_species_due_clinic(dbo)
     alerturgentwl = asm3.configuration.alert_species_urgent_wl(dbo)
     alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
-    alertduedon = asm3.configuration.alert_species_due_don(dbo)
+    alertduedon = asm3.configuration.alert_due_don(dbo)
     alertendtrial = asm3.configuration.alert_species_end_trial(dbo)
-    alertdocunsigned = asm3.configuration.alert_species_doc_unsigned(dbo)
-    alertdocsigned = asm3.configuration.alert_species_doc_signed(dbo)
-    alertopencheckout = asm3.configuration.alert_species_open_checkout(dbo)
+    alertdocunsigned = asm3.configuration.alert_doc_unsigned(dbo)
+    alertdocsigned = asm3.configuration.alert_doc_signed(dbo)
+    alertopencheckout = asm3.configuration.alert_open_checkout(dbo)
     alertlongrsv = asm3.configuration.alert_species_long_rsv(dbo)
     alertholdtoday = asm3.configuration.alert_species_hold_today(dbo)
-    alertinform = asm3.configuration.alert_species_incoming_form(dbo)
-    alertacunfine = asm3.configuration.alert_species_ac_unfine(dbo)
+    alertinform = asm3.configuration.alert_incoming_form(dbo)
+    alertacunfine = asm3.configuration.alert_ac_unfine(dbo)
     alertacundisp = asm3.configuration.alert_species_ac_undisp(dbo)
     alertacuncomp = asm3.configuration.alert_species_ac_uncomp(dbo)
     alertacfoll = asm3.configuration.alert_species_ac_foll(dbo)
-    alerttlover = asm3.configuration.alert_species_tl_over(dbo)
-    alertstexpsoon = asm3.configuration.alert_species_st_exp_soon(dbo)
-    alertstlowbal = asm3.configuration.alert_species_st_low_bal(dbo)
-    alertsgloballows = asm3.configuration.alert_species_global_lows(dbo)
-    alertstrnodrv = asm3.configuration.alert_species_tr_nodrv(dbo)
-    alertpublish = asm3.configuration.alert_species_publish(dbo)
+    alerttlover = asm3.configuration.alert_tl_over(dbo)
+    alertstexpsoon = asm3.configuration.alert_st_exp_soon(dbo)
+    alertstexp = asm3.configuration.alert_st_expired(dbo)
+    alertstlowbal = asm3.configuration.alert_st_low_bal(dbo)
+    alertgloballows = asm3.configuration.alert_global_lows(dbo)
+    alerttrnodrv = asm3.configuration.alert_tr_nodrv(dbo)
+    alertlngterm = asm3.configuration.alert_species_lng_term(dbo)
+    alertpublish = asm3.configuration.alert_publish(dbo)
 
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (Archived = 0 OR ActiveMovementType = 2)"
@@ -1599,24 +1601,31 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateGiven Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND SpeciesID IN ( %(alertduemed)s )) AS duemed," \
-        "(SELECT COUNT(*) FROM animalboarding WHERE InDateTime >= %(today)s AND InDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardintoday)s )) AS boardintoday, " \
-        "(SELECT COUNT(*) FROM animalboarding WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardouttoday)s )) AS boardouttoday, " \
-        "(SELECT COUNT(*) FROM clinicappointment WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s AND SpeciesID IN ( %(alertdueclinic)s )) AS dueclinic," \
+        "(SELECT COUNT(*) FROM animalboarding " \
+            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
+            "WHERE InDateTime >= %(today)s AND InDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardintoday)s )) AS boardintoday, " \
+        "(SELECT COUNT(*) FROM animalboarding " \
+            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
+            "WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardouttoday)s )) AS boardouttoday, " \
+        "(SELECT COUNT(*) FROM clinicappointment " \
+            "INNER JOIN animal ON clinicappointment.AnimalID = animal.ID " \
+            "WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s AND SpeciesID IN ( %(alertdueclinic)s )) AS dueclinic," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
             "WHERE Urgency = 1 AND DateRemovedFromList Is Null AND SpeciesID IN ( %(alerturgentwl)s )) AS urgentwl," \
-        "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID WHERE " \
-            "MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0) AS rsvhck," \
-        "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE DateDue <= %(today)s AND Date Is Null) AS duedon," \
+        "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID  " \
+            "INNER JOIN animal ON adoption.AnimalID = animal.ID " \
+            "WHERE MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0 AND SpeciesID IN ( %(alertrsvhck)s )) AS rsvhck," \
+        "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE '%(alertduedon)s' = 'Yes' AND DateDue <= %(today)s AND Date Is Null) AS duedon," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID = adoption.AnimalID WHERE " \
-            "DeceasedDate Is Null AND IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s) AS endtrial," \
-        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%') - " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%') AS docunsigned, " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%') AS docsigned, " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'AC01%%') - " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'AC02%%') AS opencheckout, " \
+            "DeceasedDate Is Null AND IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s AND SpeciesID IN ( %(alerturgentwl)s )) AS endtrial," \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%' AND '%(alertdocunsigned)s' = 'Yes') - " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%' AND '%(alertdocunsigned)s' = 'Yes') AS docunsigned, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%' AND '%(alertdocsigned)s' = 'Yes') AS docsigned, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'AC01%%' AND '%(alertopencheckout)s' = 'Yes') - " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'AC02%%' AND '%(alertopencheckout)s' = 'Yes') AS opencheckout, " \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE " \
             "Archived = 0 AND DeceasedDate Is Null AND ReservationDate Is Not Null AND ReservationDate <= %(oneweek)s " \
-            "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null) AS longrsv," \
+            "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null AND SpeciesID IN ( %(alertlongrsv)s )) AS longrsv," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Neutered = 0 AND ActiveMovementType = 1 AND " \
             "ActiveMovementDate > %(onemonth)s %(locfilter)s AND SpeciesID IN ( %(alertneuter)s ) ) AS notneu," \
@@ -1627,24 +1636,24 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND IsNotAvailableForAdoption = 1 %(locfilter)s) AS notadopt, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 %(locfilter)s AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s) AS holdtoday, " \
-        "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming) AS inform, " \
-        "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null) AS acunfine, " \
-        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null) AS acundisp, " \
-        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null) AS acuncomp, " \
+            "WHERE Archived = 0 %(locfilter)s AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s AND SpeciesID IN ( %(alertholdtoday)s )) AS holdtoday, " \
+        "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming WHERE '%(alertinform)s' = 'Yes') AS inform, " \
+        "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null AND '%(alertacunfine)s' = 'Yes') AS acunfine, " \
+        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null AND SpeciesID IN ( %(alertacundisp)s )) AS acundisp, " \
+        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND SpeciesID IN ( %(alertacuncomp)s )) AS acuncomp, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE (" \
             "(FollowupDateTime Is Not Null AND FollowupDateTime <= %(endoftoday)s AND NOT FollowupComplete = 1) OR " \
             "(FollowupDateTime2 Is Not Null AND FollowupDateTime2 <= %(endoftoday)s AND NOT FollowupComplete2 = 1) OR " \
-            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(endoftoday)s) AND NOT FollowupComplete3 = 1)) AS acfoll, " \
-        "(SELECT COUNT(*) FROM ownertraploan WHERE ReturnDueDate Is Not Null AND ReturnDueDate <= %(today)s AND ReturnDate Is Null) AS tlover, " \
-        "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry > %(today)s AND Expiry <= %(futuremonth)s) AS stexpsoon, " \
-        "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
-        "(SELECT COUNT(*) FROM stocklevel WHERE Balance < Low) AS stlowbal, " \
-        "(SELECT COUNT(*) FROM product WHERE (SELECT SUM(stocklevel.Balance) FROM stocklevel WHERE stocklevel.ProductID = product.ID) <= product.GlobalMinimum) AS globallows, " \
-        "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
+            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(endoftoday)s) AND NOT FollowupComplete3 = 1 AND SpeciesID IN ( %(alertacfoll)s ))) AS acfoll, " \
+        "(SELECT COUNT(*) FROM ownertraploan WHERE '%(alerttlover)s' = 'Yes' AND ReturnDueDate Is Not Null AND ReturnDueDate <= %(today)s AND ReturnDate Is Null) AS tlover, " \
+        "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry > %(today)s AND Expiry <= %(futuremonth)s AND '%(alertstexpsoon)s' = 'Yes') AS stexpsoon, " \
+        "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s AND '%(alertstexp)s' = 'Yes') AS stexp, " \
+        "(SELECT COUNT(*) FROM stocklevel WHERE Balance < Low AND '%(alertstlowbal)s' = 'Yes') AS stlowbal, " \
+        "(SELECT COUNT(*) FROM product WHERE (SELECT SUM(stocklevel.Balance) FROM stocklevel WHERE stocklevel.ProductID = product.ID) <= product.GlobalMinimum AND '%(alertgloballows)s' = 'Yes') AS globallows, " \
+        "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10 AND '%(alerttrnodrv)s' = 'Yes') AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s) AS lngterm, " \
-        "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
+            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
+        "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s AND '%(alertpublish)s' = 'Yes') AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, 
                "endoftoday": endoftoday, 
@@ -1667,7 +1676,28 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
                 "alertboardintoday": alertboardintoday,
                 "alertboardouttoday": alertboardouttoday,
                 "alertdueclinic": alertdueclinic,
-                "alerturgentwl": alerturgentwl
+                "alerturgentwl": alerturgentwl,
+                "alertrsvhck": alertrsvhck,
+                "alertduedon": alertduedon,
+                "alertendtrial": alertendtrial,
+                "alertdocunsigned": alertdocunsigned,
+                "alertdocsigned": alertdocsigned,
+                "alertopencheckout": alertopencheckout,
+                "alertlongrsv": alertlongrsv,
+                "alertholdtoday": alertholdtoday,
+                "alertinform": alertinform,
+                "alertacunfine": alertacunfine,
+                "alertacundisp": alertacundisp,
+                "alertacuncomp": alertacuncomp,
+                "alertacfoll": alertacfoll,
+                "alerttlover": alerttlover,
+                "alertstexpsoon": alertstexpsoon,
+                "alertstexp": alertstexp,
+                "alertstlowbal": alertstlowbal,
+                "alertgloballows": alertgloballows,
+                "alerttrnodrv": alerttrnodrv,
+                "alertlngterm": alertlngterm,
+                "alertpublish": alertpublish
                 }
     return dbo.query_cache(sql, age=age)
 
