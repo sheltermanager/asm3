@@ -1036,10 +1036,6 @@ class mobile(ASMEndpoint):
         asm3.al.debug("mobile for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile", dbo)
         
         userdata = asm3.users.get_user(dbo, o.user)
-        # if userdata["OWNERID"]:
-        #     rotadata = asm3.person.get_rota(dbo, today(), add_days(today(), 7), userdata["OWNERID"])
-        # else:
-        #     rotadata = False
         
         rotadata = []
         if userdata["OWNERID"]:
