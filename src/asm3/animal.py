@@ -1552,7 +1552,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertduemed = asm3.configuration.alert_due_med(dbo)
     alertboardintoday = asm3.configuration.alert_board_in_today(dbo)
     alertboardouttoday = asm3.configuration.alert_board_out_today(dbo)
-    alertdueclinic = asm3.configuration.alert_species_due_clinic(dbo)
+    alertdueclinic = asm3.configuration.alert_due_clinic(dbo)
     alerturgentwl = asm3.configuration.alert_species_urgent_wl(dbo)
     alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
     alertduedon = asm3.configuration.alert_due_don(dbo)
@@ -1607,7 +1607,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s AND '%(alertboardouttoday)s' = 'Yes') AS boardouttoday, " \
         "(SELECT COUNT(*) FROM clinicappointment " \
             "INNER JOIN animal ON clinicappointment.AnimalID = animal.ID " \
-            "WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s AND SpeciesID IN ( %(alertdueclinic)s )) AS dueclinic," \
+            "WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s AND '%(alertdueclinic)s' = 'Yes') AS dueclinic," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
             "WHERE Urgency = 1 AND DateRemovedFromList Is Null AND SpeciesID IN ( %(alerturgentwl)s )) AS urgentwl," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID  " \

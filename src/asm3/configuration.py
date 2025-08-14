@@ -116,7 +116,7 @@ DEFAULTS = {
     "AlertDocUnsigned": "Yes",
     "AlertSpeciesEndTrial": "1,2",
     "AlertSpeciesMicrochip": "1,2",
-    "AlertSpeciesDueClinic": "1,2",
+    "AlertDueClinic": "Yes",
     "AlertDueDon": "Yes",
     "AlertDueMed": "Yes",
     "AlertDueTest": "Yes",
@@ -736,9 +736,9 @@ def alert_doc_unsigned(dbo: Database) -> str:
     if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_due_clinic(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesDueClinic", DEFAULTS["AlertSpeciesDueClinic"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_due_clinic(dbo: Database) -> str:
+    s = cstring(dbo, "AlertDueClinic", DEFAULTS["AlertDueClinic"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_due_don(dbo: Database) -> str:
