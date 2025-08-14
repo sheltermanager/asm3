@@ -185,6 +185,7 @@ additional = {
             if (f.NEWRECORD == 1) {
                 add.push(additional.render_field(f, includeids, classes, true));
                 if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
+                    // This ajax response will be coming back after render has completed and then re inserted into the DOM
                     let formdata = { "mode": "nextid", "afid": f.ID };
                     common.ajax_post("additional", formdata, function(response) {
                         $("#add_" + f.ID).val(response);
@@ -555,10 +556,7 @@ additional = {
         else if (f.FIELDTYPE == additional.TIME) { return tableform.render_time(v); }
         else if (f.FIELDTYPE == additional.NOTES) { v.classes += " asm-textareafixed"; return tableform.render_textarea(v); }
         else if (f.FIELDTYPE == additional.NUMBER) { return tableform.render_number(v); }
-        else if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
-            v.readonly = true;
-            return tableform.render_number(v);
-        }
+        else if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) { v.readonly = true; return tableform.render_number(v); }
         else if (f.FIELDTYPE == additional.MONEY) { return tableform.render_currency(v); }
         else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) { return tableform.render_animal(v); }
         else if (f.FIELDTYPE == additional.PERSON_LOOKUP) { return tableform.render_person(v); }
