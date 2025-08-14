@@ -1548,10 +1548,10 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertrabies = asm3.configuration.alert_species_rabies(dbo)
     alertduevacc = asm3.configuration.alert_species_due_vacc(dbo)
     alertexpvacc = asm3.configuration.alert_species_exp_vacc(dbo)
-    alertduetest = asm3.configuration.alert_species_due_test(dbo)
-    alertduemed = asm3.configuration.alert_species_due_med(dbo)
-    alertboardintoday = asm3.configuration.alert_species_board_in_today(dbo)
-    alertboardouttoday = asm3.configuration.alert_species_board_in_today(dbo)
+    alertduetest = asm3.configuration.alert_due_test(dbo)
+    alertduemed = asm3.configuration.alert_due_med(dbo)
+    alertboardintoday = asm3.configuration.alert_board_in_today(dbo)
+    alertboardouttoday = asm3.configuration.alert_board_out_today(dbo)
     alertdueclinic = asm3.configuration.alert_species_due_clinic(dbo)
     alerturgentwl = asm3.configuration.alert_species_urgent_wl(dbo)
     alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
@@ -1595,18 +1595,16 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateOfTest Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND SpeciesID IN ( %(alertduetest)s )) AS duetest," \
+            "DateRequired >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND '%(alertduetest)s' = 'Yes') AS duetest," \
         "(SELECT COUNT(*) FROM animalmedicaltreatment INNER JOIN animal ON animal.ID = animalmedicaltreatment.AnimalID " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateGiven Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND SpeciesID IN ( %(alertduemed)s )) AS duemed," \
+            "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND '%(alertduemed)s' = 'Yes') AS duemed," \
         "(SELECT COUNT(*) FROM animalboarding " \
-            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
-            "WHERE InDateTime >= %(today)s AND InDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardintoday)s )) AS boardintoday, " \
+            "WHERE InDateTime >= %(today)s AND InDateTime < %(tomorrow)s AND '%(alertboardintoday)s' = 'Yes') AS boardintoday, " \
         "(SELECT COUNT(*) FROM animalboarding " \
-            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
-            "WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s AND SpeciesID IN ( %(alertboardouttoday)s )) AS boardouttoday, " \
+            "WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s AND '%(alertboardouttoday)s' = 'Yes') AS boardouttoday, " \
         "(SELECT COUNT(*) FROM clinicappointment " \
             "INNER JOIN animal ON clinicappointment.AnimalID = animal.ID " \
             "WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s AND SpeciesID IN ( %(alertdueclinic)s )) AS dueclinic," \

@@ -110,16 +110,16 @@ DEFAULTS = {
     "AlertSpeciesACUncomp": "1,2",
     "AlertSpeciesACUndisp": "1,2",
     "AlertACUnfine": "Yes",
-    "AlertSpeciesBoardInToday": "1,2",
-    "AlertSpeciesBoardOutToday": "1,2",
+    "AlertBoardInToday": "Yes",
+    "AlertBoardOutToday": "Yes",
     "AlertDocSigned": "Yes",
     "AlertDocUnsigned": "Yes",
     "AlertSpeciesEndTrial": "1,2",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesDueClinic": "1,2",
     "AlertDueDon": "Yes",
-    "AlertSpeciesDueMed": "1,2",
-    "AlertSpeciesDueTest": "1,2",
+    "AlertDueMed": "Yes",
+    "AlertDueTest": "Yes",
     "AlertSpeciesDueVacc": "1,2",
     "AlertSpeciesExpVacc": "1,2",
     "AlertGlobalLows": "1,2", 
@@ -713,17 +713,17 @@ def alert_species_ac_undisp(dbo: Database) -> str:
 
 def alert_ac_unfine(dbo: Database) -> str:
     s = cstring(dbo, "AlertACUnfine", DEFAULTS["AlertACUnfine"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_board_in_today(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesBoardInToday", DEFAULTS["AlertSpeciesBoardInToday"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_board_in_today(dbo: Database) -> str:
+    s = cstring(dbo, "AlertBoardInToday", DEFAULTS["AlertBoardInToday"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_board_out_today(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesBoardOutToday", DEFAULTS["AlertSpeciesBoardOutToday"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_board_out_today(dbo: Database) -> str:
+    s = cstring(dbo, "AlertBoardOutToday", DEFAULTS["AlertBoardOutToday"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_doc_signed(dbo: Database) -> str:
@@ -746,13 +746,13 @@ def alert_due_don(dbo: Database) -> str:
     if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_due_med(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesDueMed", DEFAULTS["AlertSpeciesDueMed"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_due_med(dbo: Database) -> str:
+    s = cstring(dbo, "AlertDueMed", DEFAULTS["AlertDueMed"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_due_test(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesDueTest", DEFAULTS["AlertSpeciesDueTest"])
+def alert_due_test(dbo: Database) -> str:
+    s = cstring(dbo, "AlertDueTest", DEFAULTS["AlertDueTest"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
