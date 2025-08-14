@@ -138,7 +138,7 @@ DEFAULTS = {
     "AlertSTLowBal": "Yes",
     "AlertTLOver": "Yes",
     "AlertTRNoDrv": "Yes",
-    "AlertSpeciesUrgentWL": "1,2",
+    "AlertUrgentWL": "Yes",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
@@ -856,9 +856,9 @@ def alert_species_rsv_hck(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_urgent_wl(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesUrgentWL", DEFAULTS["AlertSpeciesUrgentWL"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_urgent_wl(dbo: Database) -> str:
+    s = cstring(dbo, "AlertUrgentWL", DEFAULTS["AlertUrgentWL"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def all_diary_home_page(dbo: Database) -> bool:
