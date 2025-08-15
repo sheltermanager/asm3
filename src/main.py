@@ -7001,7 +7001,8 @@ class publish_options(JSONEndpoint):
 class receipt_bulk(JSONEndpoint):
     url = "receipt_bulk"
     js_module = "receipt_bulk"
-    get_permissions = asm3.users.VIEW_DONATION
+    get_permissions = [ asm3.users.VIEW_DONATION, asm3.users.EMAIL_PERSON ]
+    post_permissions = asm3.users.EMAIL_PERSON
 
     def controller(self, o):
         dbo = o.dbo
@@ -7072,7 +7073,6 @@ class receipt_bulk(JSONEndpoint):
                     asm3.log.add_log(dbo, user, asm3.log.PERSON, pid, logtypeid, logmsg)
             except Exception as err:
                 asm3.al.error(f"failed sending message '{subject}' to '{to}': {err}", "automail._send_email_from_template", dbo)
-
         return True
 
 class report(ASMEndpoint):
