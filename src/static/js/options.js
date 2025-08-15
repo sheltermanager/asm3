@@ -699,7 +699,8 @@ $(function() {
                         { id: "alertboardouttoday", post_field: "AlertBoardOutToday", label: _("Show an alert when boarding animals are due to leave"), type: "check" }, 
                         { id: "alertdueclinic", post_field: "AlertDueClinic", label: _("Show an alert when a clinic appointment is due"), type: "check" }, 
 
-                        { id: "alerturgentwl", post_field: "AlertSpeciesUrgentWL", label: _("Show an alert when these species of animals are marked as urgent on the waiting list"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alerturgentwl", post_field: "AlertUrgentWL", label: _("Show an alert when animals are marked as urgent on the waiting list"), type: "check" }, 
+
                         { id: "alertrsvhck", post_field: "AlertSpeciesRsvHck", label: _("Show an alert when these species of animals are reserved but not marked as home checked"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertduedon", post_field: "AlertDueDon", label: _("Show an alert when a payment is due"), type: "check" }, 
                         { id: "alertendtrial", post_field: "AlertSpeciesEndTrial", label: _("Show an alert when these species of animals have passed the end of their trial adoption period"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
