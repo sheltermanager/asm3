@@ -716,7 +716,7 @@ $(function() {
                         { id: "alertstexp", post_field: "AlertSTExpired", label: _("Show an alert when stock has passed it's expiry date"), type: "check" }, 
                         { id: "alertstlowbal", post_field: "AlertSTLowBal", label: _("Show an alert when a stock item has low global balance"), type: "check" }, 
                         { id: "alertstrnodrv", post_field: "AlertTRNoDrv", label: _("Show an alert when an animal transport has no driver assigned"), type: "check" }, 
-                        { id: "alertlngterm", post_field: "AlertLongTerm", label: _("Show an alert when animals are long termers"), type: "check" }, 
+                        { id: "alertlngterm", post_field: "AlertSpeciesLongTerm", label: _("Show an alert when these species of animals are long termers"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check" }, 
                         { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Stats") + '</p>' },
                         { type: "raw", fullrow: true, markup: html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) },

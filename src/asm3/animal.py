@@ -1573,7 +1573,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertstlowbal = asm3.configuration.alert_st_low_bal(dbo)
     alertgloballows = asm3.configuration.alert_global_lows(dbo)
     alerttrnodrv = asm3.configuration.alert_tr_nodrv(dbo)
-    alertlngterm = asm3.configuration.alert_lng_term(dbo)
+    alertlngterm = asm3.configuration.alert_species_lng_term(dbo)
     alertpublish = asm3.configuration.alert_publish(dbo)
 
     if not asm3.configuration.include_off_shelter_medical(dbo):
@@ -1650,7 +1650,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM product WHERE (SELECT SUM(stocklevel.Balance) FROM stocklevel WHERE stocklevel.ProductID = product.ID) <= product.GlobalMinimum AND '%(alertgloballows)s' = 'Yes') AS globallows, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10 AND '%(alerttrnodrv)s' = 'Yes') AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND '%(alertlngterm)s' = 'Yes') AS lngterm, " \
+            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s AND '%(alertpublish)s' = 'Yes') AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, 

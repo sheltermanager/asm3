@@ -126,7 +126,7 @@ DEFAULTS = {
     "AlertHoldToday": "Yes",
     "AlertIncomingForm": "Yes",
     "AlertLongRsv": "Yes",
-    "AlertLongTerm": "Yes",
+    "AlertSpeciesLongTerm": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesNeverVacc": "1,2",
     "AlertOpenCheckout": "Yes",
@@ -766,9 +766,9 @@ def alert_global_lows(dbo: Database) -> str:
     if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_lng_term(dbo: Database) -> str:
-    s = cstring(dbo, "AlertLongTerm", DEFAULTS["AlertLongTerm"])
-    if s == "": return "No" # Always return something due to IN clauses of queries
+def alert_species_lng_term(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSpeciesLongTerm", DEFAULTS["AlertSpeciesLongTerm"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
 def alert_publish(dbo: Database) -> str:
