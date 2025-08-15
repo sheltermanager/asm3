@@ -288,6 +288,7 @@ def validate_movement_form_data(dbo: Database, username: str, post: PostedData) 
     animalid = post.integer("animal")
     retailerid = post.integer("retailer")
     datebroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
+    deceaseddate = dbo.query_date("SELECT DeceasedDate FROM animal WHERE ID = ?", [animalid])
     if datebroughtin is not None: datebroughtin = datebroughtin.replace(hour=0, minute=0, second=0, microsecond=0)
     asm3.al.debug("validating saved movement %d for animal %d" % (movementid, animalid), "movement.validate_movement_form_data", dbo)
     # If we have a date but no type, get rid of it
@@ -349,6 +350,10 @@ def validate_movement_form_data(dbo: Database, username: str, post: PostedData) 
     if movementdate is not None and datebroughtin is not None and movementdate < datebroughtin:
         asm3.al.debug("movement date is before date brought in", "movement.validate_movement_form_data", dbo)
         raise asm3.utils.ASMValidationError(asm3.i18n._("Movement date cannot be before brought in date.", l))
+    # Movement date cannot be after deceased date
+    if movementdate is not None and deceaseddate is not None and movementdate > deceaseddate:
+        asm3.al.debug("movement date is after deceased date", "movement.validate_movement_form_data", dbo)
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Movement date cannot be after deceased date.", l))
     # You can't have a return without a movement
     if movementdate is None and returndate is not None:
         asm3.al.debug("movement is returned without a movement date.", "movement.validate_movement_form_data", dbo)

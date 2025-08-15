@@ -329,10 +329,8 @@ const mobile_ui_animal = {
             });
             formdata.logs = logs.join("^^");
             if (formdata.logs == "") { return; }
-            //header.show_loading(_("Saving..."));
             let response = await common.ajax_post("animal_observations", formdata);
-            //header.hide_loading();
-            //header.show_info(_("{0} observation logs successfully written.").replace("{0}", response));
+            mobile.show_info(_("Daily observations"), _("{0} observation logs successfully written.").replace("{0}", response));
             // Unselect the previously selected values
             $("#content-dailyobs .list-group .widget").val('');
             $("#content-dailyobs .list-group .widget").prop('disabled', true);

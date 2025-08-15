@@ -57,7 +57,7 @@ CACHE_PROTECT_METHODS = {
     "animal_thumbnail": [ "animalid", "seq", "d" ],
     "animal_view": [ "animalid", "template" ],
     "animal_view_adoptable_js": [], 
-    "animal_view_adoptable_html": [],
+    "animal_view_adoptable_html": [ "template" ],
     "checkout": [ "processor", "payref" ],
     # "checkout_adoption" - write method
     # "checkout_licence" - write method

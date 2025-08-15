@@ -23,8 +23,14 @@ READABLE_FIELDS = {
     "additionalfield": [ "FIELDNAME" ],
     "animal":       [ "ANIMALNAME", "SHELTERCODE", "SHORTCODE" ],
     "customreport": [ "TITLE" ],
+    "medicalprofile": [ "PROFILENAME" ],
+    "onlineform":   [ "NAME" ],
+    "onlineformfield": [ "FIELDNAME" ],
     "owner":        [ "OWNERNAME" ],
+    "ownertraploan": [ "TRAPNUMBER" ],
+    "product":      [ "PRODUCTNAME" ],
     "role":         [ "ROLENAME" ],
+    "stocklevel":   [ "NAME" ],
     "users":        [ "USERNAME", "REALNAME" ]
 }
 
@@ -61,7 +67,7 @@ def get_parent_links(row: ResultRow, tablename: str = "") -> str:
 def get_readable_fields_for_table(tablename: str) -> List[str]:
     """
     Given a tablename, returns the list of fields that are human readable and can
-    be supplied to the ref argument of map_diff
+    be supplied to the ref argument of map_diff by the caller (typically Database.update())
     """
     if tablename in READABLE_FIELDS:
         return READABLE_FIELDS[tablename]
@@ -133,7 +139,8 @@ def get_deletions(dbo: Database, days: int = 0) -> Results:
     if days > 0:
         datefilter = " AND Date >= %s " % dbo.sql_date(dbo.today(offset = -1 * days))
     rows = dbo.query("SELECT ID, TableName, DeletedBy, Date, IDList FROM deletion WHERE TableName IN " \
-        "('animal', 'animalcontrol', 'animalfound', 'animallost', 'customreport', 'onlineformincoming', " \
+        "('animal', 'animalcontrol', 'animalfound', 'animallost', 'customreport', 'dbfs', " \
+        "'onlineform', 'onlineformfield', 'onlineformincoming', " \
         f"'owner', 'templatedocument', 'templatehtml', 'waitinglist') {datefilter}")
     for r in rows:
         r["KEY"] = "%s:%s" % (r.TABLENAME, r.ID)

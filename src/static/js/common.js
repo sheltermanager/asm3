@@ -1420,7 +1420,7 @@ const format = {
      * correct currency symbol and decimal places.
      */
     currency: function(v, commagroups) {
-        var nv = parseInt(v, 10) / 100,
+        var nv = parseInt(v, 10) / Math.pow(10, asm.currencydp), // Turn whole pence back into decimal amount
             cs = format.decode_html_str(asm.currencysymbol),
             rv = "";
         if (isNaN(nv)) { nv = 0; }
@@ -1459,7 +1459,7 @@ const format = {
     },
 
     currency_to_int: function(c) {
-        var f = format.currency_to_float(c) * 100;
+        var f = format.currency_to_float(c) * Math.pow(10, asm.currencydp); // Turn decimal number into whole pence
         // Adding 0.5 corrects IEEE rounding errors in multiplication
         if (f > 0) { f += 0.5; }
         if (f < 0) { f -= 0.5; }
@@ -1606,17 +1606,22 @@ const format = {
     /**
      * Turns an iso date into a js date. null is returned if iso is undefined/null
      */
-    date_js: function(iso) {
+    date_js: function(iso, excludetime=false) {
         if (!iso) { return null; }
         if (iso instanceof Date) { return iso; } // it's already a js date
         // IE8 and below doesn't support ISO date strings so we have to slice it up ourself
-        var year = parseInt(iso.substring(0, 4), 10),
+        let year = parseInt(iso.substring(0, 4), 10),
             month = parseInt(iso.substring(5, 7), 10) - 1,
             day = parseInt(iso.substring(8, 10), 10),
             hour = parseInt(iso.substring(11, 13), 10),
             minute = parseInt(iso.substring(14, 16), 10),
             second = parseInt(iso.substring(17, 19), 10);
-        var d = new Date(year, month, day, hour, minute, second);
+        if (excludetime) {
+            hour = 0;
+            minute = 0;
+            second = 0;
+        }
+        let d = new Date(year, month, day, hour, minute, second);
         return d;
     },
 

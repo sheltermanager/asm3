@@ -110,7 +110,7 @@ FORM_FIELDS = [
     "emailaddress", "emailaddress2", "idnumber", "idnumber2", "dateofbirth", "dateofbirth2",
     "dateofbirthanimal", "dateofbirthperson", "dateofbirthperson2",
     "excludefrombulkemail", "gdprcontactoptin", "commentsperson", 
-    "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
+    "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", "canafforddonation", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "animalname2", "animalname3", "reserveanimalname", "reserveanimalname2", "reserveanimalname3",
     "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", "healthproblems", 
@@ -716,7 +716,7 @@ def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
     """
     Deletes the specified onlineform and fields
     """
-    dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
+    dbo.delete("onlineformfield", f"OnlineFormID={formid}", username)
     dbo.delete("onlineform", formid, username)
 
 def reindex_onlineform(dbo: Database, username: str, formid: int) -> None:
@@ -1841,6 +1841,7 @@ def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[
         if f.FIELDNAME == "description": d["description"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME == "canafforddonation" and (f.VALUE == "Yes" or f.VALUE == "on"): d["canafforddonation"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "breed" not in d and "breed1" not in d: d["breed"] = guess_breed(dbo, "nomatchesusedefault")
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")

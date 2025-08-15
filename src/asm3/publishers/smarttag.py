@@ -3,89 +3,57 @@ import asm3.configuration
 import asm3.i18n
 import asm3.utils
 
-from .base import FTPPublisher, get_microchip_data
-from asm3.sitedefs import SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD
-from asm3.typehints import Database, PublishCriteria, ResultRow
+from .base import AbstractPublisher, get_microchip_data
+from asm3.sitedefs import SMARTTAG_HOST
+from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
-import os
 import sys
 
-SMARTTAG_PREFIXES = [ '90007400', '900139', '900141', '987' ]
-
-class SmartTagPublisher(FTPPublisher):
+class SmartTagPublisher(AbstractPublisher):
     """
-    Handles publishing to SmartTag PETID
+    Handles updating animal microchips with SmartTag
     """
     def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
-        FTPPublisher.__init__(self, dbo, publishCriteria, 
-            SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD)
+        AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("smarttag", "SmartTag Publisher")
-
-    def stYesNo(self, condition: bool) -> str:
-        """
-        Returns a CSV entry for yes or no based on the condition
-        """
-        if condition:
-            return "\"Y\""
-        else:
-            return "\"N\""
-
-    def stIsSmartTagPrefix(self, chipno: str) -> bool:
-        """
-        Returns true if this is a smart tag chip prefix
-        """
-        for p in SMARTTAG_PREFIXES:
-            if chipno.startswith(p):
-                return True
-        return False
-
+    
     def run(self) -> None:
         
+        self.log("Smart Tag Publisher starting...")
+
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
         self.setLastError("")
         self.setStartPublishing()
 
-        shelterid = asm3.configuration.smarttag_accountid(self.dbo)
-        if shelterid == "":
-            self.setLastError("No SmartTag Account id has been set.")
-            self.cleanup()
+        smarttagapikey = asm3.configuration.smarttag_api_key(self.dbo)
+
+        if smarttagapikey == "":
+            self.setLastError("api key needs to be set for SmartTag publisher")
             return
 
-        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''"] + SMARTTAG_PREFIXES, "smarttag")
+        headers = {
+            "x-api-key": smarttagapikey
+        }
+
+        chipprefix = [ "987", "900139", "900141", "900074" ]
+
+        animals = get_microchip_data(self.dbo, chipprefix, "smarttag", allowintake = False)
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
-            self.cleanup(save_log=False)
             return
         
         # Make sure we don't try to register too many chips
         if self.checkMicrochipLimit(animals): return
 
-        if not self.openFTPSocket(): 
-            self.setLastError("Failed to open FTP socket.")
-            if self.logSearch("530 Login") != -1:
-                self.log("Found 530 Login incorrect: disabling SmartTag publisher.")
-                asm3.configuration.publishers_enabled_disable(self.dbo, "st")
-            self.cleanup()
-            return
-
-        # SmartTag want data files called shelterid_mmddyyyy_HHMMSS.csv in a folder
-        # called shelterid_mmddyyyy_HHMMSS
-        dateportion = asm3.i18n.format_date(asm3.i18n.now(self.dbo.timezone), "%m%d%Y_%H%M%S")
-        folder = "%s_%s" % (shelterid, dateportion)
-        outputfile = "%s_%s.csv" % (shelterid, dateportion)
-        self.mkdir(folder)
-        self.chdir(folder, folder)
-
-        csv = []
-
         anCount = 0
+        processed_animals = []
         for an in animals:
             try:
                 anCount += 1
-                self.log("Processing: %s: %s (%d of %d)" % ( an.SHELTERCODE, an.ANIMALNAME, anCount, len(animals)))
+                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
                 # If the user cancelled, stop now
@@ -93,137 +61,114 @@ class SmartTagPublisher(FTPPublisher):
                     self.stopPublishing()
                     return
 
-                # Upload one image for this animal with the name shelterid_animalid-1.jpg
-                self.uploadImage(an, an.WEBSITEMEDIAID, an.WEBSITEMEDIANAME, "%s_%d-1.jpg" % (shelterid, an.ID))
+                if not self.validate(an): continue
+                fields = self.processAnimal(an)
+                j = asm3.utils.json(fields)
+                url = f"{SMARTTAG_HOST}/pets"
+                self.log("HTTP POST request %s: %s" % (url, j))
+                r = asm3.utils.post_json(url, j, headers=headers)
+                self.log("HTTP response: %s" % r["response"])
 
-                csv.append( self.processAnimal(an, shelterid) )
+                # SmartTag API uses different variable names to store success on dev and production servers but both use the same variable name for errors
+                if asm3.utils.json_parse(r["response"])["summary"]["errors"] == 0: 
+                    self.log("successful response, marking processed")
+                    processed_animals.append(an)
+                    # Mark success in the log
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                else:
+                    self.logError("Problem with data encountered, not marking processed")
 
-                # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
-        # Mark published
-        self.markAnimalsPublished(animals)
+        if len(processed_animals) > 0:
+            self.log("successfully processed %d animals, marking sent" % len(processed_animals))
+            self.markAnimalsPublished(processed_animals)
 
-        header = "accountid,sourcesystem,sourcesystemanimalkey," \
-            "sourcesystemownerkey,signupidassigned,signuptype,signupeffectivedate," \
-            "signupbatchpostdt,feecharged,feecollected,ownerfname,ownermname," \
-            "ownerlname,addressstreetnumber,addressstreetdir,addressstreetname," \
-            "addressstreettype,addresscity,addressstate,addresspostal,addressctry," \
-            "owneremail,owneremail2,owneremail3,ownerhomephone,ownerworkphone," \
-            "ownerthirdphone,petname,species,primarybreed,crossbreed,purebred,gender," \
-            "sterilized,primarycolor,secondcolor,sizecategory,agecategory,declawed," \
-            "animalstatus\n" 
-        self.saveFile(os.path.join(self.publishDir, outputfile), header + "\n".join(csv))
-        self.log("Uploading datafile %s" % outputfile)
-        self.upload(outputfile)
-        self.log("Uploaded %s" % outputfile)
-        self.log("-- FILE DATA --")
-        self.log(header + "\n".join(csv))
-        self.cleanup()
+        self.saveLog()
+        self.setPublisherComplete()
+    
+    def processAnimal(self, an: ResultRow) -> Dict:
+        """ Generate a dictionary of data to post from an animal record """
+        # Sort out breed
+        breed = an["BREEDNAME"]
+        if breed.find("Domestic Long") != -1: breed = "DLH"
+        if breed.find("Domestic Short") != -1: breed = "DSH"
+        if breed.find("Domestic Medium") != -1: breed = "DSLH"
 
-    def processAnimal(self, an: ResultRow, shelterid: str = "") -> str:
-        """ Process an animal record and return a CSV line """
-        reccountry = an.CURRENTOWNERCOUNTRY
-        if reccountry is None or reccountry == "": reccountry = "USA"
-        address = self.splitAddress(an.CURRENTOWNERADDRESS)
-        line = []
-        # accountid
-        line.append("\"%s\"" % shelterid)
-        # sourcesystem
-        line.append("\"ASM\"")
-        # sourcesystemanimalkey (corresponds to image name)
-        line.append("\"%d\"" % an["ID"])
-        # sourcesystemownerkey
-        line.append("\"%s\"" % str(an["CURRENTOWNERID"]))
-        # signupidassigned, signuptype
-        if self.stIsSmartTagPrefix(an["IDENTICHIPNUMBER"]):
-            # if we have a smarttag microchip number, use that instead of the tag
-            # since it's unlikely someone will want both
-            line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
-            line.append("\"IDTAG-LIFETIME\"")
-        else:
-            line.append("\"%s\"" % an["SMARTTAGNUMBER"])
-            sttype = "IDTAG-ANNUAL"
-            if an["SMARTTAGTYPE"] == 1: sttype = "IDTAG-5 YEAR"
-            if an["SMARTTAGTYPE"] == 2: sttype = "IDTAG-LIFETIME"
-            line.append("\"%s\"" % sttype)
-        # signupeffectivedate
-        line.append("\"" + asm3.i18n.python2display(self.locale, an["SMARTTAGDATE"]) + "\"")
-        # signupbatchpostdt - only used by resending mechanism and we don't do that
-        line.append("\"\"")
-        # feecharged
-        line.append("\"\"")
-        # feecollected
-        line.append("\"\"")
-        # ownerfname
-        line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
-        # ownermname
-        line.append("\"\"")
-        #ownerlname
-        line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
-        # addressstreetnumber
-        line.append(address["houseno"])
-        # addressstreetdir
-        line.append("\"\"")
-        # addressstreetname
-        line.append(address["streetname"])
-        # addressstreettype
-        line.append("\"\"")
-        # addresscity
-        line.append("\"%s\"" % an["CURRENTOWNERTOWN"])
-        # addressstate
-        line.append("\"%s\"" % an["CURRENTOWNERCOUNTY"])
-        # addresspostal
-        line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
-        # addressctry
-        line.append("\"%s\"" % reccountry)
-        # owneremail
-        line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
-        # owneremail2
-        line.append("\"\"")
-        # owneremail3
-        line.append("\"\"")
-        # ownerhomephone
-        line.append("\"%s\"" % an["CURRENTOWNERHOMETELEPHONE"])
-        # ownerworkphone
-        line.append("\"%s\"" % an["CURRENTOWNERWORKTELEPHONE"])
-        # ownerthirdphone
-        line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
-        # petname
-        line.append("\"%s\"" % an["ANIMALNAME"])
-        # species
-        line.append("\"%s\"" % an["SPECIESNAME"])
-        # primarybreed
-        line.append("\"%s\"" % an["BREEDNAME1"])
-        # crossbreed (second breed)
-        if an["CROSSBREED"] == 1:
-            line.append("\"%s\"" % an["BREEDNAME2"])
-        else:
-            line.append("\"\"")
-        # purebred
-        line.append("\"%s\"" % self.stYesNo(an["CROSSBREED"] == 0))
-        # gender
-        line.append("\"%s\"" % an["SEXNAME"])
-        # sterilized
-        line.append("\"%s\"" % self.stYesNo(an["NEUTERED"] == 1))
-        # primarycolor
-        line.append("\"%s\"" % an["BASECOLOURNAME"])
-        # secondcolor
-        line.append("\"\"")
-        # sizecategory
-        line.append("\"%s\"" % an["SIZENAME"])
-        # agecategory
-        line.append("\"%s\"" % an["AGEGROUP"])
-        # declawed
-        line.append("\"%s\"" % self.stYesNo(an["DECLAWED"] == 1))
-        # animalstatus (one of DECEASED, ADOPTED or NOT ADOPTED)
-        if an["DECEASEDDATE"] is not None:
-            line.append("\"DECEASED\"")
-        elif an["ACTIVEMOVEMENTTYPE"] == 1 and an["ACTIVEMOVEMENTDATE"] is not None:
-            line.append("\"ADOPTED\"")
-        else:
-            line.append("\"NOT ADOPTED\"")
-        return self.csvLine(line)
+        # Sort out species
+        species = an["SPECIESNAME"]
+        if species.find("Dog") != -1: species = "Canine"
+        elif species.find("Cat") != -1: species = "Feline"
+        elif species.find("Bird") != -1: species = "Avian"
+        elif species.find("Horse") != -1: species = "Equine"
+        elif species.find("Reptile") != -1: species = "Reptilian"
+        else: species = "Other"
+
+        address1 = an["CURRENTOWNERADDRESS"].split("\n")[0]
+        address2 = ""
+        if "\n" in an["CURRENTOWNERADDRESS"]:
+            address2 = an["CURRENTOWNERADDRESS"].split("\n")[1]
+
+        firstname = an["CURRENTOWNERFORENAMES"].split(" ")[0]
+        
+        neutered = "No"
+        if an["NEUTERED"] == 1: neutered = "Yes"
+
+        # Build the POST data
+        ro = {
+            "pets": [
+                {
+                    "microchip_number": an["IDENTICHIPNUMBER"],
+                    "pet_name": an["ANIMALNAME"],
+                    "pet_type": species,
+                    "pet_breed": breed,
+                    "pet_sec_breed": "",
+                    "pet_color": an["BASECOLOURNAME"],
+                    "pet_sec_color": "",
+                    "pet_gender": an["SEXNAME"],
+                    "pet_weight": "",
+                    "pet_dob": asm3.i18n.format_date(an["IDENTICHIPDATE"], "%Y-%m-%d"),
+                    "pet_neutered": neutered,
+                    "pet_allergies": "",
+                    "pet_unique_features": "",
+                    "pet_special_needs": "",
+                    "pet_images": [],
+                    "pet_owner": {
+                        "email": an["CURRENTOWNEREMAILADDRESS"],
+                        "first_name": firstname,
+                        "last_name": an["CURRENTOWNERSURNAME"],
+                        "address_1": address1,
+                        "address_2": address2,
+                        "city": an["CURRENTOWNERTOWN"],
+                        "state": an["CURRENTOWNERCOUNTY"],
+                        "zip": an["CURRENTOWNERPOSTCODE"],
+                        "country": "US",
+                        "phone": an["CURRENTOWNERHOMETELEPHONE"],
+                        "mobile_phone": an["CURRENTOWNERMOBILETELEPHONE"]
+                    }
+                    #Can add a secondary and/or vet contact here - Adam.
+                }
+            ]
+        }
+
+        return ro
+    
+    def validate(self, an: ResultRow) -> bool:
+        """ Validate an animal record is ok to send """
+        # Validate certain items aren't blank so we aren't registering bogus data
+        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+            self.logError("Address for the new owner is blank, cannot process")
+            return False 
+
+        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+            self.logError("Postal code for the new owner is blank, cannot process")
+            return False
+
+        # Make sure the length is actually suitable
+        if len(an.IDENTICHIPNUMBER) != 15:
+            self.logError("Microchip length is not 15, cannot process")
+            return False
+    
+        return True
 

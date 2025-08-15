@@ -60,7 +60,7 @@ from asm3.i18n import _, translate, get_version, get_display_date_format, \
     get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, \
     get_currency_digit_grouping, get_dst, get_locales, parse_date, python2display, \
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
-    monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
+    monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, today
 
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
@@ -71,8 +71,8 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
-    RESIZE_IMAGES_DURING_ATTACH, SAC_METRICS_URL, \
-    SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
+    RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
+    SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_HOST, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT, cfg_file
 
 from asm3.typehints import Any, Dict, Generator, List, ResultRow, Session
@@ -1034,6 +1034,12 @@ class mobile(ASMEndpoint):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile", dbo)
+        
+        userdata = asm3.users.get_user(dbo, o.user)
+        
+        rotadata = []
+        if userdata["OWNERID"]:
+            rotadata = asm3.person.get_rota(dbo, today(), add_days(today(), 7), userdata["OWNERID"])
 
         c = {
             "animals":      animals,
@@ -1065,13 +1071,14 @@ class mobile(ASMEndpoint):
             "species":      asm3.lookups.get_species(dbo),
             "timeline":     asm3.animal.get_timeline(dbo, 30, age=300),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
+            "rotadata":     rotadata,
             "user":         o.user,
             "locale":       o.locale
         }
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile.js", 
             "mobile_ui_addanimal.js", "mobile_ui_animal.js", "mobile_ui_image.js", "mobile_ui_incident.js", 
-            "mobile_ui_person.js", "mobile_ui_stock.js" ], c)
+            "mobile_ui_person.js", "mobile_ui_stock.js", "mobile_ui_rota.js" ], c)
 
     def post_addanimal(self, o):
         self.check(asm3.users.ADD_ANIMAL)
@@ -5142,10 +5149,18 @@ class maint_undelete(JSONEndpoint):
 
     def post_undelete(self, o):
         self.check(asm3.users.USE_SQL_INTERFACE)
+        errors = 0
+        success = 0
         for i in o.post["ids"].split(","):
             if i == "": continue
             tablename, iid = i.split(":")
-            asm3.audit.undelete(o.dbo, asm3.utils.cint(iid), tablename)
+            try:
+                asm3.audit.undelete(o.dbo, asm3.utils.cint(iid), tablename)
+                success += 1
+            except:
+                errors += 1
+        self.content_type("text/plain")
+        return f"{success},{errors}"
 
 class maint_update_reports(ASMEndpoint):
     url = "maint_update_reports"
@@ -5994,9 +6009,12 @@ class onlineforms(JSONEndpoint):
         fd = asm3.utils.bytes2str(o.post.filedata())
         if fd.startswith("{"):
             asm3.onlineform.import_onlineform_json(o.dbo, fd)
-        else:
+            self.redirect("onlineforms")
+        elif '<html' in fd:
             asm3.onlineform.import_onlineform_html(o.dbo, fd)
-        self.redirect("onlineforms")
+            self.redirect("onlineforms")
+        else:
+            raise Exception("File content neither valid JSON or HTML")
 
 class onlineform_json(ASMEndpoint):
     url = "onlineform_json"
@@ -6960,7 +6978,7 @@ class publish_options(JSONEndpoint):
             "haspetlink": PETLINK_BASE_URL != "",
             "haspetslocated": PETSLOCATED_FTP_USER != "",
             "hassac": SAC_METRICS_URL != "",
-            "hassmarttag": SMARTTAG_FTP_USER != "",
+            "hassmarttag": SMARTTAG_HOST != "",
             "hasvetenvoy": False, # Disabled. VETENVOY_US_BASE_URL != "",
             "haspetrescue": PETRESCUE_URL != "",
             "hassavourlife": SAVOURLIFE_URL != "",

@@ -1103,7 +1103,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
             m = {}
             m["animal"] = str(animalid)
-            m["medicaltype"] = gkl(dbo, row, "MEDICALTYPE", "lksmedicaltype", "MedicalTypeName", createmissinglookups)
+            m["medicaltype"] = gkl(dbo, row, "MEDICALTYPE", "lksmedicaltype", "MedicalTypeName", False)
             m["treatmentname"] = gks(row, "MEDICALNAME")
             m["dosage"] = gks(row, "MEDICALDOSAGE")
             m["startdate"] = gkd(dbo, row, "MEDICALGIVENDATE")

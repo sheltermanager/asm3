@@ -12,7 +12,7 @@ import asm3.wordprocessor
 
 from .base import FTPPublisher, PublishCriteria, get_animal_data, is_animal_adoptable
 from asm3.sitedefs import BASE_URL, SERVICE_URL
-from asm3.typehints import Database, ResultRow, Results
+from asm3.typehints import Database, Dict, ResultRow, Results
 
 import math
 import os
@@ -120,6 +120,30 @@ def get_held_animals(dbo: Database, style="", speciesid=0, animaltypeid=0, order
         "ORDER BY %s" % orderby)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
+def get_html_template_tags(dbo: Database, rows: Results) -> Dict[str, str]:
+    """
+    Creates the HTML template tags. Most of these are for compatibility
+    with the old static HTML publisher, but ADOPTABLEJSURL is needed
+    for the animalviewadoptable template to work.
+    """
+    l = dbo.locale
+    tags = {
+        "ORGNAME":      asm3.configuration.organisation(dbo),
+        "ORGADDRESS":   asm3.configuration.organisation_address(dbo),
+        "ORGTEL":       asm3.configuration.organisation_telephone(dbo),
+        "ORGEMAIL":     asm3.configuration.email(dbo),
+        "USER":         "system",
+        "DATE":         asm3.i18n.python2display(l, dbo.now()),
+        "TIME":         asm3.i18n.format_time(dbo.now()),
+        "DATETIME":     asm3.i18n.python2displaytime(l, dbo.now()),
+        "VERSION":      asm3.i18n.get_version(),
+        "NAV":          "",
+        "TITLE":        asm3.i18n._("Available for adoption", l),
+        "TOTAL":        len(rows),
+        "ADOPTABLEJSURL": "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name())
+    }
+    return tags
+
 def get_permfoster_animals(dbo: Database, style="", speciesid=0, animaltypeid=0, orderby="entered_desc") -> str:
     """ Returns a page of animals on permanent foster
     style: The HTML publishing template to use
@@ -198,12 +222,11 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
         head, body, foot = asm3.template.get_html_template(dbo, style)
         if head == "":
             raise asm3.utils.ASMError(f"template {style} does not exist")
-    # Substitute the header and footer tags
+    # Substitute the header and footer tags - NOTE: get_html_template_tags does ADOPTABLEJSURL
     org_tags = asm3.wordprocessor.org_tags(dbo, "system")
+    org_tags = asm3.wordprocessor.append_tags(org_tags, get_html_template_tags(dbo, animals))
     head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
     foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
-    # Substitute the special ADOPTABLEJSURL token if present so animalviewadoptable can be tested/previewed
-    body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name()))
     # Run through each animal and generate body sections
     bodies = []
     for a in animals:
@@ -256,6 +279,7 @@ def lostfound_animals_to_page(dbo: Database, rows: Results, lostorfound="found",
             raise asm3.utils.ASMError(f"template {style} does not exist")
     # Substitute the header and footer tags
     org_tags = asm3.wordprocessor.org_tags(dbo, "system")
+    org_tags = asm3.wordprocessor.append_tags(org_tags, get_html_template_tags(dbo, rows))
     head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
     foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
     # Run through each animal and generate body sections
@@ -265,7 +289,6 @@ def lostfound_animals_to_page(dbo: Database, rows: Results, lostorfound="found",
             speciesname = asm3.lookups.get_species_name(dbo, speciesid)
             if a.SPECIESNAME != speciesname: continue
         # Generate tags for this row
-
         if lostorfound == "lost":
             tags = asm3.wordprocessor.lostanimal_tags(dbo, a)
         else:
@@ -297,6 +320,7 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
     s = head + body + foot
     tags = asm3.wordprocessor.animal_tags_publisher(dbo, a)
     tags = asm3.wordprocessor.append_tags(tags, asm3.wordprocessor.org_tags(dbo, "system"))
+    tags = asm3.wordprocessor.append_tags(tags, get_html_template_tags(dbo, [a]))
     # Add extra tags for websitemedianame2-10 if they exist
     for x in range(2, 11):
         if a.WEBSITEIMAGECOUNT > x-1: tags["WEBMEDIAFILENAME%d" % x] = "%s&seq=%d" % (a.WEBSITEMEDIANAME, x)

@@ -114,7 +114,8 @@ def set_video_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsiteVideo": 0 })
-    dbo.update("media", mid, { "WebsiteVideo": 1, "Date": dbo.now() }, username) 
+    dbo.update("media", mid, { "LinkID": link.LINKID, "LinkTypeID": link.LINKTYPEID, 
+        "WebsiteVideo": 1, "Date": dbo.now() }, username) 
 
 def set_web_preferred(dbo: Database, username: str, mid: int) -> None:
     """
@@ -122,7 +123,8 @@ def set_web_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsitePhoto": 0 })
-    dbo.update("media", mid, { "WebsitePhoto": 1, "ExcludeFromPublish": 0, "Date": dbo.now() }, username) 
+    dbo.update("media", mid, { "LinkID": link.LINKID, "LinkTypeID": link.LINKTYPEID, 
+        "WebsitePhoto": 1, "ExcludeFromPublish": 0, "Date": dbo.now() }, username) 
 
 def set_doc_preferred(dbo: Database, username: str, mid: int) -> None:
     """
@@ -130,13 +132,15 @@ def set_doc_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "DocPhoto": 0 })
-    dbo.update("media", mid, { "DocPhoto": 1, "Date": dbo.now() }, username) 
+    dbo.update("media", mid, { "LinkID": link.LINKID, "LinkTypeID": link.LINKTYPEID, 
+        "DocPhoto": 1, "Date": dbo.now() }, username) 
 
 def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> None:
     """
     Marks the media with id excluded from publishing.
     """
-    d = { "ExcludeFromPublish": exclude, "Date": dbo.now() }
+    link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
+    d = { "LinkID": link.LINKID, "LinkTypeID": link.LINKTYPEID, "ExcludeFromPublish": exclude, "Date": dbo.now() }
     # If we are excluding, we can't be the web or doc or video preferred
     if exclude == 1:
         d["WebsitePhoto"] = 0
@@ -910,12 +914,12 @@ def delete_media(dbo: Database, username: str, mid: int) -> None:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
-        if ml: dbo.update("media", ml.ID, { "WebsitePhoto": 1 })
+        if ml: set_web_preferred(dbo, username, ml.ID)
     if mr.DOCPHOTO == 1:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
-        if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
+        if ml: set_doc_preferred(dbo, username, ml.ID)
 
 def convert_media_jpg2pdf(dbo: Database, username: str, mid: int) -> int:
     """

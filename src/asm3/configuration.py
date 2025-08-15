@@ -49,8 +49,10 @@ DEFAULTS = {
     "AddAnimalsShowWeight": "No",
     "AdoptionCheckoutDonationMsg": "Our organization depends on the kind donations of individuals to provide animals with medical care, food and shelter.\n<br/><br/><b>We need your help!</b>",
     "AdoptionCheckoutDonationTiers": "$0=No thanks\n$10=Microchip one pet\n$25=One week of milk for a litter of kittens\n$50=Vaccinate a litter of puppies\n$100=Spay/neuter and vaccinate one pet\n$200=Contribute to surgery for pets in need",
+    "AnimalCommentsChangeLog": "No",
+    "AnimalCommentsChangeLogType": "3",
     "AnimalNameChangeLog": "No",
-    "AnimalNameChangeLogType": "1",
+    "AnimalNameChangeLogType": "3",
     "AnimalFiguresSplitEntryReason": "No",
     "AnimalSearchResultsNewTab": "No",
     "PersonSearchResultsNewTab": "No",
@@ -701,6 +703,12 @@ def anibase_practice_id(dbo: Database) -> str:
 
 def anibase_pin_no(dbo: Database) -> str:
     return cstring(dbo, "AnibasePinNo")
+
+def animalcomments_change_log(dbo: Database) -> bool:
+    return cboolean(dbo, "AnimalCommentsChangeLog", DEFAULTS["AnimalCommentsChangeLog"] == "Yes")
+
+def animalcomments_change_log_type(dbo: Database) -> int:
+    return cint(dbo, "AnimalCommentsChangeLogType", DEFAULTS["AnimalCommentsChangeLogType"])
 
 def animal_figures_split_entryreason(dbo: Database) -> bool:
     return cboolean(dbo, "AnimalFiguresSplitEntryReason", DEFAULTS["AnimalFiguresSplitEntryReason"] == "Yes")
@@ -1537,8 +1545,8 @@ def return_fosters_on_transfer(dbo: Database) -> bool:
 def return_retailer_on_adoption(dbo: Database) -> bool:
     return cboolean(dbo, "ReturnRetailerOnAdoption", DEFAULTS["ReturnRetailerOnAdoption"] == "Yes")
 
-def smarttag_accountid(dbo: Database) -> str:
-    return cstring(dbo, "SmartTagFTPUser")
+def smarttag_api_key(dbo: Database) -> str:
+    return cstring(dbo, "SmartTagAPIKey")
 
 def publisher_presets(dbo: Database) -> str:
     return cstring(dbo, "PublisherPresets", DEFAULTS["PublisherPresets"])
