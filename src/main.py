@@ -60,7 +60,7 @@ from asm3.i18n import _, translate, get_version, get_display_date_format, \
     get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, \
     get_currency_digit_grouping, get_dst, get_locales, parse_date, python2display, \
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
-    monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
+    monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, today
 
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
@@ -1034,6 +1034,12 @@ class mobile(ASMEndpoint):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile", dbo)
+        
+        userdata = asm3.users.get_user(dbo, o.user)
+        
+        rotadata = []
+        if userdata["OWNERID"]:
+                rotadata = asm3.person.get_rota(dbo, today(), add_days(today(), 7), userdata["OWNERID"])
 
         c = {
             "animals":      animals,
@@ -1065,13 +1071,14 @@ class mobile(ASMEndpoint):
             "species":      asm3.lookups.get_species(dbo),
             "timeline":     asm3.animal.get_timeline(dbo, 30, age=300),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
+            "rotadata":     rotadata,
             "user":         o.user,
             "locale":       o.locale
         }
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile.js", 
             "mobile_ui_addanimal.js", "mobile_ui_animal.js", "mobile_ui_image.js", "mobile_ui_incident.js", 
-            "mobile_ui_person.js", "mobile_ui_stock.js" ], c)
+            "mobile_ui_person.js", "mobile_ui_stock.js", "mobile_ui_rota.js" ], c)
 
     def post_addanimal(self, o):
         self.check(asm3.users.ADD_ANIMAL)

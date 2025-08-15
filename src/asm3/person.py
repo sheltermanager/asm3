@@ -855,13 +855,20 @@ def check_view_permission_bool(dbo: Database, username: str, session: Session, p
 def get_person_rota(dbo: Database, personid: int) -> Results:
     return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])
 
-def get_rota(dbo: Database, startdate: datetime, enddate: datetime) -> Results:
+def get_rota(dbo: Database, startdate: datetime, enddate: datetime, personid: int = 0) -> Results:
     """ Returns rota records that apply between the two dates given """
-    return dbo.query(get_rota_query(dbo) + \
-        " WHERE (r.StartDateTime >= ? AND r.StartDateTime < ?)" \
-        " OR (r.EndDateTime >= ? AND r.EndDateTime < ?)" \
-        " OR (r.StartDateTime < ? AND r.EndDateTime >= ?) " \
-        " ORDER BY r.StartDateTime", (startdate, enddate, startdate, enddate, startdate, startdate))
+    if personid:
+        return dbo.query(get_rota_query(dbo) + \
+            " WHERE OwnerID = ? AND ((r.StartDateTime >= ? AND r.StartDateTime < ?)" \
+            " OR (r.EndDateTime >= ? AND r.EndDateTime < ?)" \
+            " OR (r.StartDateTime < ? AND r.EndDateTime >= ?)) " \
+            " ORDER BY r.StartDateTime", (personid, startdate, enddate, startdate, enddate, startdate, startdate))
+    else:
+        return dbo.query(get_rota_query(dbo) + \
+            " WHERE (r.StartDateTime >= ? AND r.StartDateTime < ?)" \
+            " OR (r.EndDateTime >= ? AND r.EndDateTime < ?)" \
+            " OR (r.StartDateTime < ? AND r.EndDateTime >= ?) " \
+            " ORDER BY r.StartDateTime", (startdate, enddate, startdate, enddate, startdate, startdate))
 
 def clone_rota_week(dbo: Database, username: str, startdate: datetime, newdate: datetime, flags: str) -> None:
     """ Copies a weeks worth of rota records from startdate to newdate """

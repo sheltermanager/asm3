@@ -1,6 +1,6 @@
 /*global $, jQuery, controller */
 /*global asm, common, config, format, html */
-/*global _, mobile_ui_addanimal, mobile_ui_animal, mobile_ui_incident, mobile_ui_person, mobile_ui_stock */
+/*global _, mobile_ui_addanimal, mobile_ui_animal, mobile_ui_incident, mobile_ui_person, mobile_ui_stock, mobile_ui_rota */
 
 "use strict";
 
@@ -145,6 +145,17 @@ const mobile = {
                             '<div class="card-body">',
                                 '<div class="list-group">',
                                 '</div>',
+                            '</div>',
+                            //'<div class="card-footer">',
+                            //'</div>',
+                        '</div>',
+                    '</div>',
+                    // Rota
+                    '<div id="hp-rota" class="col-sm">',
+                        '<div class="card shadow-sm mt-3">',
+                            '<div class="card-header">' + _("Rota"), 
+                            '</div>',
+                            '<div class="card-body">',
                             '</div>',
                             //'<div class="card-footer">',
                             //'</div>',
@@ -570,6 +581,9 @@ const mobile = {
     },
 
     bind: function() {
+
+        // Add rota panel to home
+        mobile_ui_rota.sync();
 
         // Delegate handler for internal links
         $("body").on("click", ".internal-link", function() {
