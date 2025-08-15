@@ -6998,6 +6998,83 @@ class publish_options(JSONEndpoint):
         userid, userpwd = asm3.publishers.vetenvoy.VetEnvoyUSMicrochipPublisher.signup(o.dbo, o.post)
         return "%s,%s" % (userid, userpwd)
 
+class receipt_bulk(JSONEndpoint):
+    url = "receipt_bulk"
+    js_module = "receipt_bulk"
+    get_permissions = asm3.users.VIEW_DONATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        post = o.post
+        if post.date('fromdate'):
+            fromdate = post.date('fromdate')
+        else:
+            fromdate = dbo.today(offset=-30)
+        if post.date('todate'):
+            todate = post.date('todate')
+        else:
+            todate = dbo.today()
+        if post.integer_list('paymentmethod'):
+            paymentmethod = post.integer_list('paymentmethod')
+        else:
+            paymentmethod = [asm3.configuration.default_payment_method(dbo)]
+        if post.integer('templateid'):
+            template = post.integer('templateid')
+        else:
+            template = 0
+        paymentmethods = asm3.lookups.get_payment_methods(dbo)
+        return {
+            "rows": asm3.financial.get_donations_paid_two_dates(dbo, fromdate, todate, paymentmethod),
+            "fromdate": fromdate,
+            "todate": todate,
+            "paymentmethod": paymentmethod,
+            "paymentmethods": paymentmethods,
+            "template": template,
+            "templates": asm3.template.get_document_templates(dbo, "payment")
+        }
+    
+    def post_send(self, o):
+        dbo = o.dbo
+        post = o.post
+        user = post["username"]
+        donationids = o.post.integer_list('ids')
+        templateid = o.post.integer('tid')
+
+        fromadd = asm3.configuration.email(dbo)
+        logmsg = _("Bulk payment receipt emailed")
+        emailaddresses = {}
+        for donationid in donationids:
+            p = asm3.financial.get_email_from_donation_id(dbo, donationid)
+            if p:
+                pid = p['ID']
+                to = p['EMAILADDRESS']
+                if to in emailaddresses:
+                    emailaddresses[to].append(donationid)
+                else:
+                    emailaddresses[to] = [donationid]
+        count = len(emailaddresses.keys())
+        if asm3.utils.is_smcom_smtp(dbo):
+            asm3.smcom.check_bulk_email(dbo, count)
+        elif count > asm3.configuration.mail_merge_max_emails(dbo):
+            raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
+        for emailaddress in emailaddresses.keys():
+            body = asm3.wordprocessor.generate_donation_doc(dbo, templateid, emailaddresses[emailaddress], user)
+            mt = asm3.wordprocessor.extract_mail_tokens(body)
+            cc = mt["CC"] or ""
+            bcc = mt["BCC"] or ""
+            subject = mt["SUBJECT"] or _("Thank you")
+            try:
+                asm3.utils.send_email(dbo, fromadd, to, cc, bcc, subject, body, "html")
+                if asm3.configuration.audit_on_send_email(dbo): 
+                    asm3.audit.email(dbo, user, fromadd, to, cc, bcc, subject, body)
+                logtypeid = asm3.configuration.system_log_type(dbo)
+                if logtypeid > 0:
+                    asm3.log.add_log(dbo, user, asm3.log.PERSON, pid, logtypeid, logmsg)
+            except Exception as err:
+                asm3.al.error(f"failed sending message '{subject}' to '{to}': {err}", "automail._send_email_from_template", dbo)
+
+        return True
+
 class report(ASMEndpoint):
     url = "report"
     get_permissions = asm3.users.VIEW_REPORT
