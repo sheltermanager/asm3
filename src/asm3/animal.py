@@ -1582,7 +1582,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateOfVaccination Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND SpeciesID IN ( %(alertduevacc)s )) AS duevacc," \
+            "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s AND '%(alertboardintoday)s' = 'Yes') AS duevacc," \
         "(SELECT COUNT(*) FROM animalvaccination av1 INNER JOIN animal ON animal.ID = av1.AnimalID " \
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
