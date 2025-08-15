@@ -701,14 +701,14 @@ $(function() {
                         { id: "alerturgentwl", post_field: "AlertUrgentWL", label: _("Show an alert when animals are marked as urgent on the waiting list"), type: "check" }, 
                         { id: "alertrsvhck", post_field: "AlertSpeciesRsvHck", label: _("Show an alert when these species of animals are reserved but not marked as home checked"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertduedon", post_field: "AlertDueDon", label: _("Show an alert when a payment is due"), type: "check" }, 
-
                         { id: "alertendtrial", post_field: "AlertEndTrial", label: _("Show an alert when a trial adoption has reached it's end"), type: "check" }, 
-
                         { id: "alertdocunsigned", post_field: "AlertDocUnsigned", label: _("Show an alert when a document is waiting to be signed"), type: "check" }, 
                         { id: "alertdocsigned", post_field: "AlertDocSigned", label: _("Show an alert when a document has been signed"), type: "check" }, 
                         { id: "alertopencheckout", post_field: "AlertOpenCheckout", label: _("Show an alert when a checkout has been left open"), type: "check" }, 
-                        { id: "alertlongrsv", post_field: "AlertSpeciesLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertholdtoday", post_field: "AlertSpeciesHoldToday", label: _("Show an alert when these species of animals holding periods are due to end"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertlongrsv", post_field: "AlertLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "check" }, 
+
+                        { id: "alertholdtoday", post_field: "AlertHoldToday", label: _("Show an alert when holding periods are due to end"), type: "check" }, 
+
                         { id: "alertinform", post_field: "AlertIncomingForm", label: _("Show an alert when an incoming form is waiting to be processed"), type: "check" }, 
                         { id: "alertacunfine", post_field: "AlertACUnfine", label: _("Show an alert when an unpaid fine is overdue"), type: "check" }, 
                         { id: "alertacundisp", post_field: "AlertSpeciesACUndisp", label: _("Show an alert when these species of animals are awaiting animal control dispatch"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 

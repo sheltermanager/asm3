@@ -123,9 +123,9 @@ DEFAULTS = {
     "AlertDueVacc": "Yes",
     "AlertExpVacc": "Yes",
     "AlertGlobalLows": "1,2", 
-    "AlertSpeciesHoldToday": "1,2",
+    "AlertHoldToday": "Yes",
     "AlertIncomingForm": "Yes",
-    "AlertSpeciesLongRsv": "1,2",
+    "AlertLongRsv": "Yes",
     "AlertSpeciesLongTerm": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesNeverVacc": "1,2",
@@ -811,9 +811,9 @@ def alert_exp_vacc(dbo: Database) -> str:
     if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_hold_today(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesHoldToday", DEFAULTS["AlertSpeciesHoldToday"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_hold_today(dbo: Database) -> str:
+    s = cstring(dbo, "AlertHoldToday", DEFAULTS["AlertHoldToday"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_incoming_form(dbo: Database) -> str:
@@ -821,9 +821,9 @@ def alert_incoming_form(dbo: Database) -> str:
     if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_long_rsv(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesLongRsv", DEFAULTS["AlertSpeciesLongRsv"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_long_rsv(dbo: Database) -> str:
+    s = cstring(dbo, "AlertLongRsv", DEFAULTS["AlertLongRsv"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_species_microchip(dbo: Database) -> str:

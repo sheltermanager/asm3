@@ -1560,8 +1560,8 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertdocunsigned = asm3.configuration.alert_doc_unsigned(dbo)
     alertdocsigned = asm3.configuration.alert_doc_signed(dbo)
     alertopencheckout = asm3.configuration.alert_open_checkout(dbo)
-    alertlongrsv = asm3.configuration.alert_species_long_rsv(dbo)
-    alertholdtoday = asm3.configuration.alert_species_hold_today(dbo)
+    alertlongrsv = asm3.configuration.alert_long_rsv(dbo)
+    alertholdtoday = asm3.configuration.alert_hold_today(dbo)
     alertinform = asm3.configuration.alert_incoming_form(dbo)
     alertacunfine = asm3.configuration.alert_ac_unfine(dbo)
     alertacundisp = asm3.configuration.alert_species_ac_undisp(dbo)
@@ -1623,7 +1623,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'AC02%%' AND '%(alertopencheckout)s' = 'Yes') AS opencheckout, " \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE " \
             "Archived = 0 AND DeceasedDate Is Null AND ReservationDate Is Not Null AND ReservationDate <= %(oneweek)s " \
-            "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null AND SpeciesID IN ( %(alertlongrsv)s )) AS longrsv," \
+            "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null AND '%(alertlongrsv)s' = 'Yes') AS longrsv," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Neutered = 0 AND ActiveMovementType = 1 AND " \
             "ActiveMovementDate > %(onemonth)s %(locfilter)s AND SpeciesID IN ( %(alertneuter)s ) ) AS notneu," \
@@ -1634,7 +1634,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND IsNotAvailableForAdoption = 1 %(locfilter)s) AS notadopt, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 %(locfilter)s AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s AND SpeciesID IN ( %(alertholdtoday)s )) AS holdtoday, " \
+            "WHERE Archived = 0 %(locfilter)s AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s AND '%(alertholdtoday)s' = 'Yes') AS holdtoday, " \
         "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming WHERE '%(alertinform)s' = 'Yes') AS inform, " \
         "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null AND '%(alertacunfine)s' = 'Yes') AS acunfine, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null AND SpeciesID IN ( %(alertacundisp)s )) AS acundisp, " \
