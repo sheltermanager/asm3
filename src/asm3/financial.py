@@ -305,6 +305,28 @@ def get_balance_fromto_date(dbo: Database, accountid: int, fromdate: datetime, t
     #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
+def get_costs(dbo: Database, offset: int = 0, sort: int = ASCENDING) -> Results:
+    """
+    Returns all animalcost records:
+    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER
+    """
+    sql = "SELECT ac.ID, ac.CostTypeID, ac.CostAmount, ac.CostDate, ac.CostPaidDate, c.CostTypeName, ac.Description, " \
+        "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate, ac.OwnerID, ac.InvoiceNumber, o.OwnerName " \
+        "FROM animalcost ac INNER JOIN costtype c ON c.ID = ac.CostTypeID " \
+        "LEFT JOIN owner o ON ac.OwnerID = o.ID "
+    params = []
+    if offset:
+        datefloor = dbo.today(offset=offset * -1)
+        sql += "WHERE ac.CostPaidDate >= ? "
+        params.append(datefloor)
+    else:
+        sql += "WHERE ac.CostPaidDate IS NULL "
+    if sort == ASCENDING:
+        sql += "ORDER BY ac.CostDate"
+    else:
+        sql += "ORDER BY ac.CostDate DESC"
+    return dbo.query(sql, params)
+
 def mark_trx_reconciled(dbo: Database, username: str, trxid: int) -> None:
     """
     Marks a transaction reconciled.

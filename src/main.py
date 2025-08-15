@@ -835,7 +835,8 @@ class cost_book(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         post = o.post
-        cost = asm3.animal.get_costs(dbo, animalid=0)
+        offset = post.integer('offset')
+        cost = asm3.financial.get_costs(dbo, offset=offset)
         asm3.al.debug("got %d costs for animals" % (len(cost), ), "main.cost_book", dbo)
         return {
             "rows": cost

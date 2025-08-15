@@ -2553,24 +2553,21 @@ def get_breedname(dbo: Database, breed1id: int, breed2id: int) -> str:
         return asm3.lookups.get_breed_name(dbo, breed1id)
     return asm3.lookups.get_breed_name(dbo, breed1id) + "/" + asm3.lookups.get_breed_name(dbo, breed2id)
 
-def get_costs(dbo: Database, animalid: int = 0, sort: int = ASCENDING) -> Results:
+def get_costs(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     """
-    Returns cost records for the given animal or all animals if animalid = 0:
+    Returns cost records for the given animal:
     COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER
     """
     sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
         "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate, a.OwnerID, a.InvoiceNumber, o.OwnerName " \
         "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
-        "LEFT JOIN owner o ON a.OwnerID = o.ID "
-    params = []
-    if animalid:
-        sql += "WHERE a.AnimalID = ? "
-        params.append(animalid)
+        "LEFT JOIN owner o ON a.OwnerID = o.ID " \
+        "WHERE a.AnimalID = ?"
     if sort == ASCENDING:
-        sql += "ORDER BY a.CostDate"
+        sql += " ORDER BY a.CostDate"
     else:
-        sql += "ORDER BY a.CostDate DESC"
-    return dbo.query(sql, params)
+        sql += " ORDER BY a.CostDate DESC"
+    return dbo.query(sql, [animalid])
 
 def get_cost_totals(dbo: Database, animalid: int) -> ResultRow:
     """
