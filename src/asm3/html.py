@@ -624,7 +624,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.VIEW_DONATION, "alt+shift+d", "", "donation", "asm-icon-donation", _("Payment book", l) ),
             ( asm3.users.VIEW_DONATION, "", "", "calendarview?ev=p", "asm-icon-calendar", _("Payment calendar", l) ),
             ( asm3.users.ADD_DONATION, "", "", "donation_receive", "asm-icon-blank", _("Receive a payment", l) ),
-            ( asm3.users.VIEW_DONATION, "", "", "receipt_bulk", "asm-icon-batch", _("Send bulk receipts", l) ),
+            ( asm3.users.VIEW_DONATION, "", "", "receipt_bulk", "asm-icon-batch", _("Email bulk receipts", l) ),
             ( asm3.users.VIEW_DONATION, "", "taggb", "--cat", "", "HMRC" ),
             ( asm3.users.VIEW_DONATION, "", "taggb", "giftaid_hmrc_spreadsheet", "asm-icon-report", "Generate HMRC Gift Aid spreadsheet" ),
             ( asm3.users.VIEW_DONATION, "", "tagstock", "--cat", "", _("Stock control", l) ),

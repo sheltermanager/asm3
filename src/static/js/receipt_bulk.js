@@ -37,18 +37,6 @@ $(function() {
             };
 
             const buttons = [
-                { type: "raw", markup: '<center>'},
-                { type: "raw",  markup: tableform.render_select({
-                        'id': 'paymenttemplate',
-                        'justwidget': true,
-                        'options': { displayfield: "NAME", valuefield: "ID", rows: controller.templates },
-                        'tooltip': _("Template")
-                    })
-                },
-                { type: "raw", markup: _("from") + ' '},
-                { type: "raw", markup: tableform.render_date({id: "fromdate", justwidget: true, halfsize: true, value: format.date(controller.fromdate), tooltip: _("From date")}) },
-                { type: "raw", markup: ' ' + _('to') + ' ' },
-                { id: "todate", type: "raw", markup: tableform.render_date({id: "todate", justwidget: true, halfsize: true, value: format.date(controller.todate), tooltip: _("To date")}) },
                 { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
                     click: function() {
                         common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val() + "&paymentmethod=" + $("#paymentmethod").val() + "&templateid=" + $("#paymenttemplate").val());
@@ -62,16 +50,7 @@ $(function() {
                         $("#button-send").button('enable');
                         header.show_info(_('Receipts emailed'));
                     } 
-                },
-                { type: "raw", markup: '<br>'},
-                { type: "raw", markup: '<div style="display: inline-block;vertical-align: top;">' + tableform.render_selectmulti({
-                        id: 'paymentmethod',
-                        justwidget: true,
-                        options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods },
-                        tooltip: _("Payment methods")
-                    }) + '</div>'
-                },
-                { type: "raw", markup: '</center>'}
+                }
             ];
 
             this.buttons = buttons;
@@ -81,8 +60,16 @@ $(function() {
         render: function() {
             let s = "";
             this.model();
-            s += html.content_header(_("Bulk receipts"));
+            s += html.content_header(_("Email bulk receipts"));
             s += tableform.buttons_render(this.buttons);
+            s += tableform.fields_render([
+                { id: "fromdate", type: "date", label: _("From"), halfsize: true, value: format.date(controller.fromdate) },
+                { id: "todate", type: "date", label: _("To"), halfsize: true, value: format.date(controller.todate) },
+                { id: "paymentmethod", type: "selectmulti", label: _("Method"), 
+                    options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods } },
+                { id: "paymenttemplate", type: "select", label: _("Template"), 
+                    options: { displayfield: "NAME", valuefield: "ID", rows: controller.templates } }
+            ], { full_width: false });
             s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
@@ -108,7 +95,7 @@ $(function() {
 
         name: "receipt_bulk",
         animation: "book",
-        title: function() {return _("Bulk receipts");},
+        title: function() { return _("Email bulk receipts"); },
         routes: {
             "receipt_bulk": function() { common.module_loadandstart("receipt_bulk", "receipt_bulk?" + this.rawqs); }
         }
