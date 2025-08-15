@@ -121,7 +121,7 @@ DEFAULTS = {
     "AlertDueMed": "Yes",
     "AlertDueTest": "Yes",
     "AlertDueVacc": "Yes",
-    "AlertSpeciesExpVacc": "1,2",
+    "AlertExpVacc": "Yes",
     "AlertGlobalLows": "1,2", 
     "AlertSpeciesHoldToday": "1,2",
     "AlertIncomingForm": "Yes",
@@ -756,7 +756,7 @@ def alert_due_test(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_due_vacc(dbo: Database) -> str:
+def alert_due_vacc(dbo: Database) -> str:
     s = cstring(dbo, "AlertDueVacc", DEFAULTS["AlertDueVacc"])
     if s == "": return "No" # Always return something due to IN clauses of queries
     return s
@@ -806,9 +806,9 @@ def alert_species_end_trial(dbo: Database) -> str:
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_exp_vacc(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesExpVacc", DEFAULTS["AlertSpeciesExpVacc"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_exp_vacc(dbo: Database) -> str:
+    s = cstring(dbo, "AlertExpVacc", DEFAULTS["AlertExpVacc"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_species_hold_today(dbo: Database) -> str:

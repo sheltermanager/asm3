@@ -693,7 +693,7 @@ $(function() {
                         { id: "alertrabies", post_field: "AlertSpeciesRabies", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertduevacc", post_field: "AlertDueVacc", label: _("Show an alert when a vaccination is due"), type: "check" }, 
 
-                        { id: "alertexpvacc", post_field: "AlertSpeciesExpVacc", label: _("Show an alert when these species of animals have an expired vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") },
+                        { id: "alertexpvacc", post_field: "AlertExpVacc", label: _("Show an alert when a vaccination has expired"), type: "check" },
                         
                         { id: "alertduetest", post_field: "AlertDueTest", label: _("Show an alert when a test is due"), type: "check" }, 
                         { id: "alertduemed", post_field: "AlertDueMed", label: _("Show an alert when a medical treatment is due"), type: "check" }, 

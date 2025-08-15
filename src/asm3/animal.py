@@ -1546,8 +1546,8 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertneuter = asm3.configuration.alert_species_neuter(dbo)
     alertnevervacc = asm3.configuration.alert_species_never_vacc(dbo)
     alertrabies = asm3.configuration.alert_species_rabies(dbo)
-    alertduevacc = asm3.configuration.alert_species_due_vacc(dbo)
-    alertexpvacc = asm3.configuration.alert_species_exp_vacc(dbo)
+    alertduevacc = asm3.configuration.alert_due_vacc(dbo)
+    alertexpvacc = asm3.configuration.alert_exp_vacc(dbo)
     alertduetest = asm3.configuration.alert_due_test(dbo)
     alertduemed = asm3.configuration.alert_due_med(dbo)
     alertboardintoday = asm3.configuration.alert_board_in_today(dbo)
@@ -1588,7 +1588,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "av1.DateExpires  >= %(oneyear)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
             "0 = (SELECT COUNT(*) FROM animalvaccination av2 WHERE av2.AnimalID = av1.AnimalID AND " \
-            "av2.ID <> av1.ID AND av2.DateRequired >= av1.DateOfVaccination AND av2.VaccinationID = av1.VaccinationID) AND SpeciesID IN ( %(alertexpvacc)s )) AS expvacc," \
+            "av2.ID <> av1.ID AND av2.DateRequired >= av1.DateOfVaccination AND av2.VaccinationID = av1.VaccinationID) AND '%(alertexpvacc)s' = 'Yes') AS expvacc," \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived=0 %(locfilter)s AND SpeciesID IN ( %(alertnevervacc)s ) AND " \
             "NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=animal.ID AND DateOfVaccination Is Not Null)) AS nevervacc," \
