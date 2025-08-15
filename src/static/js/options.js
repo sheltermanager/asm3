@@ -601,6 +601,20 @@ $(function() {
                     { id: "tab-display", title: _("Display"), fields: [
                         { id: "disableeffects", post_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check", fullrow: true }, 
                         { id: "disablehtml5scaling", post_field: "rc:DontUseHTML5Scaling", label: _("Use HTML5 client side image scaling where available to speed up image uploads"), type: "check", fullrow: true }, 
+                        { id: "resizeimagesspec", post_field: "ResizeImagesSpec", label: _("Scale uploaded images to"), 
+                            callout: _("Longest side to scale uploaded images to.") + "<br><br><b>" + 
+                                _("WARNING: Selecting a larger value will use more storage and could increase your hosting costs") + "</b>",
+                            type: "select", options: html.list_to_options(
+                            [
+                                "|" + _("(use system)"),
+                                "1024x1024|1MP (1024px)",
+                                "1414x1414|2MP (1414px)",
+                                "1732x1732|3MP (1732px)",
+                                "2048x2048|4MP (2048px)",
+                                "2236x2236|5MP (2236px)",
+                                "2828x2828|8MP (2828px)",
+                                "4096x4096|16MP (4096px)"
+                            ]) },
                         { id: "picsinbooksclinic", post_field: "PicturesInBooksClinic", label: _("Show animal thumbnails in clinic books"), type: "check", fullrow: true }, 
                         { id: "picsinbooks", post_field: "PicturesInBooks", label: _("Show animal thumbnails in movement and medical books"), type: "check", fullrow: true }, 
                         { id: "sexborder", post_field: "ShowSexBorder", label: _("Show pink and blue borders around animal thumbnails to indicate sex"), type: "check", fullrow: true }, 
@@ -634,17 +648,6 @@ $(function() {
                             '</select> '
                         }, 
                         { id: "ownernameformat", post_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) },
-                        { id: "resizeimagesspec", post_field: "ResizeImagesSpec", label: _("Scale images to"), type: "select", options: html.list_to_options(
-                            [
-                                _("(use system)"),
-                                "1024x1024|1MP (1024px)",
-                                "1414x1414|2MP (1414px)",
-                                "1732x1732|3MP (1732px)",
-                                "2048x2048|4MP (2048px)",
-                                "2236x2236|5MP (2236px)",
-                                "2828x2828|8MP (2828px)",
-                                "4096z4096|16MP (4096px)"
-                            ]) }
                     ]}, 
                     { id: "tab-documents", title: _("Documents"), fields: [
                         { id: "allowodttemp", post_field: "AllowODTDocumentTemplates", label: _("Allow use of OpenOffice document templates"), type: "check" }, 
