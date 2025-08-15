@@ -3878,7 +3878,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
             if id == movement.ID:
                 return movement
         return None
-    ## Grab all data relevant to animal movement/death
+    # Grab all data relevant to animal movement/death
     animaldata = dbo.query("SELECT ShelterCode, AnimalName, DateBroughtIn, DeceasedDate FROM animal WHERE ID = ?", (animalid,))[0]
     entrydate = asm3.i18n.remove_time(animaldata["DATEBROUGHTIN"])
     deceaseddate = asm3.i18n.remove_time(animaldata["DECEASEDDATE"])
@@ -3896,7 +3896,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
     ])
     movementrows = dbo.query(query, (animalid,))
     animallocations = dbo.query("SELECT ID, Date, MovementID, IsDeath, ToLocationID, ToUnit, PrevAnimalLocationID FROM animallocation WHERE AnimalID = ? ORDER BY DATE desc", (animalid,))
-    ## Detect and remove impossible internal movements
+    # Detect and remove impossible internal movements
     indates = [entrydate]
     outdates = []
     if movementrows:
@@ -3923,8 +3923,8 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                     if row not in validrows:
                         validrows.append(row)
             elif row.MOVEMENTID == 0 and row.ISDEATH == 0 and asm3.i18n.remove_time(row.DATE) >= indate:
-                    if row not in validrows:
-                        validrows.append(row)
+                if row not in validrows:
+                    validrows.append(row)
     # Iterate our list of valid rows and remove the ones that don't match, reparenting invalid PrevAnimalLocationID values as necessary
     for row in animallocations.copy():
         if row not in validrows:
@@ -3933,7 +3933,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
             rowid = row["ID"]
             rowprevlocationid = row["PREVANIMALLOCATIONID"]
             dbo.execute("UPDATE animallocation SET PrevAnimalLocationID = ? WHERE AnimalID = ? AND PrevAnimalLocationID = ?", (rowprevlocationid, animalid, rowid) )
-    ## Detect and delete obsolete external movements
+    # Detect and delete obsolete external movements
     obsoletemovements = []
     for row in animallocations:
         if row["MOVEMENTID"]:
@@ -3944,20 +3944,20 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
         rowid = row["ID"]
         rowprevlocationid = row["PREVANIMALLOCATIONID"]
         dbo.execute("UPDATE animallocation SET PrevAnimalLocationID = ? WHERE AnimalID = ? AND PrevAnimalLocationID = ?", (rowprevlocationid, animalid, rowid) )
-    ## Sync external movements
+    # Sync external movements
     for movementrow in movementrows:
         for locationrow in animallocations:
             movementfound = False
             if locationrow["MOVEMENTID"] == movementrow["ID"]:    
                 movementfound = True
-                ## Found movement in animallocation table
+                # Found movement in animallocation table
                 if asm3.i18n.remove_time(locationrow["DATE"]) != asm3.i18n.remove_time(movementrow["MOVEMENTDATE"]):
-                    ## Date of movement in animallocation table out of sync, need to update it
+                    # Date of movement in animallocation table out of sync, need to update it
                     dbo.execute("UPDATE animallocation SET Date = ? WHERE ID = ?", (movementrow["MOVEMENTDATE"], locationrow["ID"]) )
                     break
         if not movementfound:
-            ## Movement not found in animallocation table, need to create it
-            ## Need to find out out where most recent location was before this date so the fromid and fromunit on new row can be filled in
+            # Movement not found in animallocation table, need to create it
+            # Need to find out out where most recent location was before this date so the fromid and fromunit on new row can be filled in
             fromid = 0
             fromunit = ''
             mostrecentmovement = False
@@ -3971,56 +3971,56 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                 fromunit = mostrecentmovement["TOUNIT"]
             insert_animallocation(dbo, username, animalid, animalname, sheltercode, fromid, fromunit, 0, '*', 0, movementrow["ID"])
         if movementrow["RETURNDATE"]:
-            ## Movement has a return date
+            # Movement has a return date
             idmatchfound = 0
             for locationrow in animallocations:
                 if locationrow["MOVEMENTID"] == movementrow["ID"]:
-                    ## Found row in animallocations table with matching movement ID
+                    # Found row in animallocations table with matching movement ID
                     if idmatchfound == 0:
-                        ## This row represents the outbound movement, we need to find a second row with a matching ID
+                        # This row represents the outbound movement, we need to find a second row with a matching ID
                         idmatchfound = 1
                     else:
-                        ## Because this is the second row found with a matching ID this row represents the return movement
+                        # Because this is the second row found with a matching ID this row represents the return movement
                         idmatchfound = 2
                         if asm3.i18n.remove_time(locationrow["DATE"]) != asm3.i18n.remove_time(movementrow["RETURNDATE"]):
-                            ## Date of movement in animallocation table out of sync, need to update it
+                            # Date of movement in animallocation table out of sync, need to update it
                             dbo.execute(
                                 "UPDATE animallocation SET Date = ? WHERE ID = ?",
                                 (asm3.i18n.remove_time(movementrow["RETURNDATE"]), locationrow["ID"])
                             )
                         break
             if idmatchfound < 2:
-                ## No return movement was found, need to create one
+                # No return movement was found, need to create one
                 insert_animallocation(dbo, username, animalid, animalname, sheltercode, 0, '*', fromid, fromunit, movementid=movementrow["ID"], date=asm3.i18n.remove_time(movementrow["RETURNDATE"]))
-    ## Check that deceased date synced
+    # Check that deceased date synced
     if deceaseddate:
-        ## Animal is deceased
+        # Animal is deceased
         deathfound = False
         fromid = 0
         fromunit = ""
         for locationrow in animallocations:
             if locationrow["ISDEATH"]:
                 deathfound = True
-                ## Found row in animallocations representing the death
+                # Found row in animallocations representing the death
                 if locationrow["DATE"] != deceaseddate:
-                    ## Death date in animallocations does not match the actual date of death, updating it
+                    # Death date in animallocations does not match the actual date of death, updating it
                     dbo.execute(
                         "UPDATE animallocation SET Date = ? WHERE ID = ?",
                         (deceaseddate, locationrow["ID"])
                     )
             else:
-                ## This row does not represent the death, making a note of the locationid and unit so that the most recent location data will be available if a new row needs to be created
+                # This row does not represent the death, making a note of the locationid and unit so that the most recent location data will be available if a new row needs to be created
                 fromid = locationrow["TOLOCATIONID"]
                 fromunit = locationrow["TOUNIT"]
         if not deathfound:
-            ## No row found representing the death, creating one
+            # No row found representing the death, creating one
             fromid = 0
             insert_animallocation(dbo, username, animalid, animalname, sheltercode, fromid, fromunit, 0, '*', isdeath=1, date=deceaseddate)
     else:
-        ## This animal is alive, make sure that there are no rows in animallocations refering to death
+        # This animal is alive, make sure that there are no rows in animallocations refering to death
         for locationrow in animallocations:
             if locationrow["ISDEATH"]:
-                ## Row found representing death, removing it
+                # Row found representing death, removing it
                 dbo.execute("DELETE FROM animallocation WHERE ID = ?", (locationrow["ID"],) )
 
 def insert_animallocation(dbo: Database, username: str, animalid: int, animalname: str, sheltercode: str, 

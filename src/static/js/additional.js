@@ -153,16 +153,17 @@ $(function() {
             // of text, notes, number, lookup or multi-lookup
             if (ft == 1 || ft == 2 || ft == 3 || ft == 6 || ft == 7 || ft == 15) {
                 $("#searchablerow").fadeIn();
-                if (ft == 15) {
-                    $("#newrecord").prop('checked', true);
-                    $("#newrecord").prop('disabled', true);
-                } else {
-                    $("#newrecord").prop('disabled', false);
-                }
             }
             else {
                 $("#searchable").prop("checked", false);
                 $("#searchablerow").fadeOut();
+            }
+            // Automatically tick and disable show on new records for incrementing numbers
+            if (ft == 15) {
+                $("#newrecord").prop('checked', true);
+                $("#newrecord").prop('disabled', true);
+            } else {
+                $("#newrecord").prop('disabled', false);
             }
         },
 

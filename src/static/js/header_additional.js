@@ -184,14 +184,6 @@ additional = {
         $.each(fields, function(i, f) {
             if (f.NEWRECORD == 1) {
                 add.push(additional.render_field(f, includeids, classes, true));
-                if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
-                    // This ajax response will be coming back after render has completed and then re inserted into the DOM
-                    let formdata = { "mode": "nextid", "afid": f.ID };
-                    common.ajax_post("additional", formdata, function(response) {
-                        $("#add_" + f.ID).val(response);
-                    });
-                    
-                }
             }
         });
         return add.join("\n");

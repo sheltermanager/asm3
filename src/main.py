@@ -2397,7 +2397,7 @@ class animal_new(JSONEndpoint):
         dbo = o.dbo
         c = {
             "autolitters": asm3.animal.get_active_litters_brief(dbo),
-            "additional": asm3.additional.get_additional_fields(dbo, 0, "animal"),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "animal")),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
@@ -3948,7 +3948,7 @@ class event_new(JSONEndpoint):
         dbo = o.dbo
         asm3.al.debug("add event", "main.event_new", dbo)
         return {
-            "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "event"))
         }
 
     def post_all(self, o):
@@ -4120,7 +4120,7 @@ class foundanimal_new(JSONEndpoint):
         dbo = o.dbo
         return {
             "agegroups": asm3.configuration.age_groups(dbo),
-            "additional": asm3.additional.get_additional_fields(dbo, 0, "foundanimal"),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "foundanimal")),
             "colours": asm3.lookups.get_basecolours(dbo),
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
@@ -4421,7 +4421,7 @@ class incident_new(JSONEndpoint):
             "acos": asm3.users.get_users_with_permission(dbo, asm3.users.DISPATCH_INCIDENT),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
-            "additional": asm3.additional.get_additional_fields(dbo, 0, "incident"),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "incident")),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "towns": asm3.person.get_towns(dbo),
             "counties": asm3.person.get_counties(dbo),
@@ -4791,7 +4791,7 @@ class lostanimal_new(JSONEndpoint):
         dbo = o.dbo
         return {
             "agegroups": asm3.configuration.age_groups(dbo),
-            "additional": asm3.additional.get_additional_fields(dbo, 0, "lostanimal"),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "lostanimal")),
             "colours": asm3.lookups.get_basecolours(dbo),
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
@@ -6766,7 +6766,7 @@ class person_new(JSONEndpoint):
             "towns": asm3.person.get_towns(dbo),
             "counties": asm3.person.get_counties(dbo),
             "towncounties": asm3.person.get_town_to_county(dbo),
-            "additional": asm3.additional.get_additional_fields(dbo, 0, "person"),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "person")),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "postcodelookup": asm3.geo.get_postcode_lookup_available(o.locale),
             "flags": asm3.lookups.get_person_flags(dbo),

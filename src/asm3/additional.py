@@ -217,6 +217,18 @@ def get_fields(dbo: Database) -> Results:
         "INNER JOIN lksyesno n ON n.ID = a.NewRecord " \
         "ORDER BY a.LinkType, a.DisplayIndex")
 
+def set_next_id(dbo: Database, rows: Results) -> Results:
+    """
+    Goes through each row in rows (which should be a merged list of additional fields and results) 
+    and for any that are of the type incrementing number, assigns the next ID. 
+    This should be called by new screen endpoints only.
+    """
+    for r in rows:
+        if r.FIELDTYPE == NUMBER_INCREMENTED:
+            r.VALUE = get_next_additional_field_number(dbo, r.ID)
+            r.DEFAULTVALUE = r.VALUE
+    return rows
+
 def append_to_results(dbo: Database, rows: Results, linktype: str = "animal") -> Results:
     """
     Goes through each row in rows and adds any additional fields to the resultset.
