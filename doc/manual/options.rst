@@ -756,6 +756,10 @@ Logs
   this option is on, a log record detailing what was changed is created every 
   time you change a person's address. 
 
+* When I change the description or hidden comments on an animal: If 
+  this option is on, a log record detailing what was changed is created every 
+  time you change an animal's description or hidden comments. 
+
 * When I send an email, record it in the log: If this option is on, when sending 
   an email the option to record that email in the log will be on by default.
   
