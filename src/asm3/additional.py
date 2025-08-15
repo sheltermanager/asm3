@@ -84,6 +84,7 @@ PERSON_SPONSOR = 11
 PERSON_VET = 12
 PERSON_ADOPTIONCOORDINATOR = 13
 TELEPHONE = 14
+NUMBER_INCREMENTED = 15
 
 def clause_for_linktype(linktype: str) -> str:
     """ Returns the appropriate clause for a link type """
@@ -121,6 +122,10 @@ def table_for_linktype(linktype: str) -> str:
 def is_person_fieldtype(fieldtype: int) -> bool:
     """ Returns true if the field type given is a person """
     return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET, PERSON_ADOPTIONCOORDINATOR)
+
+def get_next_additional_field_number(dbo: Database, afid: int) -> str:
+    """ Returns the next ID number for the frontend """
+    return dbo.get_id_cache_pk(f"additional_{afid}", "SELECT 1")
 
 def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", linktypeid: int = -1) -> Results:
     """

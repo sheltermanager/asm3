@@ -34,6 +34,7 @@ additional = {
     PERSON_VET: 12,
     PERSON_ADOPTIONCOORDINATOR: 13,
     TELEPHONE: 14,
+    NUMBER_INCREMENTED: 15,
 
     /**
      * Renders and lays out additional fields from data from the backend 
@@ -122,7 +123,7 @@ additional = {
                 if (f.FIELDTYPE == additional.YESNO) {
                     element.prop("checked", (fieldval && fieldval == "1"));
                 }
-                else if (f.FIELDTYPE == additional.TEXT ||  f.FIELDTYPE == additional.NUMBER) {
+                else if (f.FIELDTYPE == additional.TEXT ||  f.FIELDTYPE == additional.NUMBER ||  f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
                     element.val(html.decode(fieldval));
                 }
                 else if (f.FIELDTYPE == additional.NOTES) {
@@ -183,6 +184,14 @@ additional = {
         $.each(fields, function(i, f) {
             if (f.NEWRECORD == 1) {
                 add.push(additional.render_field(f, includeids, classes, true));
+                if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
+                    // This ajax response will be coming back after render has completed and then re inserted into the DOM
+                    let formdata = { "mode": "nextid", "afid": f.ID };
+                    common.ajax_post("additional", formdata, function(response) {
+                        $("#add_" + f.ID).val(response);
+                    });
+                    
+                }
             }
         });
         return add.join("\n");
@@ -283,7 +292,7 @@ additional = {
                     if (f.FIELDTYPE == additional.YESNO) {
                         row[f.FIELDNAME.toUpperCase()] = (element.is(":checked") ? "1" : "");
                     }
-                    else if (f.FIELDTYPE == additional.TEXT || f.FIELDTYPE == additional.NOTES || f.FIELDTYPE == additional.NUMBER) {
+                    else if (f.FIELDTYPE == additional.TEXT || f.FIELDTYPE == additional.NOTES || f.FIELDTYPE == additional.NUMBER || f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
                         row[f.FIELDNAME.toUpperCase()] = element.val();
                     }
                     else if (f.FIELDTYPE == additional.DATE) {
@@ -350,7 +359,7 @@ additional = {
                     if (f.FIELDTYPE == additional.YESNO) {
                         return_string += "&" + fid + "=" + (element.is(":checked") ? "on" : "");
                     }
-                    else if (f.FIELDTYPE == additional.TEXT || f.FIELDTYPE == additional.DATE || f.FIELDTYPE == additional.TIME || f.FIELDTYPE == additional.NOTES || f.FIELDTYPE == additional.NUMBER) {
+                    else if (f.FIELDTYPE == additional.TEXT || f.FIELDTYPE == additional.DATE || f.FIELDTYPE == additional.TIME || f.FIELDTYPE == additional.NOTES || f.FIELDTYPE == additional.NUMBER || f.FIELDTYPE == additional.NUMBER_INCREMENTED) {
                         return_string += "&" + fid + "=" + element.val();
                     }
                     else if (f.FIELDTYPE == additional.MONEY) {
@@ -547,6 +556,7 @@ additional = {
         else if (f.FIELDTYPE == additional.TIME) { return tableform.render_time(v); }
         else if (f.FIELDTYPE == additional.NOTES) { v.classes += " asm-textareafixed"; return tableform.render_textarea(v); }
         else if (f.FIELDTYPE == additional.NUMBER) { return tableform.render_number(v); }
+        else if (f.FIELDTYPE == additional.NUMBER_INCREMENTED) { v.readonly = true; return tableform.render_number(v); }
         else if (f.FIELDTYPE == additional.MONEY) { return tableform.render_currency(v); }
         else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) { return tableform.render_animal(v); }
         else if (f.FIELDTYPE == additional.PERSON_LOOKUP) { return tableform.render_person(v); }

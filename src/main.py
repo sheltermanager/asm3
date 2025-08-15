@@ -1833,6 +1833,10 @@ class additional(JSONEndpoint):
         self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
         for fid in o.post.integer_list("ids"):
             asm3.additional.delete_field(o.dbo, o.user, fid)
+    
+    def post_nextid(self, o):
+        self.check(asm3.users.MODIFY_ADDITIONAL_FIELDS)
+        return asm3.additional.get_next_additional_field_number(o.dbo, o.post.integer("afid"))
 
 class animal(JSONEndpoint):
     url = "animal"
