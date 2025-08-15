@@ -355,10 +355,9 @@ class TestCSVImport(unittest.TestCase):
     def test_accounts_import_missing_lookups_insert_on(self):
         rows = self.accountssvdata
         rows[0]['ACCOUNTSSOURCE'] = 'Back of sofa'
-        rows[0]['ACCOUNTSDESTINATION'] = 'Stormy Daniels hush money'
+        rows[0]['ACCOUNTSDESTINATION'] = 'Hush money'
         csvdata = asm3.utils.csv(base.get_dbo().locale, rows)
         result = asm3.csvimport.csvimport(base.get_dbo(), csvdata, "utf-8-sig", "test", True, False, True, False, False, False, True)
-        print("\n" + str(result) + "\n")
         self.assertEqual(1, len(json.loads(result)['errors']))
     
     def test_simple_animal_import(self):
