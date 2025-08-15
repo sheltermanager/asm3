@@ -827,6 +827,61 @@ class custom_splash(ASMEndpoint):
             asm3.al.error("%s" % str(err), "main.custom_splash", dbo)
             return ""
 
+class cost_book(JSONEndpoint):
+    url = "cost_book"
+    js_module = "cost_book"
+    get_permissions = asm3.users.VIEW_COST
+
+    def controller(self, o):
+        dbo = o.dbo
+        post = o.post
+        cost = asm3.animal.get_costs(dbo, animalid=0)
+        asm3.al.debug("got %d costs for animals" % (len(cost), ), "main.cost_book", dbo)
+        return {
+            "rows": cost
+        }
+    
+    # def post_send(self, o):
+    #     dbo = o.dbo
+    #     post = o.post
+    #     user = post["username"]
+    #     donationids = o.post.integer_list('ids')
+    #     templateid = o.post.integer('tid')
+
+    #     fromadd = asm3.configuration.email(dbo)
+    #     logmsg = _("Bulk payment receipt emailed")
+    #     emailaddresses = {}
+    #     for donationid in donationids:
+    #         p = asm3.financial.get_email_from_donation_id(dbo, donationid)
+    #         if p:
+    #             pid = p['ID']
+    #             to = p['EMAILADDRESS']
+    #             if to in emailaddresses:
+    #                 emailaddresses[to].append(donationid)
+    #             else:
+    #                 emailaddresses[to] = [donationid]
+    #     count = len(emailaddresses.keys())
+    #     if asm3.utils.is_smcom_smtp(dbo):
+    #         asm3.smcom.check_bulk_email(dbo, count)
+    #     elif count > asm3.configuration.mail_merge_max_emails(dbo):
+    #         raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
+    #     for emailaddress in emailaddresses.keys():
+    #         body = asm3.wordprocessor.generate_donation_doc(dbo, templateid, emailaddresses[emailaddress], user)
+    #         mt = asm3.wordprocessor.extract_mail_tokens(body)
+    #         cc = mt["CC"] or ""
+    #         bcc = mt["BCC"] or ""
+    #         subject = mt["SUBJECT"] or _("Thank you")
+    #         try:
+    #             asm3.utils.send_email(dbo, fromadd, to, cc, bcc, subject, body, "html")
+    #             if asm3.configuration.audit_on_send_email(dbo): 
+    #                 asm3.audit.email(dbo, user, fromadd, to, cc, bcc, subject, body)
+    #             logtypeid = asm3.configuration.system_log_type(dbo)
+    #             if logtypeid > 0:
+    #                 asm3.log.add_log(dbo, user, asm3.log.PERSON, pid, logtypeid, logmsg)
+    #         except Exception as err:
+    #             asm3.al.error(f"failed sending message '{subject}' to '{to}': {err}", "automail._send_email_from_template", dbo)
+    #     return True
+
 class media(ASMEndpoint):
     url = "media"
 
