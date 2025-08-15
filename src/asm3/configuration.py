@@ -106,9 +106,9 @@ DEFAULTS = {
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
     "AKCRegisterAll": "No",
-    "AlertSpeciesACFoll": "1,2",
-    "AlertSpeciesACUncomp": "1,2",
-    "AlertSpeciesACUndisp": "1,2",
+    "AlertACFoll": "Yes",
+    "AlertACUncomp": "Yes",
+    "AlertACUndisp": "Yes",
     "AlertACUnfine": "Yes",
     "AlertBoardInToday": "Yes",
     "AlertBoardOutToday": "Yes",
@@ -696,19 +696,19 @@ def akc_enrollmentsourceid(dbo: Database) -> str:
 def akc_register_all(dbo: Database) -> bool:
     return cboolean(dbo, "AKCRegisterAll")
 
-def alert_species_ac_foll(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesACFoll", DEFAULTS["AlertSpeciesACFoll"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_ac_foll(dbo: Database) -> str:
+    s = cstring(dbo, "AlertACFoll", DEFAULTS["AlertACFoll"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_ac_uncomp(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesACUncomp", DEFAULTS["AlertSpeciesACUncomp"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_ac_uncomp(dbo: Database) -> str:
+    s = cstring(dbo, "AlertACUncomp", DEFAULTS["AlertACUncomp"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_ac_undisp(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesACUndisp", DEFAULTS["AlertSpeciesACUndisp"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_ac_undisp(dbo: Database) -> str:
+    s = cstring(dbo, "AlertACUndisp", DEFAULTS["AlertACUndisp"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_ac_unfine(dbo: Database) -> str:

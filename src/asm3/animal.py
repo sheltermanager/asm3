@@ -1564,9 +1564,9 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertholdtoday = asm3.configuration.alert_hold_today(dbo)
     alertinform = asm3.configuration.alert_incoming_form(dbo)
     alertacunfine = asm3.configuration.alert_ac_unfine(dbo)
-    alertacundisp = asm3.configuration.alert_species_ac_undisp(dbo)
-    alertacuncomp = asm3.configuration.alert_species_ac_uncomp(dbo)
-    alertacfoll = asm3.configuration.alert_species_ac_foll(dbo)
+    alertacundisp = asm3.configuration.alert_ac_undisp(dbo)
+    alertacuncomp = asm3.configuration.alert_ac_uncomp(dbo)
+    alertacfoll = asm3.configuration.alert_ac_foll(dbo)
     alerttlover = asm3.configuration.alert_tl_over(dbo)
     alertstexpsoon = asm3.configuration.alert_st_exp_soon(dbo)
     alertstexp = asm3.configuration.alert_st_expired(dbo)
@@ -1637,12 +1637,12 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "WHERE Archived = 0 %(locfilter)s AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s AND '%(alertholdtoday)s' = 'Yes') AS holdtoday, " \
         "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming WHERE '%(alertinform)s' = 'Yes') AS inform, " \
         "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null AND '%(alertacunfine)s' = 'Yes') AS acunfine, " \
-        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null AND SpeciesID IN ( %(alertacundisp)s )) AS acundisp, " \
-        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND SpeciesID IN ( %(alertacuncomp)s )) AS acuncomp, " \
+        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null AND '%(alertacundisp)s' = 'Yes') AS acundisp, " \
+        "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND '%(alertholdtoday)s' = 'Yes') AS acuncomp, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE (" \
             "(FollowupDateTime Is Not Null AND FollowupDateTime <= %(endoftoday)s AND NOT FollowupComplete = 1) OR " \
             "(FollowupDateTime2 Is Not Null AND FollowupDateTime2 <= %(endoftoday)s AND NOT FollowupComplete2 = 1) OR " \
-            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(endoftoday)s) AND NOT FollowupComplete3 = 1 AND SpeciesID IN ( %(alertacfoll)s ))) AS acfoll, " \
+            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(endoftoday)s) AND NOT FollowupComplete3 = 1) AND '%(alertacfoll)s' = 'Yes') AS acfoll, " \
         "(SELECT COUNT(*) FROM ownertraploan WHERE '%(alerttlover)s' = 'Yes' AND ReturnDueDate Is Not Null AND ReturnDueDate <= %(today)s AND ReturnDate Is Null) AS tlover, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry > %(today)s AND Expiry <= %(futuremonth)s AND '%(alertstexpsoon)s' = 'Yes') AS stexpsoon, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s AND '%(alertstexp)s' = 'Yes') AS stexp, " \

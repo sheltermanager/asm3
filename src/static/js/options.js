@@ -706,14 +706,14 @@ $(function() {
                         { id: "alertdocsigned", post_field: "AlertDocSigned", label: _("Show an alert when a document has been signed"), type: "check" }, 
                         { id: "alertopencheckout", post_field: "AlertOpenCheckout", label: _("Show an alert when a checkout has been left open"), type: "check" }, 
                         { id: "alertlongrsv", post_field: "AlertLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "check" }, 
-
                         { id: "alertholdtoday", post_field: "AlertHoldToday", label: _("Show an alert when holding periods are due to end"), type: "check" }, 
-
                         { id: "alertinform", post_field: "AlertIncomingForm", label: _("Show an alert when an incoming form is waiting to be processed"), type: "check" }, 
                         { id: "alertacunfine", post_field: "AlertACUnfine", label: _("Show an alert when an unpaid fine is overdue"), type: "check" }, 
-                        { id: "alertacundisp", post_field: "AlertSpeciesACUndisp", label: _("Show an alert when these species of animals are awaiting animal control dispatch"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertacuncomp", post_field: "AlertSpeciesACUncomp", label: _("Show an alert when these species of animals are involved in unresolved animal control incidents"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertacfoll", post_field: "AlertSpeciesACFoll", label: _("Show an alert when these species of animals are involved in animal control incidents due a follow up"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+
+                        { id: "alertacundisp", post_field: "AlertACUndisp", label: _("Show an alert when animals are awaiting animal control dispatch"), type: "check" }, 
+                        { id: "alertacuncomp", post_field: "AlertACUncomp", label: _("Show an alert when animals are involved in unresolved animal control incidents"), type: "check" }, 
+                        { id: "alertacfoll", post_field: "AlertACFoll", label: _("Show an alert when animals are involved in animal control incidents due a follow up"), type: "check" }, 
+
                         { id: "alertstexpsoon", post_field: "AlertSTExpSoon", label: _("Show an alert when stock is close to it's expiry date"), type: "check" }, 
                         { id: "alertstexp", post_field: "AlertSTExpired", label: _("Show an alert when stock has passed it's expiry date"), type: "check" }, 
                         { id: "alertstlowbal", post_field: "AlertSTLowBal", label: _("Show an alert when a stock item has low global balance"), type: "check" }, 
