@@ -1556,7 +1556,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alerturgentwl = asm3.configuration.alert_urgent_wl(dbo)
     alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
     alertduedon = asm3.configuration.alert_due_don(dbo)
-    alertendtrial = asm3.configuration.alert_species_end_trial(dbo)
+    alertendtrial = asm3.configuration.alert_end_trial(dbo)
     alertdocunsigned = asm3.configuration.alert_doc_unsigned(dbo)
     alertdocsigned = asm3.configuration.alert_doc_signed(dbo)
     alertopencheckout = asm3.configuration.alert_open_checkout(dbo)
@@ -1615,7 +1615,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
             "WHERE MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0 AND SpeciesID IN ( %(alertrsvhck)s )) AS rsvhck," \
         "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE '%(alertduedon)s' = 'Yes' AND DateDue <= %(today)s AND Date Is Null) AS duedon," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID = adoption.AnimalID WHERE " \
-            "DeceasedDate Is Null AND IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s AND SpeciesID IN ( %(alertendtrial)s )) AS endtrial," \
+            "DeceasedDate Is Null AND IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s AND '%(alertendtrial)s' = 'Yes') AS endtrial," \
         "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%' AND '%(alertdocunsigned)s' = 'Yes') - " \
         "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%' AND '%(alertdocunsigned)s' = 'Yes') AS docunsigned, " \
         "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%' AND '%(alertdocsigned)s' = 'Yes') AS docsigned, " \

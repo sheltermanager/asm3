@@ -692,20 +692,18 @@ $(function() {
                         { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrabies", post_field: "AlertSpeciesRabies", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertduevacc", post_field: "AlertDueVacc", label: _("Show an alert when a vaccination is due"), type: "check" }, 
-
                         { id: "alertexpvacc", post_field: "AlertExpVacc", label: _("Show an alert when a vaccination has expired"), type: "check" },
-                        
                         { id: "alertduetest", post_field: "AlertDueTest", label: _("Show an alert when a test is due"), type: "check" }, 
                         { id: "alertduemed", post_field: "AlertDueMed", label: _("Show an alert when a medical treatment is due"), type: "check" }, 
                         { id: "alertboardintoday", post_field: "AlertBoardInToday", label: _("Show an alert when boarding animals are due to arrive"), type: "check" }, 
                         { id: "alertboardouttoday", post_field: "AlertBoardOutToday", label: _("Show an alert when boarding animals are due to leave"), type: "check" }, 
                         { id: "alertdueclinic", post_field: "AlertDueClinic", label: _("Show an alert when a clinic appointment is due"), type: "check" }, 
-
                         { id: "alerturgentwl", post_field: "AlertUrgentWL", label: _("Show an alert when animals are marked as urgent on the waiting list"), type: "check" }, 
-
                         { id: "alertrsvhck", post_field: "AlertSpeciesRsvHck", label: _("Show an alert when these species of animals are reserved but not marked as home checked"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertduedon", post_field: "AlertDueDon", label: _("Show an alert when a payment is due"), type: "check" }, 
-                        { id: "alertendtrial", post_field: "AlertSpeciesEndTrial", label: _("Show an alert when these species of animals have passed the end of their trial adoption period"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+
+                        { id: "alertendtrial", post_field: "AlertEndTrial", label: _("Show an alert when a trial adoption has reached it's end"), type: "check" }, 
+
                         { id: "alertdocunsigned", post_field: "AlertDocUnsigned", label: _("Show an alert when a document is waiting to be signed"), type: "check" }, 
                         { id: "alertdocsigned", post_field: "AlertDocSigned", label: _("Show an alert when a document has been signed"), type: "check" }, 
                         { id: "alertopencheckout", post_field: "AlertOpenCheckout", label: _("Show an alert when a checkout has been left open"), type: "check" }, 

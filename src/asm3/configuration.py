@@ -114,7 +114,7 @@ DEFAULTS = {
     "AlertBoardOutToday": "Yes",
     "AlertDocSigned": "Yes",
     "AlertDocUnsigned": "Yes",
-    "AlertSpeciesEndTrial": "1,2",
+    "AlertEndTrial": "Yes",
     "AlertSpeciesMicrochip": "1,2",
     "AlertDueClinic": "Yes",
     "AlertDueDon": "Yes",
@@ -801,9 +801,9 @@ def alert_tr_nodrv(dbo: Database) -> str:
     if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
-def alert_species_end_trial(dbo: Database) -> str:
-    s = cstring(dbo, "AlertSpeciesEndTrial", DEFAULTS["AlertSpeciesEndTrial"])
-    if s == "": return "0" # Always return something due to IN clauses of queries
+def alert_end_trial(dbo: Database) -> str:
+    s = cstring(dbo, "AlertEndTrial", DEFAULTS["AlertEndTrial"])
+    if s == "": return "No" # Always return something due to IN clauses of queries
     return s
 
 def alert_exp_vacc(dbo: Database) -> str:
