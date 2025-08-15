@@ -1039,7 +1039,7 @@ class mobile(ASMEndpoint):
         
         rotadata = []
         if userdata["OWNERID"]:
-                rotadata = asm3.person.get_rota(dbo, today(), add_days(today(), 7), userdata["OWNERID"])
+            rotadata = asm3.person.get_rota(dbo, today(), add_days(today(), 7), userdata["OWNERID"])
 
         c = {
             "animals":      animals,

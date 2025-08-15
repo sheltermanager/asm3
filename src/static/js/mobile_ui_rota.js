@@ -12,7 +12,7 @@ const mobile_ui_rota = {
     },
 
     sync: () => {
-        if (controller.rotadata) {
+        if (controller.rotadata.length > 0) {
             let daysofweek = [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")];
             let date = common.today_no_time();
             let o = '<table cellpadding=5>';
