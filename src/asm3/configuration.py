@@ -1578,6 +1578,9 @@ def rescuegroups_user(dbo: Database) -> str:
 def rescuegroups_password(dbo: Database) -> str:
     return cstring(dbo, "RescueGroupsFTPPassword")
 
+def resize_images_spec(dbo: Database) -> str:
+    return cstring(dbo, "ResizeImagesSpec")
+
 def retailer_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
