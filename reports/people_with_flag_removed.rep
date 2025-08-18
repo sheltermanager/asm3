@@ -1,0 +1,44 @@
+People with Flag Removed
+###
+People
+###
+33716/Any rev01
+###
+People with the selected person flag removed between two dates.
+###
+en
+###
+$VAR flag PERSONFLAG$
+
+SELECT OwnerName, EmailAddress, AdditionalFlags, o.ID AS OID 
+FROM owner o
+WHERE EXISTS(SELECT log.comments FROM log
+WHERE o.ID = log.linkID AND log.linktype = 1 
+AND log.comments LIKE '%$@flag$|%'
+AND log.date >= '$ASK DATE Enter the from date$'
+AND log.date <= '$ASK DATE Enter the to date$ 23:59:59')
+AND o.AdditionalFlags NOT LIKE '%$@flag$%'
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Flags</th>  
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>  
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total: {COUNT.OWNERNAME}</h2>
+FOOTER$$
