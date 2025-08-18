@@ -5280,7 +5280,7 @@ class move_adopt(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION)),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION)),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -5605,7 +5605,7 @@ class move_foster(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER))
         }
 
     def post_create(self, o):
@@ -5630,7 +5630,7 @@ class move_reclaim(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RECLAIMED)),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RECLAIMED)),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -5663,7 +5663,7 @@ class move_reserve(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RESERVATION)),
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RESERVATION)),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -5682,7 +5682,7 @@ class move_retailer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RETAILER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RETAILER))
         }
 
     def post_create(self, o):
@@ -5696,7 +5696,7 @@ class move_transfer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER))
         }
 
     def post_create(self, o):
