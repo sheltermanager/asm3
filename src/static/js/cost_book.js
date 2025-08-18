@@ -41,11 +41,11 @@ $(function() {
                 },
                 { id: "offset", type: "dropdownfilter", 
                     options: [ 
-                        "m7|" + _("Paid in last week"),
-                        "m31|" + _("Paid in last month"),
-                        "m0|" + _("Unpaid costs") ],
+                        "7|" + _("Paid in last week"),
+                        "31|" + _("Paid in last month"),
+                        "0|" + _("Unpaid costs") ],
                     click: function(selval) {
-                        common.route(controller.name + "?offset=" + selval);
+                        common.route("cost_book" + "?offset=" + selval);
                     },
                 }
             ];

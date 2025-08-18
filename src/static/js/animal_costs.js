@@ -107,7 +107,11 @@ $(function() {
             this.model();
             let s = "";
             s += tableform.dialog_render(this.dialog);
-            s += edit_header.animal_edit_header(controller.animal, "costs", controller.tabcounts);
+            if (controller.animal) {
+                s += edit_header.animal_edit_header(controller.animal, "costs", controller.tabcounts);
+            } else {
+                s += html.content_header(_("Cost Book"));
+            }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += [
@@ -155,7 +159,7 @@ $(function() {
             $("#button-savecost").button("disable");
 
             // If the animal isn't on the shelter, hide running board
-            if (controller.animal.ARCHIVED == 1) {
+            if (!controller.animal || controller.animal.ARCHIVED == 1) {
                 $("#onshelterboard").hide();
             }
 
@@ -168,54 +172,60 @@ $(function() {
         },
 
         sync: function() {
-            $("#dailyboardingcost").currency("value", controller.animal.DAILYBOARDINGCOST);
+            if (controller.animal) {
+                $("#dailyboardingcost").currency("value", controller.animal.DAILYBOARDINGCOST);
+            }
             animal_costs.recalc_daysonshelter();
             animal_costs.calculate_costtotals();
         },
 
         calculate_costtotals: function() {
-            let s = _("Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}");
-            let bc = $("#dailyboardingcost").currency("value");
-            let dons = format.to_int(controller.animal.DAYSONSHELTER);
-            let tb = bc * dons;
-            let tv = format.to_int(controller.costtotals.TV);
-            let tt = format.to_int(controller.costtotals.TT);
-            let tm = format.to_int(controller.costtotals.TM);
-            let tr = format.to_int(controller.costtotals.TR);
-            let tc = 0;
-            let td = format.to_int(controller.costtotals.TD);
-            // Calculate tc from our current cost rows
-            $.each(controller.rows, function(i, v) {
-                tc += format.to_int(v.COSTAMOUNT);
-            });
-            // Total without boarding costs
-            let totc = tv + tt + tm + tr + tc;
-            // Only add current boarding cost if the animal is on the shelter
-            if (controller.animal.ARCHIVED == 0) { totc += tb; }
-            let bal = td - totc;
-            $("#costtotals").html(common.substitute(s,
-                { 
-                    "0": format.currency(tv), 
-                    "1": format.currency(tt), 
-                    "2": format.currency(tm),
-                    "3": format.currency(tr),
-                    "4": format.currency(tc),
-                    "5": "<b>" + format.currency(totc) + "</b><br />",
-                    "6": format.currency(td),
-                    "7": "<b>" + format.currency(bal) + "</b>"
-                }));
+            if (controller.animal) {
+                let s = _("Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}");
+                let bc = $("#dailyboardingcost").currency("value");
+                let dons = format.to_int(controller.animal.DAYSONSHELTER);
+                let tb = bc * dons;
+                let tv = format.to_int(controller.costtotals.TV);
+                let tt = format.to_int(controller.costtotals.TT);
+                let tm = format.to_int(controller.costtotals.TM);
+                let tr = format.to_int(controller.costtotals.TR);
+                let tc = 0;
+                let td = format.to_int(controller.costtotals.TD);
+                // Calculate tc from our current cost rows
+                $.each(controller.rows, function(i, v) {
+                    tc += format.to_int(v.COSTAMOUNT);
+                });
+                // Total without boarding costs
+                let totc = tv + tt + tm + tr + tc;
+                // Only add current boarding cost if the animal is on the shelter
+                if (controller.animal.ARCHIVED == 0) { totc += tb; }
+                let bal = td - totc;
+                $("#costtotals").html(common.substitute(s,
+                    { 
+                        "0": format.currency(tv), 
+                        "1": format.currency(tt), 
+                        "2": format.currency(tm),
+                        "3": format.currency(tr),
+                        "4": format.currency(tc),
+                        "5": "<b>" + format.currency(totc) + "</b><br />",
+                        "6": format.currency(td),
+                        "7": "<b>" + format.currency(bal) + "</b>"
+                    }));
+            }
         },
 
         recalc_daysonshelter: function() {
-            let days = controller.animal.DAYSONSHELTER;
-            let cost = format.currency_to_float($("#dailyboardingcost").val());
-            let costrounded = format.float_to_dp(cost, asm.currencydp);
-            let tot = (days * costrounded) * 100;
-            let s = _("On shelter for {0} days. Total cost: {1}");
-            s = s.replace("{0}", "<b>" + days + "</b>");
-            s = s.replace("{1}", "<b>" + format.currency(tot) + "</b>");
-            $("#costonshelter").html(s);
-            $("#button-savecost").button("enable");
+            if (controller.animal) {
+                let days = controller.animal.DAYSONSHELTER;
+                let cost = format.currency_to_float($("#dailyboardingcost").val());
+                let costrounded = format.float_to_dp(cost, asm.currencydp);
+                let tot = (days * costrounded) * 100;
+                let s = _("On shelter for {0} days. Total cost: {1}");
+                s = s.replace("{0}", "<b>" + days + "</b>");
+                s = s.replace("{1}", "<b>" + format.currency(tot) + "</b>");
+                $("#costonshelter").html(s);
+                $("#button-savecost").button("enable");
+            }
         },
 
         save_boarding_cost: function() {
@@ -234,15 +244,20 @@ $(function() {
         },
 
         name: "animal_costs",
-        animation: "formtab",
-        title:  function() { return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
-            0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
-            3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); },
+        animation: function() { return controller.name == "cost_book" ? "book" : "formtab"; },
+        title: function() {
+            if (controller.animal) {
+                return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE });
+            } else {
+                return _("Cost Book");
+            }
+        },
 
         routes: {
-            "animal_costs": function() {
-                common.module_loadandstart("animal_costs", "animal_costs?id=" + this.qs.id);
-            }
+            "animal_costs": function() { common.module_loadandstart("animal_costs", "animal_costs?id=" + this.qs.id);},
+            "cost_book": function() { common.module_loadandstart("animal_costs", "cost_book?id=" + this.qs.id);}
         }
 
     };

@@ -829,17 +829,18 @@ class custom_splash(ASMEndpoint):
 
 class cost_book(JSONEndpoint):
     url = "cost_book"
-    js_module = "cost_book"
+    js_module = "animal_costs"
     get_permissions = asm3.users.VIEW_COST
 
     def controller(self, o):
         dbo = o.dbo
         post = o.post
         offset = post.integer('offset')
-        cost = asm3.financial.get_costs(dbo, offset=offset)
-        asm3.al.debug("got %d costs for animals" % (len(cost), ), "main.cost_book", dbo)
+        costs = asm3.financial.get_costs(dbo, offset=offset)
+        asm3.al.debug("got %d costs for animals" % (len(costs), ), "main.cost_book", dbo)
         return {
-            "rows": cost
+            "name": "cost_book",
+            "rows": costs
         }
     
     # def post_send(self, o):
@@ -2087,6 +2088,7 @@ class animal_costs(JSONEndpoint):
         cost = asm3.animal.get_costs(dbo, animalid)
         asm3.al.debug("got %d costs for animal %s %s" % (len(cost), a["CODE"], a["ANIMALNAME"]), "main.animal_costs", dbo)
         return {
+            "name": "animal_costs",
             "rows": cost,
             "animal": a,
             "costtypes": asm3.lookups.get_costtypes(dbo),
