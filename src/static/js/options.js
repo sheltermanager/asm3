@@ -504,8 +504,9 @@ $(function() {
                         { id: "AdoptionCheckoutPaymentMethod", post_field: "AdoptionCheckoutPaymentMethod", label: _("Payment method"), type: "select", 
                             options: html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME")
                         }, 
-                        { id: "AdoptionCheckoutDonationMsg", post_field: "AdoptionCheckoutDonationMsg", label: _("Donation message"), type: "textarea", callout: _("The text to show adopters when requesting a donation. Simple HTML formatting is allowed.") }, 
-                        { id: "AdoptionCheckoutDonationTiers", post_field: "AdoptionCheckoutDonationTiers", label: _("Donation tiers"), type: "textarea" }
+                        { id: "AdoptionCheckoutDonationMsg", post_field: "AdoptionCheckoutDonationMsg", label: _("Donation message"), type: "textarea", doublesize: true, 
+                            callout: _("The text to show adopters when requesting a donation. Simple HTML formatting is allowed.") }, 
+                        { id: "AdoptionCheckoutDonationTiers", post_field: "AdoptionCheckoutDonationTiers", label: _("Donation tiers"), type: "textarea", doublesize: true }
                     ]},
                     { id: "tab-costs", title: _("Costs"), fields: [
                         { id: "dailyboardingcost", post_field: "DefaultDailyBoardingCost", label: _("Default daily boarding cost"), type: "currency", callout: _("The daily cost for every day a shelter animal is in care")
