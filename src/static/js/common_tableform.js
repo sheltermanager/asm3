@@ -1089,6 +1089,7 @@ const tableform = {
      *        xattr: ' data-linktype="2" ' (add extra attributes to the widget)
      *        xbutton: "text" (render an extra button after the widget with id button-post_field and inner text)
      *        xlabel: "<span>whatever</span>" (render extra markup after the label)
+     *        prelabel: "<span>whatever</span>" (render extra markup before the label, "hcb" renders a hidden checkbox for indenting)
      *        xmarkup: "<span>whatever</span>" (render extra markup after the widget)
      *        coldata: use in conjunction with type "nextcol" to specify the data attribute for the next column
      *      } ]
@@ -1213,7 +1214,7 @@ const tableform = {
      * v: field definition
      */
     _render_label: function(v) {
-        let label = "", labelx = "", labelfor = "", labelclass = "";
+        let label = "", labelx = "", labelfor = "", labelclass = "", prelabel = "";
         if (v.validation && typeof v.validation !== "function") {
             labelx += '&nbsp;<span class="asm-has-validation">*</span>';
         }
@@ -1223,13 +1224,21 @@ const tableform = {
         if (v.xlabel) {
             labelx += v.xlabel;
         }
+        if (v.prelabel) {
+            if (v.prelabel == "hcb") {
+                prelabel = '<input type="checkbox" style="visibility: hidden" />';
+            }
+            else {
+                prelabel = v.prelabel;
+            }
+        }
         if (v.label && v.label.indexOf("<label") != -1) {
             label = v.label; // label already contains markup, let it override our generated label
         }
         else {
             if (v.id) { labelfor = 'for="' + v.id + '"'; }
             if (v.labelclasses) { labelclass = 'class="' + v.labelclasses + '"'; }
-            label = '<label ' + labelfor + ' ' + labelclass + '>' + (v.label || "") + "</label>" + labelx;
+            label = prelabel + '<label ' + labelfor + ' ' + labelclass + '>' + (v.label || "") + "</label>" + labelx;
         }
         return label;
     },

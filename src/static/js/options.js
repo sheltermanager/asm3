@@ -601,7 +601,7 @@ $(function() {
                     { id: "tab-display", title: _("Display"), fields: [
                         { id: "disableeffects", post_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check", fullrow: true }, 
                         { id: "disablehtml5scaling", post_field: "rc:DontUseHTML5Scaling", label: _("Use HTML5 client side image scaling where available to speed up image uploads"), type: "check", fullrow: true }, 
-                        { id: "resizeimagesspec", post_field: "ResizeImagesSpec", label: _("Scale uploaded images to"), 
+                        { id: "resizeimagesspec", post_field: "ResizeImagesSpec", label: _("Scale uploaded images to"), prelabel: "hcb", 
                             callout: _("Longest side to scale uploaded images to.") + "<br><br><b>" + 
                                 _("WARNING: Selecting a larger value will use more storage and could increase your hosting costs") + "</b>",
                             type: "select", options: html.list_to_options(
@@ -635,7 +635,7 @@ $(function() {
                         { id: "multisite", post_field: "MultiSiteEnabled", label: _("Enable multiple sites"), type: "check", fullrow: true }, 
                         { id: "formatphonenumbers", post_field: "FormatPhoneNumbers", label: _("Format telephone numbers according to my locale"), type: "check", fullrow: true }, 
                         { id: "inactivitytimer", post_field: "InactivityTimer", label: _("Auto log users out after this many minutes of inactivity"), type: "check", fullrow: true, xmarkup: '<input data="InactivityTimeout" id="inactivitytimeout" data-min="0" data-max="1440" class="asm-textbox asm-numberbox" />' }, 
-                        { id: "ownernameformat", post_field: "OwnerNameFormat", label: _("When displaying person names, use the format"), type: "select", options:
+                        { id: "ownernameformat", post_field: "OwnerNameFormat", label: _("When displaying person names, use the format"), prelabel: "hcb", type: "select", options:
                             '<option value="{ownertitle} {ownerforenames} {ownersurname}">' + _("Title First Last") + '</option>' + 
                             '<option value="{ownertitle} {ownerinitials} {ownersurname}">' + _("Title Initials Last") + '</option>' + 
                             '<option value="{ownerforenames} {ownersurname}">' + _("First Last") + '</option>' + 
@@ -647,16 +647,16 @@ $(function() {
                             '<option value="{ownersurname}, {ownerforenames1} & {ownerforenames2}">' + _("Last, First & First") + '</option>' + 
                             '</select> '
                         }, 
-                        { id: "ownernameformat", post_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) },
+                        { id: "ownernameformat", post_field: "FirstDayOfWeek", label: _("When displaying calendars, the first day of the week is"), prelabel: "hcb", type: "select", options: html.list_to_options(['0|' + _("Sunday"), '1|' + _("Monday")]) },
                     ]}, 
                     { id: "tab-documents", title: _("Documents"), fields: [
-                        { id: "allowodttemp", post_field: "AllowODTDocumentTemplates", label: _("Allow use of OpenOffice document templates"), type: "check" }, 
-                        { id: "jswprint", post_field: "JSWindowPrint", label: _("Printing word processor documents uses hidden iframe and window.print"), type: "check" }, 
-                        { id: "pdfinline", post_field: "PDFInline", label: _("Show PDF files inline instead of sending them as attachments"), type: "check" }, 
-                        { id: "includeincompletemedical", post_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check" }, 
-                        { id: "notifycoordicatorondocsign", post_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check" }, 
-                        { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
-                        { type: "raw", markup: _("Default zoom level when converting documents to PDF") + ' <input type="text" class="asm-field asm-textbox asm-numberbox controlshadow controlborder" style="" id="pdfzoom" data-post="PDFZoom"">%' }
+                        { id: "allowodttemp", post_field: "AllowODTDocumentTemplates", label: _("Allow use of OpenOffice document templates"), type: "check", fullrow: true }, 
+                        { id: "jswprint", post_field: "JSWindowPrint", label: _("Printing word processor documents uses hidden iframe and window.print"), type: "check", fullrow: true }, 
+                        { id: "pdfinline", post_field: "PDFInline", label: _("Show PDF files inline instead of sending them as attachments"), type: "check", fullrow: true }, 
+                        { id: "includeincompletemedical", post_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check", fullrow: true }, 
+                        { id: "notifycoordicatorondocsign", post_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check", fullrow: true }, 
+                        { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", fullrow: true, xmarkup: ' <select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "pdfzoom", post_field: "PDFZoom", label: _("Default zoom level when converting documents to PDF"), prelabel: "hcb", type: "number", xmarkup: "%" }
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
                         { id: "emailaddress", post_field: "EmailAddress", label: _("Email address"), type: "text", doublesize: true, 
@@ -815,7 +815,7 @@ $(function() {
                         { id: "warnmultiplereseves", post_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-onlineforms", title: _("Online Forms"), fields: [
-                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", halfsize: true, xmarkup: _(" days.") }, 
+                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", prelabel: "hcb", halfsize: true, xmarkup: _(" days.") }, 
                         { id: "deleteonprocess", post_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check", fullrow: true }, 
                         { id: "removeprocessedforms", post_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check", fullrow: true }, 
                         { id: "hashprocessedforms", post_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check", fullrow: true }, 
@@ -939,7 +939,7 @@ $(function() {
                         { id: "personpermissions", post_field: "PersonPermissions", label: _("Enable access permissions for person records"), type: "check" }
                     ]}, 
                     { id: "tab-shelterview", title: _("Shelter view"), fields: [
-                        { id: "shelterviewdefault", post_field: "ShelterViewDefault", label: _("Default view"), type: "select", options: html.shelter_view_options() }, 
+                        { id: "shelterviewdefault", post_field: "ShelterViewDefault", label: _("Default view"), prelabel: "hcb", type: "select", options: html.shelter_view_options() }, 
                         { id: "shelterviewdragdrop", post_field: "ShelterViewDragDrop", label: _("Allow drag and drop to move animals between locations"), type: "check", fullrow: true }, 
                         { id: "shelterviewreserves", post_field: "ShelterViewReserves", label: _("Allow units to be reserved and sponsored"), type: "check", fullrow: true }, 
                         { id: "shelterviewempty", post_field: "ShelterViewShowEmpty", label: _("Show empty locations"), type: "check", fullrow: true }
