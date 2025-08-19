@@ -7,6 +7,7 @@ $(function() {
     const animal_costs = {
 
         lastperson: null,
+        lastanimal: null,
 
         model: function() {
             const dialog = {
@@ -109,6 +110,11 @@ $(function() {
                         tableform.fields_update_row(dialog.fields, row);
                         row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
                         if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
+                        if (animal_costs.lastanimal) {
+                            row.ANIMALNAME = animal_costs.lastanimal.ANIMALNAME;
+                            row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
+                            row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
+                        }
                         controller.rows.push(row);
                         tableform.table_update(table);
                         animal_costs.calculate_costtotals();
@@ -197,6 +203,14 @@ $(function() {
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
                 animal_costs.lastperson = rec;
+            });
+
+            $("#costanimalid").animalchooser().bind("animalchooserchange", function(event, rec) {
+                animal_costs.lastanimal = rec;
+            });
+
+            $("#costanimalid").animalchooser().bind("animalchooserloaded", function(event, rec) {
+                animal_costs.lastanimal = rec;
             });
             
             $("#type").change(animal_costs.costtype_change);
