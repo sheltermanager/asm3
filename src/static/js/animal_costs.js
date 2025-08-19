@@ -17,6 +17,7 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
+                    { json_field: "ANIMALID", post_field: "costanimalid", label: _("Animal"), type: "animal", validation: "notzero" },
                     { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
@@ -31,11 +32,25 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    await tableform.dialog_show_edit(dialog, row);
+                    await tableform.dialog_show_edit(dialog, row, {
+                        onload: function() {
+                            if (controller.animal) {
+                                $("#costanimalid").animalchooser("loadbyid", controller.animal.ID);
+                                $("#costanimalidrow").hide();
+                                animal_costs.costtype_change();
+                            } else {
+                                $("#costanimalidrow").show();
+                            }
+                        }
+                    });
                     tableform.fields_update_row(dialog.fields, row);
                     row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
                     if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
-                    await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
+                    if (controller.animal) {
+                        await tableform.fields_post(dialog.fields, "mode=update&costanimalid=" + controller.animal.ID + "&costid=" + row.ID, "animal_costs");
+                    } else {
+                        await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
+                    }
                     tableform.table_update(table);
                     animal_costs.calculate_costtotals();
                     tableform.dialog_close();
@@ -48,6 +63,16 @@ $(function() {
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
                     { field: "INVOICENUMBER", display: _("Invoice Number") },
+                    { field: "ANIMAL", display: _("Animal"), 
+                        formatter: function(row) {
+                            let h = html.animal_link(row, { noemblems: controller.name == "animal_costs", emblemsright: true });
+                            return h;
+                        },
+                        hideif: function(row) {
+                            // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
                     { field: "OWNERNAME", display: _("Payee"),
                         formatter: function(row) {
                             if (row.OWNERID) {
@@ -63,8 +88,22 @@ $(function() {
             const buttons = [
                 { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
                     click: async function() { 
-                        await tableform.dialog_show_add(dialog, { onload: animal_costs.costtype_change });
-                        let response = await tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs");
+                        await tableform.dialog_show_add(dialog, {
+                            onload: function() {
+                                if (controller.animal) {
+                                    $("#costanimalid").animalchooser("loadbyid", controller.animal.ID);
+                                    $("#costanimalidrow").hide();
+                                    animal_costs.costtype_change();
+                                } else {
+                                    $("#costanimalidrow").show();
+                                }
+                            }
+                        });
+                        if (controller.animal) {
+                            var response = await tableform.fields_post(dialog.fields, "mode=create&costanimalid="  + controller.animal.ID, "animal_costs");
+                        } else {
+                            var response = await tableform.fields_post(dialog.fields, "mode=create", "animal_costs");
+                        }
                         let row = {};
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
@@ -95,6 +134,19 @@ $(function() {
                     '<span id="costonshelter"></span>',
                     '</span>'
                     ].join("\n")
+                },
+                { id: "offset", type: "dropdownfilter", 
+                    hideif: function() {
+                        // Don't show on animal records
+                        if (controller.animal) {return true;}
+                    },
+                    options: [ 
+                        "7|" + _("Paid in last week"),
+                        "31|" + _("Paid in last month"),
+                        "0|" + _("Unpaid costs") ],
+                    click: function(selval) {
+                        common.route("cost_book" + "?offset=" + selval, true);
+                    },
                 }
             ];
 
@@ -114,15 +166,17 @@ $(function() {
             }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
-            s += [
-                '<div id="asm-cost-footer">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                '<span id="costtotals"></span>',
-                '</div>',
-                '</div>'
-            ].join("\n");
-            s += html.content_footer();
+            if (controller.animal) {
+                s += [
+                    '<div id="asm-cost-footer">',
+                    '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
+                    '<p><span class="ui-icon ui-icon-info"></span>',
+                    '<span id="costtotals"></span>',
+                    '</div>',
+                    '</div>'
+                ].join("\n");
+                s += html.content_footer();
+            }
             return s;
         },
 
@@ -172,6 +226,10 @@ $(function() {
         },
 
         sync: function() {
+            // If an offset is given in the querystring, update the select
+            if (common.querystring_param("offset")) {
+                $("#offset").select("value", common.querystring_param("offset"));
+            }
             if (controller.animal) {
                 $("#dailyboardingcost").currency("value", controller.animal.DAILYBOARDINGCOST);
             }

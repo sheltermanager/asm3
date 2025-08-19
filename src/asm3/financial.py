@@ -308,11 +308,13 @@ def get_balance_fromto_date(dbo: Database, accountid: int, fromdate: datetime, t
 def get_costs(dbo: Database, offset: int = 0, sort: int = ASCENDING) -> Results:
     """
     Returns all animalcost records:
-    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER
+    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER, ANIMALID, ANIMALNAME, SHORTCODE, SHELTERCODE
     """
     sql = "SELECT ac.ID, ac.CostTypeID, ac.CostAmount, ac.CostDate, ac.CostPaidDate, c.CostTypeName, ac.Description, " \
-        "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate, ac.OwnerID, ac.InvoiceNumber, o.OwnerName " \
+        "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate, ac.OwnerID, ac.InvoiceNumber, o.OwnerName, " \
+        "ac.AnimalID, a.AnimalName, a.ShortCode, a.ShelterCode " \
         "FROM animalcost ac INNER JOIN costtype c ON c.ID = ac.CostTypeID " \
+        "INNER JOIN animal a ON ac.AnimalID = a.ID " \
         "LEFT JOIN owner o ON ac.OwnerID = o.ID "
     params = []
     if offset:

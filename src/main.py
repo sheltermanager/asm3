@@ -840,7 +840,8 @@ class cost_book(JSONEndpoint):
         asm3.al.debug("got %d costs for animals" % (len(costs), ), "main.cost_book", dbo)
         return {
             "name": "cost_book",
-            "rows": costs
+            "rows": costs,
+            "costtypes": asm3.lookups.get_costtypes(dbo)
         }
     
     # def post_send(self, o):
@@ -2098,6 +2099,7 @@ class animal_costs(JSONEndpoint):
 
     def post_create(self, o):
         self.check(asm3.users.ADD_COST)
+        o.post["animalid"] = o.post["costanimalid"]
         return asm3.animal.insert_cost_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
