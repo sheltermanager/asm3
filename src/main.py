@@ -4868,7 +4868,8 @@ class mailmerge(JSONEndpoint):
             "numrows": len(rows),
             "hasemail": "EMAILADDRESS" in fields,
             "hasaddress": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
-            "templates": asm3.template.get_document_templates(dbo, "mailmerge")
+            "templates": asm3.template.get_document_templates(dbo, "mailmerge"),
+            "logtypes": asm3.lookups.get_log_types(dbo)
         }
    
     def post_email(self, o):

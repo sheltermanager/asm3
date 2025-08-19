@@ -135,6 +135,15 @@ $(function() {
                 '<input id="em-includeunsubscribe" data="unsubscribe" type="checkbox" name="em-includeunsubscribe" class="asm-checkbox" />',
                 '<label for="em-includeunsubscribe">' + _("Add an unsubscribe link to the bottom of emails") + '</label>',
                 '</p>',
+
+                '<div id="em-logemail">',
+                '<input id="em-includelog" data="includelog" type="checkbox" name="em-includelog" class="asm-checkbox" />',
+                '<label for="em-includelog">' + _("Add a log to recipient person record") + '</label>',
+                '<label for="em-logtype">' + _(" using type") + '</label>',
+                '<select id="em-logtype" class="asm-selectbox">',
+                '</select>',
+                '</div>',
+
                 '</td>',
                 '<td>',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
@@ -270,7 +279,7 @@ $(function() {
                         $("#em-body").html(j.BODY); 
                     });
                 });
-
+                $("#em-logtype").html( html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME') );
             }
         },
 
