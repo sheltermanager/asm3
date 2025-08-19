@@ -22,16 +22,10 @@ $(function() {
                             }
                         }
                     },
-                    { field: "TYPE", display: _("Type"), formatter: function(row) {
-                            return row.PAYMENTNAME;
-                        }
-                    },
-                    { field: "OWNERNAME", display: _("Person"), formatter: function(row) {
-                        return row.OWNERNAME;
-                    } },
-                    { field: "DONATION", display: _("Amount"), formatter: function(row) {
-                        return format.currency(row.DONATION);
-                    } },
+                    { field: "DONATIONNAME", display: _("Type") },
+                    { field: "PAYMENTNAME", display: _("Method") },
+                    { field: "OWNERNAME", display: _("Person") },
+                    { field: "DONATION", display: _("Amount"), formatter: tableform.format_currency },
                     { field: "COMMENTS", display: _("Comments") }
                 ]
             };
@@ -39,7 +33,8 @@ $(function() {
             const buttons = [
                 { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", 
                     click: function() {
-                        common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val() + "&paymentmethod=" + $("#paymentmethod").val() + "&templateid=" + $("#paymenttemplate").val());
+                        common.route("receipt_bulk?fromdate=" + $("#fromdate").val() + "&todate=" + $("#todate").val() + 
+                            "&paymenttype=" + $("#paymenttype").val() + "&paymentmethod=" + $("#paymentmethod").val() + "&templateid=" + $("#paymenttemplate").val());
                     }
                 },
                 { id: "send", text: _("Send"), icon: "email", enabled: "multi", 
@@ -65,10 +60,12 @@ $(function() {
             s += tableform.fields_render([
                 { id: "fromdate", type: "date", label: _("From"), halfsize: true, value: format.date(controller.fromdate) },
                 { id: "todate", type: "date", label: _("To"), halfsize: true, value: format.date(controller.todate) },
+                { id: "paymenttype", type: "selectmulti", label: _("Type"), 
+                    options: { displayfield: "DONATIONNAME", rows: controller.paymenttypes } },
                 { id: "paymentmethod", type: "selectmulti", label: _("Method"), 
-                    options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods } },
+                    options: { displayfield: "PAYMENTNAME", rows: controller.paymentmethods } },
                 { id: "paymenttemplate", type: "select", label: _("Template"), 
-                    options: { displayfield: "NAME", valuefield: "ID", rows: controller.templates } }
+                    options: { displayfield: "NAME", rows: controller.templates } }
             ], { full_width: false });
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -81,6 +78,8 @@ $(function() {
         },
 
         sync: function() {
+            $("#paymenttype").val(controller.paymenttype);
+            $("#paymenttype").change();
             $("#paymentmethod").val(controller.paymentmethod);
             $("#paymentmethod").change();
             if (controller.template > 0) {

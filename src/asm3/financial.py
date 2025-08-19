@@ -480,7 +480,7 @@ def get_donations_due_two_dates(dbo: Database, start: datetime, end: datetime) -
         "WHERE od.DateDue >= ? AND od.DateDue <= ? AND od.Date Is Null " \
         "ORDER BY od.DateDue DESC", (start, end))
 
-def get_donations_paid_two_dates(dbo: Database, start: datetime, end: datetime, paymentmethods: List[int]) -> Results:
+def get_donations_paid_two_dates(dbo: Database, start: datetime, end: datetime, paymenttypes: List[int], paymentmethods: List[int]) -> Results:
     """
     Returns a recordset of paid donations between two dates
     ID, DONATIONTYPEID, DONATIONNAME, DATE, DATEDUE, DONATION,
@@ -488,8 +488,9 @@ def get_donations_paid_two_dates(dbo: Database, start: datetime, end: datetime, 
     ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
     """
     methodids = ",".join([ str(x) for x in paymentmethods ])
+    typeids = ",".join([ str(x) for x in paymenttypes ])
     sql = f"{get_donation_query(dbo)} WHERE od.DATE >= ? AND od.Date <= ? " \
-        f"AND DonationPaymentID IN ({methodids}) ORDER BY od.Date DESC"
+        f"AND DonationTypeID IN ({typeids}) AND DonationPaymentID IN ({methodids}) ORDER BY od.Date DESC"
     return dbo.query(sql, [start, end])
 
 def get_animal_donations(dbo: Database, aid: int, sort: int = ASCENDING) -> Results:

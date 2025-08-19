@@ -7011,29 +7011,34 @@ class receipt_bulk(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         post = o.post
-        if post.date('fromdate'):
-            fromdate = post.date('fromdate')
+        if post.date("fromdate"):
+            fromdate = post.date("fromdate")
         else:
             fromdate = dbo.today(offset=-30)
-        if post.date('todate'):
-            todate = post.date('todate')
+        if post.date("todate"):
+            todate = post.date("todate")
         else:
             todate = dbo.today()
-        if post.integer_list('paymentmethod'):
-            paymentmethod = post.integer_list('paymentmethod')
+        if post.integer_list("paymentmethod"):
+            paymentmethod = post.integer_list("paymentmethod")
         else:
             paymentmethod = [asm3.configuration.default_payment_method(dbo)]
-        if post.integer('templateid'):
-            template = post.integer('templateid')
+        if post.integer_list("paymenttype"):
+            paymenttype = post.integer_list("paymenttype")
+        else:
+            paymenttype = [asm3.configuration.default_donation_type(dbo)]
+        if post.integer("templateid"):
+            template = post.integer("templateid")
         else:
             template = 0
-        paymentmethods = asm3.lookups.get_payment_methods(dbo)
         return {
-            "rows": asm3.financial.get_donations_paid_two_dates(dbo, fromdate, todate, paymentmethod),
+            "rows": asm3.financial.get_donations_paid_two_dates(dbo, fromdate, todate, paymenttype, paymentmethod),
             "fromdate": fromdate,
             "todate": todate,
             "paymentmethod": paymentmethod,
-            "paymentmethods": paymentmethods,
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "paymenttype": paymenttype,
+            "paymenttypes": asm3.lookups.get_donation_types(dbo),
             "template": template,
             "templates": asm3.template.get_document_templates(dbo, "payment")
         }
