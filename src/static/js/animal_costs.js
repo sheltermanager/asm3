@@ -115,7 +115,17 @@ $(function() {
                             row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
                             row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
                         }
-                        controller.rows.push(row);
+                        let offset = $("#offset").val();
+                        let paiddate = row.COSTPAIDDATE;
+                        let datefloor = common.subtract_days(common.today_no_time(), offset)
+                        if (!paiddate && !offset) {
+                            controller.rows.push(row);
+                        } else if (format.date_js(paiddate, true) >= datefloor ) {
+                            controller.rows.push(row);
+                        }
+
+                        
+                        // controller.rows.push(row);
                         tableform.table_update(table);
                         animal_costs.calculate_costtotals();
                         tableform.dialog_close();
