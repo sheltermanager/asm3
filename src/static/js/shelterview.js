@@ -642,6 +642,9 @@ $(function() {
             else if (viewmode == "speciescolor") {
                 this.render_view("SPECIESNAME", "BASECOLOURNAME", "SPECIESNAME,BASECOLOURNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "speciesfosterer") {
+                this.render_view("SPECIESNAME", "CURRENTOWNERNAME", "SPECIESNAME,CURRENTOWNERNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "status") {
                 this.render_view("ADOPTIONSTATUS", "", "ADOPTIONSTATUS,ANIMALNAME", false, true);
             }

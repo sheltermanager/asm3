@@ -894,6 +894,7 @@ const html = {
             '<option value="speciesbreed">' + _("Species and Breed") + '</option>',
             '<option value="speciescode">' + _("Species and Code") + '</option>',
             '<option value="speciescolor">' + _("Species and Color") + '</option>',
+            '<option value="speciesfosterer">' + _("Species and Fosterer") + '</option>',
             '<option value="status">' + _("Status") + '</option>',
             '<option value="statuslocation">' + _("Status and Location") + '</option>',
             '<option value="statusspecies">' + _("Status and Species") + '</option>',
