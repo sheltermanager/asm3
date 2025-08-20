@@ -537,11 +537,14 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
             ar( asm3.lostfound.get_foundanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "FOUNDANIMAL", fasort )
         if cp(asm3.users.VIEW_LICENCE):
             ar( asm3.financial.get_licence_find_simple(dbo, q, limit), "LICENCE", lisort )
+        if cp(asm3.users.VIEW_COST):
+            ar( asm3.animal.get_animalcost_find_simple(dbo, q, limit), "COST", cosort)
         # This pollutes search results too much, only allow log search with explicit lo:
         #if cp(asm3.users.VIEW_LOG):
         #    ar( asm3.log.get_log_find_simple(dbo, q, limit=100), "LOG", losort )
         if cp(asm3.users.VIEW_VOUCHER):
             ar( asm3.financial.get_voucher_find_simple(dbo, q, limit), "VOUCHER", vosort)
+
         explain = _("Results for '{0}'.", l).format(q)
 
     # Apply the sort to the results
