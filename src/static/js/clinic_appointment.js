@@ -170,8 +170,8 @@ $(function() {
             };
 
             const buttons = [
-                { id: "new", text: _("New Appointment"), icon: "new", enabled: "always", perm: "acl", click: async function() { 
-                    await tableform.dialog_show_add(dialog, {
+                { id: "new", text: _("New Appointment"), icon: "new", enabled: "always", perm: "acl", click: function() { 
+                    tableform.dialog_show_add(dialog, {
                         onvalidate: function() {
                             return clinic_appointment.validation();
                         },
@@ -184,6 +184,7 @@ $(function() {
                             }
                             $("#person").personchooser("clear");
                             $("#animal").animalchooser("clear");
+                            clinic_appointment.lastperson = null;
                             if (controller.person) {
                                 $("#person").personchooser("loadbyid", controller.person.ID);
                                 clinic_appointment.update_person_animals(controller.person.ID);
@@ -198,7 +199,6 @@ $(function() {
                                 }
                                 $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 clinic_appointment.show_person_animals(false);
-
                             }
                             if (config.bool("VATEnabled")) {
                                 $("#vat").prop("checked", true);
@@ -206,21 +206,23 @@ $(function() {
                                 $("#vat").prop("checked", false);
                             }
                             $("#vat").change();
+                        }, 
+                        onadd: async function () {
+                            try {
+                                let response = await tableform.fields_post(dialog.fields, "mode=create", "clinic_appointment");
+                                var row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                clinic_appointment.set_extra_fields(row);
+                                controller.rows.push(row);
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            }
+                            finally {
+                                tableform.dialog_enable_buttons();   
+                            }
                         }
                     });
-                    try {
-                        let response = await tableform.fields_post(dialog.fields, "mode=create", "clinic_appointment");
-                        var row = {};
-                        row.ID = response;
-                        tableform.fields_update_row(dialog.fields, row);
-                        clinic_appointment.set_extra_fields(row);
-                        controller.rows.push(row);
-                        tableform.table_update(table);
-                        tableform.dialog_close();
-                    }
-                    finally {
-                        tableform.dialog_enable_buttons();   
-                    }
                 }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcl",
                     click: async function() { 
