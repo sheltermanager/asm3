@@ -7047,17 +7047,14 @@ class receipt_bulk(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         user = post["username"]
-        donationids = o.post.integer_list('ids')
-        templateid = o.post.integer('tid')
-
         fromadd = asm3.configuration.email(dbo)
         logmsg = _("Bulk payment receipt emailed")
         emailaddresses = {}
-        for donationid in donationids:
+        for donationid in o.post.integer_list("ids"):
             p = asm3.financial.get_email_from_donation_id(dbo, donationid)
             if p:
-                pid = p['ID']
-                to = p['EMAILADDRESS']
+                pid = p.ID
+                to = p.EMAILADDRESS
                 if to in emailaddresses:
                     emailaddresses[to].append(donationid)
                 else:
@@ -7067,8 +7064,8 @@ class receipt_bulk(JSONEndpoint):
             asm3.smcom.check_bulk_email(dbo, count)
         elif count > asm3.configuration.mail_merge_max_emails(dbo):
             raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
-        for emailaddress in emailaddresses.keys():
-            body = asm3.wordprocessor.generate_donation_doc(dbo, templateid, emailaddresses[emailaddress], user)
+        for to in emailaddresses.keys():
+            body = asm3.wordprocessor.generate_donation_doc(dbo, o.post.integer("tid"), emailaddresses[to], user)
             mt = asm3.wordprocessor.extract_mail_tokens(body)
             cc = mt["CC"] or ""
             bcc = mt["BCC"] or ""
