@@ -114,48 +114,26 @@ $(function() {
                 '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a> (' + controller.numemails + ') ' + smcomemailinfo + '</h3>',
                 '<div id="sendemail">',
                 hf.replace("{mode}", "email"),
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="em-from">' + _("From") + '</label></td>',
-                '<td><input id="em-from" data="from" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="em-subject">' + _("Subject") + '</label></td>',
-                '<td><input id="em-subject" data="subject" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td colspan="2">',
-                '<div id="em-body" data="body" data-height="300px" data-margin-top="24px" class="asm-richtextarea"></div>',
-                '<p>',
-                '<label for="em-template">' + _("Template") + '</label>',
-                '<select id="em-template" class="asm-selectbox">',
-                '</select>',
-                '</p>',
-                '<p>',
-                '<input id="em-includeunsubscribe" data="unsubscribe" type="checkbox" name="em-includeunsubscribe" class="asm-checkbox" />',
-                '<label for="em-includeunsubscribe">' + _("Add an unsubscribe link to the bottom of emails") + '</label>',
-                '</p>',
-
-                '<div id="em-logemail">',
-                '<input id="em-includelog" data="includelog" type="checkbox" name="em-includelog" class="asm-checkbox" />',
-                '<label for="em-includelog">' + _("Add a log to recipient person record") + '</label>',
-                '<label for="em-logtype">' + _(" using type") + '</label>',
-                '<select id="em-logtype" class="asm-selectbox">',
-                '</select>',
-                '</div>',
-
-                '</td>',
-                '<td>',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
-                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
-                _("Valid tokens for the subject and text") + ':',
-                '<br/><br/>',
-                mailmerge.render_fields(),
-                '</p>',
-                '</div>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render(
+                    [
+                        { id: 'em-from', label: _("From"), type: 'text', doublesize: true },
+                        { id: 'em-subject', label: _("Subject"), type: 'text', doublesize: true,
+                            callout: _("Valid tokens for the subject and text") + ':' +
+                            '<br/><br/>' +
+                            mailmerge.render_fields()
+                        },
+                        { id: 'em-body', label: _("Email body"), type: 'richtextarea', height: '200px' },
+                        { id: 'em-template', label: _("Template"), type: 'select', options: edit_header.template_list_options(controller.templates) },
+                        { id: 'em-includeunsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
+                        { id: 'em-logemail', label: _("Add a log to recipient person records"), type: 'check' },
+                        { id: 'em-logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME') },
+                        { id: 'em-logmessage', label: _("Log message"), type: 'textarea' },
+                    ],
+                    {
+                        full_width: true
+                    }
+                ),
+                
                 '<p class="centered"><button id="button-email">' + _("Send Emails") + '</button></p>',
                 '</div>',
 
