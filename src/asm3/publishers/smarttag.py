@@ -91,13 +91,13 @@ class SmartTagPublisher(AbstractPublisher):
     def processAnimal(self, an: ResultRow) -> Dict:
         """ Generate a dictionary of data to post from an animal record """
         # Sort out breed
-        breed = an["BREEDNAME"]
+        breed = an.BREEDNAME
         if breed.find("Domestic Long") != -1: breed = "DLH"
         if breed.find("Domestic Short") != -1: breed = "DSH"
         if breed.find("Domestic Medium") != -1: breed = "DSLH"
 
         # Sort out species
-        species = an["SPECIESNAME"]
+        species = an.SPECIESNAME
         if species.find("Dog") != -1: species = "Canine"
         elif species.find("Cat") != -1: species = "Feline"
         elif species.find("Bird") != -1: species = "Avian"
@@ -105,12 +105,13 @@ class SmartTagPublisher(AbstractPublisher):
         elif species.find("Reptile") != -1: species = "Reptilian"
         else: species = "Other"
 
-        address1 = an["CURRENTOWNERADDRESS"].split("\n")[0]
+        address = asm3.utils.nulltostr(an.CURRENTOWNERADDRESS)
+        address1 = address.split("\n")[0]
         address2 = ""
-        if "\n" in an["CURRENTOWNERADDRESS"]:
-            address2 = an["CURRENTOWNERADDRESS"].split("\n")[1]
+        if "\n" in address:
+            address2 = address.split("\n")[1]
 
-        firstname = an["CURRENTOWNERFORENAMES"].split(" ")[0]
+        firstname = address.split(" ")[0]
         
         neutered = "No"
         if an["NEUTERED"] == 1: neutered = "Yes"
@@ -119,33 +120,33 @@ class SmartTagPublisher(AbstractPublisher):
         ro = {
             "pets": [
                 {
-                    "microchip_number": an["IDENTICHIPNUMBER"],
-                    "pet_name": an["ANIMALNAME"],
+                    "microchip_number": an.IDENTICHIPNUMBER,
+                    "pet_name": an.ANIMALNAME,
                     "pet_type": species,
                     "pet_breed": breed,
                     "pet_sec_breed": "",
-                    "pet_color": an["BASECOLOURNAME"],
+                    "pet_color": an.BASECOLOURNAME,
                     "pet_sec_color": "",
-                    "pet_gender": an["SEXNAME"],
+                    "pet_gender": an.SEXNAME,
                     "pet_weight": "",
-                    "pet_dob": asm3.i18n.format_date(an["IDENTICHIPDATE"], "%Y-%m-%d"),
+                    "pet_dob": asm3.i18n.format_date(an.IDENTICHIPDATE, "%Y-%m-%d"),
                     "pet_neutered": neutered,
                     "pet_allergies": "",
                     "pet_unique_features": "",
                     "pet_special_needs": "",
                     "pet_images": [],
                     "pet_owner": {
-                        "email": an["CURRENTOWNEREMAILADDRESS"],
+                        "email": an.CURRENTOWNEREMAILADDRESS,
                         "first_name": firstname,
-                        "last_name": an["CURRENTOWNERSURNAME"],
+                        "last_name": an.CURRENTOWNERSURNAME,
                         "address_1": address1,
                         "address_2": address2,
-                        "city": an["CURRENTOWNERTOWN"],
-                        "state": an["CURRENTOWNERCOUNTY"],
-                        "zip": an["CURRENTOWNERPOSTCODE"],
+                        "city": an.CURRENTOWNERTOWN,
+                        "state": an.CURRENTOWNERCOUNTY,
+                        "zip": an.CURRENTOWNERPOSTCODE,
                         "country": "US",
-                        "phone": an["CURRENTOWNERHOMETELEPHONE"],
-                        "mobile_phone": an["CURRENTOWNERMOBILETELEPHONE"]
+                        "phone": an.CURRENTOWNERHOMETELEPHONE,
+                        "mobile_phone": an.CURRENTOWNERMOBILETELEPHONE
                     }
                     #Can add a secondary and/or vet contact here - Adam.
                 }
@@ -157,11 +158,11 @@ class SmartTagPublisher(AbstractPublisher):
     def validate(self, an: ResultRow) -> bool:
         """ Validate an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
-        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":
             self.logError("Address for the new owner is blank, cannot process")
             return False 
 
-        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERPOSTCODE).strip() == "":
             self.logError("Postal code for the new owner is blank, cannot process")
             return False
 

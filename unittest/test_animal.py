@@ -49,15 +49,12 @@ class TestAnimal(unittest.TestCase):
             )
         def print_animallocation_rows(rows):
             for row in rows:
-                print(str(row))
-            print()
+                # print(str(row))
+                pass
+            # print()
         
         dbo = base.get_dbo()
         ## Create an animal
-        asm3.al.debug("Test animal created", "main.main", dbo)
-        print()
-        print()
-        print("Animal created")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
         self.assertEqual(1, len(animallocationrows)) ## Expect a single row representing the animal entering the shelter
@@ -66,7 +63,6 @@ class TestAnimal(unittest.TestCase):
             "SELECT RecordVersion FROM animal WHERE ID = ?",
             (self.nid,)
         )[0]["RECORDVERSION"]
-        print("Move animal internally")
         ## Move animal internally
         data = {
             "id": str(self.nid),
@@ -88,7 +84,6 @@ class TestAnimal(unittest.TestCase):
         self.assertEqual(2, len(animallocationrows))
 
         ## Adopt out animal
-        print("Adopt out animal")
         data = {
             "animal": str(self.nid),
             "person": "1",
@@ -102,15 +97,12 @@ class TestAnimal(unittest.TestCase):
         print_animallocation_rows(animallocationrows)
         self.assertEqual(3, len(animallocationrows))
 
-        print("Delete movement")
-
         asm3.movement.delete_movement(dbo, "test", mid)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
         self.assertEqual(2, len(animallocationrows))
 
         ## Adopt out animal BEFORE most recent movement
-        print("Adopt out animal BEFORE most recent movement")
         data = {
             "animal": str(self.nid),
             "person": "1",
@@ -125,7 +117,6 @@ class TestAnimal(unittest.TestCase):
         print_animallocation_rows(animallocationrows)
 
         ## Return from adoption
-        print("Return animal from adoption")
         data = {
             "movementid": str(mid),
             "animal": str(self.nid),
@@ -139,8 +130,6 @@ class TestAnimal(unittest.TestCase):
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
         self.assertEqual(3, len(animallocationrows))
-
-        print("Kill animal")
 
         arv = dbo.query(
             "SELECT RecordVersion FROM animal WHERE ID = ?",
@@ -167,7 +156,6 @@ class TestAnimal(unittest.TestCase):
         print_animallocation_rows(animallocationrows)
         self.assertEqual(4, len(animallocationrows))
 
-        print("Change deceased date")
         ## Change deceased date
         arv = dbo.query(
             "SELECT RecordVersion FROM animal WHERE ID = ?",
@@ -193,7 +181,6 @@ class TestAnimal(unittest.TestCase):
         print_animallocation_rows(animallocationrows)
         self.assertEqual(4, len(animallocationrows)) ## Expect four rows as number of movements has not changed
 
-        print("Remove deceased date")
         ## Remove deceased date
         arv = dbo.query(
             "SELECT RecordVersion FROM animal WHERE ID = ?",

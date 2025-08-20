@@ -3946,8 +3946,8 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
         dbo.execute("UPDATE animallocation SET PrevAnimalLocationID = ? WHERE AnimalID = ? AND PrevAnimalLocationID = ?", (rowprevlocationid, animalid, rowid) )
     # Sync external movements
     for movementrow in movementrows:
+        movementfound = False
         for locationrow in animallocations:
-            movementfound = False
             if locationrow["MOVEMENTID"] == movementrow["ID"]:    
                 movementfound = True
                 # Found movement in animallocation table

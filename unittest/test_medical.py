@@ -35,7 +35,7 @@ class TestMedical(unittest.TestCase):
         asm3.medical.get_regimens_treatments(base.get_dbo(), 1)
 
     def test_get_medical_export(self):
-        asm3.medical.get_medical_export(base.get_dbo())
+        base.get_dbo().query(asm3.medical.get_medical_export_query(base.get_dbo()))
 
     def test_get_profiles(self):
         asm3.medical.get_profiles(base.get_dbo())
