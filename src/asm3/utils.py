@@ -4,6 +4,7 @@ import asm3.cachemem
 import asm3.configuration
 import asm3.i18n
 import asm3.users
+import asm3.log
 
 from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SERVICE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union
@@ -2151,7 +2152,7 @@ def _send_email(msg: MIMEMultipart, fromadd: str, tolist: List[str], dbo: Databa
             time.sleep(RETRY_SECS)
             _send_email(msg, fromadd, tolist, dbo=dbo, exceptions=exceptions, retries=retries-1)
 
-def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows: Results, contenttype: str, unsubscribe: bool) -> None:
+def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows: Results, contenttype: str, unsubscribe: bool, createlog: bool = False, logtypeid: int = 0, logmessage: str = '', username: str = '') -> None:
     """
     Sends a set of bulk emails asynchronously.
     replyadd is an RFC821 address and controls the Reply-To header
@@ -2175,6 +2176,18 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
             if toadd is None or toadd.strip() == "": continue
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
             send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
+            if createlog:
+                if "OWNERID" in r:
+                    pid = r.OWNERID
+                else:
+                    pid = r.ID
+                postdata = PostedData({
+                    "type": logtypeid,
+                    "logdate": asm3.i18n.format_date(asm3.i18n.today(), asm3.i18n.get_display_date_format(l)),
+                    "logtime": asm3.i18n.format_time_now(),
+                    "entry": logmessage
+                }, l)
+                asm3.log.insert_log_from_form(dbo, username, asm3.log.PERSON, pid, postdata)
             if "EMAILADDRESS2" in r: 
                 toadd = r.EMAILADDRESS2
                 if toadd is None or toadd.strip() == "": continue

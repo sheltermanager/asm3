@@ -4889,6 +4889,9 @@ class mailmerge(JSONEndpoint):
         if asm3.configuration.audit_on_send_email(dbo):
             emails = self.recipients(rows)
             asm3.audit.email(dbo, o.user, fromadd, ",".join(emails), "", "", subject, body)
+
+        #send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows: Results, contenttype: str, unsubscribe: bool, createlog: bool = False, logtypeid: int = 0, logmessage: str = '', username: str = '')
+        
         asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html", post.boolean("unsubscribe"))
 
     def post_document(self, o):

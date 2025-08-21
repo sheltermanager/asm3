@@ -1,4 +1,4 @@
-from asm3.dbupdate import execute
+from asm3.dbupdate import execute, add_index
 
 fields = ",".join([
     dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
@@ -8,3 +8,6 @@ fields = ",".join([
     dbo.ddl_add_table_column("LogMessage", dbo.type_longtext, False)
 ])
 execute(dbo, dbo.ddl_add_table("logmulti", fields) )
+
+add_index(dbo, "logmulti_LogTypeID", "logmulti", "LogTypeID")
+add_index(dbo, "logmulti_LinkTypeID", "logmulti", "LinkTypeID")

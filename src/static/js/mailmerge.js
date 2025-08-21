@@ -116,18 +116,42 @@ $(function() {
                 hf.replace("{mode}", "email"),
                 tableform.fields_render(
                     [
-                        { id: 'em-from', label: _("From"), type: 'text', doublesize: true },
-                        { id: 'em-subject', label: _("Subject"), type: 'text', doublesize: true,
+                        { id: 'em-from', label: _("From"), type: 'text', doublesize: true, validation: 'notblank' },
+                        { id: 'em-subject', label: _("Subject"), type: 'text', doublesize: true, validation: 'notblank',
                             callout: _("Valid tokens for the subject and text") + ':' +
                             '<br/><br/>' +
                             mailmerge.render_fields()
                         },
-                        { id: 'em-body', label: _("Email body"), type: 'richtextarea', height: '200px' },
+                        { id: 'em-body', label: _("Email body"), type: 'richtextarea', height: '200px', validation: 'notblank' },
                         { id: 'em-template', label: _("Template"), type: 'select', options: edit_header.template_list_options(controller.templates) },
                         { id: 'em-includeunsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
-                        { id: 'em-logemail', label: _("Add a log to recipient person records"), type: 'check' },
-                        { id: 'em-logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME') },
-                        { id: 'em-logmessage', label: _("Log message"), type: 'textarea' },
+                        { id: 'em-logemail', label: _("Add a log to recipient person records"), type: 'check',
+                            hideif: function() {
+                                if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }
+                        },
+                        { id: 'em-logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME'),
+                            hideif: function() {
+                                if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }
+                        },
+                        { id: 'em-logmessage', label: _("Log message"), type: 'textarea', validation: 'notblank',
+                            hideif: function() {
+                                if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }
+                         },
                     ],
                     {
                         full_width: true
@@ -203,11 +227,17 @@ $(function() {
 
             $("#button-csv, #button-pdflabels").button();
             $("#button-email").button().click(async function() {
-                $("#button-email").button("disable");
-                let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea").toPOST();
-                await common.ajax_post("mailmerge", formdata);
-                header.show_info(_("Messages successfully sent"));
-                $("#asm-mailmerge-accordion").hide();
+                if (validate.notblank(['em-from', 'em-subject', 'em-logmessage'])) {
+                    if ( !html.strip_tags($("#em-body").richtextarea("value")) ) {
+                        validate.highlight('em-body');
+                    } else {
+                        $("#button-email").button("disable");
+                        let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea, #sendemail .asm-checkbox, #sendemail .asm-selectbox").toPOST();
+                        await common.ajax_post("mailmerge", formdata);
+                        header.show_info(_("Messages successfully sent"));
+                        $("#asm-mailmerge-accordion").hide();
+                    }
+                }
             });
 
             $("#button-copyrecipients").button({icons: { primary: "ui-icon-clipboard" }, text: true}).click(function() {
@@ -257,7 +287,6 @@ $(function() {
                         $("#em-body").html(j.BODY); 
                     });
                 });
-                $("#em-logtype").html( html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME') );
             }
         },
 
