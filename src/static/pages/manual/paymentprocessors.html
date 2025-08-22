@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Payment Processors &mdash; ASM 50u documentation</title>
+  <title>Payment Processors &mdash; ASM 51u documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
 
@@ -12,7 +12,7 @@
   
         <script src="_static/jquery.js?v=8dae8fb0"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9a646e7d"></script>
+        <script src="_static/documentation_options.js?v=feabbe39"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             ASM
           </a>
               <div class="version">
-                50
+                51u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -66,6 +66,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Payment Processors</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requesting-a-payment">Requesting a payment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#requesting-fulfilment-of-multiple-payments">Requesting fulfilment of multiple payments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#email-bulk-receipts">Email bulk Receipts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adoption-checkout">Adoption checkout</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#initiating">Initiating</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#checkout-link">Checkout Link</a></li>
@@ -174,6 +175,26 @@ multiple payments, allow the due and received dates to be set</span></p>
 <p>When choosing a due payment from the Payment Book or a payment tab, the other
 payments with the same receipt number will also be included and added to the
 payment total requested.</p>
+<p>Receipts can be generated from the Payment Book or a payment tab and saved to
+the persons media tab. The system comes with basic receipt document templates,
+in <span class="menuselection">Settings ‣ Document Templates</span> you can edit these or
+create your own, see <a class="reference internal" href="documents.html#documents"><span class="std std-ref">Documents</span></a></p>
+</section>
+<section id="email-bulk-receipts">
+<h2>Email bulk Receipts<a class="headerlink" href="#email-bulk-receipts" title="Link to this heading">¶</a></h2>
+<p>Receipts can be emailed in bulk in the <span class="menuselection">Financial ‣ Email bulk receipts</span>
+screen.</p>
+<img alt="_images/bulk_email_receipts.png" src="_images/bulk_email_receipts.png" />
+<p>Here you can select a date range of the payments you wish to display, a payment
+type and method and the template you wish to use in the emails. Clicking the tick
+icon will select all payments, or you can check the individual boxes next to payments
+to select them before clicking the email button to send. Any payments where the
+person has no email address on record will appear in red with no checkbox to select
+them.</p>
+<p>If a person appears in the list more than once with multiple payments, they would
+only receive the one email. To capture all the payments the template must contain
+multiple wordkeys for each one e.g PaymentType1, PaymentType2. The receipt.html
+template which comes with the software contains wordkeys for up to 8 payments.</p>
 </section>
 <section id="adoption-checkout">
 <h2>Adoption checkout<a class="headerlink" href="#adoption-checkout" title="Link to this heading">¶</a></h2>

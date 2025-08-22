@@ -78,6 +78,31 @@ When choosing a due payment from the Payment Book or a payment tab, the other
 payments with the same receipt number will also be included and added to the
 payment total requested. 
 
+Receipts can be generated from the Payment Book or a payment tab and saved to
+the persons media tab. The system comes with basic receipt document templates, 
+in :menuselection:`Settings --> Document Templates` you can edit these or
+create your own, see :ref:`documents` 
+
+Email bulk Receipts
+-------------------
+
+Receipts can be emailed in bulk in the :menuselection:`Financial --> Email bulk receipts` 
+screen.
+
+.. image:: images/bulk_email_receipts.png
+
+Here you can select a date range of the payments you wish to display, a payment
+type and method and the template you wish to use in the emails. Clicking the tick
+icon will select all payments, or you can check the individual boxes next to payments 
+to select them before clicking the email button to send. Any payments where the 
+person has no email address on record will appear in red with no checkbox to select 
+them.
+
+If a person appears in the list more than once with multiple payments, they would 
+only receive the one email. To capture all the payments the template must contain 
+multiple wordkeys for each one e.g PaymentType1, PaymentType2. The receipt.html 
+template which comes with the software contains wordkeys for up to 8 payments.
+
 Adoption checkout
 ----------------------
 
