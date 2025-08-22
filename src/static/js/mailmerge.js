@@ -116,16 +116,16 @@ $(function() {
                 hf.replace("{mode}", "email"),
                 tableform.fields_render(
                     [
-                        { id: 'em-from', label: _("From"), type: 'text', doublesize: true, validation: 'notblank' },
-                        { id: 'em-subject', label: _("Subject"), type: 'text', doublesize: true, validation: 'notblank',
+                        { id: 'em-from', post_field: 'from', label: _("From"), type: 'text', doublesize: true, validation: 'notblank' },
+                        { id: 'em-subject', post_field: 'subject', label: _("Subject"), type: 'text', doublesize: true, validation: 'notblank',
                             callout: _("Valid tokens for the subject and text") + ':' +
                             '<br/><br/>' +
                             mailmerge.render_fields()
                         },
-                        { id: 'em-body', label: _("Email body"), type: 'richtextarea', height: '200px', validation: 'notblank' },
+                        { id: 'em-body', post_field: 'body', label: _("Email body"), type: 'richtextarea', height: '200px', validation: 'notblank' },
                         { id: 'em-template', label: _("Template"), type: 'select', options: edit_header.template_list_options(controller.templates) },
-                        { id: 'em-includeunsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
-                        { id: 'em-logemail', label: _("Add a log to recipient person records"), type: 'check',
+                        { id: 'em-includeunsubscribe', post_field: 'unsubscribe', post_field: 'em-includeunsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
+                        { id: 'em-logemail', post_field: 'logemail', label: _("Add a log to recipient person records"), type: 'check',
                             hideif: function() {
                                 if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
                                     return false;
@@ -134,7 +134,7 @@ $(function() {
                                 }
                             }
                         },
-                        { id: 'em-logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME'),
+                        { id: 'em-logtype', post_field: 'logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME'),
                             hideif: function() {
                                 if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
                                     return false;
@@ -143,7 +143,7 @@ $(function() {
                                 }
                             }
                         },
-                        { id: 'em-logmessage', label: _("Log message"), type: 'textarea', validation: 'notblank',
+                        { id: 'em-logmessage', post_field: 'logmessage', label: _("Log message"), type: 'textarea', validation: 'notblank',
                             hideif: function() {
                                 if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
                                     return false;
@@ -232,8 +232,7 @@ $(function() {
                         validate.highlight('em-body');
                     } else {
                         $("#button-email").button("disable");
-                        let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea, #sendemail .asm-checkbox, #sendemail .asm-selectbox").toPOST();
-                        console.log(formdata);
+                        let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea, #sendemail .asm-selectbox, #sendemail textarea").toPOST();
                         await common.ajax_post("mailmerge", formdata);
                         header.show_info(_("Messages successfully sent"));
                         $("#asm-mailmerge-accordion").hide();
