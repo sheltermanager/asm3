@@ -1,9 +1,5 @@
 ---
 asm_version: "46"
-asm_archive:
-  name: "asm3-{{ asm_version }}"
-  ext: ".tar.gz"
-  path: "archives/asm3-{{ asm_version }}.tar.gz"
 
 asm_path: "/srv/sites/asm"
 asm_data: "/srv/data/asm"

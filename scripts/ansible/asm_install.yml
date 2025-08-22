@@ -3,6 +3,9 @@
   become: "yes"
   roles:
     - "City-of-Bloomington.apache"
+  vars:
+    archive_name: "asm3-{{ asm_version }}"
+    archive_path: "archives/asm3-{{ asm_version }}.tar.gz"
   tasks:
     - name: "Mysql setup"
       include_tasks: "tasks/mysql.yml"
@@ -20,40 +23,28 @@
         packages:
           - "libapache2-mod-wsgi-py3"
           - "make"
-          - "python3-pil"
-          - "python3-webpy"
           - "imagemagick"
           - "wkhtmltopdf"
-          - "python3-requests"
           - "memcached"
-          - "python3-memcache"
           - "curl"
+          - "python3-lxml"
+          - "python3-memcache"
+          - "python3-pil"
+          - "python3-requests"
+          - "python3-webpy"
 
     - name: "Activate Apache WSGI Module"
       apache2_module:
         name: "wsgi"
 
-    - name: "Extract release"
-      unarchive:
-        src: "{{ asm_archive.path }}"
-        dest: "/usr/local/src"
-      register: "release"
-
-    - name: "Remove old release"
-      file:
-        path: "{{ asm_path }}"
-        state: "absent"
-      when: "release.changed"
-
     - name: "Create ASM directories"
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: "directory"
         owner: "www-data"
         group: "staff"
         mode: "u=rwx,g=rwxs,o=rx"
       with_items:
-        - "{{ asm_path }}"
         - "{{ asm_data }}"
         - "{{ asm_data }}/cache"
         - "{{ asm_data }}/media"
@@ -61,9 +52,25 @@
         - "/srv/backups/asm"
         - "/var/log/cron"
 
-    - name: "Install release"
-      command: "rsync -rlv /usr/local/src/{{ asm_archive.name }}/ {{ asm_path }}/"
-      when: "release.changed"
+    - name: "Extract release"
+      ansible.builtin.unarchive:
+        src:  "{{ archive_path }}"
+        dest: "{{ asm_path | dirname }}"
+        owner: 'www-data'
+        group: 'staff'
+
+    - name: "Symlink Release"
+      ansible.builtin.file:
+        path:  "{{ asm_path }}"
+        src:   "{{ asm_path | dirname }}/{{ archive_name }}"
+        state: 'link'
+        owner: 'www-data'
+        group: 'staff'
+
+    - name: "Create Version File"
+      ansible.builtin.template:
+        src: "__version__.py"
+        dest: "{{ asm_path }}/src/asm3/__version__.py"
 
     - name: "Update apache configuration"
       template:
