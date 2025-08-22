@@ -233,6 +233,7 @@ $(function() {
                     } else {
                         $("#button-email").button("disable");
                         let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea, #sendemail .asm-checkbox, #sendemail .asm-selectbox").toPOST();
+                        console.log(formdata);
                         await common.ajax_post("mailmerge", formdata);
                         header.show_info(_("Messages successfully sent"));
                         $("#asm-mailmerge-accordion").hide();

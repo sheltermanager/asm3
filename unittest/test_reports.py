@@ -5,6 +5,7 @@ import web062 as web
 
 import asm3.reports
 import asm3.utils
+import asm3.person
 
 TEST_QUERY = "SELECT * FROM lksmovementtype"
 
@@ -13,6 +14,8 @@ class TestReports(unittest.TestCase):
     nid = 0
 
     def setUp(self):
+
+        # Test Report
         data = {
             "title":    "Test Report",
             "category": "Test",
@@ -22,8 +25,32 @@ class TestReports(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         self.nid = asm3.reports.insert_report_from_form(base.get_dbo(), "test", post)
 
+        # Test Mailmerge
+        data = {
+            "title":    "Test Mailmerge",
+            "category": "Test",
+            "sql":      "SELECT ID, OwnerName, EmailAddress FROM owner",
+            "html":     "MAIL"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.mid = asm3.reports.insert_report_from_form(base.get_dbo(), "test", post)
+
+        # Test Person
+        data = {
+            "title": "Mr",
+            "forenames": "Test",
+            "surname": "Testing",
+            "ownertype": "1",
+            "address": "123 test street",
+            "emailaddress": "test@test.com"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.oid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
+
     def tearDown(self):
         asm3.reports.delete_report(base.get_dbo(), "test", self.nid)
+        asm3.reports.delete_report(base.get_dbo(), "test", self.mid)
+        asm3.person.delete_person(base.get_dbo(), "test", self.oid)
 
     def test_get_all_report_titles(self):
        self.assertNotEqual(0, len(asm3.reports.get_all_report_titles(base.get_dbo())))
@@ -58,4 +85,6 @@ class TestReports(unittest.TestCase):
     def test_smcom_reports(self):
         asm3.reports.install_recommended_smcom_reports(base.get_dbo(), "test") # Calls get_reports to do the install
 
-    
+    def test_mailmerge(self):
+        rows, cols = asm3.reports.execute_query(base.get_dbo(), self.mid, "test", "")
+        asm3.utils.send_bulk_email(base.get_dbo(), 'test@test.com', "Just Testing", "<p>Just a unit test email</p>", rows, contenttype="html", unsubscribe=False, createlog=True, logtypeid=0, logmessage = 'Test running a unit test.', username="test")
