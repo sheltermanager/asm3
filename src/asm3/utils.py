@@ -2164,6 +2164,7 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
     """
     l = dbo.locale
     def do_send():
+        if createlog: linkids = []
         for r in rows:
             ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>", cr_to_br = False)
             sbody = substitute_tags(body, r)
@@ -2178,21 +2179,16 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
             send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
             if createlog:
                 if "OWNERID" in r:
-                    pid = r.OWNERID
-                else:
-                    pid = r.ID
-                postdata = PostedData({
-                    "type": logtypeid,
-                    "logdate": asm3.i18n.format_date(asm3.i18n.today(), asm3.i18n.get_display_date_format(l)),
-                    "logtime": asm3.i18n.format_time_now(),
-                    "entry": logmessage
-                }, l)
-                asm3.log.insert_log_from_form(dbo, username, asm3.log.PERSON, pid, postdata)
+                    linkids.append(str(r.OWNERID))
+                elif "ID" in r:
+                    linkids.append(str(r.ID))
             if "EMAILADDRESS2" in r: 
                 toadd = r.EMAILADDRESS2
                 if toadd is None or toadd.strip() == "": continue
                 asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
                 send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
+        if createlog:
+                asm3.log.add_logmulti(dbo, username, asm3.log.PERSON, linkids, logtypeid, logmessage)
     thread.start_new_thread(do_send, ())
 
 def send_error_email(errtype, errvalue, path, errmsg) -> None:

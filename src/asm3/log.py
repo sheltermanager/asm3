@@ -37,6 +37,20 @@ def add_log_email(dbo: Database, username: str, linktype: int, linkid: int, logt
     return add_log(dbo, username, linktype, linkid, logtypeid,
         "[%s] %s ::\n%s" % ( to, subject, body ))
 
+def add_logmulti(dbo: Database, username: str, linktype: int, linkids: list, logtypeid: int, logtext: str, logdatetime: datetime = None) -> int:
+    """
+    Adds a log entry. If logdatetime is blank, the date/time now is used.
+    """
+    linkidsstring = ",".join(linkids)
+    if logdatetime is None: logdatetime = dbo.now()
+    return dbo.insert("logmulti", {
+        "LogTypeID":        logtypeid,
+        "LinkIDs":          linkidsstring,
+        "LinkType":         linktype,
+        "Date":             logdatetime,
+        "Comments":         logtext
+    }, username)
+
 def get_log_find_simple(dbo: Database, q: str, limit: int = 0) -> Results:
     """
     Searches log notes for the term q

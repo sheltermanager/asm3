@@ -37,7 +37,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lktaxrate", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", 
     "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", 
     "lkstransportstatus", "lkurgency", "lkwaitinglistremoval", "lkworktype", 
-    "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
+    "log", "logmulti", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "product", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
@@ -72,7 +72,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
-    "log", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
+    "log", "logmulti", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
     "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", 
     "stocklevel", "stockusage" )
 
@@ -1243,6 +1243,16 @@ def sql_structure(dbo: Database) -> str:
         fid(),
         fint("LogTypeID"),
         fint("LinkID"),
+        fint("LinkType"),
+        fdate("Date"),
+        flongstr("Comments") ))
+    sql += index("log_LogTypeID", "log", "LogTypeID")
+    sql += index("log_LinkID", "log", "LinkID")
+
+    sql += table("logmulti", (
+        fid(),
+        fint("LogTypeID"),
+        flongstr("LinkIDs"),
         fint("LinkType"),
         fdate("Date"),
         flongstr("Comments") ))
