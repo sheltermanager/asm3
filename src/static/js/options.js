@@ -966,7 +966,33 @@ $(function() {
                         { id: "watermarkfontfile", post_field: "WatermarkFontFile", label: _("Watermark font"), type: "select", doublesize: true, options: html.list_to_options_array(asm.fontfiles), xmarkup: '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />' }, 
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
-                    ]}
+                    ]},
+                    { id: "tab-kombu",
+                      title: _("Kombu"),
+                      info: _("Configure AMQP messaging via the Kombu library."),
+                      fields: [
+                          { id: "kombuenabled",
+                            post_field: "KombuEnabled",
+                            label: _("Enable Kombu integration"),
+                            type: "check",
+                            fullrow: true },
+
+                          { id: "kombubrokerurl",
+                            post_field: "KombuBrokerUrl",
+                            label: _("Broker URL"),
+                            type: "text",
+                            doublesize: true },
+
+                          { id: "kombuexchangename",
+                            post_field: "KombuExchangeName",
+                            label: _("Exchange name"),
+                            type: "text" },
+
+                          { id: "komburoutingkey",
+                            post_field: "KombuRoutingKey",
+                            label: _("Routing key"),
+                            type: "text" }
+                      ]},
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");

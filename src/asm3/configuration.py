@@ -269,6 +269,7 @@ DEFAULTS = {
     "InactivityTimeout": "20", 
     "IncludeIncompleteMedicalDoc": "Yes",
     "IncludeOffShelterMedical": "No",
+    "KombuEnabled": "No",  
     "Locale": "en",
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",
@@ -1203,6 +1204,22 @@ def js_injection(dbo: Database) -> str:
 
 def js_window_print(dbo: Database) -> bool:
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")
+
+def kombu_enabled(dbo) -> bool:
+    """Return True if Kombu integration is enabled."""
+    return cboolean(dbo, "KombuEnabled", DEFAULTS["KombuEnabled"] == "Yes")
+
+def kombu_broker_url(dbo) -> str:
+    """Return the Kombu broker URL string."""
+    return cstring(dbo, "KombuBrokerUrl")
+
+def kombu_exchange_name(dbo) -> str:
+    """Return the Kombu exchange name string."""
+    return cstring(dbo, "KombuExchangeName")
+
+def kombu_routing_key(dbo) -> str:
+    """Return the Kombu routing key string."""
+    return cstring(dbo, "KombuRoutingKey")
 
 def licence_checkout_feeid(dbo: Database) -> int:
     return cint(dbo, "LicenceCheckoutFeeID")
