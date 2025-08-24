@@ -166,7 +166,7 @@ deps:
 	apt-get install python3-qrcode python3-openpyxl
 	apt-get install python3-boto3 python3-stripe
 	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
-	apt-get install exuberant-ctags flake8 imagemagick wkhtmltopdf nodejs npm memcached
+	apt-get install exuberant-ctags flake8 imagemagick wkhtmltopdf nodejs npm memcached kombu
 	npm install
 
 

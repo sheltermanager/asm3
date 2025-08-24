@@ -29,6 +29,7 @@ Extra, non-mandatory packages:
 * apt-get install python3-openpyxl (needed for exporting reports to Excel)
 * apt-get install python3-qrcode (needed for generating QR codes in document templates and reports)
 * apt-get install python3-stripe (for requesting payments via Stripe)
+* apt-get install python3-kombu (for Kombu AMQP integration)
 
 Packages necessary for building, static checkers, installers and manuals:
 
