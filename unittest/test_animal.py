@@ -129,7 +129,7 @@ class TestAnimal(unittest.TestCase):
         asm3.movement.update_movement_from_form(dbo, "test", post)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows))
+        self.assertEqual(2, len(animallocationrows))
 
         arv = dbo.query(
             "SELECT RecordVersion FROM animal WHERE ID = ?",

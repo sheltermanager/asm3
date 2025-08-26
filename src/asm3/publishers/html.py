@@ -243,14 +243,9 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
         # Generate tags for this row
         tags = asm3.wordprocessor.animal_tags_publisher(dbo, a)
         tags = asm3.wordprocessor.append_tags(tags, org_tags)
-        # Add extra tags for websitemedianame2-8 if they exist
-        if a.WEBSITEIMAGECOUNT > 1: tags["WEBMEDIAFILENAME2"] = "%s&seq=2" % a.WEBSITEMEDIANAME
-        if a.WEBSITEIMAGECOUNT > 2: tags["WEBMEDIAFILENAME3"] = "%s&seq=3" % a.WEBSITEMEDIANAME
-        if a.WEBSITEIMAGECOUNT > 3: tags["WEBMEDIAFILENAME4"] = "%s&seq=4" % a.WEBSITEMEDIANAME
-        if a.WEBSITEIMAGECOUNT > 4: tags["WEBMEDIAFILENAME5"] = "%s&seq=5" % a.WEBSITEMEDIANAME
-        if a.WEBSITEIMAGECOUNT > 5: tags["WEBMEDIAFILENAME6"] = "%s&seq=6" % a.WEBSITEMEDIANAME
-        if a.WEBSITEIMAGECOUNT > 6: tags["WEBMEDIAFILENAME7"] = "%s&seq=7" % a.WEBSITEMEDIANAME
-        if a.WEBSITEIMAGECOUNT > 7: tags["WEBMEDIAFILENAME8"] = "%s&seq=8" % a.WEBSITEMEDIANAME
+        # Add extra tags for websitemedianame2-10 if they exist
+        for x in range(2, 11):
+            if a.WEBSITEIMAGECOUNT > x-1: tags["WEBMEDIAFILENAME%d" % x] = "%s&seq=%d" % (a.WEBSITEMEDIANAME, x)
         # Set the description
         if asm3.configuration.publisher_use_comments(dbo):
             a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
