@@ -18,7 +18,7 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
-                    { json_field: "ANIMALID", post_field: "costanimalid", label: _("Animal"), type: "animal", validation: "notzero" },
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal", validation: "notzero" },
                     { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
@@ -36,8 +36,8 @@ $(function() {
                     await tableform.dialog_show_edit(dialog, row, {
                         onload: function() {
                             if (controller.animal) {
-                                $("#costanimalid").animalchooser("loadbyid", controller.animal.ID);
-                                $("#costanimalidrow").hide();
+                                $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                                $("#animalrow").hide();
                                 animal_costs.costtype_change();
                             } else {
                                 $("#costanimalidrow").show();
@@ -64,7 +64,7 @@ $(function() {
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
                     { field: "INVOICENUMBER", display: _("Invoice Number") },
-                    { field: "ANIMAL", display: _("Animal"), 
+                    { field: "ANIMALID", display: _("Animal"), 
                         formatter: function(row) {
                             let h = html.animal_link(row, { noemblems: controller.name == "animal_costs", emblemsright: true });
                             return h;
