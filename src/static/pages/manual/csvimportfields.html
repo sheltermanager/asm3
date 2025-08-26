@@ -137,7 +137,7 @@ the caller.</p>
 <dl class="simple">
 <dt>ACCOUNTSTRXDATE</dt><dd><p>The date of the accounting transaction.</p>
 </dd>
-<dt>ACCOUNTSAMOUNT</dt><dd><p>The amount of the accounting transaction.</p>
+<dt>ACCOUNTSAMOUNT</dt><dd><p>The amount of the accounting transaction. The amount will be posted as a withdrawal from ACCOUNTSSOURCE to ACCOUNTSDESTINATION. If the amount is negative, it will be posted as a deposit from ACCOUNTSDESTINATION to ACCOUNTSSOURCE.</p>
 </dd>
 <dt>ACCOUNTSSOURCE</dt><dd><p>The source account of the accounting transaction, this must match an existing account code in your database.</p>
 </dd>

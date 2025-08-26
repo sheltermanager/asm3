@@ -38,7 +38,7 @@ the caller.
 ACCOUNTSTRXDATE
     The date of the accounting transaction.
 ACCOUNTSAMOUNT
-    The amount of the accounting transaction.   
+    The amount of the accounting transaction. The amount will be posted as a withdrawal from ACCOUNTSSOURCE to ACCOUNTSDESTINATION. If the amount is negative, it will be posted as a deposit from ACCOUNTSDESTINATION to ACCOUNTSSOURCE.
 ACCOUNTSSOURCE
     The source account of the accounting transaction, this must match an existing account code in your database.
 ACCOUNTSDESTINATION
