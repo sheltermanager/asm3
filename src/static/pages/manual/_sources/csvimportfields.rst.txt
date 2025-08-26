@@ -35,6 +35,16 @@ days (for example), or update many animal bios in one go.
 When importing incident data from CSV files, the person fields supplied will be used as
 the caller.
 
+ACCOUNTSTRXDATE
+    The date of the accounting transaction.
+ACCOUNTSAMOUNT
+    The amount of the accounting transaction.   
+ACCOUNTSSOURCE
+    The source account of the accounting transaction, this must match an existing account code in your database.
+ACCOUNTSDESTINATION
+    The destination account of the accounting transaction, this must match an existing account code in your database.
+ACCOUNTSDESCRIPTION
+    A decription of the accounting transaction.                
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
 ANIMALLITTER

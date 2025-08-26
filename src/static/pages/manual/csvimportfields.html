@@ -135,6 +135,16 @@ days (for example), or update many animal bios in one go.</p>
 <p>When importing incident data from CSV files, the person fields supplied will be used as
 the caller.</p>
 <dl class="simple">
+<dt>ACCOUNTSTRXDATE</dt><dd><p>The date of the accounting transaction.</p>
+</dd>
+<dt>ACCOUNTSAMOUNT</dt><dd><p>The amount of the accounting transaction.</p>
+</dd>
+<dt>ACCOUNTSSOURCE</dt><dd><p>The source account of the accounting transaction, this must match an existing account code in your database.</p>
+</dd>
+<dt>ACCOUNTSDESTINATION</dt><dd><p>The destination account of the accounting transaction, this must match an existing account code in your database.</p>
+</dd>
+<dt>ACCOUNTSDESCRIPTION</dt><dd><p>A decription of the accounting transaction.</p>
+</dd>
 <dt>ANIMALCODE</dt><dd><p>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</p>
 </dd>
 <dt>ANIMALLITTER</dt><dd><p>A litter reference for the animal. Animals with the same reference can be viewed together with the “littermates” button on animal records.</p>
