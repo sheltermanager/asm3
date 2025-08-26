@@ -40,7 +40,7 @@ $(function() {
                                 $("#animalrow").hide();
                                 animal_costs.costtype_change();
                             } else {
-                                $("#costanimalidrow").show();
+                                $("#animalrow").show();
                             }
                         }
                     });
@@ -48,7 +48,7 @@ $(function() {
                     row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
                     if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
                     if (controller.animal) {
-                        await tableform.fields_post(dialog.fields, "mode=update&costanimalid=" + controller.animal.ID + "&costid=" + row.ID, "animal_costs");
+                        await tableform.fields_post(dialog.fields, "mode=update&animal=" + controller.animal.ID + "&costid=" + row.ID, "animal_costs");
                     } else {
                         await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
                     }
@@ -88,46 +88,49 @@ $(function() {
 
             const buttons = [
                 { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
-                    click: async function() { 
-                        await tableform.dialog_show_add(dialog, {
+                    click: function() { 
+                        tableform.dialog_show_add(dialog, {
                             onload: function() {
                                 if (controller.animal) {
-                                    $("#costanimalid").animalchooser("loadbyid", controller.animal.ID);
-                                    $("#costanimalidrow").hide();
+                                    $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                                    $("#animalrow").hide();
                                     animal_costs.costtype_change();
                                 } else {
-                                    $("#costanimalidrow").show();
+                                    $("#animalrow").show();
                                 }
+                            },
+                            onadd: function() {
+                                if (controller.animal) {
+                                    var response = tableform.fields_post(dialog.fields, "mode=create&animal="  + controller.animal.ID, "animal_costs");
+                                } else {
+                                    var response = tableform.fields_post(dialog.fields, "mode=create", "animal_costs");
+                                }
+                                let row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                                if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
+                                if (animal_costs.lastanimal) {
+                                    row.ANIMALNAME = animal_costs.lastanimal.ANIMALNAME;
+                                    row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
+                                    row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
+                                }
+                                let offset = parseInt($("#offset").val());
+                                let paiddate = row.COSTPAIDDATE;
+                                let datefloor = common.subtract_days(common.today_no_time(), offset);
+                                if (controller.animal) {
+                                    controller.rows.push(row);
+                                } else if (!paiddate && !offset) {
+                                    controller.rows.push(row);
+                                } else if (format.date_js(paiddate, true) >= datefloor ) {
+                                    controller.rows.push(row);
+                                }
+                                tableform.table_update(table);
+                                animal_costs.calculate_costtotals();
+                                tableform.dialog_close();
                             }
                         });
-                        if (controller.animal) {
-                            var response = await tableform.fields_post(dialog.fields, "mode=create&costanimalid="  + controller.animal.ID, "animal_costs");
-                        } else {
-                            var response = await tableform.fields_post(dialog.fields, "mode=create", "animal_costs");
-                        }
-                        let row = {};
-                        row.ID = response;
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                        if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
-                        if (animal_costs.lastanimal) {
-                            row.ANIMALNAME = animal_costs.lastanimal.ANIMALNAME;
-                            row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
-                            row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
-                        }
-                        let offset = parseInt($("#offset").val());
-                        let paiddate = row.COSTPAIDDATE;
-                        let datefloor = common.subtract_days(common.today_no_time(), offset);
-                        if (controller.animal) {
-                            controller.rows.push(row);
-                        } else if (!paiddate && !offset) {
-                            controller.rows.push(row);
-                        } else if (format.date_js(paiddate, true) >= datefloor ) {
-                            controller.rows.push(row);
-                        }
-                        tableform.table_update(table);
-                        animal_costs.calculate_costtotals();
-                        tableform.dialog_close();
+                        
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "cdad",
@@ -213,11 +216,11 @@ $(function() {
                 animal_costs.lastperson = rec;
             });
 
-            $("#costanimalid").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
                 animal_costs.lastanimal = rec;
             });
 
-            $("#costanimalid").animalchooser().bind("animalchooserloaded", function(event, rec) {
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
                 animal_costs.lastanimal = rec;
             });
             

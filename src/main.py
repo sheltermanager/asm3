@@ -2060,7 +2060,7 @@ class animal_costs(JSONEndpoint):
 
     def post_create(self, o):
         self.check(asm3.users.ADD_COST)
-        o.post["animalid"] = o.post["costanimalid"]
+        o.post["animalid"] = o.post["animal"]
         return asm3.animal.insert_cost_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
