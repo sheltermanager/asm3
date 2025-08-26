@@ -441,7 +441,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasaccounts:
             a = {}
             a["trxdate"] = gkd(dbo, row, "ACCOUNTSTRXDATE")
-            a["withdrawal"] = gkc(row, "ACCOUNTSAMOUNT")
+            a["withdrawal"] = str(gkc(row, "ACCOUNTSAMOUNT"))
             a["accountid"] = str(asm3.financial.get_account_id(dbo, gks(row, "ACCOUNTSSOURCE")))
             a["otheraccount"] = gks(row, "ACCOUNTSDESTINATION")
             a["description"] = gks(row, "ACCOUNTSDESCRIPTION")
