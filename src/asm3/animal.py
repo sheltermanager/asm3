@@ -4002,7 +4002,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                 # Death date in animallocations does not match the actual date of death, updating it
                 dbo.execute("UPDATE animallocation SET Date = ? WHERE ID = ?", (deceaseddate, locationrow["ID"]))
         else:
-            fromid, fromunit = find_location_before(movementrow.MOVEMENTDATE)
+            fromid, fromunit = find_location_before(deceaseddate)
             # No row found representing the death, so create one
             insert_animallocation(dbo, username, animalid, animalname, sheltercode, fromid, fromunit, 0, '*', isdeath=1, date=deceaseddate)
     else:
