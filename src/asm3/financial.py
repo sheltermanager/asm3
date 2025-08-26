@@ -309,6 +309,8 @@ def get_costs(dbo: Database, offset: int = 0, sort: int = ASCENDING) -> Results:
     """
     Returns all animalcost records:
     COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER, ANIMALID, ANIMALNAME, SHORTCODE, SHELTERCODE
+    When a non zero offset is supplied, costs paid within the last {offset} days are returned
+    When offset = 0, all unpaid costs are returned
     """
     sql = "SELECT ac.ID, ac.CostTypeID, ac.CostAmount, ac.CostDate, ac.CostPaidDate, c.CostTypeName, ac.Description, " \
         "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate, ac.OwnerID, ac.InvoiceNumber, o.OwnerName, " \

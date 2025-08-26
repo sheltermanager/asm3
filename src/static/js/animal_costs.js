@@ -42,19 +42,27 @@ $(function() {
                             } else {
                                 $("#animalrow").show();
                             }
+                        },
+                        onchange: function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                            if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
+                            if (animal_costs.lastanimal) {
+                                row.ANIMALNAME = animal_costs.lastanimal.ANIMALNAME;
+                                row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
+                                row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
+                            }
+                            if (controller.animal) {
+                                tableform.fields_post(dialog.fields, "mode=update&animal=" + controller.animal.ID + "&costid=" + row.ID, "animal_costs");
+                            } else {
+                                tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
+                            }
+                            tableform.table_update(table);
+                            animal_costs.calculate_costtotals();
+                            tableform.dialog_close();
                         }
                     });
-                    tableform.fields_update_row(dialog.fields, row);
-                    row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                    if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
-                    if (controller.animal) {
-                        await tableform.fields_post(dialog.fields, "mode=update&animal=" + controller.animal.ID + "&costid=" + row.ID, "animal_costs");
-                    } else {
-                        await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
-                    }
-                    tableform.table_update(table);
-                    animal_costs.calculate_costtotals();
-                    tableform.dialog_close();
+                    
                 },
                 columns: [
                     { field: "COSTTYPENAME", display: _("Type") },
@@ -323,6 +331,10 @@ $(function() {
         },
 
         destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+            animal_costs.lastanimal = null;
+            animal_costs.lastperson = null;
             tableform.dialog_destroy();
         },
 
