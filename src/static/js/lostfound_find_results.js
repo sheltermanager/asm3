@@ -151,7 +151,6 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            console.log(row);
             const STRING_FIELDS = [ "MicrochipNumber", "AreaLost", "AreaFound", "AreaPostCode", "AgeGroup", "SexName", "SpeciesName", "BreedName", "BaseColourName", "DistFeat" ];
             const DATE_FIELDS = [ "DateFound", "DateLost" ];
             let rv = "";

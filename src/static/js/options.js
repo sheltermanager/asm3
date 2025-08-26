@@ -683,7 +683,7 @@ $(function() {
                     { id: "tab-findscreens", title: _("Find Screens"), fields: [
                         { id: "findanimalcols", post_field: "SearchColumns", label: _("Find animal columns"), type: "selectmulti", options: this.two_pair_options(controller.animalfindcolumns) }, 
                         { id: "findfoundanimalcols", post_field: "FoundAnimalSearchColumns", label: _("Find found animal columns"), type: "selectmulti", options: this.two_pair_options(controller.foundanimalfindcolumns) }, 
-                        { id: "findlostanimalcols", post_field: "LostAnimalSearchColumns", label: _("Find lost animal columns"), type: "selectmulti", options: this.two_pair_options(controller.foundanimalfindcolumns) }, 
+                        { id: "findlostanimalcols", post_field: "LostAnimalSearchColumns", label: _("Find lost animal columns"), type: "selectmulti", options: this.two_pair_options(controller.lostanimalfindcolumns) }, 
                         { id: "findincidentcols", post_field: "IncidentSearchColumns", label: _("Find incident columns"), type: "selectmulti", options: this.two_pair_options(controller.incidentfindcolumns) }, 
                         { id: "findpersoncols", post_field: "OwnerSearchColumns", label: _("Find person columns"), type: "selectmulti", options: this.two_pair_options(controller.personfindcolumns) }, 
                         { id: "findeventcols", post_field: "EventSearchColumns", label: _("Find event columns"), type: "selectmulti", options: this.two_pair_options(controller.eventfindcolumns) }, 
