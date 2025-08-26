@@ -39,9 +39,9 @@ def add_log_email(dbo: Database, username: str, linktype: int, linkid: int, logt
 
 def add_logmulti(dbo: Database, username: str, linktype: int, linkids: list, logtypeid: int, logtext: str, logdatetime: datetime = None) -> int:
     """
-    Adds a log entry. If logdatetime is blank, the date/time now is used.
+    Adds a logmulti entry. If logdatetime is blank, the date/time now is used.
     """
-    linkidsstring = ",".join(linkids)
+    linkidsstring = ",".join([str(linkid) for linkid in linkids] )
     if logdatetime is None: logdatetime = dbo.now()
     return dbo.insert("logmulti", {
         "LogTypeID":        logtypeid,

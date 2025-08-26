@@ -2179,9 +2179,9 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
             send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
             if createlog:
                 if "OWNERID" in r:
-                    linkids.append(str(r.OWNERID))
+                    linkids.append(r.OWNERID)
                 elif "ID" in r:
-                    linkids.append(str(r.ID))
+                    linkids.append(r.ID)
             if "EMAILADDRESS2" in r: 
                 toadd = r.EMAILADDRESS2
                 if toadd is None or toadd.strip() == "": continue

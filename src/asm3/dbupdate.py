@@ -1256,8 +1256,8 @@ def sql_structure(dbo: Database) -> str:
         fint("LinkType"),
         fdate("Date"),
         flongstr("Comments") ))
-    sql += index("log_LogTypeID", "log", "LogTypeID")
-    sql += index("log_LinkID", "log", "LinkID")
+    sql += index("logmulti_LogTypeID", "logmulti", "LogTypeID")
+    sql += index("logmulti_LinkType", "logmulti", "LinkType")
 
     sql += table("logtype", (
         fid(),
