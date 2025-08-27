@@ -1546,6 +1546,8 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertneuter = asm3.configuration.alert_species_neuter(dbo)
     alertnevervacc = asm3.configuration.alert_species_never_vacc(dbo)
     alertrabies = asm3.configuration.alert_species_rabies(dbo)
+    alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
+    alertlngterm = asm3.configuration.alert_species_lng_term(dbo)
     # alertduevacc = asm3.configuration.alert_due_vacc(dbo)
     # alertexpvacc = asm3.configuration.alert_exp_vacc(dbo)
     # alertduetest = asm3.configuration.alert_due_test(dbo)
@@ -1554,7 +1556,6 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     # alertboardouttoday = asm3.configuration.alert_board_out_today(dbo)
     # alertdueclinic = asm3.configuration.alert_due_clinic(dbo)
     # alerturgentwl = asm3.configuration.alert_urgent_wl(dbo)
-    # alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
     # alertduedon = asm3.configuration.alert_due_don(dbo)
     # alertendtrial = asm3.configuration.alert_end_trial(dbo)
     # alertdocunsigned = asm3.configuration.alert_doc_unsigned(dbo)
@@ -1573,7 +1574,6 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     # alertstlowbal = asm3.configuration.alert_st_low_bal(dbo)
     # alertgloballows = asm3.configuration.alert_global_lows(dbo)
     # alerttrnodrv = asm3.configuration.alert_tr_nodrv(dbo)
-    # alertlngterm = asm3.configuration.alert_species_lng_term(dbo)
     # alertpublish = asm3.configuration.alert_publish(dbo)
 
     if not asm3.configuration.include_off_shelter_medical(dbo):
@@ -1606,8 +1606,9 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM clinicappointment WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s) AS dueclinic," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
             "WHERE Urgency = 1 AND DateRemovedFromList Is Null) AS urgentwl," \
-        "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID WHERE " \
-            "MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0) AS rsvhck," \
+        "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID  " \
+            "INNER JOIN animal ON adoption.AnimalID = animal.ID " \
+            "WHERE MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0 AND SpeciesID IN ( %(alertrsvhck)s )) AS rsvhck," \
         "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE DateDue <= %(today)s AND Date Is Null) AS duedon," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID = adoption.AnimalID WHERE " \
             "DeceasedDate Is Null AND IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s) AS endtrial," \
@@ -1645,14 +1646,15 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM product WHERE (SELECT SUM(stocklevel.Balance) FROM stocklevel WHERE stocklevel.ProductID = product.ID) <= product.GlobalMinimum) AS globallows, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s) AS lngterm, " \
+            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
                 "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, 
                 "alertchip": alertchip, "longterm": longterm, "alertneuter": alertneuter, 
-                "alertnevervacc": alertnevervacc, "alertrabies": alertrabies }
+                "alertnevervacc": alertnevervacc, "alertrabies": alertrabies,
+                "alertrsvhck": alertrsvhck, "alertlngterm": alertlngterm }
     return dbo.query_cache(sql, age=age)
 
 def get_overview(dbo: Database, age: int = 120) -> Results:

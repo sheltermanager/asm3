@@ -265,7 +265,7 @@ $(function() {
                         _("{plural3} animals are not available for adoption")
                     ]));
             }
-            if (alerts.LNGTERM > 0 && common.has_permission("va") && config.bool("AlertSpeciesLongTerm")) {
+            if (alerts.LNGTERM > 0 && common.has_permission("va")) {
                 totalalerts += alerts.LNGTERM;
                 let ltm = Math.round(config.integer("LongTermDays") / 30);
                 oa("search?q=longterm", "calendar", 
