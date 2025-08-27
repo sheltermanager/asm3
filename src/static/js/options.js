@@ -716,6 +716,8 @@ $(function() {
                         { id: "alertrabies", post_field: "AlertSpeciesRabies", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrsvhck", post_field: "AlertSpeciesRsvHck", label: _("Show an alert when these species of animals are reserved but not marked as home checked"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertlngterm", post_field: "AlertSpeciesLongTerm", label: _("Show an alert when these species of animals are long termers"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertnotforadoption", post_field: "AlertNotForAdoption", label: _("Show an alert when an animal is not available for adoption"), type: "check", fullrow: true }, 
+                        { id: "alertlookingfor", post_field: "AlertLookingFor", label: _("Show an alert when a shelter animal has people looking for them"), type: "check", fullrow: true }, 
                         { id: "alertduevacc", post_field: "AlertDueVacc", label: _("Show an alert when a vaccination is due"), type: "check", fullrow: true }, 
                         { id: "alertexpvacc", post_field: "AlertExpVacc", label: _("Show an alert when a vaccination has expired"), type: "check", fullrow: true },
                         { id: "alertduetest", post_field: "AlertDueTest", label: _("Show an alert when a test is due"), type: "check", fullrow: true }, 
@@ -741,6 +743,8 @@ $(function() {
                         { id: "alertstlowbal", post_field: "AlertSTLowBal", label: _("Show an alert when a stock item has low global balance"), type: "check", fullrow: true }, 
                         { id: "alertstrnodrv", post_field: "AlertTRNoDrv", label: _("Show an alert when an animal transport has no driver assigned"), type: "check", fullrow: true }, 
                         { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true }, 
+                        { id: "alertlostandfound", post_field: "AlertLostandFound", label: _("Show an alert when potential matches for lost animals are detected"), type: "check", fullrow: true },
+                        { id: "alerttlover", post_field: "AlertTLover", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-insurance", title: _("Insurance"), info: _("These numbers are for shelters who have agreements with insurance companies and are given blocks of policy numbers to allocate."), fields: [
                         { id: "autoinsurance", post_field: "UseAutoInsurance", label: _("Use Automatic Insurance Numbers"), type: "check" }, 

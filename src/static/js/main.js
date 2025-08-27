@@ -65,7 +65,7 @@ $(function() {
             const oa = function(url, icon, text) {
                s.push('<p class="bottomdotted"><a href="' + url + '">' + html.icon(icon) + ' ' + text + '</a></p>');
             };
-            if (alerts.DUEVACC > 0 && common.has_permission("vav")) {
+            if (alerts.DUEVACC > 0 && common.has_permission("vav") && config.bool("AlertDueVacc")) {
                 totalalerts += alerts.DUEVACC;
                 oa("vaccination", "vaccination", 
                     common.ntranslate(alerts.DUEVACC, [ 
@@ -75,7 +75,7 @@ $(function() {
                         _("{plural3} vaccinations need to be administered today")
                     ]));
             }
-            if (alerts.EXPVACC > 0 && common.has_permission("vav")) {
+            if (alerts.EXPVACC > 0 && common.has_permission("vav") && config.bool("AlertExpVacc")) {
                 totalalerts += alerts.EXPVACC;
                 oa("vaccination?offset=xm365", "vaccination",
                     common.ntranslate(alerts.EXPVACC, [ 
@@ -105,7 +105,7 @@ $(function() {
                         _("{plural3} animals have never had a vaccination of any type")
                     ]));
             }
-            if (alerts.DUETEST > 0 && common.has_permission("vat")) {
+            if (alerts.DUETEST > 0 && common.has_permission("vat") && config.bool("AlertDueTest")) {
                 totalalerts += alerts.DUETEST;
                 oa("test", "test", 
                     common.ntranslate(alerts.DUETEST, [ 
@@ -115,7 +115,7 @@ $(function() {
                         _("{plural3} tests need to be performed today")
                     ]));
             }
-            if (alerts.DUEMED > 0 && common.has_permission("mvam")) {
+            if (alerts.DUEMED > 0 && common.has_permission("mvam") && config.bool("AlertDueMed")) {
                 totalalerts += alerts.DUEMED;
                 oa("medical", "medical", 
                     common.ntranslate(alerts.DUEMED, [
@@ -125,7 +125,7 @@ $(function() {
                         _("{plural3} medical treatments need to be administered today")
                     ]));
             }
-            if (alerts.BOARDINTODAY > 0 && common.has_permission("vbi")) {
+            if (alerts.BOARDINTODAY > 0 && common.has_permission("vbi") && config.bool("AlertBoardInToday")) {
                 totalalerts += alerts.BOARDINTODAY;
                 oa("boarding?filter=st", "boarding",
                     common.ntranslate(alerts.BOARDINTODAY, [
@@ -135,7 +135,7 @@ $(function() {
                         _("{plural3} boarding animals entering today")
                     ]));
             }
-            if (alerts.BOARDOUTTODAY > 0 && common.has_permission("vbi")) {
+            if (alerts.BOARDOUTTODAY > 0 && common.has_permission("vbi") && config.bool("AlertBoardOutToday")) {
                 totalalerts += alerts.BOARDOUTTODAY;
                 oa("boarding?filter=et", "boarding", 
                     common.ntranslate(alerts.BOARDOUTTODAY, [
@@ -145,7 +145,7 @@ $(function() {
                         _("{plural3} boarding animals leaving today")
                     ]));
             }
-            if (alerts.DUECLINIC > 0 && common.has_permission("vcl")) {
+            if (alerts.DUECLINIC > 0 && common.has_permission("vcl") && config.bool("AlertDueClinic")) {
                 totalalerts += alerts.DUECLINIC;
                 oa("clinic_waitingroom", "health", 
                     common.ntranslate(alerts.DUECLINIC, [
@@ -155,7 +155,7 @@ $(function() {
                         _("{plural3} clinic appointments today")
                     ]));
             }
-            if (alerts.URGENTWL > 0 && common.has_permission("vwl")) {
+            if (alerts.URGENTWL > 0 && common.has_permission("vwl") && config.bool("AlertUrgentWL")) {
                 totalalerts += alerts.URGENTWL;
                 oa("waitinglist_results?priorityfloor=1", "waitinglist",
                     common.ntranslate(alerts.URGENTWL, [
@@ -165,7 +165,7 @@ $(function() {
                         _("{plural3} urgent entries on the waiting list")
                     ]));
             }
-            if (alerts.RSVHCK > 0 && config.bool("WarnNoHomeCheck") && common.has_permission("vo")) {
+            if (alerts.RSVHCK > 0 && config.bool("AlertSpeciesRsvHck") && common.has_permission("vo")) {
                 totalalerts += alerts.RSVHCK;
                 oa("search?q=reservenohomecheck", "person",
                     common.ntranslate(alerts.RSVHCK, [
@@ -175,7 +175,7 @@ $(function() {
                         _("{plural3} people with active reservations have not been homechecked")
                     ]));
             }
-            if (alerts.LONGRSV > 0 && common.has_permission("vamv")) {
+            if (alerts.LONGRSV > 0 && common.has_permission("vamv") && config.bool("AlertLongRsv")) {
                 totalalerts += alerts.LONGRSV;
                 oa("move_book_reservation", "reservation",
                     common.ntranslate(alerts.LONGRSV, [
@@ -205,7 +205,7 @@ $(function() {
                         _("{plural3} shelter animals have not been microchipped")
                     ]));
             }
-            if (alerts.DUEDON > 0 && common.has_permission("ovod")) {
+            if (alerts.DUEDON > 0 && common.has_permission("ovod") && config.bool("AlertDueDon")) {
                 totalalerts += alerts.DUEDON;
                 oa("donation?offset=d0", "donation",
                     common.ntranslate(alerts.DUEDON, [
@@ -215,7 +215,7 @@ $(function() {
                         _("{plural3} people have overdue payments")
                     ]));
             }
-            if (alerts.ENDTRIAL > 0 && common.has_permission("vamv")) {
+            if (alerts.ENDTRIAL > 0 && common.has_permission("vamv") && config.bool("AlertEndTrial")) {
                 totalalerts += alerts.ENDTRIAL;
                 oa("move_book_trial_adoption", "trial",
                     common.ntranslate(alerts.ENDTRIAL, [
@@ -225,7 +225,7 @@ $(function() {
                         _("{plural3} trial adoptions have ended")
                     ]));
             }
-            if (alerts.DOCUNSIGNED > 0 && common.has_permission("vo")) {
+            if (alerts.DOCUNSIGNED > 0 && common.has_permission("vo") && config.bool("AlertDocUnsigned")) {
                 totalalerts += alerts.DOCUNSIGNED;
                 oa("search?q=unsigned", "signature",
                     common.ntranslate(alerts.DOCUNSIGNED, [
@@ -235,7 +235,7 @@ $(function() {
                         _("{plural3} document signing requests issued in the last month are unsigned")
                     ]));
             }
-            if (alerts.DOCSIGNED > 0 && common.has_permission("vo")) {
+            if (alerts.DOCSIGNED > 0 && common.has_permission("vo") && config.bool("AlertDocSigned")) {
                 totalalerts += alerts.DOCSIGNED;
                 oa("search?q=signed", "signature", 
                     common.ntranslate(alerts.DOCSIGNED, [
@@ -245,7 +245,7 @@ $(function() {
                         _("{plural3} document signing requests have been received in the last week")
                     ]));
             }
-            if (alerts.OPENCHECKOUT > 0 && common.has_permission("vo")) {
+            if (alerts.OPENCHECKOUT > 0 && common.has_permission("vo") && config.bool("AlertOpenCheckout")) {
                 totalalerts += alerts.OPENCHECKOUT;
                 oa("search?q=opencheckout", "movement",
                     common.ntranslate(alerts.OPENCHECKOUT, [
@@ -255,7 +255,7 @@ $(function() {
                         _("{plural3} adoption checkout requests initiated in the last week are still open")
                     ]));
             }
-            if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("EmblemNotForAdoption")) {
+            if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("AlertNotForAdoption")) {
                 totalalerts += alerts.NOTADOPT;
                 oa("search?q=notforadoption", "notforadoption", 
                     common.ntranslate(alerts.NOTADOPT, [
@@ -265,7 +265,7 @@ $(function() {
                         _("{plural3} animals are not available for adoption")
                     ]));
             }
-            if (alerts.LNGTERM > 0 && common.has_permission("va") && config.bool("EmblemLongTerm")) {
+            if (alerts.LNGTERM > 0 && common.has_permission("va") && config.bool("AlertSpeciesLongTerm")) {
                 totalalerts += alerts.LNGTERM;
                 let ltm = Math.round(config.integer("LongTermDays") / 30);
                 oa("search?q=longterm", "calendar", 
@@ -276,7 +276,7 @@ $(function() {
                         _("{plural3} animals have been on the shelter longer than {0} months").replace("{0}", ltm)
                     ]));
             }
-            if (alerts.HOLDTODAY > 0 && common.has_permission("va") && config.bool("EmblemHold")) {
+            if (alerts.HOLDTODAY > 0 && common.has_permission("va") && config.bool("AlertHoldToday")) {
                 totalalerts += alerts.HOLDTODAY;
                 oa("search?q=holdtoday", "hold",
                     common.ntranslate(alerts.HOLDTODAY, [
@@ -286,7 +286,7 @@ $(function() {
                         _("{plural3} animals have holds ending today")
                     ]));
             }
-            if (alerts.INFORM > 0 && common.has_permission("vif")) {
+            if (alerts.INFORM > 0 && common.has_permission("vif") && config.bool("AlertIncomingForm")) {
                 totalalerts += alerts.INFORM;
                 oa("onlineform_incoming", "forms",
                     common.ntranslate(alerts.INFORM, [
@@ -296,7 +296,7 @@ $(function() {
                         _("{plural3} new online form submissions")
                     ]));
             }
-            if (alerts.LOOKFOR > 0 && common.has_permission("vcr")) {
+            if (alerts.LOOKFOR > 0 && common.has_permission("vcr") && config.bool("AlertLookingFor")) {
                 totalalerts += alerts.LOOKFOR;
                 oa("person_lookingfor", "animal-find",
                     common.ntranslate(alerts.LOOKFOR, [
@@ -306,7 +306,7 @@ $(function() {
                         _("{plural3} shelter animals have people looking for them")
                     ]));
             }
-            if (alerts.LOSTFOUND > 0 && common.has_permission("mlaf")) {
+            if (alerts.LOSTFOUND > 0 && common.has_permission("mlaf") && config.bool("AlertLostandFound")) {
                 totalalerts += alerts.LOSTFOUND;
                 oa("lostfound_match", "match",
                     common.ntranslate(alerts.LOSTFOUND, [
@@ -316,7 +316,7 @@ $(function() {
                         _("{plural3} potential matches for lost animals")
                     ]));
             }
-            if (alerts.PUBLISH > 0 && common.has_permission("uipb")) {
+            if (alerts.PUBLISH > 0 && common.has_permission("uipb") && config.bool("AlertPublish")) {
                 totalalerts += alerts.PUBLISH;
                 oa("publish_logs", "web",
                     common.ntranslate(alerts.PUBLISH, [
@@ -326,7 +326,7 @@ $(function() {
                         _("{plural3} recent publisher runs had errors")
                     ]));
             }
-            if (alerts.ACUNFINE > 0 && common.has_permission("vaci")) {
+            if (alerts.ACUNFINE > 0 && common.has_permission("vaci") && config.bool("AlertACUnfine")) {
                 totalalerts += alerts.ACUNFINE;
                 oa("citations?filter=unpaid", "donation",
                     common.ntranslate(alerts.ACUNFINE, [
@@ -336,7 +336,7 @@ $(function() {
                         _("{plural3} unpaid fines")
                     ]));
             }
-            if (alerts.ACUNDISP > 0 && common.has_permission("vaci")) {
+            if (alerts.ACUNDISP > 0 && common.has_permission("vaci") && config.bool("AlertACUndisp")) {
                 totalalerts += alerts.ACUNDISP;
                 oa("incident_find_results?filter=undispatched", "call",
                     common.ntranslate(alerts.ACUNDISP, [
@@ -346,7 +346,7 @@ $(function() {
                         _("{plural3} undispatched animal control calls")
                     ]));
             }
-            if (alerts.ACFOLL > 0 && common.has_permission("vaci")) {
+            if (alerts.ACFOLL > 0 && common.has_permission("vaci") && config.bool("AlertACFoll")) {
                 totalalerts += alerts.ACFOLL;
                 oa("incident_find_results?filter=requirefollowup", "call",
                     common.ntranslate(alerts.ACFOLL, [
@@ -356,7 +356,7 @@ $(function() {
                         _("{plural3} animal control calls due for followup today")
                     ]));
             }
-            if (alerts.ACUNCOMP > 0 && common.has_permission("vaci")) {
+            if (alerts.ACUNCOMP > 0 && common.has_permission("vaci") && config.bool("AlertACUncomp")) {
                 totalalerts += alerts.ACUNCOMP;
                 oa("incident_find_results?filter=incomplete", "call",
                     common.ntranslate(alerts.ACUNCOMP, [
@@ -366,7 +366,7 @@ $(function() {
                         _("{plural3} incomplete animal control calls")
                     ]));
             }
-            if (alerts.TLOVER > 0 && common.has_permission("vatl")) {
+            if (alerts.TLOVER > 0 && common.has_permission("vatl") && config.bool("AlertTLover")) {
                 totalalerts += alerts.TLOVER;
                 oa("traploan?filter=active", "traploan",
                     common.ntranslate(alerts.TLOVER, [
@@ -376,7 +376,7 @@ $(function() {
                         _("{plural3} items of equipment are overdue for return")
                     ]));
             }
-            if (alerts.STEXP > 0 && common.has_permission("vsl")) {
+            if (alerts.STEXP > 0 && common.has_permission("vsl") && config.bool("AlertSTExpired")) {
                 totalalerts += alerts.STEXP;
                 oa("stock_level?sortexp=1", "stock",
                     common.ntranslate(alerts.STEXP, [
@@ -386,7 +386,7 @@ $(function() {
                         _("{plural3} items of stock have expired")
                     ]));
             }
-            if (alerts.STEXPSOON > 0 && common.has_permission("vsl")) {
+            if (alerts.STEXPSOON > 0 && common.has_permission("vsl") && config.bool("AlertSTExpSoon")) {
                 totalalerts += alerts.STEXPSOON;
                 oa("stock_level?sortexp=1", "stock",
                     common.ntranslate(alerts.STEXPSOON, [
@@ -396,7 +396,7 @@ $(function() {
                         _("{plural3} items of stock expire in the next month")
                     ]));
             }
-            if (alerts.STLOWBAL > 0 && common.has_permission("vsl")) {
+            if (alerts.STLOWBAL > 0 && common.has_permission("vsl") && config.bool("AlertSTLowBal")) {
                 totalalerts += alerts.STLOWBAL;
                 oa("stock_level?viewlocation=-2", "stock",
                     common.ntranslate(alerts.STLOWBAL, [
@@ -406,7 +406,7 @@ $(function() {
                         _("{plural3} items of stock have a low balance")
                     ]));
             }
-            if (alerts.GLOBALLOWS > 0 && common.has_permission("vsl")) {
+            if (alerts.GLOBALLOWS > 0 && common.has_permission("vsl") && config.bool("AlertSTLowBal")) {
                 totalalerts += alerts.GLOBALLOWS;
                 oa("product?productfilter=-2", "product",
                     common.ntranslate(alerts.GLOBALLOWS, [
@@ -416,7 +416,7 @@ $(function() {
                         _("{plural3} products have a low balance")
                     ]));
             }
-            if (alerts.TRNODRV > 0 && common.has_permission("vtr")) {
+            if (alerts.TRNODRV > 0 && common.has_permission("vtr") && config.bool("AlertTRNoDrv")) {
                 totalalerts += alerts.TRNODRV;
                 oa("transport", "transport",
                     common.ntranslate(alerts.TRNODRV, [
