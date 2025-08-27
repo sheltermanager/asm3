@@ -163,7 +163,7 @@ $(function() {
                 let formdata = "mode=save" +
                     "&id=" + $("#waitinglistid").val() + 
                     "&recordversion=" + controller.animal.RECORDVERSION + 
-                    "&" + $("input, select, textarea").toPOST();
+                    "&" + $("input, select, textarea").not(".chooser").toPOST();
                 common.ajax_post("waitinglist", formdata)
                     .then(callback)
                     .fail(function() { 
