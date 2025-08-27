@@ -108,10 +108,11 @@ $(function() {
                                 }
                             },
                             onadd: function() {
+                                let response;
                                 if (controller.animal) {
-                                    var response = tableform.fields_post(dialog.fields, "mode=create&animal="  + controller.animal.ID, "animal_costs");
+                                    response = tableform.fields_post(dialog.fields, "mode=create&animal="  + controller.animal.ID, "animal_costs");
                                 } else {
-                                    var response = tableform.fields_post(dialog.fields, "mode=create", "animal_costs");
+                                    response = tableform.fields_post(dialog.fields, "mode=create", "animal_costs");
                                 }
                                 let row = {};
                                 row.ID = response;
@@ -123,12 +124,12 @@ $(function() {
                                     row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
                                     row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
                                 }
-                                let offset = parseInt($("#offset").val());
+                                let offset = $("#offset").val();
                                 let paiddate = row.COSTPAIDDATE;
                                 let datefloor = common.subtract_days(common.today_no_time(), offset);
                                 if (controller.animal) {
                                     controller.rows.push(row);
-                                } else if (!paiddate && !offset) {
+                                } else if (!paiddate && offset != '0') {
                                     controller.rows.push(row);
                                 } else if (format.date_js(paiddate, true) >= datefloor ) {
                                     controller.rows.push(row);
