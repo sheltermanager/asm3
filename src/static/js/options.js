@@ -710,41 +710,60 @@ $(function() {
                         { id: "linkmax", post_field: "MainScreenAnimalLinkMax", label: _("Number of animal links to show"), type: "number", min: 0, max: 200 }, 
                         { type: "nextcol" }, 
                         { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Alerts") + '</p>' },
-                        { id: "alertmicrochip", post_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrabies", post_field: "AlertSpeciesRabies", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertmicrochip", post_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertrsvhck", post_field: "AlertSpeciesRsvHck", label: _("Show an alert when these species of animals are reserved but not marked as home checked"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { id: "alertlngterm", post_field: "AlertSpeciesLongTerm", label: _("Show an alert when these species of animals are long termers"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertnotforadoption", post_field: "AlertNotForAdoption", label: _("Show an alert when an animal is not available for adoption"), type: "check", fullrow: true }, 
-                        { id: "alertlookingfor", post_field: "AlertLookingFor", label: _("Show an alert when a shelter animal has people looking for them"), type: "check", fullrow: true }, 
-                        { id: "alertduevacc", post_field: "AlertDueVacc", label: _("Show an alert when a vaccination is due"), type: "check", fullrow: true }, 
-                        { id: "alertexpvacc", post_field: "AlertExpVacc", label: _("Show an alert when a vaccination has expired"), type: "check", fullrow: true },
-                        { id: "alertduetest", post_field: "AlertDueTest", label: _("Show an alert when a test is due"), type: "check", fullrow: true }, 
+
+                        { id: "alertdueclinic", post_field: "AlertDueClinic", label: _("Show an alert when a clinic appointment is due"), type: "check", fullrow: true }, 
                         { id: "alertduemed", post_field: "AlertDueMed", label: _("Show an alert when a medical treatment is due"), type: "check", fullrow: true }, 
+                        { id: "alertduetest", post_field: "AlertDueTest", label: _("Show an alert when a test is due"), type: "check", fullrow: true }, 
+                        { id: "alertexpvacc", post_field: "AlertExpVacc", label: _("Show an alert when a vaccination has expired"), type: "check", fullrow: true },
+                        { id: "alertduevacc", post_field: "AlertDueVacc", label: _("Show an alert when a vaccination is due"), type: "check", fullrow: true }, 
+
+                        { id: "alertlostandfound", post_field: "AlertLostandFound", label: _("Show an alert when potential matches for lost animals are detected"), type: "check", fullrow: true },
+
                         { id: "alertboardintoday", post_field: "AlertBoardInToday", label: _("Show an alert when boarding animals are due to arrive"), type: "check", fullrow: true }, 
                         { id: "alertboardouttoday", post_field: "AlertBoardOutToday", label: _("Show an alert when boarding animals are due to leave"), type: "check", fullrow: true }, 
-                        { id: "alertdueclinic", post_field: "AlertDueClinic", label: _("Show an alert when a clinic appointment is due"), type: "check", fullrow: true }, 
-                        { id: "alerturgentwl", post_field: "AlertUrgentWL", label: _("Show an alert when animals are marked as urgent on the waiting list"), type: "check", fullrow: true }, 
-                        { id: "alertduedon", post_field: "AlertDueDon", label: _("Show an alert when a payment is due"), type: "check", fullrow: true }, 
-                        { id: "alertendtrial", post_field: "AlertEndTrial", label: _("Show an alert when a trial adoption has reached it's end"), type: "check", fullrow: true }, 
-                        { id: "alertdocunsigned", post_field: "AlertDocUnsigned", label: _("Show an alert when a document is waiting to be signed"), type: "check", fullrow: true }, 
-                        { id: "alertdocsigned", post_field: "AlertDocSigned", label: _("Show an alert when a document has been signed"), type: "check", fullrow: true }, 
-                        { id: "alertopencheckout", post_field: "AlertOpenCheckout", label: _("Show an alert when a checkout has been left open"), type: "check", fullrow: true }, 
-                        { id: "alertlongrsv", post_field: "AlertLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "check", fullrow: true }, 
-                        { id: "alertholdtoday", post_field: "AlertHoldToday", label: _("Show an alert when holding periods are due to end"), type: "check", fullrow: true }, 
-                        { id: "alertinform", post_field: "AlertIncomingForm", label: _("Show an alert when an incoming form is waiting to be processed"), type: "check", fullrow: true }, 
-                        { id: "alertacunfine", post_field: "AlertACUnfine", label: _("Show an alert when an unpaid fine is overdue"), type: "check", fullrow: true }, 
-                        { id: "alertacundisp", post_field: "AlertACUndisp", label: _("Show an alert when animals are awaiting animal control dispatch"), type: "check", fullrow: true }, 
-                        { id: "alertacuncomp", post_field: "AlertACUncomp", label: _("Show an alert when animals are involved in unresolved animal control incidents"), type: "check", fullrow: true }, 
-                        { id: "alertacfoll", post_field: "AlertACFoll", label: _("Show an alert when animals are involved in animal control incidents due a follow up"), type: "check", fullrow: true }, 
-                        { id: "alertstexpsoon", post_field: "AlertSTExpSoon", label: _("Show an alert when stock is close to it's expiry date"), type: "check", fullrow: true }, 
-                        { id: "alertstexp", post_field: "AlertSTExpired", label: _("Show an alert when stock has passed it's expiry date"), type: "check", fullrow: true }, 
-                        { id: "alertstlowbal", post_field: "AlertSTLowBal", label: _("Show an alert when a stock item has low global balance"), type: "check", fullrow: true }, 
+
                         { id: "alertstrnodrv", post_field: "AlertTRNoDrv", label: _("Show an alert when an animal transport has no driver assigned"), type: "check", fullrow: true }, 
-                        { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true }, 
-                        { id: "alertlostandfound", post_field: "AlertLostandFound", label: _("Show an alert when potential matches for lost animals are detected"), type: "check", fullrow: true },
-                        { id: "alerttlover", post_field: "AlertTLover", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true }
+
+                        { id: "alertstexpsoon", post_field: "AlertSTExpSoon", label: _("Show an alert when stock is close to it's expiry date"), type: "check", fullrow: true }, 
+                        { id: "alertstlowbal", post_field: "AlertSTLowBal", label: _("Show an alert when a stock item has low global balance"), type: "check", fullrow: true }, 
+                        { id: "alertstexp", post_field: "AlertSTExpired", label: _("Show an alert when stock has passed it's expiry date"), type: "check", fullrow: true }, 
+
+                        { id: "alertacundisp", post_field: "AlertACUndisp", label: _("Show an alert when animals are awaiting animal control dispatch"), type: "check", fullrow: true }, 
+                        { id: "alertacfoll", post_field: "AlertACFoll", label: _("Show an alert when animals involved in animal control incidents are due a follow up"), type: "check", fullrow: true }, 
+                        { id: "alertacuncomp", post_field: "AlertACUncomp", label: _("Show an alert when animals are involved in unresolved animal control incidents"), type: "check", fullrow: true }, 
+
+                        { id: "alertlookingfor", post_field: "AlertLookingFor", label: _("Show an alert when a shelter animal has people looking for them"), type: "check", fullrow: true }, 
+
+                        { id: "alerturgentwl", post_field: "AlertUrgentWL", label: _("Show an alert when animals are marked as urgent on the waiting list"), type: "check", fullrow: true }, 
+
+                        { id: "alertholdtoday", post_field: "AlertHoldToday", label: _("Show an alert when holding periods are due to end"), type: "check", fullrow: true }, 
+
+                        { id: "alertdocsigned", post_field: "AlertDocSigned", label: _("Show an alert when a document has been signed"), type: "check", fullrow: true }, 
+                        { id: "alertdocunsigned", post_field: "AlertDocUnsigned", label: _("Show an alert when a document is waiting to be signed"), type: "check", fullrow: true }, 
+
+                        { id: "alertopencheckout", post_field: "AlertOpenCheckout", label: _("Show an alert when a checkout has been left open"), type: "check", fullrow: true }, 
+                        { id: "alertduedon", post_field: "AlertDueDon", label: _("Show an alert when a payment is due"), type: "check", fullrow: true }, 
+
+                        { id: "alertinform", post_field: "AlertIncomingForm", label: _("Show an alert when an incoming form is waiting to be processed"), type: "check", fullrow: true }, 
+
+                        { id: "alertacunfine", post_field: "AlertACUnfine", label: _("Show an alert when an unpaid fine is overdue"), type: "check", fullrow: true }, 
+                        
+                        { id: "alertendtrial", post_field: "AlertEndTrial", label: _("Show an alert when a trial adoption has reached it's end"), type: "check", fullrow: true }, 
+                        
+                        { id: "alertlongrsv", post_field: "AlertLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "check", fullrow: true }, 
+                        { id: "alertnotforadoption", post_field: "AlertNotForAdoption", label: _("Show an alert when an animal is not available for adoption"), type: "check", fullrow: true }, 
+                        
+                        { id: "alerttlover", post_field: "AlertTLover", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true },
+                        
+                        { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true }
+                        
+                        
                     ]}, 
                     { id: "tab-insurance", title: _("Insurance"), info: _("These numbers are for shelters who have agreements with insurance companies and are given blocks of policy numbers to allocate."), fields: [
                         { id: "autoinsurance", post_field: "UseAutoInsurance", label: _("Use Automatic Insurance Numbers"), type: "check" }, 
