@@ -2642,6 +2642,7 @@ class Owner:
     MatchGoodWithDogs = 0
     MatchGoodWithChildren = 0
     MatchHouseTrained = 0
+    MatchDeclawed = 0
     MatchCommentsContain = ""
     AdditionalFlags = ""
     RecordVersion = 0
