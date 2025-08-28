@@ -340,7 +340,8 @@ class ASMEndpoint(object):
         Does not apply if the URL being requested is the change_user_settings
         page to stop a redirect loop.
         """
-        if "force2fa" in session and session.force2fa and web.ctx.path.find("/change_user_settings") == -1:
+        #if "force2fa" in session and session.force2fa and web.ctx.path.find("/change_user_settings") == -1:
+        if False:
             raise web.seeother("%s/change_user_settings?force2fa=1" % BASE_URL)
 
     def check_mode(self, mode: str) -> bool:
@@ -6056,11 +6057,12 @@ class options(JSONEndpoint):
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "accountsexp": asm3.financial.get_accounts(dbo, onlyexpense=True),
             "accountsinc": asm3.financial.get_accounts(dbo, onlyincome=True),
+            "amqpenabled": asm3.sitedefs.AMQP_ENABLED,
             "animalfindcolumns": asm3.html.json_animalfindcolumns(dbo),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "breeds": asm3.lookups.get_breeds(dbo),
             "clinictypes": asm3.lookups.get_clinic_types(dbo),
-            "coattypes": asm3.lookups.get_coattypes(dbo),
+            "coattypes": asm3.lookups.get_coattypes(dbo), 
             "colours": asm3.lookups.get_basecolours(dbo),
             "costtypes": asm3.lookups.get_costtypes(dbo),
             "currencies": asm3.lookups.CURRENCIES,

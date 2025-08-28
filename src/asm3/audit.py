@@ -1,9 +1,11 @@
 
 import asm3.al
 
-from asm3.sitedefs import DB_RETAIN_AUDIT_DAYS
+from asm3.sitedefs import DB_RETAIN_AUDIT_DAYS, AMQP_ENABLED
 from asm3.typehints import Database, List, ResultRow, Results
-from asm3.kombu import send_message
+
+if AMQP_ENABLED:
+    from asm3.amqp import send_message
 
 ADD = 0
 EDIT = 1
@@ -222,8 +224,9 @@ def action(dbo: Database, action: str, username: str, tablename: str, linkid: in
      "Description": description,
     }
 
-    # Route audit record to Kombu enqueue method
-    send_message(dbo, audit_record)
+    if AMQP_ENABLED:
+        # Route audit record to AMPQ enqueue method
+        send_message(dbo, audit_record)
 
     dbo.insert(
         "audittrail",

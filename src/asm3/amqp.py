@@ -1,8 +1,8 @@
 """
-Kombu-backed asynchronous publisher for ASM3.
+AMQP-backed asynchronous publisher for ASM3.
 
 This module reads its configuration from ASM3's configuration store
-(KombuEnabled, KombuBrokerUrl, KombuExchangeName, KombuRoutingKey),
+(AMQPEnabled, AMQPBrokerUrl, AMQPExchangeName, AMQPRoutingKey),
 starts a single background worker to own the AMQP connection, and
 publishes JSON-serializable messages placed into an in-memory queue.
 
@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class _Config:
-    """Immutable snapshot of effective Kombu settings."""
+    """Immutable snapshot of effective AMQP settings."""
     enabled: bool
     broker_url: str
     exchange_name: str
@@ -40,9 +40,9 @@ class _Config:
         return bool(self.broker_url and self.exchange_name and self.routing_key)
 
 
-class KombuClient:
+class AMQPClient:
     """
-    Single-worker Kombu publisher.
+    Single-worker AMQP publisher.
 
     Thread-safety:
         - The public methods `ensure_config`, `send_message`, and `close` are safe to
@@ -79,10 +79,10 @@ class KombuClient:
             True if enabled and ready to accept messages, False otherwise.
         """
         cfg = _Config(
-            enabled=configuration.kombu_enabled(dbo),
-            broker_url=configuration.kombu_broker_url(dbo),
-            exchange_name=configuration.kombu_exchange_name(dbo),
-            routing_key=configuration.kombu_routing_key(dbo),
+            enabled=configuration.amqp_enabled(dbo),
+            broker_url=configuration.amqp_broker_url(dbo),
+            exchange_name=configuration.amqp_exchange_name(dbo),
+            routing_key=configuration.amqp_routing_key(dbo),
         )
 
         with self._lock:
@@ -97,10 +97,10 @@ class KombuClient:
             worker.join(timeout=2.0)
 
         if not cfg.enabled:
-            logger.info("Kombu disabled; worker stopped.")
+            logger.info("AMQP disabled; worker stopped.")
             return False
         if not cfg.valid:
-            logger.warning("Kombu misconfigured; missing broker/exchange/routing key.")
+            logger.warning("AMQP misconfigured; missing broker/exchange/routing key.")
             return False
 
         with self._lock:
@@ -121,13 +121,13 @@ class KombuClient:
             True if accepted into the outbox; False otherwise (disabled/misconfigured/full).
         """
         if not self.ensure_config(dbo):
-            logger.debug("Kombu disabled or misconfigured; dropping message.")
+            logger.debug("AMQP disabled or misconfigured; dropping message.")
             return False
         try:
             self._outbox.put(message, block=block, timeout=timeout)
             return True
         except Exception as e:  # queue.Full or other runtime issues
-            logger.exception("Failed to enqueue Kombu message: %s", e)
+            logger.exception("Failed to enqueue AMQP message: %s", e)
             return False
 
     def close(self, drain: bool = False, drain_timeout: float = 5.0) -> None:
@@ -156,7 +156,7 @@ class KombuClient:
         self._connected = False
         self._worker = Thread(target=self._run, name="kombu-worker", daemon=True)
         self._worker.start()
-        logger.info("Kombu worker started (exchange=%s, routing_key=%s).", cfg.exchange_name, cfg.routing_key)
+        logger.info("AMQP worker started (exchange=%s, routing_key=%s).", cfg.exchange_name, cfg.routing_key)
 
     def _stop_worker_locked(self) -> Optional[Thread]:
         """Signal worker to stop and return the thread to join outside the lock."""
@@ -178,7 +178,7 @@ class KombuClient:
                     backoff = 1.0
                 except Exception as e:
                     self._connected = False
-                    logger.warning("Kombu connect/declare failed: %s; retry in %.1fs", e, backoff)
+                    logger.warning("AMQP connect/declare failed: %s; retry in %.1fs", e, backoff)
                     time.sleep(backoff)
                     backoff = min(backoff * 2.0, 30.0)
                     continue
@@ -199,13 +199,13 @@ class KombuClient:
                 finally:
                     ch.close()
             except Exception as e:
-                logger.warning("Kombu publish failed: %s; will reconnect", e)
+                logger.warning("AMQP publish failed: %s; will reconnect", e)
                 self._connected = False
                 # Best-effort: requeue the message; if the queue is momentarily full, drop with a log.
                 try:
                     self._outbox.put_nowait(msg)
                 except Exception:
-                    logger.error("Kombu outbox full; dropping message after publish failure.")
+                    logger.error("AMQP outbox full; dropping message after publish failure.")
                 self._safe_release()
 
         # Shutdown path
@@ -218,7 +218,7 @@ class KombuClient:
         """Establish connection and declare exchange/queue (worker thread)."""
         cfg = self._cfg  # capture snapshot
         if not cfg or not cfg.valid:
-            raise RuntimeError("Kombu configuration not set")
+            raise RuntimeError("AMQP configuration not set")
 
         self._connection = Connection(cfg.broker_url, heartbeat=10, connect_timeout=5)
         self._connection.ensure_connection(max_retries=3)
@@ -239,7 +239,7 @@ class KombuClient:
             ch.close()
 
     def _safe_release(self) -> None:
-        """Release Kombu connection safely."""
+        """Release AMQP connection safely."""
         try:
             if self._connection:
                 self._connection.release()
@@ -251,7 +251,7 @@ class KombuClient:
 
 # ------------------------- module-level facade -------------------------
 
-_client = KombuClient()
+_client = AMQPClient()
 
 
 def reinitialize(dbo) -> None:

@@ -967,29 +967,29 @@ $(function() {
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
                     ]},
-                    { id: "tab-kombu",
-                      title: _("Kombu"),
-                      info: _("Configure AMQP messaging via the Kombu library."),
+                    { id: "tab-amqp",
+                      title: _("AMQP"),
+                      info: _("Configure AMQP messaging"),
                       fields: [
-                          { id: "kombuenabled",
-                            post_field: "KombuEnabled",
-                            label: _("Enable Kombu integration"),
+                          { id: "amqpenabled",
+                            post_field: "AMQPEnabled",
+                            label: _("Enable AMQP integration"),
                             type: "check",
                             fullrow: true },
 
-                          { id: "kombubrokerurl",
-                            post_field: "KombuBrokerUrl",
+                          { id: "amqpbrokerurl",
+                            post_field: "AMQPBrokerUrl",
                             label: _("Broker URL"),
                             type: "text",
                             doublesize: true },
 
-                          { id: "kombuexchangename",
-                            post_field: "KombuExchangeName",
+                          { id: "amqpexchangename",
+                            post_field: "AMQPExchangeName",
                             label: _("Exchange name"),
                             type: "text" },
 
-                          { id: "komburoutingkey",
-                            post_field: "KombuRoutingKey",
+                          { id: "amqproutingkey",
+                            post_field: "AMQPRoutingKey",
                             label: _("Routing key"),
                             type: "text" }
                       ]},
@@ -1121,6 +1121,11 @@ $(function() {
             }
             if (!asm.smcom) {
                 $(".smcom").hide();
+            }
+          
+            if (!controller.amqpenabled){
+                $("li[aria-controls='tab-tab-amqp']").hide();
+                $("#tab-tab-amqp").hide();
             }
 
             // Show sample colours and fonts when selected
