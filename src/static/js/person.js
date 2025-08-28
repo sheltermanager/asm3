@@ -200,6 +200,8 @@ $(function() {
                         options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchcratetrained", json_field: "MATCHCRATETRAINED", type: "select", label: _("Crate trained"), rowclasses: "lfs", 
                         options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
+                    { post_field: "matchdeclawed", json_field: "MATCHDECLAWED", type: "select", label: _("Declawed"), rowclasses: "lfs", 
+                        options: { displayfield: "NAME", rows: controller.yesno, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                     { post_field: "matchenergylevel", json_field: "MATCHENERGYLEVEL", type: "select", label: _("Energy level"), 
                         rowclasses: "lfs", options: html.list_to_options([
                             "-1|" + _("(any)"),

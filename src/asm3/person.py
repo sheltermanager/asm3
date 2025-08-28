@@ -1113,6 +1113,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchHouseTrained": post.integer("matchhousetrained", -1),
         "MatchCrateTrained": post.integer("matchcratetrained", -1),
         "MatchEnergyLevel": post.integer("matchenergylevel", -1),
+        "MatchDeclawed": post.integer("matchdeclawed", -1),
         "MatchCommentsContain": post["matchcommentscontain"],
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
@@ -1264,6 +1265,7 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodOnLead": post.integer("matchgoodonlead"),
         "MatchHouseTrained": post.integer("matchhousetrained"),
         "MatchCrateTrained": post.integer("matchcratetrained"),
+        "MatchDeclawed": post.integer("matchdeclawed", -1),
         "MatchEnergyLevel": post.integer("matchenergylevel"),
         "MatchCommentsContain": post["matchcommentscontain"]
     }, username)
