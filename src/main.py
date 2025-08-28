@@ -340,8 +340,7 @@ class ASMEndpoint(object):
         Does not apply if the URL being requested is the change_user_settings
         page to stop a redirect loop.
         """
-        #if "force2fa" in session and session.force2fa and web.ctx.path.find("/change_user_settings") == -1:
-        if False:
+        if "force2fa" in session and session.force2fa and web.ctx.path.find("/change_user_settings") == -1:
             raise web.seeother("%s/change_user_settings?force2fa=1" % BASE_URL)
 
     def check_mode(self, mode: str) -> bool:
