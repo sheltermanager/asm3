@@ -4,9 +4,6 @@ import asm3.al
 from asm3.sitedefs import DB_RETAIN_AUDIT_DAYS, AMQP_ENABLED
 from asm3.typehints import Database, List, ResultRow, Results
 
-if AMQP_ENABLED:
-    from asm3.amqp import send_message
-
 ADD = 0
 EDIT = 1
 DELETE = 2
@@ -225,8 +222,9 @@ def action(dbo: Database, action: str, username: str, tablename: str, linkid: in
     }
 
     if AMQP_ENABLED:
-        # Route audit record to AMPQ enqueue method
-        send_message(dbo, audit_record)
+        # Route audit record to AMQP enqueue method
+        import asm3.amqp
+        asm3.amqp.send_message(dbo, audit_record)
 
     dbo.insert(
         "audittrail",

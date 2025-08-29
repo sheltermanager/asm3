@@ -76,7 +76,7 @@ Priority: optional
 Architecture: all
 Essential: no
 Depends: debconf, memcached, libapache2-mod-wsgi-py3, python3-cheroot, python3-pil, python3-memcache, python3-requests, python3-mysqldb, python3-psycopg2, python3-reportlab, python3-xhtml2pdf, python3-lxml
-Suggests: mysql-server, imagemagick, wkhtmltopdf, python3-stripe, python3-boto, python3-openpyxl, python3-qrcode
+Suggests: mysql-server, imagemagick, wkhtmltopdf, python3-stripe, python3-boto, python3-openpyxl, python3-qrcode, python3-kombu
 Installed-Size: `du -s -k sheltermanager3 | awk '{print$1}'`
 Maintainer: ASM Team [info@sheltermanager.com]
 Provides: sheltermanager3

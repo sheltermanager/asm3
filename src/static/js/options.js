@@ -333,6 +333,12 @@ $(function() {
                         { id: "agegroup8", post_field: "AgeGroup8", label: "", type: "text", placeholder: _("Upper Age"), 
                             xmarkup: ' ' + tableform.render_text({xattr: 'data="AgeGroup8Name"', justwidget: true, placeholder: _("Name") })  }
                     ]},
+                    { id: "tab-amqp", title: _("AMQP"), info: _("Configure AMQP messaging"), fields: [
+                          { id: "amqpenabled", post_field: "AMQPEnabled", label: _("Enable AMQP integration"), type: "check", fullrow: true },
+                          { id: "amqpbrokerurl", post_field: "AMQPBrokerUrl", label: _("Broker URL"), type: "text", doublesize: true },
+                          { id: "amqpexchangename", post_field: "AMQPExchangeName", label: _("Exchange name"), type: "text" },
+                          { id: "amqproutingkey", post_field: "AMQPRoutingKey", label: _("Routing key"), type: "text" }
+                    ]},
                     { id: "tab-animalcodes", title: _("Animal Codes"), fields: [
                         { id: "codeformat", post_field: "CodingFormat", label: _("Animal code format"), type: "text",
                             callout: _("Code format tokens:") + '<br />' +
@@ -475,11 +481,10 @@ $(function() {
                         { post_field: "EmblemsCustomValue20", type: "select", options: emblemoptions.join(""),
                             xmarkup: ' <select data="EmblemsCustomCond20" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag20" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
                         }
-
                     ]},
                     { id: "tab-boarding", title: _("Boarding"), fields: [
-                        { id: "boardingpaytype", post_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
-                        }
+                        { id: "boardingpaytype", post_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            callout: _("The payment type used when creating payments from boarding records") }
                     ]},
                     { id: "tab-checkout", title: _("Checkout"), info: _("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation."), fields: [
                         { id: "AdoptionCheckoutProcessor", post_field: "AdoptionCheckoutProcessor", label: _("Payment processor"), type: "select", 
@@ -967,32 +972,6 @@ $(function() {
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
                     ]},
-                    { id: "tab-amqp",
-                      title: _("AMQP"),
-                      info: _("Configure AMQP messaging"),
-                      fields: [
-                          { id: "amqpenabled",
-                            post_field: "AMQPEnabled",
-                            label: _("Enable AMQP integration"),
-                            type: "check",
-                            fullrow: true },
-
-                          { id: "amqpbrokerurl",
-                            post_field: "AMQPBrokerUrl",
-                            label: _("Broker URL"),
-                            type: "text",
-                            doublesize: true },
-
-                          { id: "amqpexchangename",
-                            post_field: "AMQPExchangeName",
-                            label: _("Exchange name"),
-                            type: "text" },
-
-                          { id: "amqproutingkey",
-                            post_field: "AMQPRoutingKey",
-                            label: _("Routing key"),
-                            type: "text" }
-                      ]},
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
@@ -1123,7 +1102,7 @@ $(function() {
                 $(".smcom").hide();
             }
           
-            if (!controller.amqpenabled){
+            if (!controller.amqpenabled) {
                 $("li[aria-controls='tab-tab-amqp']").hide();
                 $("#tab-tab-amqp").hide();
             }
