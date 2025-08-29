@@ -4,6 +4,7 @@ import asm3.cachemem
 import asm3.configuration
 import asm3.i18n
 import asm3.users
+import asm3.search
 
 from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SERVICE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union

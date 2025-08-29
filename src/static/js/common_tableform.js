@@ -2004,6 +2004,7 @@ const tableform = {
                 if (!s) { s = ""; }
                 s = s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                 n.val(html.decode(s));
+                n.change();
             }
             else if (v.type == "richtextarea") {
                 n.richtextarea("value", row[v.json_field]);

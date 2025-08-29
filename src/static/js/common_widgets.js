@@ -63,6 +63,7 @@ $.fn.fromJSON = function(row) {
         }
         else if (n.is("textarea")) {
             n.html(row[f]);
+            n.change();
         }
         else if (n.attr("type") == "checkbox") {
             n.prop("checked", row[f] == 1);
@@ -1832,11 +1833,29 @@ $.widget("asm.textarea", {
         t.wrap("<span style='white-space: nowrap'></span>");
         t.after("<button id='" + zbid + "' style='" + buttonstyle + "'></button>" + "<span style='" + fixmarginstyle + "'></span>");
 
+        let tdid = t.attr("id") + "-td";
+        $("#" + zbid).after("<div id='" + tdid + "'></div>");
+
         // When zoom button is clicked
         $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
             self.zoom();
             return false; // Prevent any textareas in form elements submitting the form
         });
+
+        t.on('change keyup', function() {
+            $('#' + tdid).html("");
+            let matches = t.val().match(/(?<=(#s:))\w{1,}:?\w{1,}/g);
+            if (matches) {
+                $.each(matches, function(i, v) {
+                    console.log(v);
+                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-link"></span>&nbsp;<a href=/search?q=' + v + ' target="_blank">' + v + '</a></div>');
+                });
+                $('#' + tdid).show();
+            } else {
+                $('#' + tdid).hide();
+            }
+        });
+        
 
     },
 

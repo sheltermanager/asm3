@@ -492,15 +492,7 @@ const common = {
 
         // Catch all URL clicks to see if we can use client side routing to handle them.
         $(document).on("click", "a", function(e) {
-            
-            // If dirty validation is active, check if we're
-            // ok to leave.
-            if (validate.active) {
-                if (!validate.a_click_handler(e, $(this).attr("href"))) {
-                    return false;
-                }
-            }
-            
+            console.log(e.target.target);            
             // If CTRL is held down, do what the browser would normally do
             // (open a new window) and allow the navigation
             if (e.ctrlKey) {
@@ -511,6 +503,14 @@ const common = {
             // use its normal behaviour to open in a new window
             if ($(this).attr("target")) {
                 return true;
+            }
+
+            // If dirty validation is active, check if we're
+            // ok to leave.
+            if (validate.active) {
+                if (!validate.a_click_handler(e, $(this).attr("href"))) {
+                    return false;
+                }
             }
 
             // If the clicked anchor goes to a URL we can handle with the
