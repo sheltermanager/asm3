@@ -1844,14 +1844,20 @@ $.widget("asm.textarea", {
 
         t.on('change keyup', function() {
             $('#' + tdid).html("");
-            let matches = t.val().match(/(?<=(#s:))\w{1,}:?\w{1,}/g);
-            if (matches) {
-                $.each(matches, function(i, v) {
+            let searchmatches = t.val().match(/(?<=(#s:))\w{1,}:?\w{1,}/g);
+            if (searchmatches) {
+                $.each(searchmatches, function(i, v) {
                     $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-link"></span>&nbsp;<a href=/search?q=' + v + ' target="_blank">' + v + '</a></div>');
                 });
                 $('#' + tdid).show();
             } else {
                 $('#' + tdid).hide();
+            }
+            let mediamatches = t.val().match(/(?<=(#m:))\w{1,}/g);
+            if (mediamatches) {
+                $.each(mediamatches, function(i, v) {
+                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-media"></span>&nbsp;<a href=/media?id=' + v + ' target="_blank">' + v + '</a></div>');
+                });
             }
         });
         

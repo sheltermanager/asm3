@@ -1079,6 +1079,10 @@ select:disabled, input:disabled, textarea:disabled {
     text-decoration: none;
 }
 
+.asm-token-link {
+    margin-top: 3px;
+}
+
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {
 
