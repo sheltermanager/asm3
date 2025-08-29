@@ -492,7 +492,6 @@ const common = {
 
         // Catch all URL clicks to see if we can use client side routing to handle them.
         $(document).on("click", "a", function(e) {
-            console.log(e.target.target);            
             // If CTRL is held down, do what the browser would normally do
             // (open a new window) and allow the navigation
             if (e.ctrlKey) {

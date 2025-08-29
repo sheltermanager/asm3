@@ -1847,7 +1847,6 @@ $.widget("asm.textarea", {
             let matches = t.val().match(/(?<=(#s:))\w{1,}:?\w{1,}/g);
             if (matches) {
                 $.each(matches, function(i, v) {
-                    console.log(v);
                     $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-link"></span>&nbsp;<a href=/search?q=' + v + ' target="_blank">' + v + '</a></div>');
                 });
                 $('#' + tdid).show();

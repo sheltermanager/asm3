@@ -105,6 +105,7 @@ $(function() {
                     }
                 },
                 columns: [
+                    { field: "ID", classes: "mode-table", display: _("ID") },
                     { field: "MEDIANOTES", classes: "mode-table", display: _("Notes"), 
                         sorttext: function(m) { 
                             return m.MEDIANOTES; 
