@@ -321,19 +321,16 @@ const html = {
             if (a.FLVRESULT == 2) { p.push(_("FLV+")); }
             s.push(html.icon("positivetest", p.join(" ")));
         }
-        if (config.bool("EmblemRabies") && !a.RABIESTAG && 
-            config.str("AlertSpeciesRabies").split(",").indexOf(String(a.SPECIESID)) != -1) {
+        if (config.bool("EmblemRabies") && !a.RABIESTAG) {
             s.push(html.icon("rabies", _("Rabies not given")));
         }
         if (config.bool("EmblemSpecialNeeds") && a.HASSPECIALNEEDS == 1) {
             s.push(html.icon("health", _("Special Needs")));
         }
-        if (config.bool("EmblemUnneutered") && a.NEUTERED == 0 && 
-            config.str("AlertSpeciesNeuter").split(",").indexOf(String(a.SPECIESID)) != -1) {
+        if (config.bool("EmblemUnneutered") && a.NEUTERED == 0) {
             s.push(html.icon("unneutered", _("Unaltered")));
         }
-        if (config.bool("EmblemNotMicrochipped") && a.IDENTICHIPPED == 0 && a.NONSHELTERANIMAL == 0 && 
-            config.str("AlertSpeciesMicrochip").split(",").indexOf(String(a.SPECIESID)) != -1) {
+        if (config.bool("EmblemNotMicrochipped") && a.IDENTICHIPPED == 0 && a.NONSHELTERANIMAL == 0) {
             s.push(html.icon("microchip", _("Not Microchipped")));
         }
         if (config.bool("EmblemNotForAdoption") && a.ISNOTAVAILABLEFORADOPTION == 1 && (a.ARCHIVED == 0 || a.ACTIVEMOVEMENTTYPE == 2) ) {
