@@ -966,7 +966,33 @@ $(function() {
                         { id: "watermarkfontfile", post_field: "WatermarkFontFile", label: _("Watermark font"), type: "select", doublesize: true, options: html.list_to_options_array(asm.fontfiles), xmarkup: '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />' }, 
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
-                    ]}
+                    ]},
+                    { id: "tab-amqp",
+                      title: _("AMQP"),
+                      info: _("Configure AMQP messaging"),
+                      fields: [
+                          { id: "amqpenabled",
+                            post_field: "AMQPEnabled",
+                            label: _("Enable AMQP integration"),
+                            type: "check",
+                            fullrow: true },
+
+                          { id: "amqpbrokerurl",
+                            post_field: "AMQPBrokerUrl",
+                            label: _("Broker URL"),
+                            type: "text",
+                            doublesize: true },
+
+                          { id: "amqpexchangename",
+                            post_field: "AMQPExchangeName",
+                            label: _("Exchange name"),
+                            type: "text" },
+
+                          { id: "amqproutingkey",
+                            post_field: "AMQPRoutingKey",
+                            label: _("Routing key"),
+                            type: "text" }
+                      ]},
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
@@ -1095,6 +1121,11 @@ $(function() {
             }
             if (!asm.smcom) {
                 $(".smcom").hide();
+            }
+          
+            if (!controller.amqpenabled){
+                $("li[aria-controls='tab-tab-amqp']").hide();
+                $("#tab-tab-amqp").hide();
             }
 
             // Show sample colours and fonts when selected
