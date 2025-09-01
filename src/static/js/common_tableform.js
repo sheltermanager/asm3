@@ -2002,8 +2002,8 @@ const tableform = {
                 // Unescaped tags in textareas behave unpredictably
                 var s = row[v.json_field];
                 if (!s) { s = ""; }
-                s = s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                n.val(html.decode(s));
+                n.textarea("value", s);
+                n.textarea('process_tokens');
                 n.change();
             }
             else if (v.type == "richtextarea") {

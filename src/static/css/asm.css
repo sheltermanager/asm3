@@ -1081,6 +1081,9 @@ select:disabled, input:disabled, textarea:disabled {
 
 .asm-token-link {
     margin-top: 3px;
+    margin-right: 3px;
+    display: inline;
+    white-space: nowrap;
 }
 
 /** Tweaks for when displaying on portrait mobile devices */
