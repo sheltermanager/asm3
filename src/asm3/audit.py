@@ -212,13 +212,13 @@ def action(dbo: Database, action: str, username: str, tablename: str, linkid: in
         description = description[0:16384]
 
     audit_record = {
-     "Action": action,
-     "AuditDate": dbo.now(),
-     "UserName": username,
-     "TableName": tablename,
-     "LinkID": linkid,
-     "ParentLinks": parentlinks,
-     "Description": description,
+        "Action": action,
+        "AuditDate": dbo.now(),
+        "UserName": username,
+        "TableName": tablename,
+        "LinkID": linkid,
+        "ParentLinks": parentlinks,
+        "Description": description,
     }
 
     if AMQP_ENABLED:
