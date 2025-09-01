@@ -346,6 +346,10 @@ header = {
             if (asm.locale != "en_GB") {
                 $(".taggb").hide();
             }
+            // Cost Book
+            if (!config.bool("ShowCostPaid")) {
+                $(".tagcostbook").hide();
+            }
         }
         catch (nc) {}
         $(".asm-menu-icon").show();
