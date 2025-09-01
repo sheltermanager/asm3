@@ -366,7 +366,7 @@ $(function() {
                         _("{plural3} incomplete animal control calls")
                     ]));
             }
-            if (alerts.TLOVER > 0 && common.has_permission("vatl") && config.bool("AlertTLover")) {
+            if (alerts.TLOVER > 0 && common.has_permission("vatl") && config.bool("AlertTLOver")) {
                 totalalerts += alerts.TLOVER;
                 oa("traploan?filter=active", "traploan",
                     common.ntranslate(alerts.TLOVER, [
