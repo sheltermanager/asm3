@@ -750,9 +750,9 @@ $(function() {
 
                         { id: "alertstrnodrv", post_field: "AlertTRNoDrv", label: _("Show an alert when an animal transport has no driver assigned"), type: "check", fullrow: true }, 
 
-                        { id: "alertstexpsoon", post_field: "AlertSTExpSoon", label: _("Show an alert when stock is close to it's expiry date"), type: "check", fullrow: true }, 
+                        { id: "alertstexpsoon", post_field: "AlertSTExpSoon", label: _("Show an alert when stock is close to its expiry date"), type: "check", fullrow: true }, 
                         { id: "alertstlowbal", post_field: "AlertSTLowBal", label: _("Show an alert when a stock item has low global balance"), type: "check", fullrow: true }, 
-                        { id: "alertstexp", post_field: "AlertSTExpired", label: _("Show an alert when stock has passed it's expiry date"), type: "check", fullrow: true }, 
+                        { id: "alertstexp", post_field: "AlertSTExpired", label: _("Show an alert when stock has passed its expiry date"), type: "check", fullrow: true }, 
 
                         { id: "alertacundisp", post_field: "AlertACUndisp", label: _("Show an alert when animals are awaiting animal control dispatch"), type: "check", fullrow: true }, 
                         { id: "alertacfoll", post_field: "AlertACFoll", label: _("Show an alert when animals involved in animal control incidents are due a follow up"), type: "check", fullrow: true }, 
@@ -774,7 +774,7 @@ $(function() {
 
                         { id: "alertacunfine", post_field: "AlertACUnfine", label: _("Show an alert when an unpaid fine is overdue"), type: "check", fullrow: true }, 
                         
-                        { id: "alertendtrial", post_field: "AlertEndTrial", label: _("Show an alert when a trial adoption has reached it's end"), type: "check", fullrow: true }, 
+                        { id: "alertendtrial", post_field: "AlertEndTrial", label: _("Show an alert when a trial adoption has reached its end"), type: "check", fullrow: true }, 
                         
                         { id: "alertlongrsv", post_field: "AlertLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "check", fullrow: true }, 
                         { id: "alertnotforadoption", post_field: "AlertNotForAdoption", label: _("Show an alert when an animal is not available for adoption"), type: "check", fullrow: true }, 
