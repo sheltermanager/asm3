@@ -305,7 +305,8 @@ const html = {
         if (config.bool("EmblemCrueltyCase") && a.CRUELTYCASE == 1) {
             s.push(html.icon("case", _("Cruelty Case")));
         }
-        if (config.bool("EmblemNeverVacc") && a.VACCGIVENCOUNT == 0) {
+        if (config.bool("EmblemNeverVacc") && a.VACCGIVENCOUNT == 0 && 
+            config.str("AlertSpeciesNeverVacc").split(",").indexOf(String(a.SPECIESID)) != -1) {
             s.push(html.icon("novaccination", _("Never Vaccinated")));
         }
         if (config.bool("EmblemNonShelter") && a.NONSHELTERANIMAL == 1) {
@@ -321,16 +322,19 @@ const html = {
             if (a.FLVRESULT == 2) { p.push(_("FLV+")); }
             s.push(html.icon("positivetest", p.join(" ")));
         }
-        if (config.bool("EmblemRabies") && !a.RABIESTAG) {
+        if (config.bool("EmblemRabies") && !a.RABIESTAG && 
+            config.str("AlertSpeciesRabies").split(",").indexOf(String(a.SPECIESID)) != -1) {
             s.push(html.icon("rabies", _("Rabies not given")));
         }
         if (config.bool("EmblemSpecialNeeds") && a.HASSPECIALNEEDS == 1) {
             s.push(html.icon("health", _("Special Needs")));
         }
-        if (config.bool("EmblemUnneutered") && a.NEUTERED == 0) {
+        if (config.bool("EmblemUnneutered") && a.NEUTERED == 0 && 
+            config.str("AlertSpeciesNeuter").split(",").indexOf(String(a.SPECIESID)) != -1) {
             s.push(html.icon("unneutered", _("Unaltered")));
         }
-        if (config.bool("EmblemNotMicrochipped") && a.IDENTICHIPPED == 0 && a.NONSHELTERANIMAL == 0) {
+        if (config.bool("EmblemNotMicrochipped") && a.IDENTICHIPPED == 0 && a.NONSHELTERANIMAL == 0 && 
+            config.str("AlertSpeciesMicrochip").split(",").indexOf(String(a.SPECIESID)) != -1) {
             s.push(html.icon("microchip", _("Not Microchipped")));
         }
         if (config.bool("EmblemNotForAdoption") && a.ISNOTAVAILABLEFORADOPTION == 1 && (a.ARCHIVED == 0 || a.ACTIVEMOVEMENTTYPE == 2) ) {
