@@ -108,10 +108,39 @@ DEFAULTS = {
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
     "AKCRegisterAll": "No",
+    "AlertACFoll": "Yes",
+    "AlertACUncomp": "Yes",
+    "AlertACUndisp": "Yes",
+    "AlertACUnfine": "Yes",
+    "AlertBoardInToday": "Yes",
+    "AlertBoardOutToday": "Yes",
+    "AlertDocSigned": "Yes",
+    "AlertDocUnsigned": "Yes",
+    "AlertEndTrial": "Yes",
     "AlertSpeciesMicrochip": "1,2",
+    "AlertDueClinic": "Yes",
+    "AlertDueDon": "Yes",
+    "AlertDueMed": "Yes",
+    "AlertDueTest": "Yes",
+    "AlertDueVacc": "Yes",
+    "AlertExpVacc": "Yes",
+    "AlertGlobalLows": "1,2", 
+    "AlertHoldToday": "Yes",
+    "AlertIncomingForm": "Yes",
+    "AlertLongRsv": "Yes",
+    "AlertSpeciesLongTerm": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesNeverVacc": "1,2",
+    "AlertOpenCheckout": "Yes",
+    "AlertPublish": "Yes",
     "AlertSpeciesRabies": "1,2",
+    "AlertSpeciesRsvHck": "1,2",
+    "AlertSTExpired": "Yes",
+    "AlertSTExpSoon": "Yes",
+    "AlertSTLowBal": "Yes",
+    "AlertTLOver": "Yes",
+    "AlertTRNoDrv": "Yes",
+    "AlertUrgentWL": "Yes",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
@@ -670,6 +699,11 @@ def akc_enrollmentsourceid(dbo: Database) -> str:
 def akc_register_all(dbo: Database) -> bool:
     return cboolean(dbo, "AKCRegisterAll")
 
+def alert_species_lng_term(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSpeciesLongTerm", DEFAULTS["AlertSpeciesLongTerm"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
 def alert_species_microchip(dbo: Database) -> str:
     s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])
     if s == "": return "0" # Always return something due to IN clauses of queries
@@ -687,6 +721,11 @@ def alert_species_neuter(dbo: Database) -> str:
 
 def alert_species_rabies(dbo: Database) -> str:
     s = cstring(dbo, "AlertSpeciesRabies", DEFAULTS["AlertSpeciesRabies"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
+def alert_species_rsv_hck(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSpeciesRsvHck", DEFAULTS["AlertSpeciesRsvHck"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
