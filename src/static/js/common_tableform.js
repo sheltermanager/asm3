@@ -2003,8 +2003,7 @@ const tableform = {
                 var s = row[v.json_field];
                 if (!s) { s = ""; }
                 n.textarea("value", s);
-                n.textarea('process_tokens');
-                n.change();
+                n.textarea("process_links");
             }
             else if (v.type == "richtextarea") {
                 n.richtextarea("value", row[v.json_field]);

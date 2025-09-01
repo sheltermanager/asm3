@@ -63,8 +63,7 @@ $.fn.fromJSON = function(row) {
         }
         else if (n.is("textarea")) {
             n.textarea("value", row[f]);
-            n.change();
-            n.textarea('process_tokens');
+            n.textarea('process_links');
         }
         else if (n.attr("type") == "checkbox") {
             n.prop("checked", row[f] == 1);
@@ -1843,13 +1842,13 @@ $.widget("asm.textarea", {
         });
 
         t.on('paste keyup', function() {
-            self.process_tokens();
+            self.process_links();
         });
         
 
     },
 
-    process_tokens: function() {
+    process_links: function() {
         let t = $(this.element[0]);
         let tdid = t.attr("id") + "-td";
         $('#' + tdid).html("");
@@ -1880,14 +1879,14 @@ $.widget("asm.textarea", {
                     } else if (v.includes('ci:')) {
                         linkiconclass = 'asm-icon-citation';
                     }
-                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon ' + linkiconclass + '"></span><a href=/search?q=' + v + ' target="_blank">' + v + '</a></div> ');
+                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon ' + linkiconclass + '"></span><a href="/search?q=' + v + '" target="_blank">' + v + '</a></div> ');
                 });
                 $('#' + tdid).show();
             }
             let mediamatches = t.val().match(/(?<=(#m:))\w{1,}/g);
             if (mediamatches) {
                 $.each(mediamatches, function(i, v) {
-                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-media"></span>&nbsp;<a href=/media?id=' + v + ' target="_blank">' + v + '</a></div> ');
+                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-media"></span>&nbsp;<a href="/media?id=' + v + '" target="_blank">' + v + '</a></div> ');
                 });
                 $('#' + tdid).show();
             }
@@ -1921,6 +1920,7 @@ $.widget("asm.textarea", {
         if (!newval) { newval = ""; }
         newval = newval.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         this.element.html(newval);
+        this.element.change();
     }
 });
 
