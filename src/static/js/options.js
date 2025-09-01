@@ -779,7 +779,7 @@ $(function() {
                         { id: "alertlongrsv", post_field: "AlertLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "check", fullrow: true }, 
                         { id: "alertnotforadoption", post_field: "AlertNotForAdoption", label: _("Show an alert when an animal is not available for adoption"), type: "check", fullrow: true }, 
                         
-                        { id: "alerttlover", post_field: "AlertTLover", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true },
+                        { id: "alerttlover", post_field: "AlertTLOver", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true },
                         
                         { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true }
                         
