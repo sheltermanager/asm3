@@ -1821,8 +1821,6 @@ $.widget("asm.textarea", {
     _create: function() {
         
         let buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
-            // fixmarginstyle = "margin-left: 32px; margin-top: 24px;",
-            fixmarginstyle = "",
             t = $(this.element[0]),
             self = this;
 
@@ -1833,7 +1831,7 @@ $.widget("asm.textarea", {
         let zbid = t.attr("id") + "-zb";
 
         t.wrap("<span style='white-space: nowrap'></span>");
-        t.after("<button id='" + zbid + "' style='" + buttonstyle + "'></button>" + "<span style='" + fixmarginstyle + "'></span>");
+        t.after("<button id='" + zbid + "' style='" + buttonstyle + "'></button>");
 
         let tdid = t.attr("id") + "-td";
         $("#" + zbid).after("<div id='" + tdid + "' style='white-space: normal;margin-bottom: 3px;'></div>");

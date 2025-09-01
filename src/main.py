@@ -7382,14 +7382,6 @@ class search(JSONEndpoint):
             "explain": explain,
             "sortname": sortname
         }
-    
-    def post_search(self, o):
-        q = o.post["q"]
-        results, timetaken, explain, sortname = asm3.search.search(o.dbo, o, q)
-        is_large_db = ""
-        if o.dbo.is_large_db: is_large_db = " (indexed only)"
-        asm3.al.debug("searched for '%s', got %d results in %0.2fs, sorted %s %s" % (q, len(results), timetaken, sortname, is_large_db), "main.search", o.dbo)
-        return results
 
 class service(ASMEndpoint):
     url = "service"
