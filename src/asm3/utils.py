@@ -150,7 +150,7 @@ class PostedData(object):
 
     def filedata(self, default: bytes = b"") -> bytes:
         if "filechooser" in self.data:
-            return self.data.filechooser.value
+            return self.data.filechooser.raw # Used to be value, but new multipart lib since webpy 0.70 decodes value now
         return default
 
     def __contains__(self, key: str) -> bool:

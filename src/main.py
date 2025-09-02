@@ -3653,8 +3653,8 @@ class document_repository(JSONEndpoint):
             filedata = asm3.utils.base64decode(filedata)
         else:
             # Otherwise it's an old style file input
-            filename = asm3.utils.filename_only(o.post.data.filechooser.filename)
-            filedata = o.post.data.filechooser.value
+            filename = asm3.utils.filename_only(o.post.filename())
+            filedata = o.post.filedata()
         asm3.dbfs.upload_document_repository(o.dbo, o.post["path"], filename, filedata)
         self.redirect("document_repository")
 
@@ -7277,7 +7277,7 @@ class report_images(JSONEndpoint):
         return { "rows": images }
 
     def post_create(self, o):
-        asm3.dbfs.upload_report_image(o.dbo, o.post.data.filechooser)
+        asm3.dbfs.upload_report_image(o.dbo, o.post.filename(), o.post.filedata())
         self.reload_config()
         self.redirect("report_images")
 
