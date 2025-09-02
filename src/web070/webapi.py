@@ -9,7 +9,7 @@ import urllib
 from http.cookies import CookieError, Morsel, SimpleCookie
 from urllib.parse import parse_qs, quote, unquote, urljoin
 
-from multipart140 import multipart
+from .multipart import parse_form_data # RRT 2025-09-02: Included multipart.py in the web package
 
 from .utils import dictadd, intget, safestr, storage, storify, threadeddict
 
@@ -429,7 +429,7 @@ def rawinput(method=None):
                 if not a:
                     try:
                         # This returns two dicts, forms & files.
-                        forms, a = multipart.parse_form_data(environ=env)
+                        forms, a = parse_form_data(environ=env) # RRT 2025-09-02: Remove module qualifier due to import
                         a = dictadd(forms, a)
                         ctx._fieldstorage = a
                     except IndexError:
