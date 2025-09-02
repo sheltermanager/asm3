@@ -161,7 +161,7 @@ tests_dbupdates:
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-webpy
+	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-webpy python3-multipart
 	apt-get install python3-memcache python3-requests python3-reportlab python3-xhtml2pdf python3-lxml
 	apt-get install python3-qrcode python3-openpyxl
 	apt-get install python3-boto3 python3-stripe
