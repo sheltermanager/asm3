@@ -3,7 +3,11 @@
 # Read the schema from a SQLite database and output it as static
 # JSON data for use by code complete within the application.
 
-import web, json
+import json
+import sys
+
+sys.path.insert(0, "src") # Assumes this script is being run by the Makefile in the root of the source
+import web070 as web
 
 web.config.debug = False
 db = web.database( dbn = "sqlite", db = "scripts/schema/schema.db" )
