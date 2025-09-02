@@ -9,7 +9,7 @@ import urllib
 from http.cookies import CookieError, Morsel, SimpleCookie
 from urllib.parse import parse_qs, quote, unquote, urljoin
 
-import multipart
+from multipart140 import multipart
 
 from .utils import dictadd, intget, safestr, storage, storify, threadeddict
 

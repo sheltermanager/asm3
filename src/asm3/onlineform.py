@@ -21,8 +21,6 @@ from asm3.sitedefs import BASE_URL, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
 from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Tuple
 
-import web062 as web
-
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
 FIELDTYPE_NOTES = 2
@@ -1637,7 +1635,7 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
                     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, reserveid, "movement")
             except Exception as err:
                 asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
-                web.ctx.status = "200 OK" # ASMValidationError sets status to 500
+                asm3.utils.web_context().status = "200 OK" # ASMValidationError thrown by insert_reserve sets status to 500
     return (collationid, personid, personname, status)
 
 def create_animalcontrol(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:

@@ -9,7 +9,7 @@ from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES,
 from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union
 from asm3.__version__ import VERSION
 
-import web062 as web
+import web070 as web
 
 import base64
 import datetime
@@ -928,6 +928,12 @@ class ASMError(web.HTTPError):
         data = "<h1>Error</h1><p>%s</p>" % msg
         if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
+
+def web_context():
+    """
+    Used to get the webpy context from other modules without having to import webpy
+    """
+    return web.ctx
 
 def escape_tinymce(content: str) -> str:
     """
