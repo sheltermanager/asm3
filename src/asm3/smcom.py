@@ -10,7 +10,7 @@ from datetime import datetime
 import re
 import os, sys
 
-import web070 as web
+import web062 as web
 
 # The maximum number of emails allowed to be sent over a period (ttl)
 # through the the sheltermanager.com email server

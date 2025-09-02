@@ -9,7 +9,7 @@ from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES,
 from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union
 from asm3.__version__ import VERSION
 
-import web070 as web
+import web062 as web
 
 import base64
 import datetime

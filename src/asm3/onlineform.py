@@ -21,7 +21,7 @@ from asm3.sitedefs import BASE_URL, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
 from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Tuple
 
-import web070 as web
+import web062 as web
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1

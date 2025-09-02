@@ -13,7 +13,7 @@ from asm3.typehints import Any, Database, List, Results, S3Client
 import mimetypes
 import os, sys, threading, time
 
-import web070 as web
+import web062 as web
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
