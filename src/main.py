@@ -4893,7 +4893,8 @@ class mailmerge(JSONEndpoint):
             "numrows": len(rows),
             "hasemail": "EMAILADDRESS" in fields,
             "hasaddress": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
-            "templates": asm3.template.get_document_templates(dbo, "mailmerge")
+            "templates": asm3.template.get_document_templates(dbo, "mailmerge"),
+            "logtypes": asm3.lookups.get_log_types(dbo)
         }
    
     def post_email(self, o):
@@ -4913,7 +4914,8 @@ class mailmerge(JSONEndpoint):
         if asm3.configuration.audit_on_send_email(dbo):
             emails = self.recipients(rows)
             asm3.audit.email(dbo, o.user, fromadd, ",".join(emails), "", "", subject, body)
-        asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html", post.boolean("unsubscribe"))
+
+        asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html", post.boolean("unsubscribe"), createlog=post.boolean("logemail"), logtypeid=post.integer("logtype"), logmessage=post["logmessage"], username=o.user)
 
     def post_document(self, o):
         dbo = o.dbo
