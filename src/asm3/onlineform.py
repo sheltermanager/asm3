@@ -374,15 +374,20 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
         footer = get_onlineform_footer(dbo)
-        h.append(footer.replace("$$TITLE$$", form.NAME))
+        extrajs = '\n'.join(['<script>',
+            'let ro = new ResizeObserver(function(e) {',
+            '   window.parent.postMessage(document.querySelector("html").offsetHeight, "*");',
+            '});',
+            'ro.observe(document.querySelector("html"));',
+            '</script>'
+        ])
+        h.append(footer.replace("$$TITLE$$", form.NAME).replace("</body>", extrajs + "</body>"))
     return "\n".join(h)
 
 def get_onlineform_js(dbo: Database, formid: int) -> str:
     """ Returns js that outputs online form into a host div """
-    js = asm3.utils.read_text_file("%s/static/js/online_form_embed.js" % dbo.installpath)
-    # inject form html
-    formhtml = get_onlineform_html(dbo, formid)
-    js = js.replace("{TOKEN_FORM}", formhtml)
+    js = asm3.utils.read_text_file("%s/static/js/onlineform_embed.js" % dbo.installpath)
+    js = js.replace("{TOKEN_FORMID}", str(formid))
     return js
 
 def get_onlineform_json(dbo: Database, formid: int) -> str:
