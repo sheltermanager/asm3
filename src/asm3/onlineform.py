@@ -377,6 +377,14 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         h.append(footer.replace("$$TITLE$$", form.NAME))
     return "\n".join(h)
 
+def get_onlineform_js(dbo: Database, formid: int) -> str:
+    """ Returns js that outputs online form into a host div """
+    js = asm3.utils.read_text_file("%s/static/js/online_form_embed.js" % dbo.installpath)
+    # inject form html
+    formhtml = get_onlineform_html(dbo, formid)
+    js = js.replace("{TOKEN_FORM}", formhtml)
+    return js
+
 def get_onlineform_json(dbo: Database, formid: int) -> str:
     """
     Get the selected online form as a JSON document
