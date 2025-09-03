@@ -62,7 +62,8 @@ $.fn.fromJSON = function(row) {
             n.richtextarea("value", row[f]);
         }
         else if (n.is("textarea")) {
-            n.html(row[f]);
+            n.textarea("value", row[f]);
+            n.textarea('process_links');
         }
         else if (n.attr("type") == "checkbox") {
             n.prop("checked", row[f] == 1);
@@ -1819,7 +1820,6 @@ $.widget("asm.textarea", {
     _create: function() {
         
         let buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
-            fixmarginstyle = "margin-left: 32px; margin-top: 24px;",
             t = $(this.element[0]),
             self = this;
 
@@ -1830,7 +1830,10 @@ $.widget("asm.textarea", {
         let zbid = t.attr("id") + "-zb";
 
         t.wrap("<span style='white-space: nowrap'></span>");
-        t.after("<button id='" + zbid + "' style='" + buttonstyle + "'></button>" + "<span style='" + fixmarginstyle + "'></span>");
+        t.after("<button id='" + zbid + "' style='" + buttonstyle + "'></button>");
+
+        let tdid = t.attr("id") + "-td";
+        $("#" + zbid).after("<div id='" + tdid + "' style='white-space: normal;margin-bottom: 3px;'></div>");
 
         // When zoom button is clicked
         $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
@@ -1838,6 +1841,58 @@ $.widget("asm.textarea", {
             return false; // Prevent any textareas in form elements submitting the form
         });
 
+        t.on('paste keyup', function() {
+            self.process_links();
+        });
+        
+
+    },
+
+    process_links: function() {
+        let t = $(this.element[0]);
+        let tdid = t.attr("id") + "-td";
+        $('#' + tdid).html("");
+            let searchmatches = t.val().match(/(?<=(#s:))\w{1,}:?\w{1,}/g);
+            if (searchmatches) {
+                $.each(searchmatches, function(i, v) {
+                    let linkiconclass = 'asm-icon-link';
+                    if (v.includes('a:')) {
+                        linkiconclass = 'asm-icon-animal';
+                    } else if (v.includes('ac:')) {
+                        linkiconclass = 'asm-icon-call';
+                    } else if (v.includes('p:')) {
+                        linkiconclass = 'asm-icon-person';
+                    } else if (v.includes('wl:')) {
+                        linkiconclass = 'asm-icon-waitinglist';
+                    } else if (v.includes('la:')) {
+                        linkiconclass = 'asm-icon-animal-lost';
+                    } else if (v.includes('fa:')) {
+                        linkiconclass = 'asm-icon-animal-found';
+                    } else if (v.includes('li:')) {
+                        linkiconclass = 'asm-icon-licence';
+                    } else if (v.includes('co:')) {
+                        linkiconclass = 'asm-icon-cost';
+                    } else if (v.includes('lo:')) {
+                        linkiconclass = 'asm-icon-log';
+                    } else if (v.includes('vo:')) {
+                        linkiconclass = 'asm-icon-transactions';
+                    } else if (v.includes('ci:')) {
+                        linkiconclass = 'asm-icon-citation';
+                    }
+                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon ' + linkiconclass + '"></span><a href="/search?q=' + v + '" target="_blank">' + v + '</a></div> ');
+                });
+                $('#' + tdid).show();
+            }
+            let mediamatches = t.val().match(/(?<=(#m:))\w{1,}/g);
+            if (mediamatches) {
+                $.each(mediamatches, function(i, v) {
+                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-media"></span>&nbsp;<a href="/media?id=' + v + '" target="_blank">' + v + '</a></div> ');
+                });
+                $('#' + tdid).show();
+            }
+            if (!searchmatches && !mediamatches) {
+                $('#' + tdid).hide();
+            }
     },
 
     zoom: function() {
@@ -1856,6 +1911,16 @@ $.widget("asm.textarea", {
         $("#dialog-textarea-zoom").dialog("open");
 
         return false;
+    },
+
+    value: function(newval) {
+        if (newval === undefined) {
+            return this.element.html();
+        }
+        if (!newval) { newval = ""; }
+        newval = newval.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        this.element.html(newval);
+        this.element.change();
     }
 });
 
