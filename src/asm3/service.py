@@ -861,6 +861,11 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if formid == 0:
             raise asm3.utils.ASMError("method online_form_html requires a valid formid")
         return set_cached_response(cache_key, account, "text/html; charset=utf-8", 1800, 1800, asm3.onlineform.get_onlineform_html(dbo, formid))
+    
+    elif method == "online_form_js":
+        if formid == 0:
+            raise asm3.utils.ASMError("method online_form_js requires a valid formid")
+        return set_cached_response(cache_key, account, "application/javascript", 1800, 1800, asm3.onlineform.get_onlineform_js(dbo, formid))
 
     elif method == "online_form_json":
         if formid == 0:

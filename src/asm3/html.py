@@ -46,7 +46,7 @@ def is_standalone_js(filename: str) -> bool:
     """
     Returns true if this is a standalone js file
     """
-    standalone = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_extra.js", "report_toolbar.js" ]
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_extra.js", "report_toolbar.js", "onlineform_embed.js" ]
     if filename in standalone: return True
     if filename.startswith("mobile"): return True
     if filename.startswith("service"): return True
