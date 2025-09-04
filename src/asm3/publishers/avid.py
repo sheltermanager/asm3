@@ -46,8 +46,10 @@ class AVIDUSPublisher(AbstractPublisher):
         self.log("AVID API Key = " + avidkey)
         self.log("AVID US Publisher credentials " + credentials)# To do - remove when finished debugging - Adam.
         headers = {
-            "x-api-key": avidkey,
-            "Authorization": f"Basic {credentials}"
+            'headers': {
+                "x-api-key": avidkey,
+                "Authorization": f"Basic {credentials}"
+            }
         }
 
         chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
