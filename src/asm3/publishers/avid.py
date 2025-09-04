@@ -1,7 +1,6 @@
 
 import asm3.configuration
 import asm3.i18n
-import asm3.users
 import asm3.utils
 import base64
 import requests
@@ -72,10 +71,8 @@ class AVIDUSPublisher(AbstractPublisher):
         basic_auth_str = f'{USERNAME}:{PASSWORD}'
         basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
         config = {
-            'headers': {
-                'authorization': 'Basic ' + basic_auth_header,
-                'x-api-key': APIKEY
-            }
+            'authorization': 'Basic ' + basic_auth_header,
+            'x-api-key': APIKEY
         }
         #####
 
