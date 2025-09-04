@@ -145,58 +145,60 @@ class AVIDUSPublisher(AbstractPublisher):
 
         # Build the POST data
         ro = {
-            "pets": [
-                {
-                    "breeds": [
-                        breed
-                    ],
-                    "color": an["BASECOLOURNAME"],
-                    "dob": asm3.i18n.format_date(an["DATEOFBIRTH"], "%m-%d-%Y"),
-                    "fixed": an["NEUTERED"] == 1 and "true" or "false",
-                    "marking": "",
-                    "medication": "",
-                    "microchips": [
-                        {
-                            "number": an["IDENTICHIPNUMBER"],# To do - add second microchip if exists?
-                            "protocol": "AVID"
-                        }
-                    ],
-                    "name": an["ANIMALNAME"],
-                    "sex": sex,
-                    "species": species.upper(),
-                    "status": "HOME",# To do - find out if this can be excluded - Adam.
-                    # Have excluded weight as must be in pounds, could add it if required
-                }
-            ],
-            "contacts": [
-                {
-                    "firstName": firstname,
-                    "middleName": middlenames,
-                    "lastName": an["CURRENTOWNERSURNAME"],
-                    "addresses": [
-                        {
-                            "administrativeArea": an["CURRENTOWNERCOUNTY"],
-                            "country": "US",
-                            "locality": an["CURRENTOWNERTOWN"],
-                            "premise": premise,
-                            "thoroughfare": thoroughfare,
-                            "postalCode": an["CURRENTOWNERPOSTCODE"],
-                            "type": "HOME"# To do - find out if this can be excluded - Adam.
-                        }
-                    ],
-                    "emails": [
-                        {
-                            "address": an["CURRENTOWNEREMAILADDRESS"],
-                            "type": "PERSONAL"
-                        }
-                    ],
-                    "phones": phones,
-                    "type": "PRIMARY"
+            "registrations": [
+                "pets": [
+                    {
+                        "breeds": [
+                            breed
+                        ],
+                        "color": an["BASECOLOURNAME"],
+                        "dob": asm3.i18n.format_date(an["DATEOFBIRTH"], "%m-%d-%Y"),
+                        "fixed": an["NEUTERED"] == 1 and "true" or "false",
+                        "marking": "",
+                        "medication": "",
+                        "microchips": [
+                            {
+                                "number": an["IDENTICHIPNUMBER"],# To do - add second microchip if exists?
+                                "protocol": "AVID"
+                            }
+                        ],
+                        "name": an["ANIMALNAME"],
+                        "sex": sex,
+                        "species": species.upper(),
+                        "status": "HOME",# To do - find out if this can be excluded - Adam.
+                        # Have excluded weight as must be in pounds, could add it if required
+                    }
+                ],
+                "contacts": [
+                    {
+                        "firstName": firstname,
+                        "middleName": middlenames,
+                        "lastName": an["CURRENTOWNERSURNAME"],
+                        "addresses": [
+                            {
+                                "administrativeArea": an["CURRENTOWNERCOUNTY"],
+                                "country": "US",
+                                "locality": an["CURRENTOWNERTOWN"],
+                                "premise": premise,
+                                "thoroughfare": thoroughfare,
+                                "postalCode": an["CURRENTOWNERPOSTCODE"],
+                                "type": "HOME"# To do - find out if this can be excluded - Adam.
+                            }
+                        ],
+                        "emails": [
+                            {
+                                "address": an["CURRENTOWNEREMAILADDRESS"],
+                                "type": "PERSONAL"
+                            }
+                        ],
+                        "phones": phones,
+                        "type": "PRIMARY"
 
-                }
-            ],
-            "facility": asm3.configuration.organisation(self.dbo),
-            "registrationDatetime": self.dbo.now().isoformat()
+                    }
+                ],
+                "facility": asm3.configuration.organisation(self.dbo),
+                "registrationDatetime": self.dbo.now().isoformat()
+            ]
         }
 
         return ro
