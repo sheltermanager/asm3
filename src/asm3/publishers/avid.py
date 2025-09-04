@@ -58,8 +58,6 @@ class AVIDUSPublisher(AbstractPublisher):
         # }
 
         #####
-
-
         APIKEY = "LnmJUQ0xA38H9rSCH8MWO4K7IsF0kEAl8w13bD2m"
 
         #
@@ -73,13 +71,12 @@ class AVIDUSPublisher(AbstractPublisher):
         #
         basic_auth_str = f'{USERNAME}:{PASSWORD}'
         basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
-        headers = {
+        config = {
             'headers': {
                 'authorization': 'Basic ' + basic_auth_header,
                 'x-api-key': APIKEY
             }
         }
-
         #####
 
         chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
@@ -106,12 +103,11 @@ class AVIDUSPublisher(AbstractPublisher):
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
-                valdebug = self.validate(an)
                 if not self.validate(an): continue
                 fields = self.processAnimal(an, registeroverseas)
                 self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
                 #r = asm3.utils.post_form(AVID_US_POST_URL, fields, headers)
-                r = requests.post(AVID_US_POST_URL, fields, headers)
+                r = requests.post(AVID_US_POST_URL, fields, config)
                 self.log("HTTP response: %s" % str(r))#r["response"])
                 #self.log("HTTP status: %s" % r["status"])
                 #self.log("HTTP headers: %s" % r["headers"])
