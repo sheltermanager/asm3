@@ -3,6 +3,8 @@ import asm3.configuration
 import asm3.i18n
 import asm3.users
 import asm3.utils
+import base64
+import requests
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import AVID_US_POST_URL
@@ -30,27 +32,55 @@ class AVIDUSPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        avidusername = asm3.configuration.avidus_username(self.dbo)
-        avidpassword = asm3.configuration.avidus_password(self.dbo)
-        avidkey = asm3.configuration.avidus_apikey(self.dbo)
+        # avidusername = asm3.configuration.avidus_username(self.dbo)
+        # avidpassword = asm3.configuration.avidus_password(self.dbo)
+        # avidkey = asm3.configuration.avidus_apikey(self.dbo)
 
-        if avidusername == "" or avidpassword == "" or avidkey == "":
-            self.setLastError("Username, password and api key all need to be set for AVID publisher")
-            return
+        # if avidusername == "" or avidpassword == "" or avidkey == "":
+        #     self.setLastError("Username, password and api key all need to be set for AVID publisher")
+        #     return
 
         registeroverseas = asm3.configuration.avid_register_overseas(self.dbo)
 
-        credentials = asm3.utils.base64encode(asm3.utils.str2bytes(f"{avidusername}:{avidpassword}"))
-        self.log("AVID UserName = " + avidusername)
-        self.log("AVID Password = " + avidpassword)
-        self.log("AVID API Key = " + avidkey)
-        self.log("AVID US Publisher credentials " + credentials)# To do - remove when finished debugging - Adam.
+        # #basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
+        # #credentials = asm3.utils.base64encode(asm3.utils.str2bytes(f"{avidusername}:{avidpassword}"))
+
+        # credentials = asm3.utils.base64encode("{avidusername}:{avidpassword}".encode()).decode()
+        # self.log("AVID UserName = " + avidusername)
+        # self.log("AVID Password = " + avidpassword)
+        # self.log("AVID API Key = " + avidkey)
+        # self.log("AVID US Publisher credentials " + credentials)# To do - remove when finished debugging - Adam.
+        # headers = {
+        #     'headers': {
+        #         "x-api-key": avidkey,
+        #         "Authorization": f"Basic {credentials}"
+        #     }
+        # }
+
+        #####
+
+
+        APIKEY = "LnmJUQ0xA38H9rSCH8MWO4K7IsF0kEAl8w13bD2m"
+
+        #
+        # Shelter username and password
+        #
+        USERNAME = "help@sheltermanager.com"
+        PASSWORD = "gEa&MXem7za%c5vLkTQbC4wkLEQWScAV"
+
+        #
+        # Authentication Header
+        #
+        basic_auth_str = f'{USERNAME}:{PASSWORD}'
+        basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
         headers = {
             'headers': {
-                "x-api-key": avidkey,
-                "Authorization": f"Basic {credentials}"
+                'authorization': 'Basic ' + basic_auth_header,
+                'x-api-key': APIKEY
             }
         }
+
+        #####
 
         chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
         if registeroverseas: 
@@ -80,7 +110,8 @@ class AVIDUSPublisher(AbstractPublisher):
                 if not self.validate(an): continue
                 fields = self.processAnimal(an, registeroverseas)
                 self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
-                r = asm3.utils.post_form(AVID_US_POST_URL, fields, headers)
+                #r = asm3.utils.post_form(AVID_US_POST_URL, fields, headers)
+                r = requests.post(AVID_US_POST_URL, fields, headers)
                 self.log("HTTP response: %s" % str(r))#r["response"])
                 #self.log("HTTP status: %s" % r["status"])
                 #self.log("HTTP headers: %s" % r["headers"])
