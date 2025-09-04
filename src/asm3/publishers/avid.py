@@ -160,7 +160,7 @@ class AVIDUSPublisher(AbstractPublisher):
                             "microchips": [
                                 {
                                     "number": an["IDENTICHIPNUMBER"],# To do - add second microchip if exists?
-                                    "protocol": "AVID"
+                                    "protocol": "ISO"
                                 }
                             ],
                             "name": an["ANIMALNAME"],
