@@ -134,7 +134,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 phones.append(
                     {
                         "extension": "",
-                        "number": phone,
+                        "number": phone.replace(" ", ""),
                         "type": "UNKNOWN"
                     }
                 )
@@ -145,7 +145,7 @@ class AVIDUSPublisher(AbstractPublisher):
 
         # Build the POST data
         ro = {
-            'registrations': [
+            "registrations": [
                 {
                     "pets": [
                         {
