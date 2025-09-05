@@ -71,8 +71,10 @@ class AVIDUSPublisher(AbstractPublisher):
         basic_auth_str = f'{USERNAME}:{PASSWORD}'
         basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
         config = {
-            'authorization': 'Basic ' + basic_auth_header,
-            'x-api-key': APIKEY
+            'headers': {
+                'authorization': 'Basic ' + basic_auth_header,
+                'x-api-key': APIKEY
+            }
         }
         #####
         self.log("Auth: " + basic_auth_header)
