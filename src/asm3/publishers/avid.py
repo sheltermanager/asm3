@@ -126,7 +126,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 phones.append(
                     {
                         "extension": "",
-                        "number": phone,#.replace(" ", ""),
+                        "number": phone.replace(" ", ""),
                         "type": "UNKNOWN"
                     }
                 )
@@ -134,6 +134,10 @@ class AVIDUSPublisher(AbstractPublisher):
         sex = an["SEXNAME"].upper()
         if sex == "UNKNOWN":
             sex = "OTHER"
+        
+        weight = 0
+        if an["WEIGHT"]:
+            weight = an["WEIGHT"]
 
         # Build the POST data
         ro = {
@@ -158,7 +162,8 @@ class AVIDUSPublisher(AbstractPublisher):
                             "name": an["ANIMALNAME"],
                             "sex": sex,
                             "species": species.upper(),
-                            "status": "HOME",# To do - find out if this can be excluded - Adam.
+                            "status": "HOME",
+                            "weight": weight
                             # Have excluded weight as must be in pounds, could add it if required
                         }
                     ],
