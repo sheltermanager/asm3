@@ -108,7 +108,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
                 #r = asm3.utils.post_form(AVID_US_POST_URL, fields, config['headers'])
                 r = requests.post(AVID_US_POST_URL, json=fields, headers=config['headers'])
-                self.log("HTTP response: %s" % str(r))#r["response"])
+                self.log("HTTP response: %s" % str(r.json()))#r["response"])
                 #self.log("HTTP status: %s" % r["status"])
                 #self.log("HTTP headers: %s" % r["headers"])
 
