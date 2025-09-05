@@ -39,15 +39,19 @@ class AVIDUSPublisher(AbstractPublisher):
         USERNAME = "help@sheltermanager.com"
         PASSWORD = "gEa&MXem7za%c5vLkTQbC4wkLEQWScAV"
 
+        avidusername = asm3.configuration.avidus_username(self.dbo)
+        avidpassword = asm3.configuration.avidus_password(self.dbo)
+        avidkey = asm3.configuration.avidus_apikey(self.dbo)
+
         #
         # Authentication Header
         #
-        basic_auth_str = f'{USERNAME}:{PASSWORD}'
+        basic_auth_str = f'{avidusername}:{avidpassword}'
         basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
         config = {
             'headers': {
                 'authorization': 'Basic ' + basic_auth_header,
-                'x-api-key': APIKEY
+                'x-api-key': avidkey
             }
         }
         #####
