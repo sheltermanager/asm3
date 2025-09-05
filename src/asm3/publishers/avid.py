@@ -75,7 +75,7 @@ class AVIDUSPublisher(AbstractPublisher):
             'x-api-key': APIKEY
         }
         #####
-
+        self.log("Auth: " + basic_auth_str)
         chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
         if registeroverseas: 
             chipprefix = ["0","1","2","3","4","5","6","7","8","9"] # If overseas registration is on, send all chips to AVID US
