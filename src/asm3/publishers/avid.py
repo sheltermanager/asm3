@@ -126,7 +126,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 phones.append(
                     {
                         "extension": "",
-                        "number": phone.replace(" ", ""),
+                        "number": phone,#.replace(" ", ""),
                         "type": "UNKNOWN"
                     }
                 )
