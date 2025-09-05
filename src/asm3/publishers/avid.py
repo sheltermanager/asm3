@@ -30,33 +30,7 @@ class AVIDUSPublisher(AbstractPublisher):
         self.updatePublisherProgress(0)
         self.setLastError("")
         self.setStartPublishing()
-
-        # avidusername = asm3.configuration.avidus_username(self.dbo)
-        # avidpassword = asm3.configuration.avidus_password(self.dbo)
-        # avidkey = asm3.configuration.avidus_apikey(self.dbo)
-
-        # if avidusername == "" or avidpassword == "" or avidkey == "":
-        #     self.setLastError("Username, password and api key all need to be set for AVID publisher")
-        #     return
-
-        registeroverseas = asm3.configuration.avid_register_overseas(self.dbo)
-
-        # #basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
-        # #credentials = asm3.utils.base64encode(asm3.utils.str2bytes(f"{avidusername}:{avidpassword}"))
-
-        # credentials = asm3.utils.base64encode("{avidusername}:{avidpassword}".encode()).decode()
-        # self.log("AVID UserName = " + avidusername)
-        # self.log("AVID Password = " + avidpassword)
-        # self.log("AVID API Key = " + avidkey)
-        # self.log("AVID US Publisher credentials " + credentials)# To do - remove when finished debugging - Adam.
-        # headers = {
-        #     'headers': {
-        #         "x-api-key": avidkey,
-        #         "Authorization": f"Basic {credentials}"
-        #     }
-        # }
-
-        #####
+    
         APIKEY = "LnmJUQ0xA38H9rSCH8MWO4K7IsF0kEAl8w13bD2m"
 
         #
@@ -80,10 +54,7 @@ class AVIDUSPublisher(AbstractPublisher):
         self.log("Auth: " + basic_auth_header)
         self.log("AVID_US_POST_URL = " + AVID_US_POST_URL)
         chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
-        if registeroverseas: 
-            chipprefix = ["0","1","2","3","4","5","6","7","8","9"] # If overseas registration is on, send all chips to AVID US
-
-        animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake = False or registeroverseas)
+        animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake=False)
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
             return
@@ -98,25 +69,15 @@ class AVIDUSPublisher(AbstractPublisher):
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
-
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
                 if not self.validate(an): continue
-                fields = self.processAnimal(an, registeroverseas)
-                #self.log("HTTP POST request %s: %s" % (AVID_US_POST_URL, str(fields)))
+                fields = self.processAnimal(an)
                 r = asm3.utils.post_json(AVID_US_POST_URL, asm3.utils.json(fields), config['headers'])
-                #r = requests.post(AVID_US_POST_URL, json=fields, headers=config['headers']).json()
-                if r['response']:
-                    self.log("HTTP response: %s" % asm3.utils.json_parse(r["response"])["status"])
-                #self.log("HTTP response: %s" % r)
-                #self.log("HTTP status: %s" % r["status"])
-                #self.log("HTTP headers: %s" % r["headers"])
-
-                # Return value is an XML fragment, look for "Registration completed successfully"
-                if r["response"].find("COMPLETE") != -1:
-                    self.log("successful response, marking processed")
+                if r['response'] and asm3.utils.json_parse(r["response"])["status"] == 'COMPLETE':
+                    self.log("Successful response, marking processed")
                     processed_animals.append(an)
                     # Mark success in the log
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -133,7 +94,7 @@ class AVIDUSPublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
     
-    def processAnimal(self, an: ResultRow, registeroverseas=False) -> Dict:
+    def processAnimal(self, an: ResultRow) -> Dict:
         """ Generate a dictionary of data to post from an animal record """
         # Sort out breed
         breed = an["BREEDNAME"]
