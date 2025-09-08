@@ -71,7 +71,6 @@ class AVIDUSPublisher(AbstractPublisher):
                 fields = self.processAnimal(an)
                 r = asm3.utils.post_json(AVID_US_POST_URL, asm3.utils.json(fields), config['headers'])
                 if r['response'] and asm3.utils.json_parse(r["response"])["status"] == 'COMPLETE':
-                    self.log(str(fields))
                     self.log("Successful response, marking processed")
                     processed_animals.append(an)
                     # Mark success in the log
@@ -134,22 +133,6 @@ class AVIDUSPublisher(AbstractPublisher):
         if an["WEIGHT"]:
             weight = an["WEIGHT"]
 
-        microchips = []
-        if an["IDENTICHIPNUMBER"][:3] == '977':
-            microchips.append(
-                {
-                    "number": an["IDENTICHIPNUMBER"],
-                    "protocol": "ISO"
-                }
-            )
-        if an["IDENTICHIP2NUMBER"][:3] == '977':
-            microchips.append(
-                {
-                    "number": an["IDENTICHIP2NUMBER"],
-                    "protocol": "ISO"
-                }
-            )
-
         # Build the POST data
         ro = {
             "registrations": [
@@ -164,7 +147,12 @@ class AVIDUSPublisher(AbstractPublisher):
                             "fixed": an["NEUTERED"] == 1 and "true" or "false",
                             "marking": "",
                             "medication": "",
-                            "microchips": microchips,
+                            "microchips": [
+                                {
+                                    "number": an["IDENTICHIPNUMBER"],
+                                    "protocol": "ISO"
+                                }
+                            ],
                             "name": an["ANIMALNAME"],
                             "sex": sex,
                             "species": species.upper(),
