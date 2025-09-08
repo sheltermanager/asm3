@@ -156,7 +156,20 @@ const tableform = {
 
     /** Formats a value as comments (truncates to one line or shows full with \n -> <br/> based on config) */
     format_comments: function(row, v) {
-        if (config.bool("ShowFullCommentsInTables")) { return common.nulltostr(v).replace(/\n/g, "<br />"); }
+        let tokenfound = false;
+        if (v.includes('#s:')) {
+            tokenfound = true;
+            v = v.replace(/#s:\w{1,}:?\w{1,}/g, function(t) {
+                return '<a href="/search?q=' + t.replace(/#s:/, '') + '" target="_blank">' + t + '</a>';
+            });
+        }
+        if (v.includes('#m:')) {
+            tokenfound = true;
+            v = v.replace(/#m:\w{1,}/g, function(t) {
+                return '<a href="/media?id=' + t.replace(/#m:/, '') + '" target="_blank">' + t + '</a>';
+            });
+        }
+        if (config.bool("ShowFullCommentsInTables") || tokenfound) { return common.nulltostr(v).replace(/\n/g, "<br />"); }
         return html.truncate(v, 80);
     },
 
