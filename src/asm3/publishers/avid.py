@@ -71,6 +71,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 fields = self.processAnimal(an)
                 r = asm3.utils.post_json(AVID_US_POST_URL, asm3.utils.json(fields), config['headers'])
                 if r['response'] and asm3.utils.json_parse(r["response"])["status"] == 'COMPLETE':
+                    self.log(str(fields))
                     self.log("Successful response, marking processed")
                     processed_animals.append(an)
                     # Mark success in the log
