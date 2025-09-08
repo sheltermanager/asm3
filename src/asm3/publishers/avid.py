@@ -46,8 +46,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 'x-api-key': avidkey
             }
         }
-        #####
-        chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
+        chipprefix = ["977%"]
         animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake=False)
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
@@ -173,7 +172,7 @@ class AVIDUSPublisher(AbstractPublisher):
                                     "premise": premise,
                                     "thoroughfare": thoroughfare,
                                     "postalCode": an["CURRENTOWNERPOSTCODE"],
-                                    "type": "HOME"# To do - find out if this can be excluded - Adam.
+                                    "type": "HOME"
                                 }
                             ],
                             "emails": [
