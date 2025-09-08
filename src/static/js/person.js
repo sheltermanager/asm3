@@ -222,6 +222,7 @@ $(function() {
                 { id: "anonymise", text: _("Anonymize"), icon: "delete", tooltip: _("Remove personally identifiable data") },
                 { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another person into this one") },
                 { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this person") },
+                { id: "report", text: _("Report"), type: "buttonmenu", icon: "report", tooltip: _("Generate a report from this person") },
                 { id: "lookingfor", text: _("Looking For"), icon: "animal-find", tooltip: _("Find animals matching the looking for criteria of this person") },
                 { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") },
                 { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") }
@@ -233,6 +234,10 @@ $(function() {
                 '<div id="button-document-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, "PERSON", controller.person.ID),
+                '</ul>',
+                '</div>',
+                '<div id="button-report-body" class="asm-menu-body">',
+                edit_header.report_list(controller.reports, controller.person.ID),
                 '</ul>',
                 '</div>',
             ].join("\n");
@@ -402,6 +407,7 @@ $(function() {
             if (!common.has_permission("co")) { $("#button-save, #button-anonymise").hide(); }
             if (!common.has_permission("do")) { $("#button-delete, #button-anonymise").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
+            if (!common.has_permission("vcr")) { $("#button-report").hide(); }
             if (!common.has_permission("mo")) { $("#button-merge").hide(); }
 
             // ACCORDION ICONS =======================================================
@@ -476,7 +482,7 @@ $(function() {
             }); 
 
             // Setup the document menu button
-            $("#button-document").asmmenu();
+            $("#button-document, #button-report").asmmenu();
             
             // Email dialog for sending emails
             $("#emailform").emailform();

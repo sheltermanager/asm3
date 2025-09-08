@@ -822,7 +822,7 @@ edit_header = {
         return s.join("\n");
     },
 
-    // List of reports that contain '$ask animal' embedded
+    // List of reports that contain '$ask animal'
     report_list: function(reports, animalid) {
         var s = [];
         var lastcategory = "";

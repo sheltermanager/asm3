@@ -48,6 +48,10 @@ def get_ask_animal_reports(dbo: Database):
     ilike = dbo.sql_ilike("SQLCommand", "?")
     return dbo.query(f"SELECT ID, Title, Category, Revision FROM customreport WHERE {dbo.sql_ilike("SQLCommand", "?")} ORDER BY Title", ['%$ask animal%'])
 
+def get_ask_person_reports(dbo: Database):
+    ilike = dbo.sql_ilike("SQLCommand", "?")
+    return dbo.query(f"SELECT ID, Title, Category, Revision FROM customreport WHERE {dbo.sql_ilike("SQLCommand", "?")} ORDER BY Title", ['%$ask person%'])
+
 def get_available_reports(dbo: Database, include_with_criteria: bool = True) -> Results:
     """
     Returns a list of reports available for running. The return

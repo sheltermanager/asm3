@@ -6318,6 +6318,7 @@ class person(JSONEndpoint):
             "homecheckhistory": asm3.person.get_homechecked(dbo, p.id),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
+            "reports": asm3.reports.get_ask_person_reports(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
