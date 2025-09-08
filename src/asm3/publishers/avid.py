@@ -30,14 +30,6 @@ class AVIDUSPublisher(AbstractPublisher):
         self.updatePublisherProgress(0)
         self.setLastError("")
         self.setStartPublishing()
-    
-        APIKEY = "LnmJUQ0xA38H9rSCH8MWO4K7IsF0kEAl8w13bD2m"
-
-        #
-        # Shelter username and password
-        #
-        USERNAME = "help@sheltermanager.com"
-        PASSWORD = "gEa&MXem7za%c5vLkTQbC4wkLEQWScAV"
 
         avidusername = asm3.configuration.avidus_username(self.dbo)
         avidpassword = asm3.configuration.avidus_password(self.dbo)
@@ -55,8 +47,6 @@ class AVIDUSPublisher(AbstractPublisher):
             }
         }
         #####
-        self.log("Auth: " + basic_auth_header)
-        self.log("AVID_US_POST_URL = " + AVID_US_POST_URL)
         chipprefix = ["977%"] # AVID Europe - # To do - confirm that this prefix also applies to AVID US, a quick google search suggested it does (it was an AI result so I'm not convinced yet) - Adam.
         animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake=False)
         if len(animals) == 0:
@@ -143,6 +133,22 @@ class AVIDUSPublisher(AbstractPublisher):
         if an["WEIGHT"]:
             weight = an["WEIGHT"]
 
+        microchips = []
+        if an["IDENTICHIPNUMBER"][:3] == '977':
+            microchips.append(
+                {
+                    "number": an["IDENTICHIPNUMBER"],
+                    "protocol": "ISO"
+                }
+            )
+        if an["IDENTICHIPNUMBER2"][:3] == '977':
+            microchips.append(
+                {
+                    "number": an["IDENTICHIPNUMBER2"],
+                    "protocol": "ISO"
+                }
+            )
+
         # Build the POST data
         ro = {
             "registrations": [
@@ -157,18 +163,12 @@ class AVIDUSPublisher(AbstractPublisher):
                             "fixed": an["NEUTERED"] == 1 and "true" or "false",
                             "marking": "",
                             "medication": "",
-                            "microchips": [
-                                {
-                                    "number": an["IDENTICHIPNUMBER"],# To do - add second microchip if exists?
-                                    "protocol": "ISO"
-                                }
-                            ],
+                            "microchips": microchips,
                             "name": an["ANIMALNAME"],
                             "sex": sex,
                             "species": species.upper(),
                             "status": "HOME",
                             "weight": weight
-                            # Have excluded weight as must be in pounds, could add it if required
                         }
                     ],
                     "contacts": [
