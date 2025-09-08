@@ -141,10 +141,10 @@ class AVIDUSPublisher(AbstractPublisher):
                     "protocol": "ISO"
                 }
             )
-        if an["IDENTICHIPNUMBER2"][:3] == '977':
+        if an["IDENTICHIP2NUMBER"][:3] == '977':
             microchips.append(
                 {
-                    "number": an["IDENTICHIPNUMBER2"],
+                    "number": an["IDENTICHIP2NUMBER"],
                     "protocol": "ISO"
                 }
             )
