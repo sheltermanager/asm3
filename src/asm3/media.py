@@ -774,6 +774,7 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
     """
     asm3.al.debug("signing document %s for %s" % (mid, username), "media.sign_document", dbo)
     SIG_PLACEHOLDER = "signature:placeholder"
+    SIG_DATE_PLACEHOLDER = "{SIGNING_DATE}"
     m = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if m is None:  
         raise asm3.utils.ASMValidationError("cannot find media with ID %s" % mid)
@@ -807,6 +808,9 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
     if content.find(SIG_PLACEHOLDER) != -1:
         asm3.al.debug("document %s: found signature placeholder" % mid, "media.sign_document", dbo)
         content = content.replace(SIG_PLACEHOLDER, sigurl)
+    if content.find(SIG_DATE_PLACEHOLDER) != -1:
+        asm3.al.debug("document %s: found signature date placeholder" % mid, "media.sign_document", dbo)
+        content = content.replace(SIG_DATE_PLACEHOLDER, signdate)
     else:
         # Create the signature at the foot of the document
         asm3.al.debug("document %s: no placeholder, appending" % mid, "media.sign_document", dbo)
