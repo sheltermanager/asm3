@@ -157,6 +157,7 @@ const tableform = {
     /** Formats a value as comments (truncates to one line or shows full with \n -> <br/> based on config) */
     format_comments: function(row, v) {
         let tokenfound = false;
+        if (!v) { return ""; }
         if (v.includes('#s:')) {
             tokenfound = true;
             v = v.replace(/#s:\w{1,}:?\w{1,}/g, function(t) {
