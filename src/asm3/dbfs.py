@@ -13,6 +13,8 @@ from asm3.typehints import Database, List, Results, S3Client
 import mimetypes
 import os, sys, threading, time
 
+import web070 as web
+
 class DBFSStorage(object):
     """ DBFSStorage factory """
     o = None
@@ -275,12 +277,18 @@ class S3Storage(DBFSStorage):
     def url_prefix(self) -> str:
         return "s3:"
 
-class DBFSError(Exception):
-    """ 
-    Custom error thrown by dbfs modules 
+class DBFSError(web.HTTPError):
     """
+    Custom error thrown by DBFS functions
+    """
+    msg = ""
     def __init__(self, msg: str) -> None:
-        Exception.__init__(self, msg)
+        self.msg = msg
+        status = '500 Internal Server Error'
+        headers = { 'Content-Type': "text/html" }
+        data = "<h1>DBFS Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
+        web.HTTPError.__init__(self, status, headers, data)
 
 def create_path(dbo: Database, path: str, name: str) -> int:
     """ 
