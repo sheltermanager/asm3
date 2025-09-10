@@ -46,7 +46,6 @@ class AVIDUSPublisher(AbstractPublisher):
                 'x-api-key': avidkey
             }
         }
-        # chipprefix = ["977%"]
         chipprefix = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
         animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake=False)
         if len(animals) == 0:
@@ -204,6 +203,10 @@ class AVIDUSPublisher(AbstractPublisher):
 
         if asm3.utils.nulltostr(an.CURRENTOWNERPOSTCODE).strip() == "":
             self.logError("Postal code for the new owner is blank, cannot process")
+            return False
+        
+        if asm3.utils.nulltostr(an.CURRENTOWNEREMAIL).strip() == "":
+            self.logError("Email address for the new owner is blank, cannot process")
             return False
 
         # Make sure the length is actually suitable
