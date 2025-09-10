@@ -280,7 +280,7 @@ class DBFSError(Exception):
     Custom error thrown by dbfs modules 
     """
     def __init__(self, msg: str) -> None:
-        Exception.__init__(self.msg)
+        Exception.__init__(msg)
 
 def create_path(dbo: Database, path: str, name: str) -> int:
     """ 
