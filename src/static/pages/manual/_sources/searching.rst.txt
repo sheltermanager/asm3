@@ -60,4 +60,29 @@ Eg:
 
 .. image:: images/searchresults.png
 
+Links
+=====
 
+Links to media or records can be added to text fields using tokens. This
+can be particularly useful to link specific media files to medical records.
+
+Selecting table view within the media tab in animal and person records will 
+display a column containing the id numbers to use in media tokens.
+
+
+.. image:: images/media_table_view.png
+
+The highlighted id for the media file above should be added to the #m: token like 
+this #m:78. When added to a text field an icon and link will appear underneath the
+field to show the system has recognised that token.
+
+.. image:: images/media_token.png
+
+Other tokens include links to animal, people and licence records.
+
+* #m:mediaid creates a link to a specific media file
+* #s:sheltercode creates a link to an animal record using the shelter code
+* #s:personcode creates a link to a person record using the person code
+* #s:a:animalname creates a link to an animal record using the animals name
+* #s:p:personname creates a link to a person record using the persons name
+* #s:li:licencenumber creates a link to a licence record using the licence number  
