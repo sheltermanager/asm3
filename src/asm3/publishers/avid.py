@@ -47,7 +47,7 @@ class AVIDUSPublisher(AbstractPublisher):
             }
         }
         # chipprefix = ["977%"]
-        chipprefix = []
+        chipprefix = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
         animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake=False)
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
