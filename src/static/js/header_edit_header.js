@@ -822,6 +822,36 @@ edit_header = {
         return s.join("\n");
     },
 
+    // List of reports that contain '$ask animal$'
+    animal_report_list: function(reports, animalid) {
+        var s = ['<ul class="asm-menu-list">'];
+        var lastcategory = "";
+        $.each(reports, function(i, r) {
+            if (r.CATEGORY != lastcategory) {
+                s.push('<li class="asm-menu-category">' + r.CATEGORY + '</li>');
+                lastcategory = r.CATEGORY;
+            }
+            s.push('<li class="asm-menu-item"><a target="_blank" class="templatelink" data="' + r.ID + '" href="/report?id=' + r.ID + '&hascriteria=true&ASK1=' + animalid + '">' + r.TITLE + '</a></li>');
+        });
+        s.push('</ul>');
+        return s.join("\n");
+    },
+
+    // List of reports that contain '$ask person$'
+    person_report_list: function(reports, personid) {
+        var s = ['<ul class="asm-menu-list">'];
+        var lastcategory = "";
+        $.each(reports, function(i, r) {
+            if (r.CATEGORY != lastcategory) {
+                s.push('<li class="asm-menu-category">' + r.CATEGORY + '</li>');
+                lastcategory = r.CATEGORY;
+            }
+            s.push('<li class="asm-menu-item"><a target="_blank" class="templatelink" data="' + r.ID + '" href="/report?id=' + r.ID + '&hascriteria=true&ASK1=' + personid + '">' + r.TITLE + '</a></li>');
+        });
+        s.push('</ul>');
+        return s.join("\n");
+    },
+
     /**
      * Returns option tags from a list of HTML document templates.
      * The values are the template IDs
