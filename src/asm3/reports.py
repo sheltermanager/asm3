@@ -58,8 +58,19 @@ def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
             filteredreports.append(report)
     return filteredreports
 
-def get_ask_person_reports(dbo: Database):
-    return dbo.query(f"SELECT ID, Title, Category, Revision FROM customreport WHERE {dbo.sql_ilike("SQLCommand", "?")} ORDER BY Title", ['%$ask person$%'])
+def get_ask_person_reports(dbo: Database, superuser: int, roleids: str):
+    filteredreports = []
+    allreports = dbo.query(f"SELECT ID, Title, Category, Revision FROM customreport WHERE {dbo.sql_ilike("SQLCommand", "?")} ORDER BY Title", ['%$ask person$%'])
+    roles = dbo.query("SELECT * FROM customreportrole")
+    for report in allreports:
+        viewroleids = []
+        for role in roles:
+            if role.REPORTID == report.ID and role.CANVIEW == 1:
+                viewroleids.append(str(role.ROLEID))
+        report.VIEWROLEIDS = "|".join(viewroleids)
+        if superuser or report.VIEWROLEIDS == "" or asm3.utils.list_overlap(report.VIEWROLEIDS.split("|"), roleids.split("|")):
+            filteredreports.append(report)
+    return filteredreports
 
 def get_available_reports(dbo: Database, include_with_criteria: bool = True) -> Results:
     """
