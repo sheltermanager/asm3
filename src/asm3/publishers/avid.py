@@ -46,7 +46,8 @@ class AVIDUSPublisher(AbstractPublisher):
                 'x-api-key': avidkey
             }
         }
-        chipprefix = ["977%"]
+        # chipprefix = ["977%"]
+        chipprefix = []
         animals = get_microchip_data(self.dbo, chipprefix, "avidus", allowintake=False)
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
