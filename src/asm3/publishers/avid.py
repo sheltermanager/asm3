@@ -205,7 +205,7 @@ class AVIDUSPublisher(AbstractPublisher):
             self.logError("Postal code for the new owner is blank, cannot process")
             return False
         
-        if asm3.utils.nulltostr(an.CURRENTOWNEREMAIL).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNEREMAILADDRESS).strip() == "":
             self.logError("Email address for the new owner is blank, cannot process")
             return False
 
