@@ -531,7 +531,7 @@ $(function() {
                 '</ul>',
                 '</div>',
                 '<div id="button-report-body" class="asm-menu-body">',
-                edit_header.report_list(controller.reports, controller.animal.ID),
+                edit_header.animal_report_list(controller.reports, controller.animal.ID),
                 '</ul>',
                 '</div>',
                 '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',

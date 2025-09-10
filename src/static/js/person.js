@@ -237,7 +237,7 @@ $(function() {
                 '</ul>',
                 '</div>',
                 '<div id="button-report-body" class="asm-menu-body">',
-                edit_header.report_list(controller.reports, controller.person.ID),
+                edit_header.person_report_list(controller.reports, controller.person.ID),
                 '</ul>',
                 '</div>',
             ].join("\n");
