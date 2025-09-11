@@ -372,6 +372,7 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         "LinkInfo":         linkinfo,
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
         "DiaryForName":     post["diaryfor"],
+        "ColourSchemeID":   post["diarycolourscheme"],
         "Subject":          post["subject"],
         "Note":             post["note"],
         "Comments":         post["comments"],
@@ -431,6 +432,7 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
     dbo.update("diary", diaryid, {
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
         "DiaryForName":     post["diaryfor"],
+        "ColourSchemeID":   post["diarycolourscheme"],
         "Subject":          post["subject"],
         "Note":             post["note"],
         "Comments":         post["comments"],

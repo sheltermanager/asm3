@@ -2103,7 +2103,8 @@ class animal_diary(JSONEndpoint):
             "linkid": animalid,
             "linktypeid": asm3.diary.ANIMAL,
             "diarytasks": asm3.diary.get_animal_tasks(dbo),
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.html.get_colour_schemes(dbo)
         }
 
 class animal_diet(JSONEndpoint):
@@ -2666,10 +2667,16 @@ class calendarview(JSONEndpoint):
     get_permissions = asm3.users.VIEW_ANIMAL
 
     def controller(self, o):
-        return {}
+        return { "colourschemes": asm3.html.get_colour_schemes(o.dbo) }
 
 class calendar_events(ASMEndpoint):
     url = "calendar_events"
+
+    def extract_colours(self, colourschemes, schemeid):
+        for scheme in colourschemes:
+            if scheme["ID"] == schemeid:
+                return [ scheme["FOREGROUNDCOLOUR"], scheme["BACKGROUNDCOLOUR"] ]
+        return []
 
     def content(self, o):
         start = parse_date("%Y-%m-%d", o.post["start"])
@@ -2681,6 +2688,7 @@ class calendar_events(ASMEndpoint):
         user = o.user
         dbo = o.dbo
         l = o.locale
+        colourschemes = asm3.html.get_colour_schemes(o.dbo)
         if "d" in ev and self.checkb(asm3.users.VIEW_DIARY):
             # Show all diary notes on the calendar if the user chose to see all
             # on the home page, or they have permission to view all notes
@@ -2690,6 +2698,12 @@ class calendar_events(ASMEndpoint):
                 user = ""
                 diarylink = "diary_edit"
             for d in asm3.diary.get_between_two_dates(dbo, user, start, end):
+                colourscheme = self.extract_colours(colourschemes, d["COLOURSCHEMEID"])
+                fgcol = ''
+                bgcol = ''
+                if colourscheme:
+                    fgcol = colourscheme[0]
+                    bgcol = colourscheme[1]
                 allday = False
                 # If the diary time is midnight, assume all day instead
                 if d.DIARYDATETIME.hour == 0 and d.DIARYDATETIME.minute == 0:
@@ -2706,7 +2720,9 @@ class calendar_events(ASMEndpoint):
                     "end": add_minutes(d.DIARYDATETIME, 60),
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
-                    "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}" })
+                    "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}",
+                    "fgcol": fgcol,
+                    "bgcol": bgcol }),
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
             for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
@@ -3217,7 +3233,8 @@ class diary_edit(JSONEndpoint):
             "name": "diary_edit",
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.html.get_colour_schemes(dbo)
         }
 
 class diary_edit_my(JSONEndpoint):
@@ -3244,7 +3261,8 @@ class diary_edit_my(JSONEndpoint):
             "name": "diary_edit_my",
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.html.get_colour_schemes(dbo)
         }
 
 class diarytask(JSONEndpoint):

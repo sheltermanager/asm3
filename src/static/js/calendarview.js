@@ -84,7 +84,7 @@ $(function() {
                         element.css("border-color", event.bgcol);
                     }
                     if (event.link) { 
-                        title.wrap('<a style="color: #fff" href="' + event.link + '"></a>');
+                        title.wrap('<a style="color: inherit" href="' + event.link + '"></a>');
                         listtitle.prop("href", event.link);
                         if (event.tooltip) { listtitle.html(event.tooltip); } // Use the more detailed version in the list
                     }
