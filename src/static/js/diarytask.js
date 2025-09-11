@@ -22,6 +22,10 @@ $(function() {
                         callout: _("Create note this many days from today, or 9999 to ask"), validation: "notblank" },
                     { json_field: "WHOFOR", post_field: "for", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME", prepend: ('<option value="taskcreator">' + _("(task creator)") + '</option>') }},
+                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), type: "select", defaultval: "Standard",
+                        options: { rows: controller.colourschemes, displayfield: "SCHEMENAME", valuefield: "ID" },
+                        callout: _("The color scheme to be used when displaying this note on the calendar view")
+                    },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
                     { json_field: "NOTE", label: _("Note"), post_field: "note", validation: "notblank", type: "textarea" }
                 ]

@@ -2005,7 +2005,8 @@ class animal_bulk(JSONEndpoint):
             "forlist": asm3.users.get_diary_forlist(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "logtypes": asm3.lookups.get_log_types(dbo),
-            "movementtypes": asm3.lookups.get_movement_types(dbo)
+            "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
     def post_update(self, o):
@@ -2104,7 +2105,7 @@ class animal_diary(JSONEndpoint):
             "linktypeid": asm3.diary.ANIMAL,
             "diarytasks": asm3.diary.get_animal_tasks(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo),
-            "colourschemes": asm3.html.get_colour_schemes(dbo)
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class animal_diet(JSONEndpoint):
@@ -2667,7 +2668,7 @@ class calendarview(JSONEndpoint):
     get_permissions = asm3.users.VIEW_ANIMAL
 
     def controller(self, o):
-        return { "colourschemes": asm3.html.get_colour_schemes(o.dbo) }
+        return { "colourschemes": asm3.lookups.COLOURSCHEMES }
 
 class calendar_events(ASMEndpoint):
     url = "calendar_events"
@@ -2675,7 +2676,7 @@ class calendar_events(ASMEndpoint):
     def extract_colours(self, colourschemes, schemeid):
         for scheme in colourschemes:
             if scheme["ID"] == schemeid:
-                return [ scheme["FOREGROUNDCOLOUR"], scheme["BACKGROUNDCOLOUR"] ]
+                return [ scheme["FGCOL"], scheme["BGCOL"] ]
         return []
 
     def content(self, o):
@@ -2688,7 +2689,7 @@ class calendar_events(ASMEndpoint):
         user = o.user
         dbo = o.dbo
         l = o.locale
-        colourschemes = asm3.html.get_colour_schemes(o.dbo)
+        colourschemes = asm3.lookups.COLOURSCHEMES
         if "d" in ev and self.checkb(asm3.users.VIEW_DIARY):
             # Show all diary notes on the calendar if the user chose to see all
             # on the home page, or they have permission to view all notes
@@ -3234,7 +3235,7 @@ class diary_edit(JSONEndpoint):
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
             "forlist": asm3.users.get_diary_forlist(dbo),
-            "colourschemes": asm3.html.get_colour_schemes(dbo)
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class diary_edit_my(JSONEndpoint):
@@ -3262,7 +3263,7 @@ class diary_edit_my(JSONEndpoint):
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
             "forlist": asm3.users.get_diary_forlist(dbo),
-            "colourschemes": asm3.html.get_colour_schemes(dbo)
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class diarytask(JSONEndpoint):
@@ -3280,7 +3281,8 @@ class diarytask(JSONEndpoint):
             "rows": diarytaskdetail,
             "taskid": taskid,
             "taskname": taskname,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
     def post_create(self, o):
@@ -4059,7 +4061,8 @@ class foundanimal_diary(JSONEndpoint):
             "name": "foundanimal_diary",
             "linkid": a["LFID"],
             "linktypeid": asm3.diary.FOUNDANIMAL,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class foundanimal_find(JSONEndpoint):
@@ -4077,7 +4080,7 @@ class foundanimal_find(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
-            "mode": "found"
+            "mode": "found",
         }
 
 class foundanimal_find_results(JSONEndpoint):
@@ -4381,7 +4384,8 @@ class incident_diary(JSONEndpoint):
             "name": "incident_diary",
             "linkid": a["ACID"],
             "linktypeid": asm3.diary.ANIMALCONTROL,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class incident_log(JSONEndpoint):
@@ -4730,7 +4734,8 @@ class lostanimal_diary(JSONEndpoint):
             "name": "lostanimal_diary",
             "linkid": a["LFID"],
             "linktypeid": asm3.diary.LOSTANIMAL,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class lostanimal_find(JSONEndpoint):
@@ -6479,7 +6484,8 @@ class person_diary(JSONEndpoint):
             "linkid": p["ID"],
             "linktypeid": asm3.diary.PERSON,
             "diarytasks": asm3.diary.get_person_tasks(dbo),
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class person_donations(JSONEndpoint):
@@ -8207,7 +8213,8 @@ class waitinglist_diary(JSONEndpoint):
             "name": "waitinglist_diary",
             "linkid": a["WLID"],
             "linktypeid": asm3.diary.WAITINGLIST,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class waitinglist_log(JSONEndpoint):

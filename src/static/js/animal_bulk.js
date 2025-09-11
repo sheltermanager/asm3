@@ -97,6 +97,9 @@ $(function() {
                             tableform.render_time({ post_field: "diarytime", halfsize: true, justwidget: true }) 
                             ].join("\n")
                     },
+                    { post_field: "diarycolourscheme", label: _("Color Scheme"), type: "select", 
+                        options: { rows: controller.colourschemes, displayfield: "SCHEMENAME", valuefield: "ID" }
+                    },
                     { post_field: "diarysubject", label: _("Subject"), type: "text" },
                     { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
                 ], { full_width: false }),

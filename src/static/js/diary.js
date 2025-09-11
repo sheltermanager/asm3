@@ -18,11 +18,8 @@ $(function() {
                 fields: [
                     { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
-                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), type: "select", defaultval: 1,
-                        options: { rows: controller.colourschemes, displayfield: "COLOURSCHEMENAME", valuefield: "ID" },
-                        hideif: function() {
-                            if (!controller.colourschemes) { return true } else { return false };
-                        },
+                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), type: "select", defaultval: "1",
+                        options: { rows: controller.colourschemes, displayfield: "SCHEMENAME", valuefield: "ID" },
                         callout: _("The color scheme to be used when displaying this note on the calendar view")
                     },
                     { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },

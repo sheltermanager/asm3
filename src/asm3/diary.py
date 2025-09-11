@@ -383,7 +383,7 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     return diaryid
 
-def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str, emailnow: bool = False) -> int:
+def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str, emailnow: bool = False, colourschemeid: int = 0) -> int:
     """
     Creates a diary note from the form data
     username: User creating the diary
@@ -402,6 +402,7 @@ def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, dia
         "LinkInfo":         linkinfo,
         "DiaryDateTime":    diarydate,
         "DiaryForName":     diaryfor,
+        "ColourSchemeID":   colourschemeid,
         "Subject":          subject,
         "Note":             note
     }, username)
@@ -471,10 +472,12 @@ def execute_diary_task(dbo: Database, username: str, tasktype: int, taskid: int,
             rollingdate = asm3.i18n.add_days(rollingdate, int(d.DAYPIVOT))
         if d.WHOFOR == "taskcreator":
             d.WHOFOR = username
-        insert_diary(dbo, username, linktype, linkid, rollingdate, \
-            d.WHOFOR, \
-            asm3.wordprocessor.substitute_tags(d.SUBJECT, tags), \
-            asm3.wordprocessor.substitute_tags(d.NOTE, tags))
+        insert_diary(dbo, username, linktype, linkid, rollingdate,
+            d.WHOFOR, 
+            asm3.wordprocessor.substitute_tags(d.SUBJECT, tags),
+            asm3.wordprocessor.substitute_tags(d.NOTE, tags),
+            colourschemeid=d.COLOURSCHEMEID
+            )
 
 def insert_diarytaskhead_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
@@ -512,6 +515,7 @@ def insert_diarytaskdetail_from_form(dbo: Database, username: str, post: PostedD
         "OrderIndex":           post.integer("orderindex"),
         "DayPivot":             post.integer("pivot"),
         "WhoFor":               post["for"],
+        "ColourSchemeID":       post["diarycolourscheme"],
         "Subject":              post["subject"],
         "Note":                 post["note"],
         "RecordVersion":        0
@@ -525,6 +529,7 @@ def update_diarytaskdetail_from_form(dbo: Database, username: str, post: PostedD
         "OrderIndex":           post.integer("orderindex"),
         "DayPivot":             post.integer("pivot"),
         "WhoFor":               post["for"],
+        "ColourSchemeID":       post["diarycolourscheme"],
         "Subject":              post["subject"],
         "Note":                 post["note"]
     }, username, setLastChanged=False)

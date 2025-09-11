@@ -90,6 +90,12 @@ LOOKUP_DESCFIELD = 3
 LOOKUP_MODIFIERS = 4
 LOOKUP_FOREIGNKEYS = 5
 
+COLOURSCHEMES = [
+    { "ID": 1, "SCHEMENAME": _("Standard"), "FGCOL": "", "BGCOL": "" },
+    { "ID": 2, "SCHEMENAME": _("Important"), "FGCOL": "red", "BGCOL": "yellow" },
+    { "ID": 3, "SCHEMENAME": _("Weird"), "FGCOL": "green", "BGCOL": "orange" }
+]
+
 # Currency codes used by payment processors when accepting payments
 CURRENCIES = [
     { "CODE": "USD", "DISPLAY": "USD - United States Dollar"},

@@ -1022,7 +1022,4 @@ def thumbnail_img_src(dbo: Database, row: ResultRow, mode: str) -> str:
         uri = f"image?db={dbo.name()}&mode={mode}&id={str(idval)}"
         if "WEBSITEMEDIADATE" in row and row.WEBSITEMEDIADATE is not None:
             uri += "&date=%s" % row.WEBSITEMEDIADATE.isoformat()
-        return uri
-
-def get_colour_schemes(dbo: Database):
-    return dbo.query('SELECT * FROM lkscolourscheme ORDER BY ColourSchemeName')
+        return UserWarning
