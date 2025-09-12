@@ -1844,7 +1844,6 @@ $.widget("asm.textarea", {
         t.on('paste keyup', function() {
             self.process_links();
         });
-        
 
     },
 
@@ -1915,12 +1914,14 @@ $.widget("asm.textarea", {
 
     value: function(newval) {
         if (newval === undefined) {
-            return this.element.html();
+            return this.element.val();
         }
         if (!newval) { newval = ""; }
-        newval = newval.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        this.element.html(newval);
-        this.element.change();
+        //newval = common.replace_all(newval, "<", "&lt;");
+        //newval = common.replace_all(newval, ">", "&gt;");
+        this.element.val(newval);
+        this.process_links();
+        this.element.trigger("change");
     }
 });
 

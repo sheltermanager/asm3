@@ -2013,11 +2013,7 @@ const tableform = {
                 n.change();
             }
             else if (v.type == "textarea") {
-                // Unescaped tags in textareas behave unpredictably
-                var s = row[v.json_field];
-                if (!s) { s = ""; }
-                n.textarea("value", s);
-                n.textarea("process_links");
+                n.textarea("value", row[v.json_field]);
             }
             else if (v.type == "richtextarea") {
                 n.richtextarea("value", row[v.json_field]);
