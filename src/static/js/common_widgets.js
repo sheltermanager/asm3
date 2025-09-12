@@ -63,7 +63,6 @@ $.fn.fromJSON = function(row) {
         }
         else if (n.is("textarea")) {
             n.textarea("value", row[f]);
-            n.textarea('process_links');
         }
         else if (n.attr("type") == "checkbox") {
             n.prop("checked", row[f] == 1);
