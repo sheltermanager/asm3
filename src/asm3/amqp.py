@@ -155,7 +155,8 @@ class AMQPClient:
         self._connected = False
         self._worker = Thread(target=self._run, name="kombu-worker", daemon=True)
         self._worker.start()
-        asm3.al.info("AMQP worker started (exchange=%s, routing_key=%s)." % (cfg.exchange_name, cfg.routing_key), "AMQPClient._start_worker_locked")
+        # This is far too noisy in the log as it logs for every message
+        # asm3.al.info("AMQP worker started (exchange=%s, routing_key=%s)." % (cfg.exchange_name, cfg.routing_key), "AMQPClient._start_worker_locked")
 
     def _stop_worker_locked(self) -> Optional[Thread]:
         """Signal worker to stop and return the thread to join outside the lock."""
