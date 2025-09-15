@@ -91,9 +91,26 @@ LOOKUP_MODIFIERS = 4
 LOOKUP_FOREIGNKEYS = 5
 
 COLOURSCHEMES = [
-    { "ID": 1, "SCHEMENAME": _("Standard"), "FGCOL": "", "BGCOL": "" },
-    { "ID": 2, "SCHEMENAME": _("Important"), "FGCOL": "red", "BGCOL": "yellow" },
-    { "ID": 3, "SCHEMENAME": _("Weird"), "FGCOL": "green", "BGCOL": "orange" }
+    { "ID": 1, "FGCOL": "", "BGCOL": "" },
+    { "ID": 2, "FGCOL": "#515151", "BGCOL": "#e7e7e7" },
+    { "ID": 3, "FGCOL": "#103b79", "BGCOL": "#b6cff5" },
+    { "ID": 4, "FGCOL": "#472893", "BGCOL": "#e3d7ff" },
+    { "ID": 5, "FGCOL": "#78203d", "BGCOL": "#98d7e4" },
+    { "ID": 6, "FGCOL": "#8b1900", "BGCOL": "#f2b2a8" },
+    { "ID": 7, "FGCOL": "#fafafa", "BGCOL": "#c2c2c2" },
+    { "ID": 8, "FGCOL": "#f7f9fe", "BGCOL": "#4986e7" },
+    { "ID": 9, "FGCOL": "#fbfdfe", "BGCOL": "#2da2bb" },
+    { "ID": 10, "FGCOL": "#fefdff", "BGCOL": "#b99aff" },
+    { "ID": 11, "FGCOL": "#9e4e69", "BGCOL": "#f691b2" },
+    { "ID": 12, "FGCOL": "#fff3f3", "BGCOL": "#f94b2f" },
+    { "ID": 13, "FGCOL": "#874023", "BGCOL": "#ffc8af" },
+    { "ID": 14, "FGCOL": "#7b4700", "BGCOL": "#ffdeb5" },
+    { "ID": 15, "FGCOL": "#594c02", "BGCOL": "#fbe983" },
+    { "ID": 16, "FGCOL": "#694e00", "BGCOL": "#fdedc1" },
+    { "ID": 17, "FGCOL": "#065332", "BGCOL": "#b3efd3" },
+    { "ID": 18, "FGCOL": "#fffbfa", "BGCOL": "#ff7537" },
+    { "ID": 19, "FGCOL": "#fffdfb", "BGCOL": "#ffad46" },
+    { "ID": 20, "FGCOL": "#7f5158", "BGCOL": "#ebdbde" },
 ]
 
 # Currency codes used by payment processors when accepting payments
