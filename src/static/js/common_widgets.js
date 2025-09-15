@@ -277,84 +277,106 @@ $.widget("asm.table", {
 });
 
 // Styles a tab strip consisting of a div with an unordered list of tabs
-$.fn.asmtabs = function() {
-    this.each(function() {
-        $(this).addClass("ui-tabs ui-widget ui-widget-content ui-corner-all");
-        $(this).find("ul.asm-tablist").addClass("ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all");
-        $(this).find("ul.asm-tablist li").addClass("ui-state-default ui-corner-top");
-        $(this).find("ul.asm-tablist a").addClass("ui-tabs-anchor");
-        $(this).on("mouseover", "ul.asm-tablist li", function() {
+$.widget("asm.asmtabs", {
+
+    _create: function() {
+        let t = this.element;
+        t.addClass("ui-tabs ui-widget ui-widget-content ui-corner-all");
+        t.find("ul.asm-tablist").addClass("ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all");
+        t.find("ul.asm-tablist li").addClass("ui-state-default ui-corner-top");
+        t.find("ul.asm-tablist a").addClass("ui-tabs-anchor");
+        t.on("mouseover", "ul.asm-tablist li", function() {
             $(this).addClass("ui-state-hover");
         });
-        $(this).on("mouseout", "ul.asm-tablist li", function() {
+        t.on("mouseout", "ul.asm-tablist li", function() {
             $(this).removeClass("ui-state-hover");
         });
-    });
-};
+    }
+
+});
 
 // Wrapper/helper for JQuery autocomplete widget. 
 // Expects a data-source attribute to contain the source for the dropdown.
-$.fn.autotext = function(method, newval) {
-    if (!method || method == "create") {
-        this.each(function() {
-            let self = $(this);
-            disable_autocomplete(self);
-            let minlength = self.attr("data-minlength") || 1;
-            let defaultsearch = self.attr("data-defaultsearch");
-            let appendto = self.attr("data-appendto");
-            let source = tableform._unpack_ac_source(self.attr("data-source"));
-            self.autocomplete({
-                source: newval || source,
-                autoFocus: true,
-                minLength: minlength, // number of chars to enter before searching starts
-                close: function() {
-                    // fire the change event when the dropdown closes (ie. something selected) 
-                    self.change();
-                }
+$.widget("asm.autotext", {
+
+    options: {
+        minlength:     1,       // number of chars to type before searching starts
+        defaultsearch: null,    // the default search to run when clicking on the widget
+        appendto:      "",      // for z-indexing, the dialog parent to make sure the dropdown is visible
+        source:        []       // The source of data for the autocomplete (array of strings or 
+                                //      dicts containing label and value properties)
+    },
+
+    _create: function(source) {
+        let self = this.element, options = this.options;
+        disable_autocomplete(self);
+        options.minlength = self.attr("data-minlength") || 1;
+        options.defaultsearch = self.attr("data-defaultsearch");
+        options.appendto = self.attr("data-appendto");
+        options.source = tableform._unpack_ac_source(self.attr("data-source"));
+        self.autocomplete({
+            source: source || options.source,
+            autoFocus: true,
+            minLength: options.minlength, // number of chars to enter before searching starts
+            close: function() {
+                // fire the change event when the dropdown closes (ie. something is selected) 
+                self.change();
+            }
+        });
+        if (options.defaultsearch) {
+            self.focus(function() {
+                self.autocomplete("search", options.defaultsearch); 
             });
-            if (defaultsearch) {
-                self.focus(function() {
-                    self.autocomplete("search", defaultsearch); 
-                });
-            }
-            if (appendto) {
-                self.autocomplete("option", "appendTo", appendto);
-            }
-            else {
-                // If we don't have an appendTo, fall back to manipulating the z-index
-                self.autocomplete("widget").css("z-index", 9999);
-            }
-        });
+        }
+        if (options.appendto) {
+            self.autocomplete("option", "appendTo", options.appendto);
+        }
+        else {
+            // If we don't have an appendTo, fall back to manipulating the z-index
+            self.autocomplete("widget").css("z-index", 9999);
+        }
+    },
+
+    // Updates the source for the autotext widget
+    // source can be either an array of strings, or an array of dicts with label/value properties
+    // [ "item1", "item2" ] or [ { label: "item1", value: "value1" } ]
+    source: function(source) {
+        let self = this.element;
+        self.autocomplete("option", "source", source);
     }
-    else if (method == "source") {
-        this.each(function() {
-            let self = $(this);
-            self.autocomplete("option", "source", newval);
-        });
-    }
-};
+
+});
 
 // Textbox that should only contain numbers.
 // data-min and data-max attributes can be used to contain the lower/upper bound
-$.fn.number = function() {
-    const allowed = /[0-9\.\-]/;
-    this.each(function() {
-        if ($(this).attr("data-min")) {
-            $(this).blur(function(e) {
-                if (format.to_int($(this).val()) < format.to_int($(this).attr("data-min"))) {
-                    $(this).val($(this).attr("data-min"));
+$.widget("asm.number", {
+
+    options: {
+        min:     null,       
+        max:     null
+    },
+
+    _create: function() {
+        const allowed = /[0-9\.\-]/;
+        let self = this.element, options = this.options;
+        options.min = self.attr("data-min");
+        options.max = self.attr("data-max");
+        if (options.min) {
+            self.blur(function(e) {
+                if (format.to_int(self.val()) < format.to_int(options.min)) {
+                    self.val(options.min);
                 }
             });
         }
-        if ($(this).attr("data-max")) {
-            $(this).blur(function(e) {
-                if (format.to_int($(this).val()) > format.to_int($(this).attr("data-max"))) {
-                    $(this).val($(this).attr("data-max"));
+        if (options.max) {
+            self.blur(function(e) {
+                if (format.to_int(self.val()) > format.to_int(options.max)) {
+                    self.val(options.max);
                 }
             });
         }
-        disable_autocomplete($(this));
-        $(this).keypress(function(e) {
+        disable_autocomplete(self);
+        self.keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);
             // Backspace, tab, ctrl, delete, arrow keys ok
@@ -365,8 +387,9 @@ $.fn.number = function() {
                 e.preventDefault();
             }
         });
-    });
-};
+    }
+
+});
 
 // Textbox that should only contain numbers and letters (numbers, latin alphabet, no spaces, limited punctuation)
 $.fn.alphanumber = function() {
