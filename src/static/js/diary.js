@@ -102,7 +102,19 @@ $(function() {
                             return common.current_url().indexOf("diary_edit") == -1;
                         }
                     },
-                    { field: "SUBJECT", display: _("Subject") },
+                    { field: "SUBJECT", display: _("Subject"),
+                        formatter: function(row) {
+                            let fgcol = "";
+                            let bgcol = "";
+                            $.each(controller.colourschemes, function(i, v) {
+                                if (v.ID == row.COLOURSCHEMEID) {
+                                    fgcol = v.FGCOL;
+                                    bgcol = v.BGCOL;
+                                }
+                            });
+                            return '<div class="asm-diarysubjectcoldiv" style="background-color: ' + bgcol + '; color: ' + fgcol + ';">' + row.SUBJECT + '</div>';
+                        },
+                    },
                     { field: "NOTE", display: _("Note") },
                     { field: "CREATEDBY", display: _("By") }
                 ]
@@ -281,12 +293,22 @@ $(function() {
             tableform.dialog_show_add(diary.dialog, {
                 onadd: async function() {
                     let response = await tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid + "&diarycolourscheme=" + $(".colourschemeid").colouredselectmenu("value"), "diary");
-                    let row = {};
-                    row.ID = response;
+                    var row = {};
+                    row.ID = parseInt(response);
                     tableform.fields_update_row(diary.dialog.fields, row);
+                    row.COLOURSCHEMEID = $(".colourschemeid").colouredselectmenu("value");
                     diary.set_extra_fields(row);
                     controller.rows.push(row);
                     tableform.table_update(diary.table);
+                    let fgcol = "";
+                    let bgcol = "";
+                    $.each(controller.colourschemes, function(i, v) {
+                        if (v.ID == row.COLOURSCHEMEID) {
+                            fgcol = v.FGCOL;
+                            bgcol = v.BGCOL;
+                        }
+                    });
+                    $("#row-" + row.ID + " .asm-diarysubjectcoldiv").css("background-color", bgcol);
                     tableform.dialog_close();
                 },
                 onload: function() {

@@ -782,14 +782,15 @@ $.widget( "asm.colouredselectmenu", {
         let scheme = $(".asm-colourscheme[data-schemeid='" + schemeid + "']");
         let fgcol = scheme.css("color");
         let bgcol = scheme.css("background-color");
-        let schemename = scheme.html();
+        // console.log(schemeid);
+        // let schemename = scheme.html();
         let selectedschemediv = this.element.find(".asm-selectedcolourscheme");
         selectedschemediv.attr("data-schemeid", schemeid);
         // selectedschemediv.html(schemename);
         selectedschemediv.css("background-color", bgcol);
         selectedschemediv.css("color", fgcol);
         this.element.find(".asm-colourschemeexpand").css("color", fgcol);
-        this.element.val(schemeid);
+        // this.element.val(schemeid);
     },
     value: function(newval) {
         if (newval === undefined) {

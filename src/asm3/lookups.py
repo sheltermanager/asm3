@@ -110,7 +110,7 @@ COLOURSCHEMES = [
     { "ID": 17, "FGCOL": "#065332", "BGCOL": "#b3efd3" },
     { "ID": 18, "FGCOL": "#fffbfa", "BGCOL": "#ff7537" },
     { "ID": 19, "FGCOL": "#fffdfb", "BGCOL": "#ffad46" },
-    { "ID": 20, "FGCOL": "#7f5158", "BGCOL": "#ebdbde" },
+    { "ID": 20, "FGCOL": "#7f5158", "BGCOL": "#ebdbde" }
 ]
 
 # Currency codes used by payment processors when accepting payments

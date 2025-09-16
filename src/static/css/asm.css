@@ -1090,7 +1090,6 @@ select:disabled, input:disabled, textarea:disabled {
     position: relative;
     padding: 2px;
     cursor: default;
-    font-weight: bold;
 }
 .asm-colourscheme {
     height: 24px;
