@@ -22,7 +22,7 @@ $(function() {
                 fields: [
                     { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
-                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color"), type: "raw", defaultval: 1, callout: _("The color scheme to be used when displaying this note on the calendar view"), markup: '<div class="colourschemeid"></div>'
+                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme very, very long label"), type: "raw", defaultval: 1, callout: _("The color scheme to be used when displaying this note on the calendar view"), markup: '<div class="colourschemeid"></div>'
                     },
                     { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
@@ -230,6 +230,8 @@ $(function() {
         },
 
         bind: function() {
+            $("#dialog-tableform table tr td").first().css("max-width", "150px");
+            $("#dialog-tableform table tr td").first().css("width", "150px");
             $(".colourschemeid").colouredselectmenu();
             $(".asm-tabbar").asmtabs();
             $("#button-diarytask").asmmenu();
