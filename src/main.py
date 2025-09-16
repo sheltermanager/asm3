@@ -4080,7 +4080,7 @@ class foundanimal_find(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
-            "mode": "found",
+            "mode": "found"
         }
 
 class foundanimal_find_results(JSONEndpoint):

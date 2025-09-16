@@ -1106,7 +1106,6 @@ select:disabled, input:disabled, textarea:disabled {
     display: none;
     position: absolute;
     top: 0;
-    /* right: 0; */
     left: 200px;
     width: 113px;
 }
