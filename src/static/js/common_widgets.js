@@ -754,13 +754,13 @@ $.widget( "asm.iconselectmenu", $.ui.selectmenu, {
  */
 $.widget( "asm.colouredselectmenu", {
     _create: function() {
-        let self = this
+        let self = this;
         let htmllines = [
             '<div style="position: relative;">',
             '<div class="asm-selectedcolourscheme asm-field asm-textbox" data-schemeid="0">' + _("Color Scheme") + '</div>',
             '<div class="asm-colourschemeexpand" style="position: absolute;left: 182px;top: 3px;font-size: 0.8em;cursor: default;">&#9654;</div>',
             '<div class="asm-colourschemes asm-textbox">',
-        ]
+        ];
         $.each(controller.colourschemes, function(i, v) {
             htmllines.push('<div class="asm-colourscheme" data-schemeid="' + v.ID + '" style="background-color: ' + v.BGCOL + ';color: ' + v.FGCOL + ';">a</div>');
         });
@@ -782,15 +782,11 @@ $.widget( "asm.colouredselectmenu", {
         let scheme = $(".asm-colourscheme[data-schemeid='" + schemeid + "']");
         let fgcol = scheme.css("color");
         let bgcol = scheme.css("background-color");
-        // console.log(schemeid);
-        // let schemename = scheme.html();
         let selectedschemediv = this.element.find(".asm-selectedcolourscheme");
         selectedschemediv.attr("data-schemeid", schemeid);
-        // selectedschemediv.html(schemename);
         selectedschemediv.css("background-color", bgcol);
         selectedschemediv.css("color", fgcol);
         this.element.find(".asm-colourschemeexpand").css("color", fgcol);
-        // this.element.val(schemeid);
     },
     value: function(newval) {
         if (newval === undefined) {

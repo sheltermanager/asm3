@@ -22,7 +22,7 @@ $(function() {
                 fields: [
                     { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
-                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme very, very long label"), type: "raw", defaultval: 1, callout: _("The color scheme to be used when displaying this note on the calendar view"), markup: '<div class="colourschemeid"></div>'
+                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), type: "raw", defaultval: 1, callout: _("The color scheme to be used when displaying this note on the calendar view"), markup: '<div class="colourschemeid"></div>'
                     },
                     { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
@@ -44,6 +44,7 @@ $(function() {
                         onchange: async function() {
                             try {
                                 tableform.fields_update_row(dialog.fields, row);
+                                row.COLOURSCHEMEID = $(".colourschemeid").colouredselectmenu("value");
                                 await tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID + "&diarycolourscheme=" + $(".colourschemeid").colouredselectmenu("value"), "diary");
                                 tableform.table_update(table);
                                 tableform.dialog_close();
@@ -230,7 +231,7 @@ $(function() {
         },
 
         bind: function() {
-            $("#dialog-tableform table tr td").first().css("max-width", "150px");
+            // $("#dialog-tableform table tr td").first().css("max-width", "150px");
             $("#dialog-tableform table tr td").first().css("width", "150px");
             $(".colourschemeid").colouredselectmenu();
             $(".asm-tabbar").asmtabs();
@@ -302,15 +303,6 @@ $(function() {
                     diary.set_extra_fields(row);
                     controller.rows.push(row);
                     tableform.table_update(diary.table);
-                    let fgcol = "";
-                    let bgcol = "";
-                    $.each(controller.colourschemes, function(i, v) {
-                        if (v.ID == row.COLOURSCHEMEID) {
-                            fgcol = v.FGCOL;
-                            bgcol = v.BGCOL;
-                        }
-                    });
-                    $("#row-" + row.ID + " .asm-diarysubjectcoldiv").css("background-color", bgcol);
                     tableform.dialog_close();
                 },
                 onload: function() {
