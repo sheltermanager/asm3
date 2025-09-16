@@ -2725,6 +2725,7 @@ class calendar_events(ASMEndpoint):
                     "fgcol": fgcol,
                     "bgcol": bgcol }),
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["vaccination"]
             for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
@@ -2734,7 +2735,9 @@ class calendar_events(ASMEndpoint):
                     "start": v.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
             for v in asm3.medical.get_vaccinations_expiring_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
@@ -2744,8 +2747,11 @@ class calendar_events(ASMEndpoint):
                     "start": v.DATEEXPIRES, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "m" in ev and self.checkb(asm3.users.VIEW_MEDICAL):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["medical"]
             for m in asm3.medical.get_treatments_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (m.TREATMENTNAME, m.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s %s" % (m.TREATMENTNAME, m.SHELTERCODE, m.ANIMALNAME, m.DISPLAYLOCATIONNAME, m.DOSAGE, m.COMMENTS)
@@ -2755,8 +2761,11 @@ class calendar_events(ASMEndpoint):
                     "start": m.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "medical",
-                    "link": "animal_medical?id=%s" % m.ANIMALID })
+                    "link": "animal_medical?id=%s" % m.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "t" in ev and self.checkb(asm3.users.VIEW_TEST):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["test"]
             for t in asm3.medical.get_tests_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (t.TESTNAME, t.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (t.TESTNAME, t.SHELTERCODE, t.ANIMALNAME, t.DISPLAYLOCATIONNAME, t.COMMENTS)
@@ -2766,8 +2775,11 @@ class calendar_events(ASMEndpoint):
                     "start": t.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "test",
-                    "link": "animal_test?id=%s" % t.ANIMALID })
+                    "link": "animal_test?id=%s" % t.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "b" in ev and self.checkb(asm3.users.VIEW_BOARDING):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["boarding"]
             for b in asm3.financial.get_boarding_due_two_dates(dbo, start, end):
                 sub = "%s:%s - %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME)
                 tit = "%s:%s - %s, %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME, b.OWNERNAME)
@@ -2778,8 +2790,11 @@ class calendar_events(ASMEndpoint):
                     "end": b.OUTDATETIME,
                     "tooltip": tit, 
                     "icon": "boarding",
-                    "link": "animal_boarding?id=%s" % b.ANIMALID })
+                    "link": "animal_boarding?id=%s" % b.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "c" in ev and self.checkb(asm3.users.VIEW_CLINIC):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["clinic"]
             for c in asm3.clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
                 if c.OWNERNAME is not None:
                     sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
@@ -2796,8 +2811,11 @@ class calendar_events(ASMEndpoint):
                     "end": add_minutes(c.DATETIME, 20),
                     "tooltip": tit, 
                     "icon": "health",
-                    "link": link })
+                    "link": link,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "p" in ev and self.checkb(asm3.users.VIEW_DONATION):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["payment"]
             for p in asm3.financial.get_donations_due_two_dates(dbo, start, end):
                 sub = "%s - %s" % (p.DONATIONNAME, p.OWNERNAME)
                 tit = "%s - %s %s %s" % (p.DONATIONNAME, p.OWNERNAME, format_currency(l, p.DONATION), p.COMMENTS)
@@ -2807,8 +2825,11 @@ class calendar_events(ASMEndpoint):
                     "start": p.DATEDUE, 
                     "tooltip": tit, 
                     "icon": "donation",
-                    "link": "person_donations?id=%s" % p.OWNERID })
+                    "link": "person_donations?id=%s" % p.OWNERID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "o" in ev and self.checkb(asm3.users.VIEW_INCIDENT):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["incident"]
             for o in asm3.animalcontrol.get_followup_two_dates(dbo, start, end):
                 sub = "%s - %s" % (o.INCIDENTNAME, o.OWNERNAME)
                 tit = "%s - %s %s, %s" % (o.INCIDENTNAME, o.OWNERNAME, o.DISPATCHADDRESS, o.CALLNOTES)
@@ -2818,8 +2839,11 @@ class calendar_events(ASMEndpoint):
                     "start": o.FOLLOWUPDATETIME, 
                     "tooltip": tit, 
                     "icon": "call",
-                    "link": "incident?id=%s" % o.ACID })
+                    "link": "incident?id=%s" % o.ACID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "r" in ev and self.checkb(asm3.users.VIEW_TRANSPORT):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["transport"]
             for r in asm3.movement.get_transport_two_dates(dbo, start, end):
                 sub = "%s - %s" % (r.ANIMALNAME, r.SHELTERCODE)
                 tit = "%s %s, %s - %s :: %s, %s" % (r.ANIMALNAME, r.SHELTERCODE, r.DRIVEROWNERNAME, r.PICKUPOWNERADDRESS, r.DROPOFFOWNERADDRESS, r.COMMENTS)
@@ -2833,8 +2857,11 @@ class calendar_events(ASMEndpoint):
                     "end": r.DROPOFFDATETIME,
                     "tooltip": tit, 
                     "icon": "transport",
-                    "link": "animal_transport?id=%s" % r.ANIMALID})
+                    "link": "animal_transport?id=%s" % r.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "l" in ev and self.checkb(asm3.users.VIEW_TRAPLOAN):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["equipment"]
             for l in asm3.animalcontrol.get_traploan_two_dates(dbo, start, end):
                 sub = "%s - %s" % (l.TRAPTYPENAME, l.OWNERNAME)
                 tit = "%s - %s %s, %s" % (l.TRAPTYPENAME, l.OWNERNAME, l.TRAPNUMBER, l.COMMENTS)
@@ -2844,12 +2871,14 @@ class calendar_events(ASMEndpoint):
                     "start": l.RETURNDUEDATE, 
                     "tooltip": tit, 
                     "icon": "traploan",
-                    "link": "person_traploan?id=%s" % l.OWNERID})
+                    "link": "person_traploan?id=%s" % l.OWNERID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "e" in ev and self.checkb(asm3.users.VIEW_EVENT):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["event"]
             now = start
             while now <= end:
                 eventsdata = asm3.event.get_events_by_date(dbo, now)
-                # eventsdata = asm3.event.get_events_two_dates(dbo, start, end)
                 for e in eventsdata:
                     events.append({ 
                         "title": e.EVENTNAME, 
@@ -2857,7 +2886,9 @@ class calendar_events(ASMEndpoint):
                         "start": now, 
                         "tooltip": e.EVENTDESCRIPTION, 
                         "icon": "event",
-                        "link": "event?id=%s" % e.ID})
+                        "link": "event?id=%s" % e.ID,
+                        "fgcol": fgcol,
+                        "bgcol": bgcol })
                 now = asm3.i18n.add_days(now, 1)
         asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "main.calendarview", dbo)
         self.content_type("application/json")
