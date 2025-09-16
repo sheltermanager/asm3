@@ -2845,6 +2845,20 @@ class calendar_events(ASMEndpoint):
                     "tooltip": tit, 
                     "icon": "traploan",
                     "link": "person_traploan?id=%s" % l.OWNERID})
+        if "e" in ev and self.checkb(asm3.users.VIEW_EVENT):
+            now = start
+            while now <= end:
+                eventsdata = asm3.event.get_events_by_date(dbo, now)
+                # eventsdata = asm3.event.get_events_two_dates(dbo, start, end)
+                for e in eventsdata:
+                    events.append({ 
+                        "title": e.EVENTNAME, 
+                        "allDay": True, 
+                        "start": now, 
+                        "tooltip": e.EVENTDESCRIPTION, 
+                        "icon": "event",
+                        "link": "event?id=%s" % e.ID})
+                now = asm3.i18n.add_days(now, 1)
         asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "main.calendarview", dbo)
         self.content_type("application/json")
         return asm3.utils.json(events)

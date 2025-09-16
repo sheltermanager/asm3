@@ -79,6 +79,17 @@ def get_animals_by_event(dbo: Database, eventid: int, queryfilter: str = "all") 
         ae["AGEGROUP"] = asm3.animal.calc_age_group(dbo, ae["ANIMALID"])
     return rows
 
+def get_events_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
+    """
+    Returns all events that are active between two dates
+    """
+    return dbo.query(get_event_query(dbo) + "WHERE " \
+        "(ev.StartDateTime <= ? AND ? >= ev.StartDateTime) OR " \
+        "(ev.StartDateTime >= ? AND ? <= ev.EndDateTime) OR " \
+        "(ev.StartDateTime <= ? AND ? >= ev.EndDateTime) " \
+        "ORDER BY ev.StartDateTime", 
+        [start, end, start, end, end, end])
+
 def get_events_by_date(dbo: Database, date: datetime) -> Results:
     """
     Returns all events that match date
