@@ -337,7 +337,13 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_BREED:
             h.append('<select class="asm-onlineform-breed" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
-            for l in asm3.lookups.get_breeds(dbo):
+            if f.SPECIESID and f.SPECIESID > 0:
+                breeds = asm3.lookups.get_breeds_by_species(dbo)
+            else:
+                breeds = asm3.lookups.get_breeds(dbo)
+            for l in breeds:
+                if f.SPECIESID and f.SPECIESID > 0 and l.SPECIESID != f.SPECIESID:
+                    continue
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BREEDNAME)
             h.append('</select>')

@@ -174,7 +174,7 @@ $(function() {
                 $("label[for='lookups']").html(_("Lookups"));
                 $("#lookupsrow").fadeOut();
             }
-            if (ft == 4 || ft == 5 || ft == 21) {
+            if (ft == 4 || ft == 5 || ft == 21 || ft == 7) {
                 $("#speciesrow").fadeIn();
             }
             else {
