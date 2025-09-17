@@ -5,6 +5,8 @@ import web062 as web
 
 import asm3.reports
 import asm3.utils
+import asm3.person
+import asm3.log
 
 TEST_QUERY = "SELECT * FROM lksmovementtype"
 
@@ -13,6 +15,8 @@ class TestReports(unittest.TestCase):
     nid = 0
 
     def setUp(self):
+
+        # Test Report
         data = {
             "title":    "Test Report",
             "category": "Test",
@@ -22,8 +26,35 @@ class TestReports(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         self.nid = asm3.reports.insert_report_from_form(base.get_dbo(), "test", post)
 
+        # Test Person
+        data = {
+            "title": "Mr",
+            "forenames": "Test",
+            "surname": "Testing",
+            "ownertype": "1",
+            "address": "123 test street",
+            "emailaddress": "test@test.com"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.oid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
+
+        # Test Mailmerge
+        data = {
+            "title":    "Test Mailmerge",
+            "category": "Test",
+            "sql":      f"SELECT ID, OwnerName, EmailAddress FROM owner WHERE ID = {str(self.oid)}",
+            "html":     "MAIL"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.mid = asm3.reports.insert_report_from_form(base.get_dbo(), "test", post)
+
+        
+
     def tearDown(self):
         asm3.reports.delete_report(base.get_dbo(), "test", self.nid)
+        asm3.reports.delete_report(base.get_dbo(), "test", self.mid)
+        asm3.person.delete_person(base.get_dbo(), "test", self.oid)
+        base.get_dbo().execute("DELETE FROM logmulti WHERE Comments = ?", ['Created by unit test.'])
 
     def test_get_all_report_titles(self):
        self.assertNotEqual(0, len(asm3.reports.get_all_report_titles(base.get_dbo())))
@@ -58,4 +89,8 @@ class TestReports(unittest.TestCase):
     def test_smcom_reports(self):
         asm3.reports.install_recommended_smcom_reports(base.get_dbo(), "test") # Calls get_reports to do the install
 
-    
+    def test_mailmerge_email_log(self):
+        rows, cols = asm3.reports.execute_query(base.get_dbo(), self.mid, "test", "")
+        asm3.log.add_logmulti(base.get_dbo(), "test", linktype=asm3.log.PERSON, linkids=[self.oid], logtypeid=1, logtext="Created by unit test.")
+        linkids = base.get_dbo().query("SELECT LinkIDs FROM logmulti ORDER BY ID desc LIMIT 1")[0]["LINKIDS"]
+        self.assertEqual(linkids, str(self.oid))
