@@ -1453,6 +1453,7 @@ def sql_structure(dbo: Database) -> str:
         fint("MatchSpecies", True),
         fint("MatchBreed", True),
         fint("MatchBreed2", True),
+        fint("MatchDeclawed", True),
         fint("MatchGoodWithCats", True),
         fint("MatchGoodWithDogs", True),
         fint("MatchGoodWithChildren", True),
