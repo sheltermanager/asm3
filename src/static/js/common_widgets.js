@@ -1873,9 +1873,10 @@ $.widget("asm.textarea", {
         let t = $(this.element[0]);
         let tdid = t.attr("id") + "-td";
         $('#' + tdid).html("");
-            let searchmatches = t.val().match(/(?<=(#s:))\w{1,}:?\w{1,}/g);
+            let searchmatches = t.val().match(/#s:\w{1,}:?\w{1,}/g);
             if (searchmatches) {
                 $.each(searchmatches, function(i, v) {
+                    v = v.replace("#s:", "");
                     let linkiconclass = 'asm-icon-link';
                     if (v.includes('a:')) {
                         linkiconclass = 'asm-icon-animal';
@@ -1904,9 +1905,10 @@ $.widget("asm.textarea", {
                 });
                 $('#' + tdid).show();
             }
-            let mediamatches = t.val().match(/(?<=(#m:))\w{1,}/g);
+            let mediamatches = t.val().match(/#m:\w{1,}/g);
             if (mediamatches) {
                 $.each(mediamatches, function(i, v) {
+                    v = v.replace("#m:", "");
                     $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-media"></span>&nbsp;<a href="/media?id=' + v + '" target="_blank">' + v + '</a></div> ');
                 });
                 $('#' + tdid).show();
