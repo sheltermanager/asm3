@@ -1816,6 +1816,45 @@ def create_transport(dbo: Database, username: str, collationid: int) -> Tuple[in
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
+def create_traploan(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
+    """
+    Creates a traploan record from the incoming form data with collationid.
+    Also, attaches the form to the animal as asm3.media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    personid = 0
+    personname = ""
+    for f in fields:
+        if f.FIELDNAME == "animalname": 
+            animalname = f.VALUE
+            animalid = get_animal_id_from_field(dbo, animalname)
+            d["animal"] = str(animalid)
+        if f.FIELDNAME == "description": d["comments"] = f.VALUE
+        # "OwnerID":          post.integer("person"),
+        # "TrapTypeID":       post.integer("type"),
+        # "LoanDate":         post.date("loandate"),
+        # "DepositAmount":    post.integer("depositamount"),
+        # "DepositReturnDate": post.date("depositreturndate"),
+        # "TrapNumber":       post["trapnumber"],
+        # "ReturnDueDate":    post.date("returnduedate"),
+        # "ReturnDate":       post.date("returndate"),
+        # "Comments":         post["comments"]
+    if "type" not in d:
+        d["type"] = guess_transporttype(dbo, "nomatchesusedefault")
+    # Have we got enough info to create the transport record? We need an animal to attach to
+    if "animal" not in d:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a transport record (need animalname).", l))
+    if "pickupdate" not in d or "dropoffdate" not in d or d["pickupdate"] == "" or d["dropoffdate"] == "":
+        raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create a transport record (need pickupdate and dropoffdate).", l))
+    if animalid == 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Could not find animal with name '{0}'", l).format(animalname))
+    # Create the transport
+    asm3.movement.insert_transport_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
+    attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
+    return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
+
 def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
     """
     Creates a waitinglist record from the incoming form data with collationid.
