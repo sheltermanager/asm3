@@ -1876,7 +1876,7 @@ class animal(JSONEndpoint):
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
             "posneg": asm3.lookups.get_posneg(dbo),
-            "reports": asm3.reports.get_ask_animal_reports(dbo, o['session'].superuser, o['session'].roleids),
+            "reports": asm3.reports.get_ask_animal_reports(dbo, o["session"].superuser, o["session"].roleids),
             "returnedexitmovements": asm3.animal.get_returned_exit_movements(dbo, a.ID),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
@@ -2860,7 +2860,7 @@ class change_user_settings(JSONEndpoint):
         quicklinks = post["quicklinksid"]
         quickreports = post["quickreportsid"]
         quickreportscfg = []
-        reports = asm3.reports.Mail(o.dbo)
+        reports = asm3.reports.get_reports(o.dbo)
         if quickreports != "":
             for reportid in quickreports.split(","):
                 for report in reports:
@@ -6318,7 +6318,7 @@ class person(JSONEndpoint):
             "homecheckhistory": asm3.person.get_homechecked(dbo, p.id),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
-            "reports": asm3.reports.get_ask_person_reports(dbo, o['session'].superuser, o['session'].roleids),
+            "reports": asm3.reports.get_ask_person_reports(dbo, o["session"].superuser, o["session"].roleids),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
