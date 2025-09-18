@@ -114,16 +114,16 @@ COLOURSCHEMES = [
 ]
 
 CALENDAR_EVENT_COLOURSCHEMES = {
-    "vaccination": ["#FFE797", "#84994F"],
-    "medical": ["#B45253", "#FCB53B"],
-    "test": ["#48B3AF", "#476EAE"],
-    "boarding": ["#0BA6DF", "#EF7722"],
-    "clinic": ["#84994F", "#FFE797"],
-    "payment": ["#FCB53B", "#B45253"],
-    "incident": ["#476EAE", "#48B3AF"],
-    "transport": ["#EF7722", "#0BA6DF" ],
-    "equipment": ["#FFFFFF",  "#000000"],
-    "event": ["#331B3F", "#ACC7B4" ]
+    "vaccination": ["", ""],
+    "medical": ["", ""],
+    "test": ["", ""],
+    "boarding": ["", ""],
+    "clinic": ["", ""],
+    "payment": ["", ""],
+    "incident": ["", ""],
+    "transport": ["", "" ],
+    "equipment": ["",  ""],
+    "event": ["", ""]
 }
 
 # Currency codes used by payment processors when accepting payments

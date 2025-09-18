@@ -372,7 +372,7 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         "LinkInfo":         linkinfo,
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
         "DiaryForName":     post["diaryfor"],
-        "ColourSchemeID":   post["diarycolourscheme"],
+        "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],
         "Note":             post["note"],
         "Comments":         post["comments"],
@@ -433,7 +433,7 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
     dbo.update("diary", diaryid, {
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
         "DiaryForName":     post["diaryfor"],
-        "ColourSchemeID":   post["diarycolourscheme"],
+        "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],
         "Note":             post["note"],
         "Comments":         post["comments"],
@@ -515,7 +515,7 @@ def insert_diarytaskdetail_from_form(dbo: Database, username: str, post: PostedD
         "OrderIndex":           post.integer("orderindex"),
         "DayPivot":             post.integer("pivot"),
         "WhoFor":               post["for"],
-        "ColourSchemeID":       post["diarycolourscheme"],
+        "ColourSchemeID":       post.integer("diarycolourscheme"),
         "Subject":              post["subject"],
         "Note":                 post["note"],
         "RecordVersion":        0
@@ -529,7 +529,7 @@ def update_diarytaskdetail_from_form(dbo: Database, username: str, post: PostedD
         "OrderIndex":           post.integer("orderindex"),
         "DayPivot":             post.integer("pivot"),
         "WhoFor":               post["for"],
-        "ColourSchemeID":       post["diarycolourscheme"],
+        "ColourSchemeID":       post.integer("diarycolourscheme"),
         "Subject":              post["subject"],
         "Note":                 post["note"]
     }, username, setLastChanged=False)
