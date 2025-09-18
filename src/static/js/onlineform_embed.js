@@ -1,7 +1,3 @@
-/*global alert */
-/*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor, asm3_adoptable_iframe_fixed */
-/*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter, asm3_adoptable_limit, asm3_adoptable_sort, asm3_adoptable_style */
-
 // NOTE: This file stands alone and should try for compatibility 
 //       with as many browsers as possible. It also does not use jQuery.
 //       Avoid use of let/const, async/await, destructuring, etc.
