@@ -530,6 +530,10 @@ $(function() {
                 edit_header.template_list(controller.templates, "ANIMAL", controller.animal.ID),
                 '</ul>',
                 '</div>',
+                '<div id="button-report-body" class="asm-menu-body">',
+                edit_header.animal_report_list(controller.reports, controller.animal.ID),
+                '</ul>',
+                '</div>',
                 '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Clone this animal?") + '</p>',
                 '</div>',
@@ -574,6 +578,7 @@ $(function() {
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Send an email relating to this animal") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
+                    { id: "report", text: _("Report"), type: "buttonmenu", icon: "report", tooltip: _("Generate a report from this animal") },
                     { id: "newentry", text: _("New Entry"), icon: "new", tooltip: _("Generate a new code and archive the current entry data"),
                         hideif: function() { 
                             return config.bool("DisableEntryHistory") || 
@@ -952,10 +957,10 @@ $(function() {
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
             if (!common.has_permission("emo")) { $("#button-email").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
+            if (!common.has_permission("vcr")) { $("#button-report").hide(); }
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
             if (!common.has_permission("vll")) { $("#button-littermates").hide(); }
-            if (!common.has_permission("uipb")) { $("#button-share").hide(); }
 
             // ACCORDION ICONS =======================================================
 
@@ -1133,7 +1138,7 @@ $(function() {
         bind: function() {
 
             // Setup the document/social menu buttons
-            $("#button-document, #button-share").asmmenu();
+            $("#button-document, #button-share, #button-report").asmmenu();
 
             $("#emailform").emailform();
 
