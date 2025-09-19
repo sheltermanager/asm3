@@ -1943,7 +1943,7 @@ $.widget("asm.textarea", {
         if (!newval) { newval = ""; }
         //newval = common.replace_all(newval, "<", "&lt;");
         //newval = common.replace_all(newval, ">", "&gt;");
-        this.element.val(newval);
+        this.element.val(html.decode(newval));
         this.process_links();
         this.element.trigger("change");
     }
