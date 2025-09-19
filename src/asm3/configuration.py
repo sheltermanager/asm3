@@ -112,7 +112,6 @@ DEFAULTS = {
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
-    "AvidUSRegisterOverseas": "No",
     "BehaveLogType": "3",
     "Behave1Name": "Eaten",
     "Behave1Values": "None|Minimal|Half|Majority|All",
@@ -832,9 +831,6 @@ def avidus_password(dbo: Database) -> str:
 
 def avidus_apikey(dbo: Database) -> str:
     return cstring(dbo, "AVIDUSKey")
-
-def avidus_register_overseas(dbo: Database) -> bool:
-    return cboolean(dbo, "AvidUSRegisterOverseas", DEFAULTS["AvidUSRegisterOverseas"] == "Yes")
 
 def buddyid_provider_code(dbo: Database) -> str:
     return cstring(dbo, "BuddyIDProviderCode")

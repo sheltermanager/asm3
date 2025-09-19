@@ -324,7 +324,7 @@ VETENVOY_US_HOMEAGAIN_RECIPIENTID = get_string("vetenvoy_us_homeagain_recipienti
 VETENVOY_US_AKC_REUNITE_RECIPIENTID = get_string("vetenvoy_us_akc_reunite_recipientid", "")
 
 # AVID US Microchip resitration details
-AVID_US_API_KEY = get_string("avid_us_api_key", "iE#LD3Y(BVU&eW#xDqkzxLzPswALboU)")
+AVID_US_API_KEY = get_string("avid_us_api_key", "")
 
 # Config for payment processing services
 PAYPAL_VALIDATE_IPN_URL = get_string("paypal_validate_ipn_url", "")

@@ -2,7 +2,6 @@
 import asm3.configuration
 import asm3.i18n
 import asm3.utils
-import base64
 import requests
 
 from .base import AbstractPublisher, get_microchip_data
@@ -38,8 +37,8 @@ class AVIDUSPublisher(AbstractPublisher):
         #
         # Authentication Header
         #
-        basic_auth_str = f'{avidusername}:{avidpassword}'
-        basic_auth_header = base64.b64encode(basic_auth_str.encode()).decode()
+        basic_auth_str = f"{avidusername}:{avidpassword}"
+        basic_auth_header = asm3.utils.base64encode(basic_auth_str)
         config = {
             'headers': {
                 'authorization': 'Basic ' + basic_auth_header,
@@ -68,8 +67,8 @@ class AVIDUSPublisher(AbstractPublisher):
                     return
                 if not self.validate(an): continue
                 fields = self.processAnimal(an)
-                r = asm3.utils.post_json(AVID_US_POST_URL, asm3.utils.json(fields), config['headers'])
-                if r['response'] and asm3.utils.json_parse(r["response"])["status"] == 'COMPLETE':
+                r = asm3.utils.post_json(AVID_US_POST_URL, asm3.utils.json(fields), config["headers"])
+                if r["response"] and asm3.utils.json_parse(r["response"])["status"] == 'COMPLETE':
                     self.log("Successful response, marking processed")
                     processed_animals.append(an)
                     # Mark success in the log
