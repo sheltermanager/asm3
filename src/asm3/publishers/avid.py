@@ -74,9 +74,7 @@ class AVIDUSPublisher(AbstractPublisher):
                     # Mark success in the log
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 else:
-                    #self.logError(asm3.utils.json_parse(r["response"]))
-                    self.logError(r)
-                    #self.logError("Problem with data encountered, not marking processed")
+                    self.logError("Problem with data encountered, not marking processed")
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
