@@ -1008,7 +1008,8 @@ def sql_structure(dbo: Database) -> str:
         flongstr("Note"),
         flongstr("Comments", True),
         fdate("DateCompleted", True),
-        fstr("LinkInfo", True) ))
+        fstr("LinkInfo", True),
+        fint("ColourSchemeID") ))
     sql += index("diary_DiaryForName", "diary", "DiaryForName")
 
     sql += table("diarytaskdetail", (
@@ -1019,7 +1020,8 @@ def sql_structure(dbo: Database) -> str:
         fstr("WhoFor"),
         flongstr("Subject"),
         flongstr("Note"),
-        fint("RecordVersion", True) ), False)
+        fint("RecordVersion", True),
+        fint("ColourSchemeID") ), False)
     sql += index("diarytaskdetail_DiaryTaskHeadID", "diarytaskdetail", "DiaryTaskHeadID")
 
     sql += table("diarytaskhead", (
