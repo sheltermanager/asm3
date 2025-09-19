@@ -14,7 +14,10 @@
     var onReady = function(event) {
         window.removeEventListener( "load", onReady );
         var hostdiv = document.getElementById(div_id);
-        if (!hostdiv) { alert("#" + div_id + " not present"); return; }
+        if (!hostdiv) { 
+            // alert("#" + div_id + " not present"); 
+            return; 
+        }
         render_iframe();
     };
 
