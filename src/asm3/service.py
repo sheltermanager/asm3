@@ -112,7 +112,8 @@ CACHE_PROTECT_METHODS = {
     "xml_stray_animals": [ "sensitive" ],
     "rss_timeline": [],
     "online_form_html": [ "formid" ],
-    "online_form_json": [ "formid" ]
+    "online_form_json": [ "formid" ],
+    "online_form_js": [ "formid" ]
     # "online_form_post" - write method
     # "sign_document" - write method
     # "upload_animal_image" - write method

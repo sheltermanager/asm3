@@ -378,17 +378,12 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
         footer = get_onlineform_footer(dbo)
-        # extrajs = '\n'.join(['<script>',
-        #     'let ro = new ResizeObserver(function(e) {',
-        #     '   window.parent.postMessage(document.querySelector("html").offsetHeight, "*");',
-        #     '});',
-        #     'ro.observe(document.querySelector("html"));',
-        #     '</script>'
-        # ])
         extrajs = '<script>\n' \
-            'let ro = new ResizeObserver(function(e) {' \
-            '    window.parent.postMessage(document.querySelector("html").offsetHeight, "*");' \
-            '});'
+            'let ro = new ResizeObserver(function(e) {\n' \
+            '    window.parent.postMessage(document.querySelector("html").offsetHeight, "*");\n' \
+            '});\n' \
+            'ro.observe(document.querySelector("html"));\n' \
+            '</script>\n'
         h.append(footer.replace("$$TITLE$$", form.NAME).replace("</body>", extrajs + "</body>"))
     return "\n".join(h)
 
