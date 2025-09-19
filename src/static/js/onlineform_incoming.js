@@ -147,6 +147,8 @@ $(function() {
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (non-shelter with owner)") + '</a></li>',
                     '<li id="button-animalbroughtin" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (with brought in person)") + '</a></li>',
+                    '<li id="button-equipmentloan" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("traploan") + ' ' + _("Equipment Loan") + '</a></li>',
                     '<li id="button-person" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("person-add") + ' ' + _("Person") + '</a></li>',
                     '<li id="button-person-nm" class="asm-menu-item"><a '
@@ -195,6 +197,10 @@ $(function() {
             });
             $("#button-animalnonshelter").click(function() {
                 onlineform_incoming.create_record("animalnonshelter", "animal");
+                return false;
+            });
+            $("#button-equipmentloan").click(function() {
+                onlineform_incoming.create_record("traploan", "traploan");
                 return false;
             });
             $("#button-person").click(function() {
@@ -358,7 +364,7 @@ $(function() {
 
         /**
          * Make an AJAX post to create a record.
-         * mode: The type of record to create - person, lostanimal, foundanimal, waitinglist
+         * mode: The type of record to create - person, lostanimal, foundanimal, waitinglist, equipmentloan
          * url:  The url to link to the target created record
          */
         create_record: async function(mode, target) {

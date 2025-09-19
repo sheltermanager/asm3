@@ -1,6 +1,7 @@
 
 import json
 import time
+import re
 
 from datetime import datetime, timedelta
 
@@ -414,6 +415,19 @@ def http_date(dt: datetime) -> str:
              "Oct", "Nov", "Dec"][dt.month - 1]
     return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, dt.day, month,
         dt.year, dt.hour, dt.minute, dt.second)
+
+def parse_currency(locale: str, f: str) -> int:
+    
+    try:
+        # Remove non-numeric characters
+        v = re.sub(r'[^\d\-\.]+', '', f)
+        price = float(v)
+        dp = get_currency_dp(locale)
+        multiplier = 1 * (10 ** dp)
+        price = int(price * multiplier)
+        return price
+    except:
+        return 0
 
 def python2display(locale: str, d: datetime) -> str:
     """

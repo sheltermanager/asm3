@@ -5923,6 +5923,16 @@ class onlineform_incoming(JSONEndpoint):
             rv.append("%d|%d|%s|0" % (collationid, animalid, animalname))
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
+    
+    def post_traploan(self, o):
+        self.check(asm3.users.ADD_TRAPLOAN)
+        user = "form/%s" % o.user
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, personid, personname = asm3.onlineform.create_traploan(o.dbo, user, pid)
+            rv.append("%d|%d|%s|0" % (collationid, personid, personname))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
+        return "^$".join(rv)
 
     def post_waitinglist(self, o):
         self.check(asm3.users.ADD_WAITING_LIST)
