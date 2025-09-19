@@ -1006,7 +1006,8 @@ the preview column and deleted in one click using the "Delete Spam" button.
   forms that contain blanks in mandatory fields as spam.
 
 * Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
-  and lower case letters in the applicants name fields and marks these as spam.
+  and lower case letters in the applicants name fields and marks these as spam. It
+  will also check for email addresses or URLs in name fields.
 
 * Spambot protection: Zipcode / Postcode contains numbers: Checks that the Zipcode / 
   Postcode field contains numbers, marks forms as spam where no number is present.

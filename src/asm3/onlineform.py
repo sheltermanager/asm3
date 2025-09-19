@@ -890,6 +890,15 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         if firstname.find("@") != -1 and firstname.find(".") != -1:
             spamreason = f"email in firstname, firstname={firstname}"
             spam = True
+        if lastname.find("@") != -1 and lastname.find(".") != -1:
+            spamreason = f"email in lastname, lastname={lastname}"
+            spam = True
+        if firstname.lower().find("http") != -1 and firstname.find("//") != -1:
+            spamreason = f"http URL found in firstname, firstname={firstname}"
+            spam = True
+        if lastname.lower().find("http") != -1 and lastname.find("//") != -1:
+            spamreason = f"http URL found in lastname, lastname={lastname}"
+            spam = True
 
     # Make sure that the postcode/zipcode actually contains some numbers
     if asm3.configuration.onlineform_spam_postcode(dbo) and postcode != "":
