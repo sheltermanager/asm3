@@ -1241,6 +1241,21 @@ Responds with the online form HTML or JSON for the id given.
 
     http://localhost:5000/service?method=online_form_html&id=1
 
+online_form_js
+--------------
+
+.. rubric:: Cache time: 30 minutes
+.. rubric:: Permissions required: None
+.. rubric:: Requires username/password: NO
+
+Similar to animal_view_adoptable_js, this method allows you to put a div placeholder
+in your page and load a script. The script will insert a responsive iframe into
+your page at the div, which displays the output of the online_form_html service
+call. This allows embedding of the form in a more transparent manner. 
+
+    <div id="asm3-form-iframe" />
+    <script src="http://localhost:5000/service?method=online_form_js&id=1"></script>
+
 rss_timeline
 ------------
 
