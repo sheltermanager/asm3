@@ -1122,7 +1122,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         # Costs
         if hascost and animalid != 0 and gkc(row, "COSTAMOUNT") > 0:
             c = {}
-            c["animalid"] = str(animalid)
+            c["animal"] = str(animalid)
             c["type"] = gkl(dbo, row, "COSTTYPE", "costtype", "CostTypeName", createmissinglookups)
             c["costdate"] = gkd(dbo, row, "COSTDATE", True)
             c["cost"] = str(gkc(row, "COSTAMOUNT"))
