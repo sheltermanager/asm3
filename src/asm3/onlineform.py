@@ -1838,13 +1838,13 @@ def create_traploan(dbo: Database, username: str, collationid: int) -> Tuple[int
     for f in fields:
         if f.FIELDNAME == "equipmenttype": d["type"] = guess_equipmenttype(dbo, f.VALUE)
         if f.FIELDNAME == "loandate": d["loandate"] = f.VALUE
-        if f.FIELDNAME == "deposit": d["depositamount"] = f.VALUE
+        if f.FIELDNAME == "deposit": d["depositamount"] = str(asm3.i18n.parse_currency(l, f.VALUE))
         if f.FIELDNAME == "returnduedate": d["returnduedate"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
-        if "loandate" not in d.keys(): d["loandate"] = asm3.i18n.python2display(l, dbo.today())
-        d["person"] = create_person(dbo, username, collationid)[1]
+    if "loandate" not in d.keys(): d["loandate"] = asm3.i18n.python2display(l, dbo.today())
+    if "type" not in d.keys(): d["type"] = guess_equipmenttype(dbo, "")
+    d["person"] = create_person(dbo, username, collationid)[1]
     asm3.animalcontrol.insert_traploan_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
-    attach_form(dbo, username, asm3.media.PERSON, d["person"], collationid)
     return (collationid, d["person"], asm3.person.get_person_name(dbo, d["person"]))
 
 def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
