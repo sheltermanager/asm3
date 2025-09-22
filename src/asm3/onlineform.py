@@ -116,7 +116,8 @@ FORM_FIELDS = [
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime",
-    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan"
+    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan",
+    "homecheckpass", "homecheckedby"
 ]
 
 AUTOCOMPLETE_MAP = {
@@ -1600,6 +1601,9 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "lookingforolderthan":
             d["matchactive"] = "1"
             d["agedto"] = f.VALUE
+        if f.FIELDNAME == "homecheckedby": d["homecheckedby"] = f.VALUE
+        if f.FIELDNAME == "homecheckpass" and (f.VALUE == "Yes" or f.VALUE == "on"):
+            d["homecheckpass"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 

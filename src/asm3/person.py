@@ -1048,6 +1048,13 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     pid = dbo.get_id("owner")
     ownercode = post["ownercode"]
     if post["ownercode"] == "": ownercode = calculate_owner_code(pid, post["surname"])
+    homecheckedby = 0
+    if post["homecheckedby"]:
+        ilikename = dbo.sql_ilike("OwnerName", "?")
+        homecheckedby = dbo.query_int(
+            f"SELECT ID FROM owner WHERE IsHomeChecker = 1 AND (UPPER(OwnerCode) = ? OR {ilikename})",
+            [post["homecheckedby"].upper(), f"%{post["homecheckedby"]}%"]
+        )
 
     dbo.insert("owner", {
         "ID":               pid,
@@ -1090,7 +1097,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "FosterCapacity":   post.integer("fostercapacity"),
         "HomeCheckAreas":   post["areas"],
         "DateLastHomeChecked": post.date("homechecked"),
-        "HomeCheckedBy":    post.integer("homecheckedby"),
+        "HomeCheckedBy":    homecheckedby,
         "MatchActive":      post.integer("matchactive"),
         "MatchAdded":       post.date("matchadded"),
         "MatchExpires":     post.date("matchexpires"),
@@ -1145,7 +1152,10 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
             post["flags"] += ",excludefrombulkemail"
 
     # Update the flags
-    update_flags(dbo, username, pid, post["flags"].split(","))
+    flags = post["flags"].split(",")    
+    if post["homecheckpass"]:
+        flags.append("homechecked")
+    update_flags(dbo, username, pid, flags)
 
     # Save any additional field values given
     asm3.additional.save_values_for_link(dbo, post, username, pid, "person", True)
@@ -1464,7 +1474,17 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
     merge("agedto", "MATCHAGETO")
     uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", "", \
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
+    if "homecheckpass" in d.keys() and d["homecheckpass"]:
+        update_pass_homecheck(dbo, username, personid, comments="")
+    if "homecheckedby" in d.keys():
+        ilikename = dbo.sql_ilike("OwnerName", "?")
+        uv["HomeCheckedBy"] = dbo.query_int(
+            f"SELECT ID FROM owner WHERE IsHomeChecker = 1 AND (UPPER(OwnerCode) = ? OR {ilikename})",
+            [d["homecheckedby"].upper(), f"%{d["homecheckedby"]}%"]
+        )
+
     dbo.update("owner", personid, uv, username)
+    
 
 def merge_gdpr_flags(dbo: Database, username: str, personid: int, flags: str) -> str:
     """
