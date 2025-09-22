@@ -33,6 +33,10 @@ mobiletelephone / celltelephone / mobiletelephone2 / celltelephone2
     The person's mobile number
 emailaddress / emailaddress2
     The person's email address
+homecheckpass
+    If a person has passed a homecheckpass
+homecheckedby
+    The name or ownercode of the home checker
 lookingforolderthan
     The person's "looking for" animal age preference (use number type field for years value)
 lookingforsex
