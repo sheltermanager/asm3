@@ -4892,6 +4892,15 @@ class mailmerge(JSONEndpoint):
 
         asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html", post.boolean("unsubscribe"), createlog=post.boolean("logemail"), logtypeid=post.integer("logtype"), logmessage=post["logmessage"], username=o.user)
 
+        if post.boolean("logemail"):
+            linkids = []
+            for r in rows:
+                if "OWNERID" in r:
+                    linkids.append(r.OWNERID)
+                elif "ID" in r:
+                    linkids.append(r.ID)
+            asm3.log.add_logmulti(dbo, o.user, asm3.log.PERSON, linkids, post.integer("logtype"), post["logmessage"])
+        
     def post_document(self, o):
         dbo = o.dbo
         post = o.post

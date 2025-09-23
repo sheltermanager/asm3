@@ -4,7 +4,6 @@ import asm3.cachemem
 import asm3.configuration
 import asm3.i18n
 import asm3.users
-import asm3.log
 
 from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SERVICE_URL, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union
@@ -2164,7 +2163,6 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
     """
     l = dbo.locale
     def do_send():
-        if createlog: linkids = []
         for r in rows:
             ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>", cr_to_br = False)
             sbody = substitute_tags(body, r)
@@ -2177,18 +2175,11 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
             if toadd is None or toadd.strip() == "": continue
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
             send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
-            if createlog:
-                if "OWNERID" in r:
-                    linkids.append(r.OWNERID)
-                elif "ID" in r:
-                    linkids.append(r.ID)
             if "EMAILADDRESS2" in r: 
                 toadd = r.EMAILADDRESS2
                 if toadd is None or toadd.strip() == "": continue
                 asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
                 send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
-        if createlog:
-                asm3.log.add_logmulti(dbo, username, asm3.log.PERSON, linkids, logtypeid, logmessage)
     thread.start_new_thread(do_send, ())
 
 def send_error_email(errtype, errvalue, path, errmsg) -> None:
