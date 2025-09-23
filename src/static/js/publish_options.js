@@ -179,7 +179,7 @@ $(function() {
                                 '<option value="1">Do not generate and upload (not recommended)</option>', 
                                 classes: 'pbool preset' }
                         ]}, 
-                    { id: "tab-avidus", title: "AVID US Microchips", classes: 'localeus', 
+                    { id: "tab-avidus", title: "AVID US Microchips", classes: 'localeus hasavidus', 
                         info: 'These settings are for registering microchips with new owner information to the AVID database. <br/>' + 
                         'Find out more at <a target="_blank" href="https://www.avidid.com/">www.avidid.com</a>', 
                         fields: [
