@@ -417,7 +417,6 @@ def http_date(dt: datetime) -> str:
         dt.year, dt.hour, dt.minute, dt.second)
 
 def parse_currency(locale: str, f: str) -> int:
-    
     try:
         # Remove non-numeric characters
         v = re.sub(r'[^\d\-\.]+', '', f)

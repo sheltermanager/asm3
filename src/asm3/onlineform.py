@@ -1256,6 +1256,13 @@ def guess_entryreason(dbo: Database, s: str) -> int:
     if guess != 0: return guess
     return asm3.configuration.default_entry_reason(dbo)
 
+def guess_entrytype(dbo: Database, s: str) -> int:
+    """ Guesses an entry type, returns the default if no match is found """
+    s = str(s).lower().strip()
+    guess = dbo.query_int("SELECT ID FROM lksentrytype WHERE LOWER(EntryTypeName) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_entry_type(dbo)
+
 def guess_equipmenttype(dbo: Database, s: str) -> int:
     """ Guesses an equipment type, returns the first equipment type found by ID if no match is found """
     s = str(s).lower().strip()
@@ -1836,13 +1843,13 @@ def create_traploan(dbo: Database, username: str, collationid: int) -> Tuple[int
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
     for f in fields:
-        if f.FIELDNAME == "equipmenttype": d["type"] = guess_equipmenttype(dbo, f.VALUE)
+        if f.FIELDNAME == "equipmenttype": d["type"] = str(guess_equipmenttype(dbo, f.VALUE))
         if f.FIELDNAME == "loandate": d["loandate"] = f.VALUE
         if f.FIELDNAME == "deposit": d["depositamount"] = str(asm3.i18n.parse_currency(l, f.VALUE))
         if f.FIELDNAME == "returnduedate": d["returnduedate"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "loandate" not in d.keys(): d["loandate"] = asm3.i18n.python2display(l, dbo.today())
-    if "type" not in d.keys(): d["type"] = guess_equipmenttype(dbo, "")
+    if "type" not in d.keys(): d["type"] = str(guess_equipmenttype(dbo, ""))
     d["person"] = create_person(dbo, username, collationid)[1]
     asm3.animalcontrol.insert_traploan_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
     return (collationid, d["person"], asm3.person.get_person_name(dbo, d["person"]))
