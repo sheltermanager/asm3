@@ -535,6 +535,7 @@ $(function() {
 
             // Disable services that require sitedef setup
             if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
+            if (!controller.hasavidus) { $(".hasavidus").hide(); }
             if (!controller.hasbuddyid) { $(".hasbuddyid").hide(); }
             if (!controller.hasfindpet) { $(".hasfindpet").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
