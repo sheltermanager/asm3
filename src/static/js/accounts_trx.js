@@ -82,7 +82,7 @@ $(function() {
             ].join("\n");
         },
 
-        render_tablebody: function() {
+    render_tablebody: function() {
             let h = [],
                 tdc = "even",
                 futuredrawn = false,
@@ -110,6 +110,12 @@ $(function() {
                         t.DONATIONANIMALCODE + " - " + 
                         t.DONATIONANIMALNAME + '</a>';
                 }
+                if (t.COSTANIMALID) {
+                    desc += " " + html.icon("right") + " " + 
+                        '<a href="animal?id=' + t.COSTANIMALID + '">' +
+                        t.COSTANIMALCODE + " - " + 
+                        t.COSTANIMALNAME + '</a>';
+                }
                 if (t.DONATIONRECEIPTNUMBER) {
                     //desc += " [" + t.DONATIONRECEIPTNUMBER + "]";
                     desc += ' <span id="dontrx-' + t.ID + '" class="asm-callout" data-icon="donation">' +
@@ -127,6 +133,12 @@ $(function() {
                     if ( t.FEE > 0) {
                         desc += "<br>" + _("Fee") + ": " + format.currency(t.FEE);
                     }
+                    desc += '</span>';
+                }
+                if (t.ANIMALCOSTID) {
+                    desc += ' <span id="animalcosttrx-' + t.ID + '" class="asm-callout" data-icon="cost">' +
+                    _("Cost") + "<br><br>" +
+                    _("Invoice No") + ": " + t.INVOICENUMBER + "<br>";
                     desc += '</span>';
                 }
                 desc = html.truncate(t.DESCRIPTION) + " " + desc;
