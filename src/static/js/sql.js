@@ -1,4 +1,4 @@
-/*global $, jQuery, Mousetrap, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
@@ -14,8 +14,14 @@ $(function() {
                 '<span id="callout-sql" class="asm-callout">' + 
                     _("SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete table and column names") + 
                 '</span>'},
-                { id: "exec", text: _("Execute"), tooltip: _("Execute the SQL in the box below"), icon: "sql", hotkey: "CTRL+E" },
-                { id: "script", text: _("Execute Script"), tooltip: _("Upload an SQL script"), icon: "sql" },
+                { id: "exec", text: _("Execute"), tooltip: _("Execute the SQL in the box below"), icon: "sql", hotkey: "ctrl+e",
+                    click: function() {
+                        sql.exec();
+                    } },
+                { id: "script", text: _("Execute Script"), tooltip: _("Upload an SQL script"), icon: "sql", 
+                    click: function() {
+                        $("#dialog-script").dialog("open");
+                    } },
                 { id: "export", text: _("Export"), tooltip: _("Export this database in various formats"), icon: "database",
                     type: "buttonmenu", 
                 options: [ 
@@ -171,17 +177,6 @@ $(function() {
                 return false;
             });
 
-            $("#button-exec").button().click(sql.exec);
-
-            // Bind the CTRL+E key to execute
-            Mousetrap.bind("ctrl+e", function() {
-                sql.exec();
-                return false; 
-            });
-
-            $("#button-script").button().click(function() {
-                $("#dialog-script").dialog("open");
-            });
         },
 
         sync: function() {

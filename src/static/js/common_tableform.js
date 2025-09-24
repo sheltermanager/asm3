@@ -41,7 +41,7 @@ const tableform = {
                     b += " " + v.text;
                 }
                 if (v.hotkey) { 
-                    b += ' <span class="asm-hotkey">' + v.hotkey + '</span>';
+                    b += ' <span class="asm-hotkey">' + v.hotkey.toUpperCase() + '</span>';
                 }
                 b += "</button>";
             }
@@ -108,6 +108,7 @@ const tableform = {
             if (!v.type || v.type == "button") {
                 $("#button-" + v.id).button();
                 if (v.click) { $("#button-" + v.id).click(v.click); }
+                if (v.hotkey) { Mousetrap.bind(v.hotkey.toLowerCase(), function() { v.click(); return false; }); }
                 if (v.mouseover) { $("#button-" + v.id).mouseover(v.mouseover); }
                 if (v.mouseleave) { $("#button-" + v.id).mouseleave(v.mouseleave); }
                 if (v.enabled == "one" || v.enabled == "multi") { $("#button-" + v.id).button("disable"); }
