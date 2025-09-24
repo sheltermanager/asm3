@@ -6,7 +6,7 @@ $(function() {
 
     const sql = {
 
-        history: [],
+        history: [ "" ],
 
         render: function() {
             this.buttons = [
@@ -77,6 +77,9 @@ $(function() {
          */
         dumpchoice: "dumpsql",
 
+        /** 
+         * Push a new query into the history
+         */
         add_to_history: function(v) {
             // if v is already in the queue, move it to the top
             if (sql.history.includes(v)) {
@@ -85,7 +88,22 @@ $(function() {
                 });
             }
             sql.history.push(v);
+            common.local_set("sql_history", sql.history.join("||"));
             $("#history").html(html.list_to_options(sql.history.toReversed()));
+        },
+
+        /**
+         * Read the history from local storage 
+         */
+        read_history: function() {
+            let h = common.local_get("sql_history");
+            if (!h) {
+                sql.history = [ "" ];
+            }
+            else {
+                sql.history = h.split("||");
+                $("#history").html(html.list_to_options(sql.history.toReversed()));
+            }
         },
 
         /**
@@ -180,7 +198,7 @@ $(function() {
         },
 
         sync: function() {
-            sql.history = [];
+            this.read_history();
         },
 
         name: "sql",
