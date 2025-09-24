@@ -160,7 +160,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;
@@ -208,7 +208,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;

@@ -40,6 +40,9 @@ const tableform = {
                 if (v.text) {
                     b += " " + v.text;
                 }
+                if (v.hotkey) { 
+                    b += ' <span class="asm-hotkey">' + v.hotkey + '</span>';
+                }
                 b += "</button>";
             }
             else if (v.type == "raw") {
