@@ -6490,6 +6490,45 @@ class person_donations(JSONEndpoint):
             "rows": donations
         }
 
+class person_costs(JSONEndpoint):
+    url = "person_costs"
+    get_permissions = asm3.users.VIEW_COST
+
+    def controller(self, o):
+        dbo = o.dbo
+        personid = o.post.integer("id")
+        p = asm3.person.get_person(dbo, personid)
+        if p is None: self.notfound()
+        costs = asm3.person.get_costs(dbo, personid)
+        asm3.al.debug("got %d costs for person %s" % (len(costs), p["OWNERNAME"]), "main.person_costs", dbo)
+        return {
+            "name": "person_costs",
+            "rows": costs,
+            "person": p,
+            "costtypes": asm3.lookups.get_costtypes(dbo),
+            "tabcounts": asm3.person.get_satellite_counts(dbo, personid)[0]
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_COST)
+        o.post["animalid"] = o.post["animal"]
+        return asm3.animal.insert_cost_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_COST)
+        asm3.animal.update_cost_from_form(o.dbo, o.user, o.post)
+
+    def post_dailyboardingcost(self, o):
+        self.check(asm3.users.CHANGE_ANIMAL)
+        animalid = o.post.integer("animalid")
+        cost = o.post.integer("dailyboardingcost")
+        asm3.animal.update_daily_boarding_cost(o.dbo, o.user, animalid, cost)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_COST)
+        for cid in o.post.integer_list("ids"):
+            asm3.animal.delete_cost(o.dbo, o.user, cid)
+
 class person_embed(ASMEndpoint):
     url = "person_embed"
     check_logged_in = False
