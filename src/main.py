@@ -6518,12 +6518,6 @@ class person_costs(JSONEndpoint):
         self.check(asm3.users.CHANGE_COST)
         asm3.animal.update_cost_from_form(o.dbo, o.user, o.post)
 
-    def post_dailyboardingcost(self, o):
-        self.check(asm3.users.CHANGE_ANIMAL)
-        animalid = o.post.integer("animalid")
-        cost = o.post.integer("dailyboardingcost")
-        asm3.animal.update_daily_boarding_cost(o.dbo, o.user, animalid, cost)
-
     def post_delete(self, o):
         self.check(asm3.users.DELETE_COST)
         for cid in o.post.integer_list("ids"):
