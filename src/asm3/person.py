@@ -152,6 +152,23 @@ def embellish_latest_movement(dbo: Database, p: ResultRow) -> ResultRow:
         p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
+def get_costs(dbo: Database, personid: int, sort: int = ASCENDING) -> Results:
+    """
+    Returns cost records for the given person:
+    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, ANIMALID, INVOICENUMBER
+    """
+    sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
+        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate, a.AnimalID, an.AnimalName, an.ShelterCode, an.ShortCode, a.InvoiceNumber, o.OwnerName " \
+        "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
+        "INNER JOIN animal an ON a.AnimalID = an.ID " \
+        "INNER JOIN owner o ON a.OwnerID = o.ID " \
+        "WHERE a.OwnerID = ?"
+    if sort == ASCENDING:
+        sql += " ORDER BY a.CostDate"
+    else:
+        sql += " ORDER BY a.CostDate DESC"
+    return dbo.query(sql, [personid])
+
 def get_homechecked(dbo: Database, personid: int) -> Results:
     """
     Returns a list of people homechecked by personid
@@ -316,6 +333,7 @@ def get_satellite_counts(dbo: Database, personid: int) -> Results:
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
+        "(SELECT COUNT(*) FROM animalcost ac WHERE ac.OwnerID = o.ID) AS costs, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.OwnerID = o.ID) AS licence, " \
