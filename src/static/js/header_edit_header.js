@@ -575,7 +575,7 @@ edit_header = {
      * Returns the header for any of the person pages, with the thumbnail image, info and tabs
      * Since the content will be contained in a tab, the caller needs to add a div
      * p: A person row from get_person
-     * selected: The name of the selected tab (person, donations, vouchers, media, diary, movements, links, log)
+     * selected: The name of the selected tab (person, costs, donations, vouchers, media, diary, movements, links, log)
      */
     person_edit_header: function(p, selected, counts) {
         const check_display_icon = function(key, iconname) {
