@@ -120,7 +120,7 @@ class SavourLifePublisher(AbstractPublisher):
             return
 
         preanimals = self.getMatchingAnimals(includeAdditionalFields=True)
-        animals = [ x for x in preanimals if x.SPECIESID == 1 ] # We only want dogs
+        animals = [ x for x in preanimals if x.SPECIESID == 1 or x.SPECIESID == 2 ] # We only want dogs and cats
         processed = []
 
         # Log that there were no animals, we still need to check
@@ -369,6 +369,7 @@ class SavourLifePublisher(AbstractPublisher):
             "DogId":                    asm3.utils.iif(dogid == "", None, dogid), # SL expect a null in this field for no dogid
             "Description":              self.getDescription(an, replaceSmart=True),
             "DogName":                  an.ANIMALNAME.title(),
+            "AnimalType":               an.SPECIESNAME,
             "Images":                   self.getPhotoUrls(an.ID),
             "BreedId":                  self.get_breed_id(an.BREEDNAME1, an.CROSSBREED == 1),
             "Suburb":                   location_suburb,
