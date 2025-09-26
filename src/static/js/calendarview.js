@@ -46,6 +46,7 @@ $(function() {
                 chk("toggle-incident", "o", "call", _("Incident followup")),
                 chk("toggle-transport", "r", "transport", _("Transport")),
                 chk("toggle-traploan", "l", "traploan", _("Equipment loan")),
+                chk("toggle-event", "e", "event", _("Event")),
                 '</p>',
                 '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;"></div>',
                 html.content_footer()
@@ -73,7 +74,7 @@ $(function() {
                     listtitle.html(event.title);
                     // We extend the default event object to support tooltips and icons
                     if (event.tooltip) { 
-                        element.prop("title", html.decode(event.tooltip)); 
+                        element.prop("title", html.decode(html.strip_tags(event.tooltip))); 
                     }
                     if (event.fgcol) {
                         element.css("color", event.fgcol);
@@ -84,7 +85,7 @@ $(function() {
                         element.css("border-color", event.bgcol);
                     }
                     if (event.link) { 
-                        title.wrap('<a style="color: #fff" href="' + event.link + '"></a>');
+                        title.wrap('<a style="color: inherit" href="' + event.link + '"></a>');
                         listtitle.prop("href", event.link);
                         if (event.tooltip) { listtitle.html(event.tooltip); } // Use the more detailed version in the list
                     }
@@ -129,6 +130,7 @@ $(function() {
             if (config.bool("DisableClinic")) { $(".tagclinic").hide(); }
             if (config.bool("DisableTransport")) { $(".tagtransport").hide(); }
             if (config.bool("DisableTrapLoan")) { $(".tagtraploan").hide(); }
+            if (config.bool("DisableEvents")) { $(".tagevent").hide(); }
         },
 
         delay: function() {
