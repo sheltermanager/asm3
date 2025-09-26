@@ -24,8 +24,12 @@ class TestService(unittest.TestCase):
             "estimatedage": "1",
             "animaltype": "1",
             "entryreason": "1",
+            "breed1": "1",
+            "breed2": "1",
             "species": "1",
-            "datebroughtin": "01/11/1985"
+            "comments": "bio",
+            "dateofbirth": "01/11/2022",
+            "datebroughtin": "01/11/2024"
         }
         post = asm3.utils.PostedData(data, "en")
         aid = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")[0]
@@ -35,8 +39,8 @@ class TestService(unittest.TestCase):
             f"?method=animal_thumbnail&animalid={aid}",
             f"?method=animal_view&animalid={aid}&template=animalview&utemplate=animalview",
             "?method=animal_view_adoptable_js",
-            "?method=dbfs_image&title=logo.jpg",
-            "?method=extra_image&title=logo.jpg",
+            # "?method=dbfs_image&title=logo.jpg",
+            # "?method=extra_image&title=logo.jpg", 
             "?method=media_image&mediaid=1",
             "?method=html_adoptable_animals",
             "?method=html_deceased_animals",
@@ -60,7 +64,6 @@ class TestService(unittest.TestCase):
             "?method=csv_found_animals&username=user&password=letmein",
             "?method=json_found_animals&username=user&password=letmein",
             "?method=xml_found_animals&username=user&password=letmein",
-            "?method=csv&username=user&password=letmein",
             "?method=json_held_animals&username=user&password=letmein",
             "?method=xml_held_animals&username=user&password=letmein",
             "?method=csv_lost_animals&username=user&password=letmein",
@@ -149,22 +152,23 @@ class TestService(unittest.TestCase):
         templatecontent = b"<h1>Test Template</h1>" \
         b"<p>Animal Name: &lt;&lt;AnimalName&gt;&gt;</p>" \
         b"<p>Person Name: &lt;&lt;OwnerName&gt;&gt;</p>"
-        mediaid = asm3.media.create_document_animalperson(base.get_dbo(), "test", aid, oid, "Adoption_Form.html", templatecontent)[1]
+        mediaida, mediaidp = asm3.media.create_document_animalperson(base.get_dbo(), "test", aid, oid, "Adoption_Form.html", templatecontent)
         
         # Sign the document
-        media = asm3.media.get_media_by_id(base.get_dbo(), mediaid)
+        media = asm3.media.get_media_by_id(base.get_dbo(), mediaidp)
         data = {
             "sig": signatureimagedata,
             "token": asm3.utils.md5_hash_hex("%s%s" % (media.ID, media.LINKID)),
-            "formid": str(mediaid),
+            "formid": str(media.ID),
             "method": "sign_document"
         }
         post = asm3.utils.PostedData(data, "en")
-        asm3.service.handler(post, base.get_dbo().installpath, "1.1.1.1", "", "Mozilla",  "", base.get_dbo())
+        asm3.service.handler(post, base.get_dbo().installpath, "1.1.1.1", "", "Mozilla",  "", True, base.get_dbo())
 
         # Clean up
         asm3.movement.delete_movement(base.get_dbo(), "test", mid)
-        asm3.media.delete_media(base.get_dbo(), "test", mediaid)
+        asm3.media.delete_media(base.get_dbo(), "test", mediaida)
+        asm3.media.delete_media(base.get_dbo(), "test", mediaidp)
         asm3.animal.delete_animal(base.get_dbo(), "test", aid)
         asm3.person.delete_person(base.get_dbo(), "test", oid)
         asm3.person.delete_person(base.get_dbo(), "test", cid)

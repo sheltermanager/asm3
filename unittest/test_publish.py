@@ -48,7 +48,7 @@ class TestPublish(unittest.TestCase):
             "emailaddress": "dirk@diggler.com"
         }
         post = asm3.utils.PostedData(sparsepersondata, "en")
-        self.nid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
+        self.pnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
         post = asm3.utils.PostedData(richpersondata, "en")
         self.rnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
         animaldata = [
@@ -104,7 +104,7 @@ class TestPublish(unittest.TestCase):
             post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
             asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
             self.animals.append((animalid, sheltercode))
-        #self.nid = self.animals[0][0] 
+        self.nid = self.animals[0][0] 
 
         data = {
             "datelost": base.today_display(),
@@ -154,7 +154,7 @@ class TestPublish(unittest.TestCase):
         asm3.movement.delete_movement(base.get_dbo(), "test", self.mid)
         for aid, sheltercode in self.animals:
             asm3.animal.delete_animal(base.get_dbo(), "test", aid)
-        asm3.person.delete_person(base.get_dbo(), "test", self.nid)
+        asm3.person.delete_person(base.get_dbo(), "test", self.pnid)
         asm3.person.delete_person(base.get_dbo(), "test", self.rnid)
 
     # base
