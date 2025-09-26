@@ -132,7 +132,7 @@ $(function() {
                         },
                         { id: 'em-body', post_field: 'body', label: _("Email body"), type: 'richtextarea', height: '200px', validation: 'notblank' },
                         { id: 'em-template', label: _("Template"), type: 'select', options: edit_header.template_list_options(controller.templates) },
-                        { id: 'em-includeunsubscribe', post_field: 'unsubscribe', post_field: 'em-includeunsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
+                        { id: 'em-includeunsubscribe', post_field: 'unsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
                         { id: 'em-logemail', post_field: 'logemail', label: _("Add a log to recipient person records"), type: 'check',
                             hideif: mailmerge.log_unavailable
                         },
@@ -279,7 +279,6 @@ $(function() {
                 });
             }
             $("#em-logemail").click(function() {
-                console.log($(this).prop("checked"));
                 if ($(this).prop("checked")) {
                     $("#em-logtyperow, #em-logmessagerow").show();
                 } else {
