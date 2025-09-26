@@ -9,6 +9,7 @@ import asm3.configuration
 import asm3.publishers.adoptapet
 import asm3.publishers.akcreunite
 import asm3.publishers.anibaseuk
+import asm3.publishers.avid
 import asm3.publishers.buddyid
 import asm3.publishers.findpet
 import asm3.publishers.foundanimals
@@ -103,6 +104,12 @@ PUBLISHER_LIST["rg"] = {
 PUBLISHER_LIST["ak"] = {
     "label":    "Register microchips with AKC Reunite",
     "class":    asm3.publishers.akcreunite.AKCReunitePublisher,
+    "locales":  "en",
+    "sub24hour": False
+}
+PUBLISHER_LIST["av"] = {
+    "label":    "Register microchips with AVID",
+    "class":    asm3.publishers.avid.AVIDUSPublisher,
     "locales":  "en",
     "sub24hour": False
 }
