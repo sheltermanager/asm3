@@ -23,6 +23,14 @@ $(function() {
         previewloaded: false,
         recipientsloaded: false,
 
+        log_unavailable: function() {
+            if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+
         render: function() {
             let hf = [
                 '<input type="hidden" name="mode" value="{mode}" />',
@@ -126,31 +134,13 @@ $(function() {
                         { id: 'em-template', label: _("Template"), type: 'select', options: edit_header.template_list_options(controller.templates) },
                         { id: 'em-includeunsubscribe', post_field: 'unsubscribe', post_field: 'em-includeunsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
                         { id: 'em-logemail', post_field: 'logemail', label: _("Add a log to recipient person records"), type: 'check',
-                            hideif: function() {
-                                if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
-                                    return false;
-                                } else {
-                                    return true;
-                                }
-                            }
+                            hideif: mailmerge.log_unavailable
                         },
                         { id: 'em-logtype', post_field: 'logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME'),
-                            hideif: function() {
-                                if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
-                                    return false;
-                                } else {
-                                    return true;
-                                }
-                            }
+                            hideif: mailmerge.log_unavailable
                         },
-                        { id: 'em-logmessage', post_field: 'logmessage', label: _("Log message"), type: 'textarea', validation: 'notblank',
-                            hideif: function() {
-                                if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
-                                    return false;
-                                } else {
-                                    return true;
-                                }
-                            }
+                        { id: 'em-logmessage', post_field: 'logmessage', label: _("Log message"), type: 'textarea',
+                            hideif: mailmerge.log_unavailable
                          },
                     ],
                     {
@@ -288,9 +278,20 @@ $(function() {
                     });
                 });
             }
+            $("#em-logemail").click(function() {
+                console.log($(this).prop("checked"));
+                if ($(this).prop("checked")) {
+                    $("#em-logtyperow, #em-logmessagerow").show();
+                } else {
+                    $("#em-logtyperow, #em-logmessagerow").hide();
+                }
+            });
         },
 
         sync: function() {
+
+            // Hide log type and log message rows until log recipients box is ticked
+            $("#em-logtyperow, #em-logmessagerow").hide();
 
             // Default the email signature for bulk emails
             let sig = config.str("EmailSignature");

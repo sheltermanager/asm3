@@ -4890,7 +4890,7 @@ class mailmerge(JSONEndpoint):
             emails = self.recipients(rows)
             asm3.audit.email(dbo, o.user, fromadd, ",".join(emails), "", "", subject, body)
 
-        asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html", post.boolean("unsubscribe"), createlog=post.boolean("logemail"), logtypeid=post.integer("logtype"), logmessage=post["logmessage"], username=o.user)
+        asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html", post.boolean("unsubscribe"))
 
         if post.boolean("logemail"):
             linkids = []

@@ -2151,7 +2151,7 @@ def _send_email(msg: MIMEMultipart, fromadd: str, tolist: List[str], dbo: Databa
             time.sleep(RETRY_SECS)
             _send_email(msg, fromadd, tolist, dbo=dbo, exceptions=exceptions, retries=retries-1)
 
-def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows: Results, contenttype: str, unsubscribe: bool, createlog: bool = False, logtypeid: int = 0, logmessage: str = '', username: str = '') -> None:
+def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows: Results, contenttype: str, unsubscribe: bool) -> None:
     """
     Sends a set of bulk emails asynchronously.
     replyadd is an RFC821 address and controls the Reply-To header
