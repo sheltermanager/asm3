@@ -5,7 +5,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 
-from asm3.sitedefs import AVID_US_POST_URL
+from asm3.sitedefs import AVID_US_BASE_URL
 from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
 import sys
@@ -67,14 +67,16 @@ class AVIDUSPublisher(AbstractPublisher):
                     return
                 if not self.validate(an): continue
                 fields = self.processAnimal(an)
-                r = asm3.utils.post_json(AVID_US_POST_URL, asm3.utils.json(fields), config["headers"])
+                jsondata = asm3.utils.json(fields)
+                url = f"{AVID_US_BASE_URL}/registrations"
+                self.log("Sending POST to %s: %s" % (url, jsondata))
+                r = asm3.utils.post_json(url, jsondata, config["headers"])
                 if r["response"] and asm3.utils.json_parse(r["response"])["status"] == 'COMPLETE':
-                    self.log("Successful response, marking processed")
-                    processed_animals.append(an)
-                    # Mark success in the log
+                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    processed_animals.append(an)
                 else:
-                    self.logError("Problem with data encountered, not marking processed")
+                    self.logError("status != COMPLETE: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
