@@ -116,7 +116,8 @@ FORM_FIELDS = [
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime",
-    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan"
+    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan",
+    "equipmenttype", "loandate", "deposit", "returnduedate"
 ]
 
 AUTOCOMPLETE_MAP = {
@@ -1290,6 +1291,23 @@ def guess_entrytype(dbo: Database, s: str) -> int:
     if guess != 0: return guess
     return asm3.configuration.default_entry_type(dbo)
 
+def guess_equipmenttype(dbo: Database, s: str) -> int:
+    """ Guesses an equipment type, returns the first equipment type found by ID if no match is found """
+    s = str(s).lower().strip()
+    guess = dbo.query_int("SELECT ID FROM traptype WHERE LOWER(TrapTypeName) LIKE ?", ["%%%s%%" % s])
+    if guess != 0:
+        return guess
+    else:
+        fallback = dbo.query_int("SELECT ID FROM traptype ORDER BY ID LIMIT 1")
+        return fallback
+
+def guess_breed(dbo: Database, s: str) -> int:
+    """ Guesses a breed, returns the default if no match is found """
+    s = str(s).lower().strip()
+    guess = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_breed(dbo)
+
 def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
     if s.lower() == asm3.i18n._("Male").lower():
@@ -1843,6 +1861,26 @@ def create_transport(dbo: Database, username: str, collationid: int) -> Tuple[in
     asm3.movement.insert_transport_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
+
+def create_traploan(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
+    """
+    Creates an equipment loan record from the incoming form data with collationid.
+    Also, attaches the form to the person as asm3.media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    for f in fields:
+        if f.FIELDNAME == "equipmenttype": d["type"] = str(guess_equipmenttype(dbo, f.VALUE))
+        if f.FIELDNAME == "loandate": d["loandate"] = f.VALUE
+        if f.FIELDNAME == "deposit": d["depositamount"] = str(asm3.csvimport.gkc(f, "VALUE", l))
+        if f.FIELDNAME == "returnduedate": d["returnduedate"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+    if "loandate" not in d.keys(): d["loandate"] = asm3.i18n.python2display(l, dbo.today())
+    if "type" not in d.keys(): d["type"] = str(guess_equipmenttype(dbo, ""))
+    d["person"] = create_person(dbo, username, collationid)[1]
+    asm3.animalcontrol.insert_traploan_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
+    return (collationid, d["person"], asm3.person.get_person_name(dbo, d["person"]))
 
 def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
     """
