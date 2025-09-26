@@ -2,9 +2,9 @@
 import asm3.configuration
 import asm3.i18n
 import asm3.utils
-import requests
 
 from .base import AbstractPublisher, get_microchip_data
+
 from asm3.sitedefs import AVID_US_POST_URL
 from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
@@ -137,9 +137,7 @@ class AVIDUSPublisher(AbstractPublisher):
                 {
                     "pets": [
                         {
-                            "breeds": [
-                                breed
-                            ],
+                            "breeds": [ breed ],
                             "color": an["BASECOLOURNAME"],
                             "dob": asm3.i18n.format_date(an["DATEOFBIRTH"], "%m-%d-%Y"),
                             "fixed": an["NEUTERED"] == 1 and "true" or "false",
@@ -214,3 +212,4 @@ class AVIDUSPublisher(AbstractPublisher):
             return False
     
         return True
+

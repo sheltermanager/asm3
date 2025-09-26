@@ -1301,13 +1301,6 @@ def guess_equipmenttype(dbo: Database, s: str) -> int:
         fallback = dbo.query_int("SELECT ID FROM traptype ORDER BY ID LIMIT 1")
         return fallback
 
-def guess_breed(dbo: Database, s: str) -> int:
-    """ Guesses a breed, returns the default if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) LIKE ?", ["%%%s%%" % s])
-    if guess != 0: return guess
-    return asm3.configuration.default_breed(dbo)
-
 def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
     if s.lower() == asm3.i18n._("Male").lower():
