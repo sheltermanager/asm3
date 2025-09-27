@@ -5096,6 +5096,18 @@ class maint_ping(ASMEndpoint):
         frules = asm3.smcom.iptables_rules()
         if frules.find("REJECT") != -1 or frules.find("DROP") != -1: keywords.append("firewall")
         return " ".join(keywords)
+    
+class maint_reset_task(ASMEndpoint):
+    url = "maint_reset_task"
+    
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        try:
+            asm3.asynctask.reset(o.dbo)
+            return "Exec asm3.asynctask.reset"
+        except Exception as err:
+            return str(err)
 
 class maint_sac_metrics(ASMEndpoint):
     url = "maint_sac_metrics"
