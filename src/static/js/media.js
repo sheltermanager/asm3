@@ -972,9 +972,9 @@ $(function() {
                 });
             });
 
-            $("#button-image").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
-            $("#button-move").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
-            $("#button-sign").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-move").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
 
             $("#button-signemail").click(function() {
                 $("#button-sign").asmmenu("hide_all");
