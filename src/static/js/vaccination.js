@@ -373,7 +373,7 @@ $(function() {
             return [
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Give Vaccination")) + '">',
                 tableform.fields_render([
-                    { post_field: "givennewdate", type: "date", label: _("Given"), nofuture: true },
+                    { post_field: "givennewdate", type: "date", label: _("Given"), date_nofuture: true },
                     { post_field: "givenexpires", type: "date", label: _("Expires"),  
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { post_field: "givenbatch", type: "text", label: _("Batch Number") },
@@ -388,7 +388,7 @@ $(function() {
                         ' <span id="callout-rescheduledate" class="asm-callout">' + 
                         _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + 
                         '</span></p>' },
-                    { post_field: "rescheduledate", type: "date", label: _("Reschedule"), nopast: true },
+                    { post_field: "rescheduledate", type: "date", label: _("Reschedule"), date_nopast: true },
                     { post_field: "reschedulecomments", type: "textarea", label: _("Comments") },
                     { type: "raw", fullrow: true, rowclasses: "tagstock", 
                         markup: '<p class="asm-header">' + _("Stock") + 

@@ -541,7 +541,7 @@ $(function() {
             return [
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Give Treatments")) + '">',
                 tableform.fields_render([
-                    { post_field: "newdate", type: "date", label: _("Given"), nofuture: true },
+                    { post_field: "newdate", type: "date", label: _("Given"), date_nofuture: true },
                     { post_field: "givenby", type: "select", label: _("By"), 
                         options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>' }},
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },

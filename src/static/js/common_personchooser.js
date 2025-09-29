@@ -485,6 +485,7 @@ $.widget("asm.personchooser", {
                     html.list_to_options(self.options.sites, "ID", "SITENAME"));
                 // Add jurisdictions
                 dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(self.options.jurisdictions, "ID", "JURISDICTIONNAME"));
+                dialogadd.find(".personchooser-jurisdiction").select();
                 dialogadd.find(".personchooser-jurisdiction").select("value", config.str("DefaultJurisdiction"));
                 dialogadd.find(".personchooser-jurisdiction").select("removeRetiredOptions", "all");
                 // Add new additional fields

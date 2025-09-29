@@ -347,6 +347,44 @@ $.widget("asm.autotext", {
 
 });
 
+/**
+ * Used by all of our number widgets to initialise themselves and set events.
+ * self: A jquery node/reference to the widget itself (this.element)
+ * options: The widget options
+ * allowed_chars: A regex indicating which chars are allowed in this widget
+ *                eg: /[0-9\.\-]/;
+ */
+const number_widget = function(self, options, allowed_chars) {
+    options.min = self.attr("data-min") || null;
+    options.max = self.attr("data-max") || null;
+    if (options.min) {
+        self.blur(function(e) {
+            if (format.to_int(self.val()) < format.to_int(options.min)) {
+                self.val(options.min);
+            }
+        });
+    }
+    if (options.max) {
+        self.blur(function(e) {
+            if (format.to_int(self.val()) > format.to_int(options.max)) {
+                self.val(options.max);
+            }
+        });
+    }
+    disable_autocomplete(self);
+    self.keypress(function(e) {
+        let k = e.charCode || e.keyCode;
+        let ch = String.fromCharCode(k);
+        // Backspace, tab, ctrl, delete, arrow keys ok
+        if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
+            return true;
+        }
+        if (!allowed_chars.test(ch)) {
+            e.preventDefault();
+        }
+    });
+};
+
 // Textbox that should only contain numbers.
 // data-min and data-max attributes can be used to contain the lower/upper bound
 $.widget("asm.number", {
@@ -357,113 +395,49 @@ $.widget("asm.number", {
     },
 
     _create: function() {
-        const allowed = /[0-9\.\-]/;
-        let self = this.element, options = this.options;
-        options.min = self.attr("data-min");
-        options.max = self.attr("data-max");
-        if (options.min) {
-            self.blur(function(e) {
-                if (format.to_int(self.val()) < format.to_int(options.min)) {
-                    self.val(options.min);
-                }
-            });
-        }
-        if (options.max) {
-            self.blur(function(e) {
-                if (format.to_int(self.val()) > format.to_int(options.max)) {
-                    self.val(options.max);
-                }
-            });
-        }
-        disable_autocomplete(self);
-        self.keypress(function(e) {
-            let k = e.charCode || e.keyCode;
-            let ch = String.fromCharCode(k);
-            // Backspace, tab, ctrl, delete, arrow keys ok
-            if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
-                return true;
-            }
-            if (!allowed.test(ch)) {
-                e.preventDefault();
-            }
-        });
+        number_widget(this.element, this.options, new RegExp("[0-9\.\-]"));
     }
 
 });
 
-// Textbox that should only contain numbers and letters (numbers, latin alphabet, no spaces, limited punctuation)
-$.fn.alphanumber = function() {
-    const allowed = new RegExp("[0-9A-Za-z\\.\\*\\-]");
-    this.each(function() {
-        disable_autocomplete($(this));
-        $(this).keypress(function(e) {
-            let k = e.charCode || e.keyCode;
-            let ch = String.fromCharCode(k);
-            // Backspace, tab, ctrl, delete, arrow keys ok
-            if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
-                return true;
-            }
-            if (!allowed.test(ch)) {
-                e.preventDefault();
-            }
-        });
-    });
-};
+// Textbox that should only contain numbers and letters (latin alphabet, no spaces, limited punctuation)
+// data-min and data-max attributes can be used to contain the lower/upper bound
+$.widget("asm.alphanumber", {
+
+    options: { },
+
+    _create: function() {
+        number_widget(this.element, this.options, new RegExp("[0-9A-Za-z\\.\\*\\-]"));
+    }
+
+});
 
 // Textbox that should only contain integer numbers
 // data-min and data-max attributes can be used to contain the lower/upper bound
-$.fn.intnumber = function() {
-    const allowed = new RegExp("[0-9\\-]");
-    this.each(function() {
-        disable_autocomplete($(this));
-        if ($(this).attr("data-min")) {
-            $(this).blur(function(e) {
-                if (format.to_int($(this).val()) < format.to_int($(this).attr("data-min"))) {
-                    $(this).val($(this).attr("data-min"));
-                }
-            });
-        }
-        if ($(this).attr("data-max")) {
-            $(this).blur(function(e) {
-                if (format.to_int($(this).val()) > format.to_int($(this).attr("data-max"))) {
-                    $(this).val($(this).attr("data-max"));
-                }
-            });
-        }
-        $(this).keypress(function(e) {
-            let k = e.charCode || e.keyCode;
-            let ch = String.fromCharCode(k);
-            // Backspace, tab, ctrl, arrow keys ok
-            // (note: little delete key is code 46, shared with decimal point
-            //  so we do not allow it here)
-            if (k == 8 || k == 9 || k == 17 || (k >= 35 && k <= 40)) {
-                return true;
-            }
-            if (!allowed.test(ch)) {
-                e.preventDefault();
-            }
-        });
-    });
-};
+$.widget("asm.intnumber", {
+
+    options: {
+        min:     null,       
+        max:     null
+    },
+
+    _create: function() {
+        number_widget(this.element, this.options, new RegExp("[0-9\\-]"));
+    }
+
+});
+
 
 // Textbox that should only contain CIDR IP subnets or IPv6 HEX/colon
-$.fn.ipnumber = function() {
-    const allowed = new RegExp("[0-9\\.\\/\\:abcdef ]");
-    this.each(function() {
-        disable_autocomplete($(this));
-        $(this).keypress(function(e) {
-            let k = e.charCode || e.keyCode;
-            let ch = String.fromCharCode(k);
-            // Backspace, tab, ctrl, delete, arrow keys ok
-            if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
-                return true;
-            }
-            if (!allowed.test(ch)) {
-                e.preventDefault();
-            }
-        });
-    });
-};
+$.widget("asm.ipnumber", {
+
+    options: { },
+
+    _create: function() {
+        number_widget(this.element, this.options, new RegExp("[0-9\\.\\/\\:abcdef ]"));
+    }
+
+});
 
 const PHONE_RULES = [
     { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
@@ -476,11 +450,15 @@ const PHONE_RULES = [
 ];
 
 // Textbox that can format phone numbers to the locale rules above
-$.fn.phone = function() {
-    this.each(function() {
+$.widget("asm.phone", {
+
+    options: { },
+
+    _create: function() {
         if (!config.bool("FormatPhoneNumbers")) { return; } 
+        let self = this.element;
         disable_autocomplete($(this));
-        $(this).blur(function(e) {
+        self.blur(function(e) {
             let t = $(this);
             let num = String(t.val()).replace(/\D/g, ''); // Throw away all but the numbers
             $.each(PHONE_RULES, function(i, rules) {
@@ -495,118 +473,128 @@ $.fn.phone = function() {
                 return false;
             });
         });
-    });
-};
+    }
+});
 
-$.fn.date = function(method, newval) {
-    if (!method || method == "create") {
-        this.each(function() {
-            disable_autocomplete($(this));
-            let dayfilter = $(this).attr("data-onlydays");
-            let nopast = $(this).attr("data-nopast");
-            let nofuture = $(this).attr("data-nofuture");
-            if (dayfilter || nopast || nofuture) {
-                $(this).datepicker({ 
-                    changeMonth: true, 
-                    changeYear: true,
-                    firstDay: config.integer("FirstDayOfWeek"),
-                    yearRange: "-70:+10",
-                    beforeShowDay: function(a) {
-                        let day = a.getDay();
-                        let rv = false;
-                        if (dayfilter) {
-                            $.each(dayfilter.split(","), function(i, v) {
-                                if (v == String(day)) {
-                                    rv = true;
-                                }
-                                return false;
-                            });
-                        }
-                        else {
-                            rv = true;
-                        }
-                        if (nopast && a < new Date()) { rv = false; }
-                        if (nofuture && a > new Date()) { rv = false; }
-                        return [rv, ""];
-                    }
-                });
-            }
-            else {
-                $(this).datepicker({ 
-                    changeMonth: true, 
-                    changeYear: true,
-                    yearRange: "-70:+10",
-                    firstDay: config.integer("FirstDayOfWeek")
-                });
-            }
-            $(this).keydown(function(e) {
-                let d = $(this);
-                let adjust = function(v) {
-                    if (v == "t") {
-                        d.datepicker("setDate", new Date());
+// Datepicker/wrapper widget
+$.widget("asm.date", {
+
+    options: { 
+        dayfilter: "", // comma separated list of days of the week to only allow (eg: 5,6 = Saturday and Sunday)
+        nopast: false, // true if we want to forbid choosing dates in the past
+        nofuture: false, // true if we want to forbid choosing dates in the future
+    },
+
+    _create: function() {
+        let self = this.element, options = this.options;
+        disable_autocomplete(self);
+        options.dayfilter = self.attr("data-onlydays");
+        options.nopast = self.attr("data-nopast");
+        options.nofuture = self.attr("data-nofuture");
+        if (options.dayfilter || options.nopast || options.nofuture) {
+            self.datepicker({ 
+                changeMonth: true, 
+                changeYear: true,
+                firstDay: config.integer("FirstDayOfWeek"),
+                yearRange: "-70:+10",
+                beforeShowDay: function(a) {
+                    let day = a.getDay();
+                    let rv = false;
+                    if (options.dayfilter) {
+                        $.each(options.dayfilter.split(","), function(i, v) {
+                            if (v == String(day)) {
+                                rv = true;
+                            }
+                            return false;
+                        });
                     }
                     else {
-                        d.datepicker("setDate", v); 
-                        d.change();
+                        rv = true;
                     }
-                    d.change();
-                };
-                if (e.keyCode == 84) { // t - today
-                    adjust("t");
-                }
-                if (e.keyCode == 68 && e.shiftKey == false) { // d, add a day
-                    adjust("c+1d");
-                }
-                if (e.keyCode == 68 && e.shiftKey == true) { // shift+d, remove a day
-                    adjust("c-1d");
-                }
-                if (e.keyCode == 87 && e.shiftKey == false) { // w, add a week
-                    adjust("c+1w");
-                }
-                if (e.keyCode == 87 && e.shiftKey == true) { // shift+w, remove a week
-                    adjust("c-1w");
-                }
-                if (e.keyCode == 77 && e.shiftKey == false) { // m, add a month
-                    adjust("c+1m");
-                }
-                if (e.keyCode == 77 && e.shiftKey == true) { // shift+w, remove a month
-                    adjust("c-1m");
-                }
-                if (e.keyCode == 89 && e.shiftKey == false) { // y, add a year
-                    adjust("c+1y");
-                }
-                if (e.keyCode == 89 && e.shiftKey == true) { // shift+y, remove a year
-                    adjust("c-1y");
+                    if (options.nopast && a < new Date()) { rv = false; }
+                    if (options.nofuture && a > new Date()) { rv = false; }
+                    return [rv, ""];
                 }
             });
-        });
-    }
-    else if (method == "today") {
-        this.each(function() {
-            $(this).datepicker("setDate", new Date());
-        });
-    }
-    else if (method == "getDate") {
-        let rv = null;
-        this.each(function() {
-            rv = $(this).datepicker("getDate");
-        });
-        return rv;
-    }
-    else if (method == "setDate") {
-        // Expects newval to contain a javascript Date object
-        this.each(function() {
-            $(this).datepicker("setDate", newval);
-        });
-    }
-};
+        }
+        else {
+            self.datepicker({ 
+                changeMonth: true, 
+                changeYear: true,
+                yearRange: "-70:+10",
+                firstDay: config.integer("FirstDayOfWeek")
+            });
+        }
+        this.bind_keys(self);
+    },
 
-// Textbox that should only contain a time (numbers and colon)
-$.fn.time = function() {
-    const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':' ];
-    this.each(function() {
-        let t = $(this);
-        $(this).timepicker({
+    bind_keys: function(self) {
+        self.keydown(function(e) {
+            let d = $(this);
+            let adjust = function(v) {
+                if (v == "t") {
+                    d.datepicker("setDate", new Date());
+                }
+                else {
+                    d.datepicker("setDate", v); 
+                    d.change();
+                }
+                d.change();
+            };
+            if (e.keyCode == 84) { // t - today
+                adjust("t");
+            }
+            if (e.keyCode == 68 && e.shiftKey == false) { // d, add a day
+                adjust("c+1d");
+            }
+            if (e.keyCode == 68 && e.shiftKey == true) { // shift+d, remove a day
+                adjust("c-1d");
+            }
+            if (e.keyCode == 87 && e.shiftKey == false) { // w, add a week
+                adjust("c+1w");
+            }
+            if (e.keyCode == 87 && e.shiftKey == true) { // shift+w, remove a week
+                adjust("c-1w");
+            }
+            if (e.keyCode == 77 && e.shiftKey == false) { // m, add a month
+                adjust("c+1m");
+            }
+            if (e.keyCode == 77 && e.shiftKey == true) { // shift+w, remove a month
+                adjust("c-1m");
+            }
+            if (e.keyCode == 89 && e.shiftKey == false) { // y, add a year
+                adjust("c+1y");
+            }
+            if (e.keyCode == 89 && e.shiftKey == true) { // shift+y, remove a year
+                adjust("c-1y");
+            }
+        });
+    },
+
+    today: function() {
+        this.element.datepicker("setDate", new Date());
+    },
+
+    getDate: function() {
+        return this.element.datepicker("getDate");
+    },
+
+    setDate: function(newval) {
+        this.element.datepicker("setDate");
+    }
+
+});
+
+// Textbox that should only contain a time (numbers and colon), wraps the timepicker widget
+$.widget("asm.time", {
+
+    options: { 
+    },
+
+    _create: function() {
+        const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':' ];
+        let t = this.element;
+        t.timepicker({
             hourText: _("Hours"),
             minuteText: _("Minutes"),
             amPmText: [ _("AM"), _("PM") ],
@@ -617,8 +605,8 @@ $.fn.time = function() {
             deselectButtonText: _("Deselect"),
             showDeselectButton: false
         });
-        disable_autocomplete($(this));
-        $(this).keypress(function(e) {
+        disable_autocomplete(t);
+        t.keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);
             // Fill in the time now if t or n are pressed
@@ -635,7 +623,7 @@ $.fn.time = function() {
                 e.preventDefault();
             }
         });
-        $(this).blur(function(e) {
+        t.blur(function(e) {
             // If the value in the box is not HH:MM try and coerce it
             // people frequently enter times like 0900, 900 or 09.00 for some reason
             let v = String($(this).val());
@@ -657,101 +645,101 @@ $.fn.time = function() {
                 header.show_error(_("'{0}' is not a valid time").replace("{0}", v), 5000);
             }
         });
-    });
-};
+    }
+});
 
-// Select box
-$.fn.select = function(method, newval) {
-    let rv = "", tv;
-    if (!method || method == "create") {
-        $(this).each(function() {
-            if ( $(this).hasClass("asm-iconselectmenu") ) {
-                $(this).iconselectmenu({
-                    change: function(event , ui) {
-                        $(this).trigger("change");
-                    }
-                });
-                $(this).iconselectmenu("menuWidget").css("height", "200px");
-            }
-            if ( $(this).hasClass("asm-selectmenu") ) {
-                $(this).selectmenu({
-                    change: function(event, ui) {
-                        $(this).trigger("change");
-                    }
-                });
-                $(this).selectmenu("menuWidget").css("height", "200px");
-            }
-        });
-    }
-    else if (method == "firstvalue") {
-        $(this).each(function() {
-            $(this).val( $(this).find("option:first").val() );
-        });
-    }
-    else if (method == "firstIfBlank") {
-        $(this).each(function() {
-            if ($(this).val() == null) {
-                $(this).val( $(this).find("option:first").val() );
-            }
-        });
-    }
-    else if (method == "value") {
-        $(this).each(function() {
-            if (newval !== undefined) {
-                $(this).val(newval);
-                if ($(this).hasClass("asm-iconselectmenu")) {
-                    $(this).iconselectmenu("refresh");
+// Select box wrapper
+$.widget("asm.select", {
+
+    options: { 
+    },
+
+    _create: function() {
+        let self = this.element;
+        if ( self.hasClass("asm-iconselectmenu") ) {
+            self.iconselectmenu({
+                change: function(event , ui) {
+                    $(this).trigger("change");
                 }
-                else if ($(this).hasClass("asm-selectmenu")) {
-                    $(this).selectmenu("refresh");
+            });
+            self.iconselectmenu("menuWidget").css("height", "200px");
+        }
+        if ( self.hasClass("asm-selectmenu") ) {
+            self.selectmenu({
+                change: function(event, ui) {
+                    $(this).trigger("change");
                 }
+            });
+            self.selectmenu("menuWidget").css("height", "200px");
+        }
+    },
+
+    disable: function() {
+        this.element.attr("disabled", "disabled");
+    },
+
+    enable: function() {
+        this.element.removeAttr("disabled");
+    },
+
+    /** Sets the value to the first element in the options list */
+    firstvalue: function() {
+        this.element.val( this.element.find("option:first").val() );
+    },
+
+    /** Set the value to the first element in the list if nothing is selected */
+    firstIfBlank: function() {
+        let t = this.element;
+        if (t.val() == null) {
+            t.val( t.find("option:first").val() );
+        }
+    },
+
+    /** Return the label for the selected option value */
+    label: function() {
+        return this.element.find("option:selected").html();
+    },
+
+    /** Strip any options that have been retired based on the data-retired attribute */
+    removeRetiredOptions: function(mode) {
+        let t = this.element;
+        // If mode == all, then we remove all retired items
+        // (behaviour you want when adding records)
+        if (mode !== undefined && mode == "all") {
+            t.find("option").each(function() {
+                if ($(this).attr("data-retired") == "1") {
+                    $(this).remove();
+                }
+            });
+        }
+        // mode isn't set - don't remove the selected item if it's retired
+        // (behaviour you want when editing records)
+        else {
+            t.find("option").each(function() {
+                if (!$(this).prop("selected") && $(this).attr("data-retired") == "1") {
+                    $(this).remove();
+                }
+            });
+        }
+    },
+
+    value: function(newval) {
+        let t = this.element;
+        if (newval !== undefined) {
+            t.val(newval);
+            if (t.hasClass("asm-iconselectmenu")) {
+                t.iconselectmenu("refresh");            
             }
-            else {
-                rv = $(this).val();
+            else if (t.hasClass("asm-selectmenu")) {
+                t.selectmenu("refresh");
             }
-        });
+        }
+        else {
+            return t.val();
+        }
     }
-    else if (method == "removeRetiredOptions") {
-        $(this).each(function() {
-            tv = $(this);
-            // newval contains a "mode". If mode == all, then we remove all retired items
-            // (behaviour you want when adding records)
-            if (newval !== undefined && newval == "all") {
-                tv.find("option").each(function() {
-                    if ($(this).attr("data-retired") == "1") {
-                        $(this).remove();
-                    }
-                });
-            }
-            // mode isn't set - don't remove the selected item if it's retired
-            // (behaviour you want when editing records)
-            else {
-                tv.find("option").each(function() {
-                    if (!$(this).prop("selected") && $(this).attr("data-retired") == "1") {
-                        $(this).remove();
-                    }
-                });
-            }
-        });
-    }
-    else if (method == "label") {
-        rv = "";
-        $(this).each(function() {
-            rv = $(this).find("option:selected").html();    
-        });
-    }
-    else if (method == "disable") {
-        $(this).each(function() {
-            $(this).attr("disabled", "disabled");
-        });
-    }
-    else if (method == "enable") {
-        $(this).each(function() {
-            $(this).removeAttr("disabled");
-        });
-    }
-    return rv;
-};
+
+});
 
 /** 
  * JQuery UI select menu with custom rendering for icons
@@ -1031,6 +1019,7 @@ $.widget("asm.emailform", {
         ].join("\n"));
         if ( config.bool("AuditOnSendEmail"))
         $("#em-body").richtextarea();
+        $("#em-logtype, #em-template").select();
         $("#em-docrepo").asmSelect({
             animate: true,
             sortable: true,
@@ -1748,6 +1737,58 @@ $.widget("asm.textbox", {
     }
 });
 
+// Textbox wrapper that should only contain currency
+// The value passed in and out via the value method is in whole pence/cents/whatever the subdivision is
+// (an integer value that we stored in the db for the value)
+$.widget("asm.currency", {
+    options: { },
+
+    _create: function() {
+        const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
+        let t = this.element;
+        disable_autocomplete(t);
+        t.keypress(function(e) {
+            let k = e.charCode || e.keyCode;
+            let ch = String.fromCharCode(k);
+            // Backspace, tab, ctrl, delete, arrow keys ok
+            if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
+                return true;
+            }
+            if ($.inArray(ch, allowed) == -1) {
+                e.preventDefault();
+            }
+        });
+        t.blur(function(e) {
+            // reformat the value when focus leaves the field
+            let i = format.currency_to_int(t.val());
+            t.val(format.currency(i));
+        });
+        this.reset();
+    },
+
+    reset: function() {
+        // Shows the locale's currency symbol and default amount of 0
+        let t = this.element;
+        if (t.val() == "") {
+            t.val(format.currency(0));
+        }
+    },
+
+    value: function(newval) {
+        if (newval === undefined) {
+            // Get the value
+            let v = this.element.val();
+            if (!v) { return 0; }
+            return format.currency_to_int(v);
+        }
+        // We're setting the value
+        this.element.val(format.currency(newval));
+    }
+
+});
+
+
+
 /** This is necessary for the richtextarea below - it allows the tinymce dialogs
  *  to work inside a JQuery UI modal dialog. The class prefix (tox) has
  *  changed between major TinyMCE releases in the past */
@@ -2041,7 +2082,6 @@ $.widget("asm.htmleditor", {
 
 });
 
-
 $.widget("asm.sqleditor", {
     options: {
         editor: null
@@ -2135,58 +2175,6 @@ $.widget("asm.sqleditor", {
     }
 
 });
-
-
-// Styles a textbox that should only contain currency
-$.fn.currency = function(cmd, newval) {
-    const reset = function(b) {
-        // Show a currency symbol and default amount of 0
-        if ($(b).val() == "") {
-            $(b).val(format.currency(0));
-        }
-    };
-    if (cmd === undefined) {
-        const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
-        this.each(function() {
-            let t = $(this);
-            disable_autocomplete(t);
-            t.keypress(function(e) {
-                let k = e.charCode || e.keyCode;
-                let ch = String.fromCharCode(k);
-                // Backspace, tab, ctrl, delete, arrow keys ok
-                if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
-                    return true;
-                }
-                if ($.inArray(ch, allowed) == -1) {
-                    e.preventDefault();
-                }
-            });
-            t.blur(function(e) {
-                // reformat the value when focus leaves the field
-                let i = format.currency_to_int(t.val());
-                t.val(format.currency(i));
-            });
-            reset(this);
-        });
-    }
-    else if (cmd == "reset") {
-        this.each(function() {
-            reset(this);
-        });
-    }
-    else if (cmd == "value") {
-        if (newval === undefined) {
-            // Get the value
-            let v = this.val();
-            if (!v) { return 0; }
-            return format.currency_to_int(v);
-        }
-        // We're setting the value
-        this.each(function() {
-            $(this).val(format.currency(newval));
-        });
-    }
-};
 
 // Helper to disable jquery ui dialog buttons
 $.fn.disable_dialog_buttons = function() {

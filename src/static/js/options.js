@@ -873,7 +873,7 @@ $(function() {
                         { id: "warnmultiplereseves", post_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-onlineforms", title: _("Online Forms"), fields: [
-                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", prelabel: "hcb", halfsize: true, xmarkup: _(" days.") }, 
+                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", min: 1, max: 56, prelabel: "hcb", halfsize: true, xmarkup: _(" days.") }, 
                         { id: "deleteonprocess", post_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check", fullrow: true }, 
                         { id: "removeprocessedforms", post_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check", fullrow: true }, 
                         { id: "hashprocessedforms", post_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check", fullrow: true }, 
