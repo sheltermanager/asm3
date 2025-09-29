@@ -1601,9 +1601,18 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "lookingforolderthan":
             d["matchactive"] = "1"
             d["agedto"] = f.VALUE
-        if f.FIELDNAME == "homecheckedby": d["homecheckedby"] = f.VALUE
+        if f.FIELDNAME == "homecheckedby":
+            d["homecheckedby"] = 0
+            if f.VALUE:
+                ilikename = dbo.sql_ilike("OwnerName", "?")
+                d["homecheckedby"] = dbo.query_int(
+                    f"SELECT ID FROM owner WHERE IsHomeChecker = 1 AND (UPPER(OwnerCode) = ? OR {ilikename})",
+                    [f.VALUE.upper(), f"%{f.VALUE}%"])
         if f.FIELDNAME == "homecheckpass" and (f.VALUE == "Yes" or f.VALUE == "on"):
             d["homecheckpass"] = f.VALUE
+            d["homechecked"] = asm3.i18n.format_date(dbo.today())
+            # d["flags"] = "homechecked"
+            flags += ",homechecked"
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
