@@ -362,6 +362,10 @@ class SavourLifePublisher(AbstractPublisher):
                 microchipdetails = an.IDENTICHIPNUMBER
             else:
                 microchipdetails = "Yes"
+        
+        coatlength = "Medium"
+        if an.COATTYPENAME == "Short" or an.COATTYPENAME == "Long":
+            coatlength = an.COATTYPENAME
 
         # Construct a dictionary of info for this animal
         d = {
@@ -398,7 +402,8 @@ class SavourLifePublisher(AbstractPublisher):
             "SizeWhenAdult":            size,
             "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,
             "MicrochipDetails":         microchipdetails,
-            "IsOnHold":                 hold # Typically false, but the change status code will do this
+            "IsOnHold":                 hold, # Typically false, but the change status code will do this
+            "CoatLength":               coatlength
         }
 
         # If this animal is bonded, override its name back to the original value
