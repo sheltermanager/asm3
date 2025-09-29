@@ -101,8 +101,11 @@ $(function() {
                     reconciled = "";
                 }
                 desc = "";
-                if (t.PERSONNAME) {
-                    desc += html.person_link(t.PERSONID, t.PERSONNAME);
+                if (t.COSTOWNERID) {
+                    desc += html.person_link(t.COSTOWNERID, t.COSTOWNERNAME);
+                }
+                if (t.DONATIONOWNERID) {
+                    desc += html.person_link(t.DONATIONOWNERID, t.DONATIONOWNERNAME);
                 }
                 if (t.DONATIONANIMALID) {
                     desc += " " + html.icon("right") + " " + 
@@ -110,11 +113,15 @@ $(function() {
                         t.DONATIONANIMALCODE + " - " + 
                         t.DONATIONANIMALNAME + '</a>';
                 }
-                if (t.COSTANIMALID) {
+                if (t.ANIMALCOSTID) {
                     desc += " " + html.icon("right") + " " + 
                         '<a href="animal?id=' + t.COSTANIMALID + '">' +
                         t.COSTANIMALCODE + " - " + 
-                        t.COSTANIMALNAME + '</a>';
+                        t.COSTANIMALNAME + '</a>' +
+                        ' <span id="animalcosttrx-' + t.ID + '" class="asm-callout" data-icon="cost">' +
+                        _("Cost") + "<br><br>" +
+                        _("Invoice No") + ": " + t.INVOICENUMBER + "<br>" + 
+                        '</span>';
                 }
                 if (t.DONATIONRECEIPTNUMBER) {
                     //desc += " [" + t.DONATIONRECEIPTNUMBER + "]";
@@ -133,12 +140,6 @@ $(function() {
                     if ( t.FEE > 0) {
                         desc += "<br>" + _("Fee") + ": " + format.currency(t.FEE);
                     }
-                    desc += '</span>';
-                }
-                if (t.ANIMALCOSTID) {
-                    desc += ' <span id="animalcosttrx-' + t.ID + '" class="asm-callout" data-icon="cost">' +
-                    _("Cost") + "<br><br>" +
-                    _("Invoice No") + ": " + t.INVOICENUMBER + "<br>";
                     desc += '</span>';
                 }
                 desc = html.truncate(t.DESCRIPTION) + " " + desc;

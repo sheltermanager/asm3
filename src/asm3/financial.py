@@ -377,11 +377,9 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
     elif reconciled == NONRECONCILED:
         recfilter = " AND Reconciled = 0"
     rows = dbo.query("SELECT t.*, srcac.Code AS SrcCode, destac.Code AS DestCode, " \
-        "CASE WHEN oac.OwnerName IS NOT NULL THEN oac.OwnerName " \
-        "ELSE o.OwnerName END AS PersonName, " \
-        "CASE WHEN oac.ID IS NOT NULL THEN oac.ID " \
-        "ELSE o.ID END AS PersonID, " \
         "a.ID AS DonationAnimalID, " \
+        "o.ID AS DonationOwnerID, o.OwnerName AS DonationOwnerName, " \
+        "oac.ID AS CostOwnerID, oac.OwnerName AS CostOwnerName, " \
         "a.AnimalName AS DonationAnimalName, " \
         "od.ReceiptNumber AS DonationReceiptNumber, " \
         "dt.DonationName AS DonationTypeName, " \
