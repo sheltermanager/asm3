@@ -20,21 +20,32 @@ const MASK_VALUE = "****************";
  * 
  * To store and load arbitrary state data, use jQuery's data() method on the DOM element.
  * 
+ * If your widget has an options member, it will be merged with an object passed to
+ * the constructor by the caller (if there is one) and passed to the _create method as argument 2.
+ * 
  * The function dispatcher sets "this" to the widget class/object (nb: this is a singleton) 
  * and passes the DOM element that the widget is wrapping as the first argument t.
  * The remaining arguments are passed in order after that (max of 2)
  * 
  * Eg: 
  * $.fn.textbox = asm_widget({ 
- *     _create: function(t) {
+ *     options: {
+ *         dothething: true
+ *     },
+ *     _create: function(t, options) {
  *          // called with $("#id").textbox() or textbox("_create")
- *          t.data("arbitrary", "some value");
+ *          if (options.dothething) { t.data("arbitrary", "some value"); }
+ *     },
+ *     thething: function(t) {
+ *         return t.data("arbitrary");
  *     },
  *     value: function(t, newval) {
  *         if (newval === undefined) { return t.val(); }
  *         t.val(newval);
  *     }
  * });
+ * 
+ * $("#mytextbox").textbox({ dothething: false });
  */
 const asm_widget = function(obj) {
     return function(method, arg1, arg2) {
