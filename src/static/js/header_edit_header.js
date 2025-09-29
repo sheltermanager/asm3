@@ -653,9 +653,7 @@ edit_header = {
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
             if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "citation" || key == "licence" || key == "investigation") && config.bool("DisableAnimalControl")) { return; }
-
             if (key == "costs" && (!controller.person.ISVET && !controller.person.ISSUPPLIER)) { return; }
-
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "traploan") && config.bool("DisableTrapLoan")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
