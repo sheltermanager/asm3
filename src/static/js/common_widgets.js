@@ -7,6 +7,49 @@
 // String shown in asm-mask fields instead of the value
 const MASK_VALUE = "****************";
 
+/**
+ * Lightweight stateless ASM widget
+ * 
+ * This uses the JQuery fn mechanism instead of the
+ * JQuery UI widget factory. Using widget factory turned out to have terrible
+ * performance once there are widget wrappers around every input field. 
+ * 
+ * This allows you to write code that looks like $.widget, but is instead stateless.
+ * To store state, use the DOM element.
+ * 
+ * The function dispatcher sets "this" to the widget class/object (nb: this is a singleton) 
+ * and passes the DOM element that the widget is wrapping as the first argument.
+ * 
+ * Eg: 
+ * $.fn.textbox = asm_widget({ 
+ *     _create: function(self) {
+ *          // called with $("#id").textbox() or textbox("_create")
+ *     },
+ *     value: function(self, newval) {
+ *         if (newval === undefined) { return self.val(); }
+ *         self.val(newval);
+ *     }
+ * });
+ */
+const asm_widget = function(obj) {
+    return function(method, arg1, arg2) {
+        let rv = null;
+        this.each(function() {
+            // Dispatch the method call
+            if (method === undefined) {
+                rv = obj._create.call(obj, $(this), arg1, arg2);
+            }
+            else if (obj.hasOwnProperty(method)) {
+                rv = obj[method].call(obj, $(this), arg1, arg2);
+            }
+            else {
+                console.log("method '" + method + "' does not exist");
+            }
+        });
+        return rv;
+    };
+};
+
 // Disables autocomplete on the given JQuery node t
 const disable_autocomplete = function(t) {
     // Only disable it if autocomplete hasn't already been
@@ -277,10 +320,9 @@ $.widget("asm.table", {
 });
 
 // Styles a tab strip consisting of a div with an unordered list of tabs
-$.widget("asm.asmtabs", {
+$.fn.asmtabs = asm_widget({
 
-    _create: function() {
-        let t = this.element;
+    _create: function(t) {
         t.addClass("ui-tabs ui-widget ui-widget-content ui-corner-all");
         t.find("ul.asm-tablist").addClass("ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all");
         t.find("ul.asm-tablist li").addClass("ui-state-default ui-corner-top");
@@ -297,77 +339,66 @@ $.widget("asm.asmtabs", {
 
 // Wrapper/helper for JQuery autocomplete widget. 
 // Expects a data-source attribute to contain the source for the dropdown.
-$.widget("asm.autotext", {
+$.fn.autotext = asm_widget({
 
-    options: {
-        minlength:     1,       // number of chars to type before searching starts
-        defaultsearch: null,    // the default search to run when clicking on the widget
-        appendto:      "",      // for z-indexing, the dialog parent to make sure the dropdown is visible
-        source:        []       // The source of data for the autocomplete (array of strings or 
-                                //      dicts containing label and value properties)
-    },
-
-    _create: function(source) {
-        let self = this.element, options = this.options;
-        disable_autocomplete(self);
-        options.minlength = self.attr("data-minlength") || 1;
-        options.defaultsearch = self.attr("data-defaultsearch");
-        options.appendto = self.attr("data-appendto");
-        options.source = tableform._unpack_ac_source(self.attr("data-source"));
-        self.autocomplete({
-            source: source || options.source,
+    _create: function(t, source) {
+        disable_autocomplete(t);
+        let minlength = t.attr("data-minlength") || 1;
+        let defaultsearch = t.attr("data-defaultsearch");
+        let appendto = t.attr("data-appendto");
+        let osource = tableform._unpack_ac_source(t.attr("data-source"));
+        t.autocomplete({
+            source: source || osource,
             autoFocus: true,
-            minLength: options.minlength, // number of chars to enter before searching starts
+            minLength: minlength, // number of chars to enter before searching starts
             close: function() {
                 // fire the change event when the dropdown closes (ie. something is selected) 
-                self.change();
+                t.change();
             }
         });
-        if (options.defaultsearch) {
-            self.focus(function() {
-                self.autocomplete("search", options.defaultsearch); 
+        if (defaultsearch) {
+            t.focus(function() {
+                t.autocomplete("search", defaultsearch); 
             });
         }
-        if (options.appendto) {
-            self.autocomplete("option", "appendTo", options.appendto);
+        if (appendto) {
+            t.autocomplete("option", "appendTo", appendto);
         }
         else {
             // If we don't have an appendTo, fall back to manipulating the z-index
-            self.autocomplete("widget").css("z-index", 9999);
+            t.autocomplete("widget").css("z-index", 9999);
         }
     },
 
     // Updates the source for the autotext widget
     // source can be either an array of strings, or an array of dicts with label/value properties
     // [ "item1", "item2" ] or [ { label: "item1", value: "value1" } ]
-    source: function(source) {
-        let self = this.element;
-        self.autocomplete("option", "source", source);
+    source: function(t, source) {
+        t.autocomplete("option", "source", source);
     }
 
 });
 
 /**
  * Used by all of our number widgets to initialise themselves and set events.
- * self: A jquery node/reference to the widget itself (this.element)
- * options: The widget options
+ * self: A jquery node/reference to the DOM widget  
  * allowed_chars: A regex indicating which chars are allowed in this widget
  *                eg: /[0-9\.\-]/;
  */
-const number_widget = function(self, options, allowed_chars) {
-    options.min = self.attr("data-min") || null;
-    options.max = self.attr("data-max") || null;
-    if (options.min) {
+const number_widget = function(self, allowed_chars) {
+    let omin = self.attr("data-min") || null;
+    let omax = self.attr("data-max") || null;
+    if (omin) {
         self.blur(function(e) {
-            if (format.to_int(self.val()) < format.to_int(options.min)) {
-                self.val(options.min);
+            if (format.to_int(self.val()) < format.to_int(omin)) {
+                self.val(omin);
             }
         });
     }
-    if (options.max) {
+    if (omax) {
         self.blur(function(e) {
-            if (format.to_int(self.val()) > format.to_int(options.max)) {
-                self.val(options.max);
+            if (format.to_int(self.val()) > format.to_int(omax)) {
+                self.val(omax);
             }
         });
     }
@@ -387,56 +418,33 @@ const number_widget = function(self, options, allowed_chars) {
 
 // Textbox that should only contain numbers.
 // data-min and data-max attributes can be used to contain the lower/upper bound
-$.widget("asm.number", {
-
-    options: {
-        min:     null,       
-        max:     null
-    },
-
-    _create: function() {
-        number_widget(this.element, this.options, new RegExp("[0-9\.\-]"));
+$.fn.number = asm_widget({
+    _create: function(self) {
+        number_widget(self, new RegExp("[0-9\.\-]"));
     }
-
 });
 
 // Textbox that should only contain numbers and letters (latin alphabet, no spaces, limited punctuation)
 // data-min and data-max attributes can be used to contain the lower/upper bound
-$.widget("asm.alphanumber", {
-
-    options: { },
-
-    _create: function() {
-        number_widget(this.element, this.options, new RegExp("[0-9A-Za-z\\.\\*\\-]"));
+$.fn.alphanumber = asm_widget({
+    _create: function(self) {
+        number_widget(self, new RegExp("[0-9A-Za-z\\.\\*\\-]"));
     }
-
 });
 
 // Textbox that should only contain integer numbers
 // data-min and data-max attributes can be used to contain the lower/upper bound
-$.widget("asm.intnumber", {
-
-    options: {
-        min:     null,       
-        max:     null
-    },
-
-    _create: function() {
-        number_widget(this.element, this.options, new RegExp("[0-9\\-]"));
+$.fn.intnumber = asm_widget({
+    _create: function(self) {
+        number_widget(self, new RegExp("[0-9\\-]"));
     }
-
 });
 
-
 // Textbox that should only contain CIDR IP subnets or IPv6 HEX/colon
-$.widget("asm.ipnumber", {
-
-    options: { },
-
-    _create: function() {
-        number_widget(this.element, this.options, new RegExp("[0-9\\.\\/\\:abcdef ]"));
+$.fn.ipnumber = asm_widget({
+    _create: function(self) {
+        number_widget(self, new RegExp("[0-9\\.\\/\\:abcdef ]"));
     }
-
 });
 
 const PHONE_RULES = [
@@ -450,13 +458,10 @@ const PHONE_RULES = [
 ];
 
 // Textbox that can format phone numbers to the locale rules above
-$.widget("asm.phone", {
+$.fn.phone = asm_widget({
 
-    options: { },
-
-    _create: function() {
+    _create: function(self) {
         if (!config.bool("FormatPhoneNumbers")) { return; } 
-        let self = this.element;
         disable_autocomplete($(this));
         self.blur(function(e) {
             let t = $(this);
@@ -477,21 +482,14 @@ $.widget("asm.phone", {
 });
 
 // Datepicker/wrapper widget
-$.widget("asm.date", {
+$.fn.date = asm_widget({
 
-    options: { 
-        dayfilter: "", // comma separated list of days of the week to only allow (eg: 5,6 = Saturday and Sunday)
-        nopast: false, // true if we want to forbid choosing dates in the past
-        nofuture: false, // true if we want to forbid choosing dates in the future
-    },
-
-    _create: function() {
-        let self = this.element, options = this.options;
+    _create: function(self) {
         disable_autocomplete(self);
-        options.dayfilter = self.attr("data-onlydays");
-        options.nopast = self.attr("data-nopast");
-        options.nofuture = self.attr("data-nofuture");
-        if (options.dayfilter || options.nopast || options.nofuture) {
+        let dayfilter = self.attr("data-onlydays");
+        let nopast = self.attr("data-nopast");
+        let nofuture = self.attr("data-nofuture");
+        if (dayfilter || nopast || nofuture) {
             self.datepicker({ 
                 changeMonth: true, 
                 changeYear: true,
@@ -500,8 +498,8 @@ $.widget("asm.date", {
                 beforeShowDay: function(a) {
                     let day = a.getDay();
                     let rv = false;
-                    if (options.dayfilter) {
-                        $.each(options.dayfilter.split(","), function(i, v) {
+                    if (dayfilter) {
+                        $.each(dayfilter.split(","), function(i, v) {
                             if (v == String(day)) {
                                 rv = true;
                             }
@@ -511,8 +509,8 @@ $.widget("asm.date", {
                     else {
                         rv = true;
                     }
-                    if (options.nopast && a < new Date()) { rv = false; }
-                    if (options.nofuture && a > new Date()) { rv = false; }
+                    if (nopast && a < new Date()) { rv = false; }
+                    if (nofuture && a > new Date()) { rv = false; }
                     return [rv, ""];
                 }
             });
@@ -571,29 +569,26 @@ $.widget("asm.date", {
         });
     },
 
-    today: function() {
-        this.element.datepicker("setDate", new Date());
+    today: function(self) {
+        self.datepicker("setDate", new Date());
     },
 
-    getDate: function() {
-        return this.element.datepicker("getDate");
+    getDate: function(self) {
+        return self.datepicker("getDate");
     },
 
-    setDate: function(newval) {
-        this.element.datepicker("setDate");
+    setDate: function(self, newval) {
+        self.datepicker("setDate");
     }
 
 });
 
 // Textbox that should only contain a time (numbers and colon), wraps the timepicker widget
-$.widget("asm.time", {
+$.fn.time = asm_widget({
 
-    options: { 
-    },
-
-    _create: function() {
+    _create: function(self) {
         const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':' ];
-        let t = this.element;
+        let t = self;
         t.timepicker({
             hourText: _("Hours"),
             minuteText: _("Minutes"),
@@ -649,13 +644,9 @@ $.widget("asm.time", {
 });
 
 // Select box wrapper
-$.widget("asm.select", {
+$.fn.select = asm_widget({
 
-    options: { 
-    },
-
-    _create: function() {
-        let self = this.element;
+    _create: function(self) {
         if ( self.hasClass("asm-iconselectmenu") ) {
             self.iconselectmenu({
                 change: function(event , ui) {
@@ -674,35 +665,35 @@ $.widget("asm.select", {
         }
     },
 
-    disable: function() {
-        this.element.attr("disabled", "disabled");
+    disable: function(self) {
+        self.attr("disabled", "disabled");
     },
 
-    enable: function() {
-        this.element.removeAttr("disabled");
+    enable: function(self) {
+        self.removeAttr("disabled");
     },
 
     /** Sets the value to the first element in the options list */
-    firstvalue: function() {
-        this.element.val( this.element.find("option:first").val() );
+    firstvalue: function(self) {
+        self.val( this.element.find("option:first").val() );
     },
 
     /** Set the value to the first element in the list if nothing is selected */
-    firstIfBlank: function() {
-        let t = this.element;
+    firstIfBlank: function(self) {
+        let t = self;
         if (t.val() == null) {
             t.val( t.find("option:first").val() );
         }
     },
 
     /** Return the label for the selected option value */
-    label: function() {
-        return this.element.find("option:selected").html();
+    label: function(self) {
+        return self.find("option:selected").html();
     },
 
     /** Strip any options that have been retired based on the data-retired attribute */
-    removeRetiredOptions: function(mode) {
-        let t = this.element;
+    removeRetiredOptions: function(self, mode) {
+        let t = self;
         // If mode == all, then we remove all retired items
         // (behaviour you want when adding records)
         if (mode !== undefined && mode == "all") {
@@ -723,8 +714,8 @@ $.widget("asm.select", {
         }
     },
 
-    value: function(newval) {
-        let t = this.element;
+    value: function(self, newval) {
+        let t = self;
         if (newval !== undefined) {
             t.val(newval);
             if (t.hasClass("asm-iconselectmenu")) {
@@ -1700,39 +1691,43 @@ $.widget("asm.asmmenu", {
     }
 });
 
-$.widget("asm.textbox", {
-    options: {
-        disabled: false
-    },
 
-    _create: function() {
-        let self = this;
-        disable_autocomplete(this.element);
-        this.element.on("keypress", function(e) {
-            if (self.options.disabled) {
+$.fn.textbox = asm_widget({
+
+    _create: function(self) {
+        disable_autocomplete(self);
+        self.on("keypress", function(e) {
+            if (self.prop("disabled")) {
                 e.preventDefault();
             }
         });
     },
 
-    enable: function() {
-        this.options.disabled = false;
-        this.element.removeClass("asm-textbox-disabled");
-        this.element.prop("disabled", false);
+    enable: function(self) {
+        self.removeClass("asm-textbox-disabled");
+        self.prop("disabled", false);
     },
 
-    disable: function() {
-        this.options.disabled = true;
-        this.element.addClass("asm-textbox-disabled");
-        this.element.prop("disabled", true);
+    disable: function(self) {
+        self.addClass("asm-textbox-disabled");
+        self.prop("disabled", true);
     },
 
-    toggleEnabled: function(enableOrDisable) {
+    toggleEnabled: function(self, enableOrDisable) {
         if (enableOrDisable) { 
             this.enable(); 
         }
         else {
             this.disable();
+        }
+    },
+
+    value: function(self, newval) {
+        if (newval === undefined) {
+            return self.val();
+        }
+        else {
+            self.val(newval);
         }
     }
 });
@@ -1740,12 +1735,10 @@ $.widget("asm.textbox", {
 // Textbox wrapper that should only contain currency
 // The value passed in and out via the value method is in whole pence/cents/whatever the subdivision is
 // (an integer value that we stored in the db for the value)
-$.widget("asm.currency", {
-    options: { },
+$.fn.currency = asm_widget({
 
-    _create: function() {
+    _create: function(t) {
         const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
-        let t = this.element;
         disable_autocomplete(t);
         t.keypress(function(e) {
             let k = e.charCode || e.keyCode;
@@ -1763,26 +1756,25 @@ $.widget("asm.currency", {
             let i = format.currency_to_int(t.val());
             t.val(format.currency(i));
         });
-        this.reset();
+        this.reset(t);
     },
 
-    reset: function() {
+    reset: function(t) {
         // Shows the locale's currency symbol and default amount of 0
-        let t = this.element;
         if (t.val() == "") {
             t.val(format.currency(0));
         }
     },
 
-    value: function(newval) {
+    value: function(t, newval) {
         if (newval === undefined) {
             // Get the value
-            let v = this.element.val();
+            let v = t.val();
             if (!v) { return 0; }
             return format.currency_to_int(v);
         }
         // We're setting the value
-        this.element.val(format.currency(newval));
+        t.val(format.currency(newval));
     }
 
 });
