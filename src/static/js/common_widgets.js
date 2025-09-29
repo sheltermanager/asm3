@@ -12,22 +12,26 @@ const MASK_VALUE = "****************";
  * 
  * This uses the JQuery fn mechanism instead of the
  * JQuery UI widget factory. Using widget factory turned out to have terrible
- * performance once there are widget wrappers around every input field. 
+ * performance once there are stateful widget wrappers around every input field. 
  * 
- * This allows you to write code that looks like $.widget, but is instead stateless.
- * To store state, use the DOM element.
+ * This allows you to write code that mostly looks and works like $.widget, but 
+ * is instead stateless. It also has no dependency on jquery.ui.widget.js or
+ * JQuery UI in general and can be used to wrap Bootstrap or any other HTML UI toolkit.
+ * 
+ * To store and load state, use the DOM element with jQuery's data() method.
  * 
  * The function dispatcher sets "this" to the widget class/object (nb: this is a singleton) 
- * and passes the DOM element that the widget is wrapping as the first argument.
+ * and passes the DOM element that the widget is wrapping as the first argument t.
+ * The remaining arguments are passed in order after that (max of 2)
  * 
  * Eg: 
  * $.fn.textbox = asm_widget({ 
- *     _create: function(self) {
+ *     _create: function(t) {
  *          // called with $("#id").textbox() or textbox("_create")
  *     },
- *     value: function(self, newval) {
- *         if (newval === undefined) { return self.val(); }
- *         self.val(newval);
+ *     value: function(t, newval) {
+ *         if (newval === undefined) { return t.val(); }
+ *         t.val(newval);
  *     }
  * });
  */
@@ -35,15 +39,24 @@ const asm_widget = function(obj) {
     return function(method, arg1, arg2) {
         let rv = null;
         this.each(function() {
-            // Dispatch the method call
+            // Dispatch the constructor (no args)
             if (method === undefined) {
                 rv = obj._create.call(obj, $(this), arg1, arg2);
             }
+            // Dispatch the constructor (create explicitly called)
+            else if (method === "create") {
+                rv = obj._create.call(obj, $(this), arg1, arg2);
+            }
+            // Dispatch the constructor (method is an object containing options, pass as arg1)
+            else if (typeof(method) === "object") {
+                rv = obj._create.call(obj, $(this), method, arg1, arg2);
+            }
+            // Dispatch the method call
             else if (obj.hasOwnProperty(method)) {
                 rv = obj[method].call(obj, $(this), arg1, arg2);
             }
             else {
-                console.log("method '" + method + "' does not exist");
+                throw new Error("method '" + method + "' does not exist");
             }
         });
         return rv;
@@ -176,19 +189,18 @@ $.fn.tableCheckedData = function() {
 };
 
 // Styles an HTML table with jquery stuff and adds sorting
-$.widget("asm.table", {
+$.fn.table = asm_widget({
     
-    options: {
-        css:        'asm-table',
-        filter:     false,  // whether filters are available
-        reflow:     config.bool("TablesReflow"),  // whether to reflow the table on portrait smartphones < 480px wide
-        row_hover:  true,   // highlight the row being hovered over with a mouse
-        row_select: true,   // allow selection with a checkbox in the first column
-        sticky_header: true // keep headers at the top of the screen when scrolling
-    },
-
-    _create: function() {
-        let tbl = this.element, options = this.options;
+    _create: function(t, coptions) {
+        let tbl = t;
+        let options = common.copy_object({ 
+            css:        'asm-table',
+            filter:     false,  // whether filters are available
+            reflow:     config.bool("TablesReflow"),  // whether to reflow the table on portrait smartphones < 480px wide
+            row_hover:  true,   // highlight the row being hovered over with a mouse
+            row_select: true,   // allow selection with a checkbox in the first column
+            sticky_header: true // keep headers at the top of the screen when scrolling
+        }, coptions);
         tbl.addClass(options.css);
         if (options.row_hover) {
             tbl.on("mouseover", "tbody tr", function() {
@@ -294,11 +306,10 @@ $.widget("asm.table", {
     },
     
     /** Loads and sets the table filters in the object filters */
-    load_filters: function(filters) {
-        let self = this;
+    load_filters: function(t, filters) {
         if (filters && Object.keys(filters).length > 0) {
             $.each(filters, function(column, value) {
-                $(self.element).find('.tablesorter-filter[data-column="' + column + '"]').each(function() {
+                t.find('.tablesorter-filter[data-column="' + column + '"]').each(function() {
                     $(this).val(value);
                     $(this).trigger("keyup");
                 });
@@ -307,9 +318,9 @@ $.widget("asm.table", {
     },
 
     /** Returns an object containing the filter textbox values. Can be passed to load_filters to reload them */
-    save_filters: function() {
+    save_filters: function(t) {
         let filters = {};
-        $(this.element).find('.tablesorter-filter').each(function() {
+        t.find('.tablesorter-filter').each(function() {
             let column = $(this).attr('data-column');
             let value = $(this).val();
             filters[column] = value;
@@ -385,25 +396,25 @@ $.fn.autotext = asm_widget({
  * allowed_chars: A regex indicating which chars are allowed in this widget
  *                eg: /[0-9\.\-]/;
  */
-const number_widget = function(self, allowed_chars) {
-    let omin = self.attr("data-min") || null;
-    let omax = self.attr("data-max") || null;
+const number_widget = function(t, allowed_chars) {
+    let omin = t.attr("data-min") || null;
+    let omax = t.attr("data-max") || null;
     if (omin) {
-        self.blur(function(e) {
-            if (format.to_int(self.val()) < format.to_int(omin)) {
-                self.val(omin);
+        t.blur(function(e) {
+            if (format.to_int(t.val()) < format.to_int(omin)) {
+                t.val(omin);
             }
         });
     }
     if (omax) {
-        self.blur(function(e) {
-            if (format.to_int(self.val()) > format.to_int(omax)) {
-                self.val(omax);
+        t.blur(function(e) {
+            if (format.to_int(t.val()) > format.to_int(omax)) {
+                t.val(omax);
             }
         });
     }
-    disable_autocomplete(self);
-    self.keypress(function(e) {
+    disable_autocomplete(t);
+    t.keypress(function(e) {
         let k = e.charCode || e.keyCode;
         let ch = String.fromCharCode(k);
         // Backspace, tab, ctrl, delete, arrow keys ok
@@ -419,31 +430,31 @@ const number_widget = function(self, allowed_chars) {
 // Textbox that should only contain numbers.
 // data-min and data-max attributes can be used to contain the lower/upper bound
 $.fn.number = asm_widget({
-    _create: function(self) {
-        number_widget(self, new RegExp("[0-9\.\-]"));
+    _create: function(t) {
+        number_widget(t, new RegExp("[0-9\.\-]"));
     }
 });
 
 // Textbox that should only contain numbers and letters (latin alphabet, no spaces, limited punctuation)
 // data-min and data-max attributes can be used to contain the lower/upper bound
 $.fn.alphanumber = asm_widget({
-    _create: function(self) {
-        number_widget(self, new RegExp("[0-9A-Za-z\\.\\*\\-]"));
+    _create: function(t) {
+        number_widget(t, new RegExp("[0-9A-Za-z\\.\\*\\-]"));
     }
 });
 
 // Textbox that should only contain integer numbers
 // data-min and data-max attributes can be used to contain the lower/upper bound
 $.fn.intnumber = asm_widget({
-    _create: function(self) {
-        number_widget(self, new RegExp("[0-9\\-]"));
+    _create: function(t) {
+        number_widget(t, new RegExp("[0-9\\-]"));
     }
 });
 
 // Textbox that should only contain CIDR IP subnets or IPv6 HEX/colon
 $.fn.ipnumber = asm_widget({
-    _create: function(self) {
-        number_widget(self, new RegExp("[0-9\\.\\/\\:abcdef ]"));
+    _create: function(t) {
+        number_widget(t, new RegExp("[0-9\\.\\/\\:abcdef ]"));
     }
 });
 
@@ -460,10 +471,10 @@ const PHONE_RULES = [
 // Textbox that can format phone numbers to the locale rules above
 $.fn.phone = asm_widget({
 
-    _create: function(self) {
+    _create: function(t) {
         if (!config.bool("FormatPhoneNumbers")) { return; } 
         disable_autocomplete($(this));
-        self.blur(function(e) {
+        t.blur(function(e) {
             let t = $(this);
             let num = String(t.val()).replace(/\D/g, ''); // Throw away all but the numbers
             $.each(PHONE_RULES, function(i, rules) {
@@ -484,13 +495,13 @@ $.fn.phone = asm_widget({
 // Datepicker/wrapper widget
 $.fn.date = asm_widget({
 
-    _create: function(self) {
-        disable_autocomplete(self);
-        let dayfilter = self.attr("data-onlydays");
-        let nopast = self.attr("data-nopast");
-        let nofuture = self.attr("data-nofuture");
+    _create: function(t) {
+        disable_autocomplete(t);
+        let dayfilter = t.attr("data-onlydays");
+        let nopast = t.attr("data-nopast");
+        let nofuture = t.attr("data-nofuture");
         if (dayfilter || nopast || nofuture) {
-            self.datepicker({ 
+            t.datepicker({ 
                 changeMonth: true, 
                 changeYear: true,
                 firstDay: config.integer("FirstDayOfWeek"),
@@ -516,18 +527,18 @@ $.fn.date = asm_widget({
             });
         }
         else {
-            self.datepicker({ 
+            t.datepicker({ 
                 changeMonth: true, 
                 changeYear: true,
                 yearRange: "-70:+10",
                 firstDay: config.integer("FirstDayOfWeek")
             });
         }
-        this.bind_keys(self);
+        this.bind_keys(t);
     },
 
-    bind_keys: function(self) {
-        self.keydown(function(e) {
+    bind_keys: function(t) {
+        t.keydown(function(e) {
             let d = $(this);
             let adjust = function(v) {
                 if (v == "t") {
@@ -569,16 +580,16 @@ $.fn.date = asm_widget({
         });
     },
 
-    today: function(self) {
-        self.datepicker("setDate", new Date());
+    today: function(t) {
+        t.datepicker("setDate", new Date());
     },
 
-    getDate: function(self) {
-        return self.datepicker("getDate");
+    getDate: function(t) {
+        return t.datepicker("getDate");
     },
 
-    setDate: function(self, newval) {
-        self.datepicker("setDate");
+    setDate: function(t, newval) {
+        t.datepicker("setDate");
     }
 
 });
@@ -586,9 +597,8 @@ $.fn.date = asm_widget({
 // Textbox that should only contain a time (numbers and colon), wraps the timepicker widget
 $.fn.time = asm_widget({
 
-    _create: function(self) {
+    _create: function(t) {
         const allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':' ];
-        let t = self;
         t.timepicker({
             hourText: _("Hours"),
             minuteText: _("Minutes"),
@@ -646,54 +656,52 @@ $.fn.time = asm_widget({
 // Select box wrapper
 $.fn.select = asm_widget({
 
-    _create: function(self) {
-        if ( self.hasClass("asm-iconselectmenu") ) {
-            self.iconselectmenu({
+    _create: function(t) {
+        if ( t.hasClass("asm-iconselectmenu") ) {
+            t.iconselectmenu({
                 change: function(event , ui) {
                     $(this).trigger("change");
                 }
             });
-            self.iconselectmenu("menuWidget").css("height", "200px");
+            t.iconselectmenu("menuWidget").css("height", "200px");
         }
-        if ( self.hasClass("asm-selectmenu") ) {
-            self.selectmenu({
+        if ( t.hasClass("asm-selectmenu") ) {
+            t.selectmenu({
                 change: function(event, ui) {
                     $(this).trigger("change");
                 }
             });
-            self.selectmenu("menuWidget").css("height", "200px");
+            t.selectmenu("menuWidget").css("height", "200px");
         }
     },
 
-    disable: function(self) {
-        self.attr("disabled", "disabled");
+    disable: function(t) {
+        t.attr("disabled", "disabled");
     },
 
-    enable: function(self) {
-        self.removeAttr("disabled");
+    enable: function(t) {
+        t.removeAttr("disabled");
     },
 
     /** Sets the value to the first element in the options list */
-    firstvalue: function(self) {
-        self.val( this.element.find("option:first").val() );
+    firstvalue: function(t) {
+        t.val( t.find("option:first").val() );
     },
 
     /** Set the value to the first element in the list if nothing is selected */
-    firstIfBlank: function(self) {
-        let t = self;
+    firstIfBlank: function(t) {
         if (t.val() == null) {
             t.val( t.find("option:first").val() );
         }
     },
 
     /** Return the label for the selected option value */
-    label: function(self) {
-        return self.find("option:selected").html();
+    label: function(t) {
+        return t.find("option:selected").html();
     },
 
     /** Strip any options that have been retired based on the data-retired attribute */
-    removeRetiredOptions: function(self, mode) {
-        let t = self;
+    removeRetiredOptions: function(t, mode) {
         // If mode == all, then we remove all retired items
         // (behaviour you want when adding records)
         if (mode !== undefined && mode == "all") {
@@ -714,8 +722,7 @@ $.fn.select = asm_widget({
         }
     },
 
-    value: function(self, newval) {
-        let t = self;
+    value: function(t, newval) {
         if (newval !== undefined) {
             t.val(newval);
             if (t.hasClass("asm-iconselectmenu")) {
@@ -1219,39 +1226,35 @@ $.widget("asm.emailform", {
     }
 });
 
-$.widget("asm.latlong", {
-    options: {
-        lat: null,
-        lng: null,
-        hash: null
-    },
-    _create: function() {
+/** Wraps an input that contains a lat/long geocode */
+$.fn.latlong = asm_widget({
+    _create: function(t) {
         let self = this;
-        this.element.hide();
-        this.element.after([
+        t.hide();
+        t.after([
             '<input type="text" class="latlong-lat asm-halftextbox" />',
             '<input type="text" class="latlong-long asm-halftextbox" />',
             '<input type="hidden" class="latlong-hash" />'
         ]);
-        this.options.lat = this.element.parent().find(".latlong-lat");
-        this.options.lng = this.element.parent().find(".latlong-long");
-        this.options.hash = this.element.parent().find(".latlong-hash");
-        this.options.lat.blur(function() { self.save.call(self); });
-        this.options.lng.blur(function() { self.save.call(self); });
+        t.data("lat", t.parent().find(".latlong-lat"));
+        t.data("lng", t.parent().find(".latlong-long"));
+        t.data("hash", t.parent().find(".latlong-hash"));
+        t.data("lat").blur(function() { self.save(t); });
+        t.data("lng").blur(function() { self.save(t); });
     },
-    load: function() {
+    load: function(t) {
         // Reads the base element value and splits it into the boxes
-        let bits = this.element.val().split(",");
-        if (bits.length > 0) { this.options.lat.val(bits[0]); }
-        if (bits.length > 1) { this.options.lng.val(bits[1]); }
-        if (bits.length > 2) { this.options.hash.val(bits[2]); }
+        let bits = t.val().split(",");
+        if (bits.length > 0) { t.data("lat").val(bits[0]); }
+        if (bits.length > 1) { t.data("lng").val(bits[1]); }
+        if (bits.length > 2) { t.data("hash").val(bits[2]); }
     },
-    save: function() {
+    save: function(t) {
         // Store the entered values back in the base element value
-        let v = this.options.lat.val() + "," +
-            this.options.lng.val() + "," +
-            this.options.hash.val();
-        this.element.val(v);
+        let v = t.data("lat").val() + "," +
+            t.data("lng").val() + "," +
+            t.data("hash").val();
+        t.val(v);
     }
 });
 
@@ -1507,20 +1510,15 @@ $.widget("asm.payments", {
  *     <span id="callout-something" class="asm-callout">This inner content can be HTML</span>
  * 
  * The popup div and cancel event are attached to #asm-content, so they will unload
- * with the current form without having to be explicitly destroyed.
+ * with the current module without having to be explicitly destroyed.
  */
-$.widget("asm.callout", {
-    options: {
-        button: null,
-        popup: null
-    },
+$.fn.callout = asm_widget({
 
-    _create: function() {
+    _create: function(t) {
         let self = this;
-        let button = this.element;
-        this.options.button = this.element;
-        let popupid = this.element.attr("id") + "-popup";
-        let icon = this.element.attr("data-icon");
+        let button = t;
+        let popupid = t.attr("id") + "-popup";
+        let icon = t.attr("data-icon");
         if (!icon) { icon = "callout"; }
 
         // Read the elements inner content then remove it
@@ -1534,12 +1532,12 @@ $.widget("asm.callout", {
         // Create the callout
         $("#asm-content").append('<div id="' + popupid + '" class="popupshadow asm-callout-popup">' + html.info(content) + '</div>');
         let popup = $("#" + popupid);
-        this.options.popup = popup;
         popup.css("display", "none");
+        t.data("popup", popup);
 
         // Hide the callout if we click elsewhere
         $("#asm-content").click(function() {
-            self.hide();
+            self.hide(t);
         });
 
         button.click(function(e) {
@@ -1555,42 +1553,37 @@ $.widget("asm.callout", {
         });
     },
 
-    hide: function() {
-        this.options.popup.hide();
+    hide: function(t) {
+        t.data("popup").hide();
     },
 
-    destroy: function() {
+    destroy: function(t) {
         try {
-            this.options.popup.remove();
+            t.data("popup").remove();
         } catch (err) {}
     }
 
 });
 
-
 /**
  * ASM menu widget (we have to use asmmenu so as not to clash
  * with the built in JQuery UI menu widget)
  */
-$.widget("asm.asmmenu", {
-    options: {
-        button: null,
-        menu: null
-    },
+$.fn.asmmenu = asm_widget({ 
 
-    _create: function() {
+    _create: function(t) {
         let self = this;
-        let button = this.element;
-        this.options.button = button;
+        let button = t;
         
         // Add display arrow span
         let n = "<span style=\"display: inline-block; width: 16px; height: 16px; vertical-align: middle\" class=\"ui-button-text ui-icon ui-icon-triangle-1-e\"></span>";
-        this.element.append(n);
+        t.append(n);
         
         // If the menu is empty, disable it
-        let id = this.element.attr("id");
+        let id = t.attr("id");
         let body = $("#" + id + "-body");
-        this.options.menu = body;
+        t.data("menu", body);
+
         if (body.find(".asm-menu-item").length == 0) {
             button.addClass("ui-state-disabled").addClass("ui-button-disabled");
         }
@@ -1614,7 +1607,7 @@ $.widget("asm.asmmenu", {
         // Attach click handler to the button
         if (!button.hasClass("ui-state-disabled")) {
             button.click(function() {
-                self.toggle_menu(id);
+                self.toggle_menu(t, id);
             });
         }
 
@@ -1639,7 +1632,7 @@ $.widget("asm.asmmenu", {
         }
     },
 
-    hide_all: function() {
+    hide_all: function(t) {
         // Active
         $(".asm-menu-icon").removeClass("ui-state-active").addClass("ui-state-default");
         // Menus
@@ -1648,7 +1641,7 @@ $.widget("asm.asmmenu", {
         $(".asm-menu-icon span.ui-button-text").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
     },
 
-    toggle_menu: function(id) {
+    toggle_menu: function(t, id) {
         // Get the menu body element, style it and position it below the button
         let button = "#" + id;
         let body = "#" + id + "-body";
@@ -1690,7 +1683,6 @@ $.widget("asm.asmmenu", {
         }
     }
 });
-
 
 $.fn.textbox = asm_widget({
 
@@ -1779,8 +1771,6 @@ $.fn.currency = asm_widget({
 
 });
 
-
-
 /** This is necessary for the richtextarea below - it allows the tinymce dialogs
  *  to work inside a JQuery UI modal dialog. The class prefix (tox) has
  *  changed between major TinyMCE releases in the past */
@@ -1790,26 +1780,23 @@ $.widget("ui.dialog", $.ui.dialog, {
     }
 });
 
-$.widget("asm.richtextarea", {
+/** Wrapper for a TinyMCE widget */
+$.fn.richtextarea = asm_widget({
 
-    options: {
-        editor: null
-    },
-
-    _create: function() {
+    _create: function(t) {
         let self = this;
         // Override height, width and margin-top if they were set as attributes of the div
-        if (self.element.attr("data-width")) {
-            self.element.css("width", self.element.attr("data-width"));
+        if (t.attr("data-width")) {
+            t.css("width", t.attr("data-width"));
         }
-        if (self.element.attr("data-height")) {
-            self.element.css("height", self.element.attr("data-height"));
+        if (t.attr("data-height")) {
+            t.css("height", t.attr("data-height"));
         }
-        if (self.element.attr("data-margin-top")) {
-            self.element.css("margin-top", self.element.attr("data-margin-top"));
+        if (t.attr("data-margin-top")) {
+            t.css("margin-top", t.attr("data-margin-top"));
         }
         tinymce.init({
-            selector: "#" + this.element.attr("id"),
+            selector: "#" + t.attr("id"),
             plugins: [
                 "advlist autolink lists link image charmap code ",
                 "hr anchor searchreplace visualblocks visualchars ",
@@ -1840,7 +1827,7 @@ $.widget("asm.richtextarea", {
             entity_encoding: "raw",
 
             setup: function(ed) {
-                self.editor = ed;
+                t.data("editor", ed);
                 ed.on("init", function(ed) {
                     $(".tox-tinymce-inline").css({ "z-index": 101 }); // Prevent floating under dialogs
                 });
@@ -1849,33 +1836,29 @@ $.widget("asm.richtextarea", {
         });
     },
 
-    destroy: function() {
+    destroy: function(t) {
         try {
-            tinymce.get(this.element.attr("id")).remove();
+            tinymce.get(t.attr("id")).remove();
         }
         catch (err) {} // uncaught exception can block module unload
     },
 
-    value: function(newval) {
+    value: function(t, newval) {
         if (newval === undefined) {
-            return this.element.html();
+            return t.html();
         }
         if (!newval) { newval = ""; }
-        this.element.html(newval);
+        t.html(newval);
     }
 
 });
 
-$.widget("asm.textarea", {
+/** Wrapper widget for textarea, adds a zoom and the ability to include links to searches and media records */
+$.fn.textarea = asm_widget({
     
-    options: {
-        disabled: false
-    },
-
-    _create: function() {
+    _create: function(t) {
         
         let buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
-            t = $(this.element[0]),
             self = this;
 
         if (t.attr("data-zoom")) { return; }
@@ -1892,68 +1875,64 @@ $.widget("asm.textarea", {
 
         // When zoom button is clicked
         $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
-            self.zoom();
+            self.zoom(t);
             return false; // Prevent any textareas in form elements submitting the form
         });
 
         t.on('paste keyup', function() {
-            self.process_links();
+            self.process_links(t);
         });
-
     },
 
-    process_links: function() {
-        let t = $(this.element[0]);
+    process_links: function(t) {
         let tdid = t.attr("id") + "-td";
         $('#' + tdid).html("");
-            let searchmatches = t.val().match(/#s:\w{1,}:?\w{1,}/g);
-            if (searchmatches) {
-                $.each(searchmatches, function(i, v) {
-                    v = v.replace("#s:", "");
-                    let linkiconclass = 'asm-icon-link';
-                    if (v.includes('a:')) {
-                        linkiconclass = 'asm-icon-animal';
-                    } else if (v.includes('ac:')) {
-                        linkiconclass = 'asm-icon-call';
-                    } else if (v.includes('p:')) {
-                        linkiconclass = 'asm-icon-person';
-                    } else if (v.includes('wl:')) {
-                        linkiconclass = 'asm-icon-waitinglist';
-                    } else if (v.includes('la:')) {
-                        linkiconclass = 'asm-icon-animal-lost';
-                    } else if (v.includes('fa:')) {
-                        linkiconclass = 'asm-icon-animal-found';
-                    } else if (v.includes('li:')) {
-                        linkiconclass = 'asm-icon-licence';
-                    } else if (v.includes('co:')) {
-                        linkiconclass = 'asm-icon-cost';
-                    } else if (v.includes('lo:')) {
-                        linkiconclass = 'asm-icon-log';
-                    } else if (v.includes('vo:')) {
-                        linkiconclass = 'asm-icon-transactions';
-                    } else if (v.includes('ci:')) {
-                        linkiconclass = 'asm-icon-citation';
-                    }
-                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon ' + linkiconclass + '"></span><a href="/search?q=' + v + '" target="_blank">' + v + '</a></div> ');
-                });
-                $('#' + tdid).show();
-            }
-            let mediamatches = t.val().match(/#m:\w{1,}/g);
-            if (mediamatches) {
-                $.each(mediamatches, function(i, v) {
-                    v = v.replace("#m:", "");
-                    $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-media"></span>&nbsp;<a href="/media?id=' + v + '" target="_blank">' + v + '</a></div> ');
-                });
-                $('#' + tdid).show();
-            }
-            if (!searchmatches && !mediamatches) {
-                $('#' + tdid).hide();
-            }
+        let searchmatches = t.val().match(/#s:\w{1,}:?\w{1,}/g);
+        if (searchmatches) {
+            $.each(searchmatches, function(i, v) {
+                v = v.replace("#s:", "");
+                let linkiconclass = 'asm-icon-link';
+                if (v.includes('a:')) {
+                    linkiconclass = 'asm-icon-animal';
+                } else if (v.includes('ac:')) {
+                    linkiconclass = 'asm-icon-call';
+                } else if (v.includes('p:')) {
+                    linkiconclass = 'asm-icon-person';
+                } else if (v.includes('wl:')) {
+                    linkiconclass = 'asm-icon-waitinglist';
+                } else if (v.includes('la:')) {
+                    linkiconclass = 'asm-icon-animal-lost';
+                } else if (v.includes('fa:')) {
+                    linkiconclass = 'asm-icon-animal-found';
+                } else if (v.includes('li:')) {
+                    linkiconclass = 'asm-icon-licence';
+                } else if (v.includes('co:')) {
+                    linkiconclass = 'asm-icon-cost';
+                } else if (v.includes('lo:')) {
+                    linkiconclass = 'asm-icon-log';
+                } else if (v.includes('vo:')) {
+                    linkiconclass = 'asm-icon-transactions';
+                } else if (v.includes('ci:')) {
+                    linkiconclass = 'asm-icon-citation';
+                }
+                $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon ' + linkiconclass + '"></span><a href="/search?q=' + v + '" target="_blank">' + v + '</a></div> ');
+            });
+            $('#' + tdid).show();
+        }
+        let mediamatches = t.val().match(/#m:\w{1,}/g);
+        if (mediamatches) {
+            $.each(mediamatches, function(i, v) {
+                v = v.replace("#m:", "");
+                $('#' + tdid).append('<div class="asm-token-link"><span class="asm-icon asm-icon-media"></span>&nbsp;<a href="/media?id=' + v + '" target="_blank">' + v + '</a></div> ');
+            });
+            $('#' + tdid).show();
+        }
+        if (!searchmatches && !mediamatches) {
+            $('#' + tdid).hide();
+        }
     },
 
-    zoom: function() {
-        let t = $(this.element[0]);
-
+    zoom: function(t) {
         if (t.is(":disabled")) { return; }
         if (t.attr("maxlength") !== undefined) { $("#textarea-zoom-area").attr("maxlength", t.attr("maxlength")); }
 
@@ -1969,28 +1948,26 @@ $.widget("asm.textarea", {
         return false;
     },
 
-    value: function(newval) {
+    value: function(t, newval) {
         if (newval === undefined) {
-            return this.element.val();
+            return t.val();
         }
         if (!newval) { newval = ""; }
         //newval = common.replace_all(newval, "<", "&lt;");
         //newval = common.replace_all(newval, ">", "&gt;");
-        this.element.val(html.decode(newval));
-        this.process_links();
-        this.element.trigger("change");
+        t.val(html.decode(newval));
+        this.process_links(t);
+        t.trigger("change");
     }
 });
 
-$.widget("asm.htmleditor", {
-    options: {
-        editor: null
-    },
+/** Wraps a CodeMirror instance editing HTML */
+$.fn.htmleditor = asm_widget({
 
-    _create: function() {
+    _create: function(t) {
         let self = this;
         setTimeout(function() {
-            self.options.editor = CodeMirror.fromTextArea(self.element[0], {
+            let editor = CodeMirror.fromTextArea(t[0], {
                 lineNumbers: true,
                 mode: "htmlmixed",
                 matchBrackets: true,
@@ -1998,172 +1975,190 @@ $.widget("asm.htmleditor", {
                 //direction: (asm.locale == "ar" || asm.locale == "he") ? "rtl" : "ltr",
                 extraKeys: {
                     "F11": function(cm) {
-                        self.fullscreen(cm, !cm.getOption("fullScreen"));
+                        self.fullscreen(t, cm, !cm.getOption("fullScreen"));
                     },
                     "Shift-Ctrl-F": function(cm) {
-                        self.fullscreen(cm, !cm.getOption("fullScreen"));
+                        self.fullscreen(t, cm, !cm.getOption("fullScreen"));
                     },
                     "Esc": function(cm) {
-                        self.fullscreen(cm, false);
+                        self.fullscreen(t, cm, false);
                     }
                 }
             });
+            t.data("editor", editor);
             // Override height and width if they were set as attributes of the text area
-            if (self.element.attr("data-width")) {
-                self.element.next().css("width", self.element.attr("data-width"));
+            if (t.attr("data-width")) {
+                t.next().css("width", t.attr("data-width"));
             }
-            if (self.element.attr("data-height")) {
-                self.element.next().css("height", self.element.attr("data-height"));
+            if (t.attr("data-height")) {
+                t.next().css("height", t.attr("data-height"));
             }
             // When the editor loses focus, update the original textarea element
-            self.options.editor.on("blur", function() {
-                self.change();
+            editor.on("blur", function() {
+                self.change(t);
             });
 
         }, 1000);
     },
 
-    append: function(s) {
-        this.options.editor.setValue(this.options.editor.getValue() + s);
+    append: function(t, s) {
+        let e = t.data("editor");
+        e.setValue(e.getValue() + s);
     },
 
-    change: function() {
-        this.element.val( this.options.editor.getValue() );
+    change: function(t) {
+        let e = t.data("editor");
+        t.val( e.getValue() );
     },
 
-    destroy: function() {
+    destroy: function(t) {
         try {
-            this.options.editor.destroy();
+            let e = t.data("editor");
+            e.destroy();
         }
         catch (err) {}
     },
 
-    fullscreen: function(cm, fs) {
+    fullscreen: function(t, cm, fs) {
         // FIX FOR CHROME: If this code editor is inside a jquery dialog, Chrome will not render
         // the portion of the editor that is outside the dialog when it goes fullscreen.
         // To work around this, we record the position, height and width of the dialog before
         // going into fullscreen, make the dialog fill the screen and then restore it 
         // when leaving fullscreen as a workaround.
-        let dlg = this.element.closest("div.ui-dialog");
+        let dlg = t.closest("div.ui-dialog");
         if (dlg) {
             if (fs) {
-                this.dlgheight = dlg.height(); this.dlgwidth = dlg.width(); this.dlgtop = dlg.position().top; this.dlgleft = dlg.position().left;
+                t.data("dlgheight",  dlg.height()); 
+                t.data("dlgwidth", dlg.width()); 
+                t.data("dlgtop", dlg.position().top); 
+                t.data("dlgleft", dlg.position().left);
                 dlg.height("100%"); dlg.width("100%"); dlg.css("top", 0); dlg.css("left", 0);
             }
             else {
-                dlg.height(this.dlgheight); dlg.width(this.dlgwidth); dlg.css("top", this.dlgtop); dlg.css("left", this.dlgleft);
+                dlg.height(t.data("dlgheight")); 
+                dlg.width(t.data("dlgwidth"));
+                dlg.css("top", t.data("dlgtop")); 
+                dlg.css("left", t.data("dlgleft"));
             }
         }
         // END CHROME FIX
         cm.setOption("fullScreen", fs);
     },
 
-    refresh: function() {
-        this.options.editor.refresh();
+    refresh: function(t) {
+        t.data("editor").refresh();
     },
 
-    value: function(newval) {
+    value: function(t, newval) {
         if (newval === undefined) {
-            return this.options.editor.getValue();
+            return t.data("editor").getValue();
         }
         if (!newval) { newval = ""; }
-        this.options.editor.setValue(newval);
-        this.options.editor.refresh();
-        this.change();
+        t.data("editor").setValue(newval);
+        t.data("editor").refresh();
+        this.change(t);
     }
 
 });
 
-$.widget("asm.sqleditor", {
-    options: {
-        editor: null
-    },
+/** Wraps a CodeMirror instance editing SQL */
+$.fn.sqleditor = asm_widget({
 
-    _create: function() {
+    _create: function(t) {
         let self = this;
         setTimeout(function() {
-            self.options.editor = CodeMirror.fromTextArea(self.element[0], {
+            let editor = CodeMirror.fromTextArea(t[0], {
                 lineNumbers: true,
                 mode: "text/x-sql",
                 matchBrackets: true,
                 autofocus: false,
+
                 //direction: (asm.locale == "ar" || asm.locale == "he") ? "rtl" : "ltr",
                 extraKeys: {
                     "F11": function(cm) {
-                        self.fullscreen(cm, !cm.getOption("fullScreen"));
+                        self.fullscreen(t, cm, !cm.getOption("fullScreen"));
                     },
                     "Shift-Ctrl-F": function(cm) {
-                        self.fullscreen(cm, !cm.getOption("fullScreen"));
+                        self.fullscreen(t, cm, !cm.getOption("fullScreen"));
                     },
                     "Esc": function(cm) {
-                        self.fullscreen(cm, false);
-                    },
-                    "Ctrl-Space": "autocomplete"
+                        self.fullscreen(t, cm, false);
+                    }
                 },
                 hintOptions: { tables: schema }
             });
+            t.data("editor", editor);
             // Override height and width if they were set as attributes of the text area
-            if (self.element.attr("data-width")) {
-                self.element.next().css("width", self.element.attr("data-width"));
+            if (t.attr("data-width")) {
+                t.next().css("width", t.attr("data-width"));
             }
-            if (self.element.attr("data-height")) {
-                self.element.next().css("height", self.element.attr("data-height"));
+            if (t.attr("data-height")) {
+                t.next().css("height", t.attr("data-height"));
             }
             // When the editor loses focus, update the original textarea element
-            self.options.editor.on("blur", function() {
-                self.change();
+            editor.on("blur", function() {
+                self.change(t);
             });
 
         }, 1000);
     },
 
-    append: function(s) {
-        this.options.editor.setValue(this.options.editor.getValue() + s);
+    append: function(t, s) {
+        let e = t.data("editor");
+        e.setValue(e.getValue() + s);
     },
 
-    change: function() {
-        this.element.val( this.options.editor.getValue() );
+    change: function(t) {
+        let e = t.data("editor");
+        t.val( e.getValue() );
     },
 
-    destroy: function() {
+    destroy: function(t) {
         try {
-            this.options.editor.destroy();
+            let e = t.data("editor");
+            e.destroy();
         }
         catch (err) {}
     },
 
-    fullscreen: function(cm, fs) {
+    fullscreen: function(t, cm, fs) {
         // FIX FOR CHROME: If this code editor is inside a jquery dialog, Chrome will not render
         // the portion of the editor that is outside the dialog when it goes fullscreen.
         // To work around this, we record the position, height and width of the dialog before
         // going into fullscreen, make the dialog fill the screen and then restore it 
         // when leaving fullscreen as a workaround.
-        let dlg = this.element.closest("div.ui-dialog");
-        if (dlg.length > 0) {
+        let dlg = t.closest("div.ui-dialog");
+        if (dlg) {
             if (fs) {
-                this.dlgheight = dlg.height(); this.dlgwidth = dlg.width(); this.dlgtop = dlg.position().top; this.dlgleft = dlg.position().left;
+                t.data("dlgheight",  dlg.height()); 
+                t.data("dlgwidth", dlg.width()); 
+                t.data("dlgtop", dlg.position().top); 
+                t.data("dlgleft", dlg.position().left);
                 dlg.height("100%"); dlg.width("100%"); dlg.css("top", 0); dlg.css("left", 0);
             }
             else {
-                dlg.height(this.dlgheight); dlg.width(this.dlgwidth); dlg.css("top", this.dlgtop); dlg.css("left", this.dlgleft);
+                dlg.height(t.data("dlgheight")); 
+                dlg.width(t.data("dlgwidth"));
+                dlg.css("top", t.data("dlgtop")); 
+                dlg.css("left", t.data("dlgleft"));
             }
         }
         // END CHROME FIX
         cm.setOption("fullScreen", fs);
     },
 
-    refresh: function() {
-        this.options.editor.refresh();
+    refresh: function(t) {
+        t.data("editor").refresh();
     },
 
-    value: function(newval) {
+    value: function(t, newval) {
         if (newval === undefined) {
-            return this.options.editor.getValue();
+            return t.data("editor").getValue();
         }
         if (!newval) { newval = ""; }
-        this.options.editor.setValue(newval);
-        this.options.editor.refresh();
-        this.change();
+        t.data("editor").setValue(newval);
+        t.data("editor").refresh();
+        this.change(t);
     }
 
 });

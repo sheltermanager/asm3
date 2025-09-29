@@ -277,6 +277,7 @@ const common = {
      * Basically Object.assign
      */
     copy_object: function(target, source) {
+        if (source === undefined) { return target; }
         for (let key in source) {
             if (source.hasOwnProperty(key)) {
                 target[key] = source[key];

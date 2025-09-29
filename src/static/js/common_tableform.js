@@ -1119,9 +1119,12 @@ const tableform = {
      *      }
      */
     fields_render: function(fields, coptions) {
-        let d = "", startcol = "", endcol = "", colclasses = "", id = "", 
-            options = { render_container: true, full_width: true, centered: true, id: "" };
-        if (coptions !== undefined) { options = common.copy_object(options, coptions); }
+        let d = "", startcol = "", endcol = "", colclasses = "", id = "";
+        let options = common.copy_object({ 
+            render_container: true, 
+            full_width: true, 
+            centered: true, 
+            id: "" }, coptions);
         if (options.render_container) {
             let colc = "col"; // row and column classes to use, bootstrap grid by default
             let rowc = "row";
