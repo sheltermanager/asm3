@@ -202,7 +202,7 @@ $.fn.tableCheckedData = function() {
     return ids;
 };
 
-// Styles an HTML table with jquery stuff and adds sorting
+/** Wrapper around the tablesorter JQuery UI widget to enhance tables with sorting and filters */
 $.fn.table = asm_widget({
 
     options: {
@@ -348,6 +348,7 @@ $.fn.table = asm_widget({
 /** 
  * Styles a tab strip consisting of a div with an unordered list of tabs 
  * This is mainly used by the edit_header functions in all base screens
+ * to give the illusion of tabs functionality (they're basically dumb button links)
  */
 $.fn.asmtabs = asm_widget({
 
@@ -366,8 +367,8 @@ $.fn.asmtabs = asm_widget({
 
 });
 
-// Wrapper/helper for JQuery autocomplete widget. 
-// Expects a data-source attribute to contain the source for the dropdown.
+/** text input wrapper/helper for JQuery autocomplete widget. 
+    Expects a data-source attribute to contain the source for the dropdown. */
 $.fn.autotext = asm_widget({
 
     _create: function(t, source) {
@@ -445,57 +446,58 @@ const number_widget = function(t, allowed_chars) {
     });
 };
 
-// Textbox that should only contain numbers.
-// data-min and data-max attributes can be used to contain the lower/upper bound
+/** Text input that should only contain numbers.
+    data-min and data-max attributes can be used to contain the lower/upper bound */
 $.fn.number = asm_widget({
     _create: function(t) {
         number_widget(t, new RegExp("[0-9\.\-]"));
     }
 });
 
-// Textbox that should only contain numbers and letters (latin alphabet, no spaces, limited punctuation)
-// data-min and data-max attributes can be used to contain the lower/upper bound
+/** Text input that should only contain numbers and letters (latin alphabet, no spaces, limited punctuation)
+    data-min and data-max attributes can be used to contain the lower/upper bound */
 $.fn.alphanumber = asm_widget({
     _create: function(t) {
         number_widget(t, new RegExp("[0-9A-Za-z\\.\\*\\-]"));
     }
 });
 
-// Textbox that should only contain integer numbers
-// data-min and data-max attributes can be used to contain the lower/upper bound
+/** Text input that should only contain integer numbers
+    data-min and data-max attributes can be used to contain the lower/upper bound */
 $.fn.intnumber = asm_widget({
     _create: function(t) {
         number_widget(t, new RegExp("[0-9\\-]"));
     }
 });
 
-// Textbox that should only contain CIDR IP subnets or IPv6 HEX/colon
+/** Text input that should only contain CIDR IP subnets or IPv6 HEX/colon */
 $.fn.ipnumber = asm_widget({
     _create: function(t) {
         number_widget(t, new RegExp("[0-9\\.\\/\\:abcdef ]"));
     }
 });
 
-const PHONE_RULES = [
-    { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
-    { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}" },
-    { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}" },
-    { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
-    { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
-    { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}" },
-    { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}" }
-];
-
-// Textbox that can format phone numbers to the locale rules above
+/** Text input that can format phone numbers to the locale rules above */
 $.fn.phone = asm_widget({
+
+    PHONE_RULES: [
+        { locale: "en", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+        { locale: "en_AU", prefix: "04", length: 10, elements: 3, extract: /^(\d{4})(\d{3})(\d{3})$/, display: "{1} {2} {3}" },
+        { locale: "en_AU", prefix: "", length: 10, elements: 3, extract: /^(\d{2})(\d{4})(\d{4})$/, display: "{1} {2} {3}" },
+        { locale: "en_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+        { locale: "fr_CA", prefix: "", length: 10, elements: 3, extract: /^(\d{3})(\d{3})(\d{4})$/, display: "({1}) {2}-{3}" },
+        { locale: "en_GB", prefix: "011", length: 11, elements: 2, extract: /^(\d{4})(\d{7})$/, display: "{1} {2}" },
+        { locale: "en_GB", prefix: "", length: 11, elements: 2, extract: /^(\d{5})(\d{6})$/, display: "{1} {2}" }
+        ],
 
     _create: function(t) {
         if (!config.bool("FormatPhoneNumbers")) { return; } 
-        disable_autocomplete($(this));
+        disable_autocomplete(t);
+        let self = this;
         t.blur(function(e) {
             let t = $(this);
             let num = String(t.val()).replace(/\D/g, ''); // Throw away all but the numbers
-            $.each(PHONE_RULES, function(i, rules) {
+            $.each(self.PHONE_RULES, function(i, rules) {
                 if (rules.locale != asm.locale) { return; }
                 if (rules.prefix && num.indexOf(rules.prefix) != 0) { return; }
                 if (num.length != rules.length) { return; }
@@ -510,7 +512,7 @@ $.fn.phone = asm_widget({
     }
 });
 
-// Datepicker/wrapper widget
+/** Datepicker/wrapper widget for a text input */
 $.fn.date = asm_widget({
 
     _create: function(t) {
@@ -612,7 +614,7 @@ $.fn.date = asm_widget({
 
 });
 
-// Textbox that should only contain a time (numbers and colon), wraps the timepicker widget
+/** text input that should only contain a time (numbers and colon), wraps the timepicker widget */
 $.fn.time = asm_widget({
 
     _create: function(t) {
@@ -671,7 +673,7 @@ $.fn.time = asm_widget({
     }
 });
 
-// Select box wrapper
+/** select widget wrapper with helper functions for removing retired items */
 $.fn.select = asm_widget({
 
     _create: function(t) {
@@ -775,7 +777,7 @@ $.widget( "asm.iconselectmenu", $.ui.selectmenu, {
     }
 });
 
-/** Wraps an input that contains a lat/long geocode */
+/** Wraps an input that contains a lat/long geocode, splitting it into separate inputs for lat/long */
 $.fn.latlong = asm_widget({
     _create: function(t) {
         let self = this;
@@ -871,6 +873,7 @@ $.fn.callout = asm_widget({
 /**
  * ASM menu widget (we have to use asmmenu so as not to clash
  * with the built in JQuery UI menu widget)
+ * target should be a div representing the button that expands the menu.
  */
 $.fn.asmmenu = asm_widget({ 
 
@@ -987,6 +990,7 @@ $.fn.asmmenu = asm_widget({
     }
 });
 
+/** simple text input wrapper that implements disabled styling */
 $.fn.textbox = asm_widget({
 
     _create: function(t) {
@@ -1027,7 +1031,7 @@ $.fn.textbox = asm_widget({
     }
 });
 
-// Textbox wrapper that should only contain currency
+// text input wrapper that should only contain currency
 // The value passed in and out via the value method is in whole pence/cents/whatever the subdivision is
 // (an integer value that we stored in the db for the value)
 $.fn.currency = asm_widget({
@@ -1083,7 +1087,7 @@ $.widget("ui.dialog", $.ui.dialog, {
     }
 });
 
-/** Wrapper for a TinyMCE widget */
+/** Wrapper for a TinyMCE widget, target should be a textarea */
 $.fn.richtextarea = asm_widget({
 
     _create: function(t) {
@@ -1264,15 +1268,20 @@ $.fn.textarea = asm_widget({
     }
 });
 
-/** Wraps a CodeMirror instance editing HTML */
-$.fn.htmleditor = asm_widget({
+
+/** Widget that wraps a CodeMirror editor around a textarea, provides full screen support with F11
+ *  This code is used multiple times below with a mode switch to make htmleditor and sqleditor widgets
+ */
+const codeeditor = {
+
+    mode: "html",  // or sql
 
     _create: function(t) {
         let self = this;
         setTimeout(function() {
-            let editor = CodeMirror.fromTextArea(t[0], {
-                lineNumbers: true,
+            let cmoptions = {
                 mode: "htmlmixed",
+                lineNumbers: true,
                 matchBrackets: true,
                 autofocus: false,
                 //direction: (asm.locale == "ar" || asm.locale == "he") ? "rtl" : "ltr",
@@ -1287,7 +1296,18 @@ $.fn.htmleditor = asm_widget({
                         self.fullscreen(t, cm, false);
                     }
                 }
-            });
+            };
+            if (self.mode == "html") { 
+                cmoptions.mode = "htmlmixed"; 
+            }
+            else if (self.mode == "sql") { 
+                cmoptions.mode = "text/x-sql"; 
+                cmoptions.hintOptions = { tables: schema };
+            }
+            else {
+                throw new Error("Unknown codemirror mode '" + self.mode + "'");
+            }
+            let editor = CodeMirror.fromTextArea(t[0], cmoptions);
             t.data("editor", editor);
             // Override height and width if they were set as attributes of the text area
             if (t.attr("data-width")) {
@@ -1323,11 +1343,11 @@ $.fn.htmleditor = asm_widget({
     },
 
     fullscreen: function(t, cm, fs) {
-        // FIX FOR CHROME: If this code editor is inside a jquery dialog, Chrome will not render
+        // FIX FOR CHROME: If this code editor is inside a jquery dialog, Chrome will not paint
         // the portion of the editor that is outside the dialog when it goes fullscreen.
         // To work around this, we record the position, height and width of the dialog before
         // going into fullscreen, make the dialog fill the screen and then restore it 
-        // when leaving fullscreen as a workaround.
+        // when leaving fullscreen mode.
         let dlg = t.closest("div.ui-dialog");
         if (dlg) {
             if (fs) {
@@ -1362,109 +1382,10 @@ $.fn.htmleditor = asm_widget({
         this.change(t);
     }
 
-});
+};
 
-/** Wraps a CodeMirror instance editing SQL */
-$.fn.sqleditor = asm_widget({
-
-    _create: function(t) {
-        let self = this;
-        setTimeout(function() {
-            let editor = CodeMirror.fromTextArea(t[0], {
-                lineNumbers: true,
-                mode: "text/x-sql",
-                matchBrackets: true,
-                autofocus: false,
-
-                //direction: (asm.locale == "ar" || asm.locale == "he") ? "rtl" : "ltr",
-                extraKeys: {
-                    "F11": function(cm) {
-                        self.fullscreen(t, cm, !cm.getOption("fullScreen"));
-                    },
-                    "Shift-Ctrl-F": function(cm) {
-                        self.fullscreen(t, cm, !cm.getOption("fullScreen"));
-                    },
-                    "Esc": function(cm) {
-                        self.fullscreen(t, cm, false);
-                    }
-                },
-                hintOptions: { tables: schema }
-            });
-            t.data("editor", editor);
-            // Override height and width if they were set as attributes of the text area
-            if (t.attr("data-width")) {
-                t.next().css("width", t.attr("data-width"));
-            }
-            if (t.attr("data-height")) {
-                t.next().css("height", t.attr("data-height"));
-            }
-            // When the editor loses focus, update the original textarea element
-            editor.on("blur", function() {
-                self.change(t);
-            });
-
-        }, 1000);
-    },
-
-    append: function(t, s) {
-        let e = t.data("editor");
-        e.setValue(e.getValue() + s);
-    },
-
-    change: function(t) {
-        let e = t.data("editor");
-        t.val( e.getValue() );
-    },
-
-    destroy: function(t) {
-        try {
-            let e = t.data("editor");
-            e.destroy();
-        }
-        catch (err) {}
-    },
-
-    fullscreen: function(t, cm, fs) {
-        // FIX FOR CHROME: If this code editor is inside a jquery dialog, Chrome will not render
-        // the portion of the editor that is outside the dialog when it goes fullscreen.
-        // To work around this, we record the position, height and width of the dialog before
-        // going into fullscreen, make the dialog fill the screen and then restore it 
-        // when leaving fullscreen as a workaround.
-        let dlg = t.closest("div.ui-dialog");
-        if (dlg) {
-            if (fs) {
-                t.data("dlgheight",  dlg.height()); 
-                t.data("dlgwidth", dlg.width()); 
-                t.data("dlgtop", dlg.position().top); 
-                t.data("dlgleft", dlg.position().left);
-                dlg.height("100%"); dlg.width("100%"); dlg.css("top", 0); dlg.css("left", 0);
-            }
-            else {
-                dlg.height(t.data("dlgheight")); 
-                dlg.width(t.data("dlgwidth"));
-                dlg.css("top", t.data("dlgtop")); 
-                dlg.css("left", t.data("dlgleft"));
-            }
-        }
-        // END CHROME FIX
-        cm.setOption("fullScreen", fs);
-    },
-
-    refresh: function(t) {
-        t.data("editor").refresh();
-    },
-
-    value: function(t, newval) {
-        if (newval === undefined) {
-            return t.data("editor").getValue();
-        }
-        if (!newval) { newval = ""; }
-        t.data("editor").setValue(newval);
-        t.data("editor").refresh();
-        this.change(t);
-    }
-
-});
+$.fn.htmleditor = asm_widget( common.copy_object(common.clone_object(codeeditor), { mode: "html" })  );
+$.fn.sqleditor = asm_widget( common.copy_object(common.clone_object(codeeditor), { mode: "sql" })  );
 
 // Helper to disable jquery ui dialog buttons
 $.fn.disable_dialog_buttons = function() {

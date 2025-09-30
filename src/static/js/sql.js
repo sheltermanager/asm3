@@ -16,6 +16,9 @@ $(function() {
                 '</span>'},
                 { id: "exec", text: _("Execute"), tooltip: _("Execute the SQL in the box below"), icon: "sql", hotkey: "ctrl+e",
                     click: function() {
+                        // if the editor has the focus when you press CTRL+E, what you see on screen
+                        // won't be returned by the value method until it loses the focus
+                        $("#button-exec").focus(); 
                         sql.exec();
                     } },
                 { id: "script", text: _("Execute Script"), tooltip: _("Upload an SQL script"), icon: "sql", 
@@ -189,7 +192,6 @@ $(function() {
             };
 
             // Handles all export menu clicks by passing the action on to confirm_dump
-            $("#button-export").asmmenu();
             $("#button-export-body a").click(function() {
                 confirm_dump($(this).attr("data"));
                 return false;
@@ -207,6 +209,7 @@ $(function() {
         title: function() { return _("SQL Interface"); },
 
         destroy: function() {
+            tableform.buttons_destroy(this.buttons);
             common.widget_destroy("#dialog-script");
             common.widget_destroy("#sql");
         },

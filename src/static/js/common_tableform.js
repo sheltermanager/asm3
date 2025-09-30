@@ -158,6 +158,15 @@ const tableform = {
         });
     },
 
+    /** Call from any screen that assigns button hotkeys to unbind them */
+    buttons_destroy: function(buttons) {
+        $.each(buttons, function(i, v) {
+            if (v.hotkey) {
+                Mousetrap.unbind(v.hotkey.toLowerCase());
+            }
+        });
+    },
+
     /** Formats a value as comments (truncates to one line or shows full with \n -> <br/> based on config) */
     format_comments: function(row, v) {
         let tokenfound = false;

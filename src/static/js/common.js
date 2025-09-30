@@ -273,6 +273,15 @@ const common = {
     },
 
     /**
+     * Returns a clone of object o
+     * If deep is true, does a deep rather than shallow copy
+     */
+    clone_object: function(o, deep) {
+        if (deep) { return $.extend(true, {}, o); } // NOTE: deep has to be either true or not present, false is not valid
+        return $.extend({}, o);
+    },
+
+    /**
      * Copies all properties from source to target, returning target
      * Basically Object.assign
      */
