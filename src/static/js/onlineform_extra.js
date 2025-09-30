@@ -50,9 +50,13 @@ $(document).ready(function() {
     const process_image = function(field) {
 
         let file = field[0].files[0];
+        let ext = file.name.split(".").pop().toLowerCase();
 
         // Is this an image? If not, stop now
         if (!file.type.match('image.*')) { alert("File is not an image"); field.val(""); return; }
+
+        // Can't support HEIC/HEIF
+        if (ext == "heic" || ext == "heif") { alert("HEIC/HEIF unsupported"); field.val(""); return; }
 
         let max_width = 640, max_height = 640;
 
