@@ -62,7 +62,7 @@ const asm_widget = function(obj) {
             // Dispatch the constructor (method is an object containing options, 
             // merge these options with obj.options and pass them as the second arg to _create)
             else if (typeof(method) === "object") {
-                let opts = common.copy_object(obj.options, method);
+                let opts = common.copy_object(common.clone_object(obj.options), method);
                 rv = obj._create.call(obj, $(this), opts);
             }
             // Dispatch the method call
