@@ -1294,7 +1294,8 @@ const codeeditor = {
                     },
                     "Esc": function(cm) {
                         self.fullscreen(t, cm, false);
-                    }
+                    },
+                    "Ctrl-Space": "autocomplete"
                 }
             };
             if (self.mode == "html") { 
