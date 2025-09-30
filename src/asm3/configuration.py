@@ -345,6 +345,7 @@ DEFAULTS = {
     "OnlineFormSpamFirstnameMixCase": "Yes",
     "OnlineFormSpamMandatory": "No",
     "OnlineFormSpamPostcode": "No",
+    "OnlineFormSpamURLs": "No",
     "OnlineFormDeleteOnProcess": "No",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
@@ -1405,6 +1406,9 @@ def onlineform_spam_mandatory(dbo: Database) -> bool:
 
 def onlineform_spam_postcode(dbo: Database) -> bool:
     return cboolean(dbo, "OnlineFormSpamPostcode", DEFAULTS["OnlineFormSpamPostcode"] == "Yes")
+
+def onlineform_spam_urls(dbo: Database) -> bool:
+    return cboolean(dbo, "OnlineFormSpamURLs", DEFAULTS["OnlineFormSpamURLs"] == "Yes")
 
 def organisation(dbo: Database) -> str:
     return cstring(dbo, "Organisation", DEFAULTS["Organisation"])

@@ -929,6 +929,15 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                             spam = True
                             break
 
+    # URLs found in any fields
+    if asm3.configuration.onlineform_spam_urls(dbo):
+        for k, v in post.data.items():
+            if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
+                if v.lower().find("http") != -1 and v.find("//") != -1:
+                    spamreason = f"http URL found in field '{k}'"
+                    spam = True
+                    break
+
     collationid = get_collationid(dbo)
 
     l = dbo.locale
