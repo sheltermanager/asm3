@@ -1250,13 +1250,10 @@ const common = {
     },
 
     /** Destroys a JQuery widget by calling its destroy method.
-     * Infers type from selector if it is not supplied:
-     *     animal = animalchooser
-     *     animals = animalschoosermulti
-     *     owner/person = personchooser
-     *     dialog- = dialog
+     * Guesses type from the selector if it is not supplied:
+     * if remove is true, the selector/node is removed from the DOM
      */
-    widget_destroy: function(selector, type, noremove) {
+    widget_destroy: function(selector, type, remove = true) {
         var types = {
             "#animals": "animalchoosermulti",
             "#animal": "animalchooser",
@@ -1279,40 +1276,36 @@ const common = {
         }
         try {
             if (type == "animalchooser") { 
-                $(selector).animalchooser("destroy").remove();
+                $(selector).animalchooser("destroy");
             }
             else if (type == "animalchoosermulti") {
-                $(selector).animalchoosermulti("destroy").remove();
+                $(selector).animalchoosermulti("destroy");
             }
             else if (type == "createpayment") { 
-                $(selector).createpayment("destroy").remove();
+                $(selector).createpayment("destroy");
             }
             else if (type == "emailform") {
-                $(selector).emailform("destroy").remove();
+                $(selector).emailform("destroy");
             }
             else if (type == "htmleditor") {
-                $(selector).htmleditor("destroy").remove();
+                $(selector).htmleditor("destroy");
             }
             else if (type == "personchooser") {
-                $(selector).personchooser("destroy").remove();
+                $(selector).personchooser("destroy");
             }
             else if (type == "richtextarea") {
-                $(selector).richtextarea("destroy").remove();
+                $(selector).richtextarea("destroy");
             }
             else if (type == "sqleditor") {
-                $(selector).sqleditor("destroy").remove();
+                $(selector).sqleditor("destroy");
             }
             else if (type == "dialog") {
-                if (noremove) {
-                    $(selector).dialog("destroy");
-                }
-                else {
-                    $(selector).dialog("destroy").remove();
-                }
+                $(selector).dialog("destroy");
             }
             else {
                 log.error("widget_destroy: invalid type '" + type + "' for selector '" + selector + "'");
             }
+            if (remove) { $(selector).remove(); }
         }
         catch (ex) {
             log.trace("widget_destroy: " + selector + " " + type + ",\n" + ex);

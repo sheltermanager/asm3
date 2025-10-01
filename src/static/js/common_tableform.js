@@ -2284,7 +2284,7 @@ const tableform = {
         var b = {}, deferred = $.Deferred();
 
         // If this dialog has already been created, destroy it first
-        common.widget_destroy(selector, "dialog", true);
+        common.widget_destroy(selector, "dialog", false);
 
         if (!o) { o = { notblank: [], notzero: [], okclick: null, redbutton: null, redclick: null, cancelclick: null }; }
         $.extend(o, {
