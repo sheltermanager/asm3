@@ -67,7 +67,7 @@ const asm_widget = function(obj) {
                 if (t.data("asm-widget").includes(obj)) { return false; } // a widget of this type has already been initialised for this node
                 t.data("asm-widget").push(obj);
             }
-            return true
+            return true;
         };
         this.each(function() {
             // Dispatch the constructor (no args)
@@ -383,7 +383,7 @@ $.fn.table = asm_widget({
         try {
             t.tablesorter("destroy");
         }
-        catch {}
+        catch(e) {}
     }
 
 });
@@ -454,7 +454,7 @@ $.fn.autotext = asm_widget({
         try {
             t.autocomplete("destroy");
         }
-        catch {}
+        catch(e) {}
     }
 
 });
@@ -666,7 +666,7 @@ $.fn.date = asm_widget({
         try {
             t.datepicker("destroy");
         }
-        catch {}
+        catch(e) {}
     }
 
 });
@@ -733,7 +733,7 @@ $.fn.time = asm_widget({
         try {
             t.timepicker("destroy");
         }
-        catch {}
+        catch(e) {}
     }
 
 });
@@ -1638,7 +1638,7 @@ $.fn.asmsignature = asm_widget({
             let id = "asmsign-" + t[0].id;
             $("#" + id + " .asmsignwidget").signature("destroy");
         }
-        catch {}
+        catch(e) {}
     }
 
 });
