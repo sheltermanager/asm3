@@ -17,7 +17,7 @@ IDTYPE_SAVOURLIFE = "savourlife"
 class SavourLifePublisher(AbstractPublisher):
     """
     Handles publishing to savourlife.com.au
-    Note: They ONLY deal with dogs.
+    Note: They ONLY deal with dogs and cats.
     """
     def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
@@ -25,6 +25,7 @@ class SavourLifePublisher(AbstractPublisher):
         publishCriteria.bondedAsSingle = True
         publishCriteria.includeWithoutImage = False # SL do not want listings without images
         AbstractPublisher.__init__(self, dbo, publishCriteria)
+        self.load_breeds()
         self.initLog("savourlife", "SavourLife Publisher")
     
     def load_breeds(self):
@@ -130,7 +131,6 @@ class SavourLifePublisher(AbstractPublisher):
             self.logSuccess("No animal/movement changes have been made since last publish")
             self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
             return
-
         preanimals = self.getMatchingAnimals(includeAdditionalFields=True)
         animals = [ x for x in preanimals if x.SPECIESID == 1 or x.SPECIESID == 2 ] # We only want dogs and cats
         processed = []
@@ -163,7 +163,6 @@ class SavourLifePublisher(AbstractPublisher):
             self.cleanup()
             return
         """
-
         anCount = 0
         for an in animals:
             try:
