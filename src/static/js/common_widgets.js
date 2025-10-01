@@ -27,6 +27,11 @@ const MASK_VALUE = "****************";
  * and passes the DOM element that the widget is wrapping as the first argument t.
  * The remaining arguments are passed in order after that (max of 2)
  * 
+ * Widget nodes are tagged with a class asm-widget, with a reference to the widget object
+ * set in .data("asm-widget") which is an array of all widgets linked to this node. 
+ * This is then used by $().destroy_asm_widgets() to call the destroy 
+ * method of all widgets in the given selector (usually with #container .asm-widget).
+ * 
  * Eg: 
  * $.fn.textbox = asm_widget({ 
  *     options: {
@@ -43,6 +48,8 @@ const MASK_VALUE = "****************";
  *         if (newval === undefined) { return t.val(); }
  *         t.val(newval);
  *     }
+ *     destroy: function(t) {
+ *     }
  * });
  * 
  * $("#mytextbox").textbox({ dothething: false });
@@ -50,20 +57,34 @@ const MASK_VALUE = "****************";
 const asm_widget = function(obj) {
     return function(method, arg1, arg2) {
         let rv = null;
+        const store_ref = function(t) {
+            // tag widget nodes with a class, and store a link to the object with it
+            t.addClass("asm-widget");
+            if (!t.data("asm-widget")) {
+                t.data("asm-widget", [ obj ]);
+            }
+            else {
+                if (t.data("asm-widget").includes(obj)) { return false; } // a widget of this type has already been initialised for this node
+                t.data("asm-widget").push(obj);
+            }
+            return true
+        };
         this.each(function() {
             // Dispatch the constructor (no args)
             if (method === undefined) {
-                rv = obj._create.call(obj, $(this), obj.options);
+                if ( store_ref($(this)) ) { rv = obj._create.call(obj, $(this), obj.options); }
             }
             // Dispatch the constructor (create explicitly called)
             else if (method === "create") {
-                rv = obj._create.call(obj, $(this), obj.options);
+                if ( store_ref($(this)) ) { rv = obj._create.call(obj, $(this), obj.options); }
             }
             // Dispatch the constructor (method is an object containing options, 
             // merge these options with obj.options and pass them as the second arg to _create)
             else if (typeof(method) === "object") {
-                let opts = common.copy_object(common.clone_object(obj.options), method);
-                rv = obj._create.call(obj, $(this), opts);
+                if ( store_ref($(this)) ) {
+                    let opts = common.copy_object(common.clone_object(obj.options), method);
+                    rv = obj._create.call(obj, $(this), opts);
+                }
             }
             // Dispatch the method call
             else if (obj.hasOwnProperty(method)) {
@@ -75,6 +96,21 @@ const asm_widget = function(obj) {
         });
         return rv;
     };
+};
+
+// Calls the destroy method of all asm widgets in the selector, eg: #asm-content .asm-widget
+$.fn.destroy_asm_widgets = function() {
+    this.each(function() {
+        let t = $(this);
+        if (t.hasClass("asm-widget")) {
+            let a = t.data("asm-widget");
+            $.each(a, function(i, o) {
+                if (typeof(o) === "object" && o.hasOwnProperty("destroy")) {
+                    o.destroy.call(o, t);
+                }
+            });
+        }
+    });
 };
 
 // Disables autocomplete on the given JQuery node t
@@ -341,6 +377,13 @@ $.fn.table = asm_widget({
             filters[column] = value;
         });
         return filters;
+    },
+
+    destroy: function(t) {
+        try {
+            t.tablesorter("destroy");
+        }
+        catch {}
     }
 
 });
@@ -405,6 +448,13 @@ $.fn.autotext = asm_widget({
     // [ "item1", "item2" ] or [ { label: "item1", value: "value1" } ]
     source: function(t, source) {
         t.autocomplete("option", "source", source);
+    },
+
+    destroy: function(t) {
+        try {
+            t.autocomplete("destroy");
+        }
+        catch {}
     }
 
 });
@@ -610,6 +660,13 @@ $.fn.date = asm_widget({
 
     setDate: function(t, newval) {
         t.datepicker("setDate");
+    },
+
+    destroy: function(t) {
+        try {
+            t.datepicker("destroy");
+        }
+        catch {}
     }
 
 });
@@ -670,7 +727,15 @@ $.fn.time = asm_widget({
                 header.show_error(_("'{0}' is not a valid time").replace("{0}", v), 5000);
             }
         });
+    },
+
+    destroy: function(t) {
+        try {
+            t.timepicker("destroy");
+        }
+        catch {}
     }
+
 });
 
 /** select widget wrapper with helper functions for removing retired items */
@@ -1566,6 +1631,14 @@ $.fn.asmsignature = asm_widget({
                 return false;
             }
         }
+    },
+
+    destroy: function(t) {
+        try {
+            let id = "asmsign-" + t[0].id;
+            $("#" + id + " .asmsignwidget").signature("destroy");
+        }
+        catch {}
     }
 
 });

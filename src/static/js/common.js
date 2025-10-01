@@ -588,7 +588,8 @@ const common = {
      */
     module_loadandstart: function(modulename, uri) {
         
-        // do we already have one running? If so, try to unload it first
+        // do we already have one running? If so, try to unload it first so
+        // that the call to destroy() can cancel it if necessary
         if (common.module_unload()) { return; }
 
         // add a json parameter to only retrieve the controller json document
@@ -659,6 +660,7 @@ const common = {
         if (common.module_unload()) { return; }
 
         var o = common.modules[modulename];
+        $("#asm-body-container .asm-widget").destroy_asm_widgets(); // unload any widgets
         $("#asm-body-container").empty(); 
         if (o.render) { 
             try {
