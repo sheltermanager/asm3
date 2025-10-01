@@ -560,7 +560,7 @@ additional = {
         else if (f.FIELDTYPE == additional.AUTOCOMPLETE) {
             let src = [];
             $.each(f.LOOKUPVALUES.split("|"), function(i, s) {
-                src.push(s);
+                src.push({ label: s, value: s });
             });
             return tableform.render_autotext(v, src);
         }
