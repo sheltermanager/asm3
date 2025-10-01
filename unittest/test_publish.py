@@ -386,7 +386,10 @@ class TestPublish(unittest.TestCase):
         sl = asm3.publishers.petrescue.PetRescuePublisher(base.get_dbo(), pc)
         sl.load_breeds()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        self.assertIsNotNone(asm3.publishers.savourlife.SavourLifePublisher(base.get_dbo(), pc).processAnimal(a))
+        sl.load_breeds()
+        self.assertIsNotNone(sl.breeds)
+        self.assertTrue(len(sl.breeds["Dog"]) > 0)
+        self.assertIsNotNone(sl.processAnimal(a))
 
     # smarttag
     def test_smarttag(self):

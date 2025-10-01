@@ -25,35 +25,41 @@ class SavourLifePublisher(AbstractPublisher):
         publishCriteria.bondedAsSingle = True
         publishCriteria.includeWithoutImage = False # SL do not want listings without images
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.load_breeds()
         self.initLog("savourlife", "SavourLife Publisher")
     
     def load_breeds(self):
-        fname = f"{self.dbo.installpath}static/publishers/savourlife/Dog.json"
-        self.dogbreeds = asm3.utils.json_parse(asm3.utils.read_text_file(fname))
-        fname = f"{self.dbo.installpath}static/publishers/savourlife/Cat.json"
-        self.catbreeds = asm3.utils.json_parse(asm3.utils.read_text_file(fname))
+        """ Loads SavourLife breeds from static json files into a dictionary for get_breed_id """
+        self.breeds = {}
+        for sp in [ "Cat", "Dog" ]:
+            fname = f"{self.dbo.installpath}static/publishers/savourlife/{sp}.json"
+            self.breeds[sp] = asm3.utils.json_parse(asm3.utils.read_text_file(fname))
 
     def get_breed_id(self, speciesname: str, breedname: str, crossbreed: bool = False) -> int:
         """
         Returns a savourlife breed for a given breedname
         """
-        if speciesname == "Cat":
-            BREEDDATA = self.catbreeds
-            breedid = 432
-        else:
-            BREEDDATA = self.dogbreeds
-            breedid = 305
+        default_breeds = {
+            "Cat":  "432", # DSH
+            "Dog":  "305"  # Crossbreed
+        }
+        if speciesname not in default_breeds: 
+            self.logError(f"Invalid species '{speciesname}', cannot load breed data")
+            return 305
+        breeddata = self.breeds[speciesname]
         breed = asm3.utils.nulltostr(breedname).lower()
         breed = " ".join(breed.split()) # this suppresses whitespace, eg: "    foo    bar" becomes "foo bar"
+        breedid = -1
         if crossbreed and speciesname == "Dog":
             breed = "%s cross" % breed
-        for k, v in BREEDDATA.items():
+        for k, v in breeddata.items():
             v = v.lower()
             v = " ".join(v.split()) # suppress whitespace
             if v == breed:
                 breedid = int(k)
                 break
+        if breedid == -1:
+            breedid = default_breeds[speciesname]
+            self.log(f"Could not find matching breed for '{breedname}', using default breed {breedid}")
         return int(breedid)
 
     def get_state(self, s: str) -> str:
@@ -131,6 +137,9 @@ class SavourLifePublisher(AbstractPublisher):
             self.logSuccess("No animal/movement changes have been made since last publish")
             self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
             return
+
+        self.load_breeds()
+
         preanimals = self.getMatchingAnimals(includeAdditionalFields=True)
         animals = [ x for x in preanimals if x.SPECIESID == 1 or x.SPECIESID == 2 ] # We only want dogs and cats
         processed = []
