@@ -45,7 +45,7 @@ $(function() {
                 ]},
                 { id: "history", type: "dropdownfilter", options: [],
                     click: function(selval) {
-                        $("#sql").sqleditor("value", selval);
+                        $("#sql").sqleditor("value", selval.replace("\\n", "\n"));
                     } }
                 ];
             return [
@@ -84,6 +84,7 @@ $(function() {
          * Push a new query into the history
          */
         add_to_history: function(v) {
+            v = v.replace("\n", "\\n");
             // if v is already in the queue, move it to the top
             if (sql.history.includes(v)) {
                 sql.history = sql.history.filter(function(item) {
@@ -106,6 +107,7 @@ $(function() {
             else {
                 sql.history = h.split("||");
                 $("#history").html(html.list_to_options(sql.history.toReversed()));
+                $("#history").val("");
             }
         },
 
