@@ -142,8 +142,8 @@ $(function() {
           */
         check_type: function() {
             let ft = $("#type").select("value");
-            // Show lookups if field type is yes/no, lookup or multi-lookup
-            if (ft == 0 || ft == 6 || ft == 7) {
+            // Show lookups if field type is yes/no, lookup, multi-lookup or autocomplete
+            if (ft == 0 || ft == 6 || ft == 7 || ft == 16) {
                 $("#lookupvaluesrow").fadeIn();
             }
             else {

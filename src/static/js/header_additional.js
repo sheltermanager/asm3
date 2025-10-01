@@ -35,6 +35,7 @@ additional = {
     PERSON_ADOPTIONCOORDINATOR: 13,
     TELEPHONE: 14,
     NUMBER_INCREMENTED: 15,
+    AUTOCOMPLETE: 16,
 
     /**
      * Renders and lays out additional fields from data from the backend 
@@ -556,6 +557,13 @@ additional = {
         else if (f.FIELDTYPE == additional.PERSON_VET) { v.personfilter = "vet"; return tableform.render_person(v); }
         else if (f.FIELDTYPE == additional.PERSON_ADOPTIONCOORDINATOR) { v.personfilter = "coordinator"; return tableform.render_person(v); }
         else if (f.FIELDTYPE == additional.TELEPHONE) { return tableform.render_phone(v); }
+        else if (f.FIELDTYPE == additional.AUTOCOMPLETE) {
+            let src = [];
+            $.each(f.LOOKUPVALUES.split("|"), function(i, s) {
+                src.push(s);
+            });
+            return tableform.render_autotext(v, src);
+        }
         else if (f.FIELDTYPE == additional.LOOKUP) { 
             let opts = [], cv = common.trim(common.nulltostr(v.value));
             $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
