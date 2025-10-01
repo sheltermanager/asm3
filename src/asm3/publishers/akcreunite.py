@@ -116,9 +116,8 @@ class AKCReunitePublisher(AbstractPublisher):
                         break
 
                     # Temporary or data errors - do nothing so we try again next time
-                    # 54103 = Data failed validation
                     # 54107 = Database unavailable, try later
-                    if jr["responseCode"] == 54103 or jr["responseCode"] == 54107:
+                    if jr["responseCode"] == 54107:
                         continue
                     
                     if not wassuccess:
