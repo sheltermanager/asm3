@@ -387,13 +387,17 @@ def get_microchip_data(dbo: Database, patterns: List[str], publishername: str,
     except Exception as err:
         asm3.al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
 
-    rows = calc_microchip_data_addresses(dbo, rows, organisation_email)
+    rows = calc_microchip_data(dbo, rows, organisation_email)
     rows = asm3.media.embellish_photo_urls(dbo, rows, asm3.media.ANIMAL)
     return rows
 
-def calc_microchip_data_addresses(dbo: Database, rows: Results, organisation_email: str = "") -> Results:
-    """ Given a list of animal microchip rows, 
-        updates the addresses and adds additional rows for animals with multiple microchips """
+def calc_microchip_data(dbo: Database, rows: Results, organisation_email: str = "") -> Results:
+    """ 
+    Given a list of animal microchip rows, 
+        1. Updates the addresses such that CURRENTOWNER* contains the correct info for shelter/nsowner/movement person
+        2. Adds additional rows for animals with two microchips 
+        3. Adds a new column EVENTDATE that contains the date of the event that triggered registration (be it intake, adoption, etc)
+    """
     
     organisation = asm3.configuration.organisation(dbo)
     orgaddress = asm3.configuration.organisation_address(dbo)
@@ -468,6 +472,12 @@ def calc_microchip_data_addresses(dbo: Database, rows: Results, organisation_ema
             r.CURRENTOWNERMOBILETELEPHONE = orgtelephone
             r.CURRENTOWNERCELLPHONE = orgtelephone
             r.CURRENTOWNEREMAILADDRESS = email
+
+        # Set the EVENTDATE column to the date of the event triggering registration
+        # if the animal is non-shelter, this will be the implant date since non-shelter
+        # animals can't have an active movement or entry date
+        r.EVENTDATE = r.ACTIVEMOVEMENTDATE or r.MOSTRECENTENTRYDATE
+        if r.NONSHELTERANIMAL == 1: r.EVENTDATE = r.IDENTICHIPDATE
 
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
         # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing

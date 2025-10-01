@@ -210,8 +210,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         # not only fail validation, but return a value of FAIL so that this record
         # is marked with the error and we won't try again until something changes
         # (prevents old records continually being checked)
-        servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
-        if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
+        servicedate = an["EVENTDATE"]
         if servicedate < self.dbo.today(offset=cutoffdays):
             an["FAILMESSAGE"] = "Service date is older than %s days, marking failed" % cutoffdays
             self.logError(an["FAILMESSAGE"])
