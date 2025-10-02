@@ -726,7 +726,7 @@ const tableform = {
     },
 
     dialog_destroy: function() {
-        common.widget_destroy("#dialog-tableform", "dialog", true);
+        common.widget_destroy("#dialog-tableform", "dialog", false);
     },
 
     /**
