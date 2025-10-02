@@ -1081,6 +1081,8 @@ class mobile(ASMEndpoint):
             "breeds":       asm3.lookups.get_breeds_by_species(dbo),
             "colours":      asm3.lookups.get_basecolours(dbo),
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
+            "entrytypes":   asm3.lookups.get_entry_types(dbo),
+            "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "logtypes":     asm3.lookups.get_log_types(dbo),
