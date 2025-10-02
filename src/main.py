@@ -5792,9 +5792,20 @@ class onlineform_incoming(JSONEndpoint):
 
     def controller(self, o):
         headers = asm3.onlineform.get_onlineformincoming_headers(o.dbo)
-        asm3.al.debug("got %d submitted headers" % len(headers), "main.onlineform_incoming", o.dbo)
+        total = len(headers)
+        totalham = 0
+        totalspam = 0
+        for x in headers:
+            if x.SPAM == 1: totalspam += 1
+            else: totalham += 1
+        if o.post["filter"] == "ham" or o.post["filter"] == "":
+            headers = [ x for x in headers if x.SPAM == 0 ]
+        elif o.post["filter"] == "spam":
+            headers = [ x for x in headers if x.SPAM == 1 ]
+        asm3.al.debug("got %d submitted form headers (filter: %s)" % (len(headers), o.post["filter"]), "main.onlineform_incoming", o.dbo)
         return {
-            "rows": headers
+            "rows": headers,
+            "totals": [ totalham, totalspam, total ]
         }
 
     def post_view(self, o):

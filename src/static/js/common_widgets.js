@@ -99,6 +99,7 @@ const asm_widget = function(obj) {
 };
 
 // Calls the destroy method of all asm widgets in the selector, eg: #asm-content .asm-widget
+// Generally only called when unloading a module in common
 $.fn.destroy_asm_widgets = function() {
     this.each(function() {
         let t = $(this);

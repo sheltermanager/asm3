@@ -118,7 +118,15 @@ $(function() {
                     }
                 },
                 { id: "attach", icon: "link", text: _("Attach"), enabled: "one", type: "buttonmenu" },
-                { id: "create", icon: "complete", text: _("Create"), enabled: "multi", type: "buttonmenu" }
+                { id: "create", icon: "complete", text: _("Create"), enabled: "multi", type: "buttonmenu" },
+                { id: "filter", type: "dropdownfilter", 
+                    options: [ "ham|" + _("Forms") + " (" + controller.totals[0] + ")", 
+                        "spam|" + _("Spam") + " (" + controller.totals[1] + ")", 
+                        "all|" + _("(all)") + " (" + controller.totals[2] + ")"],
+                     click: function(selval) {
+                        common.route("onlineform_incoming?filter=" + selval);
+                     }
+                }
 
             ];
             this.table = table;
@@ -468,6 +476,12 @@ $(function() {
         },
 
         sync: function() {
+            // If a filter is in the querystring, update the select
+            if (common.querystring_param("filter")) {
+                $("#filter").select("value", common.querystring_param("filter"));
+            }
+            // If there's no spam in the list, disable the delete spam button
+            if ($("#tableform .asm-icon-spam").length == 0) { $("#button-deletespam").button("disable"); }
         },
 
         destroy: function() {
@@ -483,7 +497,7 @@ $(function() {
         animation: "formtab",
         title: function() { return _("Incoming Forms"); },
         routes: {
-            "onlineform_incoming": function() { common.module_loadandstart("onlineform_incoming", "onlineform_incoming"); }
+            "onlineform_incoming": function() { common.module_loadandstart("onlineform_incoming", "onlineform_incoming?" + this.rawqs); }
         }
 
     };

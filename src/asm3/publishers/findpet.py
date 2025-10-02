@@ -4,7 +4,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.utils
 
-from .base import AbstractPublisher, calc_microchip_data_addresses, get_microchip_data
+from .base import AbstractPublisher, calc_microchip_data, get_microchip_data
 from asm3.sitedefs import FINDPET_BASE_URL, FINDPET_API_KEY
 from asm3.typehints import Database, PublishCriteria, ResultRow
 
@@ -77,7 +77,7 @@ class FindPetPublisher(AbstractPublisher):
         # Get the list of stray/hold animals
         shanimals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + " WHERE " \
             "a.Archived=0 AND (a.EntryTypeID=2 OR a.IsHold=1) ORDER BY a.MostRecentEntryDate")
-        shanimals = calc_microchip_data_addresses(self.dbo, shanimals) # We do this so that we have the shelter address for reports
+        shanimals = calc_microchip_data(self.dbo, shanimals) # We do this so that we have the shelter address for reports
 
         # Get the list of animals that need their chips transferring
         tranimals = []
