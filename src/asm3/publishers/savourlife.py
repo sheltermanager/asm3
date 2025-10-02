@@ -28,7 +28,11 @@ class SavourLifePublisher(AbstractPublisher):
         self.initLog("savourlife", "SavourLife Publisher")
     
     def load_breeds(self):
-        """ Loads SavourLife breeds from static json files into a dictionary for get_breed_id """
+        """ Loads SavourLife breeds from static json files into a dictionary for get_breed_id 
+            The static files were downloaded from the SavourLife API with Curl:
+            curl -H "Content-Type: application/json" https://www.savour-life.com.au/umbraco/api/sheltermanager/GetBreeds?animalType=Cat > Cat.json
+            curl -H "Content-Type: application/json" https://www.savour-life.com.au/umbraco/api/sheltermanager/GetBreeds?animalType=Dog > Dog.json
+        """
         self.breeds = {}
         for sp in [ "Cat", "Dog" ]:
             fname = f"{self.dbo.installpath}static/publishers/savourlife/{sp}.json"
@@ -39,7 +43,7 @@ class SavourLifePublisher(AbstractPublisher):
         Returns a savourlife breed for a given breedname
         """
         default_breeds = {
-            "Cat":  "432", # DSH
+            "Cat":  "422", # DSH
             "Dog":  "305"  # Crossbreed
         }
         if speciesname not in default_breeds: 
