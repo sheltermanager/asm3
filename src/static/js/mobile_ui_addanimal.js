@@ -186,6 +186,8 @@ const mobile_ui_addanimal = {
         $("#internallocation").val(config.str("AFDefaultLocation"));
         mobile_ui_addanimal.update_units();
         $("#species").val(config.str("AFDefaultSpecies"));
+        $("#entrytype").val(config.str("AFDefaultEntryType"));
+        $("#entryreason").val(config.str("AFDefaultEntryReason"));
         mobile_ui_addanimal.update_breed_select();
         $("#breed1").val(config.str("AFDefaultBreed"));
         $("#size").val(config.str("AFDefaultSize"));
