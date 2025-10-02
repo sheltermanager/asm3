@@ -660,7 +660,7 @@ $.fn.date = asm_widget({
     },
 
     setDate: function(t, newval) {
-        t.datepicker("setDate");
+        t.datepicker("setDate", newval);
     },
 
     destroy: function(t) {
