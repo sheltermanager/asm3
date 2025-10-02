@@ -48,15 +48,16 @@ class TestAnimal(unittest.TestCase):
                 (animalid,)
             )
         def print_animallocation_rows(rows):
+            print()
             for row in rows:
-                # print(str(row))
+                print(str(row))
                 pass
-            # print()
+            print()
         
         dbo = base.get_dbo()
         ## Create an animal
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
+        # print_animallocation_rows(animallocationrows)
         self.assertEqual(1, len(animallocationrows)) ## Expect a single row representing the animal entering the shelter
         
         arv = dbo.query(
@@ -80,8 +81,8 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows))
+        # print_animallocation_rows(animallocationrows)
+        self.assertEqual(2, len(animallocationrows)) ## Expect the previous row plus a new row representing the new internal movement = 2 rows
 
         ## Adopt out animal
         data = {
@@ -94,15 +95,15 @@ class TestAnimal(unittest.TestCase):
         mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
 
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows))
+        # print_animallocation_rows(animallocationrows)
+        self.assertEqual(3, len(animallocationrows)) ## Expect 3 rows, the previous 2 plus the new movement
 
         asm3.movement.delete_movement(dbo, "test", mid)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows))
+        # print_animallocation_rows(animallocationrows)
+        self.assertEqual(2, len(animallocationrows)) ## Expect to drop back to 2 rows as previous movement has been deleted
 
-        ## Adopt out animal BEFORE most recent movement
+        ## Adopt out animal BEFORE internal movement
         data = {
             "animal": str(self.nid),
             "person": "1",
@@ -113,8 +114,8 @@ class TestAnimal(unittest.TestCase):
         mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
 
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        self.assertEqual(2, len(animallocationrows))
-        print_animallocation_rows(animallocationrows)
+        self.assertEqual(2, len(animallocationrows)) ## Expect to stay at 2 rows as new row should make previous row obsolete so should be removed automatically
+        # print_animallocation_rows(animallocationrows)
 
         ## Return from adoption
         data = {
@@ -129,7 +130,7 @@ class TestAnimal(unittest.TestCase):
         asm3.movement.update_movement_from_form(dbo, "test", post)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows))
+        self.assertEqual(3, len(animallocationrows)) ## Expect to increase to 3 to acknowledge the return
 
         arv = dbo.query(
             "SELECT RecordVersion FROM animal WHERE ID = ?",
@@ -153,8 +154,8 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(4, len(animallocationrows))
+        # print_animallocation_rows(animallocationrows)
+        self.assertEqual(4, len(animallocationrows)) ## Expect to increase to 4 to acknowledge the death
 
         ## Change deceased date
         arv = dbo.query(
@@ -178,8 +179,8 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(4, len(animallocationrows)) ## Expect four rows as number of movements has not changed
+        # print_animallocation_rows(animallocationrows)
+        self.assertEqual(4, len(animallocationrows)) ## Expect 4 rows as number of movements has not changed
 
         ## Remove deceased date
         arv = dbo.query(
@@ -202,8 +203,8 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows))
+        # print_animallocation_rows(animallocationrows)
+        self.assertEqual(3, len(animallocationrows)) ## Expect 3 rows as death has been removed
 
     def test_get_animal(self):
         self.assertIsNotNone(asm3.animal.get_animal(base.get_dbo(), self.nid))
