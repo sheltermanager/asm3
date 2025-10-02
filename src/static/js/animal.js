@@ -839,7 +839,8 @@ $(function() {
             if (controller.entryhistory.length > 0) {
                 $("#datebroughtin").hide();
                 $("#timebroughtinrow").hide();
-                $("#mostrecententrydate").val(format.date(controller.animal.MOSTRECENTENTRYDATE)).textbox("disable").show();
+                $("#mostrecententrydate").val(format.date(controller.animal.MOSTRECENTENTRYDATE)).textbox("disable");
+                $("#mostrecententrydate").show();
             }
 
             // CONFIG ===========================
