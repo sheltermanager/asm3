@@ -1047,7 +1047,7 @@ $(function() {
         /** Generates a new animal code */
         generate_code: async function() {
             validate.dirty(false);
-            let formdata = "mode=gencode&datebroughtin=" + format.date(controller.animal.MOSTRECENTENTRYDATE) + 
+            let formdata = "mode=gencode&datebroughtin=" + $("#datebroughtin").val() + 
                 "&animaltypeid=" + $("#animaltype").val() +
                 "&entryreasonid=" + $("#entryreason").val() +
                 "&speciesid=" + $("#species").val();
@@ -1202,7 +1202,7 @@ $(function() {
                 if (config.bool("ManualCodes")) { 
                     return;
                 }
-                let dbin = $("#datebroughtin").datepicker("getDate"), today = new Date();
+                let dbin = $("#datebroughtin").date("getDate"), today = new Date();
                 if (config.str("CodingFormat").indexOf("M") != -1 ||
                     config.str("ShortCodingFormat").indexOf("M") != -1) {
                     // If the month is not this month, regenerate the code
