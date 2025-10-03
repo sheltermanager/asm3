@@ -2913,6 +2913,7 @@ def update_active_litters(dbo: Database) -> None:
         if newremaining != remaining:
             dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE ID=?", (newremaining, a.id))
             asm3.al.debug("litter '%s' change, setting remaining to %d." % (a.acceptancenumber, int(newremaining)), "animal.update_active_litters", dbo)
+    return "OK %d" % len(active)
 
 def get_active_litters(dbo: Database, speciesid: int = -1) -> Results:
     """
