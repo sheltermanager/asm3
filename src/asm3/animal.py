@@ -3894,6 +3894,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
     animallocations = dbo.query("SELECT * FROM animallocation WHERE AnimalID = ? ORDER BY DATE desc", (animalid,))
     entrydate = asm3.i18n.remove_time(animaldata.DATEBROUGHTIN)
     deceaseddate = asm3.i18n.remove_time(animaldata.DECEASEDDATE)
+    defaultlocation = int(asm3.configuration.DEFAULTS["AFDefaultLocation"])
 
     ## If the animal is deceased or archived, grab the date the animal left the shelter for the last time
     finalleavingdate = None
@@ -3920,6 +3921,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                     "isdeath": 0
                 }
             )
+    
     
     invalidlocations = []
     lastlocationid = 0
@@ -3958,7 +3960,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
     ]
     onshelter = True
     lastmovementdate = entrydate
-    lastlocationid = 0
+    lastlocationid = defaultlocation
     lastunit = "*"
     isdead = False
     for am in actualmovements:
@@ -3966,10 +3968,10 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
         if not isdead:
             if onshelter:
                 for location in animallocations.copy():
-                    if location.ISDEATH:
+                    if am["ISDEATH"]:
                         newlocations.append(
                             {
-                                "date": entrydate,
+                                "date": location.DATE,
                                 "fromlocationid": location.FROMLOCATIONID,
                                 "fromunit": location.FROMUNIT,
                                 "isdeath": 1
