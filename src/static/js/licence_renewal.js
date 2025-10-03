@@ -67,7 +67,7 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 licence_renewal.lastperson = rec;
                 // Default giftaid if the person is registered
-                $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                $("#payment").payments("set_giftaid", rec.ISGIFTAID == 1);
                 $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
             });
 

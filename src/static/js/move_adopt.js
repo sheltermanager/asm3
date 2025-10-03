@@ -247,7 +247,7 @@ $(function() {
 
                 // Default giftaid if the person is registered
                 if (common.has_permission("oaod")) {
-                    $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
+                    $("#payment").payments("set_giftaid", p.ISGIFTAID == 1);
                     $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
                 }
 

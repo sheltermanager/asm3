@@ -11,15 +11,10 @@
  * Widget to show a create a payment dialog.
  * Target should be a div to contain the hidden dialog.
  */
-$.widget("asm.createpayment", {
-    options: {
-        dialog: null
-    },
+$.fn.createpayment = asm_widget({
 
-    _create: function() {
-        let dialog = this.element, self = this;
-        this.options.dialog = dialog;
-        this.element.append([
+    _create: function(t) {
+        t.append([
             '<div id="dialog-payment" style="display: none" title="' + html.title(_("Create Payment")) + '">',
             '<div>',
             '<input type="hidden" id="pm-animal" data="animal" class="asm-field" value="" />',
@@ -91,7 +86,7 @@ $.widget("asm.createpayment", {
             click: function() {
                 validate.reset("dialog-payment");
                 if (!validate.notblank(["pm-due"])) { return; }
-                let o = self.options.o;
+                let o = t.data("o");
                 let formdata = "mode=create&";
                 formdata += $("#dialog-payment .asm-field").toPOST();
                 header.show_loading(_("Creating..."));
@@ -140,7 +135,7 @@ $.widget("asm.createpayment", {
         });
     },
 
-    destroy: function() {
+    destroy: function(t) {
         common.widget_destroy("#dialog-payment", "dialog"); 
     },
     
@@ -161,8 +156,8 @@ $.widget("asm.createpayment", {
      * comments:   Any comments for the payment
      *    Eg: show({ amount: 5000, vat: false })
      */
-    show: function(o) {
-        this.options.o = o;
+    show: function(t, o) {
+        t.data("o", o);
         $("#dialog-payment").dialog("option", "title", o.title || _("Create Payment"));
         $("#pm-animal").val(o.animalid);
         $("#pm-person").val(o.personid);
@@ -196,7 +191,6 @@ $.widget("asm.createpayment", {
         $("#pm-vat").change();
         $("#pm-vatratechoice").change();
         $("#dialog-payment").dialog("open");
-        
     }
 });
 
@@ -205,15 +199,10 @@ $.widget("asm.createpayment", {
  * Widget to manage a dialog that allows sending of an email.
  * Target should be a div to contain the hidden dialog.
  */
-$.widget("asm.emailform", {
-    options: {
-        dialog: null
-    },
+$.fn.emailform = asm_widget({
 
-    _create: function() {
-        let dialog = this.element, self = this;
-        this.options.dialog = dialog;
-        this.element.append([
+    _create: function(t) {
+        t.append([
             '<div id="dialog-email" style="display: none" title="' + html.title(_("Email person"))  + '">',
             '<table width="100%">',
             '<tr>',
@@ -288,7 +277,7 @@ $.widget("asm.emailform", {
                 if (!validate.validemail(["em-from", "em-to"])) { return; }
                 if ($("#em-cc").val() != "" && !validate.validemail(["em-cc"])) { return; }
                 if ($("#em-bcc").val() != "" && !validate.validemail(["em-bcc"])) { return; }
-                let o = self.options.o;
+                let o = t.data("o");
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 header.show_loading(_("Sending..."));
@@ -312,7 +301,7 @@ $.widget("asm.emailform", {
                 buttons: b
         });
         $("#em-template").change(function() {
-            let o = self.options.o;
+            let o = t.data("o");
             let formdata = "mode=emailtemplate&dtid=" + $("#em-template").val();
             if (o.animalcontrolid) { formdata += "&animalcontrolid=" + o.animalcontrolid; }
             if (o.licenceid) { formdata += "&licenceid=" + o.licenceid; }
@@ -336,7 +325,7 @@ $.widget("asm.emailform", {
 
     },
 
-    destroy: function() {
+    destroy: function(t) {
         common.widget_destroy("#dialog-email", "dialog"); 
         common.widget_destroy("#em-body", "richtextarea");
     },
@@ -357,8 +346,8 @@ $.widget("asm.emailform", {
      * animalid:   An animal to substitute tokens in templates for (optional)
      *    Eg: show({ post: "person", formdata: "mode=email&personid=52", name: "Bob Smith", email: "bob@smith.com" })
      */
-    show: function(o) {
-        this.options.o = o;
+    show: function(t, o) {
+        t.data("o", o);
         $("#dialog-email").dialog("option", "title", o.title || _("Email person"));
         $("#dialog-email").dialog("open");
         if (o.logtypes) {
@@ -485,17 +474,19 @@ $.widget("asm.emailform", {
  * This is mainly used by Financial->Receive payment, and the Move-> screens 
  * to add payments at the same time as a movement.
  */
-$.widget("asm.payments", {
+$.fn.payments = asm_widget({
+
     options: {
-        count: 0,
         controller: null,
-        giftaid: false
     },
-    _create: function() {
+
+    _create: function(t, options) {
         let self = this;
         // If the user does not have permission to add payments, do nothing
         if (!common.has_permission("oaod")) { return; }
-        this.element.append([
+        let o = { controller: options.controller, count: 0, giftaid: false };
+        t.data("o", o);
+        t.append([
             html.content_header(_("Payment"), true),
             '<table class="asm-table-layout">',
             '<thead>',
@@ -536,24 +527,25 @@ $.widget("asm.payments", {
             '</table>',
             html.content_footer()
         ].join("\n"));
-        this.add_payment();
+        self.add_payment(t);
         $("button.takepayment")
             .button({ icons: { primary: "ui-icon-circle-plus" }, text: false })
             .click(function() {
-            self.add_payment();
+            self.add_payment(t);
         });
-        this.element.find("a.takepayment").click(function() {
-            self.add_payment();
+        t.find("a.takepayment").click(function() {
+            self.add_payment(t);
             return false;
         });
     },
 
-    add_payment: function() {
+    add_payment: function(t) {
+        let o = t.data("o");
         let h = [
             '<tr>',
             '<td>',
             '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox asm-halfselectbox">',
-            html.list_to_options(this.options.controller.donationtypes, "ID", "DONATIONNAME"),
+            html.list_to_options(o.controller.donationtypes, "ID", "DONATIONNAME"),
             '</select>',
             '</td>',
             '<td class="overridedates">',
@@ -564,7 +556,7 @@ $.widget("asm.payments", {
             '</td>',
             '<td>',
             '<select id="payment{i}" data="payment{i}" class="asm-halfselectbox">',
-            html.list_to_options(this.options.controller.paymentmethods, "ID", "PAYMENTNAME"),
+            html.list_to_options(o.controller.paymentmethods, "ID", "PAYMENTNAME"),
             '</select>',
             '</td>',
             '<td>',
@@ -581,18 +573,18 @@ $.widget("asm.payments", {
             '</td>',
             '<td class="overrideaccount">',
             '<select id="destaccount{i}" data="destaccount{i}" class="asm-selectbox asm-halfselectbox">',
-            html.list_to_options(this.options.controller.accounts, "ID", "CODE"),
+            html.list_to_options(o.controller.accounts, "ID", "CODE"),
             '</select>',
             '</td>',
             '<td class="giftaid centered">',
             '<input id="giftaid{i}" data="giftaid{i}" type="checkbox" class="asm-checkbox"',
-            (this.options.giftaid ? ' checked="checked"' : '') + ' />',
+            (o.giftaid ? ' checked="checked"' : '') + ' />',
             '</td>',
             '<td class="vat centered nowrap">',
             '<input id="vat{i}" data="vat{i}" type="checkbox" class="asm-checkbox" />',
             '<span id="vatboxes{i}" style="display: none">',
             '<select id="vatratechoice{i}" data="vatratechoice{i}" class="asm-selectbox asm-halfselectbox">',
-            html.list_to_options(this.options.controller.taxrates, "ID", "TAXRATENAME"),
+            html.list_to_options(o.controller.taxrates, "ID", "TAXRATENAME"),
             '</select>',
             '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" style="display: none;" />',
             '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
@@ -604,43 +596,43 @@ $.widget("asm.payments", {
             '</tr>'
         ];
         // Construct and add our new payment fields to the DOM
-        this.options.count += 1;
-        let i = this.options.count, self = this;
-        this.element.find("#paymentlines").append(common.substitute(h.join("\n"), {
-            i: this.options.count
+        o.count += 1;
+        let i = o.count, self = this;
+        t.find("#paymentlines").append(common.substitute(h.join("\n"), {
+            i: o.count
         }));
         // Remove any retired payment types and methods
         $("#donationtype" + i).select("removeRetiredOptions", "all");
         $("#payment" + i).select("removeRetiredOptions", "all");
         // Change the default amount when the payment type changes
         $("#donationtype" + i).change(function() {
-            let dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
-            let dv = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "ISVAT");
+            let dc = common.get_field(o.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
+            let dv = common.get_field(o.controller.donationtypes, $("#donationtype" + i).select("value"), "ISVAT");
             $("#quantity" + i).val("1");
             $("#unitprice" + i).currency("value", dc);
             $("#amount" + i).currency("value", dc);
             $("#vatratechoice" + i).val(config.number("AFDefaultTaxRate")); // triggers change
             $("#vat" + i).prop("checked", dv == 1);
             $("#vat" + i).change();
-            self.update_totals();
+            self.update_totals(t);
         });
         // Recalculate when quantity or unit price changes
         $("#quantity" + i + ", #unitprice" + i).change(function() {
             let q = $("#quantity" + i).val(), u = $("#unitprice" + i).currency("value");
             $("#amount" + i).currency("value", q * u);
-            self.update_totals();
+            self.update_totals(t);
         });
         // Recalculate when amount or VAT changes
         $("#amount" + i).change(function() {
-            self.update_totals();
+            self.update_totals(t);
         });
         // Recalculate vat when taxrate select is changed
         $("#vatratechoice" + i).change(function() {
             let taxrate = 0.0;
-            taxrate = common.get_field(self.options.controller.taxrates, $("#vatratechoice" + i).val(), "TAXRATE");
+            taxrate = common.get_field(o.controller.taxrates, $("#vatratechoice" + i).val(), "TAXRATE");
             $("#vatrate" + i).val(taxrate);
-            self.update_vat(i, true);
-            self.update_totals();
+            self.update_vat(t, i, true);
+            self.update_totals(t);
         });
         // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
         $("#vat" + i).change(function() {
@@ -653,7 +645,7 @@ $.widget("asm.payments", {
                 $("#vatrate" + i + ", #vatamount" + i).val("0");
                 $("#vatboxes" + i).fadeOut();
             }
-            self.update_totals();
+            self.update_totals(t);
         });
         // Set the default for our new payment type
         $("#donationtype" + i).val(config.str("AFDefaultDonationType")).change();
@@ -694,7 +686,12 @@ $.widget("asm.payments", {
         }
     },
 
-    update_totals: function() {
+    set_giftaid: function(t, b) {
+        let o = t.data("o");
+        o.giftaid = b;
+    },
+
+    update_totals: function(t) {
         let totalamt = 0, totalvat = 0, totalall = 0;
         $(".amount").each(function() {
             totalamt += $(this).currency("value");
@@ -706,7 +703,7 @@ $.widget("asm.payments", {
         $("#totalvat").html(format.currency(totalvat));
     },
 
-    update_vat: function(i, update_amount) {
+    update_vat: function(t, i, update_amount) {
         // Calculates the vatamount field. If update_amount is true, and vatexclusive is off, adds the vat to the amount
         if (config.bool("VATExclusive")) {
             $("#vatamount" + i).currency("value", 
@@ -720,8 +717,5 @@ $.widget("asm.payments", {
                 common.tax_from_inclusive($("#amount" + i).currency("value"), format.to_float($("#vatrate" + i).val())));
         }
     },
-
-    destroy: function() {
-    }
 
 });
