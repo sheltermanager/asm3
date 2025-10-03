@@ -4540,6 +4540,7 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         namid = dbo.insert("animalmedical", {
             "AnimalID":             animalid,
             "MedicalProfileID":     am.medicalprofileid,
+            "MedicalTypeID":        am.medicaltypeid,
             "TreatmentName":        am.treatmentname,
             "StartDate":            newdate,
             "Dosage":               am.dosage,
