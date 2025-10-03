@@ -1057,65 +1057,6 @@ const common = {
         if (common.browser_is.mobile) {
             jQuery.fx.off = true;
         }
-        // textarea zoom dialog
-        try {
-            var tzb = {};
-            tzb[_("Change")] = function() {
-                // Copy edited value back to the field
-                var fid = $("#textarea-zoom-id").val();
-                $("#" + fid).val($("#textarea-zoom-area").val());
-                $("#dialog-textarea-zoom").dialog("close");
-                try { validate.dirty(true); } catch(err) {}
-                $("#" + fid).focus();
-            };
-            tzb[_("Cancel")] = function() {
-                $("#dialog-textarea-zoom").dialog("close");
-            };
-            $("#dialog-textarea-zoom").dialog({
-                autoOpen: false,
-                height: 640,
-                width: 800,
-                modal: true,
-                show: dlgfx.zoom_show,
-                hide: dlgfx.zoom_hide,
-                buttons: tzb
-            });
-        }
-        catch(err) {}
-        // Get the date format specified by the backend for use by datepicker
-        var df = "dd/mm/yy";
-        if (asm.dateformat) {
-            df = asm.dateformat.replace("%Y", "yy");
-            df = df.replace("%m", "mm");
-            df = df.replace("%d", "dd");
-        }
-        // Set the datepicker to use ASM's translations and localisation settings
-        var asmregion = {
-            renderer: $.ui.datepicker.defaultRenderer,
-            monthNames: [ _("January"), _("February"),_("March"),_("April"),_("May"),_("June"),
-            _("July"),_("August"),_("September"),_("October"),_("November"),_("December")],
-            monthNamesShort: [_("Jan"), _("Feb"), _("Mar"), _("Apr"), _("May"), _("Jun"),
-            _("Jul"), _("Aug"), _("Sep"), _("Oct"), _("Nov"), _("Dec")],
-            dayNames: [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")],
-            dayNamesShort: [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")],
-            dayNamesMin: [_("Su"),_("Mo"),_("Tu"),_("We"),_("Th"),_("Fr"),_("Sa")],
-            firstDay: config.integer("FirstDayOfWeek"),
-            dateFormat: df,
-            prevText: _("Previous"), prevStatus: "",
-            prevJumpText: "&#x3c;&#x3c;", prevJumpStatus: "",
-            nextText: _("Next"), nextStatus: "",
-            nextJumpText: "&#x3e;&#x3e;", nextJumpStatus: "",
-            currentText: _("Current"), currentStatus: "",
-            todayText: _("Today"), todayStatus: "",
-            clearText: _("Clear"), clearStatus: "",
-            closeText: _("Done"), closeStatus: "",
-            yearStatus: "", monthStatus: "",
-            weekText: _("Wk"), weekStatus: "",
-            dayStatus: "DD d MM",
-            defaultStatus: "",
-            isRTL: (asm.locale == "ar" || asm.locale == "he")
-        };
-        $.datepicker.setDefaults(asmregion);
         // If we're using an RTL language, load the RTL stylesheet
         if (asm.locale == "ar" || asm.locale == "he") {
             if ($("#rtlcss").length == 0) { // Only add the link if it isn't already there

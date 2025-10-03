@@ -567,6 +567,7 @@ $.fn.phone = asm_widget({
 $.fn.date = asm_widget({
 
     _create: function(t) {
+        this._defaults(t);
         disable_autocomplete(t);
         let dayfilter = t.attr("data-onlydays");
         let nopast = t.attr("data-nopast");
@@ -606,6 +607,43 @@ $.fn.date = asm_widget({
             });
         }
         this.bind_keys(t);
+    },
+
+    _defaults: function(t) {
+        // Get the date format specified by the backend for use by datepicker
+        let df = "dd/mm/yy";
+        if (asm.dateformat) {
+            df = asm.dateformat.replace("%Y", "yy");
+            df = df.replace("%m", "mm");
+            df = df.replace("%d", "dd");
+        }
+        // Set the datepicker to use ASM's translations and localisation settings
+        let asmregion = {
+            renderer: $.ui.datepicker.defaultRenderer,
+            monthNames: [ _("January"), _("February"),_("March"),_("April"),_("May"),_("June"),
+            _("July"),_("August"),_("September"),_("October"),_("November"),_("December")],
+            monthNamesShort: [_("Jan"), _("Feb"), _("Mar"), _("Apr"), _("May"), _("Jun"),
+            _("Jul"), _("Aug"), _("Sep"), _("Oct"), _("Nov"), _("Dec")],
+            dayNames: [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")],
+            dayNamesShort: [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")],
+            dayNamesMin: [_("Su"),_("Mo"),_("Tu"),_("We"),_("Th"),_("Fr"),_("Sa")],
+            firstDay: config.integer("FirstDayOfWeek"),
+            dateFormat: df,
+            prevText: _("Previous"), prevStatus: "",
+            prevJumpText: "&#x3c;&#x3c;", prevJumpStatus: "",
+            nextText: _("Next"), nextStatus: "",
+            nextJumpText: "&#x3e;&#x3e;", nextJumpStatus: "",
+            currentText: _("Current"), currentStatus: "",
+            todayText: _("Today"), todayStatus: "",
+            clearText: _("Clear"), clearStatus: "",
+            closeText: _("Done"), closeStatus: "",
+            yearStatus: "", monthStatus: "",
+            weekText: _("Wk"), weekStatus: "",
+            dayStatus: "DD d MM",
+            defaultStatus: "",
+            isRTL: (asm.locale == "ar" || asm.locale == "he")
+        };
+        $.datepicker.setDefaults(asmregion);
     },
 
     bind_keys: function(t) {
@@ -655,10 +693,12 @@ $.fn.date = asm_widget({
         t.datepicker("setDate", new Date());
     },
 
+    /** Returns the date from the widget as a javascript Date object */
     getDate: function(t) {
         return t.datepicker("getDate");
     },
 
+    /** Accepts a javascript Date object and updates the widget */
     setDate: function(t, newval) {
         t.datepicker("setDate", newval);
     },
@@ -1248,7 +1288,7 @@ $.fn.textarea = asm_widget({
 
         // When zoom button is clicked
         $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
-            self.zoom(t);
+            self.zoom.call(self, t);
             return false; // Prevent any textareas in form elements submitting the form
         });
 
@@ -1306,6 +1346,7 @@ $.fn.textarea = asm_widget({
     },
 
     zoom: function(t) {
+        this._zoom_dialog(t); // set up the zoom dialog if it hasn't been done already
         if (t.is(":disabled")) { return; }
         if (t.attr("maxlength") !== undefined) { $("#textarea-zoom-area").attr("maxlength", t.attr("maxlength")); }
 
@@ -1319,6 +1360,37 @@ $.fn.textarea = asm_widget({
         $("#dialog-textarea-zoom").dialog("open");
 
         return false;
+    },
+
+    /** Adds the zoom dialog to the DOM and sets up the widget */
+    _zoom_dialog: function(t) {
+        if ($("#dialog-textarea-zoom").length > 0) { return; }
+        $("#asm-topline").append(
+            [ '<div id="dialog-textarea-zoom" style="display: none" title="">',
+                '<input id="textarea-zoom-id" type="hidden" />',
+                '<textarea id="textarea-zoom-area" style="width: 98%; height: 98%;"></textarea>',
+            '</div>'].join("\n"));
+        let tzb = {};
+        tzb[_("Change")] = function() {
+            // Copy edited value back to the field
+            let fid = $("#textarea-zoom-id").val();
+            $("#" + fid).val($("#textarea-zoom-area").val());
+            $("#dialog-textarea-zoom").dialog("close");
+            try { validate.dirty(true); } catch(err) {}
+            $("#" + fid).focus();
+        };
+        tzb[_("Cancel")] = function() {
+            $("#dialog-textarea-zoom").dialog("close");
+        };
+        $("#dialog-textarea-zoom").dialog({
+            autoOpen: false,
+            height: 640,
+            width: 800,
+            modal: true,
+            show: dlgfx.zoom_show,
+            hide: dlgfx.zoom_hide,
+            buttons: tzb
+        });
     },
 
     value: function(t, newval) {

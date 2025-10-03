@@ -1097,9 +1097,9 @@ const tableform = {
      *        classes: "extraclass anotherone", extra classes to apply to the widget
      *        rowclasses: "extraclass anotherone", extra classes to apply to the row container
      *        colclasses: "extraclass", extra classes to apply to the column containers within the row
-     *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
-     *        date_nofuture: true|false, (for datepicker fields)
-     *        date_nopast: true| false, (for datepicker fields)
+     *        date_onlydays: "0,1,2,3,4,5,6" (for date fields, only allow days to be selected monday-sunday)
+     *        date_nofuture: true|false, (for date fields)
+     *        date_nopast: true| false, (for date fields)
      *        placeholder: _("Text"), sets the placeholder attribute of the widget
      *        tooltip: _("Text"), sets the title attribute of the widget
      *        callout: _("Text"), mixed markup allowed, shows a callout button next to the widget label
