@@ -3876,46 +3876,155 @@ def update_diary_linkinfo(dbo: Database, animalid: int, a: ResultRow = None, dia
     else:
         dbo.execute("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", (diaryloc, asm3.diary.ANIMAL, animalid))
 
-# def update_animallocation(dbo: Database, animalid: int, username: str):
-#     """ Checks and rebuilds the animallocation entries for animalid based on deceased date and movements """
-#     animaldata = dbo.query("SELECT ShelterCode, AnimalName, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementID FROM animal WHERE ID = ?", (animalid,))[0]
-#     entrydate = asm3.i18n.remove_time(animaldata.DATEBROUGHTIN)
-#     deceaseddate = asm3.i18n.remove_time(animaldata.DECEASEDDATE)
-#     animalname = animaldata.ANIMALNAME
-#     sheltercode = animaldata.SHELTERCODE
-#     movetypes = ['1', '3', '4', '5', '6', '7']
-#     if not asm3.configuration.foster_on_shelter(dbo):
-#         movetypes.append('2')
-#     if not asm3.configuration.retailer_on_shelter(dbo):
-#         movetypes.append('8')
-#     query = "SELECT ID, MovementDate, ReturnDate FROM adoption " \
-#         "WHERE AnimalID = ? AND MovementType IN (%s) ORDER BY MovementDate DESC, ReturnDate DESC" % ",".join(movetypes)
-#     movementrows = dbo.query(query, (animalid,))
-#     animallocations = dbo.query("SELECT ID, Date, MovementID, IsDeath, ToLocationID, ToUnit, PrevAnimalLocationID " \
-#         "FROM animallocation WHERE AnimalID = ? ORDER BY DATE desc", (animalid,))
-    
-#     # Calculate movements in reverse order
-#     calculatedrows = []
-#     if deceaseddate and not animaldata.DIEDOFFSHELTER:
-#         ## Animal died on shelter - this must be the last movement
-#         calculatedrow = {
-#             'isdeath': 1,
-#             'description': _("Death")
-#         }
-#         calculatedrows.append(calculatedrow)
-#     elif animaldata.ARCHIVED:
-#         ## Animal is not on shelter - last movement must be the active movement
-#         lastmovement = movementrows[-1]
-#         msg = _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, fromlocation, tolocation)
-#         calculatedrow = {
-#             'movementid': lastmovement.ID,
-#             'description': _("Death")
-#         }
-#         calculatedrows.append(calculatedrow)
-#     else:
-#         ## Animal is currently on shelter
-
 def update_animallocation(dbo: Database, animalid: int, username: str):
+    """ Checks and rebuilds the animallocation entries for animalid based on deceased date and movements """
+
+    ## Grab the data we're going to need
+    animaldata = dbo.query("SELECT ShelterCode, AnimalName, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementID, ActiveMovementDate FROM animal WHERE ID = ?", (animalid,))[0]
+    animalname = animaldata.ANIMALNAME
+    sheltercode = animaldata.SHELTERCODE
+    movetypes = ['1', '3', '4', '5', '6', '7']
+    if not asm3.configuration.foster_on_shelter(dbo):
+        movetypes.append('2')
+    if not asm3.configuration.retailer_on_shelter(dbo):
+        movetypes.append('8')
+    query = "SELECT ID, MovementDate, ReturnDate FROM adoption " \
+        "WHERE AnimalID = ? AND MovementType IN (%s) ORDER BY MovementDate" % ",".join(movetypes)
+    movementrows = dbo.query(query, (animalid,))
+    animallocations = dbo.query("SELECT ID, Date, MovementID, IsDeath, ToLocationID, ToUnit, PrevAnimalLocationID " \
+        "FROM animallocation WHERE AnimalID = ? ORDER BY DATE desc", (animalid,))
+    entrydate = asm3.i18n.remove_time(animaldata.DATEBROUGHTIN)
+    deceaseddate = asm3.i18n.remove_time(animaldata.DECEASEDDATE)
+
+    ## If the animal is deceased or archived, grab the date the animal left the shelter for the last time
+    finalleavingdate = None
+    if animaldata.ACTIVEMOVEMENTID:
+        finalleavingdate = animaldata.ACTIVEMOVEMENTDATE
+    elif deceaseddate:
+        finalleavingdate = deceaseddate
+    
+    ## Calculate actual movements
+    actualmovements = []
+    for movement in movementrows:
+        actualmovements.append(
+            {
+                "date": movement.MOVEMENTDATE,
+                "movementid": movement.ID,
+                "isdeath": 0
+            }
+        )
+        if movement.RETURNDATE:
+            actualmovements.append(
+                {
+                    "date": movement.MOVEMENTDATE,
+                    "movementid": movement.ID,
+                    "isdeath": 0
+                }
+            )
+    
+    invalidlocations = []
+    lastlocationid = 0
+    
+    ## Mark locationrows that are dated before the entry date for removal
+    for location in animallocations.copy():
+        if location.DATE < entrydate:
+            invalidlocations.append(location)
+            animallocations.remove(location)
+    
+    ## Mark locationrows that are dated after the final leaving date for removal
+    if finalleavingdate:
+        for location in animallocations.copy():
+            if location.DATE > finalleavingdate:
+                invalidlocations.append(location)
+                animallocations.remove(location)
+
+    ## Do we have a valid entry locationrow? Remove any locationrows with PREVANIMALOCATIONID = 0 that are invalid
+    entryrowfound = False
+    for location in animallocations.copy():
+        if not entryrowfound and location.PREVANIMALLOCATIONID == 0 and location.DATE == entrydate:
+            entryrowfound = True
+        elif location.PREVANIMALLOCATIONID == 0:
+            invalidlocations.append(location)
+            animallocations.remove(location)
+
+    ## Create a valid entry row if it wasn't found
+    if not entryrowfound:
+        # insert_animallocation(dbo, username, animalid, animalname, sheltercode, fromid=0, fromunit="*", toid=0, tounit="*", isdeath=0, movementid=0, date=entrydate)
+        pass
+
+    newlocations = [
+        {
+            "date": entrydate
+        }
+    ]
+    onshelter = True
+    lastmovementdate = entrydate
+    lastlocationid = 0
+    lastunit = "*"
+    isdead = False
+    for am in actualmovements:
+        movementdate = am["date"]
+        if not isdead:
+            if onshelter:
+                for location in animallocations.copy():
+                    if location.ISDEATH:
+                        newlocations.append(
+                            {
+                                "date": entrydate,
+                                "fromlocationid": location.FROMLOCATIONID,
+                                "fromunit": location.FROMUNIT,
+                                "isdeath": 1
+                            }
+                        )
+                        isdead = True
+                    if not location.MOVEMENTID and not location.ISDEATH and location.DATE >= lastmovementdate and location.DATE <= movementdate:
+                        newlocations.append(
+                            {
+                                "date": entrydate,
+                                "fromlocationid": location.FROMLOCATIONID,
+                                "fromunit": location.FROMUNIT,
+                                "tolocationid": location.TOLOCATIONID,
+                                "tounit": location.TOUNIT
+                            }
+                        )
+                        lastlocationid = location.TOLOCATIONID
+                        lastunit = location.TOUNIT
+                        animallocations.remove(location)
+                newlocations.append(
+                    {
+                        "date": am["date"],
+                        "movementid": am["movementid"],
+                        "fromlocationid": lastlocationid,
+                        "fromunit": lastunit,
+                        "tolocationid": 0,
+                        "tounit": "*"
+                    }
+                )
+                onshelter = False
+                lastmovementdate = movementdate
+            else:
+                newlocation = {
+                    "date": am["date"],
+                    "movementid": am["movementid"],
+                    "fromlocationid": 0,
+                    "fromunit": "*"
+                }
+                nextlocation = 0
+                nextunit = "*"
+                for location in animallocations.copy():
+                    if nextlocation == 0 and location.DATE >= movementdate and location.FROMLOCATIONID:
+                        nextlocation = location.FROMLOCATIONID
+                        nextunit = location.FROMUNIT
+                    if not location.MOVEMENTID and not location.ISDEATH and location.DATE >= lastmovementdate and location.DATE <= movementdate:
+                        animallocations.remove(location)
+                newlocation["tolocationid"] = nextlocation
+                newlocation["tounit"] = nextunit
+                newlocations.append(newlocation)
+                onshelter = True
+                lastmovementdate = movementdate
+    return newlocations
+
+def update_animallocation_old(dbo: Database, animalid: int, username: str):
     """ Checks and rebuilds the animallocation entries for animalid based on deceased date movements """
     def find_movement(id):
         """ Used to find movement with id """
@@ -3959,8 +4068,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
     query = "SELECT ID, MovementDate, ReturnDate FROM adoption " \
         "WHERE AnimalID = ? AND MovementType IN (%s) ORDER BY MovementDate DESC, ReturnDate DESC" % ",".join(movetypes)
     movementrows = dbo.query(query, (animalid,))
-    animallocations = dbo.query("SELECT ID, Date, MovementID, IsDeath, ToLocationID, ToUnit, PrevAnimalLocationID " \
-        "FROM animallocation WHERE AnimalID = ? ORDER BY DATE desc", (animalid,))
+    animallocations = dbo.query("SELECT * FROM animallocation WHERE AnimalID = ? ORDER BY DATE desc", (animalid,))
 
     # Detect and remove impossible internal movements that overlap with exit/death dates
     indates = [entrydate]
