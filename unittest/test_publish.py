@@ -247,6 +247,7 @@ class TestPublish(unittest.TestCase):
     def test_homeagain(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        a.EVENTDATE = a.MOSTRECENTENTRYDATE
         self.assertIsNotNone(asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).validate(a)
 
