@@ -575,7 +575,7 @@ edit_header = {
      * Returns the header for any of the person pages, with the thumbnail image, info and tabs
      * Since the content will be contained in a tab, the caller needs to add a div
      * p: A person row from get_person
-     * selected: The name of the selected tab (person, donations, vouchers, media, diary, movements, links, log)
+     * selected: The name of the selected tab (person, costs, donations, vouchers, media, diary, movements, links, log)
      */
     person_edit_header: function(p, selected, counts) {
         const check_display_icon = function(key, iconname) {
@@ -640,6 +640,7 @@ edit_header = {
             [ "traploan", "person_traploan", _("Equipment Loans"), "traploan", "vatl" ],
             [ "boarding", "person_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "person_clinic", _("Clinic"), "health", "vcl" ],
+            [ "costs", "person_costs", _("Costs"), "cost", "cvad" ],
             [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
             [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
             [ "media", "person_media", _("Media"), "media", "vam" ],
@@ -652,6 +653,7 @@ edit_header = {
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
             if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "citation" || key == "licence" || key == "investigation") && config.bool("DisableAnimalControl")) { return; }
+            if (key == "costs" && (!controller.person.ISVET && !controller.person.ISSUPPLIER)) { return; }
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "traploan") && config.bool("DisableTrapLoan")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
