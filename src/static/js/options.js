@@ -489,6 +489,7 @@ $(function() {
                     { id: "tab-checkout", title: _("Checkout"), info: _("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation."), fields: [
                         { id: "AdoptionCheckoutProcessor", post_field: "AdoptionCheckoutProcessor", label: _("Payment processor"), type: "select", 
                             options: html.list_to_options([
+                                "",
                                 "paypal|" + _("PayPal"),
                                 "square|" + _("Square"),
                                 "stripe|" + _("Stripe")

@@ -226,7 +226,7 @@ $(function() {
 
                 // Show the checkout section if it's configured and there's an animal with 
                 // a non-zero adoption fee
-                if (config.str("AdoptionCheckoutProcessor") != "" && lastanimal && lastanimal.FEE > 0) {
+                if (config.str("AdoptionCheckoutProcessor") && config.str("AdoptionCheckoutProcessor") != "null" && lastanimal && lastanimal.FEE > 0) {
                     $("#emailaddress").val(p.EMAILADDRESS);
                     $("#templateid").select("value", config.str("AdoptionCheckoutTemplateID"));
                     $("#feetypeid").select("value", config.str("AdoptionCheckoutFeeID"));
