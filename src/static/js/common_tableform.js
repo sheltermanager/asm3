@@ -1774,7 +1774,7 @@ const tableform = {
         let d = "";
         tableform._check_id(v);
         d += "<select multiple=\"multiple\" ";
-        d += tableform._render_class(v, "asm-bsmselect");
+        d += tableform._render_class(v, "asm-selectmulti");
         d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
@@ -1940,15 +1940,11 @@ const tableform = {
                 if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
                 if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
                 if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
-                if (v.type == "selectmulti") { 
-                    $("#" + v.post_field).children().prop("selected", false); 
-                    $("#" + v.post_field).change(); 
-                    return;
-                }
                 if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
                 if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
                 if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
                 if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
+                if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
                 if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
             }
             else {
@@ -2017,16 +2013,7 @@ const tableform = {
                 n.select("value", html.decode(row[v.json_field])); 
             }
             else if (v.type == "selectmulti") {
-                n.children().prop("selected", false);
-                $.each(String(row[v.json_field]).split(/[|,]+/), function(mi, mv) {
-                    n.find("option").each(function() {
-                        var ot = $(this), ov = $(this).prop("value");
-                        if (html.decode(mv) == html.decode(ov)) {
-                            ot.prop("selected", true);
-                        }
-                    });
-                });
-                n.change();
+                n.selectmulti("value", String(row[v.json_field]));
             }
             else if (v.type == "textarea") {
                 n.textarea("value", row[v.json_field]);
@@ -2087,15 +2074,7 @@ const tableform = {
                 row[v.json_field] = n.sqleditor("value");
             }
             else if (v.type == "selectmulti") {
-                if (!n.val()) { 
-                    row[v.json_field] = ""; 
-                }
-                else if ($.isArray(n.val())) {
-                    row[v.json_field] = n.val().join("|");
-                }
-                else {
-                    row[v.json_field] = n.val();
-                }
+                row[v.json_field] = n.selectmulti("value");
             }
             else {
                 row[v.json_field] = n.val();

@@ -1,5 +1,5 @@
 /*global $, console, jQuery */
-/*global asm, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
+/*global asm, asm_widget, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
 
 "use strict";
 
@@ -42,19 +42,19 @@ $.fn.animalchoosermulti = asm_widget({
             '<a href="#" class="animalchoosermulti-selectall" title="Select all"><span class="ui-icon ui-icon-check"></span></a>',
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Locations") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-locations asm-bsmselect"></select>', 
+             _("Locations") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-locations asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Species") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-species asm-bsmselect"></select>', 
+             _("Species") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-species asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Litters") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-litters asm-bsmselect"></select>', 
+             _("Litters") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-litters asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Age Groups") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-agegroups asm-bsmselect"></select>', 
+             _("Age Groups") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-agegroups asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Flags") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-flags asm-bsmselect"></select>', 
+             _("Flags") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-flags asm-selectmulti"></select>', 
             '</div>',
             '</div>',
             '<div class="animalchoosermulti-results">',

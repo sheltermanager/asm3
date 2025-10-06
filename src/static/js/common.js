@@ -1081,26 +1081,15 @@ const common = {
         $(".asm-currencybox").currency();
         $(".asm-phone").phone();
         $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();
-        $(".asm-htmleditor").htmleditor();
-        $(".asm-sqleditor").sqleditor();
+        $(".asm-selectmulti").selectmulti();
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();
         $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
         $(".asm-richtextarea").richtextarea();
+        $(".asm-htmleditor").htmleditor();
+        $(".asm-sqleditor").sqleditor();
         $(".asm-table").table();
         //$(".asm-tabs").tabs({ show: "slideDown", hide: "slideUp" });
         $(".asm-tabs").tabs();
-        if (_ && !$(".asm-bsmselect").attr("title")) {
-            $(".asm-bsmselect").attr("title", _("Select"));
-        }
-        $(".asm-bsmselect").asmSelect({
-            animate: true,
-            sortable: true,
-            removeLabel: '<strong>&times;</strong>',
-            listClass: 'bsmList-custom',  
-            listItemClass: 'bsmListItem-custom',
-            listItemLabelClass: 'bsmListItemLabel-custom',
-            removeClass: 'bsmListItemRemove-custom'
-        });
         // Add extra control styles
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox .asm-selectbox, .asm-richtextarea, .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").each(function() {
             $(this).addClass("controlshadow").addClass("controlborder");

@@ -179,7 +179,7 @@ $(function() {
                     }
                 },
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") },
-                { type: "raw", markup: '<span style="float: right"><select id="filter" multiple="multiple" class="asm-bsmselect"></select></span>' }
+                { type: "raw", markup: '<span style="float: right"><select id="filter" multiple="multiple" class="asm-selectmulti"></select></span>' }
             ];
             this.dialog = dialog;
             this.table = table;

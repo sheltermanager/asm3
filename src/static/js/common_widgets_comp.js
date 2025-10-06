@@ -1,5 +1,5 @@
 /*global $, console, jQuery, */
-/*global asm, common, config, dlgfx, edit_header, format, html, header, log, schema, tableform, validate, _, escape, unescape */
+/*global asm, asm_widget, common, config, dlgfx, edit_header, format, html, header, log, schema, tableform, validate, _, escape, unescape */
 
 "use strict";
 
@@ -232,7 +232,7 @@ $.fn.emailform = asm_widget({
             '<tr id="em-docreporow">',
             '<td><label for="em-docrepo">' + _("Document Repository") + '</label></td>',
             '<td>',
-            '<select id="em-docrepo" data="docrepo" multiple="multiple" class="asm-bsmselect" title="' + _("Select") + '">',
+            '<select id="em-docrepo" data="docrepo" multiple="multiple" class="asm-selectmulti" title="' + _("Select") + '">',
             '</select>',
             '</td>',
             '</tr>',

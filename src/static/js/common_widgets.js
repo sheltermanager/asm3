@@ -174,13 +174,8 @@ $.fn.fromJSON = function(row) {
         else if (n.attr("type") == "checkbox") {
             n.prop("checked", row[f] == 1);
         }
-        else if (n.hasClass("asm-bsmselect")) {
-            n.children().prop("selected", false);
-            $.each(String(row[f]).split(/[|,]+/), function(mi, mv) {
-                if (!mv) { return; }
-                n.find("[value='" + mv + "']").prop("selected", true);
-            });
-            n.change();
+        else if (n.hasClass("asm-selectmulti")) {
+            n.selectmulti("value", String(row[f]));
         }
         else {
             n.val(html.decode(row[f]));
@@ -192,7 +187,7 @@ $.fn.fromJSON = function(row) {
 // by looking at the data-post or data attribute of all items 
 // matching the selector. 
 // includeblanks: true if you want fields with empty values sent instead of omitted.
-$.fn.toPOST = function(includeblanks) {
+$.fn.toPOST = function(includeblanks = false) {
     let post = [];
     this.each(function() {
         let t = $(this);
@@ -883,8 +878,62 @@ $.widget( "asm.iconselectmenu", $.ui.selectmenu, {
     }
 });
 
+/** Wraps a select with multiple attribute, using the asmselect widget  */
+$.fn.selectmulti = asm_widget({
+
+    _create: function(t) {
+        if (_ && !t.attr("title")) {
+            t.attr("title", _("Select"));
+        }
+        t.asmSelect({
+            animate: true,
+            sortable: true,
+            removeLabel: '<strong>&times;</strong>',
+            listClass: 'bsmList-custom',  
+            listItemClass: 'bsmListItem-custom',
+            listItemLabelClass: 'bsmListItemLabel-custom',
+            removeClass: 'bsmListItemRemove-custom'
+        });
+    },
+
+    /** Unselect all options */
+    clear: function(t) {
+        t.children().prop("selected", false); 
+        t.change(); 
+    },
+
+    /** Get or set the value, which is a pipe delimited list (comma delimited also acceptable for setting) */
+    value: function(t, newval) {
+        if (newval) {
+            t.children().prop("selected", false);
+            $.each(String(newval).split(/[|,]+/), function(mi, mv) {
+                t.find("option").each(function() {
+                    var ot = $(this), ov = $(this).prop("value");
+                    if (html.decode(mv) == html.decode(ov)) {
+                        ot.prop("selected", true);
+                    }
+                });
+            });
+            t.change();
+        }
+        else {
+            if (!t.val()) { 
+                return ""; 
+            }
+            else if ($.isArray(t.val())) {
+                return t.val().join("|");
+            }
+            else {
+                return t.val();
+            }
+        }
+    }
+
+});
+
 /** Wraps an input that contains a lat/long geocode, splitting it into separate inputs for lat/long */
 $.fn.latlong = asm_widget({
+
     _create: function(t) {
         let self = this;
         t.hide();

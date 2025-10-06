@@ -923,7 +923,7 @@ $(function() {
                     { id: "tab-reminders", title: _("Reminder Emails"), info: _("Reminder emails can be automatically sent to groups of people a number of days before or after a key event."), fields: [
                         { type: "raw", markup: '<tr><th colspan="2"></th><th>' + _("Days") + '</th><th>' + _("Template") + '</th></tr>' }, 
                         { id: "adopterfollowup", post_field: "EmailAdopterFollowup", label: _("Send a followup email to new adopters after X days"), type: "check", xmarkup: '</td><td><input data="EmailAdopterFollowupDays" id="adopterfollowupdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailAdopterFollowupTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templates) + '</select>' }, 
-                        { type: "raw", markup: '<tr><td colspan="2">' + _("Only for these species of adopted animal") + '</td><td><select id="adopterfollowupspecies" multiple="multiple" class="asm-bsmselect" data="EmailAdopterFollowupSpecies">' + html.list_to_options(controller.species, "ID", "SPECIESNAME") + '</select></td><td></td></tr>' }, 
+                        { type: "raw", markup: '<tr><td colspan="2">' + _("Only for these species of adopted animal") + '</td><td><select id="adopterfollowupspecies" multiple="multiple" class="asm-selectmulti" data="EmailAdopterFollowupSpecies">' + html.list_to_options(controller.species, "ID", "SPECIESNAME") + '</select></td><td></td></tr>' }, 
                         { id: "vaccinationfollowup", post_field: "EmailVaccinationFollowup", label: _("Send a reminder email to owners X days before a vaccination is due"), type: "check", xmarkup: '</td><td><input data="EmailVaccinationFollowupDays" id="vaccinationfollowupdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailVaccinationFollowupTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templates) + '</select>' }, 
                         { id: "clinicreminder", post_field: "EmailClinicReminder", label: _("Send a reminder email to people with clinic appointments in X days"), type: "check", xmarkup: '</td><td><input data="EmailClinicReminderDays" id="clinicreminderdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailClinicReminderTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templatesclinic) + '</select>' }, 
                         { id: "duepayment", post_field: "EmailDuePayment", label: _("Send a reminder email to people with payments due in X days"), type: "check", xmarkup: '</td><td><input data="EmailDuePaymentDays" id="duepaymentdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailDuePaymentTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templateslicence) + '</select>' }, 
@@ -1107,16 +1107,11 @@ $(function() {
                     else if ($(this).is(".asm-selectbox") || $(this).is(".asm-doubleselectbox")) {
                         $(this).select("value", config.str(d));
                     }
-                    else if ($(this).is(".asm-bsmselect")) {
-                        let ms = config.str(d).split(",");
-                        let bsm = $(this);
-                        $.each(ms, function(i, v) {
-                            bsm.find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
-                        });
-                        $(this).change();
+                    else if ($(this).is(".asm-selectmulti")) {
+                        $(this).selectmulti("value", config.str(d));
                     }
                     else if ($(this).is("textarea")) {
-                        $(this).val( html.decode(config.str(d)));
+                        $(this).textarea("value", config.str(d));
                     }
                     else if ($(this).is(".asm-richtextarea")) {
                         $(this).richtextarea("value", config.str(d));

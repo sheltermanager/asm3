@@ -841,7 +841,7 @@ const html = {
 
     search_field_mselect: function(id, label, options) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
-        let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-bsmselect" multiple="multiple">';
+        let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-selectmulti" multiple="multiple">';
         widgethtml += options;
         widgethtml += '</select>';
         return html.search_field(id, labelhtml, widgethtml);

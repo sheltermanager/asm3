@@ -559,13 +559,8 @@ $(function() {
                     else if ($(this).is("input:checkbox")) {
                         $(this).attr("checked", config.bool(d));
                     }
-                    else if ($(this).hasClass("asm-bsmselect")) {
-                        let n = $(this);
-                        n.children().prop("selected", false);
-                        $.each(config.str(d).split(/[|,]+/), function(mi, mv) {
-                            n.find("[value='" + mv + "']").prop("selected", true);
-                        });
-                        n.change();
+                    else if ($(this).hasClass("asm-selectmulti")) {
+                        $(this).selectmulti("value", config.str(d)); 
                     }
                     else if ($(this).is("select")) {
                         $(this).select("value", config.str(d));
@@ -601,12 +596,8 @@ $(function() {
                         if (node.hasClass("asm-selectbox")) {
                             node.select("value", v);
                         }
-                        else if (node.hasClass("asm-bsmselect")) {
-                            let ls = v.split(",");
-                            $.each(ls, function(li, lv) {
-                                node.find("[value='" + lv + "']").prop("selected", "selected");
-                            });
-                            node.change();
+                        else if (node.hasClass("asm-selectmulti")) {
+                            node.selectmulti("value", v);
                         }
                         else {
                             node.val(v);
