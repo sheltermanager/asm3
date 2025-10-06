@@ -1330,6 +1330,28 @@ const tableform = {
         }
     },
 
+    render_accordion: function(a) {
+        let h = [], id = "";
+        if (a.id) { id = 'id="' + a.id + '"'; }
+        h.push('<div ' + id + ' class="asm-accordion">');
+        $.each(a.panes, function(i, v) {
+            if (v.hideif && v.hideif()) { return; }
+            if (!v.classes) { v.classes = ''; }
+            if (!v.xmarkup) { v.xmarkup = ''; }
+            if (v.full_width === undefined) { v.full_width = true; }
+            if (v.centered === undefined) { v.centered = true; }
+            h.push('<h3 id="' + v.id + '" class="' + v.classes + '"><a href="#">' + v.title + '</a> ' + v.xmarkup + '</h3>');
+            h.push('<div>');
+            if (v.markup) { h.push(v.markup); }
+            if (v.fields && v.fields.length > 0) {
+                h.push( tableform.fields_render(v.fields, { full_width: v.full_width, centered: v.centered } ));
+            }
+            h.push('</div>');
+        });
+        h.push('</div>');
+        return h.join("\n");
+    },
+
     render_animal: function(v) {
         let d = "";
         tableform._check_id(v);
@@ -1827,13 +1849,21 @@ const tableform = {
         h.push('<div class="asm-tabbar asm-tabs">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
+            if (v.hideif && v.hideif()) { return; }
             if (!v.classes) { v.classes = ''; }
-            h.push('<li class="' + v.classes + '"><a href="#tab-' + v.id + '">' + v.title + '</a></li>');
+            if (!v.xmarkup) { v.xmarkup = ''; }
+            h.push('<li class="' + v.classes + '"><a href="#tab-' + v.id + '">' + v.title + '</a>' + v.xmarkup + '</li>');
         });
         h.push('</ul>');
         $.each(l, function(i, v) {
+            if (v.hideif && v.hideif()) { return; }
             h.push('<div id="tab-' + v.id + '">');
-            h.push( tableform.fields_render(v.fields, { full_width: false, centered: true } ));
+            if (v.full_width === undefined) { v.full_width = false; }
+            if (v.centered === undefined) { v.centered = true; }
+            if (v.markup) { h.push(v.markup); }
+            if (v.fields && v.fields.length > 0) {
+                h.push( tableform.fields_render(v.fields, { full_width: v.full_width, centered: v.centered } ));
+            }
             h.push('</div>');
         });
         return h.join("\n");

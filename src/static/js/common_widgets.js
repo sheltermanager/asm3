@@ -384,6 +384,27 @@ $.fn.table = asm_widget({
 
 });
 
+/**
+ * Wrapper for the JQuery UI accordion widget
+ */
+$.fn.asmaccordion = asm_widget({
+
+    _create: function(t) {
+        t.accordion({ heightStyle: "content" });
+    },
+
+    /** Sets the active accordion section or returns which one is active if unspecified */
+    active: function(t, idx) {
+        if (idx !== undefined) {
+            t.accordion("option", "active", idx);
+        }
+        else {
+            return t.accordion("option", "active");
+        }
+    }
+
+});
+
 /** 
  * Styles a tab strip consisting of a div with an unordered list of tabs 
  * This is mainly used by the edit_header functions in all base screens

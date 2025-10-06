@@ -1066,6 +1066,7 @@ const common = {
         }
         // Create any form controls based on classes used
         // Choosers are initialised first as they inject more widgets into the DOM
+        $(".asm-accordion").asmaccordion();
         $(".asm-animalchooser").animalchooser();
         $(".asm-animalchoosermulti").animalchoosermulti();
         $(".asm-personchooser").personchooser();
