@@ -80,6 +80,9 @@ class TestAnimal(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
+        ## Change date of internal movement
+        ilid = dbo.query("SELECT ID FROM animallocation WHERE AnimalID = %d ORDER BY ID desc LIMIT 1" % self.nid)[0].ID
+        dbo.update("animallocation", ilid, { "Date": "2025-03-03 00:00:00" })
         animallocationrows = get_animallocation_rows(dbo, self.nid)
         # print_animallocation_rows(animallocationrows)
         self.assertEqual(2, len(animallocationrows)) ## Expect the previous row plus a new row representing the new internal movement = 2 rows
@@ -129,7 +132,7 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.movement.update_movement_from_form(dbo, "test", post)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
+        # print_animallocation_rows(animallocationrows)
         self.assertEqual(3, len(animallocationrows)) ## Expect to increase to 3 to acknowledge the return
 
         arv = dbo.query(
