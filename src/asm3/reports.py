@@ -297,7 +297,8 @@ def insert_report_from_form(dbo: Database, username: str, post: PostedData) -> i
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
         "OmitCriteria":         post.boolean("omitcriteria"),
-        "Revision":             post.integer("revision")
+        "Revision":             post.integer("revision"),
+        "SendAsPDF":            post.boolean("sendaspdf")
     }, username, setRecordVersion=False)
 
     dbo.delete("customreportrole", "ReportID=%d" % reportid)
@@ -321,7 +322,8 @@ def update_report_from_form(dbo: Database, username: str, post: PostedData) -> N
         "DailyEmailFrequency":  post.integer("dailyemailfrequency"),
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
-        "OmitCriteria":         post.boolean("omitcriteria")
+        "OmitCriteria":         post.boolean("omitcriteria"),
+        "SendAsPDF":            post.boolean("sendaspdf")
     }
     # If the name or category was changed, clear any revision number
     if prev is not None and (prev.TITLE != post["title"] or prev.CATEGORY != post["category"]): values["Revision"] = 0
@@ -771,7 +773,11 @@ def email_daily_reports(dbo: Database) -> None:
         if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
             asm3.al.debug("report '%s' contained no data and option is on to skip sending empty reports" % (r.TITLE), "reports.email_daily_reports", dbo)
             continue
-        asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
+        if r.SENDASPDF:
+            pdfdata = asm3.utils.html_to_pdf(dbo, body)
+            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3, attachments=[ f"{_("Report")}.pdf", "application/pdf", pdfdata])
+        else:
+            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
 def execute_title(dbo: Database, title: str, username: str = "system", params: ReportParams = None, toolbar: bool = True) -> str:
     """

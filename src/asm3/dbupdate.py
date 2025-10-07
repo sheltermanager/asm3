@@ -964,7 +964,8 @@ def sql_structure(dbo: Database) -> str:
         flongstr("Description"),
         fint("OmitHeaderFooter"),
         fint("OmitCriteria"),
-        fint("Revision", True) ))
+        fint("Revision", True),
+        fint("SendAsPDF") ))
     sql += index("customreport_Title", "customreport", "Title")
 
     sql += table("customreportrole", (
