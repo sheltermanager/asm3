@@ -1126,6 +1126,7 @@ const common = {
         $(".asm-animalchooser").animalchooser();
         $(".asm-animalchoosermulti").animalchoosermulti();
         $(".asm-personchooser").personchooser();
+        $(".asm-productchooser").productchooser();
         $(".asm-callout").callout();
         $(".asm-datebox").date();
         $(".asm-alphanumberbox").alphanumber();
@@ -1261,6 +1262,7 @@ const common = {
             "#emailbody": "richtextarea",
             "#owner": "personchooser",
             "#person": "personchooser",
+            "#product": "productchooser",
             "#retailer": "personchooser",
             "#createpayment": "createpayment",
             "#dialog-": "dialog",
@@ -1293,6 +1295,9 @@ const common = {
             }
             else if (type == "personchooser") {
                 $(selector).personchooser("destroy").remove();
+            }
+            else if (type == "productchooser") {
+                $(selector).productchooser("destroy").remove();
             }
             else if (type == "richtextarea") {
                 $(selector).richtextarea("destroy").remove();

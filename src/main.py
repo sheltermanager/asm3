@@ -6958,6 +6958,34 @@ class product(JSONEndpoint):
         o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [linktypeid, linkid])
         return asm3.media.attach_file_from_form(o.dbo, o.user, linktypeid, linkid, sourceid, o.post)
 
+class product_embed(ASMEndpoint):
+    url = "product_embed"
+    check_logged_in = False
+
+    # def content(self, o):
+    #     if not o.dbo: raise asm3.utils.ASMPermissionError("No session")
+    #     dbo = o.dbo
+    #     self.content_type("application/json")
+    #     self.cache_control(180) # Person data can be cached for a few minutes, useful for multiple widgets on one page
+    #     return asm3.utils.json({
+    #         "additional": asm3.additional.get_additional_fields(dbo, 0, "person"),
+    #         "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
+    #         "towns": asm3.person.get_towns(dbo),
+    #         "counties": asm3.person.get_counties(dbo),
+    #         "towncounties": asm3.person.get_town_to_county(dbo),
+    #         "postcodelookup": asm3.geo.get_postcode_lookup_available(o.locale),
+    #         "flags": asm3.lookups.get_person_flags(dbo),
+    #         "sites": asm3.lookups.get_sites(dbo)
+    #     })
+
+    def post_find(self, o):
+        # self.check(asm3.users.VIEW_PERSON)
+        self.content_type("application/json")
+        q = o.post["q"]
+        rows = asm3.stock.get_active_products(o.dbo)
+        asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "main.product_embed", o.dbo)
+        return asm3.utils.json(rows)
+
 class publish(JSONEndpoint):
     url = "publish"
     get_permissions = asm3.users.USE_INTERNET_PUBLISHER

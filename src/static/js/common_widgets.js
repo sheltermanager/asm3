@@ -119,6 +119,9 @@ $.fn.fromJSON = function(row) {
         else if (n.hasClass("asm-personchooser")) {
             n.personchooser().personchooser("loadbyid", row[f]);
         }
+        else if (n.hasClass("asm-productchooser")) {
+            n.productchooser().productchooser("loadbyid", row[f]);
+        }
         else if (n.hasClass("asm-currencybox")) {
             n.val(format.currency(row[f]));
         }

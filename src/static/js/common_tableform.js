@@ -1718,6 +1718,22 @@ const tableform = {
         return tableform._render_formfield(v, d);
     },
 
+    render_product: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "asm-productchooser");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.validation) { d += tableform._render_validation_attr(v); }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        d += "/>";
+        return tableform._render_formfield(v, d);
+    },
+
     render_richtextarea: function(v) {
         let d = "";
         tableform._check_id(v);
@@ -1940,6 +1956,7 @@ const tableform = {
                 if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
                 if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
                 if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
+                if (v.type == "product") { $("#" + v.post_field).productchooser("clear"); return; }
                 if (v.type == "selectmulti") { 
                     $("#" + v.post_field).children().prop("selected", false); 
                     $("#" + v.post_field).change(); 
@@ -1966,6 +1983,7 @@ const tableform = {
                 else if (v.type == "currency") { $("#" + v.post_field).currency("value", dval); return; }
                 else if (v.type == "animal") { $("#" + v.post_field).animalchooser("loadbyid", dval); return; }
                 else if (v.type == "person") { $("#" + v.post_field).personchooser("loadbyid", dval); return; }
+                else if (v.type == "product") { $("#" + v.post_field).productchooser("loadbyid", dval); return; }
                 else if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
                 else if (v.type == "textarea") { $("#" + v.post_field).val(dval); return; }
                 else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
@@ -1996,6 +2014,10 @@ const tableform = {
             else if (v.type == "person") {
                 n.personchooser("clear", false);
                 n.personchooser("loadbyid", row[v.json_field]);
+            }
+            else if (v.type == "product") {
+                n.productchooser("clear", false);
+                n.productchooser("loadbyid", row[v.json_field]);
             }
             else if (v.type == "currency") {
                 n.currency("value", row[v.json_field]);

@@ -16,6 +16,7 @@ $(function() {
                 width: 550,
                 fields: [
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
+                    { json_field: "PRODUCTID", post_field: "product", label: _("Stock Item"), type: "product" },
                     { json_field: "TRAPTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "TRAPTYPENAME", valuefield: "ID", rows: controller.traptypes }},
                     { json_field: "LOANDATE", post_field: "loandate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DEPOSITAMOUNT", post_field: "depositamount", label: _("Deposit"), type: "currency" },
