@@ -1084,6 +1084,7 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData, subst
     if feetypeid == 0: feetypeid = asm3.configuration.adoption_checkout_feeid(dbo)
     co = {
         "database":     dbo.name(),
+        "username":     username,
         "movementid":   post.integer("id"),
         "templateid":   templateid, 
         "mediaid":      0, # paperwork mediaid, generated in the next step

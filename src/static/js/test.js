@@ -298,10 +298,10 @@ $(function() {
             return [
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Perform Test")) + '">',
                 tableform.fields_render([
-                    { post_field: "newdate", type: "date", label: _("Performed") },
+                    { post_field: "newdate", type: "date", label: _("Performed"), date_nofuture: true },
                     { post_field: "testresult", type: "select", label: _("Result"), 
                         options: { displayfield: "RESULTNAME", rows: controller.testresults }},
-                    { post_field: "retestdate", type: "date", label: _("Retest"), nopast: true },
+                    { post_field: "retestdate", type: "date", label: _("Retest"), date_nopast: true },
                     { post_field: "givencost", type: "currency", label: _("Cost") },
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
                     { type: "raw", fullrow: true, rowclasses: "tagstock", 

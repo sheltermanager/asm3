@@ -1,6 +1,7 @@
 
 import json
 import time
+import re
 
 from datetime import datetime, timedelta
 
@@ -115,7 +116,8 @@ locale_maps = {
     "en_TR":    ( "English", "Turkey", DDMY, "TL", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", "" ),
     "en_TW":    ( "English", "Taiwan", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 0, ".", ",", ""),
     "en_TW2":   ( "English", "Taiwan $0.00", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
-    "en_TZ":    ( "English", "Tanzania", DMY, "Tsh", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_TZ":    ( "English", "Tanzania", DMY, "TSh", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, "/", ",", "" ),
+    "en_UG":    ( "English", "Uganda", DMY, "USh", PLURAL_ENGLISH, CURRENCY_PREFIX, 0, "/", ",", "" ),
     "en_VN":    ( "English", "Vietnam", DMY, "&#8363;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", "" ),
     "en_ZA":    ( "English", "South Africa", YMD, "R", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", ""),
     "en_ZW":    ( "English", "Zimbabwe", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
@@ -174,8 +176,8 @@ def real_locale(locale: str = "en") -> str:
     if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_EG", 
         "en_ES", "en_HK", "en_ID", "en_IE", "en_IN", "en_JO", "en_JP", "en_KE", "en_KH", "en_LB", 
         "en_LU", "en_LV", "en_MU", "en_MY", "en_MZ", "en_NA", "en_NP", "en_PH", "en_PT", "en_QA", 
-        "en_RO", "en_RO2", "en_SA", "en_TH", "en_TR", "en_TW", "en_TW2", "en_TZ", "en_VN", "en_ZA", 
-        "en_ZW"):
+        "en_RO", "en_RO2", "en_SA", "en_TH", "en_TR", "en_TW", "en_TW2", "en_TZ", "en_UG", "en_VN", 
+        "en_ZA", "en_ZW"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
         "en_MX"):

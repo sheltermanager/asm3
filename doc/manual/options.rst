@@ -1009,6 +1009,10 @@ the preview column and deleted in one click using the "Delete Spam" button.
   and lower case letters in the applicants name fields and marks these as spam. It
   will also check for email addresses or URLs in name fields.
 
+* Spambot protection: URLs in any field: It's highly unusual for forms to need the
+  user to include URLs - something that spammers do a lot. This will tag any
+  form as spam if there's a link found (http: or https:) in any form field.
+
 * Spambot protection: Zipcode / Postcode contains numbers: Checks that the Zipcode / 
   Postcode field contains numbers, marks forms as spam where no number is present.
 

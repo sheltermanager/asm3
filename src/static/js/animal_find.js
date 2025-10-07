@@ -159,9 +159,7 @@ $(function() {
                 return false;
             });
 
-            // Search button - we don't use the traditional submit because
-            // the bsmselect widget craps extra values into the form and 
-            // breaks the filter
+            // Search 
             $("#searchbutton").button().click(function() {
                 if (config.bool("AnimalSearchResultsNewTab")) {
                     window.open("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST(), "_blank");

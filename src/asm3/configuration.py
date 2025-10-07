@@ -345,6 +345,7 @@ DEFAULTS = {
     "OnlineFormSpamFirstnameMixCase": "Yes",
     "OnlineFormSpamMandatory": "No",
     "OnlineFormSpamPostcode": "No",
+    "OnlineFormSpamURLs": "No",
     "OnlineFormDeleteOnProcess": "No",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
@@ -879,6 +880,15 @@ def avid_overseas_origin_country(dbo: Database) -> str:
 def avid_reregistration(dbo: Database) -> bool:
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
 
+def avidus_username(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSUsername")
+
+def avidus_password(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSPassword")
+
+def avidus_apikey(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSKey")
+
 def buddyid_provider_code(dbo: Database) -> str:
     return cstring(dbo, "BuddyIDProviderCode")
 
@@ -1396,6 +1406,9 @@ def onlineform_spam_mandatory(dbo: Database) -> bool:
 
 def onlineform_spam_postcode(dbo: Database) -> bool:
     return cboolean(dbo, "OnlineFormSpamPostcode", DEFAULTS["OnlineFormSpamPostcode"] == "Yes")
+
+def onlineform_spam_urls(dbo: Database) -> bool:
+    return cboolean(dbo, "OnlineFormSpamURLs", DEFAULTS["OnlineFormSpamURLs"] == "Yes")
 
 def organisation(dbo: Database) -> str:
     return cstring(dbo, "Organisation", DEFAULTS["Organisation"])

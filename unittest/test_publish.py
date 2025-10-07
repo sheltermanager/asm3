@@ -30,6 +30,27 @@ import asm3.utils
 class TestPublish(unittest.TestCase):
  
     def setUp(self):
+        sparsepersondata = {
+            "title": "Mr",
+            "forenames": "Test",
+            "surname": "Testing",
+            "ownertype": "1",
+            "address": ""
+        }
+        richpersondata = {
+            "title": "Mr",
+            "forenames": "Test",
+            "surname": "Testing",
+            "ownertype": "1",
+            "address": "10 Downing Street",
+            "postcode": "SW1 2ER",
+            "mobiletelephone": "07734 567890",
+            "emailaddress": "dirk@diggler.com"
+        }
+        post = asm3.utils.PostedData(sparsepersondata, "en")
+        self.pnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
+        post = asm3.utils.PostedData(richpersondata, "en")
+        self.rnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
         animaldata = [
             {
                 "animalname": "Testio",
@@ -56,8 +77,23 @@ class TestPublish(unittest.TestCase):
                 "entrytype": "2",
                 "dateofbirth": "01/01/2023",
                 "basecolour": "1"
+            },
+            {
+                "animalname": "Chipio",
+                "estimatedage": "1",
+                "animaltype": "1",
+                "entryreason": "1",
+                "breed1": "1",
+                "breed2": "1", 
+                "species": "1",
+                "comments": "bio",
+                "dateofbirth": "01/01/2022",
+                "basecolour": "1",
+                "microchipped": "on",
+                "microchipnumber": "977123123456789"
             }
         ]
+
         f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
         imagedata = f.read()
         f.close()
@@ -103,12 +139,23 @@ class TestPublish(unittest.TestCase):
         faid = asm3.lostfound.insert_foundanimal_from_form(base.get_dbo(), post, "test")
         post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
         asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.FOUNDANIMAL, faid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+        data = {
+            "animal": int(self.animals[2][0]),
+            "person": self.rnid,
+            "movementdate": base.today_display(),
+            "type": "1"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.mid = asm3.movement.insert_movement_from_form(base.get_dbo(), "test", post)
 
         asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered includenonmicrochip excludeunder=1")
 
     def tearDown(self):
+        asm3.movement.delete_movement(base.get_dbo(), "test", self.mid)
         for aid, sheltercode in self.animals:
             asm3.animal.delete_animal(base.get_dbo(), "test", aid)
+        asm3.person.delete_person(base.get_dbo(), "test", self.pnid)
+        asm3.person.delete_person(base.get_dbo(), "test", self.rnid)
 
     # base
     def test_get_adoption_status(self):
@@ -166,6 +213,13 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         self.assertIsNotNone(asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).validate(a)
+    
+    # avidus
+    def test_avidus(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.animal.get_animal(base.get_dbo(), self.animals[2][0])
+        self.assertNotEqual(False, asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).validate(a))
+        self.assertNotEqual(False, asm3.publishers.avid.AVIDUSPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # buddyid
     def test_buddyid(self):
@@ -193,6 +247,7 @@ class TestPublish(unittest.TestCase):
     def test_homeagain(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        a.EVENTDATE = a.MOSTRECENTENTRYDATE
         self.assertIsNotNone(asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).validate(a)
 
@@ -329,8 +384,13 @@ class TestPublish(unittest.TestCase):
     # savourlife
     def test_savourlife(self):
         pc = asm3.publishers.base.PublishCriteria()
+        sl = asm3.publishers.petrescue.PetRescuePublisher(base.get_dbo(), pc)
+        sl.load_breeds()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        self.assertIsNotNone(asm3.publishers.savourlife.SavourLifePublisher(base.get_dbo(), pc).processAnimal(a))
+        sl.load_breeds()
+        self.assertIsNotNone(sl.breeds)
+        self.assertTrue(len(sl.breeds["Dog"]) > 0)
+        self.assertIsNotNone(sl.processAnimal(a))
 
     # smarttag
     def test_smarttag(self):

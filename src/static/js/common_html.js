@@ -599,6 +599,55 @@ const html = {
         return h.join("\n");
     },
 
+    /** Returns an audit trail accordion element for passing to tableform accordions */
+    audit_trail_accordion_obj: function(controller) {
+        let h = [
+            '<table class="asm-table">',
+            '<thead>',
+            '<tr>',
+            '<th>' + _("Date") + '</th>',
+            '<th>' + _("User") + '</th>',
+            '<th>' + _("Action") + '</th>',
+            '<th>' + _("Table") + '</th>',
+            '<th>' + _("Details") + '</th>',
+            '</tr>',
+            '</thead>',
+            '<tbody>'
+        ], readableaction = {
+            0: _("Add"),
+            1: _("Edit"),
+            2: _("Delete"),
+            3: _("Move"),
+            4: _("Login"),
+            5: _("Logout"),
+            6: _("View"),
+            7: _("Report"),
+            8: _("Email")
+        };
+        $.each(controller.audit, function(i, v) {
+            if (!config.bool("ShowViewsInAuditTrail") && v.ACTION == 6) { return; }
+            h.push('<tr>');
+            h.push('<td>' + format.date(v.AUDITDATE) + ' ' + format.time(v.AUDITDATE) + '</td>');
+            h.push('<td>' + v.USERNAME + '</td>');
+            h.push('<td>' + readableaction[v.ACTION] + '</td>');
+            h.push('<td>' + v.TABLENAME + '</td>');
+            h.push('<td>' + v.DESCRIPTION + '</td>');
+            h.push('</tr>');
+        });
+        h.push('</tbody>');
+        h.push('</table>');
+        return {
+            id: "asm-audit-accordion",
+            title: _("Audit Trail"),
+            hideif: function() { 
+                return !controller.hasOwnProperty("audit") || !common.has_permission("vatr") || controller.audit.length == 0;
+            },
+            markup: h.join("\n")
+        };
+
+    },
+
+
     /**
      * Returns a link to an event - but only if the view event permission is set
      * to hide their detail.
@@ -841,7 +890,7 @@ const html = {
 
     search_field_mselect: function(id, label, options) {
         let labelhtml = '<label for="' + id + '">' + label + '</label>';
-        let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-bsmselect" multiple="multiple">';
+        let widgethtml = '<select id="' + id + '" data="' + id + '" class="asm-selectmulti" multiple="multiple">';
         widgethtml += options;
         widgethtml += '</select>';
         return html.search_field(id, labelhtml, widgethtml);

@@ -63,6 +63,18 @@ const mobile_ui_addanimal = {
                 '</select>',
             '</div>',
             '<div class="mb-3">',
+                '<label for="size" class="form-label">' + _("Entry Type") + '</label>',
+                '<select class="form-select" data="entrytype" id="entrytype">',
+                html.list_to_options(controller.entrytypes, "ID", "ENTRYTYPENAME"),
+                '</select>',
+            '</div>',
+            '<div class="mb-3">',
+                '<label for="size" class="form-label">' + _("Entry Category") + '</label>',
+                '<select class="form-select" data="entryreason" id="entryreason">',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select>',
+            '</div>',
+            '<div class="mb-3">',
                 '<label for="microchipnumber" class="form-label">' + _("Microchip") + '</label>',
                 '<input type="text" class="form-control" id="microchipnumber" data="microchipnumber">',
             '</div>',
@@ -139,6 +151,8 @@ const mobile_ui_addanimal = {
                 "breed1": $("#breed1").val(),
                 "basecolour": $("#basecolour").val(),
                 "size": $("#size").val(),
+                "entrytype": $("#entrytype").val(),
+                "entryreason": $("#entryreason").val(),
                 "microchipped": $("#microchipnumber").val() != "" ? "on" : "",
                 "microchipnumber": $("#microchipnumber").val(),
                 "internallocation": $("#internallocation").val(),
@@ -172,6 +186,8 @@ const mobile_ui_addanimal = {
         $("#internallocation").val(config.str("AFDefaultLocation"));
         mobile_ui_addanimal.update_units();
         $("#species").val(config.str("AFDefaultSpecies"));
+        $("#entrytype").val(config.str("AFDefaultEntryType"));
+        $("#entryreason").val(config.str("AFDefaultEntryReason"));
         mobile_ui_addanimal.update_breed_select();
         $("#breed1").val(config.str("AFDefaultBreed"));
         $("#size").val(config.str("AFDefaultSize"));

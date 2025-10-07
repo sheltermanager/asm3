@@ -14,7 +14,14 @@ from datetime import datetime
 import os
 import tempfile
 import zipfile
+
 from PIL import Image, ImageFont, ImageDraw
+
+# The resampling constants are in different places on Pillow versions < 9.0
+if not hasattr(Image, 'Resampling'):  # Pillow < 9.0
+    LANCZOS = Image.LANCZOS
+else:
+    LANCZOS = Image.Resampling.LANCZOS
 
 ANIMAL = 0
 LOSTANIMAL = 1
@@ -1063,7 +1070,7 @@ def scale_image(imagedata: bytes, resizespec: str) -> bytes:
         # Load the image data and scale it
         file_data = asm3.utils.bytesio(imagedata)
         im = Image.open(file_data)
-        im.thumbnail(size, Image.Resampling.LANCZOS)
+        im.thumbnail(size, LANCZOS)
         if im.mode in ("RGBA", "P"): im = im.convert("RGB") # throw away alpha layer so we can output as JPEG
         # Save the scaled down image data 
         output = asm3.utils.bytesio()
@@ -1249,7 +1256,7 @@ def scale_image_file(inimage: bytes, outimage: bytes, resizespec: str) -> None:
     if h > w: size = h, h
     # Scale and save
     im = Image.open(inimage)
-    im.thumbnail(size, Image.Resampling.LANCZOS)
+    im.thumbnail(size, LANCZOS)
     im.save(outimage, "JPEG")
 
 def scale_pdf(filedata: bytes) -> bytes:

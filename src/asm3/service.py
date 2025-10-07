@@ -277,7 +277,11 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
     # Generate the adoption paperwork if it has not been generated already
     if co["mediaid"] == 0:
         dtid = co["templateid"]
-        content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, co["movementid"], "checkout")
+        # If it's available, we use the user account of the person who kicked off the checkout 
+        # when generating the paperwork, so tokens like UserSignature work correctly.
+        username = "checkout"
+        if "username" in co: username = co["username"] 
+        content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, co["movementid"], username)
         # Save the doc with the person and animal, record the person copy for signing
         tempname = asm3.template.get_document_template_name(dbo, dtid)
         tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, co["animalid"]), 

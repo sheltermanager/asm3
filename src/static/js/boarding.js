@@ -212,7 +212,7 @@ $(function() {
             }
             row.BOARDINGTYPENAME = common.get_field(controller.boardingtypes, row.BOARDINGTYPEID, "BOARDINGNAME");
             row.SHELTERLOCATIONNAME = common.get_field(controller.internallocations, row.SHELTERLOCATION, "LOCATIONNAME");
-            row.DAYS = format.date_diff_days( $("#indate").datepicker("getDate"), $("#outdate").datepicker("getDate") ); 
+            row.DAYS = format.date_diff_days( $("#indate").date("getDate"), $("#outdate").date("getDate") ); 
         },
 
         render: function() {

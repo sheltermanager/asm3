@@ -1,36 +1,26 @@
 /*global $, console, jQuery */
-/*global asm, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
+/*global asm, asm_widget, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
 
 "use strict";
 
 /**
  * Multiple animal chooser widget. To create one, use a hidden input
- * with a class of asm-animalchoosermulti
+ * with a class of asm-animalchoosermulti for bind_widgets to autoload
  *
  * <input id="animal" class="asm-animalchoosermulti" data="boundfield" type="hidden" value="commaseparatedids" />
+ * 
+ * $(".asm-animalchoosermulti").animalchoosermulti(); // (bind_widgets does this automatically)
  *
- * callbacks: select (after selectbyids is complete)
- *            change (after user has clicked select button)
+ * events: select (after selectbyids is complete)
+ *         change (after user has clicked select button)
  */
-$.widget("asm.animalchoosermulti", {
+$.fn.animalchoosermulti = asm_widget({
 
-    options: {
-        ids: "",
-        rows: [],
-        node: null,
-        dialog: null,
-        display: null,
-        results: null,
-        locations: null,
-        species: null,
-        litters: null,
-        flags: null,
-        loaded: false
-    },
+    _create: function(t) {
+        
+        let self = this;
 
-    _create: function() {
-
-        var h = [
+        let h = [
             '<div class="animalchoosermulti asm-chooser-container">',
             '<table style="margin-left: 0px; margin-right: 0px; width: 100%; ">',
             '<tr>',
@@ -52,19 +42,19 @@ $.widget("asm.animalchoosermulti", {
             '<a href="#" class="animalchoosermulti-selectall" title="Select all"><span class="ui-icon ui-icon-check"></span></a>',
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Locations") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-locations asm-bsmselect"></select>', 
+             _("Locations") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-locations asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Species") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-species asm-bsmselect"></select>', 
+             _("Species") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-species asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Litters") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-litters asm-bsmselect"></select>', 
+             _("Litters") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-litters asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Age Groups") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-agegroups asm-bsmselect"></select>', 
+             _("Age Groups") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-agegroups asm-selectmulti"></select>', 
             '</div>',
             '<div class="asm-animalchoosermulti-filter">',
-             _("Flags") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-flags asm-bsmselect"></select>', 
+             _("Flags") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-flags asm-selectmulti"></select>', 
             '</div>',
             '</div>',
             '<div class="animalchoosermulti-results">',
@@ -74,26 +64,27 @@ $.widget("asm.animalchoosermulti", {
         ].join("\n");
 
         let node = $(h);
-        let self = this;
 
-        this.options.node = node;
-        let dialog = node.find(".animalchoosermulti-find");
-        this.options.dialog = dialog;
+        let o = {};
+        t.data("o", o);
+        o.node = node;
+        o.dialog = node.find(".animalchoosermulti-find");
+        o.display = node.find(".animalchoosermulti-display");
+        o.locations = node.find(".animalchoosermulti-locations");
+        o.species = node.find(".animalchoosermulti-species");
+        o.litters = node.find(".animalchoosermulti-litters");
+        o.flags = node.find(".animalchoosermulti-flags");
+        o.agegroups = node.find(".animalchoosermulti-agegroups");
+        o.results = node.find(".animalchoosermulti-results");
+        o.loaded = false;
 
-        this.options.display = node.find(".animalchoosermulti-display");
-        this.options.locations = node.find(".animalchoosermulti-locations");
-        this.options.species = node.find(".animalchoosermulti-species");
-        this.options.litters = node.find(".animalchoosermulti-litters");
-        this.options.flags = node.find(".animalchoosermulti-flags");
-        this.options.agegroups = node.find(".animalchoosermulti-agegroups");
-        this.options.results = node.find(".animalchoosermulti-results");
-        this.element.parent().append(node);
+        t.parent().append(node);
 
         // Create the dialog
-        var acbuttons = {};
-        acbuttons[_("Select")] = function() { self.select(); };
+        let acbuttons = {};
+        acbuttons[_("Select")] = function() { self.select.call(self, t); };
         acbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
-        dialog.dialog({
+        o.dialog.dialog({
             autoOpen: false,
             height: common.vheight(600),
             width: common.vwidth(875),
@@ -105,48 +96,51 @@ $.widget("asm.animalchoosermulti", {
             open: function() {
                 // Load animal thumbs when opening the dialog if they
                 // haven't been loaded yet
-                if (!self.options.loaded) {
-                    self.load();
-                    self.options.loaded = true;
+                if (!o.loaded) {
+                    self.load.call(self, t);
+                    o.loaded = true;
                 }
             }
         });
 
-        dialog.find("img").hide();
+        o.dialog.find("img").hide();
 
         // Bind the find button
         node.find(".animalchoosermulti-link-find")
             .button({ icons: { primary: "ui-icon-search" }, text: false })
             .click(function() {
-                dialog.dialog("open");
+                o.dialog.dialog("open");
             });
 
         // Bind the clear button
         node.find(".animalchoosermulti-link-clear")
             .button({ icons: { primary: "ui-icon-trash" }, text: false })
             .click(function() {
-                self.clear();
+                self.clear.call(self, t);
             });
     },
 
     /**
      * Empties the widget
      */
-    clear: function() {
-        this.element.val("");
-        this.options.display.html("");
-        this.options.results.find(":checked").prop("checked", false);
-        this.update_status();
+    clear: function(t) {
+        t.val("");
+        let o = t.data("o");
+        o.display.html("");
+        o.results.find(":checked").prop("checked", false);
+        this.update_status(t);
     },
 
-    is_empty: function() {
-        return this.options.results.find(":checked").length == 0;
+    is_empty: function(t) {
+        let o = t.data("o");
+        return o.results.find(":checked").length == 0;
     },
 
-    destroy: function() {
+    destroy: function(t) {
         try {
-            this.options.dialog.empty();
-            this.options.dialog.dialog("destroy"); 
+            let o = t.data("o");
+            o.dialog.empty();
+            o.dialog.dialog("destroy"); 
         }
         catch (ex) {}
     },
@@ -154,9 +148,9 @@ $.widget("asm.animalchoosermulti", {
     /**
      * Returns the animal row with ID aid
      */
-    get_row: function(aid) {
-        var rv;
-        $.each(this.rows, function(i, v) {
+    get_row: function(t, aid) {
+        let rv, o = t.data("o");
+        $.each(o.rows, function(i, v) {
             if (v.ID == aid) {
                 rv = v;
             }
@@ -167,9 +161,9 @@ $.widget("asm.animalchoosermulti", {
     /**
      * Returns true if a row has idval in column fname
      */
-    id_used: function(fname, idval) {
-        var rv = false;
-        $.each(this.rows, function(i, a) {
+    id_used: function(t, fname, idval) {
+        let rv = false, o = t.data("o");
+        $.each(o.rows, function(i, a) {
             if (a[fname] == idval) {
                 rv = true;
             }
@@ -181,60 +175,59 @@ $.widget("asm.animalchoosermulti", {
      * Converts the selected items into a list of ids, sets it as the
      * element value and puts links in the display area
      */
-    select: function() {
-        var self = this, dialog = this.options.dialog, results = this.options.results, display = this.options.display, selval = [];
-        display.html("");
-        results.find(":checked").each(function() {
-            var aid = $(this).attr("data"), rec = self.get_row(aid);
+    select: function(t) {
+        let self = this, o = t.data("o"), selval = [];
+        o.display.html("");
+        o.results.find(":checked").each(function() {
+            let aid = $(this).attr("data"), rec = self.get_row(t, aid);
             selval.push(aid);
-            var disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
-            display.append(disp);
-            display.append("<br />");
+            let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+            o.display.append(disp);
+            o.display.append("<br />");
         });
-        self.element.val(selval.join(","));
-        self._trigger("change", null, self.element.val());
-        dialog.dialog("close");
+        t.val(selval.join(","));
+        t.trigger("change", [ t.val() ]);
+        o.dialog.dialog("close");
     },
 
     /**
      * Update the visible list of animals according to what's selected in the filters
      */
-    update_filters: function() {
-        let results = this.options.results, locations = this.options.locations, 
-            species = this.options.species, litters = this.options.litters, flags = this.options.flags, agegroups = this.options.agegroups, 
-            dialog = this.options.dialog;
-        $.each(this.rows, function(i, a) {
+    update_filters: function(t) {
+        let o = t.data("o");
+        $.each(o.rows, function(i, a) {
             let show = true;
-            let selspecies = String(species.val()).trim().split(",");
-            if ( String(species.val()).trim() && selspecies.indexOf(String(a.SPECIESID)) == -1 ) { show = false; }
-            let selloc = String(locations.val()).trim().split(",");
-            if ( String(locations.val()).trim() ) {
+            let selspecies = String(o.species.val()).trim().split(",");
+            if ( String(o.species.val()).trim() && selspecies.indexOf(String(a.SPECIESID)) == -1 ) { show = false; }
+            let selloc = String(o.locations.val()).trim().split(",");
+            if ( String(o.locations.val()).trim() ) {
                 if (a.ACTIVEMOVEMENTTYPE == 1 && selloc.indexOf("m1") == -1) { show = false; }
                 if (a.ACTIVEMOVEMENTTYPE == 2 && selloc.indexOf("m2") == -1) { show = false; }
                 if (a.ACTIVEMOVEMENTTYPE == 8 && selloc.indexOf("m8") == -1) { show = false; }
                 if (!a.ACTIVEMOVEMENTTYPE && selloc.indexOf(String(a.SHELTERLOCATION)) == -1) { show = false; }
             }
-            let sellitter = String(litters.val()).trim().split(",");
-            if ( String(litters.val()).trim() && sellitter.length > 0 && sellitter.indexOf(a.ACCEPTANCENUMBER) == -1) { show = false; }
-            let selflag = String(flags.val()).trim().split(",");
-            if (String(flags.val()).trim() && selflag.length > 0 && !common.array_overlap(selflag, a.ADDITIONALFLAGS.split("|"))) { show = false; }
-            let selagegroup = String(agegroups.val()).trim().split(",");
-            if (String(agegroups.val()).trim() && selagegroup.length > 0 && selagegroup.indexOf(a.AGEGROUP) == -1) { show = false; }
+            let sellitter = String(o.litters.val()).trim().split(",");
+            if ( String(o.litters.val()).trim() && sellitter.length > 0 && sellitter.indexOf(a.ACCEPTANCENUMBER) == -1) { show = false; }
+            let selflag = String(o.flags.val()).trim().split(",");
+            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap(selflag, a.ADDITIONALFLAGS.split("|"))) { show = false; }
+            let selagegroup = String(o.agegroups.val()).trim().split(",");
+            if (String(o.agegroups.val()).trim() && selagegroup.length > 0 && selagegroup.indexOf(a.AGEGROUP) == -1) { show = false; }
 
             // Show/hide the result appropriately
-            dialog.find(".animalselect[data='" + a.ID + "']").closest(".asm-animalchoosermulti-result").toggle(show);
+            o.dialog.find(".animalselect[data='" + a.ID + "']").closest(".asm-animalchoosermulti-result").toggle(show);
         });
     },
 
     /**
      * Updates the info strip at the top to show how many animals selected
      */
-    update_status: function() {
-        var c = this.options.results.find(":checked").length;
-        this.options.dialog.find(".totalselected").html(html.info(_("{0} selected").replace("{0}", c)));
-        this.options.results.find(".asm-animalchoosermulti-selected").removeClass("asm-animalchoosermulti-selected").removeClass("ui-state-highlight");
-        this.options.results.find(":checked").each(function() {
-            var tn = $(this);
+    update_status: function(t) {
+        let o = t.data("o");
+        let c = o.results.find(":checked").length;
+        o.dialog.find(".totalselected").html(html.info(_("{0} selected").replace("{0}", c)));
+        o.results.find(".asm-animalchoosermulti-selected").removeClass("asm-animalchoosermulti-selected").removeClass("ui-state-highlight");
+        o.results.find(":checked").each(function() {
+            let tn = $(this);
             tn.closest(".asm-animalchoosermulti-result").addClass("asm-animalchoosermulti-selected").addClass("ui-state-highlight");
         });
     },
@@ -242,25 +235,21 @@ $.widget("asm.animalchoosermulti", {
     /**
      * Selects animals based on a comma separated list of ids as a string
      */
-    selectbyids: function(animalids) {
-        this.clear();
-        var self = this;
-        var results = this.options.results;
+    selectbyids: function(t, animalids) {
+        let self = this, o = t.data("o");
+        self.clear.call(self, t);
         if (!animalids) { return; }
         $.each(animalids.split(","), function(i, v) {
-            results.find("data=['" + v + "']").prop("checked", true);
+            o.results.find("data=['" + v + "']").prop("checked", true);
         });
-        self.update_status();
-        self._trigger("change", null, animalids);
+        self.update_status(t);
+        t.trigger("change", [animalids] );
     },
 
-    load: function() {
-        var self = this;
-        var dialog = this.options.dialog, node = this.options.node, results = this.options.results, 
-            locations = this.options.locations, species = this.options.species, litters = this.options.litters,
-            flags = this.options.flags, agegroups = this.options.agegroups;
-        dialog.find("img").show();
-        var formdata = "mode=multiselect";
+    load: function(t) {
+        let self = this, o = t.data("o");
+        o.dialog.find("img").show();
+        let formdata = "mode=multiselect";
         $.ajax({
             type: "POST",
             url:  "animal_embed",
@@ -268,9 +257,8 @@ $.widget("asm.animalchoosermulti", {
             dataType: "text",
             success: function(data, textStatus, jqXHR) {
 
-                var h = "";
-                var rv = jQuery.parseJSON(data);
-                self.rows = rv.rows;
+                let rv = jQuery.parseJSON(data);
+                o.rows = rv.rows;
 
                 // Update the list of locations
                 let ll = [];
@@ -278,17 +266,17 @@ $.widget("asm.animalchoosermulti", {
                 ll.push('<option value="m1">' + _("Trial Adoption") + '</option>');
                 ll.push('<option value="m2">' + _("Foster") + '</option>');
                 ll.push('<option value="m8">' + _("Retailer") + '</option>');
-                locations.html( ll.join("\n") );
-                locations.change();
-                locations.on("change", function(e) {
-                    self.update_filters();
+                o.locations.html( ll.join("\n") );
+                o.locations.change();
+                o.locations.on("change", function(e) {
+                    self.update_filters(t);
                 });
 
                 // Species list
-                species.html( html.list_to_options(rv.species, "ID", "SPECIESNAME") );
-                species.change();
-                species.on("change", function(e) {
-                    self.update_filters();
+                o.species.html( html.list_to_options(rv.species, "ID", "SPECIESNAME") );
+                o.species.change();
+                o.species.on("change", function(e) {
+                    self.update_filters(t);
                 });
 
                 // Litters list
@@ -297,68 +285,68 @@ $.widget("asm.animalchoosermulti", {
                     lh.push('<option value="' + html.title(l.ACCEPTANCENUMBER) + '">' + common.nulltostr(l.MOTHERCODE) + ' ' + 
                         common.nulltostr(l.MOTHERNAME) + ' ' + l.ACCEPTANCENUMBER + ' - ' + l.SPECIESNAME + '</option>');
                 });
-                litters.html( lh.join("\n") );
-                litters.change();
-                litters.on("change", function(e) {
-                    self.update_filters();
+                o.litters.html( lh.join("\n") );
+                o.litters.change();
+                o.litters.on("change", function(e) {
+                    self.update_filters(t);
                 });
 
                 // Flags list
-                html.animal_flag_options(null, rv.flags, flags);
+                html.animal_flag_options(null, rv.flags, o.flags);
                 //flags.html( html.list_to_options(rv.flags, "FLAG", "FLAG") );
-                flags.change();
-                flags.on("change", function(e) {
-                    self.update_filters();
+                o.flags.change();
+                o.flags.on("change", function(e) {
+                    self.update_filters(t);
                 });
 
                 // Age groups list
-                agegroups.html( html.list_to_options(rv.agegroups));
-                agegroups.change();
-                agegroups.on("change", function(e) {
-                    self.update_filters();
+                o.agegroups.html( html.list_to_options(rv.agegroups));
+                o.agegroups.change();
+                o.agegroups.on("change", function(e) {
+                    self.update_filters(t);
                 });
 
                 // Load the list of animals
-                $.each(self.rows, function(i, a) {
-                    results.append( '<div class="asm-animalchoosermulti-result asm-shelterview-animal">' + 
+                $.each(o.rows, function(i, a) {
+                    o.results.append( '<div class="asm-animalchoosermulti-result asm-shelterview-animal">' + 
                         html.animal_link_thumb(a, { showselector: true, showunit: true, showlocation: true }) +
                     '</div> '); // NOTE: Extra space after div to leave a small gap between items
                 });
 
                 // Delegate event handler for the checkboxes
-                results.off("click", "input[type='checkbox']");
-                results.on("click", "input[type='checkbox']", function(e) { 
-                    self.update_status();
+                o.results.off("click", "input[type='checkbox']");
+                o.results.on("click", "input[type='checkbox']", function(e) { 
+                    self.update_status(t);
                 });
 
                 // Remove the spinner
-                dialog.find(".spinner").hide();
+                o.dialog.find(".spinner").hide();
 
                 // Select all toggle
-                dialog.find(".animalchoosermulti-selectall").click(function(e) {
+                o.dialog.find(".animalchoosermulti-selectall").click(function(e) {
                     if (!self.select_all_toggle) {
                         self.select_all_toggle = true;
-                        dialog.find(".animalselect:visible").prop("checked", true);
-                        self.update_status();
+                        o.dialog.find(".animalselect:visible").prop("checked", true);
+                        self.update_status(t);
                     }
                     else {
                         self.select_all_toggle = false;
-                        dialog.find(".animalselect").prop("checked", false);
-                        self.update_status();
+                        o.dialog.find(".animalselect").prop("checked", false);
+                        self.update_status(t);
                     }
                     return false;
                 });
 
                 // Was there a value already set by the markup? If so, use it
-                if (self.element.val() != "") {
-                    self.selectbyids(self.element.val());
-                    self._trigger("select", null, self.element.val());
+                if (t.val() != "") {
+                    self.selectbyids(t, t.val());
+                    t.trigger("select", [ t.val() ]);
                 }
 
             },
             error: function(jqxhr, textstatus, response) {
-                dialog.dialog("close");
-                dialog.find(".spinner").hide();
+                o.dialog.dialog("close");
+                o.dialog.find(".spinner").hide();
                 log.error(response);
             }
         });
