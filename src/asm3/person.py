@@ -1098,7 +1098,6 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "FosterCapacity":   post.integer("fostercapacity"),
         "HomeCheckAreas":   post["areas"],
         "DateLastHomeChecked": post.date("homechecked"),
-        # "HomeCheckedBy":    homecheckedby,
         "HomeCheckedBy":    post.integer("homecheckedby"),
         "MatchActive":      post.integer("matchactive"),
         "MatchAdded":       post.date("matchadded"),
@@ -1154,10 +1153,6 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
             post["flags"] += ",excludefrombulkemail"
 
     # Update the flags
-    # flags = post["flags"].split(",")    
-    # if post["homecheckpass"]:
-    #     flags.append("homechecked")
-    # update_flags(dbo, username, pid, flags)
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any additional field values given

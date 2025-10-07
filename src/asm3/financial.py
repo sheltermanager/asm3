@@ -397,7 +397,6 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "CASE " \
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN aca.ShortCode ELSE aca.ShelterCode END AS CostAnimalCode, " \
-        # "oac.OwnerName AS ACOwnerName " \
         "ac.InvoiceNumber " \
         "FROM accountstrx t " \
         "LEFT OUTER JOIN accounts srcac ON srcac.ID = t.SourceAccountID " \

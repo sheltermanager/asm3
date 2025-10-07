@@ -482,26 +482,25 @@ additional = {
      * 3. An error message is displayed
      */
     validate_mandatory: function() {
-        var valid = true;
+        let valid = true;
         $(".additional").not(".chooser").each(function() {
-            var t = $(this), 
-                label = $("label[for='" + t.attr("id") + "']"),
-                acchead = $("#" + t.closest(".ui-accordion-content").prev().attr("id"));
+            let t = $(this), 
+                label = $("label[for='" + t.attr("id") + "']");
             // ignore checkboxes
             if (t.attr("type") != "checkbox") {
-                var d = String(t.attr("data-post"));
+                let d = String(t.attr("data-post"));
                 // mandatory fields have a prefix of a.1 in their post attribute - skip those without
                 if (d.indexOf("a.1") == -1) { return; }
                 // skip checking fields that have been hidden
                 if (t.attr("data-hidden") == "1") { return; }
                 // skip checking mandatory fields that are for a particular species if the species on screen does not match 
-                // NOTE: relies on a #species dropdown, this is poor encapsulation/design, 
+                // NOTE: relies on a #species dropdown existing, this is poor encapsulation/design, 
                 // but the alternatives were far more complex to implement
                 if ($("#species").val() && !common.array_in($("#species").val(), t.attr("data-speciesids").split(","))) { return; }
                 if (common.trim(t.val()) == "") {
                     header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
-                    // Find the index of the accordion section this element is in and activate it
-                    $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
+                    // Activate the accordion section this element is in (if it's in an accordion)
+                    t.closest(".asm-accordion").asmaccordion("activeNode", t);
                     label.addClass(validate.ERROR_LABEL_CLASS);
                     t.focus();
                     valid = false;

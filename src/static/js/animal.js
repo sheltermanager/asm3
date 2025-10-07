@@ -534,24 +534,24 @@ $(function() {
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
                 ]),
-                tableform.render_accordion({ id: "a-details", panes: [
-                    { id: "asm-details-accordion", title: _("Details"), fields: this.render_details() },
-                    { id: "asm-notes-accordion", title: _("Notes"), fields: this.render_notes() },
-                    { id: "asm-additional-accordion", title: _("Additional"), markup: additional.additional_fields(controller.additional) },
-                    { id: "asm-entry-accordion", title: _("Entry"), fields: this.render_entry() },
-                    { id: "asm-entryhistory-accordion", title: _("Entry History"), markup: this.render_entry_history(), 
+                tableform.render_accordion({ id: "asm-details-accordion", panes: [
+                    { title: _("Details"), fields: this.render_details() },
+                    { title: _("Notes"), fields: this.render_notes() },
+                    { title: _("Additional"), markup: additional.additional_fields(controller.additional) },
+                    { title: _("Entry"), fields: this.render_entry() },
+                    { title: _("Entry History"), markup: this.render_entry_history(), 
                         hideif: function() { return controller.entryhistory.length == 0 || config.bool("DisableEntryHistory"); }  },
-                    { id: "asm-health-accordion", title: _("Health and Identification"), fields: this.render_health_and_identification(),
+                    { title: _("Health and Identification"), fields: this.render_health_and_identification(),
                         xmarkup: '<span id="tabhealth" style="display: none" class="asm-icon asm-icon-health"></span>' },
-                    { id: "asm-death-accordion", title: _("Death"), fields: this.render_death(),
+                    { title: _("Death"), fields: this.render_death(),
                         xmarkup: '<span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span>' },
-                    { id: "asm-incidents-accordion", title: _("Incidents"), markup: this.render_incidents(),
+                    { title: _("Incidents"), markup: this.render_incidents(),
                         hideif: function() { return controller.incidents.length == 0 || !common.has_permission("vaci"); } },
-                    { id: "asm-events-accordion", title: _("Events"), markup: this.render_events(), 
+                    { title: _("Events"), markup: this.render_events(), 
                         hideif: function() { return controller.events.length == 0 || !common.has_permission("vea") || config.bool("DisableEvents"); } },
-                    { id: "asm-publish-accordion", title: _("Publishing History"), markup: this.render_publish_history(),
+                    { title: _("Publishing History"), markup: this.render_publish_history(),
                         hideif: function() { return controller.publishhistory.length == 0; } },
-                    { id: "asm-links-accordion", title: _("Links"), markup: this.render_links(),
+                    { title: _("Links"), markup: this.render_links(),
                         hideif: function() { return controller.links.length == 0; } },
                     html.audit_trail_accordion_obj(controller)
                 ]}),
@@ -958,7 +958,7 @@ $(function() {
             // name
             if (common.trim($("#animalname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
-                $("#a-details").asmaccordion("active", 0); 
+                $("#asm-details-accordion").asmaccordion("active", 0); 
                 validate.highlight("animalname");
                 return false;
             }
@@ -966,7 +966,7 @@ $(function() {
             // date brought in
             if (common.trim($("#datebroughtin").val()) == "") {
                 header.show_error(_("Date brought in cannot be blank"));
-                $("#a-details").asmaccordion("active", 3);
+                $("#asm-details-accordion").asmaccordion("active", 3);
                 validate.highlight("datebroughtin");
                 return false;
             }
@@ -974,7 +974,7 @@ $(function() {
             // date of birth
             if (common.trim($("#dateofbirth").val()) == "") {
                 header.show_error(_("Date of birth cannot be blank"));
-                $("#a-details").asmaccordion("active", 0);
+                $("#asm-details-accordion").asmaccordion("active", 0);
                 validate.highlight("dateofbirth");
                 return false;
             }
@@ -982,7 +982,7 @@ $(function() {
             // shelter code
             if (common.trim($("#sheltercode").val()) == "") {
                 header.show_error(_("Shelter code cannot be blank"));
-                $("#a-details").asmaccordion("active", 0);
+                $("#asm-details-accordion").asmaccordion("active", 0);
                 validate.highlight("sheltercode");
                 return false;
             }
@@ -1421,13 +1421,13 @@ $(function() {
 
             // We can open on a particular slider
             if (controller.view && controller.view == "notes") {
-                $("#a-details").asmaccordion("active", 2);
+                $("#asm-details-accordion").asmaccordion("active", 2);
             }
             if (controller.view && controller.view == "entry") {
-                $("#a-details").asmaccordion("active", 3);
+                $("#asm-details-accordion").asmaccordion("active", 3);
             }
             if (controller.view && controller.view == "entryhistory") {
-                $("#a-details").asmaccordion("active", 4);
+                $("#asm-details-accordion").asmaccordion("active", 4);
             }
 
             // If a popup warning has been set, display it

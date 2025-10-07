@@ -393,6 +393,11 @@ $.fn.asmaccordion = asm_widget({
         t.accordion({ heightStyle: "content" });
     },
 
+    /** Makes the pane active that contains node n - a shortcut for active(index()) */
+    activeNode: function(t, n) {
+        this.active(t, this.index(t, n));
+    },
+
     /** Sets the active accordion section or returns which one is active if unspecified */
     active: function(t, idx) {
         if (idx !== undefined) {
@@ -401,6 +406,12 @@ $.fn.asmaccordion = asm_widget({
         else {
             return t.accordion("option", "active");
         }
+    },
+
+    /** Returns the index of the pane that that node n is in, useful for passing to active to show that pane */
+    index: function(t, n) {
+        let acc_header = n.closest(".ui-accordion-content").prev();
+        return t.find("h3").index(acc_header);
     }
 
 });
@@ -925,11 +936,11 @@ $.fn.selectmulti = asm_widget({
 
     /** Get or set the value, which is a pipe delimited list (comma delimited also acceptable for setting) */
     value: function(t, newval) {
-        if (newval) {
+        if (newval !== undefined) {
             t.children().prop("selected", false);
             $.each(String(newval).split(/[|,]+/), function(mi, mv) {
                 t.find("option").each(function() {
-                    var ot = $(this), ov = $(this).prop("value");
+                    let ot = $(this), ov = $(this).prop("value");
                     if (html.decode(mv) == html.decode(ov)) {
                         ot.prop("selected", true);
                     }

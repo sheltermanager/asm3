@@ -1336,8 +1336,9 @@ const tableform = {
         h.push('<div ' + id + ' class="asm-accordion">');
         $.each(a.panes, function(i, v) {
             if (v.hideif && v.hideif()) { return; }
-            if (!v.classes) { v.classes = ''; }
-            if (!v.xmarkup) { v.xmarkup = ''; }
+            if (!v.id) { v.id = ""; }
+            if (!v.classes) { v.classes = ""; }
+            if (!v.xmarkup) { v.xmarkup = ""; }
             if (v.full_width === undefined) { v.full_width = true; }
             if (v.centered === undefined) { v.centered = true; }
             h.push('<h3 id="' + v.id + '" class="' + v.classes + '"><a href="#">' + v.title + '</a> ' + v.xmarkup + '</h3>');
