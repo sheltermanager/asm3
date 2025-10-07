@@ -1049,6 +1049,13 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     pid = dbo.get_id("owner")
     ownercode = post["ownercode"]
     if post["ownercode"] == "": ownercode = calculate_owner_code(pid, post["surname"])
+    # homecheckedby = 0
+    # if post["homecheckedby"]:
+    #     ilikename = dbo.sql_ilike("OwnerName", "?")
+    #     homecheckedby = dbo.query_int(
+    #         f"SELECT ID FROM owner WHERE IsHomeChecker = 1 AND (UPPER(OwnerCode) = ? OR {ilikename})",
+    #         [post["homecheckedby"].upper(), f"%{post["homecheckedby"]}%"]
+    #     )
 
     dbo.insert("owner", {
         "ID":               pid,
@@ -1091,6 +1098,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "FosterCapacity":   post.integer("fostercapacity"),
         "HomeCheckAreas":   post["areas"],
         "DateLastHomeChecked": post.date("homechecked"),
+        # "HomeCheckedBy":    homecheckedby,
         "HomeCheckedBy":    post.integer("homecheckedby"),
         "MatchActive":      post.integer("matchactive"),
         "MatchAdded":       post.date("matchadded"),
@@ -1146,6 +1154,10 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
             post["flags"] += ",excludefrombulkemail"
 
     # Update the flags
+    # flags = post["flags"].split(",")    
+    # if post["homecheckpass"]:
+    #     flags.append("homechecked")
+    # update_flags(dbo, username, pid, flags)
     update_flags(dbo, username, pid, post["flags"].split(","))
 
     # Save any additional field values given
@@ -1424,7 +1436,7 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
         if dictfield == "surname2" and d[dictfield] != "": 
             uv["OwnerType"] = 3 # Force person to be a couple if a second surname is supplied
             p.OWNERTYPE = 3
-        if dictfield.startswith("date") and (p[fieldname] is None or force):
+        if fieldname.startswith("DATE") and (p[fieldname] is None or force):
             uv[fieldname] = display2python(dbo.locale, d[dictfield])
             p[fieldname] = uv[fieldname]
         elif fieldname.startswith("MATCH") and (p[fieldname] is None or force):
@@ -1463,9 +1475,12 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
     merge("matchspecies", "MATCHSPECIES")
     merge("agedfrom", "MATCHAGEFROM")
     merge("agedto", "MATCHAGETO")
+    merge("homecheckedby", "HOMECHECKEDBY")
+    merge("homechecked", "DATELASTHOMECHECKED")
     uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", "", \
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
     dbo.update("owner", personid, uv, username)
+    
 
 def merge_gdpr_flags(dbo: Database, username: str, personid: int, flags: str) -> str:
     """
