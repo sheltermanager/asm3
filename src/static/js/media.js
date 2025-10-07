@@ -179,7 +179,7 @@ $(function() {
                     }
                 },
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") },
-                { type: "raw", markup: '<span style="float: right"><select id="filter" multiple="multiple" class="asm-bsmselect"></select></span>' }
+                { type: "raw", markup: '<span style="float: right"><select id="filter" multiple="multiple" class="asm-selectmulti"></select></span>' }
             ];
             this.dialog = dialog;
             this.table = table;
@@ -972,9 +972,9 @@ $(function() {
                 });
             });
 
-            $("#button-image").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
-            $("#button-move").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
-            $("#button-sign").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-move").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
 
             $("#button-signemail").click(function() {
                 $("#button-sign").asmmenu("hide_all");

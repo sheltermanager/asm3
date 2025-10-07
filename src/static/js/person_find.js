@@ -105,9 +105,7 @@ $(function() {
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             $("#gdprrow").toggle( config.bool("ShowGDPRContactOptIn") );
 
-            // Search button - we don't use the traditional submit because
-            // the bsmselect widget craps extra values into the form and 
-            // breaks filtering by flag
+            // Search
             $("#searchbutton").button().click(function() {
                 if (config.bool("PersonSearchResultsNewTab")) {
                     window.open("person_find_results?" + $("#personsearchform input, #personsearchform select").toPOST(), "_blank");

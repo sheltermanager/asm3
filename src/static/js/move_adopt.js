@@ -226,7 +226,7 @@ $(function() {
 
                 // Show the checkout section if it's configured and there's an animal with 
                 // a non-zero adoption fee
-                if (config.str("AdoptionCheckoutProcessor") != "" && lastanimal && lastanimal.FEE > 0) {
+                if (config.str("AdoptionCheckoutProcessor") && config.str("AdoptionCheckoutProcessor") != "null" && lastanimal && lastanimal.FEE > 0) {
                     $("#emailaddress").val(p.EMAILADDRESS);
                     $("#templateid").select("value", config.str("AdoptionCheckoutTemplateID"));
                     $("#feetypeid").select("value", config.str("AdoptionCheckoutFeeID"));
@@ -247,7 +247,7 @@ $(function() {
 
                 // Default giftaid if the person is registered
                 if (common.has_permission("oaod")) {
-                    $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
+                    $("#payment").payments("set_giftaid", p.ISGIFTAID == 1);
                     $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
                 }
 

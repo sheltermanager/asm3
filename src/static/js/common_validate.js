@@ -33,7 +33,7 @@ const validate = {
         const dirtykey = function(event) { if (ctrl_keys.indexOf(event.keyCode) == -1) { validate.dirty(true); } };
         const dirtychange = function(event) { validate.dirty(true); };
         validate.active = true;
-        let selectselector = ".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox, .asm-bsmselect";
+        let selectselector = ".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox, .asm-selectmulti";
         let textselector = ".asm-textbox, .asm-doubletextbox, .asm-halftextbox, .asm-textarea, .asm-richtextarea, .asm-textareafixed, .asm-textareafixeddouble";
         let clickselector = ".button-asmsignchange";
         let changeselector = ".asm-checkbox, .asm-datebox, " + selectselector + ", " + textselector;

@@ -40,6 +40,9 @@ const tableform = {
                 if (v.text) {
                     b += " " + v.text;
                 }
+                if (v.hotkey) { 
+                    b += ' <span class="asm-hotkey">' + v.hotkey.toUpperCase() + '</span>';
+                }
                 b += "</button>";
             }
             else if (v.type == "raw") {
@@ -105,6 +108,7 @@ const tableform = {
             if (!v.type || v.type == "button") {
                 $("#button-" + v.id).button();
                 if (v.click) { $("#button-" + v.id).click(v.click); }
+                if (v.hotkey) { Mousetrap.bind(v.hotkey.toLowerCase(), function() { v.click(); return false; }); }
                 if (v.mouseover) { $("#button-" + v.id).mouseover(v.mouseover); }
                 if (v.mouseleave) { $("#button-" + v.id).mouseleave(v.mouseleave); }
                 if (v.enabled == "one" || v.enabled == "multi") { $("#button-" + v.id).button("disable"); }
@@ -150,6 +154,15 @@ const tableform = {
                 if (v.enabled == "one" || v.enabled == "multi") { 
                     $("#button-" + v.id).addClass("ui-state-disabled").addClass("ui-button-disabled");
                 }
+            }
+        });
+    },
+
+    /** Call from any screen that assigns button hotkeys to unbind them */
+    buttons_destroy: function(buttons) {
+        $.each(buttons, function(i, v) {
+            if (v.hotkey) {
+                Mousetrap.unbind(v.hotkey.toLowerCase());
             }
         });
     },
@@ -713,7 +726,7 @@ const tableform = {
     },
 
     dialog_destroy: function() {
-        common.widget_destroy("#dialog-tableform", "dialog", true);
+        common.widget_destroy("#dialog-tableform", "dialog", false);
     },
 
     /**
@@ -1084,9 +1097,9 @@ const tableform = {
      *        classes: "extraclass anotherone", extra classes to apply to the widget
      *        rowclasses: "extraclass anotherone", extra classes to apply to the row container
      *        colclasses: "extraclass", extra classes to apply to the column containers within the row
-     *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
-     *        date_nofuture: true|false, (for datepicker fields)
-     *        date_nopast: true| false, (for datepicker fields)
+     *        date_onlydays: "0,1,2,3,4,5,6" (for date fields, only allow days to be selected monday-sunday)
+     *        date_nofuture: true|false, (for date fields)
+     *        date_nopast: true| false, (for date fields)
      *        placeholder: _("Text"), sets the placeholder attribute of the widget
      *        tooltip: _("Text"), sets the title attribute of the widget
      *        callout: _("Text"), mixed markup allowed, shows a callout button next to the widget label
@@ -1115,9 +1128,12 @@ const tableform = {
      *      }
      */
     fields_render: function(fields, coptions) {
-        let d = "", startcol = "", endcol = "", colclasses = "", id = "", 
-            options = { render_container: true, full_width: true, centered: true, id: "" };
-        if (coptions !== undefined) { options = common.copy_object(options, coptions); }
+        let d = "", startcol = "", endcol = "", colclasses = "", id = "";
+        let options = common.copy_object({ 
+            render_container: true, 
+            full_width: true, 
+            centered: true, 
+            id: "" }, coptions);
         if (options.render_container) {
             let colc = "col"; // row and column classes to use, bootstrap grid by default
             let rowc = "row";
@@ -1312,6 +1328,28 @@ const tableform = {
         else {
             return tr + td + label + '</td>' + td + h + closer;
         }
+    },
+
+    render_accordion: function(a) {
+        let h = [], id = "";
+        if (a.id) { id = 'id="' + a.id + '"'; }
+        h.push('<div ' + id + ' class="asm-accordion">');
+        $.each(a.panes, function(i, v) {
+            if (v.hideif && v.hideif()) { return; }
+            if (!v.classes) { v.classes = ''; }
+            if (!v.xmarkup) { v.xmarkup = ''; }
+            if (v.full_width === undefined) { v.full_width = true; }
+            if (v.centered === undefined) { v.centered = true; }
+            h.push('<h3 id="' + v.id + '" class="' + v.classes + '"><a href="#">' + v.title + '</a> ' + v.xmarkup + '</h3>');
+            h.push('<div>');
+            if (v.markup) { h.push(v.markup); }
+            if (v.fields && v.fields.length > 0) {
+                h.push( tableform.fields_render(v.fields, { full_width: v.full_width, centered: v.centered } ));
+            }
+            h.push('</div>');
+        });
+        h.push('</div>');
+        return h.join("\n");
     },
 
     render_animal: function(v) {
@@ -1758,7 +1796,7 @@ const tableform = {
         let d = "";
         tableform._check_id(v);
         d += "<select multiple=\"multiple\" ";
-        d += tableform._render_class(v, "asm-bsmselect");
+        d += tableform._render_class(v, "asm-selectmulti");
         d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
@@ -1811,13 +1849,21 @@ const tableform = {
         h.push('<div class="asm-tabbar asm-tabs">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
+            if (v.hideif && v.hideif()) { return; }
             if (!v.classes) { v.classes = ''; }
-            h.push('<li class="' + v.classes + '"><a href="#tab-' + v.id + '">' + v.title + '</a></li>');
+            if (!v.xmarkup) { v.xmarkup = ''; }
+            h.push('<li class="' + v.classes + '"><a href="#tab-' + v.id + '">' + v.title + '</a>' + v.xmarkup + '</li>');
         });
         h.push('</ul>');
         $.each(l, function(i, v) {
+            if (v.hideif && v.hideif()) { return; }
             h.push('<div id="tab-' + v.id + '">');
-            h.push( tableform.fields_render(v.fields, { full_width: false, centered: true } ));
+            if (v.full_width === undefined) { v.full_width = false; }
+            if (v.centered === undefined) { v.centered = true; }
+            if (v.markup) { h.push(v.markup); }
+            if (v.fields && v.fields.length > 0) {
+                h.push( tableform.fields_render(v.fields, { full_width: v.full_width, centered: v.centered } ));
+            }
             h.push('</div>');
         });
         return h.join("\n");
@@ -1924,15 +1970,11 @@ const tableform = {
                 if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
                 if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
                 if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
-                if (v.type == "selectmulti") { 
-                    $("#" + v.post_field).children().prop("selected", false); 
-                    $("#" + v.post_field).change(); 
-                    return;
-                }
                 if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
                 if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
                 if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
                 if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
+                if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
                 if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
             }
             else {
@@ -2001,16 +2043,7 @@ const tableform = {
                 n.select("value", html.decode(row[v.json_field])); 
             }
             else if (v.type == "selectmulti") {
-                n.children().prop("selected", false);
-                $.each(String(row[v.json_field]).split(/[|,]+/), function(mi, mv) {
-                    n.find("option").each(function() {
-                        var ot = $(this), ov = $(this).prop("value");
-                        if (html.decode(mv) == html.decode(ov)) {
-                            ot.prop("selected", true);
-                        }
-                    });
-                });
-                n.change();
+                n.selectmulti("value", String(row[v.json_field]));
             }
             else if (v.type == "textarea") {
                 n.textarea("value", row[v.json_field]);
@@ -2071,15 +2104,7 @@ const tableform = {
                 row[v.json_field] = n.sqleditor("value");
             }
             else if (v.type == "selectmulti") {
-                if (!n.val()) { 
-                    row[v.json_field] = ""; 
-                }
-                else if ($.isArray(n.val())) {
-                    row[v.json_field] = n.val().join("|");
-                }
-                else {
-                    row[v.json_field] = n.val();
-                }
+                row[v.json_field] = n.selectmulti("value");
             }
             else {
                 row[v.json_field] = n.val();
@@ -2268,7 +2293,7 @@ const tableform = {
         var b = {}, deferred = $.Deferred();
 
         // If this dialog has already been created, destroy it first
-        common.widget_destroy(selector, "dialog", true);
+        common.widget_destroy(selector, "dialog", false);
 
         if (!o) { o = { notblank: [], notzero: [], okclick: null, redbutton: null, redclick: null, cancelclick: null }; }
         $.extend(o, {

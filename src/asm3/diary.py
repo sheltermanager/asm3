@@ -342,6 +342,7 @@ def update_link_info_incomplete(dbo: Database) -> None:
         update_link_info(dbo, "system", d.LINKTYPE, d.LINKID)
         asm3.asynctask.increment_progress_value(dbo)
     asm3.al.info(f"updated {len(rows)} diary link info elements", "diary.update_link_info_incomplete", dbo)
+    return "OK %d" % len(rows)
 
 def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid: int, post: PostedData) -> int:
     """

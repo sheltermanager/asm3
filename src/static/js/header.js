@@ -160,7 +160,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;
@@ -208,7 +208,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;
@@ -510,10 +510,6 @@ header = {
                     '<span style="font-weight: bold">' + _("Did you know?") + '</span><br/>',
                     '<span id="tip"></span>',
                 '</p>',
-            '</div>',
-            '<div id="dialog-textarea-zoom" style="display: none" title="">',
-                '<input id="textarea-zoom-id" type="hidden" />',
-                '<textarea id="textarea-zoom-area" style="width: 98%; height: 98%;"></textarea>',
             '</div>',
             '<div id="dialog-unsaved" style="display: none" title="' + _("Unsaved Changes") + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span>',

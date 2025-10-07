@@ -431,7 +431,14 @@ def merge_values_for_link(dbo: Database, post: PostedData, username: str, linkid
             val = post[key]
             if val == "": continue
             if f.fieldtype == YESNO:
-                val = str(post.boolean(key))
+                # If the incoming value was from an online form and wasn't a checkbox, but contains 
+                # the word Yes, set the additional field correctly. This is handy for online forms
+                # and csv imports where the value isn't going to be a POSTed check input
+                if post[key] == _("Yes", dbo.locale): 
+                    val = "1"
+                else:
+                    # Assume it's a checkbox 
+                    val = str(post.boolean(key))
             elif f.fieldtype == MONEY:
                 val = str(post.integer(key))
             elif f.fieldtype == DATE:

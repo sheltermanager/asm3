@@ -107,6 +107,11 @@ $(function() {
             }
 
             // Task complete - stop
+            // NOTE: No longer used, a task must have a return value or an error to complete
+            // The reason for this is that for some complex tasks, such as csvexport_animals, 
+            // the progress meter could be incremented to 100% before the task had fully 
+            // finished and the return value was available.
+            /*
             if (progress == "100") {
                 $("#complete").fadeIn();
                 $("#running").hide();
@@ -114,6 +119,7 @@ $(function() {
                 $("#stop").hide();
                 return;
             }
+            */
 
             // No task running
             if (taskname == "NONE") {

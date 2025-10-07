@@ -156,7 +156,8 @@ class HomeAgainPublisher(AbstractPublisher):
         self.setPublisherComplete()
 
     def processAnimal(self, an: ResultRow, userid: str = "") -> str:
-        """ Returns a VetXML document from an animal """
+        """ Returns a VetXML document from an animal.
+            NOTE: 1/10/25 HomeAgain requested we send the eventdate in the implantdate tag """
         def xe(s): 
             if s is None: return ""
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -176,40 +177,40 @@ class HomeAgainPublisher(AbstractPublisher):
             ' <Source></Source>' \
             '</Identification>' \
             '<OwnerDetails>' \
-            ' <Salutation>' + xe(an["CURRENTOWNERTITLE"]) + '</Salutation>' \
-            ' <Initials>' + xe(an["CURRENTOWNERINITIALS"]) + '</Initials>' \
+            ' <Salutation>' + xe(an.CURRENTOWNERTITLE) + '</Salutation>' \
+            ' <Initials>' + xe(an.CURRENTOWNERINITIALS) + '</Initials>' \
             ' <Forenames>' + xe(forenames) + '</Forenames>' \
-            ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
+            ' <Surname>' + xe(an.CURRENTOWNERSURNAME) + '</Surname>' \
             ' <Address>' \
             '  <Line1>'+ xe(address["csv"]) + '</Line1>' \
-            '  <TownCity>'+ xe(an["CURRENTOWNERTOWN"]) + '</TownCity>' \
-            '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
-            '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
+            '  <TownCity>'+ xe(an.CURRENTOWNERTOWN) + '</TownCity>' \
+            '  <County_State>'+ xe(an.CURRENTOWNERCOUNTY) + '</County_State>' \
+            '  <PostalCode>' + xe(an.CURRENTOWNERPOSTCODE) + '</PostalCode>' \
             '  <Country>' + xe(reccountry) + '</Country>' \
             ' </Address>' \
-            ' <DaytimePhone><Number>' + xe(an["CURRENTOWNERWORKTELEPHONE"]) + '</Number><Note/></DaytimePhone>' \
-            ' <EveningPhone><Number>' + xe(an["CURRENTOWNERHOMETELEPHONE"]) + '</Number><Note/></EveningPhone>' \
-            ' <MobilePhone><Number>' + xe(an["CURRENTOWNERMOBILETELEPHONE"]) + '</Number><Note/></MobilePhone>' \
+            ' <DaytimePhone><Number>' + xe(an.CURRENTOWNERWORKTELEPHONE) + '</Number><Note/></DaytimePhone>' \
+            ' <EveningPhone><Number>' + xe(an.CURRENTOWNERHOMETELEPHONE) + '</Number><Note/></EveningPhone>' \
+            ' <MobilePhone><Number>' + xe(an.CURRENTOWNERMOBILETELEPHONE) + '</Number><Note/></MobilePhone>' \
             ' <EmergencyPhone><Number/><Note/></EmergencyPhone>' \
             ' <OtherPhone><Number/><Note/></OtherPhone>' \
-            ' <EmailAddress>' + xe(an["CURRENTOWNEREMAILADDRESS"]) + '</EmailAddress>' \
+            ' <EmailAddress>' + xe(an.CURRENTOWNEREMAILADDRESS) + '</EmailAddress>' \
             ' <Fax />' \
             '</OwnerDetails>' \
             '<PetDetails>' \
-            '  <Name>' + xe(an["ANIMALNAME"]) + '</Name>' \
-            '  <Species>' + self.get_homeagain_species(an["SPECIESID"]) + '</Species>' \
-            '  <Breed><FreeText>' + xe(an["BREEDNAME"]) + '</FreeText><Code/></Breed>' \
-            '  <DateOfBirth>' + asm3.i18n.format_date(an["DATEOFBIRTH"], "%m/%d/%Y") + '</DateOfBirth>' \
-            '  <Gender>' + an["SEXNAME"][0:1] + '</Gender>' \
-            '  <Colour>' + xe(an["BASECOLOURNAME"]) + '</Colour>' \
-            '  <Markings>' + xe(an["MARKINGS"]) + '</Markings>' \
-            '  <Neutered>' + (an["NEUTERED"] == 1 and "true" or "false") + '</Neutered>' \
-            '  <NotableConditions>' + xe(an["HEALTHPROBLEMS"]) + '</NotableConditions>' \
+            '  <Name>' + xe(an.ANIMALNAME) + '</Name>' \
+            '  <Species>' + self.get_homeagain_species(an.SPECIESID) + '</Species>' \
+            '  <Breed><FreeText>' + xe(an.BREEDNAME) + '</FreeText><Code/></Breed>' \
+            '  <DateOfBirth>' + asm3.i18n.format_date(an.DATEOFBIRTH, "%m/%d/%Y") + '</DateOfBirth>' \
+            '  <Gender>' + an.SEXNAME[0:1] + '</Gender>' \
+            '  <Colour>' + xe(an.BASECOLOURNAME) + '</Colour>' \
+            '  <Markings>' + xe(an.MARKINGS) + '</Markings>' \
+            '  <Neutered>' + (an.NEUTERED == 1 and "true" or "false") + '</Neutered>' \
+            '  <NotableConditions>' + xe(an.HEALTHPROBLEMS) + '</NotableConditions>' \
             '</PetDetails>' \
             '<MicrochipDetails>' \
-            '  <MicrochipNumber>' + xe(an["IDENTICHIPNUMBER"]) + '</MicrochipNumber>' \
-            '  <ImplantDate>' + asm3.i18n.format_date(an["IDENTICHIPDATE"], "%m/%d/%Y") + '</ImplantDate>' \
-            '  <ImplanterName>' + xe(an["CREATEDBY"]) + '</ImplanterName>' \
+            '  <MicrochipNumber>' + xe(an.IDENTICHIPNUMBER) + '</MicrochipNumber>' \
+            '  <ImplantDate>' + asm3.i18n.format_date(an.EVENTDATE, "%m/%d/%Y") + '</ImplantDate>' \
+            '  <ImplanterName>' + xe(an.CREATEDBY) + '</ImplanterName>' \
             '</MicrochipDetails>' \
             '<ThirdPartyDisclosure>true</ThirdPartyDisclosure>' \
             '<ReceiveMail>true</ReceiveMail>' \

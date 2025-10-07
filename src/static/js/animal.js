@@ -8,27 +8,19 @@ $(function() {
 
         render_death: function() {
             return [
-                '<h3><a href="#">' + _("Death") + ' <span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span></a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { post_field: "deceaseddate", json_field: "DECEASEDDATE", label: _("Deceased Date"), type: "date" },
-                    { post_field: "deathcategory", json_field: "PTSREASONID", label: _("Category"), type: "select", 
-                        options: { displayfield: "REASONNAME", rows: controller.deathreasons }},
-                    { post_field: "puttosleep", json_field: "PUTTOSLEEP", label: _("Euthanized"), type: "check" },
-                    { post_field: "deadonarrival", json_field: "ISDOA", label: _("Dead on arrival"), type: "check" },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 6) },
-                    { type: "nextcol" },
-                    { post_field: "ptsreason", json_field: "PTSREASON", label: _("Notes"), type: "textarea", labelpos: "above" },
-                ]),
-                '</div>'
-            ].join("\n");
+                { post_field: "deceaseddate", json_field: "DECEASEDDATE", label: _("Deceased Date"), type: "date" },
+                { post_field: "deathcategory", json_field: "PTSREASONID", label: _("Category"), type: "select", 
+                    options: { displayfield: "REASONNAME", rows: controller.deathreasons }},
+                { post_field: "puttosleep", json_field: "PUTTOSLEEP", label: _("Euthanized"), type: "check" },
+                { post_field: "deadonarrival", json_field: "ISDOA", label: _("Dead on arrival"), type: "check" },
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 6) },
+                { type: "nextcol" },
+                { post_field: "ptsreason", json_field: "PTSREASON", label: _("Notes"), type: "textarea", labelpos: "above" },
+                ];
         },
 
         render_details: function() {
             return [
-                '<h3><a href="#">' + _("Details") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
                     { post_field: "sheltercode", label: _("Code"), type: "raw", markup: [
                         '<span style="white-space: nowrap;">',
                         tableform.render_text({ post_field: "sheltercode", json_field: "SHELTERCODE", justwidget: true, halfsize: true }),
@@ -99,63 +91,54 @@ $(function() {
 
                     { type: "nextcol" },  
                     { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 2) },
-
-                ], { full_width: true }),
-                '</div>' // end accordion section
-            ].join("\n");
+                ];
         },
 
         render_entry: function() {
             return [
-                '<h3><a href="#">' + _("Entry") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { rowid: "coordinatorrow", post_field: "adoptioncoordinator", json_field: "ADOPTIONCOORDINATORID", 
-                        label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator", colclasses: "bottomborder" },
-                    { post_field: "originalowner", json_field: "ORIGINALOWNERID", 
-                        label: _("Original Owner"), type: "person", colclasses: "bottomborder" },
-                    { rowid: "broughtinbyownerrow", post_field: "broughtinby", json_field: "BROUGHTINBYOWNERID", 
-                        label: _("Brought In By"), type: "person" },
+                { rowid: "coordinatorrow", post_field: "adoptioncoordinator", json_field: "ADOPTIONCOORDINATORID", 
+                    label: _("Adoption Coordinator"), type: "person", personfilter: "coordinator", colclasses: "bottomborder" },
+                { post_field: "originalowner", json_field: "ORIGINALOWNERID", 
+                    label: _("Original Owner"), type: "person", colclasses: "bottomborder" },
+                { rowid: "broughtinbyownerrow", post_field: "broughtinby", json_field: "BROUGHTINBYOWNERID", 
+                    label: _("Brought In By"), type: "person" },
 
-                    { type: "nextcol" },
+                { type: "nextcol" },
 
-                    { post_field: "datebroughtin", json_field: "DATEBROUGHTIN", label: _("Date Brought In"), type: "date",
-                        xmarkup: tableform.render_text({ id: "mostrecententrydate", justwidget: true, style: "display: none" }) },
-                    { post_field: "timebroughtin", json_field: "DATEBROUGHTIN", label: _("Time Brought In"), type: "time" },
-                    { post_field: "entrytype", json_field: "ENTRYTYPEID", label: _("Entry Type"), type: "select", 
-                        options: { displayfield: "ENTRYTYPENAME", rows: controller.entrytypes }},
-                    { post_field: "entryreason", json_field: "ENTRYREASONID", label: _("Entry Category"), type: "select", 
-                        options: { displayfield: "REASONNAME", rows: controller.entryreasons }},
-                    { post_field: "asilomarintakecategory", json_field: "ASILOMARINTAKECATEGORY", label: "Asilomar Category", 
-                        rowclasses: "asilomar", type: "select", 
-                        options: [ "0|Healthy", "1|Treatable - Rehabilitatable", "2|Treatable - Manageable", 
-                            "3|Unhealthy and Untreatable" ] },
-                    { post_field: "jurisdiction", json_field: "JURISDICTIONID", label: _("Jurisdiction"), type: "select", 
-                        options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
-                    { post_field: "transferin", json_field: "ISTRANSFER", label: _("Transfer In"), type: "check" },
-                    { post_field: "asilomartransferexternal", json_field: "ASILOMARISTRANSFEREXTERNAL", type: "check", 
-                        label: "Transfer from outside community/coalition", rowclasses: "asilomar" },
-                    { post_field: "pickedup", json_field: "ISPICKUP", label: _("Picked Up"), type: "check" },
-                    { post_field: "pickuplocation", json_field: "PICKUPLOCATIONID", label: _("Pickup Location"), type: "select", 
-                        options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations }},
-                    { post_field: "pickupaddress", json_field: "PICKUPADDRESS", label: _("Pickup Address"), type: "text", doublesize: true },
-                    { post_field: "hold", json_field: "ISHOLD", label: _("Hold until"), type: "check", 
-                        xmarkup: [
-                            ' <span class="asm-callout" id="callout-hold">' + _("Hold the animal until this date or blank to hold indefinitely") + '</span>',
-                            tableform.render_date({ post_field: "holduntil", json_field: "HOLDUNTILDATE", justwidget: true, halfsize: true }),
-                            ].join("\n") },
-                    { post_field: "bonded1", json_field: "BONDEDANIMALID", label: _("Bonded With"), type: "animal", rowclasses: "bondedwith" },
-                    { post_field: "bonded2", json_field: "BONDEDANIMAL2ID", label: "", type: "animal", rowclasses: "bondedwith" },
-                    { post_field: "reasonnotfromowner", json_field: "REASONNO", label: _("Reason not from Owner"), type: "textarea", rows: 3},
-                    { post_field: "reasonforentry", json_field: "REASONFORENTRY", label: _("Reason for Entry"), type: "textarea", rows: 3},
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 4) }
-                ]),
-                '</div>', // end accordion section
-            ].join("\n");
+                { post_field: "datebroughtin", json_field: "DATEBROUGHTIN", label: _("Date Brought In"), type: "date",
+                    xmarkup: tableform.render_text({ id: "mostrecententrydate", justwidget: true, style: "display: none" }) },
+                { post_field: "timebroughtin", json_field: "DATEBROUGHTIN", label: _("Time Brought In"), type: "time" },
+                { post_field: "entrytype", json_field: "ENTRYTYPEID", label: _("Entry Type"), type: "select", 
+                    options: { displayfield: "ENTRYTYPENAME", rows: controller.entrytypes }},
+                { post_field: "entryreason", json_field: "ENTRYREASONID", label: _("Entry Category"), type: "select", 
+                    options: { displayfield: "REASONNAME", rows: controller.entryreasons }},
+                { post_field: "asilomarintakecategory", json_field: "ASILOMARINTAKECATEGORY", label: "Asilomar Category", 
+                    rowclasses: "asilomar", type: "select", 
+                    options: [ "0|Healthy", "1|Treatable - Rehabilitatable", "2|Treatable - Manageable", 
+                        "3|Unhealthy and Untreatable" ] },
+                { post_field: "jurisdiction", json_field: "JURISDICTIONID", label: _("Jurisdiction"), type: "select", 
+                    options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
+                { post_field: "transferin", json_field: "ISTRANSFER", label: _("Transfer In"), type: "check" },
+                { post_field: "asilomartransferexternal", json_field: "ASILOMARISTRANSFEREXTERNAL", type: "check", 
+                    label: "Transfer from outside community/coalition", rowclasses: "asilomar" },
+                { post_field: "pickedup", json_field: "ISPICKUP", label: _("Picked Up"), type: "check" },
+                { post_field: "pickuplocation", json_field: "PICKUPLOCATIONID", label: _("Pickup Location"), type: "select", 
+                    options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations }},
+                { post_field: "pickupaddress", json_field: "PICKUPADDRESS", label: _("Pickup Address"), type: "text", doublesize: true },
+                { post_field: "hold", json_field: "ISHOLD", label: _("Hold until"), type: "check", 
+                    xmarkup: [
+                        ' <span class="asm-callout" id="callout-hold">' + _("Hold the animal until this date or blank to hold indefinitely") + '</span>',
+                        tableform.render_date({ post_field: "holduntil", json_field: "HOLDUNTILDATE", justwidget: true, halfsize: true }),
+                        ].join("\n") },
+                { post_field: "bonded1", json_field: "BONDEDANIMALID", label: _("Bonded With"), type: "animal", rowclasses: "bondedwith" },
+                { post_field: "bonded2", json_field: "BONDEDANIMAL2ID", label: "", type: "animal", rowclasses: "bondedwith" },
+                { post_field: "reasonnotfromowner", json_field: "REASONNO", label: _("Reason not from Owner"), type: "textarea", rows: 3},
+                { post_field: "reasonforentry", json_field: "REASONFORENTRY", label: _("Reason for Entry"), type: "textarea", rows: 3},
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 4) }
+            ];
         },
 
         render_entry_history: function() {
-            if (controller.entryhistory.length == 0 || config.bool("DisableEntryHistory")) { return; }
             const asilomar_categories = {
                 0: "Healthy",
                 1: "Treatable - Rehabilitatable",
@@ -163,8 +146,6 @@ $(function() {
                 3: "Unhealthy and Untreatable"
             };
             let h = [
-                '<h3><a href="#">' + _("Entry History") + '</a></h3>',
-                '<div>',
                 '<table class="asm-table">',
                 '<thead>',
                 '<tr>',
@@ -200,105 +181,94 @@ $(function() {
                 h.push('<td>' + v.REASONFORENTRY + ' ' + v.REASONNO + '</td>');
                 h.push('</tr>');
             });
-            h.push('</tbody></table></div>');
+            h.push('</tbody></table>');
             return h.join("\n");
         },
 
         render_health_and_identification: function() {
             return [
-                '<h3><a href="#">' + _("Health and Identification") + ' <span id="tabhealth" style="display: none" class="asm-icon asm-icon-health"></span></a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { rowid: "microchiprow", type: "raw", 
-                        label: tableform.render_check({ post_field: "microchipped", json_field: "IDENTICHIPPED", label: _("Microchipped"), justwidget: true }), 
-                        markup: [
-                        tableform.render_date({ post_field: "microchipdate", json_field: "IDENTICHIPDATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
-                        tableform.render_select({ post_field: "microchipstatus", json_field: "IDENTICHIPSTATUS", placeholder: _("Status"), justwidget: true, halfsize: true, 
-                            options: '<option value="0">' + _("Not attempted") + '</option>' + 
-                            '<option value="1">' + _("Readable") + '</option>' + 
-                            '<option value="2">' + _("Unreadable") + '</option>' 
+                { rowid: "microchiprow", type: "raw", 
+                    label: tableform.render_check({ post_field: "microchipped", json_field: "IDENTICHIPPED", label: _("Microchipped"), justwidget: true }), 
+                    markup: [
+                    tableform.render_date({ post_field: "microchipdate", json_field: "IDENTICHIPDATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                    tableform.render_select({ post_field: "microchipstatus", json_field: "IDENTICHIPSTATUS", placeholder: _("Status"), justwidget: true, halfsize: true, 
+                        options: '<option value="0">' + _("Not attempted") + '</option>' + 
+                        '<option value="1">' + _("Readable") + '</option>' + 
+                        '<option value="2">' + _("Unreadable") + '</option>' 
 
-                        }), 
-                        tableform.render_text({ post_field: "microchipnumber", json_field: "IDENTICHIPNUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
-                        '<span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>'
-                        ].join("\n") },
-                    { rowid: "microchiprow2", type: "raw", label: "", 
-                        markup: [
-                        tableform.render_date({ post_field: "microchipdate2", json_field: "IDENTICHIP2DATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
-                        tableform.render_select({ post_field: "microchipstatus2", json_field: "IDENTICHIP2STATUS", placeholder: _("Status"), justwidget: true, halfsize: true, 
-                            options: '<option value="0">' + _("Not attempted") + '</option>' + 
-                            '<option value="1">' + _("Readable") + '</option>' + 
-                            '<option value="2">' + _("Unreadable") + '</option>' 
+                    }), 
+                    tableform.render_text({ post_field: "microchipnumber", json_field: "IDENTICHIPNUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
+                    '<span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>'
+                    ].join("\n") },
+                { rowid: "microchiprow2", type: "raw", label: "", 
+                    markup: [
+                    tableform.render_date({ post_field: "microchipdate2", json_field: "IDENTICHIP2DATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                    tableform.render_select({ post_field: "microchipstatus2", json_field: "IDENTICHIP2STATUS", placeholder: _("Status"), justwidget: true, halfsize: true, 
+                        options: '<option value="0">' + _("Not attempted") + '</option>' + 
+                        '<option value="1">' + _("Readable") + '</option>' + 
+                        '<option value="2">' + _("Unreadable") + '</option>' 
 
-                        }), 
-                        tableform.render_text({ post_field: "microchipnumber2", json_field: "IDENTICHIP2NUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
-                        '<span id="microchipbrand2"></span> <button id="button-microchipcheck2">' + microchip.check_site_name() + '</button>'
-                    ].join("\n") },
-                    { rowid: "tattoorow", type: "raw", 
-                        label: tableform.render_check({ post_field: "tattoo", json_field: "TATTOO", label: _("Tattoo"), justwidget: true }), 
-                        markup: [
-                        tableform.render_date({ post_field: "tattoodate", json_field: "TATTOODATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
-                        tableform.render_text({ post_field: "tattoonumber", json_field: "TATTOONUMBER", placeholder: _("Number"), justwidget: true  })
-                    ].join("\n") },
-                    { rowid: "smarttagrow", type: "raw", 
-                        label: tableform.render_check({ post_field: "smarttag", json_field: "SMARTTAG", label: _("SmartTag PETID"), justwidget: true }), 
-                        markup: [
-                        tableform.render_text({ post_field: "smarttagnumber", json_field: "SMARTTAGNUMBER", placeholder: _("Number"), 
-                            classes: "asm-alphanumberbox", justwidget: true, halfsize: true }),
-                        tableform.render_select({ post_field: "smarttagtype", json_field: "SMARTTAGTYPE", justwidget: true, 
-                            options: [ "0|Annual", "1|5 Year", "2|Lifetime" ] })
-                    ].join("\n") },
-                    { rowid: "neuteredrow", type: "raw", rowclasses: "topvalign",
-                        label: tableform.render_check({ post_field: "neutered", json_field: "NEUTERED", label: _("Altered"), justwidget: true }), 
-                        markup: [
-                        tableform.render_date({ post_field: "neutereddate", json_field: "NEUTEREDDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
-                        tableform.render_person({ post_field: "neuteringvet", json_field: "NEUTEREDBYVETID", personfilter: "vet", personmode: "brief", justwidget: true })
-                    ].join("\n") },
-                    { rowid: "declawedrow", rowclasses: "cats", type: "raw", markup: "",
-                        label: tableform.render_check({ post_field: "declawed", json_field: "DECLAWED", label: _("Declawed"), justwidget: true }) }, 
-                    { rowid: "heartwormrow", rowclasses: "dogs", type: "raw", 
-                        label: tableform.render_check({ post_field: "heartwormtested", json_field: "HEARTWORMTESTED", label: _("Heartworm Tested"), justwidget: true }), 
-                        markup: [
-                        tableform.render_date({ post_field: "heartwormtestdate", json_field: "HEARTWORMTESTDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
-                        tableform.render_select({ post_field: "heartwormtestresult", json_field: "HEARTWORMTESTRESULT", justwidget: true, 
-                            options: { displayfield: "NAME", rows: controller.posneg }})
-                    ].join("\n") },
-                    { rowid: "fivlrow", rowclasses: "cats", type: "raw", 
-                        label: tableform.render_check({ post_field: "fivltested", json_field: "COMBITESTED", label: _("FIV/L Tested"), justwidget: true }), 
-                        markup: [
-                        tableform.render_date({ post_field: "fivltestdate", json_field: "COMBITESTDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
-                        tableform.render_select({ post_field: "fivresult", json_field: "COMBITESTRESULT", justwidget: true, 
-                            options: { displayfield: "NAME", rows: controller.posneg }}),
-                        tableform.render_select({ post_field: "flvresult", json_field: "FLVRESULT", justwidget: true, 
-                            options: { displayfield: "NAME", rows: controller.posneg }})
-                    ].join("\n") },
-                    { type: "raw", markup: "",
-                        label: tableform.render_check({ post_field: "specialneeds", json_field: "HASSPECIALNEEDS", label: _("Special Needs"), justwidget: true }) }, 
-                    { post_field: "rabiestag", json_field: "RABIESTAG", label: _("Rabies Tag"), type: "text", 
-                        maxlength: "20", rowclasses: "cats dogs" },
+                    }), 
+                    tableform.render_text({ post_field: "microchipnumber2", json_field: "IDENTICHIP2NUMBER", placeholder: _("Number"), justwidget: true, maxlength: 15 }),
+                    '<span id="microchipbrand2"></span> <button id="button-microchipcheck2">' + microchip.check_site_name() + '</button>'
+                ].join("\n") },
+                { rowid: "tattoorow", type: "raw", 
+                    label: tableform.render_check({ post_field: "tattoo", json_field: "TATTOO", label: _("Tattoo"), justwidget: true }), 
+                    markup: [
+                    tableform.render_date({ post_field: "tattoodate", json_field: "TATTOODATE", placeholder: _("Date"), justwidget: true, halfsize: true }),
+                    tableform.render_text({ post_field: "tattoonumber", json_field: "TATTOONUMBER", placeholder: _("Number"), justwidget: true  })
+                ].join("\n") },
+                { rowid: "smarttagrow", type: "raw", 
+                    label: tableform.render_check({ post_field: "smarttag", json_field: "SMARTTAG", label: _("SmartTag PETID"), justwidget: true }), 
+                    markup: [
+                    tableform.render_text({ post_field: "smarttagnumber", json_field: "SMARTTAGNUMBER", placeholder: _("Number"), 
+                        classes: "asm-alphanumberbox", justwidget: true, halfsize: true }),
+                    tableform.render_select({ post_field: "smarttagtype", json_field: "SMARTTAGTYPE", justwidget: true, 
+                        options: [ "0|Annual", "1|5 Year", "2|Lifetime" ] })
+                ].join("\n") },
+                { rowid: "neuteredrow", type: "raw", rowclasses: "topvalign",
+                    label: tableform.render_check({ post_field: "neutered", json_field: "NEUTERED", label: _("Altered"), justwidget: true }), 
+                    markup: [
+                    tableform.render_date({ post_field: "neutereddate", json_field: "NEUTEREDDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
+                    tableform.render_person({ post_field: "neuteringvet", json_field: "NEUTEREDBYVETID", personfilter: "vet", personmode: "brief", justwidget: true })
+                ].join("\n") },
+                { rowid: "declawedrow", rowclasses: "cats", type: "raw", markup: "",
+                    label: tableform.render_check({ post_field: "declawed", json_field: "DECLAWED", label: _("Declawed"), justwidget: true }) }, 
+                { rowid: "heartwormrow", rowclasses: "dogs", type: "raw", 
+                    label: tableform.render_check({ post_field: "heartwormtested", json_field: "HEARTWORMTESTED", label: _("Heartworm Tested"), justwidget: true }), 
+                    markup: [
+                    tableform.render_date({ post_field: "heartwormtestdate", json_field: "HEARTWORMTESTDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
+                    tableform.render_select({ post_field: "heartwormtestresult", json_field: "HEARTWORMTESTRESULT", justwidget: true, 
+                        options: { displayfield: "NAME", rows: controller.posneg }})
+                ].join("\n") },
+                { rowid: "fivlrow", rowclasses: "cats", type: "raw", 
+                    label: tableform.render_check({ post_field: "fivltested", json_field: "COMBITESTED", label: _("FIV/L Tested"), justwidget: true }), 
+                    markup: [
+                    tableform.render_date({ post_field: "fivltestdate", json_field: "COMBITESTDATE", placeholder: _("Date"), halfsize: true, justwidget: true }),
+                    tableform.render_select({ post_field: "fivresult", json_field: "COMBITESTRESULT", justwidget: true, 
+                        options: { displayfield: "NAME", rows: controller.posneg }}),
+                    tableform.render_select({ post_field: "flvresult", json_field: "FLVRESULT", justwidget: true, 
+                        options: { displayfield: "NAME", rows: controller.posneg }})
+                ].join("\n") },
+                { type: "raw", markup: "",
+                    label: tableform.render_check({ post_field: "specialneeds", json_field: "HASSPECIALNEEDS", label: _("Special Needs"), justwidget: true }) }, 
+                { post_field: "rabiestag", json_field: "RABIESTAG", label: _("Rabies Tag"), type: "text", 
+                    maxlength: "20", rowclasses: "cats dogs" },
 
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 5) },
-                    { type: "nextcol" },
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 5) },
+                { type: "nextcol" },
 
-                    { post_field: "healthproblems", json_field: "HEALTHPROBLEMS", label: _("Health Problems"), 
-                        labelpos: "above", type: "textarea", rows: "4" },
+                { post_field: "healthproblems", json_field: "HEALTHPROBLEMS", label: _("Health Problems"), 
+                    labelpos: "above", type: "textarea", rows: "4" },
 
-                    { post_field: "currentvet", json_field: "CURRENTVETID", label: _("Current Vet"), type: "person", personfilter: "vet" },
-                    { post_field: "ownersvet", json_field: "OWNERSVETID", label: _("Owners Vet"), type: "person", personfilter: "vet" }
-                ]),
-                '</div>', // end accordion section
-            ].join("\n");
+                { post_field: "currentvet", json_field: "CURRENTVETID", label: _("Current Vet"), type: "person", personfilter: "vet" },
+                { post_field: "ownersvet", json_field: "OWNERSVETID", label: _("Owners Vet"), type: "person", personfilter: "vet" }
+            ];
         },
 
         render_events: function() {
             
-            if (controller.events.length == 0 || !common.has_permission("vea") || config.bool("DisableEvents")) {
-                return;
-            }
-
             let h = [
-                '<h3><a href="#">' + _("Events") + '</a></h3>',
-                '<div>',
                 '<table class="asm-table">',
                 '<thead>',
                 '<tr>',
@@ -326,19 +296,13 @@ $(function() {
                 h.push('</tr>');
             });
 
-            h.push('</table></div>');
+            h.push('</table>');
             return h.join("\n");
         },
 
         render_incidents: function() {
             
-            if (controller.incidents.length == 0 || !common.has_permission("vaci")) {
-                return;
-            }
-
             let h = [
-                '<h3><a href="#">' + _("Incidents") + '</a></h3>',
-                '<div>',
                 '<table class="asm-table">',
                 '<thead>',
                 '<tr>',
@@ -366,19 +330,13 @@ $(function() {
                 h.push('</tr>');
             });
 
-            h.push('</table></div>');
+            h.push('</table>');
             return h.join("\n");
         },
 
         render_links: function() {
             
-            if (controller.links.length == 0) {
-                return;
-            }
-
             let h = [
-                '<h3><a href="#">' + _("Links") + '</a></h3>',
-                '<div>',
                 '<table class="asm-table">',
                 '<thead>',
                 '<tr>',
@@ -409,60 +367,51 @@ $(function() {
                 h.push('</tr>');
             });
 
-            h.push('</table></div>');
+            h.push('</table>');
             return h.join("\n");
         },
 
         render_notes: function() {
             return [
-                '<h3><a href="#">' + _("Notes") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { post_field: "markings", json_field: "MARKINGS", label: _("Markings"), type: "textarea", rows: 3 },
-                    { post_field: "hiddencomments", json_field: "HIDDENANIMALDETAILS", label: _("Hidden Comments"), type: "textarea", rows: 3,
-                        callout: _("Hidden comments are for staff information only and will never be used on any adoption websites") },
-                    { post_field: "comments", json_field: "ANIMALCOMMENTS", label: _("Description"), type: "textarea", rows: 3,
-                        callout: _("The description is used for the animal's bio on adoption websites"),
-                        xlabel: '<button id="button-commentstomedia">' + _('Copy description to the notes field of the web preferred media for this animal') + '</button>' },
-                    { post_field: "popupwarning", json_field: "POPUPWARNING", label: _("Warning"), type: "textarea", rows: 3, 
-                        callout: _("Show a warning when viewing this animal") },
-                    { type: "nextcol" },
-                    { post_field: "goodwithcats", json_field: "ISGOODWITHCATS", label: _("Good with cats"), type: "select", 
-                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
-                    { post_field: "goodwithdogs", json_field: "ISGOODWITHDOGS", label: _("Good with dogs"), type: "select", 
-                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
-                    { post_field: "goodwithkids", json_field: "ISGOODWITHCHILDREN", label: _("Good with children"), type: "select", 
-                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynunk }},
-                    { post_field: "goodwithelderly", json_field: "ISGOODWITHELDERLY", label: _("Good with elderly"), type: "select", 
-                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
-                    { post_field: "goodonlead", json_field: "ISGOODONLEAD", label: _("Good on lead"), type: "select", 
-                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
-                    { post_field: "goodtraveller", json_field: "ISGOODTRAVELLER", label: _("Good traveller"), type: "select", 
-                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
-                    { post_field: "housetrained", json_field: "ISHOUSETRAINED", label: _("Housetrained"), type: "select", 
-                        rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
-                    { post_field: "cratetrained", json_field: "ISCRATETRAINED", label: _("Crate trained"), type: "select", 
-                        rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
-                    { post_field: "energylevel", json_field: "ENERGYLEVEL", label: _("Energy level"), type: "select", 
-                        rowclasses: "goodwith dogs", options: html.list_to_options([
-                            "0|" + _("Unknown"),
-                            "1|" + _("1 - Very low"),
-                            "2|" + _("2 - Low"),
-                            "3|" + _("3 - Medium"),
-                            "4|" + _("4 - High"),
-                            "5|" + _("5 - Very high") ]) },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) }
-                ]),
-               '</div>', // end accordion section
-            ].join("\n");
+                { post_field: "markings", json_field: "MARKINGS", label: _("Markings"), type: "textarea", rows: 3 },
+                { post_field: "hiddencomments", json_field: "HIDDENANIMALDETAILS", label: _("Hidden Comments"), type: "textarea", rows: 3,
+                    callout: _("Hidden comments are for staff information only and will never be used on any adoption websites") },
+                { post_field: "comments", json_field: "ANIMALCOMMENTS", label: _("Description"), type: "textarea", rows: 3,
+                    callout: _("The description is used for the animal's bio on adoption websites"),
+                    xlabel: '<button id="button-commentstomedia">' + _('Copy description to the notes field of the web preferred media for this animal') + '</button>' },
+                { post_field: "popupwarning", json_field: "POPUPWARNING", label: _("Warning"), type: "textarea", rows: 3, 
+                    callout: _("Show a warning when viewing this animal") },
+                { type: "nextcol" },
+                { post_field: "goodwithcats", json_field: "ISGOODWITHCATS", label: _("Good with cats"), type: "select", 
+                    rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
+                { post_field: "goodwithdogs", json_field: "ISGOODWITHDOGS", label: _("Good with dogs"), type: "select", 
+                    rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
+                { post_field: "goodwithkids", json_field: "ISGOODWITHCHILDREN", label: _("Good with children"), type: "select", 
+                    rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynunk }},
+                { post_field: "goodwithelderly", json_field: "ISGOODWITHELDERLY", label: _("Good with elderly"), type: "select", 
+                    rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
+                { post_field: "goodonlead", json_field: "ISGOODONLEAD", label: _("Good on lead"), type: "select", 
+                    rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
+                { post_field: "goodtraveller", json_field: "ISGOODTRAVELLER", label: _("Good traveller"), type: "select", 
+                    rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
+                { post_field: "housetrained", json_field: "ISHOUSETRAINED", label: _("Housetrained"), type: "select", 
+                    rowclasses: "goodwith", options: { displayfield: "NAME", rows: controller.ynun }},
+                { post_field: "cratetrained", json_field: "ISCRATETRAINED", label: _("Crate trained"), type: "select", 
+                    rowclasses: "goodwith dogs", options: { displayfield: "NAME", rows: controller.ynun }},
+                { post_field: "energylevel", json_field: "ENERGYLEVEL", label: _("Energy level"), type: "select", 
+                    rowclasses: "goodwith dogs", options: html.list_to_options([
+                        "0|" + _("Unknown"),
+                        "1|" + _("1 - Very low"),
+                        "2|" + _("2 - Low"),
+                        "3|" + _("3 - Medium"),
+                        "4|" + _("4 - High"),
+                        "5|" + _("5 - Very high") ]) },
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 3) }
+            ];
         },
 
         render_publish_history: function() {
             
-            if (controller.publishhistory.length == 0) {
-                return;
-            }
-
             const pname = function(p) {
                 let t = p;
                 if (p == "first") { t = _("Adoptable and published for the first time"); }
@@ -499,11 +448,9 @@ $(function() {
                 else if (p == "tumblr") { t = html.icon("tumblr") + " Shared on Tumblr"; }
 
                 return t;
-            },
-            h = [
-                '<h3><a href="#">' + _("Publishing History") + '</a></h3>',
-                '<div>'
-            ];
+            };
+
+            let h = []; 
 
             $.each(controller.publishhistory, function(i, v) {
                 let err = "";
@@ -516,7 +463,6 @@ $(function() {
                 h.push('<p>' + format.date(v.SENTDATE) + ' - ' + pname(v.PUBLISHEDTO) + err + '</p>');
             });
 
-            h.push('</div>');
             return h.join("\n");
         },
 
@@ -588,23 +534,27 @@ $(function() {
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
                 ]),
-                '<div id="asm-details-accordion">',
-                this.render_details(),
-                this.render_notes(),
-                '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
-                '<div>',
-                additional.additional_fields(controller.additional),
-                '</div>',
-                this.render_entry(),
-                this.render_entry_history(),
-                this.render_health_and_identification(),
-                this.render_death(),
-                this.render_incidents(),
-                this.render_events(),
-                this.render_publish_history(),
-                this.render_links(),
-                html.audit_trail_accordion(controller),
-                '</div>', // accordion
+                tableform.render_accordion({ id: "a-details", panes: [
+                    { id: "asm-details-accordion", title: _("Details"), fields: this.render_details() },
+                    { id: "asm-notes-accordion", title: _("Notes"), fields: this.render_notes() },
+                    { id: "asm-additional-accordion", title: _("Additional"), markup: additional.additional_fields(controller.additional) },
+                    { id: "asm-entry-accordion", title: _("Entry"), fields: this.render_entry() },
+                    { id: "asm-entryhistory-accordion", title: _("Entry History"), markup: this.render_entry_history(), 
+                        hideif: function() { return controller.entryhistory.length == 0 || config.bool("DisableEntryHistory"); }  },
+                    { id: "asm-health-accordion", title: _("Health and Identification"), fields: this.render_health_and_identification(),
+                        xmarkup: '<span id="tabhealth" style="display: none" class="asm-icon asm-icon-health"></span>' },
+                    { id: "asm-death-accordion", title: _("Death"), fields: this.render_death(),
+                        xmarkup: '<span id="tabdeath" style="display: none" class="asm-icon asm-icon-death"></span>' },
+                    { id: "asm-incidents-accordion", title: _("Incidents"), markup: this.render_incidents(),
+                        hideif: function() { return controller.incidents.length == 0 || !common.has_permission("vaci"); } },
+                    { id: "asm-events-accordion", title: _("Events"), markup: this.render_events(), 
+                        hideif: function() { return controller.events.length == 0 || !common.has_permission("vea") || config.bool("DisableEvents"); } },
+                    { id: "asm-publish-accordion", title: _("Publishing History"), markup: this.render_publish_history(),
+                        hideif: function() { return controller.publishhistory.length == 0; } },
+                    { id: "asm-links-accordion", title: _("Links"), markup: this.render_links(),
+                        hideif: function() { return controller.links.length == 0; } },
+                    html.audit_trail_accordion_obj(controller)
+                ]}),
                 '</div>', // asmcontent
                 '</div>'  // tabs
             ].join("\n");
@@ -839,7 +789,8 @@ $(function() {
             if (controller.entryhistory.length > 0) {
                 $("#datebroughtin").hide();
                 $("#timebroughtinrow").hide();
-                $("#mostrecententrydate").val(format.date(controller.animal.MOSTRECENTENTRYDATE)).textbox("disable").show();
+                $("#mostrecententrydate").val(format.date(controller.animal.MOSTRECENTENTRYDATE)).textbox("disable");
+                $("#mostrecententrydate").show();
             }
 
             // CONFIG ===========================
@@ -1007,7 +958,7 @@ $(function() {
             // name
             if (common.trim($("#animalname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#a-details").asmaccordion("active", 0); 
                 validate.highlight("animalname");
                 return false;
             }
@@ -1015,7 +966,7 @@ $(function() {
             // date brought in
             if (common.trim($("#datebroughtin").val()) == "") {
                 header.show_error(_("Date brought in cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 3);
+                $("#a-details").asmaccordion("active", 3);
                 validate.highlight("datebroughtin");
                 return false;
             }
@@ -1023,7 +974,7 @@ $(function() {
             // date of birth
             if (common.trim($("#dateofbirth").val()) == "") {
                 header.show_error(_("Date of birth cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#a-details").asmaccordion("active", 0);
                 validate.highlight("dateofbirth");
                 return false;
             }
@@ -1031,7 +982,7 @@ $(function() {
             // shelter code
             if (common.trim($("#sheltercode").val()) == "") {
                 header.show_error(_("Shelter code cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#a-details").asmaccordion("active", 0);
                 validate.highlight("sheltercode");
                 return false;
             }
@@ -1047,7 +998,7 @@ $(function() {
         /** Generates a new animal code */
         generate_code: async function() {
             validate.dirty(false);
-            let formdata = "mode=gencode&datebroughtin=" + format.date(controller.animal.MOSTRECENTENTRYDATE) + 
+            let formdata = "mode=gencode&datebroughtin=" + $("#datebroughtin").val() + 
                 "&animaltypeid=" + $("#animaltype").val() +
                 "&entryreasonid=" + $("#entryreason").val() +
                 "&speciesid=" + $("#species").val();
@@ -1170,11 +1121,6 @@ $(function() {
                 animal.update_units();
             });
 
-            // accordion
-            $("#asm-details-accordion").accordion({
-                heightStyle: "content"
-            });
-
             // Keep breed2 in sync with breed1 for non-crossbreeds
             $("#breed1").change(function() {
                 if (!$("#crossbreed").is(":checked")) {
@@ -1202,7 +1148,7 @@ $(function() {
                 if (config.bool("ManualCodes")) { 
                     return;
                 }
-                let dbin = $("#datebroughtin").datepicker("getDate"), today = new Date();
+                let dbin = $("#datebroughtin").date("getDate"), today = new Date();
                 if (config.str("CodingFormat").indexOf("M") != -1 ||
                     config.str("ShortCodingFormat").indexOf("M") != -1) {
                     // If the month is not this month, regenerate the code
@@ -1475,13 +1421,13 @@ $(function() {
 
             // We can open on a particular slider
             if (controller.view && controller.view == "notes") {
-                $("#asm-details-accordion").accordion("option", "active", 2);
+                $("#a-details").asmaccordion("active", 2);
             }
             if (controller.view && controller.view == "entry") {
-                $("#asm-details-accordion").accordion("option", "active", 3);
+                $("#a-details").asmaccordion("active", 3);
             }
             if (controller.view && controller.view == "entryhistory") {
-                $("#asm-details-accordion").accordion("option", "active", 4);
+                $("#a-details").asmaccordion("active", 4);
             }
 
             // If a popup warning has been set, display it

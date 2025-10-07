@@ -141,6 +141,9 @@ def function_task(dbo: Database, taskname: str, fn: Callable, *args):
 
         functions can still call async.set_progress_value, but they don't
         need any other boiler plate async code and will work just as well sync.
+
+        Functions MUST have some kind of return value as the task screen
+        only considers a task complete when returnvalue or lasterror is present.
     """
     if is_task_running(dbo): return # do nothing if a task is already going
     set_last_error(dbo, "")

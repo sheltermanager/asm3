@@ -2589,6 +2589,23 @@ def get_cost_totals(dbo: Database, animalid: int) -> ResultRow:
         "FROM animal WHERE ID = ?"
     return dbo.first_row( dbo.query(q, [animalid]) )
 
+def get_costs_for_payee(dbo: Database, personid: int, sort: int = ASCENDING) -> Results:
+    """
+    Returns cost records for the given person:
+    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, ANIMALID, INVOICENUMBER
+    """
+    sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
+        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate, a.AnimalID, an.AnimalName, an.ShelterCode, an.ShortCode, a.InvoiceNumber, o.OwnerName " \
+        "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
+        "INNER JOIN animal an ON a.AnimalID = an.ID " \
+        "INNER JOIN owner o ON a.OwnerID = o.ID " \
+        "WHERE a.OwnerID = ?"
+    if sort == ASCENDING:
+        sql += " ORDER BY a.CostDate"
+    else:
+        sql += " ORDER BY a.CostDate DESC"
+    return dbo.query(sql, [personid])
+
 def get_diets(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     """
     Returns diet records for the given animal:
@@ -2913,6 +2930,7 @@ def update_active_litters(dbo: Database) -> None:
         if newremaining != remaining:
             dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE ID=?", (newremaining, a.id))
             asm3.al.debug("litter '%s' change, setting remaining to %d." % (a.acceptancenumber, int(newremaining)), "animal.update_active_litters", dbo)
+    return "OK %d" % len(active)
 
 def get_active_litters(dbo: Database, speciesid: int = -1) -> Results:
     """
@@ -4540,6 +4558,7 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         namid = dbo.insert("animalmedical", {
             "AnimalID":             animalid,
             "MedicalProfileID":     am.medicalprofileid,
+            "MedicalTypeID":        am.medicaltypeid,
             "TreatmentName":        am.treatmentname,
             "StartDate":            newdate,
             "Dosage":               am.dosage,
