@@ -6525,6 +6525,26 @@ class person_donations(JSONEndpoint):
             "rows": donations
         }
 
+class person_costs(JSONEndpoint):
+    url = "person_costs"
+    js_module = "animal_costs"
+    get_permissions = asm3.users.VIEW_COST
+
+    def controller(self, o):
+        dbo = o.dbo
+        personid = o.post.integer("id")
+        p = asm3.person.get_person(dbo, personid)
+        if p is None: self.notfound()
+        costs = asm3.animal.get_costs_for_payee(dbo, personid)
+        asm3.al.debug("got %d costs for person %s" % (len(costs), p["OWNERNAME"]), "main.person_costs", dbo)
+        return {
+            "name": "person_costs",
+            "rows": costs,
+            "person": p,
+            "costtypes": asm3.lookups.get_costtypes(dbo),
+            "tabcounts": asm3.person.get_satellite_counts(dbo, personid)[0]
+        }
+
 class person_embed(ASMEndpoint):
     url = "person_embed"
     check_logged_in = False
