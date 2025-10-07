@@ -257,7 +257,7 @@ header = {
     menu_widgets: function() {
 
         $(".asm-menu-icon").asmmenu();
-        $(".asm-menu-accordion").accordion({ active: false, collapsible: true, heightStyle: "content" });
+        $(".asm-menu-accordion").asmaccordion({ active: false, collapsible: true });
 
         // Hide any publishers that are not enabled
         var ep = config.str("PublishersEnabled");
@@ -662,7 +662,7 @@ header = {
                 activereportmenu.find(".ui-accordion-content .asm-menu-list").css("padding", "5px");
                 activereportmenu.find(".ui-accordion-content").hide();
                 activereportmenu.find(".ui-accordion-header").show();
-                activereportmenu.find(".ui-accordion").accordion({active: false});
+                activereportmenu.find(".asm-accordion").asmaccordion({ active: false, collapsible: true });
             }
         });
 

@@ -21,77 +21,77 @@ $(function() {
 
         render_details: function() {
             return [
-                    { post_field: "sheltercode", label: _("Code"), type: "raw", markup: [
-                        '<span style="white-space: nowrap;">',
-                        tableform.render_text({ post_field: "sheltercode", json_field: "SHELTERCODE", justwidget: true, halfsize: true }),
-                        tableform.render_text({ post_field: "shortcode", json_field: "SHORTCODE", justwidget: true, halfsize: true }),
-                        tableform.render_hidden({ post_field: "uniquecode", json_field: "UNIQUECODEID", justwidget: true }),
-                        tableform.render_hidden({ post_field: "yearcode", json_field: "YEARCODEID", justwidget: true }),
-                        '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
-                        '</span>' ].join("\n") },
-                    { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "autotext", 
-                        options: { rows: controller.activelitters, displayfield: "label", valuefield: "value" }},
-                    { post_field: "animalname", json_field: "ANIMALNAME", label: _("Name"), type: "text", 
-                        xmarkup: ' <button id="button-randomname">' + _("Generate a random name for this animal") + '</button>' },
-                    { post_field: "sex", json_field: "SEX", label: _("Sex"), type: "select", 
-                        options: { displayfield: "SEX", rows: controller.sexes }},
-                    { post_field: "animaltype", json_field: "ANIMALTYPEID", label: _("Type"), type: "select", 
-                        options: { displayfield: "ANIMALTYPE", rows: controller.animaltypes }},
-                    { post_field: "basecolour", json_field: "BASECOLOURID", label: _("Color"), type: "select", 
-                        options: { displayfield: "BASECOLOUR", rows: controller.colours }},
-                    { post_field: "coattype", json_field: "COATTYPE", label: _("Coat Type"), type: "select", 
-                        options: { displayfield: "COATTYPE", rows: controller.coattypes }},
-                    { post_field: "size", json_field: "SIZE", label: _("Size"), type: "select", 
-                        options: { displayfield: "SIZE", rows: controller.sizes }},
-                    { rowid: "kilosrow", label: _("Weight"), type: "raw", markup: [ 
-                        '<span style="white-space: nowrap;">',
-                        tableform.render_number({ post_field: "weight", json_field: "WEIGHT", justwidget: true, halfsize: true }),
-                        '<span id="kglabel">' + _("kg") + '</span>',
-                        '</span>' ].join("\n") },
-                    { rowid: "poundsrow", label: _("Weight"), type: "raw", markup: [
-                        '<span style="white-space: nowrap;">',
-                        tableform.render_intnumber({ id: "weightlb", justwidget: true, style: "width: 70px" }),
-                        '<span id="lblabel">' + _("lb") + '</span>',
-                        tableform.render_intnumber({ id: "weightoz", justwidget: true, style: "width: 70px" }),
-                        '<span id="ozlabel">' + _("oz") + '</span>',
-                        '</span>' ].join("\n") },
+                { post_field: "sheltercode", label: _("Code"), type: "raw", markup: [
+                    '<span style="white-space: nowrap;">',
+                    tableform.render_text({ post_field: "sheltercode", json_field: "SHELTERCODE", justwidget: true, halfsize: true }),
+                    tableform.render_text({ post_field: "shortcode", json_field: "SHORTCODE", justwidget: true, halfsize: true }),
+                    tableform.render_hidden({ post_field: "uniquecode", json_field: "UNIQUECODEID", justwidget: true }),
+                    tableform.render_hidden({ post_field: "yearcode", json_field: "YEARCODEID", justwidget: true }),
+                    '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
+                    '</span>' ].join("\n") },
+                { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "autotext", 
+                    options: { rows: controller.activelitters, displayfield: "label", valuefield: "value" }},
+                { post_field: "animalname", json_field: "ANIMALNAME", label: _("Name"), type: "text", 
+                    xmarkup: ' <button id="button-randomname">' + _("Generate a random name for this animal") + '</button>' },
+                { post_field: "sex", json_field: "SEX", label: _("Sex"), type: "select", 
+                    options: { displayfield: "SEX", rows: controller.sexes }},
+                { post_field: "animaltype", json_field: "ANIMALTYPEID", label: _("Type"), type: "select", 
+                    options: { displayfield: "ANIMALTYPE", rows: controller.animaltypes }},
+                { post_field: "basecolour", json_field: "BASECOLOURID", label: _("Color"), type: "select", 
+                    options: { displayfield: "BASECOLOUR", rows: controller.colours }},
+                { post_field: "coattype", json_field: "COATTYPE", label: _("Coat Type"), type: "select", 
+                    options: { displayfield: "COATTYPE", rows: controller.coattypes }},
+                { post_field: "size", json_field: "SIZE", label: _("Size"), type: "select", 
+                    options: { displayfield: "SIZE", rows: controller.sizes }},
+                { rowid: "kilosrow", label: _("Weight"), type: "raw", markup: [ 
+                    '<span style="white-space: nowrap;">',
+                    tableform.render_number({ post_field: "weight", json_field: "WEIGHT", justwidget: true, halfsize: true }),
+                    '<span id="kglabel">' + _("kg") + '</span>',
+                    '</span>' ].join("\n") },
+                { rowid: "poundsrow", label: _("Weight"), type: "raw", markup: [
+                    '<span style="white-space: nowrap;">',
+                    tableform.render_intnumber({ id: "weightlb", justwidget: true, style: "width: 70px" }),
+                    '<span id="lblabel">' + _("lb") + '</span>',
+                    tableform.render_intnumber({ id: "weightoz", justwidget: true, style: "width: 70px" }),
+                    '<span id="ozlabel">' + _("oz") + '</span>',
+                    '</span>' ].join("\n") },
 
-                    { type: "nextcol" }, 
+                { type: "nextcol" }, 
 
-                    { post_field: "species", json_field: "SPECIESID", label: _("Species"), type: "select", 
-                        options: { displayfield: "SPECIESNAME", rows: controller.species }},
-                    { post_field: "breed1", json_field: "BREEDID", label: _("Breed"), type: "select", 
-                        options: { displayfield: "BREEDNAME", rows: controller.breeds }, 
-                        xmarkup: ['<select id="breedp" class="asm-selectbox" style="display:none;">',
-                            html.list_to_options_breeds(controller.breeds),
-                            '</select>'].join("\n") },
-                    { post_field: "breed2", json_field: "BREED2ID", rowid: "secondbreedrow",
-                        type: "select", options: html.list_to_options_breeds(controller.breeds),
-                        label: tableform.render_check({ post_field: "crossbreed", json_field: "CROSSBREED", justwidget: true,
-                            label: _("Crossbreed"), labelpos: "before" })  },
-                    { post_field: "location", json_field: "SHELTERLOCATION", label: _("Location"), type: "select", 
-                        callout: _("Where this animal is located within the shelter"),
-                        options: { displayfield: "LOCATIONNAME", rows: controller.internallocations }},
-                    { rowid: "locationunitrow", post_field: "unit", json_field: "SHELTERLOCATIONUNIT", label: _("Unit"), 
-                        type: "autotext", defaultsearch: ":", options: "",
-                        callout:_("Unit within the location, eg: pen or cage number")
-                    },
-                    { rowid: "lastlocation", type: "raw", label: _("Last Location"), markup:
-                        '<a class="asm-embed-name" href="animal_find_results?logicallocation=onshelter&shelterlocation=' + 
-                            controller.animal.SHELTERLOCATION + '">' + controller.animal.SHELTERLOCATIONNAME + ' ' 
-                            + common.nulltostr(controller.animal.SHELTERLOCATIONUNIT) + '</a>'
-                    },
-                    { post_field: "owner", json_field: "OWNERID", label: _("Owner"), type: "person", personmode: "brief" },
-                    { post_field: "flags", label: _("Flags"), type: "selectmulti" },
-                    { rowid: "dobrow", type: "raw", label: _("Date of Birth"), markup: [
-                        tableform.render_date({ post_field: "dateofbirth", json_field: "DATEOFBIRTH", halfsize: true, justwidget: true }),
-                        tableform.render_check({ post_field: "estimateddob", json_field: "ESTIMATEDDOB", label: _("Estimate"), justwidget: true }),
-                        ].join("\n") },
-                    { post_field: "fee", json_field: "FEE", label: _("Adoption Fee"), type: "currency" },
+                { post_field: "species", json_field: "SPECIESID", label: _("Species"), type: "select", 
+                    options: { displayfield: "SPECIESNAME", rows: controller.species }},
+                { post_field: "breed1", json_field: "BREEDID", label: _("Breed"), type: "select", 
+                    options: { displayfield: "BREEDNAME", rows: controller.breeds }, 
+                    xmarkup: ['<select id="breedp" class="asm-selectbox" style="display:none;">',
+                        html.list_to_options_breeds(controller.breeds),
+                        '</select>'].join("\n") },
+                { post_field: "breed2", json_field: "BREED2ID", rowid: "secondbreedrow",
+                    type: "select", options: html.list_to_options_breeds(controller.breeds),
+                    label: tableform.render_check({ post_field: "crossbreed", json_field: "CROSSBREED", justwidget: true,
+                        label: _("Crossbreed"), labelpos: "before" })  },
+                { post_field: "location", json_field: "SHELTERLOCATION", label: _("Location"), type: "select", 
+                    callout: _("Where this animal is located within the shelter"),
+                    options: { displayfield: "LOCATIONNAME", rows: controller.internallocations }},
+                { rowid: "locationunitrow", post_field: "unit", json_field: "SHELTERLOCATIONUNIT", label: _("Unit"), 
+                    type: "autotext", defaultsearch: ":", options: "",
+                    callout:_("Unit within the location, eg: pen or cage number")
+                },
+                { rowid: "lastlocation", type: "raw", label: _("Last Location"), markup:
+                    '<a class="asm-embed-name" href="animal_find_results?logicallocation=onshelter&shelterlocation=' + 
+                        controller.animal.SHELTERLOCATION + '">' + controller.animal.SHELTERLOCATIONNAME + ' ' 
+                        + common.nulltostr(controller.animal.SHELTERLOCATIONUNIT) + '</a>'
+                },
+                { post_field: "owner", json_field: "OWNERID", label: _("Owner"), type: "person", personmode: "brief" },
+                { post_field: "flags", label: _("Flags"), type: "selectmulti" },
+                { rowid: "dobrow", type: "raw", label: _("Date of Birth"), markup: [
+                    tableform.render_date({ post_field: "dateofbirth", json_field: "DATEOFBIRTH", halfsize: true, justwidget: true }),
+                    tableform.render_check({ post_field: "estimateddob", json_field: "ESTIMATEDDOB", label: _("Estimate"), justwidget: true }),
+                    ].join("\n") },
+                { post_field: "fee", json_field: "FEE", label: _("Adoption Fee"), type: "currency" },
 
-                    { type: "nextcol" },  
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 2) },
-                ];
+                { type: "nextcol" },  
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 2) },
+            ];
         },
 
         render_entry: function() {
@@ -636,13 +636,8 @@ $(function() {
 
             // DATA ===========================================
 
-            // Hide additional accordion section if there aren't
-            // any additional fields declared
-            let ac = $("#asm-additional-accordion");
-            let an = ac.next();
-            if (an.find(".additional").length == 0) {
-                ac.hide(); an.hide();
-            }
+            // Hide the additional accordion section if there aren't any additional fields declared
+            $("#asm-details-accordion").asmaccordion("hideNoInput", 2);
             
             // Crossbreed flag being unset hides second breed field
             if ($("#crossbreed").is(":checked")) {

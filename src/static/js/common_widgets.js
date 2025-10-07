@@ -389,8 +389,20 @@ $.fn.table = asm_widget({
  */
 $.fn.asmaccordion = asm_widget({
 
-    _create: function(t) {
-        t.accordion({ heightStyle: "content" });
+    options: {
+        // active: 0, // the index of the initial pane to be active after loading
+        collapsible: false, // if true, all panes can be collapsed, otherwise one must stay open
+        heightStyle: "content",
+    },
+
+    _create: function(t, options) {
+        let self = this;
+        // Map the activate function to a new "changePane" event, so that callers
+        // can listen to the original div element for changes
+        options.activate = function(event, ui) {
+            t.trigger("changePane", [ self.active(t) ]);
+        };
+        t.accordion(options);
     },
 
     /** Makes the pane active that contains node n - a shortcut for active(index()) */
@@ -408,11 +420,20 @@ $.fn.asmaccordion = asm_widget({
         }
     },
 
+    /** Hides pane with index if it doesn't have any input, select or textarea elements in their content  */
+    hideNoInput: function(t, idx) {
+        let h = $(t.find("h3")[idx]);
+        let b = h.next();
+        if (b.find("input, select, textarea").length == 0) {
+            h.hide(); b.hide();
+        }
+    },
+
     /** Returns the index of the pane that that node n is in, useful for passing to active to show that pane */
     index: function(t, n) {
         let acc_header = n.closest(".ui-accordion-content").prev();
         return t.find("h3").index(acc_header);
-    }
+    },
 
 });
 
