@@ -28,73 +28,60 @@ $(function() {
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") },
                     { id: "toanimal", text: _("Create Animal"), icon: "animal-add", tooltip: _("Create a new animal from this waiting list entry") }
                 ]),
-                '<div id="asm-details-accordion">',
-                '<h3><a href="#">' + _("Details") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { type: "raw", label: _("Number"), markup: '<span class="asm-waitinglist-number">' + format.padleft(controller.animal.WLID, 6) + '</span>' },
-                    { post_field: "dateputon", json_field: "DATEPUTONLIST", type: "date", label: _("Date put on") },
-                    { post_field: "animalname", json_field: "ANIMALNAME", type: "text", label: _("Name") },
-                    { post_field: "microchip", json_field: "MICROCHIPNUMBER", type: "text", label: _("Microchip"), maxlength: 15, 
-                        xmarkup: ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>' },
-                    { post_field: "species", json_field: "SPECIESID", type: "select", label: _("Species"), 
-                        options: { displayfield: "SPECIESNAME", rows: controller.species }},
-                    { post_field: "breed", json_field: "BREEDID", type: "select", label: _("Breed"), 
-                        options: html.list_to_options_breeds(controller.breeds),
-                        xmarkup: '<select id="breedp" data="breedp" class="asm-selectbox" style="display:none;">' + 
-                            html.list_to_options_breeds(controller.breeds) + '</select>' },
-                    { post_field: "sex", json_field: "SEX", type: "select", label: _("Sex"), 
-                        options: { displayfield: "SEX", rows: controller.sexes }},
-                    { post_field: "neutered", json_field: "NEUTERED", type: "check", label: _("Altered") },
-                    { post_field: "size", json_field: "SIZE", type: "select", label: _("Size"), 
-                        options: { displayfield: "SIZE", rows: controller.sizes }},
-                    { post_field: "dateofbirth", json_field: "DATEOFBIRTH", type: "date", label: _("Date of Birth") },
-                    { post_field: "description", json_field: "ANIMALDESCRIPTION", type: "textarea", label: _("Description"), rows: 3, 
-                        callout: _("A description or other information about the animal") },
-                    { post_field: "reasonforwantingtopart", json_field: "REASONFORWANTINGTOPART", type: "textarea", label: _("Entry reason"), rows: 3,
-                        callout: _("The reason the owner wants to part with the animal") },
-                    { type: "nextcol" },
-                    { post_field: "canafforddonation", json_field: "CANAFFORDDONATION", type: "check", label: _("Can afford donation") },
-                    { post_field: "urgency", json_field: "URGENCY", type: "select", label: _("Urgency"), 
-                        options: { displayfield: "URGENCY", rows: controller.urgencies }},
-                    { post_field: "comments", json_field: "COMMENTS", type: "textarea", label: _("Comments"), rows: 5, },
-                    { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Contact") },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 14) }
-                ], { full_width: true }),
-                '</div>', 
-                '<h3><a href="#">' + _("Removal") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { post_field: "dateoflastownercontact", json_field: "DATEOFLASTOWNERCONTACT", type: "date", label: _("Date of last owner contact") },
-                    { post_field: "autoremovepolicy", json_field: "AUTOREMOVEPOLICY", type: "number", label: _("Automatically remove"),
-                        callout: _("ASM will remove this animal from the waiting list after a set number of weeks since the last owner contact date.") + 
-                            ' <br />' + _("Set this to 0 to never automatically remove."),
-                        xmarkup: ' ' + _("weeks after last contact.") },
-                    { post_field: "dateremoved", json_field: "DATEREMOVEDFROMLIST", type: "date", label: _("Date removed") },
-                    { post_field: "waitinglistremoval", json_field: "WAITINGLISTREMOVALID", type: "select", label: _("Removal category"), 
-                        options: { displayfield: "REMOVALNAME", rows: controller.waitinglistremovals }},
-                    { post_field: "reasonforremoval", json_field: "REASONFORREMOVAL", type: "textarea", label: _("Removal reason"), rows: 5 },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 15) }
-                ]),
-                '</div>',
-                '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
-                '<div>',
-                additional.additional_fields(controller.additional),
-                '</div>',
-                html.audit_trail_accordion(controller),
-                '</div> <!-- accordion -->',
+                tableform.render_accordion({ id: "asm-details-accordion", panes: [
+                    { title: _("Details"), fields: [
+                        { type: "raw", label: _("Number"), markup: '<span class="asm-waitinglist-number">' + format.padleft(controller.animal.WLID, 6) + '</span>' },
+                        { post_field: "dateputon", json_field: "DATEPUTONLIST", type: "date", label: _("Date put on") },
+                        { post_field: "animalname", json_field: "ANIMALNAME", type: "text", label: _("Name") },
+                        { post_field: "microchip", json_field: "MICROCHIPNUMBER", type: "text", label: _("Microchip"), maxlength: 15, 
+                            xmarkup: ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>' },
+                        { post_field: "species", json_field: "SPECIESID", type: "select", label: _("Species"), 
+                            options: { displayfield: "SPECIESNAME", rows: controller.species }},
+                        { post_field: "breed", json_field: "BREEDID", type: "select", label: _("Breed"), 
+                            options: html.list_to_options_breeds(controller.breeds),
+                            xmarkup: '<select id="breedp" data="breedp" class="asm-selectbox" style="display:none;">' + 
+                                html.list_to_options_breeds(controller.breeds) + '</select>' },
+                        { post_field: "sex", json_field: "SEX", type: "select", label: _("Sex"), 
+                            options: { displayfield: "SEX", rows: controller.sexes }},
+                        { post_field: "neutered", json_field: "NEUTERED", type: "check", label: _("Altered") },
+                        { post_field: "size", json_field: "SIZE", type: "select", label: _("Size"), 
+                            options: { displayfield: "SIZE", rows: controller.sizes }},
+                        { post_field: "dateofbirth", json_field: "DATEOFBIRTH", type: "date", label: _("Date of Birth") },
+                        { post_field: "description", json_field: "ANIMALDESCRIPTION", type: "textarea", label: _("Description"), rows: 3, 
+                            callout: _("A description or other information about the animal") },
+                        { post_field: "reasonforwantingtopart", json_field: "REASONFORWANTINGTOPART", type: "textarea", label: _("Entry reason"), rows: 3,
+                            callout: _("The reason the owner wants to part with the animal") },
+                        { type: "nextcol" },
+                        { post_field: "canafforddonation", json_field: "CANAFFORDDONATION", type: "check", label: _("Can afford donation") },
+                        { post_field: "urgency", json_field: "URGENCY", type: "select", label: _("Urgency"), 
+                            options: { displayfield: "URGENCY", rows: controller.urgencies }},
+                        { post_field: "comments", json_field: "COMMENTS", type: "textarea", label: _("Comments"), rows: 5, },
+                        { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Contact") },
+                        { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 14) }
+                    ]},
+                    { title: _("Removal"), fields: [
+                        { post_field: "dateoflastownercontact", json_field: "DATEOFLASTOWNERCONTACT", type: "date", label: _("Date of last owner contact") },
+                        { post_field: "autoremovepolicy", json_field: "AUTOREMOVEPOLICY", type: "number", label: _("Automatically remove"),
+                            callout: _("ASM will remove this animal from the waiting list after a set number of weeks since the last owner contact date.") + 
+                                ' <br />' + _("Set this to 0 to never automatically remove."),
+                            xmarkup: ' ' + _("weeks after last contact.") },
+                        { post_field: "dateremoved", json_field: "DATEREMOVEDFROMLIST", type: "date", label: _("Date removed") },
+                        { post_field: "waitinglistremoval", json_field: "WAITINGLISTREMOVALID", type: "select", label: _("Removal category"), 
+                            options: { displayfield: "REMOVALNAME", rows: controller.waitinglistremovals }},
+                        { post_field: "reasonforremoval", json_field: "REASONFORREMOVAL", type: "textarea", label: _("Removal reason"), rows: 5 },
+                        { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 15) }
+                    ]},
+                    { title: _("Additional"), markup: additional.additional_fields(controller.additional )},
+                    html.audit_trail_accordion_obj(controller)
+                ]}),
                 html.content_footer()
             ].join("\n");
         },
 
         enable_widgets: function() {
-            // Hide additional accordion section if there aren't
-            // any additional fields declared
-            let ac = $("#asm-additional-accordion");
-            let an = ac.next();
-            if (an.find(".additional").length == 0) {
-                ac.hide(); an.hide();
-            }
+            
+            // Hide the additional accordion section if there aren't any additional fields declared
+            $("#asm-details-accordion").asmaccordion("hideNoInput", 2);
 
             // Show the microchip manufacturer
             microchip.manufacturer("#microchip", "#microchipbrand");
@@ -118,7 +105,7 @@ $(function() {
             // owner
             if (common.trim($("#owner").val()) == "0") {
                 header.show_error(_("Waiting list entries must have a contact"));
-                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#asm-details-accordion").asmaccordion("active", 0);
                 validate.highlight("owner");
                 return false;
             }
@@ -126,7 +113,7 @@ $(function() {
             // date put on list
             if (common.trim($("#dateputon").val()) == "") {
                 header.show_error(_("Date put on cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 3);
+                $("#asm-details-accordion").asmaccordion("active", 0);
                 validate.highlight("dateputon");
                 return false;
             }
@@ -134,7 +121,7 @@ $(function() {
             // description
             if (common.trim($("#description").val()) == "") {
                 header.show_error(_("Description cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#asm-details-accordion").asmaccordion("active", 0);
                 validate.highlight("description");
                 return false;
             }
@@ -150,9 +137,6 @@ $(function() {
         bind: function() {
             
             $(".asm-tabbar").asmtabs();
-            $("#asm-details-accordion").accordion({
-                heightStyle: "content"
-            }); 
 
             // Setup the document button
             $("#button-document").asmmenu();

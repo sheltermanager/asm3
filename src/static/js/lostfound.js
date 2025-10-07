@@ -32,66 +32,55 @@ $(function() {
                     { id: "towaitinglist", text: _("Create Waiting List"), icon: "waitinglist", hideif: function() { return mode != "found"; },
                         tooltip: _("Create a new waiting list entry from this found animal record") }
                 ]),
-                '<div id="asm-details-accordion">',
-                '<h3><a href="#">' + _("Details") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { type: "raw", label: _("Number"), markup: '<span class="asm-lostfound-number">' + format.padleft(controller.animal.ID, 6) + '</span>' },
-                    { post_field: "datelost", json_field: "DATELOST", type: "date", label: _("Date Lost"), 
-                        hideif: function() { return mode != "lost"; }},
-                    { post_field: "datefound", json_field: "DATEFOUND", type: "date", label: _("Date Found"), 
-                        hideif: function() { return mode != "found"; }},
-                    { post_field: "datereported", json_field: "DATEREPORTED", type: "date", label: _("Date Reported") },
-                    { post_field: "agegroup", json_field: "AGEGROUP", type: "select", label: _("Age Group"), 
-                        options: '<option value="Unknown">' + _("(unknown)") + '</option>' + html.list_to_options(controller.agegroups) },
-                    { post_field: "sex", json_field: "SEX", type: "select", label: _("Sex"), 
-                        options: { displayfield: "SEX", rows: controller.sexes }},
-                    { post_field: "species", json_field: "ANIMALTYPEID", type: "select", label: _("Species"), 
-                        options: { displayfield: "SPECIESNAME", rows: controller.species }},
-                    { post_field: "breed", json_field: "BREEDID", type: "select", label: _("Breed"), 
-                        options: html.list_to_options_breeds(controller.breeds),
-                        xmarkup: '<select id="breedp" data="breedp" class="asm-selectbox" style="display:none;">' + 
-                            html.list_to_options_breeds(controller.breeds) + '</select>' },
-                    { post_field: "colour", json_field: "BASECOLOURID", type: "select", label: _("Color"), 
-                        options: { displayfield: "BASECOLOUR", rows: controller.colours }},
-                    { post_field: "markings", json_field: "DISTFEAT", type: "textarea", label: _("Features") },
-                    { post_field: "arealost", json_field: "AREALOST", type: "textarea", label: _("Area Lost"), rows: 4, 
-                        hideif: function() { return mode != "lost"; }},
-                    { post_field: "areafound", json_field: "AREAFOUND", type: "textarea", label: _("Area Found"), rows: 4, 
-                        hideif: function() { return mode != "found"; }},
-                    { type: "nextcol" },
-                    { post_field: "areapostcode", json_field: "AREAPOSTCODE", type: "text", label: _("Zipcode") },
-                    { post_field: "datefound", json_field: "DATEFOUND", type: "date", label: _("Date Found"), 
-                        hideif: function() { return mode != "lost"; }},
-                    { post_field: "returntoownerdate", json_field: "RETURNTOOWNERDATE", type: "date", label: _("Returned"), 
-                        hideif: function() { return mode != "found"; }},
-                    { post_field: "microchip", json_field: "MICROCHIPNUMBER", type: "text", label: _("Microchip"), maxlength: 15, 
-                        xmarkup:  '<span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>' },
-                    { post_field: "comments", json_field: "COMMENTS", type: "textarea", label: _("Comments"), rows: 5 },
-                    { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Contact") },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 10), hideif: function() { return mode != "lost"; }},
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 12), hideif: function() { return mode != "found"; }}
-                ], { full_width: true }),
-                '</div>', // accordion section
-                '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
-                '<div>',
-                additional.additional_fields(controller.additional),
-                '</div>',
-                html.audit_trail_accordion(controller),
-                '</div>', // accordion
+                tableform.render_accordion({ id: "asm-details-accordion", panes: [
+                    { title: _("Details"), fields: [
+                        { type: "raw", label: _("Number"), markup: '<span class="asm-lostfound-number">' + format.padleft(controller.animal.ID, 6) + '</span>' },
+                        { post_field: "datelost", json_field: "DATELOST", type: "date", label: _("Date Lost"), 
+                            hideif: function() { return mode != "lost"; }},
+                        { post_field: "datefound", json_field: "DATEFOUND", type: "date", label: _("Date Found"), 
+                            hideif: function() { return mode != "found"; }},
+                        { post_field: "datereported", json_field: "DATEREPORTED", type: "date", label: _("Date Reported") },
+                        { post_field: "agegroup", json_field: "AGEGROUP", type: "select", label: _("Age Group"), 
+                            options: '<option value="Unknown">' + _("(unknown)") + '</option>' + html.list_to_options(controller.agegroups) },
+                        { post_field: "sex", json_field: "SEX", type: "select", label: _("Sex"), 
+                            options: { displayfield: "SEX", rows: controller.sexes }},
+                        { post_field: "species", json_field: "ANIMALTYPEID", type: "select", label: _("Species"), 
+                            options: { displayfield: "SPECIESNAME", rows: controller.species }},
+                        { post_field: "breed", json_field: "BREEDID", type: "select", label: _("Breed"), 
+                            options: html.list_to_options_breeds(controller.breeds),
+                            xmarkup: '<select id="breedp" data="breedp" class="asm-selectbox" style="display:none;">' + 
+                                html.list_to_options_breeds(controller.breeds) + '</select>' },
+                        { post_field: "colour", json_field: "BASECOLOURID", type: "select", label: _("Color"), 
+                            options: { displayfield: "BASECOLOUR", rows: controller.colours }},
+                        { post_field: "markings", json_field: "DISTFEAT", type: "textarea", label: _("Features") },
+                        { post_field: "arealost", json_field: "AREALOST", type: "textarea", label: _("Area Lost"), rows: 4, 
+                            hideif: function() { return mode != "lost"; }},
+                        { post_field: "areafound", json_field: "AREAFOUND", type: "textarea", label: _("Area Found"), rows: 4, 
+                            hideif: function() { return mode != "found"; }},
+                        { type: "nextcol" },
+                        { post_field: "areapostcode", json_field: "AREAPOSTCODE", type: "text", label: _("Zipcode") },
+                        { post_field: "datefound", json_field: "DATEFOUND", type: "date", label: _("Date Found"), 
+                            hideif: function() { return mode != "lost"; }},
+                        { post_field: "returntoownerdate", json_field: "RETURNTOOWNERDATE", type: "date", label: _("Returned"), 
+                            hideif: function() { return mode != "found"; }},
+                        { post_field: "microchip", json_field: "MICROCHIPNUMBER", type: "text", label: _("Microchip"), maxlength: 15, 
+                            xmarkup:  '<span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>' },
+                        { post_field: "comments", json_field: "COMMENTS", type: "textarea", label: _("Comments"), rows: 5 },
+                        { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Contact") },
+                        { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 10), hideif: function() { return mode != "lost"; }},
+                        { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 12), hideif: function() { return mode != "found"; }}
+                    ]},
+                    { title: _("Additional"), markup: additional.additional_fields(controller.additional) },
+                    html.audit_trail_accordion_obj(controller)
+                ]}),
                 html.content_footer()
             ].join("\n");
         },
 
         enable_widgets: function() {
 
-            // Hide additional accordion section if there aren't
-            // any additional fields declared
-            let ac = $("#asm-additional-accordion");
-            let an = ac.next();
-            if (an.find(".additional").length == 0) {
-                ac.hide(); an.hide();
-            }
+            // Hide the additional accordion section if there aren't any additional fields declared
+            $("#asm-additional-accordion").asmaccordion("hideNoInput", 1);
 
             // Show the microchip manufacturer
             microchip.manufacturer("#microchip", "#microchipbrand");

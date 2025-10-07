@@ -55,7 +55,7 @@ const MASK_VALUE = "****************";
  * $("#mytextbox").textbox({ dothething: false });
  */
 const asm_widget = function(obj) {
-    return function(method, arg1, arg2) {
+    return function(method, arg1, arg2, arg3, arg4) {
         let rv = null;
         const store_ref = function(t) {
             // tag widget nodes with a class, and store a link to the object with it
@@ -88,7 +88,7 @@ const asm_widget = function(obj) {
             }
             // Dispatch the method call
             else if (obj.hasOwnProperty(method)) {
-                rv = obj[method].call(obj, $(this), arg1, arg2);
+                rv = obj[method].call(obj, $(this), arg1, arg2, arg3, arg4);
             }
             else {
                 throw new Error("method '" + method + "' does not exist");
@@ -433,6 +433,14 @@ $.fn.asmaccordion = asm_widget({
     index: function(t, n) {
         let acc_header = n.closest(".ui-accordion-content").prev();
         return t.find("h3").index(acc_header);
+    },
+
+    /** Shows/hides the pane with index */
+    toggle: function(t, idx, show) {
+        let h = $(t.find("h3")[idx]);
+        let b = h.next();
+        h.toggle(show); 
+        if(!show) { b.hide(); }
     },
 
 });

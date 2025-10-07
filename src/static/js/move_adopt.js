@@ -349,9 +349,6 @@ $(function() {
 
             $("#page1").show();
             $("#page2").hide();
-            $("#asm-adopt-accordion").accordion({
-                heightStyle: "content"
-            });
 
             // Set default values
             $("#movementdate").date("today");

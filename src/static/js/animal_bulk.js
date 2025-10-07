@@ -137,14 +137,14 @@ $(function() {
                     { id: "delete", icon: "delete", text: _("Delete") }, 
                     { type: "raw", markup: '<label for="animals">' + _("Animals") + '</label><div style="display: inline-block; vertical-align: middle; width: 400px;"><input type="hidden" class="asm-field asm-animalchoosermulti" id="animals" data-post="animals"></div>' }, 
                  ], { centered: false }),
-                tableform.render_accordion({ id: "a-bulk", panes: [
-                   { id: "asm-details-accordion", title: _("Details"), fields: animal_bulk.render_details(), full_width: false },
-                   { id: "asm-notes-accordion", title: _("Notes"), fields: animal_bulk.render_notes(), full_width: false },
-                   { id: "asm-notes-health", title: _("Health and Identification"), fields: animal_bulk.render_healthandid(), full_width: false },
-                   { id: "asm-notes-diary", title: _("Diary"), fields: animal_bulk.render_diary(), full_width: false },
-                   { id: "asm-notes-log", title: _("Log"), fields: animal_bulk.render_log(), full_width: false },
-                   { id: "asm-notes-movement", title: _("Movements"), fields: animal_bulk.render_movement(), full_width: false },
-                   { id: "asm-notes-additional", title: _("Additional"), fields: animal_bulk.render_additional(), full_width: false }
+                tableform.render_accordion({ id: "asm-details-accordion", panes: [
+                   { title: _("Details"), fields: animal_bulk.render_details(), full_width: false },
+                   { title: _("Notes"), fields: animal_bulk.render_notes(), full_width: false },
+                   { title: _("Health and Identification"), fields: animal_bulk.render_healthandid(), full_width: false },
+                   { title: _("Diary"), fields: animal_bulk.render_diary(), full_width: false },
+                   { title: _("Log"), fields: animal_bulk.render_log(), full_width: false },
+                   { title: _("Movements"), fields: animal_bulk.render_movement(), full_width: false },
+                   { title: _("Additional"), fields: animal_bulk.render_additional(), full_width: false }
                 ]}),
                  html.content_footer()
             ].join("\n");

@@ -49,7 +49,7 @@ $(function() {
                 '</p>',
                 '</div>',
 
-                '<div id="asm-mailmerge-accordion">',
+                '<div id="asm-mailmerge-accordion" class="asm-accordion">',
                 '<h3><a href="#">' + _("Produce a CSV File") + '</a></h3>',
                 '<div>',
                 '<form action="mailmerge" method="post">',
@@ -210,10 +210,6 @@ $(function() {
             $("#labeltype").change(preset_change);
             preset_change();
 
-            $("#asm-mailmerge-accordion").accordion({
-                heightStyle: "content"
-            });
-
             $("#button-csv, #button-pdflabels").button();
             $("#button-email").button().click(async function() {
                 $("#button-email").button("disable");
@@ -282,9 +278,9 @@ $(function() {
                 $("#em-body").richtextarea("value", "<p>&nbsp;</p>" + sig);
             }
 
-            // When the preview slider is chosen, load the preview data
-            $("#asm-mailmerge-accordion").on("accordionactivate", function(event, ui) {
-                if (ui.newHeader.attr("id") == "matchingtab" && !mailmerge.previewloaded) {
+            // When the preview or recipients slider is chosen, load the data
+            $("#asm-mailmerge-accordion").on("changePane", function(event, idx) {
+                if (idx == 4 && !mailmerge.previewloaded) {
                     mailmerge.previewloaded = true;
                     header.show_loading();
                     let formdata = "mode=preview&" + $("#matching input").toPOST();
@@ -308,7 +304,7 @@ $(function() {
                         $("#matching table").table();
                     });
                 }
-                if (ui.newHeader.attr("id") == "recipientstab" && !mailmerge.recipientsloaded) {
+                if (idx == 5 && !mailmerge.recipientsloaded) {
                     mailmerge.recipientsloaded = true;
                     header.show_loading();
                     let formdata = "mode=recipients&" + $("#recipients input").toPOST();
