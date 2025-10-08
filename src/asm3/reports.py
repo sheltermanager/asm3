@@ -775,7 +775,7 @@ def email_daily_reports(dbo: Database) -> None:
             continue
         if r.SENDASPDF:
             pdfdata = asm3.utils.html_to_pdf(dbo, body)
-            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3, attachments=[ f"{_("Report")}.pdf", "application/pdf", pdfdata])
+            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3, attachments=[ f"{asm3.i18n._("Report", dbo.locale)}.pdf", "application/pdf", pdfdata])
         else:
             asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
