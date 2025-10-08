@@ -1089,8 +1089,8 @@ const common = {
         $(".asm-htmleditor").htmleditor();
         $(".asm-sqleditor").sqleditor();
         $(".asm-table").table();
-        //$(".asm-tabs").tabs({ show: "slideDown", hide: "slideUp" });
-        $(".asm-tabs").tabs();
+        $(".asm-tabbar").asmtabbar();
+        $(".asm-tabs").asmtabs();
         // Add extra control styles
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox .asm-selectbox, .asm-richtextarea, .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").each(function() {
             $(this).addClass("controlshadow").addClass("controlborder");

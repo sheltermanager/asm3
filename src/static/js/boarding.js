@@ -240,7 +240,6 @@ $(function() {
         },
 
         bind: function() {
-            $(".asm-tabbar").asmtabs();
             $("#createpayment").createpayment();
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);

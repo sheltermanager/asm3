@@ -55,9 +55,6 @@ $(function(){
                     });
             };
 
-            // Load the tab strip
-            $(".asm-tabbar").asmtabs();
-
             $("#button-save").button().click(function(){
                header.show_loading(_("Saving..."));
                validate.save(function() {

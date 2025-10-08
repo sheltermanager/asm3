@@ -733,7 +733,6 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
-            $(".asm-tabbar").asmtabs();
             $("#emailform").emailform();
             $("#signature").signature({ guideline: true });
 

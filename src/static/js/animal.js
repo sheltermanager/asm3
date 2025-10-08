@@ -1097,9 +1097,6 @@ $(function() {
                 $("#tattoonumber").alphanumber();
             }
 
-            // Load the tab strip
-            $(".asm-tabbar").asmtabs();
-
             // Changing the species updates the breed list
             $('#species').change(function() {
                 animal.update_breed_list();

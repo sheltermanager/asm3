@@ -217,11 +217,9 @@ $(function() {
 
             if (controller.name.indexOf("animal_") != -1) {
                 $("#animalrow").hide();
-                $(".asm-tabbar").asmtabs();
             }
             if (controller.name.indexOf("person_") != -1) {
                 $("#personrow").hide();
-                $(".asm-tabbar").asmtabs();
             }
 
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {

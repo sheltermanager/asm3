@@ -901,9 +901,9 @@ edit_header = {
             removal = "<tr><td>" + _("Removed") + ":</td><td><b>" + format.date(a.DATEREMOVEDFROMLIST) + "</b></td></tr>";
         }
         var h = [
-            '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
+            '<div class="asm-banner ' + hclass + ' ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="waitinglistid" value="' + a.WLID + '" />',
-            '<div class="row ' + hclass + '">',
+            '<div class="row">',
             '<div class="col-sm">',
             '<table><tr>',
             '<td>',

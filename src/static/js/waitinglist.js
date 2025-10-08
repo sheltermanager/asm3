@@ -136,8 +136,6 @@ $(function() {
 
         bind: function() {
             
-            $(".asm-tabbar").asmtabs();
-
             // Setup the document button
             $("#button-document").asmmenu();
 

@@ -274,7 +274,6 @@ $(function() {
         },
 
         bind: function() {
-            $(".asm-tabbar").asmtabs();
             $("#emailform").emailform();
             $("#type").change(licence.type_change);
 

@@ -448,9 +448,9 @@ $.fn.asmaccordion = asm_widget({
 /** 
  * Styles a tab strip consisting of a div with an unordered list of tabs 
  * This is mainly used by the edit_header functions in all base screens
- * to give the illusion of tabs functionality (they're basically dumb button links)
+ * to give the illusion of tabs functionality (they're basically dumb button links that look like types)
  */
-$.fn.asmtabs = asm_widget({
+$.fn.asmtabbar = asm_widget({
 
     _create: function(t) {
         t.addClass("ui-tabs ui-widget ui-widget-content ui-corner-all");
@@ -1204,6 +1204,59 @@ $.fn.asmmenu = asm_widget({
             $(body).css("z-index", "2 !important").slideDown(common.fx_speed);
         }
     }
+});
+
+/** Wrapper for the JQuery UI tabs widget */
+$.fn.asmtabs = asm_widget({
+
+    options: {
+        // active: 0
+    },
+
+    _create: function(t, options) {
+        let self = this;
+        // Map the activate function to a new "changeTab" event, so that callers
+        // can listen to the original div element for changes
+        options.activate = function(event, ui) {
+            t.trigger("changeTab", [ self.active(t) ]);
+        };
+        t.tabs(options);
+    },
+
+    /** Makes the pane active that contains node n - a shortcut for active(index()) */
+    activeNode: function(t, n) {
+        this.active(t, this.index(t, n));
+    },
+
+    /** Sets the active accordion section or returns which one is active if unspecified */
+    active: function(t, idx) {
+        if (idx !== undefined) {
+            t.tabs("option", "active", idx);
+        }
+        else {
+            return t.tabs("option", "active");
+        }
+    },
+
+    /** Returns the index of the pane that that node n is in, useful for passing to active to show that pane */
+    index: function(t, n) {
+        let tab = n.closest(".ui-tabs-panel");
+        return t.find(".ui-tabs-panel").index(tab);
+    },
+
+    /** Shows/hides the pane with index */
+    toggle: function(t, idx, show) {
+        let tab = $(t.find(".ui-tabs-panel")[idx]);
+        t.find(".ui-tabs-tab").each(function() {
+            let n = $(this);
+            if (n.prop("aria-controls") == tab.prop("id")) {
+                n.hide();
+                return false;
+            }
+        });
+        tab.hide();
+    }
+
 });
 
 /** simple text input wrapper that implements disabled styling */

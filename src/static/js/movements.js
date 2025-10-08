@@ -634,10 +634,6 @@ $(function() {
 
         bind: function() {
 
-            if (controller.name == "animal_movements" || controller.name == "person_movements") {
-                $(".asm-tabbar").asmtabs();
-            }
-
             $("#emailform").emailform();
 
             tableform.dialog_bind(this.dialog);

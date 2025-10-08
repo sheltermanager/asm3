@@ -147,9 +147,6 @@ $(function() {
 
         bind: function() {
 
-            // Load the tab strip
-            $(".asm-tabbar").asmtabs();
-
             // Setup the document button
             $("#button-document").asmmenu();
 

@@ -242,7 +242,6 @@ $(function() {
 
         bind: function() {
 
-            $(".asm-tabbar").asmtabs();
             $("#emailform").emailform();
 
             $("#asm-details-accordion").on("changePane", function(e, idx) {

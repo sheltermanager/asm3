@@ -1847,7 +1847,7 @@ const tableform = {
 
     render_tabs: function(l) {
         let h = [];
-        h.push('<div class="asm-tabbar asm-tabs">');
+        h.push('<div class="asm-tabs">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
             if (v.hideif && v.hideif()) { return; }
