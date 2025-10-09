@@ -959,13 +959,13 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DailyEmail", True),
         fint("DailyEmailHour", True),
         fint("DailyEmailFrequency", True),
+        fint("DailyEmailSendAsPDF", True),
         flongstr("SQLCommand", False),
         flongstr("HTMLBody", False),
         flongstr("Description"),
         fint("OmitHeaderFooter"),
         fint("OmitCriteria"),
-        fint("Revision", True),
-        fint("SendAsPDF") ))
+        fint("Revision", True) ))
     sql += index("customreport_Title", "customreport", "Title")
 
     sql += table("customreportrole", (
