@@ -31,7 +31,7 @@ $(function() {
                     { json_field: "MEDIAID", post_field: "mediaid", type: "hidden" },
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", 
-                        options: { rows: controller.producttypes, displayfield: "PRODUCTTYPENAME" }},
+                        options: { rows: controller.producttypes, displayfield: "PRODUCTTYPENAME" }, validation: "notblank"},
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text",
                         callout: _("A unique identifier that may be used to link this product with an external POS system") },
