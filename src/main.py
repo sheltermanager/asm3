@@ -7920,6 +7920,11 @@ class systemusers(JSONEndpoint):
     def post_update(self, o):
         self.check(asm3.users.EDIT_USER)
         asm3.users.update_user_from_form(o.dbo, o.user, o.post)
+    
+    def post_addrole(self, o):
+        self.check(asm3.users.EDIT_USER)
+        for uid in o.post.integer_list("ids"):
+            o.dbo.insert("userrole", { "UserID": uid, "RoleID": o.post.integer("roleid") }, generateID=False)
 
     def post_delete(self, o):
         self.check(asm3.users.EDIT_USER)

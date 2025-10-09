@@ -175,16 +175,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "assignroles", text: _("Assign Roles"), icon: "auth", enabled: "multi", type: "buttonmenu",
-                    // click: async function() { 
-                    //     await tableform.delete_dialog(null, _("This will permanently remove the selected user accounts. Are you sure?"));
-                    //     tableform.buttons_default_state(buttons);
-                    //     let ids = tableform.table_ids(table);
-                    //     await common.ajax_post("systemusers", "mode=delete&ids=" + ids);
-                    //     tableform.table_remove_selected_from_json(table, controller.rows);
-                    //     tableform.table_update(table);
-                    // } 
-                },
+                { id: "assignrole", text: _("Assign Role"), icon: "auth", enabled: "multi", type: "buttonmenu" },
                 { id: "reset", text: _("Reset Password"), icon: "auth", enabled: "multi", 
                     click: function() { 
                         $("#dialog-reset").dialog("open");
@@ -255,7 +246,7 @@ $(function() {
 
         render: function() {
             let s = [
-                '<div id="button-assignroles-body" class="asm-menu-body">',
+                '<div id="button-assignrole-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 this.roles_list(controller.roles),
                 '</ul>',
@@ -286,14 +277,28 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             validate.indicator([ "newpassword", "confirmpassword" ]);
-            $.each($("#button-assignroles-body li"), function(i, r) {
+            $.each($("#button-assignrole-body li"), function(i, r) {
                 $(r).on("click", async function() {
-                    // console.log($(this));
                     let userids = tableform.table_ids(this.table);
                     let roleid = $(this).attr("data-roleid");
-                    console.log(userids);
-                    console.log(roleid);
-                    // await common.ajax_post("systemusers", "mode=addrole&ids=" + ids + "&roleid=" + roleid);
+                    await common.ajax_post("systemusers", "mode=addrole&ids=" + userids + "&roleid=" + roleid);
+                    $.each(userids.split(","), function(i, uid) {
+                        if (uid) {
+                            $.each(controller.rows, function(i, row) {
+                                if (row.ID == uid) {
+                                    if (row.ROLES) {
+                                        row.ROLES += "|";
+                                        row.ROLEIDS += "|";
+                                    }
+                                    row.ROLES += $(r).text();
+                                    row.ROLEIDS += roleid;
+                                }
+                            });
+
+                        }
+                    });
+                    tableform.buttons_default_state(users.buttons);
+                    tableform.table_update(users.table);
                 });
             });
         },
