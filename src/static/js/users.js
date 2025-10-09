@@ -175,6 +175,16 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
+                { id: "assignroles", text: _("Assign roles"), icon: "auth", enabled: "multi", type: "buttonmenu",
+                    // click: async function() { 
+                    //     await tableform.delete_dialog(null, _("This will permanently remove the selected user accounts. Are you sure?"));
+                    //     tableform.buttons_default_state(buttons);
+                    //     let ids = tableform.table_ids(table);
+                    //     await common.ajax_post("systemusers", "mode=delete&ids=" + ids);
+                    //     tableform.table_remove_selected_from_json(table, controller.rows);
+                    //     tableform.table_update(table);
+                    // } 
+                },
                 { id: "reset", text: _("Reset Password"), icon: "auth", enabled: "multi", 
                     click: function() { 
                         $("#dialog-reset").dialog("open");
