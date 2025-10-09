@@ -37,7 +37,7 @@ $(function() {
                         callout: _("A unique identifier that may be used to link this product with an external POS system") },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
                     { json_field: "TAXRATE", post_field: "taxrateid", label: _("Tax Rate"), type: "select", 
-                        options: { rows: controller.taxrates, displayfield: "TAXRATENAME" }, validation: "notnull" },
+                        options: { rows: controller.taxrates, displayfield: "TAXRATENAME" }, validation: "notblank" },
                     { json_field: "ACTIVE", post_field: "active", label: _("Active"), type: "select", 
                         options: { rows: controller.yesno, displayfield: "NAME" }, defaultval: "1" },
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
