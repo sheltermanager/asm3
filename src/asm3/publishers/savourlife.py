@@ -457,4 +457,9 @@ class SavourLifePublisher(AbstractPublisher):
             else: size2 = 10
             d["SizeWhenAdult2"] = size2
 
+        # If the dataset came from get_animal_query rather than the publisher, because we were doing a held/status
+        # update, then we need to set DogName2 as SavourLife have validation that will prevent the update without it.
+        elif "BONDEDANIMAL1NAME" in an and an.BONDEDANIMAL1NAME is not None:
+            d["DogName2"] = an.BONDEDANIMAL1NAME
+
         return d
