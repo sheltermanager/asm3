@@ -89,7 +89,7 @@ $(function() {
                         options: '<option value="0">' + _("No") + '</option><option value="1">' + _("Yes") + '</option>' },
                     { hideif: function() { return !controller.hastaxrate; },
                         json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "number", 
-                        callout: _("Rate of tax to be applied") },
+                        callout: _("Rate of tax to be applied"), validation: "notblank" },
                     { hideif: function() { return controller.descfield == ""; },
                         json_field: controller.descfield, post_field: "lookupdesc", label: _("Description"), type: "textarea" }
                 ]
