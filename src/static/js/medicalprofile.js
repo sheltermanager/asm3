@@ -267,7 +267,6 @@ $(function() {
         },
 
         bind: function() {
-            $(".asm-tabbar").asmtabs();
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);

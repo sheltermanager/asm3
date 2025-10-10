@@ -316,6 +316,7 @@ def get_satellite_counts(dbo: Database, personid: int) -> Results:
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
+        "(SELECT COUNT(*) FROM animalcost ac WHERE ac.OwnerID = o.ID) AS costs, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.OwnerID = o.ID) AS licence, " \
@@ -1048,6 +1049,13 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     pid = dbo.get_id("owner")
     ownercode = post["ownercode"]
     if post["ownercode"] == "": ownercode = calculate_owner_code(pid, post["surname"])
+    # homecheckedby = 0
+    # if post["homecheckedby"]:
+    #     ilikename = dbo.sql_ilike("OwnerName", "?")
+    #     homecheckedby = dbo.query_int(
+    #         f"SELECT ID FROM owner WHERE IsHomeChecker = 1 AND (UPPER(OwnerCode) = ? OR {ilikename})",
+    #         [post["homecheckedby"].upper(), f"%{post["homecheckedby"]}%"]
+    #     )
 
     dbo.insert("owner", {
         "ID":               pid,
@@ -1113,6 +1121,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchHouseTrained": post.integer("matchhousetrained", -1),
         "MatchCrateTrained": post.integer("matchcratetrained", -1),
         "MatchEnergyLevel": post.integer("matchenergylevel", -1),
+        "MatchDeclawed": post.integer("matchdeclawed", -1),
         "MatchCommentsContain": post["matchcommentscontain"],
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
@@ -1264,6 +1273,7 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodOnLead": post.integer("matchgoodonlead"),
         "MatchHouseTrained": post.integer("matchhousetrained"),
         "MatchCrateTrained": post.integer("matchcratetrained"),
+        "MatchDeclawed": post.integer("matchdeclawed", -1),
         "MatchEnergyLevel": post.integer("matchenergylevel"),
         "MatchCommentsContain": post["matchcommentscontain"]
     }, username)
@@ -1423,7 +1433,7 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
         if dictfield == "surname2" and d[dictfield] != "": 
             uv["OwnerType"] = 3 # Force person to be a couple if a second surname is supplied
             p.OWNERTYPE = 3
-        if dictfield.startswith("date") and (p[fieldname] is None or force):
+        if fieldname.startswith("DATE") and (p[fieldname] is None or force):
             uv[fieldname] = display2python(dbo.locale, d[dictfield])
             p[fieldname] = uv[fieldname]
         elif fieldname.startswith("MATCH") and (p[fieldname] is None or force):
@@ -1462,9 +1472,12 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
     merge("matchspecies", "MATCHSPECIES")
     merge("agedfrom", "MATCHAGEFROM")
     merge("agedto", "MATCHAGETO")
+    merge("homecheckedby", "HOMECHECKEDBY")
+    merge("homechecked", "DATELASTHOMECHECKED")
     uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", "", \
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
     dbo.update("owner", personid, uv, username)
+    
 
 def merge_gdpr_flags(dbo: Database, username: str, personid: int, flags: str) -> str:
     """
@@ -1893,6 +1906,8 @@ def lookingfor_summary(dbo: Database, personid: int, p: ResultRow = None) -> str
         c.append(_("Good with dogs", l))
     if p.MATCHHOUSETRAINED == 0: 
         c.append(_("Housetrained", l))
+    if p.MATCHDECLAWED == 0: 
+        c.append(_("Declawed", l))
     if p.MATCHAGEFROM and p.MATCHAGETO and p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
         c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
     if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
@@ -1992,6 +2007,8 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
             ands.append("a.IsGoodWithDogs=0")
         if p.MATCHHOUSETRAINED == 0: 
             ands.append("a.IsHouseTrained=0")
+        if p.MATCHDECLAWED == 0: 
+            ands.append("a.Declawed=0")
         if p.MATCHCRATETRAINED == 0: 
             ands.append("a.IsCrateTrained=0")
         if p.MATCHENERGYLEVEL != -1: 

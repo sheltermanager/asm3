@@ -231,14 +231,13 @@ $(function() {
         },
 
         bind: function() {
-            // $("#dialog-tableform table tr td").first().css("max-width", "150px");
-            $("#dialog-tableform table tr td").first().css("width", "150px");
-            $(".colourschemeid").colouredselectmenu();
-            $(".asm-tabbar").asmtabs();
-            $("#button-diarytask").asmmenu();
+            
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+          
+            $("#dialog-tableform table tr td").first().css("width", "150px");
+            $(".colourschemeid").colouredselectmenu();
 
             const create_task = async function(taskid) {
                 let formdata = "";

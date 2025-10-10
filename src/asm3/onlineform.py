@@ -116,7 +116,9 @@ FORM_FIELDS = [
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime",
-    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan"
+    "lookingforsex", "lookingforspecies", "lookingforyoungerthan", "lookingforolderthan",
+    "homecheckpass", "homecheckedby",
+    "equipmenttype", "loandate", "deposit", "returnduedate"
 ]
 
 AUTOCOMPLETE_MAP = {
@@ -337,7 +339,13 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_BREED:
             h.append('<select class="asm-onlineform-breed" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
-            for l in asm3.lookups.get_breeds(dbo):
+            if f.SPECIESID and f.SPECIESID > 0:
+                breeds = asm3.lookups.get_breeds_by_species(dbo)
+            else:
+                breeds = asm3.lookups.get_breeds(dbo)
+            for l in breeds:
+                if f.SPECIESID and f.SPECIESID > 0 and l.SPECIESID != f.SPECIESID:
+                    continue
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BREEDNAME)
             h.append('</select>')
@@ -372,8 +380,21 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
         footer = get_onlineform_footer(dbo)
-        h.append(footer.replace("$$TITLE$$", form.NAME))
+        extrajs = '<script>\n' \
+            'let ro = new ResizeObserver(function(e) {\n' \
+            '    window.parent.postMessage(document.querySelector("html").offsetHeight, "*");\n' \
+            '});\n' \
+            'ro.observe(document.querySelector("html"));\n' \
+            '</script>\n'
+        h.append(footer.replace("$$TITLE$$", form.NAME).replace("</body>", extrajs + "</body>"))
     return "\n".join(h)
+
+def get_onlineform_js(dbo: Database, formid: int) -> str:
+    """ Returns js that outputs a responsive online form iframe into a host div """
+    js = asm3.utils.read_text_file("%s/static/js/onlineform_embed.js" % dbo.installpath)
+    js = js.replace("{SERVICE_URL}", SERVICE_URL)
+    js = js.replace("{TOKEN_FORMID}", str(formid))
+    return js
 
 def get_onlineform_json(dbo: Database, formid: int) -> str:
     """
@@ -871,6 +892,15 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         if firstname.find("@") != -1 and firstname.find(".") != -1:
             spamreason = f"email in firstname, firstname={firstname}"
             spam = True
+        if lastname.find("@") != -1 and lastname.find(".") != -1:
+            spamreason = f"email in lastname, lastname={lastname}"
+            spam = True
+        if firstname.lower().find("http") != -1 and firstname.find("//") != -1:
+            spamreason = f"http URL found in firstname, firstname={firstname}"
+            spam = True
+        if lastname.lower().find("http") != -1 and lastname.find("//") != -1:
+            spamreason = f"http URL found in lastname, lastname={lastname}"
+            spam = True
 
     # Make sure that the postcode/zipcode actually contains some numbers
     if asm3.configuration.onlineform_spam_postcode(dbo) and postcode != "":
@@ -899,6 +929,15 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                             spamreason = f"empty value found in mandatory field '{fieldname}'"
                             spam = True
                             break
+
+    # URLs found in any fields
+    if asm3.configuration.onlineform_spam_urls(dbo):
+        for k, v in post.data.items():
+            if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
+                if v.lower().find("http") != -1 and v.find("//") != -1:
+                    spamreason = f"http URL found in field '{k}'"
+                    spam = True
+                    break
 
     collationid = get_collationid(dbo)
 
@@ -1262,6 +1301,16 @@ def guess_entrytype(dbo: Database, s: str) -> int:
     if guess != 0: return guess
     return asm3.configuration.default_entry_type(dbo)
 
+def guess_equipmenttype(dbo: Database, s: str) -> int:
+    """ Guesses an equipment type, returns the first equipment type found by ID if no match is found """
+    s = str(s).lower().strip()
+    guess = dbo.query_int("SELECT ID FROM traptype WHERE LOWER(TrapTypeName) LIKE ?", ["%%%s%%" % s])
+    if guess != 0:
+        return guess
+    else:
+        fallback = dbo.query_int("SELECT ID FROM traptype ORDER BY ID LIMIT 1")
+        return fallback
+
 def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
     if s.lower() == asm3.i18n._("Male").lower():
@@ -1572,6 +1621,18 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "lookingforolderthan":
             d["matchactive"] = "1"
             d["agedto"] = f.VALUE
+        if f.FIELDNAME == "homecheckedby":
+            d["homecheckedby"] = 0
+            if f.VALUE:
+                ilikename = dbo.sql_ilike("OwnerName", "?")
+                d["homecheckedby"] = dbo.query_int(
+                    f"SELECT ID FROM owner WHERE IsHomeChecker = 1 AND (UPPER(OwnerCode) = ? OR {ilikename})",
+                    [f.VALUE.upper(), f"%{f.VALUE}%"])
+        if f.FIELDNAME == "homecheckpass" and (f.VALUE == "Yes" or f.VALUE == "on"):
+            d["homecheckpass"] = f.VALUE
+            d["homechecked"] = asm3.i18n.format_date(dbo.today())
+            # d["flags"] = "homechecked"
+            flags += ",homechecked"
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 

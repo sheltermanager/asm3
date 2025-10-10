@@ -14,7 +14,14 @@ from datetime import datetime
 import os
 import tempfile
 import zipfile
+
 from PIL import Image, ImageFont, ImageDraw
+
+# The resampling constants are in different places on Pillow versions < 9.0
+if not hasattr(Image, 'Resampling'):  # Pillow < 9.0
+    LANCZOS = Image.LANCZOS
+else:
+    LANCZOS = Image.Resampling.LANCZOS
 
 ANIMAL = 0
 LOSTANIMAL = 1
@@ -774,6 +781,9 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
     """
     asm3.al.debug("signing document %s for %s" % (mid, username), "media.sign_document", dbo)
     SIG_PLACEHOLDER = "signature:placeholder"
+    SIG_DATE_PLACEHOLDER = "{SIGNING_DATE}"
+    SIG_IP_PLACEHOLDER = "{SIGNING_IP}"
+    SIG_UA_PLACEHOLDER = "{SIGNING_UA}"
     m = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if m is None:  
         raise asm3.utils.ASMValidationError("cannot find media with ID %s" % mid)
@@ -807,6 +817,15 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
     if content.find(SIG_PLACEHOLDER) != -1:
         asm3.al.debug("document %s: found signature placeholder" % mid, "media.sign_document", dbo)
         content = content.replace(SIG_PLACEHOLDER, sigurl)
+        if content.find(SIG_DATE_PLACEHOLDER) != -1:
+            asm3.al.debug("document %s: found signature date placeholder" % mid, "media.sign_document", dbo)
+            content = content.replace(SIG_DATE_PLACEHOLDER, signdate)
+        if content.find(SIG_IP_PLACEHOLDER) != -1:
+            asm3.al.debug("document %s: found signature IP placeholder" % mid, "media.sign_document", dbo)
+            content = content.replace(SIG_IP_PLACEHOLDER, remoteip)
+        if content.find(SIG_UA_PLACEHOLDER) != -1:
+            asm3.al.debug("document %s: found signature UA placeholder" % mid, "media.sign_document", dbo)
+            content = content.replace(SIG_UA_PLACEHOLDER, useragent)
     else:
         # Create the signature at the foot of the document
         asm3.al.debug("document %s: no placeholder, appending" % mid, "media.sign_document", dbo)
@@ -1051,7 +1070,7 @@ def scale_image(imagedata: bytes, resizespec: str) -> bytes:
         # Load the image data and scale it
         file_data = asm3.utils.bytesio(imagedata)
         im = Image.open(file_data)
-        im.thumbnail(size, Image.Resampling.LANCZOS)
+        im.thumbnail(size, LANCZOS)
         if im.mode in ("RGBA", "P"): im = im.convert("RGB") # throw away alpha layer so we can output as JPEG
         # Save the scaled down image data 
         output = asm3.utils.bytesio()
@@ -1237,7 +1256,7 @@ def scale_image_file(inimage: bytes, outimage: bytes, resizespec: str) -> None:
     if h > w: size = h, h
     # Scale and save
     im = Image.open(inimage)
-    im.thumbnail(size, Image.Resampling.LANCZOS)
+    im.thumbnail(size, LANCZOS)
     im.save(outimage, "JPEG")
 
 def scale_pdf(filedata: bytes) -> bytes:

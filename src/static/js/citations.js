@@ -184,7 +184,6 @@ $(function() {
         },
 
         bind: function() {
-            $(".asm-tabbar").asmtabs();
             $("#type").change(citations.type_change);
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);

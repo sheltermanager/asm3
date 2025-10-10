@@ -377,7 +377,9 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
     elif reconciled == NONRECONCILED:
         recfilter = " AND Reconciled = 0"
     rows = dbo.query("SELECT t.*, srcac.Code AS SrcCode, destac.Code AS DestCode, " \
-        "o.OwnerName AS PersonName, o.ID AS PersonID, a.ID AS DonationAnimalID, " \
+        "a.ID AS DonationAnimalID, " \
+        "o.ID AS DonationOwnerID, o.OwnerName AS DonationOwnerName, " \
+        "oac.ID AS CostOwnerID, oac.OwnerName AS CostOwnerName, " \
         "a.AnimalName AS DonationAnimalName, " \
         "od.ReceiptNumber AS DonationReceiptNumber, " \
         "dt.DonationName AS DonationTypeName, " \
@@ -394,7 +396,8 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "aca.AnimalName AS CostAnimalName, aca.ID AS CostAnimalID, " \
         "CASE " \
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
-        "THEN aca.ShortCode ELSE aca.ShelterCode END AS CostAnimalCode " \
+        "THEN aca.ShortCode ELSE aca.ShelterCode END AS CostAnimalCode, " \
+        "ac.InvoiceNumber " \
         "FROM accountstrx t " \
         "LEFT OUTER JOIN accounts srcac ON srcac.ID = t.SourceAccountID " \
         "LEFT OUTER JOIN accounts destac ON destac.ID = t.DestinationAccountID " \
@@ -404,6 +407,7 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "LEFT OUTER JOIN owner o ON o.ID = od.OwnerID " \
         "LEFT OUTER JOIN animal a ON a.ID = od.AnimalID " \
         "LEFT OUTER JOIN animalcost ac ON ac.ID = t.AnimalCostID " \
+        "LEFT OUTER JOIN owner oac ON oac.ID = ac.OwnerID " \
         "LEFT OUTER JOIN animal aca ON aca.ID = ac.AnimalID " \
         "WHERE t.TrxDate >= %s AND t.TrxDate <= %s%s " \
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \

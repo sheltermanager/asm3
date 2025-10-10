@@ -44,6 +44,34 @@ def get_all_report_titles(dbo: Database):
     """
     return dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE SQLCommand NOT LIKE '0%' AND SQLCommand NOT LIKE '%$PARENT%' ORDER BY Title")
 
+def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
+    filteredreports = []
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask animal$%'])
+    roles = dbo.query("SELECT * FROM customreportrole")
+    for report in allreports:
+        viewroleids = []
+        for role in roles:
+            if role.REPORTID == report.ID and role.CANVIEW == 1:
+                viewroleids.append(str(role.ROLEID))
+        report.VIEWROLEIDS = "|".join(viewroleids)
+        if superuser or report.VIEWROLEIDS == "" or asm3.utils.list_overlap(report.VIEWROLEIDS.split("|"), roleids.split("|")):
+            filteredreports.append(report)
+    return filteredreports
+
+def get_ask_person_reports(dbo: Database, superuser: int, roleids: str):
+    filteredreports = []
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask person$%'])
+    roles = dbo.query("SELECT * FROM customreportrole")
+    for report in allreports:
+        viewroleids = []
+        for role in roles:
+            if role.REPORTID == report.ID and role.CANVIEW == 1:
+                viewroleids.append(str(role.ROLEID))
+        report.VIEWROLEIDS = "|".join(viewroleids)
+        if superuser or report.VIEWROLEIDS == "" or asm3.utils.list_overlap(report.VIEWROLEIDS.split("|"), roleids.split("|")):
+            filteredreports.append(report)
+    return filteredreports
+
 def get_available_reports(dbo: Database, include_with_criteria: bool = True) -> Results:
     """
     Returns a list of reports available for running. The return

@@ -206,6 +206,13 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 .asm-hotkey {
+    float: right;
+    font-size: 60%;
+    padding-left: 5px;
+    padding-top: 4px;
+}
+
+.asm-menu-hotkey {
     margin-right: 20px;
     float: right;
     font-size: 60%;

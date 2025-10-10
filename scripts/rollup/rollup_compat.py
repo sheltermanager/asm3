@@ -11,11 +11,11 @@ def readfile_print(fname):
     with open(fname, "r") as f:
         print(f.read())
 
-jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-    "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_barcode.js", "common_microchip.js", "header.js",
-    "header_additional.js", "header_edit_header.js" ]
+jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_widgets_comp.js", 
+    "common_animalchooser.js", "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_barcode.js", 
+    "common_microchip.js", "header.js", "header_additional.js", "header_edit_header.js" ]
 
-exclude = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_extra.js", "report_toolbar.js" ]
+exclude = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_embed.js", "onlineform_extra.js", "report_toolbar.js" ]
 
 exclude += [ "rollup.js", "rollup_compat.js" ]
 

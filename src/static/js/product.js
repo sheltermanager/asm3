@@ -19,8 +19,8 @@ $(function() {
                 width: 500,
                 fields: [
                     { json_field: "PRODUCTIMAGE", post_field: "productimage", type: "raw",
-                        markup: '<a target="_blank" href="image?db=asmtestdbdb&amp;mode=nopic">' + 
-                        '<img id="productimage" class="asm-thumbnail thumbnailshadow " src="image?db=asmtestdbdb&amp;mode=nopic" style="margin-left: 0;">' + 
+                        markup: '<a target="_blank" href="image?db=' + asm.useraccount + '&amp;mode=nopic">' + 
+                        '<img id="productimage" class="asm-thumbnail thumbnailshadow " src="image?db=' + asm.useraccount + '&amp;mode=nopic" style="margin-left: 0;">' + 
                         '</a> ' + 
                         '<div style="display: inline-block;">' + 
                         '<button id="addimage" style="white-space: nowrap; cursor: pointer;" title="' + _("Choose an image") + '">' + _("Choose image") +  ' ' + 
@@ -31,13 +31,13 @@ $(function() {
                     { json_field: "MEDIAID", post_field: "mediaid", type: "hidden" },
                     { json_field: "PRODUCTNAME", post_field: "productname", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "PRODUCTTYPEID", post_field: "producttypeid", label: _("Product type"), type: "select", 
-                        options: { rows: controller.producttypes, displayfield: "PRODUCTTYPENAME" }},
+                        options: { rows: controller.producttypes, displayfield: "PRODUCTTYPENAME" }, validation: "notblank"},
                     { json_field: "BARCODE", post_field: "barcode", label: _("Barcode"), type: "text" },
                     { json_field: "PLU", post_field: "plu", label: _("PLU"), type: "text",
                         callout: _("A unique identifier that may be used to link this product with an external POS system") },
                     { json_field: "DESCRIPTION", post_field: "productdescription", label: _("Description"), type: "textarea" },
                     { json_field: "TAXRATE", post_field: "taxrateid", label: _("Tax Rate"), type: "select", 
-                        options: { rows: controller.taxrates, displayfield: "TAXRATENAME" }, validation: "notnull" },
+                        options: { rows: controller.taxrates, displayfield: "TAXRATENAME" }, validation: "notblank" },
                     { json_field: "ACTIVE", post_field: "active", label: _("Active"), type: "select", 
                         options: { rows: controller.yesno, displayfield: "NAME" }, defaultval: "1" },
                     { json_field: "SUPPLIERID", post_field: "supplierid", label: _("Supplier"), type: "person", personfilter: "supplier", validation:"notzero" },
@@ -69,8 +69,8 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    $("#productimage").prop("src", "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID);
-                    $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID);
+                    $("#productimage").prop("src", "image?db=" + asm.useraccount + "&mode=media&id=" + row.MEDIAID);
+                    $("#productimage").closest("a").prop("href", "image?db=" + asm.useraccount + "&mode=media&id=" + row.MEDIAID);
                     $("#mediaid").val(row.MEDIAID);
                     if (row.MEDIAID) {
                         $("#removeimage").show();
@@ -83,10 +83,11 @@ $(function() {
                             let selectedfile = $("#imageinput")[0].files[0];
                             if (selectedfile) {
                                 row.MEDIAID = await product.attach_image(selectedfile, "imageinput", row.ID);
+                                $("#mediaid").val(row.MEDIAID);
                             } else {
-                                row.MEDIAID = 0;
+                                row.MEDIAID = $("#mediaid").val();
                             }
-                            $("#mediaid").val(row.MEDIAID);
+                            row.PRODUCTTYPENAME = $("#producttypeid").find(":selected").text();
                             tableform.fields_update_row(dialog.fields, row);
                             tableform.fields_post(dialog.fields, "mode=update&productid=" + row.ID, "product")
                                 .then(function() {
@@ -127,7 +128,7 @@ $(function() {
                     { field: "PRODUCTIMAGE", display: _("Image"), 
                         formatter: function(row) {
                             if (!row.MEDIAID || row.MEDIAID == "0") { return ""; }
-                            let imageurl = "image?db=asmtestdbdb&mode=media&id=" + row.MEDIAID;
+                            let imageurl = "image?db=" + asm.useraccount + "&mode=media&id=" + row.MEDIAID;
                             return '<a target="_blank" href="' + imageurl + '">' + 
                             '<img class="asm-thumbnail thumbnailshadow " src="' + imageurl + '" style="margin-left: 0;">' + 
                             '</a>';
@@ -250,8 +251,8 @@ $(function() {
         new_product: function() { 
             let dialog = product.dialog, table = product.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#productimage").prop("src", "image?db=asmtestdbdb&mode=noimage");
-            $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=noimage");
+            $("#productimage").prop("src", "image?db=" + asm.useraccount + "&mode=noimage");
+            $("#productimage").closest("a").prop("href", "image?db=" + asm.useraccount + "&mode=noimage");
             $("#removeimage").hide();
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
@@ -264,6 +265,7 @@ $(function() {
                                 let mediaid = await product.attach_image(selectedfile, "imageinput", row.ID);
                                 $("#mediaid").val(mediaid);
                              }
+                            row.PRODUCTTYPENAME = $("#producttypeid").find(":selected").text();
                             tableform.fields_update_row(dialog.fields, row);
                             product.set_extra_fields(row);
                             controller.rows.push(row);
@@ -413,9 +415,10 @@ $(function() {
             });
 
             $("#removeimage").button({ icons: { primary: "ui-icon-trash" }, text: false }).click(function() {
-                $("#productimage").prop("src", "image?db=asmtestdbdb&mode=noimage");
-                $("#productimage").closest("a").prop("href", "image?db=asmtestdbdb&mode=noimage");
+                $("#productimage").prop("src", "image?db=" + asm.useraccount + "&mode=noimage");
+                $("#productimage").closest("a").prop("href", "image?db=" + asm.useraccount + "&mode=noimage");
                 $("#mediaid").val("");
+                $("#imageinput").val("");
                 $("#removeimage").hide();
             });
 

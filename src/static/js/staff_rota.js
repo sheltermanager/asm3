@@ -45,7 +45,7 @@ $(function() {
                     { id: "next", icon: "rotate-clock", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.nextdate)) },
                     { id: "clone", text: _("Clone"), icon: "copy", perm: 'aoro', tooltip: _("Clone the rota this week to another week") },
                     { id: "delete", text: _("Delete"), icon: "delete", perm: 'doro', tooltip: _("Delete all rota entries for this week") },
-                    { type: "raw", markup: '<span style="float: right"><select id="flags" multiple="multiple" class="asm-bsmselect"></select></span>' }
+                    { type: "raw", markup: '<span style="float: right"><select id="flags" multiple="multiple" class="asm-selectmulti"></select></span>' }
                 ]),
                 '<table class="asm-staff-rota">',
                 '<thead></thead>',

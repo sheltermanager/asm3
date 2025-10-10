@@ -85,6 +85,17 @@ Description: Web-based management solution for animal shelters and sanctuaries
  for animal sanctuaries and welfare charities. This is version 3, built
  around Python and HTML5." > sheltermanager3/DEBIAN/control
 
+# Generate a postinst file that attempts to execute
+# maint_db_update in case we are doing a package upgrade.
+# Note that it squashes output to stdout and stderr as
+# cron.py logs to the syslog
+echo "#!/bin/sh
+cd /usr/lib/sheltermanager3
+python3 cron.py maint_db_update > /dev/null 2>&1 
+exit 0
+" > sheltermanager3/DEBIAN/postinst
+chmod +x sheltermanager3/DEBIAN/postinst
+
 # Build the deb package
 # NOTE: -Zxz is specify xz compression for compatibility with Debian systems, Ubuntu uses zstd compression by default
 PKGNAME=sheltermanager3_`cat ../../VERSION`_all.deb

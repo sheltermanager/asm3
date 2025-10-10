@@ -35,6 +35,12 @@ Signature
     150px wide)
 Signature100 /Signature150 / Signature200 / Signature300
     Controls the max width of the signature while retaining aspect ratio
+SignatureDate
+    The date that the document was signed
+SignatureIP
+    The IP address of the signee
+SignatureUA
+    The signees user agent (browser and operating system information)
 Username
     The current user generating the document
 UserRealname

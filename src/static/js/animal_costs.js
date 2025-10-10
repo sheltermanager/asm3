@@ -39,6 +39,9 @@ $(function() {
                                 $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 $("#animalrow").hide();
                                 animal_costs.costtype_change();
+                            } else if (controller.person) {
+                                $("#person").personchooser("loadbyid", controller.person.ID);
+                                $("#personrow").hide();
                             } else {
                                 $("#animalrow").show();
                             }
@@ -88,6 +91,11 @@ $(function() {
                                 return html.person_link(row.OWNERID, row.OWNERNAME);
                             }
                             return "";
+                        },
+                        hideif: function() {
+                            if (controller.person) {
+                                return true;
+                            }
                         }
                     },
                     { field: "DESCRIPTION", display: _("Description"), formatter: tableform.format_comments }
@@ -103,6 +111,9 @@ $(function() {
                                     $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                     $("#animalrow").hide();
                                     animal_costs.costtype_change();
+                                } else if (controller.person) {
+                                    $("#person").personchooser("loadbyid", controller.person.ID);
+                                    $("#personrow").hide();
                                 } else {
                                     $("#animalrow").show();
                                 }
@@ -165,7 +176,7 @@ $(function() {
                 { id: "offset", type: "dropdownfilter", 
                     hideif: function() {
                         // Don't show on animal records
-                        if (controller.animal) {return true;}
+                        if (controller.animal || controller.person) {return true;}
                     },
                     options: [ 
                         "7|" + _("Paid in last week"),
@@ -188,6 +199,8 @@ $(function() {
             s += tableform.dialog_render(this.dialog);
             if (controller.animal) {
                 s += edit_header.animal_edit_header(controller.animal, "costs", controller.tabcounts);
+            } else if (controller.person) {
+                s += edit_header.person_edit_header(controller.person, "costs", controller.tabcounts);
             } else {
                 s += html.content_header(_("Cost Book"));
             }
@@ -208,7 +221,7 @@ $(function() {
         },
 
         bind: function() {
-            $(".asm-tabbar").asmtabs();
+            
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
@@ -346,6 +359,8 @@ $(function() {
                 return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
                 0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
                 3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE });
+            } else if (controller.person) {
+                return controller.person.OWNERNAME;
             } else {
                 return _("Cost Book");
             }
@@ -353,6 +368,7 @@ $(function() {
 
         routes: {
             "animal_costs": function() { common.module_loadandstart("animal_costs", "animal_costs?id=" + this.qs.id);},
+            "person_costs": function() { common.module_loadandstart("animal_costs", "person_costs?id=" + this.qs.id);},
             "cost_book": function() { common.module_loadandstart("animal_costs", "cost_book?id=" + this.qs.id);}
         }
 

@@ -14,18 +14,17 @@ Public API:
 
 from __future__ import annotations
 
-import logging
+import asm3.al
+import asm3.configuration
+
 import time
+
 from dataclasses import dataclass
 from queue import Empty, Queue as ThreadQueue
 from threading import Event, Lock, Thread
 from typing import Optional
 
-from asm3 import configuration
 from kombu import Connection, Exchange, Producer, Queue
-
-logger = logging.getLogger(__name__)
-
 
 @dataclass(frozen=True)
 class _Config:
@@ -79,10 +78,10 @@ class AMQPClient:
             True if enabled and ready to accept messages, False otherwise.
         """
         cfg = _Config(
-            enabled=configuration.amqp_enabled(dbo),
-            broker_url=configuration.amqp_broker_url(dbo),
-            exchange_name=configuration.amqp_exchange_name(dbo),
-            routing_key=configuration.amqp_routing_key(dbo),
+            enabled = asm3.configuration.amqp_enabled(dbo),
+            broker_url = asm3.configuration.amqp_broker_url(dbo),
+            exchange_name = asm3.configuration.amqp_exchange_name(dbo),
+            routing_key = asm3.configuration.amqp_routing_key(dbo),
         )
 
         with self._lock:
@@ -97,10 +96,10 @@ class AMQPClient:
             worker.join(timeout=2.0)
 
         if not cfg.enabled:
-            logger.info("AMQP disabled; worker stopped.")
+            asm3.al.info("AMQP disabled; worker stopped.", "AMQPClient.ensure_config", dbo)
             return False
         if not cfg.valid:
-            logger.warning("AMQP misconfigured; missing broker/exchange/routing key.")
+            asm3.al.warning("AMQP misconfigured; missing broker/exchange/routing key.", "AMQPClient.ensure_config", dbo)
             return False
 
         with self._lock:
@@ -121,13 +120,13 @@ class AMQPClient:
             True if accepted into the outbox; False otherwise (disabled/misconfigured/full).
         """
         if not self.ensure_config(dbo):
-            logger.debug("AMQP disabled or misconfigured; dropping message.")
+            asm3.al.debug("AMQP disabled or misconfigured; dropping message.", "AMQPClient.send_message", dbo)
             return False
         try:
             self._outbox.put(message, block=block, timeout=timeout)
             return True
         except Exception as e:  # queue.Full or other runtime issues
-            logger.exception("Failed to enqueue AMQP message: %s", e)
+            asm3.al.error("Failed to enqueue AMQP message: %s" % e, "AMQPClient.send_message", dbo)
             return False
 
     def close(self, drain: bool = False, drain_timeout: float = 5.0) -> None:
@@ -156,7 +155,8 @@ class AMQPClient:
         self._connected = False
         self._worker = Thread(target=self._run, name="kombu-worker", daemon=True)
         self._worker.start()
-        logger.info("AMQP worker started (exchange=%s, routing_key=%s).", cfg.exchange_name, cfg.routing_key)
+        # This is far too noisy in the log as it logs for every message
+        # asm3.al.info("AMQP worker started (exchange=%s, routing_key=%s)." % (cfg.exchange_name, cfg.routing_key), "AMQPClient._start_worker_locked")
 
     def _stop_worker_locked(self) -> Optional[Thread]:
         """Signal worker to stop and return the thread to join outside the lock."""
@@ -178,7 +178,7 @@ class AMQPClient:
                     backoff = 1.0
                 except Exception as e:
                     self._connected = False
-                    logger.warning("AMQP connect/declare failed: %s; retry in %.1fs", e, backoff)
+                    asm3.al.warn("AMQP connect/declare failed: %s; retry in %.1fs" % (e, backoff), "AMQPClient._run")
                     time.sleep(backoff)
                     backoff = min(backoff * 2.0, 30.0)
                     continue
@@ -199,13 +199,13 @@ class AMQPClient:
                 finally:
                     ch.close()
             except Exception as e:
-                logger.warning("AMQP publish failed: %s; will reconnect", e)
+                asm3.al.warn("AMQP publish failed: %s; will reconnect" % e, "AMQPClient._run")
                 self._connected = False
                 # Best-effort: requeue the message; if the queue is momentarily full, drop with a log.
                 try:
                     self._outbox.put_nowait(msg)
                 except Exception:
-                    logger.error("AMQP outbox full; dropping message after publish failure.")
+                    asm3.al.error("AMQP outbox full; dropping message after publish failure.", "AMQPClient._run")
                 self._safe_release()
 
         # Shutdown path
@@ -253,11 +253,9 @@ class AMQPClient:
 
 _client = AMQPClient()
 
-
 def reinitialize(dbo) -> None:
     """Force a configuration refresh and (re)start/stop the worker as needed."""
     _client.ensure_config(dbo)
-
 
 def send_message(dbo, message: dict) -> bool:
     """
@@ -266,8 +264,8 @@ def send_message(dbo, message: dict) -> bool:
     Returns:
         True if accepted into the outbox; False if disabled/misconfigured or full.
     """
+    if not asm3.configuration.amqp_enabled(dbo): return
     return _client.send_message(dbo, message)
-
 
 def close(drain: bool = False, drain_timeout: float = 5.0) -> None:
     """Stop the background worker and release all resources."""

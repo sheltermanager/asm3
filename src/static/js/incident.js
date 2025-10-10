@@ -8,101 +8,86 @@ $(function() {
 
         render_details: function() {
             return [
-                '<h3><a href="#">' + _("Details") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { type: "raw", label: _("Number"), markup: '<span class="asm-waitinglist-number">' + format.padleft(controller.incident.ACID, 6) + '</span>' },
-                    { post_field: "incidentcode", json_field: "INCIDENTCODE", type: "text", label: _("Code") },
-                    { post_field: "site", json_field: "SITEID", type: "select", label: _("Site"), 
-                        options: { displayfield: "SITENAME", rows: controller.sites, prepend: '<option value="0">' + _("(all)") + '</option>' }},
-                    { post_field: "incidenttype", json_field: "INCIDENTTYPEID", type: "select", label: _("Type"), 
-                        options: { displayfield: "INCIDENTNAME", rows: controller.incidenttypes }},
-                    { post_field: "viewroles", json_field: "VIEWROLEIDS", type: "selectmulti", label: _("View Roles"), 
-                        callout: _("Only allow users with one of these roles to view this incident"),
-                        options: { displayfield: "ROLENAME", rows: controller.roles }},
-                    { post_field: "incident", json_field: "INCIDENTDATETIME", type: "datetime", label: _("Incident Date/Time"), halfsize: true }, 
-                    { post_field: "callnotes", json_field: "CALLNOTES", type: "textarea", label: _("Notes"), rows: 3 },
-                    { post_field: "completedtype", json_field: "INCIDENTCOMPLETEDID", label: _("Completion Type"), type: "select", 
-                        options: { displayfield: "COMPLETEDNAME", rows: controller.completedtypes, prepend: '<option value="0"> </option>' }},
-                    { post_field: "completed", json_field: "COMPLETEDDATE", type: "datetime", label: _("Completion Date/Time"), halfsize: true },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 16) },
-                    { type: "nextcol" },
-                    { post_field: "call", json_field: "CALLDATETIME", type: "datetime", label: _("Call Date/Time"), halfsize: true },
-                    { post_field: "calltaker", json_field: "CALLTAKER", type: "select", 
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option> </option>' }},
-                    { post_field: "caller", json_field: "CALLERID", type: "person", label: _("Caller"), colclasses: "bottomborder" },
-                    { post_field: "victim", json_field: "VICTIMID", type: "person", label: _("Victim") }
-                ]),
-                '</div>'
-            ].join("\n");
+                { type: "raw", label: _("Number"), markup: '<span class="asm-waitinglist-number">' + format.padleft(controller.incident.ACID, 6) + '</span>' },
+                { post_field: "incidentcode", json_field: "INCIDENTCODE", type: "text", label: _("Code") },
+                { post_field: "site", json_field: "SITEID", type: "select", label: _("Site"), 
+                    options: { displayfield: "SITENAME", rows: controller.sites, prepend: '<option value="0">' + _("(all)") + '</option>' }},
+                { post_field: "incidenttype", json_field: "INCIDENTTYPEID", type: "select", label: _("Type"), 
+                    options: { displayfield: "INCIDENTNAME", rows: controller.incidenttypes }},
+                { post_field: "viewroles", json_field: "VIEWROLEIDS", type: "selectmulti", label: _("View Roles"), 
+                    callout: _("Only allow users with one of these roles to view this incident"),
+                    options: { displayfield: "ROLENAME", rows: controller.roles }},
+                { post_field: "incident", json_field: "INCIDENTDATETIME", type: "datetime", label: _("Incident Date/Time"), halfsize: true }, 
+                { post_field: "callnotes", json_field: "CALLNOTES", type: "textarea", label: _("Notes"), rows: 3 },
+                { post_field: "completedtype", json_field: "INCIDENTCOMPLETEDID", label: _("Completion Type"), type: "select", 
+                    options: { displayfield: "COMPLETEDNAME", rows: controller.completedtypes, prepend: '<option value="0"> </option>' }},
+                { post_field: "completed", json_field: "COMPLETEDDATE", type: "datetime", label: _("Completion Date/Time"), halfsize: true },
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 16) },
+                { type: "nextcol" },
+                { post_field: "call", json_field: "CALLDATETIME", type: "datetime", label: _("Call Date/Time"), halfsize: true },
+                { post_field: "calltaker", json_field: "CALLTAKER", type: "select", 
+                    options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option> </option>' }},
+                { post_field: "caller", json_field: "CALLERID", type: "person", label: _("Caller"), colclasses: "bottomborder" },
+                { post_field: "victim", json_field: "VICTIMID", type: "person", label: _("Victim") }
+            ];
         },
 
         render_dispatch: function() {
             return [
-                '<h3><a href="#">' + _("Dispatch") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { post_field: "dispatchaddress", json_field: "DISPATCHADDRESS", type: "textarea", label: _("Address"), rows: 5, classes: "asm-textareafixed" },
-                    { post_field: "dispatchtown", json_field: "DISPATCHTOWN", type: "text", label: _("City"), maxlength: 100, rowclasses: "towncounty" },
-                    common.iif(config.bool("USStateCodes"),
-                        { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "select", label: _("State"), options: html.states_us_options(), rowclasses: "towncounty" },
-                        { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "text", label: _("State"), maxlength: 100, rowclasses: "towncounty" }),
-                    { post_field: "dispatchpostcode", json_field: "DISPATCHPOSTCODE", type: "text", label: _("Zipcode") },
-                    { post_field: "dispatchlatlong", json_field: "DISPATCHLATLONG", type: "latlong", label: _("Latitude/Longitude"), 
-                        callout: _("Right-click on the map to change the marker location") },
-                    { post_field: "pickuplocation", json_field: "PICKUPLOCATIONID", type: "select", label: _("Pickup Location"), 
-                        options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations, prepend: '<option value="0"></option>'}},
-                    { post_field: "jurisdiction", json_field: "JURISDICTIONID", type: "select", label: _("Jurisidiction"), 
-                        options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
-                    { type: "nextcol" },
-                    { post_field: "dispatchedaco", json_field: "DISPATCHEDACO", type: "selectmulti", label: _("Dispatched ACO"), 
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
-                    { post_field: "dispatch", json_field: "DISPATCHDATETIME", type: "datetime", label: _("Dispatch Date/Time"), halfsize: true },
-                    { post_field: "responded", json_field: "RESPONDEDDATETIME", type: "datetime", label: _("Responded Date/Time"), halfsize: true },
-                    { post_field: "followup", json_field: "FOLLOWUPDATETIME", type: "datetime", label: _("Followup Date/Time"), halfsize: true,
-                        xmarkup: tableform.render_check({ post_field: "followupcomplete", json_field: "FOLLOWUPCOMPLETE", tooltip: _("Complete"), justwidget: true }) },
-                    { post_field: "followupaco", json_field: "FOLLOWUPACO", type: "selectmulti", label: _("Followup ACO"), 
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
-                    { post_field: "followup2", json_field: "FOLLOWUPDATETIME2", type: "datetime", label: _("Followup Date/Time"), halfsize: true,
-                        xmarkup: tableform.render_check({ post_field: "followupcomplete2", json_field: "FOLLOWUPCOMPLETE2", tooltip: _("Complete"), justwidget: true }) },
-                    { post_field: "followupaco2", json_field: "FOLLOWUPACO2", type: "selectmulti", label: _("Followup ACO"), 
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
-                    { post_field: "followup3", json_field: "FOLLOWUPDATETIME3", type: "datetime", label: _("Followup Date/Time"), halfsize: true, 
-                        xmarkup: tableform.render_check({ post_field: "followupcomplete3", json_field: "FOLLOWUPCOMPLETE3", tooltip: _("Complete"), justwidget: true }) },
-                    { post_field: "followupaco3", json_field: "FOLLOWUPACO3", type: "selectmulti", label: _("Followup ACO"), 
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 17) },
-                    { type: "nextcol" },
-                    { type: "raw", fullrow: true, markup: '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>' }
-                ]),
-                '</div>'
-            ].join("\n");
+                { post_field: "dispatchaddress", json_field: "DISPATCHADDRESS", type: "textarea", label: _("Address"), rows: 5, classes: "asm-textareafixed" },
+                { post_field: "dispatchtown", json_field: "DISPATCHTOWN", type: "text", label: _("City"), maxlength: 100, rowclasses: "towncounty" },
+                common.iif(config.bool("USStateCodes"),
+                    { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "select", label: _("State"), options: html.states_us_options(), rowclasses: "towncounty" },
+                    { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "text", label: _("State"), maxlength: 100, rowclasses: "towncounty" }),
+                { post_field: "dispatchpostcode", json_field: "DISPATCHPOSTCODE", type: "text", label: _("Zipcode") },
+                { post_field: "dispatchlatlong", json_field: "DISPATCHLATLONG", type: "latlong", label: _("Latitude/Longitude"), 
+                    callout: _("Right-click on the map to change the marker location") },
+                { post_field: "pickuplocation", json_field: "PICKUPLOCATIONID", type: "select", label: _("Pickup Location"), 
+                    options: { displayfield: "LOCATIONNAME", rows: controller.pickuplocations, prepend: '<option value="0"></option>'}},
+                { post_field: "jurisdiction", json_field: "JURISDICTIONID", type: "select", label: _("Jurisidiction"), 
+                    options: { displayfield: "JURISDICTIONNAME", rows: controller.jurisdictions }},
+                { type: "nextcol" },
+                { post_field: "dispatchedaco", json_field: "DISPATCHEDACO", type: "selectmulti", label: _("Dispatched ACO"), 
+                    options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
+                { post_field: "dispatch", json_field: "DISPATCHDATETIME", type: "datetime", label: _("Dispatch Date/Time"), halfsize: true },
+                { post_field: "responded", json_field: "RESPONDEDDATETIME", type: "datetime", label: _("Responded Date/Time"), halfsize: true },
+                { post_field: "followup", json_field: "FOLLOWUPDATETIME", type: "datetime", label: _("Followup Date/Time"), halfsize: true,
+                    xmarkup: tableform.render_check({ post_field: "followupcomplete", json_field: "FOLLOWUPCOMPLETE", tooltip: _("Complete"), justwidget: true }) },
+                { post_field: "followupaco", json_field: "FOLLOWUPACO", type: "selectmulti", label: _("Followup ACO"), 
+                    options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
+                { post_field: "followup2", json_field: "FOLLOWUPDATETIME2", type: "datetime", label: _("Followup Date/Time"), halfsize: true,
+                    xmarkup: tableform.render_check({ post_field: "followupcomplete2", json_field: "FOLLOWUPCOMPLETE2", tooltip: _("Complete"), justwidget: true }) },
+                { post_field: "followupaco2", json_field: "FOLLOWUPACO2", type: "selectmulti", label: _("Followup ACO"), 
+                    options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
+                { post_field: "followup3", json_field: "FOLLOWUPDATETIME3", type: "datetime", label: _("Followup Date/Time"), halfsize: true, 
+                    xmarkup: tableform.render_check({ post_field: "followupcomplete3", json_field: "FOLLOWUPCOMPLETE3", tooltip: _("Complete"), justwidget: true }) },
+                { post_field: "followupaco3", json_field: "FOLLOWUPACO3", type: "selectmulti", label: _("Followup ACO"), 
+                    options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.acos }},
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 17) },
+                { type: "nextcol" },
+                { type: "raw", fullrow: true, markup: '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>' }
+            ];
         },
 
         render_owner: function() {
             return [
-                '<h3><a href="#">' + _("Suspect/Animal") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Suspect 1"), colclasses: "bottomborder" },
-                    { post_field: "owner2", json_field: "OWNER2ID", type: "person", label: _("Suspect 2"), colclasses: "bottomborder" },
-                    { post_field: "owner3", json_field: "OWNER3ID", type: "person", label: _("Suspect 3") },
-                    { type: "nextcol" },
-                    { post_field: "species", json_field: "SPECIESID", type: "select", label: _("Species"), 
-                        options: { displayfield: "SPECIESNAME", rows: controller.species }}, 
-                    { post_field: "sex", json_field: "SEX", type: "select", label: _("Sex"), 
-                        options: { displayfield: "SEX", rows: controller.sexes }},
-                    { post_field: "agegroup", json_field: "AGEGROUP", type: "select", label: _("Age Group"), 
-                        options: '<option value="Unknown">' + _("(unknown)") + '</option>' + html.list_to_options(controller.agegroups) },
-                    { post_field: "animaldescription", json_field: "ANIMALDESCRIPTION", type: "textarea", label: _("Description") },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 18) },
-                    { type: "raw", fullrow: true, markup: 
-                        '<p class="asm-menu-category">' + _("Animals") + 
-                        ' <button id="button-linkanimal">' + _("Link an animal") + '</button></p>' +
-                        '<div id="animallist"></div>' }
-                ]),
-                '</div>'
-            ].join("\n");
+                { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Suspect 1"), colclasses: "bottomborder" },
+                { post_field: "owner2", json_field: "OWNER2ID", type: "person", label: _("Suspect 2"), colclasses: "bottomborder" },
+                { post_field: "owner3", json_field: "OWNER3ID", type: "person", label: _("Suspect 3") },
+                { type: "nextcol" },
+                { post_field: "species", json_field: "SPECIESID", type: "select", label: _("Species"), 
+                    options: { displayfield: "SPECIESNAME", rows: controller.species }}, 
+                { post_field: "sex", json_field: "SEX", type: "select", label: _("Sex"), 
+                    options: { displayfield: "SEX", rows: controller.sexes }},
+                { post_field: "agegroup", json_field: "AGEGROUP", type: "select", label: _("Age Group"), 
+                    options: '<option value="Unknown">' + _("(unknown)") + '</option>' + html.list_to_options(controller.agegroups) },
+                { post_field: "animaldescription", json_field: "ANIMALDESCRIPTION", type: "textarea", label: _("Description") },
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 18) },
+                { type: "raw", fullrow: true, markup: 
+                    '<p class="asm-menu-category">' + _("Animals") + 
+                    ' <button id="button-linkanimal">' + _("Link an animal") + '</button></p>' +
+                    '<div id="animallist"></div>' }
+                ];
         },
 
         load_animallinks: function() {
@@ -151,28 +136,21 @@ $(function() {
                     { id: "followup", text: _("Follow Up"), icon: "calendar", perm: "caci", tooltip: _("Mark follow up now") },
                     { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") }
                 ]),
-                '<div id="asm-details-accordion">',
-                this.render_details(),
-                '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
-                '<div>',
-                additional.additional_fields(controller.additional),
-                '</div>',
-                this.render_dispatch(),
-                this.render_owner(),
-                html.audit_trail_accordion(controller),
-                '</div> <!-- accordion -->',
+                tableform.render_accordion({ id: "asm-details-accordion", panes: [
+                    { title: _("Details"), fields: this.render_details() },
+                    { title: _("Additional"), markup: additional.additional_fields(controller.additional) },
+                    { title: _("Dispatch"), fields: this.render_dispatch() },
+                    { title: _("Suspect/Animal"), fields: this.render_owner() },
+                    html.audit_trail_accordion_obj(controller)
+                ]}),
                 html.content_footer()
             ].join("\n");
         },
 
         enable_widgets: function() {
-            // Hide additional accordion section if there aren't
-            // any additional fields declared
-            let ac = $("#asm-additional-accordion");
-            let an = ac.next();
-            if (an.find(".additional").length == 0) {
-                ac.hide(); an.hide();
-            }
+
+            // Hide the additional accordion section if there aren't any additional fields declared
+            $("#asm-details-accordion").asmaccordion("hideNoInput", 1);
 
             if (!common.has_permission("caci")) { $("#button-save").hide(); }
             if (!common.has_permission("aaci")) { $("#button-clone").hide(); }
@@ -243,7 +221,7 @@ $(function() {
             // incident date
             if (common.trim($("#incidentdate").val()) == "") {
                 header.show_error(_("Incident date cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#asm-details-accordion").asmaccordion("active", 0);
                 validate.highlight("incidentdate");
                 return false;
             }
@@ -264,19 +242,13 @@ $(function() {
 
         bind: function() {
 
-            $(".asm-tabbar").asmtabs();
             $("#emailform").emailform();
 
-            $("#asm-details-accordion").accordion({
-                heightStyle: "content",
-                activate: function(event, ui) {
-                    // Show the minimap when the dispatch panel activates.
-                    // No map api likes being loaded in a hidden div and this avoids that
-                    if (config.bool("ShowPersonMiniMap") && $("#dispatchaddress").val()) {
-                        if ($("#asm-details-accordion").accordion("option", "active") == 2) {
-                            incident.show_mini_map();
-                        }
-                    }
+            $("#asm-details-accordion").on("changePane", function(e, idx) {
+                // Show the minimap when the dispatch panel activates.
+                // None of the map apis likes being loaded in a hidden div and this avoids that
+                if (config.bool("ShowPersonMiniMap") && $("#dispatchaddress").val() && idx == 2) {
+                    incident.show_mini_map();
                 }
             }); 
 

@@ -212,7 +212,7 @@ $(function() {
             }
             row.BOARDINGTYPENAME = common.get_field(controller.boardingtypes, row.BOARDINGTYPEID, "BOARDINGNAME");
             row.SHELTERLOCATIONNAME = common.get_field(controller.internallocations, row.SHELTERLOCATION, "LOCATIONNAME");
-            row.DAYS = format.date_diff_days( $("#indate").datepicker("getDate"), $("#outdate").datepicker("getDate") ); 
+            row.DAYS = format.date_diff_days( $("#indate").date("getDate"), $("#outdate").date("getDate") ); 
         },
 
         render: function() {
@@ -240,7 +240,6 @@ $(function() {
         },
 
         bind: function() {
-            $(".asm-tabbar").asmtabs();
             $("#createpayment").createpayment();
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);

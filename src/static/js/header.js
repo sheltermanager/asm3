@@ -160,7 +160,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;
@@ -208,7 +208,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;
@@ -257,7 +257,7 @@ header = {
     menu_widgets: function() {
 
         $(".asm-menu-icon").asmmenu();
-        $(".asm-menu-accordion").accordion({ active: false, collapsible: true, heightStyle: "content" });
+        $(".asm-menu-accordion").asmaccordion({ active: false, collapsible: true });
 
         // Hide any publishers that are not enabled
         var ep = config.str("PublishersEnabled");
@@ -511,10 +511,6 @@ header = {
                     '<span id="tip"></span>',
                 '</p>',
             '</div>',
-            '<div id="dialog-textarea-zoom" style="display: none" title="">',
-                '<input id="textarea-zoom-id" type="hidden" />',
-                '<textarea id="textarea-zoom-area" style="width: 98%; height: 98%;"></textarea>',
-            '</div>',
             '<div id="dialog-unsaved" style="display: none" title="' + _("Unsaved Changes") + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("You have unsaved changes, are you sure you want to leave this page?"),
@@ -666,7 +662,7 @@ header = {
                 activereportmenu.find(".ui-accordion-content .asm-menu-list").css("padding", "5px");
                 activereportmenu.find(".ui-accordion-content").hide();
                 activereportmenu.find(".ui-accordion-header").show();
-                activereportmenu.find(".ui-accordion").accordion({active: false});
+                activereportmenu.find(".asm-accordion").asmaccordion({ active: false, collapsible: true });
             }
         });
 
