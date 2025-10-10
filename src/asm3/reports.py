@@ -294,6 +294,7 @@ def insert_report_from_form(dbo: Database, username: str, post: PostedData) -> i
         "DailyEmail":           post["dailyemail"],
         "DailyEmailHour":       post.integer("dailyemailhour"),
         "DailyEmailFrequency":  post.integer("dailyemailfrequency"),
+        "DailyEmailSendAsPDF":  post.boolean("sendaspdf"),
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
         "OmitCriteria":         post.boolean("omitcriteria"),
@@ -319,6 +320,7 @@ def update_report_from_form(dbo: Database, username: str, post: PostedData) -> N
         "DailyEmail":           post["dailyemail"],
         "DailyEmailHour":       post.integer("dailyemailhour"),
         "DailyEmailFrequency":  post.integer("dailyemailfrequency"),
+        "DailyEmailSendAsPDF":  post.boolean("sendaspdf"),
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
         "OmitCriteria":         post.boolean("omitcriteria")
@@ -771,7 +773,12 @@ def email_daily_reports(dbo: Database) -> None:
         if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
             asm3.al.debug("report '%s' contained no data and option is on to skip sending empty reports" % (r.TITLE), "reports.email_daily_reports", dbo)
             continue
-        asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
+        if r.DAILYEMAILSENDASPDF:
+            pdfdata = asm3.utils.html_to_pdf(dbo, body)
+            body = asm3.i18n._('Please find your report attached.', dbo.locale)
+            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3, attachments=[ "report.pdf", "application/pdf", pdfdata])
+        else:
+            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
 def execute_title(dbo: Database, title: str, username: str = "system", params: ReportParams = None, toolbar: bool = True) -> str:
     """

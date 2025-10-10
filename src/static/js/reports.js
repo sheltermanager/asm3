@@ -83,6 +83,7 @@ $(function() {
                     { json_field: "DAILYEMAILFREQUENCY", post_field: "dailyemailfrequency", label: _("When"), type: "select", options: html.list_to_options(emailfreq, "ID", "DISPLAY") },
                     { json_field: "DAILYEMAILHOUR", post_field: "dailyemailhour", label: _("at"), type: "select",
                         options: { displayfield: "display", valuefield: "value", rows: emailhours }},
+                    { json_field: "DAILYEMAILSENDASPDF", post_field: "sendaspdf", label: _("Send in PDF format"), type: "check" },
                     { json_field: "OMITHEADERFOOTER", post_field: "omitheaderfooter", label: _("Omit header/footer"), type: "check" },
                     { json_field: "OMITCRITERIA", post_field: "omitcriteria", label: _("Omit criteria"), type: "check" },
                     { json_field: "VIEWROLEIDS", post_field: "viewroles", label: _("View Roles"), type: "selectmulti", 
@@ -444,6 +445,7 @@ $(function() {
                 $("#dailyemailrow").hide();
                 $("#dailyemailfrequencyrow").hide();
                 $("#dailyemailhourrow").hide();
+                $("#sendaspdfrow").hide();
                 $("#omitheaderfooterrow").hide();
                 $("#omitcriteriarow").hide();
                 $("#button-genhtml").hide();
@@ -455,6 +457,7 @@ $(function() {
                 $("#dailyemailfrequencyrow").show();
                 $("#dailyemailhourrow").show();
                 $("#omitheaderfooterrow").show();
+                $("#sendaspdfrow").show();
                 $("#omitcriteriarow").show();
                 $("#button-genhtml").show();
                 $("#dialog-add").dialog("option", "height", "auto");
