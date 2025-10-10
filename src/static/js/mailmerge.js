@@ -23,6 +23,14 @@ $(function() {
         previewloaded: false,
         recipientsloaded: false,
 
+        log_unavailable: function() {
+            if ( controller.fields.includes("ID") || controller.fields.includes("OWNERID") ) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+
         render: function() {
             let hf = [
                 '<input type="hidden" name="mode" value="{mode}" />',
@@ -114,39 +122,32 @@ $(function() {
                 '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a> (' + controller.numemails + ') ' + smcomemailinfo + '</h3>',
                 '<div id="sendemail">',
                 hf.replace("{mode}", "email"),
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="em-from">' + _("From") + '</label></td>',
-                '<td><input id="em-from" data="from" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="em-subject">' + _("Subject") + '</label></td>',
-                '<td><input id="em-subject" data="subject" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td colspan="2">',
-                '<div id="em-body" data="body" data-height="300px" data-margin-top="24px" class="asm-richtextarea"></div>',
-                '<p>',
-                '<label for="em-template">' + _("Template") + '</label>',
-                '<select id="em-template" class="asm-selectbox">',
-                '</select>',
-                '</p>',
-                '<p>',
-                '<input id="em-includeunsubscribe" data="unsubscribe" type="checkbox" name="em-includeunsubscribe" class="asm-checkbox" />',
-                '<label for="em-includeunsubscribe">' + _("Add an unsubscribe link to the bottom of emails") + '</label>',
-                '</p>',
-                '</td>',
-                '<td>',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
-                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
-                _("Valid tokens for the subject and text") + ':',
-                '<br/><br/>',
-                mailmerge.render_fields(),
-                '</p>',
-                '</div>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render(
+                    [
+                        { id: 'em-from', post_field: 'from', label: _("From"), type: 'text', doublesize: true, validation: 'notblank' },
+                        { id: 'em-subject', post_field: 'subject', label: _("Subject"), type: 'text', doublesize: true, validation: 'notblank',
+                            callout: _("Valid tokens for the subject and text") + ':' +
+                            '<br/><br/>' +
+                            mailmerge.render_fields()
+                        },
+                        { id: 'em-body', post_field: 'body', label: _("Email body"), type: 'richtextarea', height: '200px', validation: 'notblank' },
+                        { id: 'em-template', label: _("Template"), type: 'select', options: edit_header.template_list_options(controller.templates) },
+                        { id: 'em-includeunsubscribe', post_field: 'unsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
+                        { id: 'em-logemail', post_field: 'logemail', label: _("Add a log to recipient person records"), type: 'check',
+                            hideif: mailmerge.log_unavailable
+                        },
+                        { id: 'em-logtype', post_field: 'logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME'),
+                            hideif: mailmerge.log_unavailable
+                        },
+                        { id: 'em-logmessage', post_field: 'logmessage', label: _("Log message"), type: 'textarea',
+                            hideif: mailmerge.log_unavailable
+                         },
+                    ],
+                    {
+                        full_width: true
+                    }
+                ),
+                
                 '<p class="centered"><button id="button-email">' + _("Send Emails") + '</button></p>',
                 '</div>',
 
@@ -212,11 +213,17 @@ $(function() {
 
             $("#button-csv, #button-pdflabels").button();
             $("#button-email").button().click(async function() {
-                $("#button-email").button("disable");
-                let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea").toPOST();
-                await common.ajax_post("mailmerge", formdata);
-                header.show_info(_("Messages successfully sent"));
-                $("#asm-mailmerge-accordion").hide();
+                if (validate.notblank(['em-from', 'em-subject', 'em-logmessage'])) {
+                    if ( !html.strip_tags($("#em-body").richtextarea("value")) ) {
+                        validate.highlight('em-body');
+                    } else {
+                        $("#button-email").button("disable");
+                        let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea, #sendemail .asm-selectbox, #sendemail textarea").toPOST();
+                        await common.ajax_post("mailmerge", formdata);
+                        header.show_info(_("Messages successfully sent"));
+                        $("#asm-mailmerge-accordion").hide();
+                    }
+                }
             });
 
             $("#button-copyrecipients").button({icons: { primary: "ui-icon-clipboard" }, text: true}).click(function() {
@@ -266,11 +273,20 @@ $(function() {
                         $("#em-body").html(j.BODY); 
                     });
                 });
-
             }
+            $("#em-logemail").click(function() {
+                if ($(this).prop("checked")) {
+                    $("#em-logtyperow, #em-logmessagerow").show();
+                } else {
+                    $("#em-logtyperow, #em-logmessagerow").hide();
+                }
+            });
         },
 
         sync: function() {
+
+            // Hide log type and log message rows until log recipients box is ticked
+            $("#em-logtyperow, #em-logmessagerow").hide();
 
             // Default the email signature for bulk emails
             let sig = config.str("EmailSignature");
