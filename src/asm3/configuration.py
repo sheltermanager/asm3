@@ -213,6 +213,7 @@ DEFAULTS = {
     "DonationTrxOverride": "No",
     "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
+    "DontShowDeclawed": "No",
     "DontShowMicrochipStatus": "Yes",
     "DontShowRabies": "Yes",
     "DontShowSize": "No",
@@ -1073,6 +1074,9 @@ def donation_trx_override(dbo: Database) -> bool:
 
 def donation_vat_account(dbo: Database) -> int:
     return cint(dbo, "DonationVATAccount", DEFAULTS["DonationVATAccount"])
+
+def dont_show_declawed(dbo: Database) -> bool:
+    return cboolean(dbo, "DontShowDeclawed", DEFAULTS["DontShowDeclawed"] == "Yes")
 
 def dont_show_size(dbo: Database) -> bool:
     return cboolean(dbo, "DontShowSize", DEFAULTS["DontShowSize"] == "Yes")

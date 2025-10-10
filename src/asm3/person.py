@@ -1965,6 +1965,8 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
     ah.append( "<th>%s</th>" % _("Good with dogs", l))
     ah.append( "<th>%s</th>" % _("Good with children", l))
     ah.append( "<th>%s</th>" % _("Housetrained", l))
+    if not asm3.configuration.dont_show_declawed(dbo): 
+        ah.append( "<th>%s</th>" % _("Declawed", l))
     ah.append( "<th>%s</th>" % _("Comments", l))
     ah.append( "</tr>")
 
@@ -2061,6 +2063,8 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
             h.append( td(a.ISGOODWITHDOGSNAME))
             h.append( td(a.ISGOODWITHCHILDRENNAME))
             h.append( td(a.ISHOUSETRAINEDNAME))
+            if not asm3.configuration.dont_show_declawed(dbo): 
+                h.append( td(a.DECLAWEDNAME))
             h.append( td(a.ANIMALCOMMENTS + " " + a.HIDDENANIMALDETAILS))
             h.append( "</tr>")
 
