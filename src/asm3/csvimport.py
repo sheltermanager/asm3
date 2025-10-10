@@ -76,7 +76,7 @@ VALID_FIELDS = [
     "STOCKLEVELBALANCE", "STOCKLEVELLOW", "STOCKLEVELEXPIRY", "STOCKLEVELBATCHNUMBER", "STOCKLEVELCOST", "STOCKLEVELUNITPRICE"
 ]
 
-def gkc(m: Dict, f: str) -> int:
+def gkc(m: Dict, f: str, locale: str) -> int:
     """ reads field f from map m, assuming a currency amount and returning 
         an integer """
     if f not in m: return 0
@@ -84,7 +84,9 @@ def gkc(m: Dict, f: str) -> int:
         # Remove non-numeric characters
         v = re.sub(r'[^\d\-\.]+', '', str(m[f]))
         fl = float(v)
-        fl *= 100
+        dp = asm3.i18n.get_currency_dp(locale)
+        multiplier = 1 * (10 ** dp)
+        fl = fl * multiplier
         return int(fl)
     except:
         return 0
@@ -441,7 +443,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasaccounts:
             a = {}
             a["trxdate"] = gkd(dbo, row, "ACCOUNTSTRXDATE")
-            amount = gkc(row, "ACCOUNTSAMOUNT")
+            amount = gkc(row, "ACCOUNTSAMOUNT", dbo.locale)
             if amount < 0:
                 a["deposit"] = str(abs(amount))
             else:
@@ -938,13 +940,13 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 row_error(errors, "movement", rowno, row, e, dbo, sys.exc_info())
 
         # Donation?
-        if hasdonation and personid != 0 and gkc(row, "DONATIONAMOUNT") != 0:
+        if hasdonation and personid != 0 and gkc(row, "DONATIONAMOUNT", dbo.locale) != 0:
             d = {}
             d["person"] = str(personid)
             d["animal"] = str(animalid)
             d["movement"] = str(movementid)
-            d["amount"] = str(gkc(row, "DONATIONAMOUNT"))
-            d["fee"] = str(gkc(row, "DONATIONFEE"))
+            d["amount"] = str(gkc(row, "DONATIONAMOUNT", dbo.locale))
+            d["fee"] = str(gkc(row, "DONATIONFEE", dbo.locale))
             d["comments"] = gks(row, "DONATIONCOMMENTS")
             d["received"] = gkd(dbo, row, "DONATIONDATE", True)
             d["chequenumber"] = gks(row, "DONATIONCHECKNUMBER")
@@ -1000,7 +1002,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             c["type"] = gkl(dbo, row, "CITATIONTYPE", "citationtype", "CitationName", createmissinglookups)
             c["citationnumber"] = gks(row, "CITATIONNUMBER")
             c["citationdate"] = gkd(dbo, row, "CITATIONDATE")
-            c["fineamount"] = str(gkc(row, "FINEAMOUNT"))
+            c["fineamount"] = str(gkc(row, "FINEAMOUNT", dbo.locale))
             c["finedue"] = gkd(dbo, row, "FINEDUEDATE")
             c["finepaid"] = gkd(dbo, row, "FINEPAIDDATE")
             c["comments"] = gks(row, "CITATIONCOMMENTS")
@@ -1062,7 +1064,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             t["person"] = str(personid)
             t["type"] = gkl(dbo, row, "TRAPTYPE", "traptype", "TrapTypeName", createmissinglookups)
             t["loandate"] = gkd(dbo, row, "LOANDATE")
-            t["depositamount"] = str(gkc(row, "DEPOSITAMOUNT"))
+            t["depositamount"] = str(gkc(row, "DEPOSITAMOUNT", dbo.locale))
             t["depositreturndate"] = gkd(dbo, row, "DEPOSITRETURNDATE")
             t["trapnumber"] = gks(row, "TRAPNUMBER")
             t["returnduedate"] = gkd(dbo, row, "RETURNDUEDATE")
@@ -1121,12 +1123,12 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
 
         # Costs
-        if hascost and animalid != 0 and gkc(row, "COSTAMOUNT") > 0:
+        if hascost and animalid != 0 and gkc(row, "COSTAMOUNT", dbo.locale) > 0:
             c = {}
-            c["animalid"] = str(animalid)
+            c["animal"] = str(animalid)
             c["type"] = gkl(dbo, row, "COSTTYPE", "costtype", "CostTypeName", createmissinglookups)
             c["costdate"] = gkd(dbo, row, "COSTDATE", True)
-            c["cost"] = str(gkc(row, "COSTAMOUNT"))
+            c["cost"] = str(gkc(row, "COSTAMOUNT", dbo.locale))
             c["description"] = gks(row, "COSTDESCRIPTION")
             try:
                 if not dryrun: asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
@@ -1172,7 +1174,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l["type"] = gkl(dbo, row, "LICENSETYPE", "licencetype", "LicenceTypeName", createmissinglookups)
             if l["type"] == "0": l["type"] = 1
             l["number"] = gks(row, "LICENSENUMBER")
-            l["fee"] = str(gkc(row, "LICENSEFEE"))
+            l["fee"] = str(gkc(row, "LICENSEFEE", dbo.locale))
             l["issuedate"] = gkd(dbo, row, "LICENSEISSUEDATE")
             l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
             l["comments"] = gks(row, "LICENSECOMMENTS")
@@ -1189,7 +1191,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l["type"] = gkl(dbo, row, "LICENSETYPE", "licencetype", "LicenceTypeName", createmissinglookups)
             if l["type"] == "0": l["type"] = 1
             l["number"] = gks(row, "LICENSENUMBER")
-            l["fee"] = str(gkc(row, "LICENSEFEE"))
+            l["fee"] = str(gkc(row, "LICENSEFEE", dbo.locale))
             l["issuedate"] = gkd(dbo, row, "LICENSEISSUEDATE")
             l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
             l["comments"] = gks(row, "LICENSECOMMENTS")

@@ -178,6 +178,17 @@ grouping name. By default, anything under 6 months (0.5 years) is classed as a
 Baby, anything under 2 years is Young Adult, under 7 years is Adult and over
 that is Senior. 
 
+AMQP
+-------------------------------
+
+The system supports emitting event messages for audit log inserts using Kombu. When an audit log record is inserted, an event message is sent to an external AMQP-compatible message broker, such as RabbitMQ or Azure Service Bus Queue. This is done asynchronously, off the primary thread, to avoid blocking the UI or main application processing.
+
+* Enable AMQP publishing by setting `enable_amqp` to `true` in your ASM configuration file
+* Ensure you have an AMQP-compatible broker available (e.g., RabbitMQ, Azure Service Bus).
+* Update your configuration to provide the appropriate connection string and queue name.
+* Kombu is required as a dependency. Install via pip if necessary: pip install kombu
+
+
 Animal Codes
 ------------
 

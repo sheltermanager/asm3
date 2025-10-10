@@ -823,20 +823,22 @@ def complete_vaccination(dbo: Database, username: str, vaccinationid: int, newda
                          givenby: str = "", vetid: int = 0, dateexpires: datetime = None, 
                          batchnumber: str = "", manufacturer: str = "", cost: int = 0, rabiestag: str = "") -> None:
     """
-    Marks a vaccination given/completed on newdate
+    Marks a vaccination given/completed on newdate.
+    Will only update most of the fields if they have a non-zero/blank value.
     """
     animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccinationid])
-    dbo.update("animalvaccination", vaccinationid, {
+    v = {
         "AnimalID":             animalid,
         "DateOfVaccination":    newdate,
-        "DateExpires":          dateexpires,
         "GivenBy":              asm3.utils.iif(givenby == "", username, givenby),
-        "AdministeringVetID":   vetid,
-        "Cost":                 cost,
-        "BatchNumber":          batchnumber,
-        "Manufacturer":         manufacturer,
-        "RabiesTag":            rabiestag
-    }, username)
+    }
+    if dateexpires: v["DateExpires"] = dateexpires
+    if vetid > 0: v["AdministeringVetID"] = vetid
+    if cost > 0: v["Cost"] = cost
+    if batchnumber != "": v["BatchNumber"] = batchnumber
+    if manufacturer != "": v["Manufacturer"] = manufacturer
+    if rabiestag != "": v["RabiesTag"] = rabiestag
+    dbo.update("animalvaccination", vaccinationid, v, username) 
     update_rabies_tag(dbo, username, animalid)
 
 def complete_test(dbo: Database, username: str, testid: int, newdate: datetime, testresult: int, vetid: int = 0, cost: int = 0) -> None:
@@ -844,13 +846,14 @@ def complete_test(dbo: Database, username: str, testid: int, newdate: datetime, 
     Marks a test performed on newdate with testresult
     """
     animalid = dbo.query_int("SELECT AnimalID FROM animaltest WHERE ID = ?", [testid])
-    dbo.update("animaltest", testid, {
+    v = {
         "AnimalID":             animalid,
         "DateOfTest":           newdate,
-        "Cost":                 cost,
-        "TestResultID":         testresult,
-        "AdministeringVetID":   vetid
-    }, username)
+        "TestResultID":         testresult
+    }
+    if vetid > 0: v["AdministeringVetID"] = vetid
+    if cost > 0: v["Cost"] = cost
+    dbo.update("animaltest", testid, v, username)
     update_animal_tests(dbo, username, testid)
 
 def reschedule_test(dbo: Database, username: str, testid: int, newdate: datetime, comments: str) -> None:

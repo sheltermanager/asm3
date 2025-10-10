@@ -8,6 +8,7 @@ $(function() {
 
         render: function() {
             let yesnooptions = '<option value="0">' + _("No") + '</option>' + '<option value="1">' + _("Yes") + '</option>';
+            let yesnocfgoptions = '<option value="No">' + _("No") + '</option>' + '<option value="Yes">' + _("Yes") + '</option>';
             return [
                 html.content_header(_("Publishing Options")),
                 tableform.buttons_render([
@@ -179,6 +180,15 @@ $(function() {
                                 '<option value="1">Do not generate and upload (not recommended)</option>', 
                                 classes: 'pbool preset' }
                         ]}, 
+                    { id: "tab-avidus", title: "AVID US Microchips", classes: 'localeus hasavidus', 
+                        info: 'These settings are for registering microchips with new owner information to the AVID database. <br/>' + 
+                        'Find out more at <a target="_blank" href="https://www.avidid.com/">www.avidid.com</a>', 
+                        fields: [
+                            { id: "enabledavidus", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "avidususername", post_field: "AVIDUSUsername", label: 'Username', type: "text" }, 
+                            { id: "aviduspass", post_field: "AVIDUSPassword", label: 'Password', type: "text" }, 
+                            { id: "aviduskey", post_field: "AVIDUSKey", label: 'API Key', type: "text" }
+                        ]},
                     { id: "tab-findpet", title: "FindPet.com", 
                         info: 'Find out more at <a target="_blank" href="https://findpet.com">www.findpet.com</a> ' +
                         'or contact hello@findpet.com for more information.<br>' +
@@ -250,7 +260,7 @@ $(function() {
                             { id: "enabledpcuk", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "pcukcustid", post_field: "PetsLocatedCustomerID", label: 'petslocated.com customer number', type: "text" }, 
                             { id: "pcukincludeshelter", post_field: "PetsLocatedIncludeShelter", label: 'Include shelter animals', 
-                                type: "select", options: yesnooptions 
+                                type: "select", options: yesnocfgoptions 
                             }, 
                             { id: "pcukanimalflag", post_field: "PetsLocatedAnimalFlag", label: 'Only shelter animals with this flag', 
                                 type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") 
@@ -261,7 +271,7 @@ $(function() {
                         fields: [
                             { id: "enabledpr", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "prtoken", post_field: "PetRescueToken", label: 'PetRescue Token', type: "text", doublesize: true }, 
-                            { id: "prdesex", post_field: "PetRescueAllDesexed", label: 'Send all animals as desexed', type: "select", options: yesnooptions, 
+                            { id: "prdesex", post_field: "PetRescueAllDesexed", label: 'Send all animals as desexed', type: "select", options: yesnocfgoptions, 
                                 callout: 'PetRescue will not accept listings for non-desexed animals. Setting this to "Yes" will send all animals as if they are desexed.' }, 
                             { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", 
                                 callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. ' + 
@@ -304,7 +314,7 @@ $(function() {
                             { id: "sltoken", post_field: "SavourLifeToken", label: 'Authentication Token', type: "text" }, 
                             { id: "slinterstate", post_field: "SavourLifeInterstate", label: 'Mark as interstate', type: "select", 
                                 callout: 'Set to yes if you will fly adoptable animals to other states', 
-                                options: yesnooptions }, 
+                                options: yesnocfgoptions }, 
                             { id: "slradius", post_field: "SavourLifeRadius", label: 'Distance restriction', type: "select",
                                 options: '<option value="0">No restriction</option>' + 
                                 '<option value="20">20 km</option>' + 
@@ -314,7 +324,7 @@ $(function() {
                                 '<option value="200">200 km</option>' + 
                                 '<option value="500">500 km</option>' }, 
                             { id: "slmicrochips", post_field: "SavourLifeAllMicrochips", label: 'Send microchip numbers for all animals', type: "select", 
-                                options: yesnooptions, 
+                                options: yesnocfgoptions, 
                                 callout: 'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. ' + 
                                 'Settings this to "Yes" will send the microchip number for all animals' }
                         ]
@@ -343,7 +353,7 @@ $(function() {
                             { id: "avidorgserial", post_field: "AvidOrgSerial", label: "Serial Number", type: "text", doublesize: true }, 
                             { id: "avidorgpostcode", post_field: "AvidOrgPostcode", label: "Postcode", type: "text", doublesize: true }, 
                             { id: "avidorgpassword", post_field: "AvidOrgPassword", label: "Password", type: "text", doublesize: true }, 
-                            { id: "avidrereg", post_field: "AvidReRegistration", label: "Re-register previously registered microchips", type: "select", options: yesnooptions }, 
+                            { id: "avidrereg", post_field: "AvidReRegistration", label: "Re-register previously registered microchips", type: "select", options: yesnocfgoptions }, 
                             { id: "avidauthuser", post_field: "AvidAuthUser", label: "Password", type: "select", 
                                 options: html.list_to_options(controller.users, "USERNAME", "USERNAME"), 
                                 callout: "An authorised user must be chosen and they must have an electronic signature on file.<br/>" + 
@@ -524,6 +534,7 @@ $(function() {
 
             // Disable services that require sitedef setup
             if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
+            if (!controller.hasavidus) { $(".hasavidus").hide(); }
             if (!controller.hasbuddyid) { $(".hasbuddyid").hide(); }
             if (!controller.hasfindpet) { $(".hasfindpet").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
@@ -548,13 +559,8 @@ $(function() {
                     else if ($(this).is("input:checkbox")) {
                         $(this).attr("checked", config.bool(d));
                     }
-                    else if ($(this).hasClass("asm-bsmselect")) {
-                        let n = $(this);
-                        n.children().prop("selected", false);
-                        $.each(config.str(d).split(/[|,]+/), function(mi, mv) {
-                            n.find("[value='" + mv + "']").prop("selected", true);
-                        });
-                        n.change();
+                    else if ($(this).hasClass("asm-selectmulti")) {
+                        $(this).selectmulti("value", config.str(d)); 
                     }
                     else if ($(this).is("select")) {
                         $(this).select("value", config.str(d));
@@ -590,12 +596,8 @@ $(function() {
                         if (node.hasClass("asm-selectbox")) {
                             node.select("value", v);
                         }
-                        else if (node.hasClass("asm-bsmselect")) {
-                            let ls = v.split(",");
-                            $.each(ls, function(li, lv) {
-                                node.find("[value='" + lv + "']").prop("selected", "selected");
-                            });
-                            node.change();
+                        else if (node.hasClass("asm-selectmulti")) {
+                            node.selectmulti("value", v);
                         }
                         else {
                             node.val(v);

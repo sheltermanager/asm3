@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searching.html#links">Links</a></li>
 <li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="people.html">People</a></li>
 <li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
@@ -111,6 +112,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#json-stray-animals-xml-stray-animals-and-csv-stray-animals">json_stray_animals, xml_stray_animals and csv_stray_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#media-file-and-media-image">media_file and media_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#online-form-html-and-online-form-json">online_form_html and online_form_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#online-form-js">online_form_js</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rss-timeline">rss_timeline</a></li>
 </ul>
 </li>
@@ -1292,6 +1294,20 @@ http://localhost:5000/service?method=media_image&amp;mediaid=28
 <p>Responds with the online form HTML or JSON for the id given.</p>
 <blockquote>
 <div><p><a class="reference external" href="http://localhost:5000/service?method=online_form_html&amp;id=1">http://localhost:5000/service?method=online_form_html&amp;id=1</a></p>
+</div></blockquote>
+</section>
+<section id="online-form-js">
+<h2>online_form_js<a class="headerlink" href="#online-form-js" title="Link to this heading">¶</a></h2>
+<p class="rubric">Cache time: 30 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
+<p>Similar to animal_view_adoptable_js, this method allows you to put a div placeholder
+in your page and load a script. The script will insert a responsive iframe into
+your page at the div, which displays the output of the online_form_html service
+call. This allows embedding of the form in a more transparent manner.</p>
+<blockquote>
+<div><p>&lt;div id=”asm3-form-iframe” /&gt;
+&lt;script src=”<a class="reference external" href="http://localhost:5000/service?method=online_form_js&amp;id=1">http://localhost:5000/service?method=online_form_js&amp;id=1</a>”&gt;&lt;/script&gt;</p>
 </div></blockquote>
 </section>
 <section id="rss-timeline">

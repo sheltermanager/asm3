@@ -76,7 +76,7 @@ Priority: optional
 Architecture: all
 Essential: no
 Depends: debconf, memcached, libapache2-mod-wsgi-py3, python3-cheroot, python3-pil, python3-memcache, python3-requests, python3-mysqldb, python3-psycopg2, python3-reportlab, python3-xhtml2pdf, python3-lxml
-Suggests: mysql-server, imagemagick, wkhtmltopdf, python3-stripe, python3-boto, python3-openpyxl, python3-qrcode
+Suggests: mysql-server, imagemagick, wkhtmltopdf, python3-stripe, python3-boto, python3-openpyxl, python3-qrcode, python3-kombu
 Installed-Size: `du -s -k sheltermanager3 | awk '{print$1}'`
 Maintainer: ASM Team [info@sheltermanager.com]
 Provides: sheltermanager3
@@ -84,6 +84,17 @@ Description: Web-based management solution for animal shelters and sanctuaries
  Animal Shelter Manager is the most popular, free management package
  for animal sanctuaries and welfare charities. This is version 3, built
  around Python and HTML5." > sheltermanager3/DEBIAN/control
+
+# Generate a postinst file that attempts to execute
+# maint_db_update in case we are doing a package upgrade.
+# Note that it squashes output to stdout and stderr as
+# cron.py logs to the syslog
+echo "#!/bin/sh
+cd /usr/lib/sheltermanager3
+python3 cron.py maint_db_update > /dev/null 2>&1 
+exit 0
+" > sheltermanager3/DEBIAN/postinst
+chmod +x sheltermanager3/DEBIAN/postinst
 
 # Build the deb package
 # NOTE: -Zxz is specify xz compression for compatibility with Debian systems, Ubuntu uses zstd compression by default

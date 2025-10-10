@@ -382,140 +382,6 @@ additional = {
     },
 
     /**
-     * Renders a field.  
-     * If a VALUE column is present, the field is rendered with the correct value in place.
-     * The data-post value will be set to a.(1 if mandatory).fieldid
-     * f: A combined row from the additionalfield and additional tables
-     * includeids: undefined or true - output an id attribute with the field
-     * classes: one or more classes to give fields - undefined="additional" 
-     * usedefault: if true, outputs the default value instead of the actual value
-     * 
-     * This is the original version of this method, that didn't use the abstractions
-     * in tableform. The code has been left here for now in case
-     * of compatibility issues with the new version of render_field so we can check
-     * what the old behaviour was.
-     * 
-    render_field_old: function(f, includeids, classes, usedefault) {
-        var fieldname = f.ID,
-            fieldid = "add_" + fieldname,
-            fieldattr = 'id="' + fieldid + '" ' + 'data-linktype="' + f.LINKTYPE + '" ',
-            fieldval = f.VALUE,
-            fieldlabel = '<label for="' + fieldid + '">' + f.FIELDLABEL + '</label>',
-            postattr = "a." + f.MANDATORY + "." + fieldname,
-            mi = "",
-            fh = [ ],
-            td1open = '<td>', 
-            td2open = '<td>';
-        if (f.HIDDEN == 1) { fh.push('<tr style="display: none">'); } else { fh.push('<tr>'); }
-        if (classes === undefined) { classes = "additional"; }
-        if (usedefault === undefined) { usedefault = false; }
-        if (usedefault) { fieldval = f.DEFAULTVALUE; }
-        if (includeids === false) { fieldattr = ""; } // includeids has to be explicitly false to disable id attrs
-        if (f.MANDATORY == 1) { mi = '&nbsp;<span class="asm-has-validation">*</span>'; }
-        fieldlabel = '<label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label>';
-        if (f.FIELDTYPE == additional.YESNO) {
-            var checked = "";
-            if (fieldval && fieldval !== "0") { checked = 'checked="checked"'; }
-            fh.push(td1open + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="checkbox" class="asm-checkbox ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '" ' + checked + ' />');
-            fh.push('<label for="' + fieldid + '" title="' + html.title(f.TOOLTIP) + '">' + f.FIELDLABEL + '</label></td>');
-        }
-        else if (f.FIELDTYPE == additional.TEXT) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="text" class="asm-textbox ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '"/></td>');
-        }
-        else if (f.FIELDTYPE == additional.DATE) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="text" class="asm-textbox asm-datebox ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
-        }
-        else if (f.FIELDTYPE == additional.TIME) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="text" class="asm-textbox asm-timebox ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
-        }
-        else if (f.FIELDTYPE == additional.NOTES) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<textarea ' + fieldattr + ' data-post="' + postattr + '" class="asm-textareafixed ' + classes + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '">' + common.nulltostr(fieldval) + '</textarea>');
-        }
-        else if (f.FIELDTYPE == additional.NUMBER) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="text" class="asm-textbox asm-numberbox ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '"/></td>');
-        }
-        else if (f.FIELDTYPE == additional.MONEY) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="text" class="asm-textbox asm-currencybox ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + format.currency(fieldval) + '"/></td>');
-        }
-        else if (f.FIELDTYPE == additional.LOOKUP) {
-            var opts = [], cv = common.trim(common.nulltostr(fieldval));
-            $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
-                vo = common.trim(vo);
-                if (cv == vo) {
-                    opts.push('<option selected="selected">' + vo + '</option>');
-                }
-                else {
-                    opts.push('<option>' + vo + '</option>');
-                }
-            });
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<select ' + fieldattr + ' class="asm-selectbox ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '">');
-            fh.push(opts.join("\n"));
-            fh.push('</select></td>');
-        }
-        else if (f.FIELDTYPE == additional.MULTI_LOOKUP) {
-            var mopts = [], mcv = common.trim(common.nulltostr(fieldval)).split(",");
-            $.each(f.LOOKUPVALUES.split("|"), function(io, vo) {
-                vo = common.trim(vo);
-                if ($.inArray(vo, mcv) != -1) {
-                    mopts.push('<option selected="selected">' + vo + '</option>');
-                }
-                else {
-                    mopts.push('<option>' + vo + '</option>');
-                }
-            });
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<select ' + fieldattr + ' class="asm-bsmselect ' + classes + '" multiple="multiple" data-post="' + postattr + '" ');
-            fh.push('title="' + html.title(f.TOOLTIP) + '">');
-            fh.push(mopts.join("\n"));
-            fh.push('</select></td>');
-        }
-        else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-animalchooser ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('value="' + html.title(fieldval) + '"/></td>');
-        }
-        else if (f.FIELDTYPE == additional.PERSON_LOOKUP) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('value="' + html.title(fieldval) + '"/></td>');
-        }
-        else if (f.FIELDTYPE == additional.PERSON_SPONSOR) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('value="' + html.title(fieldval) + '" data-filter="sponsor"/></td>');
-        }
-        else if (f.FIELDTYPE == additional.PERSON_VET) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('value="' + html.title(fieldval) + '" data-filter="vet"/></td>');
-        }
-        else if (f.FIELDTYPE == additional.PERSON_ADOPTIONCOORDINATOR) {
-            fh.push(td1open + fieldlabel + '</td>' + td2open);
-            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
-            fh.push('value="' + html.title(fieldval) + '" data-filter="coordinator"/></td>');
-        }
-        fh.push('</tr>');
-        return fh.join("\n");
-    },
-    */
-
-    /**
      * Renders an additional field.  
      * If a VALUE column is present in f, the field is rendered with the correct value in place.
      * The data-post value will be set to a.(1 if mandatory).fieldid
@@ -616,26 +482,25 @@ additional = {
      * 3. An error message is displayed
      */
     validate_mandatory: function() {
-        var valid = true;
+        let valid = true;
         $(".additional").not(".chooser").each(function() {
-            var t = $(this), 
-                label = $("label[for='" + t.attr("id") + "']"),
-                acchead = $("#" + t.closest(".ui-accordion-content").prev().attr("id"));
+            let t = $(this), 
+                label = $("label[for='" + t.attr("id") + "']");
             // ignore checkboxes
             if (t.attr("type") != "checkbox") {
-                var d = String(t.attr("data-post"));
+                let d = String(t.attr("data-post"));
                 // mandatory fields have a prefix of a.1 in their post attribute - skip those without
                 if (d.indexOf("a.1") == -1) { return; }
                 // skip checking fields that have been hidden
                 if (t.attr("data-hidden") == "1") { return; }
                 // skip checking mandatory fields that are for a particular species if the species on screen does not match 
-                // NOTE: relies on a #species dropdown, this is poor encapsulation/design, 
+                // NOTE: relies on a #species dropdown existing, this is poor encapsulation/design, 
                 // but the alternatives were far more complex to implement
                 if ($("#species").val() && !common.array_in($("#species").val(), t.attr("data-speciesids").split(","))) { return; }
                 if (common.trim(t.val()) == "") {
                     header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
-                    // Find the index of the accordion section this element is in and activate it
-                    $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
+                    // Activate the accordion section this element is in (if it's in an accordion)
+                    t.closest(".asm-accordion").asmaccordion("activeNode", t);
                     label.addClass(validate.ERROR_LABEL_CLASS);
                     t.focus();
                     valid = false;

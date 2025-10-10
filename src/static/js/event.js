@@ -13,42 +13,32 @@ $(function(){
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this event") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this event") },
                 ]),
-                '<div id="asm-details-accordion">',
-                this.render_details(),
-                '</div>',
+                tableform.render_accordion({ id: "asm-details-accordion", panes: [
+                    { title: _("Details"), fields: this.render_details() }
+                ]}),
                 '</div>'
             ].join("\n");
         },
 
         render_details: function(){
             return [
-                '<h3><a href="#">' + _("Details") + '</a></h3>',
-                '<div>',
-                tableform.fields_render([
-                    { post_field: "eventname", json_field: "EVENTNAME", type: "text", label: _("Event Name") },
-                    { post_field: "startdate", json_field: "STARTDATETIME", type: "date", label: _("Start Date") },
-                    { post_field: "enddate", json_field: "ENDDATETIME", type: "date", label: _("End Date") },
-                    { post_field: "location", json_field: "EVENTOWNERID", label: _("Location"), type: "person", persontype: "organization" },
-                    { post_field: "address", json_field: "EVENTADDRESS", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },
-                    { post_field: "town", json_field: "EVENTTOWN", label: _("City"), type: "text", maxlength: 100 },
-                    { post_field: "county", json_field: "EVENTCOUNTY", label: _("State"), type: "text", maxlength: 100 },
-                    { post_field: "postcode", json_field: "EVENTPOSTCODE", label: _("Zipcode"), type: "text", maxlength: 100 },
-                    { post_field: "country", json_field: "EVENTCOUNTRY", label: _("Country"), type: "text", maxlength: 100 }, 
-                    { type: "nextcol" },
-                    { post_field: "description", json_field: "EVENTDESCRIPTION", label: _("Description"), type: "richtextarea", 
-                        height: "200px", labelpos: "above" },
-                    { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 21) },
-                ], { full_width: true }),
-                '</div>', // end accordion section
-            ].join("\n");
+                { post_field: "eventname", json_field: "EVENTNAME", type: "text", label: _("Event Name") },
+                { post_field: "startdate", json_field: "STARTDATETIME", type: "date", label: _("Start Date") },
+                { post_field: "enddate", json_field: "ENDDATETIME", type: "date", label: _("End Date") },
+                { post_field: "location", json_field: "EVENTOWNERID", label: _("Location"), type: "person", persontype: "organization" },
+                { post_field: "address", json_field: "EVENTADDRESS", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },
+                { post_field: "town", json_field: "EVENTTOWN", label: _("City"), type: "text", maxlength: 100 },
+                { post_field: "county", json_field: "EVENTCOUNTY", label: _("State"), type: "text", maxlength: 100 },
+                { post_field: "postcode", json_field: "EVENTPOSTCODE", label: _("Zipcode"), type: "text", maxlength: 100 },
+                { post_field: "country", json_field: "EVENTCOUNTRY", label: _("Country"), type: "text", maxlength: 100 }, 
+                { type: "nextcol" },
+                { post_field: "description", json_field: "EVENTDESCRIPTION", label: _("Description"), type: "richtextarea", 
+                    height: "200px", labelpos: "above" },
+                { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 21) },
+            ];
         },
 
         bind: function(){
-
-            // accordion
-            $("#asm-details-accordion").accordion({
-                heightStyle: "content"
-            });
 
             validate.save = function(callback) {
                 if (!event.validation()) { header.hide_loading(); return; }
@@ -64,9 +54,6 @@ $(function(){
                         validate.dirty(true);
                     });
             };
-
-            // Load the tab strip
-            $(".asm-tabbar").asmtabs();
 
             $("#button-save").button().click(function(){
                header.show_loading(_("Saving..."));

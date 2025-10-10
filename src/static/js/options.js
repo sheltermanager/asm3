@@ -333,6 +333,12 @@ $(function() {
                         { id: "agegroup8", post_field: "AgeGroup8", label: "", type: "text", placeholder: _("Upper Age"), 
                             xmarkup: ' ' + tableform.render_text({xattr: 'data="AgeGroup8Name"', justwidget: true, placeholder: _("Name") })  }
                     ]},
+                    { id: "tab-amqp", title: _("AMQP"), info: _("Configure AMQP messaging"), fields: [
+                          { id: "amqpenabled", post_field: "AMQPEnabled", label: _("Enable AMQP integration"), type: "check", fullrow: true },
+                          { id: "amqpbrokerurl", post_field: "AMQPBrokerUrl", label: _("Broker URL"), type: "text", doublesize: true },
+                          { id: "amqpexchangename", post_field: "AMQPExchangeName", label: _("Exchange name"), type: "text" },
+                          { id: "amqproutingkey", post_field: "AMQPRoutingKey", label: _("Routing key"), type: "text" }
+                    ]},
                     { id: "tab-animalcodes", title: _("Animal Codes"), fields: [
                         { id: "codeformat", post_field: "CodingFormat", label: _("Animal code format"), type: "text",
                             callout: _("Code format tokens:") + '<br />' +
@@ -475,15 +481,15 @@ $(function() {
                         { post_field: "EmblemsCustomValue20", type: "select", options: emblemoptions.join(""),
                             xmarkup: ' <select data="EmblemsCustomCond20" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag20" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
                         }
-
                     ]},
                     { id: "tab-boarding", title: _("Boarding"), fields: [
-                        { id: "boardingpaytype", post_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), callout: _("The payment type used when creating payments from boarding records")
-                        }
+                        { id: "boardingpaytype", post_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                            callout: _("The payment type used when creating payments from boarding records") }
                     ]},
                     { id: "tab-checkout", title: _("Checkout"), info: _("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation."), fields: [
                         { id: "AdoptionCheckoutProcessor", post_field: "AdoptionCheckoutProcessor", label: _("Payment processor"), type: "select", 
                             options: html.list_to_options([
+                                "",
                                 "paypal|" + _("PayPal"),
                                 "square|" + _("Square"),
                                 "stripe|" + _("Stripe")
@@ -695,17 +701,13 @@ $(function() {
                         { id: "personsearchnewtab", post_field: "PersonSearchResultsNewTab", label: _("Open person find screens in a new tab"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-homepage", title: _("Home page"), fields: [
+                        { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("General") + '</p>' },
                         { id: "disabletips", post_field: "rc:DisableTips", label: _("Show tips on the home page"), type: "check", fullrow: true }, 
                         { id: "showalerts", post_field: "ShowAlertsHomePage", label: _("Show alerts on the home page"), type: "check", fullrow: true }, 
                         { id: "showoverview", post_field: "ShowOverviewHomePage", label: _("Show overview counts on the home page"), type: "check", fullrow: true }, 
                         { id: "showtimeline", post_field: "ShowTimelineHomePage", label: _("Show timeline on the home page"), type: "check", fullrow: true }, 
                         { id: "showhdeceased", post_field: "rc:ShowDeceasedHomePage", label: _("Hide deceased animals from the home page"), type: "check", fullrow: true }, 
                         { id: "showhfinancial", post_field: "rc:ShowFinancialHomePage", label: _("Hide financial stats from the home page"), type: "check", fullrow: true }, 
-                        { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Alerts") + '</p>' },
-                        { id: "alertmicrochip", post_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
-                        { id: "alertrabies", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
                         { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Stats") + '</p>' },
                         { type: "raw", fullrow: true, markup: html.info(_("Stats show running figures for the selected period of animals entering and leaving the shelter on the home page.")) },
                         { id: "statmode", post_field: "ShowStatsHomePage", label: _("Stats period"), type: "select", options: 
@@ -727,6 +729,62 @@ $(function() {
                             '<option value="longestonshelter">' + _("Longest On Shelter") + '</option>'
                         }, 
                         { id: "linkmax", post_field: "MainScreenAnimalLinkMax", label: _("Number of animal links to show"), type: "number", min: 0, max: 200 }, 
+                        { type: "nextcol" }, 
+                        { type: "raw", fullrow: true, markup: '<p class="asm-header">' + _("Alerts") + '</p>' },
+                        { id: "alertnevervacc", post_field: "AlertSpeciesNeverVacc", label: _("Show an alert when these species of animals do not have a vaccination of any type"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertrabies", post_field: "AlertSpeciesRabies", label: _("Show an alert when these species of animals do not have a rabies vaccination"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertmicrochip", post_field: "AlertSpeciesMicrochip", label: _("Show an alert when these species of animals are not microchipped"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertentire", post_field: "AlertSpeciesNeuter", label: _("Show an alert when these species of animals are not altered"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertrsvhck", post_field: "AlertSpeciesRsvHck", label: _("Show an alert when these species of animals are reserved but not marked as home checked"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+                        { id: "alertlngterm", post_field: "AlertSpeciesLongTerm", label: _("Show an alert when these species of animals are long termers"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }, 
+
+                        { id: "alertdueclinic", post_field: "AlertDueClinic", label: _("Show an alert when a clinic appointment is due"), type: "check", fullrow: true }, 
+                        { id: "alertduemed", post_field: "AlertDueMed", label: _("Show an alert when a medical treatment is due"), type: "check", fullrow: true }, 
+                        { id: "alertduetest", post_field: "AlertDueTest", label: _("Show an alert when a test is due"), type: "check", fullrow: true }, 
+                        { id: "alertexpvacc", post_field: "AlertExpVacc", label: _("Show an alert when a vaccination has expired"), type: "check", fullrow: true },
+                        { id: "alertduevacc", post_field: "AlertDueVacc", label: _("Show an alert when a vaccination is due"), type: "check", fullrow: true }, 
+
+                        { id: "alertlostandfound", post_field: "AlertLostandFound", label: _("Show an alert when potential matches for lost animals are detected"), type: "check", fullrow: true },
+
+                        { id: "alertboardintoday", post_field: "AlertBoardInToday", label: _("Show an alert when boarding animals are due to arrive"), type: "check", fullrow: true }, 
+                        { id: "alertboardouttoday", post_field: "AlertBoardOutToday", label: _("Show an alert when boarding animals are due to leave"), type: "check", fullrow: true }, 
+
+                        { id: "alertstrnodrv", post_field: "AlertTRNoDrv", label: _("Show an alert when an animal transport has no driver assigned"), type: "check", fullrow: true }, 
+
+                        { id: "alertstexpsoon", post_field: "AlertSTExpSoon", label: _("Show an alert when stock is close to its expiry date"), type: "check", fullrow: true }, 
+                        { id: "alertstlowbal", post_field: "AlertSTLowBal", label: _("Show an alert when a stock item has low global balance"), type: "check", fullrow: true }, 
+                        { id: "alertstexp", post_field: "AlertSTExpired", label: _("Show an alert when stock has passed its expiry date"), type: "check", fullrow: true }, 
+
+                        { id: "alertacundisp", post_field: "AlertACUndisp", label: _("Show an alert when animals are awaiting animal control dispatch"), type: "check", fullrow: true }, 
+                        { id: "alertacfoll", post_field: "AlertACFoll", label: _("Show an alert when animals involved in animal control incidents are due a follow up"), type: "check", fullrow: true }, 
+                        { id: "alertacuncomp", post_field: "AlertACUncomp", label: _("Show an alert when animals are involved in unresolved animal control incidents"), type: "check", fullrow: true }, 
+
+                        { id: "alertlookingfor", post_field: "AlertLookingFor", label: _("Show an alert when a shelter animal has people looking for them"), type: "check", fullrow: true }, 
+
+                        { id: "alerturgentwl", post_field: "AlertUrgentWL", label: _("Show an alert when animals are marked as urgent on the waiting list"), type: "check", fullrow: true }, 
+
+                        { id: "alertholdtoday", post_field: "AlertHoldToday", label: _("Show an alert when holding periods are due to end"), type: "check", fullrow: true }, 
+
+                        { id: "alertdocsigned", post_field: "AlertDocSigned", label: _("Show an alert when a document has been signed"), type: "check", fullrow: true }, 
+                        { id: "alertdocunsigned", post_field: "AlertDocUnsigned", label: _("Show an alert when a document is waiting to be signed"), type: "check", fullrow: true }, 
+
+                        { id: "alertopencheckout", post_field: "AlertOpenCheckout", label: _("Show an alert when a checkout has been left open"), type: "check", fullrow: true }, 
+                        { id: "alertduedon", post_field: "AlertDueDon", label: _("Show an alert when a payment is due"), type: "check", fullrow: true }, 
+
+                        { id: "alertinform", post_field: "AlertIncomingForm", label: _("Show an alert when an incoming form is waiting to be processed"), type: "check", fullrow: true }, 
+
+                        { id: "alertacunfine", post_field: "AlertACUnfine", label: _("Show an alert when an unpaid fine is overdue"), type: "check", fullrow: true }, 
+                        
+                        { id: "alertendtrial", post_field: "AlertEndTrial", label: _("Show an alert when a trial adoption has reached its end"), type: "check", fullrow: true }, 
+                        
+                        { id: "alertlongrsv", post_field: "AlertLongRsv", label: _("Show an alert when an animal has a long reserve"), type: "check", fullrow: true }, 
+                        { id: "alertnotforadoption", post_field: "AlertNotForAdoption", label: _("Show an alert when an animal is not available for adoption"), type: "check", fullrow: true }, 
+                        
+                        { id: "alerttlover", post_field: "AlertTLOver", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true },
+                        
+                        { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true }
+                        
+                        
                     ]}, 
                     { id: "tab-insurance", title: _("Insurance"), info: _("These numbers are for shelters who have agreements with insurance companies and are given blocks of policy numbers to allocate."), fields: [
                         { id: "autoinsurance", post_field: "UseAutoInsurance", label: _("Use Automatic Insurance Numbers"), type: "check" }, 
@@ -816,7 +874,7 @@ $(function() {
                         { id: "warnmultiplereseves", post_field: "WarnMultipleReserves", label: _("Warn when creating multiple reservations on the same animal"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-onlineforms", title: _("Online Forms"), fields: [
-                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", prelabel: "hcb", halfsize: true, xmarkup: _(" days.") }, 
+                        { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", min: 1, max: 56, prelabel: "hcb", halfsize: true, xmarkup: _(" days.") }, 
                         { id: "deleteonprocess", post_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check", fullrow: true }, 
                         { id: "removeprocessedforms", post_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check", fullrow: true }, 
                         { id: "hashprocessedforms", post_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check", fullrow: true }, 
@@ -824,6 +882,7 @@ $(function() {
                         { id: "spamuacheck", post_field: "OnlineFormSpamUACheck", label: _("Spambot protection: UserAgent check"), type: "check", fullrow: true }, 
                         { id: "spamfirstname", post_field: "OnlineFormSpamFirstnameMixCase", label: _("Spambot protection: Person name mixed case"), type: "check", fullrow: true }, 
                         { id: "spammandatory", post_field: "OnlineFormSpamMandatory", label: _("Spambot protection: Mandatory fields are blank"), type: "check", fullrow: true }, 
+                        { id: "spamurls", post_field: "OnlineFormSpamURLs", label: _("Spambot protection: URLs in any field"), type: "check", fullrow: true }, 
                         { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
@@ -864,7 +923,7 @@ $(function() {
                     { id: "tab-reminders", title: _("Reminder Emails"), info: _("Reminder emails can be automatically sent to groups of people a number of days before or after a key event."), fields: [
                         { type: "raw", markup: '<tr><th colspan="2"></th><th>' + _("Days") + '</th><th>' + _("Template") + '</th></tr>' }, 
                         { id: "adopterfollowup", post_field: "EmailAdopterFollowup", label: _("Send a followup email to new adopters after X days"), type: "check", xmarkup: '</td><td><input data="EmailAdopterFollowupDays" id="adopterfollowupdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailAdopterFollowupTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templates) + '</select>' }, 
-                        { type: "raw", markup: '<tr><td colspan="2">' + _("Only for these species of adopted animal") + '</td><td><select id="adopterfollowupspecies" multiple="multiple" class="asm-bsmselect" data="EmailAdopterFollowupSpecies">' + html.list_to_options(controller.species, "ID", "SPECIESNAME") + '</select></td><td></td></tr>' }, 
+                        { type: "raw", markup: '<tr><td colspan="2">' + _("Only for these species of adopted animal") + '</td><td><select id="adopterfollowupspecies" multiple="multiple" class="asm-selectmulti" data="EmailAdopterFollowupSpecies">' + html.list_to_options(controller.species, "ID", "SPECIESNAME") + '</select></td><td></td></tr>' }, 
                         { id: "vaccinationfollowup", post_field: "EmailVaccinationFollowup", label: _("Send a reminder email to owners X days before a vaccination is due"), type: "check", xmarkup: '</td><td><input data="EmailVaccinationFollowupDays" id="vaccinationfollowupdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailVaccinationFollowupTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templates) + '</select>' }, 
                         { id: "clinicreminder", post_field: "EmailClinicReminder", label: _("Send a reminder email to people with clinic appointments in X days"), type: "check", xmarkup: '</td><td><input data="EmailClinicReminderDays" id="clinicreminderdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailClinicReminderTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templatesclinic) + '</select>' }, 
                         { id: "duepayment", post_field: "EmailDuePayment", label: _("Send a reminder email to people with payments due in X days"), type: "check", xmarkup: '</td><td><input data="EmailDuePaymentDays" id="duepaymentdays" data-min="0" data-max="365" class="asm-textbox asm-numberbox" /></td><td><select data="EmailDuePaymentTemplate" class="asm-selectbox">' + edit_header.template_list_options(controller.templateslicence) + '</select>' }, 
@@ -966,7 +1025,7 @@ $(function() {
                         { id: "watermarkfontfile", post_field: "WatermarkFontFile", label: _("Watermark font"), type: "select", doublesize: true, options: html.list_to_options_array(asm.fontfiles), xmarkup: '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />' }, 
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
-                    ]}
+                    ]},
                 ], {full_width: false}),
                 html.content_footer()
             ].join("\n");
@@ -1048,16 +1107,11 @@ $(function() {
                     else if ($(this).is(".asm-selectbox") || $(this).is(".asm-doubleselectbox")) {
                         $(this).select("value", config.str(d));
                     }
-                    else if ($(this).is(".asm-bsmselect")) {
-                        let ms = config.str(d).split(",");
-                        let bsm = $(this);
-                        $.each(ms, function(i, v) {
-                            bsm.find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
-                        });
-                        $(this).change();
+                    else if ($(this).is(".asm-selectmulti")) {
+                        $(this).selectmulti("value", config.str(d));
                     }
                     else if ($(this).is("textarea")) {
-                        $(this).val( html.decode(config.str(d)));
+                        $(this).textarea("value", config.str(d));
                     }
                     else if ($(this).is(".asm-richtextarea")) {
                         $(this).richtextarea("value", config.str(d));
@@ -1095,6 +1149,11 @@ $(function() {
             }
             if (!asm.smcom) {
                 $(".smcom").hide();
+            }
+          
+            if (!controller.amqpenabled) {
+                $("li[aria-controls='tab-tab-amqp']").hide();
+                $("#tab-tab-amqp").hide();
             }
 
             // Show sample colours and fonts when selected

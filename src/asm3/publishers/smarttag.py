@@ -40,7 +40,7 @@ class SmartTagPublisher(AbstractPublisher):
 
         chipprefix = [ "987", "900139", "900141", "900074" ]
 
-        animals = get_microchip_data(self.dbo, chipprefix, "smarttag", allowintake = False)
+        animals = get_microchip_data(self.dbo, chipprefix, "smarttag")
         if len(animals) == 0:
             self.setLastError("No microchips found to register.")
             return

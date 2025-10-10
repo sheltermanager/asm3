@@ -7,6 +7,7 @@ $(function() {
     const animal_costs = {
 
         lastperson: null,
+        lastanimal: null,
 
         model: function() {
             const dialog = {
@@ -17,6 +18,7 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal", validation: "notzero" },
                     { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
@@ -31,14 +33,39 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    await tableform.dialog_show_edit(dialog, row);
-                    tableform.fields_update_row(dialog.fields, row);
-                    row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                    if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
-                    await tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
-                    tableform.table_update(table);
-                    animal_costs.calculate_costtotals();
-                    tableform.dialog_close();
+                    await tableform.dialog_show_edit(dialog, row, {
+                        onload: function() {
+                            if (controller.animal) {
+                                $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                                $("#animalrow").hide();
+                                animal_costs.costtype_change();
+                            } else if (controller.person) {
+                                $("#person").personchooser("loadbyid", controller.person.ID);
+                                $("#personrow").hide();
+                            } else {
+                                $("#animalrow").show();
+                            }
+                        },
+                        onchange: function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                            if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
+                            if (animal_costs.lastanimal) {
+                                row.ANIMALNAME = animal_costs.lastanimal.ANIMALNAME;
+                                row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
+                                row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
+                            }
+                            if (controller.animal) {
+                                tableform.fields_post(dialog.fields, "mode=update&animal=" + controller.animal.ID + "&costid=" + row.ID, "animal_costs");
+                            } else {
+                                tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
+                            }
+                            tableform.table_update(table);
+                            animal_costs.calculate_costtotals();
+                            tableform.dialog_close();
+                        }
+                    });
+                    
                 },
                 columns: [
                     { field: "COSTTYPENAME", display: _("Type") },
@@ -48,12 +75,27 @@ $(function() {
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
                     { field: "INVOICENUMBER", display: _("Invoice Number") },
+                    { field: "ANIMALID", display: _("Animal"), 
+                        formatter: function(row) {
+                            let h = html.animal_link(row, { noemblems: controller.name == "animal_costs", emblemsright: true });
+                            return h;
+                        },
+                        hideif: function(row) {
+                            // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
                     { field: "OWNERNAME", display: _("Payee"),
                         formatter: function(row) {
                             if (row.OWNERID) {
                                 return html.person_link(row.OWNERID, row.OWNERNAME);
                             }
                             return "";
+                        },
+                        hideif: function() {
+                            if (controller.person) {
+                                return true;
+                            }
                         }
                     },
                     { field: "DESCRIPTION", display: _("Description"), formatter: tableform.format_comments }
@@ -62,18 +104,53 @@ $(function() {
 
             const buttons = [
                 { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
-                    click: async function() { 
-                        await tableform.dialog_show_add(dialog, { onload: animal_costs.costtype_change });
-                        let response = await tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs");
-                        let row = {};
-                        row.ID = response;
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                        if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
-                        controller.rows.push(row);
-                        tableform.table_update(table);
-                        animal_costs.calculate_costtotals();
-                        tableform.dialog_close();
+                    click: function() { 
+                        tableform.dialog_show_add(dialog, {
+                            onload: function() {
+                                if (controller.animal) {
+                                    $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                                    $("#animalrow").hide();
+                                    animal_costs.costtype_change();
+                                } else if (controller.person) {
+                                    $("#person").personchooser("loadbyid", controller.person.ID);
+                                    $("#personrow").hide();
+                                } else {
+                                    $("#animalrow").show();
+                                }
+                            },
+                            onadd: function() {
+                                let response;
+                                if (controller.animal) {
+                                    response = tableform.fields_post(dialog.fields, "mode=create&animal="  + controller.animal.ID, "animal_costs");
+                                } else {
+                                    response = tableform.fields_post(dialog.fields, "mode=create", "animal_costs");
+                                }
+                                let row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                                if (animal_costs.lastperson) { row.OWNERNAME = animal_costs.lastperson.OWNERNAME; }
+                                if (animal_costs.lastanimal) {
+                                    row.ANIMALNAME = animal_costs.lastanimal.ANIMALNAME;
+                                    row.SHELTERCODE = animal_costs.lastanimal.SHELTERCODE;
+                                    row.SHORTCODE = animal_costs.lastanimal.SHORTCODE;
+                                }
+                                let offset = $("#offset").val();
+                                let paiddate = row.COSTPAIDDATE;
+                                let datefloor = common.subtract_days(common.today_no_time(), offset);
+                                if (controller.animal) {
+                                    controller.rows.push(row);
+                                } else if (!paiddate && offset != '0') {
+                                    controller.rows.push(row);
+                                } else if (format.date_js(paiddate, true) >= datefloor ) {
+                                    controller.rows.push(row);
+                                }
+                                tableform.table_update(table);
+                                animal_costs.calculate_costtotals();
+                                tableform.dialog_close();
+                            }
+                        });
+                        
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "cdad",
@@ -95,6 +172,19 @@ $(function() {
                     '<span id="costonshelter"></span>',
                     '</span>'
                     ].join("\n")
+                },
+                { id: "offset", type: "dropdownfilter", 
+                    hideif: function() {
+                        // Don't show on animal records
+                        if (controller.animal || controller.person) {return true;}
+                    },
+                    options: [ 
+                        "7|" + _("Paid in last week"),
+                        "31|" + _("Paid in last month"),
+                        "0|" + _("Unpaid costs") ],
+                    click: function(selval) {
+                        common.route("cost_book" + "?offset=" + selval, true);
+                    },
                 }
             ];
 
@@ -107,29 +197,36 @@ $(function() {
             this.model();
             let s = "";
             s += tableform.dialog_render(this.dialog);
-            s += edit_header.animal_edit_header(controller.animal, "costs", controller.tabcounts);
+            if (controller.animal) {
+                s += edit_header.animal_edit_header(controller.animal, "costs", controller.tabcounts);
+            } else if (controller.person) {
+                s += edit_header.person_edit_header(controller.person, "costs", controller.tabcounts);
+            } else {
+                s += html.content_header(_("Cost Book"));
+            }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
-            s += [
-                '<div id="asm-cost-footer">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                '<span id="costtotals"></span>',
-                '</div>',
-                '</div>'
-            ].join("\n");
-            s += html.content_footer();
+            if (controller.animal) {
+                s += [
+                    '<div id="asm-cost-footer">',
+                    '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
+                    '<p><span class="ui-icon ui-icon-info"></span>',
+                    '<span id="costtotals"></span>',
+                    '</div>',
+                    '</div>'
+                ].join("\n");
+                s += html.content_footer();
+            }
             return s;
         },
 
         bind: function() {
-            $(".asm-tabbar").asmtabs();
+            
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
-                console.log(rec);
                 animal_costs.lastperson = rec;
             });
 
@@ -139,6 +236,14 @@ $(function() {
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
                 animal_costs.lastperson = rec;
+            });
+
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+                animal_costs.lastanimal = rec;
+            });
+
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
+                animal_costs.lastanimal = rec;
             });
             
             $("#type").change(animal_costs.costtype_change);
@@ -155,7 +260,7 @@ $(function() {
             $("#button-savecost").button("disable");
 
             // If the animal isn't on the shelter, hide running board
-            if (controller.animal.ARCHIVED == 1) {
+            if (!controller.animal || controller.animal.ARCHIVED == 1) {
                 $("#onshelterboard").hide();
             }
 
@@ -168,54 +273,64 @@ $(function() {
         },
 
         sync: function() {
-            $("#dailyboardingcost").currency("value", controller.animal.DAILYBOARDINGCOST);
+            // If an offset is given in the querystring, update the select
+            if (common.querystring_param("offset")) {
+                $("#offset").select("value", common.querystring_param("offset"));
+            }
+            if (controller.animal) {
+                $("#dailyboardingcost").currency("value", controller.animal.DAILYBOARDINGCOST);
+            }
             animal_costs.recalc_daysonshelter();
             animal_costs.calculate_costtotals();
         },
 
         calculate_costtotals: function() {
-            let s = _("Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}");
-            let bc = $("#dailyboardingcost").currency("value");
-            let dons = format.to_int(controller.animal.DAYSONSHELTER);
-            let tb = bc * dons;
-            let tv = format.to_int(controller.costtotals.TV);
-            let tt = format.to_int(controller.costtotals.TT);
-            let tm = format.to_int(controller.costtotals.TM);
-            let tr = format.to_int(controller.costtotals.TR);
-            let tc = 0;
-            let td = format.to_int(controller.costtotals.TD);
-            // Calculate tc from our current cost rows
-            $.each(controller.rows, function(i, v) {
-                tc += format.to_int(v.COSTAMOUNT);
-            });
-            // Total without boarding costs
-            let totc = tv + tt + tm + tr + tc;
-            // Only add current boarding cost if the animal is on the shelter
-            if (controller.animal.ARCHIVED == 0) { totc += tb; }
-            let bal = td - totc;
-            $("#costtotals").html(common.substitute(s,
-                { 
-                    "0": format.currency(tv), 
-                    "1": format.currency(tt), 
-                    "2": format.currency(tm),
-                    "3": format.currency(tr),
-                    "4": format.currency(tc),
-                    "5": "<b>" + format.currency(totc) + "</b><br />",
-                    "6": format.currency(td),
-                    "7": "<b>" + format.currency(bal) + "</b>"
-                }));
+            if (controller.animal) {
+                let s = _("Vaccinations: {0}, Tests: {1}, Medical Treatments: {2}, Transport: {3}, Costs: {4}, Total Costs: {5} Total Payments: {6}, Balance: {7}");
+                let bc = $("#dailyboardingcost").currency("value");
+                let dons = format.to_int(controller.animal.DAYSONSHELTER);
+                let tb = bc * dons;
+                let tv = format.to_int(controller.costtotals.TV);
+                let tt = format.to_int(controller.costtotals.TT);
+                let tm = format.to_int(controller.costtotals.TM);
+                let tr = format.to_int(controller.costtotals.TR);
+                let tc = 0;
+                let td = format.to_int(controller.costtotals.TD);
+                // Calculate tc from our current cost rows
+                $.each(controller.rows, function(i, v) {
+                    tc += format.to_int(v.COSTAMOUNT);
+                });
+                // Total without boarding costs
+                let totc = tv + tt + tm + tr + tc;
+                // Only add current boarding cost if the animal is on the shelter
+                if (controller.animal.ARCHIVED == 0) { totc += tb; }
+                let bal = td - totc;
+                $("#costtotals").html(common.substitute(s,
+                    { 
+                        "0": format.currency(tv), 
+                        "1": format.currency(tt), 
+                        "2": format.currency(tm),
+                        "3": format.currency(tr),
+                        "4": format.currency(tc),
+                        "5": "<b>" + format.currency(totc) + "</b><br />",
+                        "6": format.currency(td),
+                        "7": "<b>" + format.currency(bal) + "</b>"
+                    }));
+            }
         },
 
         recalc_daysonshelter: function() {
-            let days = controller.animal.DAYSONSHELTER;
-            let cost = format.currency_to_float($("#dailyboardingcost").val());
-            let costrounded = format.float_to_dp(cost, asm.currencydp);
-            let tot = (days * costrounded) * 100;
-            let s = _("On shelter for {0} days. Total cost: {1}");
-            s = s.replace("{0}", "<b>" + days + "</b>");
-            s = s.replace("{1}", "<b>" + format.currency(tot) + "</b>");
-            $("#costonshelter").html(s);
-            $("#button-savecost").button("enable");
+            if (controller.animal) {
+                let days = controller.animal.DAYSONSHELTER;
+                let cost = format.currency_to_float($("#dailyboardingcost").val());
+                let costrounded = format.float_to_dp(cost, asm.currencydp);
+                let tot = (days * costrounded) * 100;
+                let s = _("On shelter for {0} days. Total cost: {1}");
+                s = s.replace("{0}", "<b>" + days + "</b>");
+                s = s.replace("{1}", "<b>" + format.currency(tot) + "</b>");
+                $("#costonshelter").html(s);
+                $("#button-savecost").button("enable");
+            }
         },
 
         save_boarding_cost: function() {
@@ -230,19 +345,31 @@ $(function() {
         },
 
         destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+            animal_costs.lastanimal = null;
+            animal_costs.lastperson = null;
             tableform.dialog_destroy();
         },
 
         name: "animal_costs",
-        animation: "formtab",
-        title:  function() { return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
-            0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
-            3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); },
+        animation: function() { return controller.name == "cost_book" ? "book" : "formtab"; },
+        title: function() {
+            if (controller.animal) {
+                return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE });
+            } else if (controller.person) {
+                return controller.person.OWNERNAME;
+            } else {
+                return _("Cost Book");
+            }
+        },
 
         routes: {
-            "animal_costs": function() {
-                common.module_loadandstart("animal_costs", "animal_costs?id=" + this.qs.id);
-            }
+            "animal_costs": function() { common.module_loadandstart("animal_costs", "animal_costs?id=" + this.qs.id);},
+            "person_costs": function() { common.module_loadandstart("animal_costs", "person_costs?id=" + this.qs.id);},
+            "cost_book": function() { common.module_loadandstart("animal_costs", "cost_book?id=" + this.qs.id);}
         }
 
     };

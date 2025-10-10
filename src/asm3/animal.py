@@ -1563,6 +1563,9 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
     alertneuter = asm3.configuration.alert_species_neuter(dbo)
     alertnevervacc = asm3.configuration.alert_species_never_vacc(dbo)
     alertrabies = asm3.configuration.alert_species_rabies(dbo)
+    alertrsvhck = asm3.configuration.alert_species_rsv_hck(dbo)
+    alertlngterm = asm3.configuration.alert_species_lng_term(dbo)
+
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (Archived = 0 OR ActiveMovementType = 2)"
     sql = "SELECT " \
@@ -1593,8 +1596,9 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM clinicappointment WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s) AS dueclinic," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
             "WHERE Urgency = 1 AND DateRemovedFromList Is Null) AS urgentwl," \
-        "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID WHERE " \
-            "MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0) AS rsvhck," \
+        "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID  " \
+            "INNER JOIN animal ON adoption.AnimalID = animal.ID " \
+            "WHERE MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0 AND SpeciesID IN ( %(alertrsvhck)s )) AS rsvhck," \
         "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE DateDue <= %(today)s AND Date Is Null) AS duedon," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID = adoption.AnimalID WHERE " \
             "DeceasedDate Is Null AND IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s) AS endtrial," \
@@ -1632,14 +1636,15 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM product WHERE (SELECT SUM(stocklevel.Balance) FROM stocklevel WHERE stocklevel.ProductID = product.ID) <= product.GlobalMinimum) AS globallows, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s) AS lngterm, " \
+            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
                 "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, 
                 "alertchip": alertchip, "longterm": longterm, "alertneuter": alertneuter, 
-                "alertnevervacc": alertnevervacc, "alertrabies": alertrabies }
+                "alertnevervacc": alertnevervacc, "alertrabies": alertrabies,
+                "alertrsvhck": alertrsvhck, "alertlngterm": alertlngterm }
     return dbo.query_cache(sql, age=age)
 
 def get_overview(dbo: Database, age: int = 120) -> Results:
@@ -2584,6 +2589,23 @@ def get_cost_totals(dbo: Database, animalid: int) -> ResultRow:
         "FROM animal WHERE ID = ?"
     return dbo.first_row( dbo.query(q, [animalid]) )
 
+def get_costs_for_payee(dbo: Database, personid: int, sort: int = ASCENDING) -> Results:
+    """
+    Returns cost records for the given person:
+    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, ANIMALID, INVOICENUMBER
+    """
+    sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
+        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate, a.AnimalID, an.AnimalName, an.ShelterCode, an.ShortCode, a.InvoiceNumber, o.OwnerName " \
+        "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
+        "INNER JOIN animal an ON a.AnimalID = an.ID " \
+        "INNER JOIN owner o ON a.OwnerID = o.ID " \
+        "WHERE a.OwnerID = ?"
+    if sort == ASCENDING:
+        sql += " ORDER BY a.CostDate"
+    else:
+        sql += " ORDER BY a.CostDate DESC"
+    return dbo.query(sql, [personid])
+
 def get_diets(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     """
     Returns diet records for the given animal:
@@ -2908,6 +2930,7 @@ def update_active_litters(dbo: Database) -> None:
         if newremaining != remaining:
             dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE ID=?", (newremaining, a.id))
             asm3.al.debug("litter '%s' change, setting remaining to %d." % (a.acceptancenumber, int(newremaining)), "animal.update_active_litters", dbo)
+    return "OK %d" % len(active)
 
 def get_active_litters(dbo: Database, speciesid: int = -1) -> Results:
     """
@@ -4535,6 +4558,7 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         namid = dbo.insert("animalmedical", {
             "AnimalID":             animalid,
             "MedicalProfileID":     am.medicalprofileid,
+            "MedicalTypeID":        am.medicaltypeid,
             "TreatmentName":        am.treatmentname,
             "StartDate":            newdate,
             "Dosage":               am.dosage,
@@ -4872,7 +4896,7 @@ def insert_cost_from_form(dbo: Database, username: str, post: PostedData) -> int
     if post.date("costdate") is None:
         raise asm3.utils.ASMValidationError(_("Cost date must be a valid date", l))
     ncostid = dbo.insert("animalcost", {
-        "AnimalID":         post.integer("animalid"),
+        "AnimalID":         post.integer("animal"),
         "CostTypeID":       post.integer("type"),
         "CostDate":         post.date("costdate"),
         "CostPaidDate":     post.date("costpaid"),
@@ -4890,6 +4914,7 @@ def update_cost_from_form(dbo: Database, username: str, post: PostedData) -> Non
     """
     costid = post.integer("costid")
     dbo.update("animalcost", costid, {
+        "AnimalID":         post.integer("animal"),
         "CostTypeID":       post.integer("type"),
         "CostDate":         post.date("costdate"),
         "CostPaidDate":     post.date("costpaid"),

@@ -178,6 +178,17 @@ grouping name. By default, anything under 6 months (0.5 years) is classed as a
 Baby, anything under 2 years is Young Adult, under 7 years is Adult and over
 that is Senior. 
 
+AMQP
+-------------------------------
+
+The system supports emitting event messages for audit log inserts using Kombu. When an audit log record is inserted, an event message is sent to an external AMQP-compatible message broker, such as RabbitMQ or Azure Service Bus Queue. This is done asynchronously, off the primary thread, to avoid blocking the UI or main application processing.
+
+* Enable AMQP publishing by setting `enable_amqp` to `true` in your ASM configuration file
+* Ensure you have an AMQP-compatible broker available (e.g., RabbitMQ, Azure Service Bus).
+* Update your configuration to provide the appropriate connection string and queue name.
+* Kombu is required as a dependency. Install via pip if necessary: pip install kombu
+
+
 Animal Codes
 ------------
 
@@ -995,7 +1006,12 @@ the preview column and deleted in one click using the "Delete Spam" button.
   forms that contain blanks in mandatory fields as spam.
 
 * Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
-  and lower case letters in the applicants name fields and marks these as spam.
+  and lower case letters in the applicants name fields and marks these as spam. It
+  will also check for email addresses or URLs in name fields.
+
+* Spambot protection: URLs in any field: It's highly unusual for forms to need the
+  user to include URLs - something that spammers do a lot. This will tag any
+  form as spam if there's a link found (http: or https:) in any form field.
 
 * Spambot protection: Zipcode / Postcode contains numbers: Checks that the Zipcode / 
   Postcode field contains numbers, marks forms as spam where no number is present.

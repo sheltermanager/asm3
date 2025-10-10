@@ -69,7 +69,6 @@ $(function() {
 
         bind: function() {
             $("#table-links").table();
-            $(".asm-tabbar").asmtabs();
         },
 
         name: "person_links",

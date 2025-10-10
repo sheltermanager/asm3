@@ -1,7 +1,7 @@
 
 import asm3.al
 
-from asm3.sitedefs import DB_RETAIN_AUDIT_DAYS
+from asm3.sitedefs import DB_RETAIN_AUDIT_DAYS, AMQP_ENABLED
 from asm3.typehints import Database, List, ResultRow, Results
 
 ADD = 0
@@ -211,15 +211,28 @@ def action(dbo: Database, action: str, username: str, tablename: str, linkid: in
     if len(description) > 16384:
         description = description[0:16384]
 
-    dbo.insert("audittrail", {
-        "Action":       action,
-        "AuditDate":    dbo.now(),
-        "UserName":     username,
-        "TableName":    tablename,
-        "LinkID":       linkid,
-        "ParentLinks":  parentlinks,
-        "Description":  description
-    }, generateID=False, writeAudit=False)
+    audit_record = {
+        "Action": action,
+        "AuditDate": dbo.now(),
+        "UserName": username,
+        "TableName": tablename,
+        "LinkID": linkid,
+        "ParentLinks": parentlinks,
+        "Description": description,
+    }
+
+    if AMQP_ENABLED:
+        # Route audit record to AMQP enqueue method
+        import asm3.amqp
+        asm3.amqp.send_message(dbo, audit_record)
+
+    dbo.insert(
+        "audittrail",
+        audit_record,
+        generateID=False,
+        writeAudit=False,
+    )
+
 
 def clean(dbo: Database) -> None:
     """

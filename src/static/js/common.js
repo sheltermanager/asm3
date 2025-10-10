@@ -273,10 +273,20 @@ const common = {
     },
 
     /**
+     * Returns a clone of object o
+     * If deep is true, does a deep rather than shallow copy
+     */
+    clone_object: function(o, deep) {
+        if (deep) { return $.extend(true, {}, o); } // NOTE: deep has to be either true or not present, false is not valid
+        return $.extend({}, o);
+    },
+
+    /**
      * Copies all properties from source to target, returning target
      * Basically Object.assign
      */
     copy_object: function(target, source) {
+        if (source === undefined) { return target; }
         for (let key in source) {
             if (source.hasOwnProperty(key)) {
                 target[key] = source[key];
@@ -492,15 +502,6 @@ const common = {
 
         // Catch all URL clicks to see if we can use client side routing to handle them.
         $(document).on("click", "a", function(e) {
-            
-            // If dirty validation is active, check if we're
-            // ok to leave.
-            if (validate.active) {
-                if (!validate.a_click_handler(e, $(this).attr("href"))) {
-                    return false;
-                }
-            }
-            
             // If CTRL is held down, do what the browser would normally do
             // (open a new window) and allow the navigation
             if (e.ctrlKey) {
@@ -511,6 +512,14 @@ const common = {
             // use its normal behaviour to open in a new window
             if ($(this).attr("target")) {
                 return true;
+            }
+
+            // If dirty validation is active, check if we're
+            // ok to leave.
+            if (validate.active) {
+                if (!validate.a_click_handler(e, $(this).attr("href"))) {
+                    return false;
+                }
             }
 
             // If the clicked anchor goes to a URL we can handle with the
@@ -579,7 +588,8 @@ const common = {
      */
     module_loadandstart: function(modulename, uri) {
         
-        // do we already have one running? If so, try to unload it first
+        // do we already have one running? If so, try to unload it first so
+        // that the call to destroy() can cancel it if necessary
         if (common.module_unload()) { return; }
 
         // add a json parameter to only retrieve the controller json document
@@ -650,6 +660,7 @@ const common = {
         if (common.module_unload()) { return; }
 
         var o = common.modules[modulename];
+        $("#asm-body-container .asm-widget").destroy_asm_widgets(); // unload any widgets
         $("#asm-body-container").empty(); 
         if (o.render) { 
             try {
@@ -1046,65 +1057,6 @@ const common = {
         if (common.browser_is.mobile) {
             jQuery.fx.off = true;
         }
-        // textarea zoom dialog
-        try {
-            var tzb = {};
-            tzb[_("Change")] = function() {
-                // Copy edited value back to the field
-                var fid = $("#textarea-zoom-id").val();
-                $("#" + fid).val($("#textarea-zoom-area").val());
-                $("#dialog-textarea-zoom").dialog("close");
-                try { validate.dirty(true); } catch(err) {}
-                $("#" + fid).focus();
-            };
-            tzb[_("Cancel")] = function() {
-                $("#dialog-textarea-zoom").dialog("close");
-            };
-            $("#dialog-textarea-zoom").dialog({
-                autoOpen: false,
-                height: 640,
-                width: 800,
-                modal: true,
-                show: dlgfx.zoom_show,
-                hide: dlgfx.zoom_hide,
-                buttons: tzb
-            });
-        }
-        catch(err) {}
-        // Get the date format specified by the backend for use by datepicker
-        var df = "dd/mm/yy";
-        if (asm.dateformat) {
-            df = asm.dateformat.replace("%Y", "yy");
-            df = df.replace("%m", "mm");
-            df = df.replace("%d", "dd");
-        }
-        // Set the datepicker to use ASM's translations and localisation settings
-        var asmregion = {
-            renderer: $.ui.datepicker.defaultRenderer,
-            monthNames: [ _("January"), _("February"),_("March"),_("April"),_("May"),_("June"),
-            _("July"),_("August"),_("September"),_("October"),_("November"),_("December")],
-            monthNamesShort: [_("Jan"), _("Feb"), _("Mar"), _("Apr"), _("May"), _("Jun"),
-            _("Jul"), _("Aug"), _("Sep"), _("Oct"), _("Nov"), _("Dec")],
-            dayNames: [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")],
-            dayNamesShort: [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")],
-            dayNamesMin: [_("Su"),_("Mo"),_("Tu"),_("We"),_("Th"),_("Fr"),_("Sa")],
-            firstDay: config.integer("FirstDayOfWeek"),
-            dateFormat: df,
-            prevText: _("Previous"), prevStatus: "",
-            prevJumpText: "&#x3c;&#x3c;", prevJumpStatus: "",
-            nextText: _("Next"), nextStatus: "",
-            nextJumpText: "&#x3e;&#x3e;", nextJumpStatus: "",
-            currentText: _("Current"), currentStatus: "",
-            todayText: _("Today"), todayStatus: "",
-            clearText: _("Clear"), clearStatus: "",
-            closeText: _("Done"), closeStatus: "",
-            yearStatus: "", monthStatus: "",
-            weekText: _("Wk"), weekStatus: "",
-            dayStatus: "DD d MM",
-            defaultStatus: "",
-            isRTL: (asm.locale == "ar" || asm.locale == "he")
-        };
-        $.datepicker.setDefaults(asmregion);
         // If we're using an RTL language, load the RTL stylesheet
         if (asm.locale == "ar" || asm.locale == "he") {
             if ($("#rtlcss").length == 0) { // Only add the link if it isn't already there
@@ -1114,6 +1066,7 @@ const common = {
         }
         // Create any form controls based on classes used
         // Choosers are initialised first as they inject more widgets into the DOM
+        $(".asm-accordion").asmaccordion();
         $(".asm-animalchooser").animalchooser();
         $(".asm-animalchoosermulti").animalchoosermulti();
         $(".asm-personchooser").personchooser();
@@ -1129,26 +1082,15 @@ const common = {
         $(".asm-currencybox").currency();
         $(".asm-phone").phone();
         $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();
-        $(".asm-htmleditor").htmleditor();
-        $(".asm-sqleditor").sqleditor();
+        $(".asm-selectmulti").selectmulti();
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();
         $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
         $(".asm-richtextarea").richtextarea();
+        $(".asm-htmleditor").htmleditor();
+        $(".asm-sqleditor").sqleditor();
         $(".asm-table").table();
-        //$(".asm-tabs").tabs({ show: "slideDown", hide: "slideUp" });
-        $(".asm-tabs").tabs();
-        if (_ && !$(".asm-bsmselect").attr("title")) {
-            $(".asm-bsmselect").attr("title", _("Select"));
-        }
-        $(".asm-bsmselect").asmSelect({
-            animate: true,
-            sortable: true,
-            removeLabel: '<strong>&times;</strong>',
-            listClass: 'bsmList-custom',  
-            listItemClass: 'bsmListItem-custom',
-            listItemLabelClass: 'bsmListItemLabel-custom',
-            removeClass: 'bsmListItemRemove-custom'
-        });
+        $(".asm-tabbar").asmtabbar();
+        $(".asm-tabs").asmtabs();
         // Add extra control styles
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox .asm-selectbox, .asm-richtextarea, .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").each(function() {
             $(this).addClass("controlshadow").addClass("controlborder");
@@ -1239,13 +1181,10 @@ const common = {
     },
 
     /** Destroys a JQuery widget by calling its destroy method.
-     * Infers type from selector if it is not supplied:
-     *     animal = animalchooser
-     *     animals = animalschoosermulti
-     *     owner/person = personchooser
-     *     dialog- = dialog
+     * Guesses type from the selector if it is not supplied:
+     * if remove is true, the selector/node is removed from the DOM
      */
-    widget_destroy: function(selector, type, noremove) {
+    widget_destroy: function(selector, type, remove = true) {
         var types = {
             "#animals": "animalchoosermulti",
             "#animal": "animalchooser",
@@ -1268,40 +1207,36 @@ const common = {
         }
         try {
             if (type == "animalchooser") { 
-                $(selector).animalchooser("destroy").remove();
+                $(selector).animalchooser("destroy");
             }
             else if (type == "animalchoosermulti") {
-                $(selector).animalchoosermulti("destroy").remove();
+                $(selector).animalchoosermulti("destroy");
             }
             else if (type == "createpayment") { 
-                $(selector).createpayment("destroy").remove();
+                $(selector).createpayment("destroy");
             }
             else if (type == "emailform") {
-                $(selector).emailform("destroy").remove();
+                $(selector).emailform("destroy");
             }
             else if (type == "htmleditor") {
-                $(selector).htmleditor("destroy").remove();
+                $(selector).htmleditor("destroy");
             }
             else if (type == "personchooser") {
-                $(selector).personchooser("destroy").remove();
+                $(selector).personchooser("destroy");
             }
             else if (type == "richtextarea") {
-                $(selector).richtextarea("destroy").remove();
+                $(selector).richtextarea("destroy");
             }
             else if (type == "sqleditor") {
-                $(selector).sqleditor("destroy").remove();
+                $(selector).sqleditor("destroy");
             }
             else if (type == "dialog") {
-                if (noremove) {
-                    $(selector).dialog("destroy");
-                }
-                else {
-                    $(selector).dialog("destroy").remove();
-                }
+                $(selector).dialog("destroy");
             }
             else {
                 log.error("widget_destroy: invalid type '" + type + "' for selector '" + selector + "'");
             }
+            if (remove) { $(selector).remove(); }
         }
         catch (ex) {
             log.trace("widget_destroy: " + selector + " " + type + ",\n" + ex);

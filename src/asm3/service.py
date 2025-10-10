@@ -112,7 +112,8 @@ CACHE_PROTECT_METHODS = {
     "xml_stray_animals": [ "sensitive" ],
     "rss_timeline": [],
     "online_form_html": [ "formid" ],
-    "online_form_json": [ "formid" ]
+    "online_form_json": [ "formid" ],
+    "online_form_js": [ "formid" ]
     # "online_form_post" - write method
     # "sign_document" - write method
     # "upload_animal_image" - write method
@@ -276,7 +277,11 @@ def checkout_adoption_page(dbo: Database, token: str) -> str:
     # Generate the adoption paperwork if it has not been generated already
     if co["mediaid"] == 0:
         dtid = co["templateid"]
-        content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, co["movementid"], "checkout")
+        # If it's available, we use the user account of the person who kicked off the checkout 
+        # when generating the paperwork, so tokens like UserSignature work correctly.
+        username = "checkout"
+        if "username" in co: username = co["username"] 
+        content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, co["movementid"], username)
         # Save the doc with the person and animal, record the person copy for signing
         tempname = asm3.template.get_document_template_name(dbo, dtid)
         tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, co["animalid"]), 
@@ -861,6 +866,11 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if formid == 0:
             raise asm3.utils.ASMError("method online_form_html requires a valid formid")
         return set_cached_response(cache_key, account, "text/html; charset=utf-8", 1800, 1800, asm3.onlineform.get_onlineform_html(dbo, formid))
+    
+    elif method == "online_form_js":
+        if formid == 0:
+            raise asm3.utils.ASMError("method online_form_js requires a valid formid")
+        return set_cached_response(cache_key, account, "application/javascript", 1800, 1800, asm3.onlineform.get_onlineform_js(dbo, formid))
 
     elif method == "online_form_json":
         if formid == 0:

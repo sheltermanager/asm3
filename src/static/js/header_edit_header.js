@@ -575,7 +575,7 @@ edit_header = {
      * Returns the header for any of the person pages, with the thumbnail image, info and tabs
      * Since the content will be contained in a tab, the caller needs to add a div
      * p: A person row from get_person
-     * selected: The name of the selected tab (person, donations, vouchers, media, diary, movements, links, log)
+     * selected: The name of the selected tab (person, costs, donations, vouchers, media, diary, movements, links, log)
      */
     person_edit_header: function(p, selected, counts) {
         const check_display_icon = function(key, iconname) {
@@ -640,6 +640,7 @@ edit_header = {
             [ "traploan", "person_traploan", _("Equipment Loans"), "traploan", "vatl" ],
             [ "boarding", "person_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "person_clinic", _("Clinic"), "health", "vcl" ],
+            [ "costs", "person_costs", _("Costs"), "cost", "cvad" ],
             [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
             [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
             [ "media", "person_media", _("Media"), "media", "vam" ],
@@ -652,6 +653,7 @@ edit_header = {
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
             if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "citation" || key == "licence" || key == "investigation") && config.bool("DisableAnimalControl")) { return; }
+            if (key == "costs" && (!controller.person.ISVET && !controller.person.ISSUPPLIER)) { return; }
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "traploan") && config.bool("DisableTrapLoan")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
@@ -822,6 +824,36 @@ edit_header = {
         return s.join("\n");
     },
 
+    // List of reports that contain '$ask animal$'
+    animal_report_list: function(reports, animalid) {
+        var s = ['<ul class="asm-menu-list">'];
+        var lastcategory = "";
+        $.each(reports, function(i, r) {
+            if (r.CATEGORY != lastcategory) {
+                s.push('<li class="asm-menu-category">' + r.CATEGORY + '</li>');
+                lastcategory = r.CATEGORY;
+            }
+            s.push('<li class="asm-menu-item"><a target="_blank" class="templatelink" data="' + r.ID + '" href="/report?id=' + r.ID + '&hascriteria=true&ASK1=' + animalid + '">' + r.TITLE + '</a></li>');
+        });
+        s.push('</ul>');
+        return s.join("\n");
+    },
+
+    // List of reports that contain '$ask person$'
+    person_report_list: function(reports, personid) {
+        var s = ['<ul class="asm-menu-list">'];
+        var lastcategory = "";
+        $.each(reports, function(i, r) {
+            if (r.CATEGORY != lastcategory) {
+                s.push('<li class="asm-menu-category">' + r.CATEGORY + '</li>');
+                lastcategory = r.CATEGORY;
+            }
+            s.push('<li class="asm-menu-item"><a target="_blank" class="templatelink" data="' + r.ID + '" href="/report?id=' + r.ID + '&hascriteria=true&ASK1=' + personid + '">' + r.TITLE + '</a></li>');
+        });
+        s.push('</ul>');
+        return s.join("\n");
+    },
+
     /**
      * Returns option tags from a list of HTML document templates.
      * The values are the template IDs
@@ -869,9 +901,9 @@ edit_header = {
             removal = "<tr><td>" + _("Removed") + ":</td><td><b>" + format.date(a.DATEREMOVEDFROMLIST) + "</b></td></tr>";
         }
         var h = [
-            '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
+            '<div class="asm-banner ' + hclass + ' ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="waitinglistid" value="' + a.WLID + '" />',
-            '<div class="row ' + hclass + '">',
+            '<div class="row">',
             '<div class="col-sm">',
             '<table><tr>',
             '<td>',

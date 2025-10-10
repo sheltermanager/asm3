@@ -46,7 +46,7 @@ def is_standalone_js(filename: str) -> bool:
     """
     Returns true if this is a standalone js file
     """
-    standalone = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_extra.js", "report_toolbar.js" ]
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", "onlineform_embed.js", "onlineform_extra.js", "report_toolbar.js" ]
     if filename in standalone: return True
     if filename.startswith("mobile"): return True
     if filename.startswith("service"): return True
@@ -66,9 +66,9 @@ def asm_script_tags(path: str) -> str:
     """
     Returns separate script tags for all ASM javascript files.
     """
-    jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_barcode.js", "common_microchip.js", 
-        "header.js", "header_additional.js", "header_edit_header.js" ]
+    jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_widgets_comp.js", 
+        "common_animalchooser.js", "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_barcode.js", 
+        "common_microchip.js", "header.js", "header_additional.js", "header_edit_header.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     # or those we should exclude because they are standalone files
@@ -615,6 +615,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
         )),
         ("", "financial", _("Financial", l), (
             ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
+            ( asm3.users.VIEW_COST, "", "tagcostbook", "cost_book", "asm-icon-cost", _("Cost book", l) ),
             ( asm3.users.VIEW_VOUCHER, "", "", "voucher", "asm-icon-blank", _("Voucher book", l) ),
             ( asm3.users.VIEW_BOARDING, "", "tagboarding", "--cat", "", _("Boarding", l) ),
             ( asm3.users.VIEW_BOARDING, "", "tagboarding", "boarding_availability", "asm-icon-blank", _("Boarding availability", l) ),

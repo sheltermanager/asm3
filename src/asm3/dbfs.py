@@ -8,12 +8,12 @@ from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER
 from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL, DBFS_S3_BACKUP_FOLDER
 from asm3.sitedefs import DBFS_S3_MIGRATE_BUCKET, DBFS_S3_MIGRATE_ACCESS_KEY_ID, DBFS_S3_MIGRATE_SECRET_ACCESS_KEY, DBFS_S3_MIGRATE_ENDPOINT_URL
 from asm3.sitedefs import DBFS_S3_BACKUP_BUCKET, DBFS_S3_BACKUP_ACCESS_KEY_ID, DBFS_S3_BACKUP_SECRET_ACCESS_KEY, DBFS_S3_BACKUP_ENDPOINT_URL
-from asm3.typehints import Any, Database, List, Results, S3Client
+from asm3.typehints import Database, List, Results, S3Client
 
 import mimetypes
 import os, sys, threading, time
 
-import web062 as web
+import web070 as web
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
@@ -278,8 +278,8 @@ class S3Storage(DBFSStorage):
         return "s3:"
 
 class DBFSError(web.HTTPError):
-    """ 
-    Custom error thrown by dbfs modules 
+    """
+    Custom error thrown by DBFS functions
     """
     msg = ""
     def __init__(self, msg: str) -> None:
@@ -287,6 +287,7 @@ class DBFSError(web.HTTPError):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>DBFS Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
 def create_path(dbo: Database, path: str, name: str) -> int:
@@ -558,15 +559,14 @@ def get_report_images(dbo: Database) -> Results:
         "(LOWER(Name) Like '%.jpg' OR LOWER(Name) Like '%.png' OR LOWER(Name) Like '%.gif') " \
         "AND Path Like '/report%' ORDER BY Path, Name")
 
-def upload_report_image(dbo: Database, fc: Any) -> None:
+def upload_report_image(dbo: Database, filename: str, filedata: bytes) -> None:
     """
     Attaches an image from a form filechooser object and puts
     it in the /reports directory. 
     """
     ext = ""
-    ext = fc.filename
-    filename = asm3.utils.filename_only(fc.filename)
-    filedata = fc.value
+    ext = filename
+    filename = asm3.utils.filename_only(filename)
     ext = ext[ext.rfind("."):].lower()
     ispicture = ext == ".jpg" or ext == ".jpeg" or ext == ".png" or ext == ".gif"
     if not ispicture:

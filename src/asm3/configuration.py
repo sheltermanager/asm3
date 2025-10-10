@@ -108,10 +108,42 @@ DEFAULTS = {
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
     "AKCRegisterAll": "No",
+    "AlertACFoll": "Yes",
+    "AlertACUncomp": "Yes",
+    "AlertACUndisp": "Yes",
+    "AlertACUnfine": "Yes",
+    "AlertBoardInToday": "Yes",
+    "AlertBoardOutToday": "Yes",
+    "AlertDocSigned": "Yes",
+    "AlertDocUnsigned": "Yes",
+    "AlertEndTrial": "Yes",
     "AlertSpeciesMicrochip": "1,2",
+    "AlertDueClinic": "Yes",
+    "AlertDueDon": "Yes",
+    "AlertDueMed": "Yes",
+    "AlertDueTest": "Yes",
+    "AlertDueVacc": "Yes",
+    "AlertExpVacc": "Yes",
+    "AlertGlobalLows": "1,2", 
+    "AlertHoldToday": "Yes",
+    "AlertIncomingForm": "Yes",
+    "AlertLongRsv": "Yes",
+    "AlertLookingFor": "Yes", 
+    "AlertLostandFound": "Yes",
+    "AlertNotForAdoption": "Yes", 
+    "AlertPublish": "Yes",
+    "AlertSpeciesLongTerm": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesNeverVacc": "1,2",
+    "AlertOpenCheckout": "Yes",
     "AlertSpeciesRabies": "1,2",
+    "AlertSpeciesRsvHck": "1,2",
+    "AlertSTExpired": "Yes",
+    "AlertSTExpSoon": "Yes",
+    "AlertSTLowBal": "Yes",
+    "AlertTLOver": "Yes",
+    "AlertTRNoDrv": "Yes",
+    "AlertUrgentWL": "Yes",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
@@ -269,6 +301,7 @@ DEFAULTS = {
     "InactivityTimeout": "20", 
     "IncludeIncompleteMedicalDoc": "Yes",
     "IncludeOffShelterMedical": "No",
+    "AMQPEnabled": "No",  
     "Locale": "en",
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",
@@ -312,6 +345,7 @@ DEFAULTS = {
     "OnlineFormSpamFirstnameMixCase": "Yes",
     "OnlineFormSpamMandatory": "No",
     "OnlineFormSpamPostcode": "No",
+    "OnlineFormSpamURLs": "No",
     "OnlineFormDeleteOnProcess": "No",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
@@ -669,6 +703,11 @@ def akc_enrollmentsourceid(dbo: Database) -> str:
 def akc_register_all(dbo: Database) -> bool:
     return cboolean(dbo, "AKCRegisterAll")
 
+def alert_species_lng_term(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSpeciesLongTerm", DEFAULTS["AlertSpeciesLongTerm"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
 def alert_species_microchip(dbo: Database) -> str:
     s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])
     if s == "": return "0" # Always return something due to IN clauses of queries
@@ -686,6 +725,11 @@ def alert_species_neuter(dbo: Database) -> str:
 
 def alert_species_rabies(dbo: Database) -> str:
     s = cstring(dbo, "AlertSpeciesRabies", DEFAULTS["AlertSpeciesRabies"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
+def alert_species_rsv_hck(dbo: Database) -> str:
+    s = cstring(dbo, "AlertSpeciesRsvHck", DEFAULTS["AlertSpeciesRsvHck"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
@@ -835,6 +879,15 @@ def avid_overseas_origin_country(dbo: Database) -> str:
 
 def avid_reregistration(dbo: Database) -> bool:
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
+
+def avidus_username(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSUsername")
+
+def avidus_password(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSPassword")
+
+def avidus_apikey(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSKey")
 
 def buddyid_provider_code(dbo: Database) -> str:
     return cstring(dbo, "BuddyIDProviderCode")
@@ -1204,6 +1257,22 @@ def js_injection(dbo: Database) -> str:
 def js_window_print(dbo: Database) -> bool:
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")
 
+def amqp_enabled(dbo) -> bool:
+    """Return True if AMQP integration is enabled."""
+    return cboolean(dbo, "AMQPEnabled", DEFAULTS["AMQPEnabled"] == "Yes")
+
+def amqp_broker_url(dbo) -> str:
+    """Return the AMQP broker URL string."""
+    return cstring(dbo, "AMQPBrokerUrl")
+
+def amqp_exchange_name(dbo) -> str:
+    """Return the AMQP exchange name string."""
+    return cstring(dbo, "AMQPExchangeName")
+
+def amqp_routing_key(dbo) -> str:
+    """Return the AMQP routing key string."""
+    return cstring(dbo, "AMQPRoutingKey")
+
 def licence_checkout_feeid(dbo: Database) -> int:
     return cint(dbo, "LicenceCheckoutFeeID")
 
@@ -1337,6 +1406,9 @@ def onlineform_spam_mandatory(dbo: Database) -> bool:
 
 def onlineform_spam_postcode(dbo: Database) -> bool:
     return cboolean(dbo, "OnlineFormSpamPostcode", DEFAULTS["OnlineFormSpamPostcode"] == "Yes")
+
+def onlineform_spam_urls(dbo: Database) -> bool:
+    return cboolean(dbo, "OnlineFormSpamURLs", DEFAULTS["OnlineFormSpamURLs"] == "Yes")
 
 def organisation(dbo: Database) -> str:
     return cstring(dbo, "Organisation", DEFAULTS["Organisation"])

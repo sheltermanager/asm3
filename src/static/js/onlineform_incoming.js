@@ -118,7 +118,15 @@ $(function() {
                     }
                 },
                 { id: "attach", icon: "link", text: _("Attach"), enabled: "one", type: "buttonmenu" },
-                { id: "create", icon: "complete", text: _("Create"), enabled: "multi", type: "buttonmenu" }
+                { id: "create", icon: "complete", text: _("Create"), enabled: "multi", type: "buttonmenu" },
+                { id: "filter", type: "dropdownfilter", 
+                    options: [ "ham|" + _("Forms") + " (" + controller.totals[0] + ")", 
+                        "spam|" + _("Spam") + " (" + controller.totals[1] + ")", 
+                        "all|" + _("(all)") + " (" + controller.totals[2] + ")"],
+                     click: function(selval) {
+                        common.route("onlineform_incoming?filter=" + selval);
+                     }
+                }
 
             ];
             this.table = table;
@@ -147,6 +155,8 @@ $(function() {
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (non-shelter with owner)") + '</a></li>',
                     '<li id="button-animalbroughtin" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (with brought in person)") + '</a></li>',
+                    '<li id="button-equipmentloan" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("traploan") + ' ' + _("Equipment Loan") + '</a></li>',
                     '<li id="button-person" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("person-add") + ' ' + _("Person") + '</a></li>',
                     '<li id="button-person-nm" class="asm-menu-item"><a '
@@ -195,6 +205,10 @@ $(function() {
             });
             $("#button-animalnonshelter").click(function() {
                 onlineform_incoming.create_record("animalnonshelter", "animal");
+                return false;
+            });
+            $("#button-equipmentloan").click(function() {
+                onlineform_incoming.create_record("traploan", "traploan");
                 return false;
             });
             $("#button-person").click(function() {
@@ -358,7 +372,7 @@ $(function() {
 
         /**
          * Make an AJAX post to create a record.
-         * mode: The type of record to create - person, lostanimal, foundanimal, waitinglist
+         * mode: The type of record to create - person, lostanimal, foundanimal, waitinglist, equipmentloan
          * url:  The url to link to the target created record
          */
         create_record: async function(mode, target) {
@@ -462,6 +476,12 @@ $(function() {
         },
 
         sync: function() {
+            // If a filter is in the querystring, update the select
+            if (common.querystring_param("filter")) {
+                $("#filter").select("value", common.querystring_param("filter"));
+            }
+            // If there's no spam in the list, disable the delete spam button
+            if ($("#tableform .asm-icon-spam").length == 0) { $("#button-deletespam").button("disable"); }
         },
 
         destroy: function() {
@@ -477,7 +497,7 @@ $(function() {
         animation: "formtab",
         title: function() { return _("Incoming Forms"); },
         routes: {
-            "onlineform_incoming": function() { common.module_loadandstart("onlineform_incoming", "onlineform_incoming"); }
+            "onlineform_incoming": function() { common.module_loadandstart("onlineform_incoming", "onlineform_incoming?" + this.rawqs); }
         }
 
     };

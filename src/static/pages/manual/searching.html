@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#links">Links</a></li>
 <li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="people.html">People</a></li>
 <li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
@@ -162,6 +163,27 @@ homecheckers, drivers, members and donors – all people with those flags set</p
 a:Jack          - all animals called Jack</p>
 </div></blockquote>
 <img alt="_images/searchresults.png" src="_images/searchresults.png" />
+</section>
+<section id="links">
+<h1>Links<a class="headerlink" href="#links" title="Link to this heading">¶</a></h1>
+<p>Links to media or records can be added to text fields using tokens. This
+can be particularly useful to link specific media files to medical records.</p>
+<p>Selecting table view within the media tab in animal and person records will
+display a column containing the id numbers to use in media tokens.</p>
+<img alt="_images/media_table_view.png" src="_images/media_table_view.png" />
+<p>The highlighted id for the media file above should be added to the #m: token like
+this #m:78. When added to a text field an icon and link will appear underneath the
+field to show the system has recognised that token.</p>
+<img alt="_images/media_token.png" src="_images/media_token.png" />
+<p>Other tokens include links to animal, people and licence records.</p>
+<ul class="simple">
+<li><p>#m:mediaid creates a link to a specific media file</p></li>
+<li><p>#s:sheltercode creates a link to an animal record using the shelter code</p></li>
+<li><p>#s:personcode creates a link to a person record using the person code</p></li>
+<li><p>#s:a:animalname creates a link to an animal record using the animals name</p></li>
+<li><p>#s:p:personname creates a link to a person record using the persons name</p></li>
+<li><p>#s:li:licencenumber creates a link to a licence record using the licence number</p></li>
+</ul>
 </section>
 
 

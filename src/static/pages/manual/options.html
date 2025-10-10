@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searching.html#links">Links</a></li>
 <li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="people.html">People</a></li>
 <li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
@@ -75,6 +76,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#accounts">Accounts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#add-animal">Add Animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#age-groups">Age Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#amqp">AMQP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-codes">Animal Codes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#boarding">Boarding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#checkout">Checkout</a></li>
@@ -286,6 +288,16 @@ wordkey (or animal.AgeGroup field in custom reports).</p>
 grouping name. By default, anything under 6 months (0.5 years) is classed as a
 Baby, anything under 2 years is Young Adult, under 7 years is Adult and over
 that is Senior.</p>
+</section>
+<section id="amqp">
+<h2>AMQP<a class="headerlink" href="#amqp" title="Link to this heading">¶</a></h2>
+<p>The system supports emitting event messages for audit log inserts using Kombu. When an audit log record is inserted, an event message is sent to an external AMQP-compatible message broker, such as RabbitMQ or Azure Service Bus Queue. This is done asynchronously, off the primary thread, to avoid blocking the UI or main application processing.</p>
+<ul class="simple">
+<li><p>Enable AMQP publishing by setting <cite>enable_amqp</cite> to <cite>true</cite> in your ASM configuration file</p></li>
+<li><p>Ensure you have an AMQP-compatible broker available (e.g., RabbitMQ, Azure Service Bus).</p></li>
+<li><p>Update your configuration to provide the appropriate connection string and queue name.</p></li>
+<li><p>Kombu is required as a dependency. Install via pip if necessary: pip install kombu</p></li>
+</ul>
 </section>
 <section id="animal-codes">
 <h2>Animal Codes<a class="headerlink" href="#animal-codes" title="Link to this heading">¶</a></h2>

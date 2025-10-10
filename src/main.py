@@ -8,7 +8,7 @@ PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 # Prepend our modules to the path to make sure they're added first
 sys.path.insert(0, PATH)
 
-import web062 as web
+import web070 as web
 
 import asm3.al
 import asm3.additional
@@ -64,7 +64,7 @@ from asm3.i18n import _, translate, get_version, get_display_date_format, \
 
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
-    AKC_REUNITE_BASE_URL, BUDDYID_BASE_URL, FINDPET_BASE_URL, HOMEAGAIN_BASE_URL, \
+    AKC_REUNITE_BASE_URL, AVID_US_BASE_URL, BUDDYID_BASE_URL, FINDPET_BASE_URL, HOMEAGAIN_BASE_URL, \
     LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
@@ -827,6 +827,25 @@ class custom_splash(ASMEndpoint):
             asm3.al.error("%s" % str(err), "main.custom_splash", dbo)
             return ""
 
+class cost_book(JSONEndpoint):
+    url = "cost_book"
+    js_module = "animal_costs"
+    get_permissions = asm3.users.VIEW_COST
+
+    def controller(self, o):
+        dbo = o.dbo
+        post = o.post
+        offset = 7
+        if post['offset']:
+            offset = post.integer('offset')
+        costs = asm3.financial.get_costs(dbo, offset=offset)
+        asm3.al.debug("got %d costs for animals" % (len(costs), ), "main.cost_book", dbo)
+        return {
+            "name": "cost_book",
+            "rows": costs,
+            "costtypes": asm3.lookups.get_costtypes(dbo)
+        }
+
 class media(ASMEndpoint):
     url = "media"
 
@@ -1062,6 +1081,8 @@ class mobile(ASMEndpoint):
             "breeds":       asm3.lookups.get_breeds_by_species(dbo),
             "colours":      asm3.lookups.get_basecolours(dbo),
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
+            "entrytypes":   asm3.lookups.get_entry_types(dbo),
+            "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "logtypes":     asm3.lookups.get_log_types(dbo),
@@ -1876,6 +1897,7 @@ class animal(JSONEndpoint):
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
             "posneg": asm3.lookups.get_posneg(dbo),
+            "reports": asm3.reports.get_ask_animal_reports(dbo, o["session"].superuser, o["session"].roleids),
             "returnedexitmovements": asm3.animal.get_returned_exit_movements(dbo, a.ID),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
@@ -2035,6 +2057,7 @@ class animal_costs(JSONEndpoint):
         cost = asm3.animal.get_costs(dbo, animalid)
         asm3.al.debug("got %d costs for animal %s %s" % (len(cost), a["CODE"], a["ANIMALNAME"]), "main.animal_costs", dbo)
         return {
+            "name": "animal_costs",
             "rows": cost,
             "animal": a,
             "costtypes": asm3.lookups.get_costtypes(dbo),
@@ -2044,6 +2067,7 @@ class animal_costs(JSONEndpoint):
 
     def post_create(self, o):
         self.check(asm3.users.ADD_COST)
+        o.post["animalid"] = o.post["animal"]
         return asm3.animal.insert_cost_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
@@ -3632,8 +3656,8 @@ class document_repository(JSONEndpoint):
             filedata = asm3.utils.base64decode(filedata)
         else:
             # Otherwise it's an old style file input
-            filename = asm3.utils.filename_only(o.post.data.filechooser.filename)
-            filedata = o.post.data.filechooser.value
+            filename = asm3.utils.filename_only(o.post.filename())
+            filedata = o.post.filedata()
         asm3.dbfs.upload_document_repository(o.dbo, o.post["path"], filename, filedata)
         self.redirect("document_repository")
 
@@ -4872,7 +4896,8 @@ class mailmerge(JSONEndpoint):
             "numrows": len(rows),
             "hasemail": "EMAILADDRESS" in fields,
             "hasaddress": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
-            "templates": asm3.template.get_document_templates(dbo, "mailmerge")
+            "templates": asm3.template.get_document_templates(dbo, "mailmerge"),
+            "logtypes": asm3.lookups.get_log_types(dbo)
         }
    
     def post_email(self, o):
@@ -4892,8 +4917,18 @@ class mailmerge(JSONEndpoint):
         if asm3.configuration.audit_on_send_email(dbo):
             emails = self.recipients(rows)
             asm3.audit.email(dbo, o.user, fromadd, ",".join(emails), "", "", subject, body)
+
         asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html", post.boolean("unsubscribe"))
 
+        if post.boolean("logemail"):
+            linkids = []
+            for r in rows:
+                if "OWNERID" in r:
+                    linkids.append(r.OWNERID)
+                elif "ID" in r:
+                    linkids.append(r.ID)
+            asm3.log.add_logmulti(dbo, o.user, asm3.log.PERSON, linkids, post.integer("logtype"), post["logmessage"])
+        
     def post_document(self, o):
         dbo = o.dbo
         post = o.post
@@ -5074,6 +5109,18 @@ class maint_ping(ASMEndpoint):
         frules = asm3.smcom.iptables_rules()
         if frules.find("REJECT") != -1 or frules.find("DROP") != -1: keywords.append("firewall")
         return " ".join(keywords)
+    
+class maint_reset_task(ASMEndpoint):
+    url = "maint_reset_task"
+    
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        try:
+            asm3.asynctask.reset(o.dbo)
+            return "Exec asm3.asynctask.reset"
+        except Exception as err:
+            return str(err)
 
 class maint_sac_metrics(ASMEndpoint):
     url = "maint_sac_metrics"
@@ -5758,9 +5805,20 @@ class onlineform_incoming(JSONEndpoint):
 
     def controller(self, o):
         headers = asm3.onlineform.get_onlineformincoming_headers(o.dbo)
-        asm3.al.debug("got %d submitted headers" % len(headers), "main.onlineform_incoming", o.dbo)
+        total = len(headers)
+        totalham = 0
+        totalspam = 0
+        for x in headers:
+            if x.SPAM == 1: totalspam += 1
+            else: totalham += 1
+        if o.post["filter"] == "ham" or o.post["filter"] == "":
+            headers = [ x for x in headers if x.SPAM == 0 ]
+        elif o.post["filter"] == "spam":
+            headers = [ x for x in headers if x.SPAM == 1 ]
+        asm3.al.debug("got %d submitted form headers (filter: %s)" % (len(headers), o.post["filter"]), "main.onlineform_incoming", o.dbo)
         return {
-            "rows": headers
+            "rows": headers,
+            "totals": [ totalham, totalspam, total ]
         }
 
     def post_view(self, o):
@@ -5899,6 +5957,16 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, animalid, animalname = asm3.onlineform.create_transport(o.dbo, user, pid)
             rv.append("%d|%d|%s|0" % (collationid, animalid, animalname))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
+        return "^$".join(rv)
+    
+    def post_traploan(self, o):
+        self.check(asm3.users.ADD_TRAPLOAN)
+        user = "form/%s" % o.user
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, personid, personname = asm3.onlineform.create_traploan(o.dbo, user, pid)
+            rv.append("%d|%d|%s|0" % (collationid, personid, personname))
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
@@ -6056,11 +6124,12 @@ class options(JSONEndpoint):
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "accountsexp": asm3.financial.get_accounts(dbo, onlyexpense=True),
             "accountsinc": asm3.financial.get_accounts(dbo, onlyincome=True),
+            "amqpenabled": asm3.sitedefs.AMQP_ENABLED,
             "animalfindcolumns": asm3.html.json_animalfindcolumns(dbo),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "breeds": asm3.lookups.get_breeds(dbo),
             "clinictypes": asm3.lookups.get_clinic_types(dbo),
-            "coattypes": asm3.lookups.get_coattypes(dbo),
+            "coattypes": asm3.lookups.get_coattypes(dbo), 
             "colours": asm3.lookups.get_basecolours(dbo),
             "costtypes": asm3.lookups.get_costtypes(dbo),
             "currencies": asm3.lookups.CURRENCIES,
@@ -6317,6 +6386,7 @@ class person(JSONEndpoint):
             "homecheckhistory": asm3.person.get_homechecked(dbo, p.id),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
+            "reports": asm3.reports.get_ask_person_reports(dbo, o["session"].superuser, o["session"].roleids),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
@@ -6465,6 +6535,26 @@ class person_donations(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "payment"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": donations
+        }
+
+class person_costs(JSONEndpoint):
+    url = "person_costs"
+    js_module = "animal_costs"
+    get_permissions = asm3.users.VIEW_COST
+
+    def controller(self, o):
+        dbo = o.dbo
+        personid = o.post.integer("id")
+        p = asm3.person.get_person(dbo, personid)
+        if p is None: self.notfound()
+        costs = asm3.animal.get_costs_for_payee(dbo, personid)
+        asm3.al.debug("got %d costs for person %s" % (len(costs), p["OWNERNAME"]), "main.person_costs", dbo)
+        return {
+            "name": "person_costs",
+            "rows": costs,
+            "person": p,
+            "costtypes": asm3.lookups.get_costtypes(dbo),
+            "tabcounts": asm3.person.get_satellite_counts(dbo, personid)[0]
         }
 
 class person_embed(ASMEndpoint):
@@ -6895,7 +6985,7 @@ class product(JSONEndpoint):
     def post_update(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
         asm3.stock.update_product_from_form(o.dbo, o.post, o.user)
-        if o.post["mediaid"] != "":
+        if not o.post.integer("mediaid"):
             o.dbo.execute("DELETE FROM media WHERE LinkTypeID = ? AND LinkID = ?", [asm3.media.PRODUCT, o.post.integer("productid")])
     
     def post_delete(self, o):
@@ -6973,6 +7063,7 @@ class publish_options(JSONEndpoint):
             "locations": asm3.lookups.get_internal_locations(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "hasakcreunite": AKC_REUNITE_BASE_URL != "",
+            "hasavidus": AVID_US_BASE_URL != "",
             "hasbuddyid": BUDDYID_BASE_URL != "",
             "hasfindpet": FINDPET_BASE_URL != "",
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
@@ -7256,7 +7347,7 @@ class report_images(JSONEndpoint):
         return { "rows": images }
 
     def post_create(self, o):
-        asm3.dbfs.upload_report_image(o.dbo, o.post.data.filechooser)
+        asm3.dbfs.upload_report_image(o.dbo, o.post.filename(), o.post.filedata())
         self.reload_config()
         self.redirect("report_images")
 

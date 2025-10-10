@@ -206,6 +206,13 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 .asm-hotkey {
+    float: right;
+    font-size: 60%;
+    padding-left: 5px;
+    padding-top: 4px;
+}
+
+.asm-menu-hotkey {
     margin-right: 20px;
     float: right;
     font-size: 60%;
@@ -1077,6 +1084,13 @@ select:disabled, input:disabled, textarea:disabled {
 
 .asm-link-disabled:hover {
     text-decoration: none;
+}
+
+.asm-token-link {
+    margin-top: 3px;
+    margin-right: 3px;
+    display: inline;
+    white-space: nowrap;
 }
 
 /** Tweaks for when displaying on portrait mobile devices */

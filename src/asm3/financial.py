@@ -305,6 +305,32 @@ def get_balance_fromto_date(dbo: Database, accountid: int, fromdate: datetime, t
     #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
+def get_costs(dbo: Database, offset: int = 0, sort: int = ASCENDING) -> Results:
+    """
+    Returns all animalcost records:
+    COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION, OWNERID, INVOICENUMBER, ANIMALID, ANIMALNAME, SHORTCODE, SHELTERCODE
+    When a non zero offset is supplied, costs paid within the last {offset} days are returned
+    When offset = 0, all unpaid costs are returned
+    """
+    sql = "SELECT ac.ID, ac.CostTypeID, ac.CostAmount, ac.CostDate, ac.CostPaidDate, c.CostTypeName, ac.Description, " \
+        "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate, ac.OwnerID, ac.InvoiceNumber, o.OwnerName, " \
+        "ac.AnimalID, a.AnimalName, a.ShortCode, a.ShelterCode " \
+        "FROM animalcost ac INNER JOIN costtype c ON c.ID = ac.CostTypeID " \
+        "INNER JOIN animal a ON ac.AnimalID = a.ID " \
+        "LEFT JOIN owner o ON ac.OwnerID = o.ID "
+    params = []
+    if offset:
+        datefloor = dbo.today(offset=offset * -1)
+        sql += "WHERE ac.CostPaidDate >= ? "
+        params.append(datefloor)
+    else:
+        sql += "WHERE ac.CostPaidDate IS NULL "
+    if sort == ASCENDING:
+        sql += "ORDER BY ac.CostDate"
+    else:
+        sql += "ORDER BY ac.CostDate DESC"
+    return dbo.query(sql, params)
+
 def mark_trx_reconciled(dbo: Database, username: str, trxid: int) -> None:
     """
     Marks a transaction reconciled.
@@ -351,7 +377,9 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
     elif reconciled == NONRECONCILED:
         recfilter = " AND Reconciled = 0"
     rows = dbo.query("SELECT t.*, srcac.Code AS SrcCode, destac.Code AS DestCode, " \
-        "o.OwnerName AS PersonName, o.ID AS PersonID, a.ID AS DonationAnimalID, " \
+        "a.ID AS DonationAnimalID, " \
+        "o.ID AS DonationOwnerID, o.OwnerName AS DonationOwnerName, " \
+        "oac.ID AS CostOwnerID, oac.OwnerName AS CostOwnerName, " \
         "a.AnimalName AS DonationAnimalName, " \
         "od.ReceiptNumber AS DonationReceiptNumber, " \
         "dt.DonationName AS DonationTypeName, " \
@@ -368,7 +396,8 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "aca.AnimalName AS CostAnimalName, aca.ID AS CostAnimalID, " \
         "CASE " \
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
-        "THEN aca.ShortCode ELSE aca.ShelterCode END AS CostAnimalCode " \
+        "THEN aca.ShortCode ELSE aca.ShelterCode END AS CostAnimalCode, " \
+        "ac.InvoiceNumber " \
         "FROM accountstrx t " \
         "LEFT OUTER JOIN accounts srcac ON srcac.ID = t.SourceAccountID " \
         "LEFT OUTER JOIN accounts destac ON destac.ID = t.DestinationAccountID " \
@@ -378,6 +407,7 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "LEFT OUTER JOIN owner o ON o.ID = od.OwnerID " \
         "LEFT OUTER JOIN animal a ON a.ID = od.AnimalID " \
         "LEFT OUTER JOIN animalcost ac ON ac.ID = t.AnimalCostID " \
+        "LEFT OUTER JOIN owner oac ON oac.ID = ac.OwnerID " \
         "LEFT OUTER JOIN animal aca ON aca.ID = ac.AnimalID " \
         "WHERE t.TrxDate >= %s AND t.TrxDate <= %s%s " \
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \

@@ -316,6 +316,7 @@ def get_satellite_counts(dbo: Database, personid: int) -> Results:
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
+        "(SELECT COUNT(*) FROM animalcost ac WHERE ac.OwnerID = o.ID) AS costs, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.OwnerID = o.ID) AS licence, " \
@@ -1048,6 +1049,13 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     pid = dbo.get_id("owner")
     ownercode = post["ownercode"]
     if post["ownercode"] == "": ownercode = calculate_owner_code(pid, post["surname"])
+    # homecheckedby = 0
+    # if post["homecheckedby"]:
+    #     ilikename = dbo.sql_ilike("OwnerName", "?")
+    #     homecheckedby = dbo.query_int(
+    #         f"SELECT ID FROM owner WHERE IsHomeChecker = 1 AND (UPPER(OwnerCode) = ? OR {ilikename})",
+    #         [post["homecheckedby"].upper(), f"%{post["homecheckedby"]}%"]
+    #     )
 
     dbo.insert("owner", {
         "ID":               pid,
@@ -1425,7 +1433,7 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
         if dictfield == "surname2" and d[dictfield] != "": 
             uv["OwnerType"] = 3 # Force person to be a couple if a second surname is supplied
             p.OWNERTYPE = 3
-        if dictfield.startswith("date") and (p[fieldname] is None or force):
+        if fieldname.startswith("DATE") and (p[fieldname] is None or force):
             uv[fieldname] = display2python(dbo.locale, d[dictfield])
             p[fieldname] = uv[fieldname]
         elif fieldname.startswith("MATCH") and (p[fieldname] is None or force):
@@ -1464,9 +1472,12 @@ def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[st
     merge("matchspecies", "MATCHSPECIES")
     merge("agedfrom", "MATCHAGEFROM")
     merge("agedto", "MATCHAGETO")
+    merge("homecheckedby", "HOMECHECKEDBY")
+    merge("homechecked", "DATELASTHOMECHECKED")
     uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", "", \
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
     dbo.update("owner", personid, uv, username)
+    
 
 def merge_gdpr_flags(dbo: Database, username: str, personid: int, flags: str) -> str:
     """
