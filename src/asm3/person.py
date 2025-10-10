@@ -1121,6 +1121,7 @@ def insert_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchHouseTrained": post.integer("matchhousetrained", -1),
         "MatchCrateTrained": post.integer("matchcratetrained", -1),
         "MatchEnergyLevel": post.integer("matchenergylevel", -1),
+        "MatchDeclawed": post.integer("matchdeclawed", -1),
         "MatchCommentsContain": post["matchcommentscontain"],
         # Flags are updated afterwards, but cannot be null
         "IDCheck":                  0,
@@ -1272,6 +1273,7 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
         "MatchGoodOnLead": post.integer("matchgoodonlead"),
         "MatchHouseTrained": post.integer("matchhousetrained"),
         "MatchCrateTrained": post.integer("matchcratetrained"),
+        "MatchDeclawed": post.integer("matchdeclawed", -1),
         "MatchEnergyLevel": post.integer("matchenergylevel"),
         "MatchCommentsContain": post["matchcommentscontain"]
     }, username)
@@ -1904,6 +1906,8 @@ def lookingfor_summary(dbo: Database, personid: int, p: ResultRow = None) -> str
         c.append(_("Good with dogs", l))
     if p.MATCHHOUSETRAINED == 0: 
         c.append(_("Housetrained", l))
+    if p.MATCHDECLAWED == 0: 
+        c.append(_("Declawed", l))
     if p.MATCHAGEFROM and p.MATCHAGETO and p.MATCHAGEFROM >= 0 and p.MATCHAGETO > 0: 
         c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
     if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
@@ -2003,6 +2007,8 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
             ands.append("a.IsGoodWithDogs=0")
         if p.MATCHHOUSETRAINED == 0: 
             ands.append("a.IsHouseTrained=0")
+        if p.MATCHDECLAWED == 0: 
+            ands.append("a.Declawed=0")
         if p.MATCHCRATETRAINED == 0: 
             ands.append("a.IsCrateTrained=0")
         if p.MATCHENERGYLEVEL != -1: 

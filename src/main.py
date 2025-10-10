@@ -6382,6 +6382,7 @@ class person(JSONEndpoint):
             "flags": asm3.lookups.get_person_flags(dbo, p.ADDITIONALFLAGS),
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo),
+            "yesno": asm3.lookups.get_yesno(dbo),
             "homecheckhistory": asm3.person.get_homechecked(dbo, p.id),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
