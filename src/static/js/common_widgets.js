@@ -835,6 +835,54 @@ $.fn.time = asm_widget({
 
 });
 
+/** 
+ * JQuery UI select menu with custom rendering for option colours
+ */
+$.widget( "asm.colouredselectmenu", {
+    _create: function() {
+        let self = this;
+        let htmllines = [
+            '<div style="position: relative;">',
+            '<div class="asm-selectedcolourscheme asm-field asm-textbox" data-schemeid="0">' + _("Color Scheme") + '</div>',
+            '<div class="asm-colourschemeexpand" style="position: absolute;left: 182px;top: 3px;font-size: 0.8em;cursor: default;">&#9654;</div>',
+            '<div class="asm-colourschemes asm-textbox">',
+        ];
+        $.each(controller.colourschemes, function(i, v) {
+            htmllines.push('<div class="asm-colourscheme" data-schemeid="' + v.ID + '" style="background-color: ' + v.BGCOL + ';color: ' + v.FGCOL + ';">a</div>');
+        });
+        htmllines.push('</div>');
+        htmllines.push('</div>');
+        this.element.append(htmllines.join("\n"));
+        $(".asm-selectedcolourscheme, .asm-colourschemeexpand").click(function() {
+            $(".asm-colourschemes").toggle();
+        });
+        $(".asm-colourscheme").click(function(e) {
+            let scheme = $(e.target);
+            let schemeid = scheme.attr("data-schemeid");
+            self.change_selection(schemeid);
+            $(".asm-colourschemes").hide();
+            
+        });
+    },
+    change_selection: function(schemeid) {
+        let scheme = $(".asm-colourscheme[data-schemeid='" + schemeid + "']");
+        let fgcol = scheme.css("color");
+        let bgcol = scheme.css("background-color");
+        let selectedschemediv = this.element.find(".asm-selectedcolourscheme");
+        selectedschemediv.attr("data-schemeid", schemeid);
+        selectedschemediv.css("background-color", bgcol);
+        selectedschemediv.css("color", fgcol);
+        this.element.find(".asm-colourschemeexpand").css("color", fgcol);
+    },
+    value: function(newval) {
+        if (newval === undefined) {
+            return $(".asm-selectedcolourscheme").attr("data-schemeid");
+        }
+        if (!newval) { newval = ""; }
+        this.change_selection(newval);
+    }
+});
+
 /** select widget wrapper with helper functions for removing retired items */
 $.fn.select = asm_widget({
 

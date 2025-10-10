@@ -7,6 +7,10 @@ $(function() {
     const diary = {
 
         model: function() {
+            let colourschemeoptionshtml = "";
+            controller.colourschemes.forEach(function(v) {
+                colourschemeoptionshtml += '<option value="' + v.ID + '" data-bgcol="' + v.BGCOL + '" data-fgcol="' + v.FGCOL + '">' + v.SCHEMENAME + '</option>';
+            });
             const dialog = {
                 add_title: _("Add diary"),
                 edit_title: _("Edit diary"),
@@ -18,6 +22,8 @@ $(function() {
                 fields: [
                     { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
+                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), type: "raw", defaultval: 1, callout: _("The color scheme to be used when displaying this note on the calendar view"), markup: '<div class="colourschemeid"></div>'
+                    },
                     { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
                     { json_field: "DATECOMPLETED", post_field: "completed", label: _("Completed"), type: "date" },
@@ -33,11 +39,13 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
+                    $(".colourschemeid").colouredselectmenu("value", row.COLOURSCHEMEID);
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: async function() {
                             try {
                                 tableform.fields_update_row(dialog.fields, row);
-                                await tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, "diary");
+                                row.COLOURSCHEMEID = $(".colourschemeid").colouredselectmenu("value");
+                                await tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID + "&diarycolourscheme=" + $(".colourschemeid").colouredselectmenu("value"), "diary");
                                 tableform.table_update(table);
                                 tableform.dialog_close();
                             }
@@ -95,7 +103,19 @@ $(function() {
                             return common.current_url().indexOf("diary_edit") == -1;
                         }
                     },
-                    { field: "SUBJECT", display: _("Subject") },
+                    { field: "SUBJECT", display: _("Subject"),
+                        formatter: function(row) {
+                            let fgcol = "";
+                            let bgcol = "";
+                            $.each(controller.colourschemes, function(i, v) {
+                                if (v.ID == row.COLOURSCHEMEID) {
+                                    fgcol = v.FGCOL;
+                                    bgcol = v.BGCOL;
+                                }
+                            });
+                            return '<div class="asm-diarysubjectcoldiv" style="background-color: ' + bgcol + '; color: ' + fgcol + ';">' + row.SUBJECT + '</div>';
+                        },
+                    },
                     { field: "NOTE", display: _("Note") },
                     { field: "CREATEDBY", display: _("By") }
                 ]
@@ -211,9 +231,13 @@ $(function() {
         },
 
         bind: function() {
+            
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+          
+            $("#dialog-tableform table tr td").first().css("width", "150px");
+            $(".colourschemeid").colouredselectmenu();
 
             const create_task = async function(taskid) {
                 let formdata = "";
@@ -270,10 +294,11 @@ $(function() {
         new_note: function() {
             tableform.dialog_show_add(diary.dialog, {
                 onadd: async function() {
-                    let response = await tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid, "diary");
-                    let row = {};
-                    row.ID = response;
+                    let response = await tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid + "&diarycolourscheme=" + $(".colourschemeid").colouredselectmenu("value"), "diary");
+                    var row = {};
+                    row.ID = parseInt(response);
                     tableform.fields_update_row(diary.dialog.fields, row);
+                    row.COLOURSCHEMEID = $(".colourschemeid").colouredselectmenu("value");
                     diary.set_extra_fields(row);
                     controller.rows.push(row);
                     tableform.table_update(diary.table);
@@ -293,6 +318,8 @@ $(function() {
                     if (config.str("AFDefaultDiaryPerson")) {
                         $("#diaryfor").select("value", config.str("AFDefaultDiaryPerson"));
                     }
+
+                    $(".colourschemeid").colouredselectmenu("value", 1);
                 }
             });
         },

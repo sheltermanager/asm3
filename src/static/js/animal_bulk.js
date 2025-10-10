@@ -79,6 +79,9 @@ $(function() {
                         tableform.render_time({ post_field: "diarytime", halfsize: true, justwidget: true }) 
                         ].join("\n")
                 },
+               { post_field: "diarycolourscheme", label: _("Color Scheme"), type: "raw", defaultval: 1, 
+                    callout: _("The color scheme to be used when displaying this note on the calendar view"), 
+                    markup: '<div class="colourschemeid"></div>' },
                 { post_field: "diarysubject", label: _("Subject"), type: "text" },
                 { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
             ];
@@ -158,7 +161,7 @@ $(function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");
                 header.show_loading(_("Updating..."));
-                let formdata = "mode=update&" + $("input, select, textarea").not(".chooser").toPOST();
+                let formdata = "mode=update&diarycolourscheme=" + $(".colourschemeid").colouredselectmenu("value") + "&" + $("input, select, textarea").not(".chooser").toPOST();
                 try {
                     let response = await common.ajax_post("animal_bulk", formdata);
                     header.hide_loading();
@@ -211,6 +214,8 @@ $(function() {
 
             $("#updateadditional").change(animal_bulk.updateadditional_change);
             animal_bulk.updateadditional_change();
+
+            $(".colourschemeid").colouredselectmenu();
 
         },
 

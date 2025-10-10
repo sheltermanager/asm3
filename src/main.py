@@ -2008,7 +2008,8 @@ class animal_bulk(JSONEndpoint):
             "forlist": asm3.users.get_diary_forlist(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "logtypes": asm3.lookups.get_log_types(dbo),
-            "movementtypes": asm3.lookups.get_movement_types(dbo)
+            "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
     def post_update(self, o):
@@ -2106,7 +2107,8 @@ class animal_diary(JSONEndpoint):
             "linkid": animalid,
             "linktypeid": asm3.diary.ANIMAL,
             "diarytasks": asm3.diary.get_animal_tasks(dbo),
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class animal_diet(JSONEndpoint):
@@ -2669,10 +2671,16 @@ class calendarview(JSONEndpoint):
     get_permissions = asm3.users.VIEW_ANIMAL
 
     def controller(self, o):
-        return {}
+        return { "colourschemes": asm3.lookups.COLOURSCHEMES }
 
 class calendar_events(ASMEndpoint):
     url = "calendar_events"
+
+    def extract_colours(self, colourschemes, schemeid):
+        for scheme in colourschemes:
+            if scheme["ID"] == schemeid:
+                return [ scheme["FGCOL"], scheme["BGCOL"] ]
+        return []
 
     def content(self, o):
         start = parse_date("%Y-%m-%d", o.post["start"])
@@ -2684,6 +2692,7 @@ class calendar_events(ASMEndpoint):
         user = o.user
         dbo = o.dbo
         l = o.locale
+        colourschemes = asm3.lookups.COLOURSCHEMES
         if "d" in ev and self.checkb(asm3.users.VIEW_DIARY):
             # Show all diary notes on the calendar if the user chose to see all
             # on the home page, or they have permission to view all notes
@@ -2693,6 +2702,12 @@ class calendar_events(ASMEndpoint):
                 user = ""
                 diarylink = "diary_edit"
             for d in asm3.diary.get_between_two_dates(dbo, user, start, end):
+                colourscheme = self.extract_colours(colourschemes, d["COLOURSCHEMEID"])
+                fgcol = ''
+                bgcol = ''
+                if colourscheme:
+                    fgcol = colourscheme[0]
+                    bgcol = colourscheme[1]
                 allday = False
                 # If the diary time is midnight, assume all day instead
                 if d.DIARYDATETIME.hour == 0 and d.DIARYDATETIME.minute == 0:
@@ -2709,8 +2724,11 @@ class calendar_events(ASMEndpoint):
                     "end": add_minutes(d.DIARYDATETIME, 60),
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
-                    "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}" })
+                    "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}",
+                    "fgcol": fgcol,
+                    "bgcol": bgcol }),
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["vaccination"]
             for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
@@ -2720,7 +2738,9 @@ class calendar_events(ASMEndpoint):
                     "start": v.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
             for v in asm3.medical.get_vaccinations_expiring_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
@@ -2730,8 +2750,11 @@ class calendar_events(ASMEndpoint):
                     "start": v.DATEEXPIRES, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "m" in ev and self.checkb(asm3.users.VIEW_MEDICAL):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["medical"]
             for m in asm3.medical.get_treatments_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (m.TREATMENTNAME, m.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s %s" % (m.TREATMENTNAME, m.SHELTERCODE, m.ANIMALNAME, m.DISPLAYLOCATIONNAME, m.DOSAGE, m.COMMENTS)
@@ -2741,8 +2764,11 @@ class calendar_events(ASMEndpoint):
                     "start": m.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "medical",
-                    "link": "animal_medical?id=%s" % m.ANIMALID })
+                    "link": "animal_medical?id=%s" % m.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "t" in ev and self.checkb(asm3.users.VIEW_TEST):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["test"]
             for t in asm3.medical.get_tests_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (t.TESTNAME, t.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (t.TESTNAME, t.SHELTERCODE, t.ANIMALNAME, t.DISPLAYLOCATIONNAME, t.COMMENTS)
@@ -2752,8 +2778,11 @@ class calendar_events(ASMEndpoint):
                     "start": t.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "test",
-                    "link": "animal_test?id=%s" % t.ANIMALID })
+                    "link": "animal_test?id=%s" % t.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "b" in ev and self.checkb(asm3.users.VIEW_BOARDING):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["boarding"]
             for b in asm3.financial.get_boarding_due_two_dates(dbo, start, end):
                 sub = "%s:%s - %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME)
                 tit = "%s:%s - %s, %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME, b.OWNERNAME)
@@ -2764,8 +2793,11 @@ class calendar_events(ASMEndpoint):
                     "end": b.OUTDATETIME,
                     "tooltip": tit, 
                     "icon": "boarding",
-                    "link": "animal_boarding?id=%s" % b.ANIMALID })
+                    "link": "animal_boarding?id=%s" % b.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "c" in ev and self.checkb(asm3.users.VIEW_CLINIC):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["clinic"]
             for c in asm3.clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
                 if c.OWNERNAME is not None:
                     sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
@@ -2782,8 +2814,11 @@ class calendar_events(ASMEndpoint):
                     "end": add_minutes(c.DATETIME, 20),
                     "tooltip": tit, 
                     "icon": "health",
-                    "link": link })
+                    "link": link,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "p" in ev and self.checkb(asm3.users.VIEW_DONATION):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["payment"]
             for p in asm3.financial.get_donations_due_two_dates(dbo, start, end):
                 sub = "%s - %s" % (p.DONATIONNAME, p.OWNERNAME)
                 tit = "%s - %s %s %s" % (p.DONATIONNAME, p.OWNERNAME, format_currency(l, p.DONATION), p.COMMENTS)
@@ -2793,8 +2828,11 @@ class calendar_events(ASMEndpoint):
                     "start": p.DATEDUE, 
                     "tooltip": tit, 
                     "icon": "donation",
-                    "link": "person_donations?id=%s" % p.OWNERID })
+                    "link": "person_donations?id=%s" % p.OWNERID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "o" in ev and self.checkb(asm3.users.VIEW_INCIDENT):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["incident"]
             for o in asm3.animalcontrol.get_followup_two_dates(dbo, start, end):
                 sub = "%s - %s" % (o.INCIDENTNAME, o.OWNERNAME)
                 tit = "%s - %s %s, %s" % (o.INCIDENTNAME, o.OWNERNAME, o.DISPATCHADDRESS, o.CALLNOTES)
@@ -2804,8 +2842,11 @@ class calendar_events(ASMEndpoint):
                     "start": o.FOLLOWUPDATETIME, 
                     "tooltip": tit, 
                     "icon": "call",
-                    "link": "incident?id=%s" % o.ACID })
+                    "link": "incident?id=%s" % o.ACID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "r" in ev and self.checkb(asm3.users.VIEW_TRANSPORT):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["transport"]
             for r in asm3.movement.get_transport_two_dates(dbo, start, end):
                 sub = "%s - %s" % (r.ANIMALNAME, r.SHELTERCODE)
                 tit = "%s %s, %s - %s :: %s, %s" % (r.ANIMALNAME, r.SHELTERCODE, r.DRIVEROWNERNAME, r.PICKUPOWNERADDRESS, r.DROPOFFOWNERADDRESS, r.COMMENTS)
@@ -2819,8 +2860,11 @@ class calendar_events(ASMEndpoint):
                     "end": r.DROPOFFDATETIME,
                     "tooltip": tit, 
                     "icon": "transport",
-                    "link": "animal_transport?id=%s" % r.ANIMALID})
+                    "link": "animal_transport?id=%s" % r.ANIMALID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         if "l" in ev and self.checkb(asm3.users.VIEW_TRAPLOAN):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["equipment"]
             for l in asm3.animalcontrol.get_traploan_two_dates(dbo, start, end):
                 sub = "%s - %s" % (l.TRAPTYPENAME, l.OWNERNAME)
                 tit = "%s - %s %s, %s" % (l.TRAPTYPENAME, l.OWNERNAME, l.TRAPNUMBER, l.COMMENTS)
@@ -2830,7 +2874,25 @@ class calendar_events(ASMEndpoint):
                     "start": l.RETURNDUEDATE, 
                     "tooltip": tit, 
                     "icon": "traploan",
-                    "link": "person_traploan?id=%s" % l.OWNERID})
+                    "link": "person_traploan?id=%s" % l.OWNERID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
+        if "e" in ev and self.checkb(asm3.users.VIEW_EVENT):
+            fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["event"]
+            now = start
+            while now <= end:
+                eventsdata = asm3.event.get_events_by_date(dbo, now)
+                for e in eventsdata:
+                    events.append({ 
+                        "title": e.EVENTNAME, 
+                        "allDay": True, 
+                        "start": now, 
+                        "tooltip": e.EVENTDESCRIPTION, 
+                        "icon": "event",
+                        "link": "event?id=%s" % e.ID,
+                        "fgcol": fgcol,
+                        "bgcol": bgcol })
+                now = asm3.i18n.add_days(now, 1)
         asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "main.calendarview", dbo)
         self.content_type("application/json")
         return asm3.utils.json(events)
@@ -3220,7 +3282,8 @@ class diary_edit(JSONEndpoint):
             "name": "diary_edit",
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class diary_edit_my(JSONEndpoint):
@@ -3247,7 +3310,8 @@ class diary_edit_my(JSONEndpoint):
             "name": "diary_edit_my",
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class diarytask(JSONEndpoint):
@@ -3265,7 +3329,8 @@ class diarytask(JSONEndpoint):
             "rows": diarytaskdetail,
             "taskid": taskid,
             "taskname": taskname,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
     def post_create(self, o):
@@ -4044,7 +4109,8 @@ class foundanimal_diary(JSONEndpoint):
             "name": "foundanimal_diary",
             "linkid": a["LFID"],
             "linktypeid": asm3.diary.FOUNDANIMAL,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class foundanimal_find(JSONEndpoint):
@@ -4366,7 +4432,8 @@ class incident_diary(JSONEndpoint):
             "name": "incident_diary",
             "linkid": a["ACID"],
             "linktypeid": asm3.diary.ANIMALCONTROL,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class incident_log(JSONEndpoint):
@@ -4715,7 +4782,8 @@ class lostanimal_diary(JSONEndpoint):
             "name": "lostanimal_diary",
             "linkid": a["LFID"],
             "linktypeid": asm3.diary.LOSTANIMAL,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class lostanimal_find(JSONEndpoint):
@@ -6510,7 +6578,8 @@ class person_diary(JSONEndpoint):
             "linkid": p["ID"],
             "linktypeid": asm3.diary.PERSON,
             "diarytasks": asm3.diary.get_person_tasks(dbo),
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class person_donations(JSONEndpoint):
@@ -8259,7 +8328,8 @@ class waitinglist_diary(JSONEndpoint):
             "name": "waitinglist_diary",
             "linkid": a["WLID"],
             "linktypeid": asm3.diary.WAITINGLIST,
-            "forlist": asm3.users.get_diary_forlist(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "colourschemes": asm3.lookups.COLOURSCHEMES
         }
 
 class waitinglist_log(JSONEndpoint):

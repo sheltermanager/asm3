@@ -1023,4 +1023,3 @@ def thumbnail_img_src(dbo: Database, row: ResultRow, mode: str) -> str:
         if "WEBSITEMEDIADATE" in row and row.WEBSITEMEDIADATE is not None:
             uri += "&date=%s" % row.WEBSITEMEDIADATE.isoformat()
         return uri
-
