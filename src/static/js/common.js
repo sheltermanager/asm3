@@ -1082,6 +1082,7 @@ const common = {
         $(".asm-currencybox").currency();
         $(".asm-phone").phone();
         $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();
+        $(".asm-selectcolour").selectcolour();
         $(".asm-selectmulti").selectmulti();
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();
         $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();

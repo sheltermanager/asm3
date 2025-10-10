@@ -1001,6 +1001,22 @@ const html = {
         return "</div></div>";
     },
 
+    /** Returns an array containing fgcol and bgcol for one of our colour scheme IDs */
+    colour_scheme: function(id) {
+        let fgcol = "";
+        let bgcol = "";
+        $.each(asm.colourschemes, function(i, v) {
+            if (v.ID == id) {
+                fgcol = v.FGCOL;
+                bgcol = v.BGCOL;
+            }
+        });
+        if (fgcol && bgcol) {
+            return [ fgcol, bgcol ];
+        }
+        return [ "#000", "#fff" ];
+    },
+
     /** 
      * Decodes any unicode html entities from the following types of objects:
      *      o can be a string

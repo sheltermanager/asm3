@@ -22,8 +22,9 @@ $(function() {
                         callout: _("Create note this many days from today, or 9999 to ask"), validation: "notblank" },
                     { json_field: "WHOFOR", post_field: "for", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME", prepend: ('<option value="taskcreator">' + _("(task creator)") + '</option>') }},
-                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), type: "raw", defaultval: 1, callout: _("The color scheme to be used when displaying this note on the calendar view"), markup: '<div class="colourschemeid"></div>'
-                    },
+                    { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), 
+                        type: "selectcolour", defaultval: 1, 
+                        callout: _("The color scheme to be used when displaying this note on the calendar view") },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
                     { json_field: "NOTE", label: _("Note"), post_field: "note", validation: "notblank", type: "textarea" }
                 ]
@@ -33,11 +34,10 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    $(".colourschemeid").colouredselectmenu("value", row.COLOURSCHEMEID);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
-                    row.COLOURSCHEMEID = $(".colourschemeid").colouredselectmenu("value");
-                    await tableform.fields_post(dialog.fields, "mode=update&diarytaskdetailid=" + row.ID + "&diarycolourscheme=" + $(".colourschemeid").colouredselectmenu("value"), "diarytask");
+                    row.COLOURSCHEMEID = $("#diarycolourscheme").selectcolour("value");
+                    await tableform.fields_post(dialog.fields, "mode=update&diarytaskdetailid=" + row.ID, "diarytask");
                     
                     tableform.table_update(table);
                     tableform.dialog_close();
@@ -54,14 +54,7 @@ $(function() {
                     { field: "DAYPIVOT", display: _("Day Pivot") },
                     { field: "SUBJECT", display: _("Subject"),
                         formatter: function(row) {
-                            let fgcol = "";
-                            let bgcol = "";
-                            $.each(controller.colourschemes, function(i, v) {
-                                if (v.ID == row.COLOURSCHEMEID) {
-                                    fgcol = v.FGCOL;
-                                    bgcol = v.BGCOL;
-                                }
-                            });
+                            let [fgcol, bgcol] = html.colour_scheme(row.COLOURSCHEMEID);
                             return '<div class="asm-diarysubjectcoldiv" style="background-color: ' + bgcol + '; color: ' + fgcol + ';">' + row.SUBJECT + '</div>';
                         },
                     },
@@ -73,11 +66,11 @@ $(function() {
                 { id: "new", text: _("New task detail"), icon: "new", enabled: "always", 
                     click: async function() { 
                         await tableform.dialog_show_add(dialog);
-                        let response = await tableform.fields_post(dialog.fields, "mode=create&taskid=" + controller.taskid + "&diarycolourscheme=" + $(".colourschemeid").colouredselectmenu("value"), "diarytask");
+                        let response = await tableform.fields_post(dialog.fields, "mode=create&taskid=" + controller.taskid , "diarytask");
                         let row = {};
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
-                        row.COLOURSCHEMEID = $(".colourschemeid").colouredselectmenu("value");
+                        row.COLOURSCHEMEID = $("#diarycolourscheme").selectcolour("value");
                         controller.rows.push(row);
                         tableform.table_update(table);
                         tableform.dialog_close();
@@ -111,7 +104,6 @@ $(function() {
         },
 
         bind: function() {
-            $(".colourschemeid").colouredselectmenu();
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);

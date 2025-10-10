@@ -1168,6 +1168,7 @@ const tableform = {
             else if (v.type == "raw") { d += tableform.render_markup(v); }
             else if (v.type == "richtextarea") { d += tableform.render_richtextarea(v); }
             else if (v.type == "select") { d += tableform.render_select(v); } 
+            else if (v.type == "selectcolour") { d += tableform.render_selectcolour(v); }
             else if (v.type == "selectmulti") { d += tableform.render_selectmulti(v); }
             else if (v.type == "sqleditor") { d += tableform.render_sqleditor(v); }
             else if (v.type == "text" || v.type === undefined) { d += tableform.render_text(v); }
@@ -1793,6 +1794,23 @@ const tableform = {
         return tableform._render_formfield(v, d);
     },
 
+    render_selectcolour: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += '<div ';
+        d += tableform._render_class(v, "asm-selectcolour");
+        d += tableform._render_style(v, "");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += ">";
+        d += "</div>";
+        return tableform._render_formfield(v, d);
+    },
+
     render_selectmulti: function(v) {
         let d = "";
         tableform._check_id(v);
@@ -1975,6 +1993,7 @@ const tableform = {
                 if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
                 if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
                 if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
+                if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
                 if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
                 if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
             }
@@ -1998,6 +2017,7 @@ const tableform = {
                 else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
                 else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
                 else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
+                else if (v.type == "selectcolour") { $("#" + v.post_field).selectcolour("value", dval); return; }
                 else { $("#" + v.post_field).val(dval); }
             }
         });
@@ -2042,6 +2062,9 @@ const tableform = {
             }
             else if (v.type =="select") {
                 n.select("value", html.decode(row[v.json_field])); 
+            }
+            else if (v.type == "selectcolour") {
+                n.selectcolour("value", String(row[v.json_field]));
             }
             else if (v.type == "selectmulti") {
                 n.selectmulti("value", String(row[v.json_field]));
@@ -2103,6 +2126,9 @@ const tableform = {
             }
             else if (v.type == "sqleditor") {
                 row[v.json_field] = n.sqleditor("value");
+            }
+            else if (v.type == "selectcolour") {
+                row[v.json_field] = n.selectcolour("value");
             }
             else if (v.type == "selectmulti") {
                 row[v.json_field] = n.selectmulti("value");
@@ -2201,6 +2227,10 @@ const tableform = {
             else if (v.type == "richtextarea") {
                 if (post != "") { post += "&"; }
                 post += v.post_field + "=" + encodeURIComponent(n.richtextarea("value"));
+            }
+            else if (v.type == "selectcolour") {
+                if (post != "") { post += "&"; }
+                post += v.post_field + "=" + encodeURIComponent(n.selectcolour("value"));
             }
             else if (v.type == "currency") {
                 if (post != "") { post += "&"; }
