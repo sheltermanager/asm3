@@ -1014,7 +1014,13 @@ const html = {
         if (fgcol && bgcol) {
             return [ fgcol, bgcol ];
         }
-        return [ "#000", "#fff" ];
+        return [ "", "" ];
+    },
+
+    /** Returns a style attribute for setting fgcol and bgcol */
+    colour_scheme_style: function(id) {
+        let [fgcol, bgcol] = html.colour_scheme(id);
+        return 'background-color: ' + bgcol + '; color: ' + fgcol + ';';
     },
 
     /** 

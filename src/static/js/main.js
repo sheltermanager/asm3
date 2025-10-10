@@ -479,7 +479,7 @@ $(function() {
                     s.push(" <i>(" + d.DIARYFORNAME + ")</i>");
                 }
                 s.push('</td>');
-                s.push('<td style="width: 20%">' + d.SUBJECT + '</td>');
+                s.push('<td style="width: 20%;' + html.colour_scheme_style(d.COLOURSCHEMEID) + '">' + d.SUBJECT + '</td>');
                 s.push('<td>');
                 if (d.LINKINFO != null && d.LINKINFO != "") {
                     s.push('<a href="' + link + '">' + d.LINKINFO + '</a><br />');

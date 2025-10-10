@@ -101,8 +101,7 @@ $(function() {
                     },
                     { field: "SUBJECT", display: _("Subject"),
                         formatter: function(row) {
-                            let [fgcol, bgcol] = html.colour_scheme(row.COLOURSCHEMEID);
-                            return '<div class="asm-diarysubjectcoldiv" style="background-color: ' + bgcol + '; color: ' + fgcol + ';">' + row.SUBJECT + '</div>';
+                            return '<div style="' + html.colour_scheme_style(row.COLOURSCHEMEID) + '">' + row.SUBJECT + '</div>';
                         },
                     },
                     { field: "NOTE", display: _("Note") },
