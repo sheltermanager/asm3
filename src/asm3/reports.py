@@ -774,8 +774,9 @@ def email_daily_reports(dbo: Database) -> None:
             asm3.al.debug("report '%s' contained no data and option is on to skip sending empty reports" % (r.TITLE), "reports.email_daily_reports", dbo)
             continue
         if r.DAILYEMAILSENDASPDF:
+            l = dbo.locale
             pdfdata = asm3.utils.html_to_pdf(dbo, body)
-            body = asm3.i18n._('Please find your report attached.', dbo.locale)
+            body = asm3.i18n._("Please find your report attached.", l)
             asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3, attachments=[ ("report.pdf", "application/pdf", pdfdata) ])
         else:
             asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
