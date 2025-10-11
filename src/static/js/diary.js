@@ -20,7 +20,7 @@ $(function() {
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
                     { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), 
                         type: "selectcolour", defaultval: 1, 
-                        callout: _("The color scheme to be used when displaying this note on the calendar view") },
+                        callout: _("The color scheme to be used when displaying this note on the calendar and home screen") },
                     { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
                     { json_field: "DATECOMPLETED", post_field: "completed", label: _("Completed"), type: "date" },

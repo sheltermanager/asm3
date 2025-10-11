@@ -183,7 +183,7 @@ $(function() {
                     options: { displayfield: "NAME", rows: controller.ynun, prepend: '<option value="-1">' + _("(any)") + '</option>' }},
                 { post_field: "matchdeclawed", json_field: "MATCHDECLAWED", type: "select", label: _("Declawed"), rowclasses: "lfs", 
                     options: { displayfield: "NAME", rows: controller.yesno, prepend: '<option value="-1">' + _("(any)") + '</option>' },
-                    hideif: function() { if (config.bool("DontShowDeclawed")) { return true } else { return false } }},
+                    hideif: function() { return config.bool("DontShowDeclawed"); }},
                 { post_field: "matchenergylevel", json_field: "MATCHENERGYLEVEL", type: "select", label: _("Energy level"), 
                     rowclasses: "lfs", options: html.list_to_options([
                         "-1|" + _("(any)"),

@@ -80,7 +80,7 @@ $(function() {
                         ].join("\n")
                 },
                { post_field: "diarycolourscheme", label: _("Color Scheme"), type: "selectcolour", defaultval: 1, 
-                    callout: _("The color scheme to be used when displaying this note on the calendar view") },
+                    callout: _("The color scheme to be used when displaying this note on the calendar and home screen") },
                 { post_field: "diarysubject", label: _("Subject"), type: "text" },
                 { post_field: "diarynotes", label: _(""), labelpos: "above", type: "textarea", colclasses: "bottomborder" }
             ];

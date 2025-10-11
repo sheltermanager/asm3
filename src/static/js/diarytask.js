@@ -24,7 +24,7 @@ $(function() {
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME", prepend: ('<option value="taskcreator">' + _("(task creator)") + '</option>') }},
                     { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), 
                         type: "selectcolour", defaultval: 1, 
-                        callout: _("The color scheme to be used when displaying this note on the calendar view") },
+                        callout: _("The color scheme to be used when displaying this note on the calendar and home screen") },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
                     { json_field: "NOTE", label: _("Note"), post_field: "note", validation: "notblank", type: "textarea" }
                 ]
