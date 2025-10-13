@@ -2,13 +2,13 @@ Microchip Cancellations
 ###
 Microchip
 ###
-34701/Any rev04
+34701/Any rev05
 ###
 Owner, microchip and animal information for all animals returned from adoption between two dates
 ###
 en
 ###
-SELECT DISTINCT a.AnimalName, a.ShelterCode, a.IdentichipNumber, o.OwnerName,
+SELECT DISTINCT a.AnimalName, a.ShelterCode, a.IdentichipNumber, o.ID, o.OwnerName,
 o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, a.BreedName, o.EmailAddress, o.EmailAddress2,
 (SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName,

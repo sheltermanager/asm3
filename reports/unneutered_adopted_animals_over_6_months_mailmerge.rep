@@ -2,14 +2,14 @@ Non-Neutered/Spayed Adopted Animals Aged Over 6 Months
 ###
 Auditing
 ###
-34701/Any rev08
+34701/Any rev09
 ###
 Adopted animals aged over 6 months who have not been neutered/spayed.
 ###
 en
 ###
 SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName, s.Sex,
-o.OwnerName, o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, 
+o.ID, o.OwnerName, o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, 
 o.OwnerCode, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.EmailAddress, o.EmailAddress2
 FROM animal a
