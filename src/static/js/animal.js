@@ -532,6 +532,11 @@ $(function() {
                                 controller.returnedexitmovements.length == controller.entryhistory.length; } },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
+                    { id: "waitinglist", text: _("Waiting List"), icon: "waitinglist", tooltip: _("Add to Waiting List"),
+                        hideif: function() {
+                            return controller.animal.ARCHIVED == 0
+                        }
+                    },
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
                 ]),
                 tableform.render_accordion({ id: "asm-details-accordion", panes: [
@@ -1328,6 +1333,22 @@ $(function() {
             $("#button-littermates").button().click(function() {
                 common.route("animal_find_results?mode=ADVANCED&q=&filter=includedeceased&litterid=" + encodeURIComponent($("#litterid").val()));
             });
+
+            $("#button-waitinglist")
+                .button()
+                .click(async function() {
+                    $("#button-waitinglist").button("disable");
+                    let description = "Handsome";
+                    let formdata = [
+                        "dateputon=" + format.date(new Date()),
+                        "animalname=" + controller.animal.ANIMALNAME,
+                        "species=" + controller.animal.SPECIESID,
+                        "owner=" + controller.animal.CURRENTOWNERID,
+                        "description=" + description
+                    ].join("&");
+                    let wlid = await common.ajax_post("waitinglist_new", formdata);
+                    common.route("waitinglist?id=" + wlid);
+                });
 
             // Inline buttons
             $("#button-gencode")
