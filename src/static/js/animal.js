@@ -1338,13 +1338,29 @@ $(function() {
                 .button()
                 .click(async function() {
                     $("#button-waitinglist").button("disable");
-                    let description = "Handsome";
+                    let description = "#s:" + controller.animal.SHELTERCODE;
+                    let microchip = controller.animal.IDENTICHIPNUMBER;
+                    if (controller.animal.IDENTICHIP2NUMBER) {
+                        microchip += " " + controller.animal.IDENTICHIP2NUMBER
+                    }
+                    let neutered = "";
+                    if (controller.animal.NEUTERED) {
+                        neutered = "on";
+                    }
+
                     let formdata = [
                         "dateputon=" + format.date(new Date()),
                         "animalname=" + controller.animal.ANIMALNAME,
                         "species=" + controller.animal.SPECIESID,
                         "owner=" + controller.animal.CURRENTOWNERID,
-                        "description=" + description
+                        "description=" + description,
+                        "microchip=" + microchip,
+                        "breed=" + controller.animal.BREEDID,
+                        "sex=" + controller.animal.SEX,
+                        "neutered=" + neutered,
+                        "size=" + controller.animal.SIZE,
+                        "dateofbirth=" + format.date(controller.animal.DATEOFBIRTH),
+
                     ].join("&");
                     let wlid = await common.ajax_post("waitinglist_new", formdata);
                     common.route("waitinglist?id=" + wlid);
