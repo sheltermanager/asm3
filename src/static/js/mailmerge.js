@@ -122,32 +122,21 @@ $(function() {
                 '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a> (' + controller.numemails + ') ' + smcomemailinfo + '</h3>',
                 '<div id="sendemail">',
                 hf.replace("{mode}", "email"),
-                tableform.fields_render(
-                    [
+                tableform.fields_render([
                         { id: 'em-from', post_field: 'from', label: _("From"), type: 'text', doublesize: true, validation: 'notblank' },
                         { id: 'em-subject', post_field: 'subject', label: _("Subject"), type: 'text', doublesize: true, validation: 'notblank',
                             callout: _("Valid tokens for the subject and text") + ':' +
-                            '<br/><br/>' +
-                            mailmerge.render_fields()
-                        },
+                            '<br/><br/>' + mailmerge.render_fields() },
                         { id: 'em-body', post_field: 'body', label: _("Email body"), type: 'richtextarea', height: '200px', validation: 'notblank' },
                         { id: 'em-template', label: _("Template"), type: 'select', options: edit_header.template_list_options(controller.templates) },
                         { id: 'em-includeunsubscribe', post_field: 'unsubscribe', label: _("Add an unsubscribe link to the bottom of emails"), type: 'check' },
                         { id: 'em-logemail', post_field: 'logemail', label: _("Add a log to recipient person records"), type: 'check',
-                            hideif: mailmerge.log_unavailable
-                        },
+                            hideif: mailmerge.log_unavailable },
                         { id: 'em-logtype', post_field: 'logtype', label: _("Log type"), type: 'select', options: html.list_to_options(controller.logtypes, 'ID', 'LOGTYPENAME'),
-                            hideif: mailmerge.log_unavailable
-                        },
+                            hideif: mailmerge.log_unavailable },
                         { id: 'em-logmessage', post_field: 'logmessage', label: _("Log message"), type: 'textarea',
-                            hideif: mailmerge.log_unavailable
-                         },
-                    ],
-                    {
-                        full_width: true
-                    }
-                ),
-                
+                            hideif: mailmerge.log_unavailable },
+                    ], { full_width: true }),
                 '<p class="centered"><button id="button-email">' + _("Send Emails") + '</button></p>',
                 '</div>',
 
@@ -213,17 +202,22 @@ $(function() {
 
             $("#button-csv, #button-pdflabels").button();
             $("#button-email").button().click(async function() {
-                if (validate.notblank(['em-from', 'em-subject', 'em-logmessage'])) {
-                    if ( !html.strip_tags($("#em-body").richtextarea("value")) ) {
-                        validate.highlight('em-body');
-                    } else {
-                        $("#button-email").button("disable");
-                        let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea, #sendemail .asm-selectbox, #sendemail textarea").toPOST();
-                        await common.ajax_post("mailmerge", formdata);
-                        header.show_info(_("Messages successfully sent"));
-                        $("#asm-mailmerge-accordion").hide();
-                    }
+                if (!validate.notblank(["em-from", "em-subject"])) { 
+                    return; 
                 }
+                if ( !html.strip_tags($("#em-body").richtextarea("value")) ) {
+                    validate.highlight("em-body");
+                    return;
+                } 
+                if ($("#em-logemail").is(":checked") && !$("#em-logmessage").textarea("value")) {
+                    validate.highlight("em-logmessage");
+                    return;
+                }
+                $("#button-email").button("disable");
+                let formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea, #sendemail .asm-selectbox, #sendemail textarea").toPOST();
+                await common.ajax_post("mailmerge", formdata);
+                header.show_info(_("Messages successfully sent"));
+                $("#asm-mailmerge-accordion").hide();
             });
 
             $("#button-copyrecipients").button({icons: { primary: "ui-icon-clipboard" }, text: true}).click(function() {
