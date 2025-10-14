@@ -486,4 +486,37 @@ class AdoptAPetPublisher(FTPPublisher):
         else:
             line.append(str(int(asm3.utils.cint(an.FEE) / 100)))
         return self.csvLine(line)
+    
+    def removeAllImages(self) -> str:
+        """
+        This process sends a blank file to Adoptapet
+        to remove all the existing listings (so any existing images are forgotten). It
+        then touches the access date on all the publishable images for adoptable animals
+        so that PetFinder will get a new URL for them and download them again.
+        The return value is the publishing log.
+        """
+                
+        self.log("AdoptAPetPublisher clearing listings ...")
 
+        shelterid = asm3.configuration.adoptapet_user(self.dbo)
+        if shelterid == "":
+            raise Exception("No adoptapet.com shelter id has been set.")
+
+        if not self.openFTPSocket(): 
+            raise Exception("Failed opening FTP socket.")
+
+        # Touch all the date fields of publishable media for adoptable animals 
+        # so that they get a different photo URL due to the timestamp so PetFinder will 
+        # retrieve them again
+        self.dbo.execute("UPDATE media SET Date=? WHERE LinkTypeID=0 AND LinkID IN (SELECT ID FROM animal WHERE Adoptable=1) AND ExcludeFromPublish=0", 
+            [ self.dbo.now() ])
+        
+        try:
+            nlst = self.socket.nlst("*.jpg")
+            for f in nlst:
+                self.log("delete image: %s" % f)
+                self.socket.delete(f)
+        except Exception as err:
+            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+        
+        return "\n".join(self.logBuffer)

@@ -4949,6 +4949,20 @@ class mailmerge(JSONEndpoint):
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         return ", ".join(self.recipients(rows))
 
+class maint_adoptapet(ASMEndpoint):
+    url = "maint_adoptapet"
+
+    def content(self, o):
+        """ Clears all Adoptapet listings """
+        self.content_type("text/plain")
+        self.cache_control(0)
+        try:
+            pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
+            p = asm3.publishers.adoptapet.AdoptAPetPublisher(o.dbo, pc)
+            return p.removeAllImages()
+        except Exception as err:
+            return str(err)
+        
 class maint_be_user(ASMEndpoint):
     url = "maint_be_user"
 
