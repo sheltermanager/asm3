@@ -326,8 +326,8 @@ $.fn.emailform = asm_widget({
     },
 
     destroy: function(t) {
-        common.widget_destroy("#dialog-email", "dialog"); 
         common.widget_destroy("#em-body", "richtextarea");
+        common.widget_destroy("#dialog-email", "dialog"); 
     },
     
     /**
