@@ -272,6 +272,17 @@ def has_security_flag(securitymap: str, flag: str) -> bool:
     perms = securitymap.split("*")
     return flag + " " in perms
 
+def add_role_to_user(dbo: Database, userid: int, roleid: int) -> bool:
+    """
+    Adds role with ID roleid to user with ID userid if not already present.
+    If roleid added - returns True, if role was already applied - returns False
+    """
+    if roleid not in get_roles_ids_for_userid(dbo, userid):
+        dbo.insert("userrole", { "UserID": userid, "RoleID": roleid }, generateID=False)
+        return True
+    else:
+        return False
+
 def add_security_flag(securitymap: str, flag: str) -> str:
     """
     Adds a security flag to a map and returns the new map
@@ -421,6 +432,16 @@ def get_roles_ids_for_user(dbo: Database, username: str) -> Results:
     Returns a list of role ids a user is in
     """
     rolesd = dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON users.ID = userrole.UserID WHERE users.UserName = ?", [username])
+    roles = []
+    for r in rolesd:
+        roles.append(r.ROLEID)
+    return roles
+
+def get_roles_ids_for_userid(dbo: Database, userid: int) -> Results:
+    """
+    Returns a list of role ids a user is in
+    """
+    rolesd = dbo.query("SELECT RoleID FROM userrole WHERE UserID = ?", [userid])
     roles = []
     for r in rolesd:
         roles.append(r.ROLEID)

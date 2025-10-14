@@ -7923,8 +7923,12 @@ class systemusers(JSONEndpoint):
     
     def post_addrole(self, o):
         self.check(asm3.users.EDIT_USER)
+        roleid = o.post.integer("roleid")
+        updatedusers = []
         for uid in o.post.integer_list("ids"):
-            o.dbo.insert("userrole", { "UserID": uid, "RoleID": o.post.integer("roleid") }, generateID=False)
+            if asm3.users.add_role_to_user(o.dbo, uid, roleid):
+                updatedusers.append(uid)
+        return updatedusers
 
     def post_delete(self, o):
         self.check(asm3.users.EDIT_USER)

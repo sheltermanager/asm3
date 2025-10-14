@@ -281,8 +281,8 @@ $(function() {
                 $(r).on("click", async function() {
                     let userids = tableform.table_ids(this.table);
                     let roleid = $(this).attr("data-roleid");
-                    await common.ajax_post("systemusers", "mode=addrole&ids=" + userids + "&roleid=" + roleid);
-                    $.each(userids.split(","), function(i, uid) {
+                    let updatedusers = JSON.parse(await common.ajax_post("systemusers", "mode=addrole&ids=" + userids + "&roleid=" + roleid));
+                    $.each(updatedusers, function(i, uid) {
                         if (uid) {
                             $.each(controller.rows, function(i, row) {
                                 if (row.ID == uid) {
