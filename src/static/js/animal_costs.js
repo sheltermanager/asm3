@@ -38,7 +38,6 @@ $(function() {
                             if (controller.animal) {
                                 $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 $("#animalrow").hide();
-                                animal_costs.costtype_change();
                             } else if (controller.person) {
                                 $("#person").personchooser("loadbyid", controller.person.ID);
                                 $("#personrow").hide();
