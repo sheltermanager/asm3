@@ -344,6 +344,10 @@ class SavourLifePublisher(AbstractPublisher):
         needs_foster = False
         if "NEEDSFOSTER" in an and an.NEEDSFOSTER and an.NEEDSFOSTER != "0":
             needs_foster = True
+        
+        indoor_only = False
+        if "INDOORONLY" in an and an.INDOORONLY and an.INDOORONLY != "0":
+            indoor_only = True
 
         medical_issues = ""
         if "MEDICALISSUES" in an and an.MEDICALISSUES:
@@ -422,6 +426,7 @@ class SavourLifePublisher(AbstractPublisher):
             "InterstateAdoptionAvaliable": interstate, # NOTE: This attribute is deliberately spelled wrong due to mispelling at SL side
             "DistanceRestriction":      asm3.utils.iif(radius == 0, None, radius),
             "FosterCareRequired":       needs_foster,
+            "IndoorOnly":               indoor_only,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
             "SizeWhenAdult":            size,
             "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,
