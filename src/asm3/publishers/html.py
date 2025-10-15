@@ -837,7 +837,7 @@ class HTMLPublisher(FTPPublisher):
 
             # Clear any existing uploaded images
             if self.pc.forceReupload:
-                self.clearExistingImages()
+                self.clearExistingImages(clearLocal = True)
 
         except Exception as err:
             self.setLastError("Error setting up page: %s" % err)
