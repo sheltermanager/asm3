@@ -1131,3 +1131,184 @@ select:disabled, input:disabled, textarea:disabled {
 {
     .no-print, .no-print * { display: none !important; }
 }
+
+/** POS CSS */
+
+#poscontainer {
+    display: flex;
+}
+
+#numberpad {
+    border: 1px;
+    color: #ffffff;
+    background-color: #888888;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#numberpad td {
+    width: 25%;
+    text-align: center;
+    font-size: 200%;
+    cursor: pointer;
+    border: 1px solid white;
+}
+
+#numberpad td:hover {
+    color: #888888;
+    background-color: #ffffff;
+}
+
+#numberpad table {
+    border-collapse: collapse;
+}
+
+#numpadscreen {
+    background-color: #90ee90;
+    height: 40px;
+    color: black;
+    text-align: left;
+    padding: 10px;
+    font-size: 200%;
+}
+
+.posbuttoncontainer {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.posbutton {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 150%;
+    cursor: pointer;
+    width: 200px;
+    height: 150px;
+    border: 1px solid black;
+    text-align: center;
+    border-radius: 5px;
+}
+
+#currentreceiptitemcontainer {
+    display: flex;
+    font-size: 150%;
+    font-style: italic;
+    background-color: #fafafa;
+}
+
+.receiptitemcontainer {
+    display: flex;
+    font-size: 150%;
+}
+
+#transactionsheader {
+    position: sticky;
+    top:0;
+    display: flex;
+    font-size: 150%;
+    background-color: white;
+}
+
+#subtotal {
+    display: flex;
+    font-size: 150%;
+}
+
+#balancecontainer {
+    display: flex;
+    font-size: 200%;
+    font-weight: bold;
+    background-color: white;
+    color: black;
+}
+
+#balancecontainer div {
+    padding: 5px;
+}
+
+#balancelabel {
+    flex: 100%;
+}
+
+#currentreceiptitemcontainer div, .receiptitemcontainer div, #transactionsheader div, #subtotal div {
+    padding: 5px;
+}
+
+#currentreceiptitemdescription, .receiptitemdescription, .paymentdescription, #transactiondescriptionheader, #subtotaldescription {
+    flex: 100%;
+}
+
+.receiptitemdescription {
+    cursor: pointer;
+}
+
+#currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, #balance, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
+    max-width: 100px;
+    min-width: 100px;
+}
+
+.numpadtarget {
+    background-color: yellow;
+}
+
+#infopanel {
+    background-color: white;
+    max-height: 50vh;
+    margin: 10px;
+    margin-top: 0;
+    overflow: auto;
+}
+
+#productsheader {
+    display: flex;
+    font-size: 150%;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.productcontainer {
+    display: flex;
+    font-size: 150%;
+    background-color: #fafafa;
+    padding: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.productcontainer:hover {
+    color: #fafafa;
+    background-color: black;    
+}
+
+#transactionlog {
+    max-height: calc(100vh - 800px);
+}
+
+#enterkey {
+    background-color: green;
+}
+
+#cardbutton {
+    background-color: blue;
+}
+
+#cashbutton {
+    background-color: red;
+}
+
+.removereceiptitem {
+    display: none;
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.refund {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}

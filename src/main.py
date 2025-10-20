@@ -6241,6 +6241,20 @@ class options(JSONEndpoint):
         asm3.configuration.csave(o.dbo, o.user, o.post)
         self.reload_config()
 
+class pos(JSONEndpoint):
+    url = "pos"
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "producttypes": asm3.stock.get_product_types(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "stocklocations": asm3.lookups.get_stock_locations(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "units": asm3.lookups.get_unit_types(dbo),
+            "products": asm3.stock.get_active_products(dbo)
+        }
+
 class options_font_preview(ASMEndpoint):
     url = "options_font_preview"
     user_activity = False
