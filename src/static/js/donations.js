@@ -266,6 +266,7 @@ $(function() {
             $("#vat").change();
             if (config.bool("DonationQuantities")) {
                 $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
+                donations.amount_change();
             }
         },
 
@@ -323,6 +324,7 @@ $(function() {
             row.FREQUENCYNAME = common.get_field(controller.frequencies, row.FREQUENCY, "FREQUENCY");
         },
 
+        /** Calculates the totals line at the bottom of the table */
         calculate_total: function() {
             let tot = 0, due = 0, vat = 0, net = 0, fee = 0;
             $.each(controller.rows, function(i, v) {
@@ -353,6 +355,37 @@ $(function() {
             }
             else {
                 $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
+            }
+        },
+
+        /** What to do when the amount is changed. 
+         * If we're adding a new payment, always recalculate the VAT 
+         * If we're editing, and VAT inclusive mode is on, don't recalculate to avoid confusion 
+         *     as amount_change can be triggered by other events */
+        amount_change: function() {
+            if (donations.create_semaphore) { donations.calculate_vat(); }
+            else if (!donations.create_semaphore && !config.bool("VATExclusive")) { donations.calculate_vat(); }
+        },
+
+        /** Shows the vat fields based on whether the vat checkbox is set */
+        vat_change: function() {
+            if ($("#vat").prop("checked")) {
+                if (donations.create_semaphore == true) {
+                    $("#vatratechoice").change();
+                    $("#vatratechoicerow").fadeIn();
+                    $("#vatraterow").fadeOut();
+                } else {
+                    $("#vatraterow").fadeIn();
+                }
+                
+                $("#vatamountrow").fadeIn();
+            }
+            else {
+                $("#vatamount").currency("value", "0");
+                $("#vatrate").val("0"); 
+                $("#vatratechoicerow").fadeOut();
+                $("#vatraterow").fadeOut();
+                $("#vatamountrow").fadeOut();
             }
         },
 
@@ -494,47 +527,17 @@ $(function() {
 
             $("#quantity, #unitprice").blur(function() {
                 $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
+                donations.amount_change();
             });
 
-            $("#vat").change(function() {
-                if ($(this).is(":checked")) {
-                    if (donations.create_semaphore == true) {
-                        $("#vatratechoice").change();
-                        $("#vatratechoicerow").fadeIn();
-                        $("#vatraterow").fadeOut();
-                    } else {
-                        $("#vatraterow").fadeIn();
-                    }
-                    
-                    $("#vatamountrow").fadeIn();
-                }
-                else {
-                    $("#vatamount").currency("value", "0");
-                    $("#vatrate").val("0"); 
-                    $("#vatratechoicerow").fadeOut();
-                    $("#vatraterow").fadeOut();
-                    $("#vatamountrow").fadeOut();
-                }
-            });
-
-            // NOTE: Trigger recalculating the vat on amount change - but only if the amount is inclusive of VAT
-            // otherwise, the amount will keep going up with each recalculation
-            $("#amount").change(function() {
-                if (!config.bool("VATExclusive")) { donations.calculate_vat(); }
+            $("#amount").change(donations.amount_change);
+            $("#vat").change(donations.vat_change);
+            $("#vatratechoice").change(function() {
+                let taxrate = common.get_field(controller.taxrates, $("#vatratechoice").val(), "TAXRATE") || 0.0;
+                $("#vatrate").val(taxrate);
+                $("#vatrate").change();
             });
             $("#vatrate").change(donations.calculate_vat);
-
-            $("#vatratechoice").change(function() {
-                let taxrate = 0.0;
-                $.each(controller.taxrates, function(trcount, tr) {
-                    if (tr.ID == $("#vatratechoice").val()) {
-                        taxrate = tr.TAXRATE;
-                        return false;
-                    }
-                });
-                $("#vatrate").val(taxrate);
-                donations.calculate_vat();
-            });
 
             $("#emailform").emailform();
 
