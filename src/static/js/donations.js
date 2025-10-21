@@ -73,7 +73,6 @@ $(function() {
                     $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
                     $("#receiptnumberrow").show();
                     $("#receiptnumber").prop("disabled", true);
-                    donations.editmode = true;
                     $("#vatratechoicerow").hide();
                     if (row.ISVAT == 1) {
                         $("#vatraterow").show();
@@ -188,17 +187,10 @@ $(function() {
                                 $("#giftaid").prop("checked", false);
                                 $("#receiptnumber").val("");
                                 $("#receiptnumberrow").hide();
-                                donations.type_change();
-                                $("#vatratechoicerow").hide();
-                                $("#vatraterow").hide();
-                                $("#vatamountrow").hide();
-                                donations.editmode = false;
-                                if (config.bool("VATEnabled")) {
-                                    $("#vat").prop("checked", true);
-                                } else {
-                                    $("#vat").prop("checked", false);
-                                }
+                                $("#amount").currency("value", 0);
+                                $("#vat").prop("checked", false); 
                                 $("#vat").change();
+                                donations.type_change(); // this will re-enable vat box if the type has it
                             }
                         });
                     } 
@@ -352,6 +344,18 @@ $(function() {
             $("#totals").toggle(due > 0 || tot > 0 || net > 0 || fee > 0 || vat > 0);
         },
 
+        /** Calculates the vat amount from the amount.
+         *  Note that if VATExclusive is on and you call this function multiple times, it will keep increasing the amount. */
+        calculate_vat: function() {
+            if (config.bool("VATExclusive")) {
+                $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
+                $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
+            }
+            else {
+                $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
+            }
+        },
+
         render: function() {
             let s = "";
             this.model();
@@ -494,8 +498,7 @@ $(function() {
 
             $("#vat").change(function() {
                 if ($(this).is(":checked")) {
-                    //$("#vatratechoice").val(config.str("AFDefaultTaxRate"));
-                    if (donations.editmode == false) {
+                    if (donations.create_semaphore == true) {
                         $("#vatratechoice").change();
                         $("#vatratechoicerow").fadeIn();
                         $("#vatraterow").fadeOut();
@@ -514,22 +517,12 @@ $(function() {
                 }
             });
 
-            const calc_vat = function() {
-                if (config.bool("VATExclusive")) {
-                    $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
-                    $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
-                }
-                else {
-                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
-                }
-            };
-
             // NOTE: Trigger recalculating the vat on amount change - but only if the amount is inclusive of VAT
             // otherwise, the amount will keep going up with each recalculation
             $("#amount").change(function() {
-                if (!config.bool("VATExclusive")) { calc_vat(); }
+                if (!config.bool("VATExclusive")) { donations.calculate_vat(); }
             });
-            $("#vatrate").change(calc_vat);
+            $("#vatrate").change(donations.calculate_vat);
 
             $("#vatratechoice").change(function() {
                 let taxrate = 0.0;
@@ -540,7 +533,7 @@ $(function() {
                     }
                 });
                 $("#vatrate").val(taxrate);
-                calc_vat();
+                donations.calculate_vat();
             });
 
             $("#emailform").emailform();
