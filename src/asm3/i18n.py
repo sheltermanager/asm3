@@ -395,6 +395,31 @@ def format_currency_no_symbol(locale: str, value: int) -> str:
     """
     return format_currency(locale, value, includeSymbol = False)
 
+def parse_currency(s: str, l: str) -> int:
+    """
+    Parses a display currency amount to an integer number of the smallest denomination of that currency
+    for storing in the database.
+    Calculation is done according to the locale l 
+    eg: $1.82/en would become 182 US cents
+         1.932/en_JO would become 1932 Jordanian fulus, etc.
+    """
+    try:
+        v = re.sub(r'[^\d\-\.\,]+', '', s) # Remove anything that isn't numeric or sign/decimal mark/grouping
+        if get_currency_radix(l) == ".": # UK/US/etc already use . for decimal mark and , for grouping
+            v = v.replace(",", "") # throw away comma/grouping
+        elif get_currency_radix(l) == ",": # EU locales that use , for decimal mark and . for grouping
+            v = v.replace(".", "") # throw away dot/grouping
+            v = v.replace(",", ".") # replace decimal mark , with a . so float() works properly
+        if v.startswith("."): v = v[1:] # Some currency symbols such as Rupees have a . in them and they end up at the front, discard
+        fl = float(v)
+        dp = get_currency_dp(l)
+        multiplier = pow(10, dp)
+        fl = fl * multiplier
+        fl += 0.5 # This will correct IEEE rounding errors where eg: 170 becomes 169.999999
+        return int(fl)
+    except:
+        return 0
+
 def format_time(d: datetime, timeformat: str = "%H:%M:%S") -> str:
     if d is None: return ""
     return time.strftime(timeformat, d.timetuple())

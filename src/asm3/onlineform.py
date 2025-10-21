@@ -2,7 +2,6 @@
 import asm3.al
 import asm3.animal
 import asm3.animalcontrol
-import asm3.cachedisk
 import asm3.configuration
 import asm3.geo
 import asm3.i18n
@@ -12,11 +11,11 @@ import asm3.lostfound
 import asm3.media
 import asm3.movement
 import asm3.person
-import asm3.publishers.base
 import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
+
 from asm3.sitedefs import BASE_URL, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
 from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Tuple
@@ -1888,7 +1887,7 @@ def create_traploan(dbo: Database, username: str, collationid: int) -> Tuple[int
     for f in fields:
         if f.FIELDNAME == "equipmenttype": d["type"] = str(guess_equipmenttype(dbo, f.VALUE))
         if f.FIELDNAME == "loandate": d["loandate"] = f.VALUE
-        if f.FIELDNAME == "deposit": d["depositamount"] = str(asm3.csvimport.gkc(f, "VALUE", l))
+        if f.FIELDNAME == "deposit": d["depositamount"] = str(asm3.i18n.parse_currency(f.VALUE, l))
         if f.FIELDNAME == "returnduedate": d["returnduedate"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "loandate" not in d.keys(): d["loandate"] = asm3.i18n.python2display(l, dbo.today())
