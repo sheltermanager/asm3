@@ -1324,6 +1324,9 @@ $.fn.textbox = asm_widget({
 
     _create: function(t) {
         disable_autocomplete(t);
+        if (t.attr("data-noedit") == "true") { 
+            t.prop("disabled", true); 
+        }
         t.on("keypress", function(e) {
             if (t.prop("disabled")) {
                 e.preventDefault();
