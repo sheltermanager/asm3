@@ -41,6 +41,7 @@ import asm3.paymentprocessor.paypal
 import asm3.paymentprocessor.stripeh
 import asm3.paymentprocessor.cardcom
 import asm3.person
+import asm3.pos
 import asm3.publish
 import asm3.publishers.base
 import asm3.publishers.html
@@ -6241,6 +6242,15 @@ class options(JSONEndpoint):
         asm3.configuration.csave(o.dbo, o.user, o.post)
         self.reload_config()
 
+class options_font_preview(ASMEndpoint):
+    url = "options_font_preview"
+    user_activity = False
+    session_cookie = False # Disable sending the cookie with the response to assist with CDN caching
+
+    def content(self, o):
+        self.cache_control(CACHE_ONE_YEAR)
+        return asm3.media.watermark_font_preview(o.post["fontfile"])
+
 class pos(JSONEndpoint):
     url = "pos"
 
@@ -6254,15 +6264,12 @@ class pos(JSONEndpoint):
             "units": asm3.lookups.get_unit_types(dbo),
             "products": asm3.stock.get_active_products(dbo)
         }
+    
+    def post_qrcode(self, o):
+        pass
 
-class options_font_preview(ASMEndpoint):
-    url = "options_font_preview"
-    user_activity = False
-    session_cookie = False # Disable sending the cookie with the response to assist with CDN caching
-
-    def content(self, o):
-        self.cache_control(CACHE_ONE_YEAR)
-        return asm3.media.watermark_font_preview(o.post["fontfile"])
+    def post_write(self, o):
+        return asm3.pos.insert_receipt_from_form(o.dbo, o.user, o.post)
 
 class pp_cardcom(ASMEndpoint):
     """ 

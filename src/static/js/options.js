@@ -885,6 +885,9 @@ $(function() {
                         { id: "spamurls", post_field: "OnlineFormSpamURLs", label: _("Spambot protection: URLs in any field"), type: "check", fullrow: true }, 
                         { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
+                    { id: "tab-pos", title: _("Point of Sale"), fields: [
+                        { id: "posbarcodes", post_field: "POSBarcodeScanner", label: _("Use barcode scanner"), type: "check" },
+                    ]}, 
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
                         { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), doublesize: true, type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
                         { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), doublesize: true, type: "text", colclasses: "bottomborder" }, 

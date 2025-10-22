@@ -1255,7 +1255,7 @@ select:disabled, input:disabled, textarea:disabled {
 
 #infopanel {
     background-color: white;
-    max-height: 50vh;
+    max-height: calc(50vh - 10px);
     margin: 10px;
     margin-top: 0;
     overflow: auto;
@@ -1311,4 +1311,9 @@ select:disabled, input:disabled, textarea:disabled {
     background-color: red;
     color: white;
     font-weight: bold;
+}
+
+#producttypes {
+    height: 50vh;
+    overflow: auto;
 }

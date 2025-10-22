@@ -206,8 +206,21 @@ $(function() {
             pos.numpadfocus = null;
         },
 
-        complete_transaction: function() {
-            alert(_("Transaction Complete"));
+        complete_transaction: async function() {
+            // alert(_("Transaction Complete"));
+            let formdata = "mode=write&balance=99";
+            let receiptid = await common.ajax_post("pos", formdata);
+            console.log(receiptid);
+            // $.each($(".receiptitemdescription"), function(i, v) {
+            //     console.log($(v).text());
+            //     let formdata = "mode=write&"
+            // });
+            // $.each($(".paymentdescription"), function(i, v) {
+            //     console.log($(v).text());
+            // });
+            // let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST(true);
+            // formdata += "&DonationAccountMappings=" + get_donation_mappings();
+            // let response = await common.ajax_post("options", formdata);
         },
 
         sync: function() {
@@ -272,6 +285,7 @@ $(function() {
                     }
                 });
                 $("#infopanel").html(products);
+                $("#infopanel").scrollTop(0);
             });
             $(".taxrate").click(function() {
                 let taxrate = parseFloat($(this).attr("data-taxrate")) / 100.00;
@@ -284,7 +298,7 @@ $(function() {
                         '<div class="receiptitemcontainer">',
                             '<div class="receiptitemdescription">' + $(this).text() + '&nbsp;<span class="removereceiptitem">X</span></div>',
                             '<div class="receiptitemquantity" data-unitprice="' + price + '">1</div>',
-                            '<div class="receiptitemtax" class="posprice" data-taxrate="' + $(this).attr("data-taxrate") + '">' + pos.format_price(taxamount) + '</div>',
+                            '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '">' + pos.format_price(taxamount) + '</div>',
                             '<div class="receiptitemprice" class="posprice">' + pos.format_price(price) + '</div>',
                         '</div>'
                     ].join("\n")
@@ -293,6 +307,7 @@ $(function() {
                 $("#producttypes, #infopanel").show();
                 $("#taxrates").hide();
                 pos.update_subtotal();
+                $("#infopanel").scrollTop(0);
             });
 
             $("#currentreceiptitemcontainer div").click(function() {
@@ -405,14 +420,16 @@ $(function() {
             });
             $("#cashbutton").on("click", function() {
                 let paymentamount = $("#numpadscreen").text();
-                if (!paymentamount) { paymentamount = $("#balance").text() };
+                if (!paymentamount) { paymentamount = parseFloat($("#balance").text()) * 100 };
                 $("#numpadscreen").text("");
+                let refund = 1;
+                if (pos.refund) { refund = -1 };
                 $("#payments").append(
                     [
                         '<hr>',
                         '<div class="receiptitemcontainer">',
                             '<div class="paymentdescription">' + _("Cash") + '&nbsp;<span class="removereceiptitem">X</span></div>',
-                            '<div class="paymentprice">' + pos.format_price(paymentamount) + '</div>',
+                            '<div class="paymentprice">' + pos.format_price(parseFloat(paymentamount) * refund) + '</div>',
                         '</div>'
                     ].join("\n")
                 );
@@ -426,14 +443,16 @@ $(function() {
 
             $("#cardbutton").on("click", function() {
                 let paymentamount = $("#numpadscreen").text();
-                if (!paymentamount) { paymentamount = $("#balance").text() };
+                if (!paymentamount) { paymentamount = parseFloat($("#balance").text()) * 100 };
                 $("#numpadscreen").text("");
+                let refund = 1;
+                if (pos.refund) { refund = -1 };
                 $("#payments").append(
                     [
                         '<hr>',
                         '<div class="receiptitemcontainer">',
                             '<div class="paymentdescription">' + _("Card") + '&nbsp;<span class="removereceiptitem">X</span></div>',
-                            '<div class="paymentprice">' + pos.format_price(paymentamount) + '</div>',
+                            '<div class="paymentprice">' + pos.format_price(parseFloat(paymentamount) * refund) + '</div>',
                         '</div>'
                     ].join("\n")
                 );
