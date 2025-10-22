@@ -192,6 +192,17 @@ class Database(object):
     def ddl_add_view(self, name: str, sql: str) -> str:
         return "CREATE VIEW %s AS %s" % (name, sql)
 
+    def ddl_audit_table_columns(self, leadingComma: bool = True) -> str:
+        cols = ",".join([ 
+            self.ddl_add_table_column("RecordVersion", self.type_integer, True),
+            self.ddl_add_table_column("CreatedBy", self.type_shorttext, False),
+            self.ddl_add_table_column("CreatedDate", self.type_datetime, False),
+            self.ddl_add_table_column("LastChangedBy", self.type_shorttext, False),
+            self.ddl_add_table_column("LastChangedDate", self.type_datetime, False)
+        ])
+        if leadingComma: cols = "," + cols
+        return cols
+
     def ddl_drop_column(self, table: str, column: str) -> str:
         return "ALTER TABLE %s DROP COLUMN %s" % (table, column)
 

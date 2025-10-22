@@ -26,13 +26,8 @@ fields = ",".join([
     dbo.ddl_add_table_column("Barcode", dbo.type_shorttext, False),
     dbo.ddl_add_table_column("PLU", dbo.type_shorttext, False),
     dbo.ddl_add_table_column("GlobalMinimum", dbo.type_integer),
-    dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
-    dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
-    dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False),
     dbo.ddl_add_table_column("IsRetired", dbo.type_integer, False)
-])
+]) + dbo.ddl_audit_table_columns()
 execute(dbo, dbo.ddl_add_table("product", fields) )
 add_index(dbo, "product_SupplierID", "product", "SupplierID")
 add_index(dbo, "product_ProductName", "product", "ProductName")
