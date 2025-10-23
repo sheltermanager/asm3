@@ -69,7 +69,7 @@ class PostedData(object):
         """ Returns an integer 1/0 value from a checkbox input """
         if field not in self.data:
             return 0
-        if self.data[field] == "checked" or self.data[field] == "on":
+        if self.data[field] == "on":
             return 1
         else:
             return 0

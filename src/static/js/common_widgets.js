@@ -114,7 +114,7 @@ $.fn.destroy_asm_widgets = function() {
     });
 };
 
-// Disables autocomplete on the given JQuery node t
+/** Disables autocomplete on the given JQuery node t */
 const disable_autocomplete = function(t) {
     // Only disable it if autocomplete hasn't already been
     // set by the markup (eg: for password fields that are textbox)
@@ -124,37 +124,17 @@ const disable_autocomplete = function(t) {
     }
 };
 
-// Generates a javascript object of parameters by looking
-// at the data attribute of all items matching the
-// selector
-$.fn.toJSON = function() {
-    let params = {};
-    this.each(function() {
-        let t = $(this);
-        if (t.attr("type") == "checkbox" && t.attr("data")) {
-            if (t.is(":checked")) {
-                params[t.attr("data")] = "checked";
-            }
-        }
-        else if (t.attr("data") && t.val()) {
-            params[t.attr("data")] = t.val();
-        }
-    });
-    return params;
-};
-
-// Populates fields matching the selector by looking up their
-// data-json attribute 
+/** Sets the value of elements based on their data-json attribute and a row of data */
 $.fn.fromJSON = function(row) {
     this.each(function() {
         let n = $(this);
         let f = $(this).attr("data-json");
         if (f === undefined || f == null || f == "") { return; }
         if (n.hasClass("asm-animalchooser")) {
-            n.animalchooser().animalchooser("loadbyid", row[f]);
+            n.animalchooser("loadbyid", row[f]);
         }
         else if (n.hasClass("asm-personchooser")) {
-            n.personchooser().personchooser("loadbyid", row[f]);
+            n.personchooser("loadbyid", row[f]);
         }
         else if (n.hasClass("asm-currencybox")) {
             n.val(format.currency(row[f]));
@@ -186,10 +166,11 @@ $.fn.fromJSON = function(row) {
     });
 };
 
-// Generates a URL encoded form data string of parameters
-// by looking at the data-post or data attribute of all items 
-// matching the selector. 
-// includeblanks: true if you want fields with empty values sent instead of omitted.
+/** Generates a URL encoded form data string of parameters
+  * by looking at the data-post or data attribute of all items 
+  * matching the selector. 
+  * includeblanks: true if you want fields with empty values sent instead of omitted.
+  */
 $.fn.toPOST = function(includeblanks = false) {
     let post = [];
     this.each(function() {
@@ -198,12 +179,7 @@ $.fn.toPOST = function(includeblanks = false) {
         if (!pname) { pname = t.attr("data"); }
         if (!pname) { return; }
         if (t.attr("type") == "checkbox") {
-            if (t.is(":checked")) {
-                post.push(pname + "=checked");
-            }
-            else {
-                post.push(pname + "=off");
-            }
+            post.push( pname + (t.is(":checked") ? "=on" : "=off" ));
         }
         else if (t.hasClass("asm-currencybox")) {
             post.push(pname + "=" + encodeURIComponent(t.currency("value")));
