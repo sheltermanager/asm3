@@ -1119,8 +1119,9 @@ $(function() {
             $("#tableform tbody tr").css({ "display": "inline-block", "vertical-align": "top", "border": "1px none transparent" });
             // Add the drop icon if it is not present in the table
             if ($("#tableform .asm-mediadroptarget").length == 0) {
-                $("#tableform tbody").prepend('<tr style="display: inline-block"><td class="mode-icon">' +
-                    '<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div></td></tr>');
+                $("#tableform tbody").prepend('<tr style="display: inline-block" class="table-nocount"><td class="mode-icon">' +
+                    '<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>' +
+                    '</td></tr>');
                 media.bind_droptarget("#tableform .asm-mediadroptarget");
             }
             media.icon_mode_active = true;

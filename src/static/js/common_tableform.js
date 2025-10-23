@@ -250,10 +250,11 @@ const tableform = {
      *
      * bodyonly: If you only want the tbody contents, set this to true
      */
-    table_render: function(table, bodyonly) {
+    table_render: function(table, bodyonly = false) {
         var t = [];
-        t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
         if (!bodyonly) {
+            t.push("<table id=\"tableform\" width=\"100%\">");
+            t.push("<thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
                 if (i == 0) {
@@ -261,6 +262,7 @@ const tableform = {
                     t.push('<th>');
                     t.push('<button id="tableform-select-all">' + _("Select all") + '</button>');
                     t.push('<button id="tableform-toggle-filter">' + _("Filter") + '</button>');
+                    t.push('<span id="tableform-row-count">' + table.rows.length + '</span>');
                     t.push(' <span>' + v.display + '</span></th>');
                 }
                 else {
@@ -318,7 +320,10 @@ const tableform = {
             t.push("</tr>");
         });
         if (!bodyonly) {
-            t.push("</tbody></table>");
+            t.push("</tbody>");
+            t.push("<tfoot></tfoot>");
+            t.push("</tfoot>");
+            t.push("</table>");
         }
         return t.join("\n");
     },
@@ -415,6 +420,24 @@ const tableform = {
         }
     },
 
+    /** Updates the table row count according to how many rows are visible */
+    table_update_count: function(table) {
+        setTimeout(function() {
+            let rowsvisible = $("#tableform tbody tr:visible").not(".table-nocount").length;
+            let rowcount = $("#tableform tbody tr").not(".table-nocount").length;
+            let o = "";
+            if (rowsvisible < rowcount) { o = rowsvisible + " / " + rowcount; }
+            else if (rowsvisible == rowcount && rowcount > 0) { o = rowcount; }
+            if (!o) { 
+                $("#tableform-row-count").hide();
+            }
+            else {
+                $("#tableform-row-count").html(o);
+                $("#tableform-row-count").show();
+            }
+        }, 1500);
+    },
+
     /**
      * Binds table events and widgets. If there's a toolbar button set, can be
      * passed to bind watching for selections to them.
@@ -492,6 +515,9 @@ const tableform = {
         table.filter_toggle = false;
         $(".tablesorter-filter-row").toggle(table.filter_toggle);
         $(".tablesorter-filter").prop("placeholder", _("Filter"));
+
+        // As filters are updated, update the visible row count
+        $(".tablesorter-filter").keyup(function() { tableform.table_update_count(table); });
 
         // Bind the select all link in the table header
         // Unlike the CTRL+A sequence, this one will toggle between select/unselect

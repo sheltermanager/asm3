@@ -637,6 +637,15 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-warningrow { color: #ff0000; }
 .asm-smallertext {font-size: 80%; }
 #tableform-select-all, #tableform-toggle-filter { float: left; margin-top: -4px; }
+#tableform-row-count { 
+    float: left; 
+    border: 1px solid #3a87cd;
+    color: #3a87cd;
+    background: #fff;
+    padding: 2px;
+    font-weight: normal;
+    white-space: nowrap;
+}
 #tableform .filtered { display: none !important; } /* also applied by .tablesorter .filtered css but without !important does not work for elements that have changed display */
 
 /** This CSS handles reflowing of tables on portrait mobiles */
