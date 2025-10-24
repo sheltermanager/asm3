@@ -802,6 +802,7 @@ $(function() {
             if (movements.lastanimal) {
                 row.ANIMALNAME = movements.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = movements.lastanimal.SHELTERCODE;
+                row.SHORTCODE = movements.lastanimal.SHORTCODE;
                 row.AGEGROUP = movements.lastanimal.AGEGROUP;
                 row.SEX = movements.lastanimal.SEXNAME;
                 row.SPECIESNAME = movements.lastanimal.SPECIESNAME;

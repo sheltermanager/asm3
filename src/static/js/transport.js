@@ -343,6 +343,7 @@ $(function() {
         set_extra_fields: function(row) {
             row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
             row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+            row.SHORTCODE = $("#animal").animalchooser("get_selected").SHORTCODE;
             row.TRANSPORTTYPENAME = common.get_field(controller.transporttypes, row.TRANSPORTTYPEID, "TRANSPORTTYPENAME");
             if (row.DRIVEROWNERID && row.DRIVEROWNERID != "0") { 
                 row.DRIVEROWNERNAME = $("#driver").personchooser("get_selected").OWNERNAME; 

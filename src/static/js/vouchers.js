@@ -158,14 +158,17 @@ $(function() {
             if (controller.animal) {
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
             }
             else if (vouchers.lastanimal) {
                 row.ANIMALNAME = vouchers.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = vouchers.lastanimal.SHELTERCODE;
+                row.SHORTCODE = vouchers.lastanimal.SHORTCODE;
             }
             else {
                 row.ANIMALNAME = "";
                 row.SHELTERCODE = "";
+                row.SHORTCODE = "";
             }
             if (controller.person) {
                 row.OWNERNAME = controller.person.OWNERNAME;

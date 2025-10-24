@@ -581,6 +581,7 @@ $(function() {
                 row.LOCATIONNAME = controller.animal.SHELTERLOCATIONNAME;
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
             else if (vaccination.lastanimal) {
@@ -592,6 +593,7 @@ $(function() {
                 }
                 row.ANIMALNAME = vaccination.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = vaccination.lastanimal.SHELTERCODE;
+                row.SHORTCODE = vaccination.lastanimal.SHORTCODE;
                 row.WEBSITEMEDIANAME = vaccination.lastanimal.WEBSITEMEDIANAME;
             }
             row.ADMINISTERINGVETNAME = "";

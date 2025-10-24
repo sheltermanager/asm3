@@ -434,6 +434,7 @@ $(function() {
                 row.LOCATIONNAME = controller.animal.SHELTERLOCATIONNAME;
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
             else if (test.lastanimal) {
@@ -445,6 +446,7 @@ $(function() {
                 }
                 row.ANIMALNAME = test.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = test.lastanimal.SHELTERCODE;
+                row.SHORTCODE = test.lastanimal.SHORTCODE;
                 row.WEBSITEMEDIANAME = test.lastanimal.WEBSITEMEDIANAME;
             }
             row.TESTNAME = common.get_field(controller.testtypes, row.TESTTYPEID, "TESTNAME");
