@@ -21,7 +21,7 @@ $(function() {
                 ["grey", "white"],
                 ["blue", "white"],
                 ["purple", "white"],
-                ["black", "white"]
+                ["#090909", "white"]
             ];
             this.nextbuttoncolour = 0;
             this.numpadfocus;
@@ -404,6 +404,8 @@ $(function() {
                         $("#posleftpanel").children().hide();
                         $("#posprintreceiptbutton").hide();
                         $("#posmenupanel").show();
+                        $("#numpadscreen").text("");
+                        pos.numpadlocked = true;
                     }
                 }
             });
