@@ -887,6 +887,8 @@ $(function() {
                     ]}, 
                     { id: "tab-pos", title: _("Point of Sale"), fields: [
                         { id: "posbarcodes", post_field: "POSBarcodeScanner", label: _("Use barcode scanner"), type: "check" },
+                        { id: "posstocklocation", post_field: "POSStockLocation", label: _("POS Stock Location"), type: "select", options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
+                        { id: "possaleusagetype", post_field: "POSSaleUsageType", label: _("POS Sale Usage"), type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
                     ]}, 
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
                         { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), doublesize: true, type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 

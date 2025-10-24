@@ -6222,6 +6222,7 @@ class options(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
             "themes": asm3.lookups.VISUAL_THEMES,
             "templates": asm3.template.get_document_templates(dbo, "movement"),
@@ -6257,8 +6258,15 @@ class pos(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "orgname": asm3.configuration.organisation(dbo),
+            "orgaddress": asm3.configuration.organisation_address(dbo),
+            "orgtown": asm3.configuration.organisation_town(dbo),
+            "orgcounty": asm3.configuration.organisation_county(dbo),
+            "orgpostcode": asm3.configuration.organisation_postcode(dbo),
+            "orgtel": asm3.configuration.organisation_telephone(dbo),
+            "orgemail": asm3.configuration.email(dbo),
             "producttypes": asm3.stock.get_product_types(dbo),
-            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "taxrates": asm3.lookups.get_raw_tax_rates(dbo),
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "units": asm3.lookups.get_unit_types(dbo),

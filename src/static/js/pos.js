@@ -14,12 +14,14 @@ $(function() {
             this.table = table;
             this.buttons = buttons;
             this.buttoncolours = [
-                ['#e7e7e7', '#515151'],
-                ['#b6cff5', '#103b79'],
-                ['#e3d7ff', '#472893'],
-                ['#98d7e4', '#78203d'],
-                ['#f2b2a8', '#8b1900'],
-                ['#c2c2c2', '#fafafa']
+                ["red", "white"],                
+                ["orange", "black"],
+                ["pink", "black"],
+                ["green", "white"],
+                ["grey", "white"],
+                ["blue", "white"],
+                ["purple", "white"],
+                ["black", "white"]
             ];
             this.nextbuttoncolour = 0;
             this.numpadfocus;
@@ -27,26 +29,51 @@ $(function() {
             this.payments = [];
             this.multiplier = 1;
             this.refund = false;
+            this.numpadlocked = true;
         },
 
         render: function() {
             this.model();
             let s = [
                 '<div id="poscontainer" style="background-color: #eeeeee; width: 100vw; height: 100vh;">',
-                    '<div style="flex: 100%;">',
+                    '<div id="posleftpanel" style="flex: 100%;">',
                         // '<div id="findproductpanel" style="vertical-align: middle; padding: 10px; padding-bottom: 0;">',
                         //     '<input type="text" style="font-size: 150%; padding: 10px; margin-right: 5px;" placeholder="' + _("Search key..") + '">',
                         //     '<button style="font-size: 150%; padding: 10px; vertical-align: top; height: 100%;">' + _("Search") + '</button>',
                         // '</div>',
-                        '<div id="producttypes" style="padding: 10px; padding-bottom: 0px;">',
+                        '<div id="producttypes">',
                             pos.product_type_buttons(),
                         '</div>',
-                        '<div id="taxrates" style="padding: 10px; padding-bottom: 0px;">',
+                        '<div id="taxrates">',
                             pos.tax_rate_buttons(),
                         '</div>',
                         '<div id="infopanel"></div>',
+                        '<div id="posmenupanel">',
+                            '<h1 id="posmenutitle">' + _("ASM Point of Sale") + '</h1>',
+                            '<div id="posstartbutton" class="posbuttoncontainer posmenubutton">',
+                                '<div class="posbutton" style="background-color: green; color: white;">',
+                                    '<div style="display: inline-block;">', 
+                                        '<div  class="posbuttoncontent">' + _("Start a Transaction") + '</div>',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                            '<div id="posprintreceiptbutton" class="posbuttoncontainer posmenubutton">',
+                                '<div class="posbutton" style="background-color: white; color: black;">',
+                                    '<div style="display: inline-block;">', 
+                                        '<div  class="posbuttoncontent">' + _("Print Receipt") + '</div>',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                            '<div id="posasmmenubutton" class="posbuttoncontainer posmenubutton">',
+                                '<div class="posbutton" style="background-color: blue; color: white;">',
+                                    '<div style="display: inline-block;">', 
+                                        '<div  class="posbuttoncontent">' + _("ASM Menu") + '</div>',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                        '</div>',
                     '</div>',
-                    '<div id="transactionpanel" style="background-color: #ffffff; max-width: 600px; min-width: 600px; height: 100vh; max-height: 100vh; border: 1px; position: relative;">',
+                    '<div id="transactionpanel">',
                         '<div id="transactionlog" style="overflow: auto;">',
                             '<div id="transactionsheader">',
                                 '<div id="transactiondescriptionheader">' + _("Description") + '</div>',
@@ -55,12 +82,6 @@ $(function() {
                                 '<div id="transactionpriceheader">' + _("Price") + '</div>',
                             '</div>',
                             '<hr>',
-                            '<div id="currentreceiptitemcontainer">',
-                                '<div id="currentreceiptitemdescription"></div>',
-                                '<div id="currentreceiptitemquantity">1</div>',
-                                '<div id="currentreceiptitemtax" class="posprice">0.00</div>',
-                                '<div id="currentreceiptitemprice" class="posprice">0.00</div>',
-                            '</div>',
                         '</div>',
                         '<hr>',
                         '<div id="subtotal">',
@@ -74,9 +95,9 @@ $(function() {
                         '<div id="numberpad">',
                             '<div id="balancecontainer">',
                                 '<div id="balancelabel">' + _("Balance") + '</div>',
-                                '<div id="balance">0.00</div>',
+                                '<div id="balance" data-balance="0">0.00</div>',
                             '</div>',
-                            '<table style="width: 100%; height: 700px;">',
+                            '<table>',
                             '<tr><th colspan="4" id="numpadscreen"></th></tr>',
                             '<tr><td class="numeral">7</td><td class="numeral">8</td><td class="numeral">9</td><td id="deletekey">' + _("Del") + '</td></tr>',
                             '<tr><td class="numeral">4</td><td class="numeral">5</td><td class="numeral">6</td><td id="refundkey">-</td></tr>',
@@ -110,7 +131,9 @@ $(function() {
                         [
                             '<div class="posbuttoncontainer">',
                                 '<div class="posbutton producttype" data-producttypeid="' + v.ID + '" style="background-color: ' + colours[0] + '; color: ' + colours[1] + ';">',
-                                    v.PRODUCTTYPENAME,
+                                    '<div style="display: inline-block;">',
+                                        '<div class="posbuttoncontent">' + v.PRODUCTTYPENAME + '</div>',
+                                    '</div>',
                                 '</div>',
                             '</div>'
                         ].join("\n")
@@ -128,7 +151,9 @@ $(function() {
                         [
                             '<div class="posbuttoncontainer">',
                                 '<div class="posbutton taxrate" data-taxrateid="' + v.ID + '" data-taxrate="' + v.TAXRATE + '" style="background-color: ' + colours[0] + '; color: ' + colours[1] + ';">',
-                                    v.TAXRATENAME,
+                                    '<div style="display: inline-block;">',
+                                        '<div class="posbuttoncontent">' + v.TAXRATENAME + '</div>',
+                                    '</div>',
                                 '</div>',
                             '</div>'
                         ].join("\n")
@@ -138,36 +163,7 @@ $(function() {
         },
 
         format_price: function(price) {
-            let founddecimalpoint = false;
-            let digitsafterdecimalpoint = 0;
-            if (!price) { return "0.00" };
-            for (let c = 0; c < price.length; c++) {
-                if (price.charAt(c) == ".") {
-                    if (!founddecimalpoint) {
-                        founddecimalpoint = true
-                    } else {
-                        return "0.00";
-                    }
-                } else {
-                    if (founddecimalpoint) {
-                        digitsafterdecimalpoint++;
-                    }
-                }
-            }
-            if (digitsafterdecimalpoint > 2) {
-                return "0.00";
-            }
-            let formattedprice = price;
-            if (!founddecimalpoint) {
-                formattedprice = parseFloat(formattedprice) / 100.00;
-                formattedprice = formattedprice.toFixed(2);
-            } else  {
-                while (digitsafterdecimalpoint < 2) {
-                    formattedprice = formattedprice + "0";
-                    digitsafterdecimalpoint++;
-                }
-            }
-            return formattedprice;
+            return (parseFloat(price) / 100.00).toFixed(2);
         },
 
         update_subtotal: function() {
@@ -181,23 +177,24 @@ $(function() {
             });
             $.each($(".receiptitemprice"), function(i, v) {
                 if ( !$(v).closest(".receiptitemcontainer").attr("data-voided") ) {
-                    price = price + parseFloat($(v).text());
+                    price = price + parseInt($(v).attr("data-price"));
                 }
             });
             $.each($(".receiptitemtax"), function(i, v) {
                 if ( !$(v).closest(".receiptitemcontainer").attr("data-voided") ) {
-                    tax = tax + parseFloat($(v).text());
+                    tax = tax + parseInt($(v).attr("data-taxamount"));
                 }
             });
             $("#subtotalquantity").text(quantity);
-            $("#subtotaltax").text(tax.toFixed(2));
-            $("#subtotalprice").text(price.toFixed(2));
+            $("#subtotaltax").text(pos.format_price(tax));
+            $("#subtotalprice").text(pos.format_price(price));
             $.each($(".paymentprice"), function(i, v) {
-                if ( !$(v).closest(".receiptitemcontainer").attr("data-voided") ) {
-                    price = price - parseFloat($(v).text());
+                if ( !$(v).closest(".receiptpaymentcontainer").attr("data-voided") ) {
+                    price = price - parseInt($(v).attr("data-price"));
                 }
             });
-            $("#balance").text(price.toFixed(2));
+            $("#balance").attr("data-balance", price);
+            $("#balance").text(pos.format_price(price));
             $("#transactionlog").scrollTop($("#transactionlog").height());
         },
 
@@ -208,19 +205,40 @@ $(function() {
 
         complete_transaction: async function() {
             // alert(_("Transaction Complete"));
-            let formdata = "mode=write&balance=99";
+            let receiptdetails = [];
+            $.each($(".receiptitemcontainer"), function(i, v) {
+                $(v).find(".removereceiptitem").remove();
+                receiptdetails.push(
+                    {
+                        "productid": parseInt($(v).find(".receiptitemdescription").attr("data-productid")),
+                        "producttypeid": parseInt($(v).find(".receiptitemdescription").attr("data-producttypeid")),
+                        "description": $(v).find(".receiptitemdescription").text(),
+                        "quantity": parseInt($(v).find(".receiptitemquantity").text()),
+                        "taxrate": parseFloat($(v).find(".receiptitemtax").attr("data-taxrate")),
+                        "price": parseInt($(v).find(".receiptitemprice").attr("data-price"))
+                    }
+                );
+            });
+            $.each($(".receiptpaymentcontainer"), function(i, v) {
+                $(v).find(".removereceiptitem").remove();   
+                receiptdetails.push(
+                    {
+                        "productid": 0,
+                        "producttypeid": 0,
+                        "description": $(v).find(".paymentdescription").text(),
+                        "quantity": 1,
+                        "taxrate": 0,
+                        "price": parseInt($(v).find(".paymentprice").attr("data-price")) * -1
+                    }
+                );
+            });
+            console.log(receiptdetails);
+            let formdata = "mode=write&jsondata=" + JSON.stringify(receiptdetails);
             let receiptid = await common.ajax_post("pos", formdata);
             console.log(receiptid);
-            // $.each($(".receiptitemdescription"), function(i, v) {
-            //     console.log($(v).text());
-            //     let formdata = "mode=write&"
-            // });
-            // $.each($(".paymentdescription"), function(i, v) {
-            //     console.log($(v).text());
-            // });
-            // let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST(true);
-            // formdata += "&DonationAccountMappings=" + get_donation_mappings();
-            // let response = await common.ajax_post("options", formdata);
+            $("#posleftpanel").children().hide();
+            $("#posprintreceiptbutton").show();
+            $("#posmenupanel").show();
         },
 
         sync: function() {
@@ -231,6 +249,9 @@ $(function() {
             $("#quicklinks").hide();
             $("#linkstips").hide();
             $("#taxrates").hide();
+            $("#producttypes").hide();
+            $("#posprintreceiptbutton").hide();
+            // $("#numpadscreen").hide();
         },
 
         bind: function() {
@@ -238,19 +259,22 @@ $(function() {
                 $("#currentreceiptitemdescription").text($(this).text());
                 $("#infopanel").html("");
                 let producttypeid = $(this).attr("data-producttypeid");
+                $("#infopanel").attr("data-producttypeid", producttypeid);
+                $(".producttype").removeClass("activeproducttype");
+                $(this).addClass("activeproducttype");
                 let products = [
                     [
                         '<div id="productsheader">',
-                            '<div style="flex: 70%">',
+                            '<div class="productinfodescription">',
                                 _("Product Name"),
                             '</div>',
-                            '<div style="flex: 10%">',
+                            '<div class="productinfounit">',
                                 _("Unit"),
                             '</div>',
-                            '<div style="flex: 10%">',
+                            '<div class="productinfoprice">',
                                 _("Price"),
                             '</div>',
-                            '<div style="flex: 10%">',
+                            '<div class="productinfobalance">',
                                 _("Stock"),
                             '</div>',
                         '</div>'
@@ -267,17 +291,17 @@ $(function() {
                         products.push(
                             [
                                 '<div class="productcontainer" data-productid="' + v.ID + '">',
-                                    '<div style="flex: 70%">',
+                                    '<div class="productinfodescription">',
                                         v.PRODUCTNAME,
                                         medialink,
                                     '</div>',
-                                    '<div style="flex: 10%">',
+                                    '<div class="productinfounit">',
                                         v.UNIT,
                                     '</div>',
-                                    '<div style="flex: 10%">',
+                                    '<div class="productinfoprice">',
                                         pos.format_price(v.RETAILPRICE),
                                     '</div>',
-                                    '<div style="flex: 10%">',
+                                    '<div class="productinfobalance">',
                                         balance,
                                     '</div>',
                                 '</div>',
@@ -292,18 +316,19 @@ $(function() {
                 let refund = 1;
                 if (pos.refund) { refund = -1 };
                 let price = parseInt($("#numpadscreen").text()) * refund;
-                let taxamount = parseFloat(price)  * taxrate;
+                let taxamount = parseInt(parseFloat(price)  * taxrate);
                 $("#transactionlog").append(
                     [
                         '<div class="receiptitemcontainer">',
-                            '<div class="receiptitemdescription">' + $(this).text() + '&nbsp;<span class="removereceiptitem">X</span></div>',
+                            '<div class="receiptitemdescription" data-productid="0" data-producttypeid="0">' + $(this).text().trim() + '<span class="removereceiptitem">X</span></div>',
                             '<div class="receiptitemquantity" data-unitprice="' + price + '">1</div>',
-                            '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '">' + pos.format_price(taxamount) + '</div>',
-                            '<div class="receiptitemprice" class="posprice">' + pos.format_price(price) + '</div>',
+                            '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '" data-taxamount="' + taxamount + '">' + pos.format_price(taxamount) + '</div>',
+                            '<div class="receiptitemprice" class="posprice" data-price="' + price + '">' + pos.format_price(price) + '</div>',
                         '</div>'
                     ].join("\n")
                 );
                 $("#numpadscreen").text("");
+                // $("#numpadscreen").hide();
                 $("#producttypes, #infopanel").show();
                 $("#taxrates").hide();
                 pos.update_subtotal();
@@ -317,10 +342,12 @@ $(function() {
                 if ( pos.numpadfocus.hasClass("posprice") && pos.numpadfocus.text() == "0.00") { pos.numpadfocus.text("") };
             });
             $("#numberpad .numeral").click(function() {
+                if (pos.numpadlocked) { return false };
                 if (pos.numpadfocus) {
                     pos.numpadfocus.text(pos.numpadfocus.text() + $(this).text());
                 } else {
                     if (!$("#numpadscreen").text()) {
+                        // $("#numpadscreen").show();
                         $("#producttypes, #infopanel").hide();
                         $("#taxrates").show();
                     }
@@ -328,6 +355,7 @@ $(function() {
                 }
             });
             $("#deletekey").click(function() {
+                if (pos.numpadlocked) { return false };
                 if (pos.numpadfocus) {
                     if (pos.numpadfocus.text() == "0.00") {
                         pos.numpadfocus.text("");
@@ -339,10 +367,12 @@ $(function() {
                     if (!$("#numpadscreen").text()) {
                         $("#producttypes, #infopanel").show();
                         $("#taxrates").hide();
+                        // $("#numpadscreen").hide();
                     }
                 }
             });
             $("#enterkey").click(function() {
+                if (pos.numpadlocked) { return false };
                 if (pos.numpadfocus) {
                     if (pos.numpadfocus.hasClass("posprice")) {
                         pos.numpadfocus.text(pos.format_price(pos.numpadfocus.text()));
@@ -377,15 +407,16 @@ $(function() {
                                 return false;
                             }
                         });
-                        let taxamount = parseFloat(v.RETAILPRICE) * taxrate;
+                        let taxamount = parseInt(v.RETAILPRICE * taxrate * pos.multiplier * refund);
+                        let price = v.RETAILPRICE * pos.multiplier * refund;
                         pos.activeproduct = v;
                         $("#transactionlog").append(
                             [
                                 '<div class="receiptitemcontainer">',
-                                    '<div class="receiptitemdescription">' + v.PRODUCTNAME + '&nbsp;<span class="removereceiptitem">X</span></div>',
+                                    '<div class="receiptitemdescription" data-productid="' + productid + '" data-producttypeid="' + $("#infopanel").attr("data-producttypeid") + '">' + v.PRODUCTNAME + '<span class="removereceiptitem">X</span></div>',
                                     '<div class="receiptitemquantity" data-unitprice="' + v.RETAILPRICE + '">' + ( pos.multiplier * refund ) + '</div>',
-                                    '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '">' + pos.format_price(taxamount * pos.multiplier * refund) + '</div>',
-                                    '<div class="receiptitemprice" class="posprice">' + pos.format_price(v.RETAILPRICE * pos.multiplier * refund) + '</div>',
+                                    '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '" data-taxamount="' + taxamount + '">' + pos.format_price(taxamount) + '</div>',
+                                    '<div class="receiptitemprice" class="posprice" data-price="' + price + '">' + pos.format_price(price) + '</div>',
                                 '</div>'
                             ].join("\n")
                         );
@@ -411,6 +442,11 @@ $(function() {
             });
             $("#transactionpanel").on("click", ".removereceiptitem", function() {
                 let receiptitem = $(this).closest(".receiptitemcontainer");
+                if ( $(this).closest("div").hasClass("paymentdescription") ) {
+                        receiptitem = $(this).closest(".receiptpaymentcontainer");
+                }
+                // let receiptitem = $(this).closest(".receiptitemcontainer");
+                console.log(receiptitem);
                 receiptitem.find(".receiptitemquantity").css("border", "none");
                 receiptitem.css("text-decoration", "line-through");
                 receiptitem.attr("data-voided", "true");
@@ -419,52 +455,59 @@ $(function() {
                 pos.update_subtotal();
             });
             $("#cashbutton").on("click", function() {
-                let paymentamount = $("#numpadscreen").text();
-                if (!paymentamount) { paymentamount = parseFloat($("#balance").text()) * 100 };
-                $("#numpadscreen").text("");
+                if (pos.numpadlocked) { return false };
                 let refund = 1;
                 if (pos.refund) { refund = -1 };
+                let paymentamount = parseInt($("#numpadscreen").text()) * refund;
+                if (!paymentamount) { paymentamount = parseInt($("#balance").attr("data-balance")) };
+                $("#numpadscreen").text("");
+                // $("#numpadscreen").hide();
                 $("#payments").append(
                     [
                         '<hr>',
-                        '<div class="receiptitemcontainer">',
-                            '<div class="paymentdescription">' + _("Cash") + '&nbsp;<span class="removereceiptitem">X</span></div>',
-                            '<div class="paymentprice">' + pos.format_price(parseFloat(paymentamount) * refund) + '</div>',
+                        '<div class="receiptpaymentcontainer">',
+                            '<div class="paymentdescription">' + _("Cash") + '<span class="removereceiptitem">X</span></div>',
+                            '<div class="paymentprice" data-price="' + paymentamount + '">' + pos.format_price(paymentamount) + '</div>',
                         '</div>'
                     ].join("\n")
                 );
                 pos.update_subtotal();
                 $("#producttypes, #infopanel").show();
                 $("#taxrates").hide();
-                if ($("#balance").text() == "0.00") {
+                if ( $("#balance").attr("data-balance") == 0 ) {
+                    pos.numpadlocked = true;
                     pos.complete_transaction();
                 }
             });
 
             $("#cardbutton").on("click", function() {
-                let paymentamount = $("#numpadscreen").text();
-                if (!paymentamount) { paymentamount = parseFloat($("#balance").text()) * 100 };
-                $("#numpadscreen").text("");
+                if (pos.numpadlocked) { return false };
                 let refund = 1;
                 if (pos.refund) { refund = -1 };
+                let paymentamount = parseInt($("#numpadscreen").text()) * refund;
+                if (!paymentamount) { paymentamount = parseInt($("#balance").attr("data-balance")) };
+                $("#numpadscreen").text("");
+                // $("#numpadscreen").hide();
                 $("#payments").append(
                     [
                         '<hr>',
-                        '<div class="receiptitemcontainer">',
-                            '<div class="paymentdescription">' + _("Card") + '&nbsp;<span class="removereceiptitem">X</span></div>',
-                            '<div class="paymentprice">' + pos.format_price(parseFloat(paymentamount) * refund) + '</div>',
+                        '<div class="receiptpaymentcontainer">',
+                            '<div class="paymentdescription">' + _("Card") + '<span class="removereceiptitem">X</span></div>',
+                            '<div class="paymentprice" data-price="' + paymentamount + '">' + pos.format_price(paymentamount) + '</div>',
                         '</div>'
                     ].join("\n")
                 );
                 pos.update_subtotal();
                 $("#producttypes, #infopanel").show();
                 $("#taxrates").hide();
-                if ($("#balance").text() == "0.00") {
+                if ( $("#balance").attr("data-balance") == 0 ) {
+                    pos.numpadlocked = true;
                     pos.complete_transaction();
                 }
             });
 
             $("#multiplykey").click(function() {
+                if (pos.numpadlocked) { return false };
                 if ($("#numpadscreen").text()) {
                     pos.multiplier = parseInt($("#numpadscreen").text());
                     $("#producttypes, #infopanel").show();
@@ -473,6 +516,7 @@ $(function() {
             });
 
             $("#refundkey").click(function() {
+                if (pos.numpadlocked) { return false };
                 if (pos.refund) {
                     $(this).removeClass("refund");
                     pos.refund = false;
@@ -480,6 +524,39 @@ $(function() {
                     $(this).addClass("refund");
                     pos.refund = true;
                 }
+            });
+
+            $("#posasmmenubutton").click(function() {
+                $("#asm-topline").toggle();
+            });
+
+            $("#posstartbutton").click(function() {
+                $("#posmenupanel").hide();
+                $("#producttypes").show();
+                pos.numpadlocked = false;
+            });
+
+            $("#posprintreceiptbutton").click(function() {
+                let receipthtml = [
+                    '<h3>' + controller.orgname + '</h3>',
+                    '<p>' + controller.orgaddress + '<br>' + controller.orgpostcode + '</p>',
+                    '<p>' + controller.orgtel + ' ' + controller.orgemail + '</p>',
+                    '<table border="1" cellpadding="10px" style="border-collapse: collapse;">',
+                    '<tr><th>' + _("Description") + '</th><th>' + _("#") + '</th><th>' + _("Tax") + '</th><th>' + _("Price") + '</th></tr>'
+                ]
+                $.each($(".receiptitemcontainer"), function(i, v) {
+                    receipthtml.push('<tr><td>' + $(v).find(".receiptitemdescription").text() + '</td><td>' + $(v).find(".receiptitemquantity").text() + '</td><td>' + $(v).find(".receiptitemtax").text() + '</td><td>' + pos.format_price(parseInt($(v).find(".receiptitemprice").attr("data-price"))) + '</td></tr>');
+                });
+                $.each($(".receiptpaymentcontainer"), function(i, v) {
+                    receipthtml.push('<tr><td colspan="3">' + $(v).find(".paymentdescription").text() + '</td><td>' + pos.format_price(parseInt($(v).find(".paymentprice").attr("data-price"))) + '</td></tr>');
+                });
+                receipthtml.push('</table>');
+                let now = new Date();
+                receipthtml.push('<p>' + asm.user + ' ' + now + '</p>');
+                let newwindow = window.open("");
+                newwindow.document.write(receipthtml.join("\n"));
+                newwindow.print();
+                newwindow.close();
             });
         },
 
