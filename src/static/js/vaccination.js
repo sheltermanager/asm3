@@ -481,14 +481,11 @@ $(function() {
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
-            $("#animal").bind("animalchooserchange", function(event, rec) { vaccination.lastanimal = rec; });
-            $("#animal").bind("animalchooserloaded", function(event, rec) { vaccination.lastanimal = rec; });
+            $("#animal").on("change loaded", function(event, rec) { vaccination.lastanimal = rec; });
 
             // Same for the vet
-            $("#administeringvet").bind("personchooserchange", function(event, rec) { vaccination.lastvet = rec; });
-            $("#administeringvet").bind("personchooserloaded", function(event, rec) { vaccination.lastvet = rec; });
-            $("#givenvet").bind("personchooserchange", function(event, rec) { vaccination.lastvet = rec; });
-            $("#givenvet").bind("personchooserloaded", function(event, rec) { vaccination.lastvet = rec; });
+            $("#administeringvet").on("change loaded", function(event, rec) { vaccination.lastvet = rec; });
+            $("#givenvet").on("change loaded", function(event, rec) { vaccination.lastvet = rec; });
 
             if (controller.newvacc == 1) {
                 this.new_vacc();

@@ -748,8 +748,7 @@ $(function() {
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
-            $("#animal").bind("animalchooserchange", function(event, rec) { medical.lastanimal = rec; });
-            $("#animal").bind("animalchooserloaded", function(event, rec) { medical.lastanimal = rec; });
+            $("#animal").on("change loaded", function(event, rec) { medical.lastanimal = rec; });
 
             $("#medicaltype").change(medical.change_medicaltype);
             $("#singlemulti").change(function() {

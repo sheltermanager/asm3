@@ -1114,7 +1114,8 @@ const common = {
         var href, anchor, targetname, r, url = common.current_url();
         if (config.bool("RecordNewBrowserTab")) {
             $("a").each(function() {
-                if ($(this).attr("href")) {
+                // We're only interested in links that have an href and no target
+                if ($(this).attr("href") && !$(this).attr("target")) {
                     href = String($(this).attr("href"));
                     anchor = $(this);
                     $.each(recpages, function(i, v) {

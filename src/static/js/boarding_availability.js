@@ -315,7 +315,7 @@ $(function() {
                 common.route(controller.name + "?start=" + format.date(controller.nextdate));
             });
 
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").on("change loaded", function(event, rec) {
                 boarding_availability.lastanimal = rec;
                 // if person is not set, load from the current owner if animal has one
                 if ($("#person").val() == "0" && rec.OWNERID) {
@@ -324,20 +324,7 @@ $(function() {
                 }
             });
 
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
-                boarding_availability.lastanimal = rec;
-                // if person is not set, load from the current owner if animal has one
-                if ($("#person").val() == "0" && rec.OWNERID) {
-                    $("#person").val(rec.OWNERID);
-                    $("#person").personchooser("loadbyid", rec.OWNERID);
-                }
-            });
-
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
-                boarding_availability.lastperson = rec;
-            });
-
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
+            $("#person").on("change loaded", function(event, rec) {
                 boarding_availability.lastperson = rec;
             });
         },

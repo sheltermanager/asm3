@@ -179,7 +179,7 @@ $.fn.toPOST = function(includeblanks = false) {
         if (!pname) { pname = t.attr("data"); }
         if (!pname) { return; }
         if (t.attr("type") == "checkbox") {
-            post.push( pname + (t.is(":checked") ? "=on" : "=off" ));
+            post.push(pname + (t.prop("checked") ? "=on" : "=off" ));
         }
         else if (t.hasClass("asm-currencybox")) {
             post.push(pname + "=" + encodeURIComponent(t.currency("value")));

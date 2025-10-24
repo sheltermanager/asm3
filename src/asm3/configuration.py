@@ -591,12 +591,12 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
                 put(k, v, sanitiseXSS = False)
         elif k.startswith("rc:"):
             # It's a NOT check
-            if v == "checked": v = "No"
+            if v == "on": v = "No"
             if v == "off": v = "Yes"
             put(k[3:], v)
-        elif v == "checked" or v == "off":
+        elif v == "on" or v == "off":
             # It's a checkbox
-            if v == "checked": v = "Yes"
+            if v == "on": v = "Yes"
             if v == "off": v = "No"
             put(k, v)
         else:

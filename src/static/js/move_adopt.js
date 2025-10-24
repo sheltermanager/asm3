@@ -135,7 +135,7 @@ $(function() {
             let lastanimal, lastperson;
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", async function(event, a) {
+            $("#animal").on("change", async function(event, a) {
                 lastanimal = a;
                 // Hide things before we start
                 $("#bonddisplay").hide();
@@ -215,7 +215,7 @@ $(function() {
             });
 
             // Callback when person is changed
-            $("#person").personchooser().bind("personchooserchange", async function(event, rec) {
+            $("#person").on("change", async function(event, rec) {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
                 lastperson = p;

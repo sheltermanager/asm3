@@ -222,29 +222,9 @@ $(function() {
                 $("#personrow").hide();
             }
 
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
-                vouchers.lastanimal = rec;
-            });
-
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
-                vouchers.lastanimal = rec;
-            });
-
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
-                vouchers.lastperson = rec;
-            });
-
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
-                vouchers.lastperson = rec;
-            });
-
-            $("#vet").personchooser().bind("personchooserchange", function(event, rec) {
-                vouchers.lastvet = rec;
-            });
-
-            $("#vet").personchooser().bind("personchooserloaded", function(event, rec) {
-                vouchers.lastvet = rec;
-            });
+            $("#animal").on("change loaded", function(event, rec) { vouchers.lastanimal = rec; });
+            $("#person").on("change loaded", function(event, rec) { vouchers.lastperson = rec; });
+            $("#vet").on("change loaded", function(event, rec) { vouchers.lastvet = rec; });
 
             $("#type").change(vouchers.vouchertype_change);
 

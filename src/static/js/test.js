@@ -386,14 +386,11 @@ $(function() {
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
-            $("#animal").bind("animalchooserchange", function(event, rec) { test.lastanimal = rec; });
-            $("#animal").bind("animalchooserloaded", function(event, rec) { test.lastanimal = rec; });
+            $("#animal").on("change loaded", function(event, rec) { test.lastanimal = rec; });
 
             // Same for the vet
-            $("#administeringvet").bind("personchooserchange", function(event, rec) { test.lastvet = rec; });
-            $("#administeringvet").bind("personchooserloaded", function(event, rec) { test.lastvet = rec; });
-            $("#givenvet").bind("personchooserchange", function(event, rec) { test.lastvet = rec; });
-            $("#givenvet").bind("personchooserloaded", function(event, rec) { test.lastvet = rec; });
+            $("#administeringvet").on("change loaded", function(event, rec) { test.lastvet = rec; });
+            $("#givenvet").on("change loaded", function(event, rec) { test.lastvet = rec; });
 
             if (controller.newtest == 1) {
                 this.new_test();

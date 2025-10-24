@@ -225,23 +225,15 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").on("change loaded", function(event, rec) {
                 animal_costs.lastperson = rec;
             });
 
-            $("#person").personchooser().bind("personchoosercleared", function(event) {
+            $("#person").on("cleared", function(event) {
                 animal_costs.lastperson = null;
             });
 
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
-                animal_costs.lastperson = rec;
-            });
-
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
-                animal_costs.lastanimal = rec;
-            });
-
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
+            $("#animal").on("change loaded", function(event, rec) {
                 animal_costs.lastanimal = rec;
             });
             

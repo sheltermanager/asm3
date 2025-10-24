@@ -50,7 +50,7 @@ $(function() {
             validate.indicator([ "animal", "person", "reservationdate" ]);
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
+            $("#animal").on("change", function(event, a) {
               
                 // Hide things before we start
                 $("#notonshelter").hide();
@@ -80,7 +80,7 @@ $(function() {
             });
 
             // Callback when person is changed
-            $("#person").personchooser().bind("personchooserchange", async function(event, rec) {
+            $("#person").on("change", async function(event, rec) {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
 

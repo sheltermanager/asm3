@@ -500,21 +500,17 @@ $(function() {
 
             $("#movementrow").hide();
 
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").on("change loaded", function(event, rec) {
                 donations.lastanimal = rec;
             });
 
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
-                donations.lastanimal = rec;
-            });
-
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").on("change", function(event, rec) {
                 donations.lastperson = rec;
                 donations.update_movements(rec.ID);
                 $("#giftaid").prop("checked", rec.ISGIFTAID == 1);
             });
 
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
+            $("#person").on("loaded", function(event, rec) {
                 donations.lastperson = rec;
                 if (donations.create_semaphore) {
                     $("#giftaid").prop("checked", rec.ISGIFTAID == 1);

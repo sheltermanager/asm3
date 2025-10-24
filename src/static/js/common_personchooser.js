@@ -1,5 +1,5 @@
 /*global $, console, jQuery */
-/*global _, asm, additional, common, config, dlgfx, edit_header, format, html, header, log, validate, escape, unescape */
+/*global _, asm, asm_widget, additional, common, config, dlgfx, edit_header, format, html, header, log, validate, escape, unescape */
 
 "use strict";
 
@@ -16,53 +16,39 @@
  *                  brief just shows the name)
  *
  * <input id="person" data-mode="full" data-filter="vet" class="asm-personchooser" data="boundfield" type="hidden" value="initialid" />
+ * 
+ * Local data() elements:
+ * 
+ *      node: Node containing the div with the displayed element
+ *      dialog: The popup find dialog node
+ *      dialogadd: The popup add person dialog node
+ *      dialogsimilar: The popup similar person dialog node
+ *      display: The node that displays the selected person
+ *      title: The dialog title when finding (Find Person)
+ *      addtitle: The dialog title when adding (Add Person)
+ *      filter: A string containing the filter
+ *      type: A string containing the type of person records to search
+ *      mode: A string containing the mode the widget is operating in (brief or full)
+ *      nonshelter: A boolean, true if the nonshelter flag should be set when adding animals
+ *      selected: The selected animal record (a dict of values from the backend)
+ *      additionalfields: Recordset of additional field definitions for people
  *
- * callbacks: loaded (after loadbyid is complete)
- *            change (after user has clicked on a new selection)
- *            cleared (after user clicks the clear button)
+ * events: loaded (after loadbyid is complete)
+ *         change (after user has clicked on a new selection)
+ *         cleared (after user clicks the clear button)
  */
-$.widget("asm.personchooser", {
+$.fn.personchooser = asm_widget({
 
-    selected: null,
-
-    options: {
-        id: 0,
-        rec: {},
-        additionalfields: [],
-        node: null,
-        display: null,
-        dialog: null,
-        dialogadd: null,
-        dialogsimilar: null,
-        towns: "",
-        counties: "",
-        towncounties: "",
-        postcodelookup: false,
-        sites: [],
-        jurisdictions: [],
-        personflags: [],
-        filter: "all",
-        mode: "full",
-        type: "all",
-        title: _("Find person"),
-        addtitle: _("Add person")
-    },
-
-    _create: function() {
+    _create: function(t) {
         let self = this;
-
-        if (this.element.attr("data-filter")) { 
-            this.set_filter(this.element.attr("data-filter"));
-        }
-
-        if (this.element.attr("data-mode")) {
-            this.options.mode = this.element.attr("data-mode");
-        }
-
-        if(this.element.attr("data-type")){
-            this.set_type(this.element.attr("data-type"));
-        }
-
+        t.data("mode", t.attr("data-mode"));
+        if (!t.data("mode")) { t.data("mode", "full"); }
+        t.data("type", t.attr("data-type"));
+        if (!t.data("type")) { t.data("type", "all"); }
+        self.set_type.call(self, t, t.data("type")); 
+        t.data("filter", t.attr("data-filter"));
+        if (!t.data("filter")) { t.data("filter", "all"); }
+        self.set_filter.call(self, t, t.data("filter")); 
         let h = [
             '<div class="personchooser asm-chooser-container">',
             '<input class="personchooser-banned" type="hidden" value="" />',
@@ -86,7 +72,7 @@ $.widget("asm.personchooser", {
                 '<span class="similar-person"></span>',
                 '</p>',
             '</div>',
-            '<div class="personchooser-find" style="display: none" title="' + this.options.title + '">',
+            '<div class="personchooser-find" style="display: none" title="' + t.data("title") + '">',
             '<input class="asm-textbox" type="text" />',
             '<button>' + _("Search") + '</button>',
             '<img style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
@@ -105,7 +91,7 @@ $.widget("asm.personchooser", {
             '<tbody></tbody>',
             '</table>',
             '</div>',
-            '<div class="personchooser-add" style="display: none" title="' + this.options.addtitle + '">',
+            '<div class="personchooser-add" style="display: none" title="' + t.data("addtitle") + '">',
             '<table width="100%" class="chooser-addfields">',
             '<tr>',
             '<td><label>' + _("Class") + '</label></td>',
@@ -232,16 +218,20 @@ $.widget("asm.personchooser", {
         ].join("\n");
         
         let node = $(h);
-        this.options.node = node;
         let dialog = node.find(".personchooser-find");
         let dialogadd = node.find(".personchooser-add");
         let dialogsimilar = node.find(".personchooser-similar");
-        
-        this.options.dialog = dialog;
-        this.options.dialogadd = dialogadd;
-        this.options.dialogsimilar = dialogsimilar;
-        this.options.display = node.find(".personchooser-display");
-        this.element.parent().append(node);
+        let display = node.find(".personchooser-display");
+        t.data("node", node);
+        t.data("dialog", dialog);
+        t.data("dialogadd", dialogadd);
+        t.data("dialogsimilar", dialogsimilar);
+        t.data("display", display);
+
+        // Start with nothing selected
+        t.data("selected", null);
+
+        t.parent().append(node); // TODO: could this be t.after() ?
 
         // Disable based on view person permission
         if (!common.has_permission("vo")) {
@@ -299,8 +289,8 @@ $.widget("asm.personchooser", {
             buttons: pcbuttons
         });
         dialog.find("table").table({ sticky_header: false });
-        dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
-        dialog.find("button").button().click(function() { self.find(); });
+        dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find.call(self, t); return false; }});
+        dialog.find("button").button().click(function() { self.find.call(self, t); });
         dialog.find("img").hide();
         
         // Create the add dialog
@@ -325,13 +315,14 @@ $.widget("asm.personchooser", {
             }
         };
         // change ownertype to organization
-        if(this.element.attr("data-type") == "organization")
+        if (t.attr("data-type") == "organization") {
             dialogadd.find("[data='ownertype']").val(2);
+        }
         dialogadd.find("[data='ownertype']").change(check_org);
-        let pcaddbuttons = {};
         
+        let pcaddbuttons = {};
         pcaddbuttons[_("Create this person")] = function() {
-            let valid = true, dialogadd = self.options.dialogadd;
+            let valid = true, dialogadd = t.data("dialogadd");
             // Validate fields that can't be blank
             dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
             dialogadd.find("input[data='surname']").each(function() {
@@ -347,7 +338,7 @@ $.widget("asm.personchooser", {
             // Disable the dialog buttons before we make any ajax requests
             dialogadd.disable_dialog_buttons();
             // check for similar people
-            self.check_similar();
+            self.check_similar.call(self, t);
         };
         pcaddbuttons[_("Cancel")] = function() {
             $(this).dialog("close");
@@ -387,10 +378,10 @@ $.widget("asm.personchooser", {
                         dialogadd.find(".personchooser-county").val( rows[0].county );
                     });
                 // Change additional fields to default
-                additional.reset_default(self.options.additionalfields);
+                additional.reset_default(t.data("additionalfields"));
                 // If we have a filter, set the appropriate person flags to match
-                if (self.options.filter) {
-                    dialogadd.find(".personchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
+                if (t.data("filter")) {
+                    dialogadd.find(".personchooser-flags option[value='" + t.data("filter") + "']").prop("selected", true);
                     dialogadd.find(".personchooser-flags").change();
                 }
             },
@@ -420,7 +411,7 @@ $.widget("asm.personchooser", {
         node.find(".personchooser-link-clear")
             .button({ icons: { primary: "ui-icon-trash" }, text: false })
             .click(function() {
-                self.clear(true);
+                self.clear.call(self, t, true);
             });
 
         /// Go to the backend to get the additional fields, towns, counties and person flags with lookup data
@@ -433,27 +424,20 @@ $.widget("asm.personchooser", {
             success: function(data, textStatus, jqXHR) {
                 let h = "";
                 let d = jQuery.parseJSON(data);
-                self.options.additionalfields = d.additional;
-                self.options.towns = d.towns;
-                self.options.counties = d.counties;
-                self.options.towncounties = d.towncounties;
-                self.options.postcodelookup = d.postcodelookup;
-                self.options.personflags = d.flags;
-                self.options.sites = d.sites;
-                self.options.jurisdictions = d.jurisdictions;
+                t.data("additionalfields", d.additional);
                 // Add person flag options to the screen
-                html.person_flag_options(null, self.options.personflags, dialogadd.find(".personchooser-flags"));
+                html.person_flag_options(null, d.flags, dialogadd.find(".personchooser-flags"));
                 // Setup autocomplete widgets with the towns/counties
-                dialogadd.find(".personchooser-town").autocomplete({ source: self.options.towns, minLength: 4 });
+                dialogadd.find(".personchooser-town").autocomplete({ source: d.towns, minLength: 4 });
                 if (!config.bool("USStateCodes")) {
-                    dialogadd.find(".personchooser-county").autocomplete({ source: self.options.counties, minLength: 3 });
+                    dialogadd.find(".personchooser-county").autocomplete({ source: d.counties, minLength: 3 });
                 }
                 // Toggle visibility of postcode lookup
                 dialogadd.find(".personchooser-postcodelookup").toggle( d.postcodelookup );
                 // When the user changes a town, suggest a county if it's blank
                 dialogadd.find(".personchooser-town").blur(function() {
                     if (dialogadd.find(".personchooser-county").val() == "" && dialogadd.find(".personchooser-town").val() != "") {
-                        dialogadd.find(".personchooser-county").val(self.options.towncounties[dialogadd.find(".personchooser-town").val()]);
+                        dialogadd.find(".personchooser-county").val(d.towncounties[dialogadd.find(".personchooser-town").val()]);
                     }
                 });
                 // Setup person flag select widget
@@ -482,9 +466,9 @@ $.widget("asm.personchooser", {
                 dialogadd.find(".asm-phone").phone();
                 // Add sites
                 dialogadd.find(".personchooser-site").html('<option value="0">' + _("(all)") + '</option>' + 
-                    html.list_to_options(self.options.sites, "ID", "SITENAME"));
+                    html.list_to_options(d.sites, "ID", "SITENAME"));
                 // Add jurisdictions
-                dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(self.options.jurisdictions, "ID", "JURISDICTIONNAME"));
+                dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(d.jurisdictions, "ID", "JURISDICTIONNAME"));
                 dialogadd.find(".personchooser-jurisdiction").select();
                 dialogadd.find(".personchooser-jurisdiction").select("value", config.str("DefaultJurisdiction"));
                 dialogadd.find(".personchooser-jurisdiction").select("removeRetiredOptions", "all");
@@ -499,8 +483,8 @@ $.widget("asm.personchooser", {
                 }
 
                 // Was there a value already set by the markup? If so, use it
-                if (self.element.val() != "" && self.element.val() != "0") {
-                    self.loadbyid(self.element.val());
+                if (t.val() != "" && t.val() != "0") {
+                    self.loadbyid.call(self, t, t.val());
                 }
             },
             error: function(jqxhr, textstatus, response) {
@@ -509,23 +493,24 @@ $.widget("asm.personchooser", {
         });
     },
 
-    destroy: function() {
-        try { this.options.dialogadd.find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
-        try { this.options.dialogadd.find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
-        try { this.options.dialogadd.find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
-        try { this.options.dialog.dialog("destroy"); } catch (ex) {}
-        try { this.options.dialogadd.dialog("destroy"); } catch (exa) {}
-        try { this.options.dialogsimilar.dialog("destroy"); } catch (exs) {}
+    destroy: function(t) {
+        try { t.data("dialogadd").find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
+        try { t.data("dialogadd").find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
+        try { t.data("dialogadd").find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
+        try { t.data("dialog").dialog("destroy"); } catch (ex) {}
+        try { t.data("dialogadd").dialog("destroy"); } catch (exa) {}
+        try { t.data("dialogsimilar").dialog("destroy"); } catch (exs) {}
     },
 
     /**
-     * Load a person record from its ID
+     * Load a person record from ID
      */
-    loadbyid: function(personid) {
+    loadbyid: function(t, personid) {
+        let self = this;
         if (!personid || personid == "0" || personid == "") { return; }
-        this.clear();
-        this.element.val(personid);
-        let self = this, node = this.options.node, display = this.options.display, dialog = this.options.dialog;
+        self.clear.call(self, t);
+        t.val(personid);
+        let node = t.data("node"), display = t.data("display"), dialog = t.data("dialog");
         let formdata = "mode=id&id=" + personid;
         $.ajax({
             type: "POST",
@@ -536,8 +521,9 @@ $.widget("asm.personchooser", {
                 let h = "";
                 let people = jQuery.parseJSON(data);
                 let rec = people[0];
-                self.element.val(rec.ID);
-                display.html(self.render_display(rec));
+                t.val(rec.ID);
+                t.data("selected", rec);
+                display.html(self.render_display.call(self, t, rec));
                 node.find(".personchooser-briefexpander").click(function() {
                     let widget = $(this);
                     if (widget.hasClass("ui-icon-triangle-1-e")) {
@@ -553,9 +539,8 @@ $.widget("asm.personchooser", {
                 node.find(".personchooser-banned").val(rec.ISBANNED);
                 node.find(".personchooser-idcheck").val(rec.IDCHECK);
                 node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
-                common.inject_target();
-                self._trigger("loaded", null, rec);
-                self.selected = rec;
+                common.inject_target(); 
+                t.trigger("loaded", [ rec ]);
             },
             error: function(jqxhr, textstatus, response) {
                 log.error(response);
@@ -567,15 +552,15 @@ $.widget("asm.personchooser", {
      * Does the backend find and updates the onscreen table
      * in the find dialog
      */
-    find: function() {
+    find: function(t) {
         let self = this, 
-            dialog = this.options.dialog, 
-            node = this.options.node, 
-            display = this.options.display;
+            dialog = t.data("dialog"),
+            node = t.data("node"),
+            display = t.data("display");
         dialog.find("img").show();
         dialog.find("button").button("disable");
         let q = encodeURIComponent(dialog.find("input").val());
-        let formdata = "mode=find&filter=" + this.options.filter + "&type=" + this.options.type + "&q=" + q;
+        let formdata = "mode=find&filter=" + t.data("filter") + "&type=" + t.data("type") + "&q=" + q;
         $.ajax({
             type: "POST",
             url:  "person_embed",
@@ -602,9 +587,9 @@ $.widget("asm.personchooser", {
                 // the person once clicked. Triggers the change callback
                 dialog.on("click", "a", function(e) {
                     let rec = people[$(this).attr("data")];
-                    self.element.val(rec.ID);
-                    self.options.rec = rec;
-                    display.html(self.render_display(rec));
+                    t.val(rec.ID);
+                    t.data("selected", rec);
+                    display.html(self.render_display.call(self, t, rec));
                     node.find(".personchooser-briefexpander").click(function() {
                         let widget = $(this);
                         if (widget.hasClass("ui-icon-triangle-1-e")) {
@@ -622,14 +607,13 @@ $.widget("asm.personchooser", {
                     node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
                     try { validate.dirty(true); } catch(exp) { }
                     dialog.dialog("close");
-                    self._trigger("change", null, rec);
-                    self.selected = rec;
+                    t.trigger("change", [ rec ]);
                     return false;
                 });
                 dialog.find("table").trigger("update");
                 dialog.find("img").hide();
                 dialog.find("button").button("enable");
-                common.inject_target();
+                common.inject_target(); 
             },
             error: function(jqxhr, textstatus, response) {
                 dialog.dialog("close");
@@ -644,16 +628,16 @@ $.widget("asm.personchooser", {
      * Returns a string containing the html content for the display element.
      * @param rec The person record.
      */
-    render_display: function(rec) {
+    render_display: function(t, rec) {
         let disp = "<span class=\"justlink\">";
-        if (this.options.mode == "brief") {
+        if (t.data("mode") == "brief") {
             disp += "<span class='personchooser-briefexpander ui-icon ui-icon-triangle-1-e'></span>";
         }
         disp += "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
         if (rec.POPUPWARNING) {
             disp += " " + html.icon("warning", rec.POPUPWARNING);
         }
-        if (this.options.mode == "full") {
+        if (t.data("mode") == "full") {
             disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
                 "<br/>" + rec.OWNERPOSTCODE + 
                 (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
@@ -672,9 +656,10 @@ $.widget("asm.personchooser", {
     /**
      * Posts the add dialog to the backend to create the owner
      */
-    add_person: function() {
-        let self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar,
-            display = this.options.display, node = this.options.node;
+    add_person: function(t) {
+        let self = this, 
+            dialogadd = t.data("dialogadd"), dialogsimilar = t.data("dialogsimilar"),
+            display = t.data("display"), node = t.data("node");
         let formdata = "mode=add&" + dialogadd.find("input, textarea, select").toPOST();
         $.ajax({
             type: "POST",
@@ -684,10 +669,10 @@ $.widget("asm.personchooser", {
             success: function(result) {
                 let people = jQuery.parseJSON(result);
                 let rec = people[0];
-                self.element.val(rec.ID);
-                self.selected = rec;
+                t.val(rec.ID);
+                t.data("selected", rec);
                 let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
-                if (self.options.mode == "full") {
+                if (t.data("mode") == "full") {
                     disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
                         (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
                         "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
@@ -701,12 +686,12 @@ $.widget("asm.personchooser", {
                 } 
                 catch(ev) { }
                 dialogadd.dialog("close");
-                common.inject_target();
+                common.inject_target(); 
                 try { 
                     dialogsimilar.dialog("close"); 
                 } 
                 catch(es) { }
-                self._trigger("change", null, rec);
+                t.trigger("change", [ rec ]);
             },
             error: function(jqxhr, textstatus, response) {
                 dialogadd.dialog("close");
@@ -720,11 +705,11 @@ $.widget("asm.personchooser", {
      * whether they want to create the owner or not. If they do,
      * calls add_person to do the adding.
      */
-    show_similar: function() {
-        let b = {}, self = this, dialogsimilar = this.options.dialogsimilar, dialogadd = this.options.dialogadd;
+    show_similar: function(t) {
+        let b = {}, self = this, dialogsimilar = t.data("dialogsimilar"), dialogadd = t.data("dialogadd");
         b[_("Create")] = function() {
             dialogsimilar.disable_dialog_buttons();
-            self.add_person();
+            self.add_person.call(self, t);
             dialogsimilar.close();
             dialogadd.close();
         };
@@ -751,8 +736,8 @@ $.widget("asm.personchooser", {
      * on file. If we do, calls show_siilar to popup the
      * confirmation dialog
      */
-    check_similar: async function() {
-        let self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
+    check_similar: async function(t) {
+        let self = this, dialogadd = t.data("dialogadd"), dialogsimilar = t.data("dialogsimilar");
         let matchfound = false;
         let formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
         let homephone = dialogadd.find("input[data='hometelephone']").val();
@@ -762,7 +747,7 @@ $.widget("asm.personchooser", {
         if (rec) {
             matchfound = true;
             let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
-            if (self.options.mode == "full") {
+            if (t.data("mode") == "full") {
                 disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
                     (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
                     "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + 
@@ -772,12 +757,12 @@ $.widget("asm.personchooser", {
             // When the user clicks the name of the similar person,
             // select it for the field instead
             dialogsimilar.find(".asm-embed-name").click(function() {
-                self.loadbyid(rec.ID);
+                self.loadbyid.call(self, t, rec.ID);
                 dialogsimilar.dialog("close");
                 dialogadd.dialog("close");
                 return false;
             });
-            self.show_similar();
+            self.show_similar.call(self, t);
         }
         // Do a second check just in case the user put a cell phone number in the home phone field
         else if (homephone) {
@@ -788,7 +773,7 @@ $.widget("asm.personchooser", {
             if (rec) {
                 matchfound = true;
                 let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
-                if (self.options.mode == "full") {
+                if (t.data("mode") == "full") {
                     disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
                         (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
                         "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + 
@@ -798,46 +783,42 @@ $.widget("asm.personchooser", {
                 // When the user clicks the name of the similar person,
                 // select it for the field instead
                 dialogsimilar.find(".asm-embed-name").click(function() {
-                    self.loadbyid(rec.ID);
+                    self.loadbyid.call(self, t, rec.ID);
                     dialogsimilar.dialog("close");
                     dialogadd.dialog("close");
                     return false;
                 });
-                self.show_similar();
+                self.show_similar.call(self, t);
             }
         }
-        if (!matchfound) { self.add_person(); }
+        if (!matchfound) { self.add_person.call(self, t); }
     },
 
-    clear: function(fireclearedevent) {
-        this.element.val("0");
-        this.options.id = 0;
-        this.options.display.html("");
-        this.selected = null;
-        if (fireclearedevent) { this._trigger("cleared", null); }
+    clear: function(t, fireclearedevent) {
+        t.val("0");
+        t.data("display").html("");
+        t.data("selected", null);
+        if (fireclearedevent) { t.trigger("cleared"); }
     },
 
-    is_empty: function() {
-        return this.selected == null;
+    is_empty: function(t) {
+        return t.data("selected") == null;
     },
 
     /**
      * Returns the selected person record. If there's nothing
      * selected, undefined/null is returned
      */
-    get_selected: function() {
-        return this.selected;
+    get_selected: function(t) {
+        return t.data("selected");
     },
 
     /**
      * Changes the find filter to f.
      */
-    set_filter: function(f) {
-
+    set_filter: function(t, f) {
         let title = "";
-
-        this.options.filter = f;
-
+        t.data("filter", f);
         // Choose the title from the filter
         if (f == "vet") { title = _("Find vet"); }
         else if (f == "retailer") { title = _("Find retailer"); }
@@ -854,27 +835,24 @@ $.widget("asm.personchooser", {
         else if (f == "driver") { title = _("Find driver"); }
         else if (f == "sponsor") { title = _("Find sponsor"); }
         else { title = _("Find person"); }
-
-        this.options.title = title;
-        
-        if (this.options.dialog) {
-            this.options.dialog.dialog("option", "title", title);
+        t.data("title", title);
+        if (t.data("dialog")) {
+            t.data("dialog").dialog("option", "title", title);
         }
-
     },
 
     /**
      * Sets the owner type to t for find operations and updates the title
      */
-    set_type: function(t){
-        this.options.type = t;
-        if (t == "organization") {
-            this.options.title = _("Find organization");
-            this.options.addtitle = _("Add organization");
+    set_type: function(t, newtype){
+        t.data("type", newtype);
+        if (newtype == "organization") {
+            t.data("title", _("Find organization"));
+            t.data("addtitle", _("Add organization"));
         }
         else {
-            this.options.title = _("Find person");
-            this.options.addtitle = _("Add person");
+            t.data("title", _("Find person"));
+            t.data("addtitle", _("Add person"));
         }
     }
 });

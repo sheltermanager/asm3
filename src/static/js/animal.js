@@ -1159,12 +1159,12 @@ $(function() {
 
             // If the bonded animals are cleared (or any animalchooser as part
             // of an additional field for that matter), dirty the form.
-            $(".asm-animalchooser").animalchooser().bind("animalchoosercleared", function(event) {
+            $(".asm-animalchooser").on("cleared", function(event) {
                 validate.dirty(true);
             });
 
             // Same goes for any of our person choosers
-            $(".asm-personchooser").personchooser().bind("personchoosercleared", function(event) {
+            $(".asm-personchooser").on("cleared", function(event) {
                 validate.dirty(true);
             });
 

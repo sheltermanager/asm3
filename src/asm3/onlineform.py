@@ -1007,7 +1007,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                             v = "RAW::%s" % tooltip
                         # If we have a checkbox field with a tooltip, it contains additional
                         # person flags, add them to our set
-                        if fieldtype == FIELDTYPE_CHECKBOX and asm3.utils.nulltostr(tooltip) != "" and (v == "checked" or v == "on"):
+                        if fieldtype == FIELDTYPE_CHECKBOX and asm3.utils.nulltostr(tooltip) != "" and v == "on":
                             if flags != "": flags += ","
                             flags += tooltip
                             dbo.update("onlineformincoming", "CollationID=%s" % collationid, {

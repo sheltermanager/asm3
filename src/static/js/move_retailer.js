@@ -44,7 +44,7 @@ $(function() {
             validate.indicator([ "animal", "person", "retailerdate" ]);
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").on("change", function(event, rec) {
               
                 // Hide things before we start
                 $("#notonshelter").hide();

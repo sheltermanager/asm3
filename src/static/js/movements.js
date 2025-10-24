@@ -668,17 +668,12 @@ $(function() {
             $("#movementdate, #eventlink").change(movements.eventlink_change);
 
             // When we choose a person or animal
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
-            $("#person").personchooser().bind("personchooserclear", function(event, rec) { movements.warnings(); });
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { 
+            $("#person").on("change loaded", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
+            $("#person").on("cleared", function(event, rec) { movements.warnings(); });
+            $("#animal").on("change loaded", function(event, rec) { 
                 movements.lastanimal = rec; movements.warnings(); movements.set_release_name(rec.SPECIESID); 
             });
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { 
-                movements.lastanimal = rec; movements.warnings(); movements.set_release_name(rec.SPECIESID); 
-            });
-            $("#retailer").personchooser().bind("personchooserchange", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
-            $("#retailer").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
+            $("#retailer").on("change loaded", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
 
             // Insurance button
             $("#insurance").after('<button id="button-insurance">' + _("Issue a new insurance number for this animal/adoption") + '</button>');

@@ -1,5 +1,5 @@
 /*global $, jQuery */
-/*global asm, additional, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
+/*global asm, asm_widget, additional, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
 
 "use strict";
 
@@ -8,30 +8,33 @@
  * with a class of asm-animalchooser
  *
  * <input id="animal" class="asm-animalchooser" data="boundfield" type="hidden" value="initialid" />
+ * 
+ * You can also add attributes for:
+ * 
+ *      data-nonshelter="true" - default the non-shelter flag to true when adding animals
+ *      data-filter="all" | "shelter" | "female" (filters from animal.py/get_animal_find_simple)
+ * 
+ * Local data() elements:
+ * 
+ *      node: Node containing the div with the displayed element
+ *      dialog: The popup find dialog node
+ *      dialogadd: The popup add animal dialog node
+ *      display: The node that displays the selected animal
+ *      addtitle: The dialog title for the add dialog
+ *      filter: A string containing the filter
+ *      nonshelter: A boolean, true if the nonshelter flag should be set when adding animals
+ *      selected: The selected animal record (a dict of values from the backend)
+ *      additionalfields: Recordset of additional field definitions for animals
  *
- * callbacks: loaded (after loadbyid is complete)
+ * events:    loaded (after loadbyid is complete)
  *            change (after user has clicked on a new selection)
  *            cleared (after user clicks the clear button)
  */
-$.widget("asm.animalchooser", {
+$.fn.animalchooser = asm_widget({
 
-    selected: null,
-
-    options: {
-        id: 0,
-        rec: {},
-        additionalfields: [], 
-        node: null,
-        dialog: null,
-        dialogadd: null,
-        display: null,
-        filter: "all", 
-        nonshelter: false,
-        addtitle: _("Add animal")
-    },
-
-    _create: function() {
-        var h = [
+     _create: function(t) {
+        t.data("addtitle", _("Add Animal"));
+        let h = [
             '<div class="animalchooser asm-chooser-container">',
             '<input class="animalchooser-oopostcode" type="hidden" value="" />',
             '<input class="animalchooser-bipostcode" type="hidden" value = "" />',
@@ -67,7 +70,7 @@ $.widget("asm.animalchooser", {
             '</table>',
             '</div>',
 
-            '<div class="animalchooser-add" style="display: none" title="' + this.options.addtitle + '">',
+            '<div class="animalchooser-add" style="display: none" title="' + t.data("addtitle") + '">',
             '<table width="100%" class="chooser-addfields">',
             '<tr>',
             '<td></td>', 
@@ -138,25 +141,25 @@ $.widget("asm.animalchooser", {
             '</div>',
             '</div>'
         ].join("\n");
-        var node = $(h);
-        var self = this;
-        this.options.node = node;
-        var dialog = node.find(".animalchooser-find");
-        var dialogadd = node.find(".animalchooser-add");
-        this.options.dialog = dialog;
-        this.options.dialogadd = dialogadd;
-        this.options.display = node.find(".animalchooser-display");
-        this.element.parent().append(node);
+
+        let self = this;
+        let node = $(h);
+        let dialog = node.find(".animalchooser-find");
+        let dialogadd = node.find(".animalchooser-add");
+        let display = node.find(".animalchooser-display");
+        t.data("node", node);
+        t.data("dialog", dialog);
+        t.data("dialogadd", dialogadd);
+        t.data("display", display);
+        t.parent().append(node); // TODO: Would this break anything if we used t.after() instead?
         // Set the filter
-        if (this.element.attr("data-filter")) { 
-            this.options.filter = this.element.attr("data-filter");
-        }
+        t.data("filter", t.attr("data-filter"));
         // Look for nonshelter flag
-        if (this.element.attr("data-nonshelter") == "true" || config.bool("AutoNonShelter")) { 
-            this.options.nonshelter = true;
-        }
-        // Create the dialog
-        var acbuttons = {};
+        t.data("nonshelter", t.attr("data-nonshelter") == "true");
+        // Start with nothing selected
+        t.data("selected", null);
+        // Create the find dialog
+        let acbuttons = {};
         acbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
         dialog.dialog({
             autoOpen: false,
@@ -168,9 +171,10 @@ $.widget("asm.animalchooser", {
             hide: dlgfx.edit_hide,
             buttons: acbuttons
         });
+        // Create the add dialog
         let acaddbuttons = {};
         acaddbuttons[_("Create this animal")] = function() {
-            let valid = true, dialogadd = self.options.dialogadd;
+            let valid = true, dialogadd = t.data("dialogadd");
             const validate_field = function() {
                 if (common.trim($(this).val()) == "") {
                     $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
@@ -192,12 +196,11 @@ $.widget("asm.animalchooser", {
                     return false;
                 }
             });
-
             if (!valid) { return; }
             if (!additional.validate_mandatory_node(dialogadd)) { return; }
             // Disable the dialog buttons before we make any ajax requests
             dialogadd.disable_dialog_buttons();
-            self.add_animal();
+            self.add_animal.call(self, t);
         };
         acaddbuttons[_("Cancel")] = function() {
             $(this).dialog("close");
@@ -212,7 +215,7 @@ $.widget("asm.animalchooser", {
             buttons: acaddbuttons,
             open: function() {
                 // Set non-shelter
-                dialogadd.find(".nonshelter").prop("checked", self.options.nonshelter);
+                dialogadd.find(".nonshelter").prop("checked", t.data("nonshelter"));
                 dialogadd.find(".nonshelter").change();
                 dialogadd.find(".sexes").val(2); // unknown
                 dialogadd.find(".animaltypes").val(config.str("AFDefaultType"));
@@ -224,10 +227,10 @@ $.widget("asm.animalchooser", {
                 dialogadd.find(".entrytypes").val(config.str("AFDefaultEntryType"));
                 dialogadd.find(".entryreasons").val(config.str("AFDefaultEntryReason"));
                 dialogadd.find(".datebroughtin").val(format.date(new Date()));
-                additional.reset_default(self.options.additionalfields);
+                additional.reset_default(t.data("additionalfields"));
                 // If we have a filter, set the appropriate animal flags to match
-                if (self.options.filter) {
-                    dialogadd.find(".animalchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
+                if (t.data("filter")) {
+                    dialogadd.find(".animalchooser-flags option[value='" + t.data("filter") + "']").prop("selected", true);
                     dialogadd.find(".animalchooser-flags").change();
                 }
             }, 
@@ -239,10 +242,11 @@ $.widget("asm.animalchooser", {
         });
 
         dialog.find("table").table({ sticky_header: false });
-        dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
-        dialog.find("button").button().click(function() { self.find(); });
+        dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find.call(self, t); return false; }});
+        dialog.find("button").button().click(function() { self.find.call(self, t); });
         dialog.find(".animalchooser-spinner").hide();
 
+        // Hide/show fields based on non-shelter checkbox
         dialogadd.find(".nonshelter").change(function() {
             dialogadd.find(".datebroughtin").val(format.date(new Date()));
             if (dialogadd.find(".nonshelter").is(":checked")) {
@@ -281,7 +285,7 @@ $.widget("asm.animalchooser", {
         node.find(".animalchooser-link-clear")
             .button({ icons: { primary: "ui-icon-trash" }, text: false })
             .click(function() {
-                self.clear(true);
+                self.clear.call(self, t, true);
             });
 
         /// Go to the backend to get the additional fields with lookup data
@@ -294,27 +298,17 @@ $.widget("asm.animalchooser", {
             success: function(data, textStatus, jqXHR) {
                 let h = "";
                 let d = jQuery.parseJSON(data);
-                self.options.additionalfields = d.additional;
-                self.options.sexes = d.sexes;
-                self.options.animaltypes = d.animaltypes;
-                self.options.colours = d.colours;
-                self.options.sizes = d.sizes;
-                self.options.species = d.species;
-                self.options.locations = d.locations;
-                self.options.breeds = d.breeds;
-                self.options.entrytypes = d.entrytypes;
-                self.options.entryreasons = d.entryreasons;
-
-                dialogadd.find(".sexes").html(html.list_to_options(self.options.sexes, "ID", "SEX"));
-                dialogadd.find(".animaltypes").html(html.list_to_options(self.options.animaltypes, "ID", "ANIMALTYPE"));
-                dialogadd.find(".colours").html(html.list_to_options(self.options.colours, "ID", "BASECOLOUR"));
-                dialogadd.find(".sizes").html(html.list_to_options(self.options.sizes, "ID", "SIZE"));
-                dialogadd.find(".species").html(html.list_to_options(self.options.species, "ID", "SPECIESNAME"));
-                dialogadd.find(".locations").html(html.list_to_options(self.options.locations, "ID", "LOCATIONNAME"));
-                dialogadd.find(".breeds").html(html.list_to_options(self.options.breeds, "ID", "BREEDNAME"));
-                dialogadd.find(".entrytypes").html(html.list_to_options(self.options.entrytypes, "ID", "ENTRYTYPENAME"));
-                dialogadd.find(".entryreasons").html(html.list_to_options(self.options.entryreasons, "ID", "REASONNAME"));
-                dialogadd.find(".chooser-addfields").append(additional.additional_new_fields(self.options.additionalfields, false, "additional chooser"));
+                t.data("additionalfields", d.additional);
+                dialogadd.find(".sexes").html(html.list_to_options(d.sexes, "ID", "SEX"));
+                dialogadd.find(".animaltypes").html(html.list_to_options(d.animaltypes, "ID", "ANIMALTYPE"));
+                dialogadd.find(".colours").html(html.list_to_options(d.colours, "ID", "BASECOLOUR"));
+                dialogadd.find(".sizes").html(html.list_to_options(d.sizes, "ID", "SIZE"));
+                dialogadd.find(".species").html(html.list_to_options(d.species, "ID", "SPECIESNAME"));
+                dialogadd.find(".locations").html(html.list_to_options(d.locations, "ID", "LOCATIONNAME"));
+                dialogadd.find(".breeds").html(html.list_to_options(d.breeds, "ID", "BREEDNAME"));
+                dialogadd.find(".entrytypes").html(html.list_to_options(d.entrytypes, "ID", "ENTRYTYPENAME"));
+                dialogadd.find(".entryreasons").html(html.list_to_options(d.entryreasons, "ID", "REASONNAME"));
+                dialogadd.find(".chooser-addfields").append(additional.additional_new_fields(d.additional, false, "additional chooser"));
 
                 // Bind additional fields that are themselves embedded choosers
                 // NOTE: We count how many times we have been embedded via parent classes to stop infinite recursion
@@ -325,8 +319,8 @@ $.widget("asm.animalchooser", {
                 }
 
                 // Was there a value already set by the markup? If so, use it
-                if (self.element.val() != "" && self.element.val() != "0") {
-                    self.loadbyid(self.element.val());
+                if (t.val() != "" && t.val() != "0") {
+                    self.loadbyid.call(self, t, t.val());
                 }
             },
             error: function(jqxhr, textstatus, response) {
@@ -335,55 +329,50 @@ $.widget("asm.animalchooser", {
         });
     },
 
-    /**
-     * Empties the widget
-     */
-    clear: function(fireclearedevent) {
-        this.selected = null;
-        this.element.val("0");
-        this.options.id = 0;
-        this.options.rec = {};
-        this.options.display.html("");
-        if (fireclearedevent) { this._trigger("cleared", null); }
+    /** Empties the widget */
+    clear: function(t, fireclearedevent = false) {
+        t.data("selected", null);
+        t.val("0");
+        t.data("display").html("");
+        if (fireclearedevent) { t.trigger("cleared"); }
     },
 
-    is_empty: function() {
-        return this.selected == null;
+    /** Returns true if nothing is selected */
+    is_empty: function(t) {
+        return t.data("selected") == null;
     },
 
-    destroy: function() {
-        try { this.options.dialogadd.find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
-        try { this.options.dialogadd.find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
-        try { this.options.dialogadd.find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
-        try { this.options.dialog.dialog("destroy"); } catch (ex) {}
-        try { this.options.dialogadd.dialog("destroy"); } catch (exa) {}
+    destroy: function(t) {
+        // Next 3 lines are to clean up additional fields that created choosers
+        try { t.data("dialogadd").find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
+        try { t.data("dialogadd").find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
+        try { t.data("dialogadd").find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
+        try { t.data("dialog").dialog("destroy"); } catch (ex) {}
+        try { t.data("dialogadd").dialog("destroy"); } catch (exa) {}
     },
 
-    /**
-     * Loads an animal into the widget by ID
-     */
-    loadbyid: function(animalid) {
+    /** Loads an animal into the widget by ID */
+    loadbyid: function(t, animalid) {
+        let self = this;
         if (!animalid || animalid == "0" || animalid == "") { return; }
-        this.clear();
-        this.element.val(animalid);
-        var self = this;
-        var formdata = "mode=id&id=" + animalid;
+        self.clear.call(self, t);
+        t.val(animalid);
+        let formdata = "mode=id&id=" + animalid;
         $.ajax({
             type: "POST",
             url:  "animal_embed",
             data: formdata,
             dataType: "text",
             success: function(data, textStatus, jqXHR) {
-                var h = "";
-                var animal = jQuery.parseJSON(data);
-                var rec = animal[0];
-                var disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
-                self.element.val(rec.ID);
-                self.options.rec = rec;
-                self.options.display.html(disp);
-                self._trigger("loaded", null, rec);
-                self.selected = rec;
-                common.inject_target();
+                let h = "";
+                let animal = jQuery.parseJSON(data);
+                let rec = animal[0];
+                let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+                t.data("display").html(disp);
+                t.val(rec.ID);
+                t.data("selected", rec);
+                t.trigger("loaded", [ rec ]);
+                common.inject_target(); 
             },
             error: function(jqxhr, textstatus, response) {
                 log.error(response);
@@ -391,20 +380,21 @@ $.widget("asm.animalchooser", {
         });
     },
 
-    find: function() {
+    /** Performs a find based on the search term and populates the table of results */
+    find: function(t) {
         let self = this;
-        let dialog = this.options.dialog, node = this.options.node;
+        let dialog = t.data("dialog"), node = t.data("node");
         dialog.find(".animalchooser-spinner").show();
         dialog.find("button").button("disable");
         let formdata = {
             "mode":     "find",
-            "filter":   this.options.filter, 
+            "filter":   t.data("filter"),
             "q":        dialog.find("input").val()
         };
         common.ajax_post("animal_embed", formdata, 
             function(data) {
-                var h = "";
-                var animal = jQuery.parseJSON(data);
+                let h = "";
+                let animal = jQuery.parseJSON(data);
                 // Create the table content from the results
                 $.each(animal, function(i, a) {
                     h += "<tr>";
@@ -431,16 +421,15 @@ $.widget("asm.animalchooser", {
                     // contains brief records.
                     common.ajax_post("animal_embed", "mode=id&id=" + rec.ID, function(data) {
                         let rec = jQuery.parseJSON(data)[0];
-                        self.element.val(rec.ID);
-                        self.options.rec = rec;
-                        var disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
-                        self.options.display.html(disp);
+                        t.val(rec.ID);
+                        t.data("selected", rec);
+                        let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+                        t.data("display").html(disp);
                         node.find(".animalchooser-oopostcode").val(rec.ORIGINALOWNERPOSTCODE);
                         node.find(".animalchooser-bipostcode").val(rec.BROUGHTINBYOWNERPOSTCODE);
                         try { validate.dirty(true); } catch(ex) { }
-                        self._trigger("change", null, rec);
-                        self.selected = rec;
-                        common.inject_target();
+                        t.trigger("change", [ rec ]);
+                        common.inject_target(); 
                     });
                     return false;
                 });
@@ -457,15 +446,15 @@ $.widget("asm.animalchooser", {
             });
     },
 
-    get_selected: function() {
-        return this.selected;
+    get_selected: function(t) {
+        return t.data("selected");
     }, 
 
     /**
      * Posts the add dialog to the backend to create the animal
      */
-    add_animal: function() {
-        let self = this, dialogadd = this.options.dialogadd, display = this.options.display, node = this.options.node;
+    add_animal: function(t) {
+        let self = this, dialogadd = t.data("dialogadd"), display = t.data("display"), node = t.data("node");
         let formdata = "mode=add&" + dialogadd.find("input, textarea, select").toPOST();
         $.ajax({
             type: "POST",
@@ -475,8 +464,8 @@ $.widget("asm.animalchooser", {
             success: function(result) {
                 let animal = jQuery.parseJSON(result);
                 let rec = animal[0];
-                self.element.val(rec.ID);
-                self.selected = rec;
+                t.val(rec.ID);
+                t.data("selected", rec);
                 let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.SHELTERCODE + " " + rec.ANIMALNAME + "</a></span>";
                 display.html(disp);
                 try { 
@@ -484,8 +473,8 @@ $.widget("asm.animalchooser", {
                 } 
                 catch(ev) { }
                 dialogadd.dialog("close");
-                common.inject_target();
-                self._trigger("change", null, rec);
+                common.inject_target(); 
+                t.trigger("change", [ rec ]);
             },
             error: function(jqxhr, textstatus, response) {
                 dialogadd.dialog("close");
