@@ -90,6 +90,7 @@ $(function() {
                             '<div id="subtotaltax">0.00</div>',
                             '<div id="subtotalprice">0.00</div>',
                         '</div>',
+                        '<hr>',
                         '<div id="payments">',
                         '</div>',
                         '<div id="numberpad">',
@@ -102,7 +103,7 @@ $(function() {
                             '<tr><td class="numeral">7</td><td class="numeral">8</td><td class="numeral">9</td><td id="deletekey">' + _("Del") + '</td></tr>',
                             '<tr><td class="numeral">4</td><td class="numeral">5</td><td class="numeral">6</td><td id="refundkey">-</td></tr>',
                             '<tr><td class="numeral">1</td><td class="numeral">2</td><td class="numeral">3</td><td id="multiplykey">*</td></tr>',
-                            '<tr><td class="numeral">0</td><td class="numeral">00</td><td colspan="2" id="enterkey">Enter</td></tr>',
+                            '<tr><td class="numeral">0</td><td class="numeral">00</td><td colspan="2" id="enterkey" class="voidkey">' + _("Void") + '</td></tr>',
                             '<tr><td colspan="2" id="cardbutton">' + _("Card") + '</td><td colspan="2" id="cashbutton">' + _("Cash") + '</td></tr>',
                             '</table>',
                         '</div>',
@@ -340,6 +341,8 @@ $(function() {
                 $(".numpadtarget").removeClass("numpadtarget");
                 pos.numpadfocus.addClass("numpadtarget");
                 if ( pos.numpadfocus.hasClass("posprice") && pos.numpadfocus.text() == "0.00") { pos.numpadfocus.text("") };
+                $("#enterkey").text(_("Enter"));
+                $("#enterkey").removeClass("voidkey");
             });
             $("#numberpad .numeral").click(function() {
                 if (pos.numpadlocked) { return false };
@@ -390,7 +393,18 @@ $(function() {
                     }
                     $(".numpadtarget").removeClass("numpadtarget");
                     pos.numpadfocus = null;
+                    $("#enterkey").text(_("Void"));
+                    $("#enterkey").addClass("voidkey");
                     pos.update_subtotal();
+                } else {
+                    if (confirm( _("No data has been written to the database and no stock has been moved. Are you sure that you want to abandon this transaction?"))) {
+                        $(".receiptitemcontainer").remove();
+                        $(".receiptpaymentcontainer").remove();
+                        pos.update_subtotal();
+                        $("#posleftpanel").children().hide();
+                        $("#posprintreceiptbutton").hide();
+                        $("#posmenupanel").show();
+                    }
                 }
             });
             $("#infopanel").on("click", ".productcontainer", function() {
@@ -438,6 +452,8 @@ $(function() {
                 if ( !pos.numpadfocus && !$(this).closest(".receiptitemcontainer").attr("data-voided") ) {
                     pos.numpadfocus = $(this);
                     pos.numpadfocus.css("border", "1px solid black");
+                    $("#enterkey").text(_("Enter"));
+                    $("#enterkey").removeClass("voidkey");
                 }
             });
             $("#transactionpanel").on("click", ".removereceiptitem", function() {
@@ -464,7 +480,6 @@ $(function() {
                 // $("#numpadscreen").hide();
                 $("#payments").append(
                     [
-                        '<hr>',
                         '<div class="receiptpaymentcontainer">',
                             '<div class="paymentdescription">' + _("Cash") + '<span class="removereceiptitem">X</span></div>',
                             '<div class="paymentprice" data-price="' + paymentamount + '">' + pos.format_price(paymentamount) + '</div>',
@@ -490,7 +505,6 @@ $(function() {
                 // $("#numpadscreen").hide();
                 $("#payments").append(
                     [
-                        '<hr>',
                         '<div class="receiptpaymentcontainer">',
                             '<div class="paymentdescription">' + _("Card") + '<span class="removereceiptitem">X</span></div>',
                             '<div class="paymentprice" data-price="' + paymentamount + '">' + pos.format_price(paymentamount) + '</div>',
@@ -531,8 +545,15 @@ $(function() {
             });
 
             $("#posstartbutton").click(function() {
+                $(".receiptitemcontainer").remove();
+                $(".receiptpaymentcontainer").remove();
+                pos.update_subtotal();
+                pos.activeproduct = {};
+                $(".activeproducttype").removeClass("activeproducttype");
                 $("#posmenupanel").hide();
                 $("#producttypes").show();
+                $("#infopanel").html("");
+                $("#infopanel").show();
                 pos.numpadlocked = false;
             });
 

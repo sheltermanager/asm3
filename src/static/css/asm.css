@@ -1314,12 +1314,16 @@ select:disabled, input:disabled, textarea:disabled {
     background-color: green;
 }
 
+.voidkey {
+    background-color: red !important;
+}
+
 #cardbutton {
     background-color: blue;
 }
 
 #cashbutton {
-    background-color: red;
+    background-color: orange;
 }
 
 .removereceiptitem {
