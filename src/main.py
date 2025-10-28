@@ -1961,6 +1961,10 @@ class animal(JSONEndpoint):
     def post_forgetpublish(self, o):
         asm3.animal.delete_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
 
+    def post_waitinglist(self, o):
+        self.check(asm3.users.ADD_WAITING_LIST)
+        return asm3.animal.create_waitinglist(o.dbo, o.user, o.post.integer("animalid"))
+
     def post_webnotes(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         asm3.animal.update_preferred_web_media_notes(o.dbo, o.user, o.post.integer("id"), o.post["comments"])
