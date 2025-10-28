@@ -1279,6 +1279,7 @@ select:disabled, input:disabled, textarea:disabled {
     width: 100%;
     max-width: calc(100vw - 600px);
     background-color: white;
+    min-height: calc(50vh - 20px);
     max-height: calc(50vh - 20px);
     overflow: auto;
 }
@@ -1462,4 +1463,9 @@ select:disabled, input:disabled, textarea:disabled {
     background-color: white !important;
     background-image: none;
     
+}
+
+#posproductsearch {
+    margin-left: 10px;
+    width: 100px;
 }

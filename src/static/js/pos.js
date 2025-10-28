@@ -37,10 +37,6 @@ $(function() {
             let s = [
                 '<div id="poscontainer" style="background-color: #eeeeee; width: 100vw; height: 100vh;">',
                     '<div id="posleftpanel" style="flex: 100%;">',
-                        // '<div id="findproductpanel" style="vertical-align: middle; padding: 10px; padding-bottom: 0;">',
-                        //     '<input type="text" style="font-size: 150%; padding: 10px; margin-right: 5px;" placeholder="' + _("Search key..") + '">',
-                        //     '<button style="font-size: 150%; padding: 10px; vertical-align: top; height: 100%;">' + _("Search") + '</button>',
-                        // '</div>',
                         '<div id="producttypes">',
                             pos.product_type_buttons(),
                         '</div>',
@@ -125,7 +121,15 @@ $(function() {
 
         product_type_buttons: function() {
             let colours = pos.get_button_colours();
-            var producttypes = []
+            var producttypes = [
+                '<div class="posbuttoncontainer">',
+                    '<div class="posbutton producttype" data-producttypeid="0" style="background-color: ' + colours[0] + '; color: ' + colours[1] + ';">',
+                        '<div style="display: inline-block;">',
+                            '<div class="posbuttoncontent">All</div>',
+                        '</div>',
+                    '</div>',
+                '</div>'
+            ];
             $.each(controller.producttypes, function(i, v) {
                     colours = pos.get_button_colours();
                     producttypes.push(
@@ -268,6 +272,7 @@ $(function() {
                         '<div id="productsheader">',
                             '<div class="productinfodescription">',
                                 _("Product Name"),
+                                '<input type="text" id="posproductsearch" class="asm-field asm-textbox">',
                             '</div>',
                             '<div class="productinfounit">',
                                 _("Unit"),
@@ -282,7 +287,7 @@ $(function() {
                     ].join("\n")
                 ];
                 $.each(controller.products, function(i, v) {
-                    if (producttypeid == v.PRODUCTTYPEID) {
+                    if (producttypeid == 0 || producttypeid == v.PRODUCTTYPEID) {
                         let balance = v.BALANCE;
                         if (!v.BALANCE) {
                             balance = 0;
@@ -408,6 +413,18 @@ $(function() {
                         pos.numpadlocked = true;
                     }
                 }
+            });
+            $("#infopanel").on("keyup", "#posproductsearch", function() {
+                let searchkey = $("#posproductsearch").val();
+                console.log(searchkey);
+                $.each($(".productcontainer"), function(i, productcontainer) {
+                    if ( $(productcontainer).find(".productinfodescription").text().toLowerCase().includes(searchkey.toLowerCase()) ) {
+                        console.log("Showing");
+                        $(productcontainer).show();
+                    } else {
+                        $(productcontainer).hide();
+                    }
+                });
             });
             $("#infopanel").on("click", ".productcontainer", function() {
                 let productid = $(this).attr("data-productid");
