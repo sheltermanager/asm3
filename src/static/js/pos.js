@@ -256,6 +256,7 @@ $(function() {
             $("#taxrates").hide();
             $("#producttypes").hide();
             $("#posprintreceiptbutton").hide();
+            $("#infopanel").hide();
             // $("#numpadscreen").hide();
         },
 
@@ -272,7 +273,8 @@ $(function() {
                         '<div id="productsheader">',
                             '<div class="productinfodescription">',
                                 _("Product Name"),
-                                '<input type="text" id="posproductsearch" class="asm-field asm-textbox">',
+                                '<div id="posproductscan">' + _("Scan") + '</div>',
+                                '<input type="text" id="posproductsearch" class="asm-field asm-textbox" placeholder="' + _("Search..") + '">',
                             '</div>',
                             '<div class="productinfounit">',
                                 _("Unit"),
@@ -419,7 +421,6 @@ $(function() {
                 console.log(searchkey);
                 $.each($(".productcontainer"), function(i, productcontainer) {
                     if ( $(productcontainer).find(".productinfodescription").text().toLowerCase().includes(searchkey.toLowerCase()) ) {
-                        console.log("Showing");
                         $(productcontainer).show();
                     } else {
                         $(productcontainer).hide();
@@ -597,6 +598,13 @@ $(function() {
                 newwindow.document.write(receipthtml.join("\n"));
                 newwindow.print();
                 newwindow.close();
+            });
+
+            $("#infopanel").on("click", "#posproductscan", function() {
+                console.log("Scanning barcode");
+                barcode.scan().then(function(scanresult) {
+                    console.log(scanresult);
+                });
             });
         },
 

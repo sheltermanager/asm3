@@ -1279,8 +1279,8 @@ select:disabled, input:disabled, textarea:disabled {
     width: 100%;
     max-width: calc(100vw - 600px);
     background-color: white;
-    min-height: calc(50vh - 20px);
-    max-height: calc(50vh - 20px);
+    min-height: calc(50vh);
+    max-height: calc(50vh);
     overflow: auto;
 }
 
@@ -1289,6 +1289,11 @@ select:disabled, input:disabled, textarea:disabled {
     /* font-size: 150%; */
     padding: 5px;
     margin-bottom: 5px;
+}
+
+#productsheader .productinfodescription {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .productcontainer {
@@ -1466,6 +1471,19 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 #posproductsearch {
-    margin-left: 10px;
+    margin-left: 5px;
     width: 100px;
+    padding: 10px;
+}
+
+#posproductscan {
+    display: inline-block;
+    cursor: pointer;
+    background-color: yellow;
+    color: black;
+    margin-left: 5px;
+    padding: 10px;
+    font-size: inherit;
+    height: inherit;
+    border: 1px solid black;
 }
