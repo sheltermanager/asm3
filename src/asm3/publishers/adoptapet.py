@@ -505,17 +505,12 @@ class AdoptAPetPublisher(FTPPublisher):
         if not self.openFTPSocket(): 
             raise Exception("Failed opening FTP socket.")
 
+        self.chdir("photos", "photos")
         # Touch all the date fields of publishable media for adoptable animals 
         # so that they get a different photo URL due to the timestamp so PetFinder will 
         # retrieve them again
-        self.dbo.execute("UPDATE media SET Date=? WHERE LinkTypeID=0 AND LinkID IN (SELECT ID FROM animal WHERE Adoptable=1) AND ExcludeFromPublish=0", 
-            [ self.dbo.now() ])
-        
         try:
-            nlst = self.socket.nlst("*.jpg")
-            for f in nlst:
-                self.log("delete image: %s" % f)
-                self.socket.delete(f)
+            self.clearExistingImages()
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
         
