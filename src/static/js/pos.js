@@ -95,7 +95,7 @@ $(function() {
                                 '<div id="balance" data-balance="0">0.00</div>',
                             '</div>',
                             '<table>',
-                            '<tr><th colspan="4" id="numpadscreen"></th></tr>',
+                            '<tr><th colspan="3" id="numpadscreen"></th><td id="posproductscan" class="posbutton">' + _("Scan") + '</td></tr>',
                             '<tr><td class="numeral">7</td><td class="numeral">8</td><td class="numeral">9</td><td id="deletekey">' + _("Del") + '</td></tr>',
                             '<tr><td class="numeral">4</td><td class="numeral">5</td><td class="numeral">6</td><td id="refundkey">-</td></tr>',
                             '<tr><td class="numeral">1</td><td class="numeral">2</td><td class="numeral">3</td><td id="multiplykey">*</td></tr>',
@@ -273,7 +273,6 @@ $(function() {
                         '<div id="productsheader">',
                             '<div class="productinfodescription">',
                                 _("Product Name"),
-                                '<div id="posproductscan">' + _("Scan") + '</div>',
                                 '<input type="text" id="posproductsearch" class="asm-field asm-textbox" placeholder="' + _("Search..") + '">',
                             '</div>',
                             '<div class="productinfounit">',
@@ -600,7 +599,7 @@ $(function() {
                 newwindow.close();
             });
 
-            $("#infopanel").on("click", "#posproductscan", function() {
+            $("#posproductscan").click(function() {
                 console.log("Scanning barcode");
                 barcode.scan().then(function(scanresult) {
                     console.log(scanresult);

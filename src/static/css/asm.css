@@ -1146,6 +1146,7 @@ select:disabled, input:disabled, textarea:disabled {
     position: absolute;
     bottom: 0;
     width: 100%;
+    text-shadow: 1px 1px #00000099;
 }
 
 #numberpad td {
@@ -1205,6 +1206,7 @@ select:disabled, input:disabled, textarea:disabled {
     /* padding: 10px; */
     /* box-shadow: 1px 1px 2px 1px grey; */
     background-image: linear-gradient(to top, #00000050 0%, #00000000 5%, #00000000 95%, #ffffff50 100%), linear-gradient(to left, #00000050 0%, #00000000 5%, #00000000 95%, #ffffff50 100%);
+    text-shadow: 1px 1px #00000099;
 }
 
 /* .posbutton:hover {
@@ -1477,13 +1479,9 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 #posproductscan {
-    display: inline-block;
-    cursor: pointer;
-    background-color: yellow;
-    color: black;
-    margin-left: 5px;
-    padding: 10px;
-    font-size: inherit;
-    height: inherit;
-    border: 1px solid black;
+    display: table-cell;
+    background-color: purple;
+    color: white;
+    vertical-align: middle;
+    height: auto;
 }
