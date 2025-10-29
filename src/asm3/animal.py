@@ -162,7 +162,7 @@ class LocationFilter(object):
 
     def reduce(self, rows: Results, animalidcolumn: str = "ANIMALID") -> Results:
         """
-        Given a resultset of rows, removes all rows that are no present in visibleanimalids.
+        Given a resultset of rows, removes all rows that are not present in visibleanimalids.
         """
         if self.visibleanimalids == "": return rows
         rowsout = []
@@ -170,6 +170,25 @@ class LocationFilter(object):
             if str(r[animalidcolumn]) in self.visibleanimalids.split(","):
                 rowsout.append(r)
         return rowsout
+    
+    # def remove_restricted_roles(self, dbo: Database, username: str, rows: Results):
+    #     """
+    #     Given a resultset of rows, removes all rows the user does not have permission to view due to role restrictions
+    #     """
+    #     userroles = asm3.users.get_roles_ids_for_user(dbo, username)
+    #     rids = []
+    #     for r in rows:
+    #         rids.append(str(r.ID))
+    #     viewroles = dbo.query("SELECT * FROM animalrole WHERE AnimalID IN (%s)" % dbo.sql_placeholders(rids), rids)
+    #     rowsout = []
+    #     for r in rows:
+    #         allowedroles = []
+    #         for v in viewroles:
+    #             allowedroles.append(v.ROLEID)
+    #         for u in userroles:
+    #             if u in allowedroles:
+    #                 rowsout.append(r)
+    #     return rowsout
 
 def get_animal_query(dbo: Database) -> str:
     """
@@ -969,6 +988,23 @@ def get_animal(dbo: Database, animalid: int) -> ResultRow:
     a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
     calc_ages(dbo, [a])
     embellish_mother(dbo, a)
+    roles = dbo.query("SELECT animalrole.*, role.RoleName FROM animalrole " \
+        "INNER JOIN role ON animalrole.RoleID = role.ID WHERE animalrole.AnimalID = ?", [animalid])
+    viewroleids = []
+    viewrolenames = []
+    editroleids = []
+    editrolenames = []
+    for r in roles:
+        if r.canview == 1:
+            viewroleids.append(str(r.roleid))
+            viewrolenames.append(str(r.rolename))
+        if r.canedit == 1:
+            editroleids.append(str(r.roleid))
+            editrolenames.append(str(r.rolename))
+    a["VIEWROLEIDS"] = "|".join(viewroleids)
+    a["VIEWROLES"] = "|".join(viewrolenames)
+    a["EDITROLEIDS"] = "|".join(editroleids)
+    a["EDITROLES"] = "|".join(editrolenames)
     return a
 
 def get_animal_sheltercode(dbo: Database, code: str) -> ResultRow:
@@ -3667,6 +3703,9 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, aid)
 
+    # Update roles needed to view
+    update_animal_roles(dbo, aid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
     # If this animal is part of a litter, update its counts
     if post["litterid"] != "":
         update_litter_count(dbo, post["litterid"])
@@ -3837,6 +3876,32 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
         for animalid in post.integer_list("animals"):
             asm3.audit.edit(dbo, username, "animal", animalid, "", ", ".join(aud))
     return len(post.integer_list("animals"))
+
+def update_animal_roles(dbo: Database, aid: int, viewroles: List[int], editroles: List[int]) -> None:
+    """
+    Updates the view and edit roles for an animal record
+    aid:       The animal ID
+    viewroles:  a list of integer role ids
+    editroles:  a list of integer role ids
+    """
+    dbo.execute("DELETE FROM animalrole WHERE AnimalID = ?", [aid])
+    for rid in viewroles:
+        dbo.insert("animalrole", {
+            "AnimalID":         aid,
+            "RoleID":           rid,
+            "CanView":          1,
+            "CanEdit":          0
+        }, generateID=False)
+    for rid in editroles:
+        if rid in viewroles:
+            dbo.execute("UPDATE animalrole SET CanEdit = 1 WHERE AnimalID = ? AND RoleID = ?", (aid, rid))
+        else:
+            dbo.insert("animalrole", {
+                "AnimalID":         aid,
+                "RoleID":           rid,
+                "CanView":          0,
+                "CanEdit":          1
+            }, generateID=False)
 
 def update_deceased_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """

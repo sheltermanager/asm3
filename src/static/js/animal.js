@@ -29,6 +29,9 @@ $(function() {
                     tableform.render_hidden({ post_field: "yearcode", json_field: "YEARCODEID", justwidget: true }),
                     '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
                     '</span>' ].join("\n") },
+                { post_field: "viewroles", json_field: "VIEWROLEIDS", type: "selectmulti", label: _("View Roles"), 
+                    callout: _("Only allow users with one of these roles to view this animal record"),
+                    options: { displayfield: "ROLENAME", rows: controller.roles }},
                 { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "autotext", 
                     options: { rows: controller.activelitters, displayfield: "label", valuefield: "value" }},
                 { post_field: "animalname", json_field: "ANIMALNAME", label: _("Name"), type: "text", 
@@ -635,6 +638,11 @@ $(function() {
         enable_widgets: function() {
 
             // DATA ===========================================
+
+            // Hide the view roles controls if incident permissions are off
+            if (!config.bool("AnimalPermissions")) {
+                $("#viewrolesrow").hide();
+            }
 
             // Hide the additional accordion section if there aren't any additional fields declared
             $("#asm-details-accordion").asmaccordion("hideNoInput", 2);
