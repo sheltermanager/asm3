@@ -489,13 +489,11 @@ class AdoptAPetPublisher(FTPPublisher):
     
     def removeAllImages(self) -> str:
         """
-        This process sends a blank file to Adoptapet
-        to remove all the existing listings (so any existing images are forgotten). It
-        then touches the access date on all the publishable images for adoptable animals
-        so that PetFinder will get a new URL for them and download them again.
-        The return value is the publishing log.
+        Log in to the FTP account with AdoptAPet and remove all images
+        Useful when an account has gone over their 800MB quota. This is called 
+        by the maint_adoptapet endpoint.
+        Return value is the publishing log for display.
         """
-                
         self.log("AdoptAPetPublisher clearing listings ...")
 
         shelterid = asm3.configuration.adoptapet_user(self.dbo)
@@ -505,13 +503,11 @@ class AdoptAPetPublisher(FTPPublisher):
         if not self.openFTPSocket(): 
             raise Exception("Failed opening FTP socket.")
 
-        self.chdir("photos", "photos")
-        # Touch all the date fields of publishable media for adoptable animals 
-        # so that they get a different photo URL due to the timestamp so PetFinder will 
-        # retrieve them again
         try:
+            self.chdir("photos", "photos")
             self.clearExistingImages()
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
-        
+
         return "\n".join(self.logBuffer)
+
