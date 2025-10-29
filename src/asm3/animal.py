@@ -171,24 +171,24 @@ class LocationFilter(object):
                 rowsout.append(r)
         return rowsout
     
-    # def remove_restricted_roles(self, dbo: Database, username: str, rows: Results):
-    #     """
-    #     Given a resultset of rows, removes all rows the user does not have permission to view due to role restrictions
-    #     """
-    #     userroles = asm3.users.get_roles_ids_for_user(dbo, username)
-    #     rids = []
-    #     for r in rows:
-    #         rids.append(str(r.ID))
-    #     viewroles = dbo.query("SELECT * FROM animalrole WHERE AnimalID IN (%s)" % dbo.sql_placeholders(rids), rids)
-    #     rowsout = []
-    #     for r in rows:
-    #         allowedroles = []
-    #         for v in viewroles:
-    #             allowedroles.append(v.ROLEID)
-    #         for u in userroles:
-    #             if u in allowedroles:
-    #                 rowsout.append(r)
-    #     return rowsout
+    def remove_restricted_roles(self, dbo: Database, username: str, rows: Results):
+        """
+        Given a resultset of rows, removes all rows the user does not have permission to view due to role restrictions
+        """
+        userroles = asm3.users.get_roles_ids_for_user(dbo, username)
+        rids = []
+        for r in rows:
+            rids.append(str(r.ID))
+        viewroles = dbo.query("SELECT * FROM animalrole WHERE AnimalID IN (%s)" % dbo.sql_placeholders(rids), rids)
+        rowsout = []
+        for r in rows:
+            allowedroles = []
+            for v in viewroles:
+                allowedroles.append(v.ROLEID)
+            for u in userroles:
+                if u in allowedroles:
+                    rowsout.append(r)
+        return rowsout
 
 def get_animal_query(dbo: Database) -> str:
     """
