@@ -11,7 +11,7 @@ import asm3.smcom
 import asm3.utils
 
 from asm3.sitedefs import BASE_URL
-from asm3.typehints import Database, PostedData, ResultRow, Results, Session
+from asm3.typehints import Database, List, PostedData, ResultRow, Results, Session
 
 import os
 import sys
@@ -272,10 +272,10 @@ def has_security_flag(securitymap: str, flag: str) -> bool:
     perms = securitymap.split("*")
     return flag + " " in perms
 
-def add_role_to_users(dbo: Database, userids: list, roleid: int) -> list:
+def add_role_to_users(dbo: Database, userids: List[int], roleid: int) -> list:
     """
-    Adds role with ID roleid to users with ID in list userids if not already present.
-    Returns a list of userids that were updated
+    Adds role with ID roleid to all users with IDs in userids if not already present.
+    Returns a list of userids that were updated.
     """
     updatedusers = []
     for userid in userids:
@@ -440,7 +440,7 @@ def get_roles_ids_for_user(dbo: Database, username: str) -> Results:
 
 def get_roles_ids_for_userid(dbo: Database, userid: int) -> Results:
     """
-    Returns a list of role ids a user is in
+    Returns a list of role ids a user id is in
     """
     rolesd = dbo.query("SELECT RoleID FROM userrole WHERE UserID = ?", [userid])
     roles = []
