@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-10-17 09:17+0000\n"
+"POT-Creation-Date: 2025-10-29 12:26+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -422,7 +422,8 @@ msgstr ""
 msgid "Add Accounts"
 msgstr ""
 
-#: event_animals.js mobile.js options.js mobile_ui_addanimal.js
+#: event_animals.js mobile.js options.js common_animalchooser.js
+#: mobile_ui_addanimal.js
 msgid "Add Animal"
 msgstr ""
 
@@ -655,7 +656,7 @@ msgstr ""
 msgid "Add an unsubscribe link to the bottom of emails"
 msgstr ""
 
-#: event_animals.js common_animalchooser.js
+#: event_animals.js
 msgid "Add animal"
 msgstr ""
 
@@ -805,6 +806,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "Add this text to all animal descriptions"
+msgstr ""
+
+#: animal.js
+msgid "Add to Waiting List"
 msgstr ""
 
 #: common_widgets_comp.js
@@ -16464,9 +16469,9 @@ msgstr ""
 msgid "Waiting"
 msgstr ""
 
-#: html.py dbupdate.py search.js document_templates.js onlineform_incoming.js
-#: waitinglist_results.js header_edit_header.js roles.js options.js
-#: reports_querybuilder.js
+#: html.py dbupdate.py search.js document_templates.js animal.js
+#: onlineform_incoming.js waitinglist_results.js header_edit_header.js roles.js
+#: options.js reports_querybuilder.js
 msgid "Waiting List"
 msgstr ""
 
