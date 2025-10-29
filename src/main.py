@@ -8011,6 +8011,12 @@ class systemusers(JSONEndpoint):
     def post_update(self, o):
         self.check(asm3.users.EDIT_USER)
         asm3.users.update_user_from_form(o.dbo, o.user, o.post)
+    
+    def post_addrole(self, o):
+        self.check(asm3.users.EDIT_USER)
+        userids = o.post.integer_list("ids")
+        roleid = o.post.integer("roleid")
+        return asm3.users.add_role_to_users(o.dbo, userids, roleid)
 
     def post_delete(self, o):
         self.check(asm3.users.EDIT_USER)

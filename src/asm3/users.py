@@ -11,7 +11,7 @@ import asm3.smcom
 import asm3.utils
 
 from asm3.sitedefs import BASE_URL
-from asm3.typehints import Database, PostedData, ResultRow, Results, Session
+from asm3.typehints import Database, List, PostedData, ResultRow, Results, Session
 
 import os
 import sys
@@ -272,6 +272,18 @@ def has_security_flag(securitymap: str, flag: str) -> bool:
     perms = securitymap.split("*")
     return flag + " " in perms
 
+def add_role_to_users(dbo: Database, userids: List[int], roleid: int) -> list:
+    """
+    Adds role with ID roleid to all users with IDs in userids if not already present.
+    Returns a list of userids that were updated.
+    """
+    updatedusers = []
+    for userid in userids:
+        if roleid not in get_roles_ids_for_userid(dbo, userid):
+            dbo.insert("userrole", { "UserID": userid, "RoleID": roleid }, generateID=False)
+            updatedusers.append(userid)
+    return updatedusers
+
 def add_security_flag(securitymap: str, flag: str) -> str:
     """
     Adds a security flag to a map and returns the new map
@@ -421,6 +433,16 @@ def get_roles_ids_for_user(dbo: Database, username: str) -> Results:
     Returns a list of role ids a user is in
     """
     rolesd = dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON users.ID = userrole.UserID WHERE users.UserName = ?", [username])
+    roles = []
+    for r in rolesd:
+        roles.append(r.ROLEID)
+    return roles
+
+def get_roles_ids_for_userid(dbo: Database, userid: int) -> Results:
+    """
+    Returns a list of role ids a user id is in
+    """
+    rolesd = dbo.query("SELECT RoleID FROM userrole WHERE UserID = ?", [userid])
     roles = []
     for r in rolesd:
         roles.append(r.ROLEID)
