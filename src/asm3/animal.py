@@ -15,6 +15,7 @@ import asm3.movement
 import asm3.publishers.base
 import asm3.utils
 import asm3.users
+import asm3.waitinglist
 
 from asm3.i18n import _, date_diff, date_diff_days, format_diff, display2python, python2display, remove_time, subtract_years, subtract_months
 from asm3.i18n import add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
@@ -7102,3 +7103,25 @@ def maintenance_animal_figures(dbo: Database, includeMonths: bool = True, includ
             asm3.al.debug("update_animal_figures_annual: year=%d" % y.theyear, "animal.maintenance_animal_figures", dbo)
             update_animal_figures_annual(dbo, y.theyear)
 
+def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
+    """
+    Creates an waitinglist record from an animal with the id given.
+    Returns the new waitinglist id. 
+    """
+    l = dbo.locale
+    a = get_animal(dbo, aid)
+    data = {
+        "dateputon":        python2display(l, dbo.today()),
+        "animalname":       a.ANIMALNAME,
+        "species":          a.SPECIESID,
+        "owner":            a.CURRENTOWNERID,
+        "description":      f"#s:{a.SHELTERCODE}",
+        "microchip":        a.IDENTICHIPNUMBER,
+        "breed":            a.BREEDID,
+        "sex":              a.SEX,
+        "neutered":         asm3.utils.iif(a.NEUTERED == 1, "on", "off"),
+        "size":             a.SIZE,
+        "dateofbirth":      python2display(l, a.DATEOFBIRTH)
+    }
+
+    return asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(data, l), username)
