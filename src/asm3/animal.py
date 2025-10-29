@@ -7110,23 +7110,16 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
     """
     l = dbo.locale
     a = get_animal(dbo, aid)
-    description = "#s:" + a.SHELTERCODE
-    microchip = a.IDENTICHIPNUMBER
-    if a.IDENTICHIP2NUMBER:
-        microchip += " " + a.IDENTICHIP2NUMBER
-    neutered = "off"
-    if a.NEUTERED == 1:
-        neutered = "on"
     data = {
         "dateputon":        python2display(l, dbo.today()),
         "animalname":       a.ANIMALNAME,
         "species":          a.SPECIESID,
         "owner":            a.CURRENTOWNERID,
-        "description":      description,
-        "microchip":        microchip,
+        "description":      f"#s:{a.SHELTERCODE}",
+        "microchip":        a.IDENTICHIPNUMBER,
         "breed":            a.BREEDID,
         "sex":              a.SEX,
-        "neutered":         neutered,
+        "neutered":         asm3.utils.iif(a.NEUTERED == 1, "on", "off"),
         "size":             a.SIZE,
         "dateofbirth":      python2display(l, a.DATEOFBIRTH)
     }
