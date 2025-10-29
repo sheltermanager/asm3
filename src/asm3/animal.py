@@ -7110,11 +7110,12 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
     """
     l = dbo.locale
     a = get_animal(dbo, aid)
+    ownerid = asm3.utils.coalesce(a.OWNERID, a.CURRENTOWNERID, a.ORIGINALOWNERID)
     data = {
         "dateputon":        python2display(l, dbo.today()),
         "animalname":       a.ANIMALNAME,
         "species":          a.SPECIESID,
-        "owner":            a.CURRENTOWNERID,
+        "owner":            ownerid, 
         "description":      f"#s:{a.SHELTERCODE}",
         "microchip":        a.IDENTICHIPNUMBER,
         "breed":            a.BREEDID,
@@ -7123,5 +7124,5 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
         "size":             a.SIZE,
         "dateofbirth":      python2display(l, a.DATEOFBIRTH)
     }
-
     return asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(data, l), username)
+

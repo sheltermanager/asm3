@@ -555,6 +555,15 @@ def cmd(c: str, shell: bool = False) -> Tuple[int, str]:
         return (0, output)
     except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
+    
+def coalesce(l: list) -> Any:
+    """
+    Returns the first element with a truthy value from list l.
+    Returns None if all the elements of the list equate to false/None
+    """
+    for x in l:
+        if x: return x 
+    return None
 
 def deduplicate_list(l: List) -> List:
     """
