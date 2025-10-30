@@ -26,6 +26,8 @@ $(function() {
             this.nextbuttoncolour = 0;
             this.numpadfocus;
             this.activeproduct = {};
+            this.activetaxrate = -1;
+            this.activereceiptitem = false;
             this.payments = [];
             this.multiplier = 1;
             this.refund = false;
@@ -60,10 +62,10 @@ $(function() {
                                     '</div>',
                                 '</div>',
                             '</div>',
-                            '<div id="posasmmenubutton" class="posbuttoncontainer posmenubutton">',
+                            '<div id="posleavebutton" class="posbuttoncontainer posmenubutton">',
                                 '<div class="posbutton" style="background-color: blue; color: white;">',
                                     '<div style="display: inline-block;">', 
-                                        '<div  class="posbuttoncontent">' + _("ASM Menu") + '</div>',
+                                        '<div  class="posbuttoncontent">' + _("Leave Point of Sale") + '</div>',
                                     '</div>',
                                 '</div>',
                             '</div>',
@@ -209,20 +211,28 @@ $(function() {
         },
 
         complete_transaction: async function() {
-            // alert(_("Transaction Complete"));
             let receiptdetails = [];
             $.each($(".receiptitemcontainer"), function(i, v) {
                 $(v).find(".removereceiptitem").remove();
+                let productid = parseInt($(v).find(".receiptitemdescription").attr("data-productid"));
+                let quantity = parseInt($(v).find(".receiptitemquantity").text());
                 receiptdetails.push(
                     {
-                        "productid": parseInt($(v).find(".receiptitemdescription").attr("data-productid")),
+                        "productid": productid,
                         "producttypeid": parseInt($(v).find(".receiptitemdescription").attr("data-producttypeid")),
                         "description": $(v).find(".receiptitemdescription").text(),
-                        "quantity": parseInt($(v).find(".receiptitemquantity").text()),
+                        "quantity": quantity,
                         "taxrate": parseFloat($(v).find(".receiptitemtax").attr("data-taxrate")),
                         "price": parseInt($(v).find(".receiptitemprice").attr("data-price"))
                     }
                 );
+                if (productid) {
+                    $.each(controller.products, function(i, v) {
+                        if (v.ID == productid) {
+                            v.BALANCE += ( quantity * -1 );
+                        }
+                    });
+                }
             });
             $.each($(".receiptpaymentcontainer"), function(i, v) {
                 $(v).find(".removereceiptitem").remove();   
@@ -237,10 +247,8 @@ $(function() {
                     }
                 );
             });
-            console.log(receiptdetails);
             let formdata = "mode=write&jsondata=" + JSON.stringify(receiptdetails);
             let receiptid = await common.ajax_post("pos", formdata);
-            console.log(receiptid);
             $("#posleftpanel").children().hide();
             $("#posprintreceiptbutton").show();
             $("#posmenupanel").show();
@@ -262,95 +270,121 @@ $(function() {
 
         bind: function() {
             $(".producttype").click(function() {
-                $("#currentreceiptitemdescription").text($(this).text());
-                $("#infopanel").html("");
-                let producttypeid = $(this).attr("data-producttypeid");
-                $("#infopanel").attr("data-producttypeid", producttypeid);
-                $(".producttype").removeClass("activeproducttype");
-                $(this).addClass("activeproducttype");
-                let products = [
-                    [
-                        '<div id="productsheader">',
-                            '<div class="productinfodescription">',
-                                _("Product Name"),
-                                '<input type="text" id="posproductsearch" class="asm-field asm-textbox" placeholder="' + _("Search..") + '">',
-                            '</div>',
-                            '<div class="productinfounit">',
-                                _("Unit"),
-                            '</div>',
-                            '<div class="productinfoprice">',
-                                _("Price"),
-                            '</div>',
-                            '<div class="productinfobalance">',
-                                _("Stock"),
-                            '</div>',
-                        '</div>'
-                    ].join("\n")
-                ];
-                $.each(controller.products, function(i, v) {
-                    if (producttypeid == 0 || producttypeid == v.PRODUCTTYPEID) {
-                        let balance = v.BALANCE;
-                        if (!v.BALANCE) {
-                            balance = 0;
-                        }
-                        let medialink = "";
-                        if (v.MEDIAID) { medialink = '<a href="image?db=' + asm.useraccount + '&mode=media&id=' + v.MEDIAID + '"><span class="asm-icon asm-icon-media"></span></a>' };
-                        products.push(
-                            [
-                                '<div class="productcontainer" data-productid="' + v.ID + '">',
-                                    '<div class="productinfodescription">',
-                                        v.PRODUCTNAME,
-                                        medialink,
-                                    '</div>',
-                                    '<div class="productinfounit">',
-                                        v.UNIT,
-                                    '</div>',
-                                    '<div class="productinfoprice">',
-                                        pos.format_price(v.RETAILPRICE),
-                                    '</div>',
-                                    '<div class="productinfobalance">',
-                                        balance,
-                                    '</div>',
+                if ( pos.activetaxrate == -1 ) {
+                    $("#currentreceiptitemdescription").text($(this).text());
+                    $("#infopanel").html("");
+                    let producttypeid = $(this).attr("data-producttypeid");
+                    $("#infopanel").attr("data-producttypeid", producttypeid);
+                    $(".producttype").removeClass("activeproducttype");
+                    $(this).addClass("activeproducttype");
+                    let products = [
+                        [
+                            '<div id="productsheader">',
+                                '<div class="productinfodescription">',
+                                    _("Product Name"),
+                                    '<input type="text" id="posproductsearch" class="asm-field asm-textbox" placeholder="' + _("Search..") + '">',
                                 '</div>',
-                            ].join("\n"));
-                    }
-                });
-                $("#infopanel").html(products);
-                $("#infopanel").scrollTop(0);
+                                '<div class="productinfounit">',
+                                    _("Unit"),
+                                '</div>',
+                                '<div class="productinfoprice">',
+                                    _("Price"),
+                                '</div>',
+                                '<div class="productinfobalance">',
+                                    _("Stock"),
+                                '</div>',
+                            '</div>'
+                        ].join("\n")
+                    ];
+                    $.each(controller.products, function(i, v) {
+                        if (producttypeid == 0 || producttypeid == v.PRODUCTTYPEID) {
+                            let balance = v.BALANCE;
+                            if (!v.BALANCE) {
+                                balance = 0;
+                            }
+                            let medialink = "";
+                            if (v.MEDIAID) { medialink = '<a href="image?db=' + asm.useraccount + '&mode=media&id=' + v.MEDIAID + '"><span class="asm-icon asm-icon-media"></span></a>' };
+                            products.push(
+                                [
+                                    '<div class="productcontainer" data-productid="' + v.ID + '">',
+                                        '<div class="productinfodescription">',
+                                            v.PRODUCTNAME,
+                                            medialink,
+                                        '</div>',
+                                        '<div class="productinfounit">',
+                                            v.UNIT,
+                                        '</div>',
+                                        '<div class="productinfoprice">',
+                                            pos.format_price(v.RETAILPRICE),
+                                        '</div>',
+                                        '<div class="productinfobalance">',
+                                            balance,
+                                        '</div>',
+                                    '</div>',
+                                ].join("\n"));
+                        }
+                    });
+                    $("#infopanel").html(products);
+                    $("#infopanel").scrollTop(0);
+                } else {
+                    let taxrate = pos.activetaxrate;
+                    let refund = 1;
+                    if (pos.refund) { refund = -1 };
+                    let price = parseInt($("#numpadscreen").text()) * refund;
+                    let taxamount = parseInt(parseFloat(price)  * taxrate);
+                    $("#transactionlog").append(
+                        [
+                            '<div class="receiptitemcontainer">',
+                                '<div class="receiptitemdescription" data-productid="0" data-producttypeid="0">' + $(this).text().trim() + '<span class="removereceiptitem">X</span></div>',
+                                '<div class="receiptitemquantity" data-unitprice="' + price + '">1</div>',
+                                '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '" data-taxamount="' + taxamount + '">' + pos.format_price(taxamount) + '</div>',
+                                '<div class="receiptitemprice" class="posprice" data-price="' + price + '">' + pos.format_price(price) + '</div>',
+                            '</div>'
+                        ].join("\n")
+                    );
+                    $("#numpadscreen").text("");
+                    pos.activetaxrate = -1;
+                    pos.update_subtotal();
+                }
             });
             $(".taxrate").click(function() {
-                let taxrate = parseFloat($(this).attr("data-taxrate")) / 100.00;
-                let refund = 1;
-                if (pos.refund) { refund = -1 };
-                let price = parseInt($("#numpadscreen").text()) * refund;
-                let taxamount = parseInt(parseFloat(price)  * taxrate);
-                $("#transactionlog").append(
-                    [
-                        '<div class="receiptitemcontainer">',
-                            '<div class="receiptitemdescription" data-productid="0" data-producttypeid="0">' + $(this).text().trim() + '<span class="removereceiptitem">X</span></div>',
-                            '<div class="receiptitemquantity" data-unitprice="' + price + '">1</div>',
-                            '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '" data-taxamount="' + taxamount + '">' + pos.format_price(taxamount) + '</div>',
-                            '<div class="receiptitemprice" class="posprice" data-price="' + price + '">' + pos.format_price(price) + '</div>',
-                        '</div>'
-                    ].join("\n")
-                );
-                $("#numpadscreen").text("");
+                // let taxrate = parseFloat($(this).attr("data-taxrate")) / 100.00;
+                // let refund = 1;
+                // if (pos.refund) { refund = -1 };
+                // let price = parseInt($("#numpadscreen").text()) * refund;
+                // let taxamount = parseInt(parseFloat(price)  * taxrate);
+                // $("#transactionlog").append(
+                //     [
+                //         '<div class="receiptitemcontainer">',
+                //             '<div class="receiptitemdescription" data-productid="0" data-producttypeid="0">' + $(this).text().trim() + '<span class="removereceiptitem">X</span></div>',
+                //             '<div class="receiptitemquantity" data-unitprice="' + price + '">1</div>',
+                //             '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '" data-taxamount="' + taxamount + '">' + pos.format_price(taxamount) + '</div>',
+                //             '<div class="receiptitemprice" class="posprice" data-price="' + price + '">' + pos.format_price(price) + '</div>',
+                //         '</div>'
+                //     ].join("\n")
+                // );
+                // $("#numpadscreen").text("");
                 // $("#numpadscreen").hide();
                 $("#producttypes, #infopanel").show();
+                pos.activetaxrate = parseFloat($(this).attr("data-taxrate")) / 100.00;
                 $("#taxrates").hide();
-                pos.update_subtotal();
-                $("#infopanel").scrollTop(0);
+                pos.activeproduct = {};
+                $(".activeproducttype").removeClass("activeproducttype");
+                $("#infopanel").html("");
+                $("#producttypes").show();
+                // pos.update_subtotal();
+                // $("#infopanel").scrollTop(0);
             });
 
-            $("#currentreceiptitemcontainer div").click(function() {
-                pos.numpadfocus = $(this);
-                $(".numpadtarget").removeClass("numpadtarget");
-                pos.numpadfocus.addClass("numpadtarget");
-                if ( pos.numpadfocus.hasClass("posprice") && pos.numpadfocus.text() == "0.00") { pos.numpadfocus.text("") };
-                $("#enterkey").text(_("Enter"));
-                $("#enterkey").removeClass("voidkey");
-            });
-            $("#numberpad .numeral").click(function() {
+            // $("#currentreceiptitemcontainer div").click(function() {
+            //     pos.numpadfocus = $(this);
+            //     $(".numpadtarget").removeClass("numpadtarget");
+            //     pos.numpadfocus.addClass("numpadtarget");
+            //     if ( pos.numpadfocus.hasClass("posprice") && pos.numpadfocus.text() == "0.00") { pos.numpadfocus.text("") };
+            //     $("#enterkey").text(_("Enter"));
+            //     $("#enterkey").removeClass("voidkey");
+            // });
+            $("#numberpad .numeral").mousedown(function() {
                 if (pos.numpadlocked) { return false };
                 if (pos.numpadfocus) {
                     pos.numpadfocus.text(pos.numpadfocus.text() + $(this).text());
@@ -363,7 +397,7 @@ $(function() {
                     $("#numpadscreen").text($("#numpadscreen").text() + $(this).text());
                 }
             });
-            $("#deletekey").click(function() {
+            $("#deletekey").mousedown(function() {
                 if (pos.numpadlocked) { return false };
                 if (pos.numpadfocus) {
                     if (pos.numpadfocus.text() == "0.00") {
@@ -402,6 +436,15 @@ $(function() {
                     $("#enterkey").text(_("Void"));
                     $("#enterkey").addClass("voidkey");
                     pos.update_subtotal();
+                } else if (pos.activereceiptitem) {
+                    console.log(pos.activereceiptitem);
+                    pos.activereceiptitem.css("text-decoration", "line-through");
+                    pos.activereceiptitem.attr("data-voided", "true");
+                    pos.activereceiptitem = false;
+                    $(".activereceiptitem").removeClass("activereceiptitem");
+                    $("#enterkey").text(_("Void"));
+                    $("#enterkey").addClass("voidkey");
+                    pos.update_subtotal();
                 } else {
                     if (confirm( _("No data has been written to the database and no stock has been moved. Are you sure that you want to abandon this transaction?"))) {
                         $(".receiptitemcontainer").remove();
@@ -412,6 +455,7 @@ $(function() {
                         $("#posmenupanel").show();
                         $("#numpadscreen").text("");
                         pos.numpadlocked = true;
+                        pos.activetaxrate = -1;
                     }
                 }
             });
@@ -462,12 +506,32 @@ $(function() {
 
             });
             $("#transactionpanel").on("click", ".receiptitemdescription", function() {
-                $(this).find(".removereceiptitem").toggle();
+                if (!pos.numpadfocus) {
+                    pos.activereceiptitem = $(this).closest(".receiptitemcontainer");
+                    if (pos.activereceiptitem.hasClass("activereceiptitem")) {
+                        pos.activereceiptitem.removeClass("activereceiptitem");
+                        pos.activereceiptitem = false;
+                    } else {
+                        $(".activereceiptitem").removeClass("activereceiptitem");
+                        pos.activereceiptitem.addClass("activereceiptitem");
+                    }
+                }
             });
             $("#transactionpanel").on("click", ".paymentdescription", function() {
-                $(this).find(".removereceiptitem").toggle();
+                if (!pos.numpadfocus) {
+                    pos.activereceiptitem = $(this).closest(".receiptitemcontainer");
+                    if (pos.activereceiptitem.hasClass("activereceiptitem")) {
+                        pos.activereceiptitem.removeClass("activereceiptitem");
+                        pos.activereceiptitem = false;
+                    } else {
+                        $(".activereceiptitem").removeClass("activereceiptitem");
+                        pos.activereceiptitem.addClass("activereceiptitem");
+                    }
+                }
             });
             $("#transactionpanel").on("click", ".receiptitemquantity", function() {
+                $(".activereceiptitem").removeClass("activereceiptitem");
+                pos.activereceiptitem = false;
                 if ( !pos.numpadfocus && !$(this).closest(".receiptitemcontainer").attr("data-voided") ) {
                     pos.numpadfocus = $(this);
                     pos.numpadfocus.css("border", "1px solid black");
@@ -475,20 +539,20 @@ $(function() {
                     $("#enterkey").removeClass("voidkey");
                 }
             });
-            $("#transactionpanel").on("click", ".removereceiptitem", function() {
-                let receiptitem = $(this).closest(".receiptitemcontainer");
-                if ( $(this).closest("div").hasClass("paymentdescription") ) {
-                        receiptitem = $(this).closest(".receiptpaymentcontainer");
-                }
-                // let receiptitem = $(this).closest(".receiptitemcontainer");
-                console.log(receiptitem);
-                receiptitem.find(".receiptitemquantity").css("border", "none");
-                receiptitem.css("text-decoration", "line-through");
-                receiptitem.attr("data-voided", "true");
-                $(this).remove();
-                pos.numpadfocus = null;
-                pos.update_subtotal();
-            });
+            // $("#transactionpanel").on("click", ".removereceiptitem", function() {
+            //     let receiptitem = $(this).closest(".receiptitemcontainer");
+            //     if ( $(this).closest("div").hasClass("paymentdescription") ) {
+            //             receiptitem = $(this).closest(".receiptpaymentcontainer");
+            //     }
+            //     // let receiptitem = $(this).closest(".receiptitemcontainer");
+            //     console.log(receiptitem);
+            //     receiptitem.find(".receiptitemquantity").css("border", "none");
+            //     receiptitem.css("text-decoration", "line-through");
+            //     receiptitem.attr("data-voided", "true");
+            //     $(this).remove();
+            //     pos.numpadfocus = null;
+            //     pos.update_subtotal();
+            // });
             $("#cashbutton").on("click", function() {
                 if (pos.numpadlocked) { return false };
                 let refund = 1;
@@ -559,8 +623,8 @@ $(function() {
                 }
             });
 
-            $("#posasmmenubutton").click(function() {
-                $("#asm-topline").toggle();
+            $("#posleavebutton").click(function() {
+                location.href = "/main";
             });
 
             $("#posstartbutton").click(function() {

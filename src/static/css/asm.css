@@ -1385,7 +1385,7 @@ select:disabled, input:disabled, textarea:disabled {
     padding: 10px;
 }
 
-@media screen and (max-width:1600px) {
+@media screen and (max-width:2048px) {
     #poscontainer {
         font-size: 100%;
     }
@@ -1484,4 +1484,8 @@ select:disabled, input:disabled, textarea:disabled {
     color: white;
     vertical-align: middle;
     height: auto;
+}
+
+.activereceiptitem {
+    background-color: yellow !important;
 }
