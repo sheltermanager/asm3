@@ -426,8 +426,10 @@ $(function() {
                         let price = parseInt(pos.numpadfocus.attr("data-unitprice")) * quantity;
                         let taxrate = pos.numpadfocus.next().attr("data-taxrate");
                         taxrate = parseFloat(taxrate);
-                        let taxamount = parseFloat(price) * taxrate;
+                        let taxamount = parseInt(parseFloat(price) * taxrate);
+                        pos.numpadfocus.next().attr("data-taxamount", taxamount);
                         pos.numpadfocus.next().text(pos.format_price(taxamount));
+                        pos.numpadfocus.next().next().attr("data-price", price);
                         pos.numpadfocus.next().next().text(pos.format_price(price));
                         pos.numpadfocus.css("border", "none");
                     }
@@ -651,6 +653,7 @@ $(function() {
                 $.each($(".receiptitemcontainer"), function(i, v) {
                     receipthtml.push('<tr><td>' + $(v).find(".receiptitemdescription").text() + '</td><td>' + $(v).find(".receiptitemquantity").text() + '</td><td>' + $(v).find(".receiptitemtax").text() + '</td><td>' + pos.format_price(parseInt($(v).find(".receiptitemprice").attr("data-price"))) + '</td></tr>');
                 });
+                receipthtml.push('<tr><td>' + _("Subtotal") + '</td><td>' + $("#subtotalquantity").text() + '</td><td>' + $("#subtotaltax").text() + '</td><td>' + $("#subtotalprice").text() + '</td></tr>');
                 $.each($(".receiptpaymentcontainer"), function(i, v) {
                     receipthtml.push('<tr><td colspan="3">' + $(v).find(".paymentdescription").text() + '</td><td>' + pos.format_price(parseInt($(v).find(".paymentprice").attr("data-price"))) + '</td></tr>');
                 });
