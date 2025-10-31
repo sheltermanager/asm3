@@ -481,7 +481,8 @@ $.fn.personchooser = asm_widget({
                     dialogadd.find(".asm-animalchoosermulti").animalchoosermulti();
                     dialogadd.find(".asm-personchooser").personchooser();
                 }
-
+                // Hide retired options from the lookups
+                dialogadd.find(".asm-selectbox").select("removeRetiredOptions", "all");
                 // Was there a value already set by the markup? If so, use it
                 if (t.val() != "" && t.val() != "0") {
                     self.loadbyid.call(self, t, t.val());

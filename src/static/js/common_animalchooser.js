@@ -309,7 +309,6 @@ $.fn.animalchooser = asm_widget({
                 dialogadd.find(".entrytypes").html(html.list_to_options(d.entrytypes, "ID", "ENTRYTYPENAME"));
                 dialogadd.find(".entryreasons").html(html.list_to_options(d.entryreasons, "ID", "REASONNAME"));
                 dialogadd.find(".chooser-addfields").append(additional.additional_new_fields(d.additional, false, "additional chooser"));
-
                 // Bind additional fields that are themselves embedded choosers
                 // NOTE: We count how many times we have been embedded via parent classes to stop infinite recursion
                 if (common.count_parents_with_class(node, "chooser-addfields") < 1) {
@@ -317,7 +316,8 @@ $.fn.animalchooser = asm_widget({
                     dialogadd.find(".asm-animalchoosermulti").animalchoosermulti();
                     dialogadd.find(".asm-personchooser").personchooser();
                 }
-
+                // Hide retired options from the lookups
+                dialogadd.find(".asm-selectbox").select("removeRetiredOptions", "all");
                 // Was there a value already set by the markup? If so, use it
                 if (t.val() != "" && t.val() != "0") {
                     self.loadbyid.call(self, t, t.val());
