@@ -399,15 +399,9 @@ $(function() {
                             { id: "bdprovidercode", post_field: "BuddyIDProviderCode", label: "BuddyID Provider Code", type: "text", doublesize: true }
                         ]}, 
                     { id: "tab-foundanimals", title: "Found/24Pet Microchips", classes: 'localeus localeca hasfoundanimals',
-                        info: 'Find out more at <a target="_blank" href="http://www.my24pet.com">www.my24pet.com</a><br/>' +
-                        'Contact clientcare@pethealthinc.com to get a folder for automatic batch registrations of microchips.', 
+                        info: 'Find out more at <a target="_blank" href="https://petcolove.org/lost/">petcolove.org/lost/</a>', 
                         fields: [
                             { id: "enabledfa", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                            { id: "fafolder", post_field: "FoundAnimalsFolder", label: "Folder name", type: "text", doublesize: true }, 
-                            { id: "faemail", post_field: "FoundAnimalsEmail", label: "Rescue group email", type: "text", doublesize: true, 
-                                callout: 'To stay on record for every pet you register as the permanent rescue contact, enter your group\'s registry ' + 
-                                'account email in this field.'
-                            }
                         ]}, 
                     { id: "tab-homeagain", title: "HomeAgain Microchips", classes: 'localeus hashomeagain',
                         info: 'Signup at <a target="_blank" href="http://homeagain.4act.com">http://homeagain.4act.com</a> or ' + 
@@ -416,6 +410,14 @@ $(function() {
                             { id: "enabledha", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "hauserid", post_field: "HomeAgainUserId", label: "HomeAgain User ID", type: "text", doublesize: true }, 
                             { id: "hauserpassword", post_field: "HomeAgainUserPassword", label: "HomeAgain User Password", type: "text", doublesize: true }
+                        ]}, 
+                    { id: "tab-petcolovelost", title: "Petco Love Lost", classes: 'localeus localeca haspetcolovelost',
+                        info: 'Find out more at <a target="_blank" href="http://www.my24pet.com">www.my24pet.com</a><br/>' +
+                        'Contact clientcare@pethealthinc.com to get a folder for automatic batch registrations of microchips.', 
+                        fields: [
+                            { id: "enabledll", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "pcllemail", post_field: "PetCoLoveLostEmail", label: "Email Address", type: "text", doublesize: true }, 
+                            { id: "pcllpassword", post_field: "PetCoLoveLostPassword", label: "Password", type: "text", doublesize: true }
                         ]}, 
                     { id: "tab-petlink", title: "PetLink Microchips", classes: 'localeus localeca localemx haspetlink',
                         info: 'These settings are for uploading new owner information to the PetLink/DataMARS microchip database.<br />' +
@@ -538,6 +540,7 @@ $(function() {
             if (!controller.hasbuddyid) { $(".hasbuddyid").hide(); }
             if (!controller.hasfindpet) { $(".hasfindpet").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
+            if (!controller.haspetcolovelost) { $(".haspetcolovelost").hide(); }
             if (!controller.hashtmlftp) { $(".hashtmlftp").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }

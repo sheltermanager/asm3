@@ -1465,6 +1465,15 @@ def person_flag_change_log(dbo: Database) -> bool:
 def person_flag_change_log_type(dbo: Database) -> int:
     return cint(dbo, "PersonFlagChangeLogType", DEFAULTS["PersonFlagChangeLogType"])
 
+def petcolovelost_email(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostEmail")
+
+def petcolovelost_password(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostPassword")
+
+def petcolovelost_apikey(dbo: Database) -> str:
+    return cstring(dbo, "AVIDUSKey")
+
 def petrescue_adoptable_in(dbo: Database) -> str:
     return cstring(dbo, "PetRescueAdoptableIn")
 

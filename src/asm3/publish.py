@@ -167,6 +167,12 @@ PUBLISHER_LIST["st"] = {
     "locales":  "en",
     "sub24hour": False
 }
+PUBLISHER_LIST["ll"] = {
+    "label":    "Register found pets with Petco Love Lost",
+    "class":    asm3.publishers.petcolovelost.PetcoLoveLostPublisher,
+    "locales":  "en",
+    "sub24hour": False
+}
 
 def delete_old_publish_logs(dbo: Database) -> None:
     """ Deletes all publishing logs older than 3 months """
