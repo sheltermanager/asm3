@@ -939,13 +939,26 @@ class media(ASMEndpoint):
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: self.notfound()
-            if m.MEDIAMIMETYPE != "text/html": continue
             linktypeid = m.LINKTYPEID
             linkid = m.LINKID
-            content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
-            contentpdf = asm3.utils.html_to_pdf(dbo, content)
-            filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
-            attachments.append(( filename, "application/pdf", contentpdf ))
+            if m.MEDIAMIMETYPE == "image/jpeg":
+                content = [
+                    "<html><head></head><body>",
+                    asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID)),
+                    "</body></html>"
+                ].join("\n")
+                contentpdf = asm3.utils.html_to_pdf(dbo, content)
+                filename = asm3.media._get_media_filename(m).replace(".jpeg", ".pdf")
+                attachments.append(( filename, "application/pdf", contentpdf ))
+            elif m.MEDIAMIMETYPE == "text/html":
+                content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
+                contentpdf = asm3.utils.html_to_pdf(dbo, content)
+                filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
+                attachments.append(( filename, "application/pdf", contentpdf ))
+            else:
+                contentpdf = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
+                filename = asm3.media._get_media_filename(m)
+                attachments.append(( filename, "application/pdf", contentpdf ))
             subject.append(filename)
         # handle attaching selected repository documents
         for drid in post.integer_list("docrepo"):
