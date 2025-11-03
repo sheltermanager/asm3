@@ -598,12 +598,18 @@ $(function() {
                         { id: "medianotesfile", post_field: "DefaultMediaNotesFromFile", label: _("Prefill new media notes with the filename if left blank"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-diaryandmessages", title: _("Diary and Messages"), fields: [
-                        { id: "alldiaryhomepage", post_field: "AllDiaryHomePage", label: _("Show the full diary (instead of just my notes) on the home page"), type: "check" }, 
-                        { id: "diarycompleteondeath", post_field: "DiaryCompleteOnDeath", label: _("Auto complete diary notes linked to animals when they are marked deceased"), type: "check" }, 
-                        { id: "emaildiarynotes", post_field: "EmailDiaryNotes", label: _("Email users their outstanding diary notes once per day"), type: "check" }, 
-                        { id: "emaildiaryonchange", post_field: "EmailDiaryOnChange", label: _("Email users immediately when a diary note assigned to them is created or updated"), type: "check" }, 
-                        { id: "emaildiaryoncomplete", post_field: "EmailDiaryOnComplete", label: _("Email diary note creators when a diary note is marked complete"), type: "check" }, 
-                        { id: "emailmessages", post_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check" }, 
+                        { id: "alldiaryhomepage", post_field: "AllDiaryHomePage", label: _("Show the full diary (instead of just my notes) on the home page"), type: "check", fullrow: true }, 
+                        { id: "diarycompleteondeath", post_field: "DiaryCompleteOnDeath", label: _("Auto complete diary notes linked to animals when they are marked deceased"), type: "check", fullrow: true }, 
+                        { id: "emaildiaryonchange", post_field: "EmailDiaryOnChange", label: _("Email users immediately when a diary note assigned to them is created or updated"), type: "check", fullrow: true }, 
+                        { id: "emaildiaryoncomplete", post_field: "EmailDiaryOnComplete", label: _("Email diary note creators when a diary note is marked complete"), type: "check", fullrow: true }, 
+                        { id: "emailmessages", post_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check", fullrow: true }, 
+                        { id: "emaildiarynotes", post_field: "EmailDiaryNotes", label: _("Email users their outstanding diary notes"), type: "select",
+                            options: [
+                                '<option value="-1">' + _("Never") + '</option>',
+                                '<option value="1">' + _("Daily") + '</option>',
+                                '<option value="7">' + _("Weekly") + '</option>'
+                            ].join("\n")
+                        }, 
                     ]}, 
                     { id: "tab-display", title: _("Display"), fields: [
                         { id: "disableeffects", post_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check", fullrow: true }, 
