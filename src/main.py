@@ -941,20 +941,15 @@ class media(ASMEndpoint):
             if m is None: self.notfound()
             linktypeid = m.LINKTYPEID
             linkid = m.LINKID
-            if m.MEDIAMIMETYPE == "image/jpeg":
-                imagedata = asm3.media.get_media_file_data(dbo, mid)
-                contentpdf = asm3.utils.generate_image_pdf(o.locale, imagedata[3])
-                filename = asm3.media._get_media_filename(m).replace(".jpg", ".pdf")
-                attachments.append(( filename, "application/pdf", contentpdf ))
-            elif m.MEDIAMIMETYPE == "text/html":
+            if m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
                 contentpdf = asm3.utils.html_to_pdf(dbo, content)
                 filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
                 attachments.append(( filename, "application/pdf", contentpdf ))
             else:
-                contentpdf = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+                content = asm3.dbfs.get_string_id(dbo, m.DBFSID)
                 filename = asm3.media._get_media_filename(m)
-                attachments.append(( filename, "application/pdf", contentpdf ))
+                attachments.append(( filename, m.MEDIAMIMETYPE, content ))
             subject.append(filename)
         # handle attaching selected repository documents
         for drid in post.integer_list("docrepo"):
