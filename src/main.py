@@ -944,7 +944,7 @@ class media(ASMEndpoint):
             if m.MEDIAMIMETYPE == "image/jpeg":
                 imagedata = asm3.media.get_media_file_data(dbo, mid)
                 contentpdf = asm3.utils.generate_image_pdf(o.locale, imagedata[3])
-                filename = asm3.media._get_media_filename(m).replace(".jpeg", ".pdf")
+                filename = asm3.media._get_media_filename(m).replace(".jpg", ".pdf")
                 attachments.append(( filename, "application/pdf", contentpdf ))
             elif m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
