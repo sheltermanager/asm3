@@ -14,6 +14,12 @@ import sys
 # ID type keys used in the ExtraIDs column
 IDTYPE_SAVOURLIFE = "savourlife"
 
+# Endpoints
+ENDPOINT_SET = f"{SAVOURLIFE_URL}SetAnimal"
+ENDPOINT_ADOPTED = f"{SAVOURLIFE_URL}SetAnimalAdopted"
+ENDPOINT_DELETE = f"{SAVOURLIFE_URL}DeleteAnimal"
+ENDPOINT_TOKEN = f"{SAVOURLIFE_URL}GetAnimalAdminByToken"
+
 class SavourLifePublisher(AbstractPublisher):
     """
     Handles publishing to savourlife.com.au
@@ -158,7 +164,7 @@ class SavourLifePublisher(AbstractPublisher):
         username = asm3.configuration.savourlife_username(self.dbo)
         password = asm3.configuration.savourlife_password(self.dbo)
         # Authenticate first to get our token
-        url = SAVOURLIFE_URL + "getToken"
+        url = ENDPOINT_TOKEN
         jsondata = '{ "Username": "%s", "Password": "%s", "Key": "%s" }' % ( username, password, SAVOURLIFE_API_KEY )
         self.log("Token request to %s: %s" % ( url, jsondata)) 
         try:
@@ -195,7 +201,7 @@ class SavourLifePublisher(AbstractPublisher):
                 data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips)
 
                 # SavourLife will insert/update accordingly based on whether DogId is null or not
-                url = SAVOURLIFE_URL + "setDog"
+                url = ENDPOINT_SET
                 jsondata = asm3.utils.json(data)
                 self.log("Sending POST to %s to create/update listing: %s" % (url, jsondata))
                 r = asm3.utils.post_json(url, jsondata)
@@ -272,21 +278,21 @@ class SavourLifePublisher(AbstractPublisher):
                                 "DogId":        dogid,
                                 "EnquiryNumber": enquirynumber
                             }
-                            url = SAVOURLIFE_URL + "setDogAdopted"
+                            url = ENDPOINT_ADOPTED
                             # Clear the dogId on adoption, so if the animal returns it gets a new listing
                             asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
                         elif status == "held":
                             # We're marking the listing as held. We can't just send the held flag, we have to send
                             # the entire listing again.
                             data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips, hold=True)
-                            url = SAVOURLIFE_URL + "setDog"
+                            url = ENDPOINT_SET
                         else:
                             # We're deleting the listing
                             data = {
                                 "Token":        token,
                                 "DogId":        dogid
                             }
-                            url = SAVOURLIFE_URL + "DeleteDog"
+                            url = ENDPOINT_DELETE
 
                         jsondata = asm3.utils.json(data)
                         self.log("Sending POST to %s to mark animal '%s - %s' %s: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, status, jsondata))
@@ -296,7 +302,7 @@ class SavourLifePublisher(AbstractPublisher):
                         if r["status"] != 200:
                             self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                         else:
-                            if url == SAVOURLIFE_URL + "DeleteDog":
+                            if url == ENDPOINT_DELETE:
                                 # Clear the dogId since the listing has been deleted
                                 asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
                             self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
