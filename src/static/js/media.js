@@ -91,7 +91,7 @@ $(function() {
                     }
                     // Only allow the email pdf button to be pressed if the
                     // selection only contains documents
-                    if (rows.length > 0 && all_of_type("text/html")) {
+                    if (rows.length > 0) {
                         $("#button-emailpdf").button("option", "disabled", false); 
                     }
                     // Only allow the sign buttons to be pressed if the
@@ -962,7 +962,7 @@ $(function() {
                     email: defaultemail,
                     toaddresses: toaddresses,
                     subject: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
-                    attachments: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
+                    attachments: media.selected_filenames(),
                     documentrepository: controller.documentrepository,
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
