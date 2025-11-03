@@ -961,7 +961,7 @@ $(function() {
                     name: defaultname,
                     email: defaultemail,
                     toaddresses: toaddresses,
-                    subject: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
+                    subject: media.selected_filenames(),
                     attachments: media.selected_filenames(),
                     documentrepository: controller.documentrepository,
                     animalid: (controller.animal && controller.animal.ID),
