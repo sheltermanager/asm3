@@ -952,7 +952,7 @@ class media(ASMEndpoint):
                 filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
                 attachments.append(( filename, "application/pdf", contentpdf ))
             else:
-                contentpdf = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
+                contentpdf = asm3.dbfs.get_string_id(dbo, m.DBFSID)
                 filename = asm3.media._get_media_filename(m)
                 attachments.append(( filename, "application/pdf", contentpdf ))
             subject.append(filename)
