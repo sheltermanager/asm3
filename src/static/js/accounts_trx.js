@@ -10,6 +10,7 @@ $(function() {
             return [
                 '<div id="dialog-edit" style="display: none" title="' + html.title(_("Edit transaction")) + '">',
                 tableform.fields_render([
+                    { post_field: "supplier", label: _("Supplier"), type: "person", personfilter: "supplier" },
                     { post_field: "description", label: _("Description"), type: "text", doublesize: true, 
                         xmarkup: '<input type="hidden" id="trxid" />' },
                     { post_field: "trxdate", label: _("Date"), type: "date" },
@@ -279,6 +280,7 @@ $(function() {
                 const row = common.get_row(controller.rows, $(this).attr("data-id"));
                 validate.reset("dialog-edit");
                 $("#trxid").val(row.ID);
+                $("#supplier").val(row.OWNERID);
                 $("#trxdate").val(format.date(row.TRXDATE));
                 $("#description").val(html.decode(row.DESCRIPTION));
                 $("#reconciled").select("value", row.RECONCILED);

@@ -1349,7 +1349,8 @@ def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
         "Amount":               amount,
         "SourceAccountID":      source,
         "DestinationAccountID": target,
-        "OwnerDonationID":      0
+        "OwnerDonationID":      0,
+        "OwnerID":              0
     }, username)
 
 def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
@@ -1383,7 +1384,8 @@ def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
         "Reconciled":           post.boolean("reconciled"),
         "Amount":               amount,
         "SourceAccountID":      source,
-        "DestinationAccountID": target
+        "DestinationAccountID": target,
+        "OwnerID":              post.integer("supplier")
     }, username)
 
 def delete_trx(dbo: Database, username: str, tid: int) -> None:
