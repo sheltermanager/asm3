@@ -55,9 +55,9 @@ def email_uncompleted_upto_today(dbo: Database) -> None:
                     weekcheck = True
                     if reminderperiod == 7:
                         datedelta = (asm3.i18n.now() - n.diarydatetime).days
-                        if datedelta % 7:
+                        if not datedelta or datedelta % 7:
                             weekcheck = False
-                    if reminderperiod == 1 or ( reminderperiod == 7 and not weekcheck ):
+                    if reminderperiod == 1 or ( reminderperiod == 7 and weekcheck ):
                         s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
                         s += n.subject
                         if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
