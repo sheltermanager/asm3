@@ -984,7 +984,11 @@ that mandatory fields are not blank on the client, however bots will quite
 happily post forms with blanks in mandatory fields. This option flags any
 forms that contain blanks in mandatory fields as spam.</p></li>
 <li><p>Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
-and lower case letters in the applicants name fields and marks these as spam.</p></li>
+and lower case letters in the applicants name fields and marks these as spam. It
+will also check for email addresses or URLs in name fields.</p></li>
+<li><p>Spambot protection: URLs in any field: It’s highly unusual for forms to need the
+user to include URLs - something that spammers do a lot. This will tag any
+form as spam if there’s a link found (http: or https:) in any form field.</p></li>
 <li><p>Spambot protection: Zipcode / Postcode contains numbers: Checks that the Zipcode /
 Postcode field contains numbers, marks forms as spam where no number is present.</p></li>
 </ul>
