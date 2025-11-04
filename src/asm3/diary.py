@@ -31,7 +31,8 @@ def email_uncompleted_upto_today(dbo: Database) -> None:
     Goes through all system users and emails them their diary for the
     day - unless the option is turned off.
     """
-    if not asm3.configuration.email_diary_notes(dbo): return
+    reminderperiod = asm3.configuration.email_diary_notes(dbo)
+    if reminderperiod == -1: return
     l = dbo.locale
     try:
         allusers = asm3.users.get_users(dbo)
@@ -51,12 +52,18 @@ def email_uncompleted_upto_today(dbo: Database) -> None:
                 if (n.diaryforname == "*") \
                 or (n.diaryforname == u.username) \
                 or (n.diaryforname in u.roles.split("|")):
-                    s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
-                    s += n.subject
-                    if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
-                    s += " (%s)" % n.createdby
-                    s += "\n%s\n\n%s" % (n.note, n.comments)
-                    totalforuser += 1
+                    weekcheck = True
+                    if reminderperiod == 7:
+                        datedelta = (asm3.i18n.now() - n.diarydatetime).days
+                        if datedelta % 7:
+                            weekcheck = False
+                    if reminderperiod == 1 or ( reminderperiod == 7 and not weekcheck ):
+                        s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
+                        s += n.subject
+                        if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
+                        s += " (%s)" % n.createdby
+                        s += "\n%s\n\n%s" % (n.note, n.comments)
+                        totalforuser += 1
             if totalforuser > 0:
                 asm3.al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
                 subject = asm3.i18n._("Diary notes for: {0}", l).format(asm3.i18n.python2display(l, dbo.now()))

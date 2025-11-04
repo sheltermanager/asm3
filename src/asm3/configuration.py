@@ -1117,8 +1117,8 @@ def email_clinic_reminder_days(dbo: Database) -> int:
 def email_clinic_reminder_template(dbo: Database) -> int:
     return cint(dbo, "EmailClinicReminderTemplate", DEFAULTS["EmailClinicReminderTemplate"])
 
-def email_diary_notes(dbo: Database) -> bool:
-    return cboolean(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "Yes")
+def email_diary_notes(dbo: Database) -> int:
+    return cint(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "1")
 
 def email_diary_on_change(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryOnChange", DEFAULTS["EmailDiaryOnChange"] == "Yes")
