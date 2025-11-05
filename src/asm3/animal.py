@@ -7110,7 +7110,7 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
     """
     l = dbo.locale
     a = get_animal(dbo, aid)
-    ownerid = asm3.utils.coalesce(a.OWNERID, a.CURRENTOWNERID, a.ORIGINALOWNERID)
+    ownerid = asm3.utils.coalesce([a.OWNERID, a.CURRENTOWNERID, a.ORIGINALOWNERID])
     data = {
         "dateputon":        python2display(l, dbo.today()),
         "animalname":       a.ANIMALNAME,
