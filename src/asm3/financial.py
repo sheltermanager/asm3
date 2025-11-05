@@ -1064,7 +1064,8 @@ def update_matching_cost_transaction(dbo: Database, username: str, acid: int, de
         "SourceAccountID":  source,
         "DestinationAccountID": target,
         "OwnerDonationID":  0,
-        "AnimalCostID":     acid
+        "AnimalCostID":     acid,
+        "OwnerID":          c.OWNERID
     }, username)
     asm3.al.debug("Trx created with ID %d" % tid, "financial.update_matching_cost_transaction", dbo)
 
@@ -1161,7 +1162,8 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
         "SourceAccountID":      source,
         "DestinationAccountID": target,
         "AnimalCostID":         0,
-        "OwnerDonationID":      odid
+        "OwnerDonationID":      odid,
+        "OwnerID":              d.OWNERID
     }, username)
     asm3.al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
@@ -1179,7 +1181,8 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
             "SourceAccountID":      vatac,
             "DestinationAccountID": target,
             "AnimalCostID":         0,
-            "OwnerDonationID":      odid
+            "OwnerDonationID":      odid,
+            "OwnerID":              d.OWNERID
         }, username)
         asm3.al.debug("VAT trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
@@ -1197,7 +1200,8 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
             "SourceAccountID":      target,
             "DestinationAccountID": feeac,
             "AnimalCostID":         0,
-            "OwnerDonationID":      odid
+            "OwnerDonationID":      odid,
+            "OwnerID":              d.OWNERID
         }, username)
         asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
