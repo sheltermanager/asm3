@@ -280,7 +280,6 @@ $(function() {
                 const row = common.get_row(controller.rows, $(this).attr("data-id"));
                 validate.reset("dialog-edit");
                 $("#trxid").val(row.ID);
-                // $("#supplier").val(row.OWNERID);
                 if (row.OWNERID) {
                     $("#supplier").personchooser("loadbyid", row.OWNERID);
                 } else {
