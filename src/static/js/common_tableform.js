@@ -2239,7 +2239,7 @@ const tableform = {
             if (v.type == "check") {
                 if (post != "") { post += "&"; }
                 if (n.is(":checked")) {
-                    post += v.post_field + "=checked";
+                    post += v.post_field + "=on";
                 }
                 else {
                     post += v.post_field + "=off";
