@@ -1472,8 +1472,11 @@ $.fn.richtextarea = asm_widget({
 $.fn.textarea = asm_widget({
     
     _create: function(t) {
-        
-        let buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
+       
+        // position the zoom button over the bottom right corner by adjusting its
+        // margins with negative values. The margin-right: 28px corrects elements after the
+        // textarea from overlapping it due to the negative margin (it's the left margin less the width of the button)
+        let buttonstyle = "margin-left: -56px; margin-right: 28px; margin-top: -24px; height: 16px",
             self = this;
 
         if (t.attr("data-zoom")) { return; }
