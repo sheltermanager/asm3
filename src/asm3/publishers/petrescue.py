@@ -82,6 +82,7 @@ class PetRescuePublisher(AbstractPublisher):
         if contact_email == "": contact_email = asm3.configuration.email(self.dbo)
         use_coordinator = asm3.configuration.petrescue_use_coordinator(self.dbo)
         breederid = asm3.configuration.petrescue_breederid(self.dbo)
+        daconumber = asm3.configuration.petrescue_sa_daconumber(self.dbo)
         nswrehomingorganisationid = asm3.configuration.petrescue_nsw_rehoming_org_id(self.dbo)
         vicsourcenumber = asm3.configuration.petrescue_vic_sourcenumber(self.dbo)
         vicpicnumber = asm3.configuration.petrescue_vic_picnumber(self.dbo)
@@ -132,7 +133,7 @@ class PetRescuePublisher(AbstractPublisher):
       
                 data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, 
                                           contact_name, contact_number, contact_email, all_microchips, use_coordinator,
-                                          nswrehomingorganisationid, breederid, vicpicnumber, vicsourcenumber)
+                                          nswrehomingorganisationid, breederid, daconumber, vicpicnumber, vicsourcenumber)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -214,7 +215,7 @@ class PetRescuePublisher(AbstractPublisher):
     def processAnimal(self, an: ResultRow, all_desexed=False, adoptable_in="", 
                       suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", 
                       all_microchips=False, use_coordinator=0,
-                      nswrehomingorganisationid="", breederid="", vicpicnumber="", vicsourcenumber="") -> Dict:
+                      nswrehomingorganisationid="", breederid="", daconumber="", vicpicnumber="", vicsourcenumber="") -> Dict:
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         isdog = an.SPECIESID == 1
         iscat = an.SPECIESID == 2
@@ -307,6 +308,7 @@ class PetRescuePublisher(AbstractPublisher):
             "species_name":             an.SPECIESNAME,
             "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
             "breeder_id":               breederid, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
+            "daco_number":              daconumber, # mandatory for SA cats and dogs
             "pic_number":               vicpicnumber, # mandatory for Victoria livestock (horses etc)
             "source_number":            vicsourcenumber, # mandatory for Victoria cats and dogs
             "rehoming_organisation_id": nswrehomingorganisationid, # required for NSW, this OR microchip or breeder_id is mandatory

@@ -1474,6 +1474,9 @@ def petrescue_all_desexed(dbo: Database) -> bool:
 def petrescue_all_microchips(dbo: Database) -> bool:
     return cboolean(dbo, "PetRescueAllMicrochips")
 
+def petrescue_sa_daconumber(dbo: Database) -> bool:
+    return cstring(dbo, "PetRescueSADACONumber")
+
 def petrescue_email(dbo: Database) -> str:
     return cstring(dbo, "PetRescueEmail")
 
