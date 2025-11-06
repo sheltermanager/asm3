@@ -154,6 +154,7 @@ $.fn.animalchooser = asm_widget({
         t.parent().append(node); // TODO: Would this break anything if we used t.after() instead?
         // Set the filter
         t.data("filter", t.attr("data-filter"));
+        if (!t.data("filter")) { t.data("filter", "all"); }
         // Look for nonshelter flag
         t.data("nonshelter", t.attr("data-nonshelter") == "true");
         // Start with nothing selected
