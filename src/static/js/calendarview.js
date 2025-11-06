@@ -26,8 +26,11 @@ $(function() {
         },
 
         render: function() {
-            const chk = function(id, data, icon, label) {
-                return '<span class="asm-calendar-legend">' + 
+            const chk = function(id, data, icon, label, tag="") {
+                if (tag) {
+                    tag = " " + tag;
+                }
+                return '<span class="asm-calendar-legend' + tag + '">' + 
                     html.icon(icon) + 
                     '<input id="' + id + '" data="' + data + '" type="checkbox" class="asm-checkbox" /> ' +
                     '<label for="' + id + '">' + label + '</label>' +
@@ -40,13 +43,13 @@ $(function() {
                 chk("toggle-vacc", "v", "vaccination", _("Vaccination")),
                 chk("toggle-medical", "m", "medical", _("Medical")),
                 chk("toggle-test", "t", "test", _("Test")),
-                chk("toggle-boarding", "b", "boarding", _("Boarding")),
-                chk("toggle-clinic", "c", "health", _("Clinic")),
+                chk("toggle-boarding", "b", "boarding", _("Boarding"), "tagboarding"),
+                chk("toggle-clinic", "c", "health", _("Clinic"), "tagclinic"),
                 chk("toggle-donation", "p", "donation", _("Payment")),
-                chk("toggle-incident", "o", "call", _("Incident followup")),
-                chk("toggle-transport", "r", "transport", _("Transport")),
-                chk("toggle-traploan", "l", "traploan", _("Equipment loan")),
-                chk("toggle-event", "e", "event", _("Event")),
+                chk("toggle-incident", "o", "call", _("Incident followup"), "taganimalcontrol"),
+                chk("toggle-transport", "r", "transport", _("Transport"), "tagtransport"),
+                chk("toggle-traploan", "l", "traploan", _("Equipment loan"), "tagtraploan"),
+                chk("toggle-event", "e", "event", _("Event"), "tagevent"),
                 '</p>',
                 '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;"></div>',
                 html.content_footer()
