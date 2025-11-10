@@ -91,7 +91,10 @@ $(function() {
                         json_field: "TAXRATE", post_field: "taxrate", label: _("Tax Rate"), type: "number", 
                         callout: _("Rate of tax to be applied") },
                     { hideif: function() { return controller.descfield == ""; },
-                        json_field: controller.descfield, post_field: "lookupdesc", label: _("Description"), type: "textarea" }
+                        json_field: controller.descfield, post_field: "lookupdesc", label: _("Description"), type: "textarea" },
+                    { hideif: function() { return !controller.hasconditiontype; },
+                        json_field: controller.descfield, post_field: "conditiontype", label: _("Condition Type"),
+                        type: "select", options: html.list_to_options(controller.conditiontypes, "ID", "CONDITIONTYPENAME") }
                 ]
             };
 
@@ -209,6 +212,7 @@ $(function() {
                             "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups");
                         let row = {};
                         row.ID = response;
+                        console.log(response);
                         tableform.fields_update_row(dialog.fields, row);
                         if (row.SPECIESID) {
                             row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
