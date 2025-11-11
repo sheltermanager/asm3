@@ -39,9 +39,7 @@ LOOKUP_TABLES = {
     "lkcoattype":           (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
     "citationtype":         (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
     "lksclinicstatus":      (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
-
     "lkcondition":          (_("Conditions"), "ConditionName", _("Name"), "Description", "add del ret conditiontype haszoonotic", ("animalcondition.ConditionID",)),
-
     "costtype":             (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
     "deathreason":          (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
     "diet":                 (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),

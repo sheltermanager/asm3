@@ -36,7 +36,6 @@ for conditiontype in (
     _("GI"),
     _("Respiratory"),
     _("Miscellaneous"),
-    _("Unknown"),
     _("Reproductive"),
     _("Symptom")
 ):

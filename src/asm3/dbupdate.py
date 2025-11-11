@@ -1915,6 +1915,8 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
         return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( tid, dbo.escape(name), dbo.escape(petfinder), str(speciesid) )
     def basecolour(tid: int, name: str, adoptapet: str) -> str:
         return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (tid, dbo.escape(name), adoptapet)
+    def conditiontype(cid: int, name: str) -> str:
+        return "INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (%s, '%s', '', 0)|=\n" % ( cid, dbo.escape(name) )
     def internallocation(lid: int, name: str) -> str:
         return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, SiteID, IsRetired) VALUES (%s, '%s', '', '', 1, 0)|=\n" % ( lid, dbo.escape(name) )
     def medicalprofile(pid: int, name: str, dosage: str) -> str:
@@ -2454,6 +2456,11 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += breed(440, _("Llama", l), "Llama", 16)
     sql += breed(441, _("Pig (Farm)", l), "Pig (Farm)", 28)
     sql += breed(442, _("Mixed Breed", l), "Mixed Breed", 1)
+    sql += conditiontype(1, "GI")
+    sql += conditiontype(2, "Respiratory")
+    sql += conditiontype(3, "Miscellaneous")
+    sql += conditiontype(4, "Reproductive")
+    sql += conditiontype(5, "Symptom")
     sql += lookup2money("citationtype", "CitationName", 1, _("First offence", l))
     sql += lookup2money("citationtype", "CitationName", 2, _("Second offence", l))
     sql += lookup2money("citationtype", "CitationName", 3, _("Third offence", l))
