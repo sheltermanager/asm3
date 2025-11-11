@@ -2607,6 +2607,28 @@ def get_costs_for_payee(dbo: Database, personid: int, sort: int = ASCENDING) -> 
         sql += " ORDER BY a.CostDate DESC"
     return dbo.query(sql, [personid])
 
+def get_animalconditions(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
+    """
+    Returns animalcondition records for the given animal:
+    """
+    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, " \
+        "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate " \
+        "FROM animalcondition ac INNER JOIN lkcondition c ON ac.ConditionID = c.ID " \
+        "INNER JOIN lksconditiontype ct ON c.ConditionTypeID = ct.ID " \
+        "WHERE ac.AnimalID = ?"
+    if sort == ASCENDING:
+        sql += " ORDER BY ac.StartDatetime"
+    else:
+        sql += " ORDER BY ac.StartDatetime DESC"
+    return dbo.query(sql, [animalid] )
+
+def get_conditions(dbo: Database) -> Results:
+    """
+    Returns all active lkcondition records:
+    """
+    sql = "SELECT * FROM lkcondition ORDER BY ConditionName"
+    return dbo.query(sql)
+
 def get_diets(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     """
     Returns diet records for the given animal:
@@ -4862,6 +4884,36 @@ def update_preferred_web_media_notes(dbo: Database, username: str, animalid: int
         })
         asm3.audit.edit(dbo, username, "media", mediaid, "", str(mediaid) + "notes => " + newnotes)
  
+def insert_animalcondition_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Creates an animalcondition record from posted form data
+    """
+    return dbo.insert("animalcondition", {
+        "AnimalID":         post.integer("animalid"),
+        "ConditionID":      post.integer("conditionid"),
+        "StartDatetime":    post.datetime("startdate", "starttime"),
+        "EndDatetime":      post.datetime("enddate", "endtime"),
+        "Comments":         post["comments"]
+    }, username)
+
+def update_animalcondition_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Updates an animalcondition record from posted form data
+    """
+    dbo.update("animalcondition", post.integer("animalconditionid"), {
+        "AnimalID":         post.integer("animalid"),
+        "ConditionID":      post.integer("conditionid"),
+        "StartDatetime":    post.datetime("startdate", "starttime"),
+        "EndDatetime":      post.datetime("enddate", "endtime"),
+        "Comments":         post["comments"]
+    }, username)
+
+def delete_animalcondition(dbo: Database, username: str, acid: int) -> None:
+    """
+    Deletes the selected animalcondition
+    """
+    dbo.delete("animalcondition", acid, username)
+
 def insert_diet_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a diet record from posted form data

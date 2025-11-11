@@ -93,8 +93,12 @@ $(function() {
                     { hideif: function() { return controller.descfield == ""; },
                         json_field: controller.descfield, post_field: "lookupdesc", label: _("Description"), type: "textarea" },
                     { hideif: function() { return !controller.hasconditiontype; },
-                        json_field: controller.descfield, post_field: "conditiontype", label: _("Condition Type"),
-                        type: "select", options: html.list_to_options(controller.conditiontypes, "ID", "CONDITIONTYPENAME") }
+                        json_field: "CONDITIONTYPEID", post_field: "conditiontype", label: _("Condition Type"),
+                        type: "select", options: html.list_to_options(controller.conditiontypes, "ID", "CONDITIONTYPENAME") },
+                    { hideif: function() { return !controller.haszoonotic; },
+                        json_field: "ISZOONOTIC", post_field: "iszoonotic", label: _("Zoonotic"),
+                        type: "select", options: '<option value="1">' + _("Yes") + '</option><option value="0">' + _("No") + '</option>',
+                        defaultval: "0"}
                 ]
             };
 
@@ -212,7 +216,7 @@ $(function() {
                             "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups");
                         let row = {};
                         row.ID = response;
-                        console.log(response);
+                        console.log(dialog.fields);
                         tableform.fields_update_row(dialog.fields, row);
                         if (row.SPECIESID) {
                             row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");

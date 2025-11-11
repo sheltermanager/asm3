@@ -40,7 +40,7 @@ LOOKUP_TABLES = {
     "citationtype":         (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
     "lksclinicstatus":      (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
 
-    "lkcondition":          (_("Conditions"), "ConditionName", _("Name"), "Description", "add del ret conditiontype", ("animalcondition.ConditionID",)),
+    "lkcondition":          (_("Conditions"), "ConditionName", _("Name"), "Description", "add del ret conditiontype haszoonotic", ("animalcondition.ConditionID",)),
 
     "costtype":             (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
     "deathreason":          (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
@@ -1042,7 +1042,7 @@ def get_lookup(dbo: Database, tablename: str, namefield: str) -> Results:
 def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: str = "", 
                   speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", 
                   units: str = "", site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, zoonotic: int = 0) -> int:
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, iszoonotic: int = 0) -> int:
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -1079,7 +1079,7 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
         return dbo.insert("lkcondition", {
             "ConditionName":    name,
             "ConditionTypeID":  conditiontypeid,
-            "Zoonotic":         zoonotic,
+            "IsZoonotic":       iszoonotic,
             "Description":      desc,
             "IsRetired":        retired
         }, username, setCreated=False)
@@ -1154,7 +1154,7 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
 def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str, desc: str = "", 
                   speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", units: str = "", 
                   site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, zoonotic: int = 0) -> None:
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, iszoonotic: int = 0) -> None:
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1191,7 +1191,7 @@ def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str
             "ConditionName":    name,
             "Description":      desc,
             "ConditionTypeID":  conditiontypeid,
-            "Zoonotic":         zoonotic,
+            "IsZoonotic":       iszoonotic,
             "IsRetired":        retired
         }, username, setLastChanged=False)
     elif lookup == "costtype":
