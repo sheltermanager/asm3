@@ -249,7 +249,7 @@ edit_header = {
         ].join("\n");
         var tabs = [[ "animal", "animal", _("Animal"), "", "va" ],
             [ "vaccination", "animal_vaccination", _("Vaccination"), "vaccination", "vav" ],
-            [ "condition", "animal_condition", _("Conditions"), "condition", "vaco" ],
+            [ "condition", "animal_condition", _("Conditions"), "health", "vaco" ],
             [ "test", "animal_test", _("Test"), "test", "vat" ],
             [ "medical", "animal_medical", _("Medical"), "medical", "mvam" ],
             [ "boarding", "animal_boarding", _("Boarding"), "boarding", "vbi" ],
