@@ -89,8 +89,6 @@ $(function() {
                     if (rows.length > 0 && no_links()) {
                         $("#button-email").button("option", "disabled", false);
                     }
-                    // Only allow the email pdf button to be pressed if the
-                    // selection only contains documents
                     if (rows.length > 0) {
                         $("#button-emailpdf").button("option", "disabled", false); 
                     }
@@ -961,8 +959,8 @@ $(function() {
                     name: defaultname,
                     email: defaultemail,
                     toaddresses: toaddresses,
-                    subject: media.selected_filenames(),
-                    attachments: media.selected_filenames(),
+                    subject: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
+                    attachments: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
                     documentrepository: controller.documentrepository,
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
