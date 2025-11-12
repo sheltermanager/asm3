@@ -108,6 +108,9 @@ $(function() {
                 if (t.DONATIONOWNERID) {
                     desc += html.person_link(t.DONATIONOWNERID, t.DONATIONOWNERNAME);
                 }
+                if (t.OWNERID) {
+                    desc += " " + html.icon("right") + " " + html.person_link(t.OWNERID, t.OWNERNAME);
+                }
                 if (t.DONATIONANIMALID) {
                     desc += " " + html.icon("right") + " " + 
                         '<a href="animal?id=' + t.DONATIONANIMALID + '">' +
@@ -360,6 +363,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-edit");
+            common.widget_destroy("#supplier", "personchooser");
             tableform.dialog_destroy();
         },
 

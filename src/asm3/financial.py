@@ -380,6 +380,7 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "a.ID AS DonationAnimalID, " \
         "o.ID AS DonationOwnerID, o.OwnerName AS DonationOwnerName, " \
         "oac.ID AS CostOwnerID, oac.OwnerName AS CostOwnerName, " \
+        "s.OwnerName AS OwnerName, " \
         "a.AnimalName AS DonationAnimalName, " \
         "od.ReceiptNumber AS DonationReceiptNumber, " \
         "dt.DonationName AS DonationTypeName, " \
@@ -409,6 +410,7 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "LEFT OUTER JOIN animalcost ac ON ac.ID = t.AnimalCostID " \
         "LEFT OUTER JOIN owner oac ON oac.ID = ac.OwnerID " \
         "LEFT OUTER JOIN animal aca ON aca.ID = ac.AnimalID " \
+        "LEFT OUTER JOIN owner s ON t.OwnerID = s.ID " \
         "WHERE t.TrxDate >= %s AND t.TrxDate <= %s%s " \
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \
         "ORDER BY t.TrxDate, t.ID" % ( dbo.sql_date(datefrom, includeTime=False), dbo.sql_date(dateto, includeTime=False), recfilter, accountid, accountid))
