@@ -182,6 +182,13 @@ def hotlink_protect(method: str, referer: str) -> None:
         if d != "" and referer.find(d) != -1: fromhldomain = True
     if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
         raise asm3.utils.ASMPermissionError("Hotlinking to %s from %s is forbidden" % (method, referer))
+    
+def image_protect(filename: str) -> None:
+    """ Protect a method from serving anything where the source filename is not an image """
+    if filename is None: filename = ""
+    filename = filename.lower()
+    if not filename.endswith(".jpg") and not filename.endswith(".jpeg"):
+        raise asm3.utils.ASMPermissionError("Non-image file requested from image-only endpoint")
 
 def safe_cache_key(method: str, qs: str) -> str:
     """ 
@@ -681,17 +688,20 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     
     elif method == "extra_image":
         hotlink_protect("extra_image", referer)
+        image_protect(title)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
 
     elif method == "media_image":
         hotlink_protect("media_image", referer)
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
         if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        image_protect(title)
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
 
     elif method == "media_file":
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
         if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        if asm3.configuration.service_media_file_imageonly(dbo): image_protect(medianame)
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
     
     elif method == "html_adoptable_animals":

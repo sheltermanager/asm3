@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-10-29 12:26+0000\n"
+"POT-Creation-Date: 2025-11-12 09:35+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1910,6 +1910,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Asset::Premises"
+msgstr ""
+
+#: users.js
+msgid "Assign Role"
 msgstr ""
 
 #: onlineform_incoming.js media.js
@@ -6454,6 +6458,12 @@ msgstr ""
 
 #: main.js clinic_appointment.js diarytask.js diary.js
 msgid "For"
+msgstr ""
+
+#: options.js
+msgid ""
+"Forbid access to HTML and PDF document media via the media_file Service API "
+"method"
 msgstr ""
 
 #: person.py users.py common_personchooser.js common_html.js

@@ -553,6 +553,7 @@ $(function() {
                         { id: "anonymisepersonaldata", post_field: "AnonymisePersonalData", label: _("Anonymize personal data after this many years"), type: "check", callout: _("This many years after creation of a person record, the name, address and telephone data will be anonymized."), xmarkup: '<input data="AnonymiseAfterYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
                         { id: "anonymiseadopters", post_field: "rc:AnonymiseAdopters", label: _("Never anonymize people who adopted an animal"), type: "check" }, 
                         { id: "autoremovedocumentmedia", post_field: "AutoRemoveDocumentMedia", label: _("Remove HTML and PDF document media after this many years"), type: "check", xmarkup: '<input data="AutoRemoveDMYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
+                        { id: "serviceapimediafileimage", post_field: "ServiceMediaFileImageOnly", label: _("Forbid access to HTML and PDF document media via the media_file Service API method"), type: "check" },
                         { id: "autoremoveanimalmediaexit", post_field: "AutoRemoveAnimalMediaExit", label: _("Remove animal media this many years after the animal dies or leaves the shelter"), type: "check", xmarkup: '<input data="AutoRemoveAMExitYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
                         { id: "autoremovepeoplecancresv", post_field: "AutoRemovePeopleCancResv", label: _("Remove people with a cancelled reservation who have not had any other contact after this many years"), type: "check", xmarkup: '<input data="AutoRemovePeopleCRYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
                         { id: "showgdprcontact", post_field: "ShowGDPRContactOptIn", label: _("Show GDPR Contact Opt-In field on person screens"), type: "check" }, 
@@ -667,7 +668,7 @@ $(function() {
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
                         { id: "emailaddress", post_field: "EmailAddress", label: _("Email address"), type: "text", doublesize: true, 
-                            callout: "This email address is the default From address when sending emails" }, 
+                            callout: "This email address is the default From address when sending emails" },
                         { id: "emailbcc", post_field: "EmailBCC", label: _("BCC messages to"), type: "text", doublesize: true, 
                             callout: "BCC this address when sending email. This is useful if you want to archive your emails with another service." }, 
                         { id: "emailsig", post_field: "EmailSignature", label: _("Email signature"), type: "richtextarea", doublesize: true, height: "150px", 
