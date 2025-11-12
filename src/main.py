@@ -311,24 +311,12 @@ class ASMEndpoint(object):
         lf = asm3.animal.LocationFilter(session.locationfilter, session.siteid, session.visibleanimalids)
         if not lf.match(a):
             raise asm3.utils.ASMPermissionError("animal not in location filter/site")
-        
-        viewroles = []
-        for rr in session.dbo.query("SELECT RoleID FROM animalrole WHERE AnimalID = ? AND CanView = 1", [a.ID]):
-            viewroles.append(rr.ROLEID)
+        viewroles = session.dbo.query_list("SELECT RoleID FROM animalrole WHERE AnimalID = ? AND CanView = 1", [a.ID])
         # No view roles means anyone can view
         if len(viewroles) == 0:
             return True
         # Does the user have any of the view roles?
-        userroles = []
-        for ur in session.dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [session.user]):
-            userroles.append(ur.ROLEID)
-        hasperm = False
-        if session.superuser:
-            hasperm = True
-        for ur in userroles:
-            if ur in viewroles:
-                hasperm = True
-        if not hasperm:
+        if not asm3.users.check_role_bool(session, viewroles):
             raise asm3.utils.ASMPermissionError("User does not have necessary role to view")
 
     def check_locked_db(self) -> None:
