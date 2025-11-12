@@ -600,16 +600,23 @@ $(function() {
                     { id: "tab-diaryandmessages", title: _("Diary and Messages"), fields: [
                         { id: "alldiaryhomepage", post_field: "AllDiaryHomePage", label: _("Show the full diary (instead of just my notes) on the home page"), type: "check", fullrow: true }, 
                         { id: "diarycompleteondeath", post_field: "DiaryCompleteOnDeath", label: _("Auto complete diary notes linked to animals when they are marked deceased"), type: "check", fullrow: true }, 
+                        { id: "emaildiarynotes", post_field: "EmailDiaryNotes", label: _("Email users their outstanding diary notes once per day"), type: "check", fullrow: true }, 
                         { id: "emaildiaryonchange", post_field: "EmailDiaryOnChange", label: _("Email users immediately when a diary note assigned to them is created or updated"), type: "check", fullrow: true }, 
                         { id: "emaildiaryoncomplete", post_field: "EmailDiaryOnComplete", label: _("Email diary note creators when a diary note is marked complete"), type: "check", fullrow: true }, 
                         { id: "emailmessages", post_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check", fullrow: true }, 
-                        { id: "emaildiarynotes", post_field: "EmailDiaryNotes", label: _("Email users their outstanding diary notes"), type: "select",
-                            options: [
-                                '<option value="-1">' + _("Never") + '</option>',
-                                '<option value="1">' + _("Daily") + '</option>',
-                                '<option value="7">' + _("Weekly") + '</option>'
-                            ].join("\n")
-                        }, 
+                        { id: "emaildiarynotesweekly", post_field: "EmailDiaryNotesWeekly", label: _("Email users their outstandiong diary notes weekly on "), type: "check", fullrow: true,
+                            xmarkup: '<select id="emaildiarynotesweeklyday" data-post="EmailDiaryNotesWeeklyDay" class="asm-field asm-selectbox asm-widget">' + 
+                            html.list_to_options(
+                            [
+                                "0|" + _("Monday"),
+                                "1|" + _("Tuesday"),
+                                "2|" + _("Wednesday"),
+                                "3|" + _("Thursday"),
+                                "4|" + _("Friday"),
+                                "5|" + _("Saturday"),
+                                "6|" + _("Sunday")
+                            ]) + '</select>'
+                        }
                     ]}, 
                     { id: "tab-display", title: _("Display"), fields: [
                         { id: "disableeffects", post_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check", fullrow: true }, 

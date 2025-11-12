@@ -31,8 +31,8 @@ def email_uncompleted_upto_today(dbo: Database) -> None:
     Goes through all system users and emails them their diary for the
     day - unless the option is turned off.
     """
-    reminderperiod = asm3.configuration.email_diary_notes(dbo)
-    if reminderperiod == -1: return
+    if not asm3.configuration.email_diary_notes(dbo) and asm3.configuration.email_diary_notes_weekly(dbo) != asm3.i18n.today().isoweekday() - 1:
+        return
     l = dbo.locale
     try:
         allusers = asm3.users.get_users(dbo)
@@ -52,24 +52,25 @@ def email_uncompleted_upto_today(dbo: Database) -> None:
                 if (n.diaryforname == "*") \
                 or (n.diaryforname == u.username) \
                 or (n.diaryforname in u.roles.split("|")):
-                    weekcheck = True
-                    if reminderperiod == 7:
-                        datedelta = (asm3.i18n.now() - n.diarydatetime).days
-                        if not datedelta or datedelta % 7:
-                            weekcheck = False
-                    if reminderperiod == 1 or ( reminderperiod == 7 and weekcheck ):
-                        s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
-                        s += n.subject
-                        if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
-                        s += " (%s)" % n.createdby
-                        s += "\n%s\n\n%s" % (n.note, n.comments)
-                        totalforuser += 1
+                    s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
+                    s += n.subject
+                    if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
+                    s += " (%s)" % n.createdby
+                    s += "\n%s\n\n%s" % (n.note, n.comments)
+                    totalforuser += 1
             if totalforuser > 0:
                 asm3.al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
                 subject = asm3.i18n._("Diary notes for: {0}", l).format(asm3.i18n.python2display(l, dbo.now()))
                 asm3.utils.send_email(dbo, "", u.emailaddress, "", "", subject, s, exceptions=False, bulk=True, retries=3)
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, "system", asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
+
+# def email_uncompleted_weekly(dbo: Database) -> None:
+#     """
+#     Goes through all system users and emails them their non completed diary notes if the day of the week
+#     is the one specified in the options - unless the option is turned off.
+#     """
+
 
 def email_note_on_change(dbo: Database, n: ResultRow, username: str) -> None:
     """
