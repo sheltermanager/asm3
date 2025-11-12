@@ -553,7 +553,6 @@ $(function() {
                         { id: "anonymisepersonaldata", post_field: "AnonymisePersonalData", label: _("Anonymize personal data after this many years"), type: "check", callout: _("This many years after creation of a person record, the name, address and telephone data will be anonymized."), xmarkup: '<input data="AnonymiseAfterYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
                         { id: "anonymiseadopters", post_field: "rc:AnonymiseAdopters", label: _("Never anonymize people who adopted an animal"), type: "check" }, 
                         { id: "autoremovedocumentmedia", post_field: "AutoRemoveDocumentMedia", label: _("Remove HTML and PDF document media after this many years"), type: "check", xmarkup: '<input data="AutoRemoveDMYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
-                        { id: "serviceapimediafileimage", post_field: "ServiceMediaFileImageOnly", label: _("Forbid access to HTML and PDF document media via the media_file Service API method"), type: "check" },
                         { id: "autoremoveanimalmediaexit", post_field: "AutoRemoveAnimalMediaExit", label: _("Remove animal media this many years after the animal dies or leaves the shelter"), type: "check", xmarkup: '<input data="AutoRemoveAMExitYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
                         { id: "autoremovepeoplecancresv", post_field: "AutoRemovePeopleCancResv", label: _("Remove people with a cancelled reservation who have not had any other contact after this many years"), type: "check", xmarkup: '<input data="AutoRemovePeopleCRYears" type="text" class="asm-textbox asm-halftextbox asm-intbox" />' }, 
                         { id: "showgdprcontact", post_field: "ShowGDPRContactOptIn", label: _("Show GDPR Contact Opt-In field on person screens"), type: "check" }, 
@@ -919,7 +918,6 @@ $(function() {
                         { id: "disablequicklinkshome", post_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check", fullrow: true }, 
                         { id: "disablequicklinksall", post_field: "QuicklinksAllScreens", label: _("Show quick links on all pages"), type: "check", fullrow: true }, 
                         { id: "quicklinksid", post_field: "QuicklinksID", label: _("Show quick links on all pages"), type: "selectmulti", options: this.quicklink_options() }, 
-
                     ]}, 
                     { id: "tab-reminders", title: _("Reminder Emails"), info: _("Reminder emails can be automatically sent to groups of people a number of days before or after a key event."), fields: [
                         { type: "raw", markup: '<tr><th colspan="2"></th><th>' + _("Days") + '</th><th>' + _("Template") + '</th></tr>' }, 
@@ -999,6 +997,12 @@ $(function() {
                         { id: "incidentpermissions", post_field: "IncidentPermissions", label: _("Enable access permissions for incident records"), type: "check" }, 
                         { id: "personpermissions", post_field: "PersonPermissions", label: _("Enable access permissions for person records"), type: "check" }
                     ]}, 
+                    { id: "tab-serviceapi", title: _("Service API"), fields: [
+                        { id: "serviceenabled", post_field: "ServiceEnabled", label: _("Enable the Service API"), type: "check" },
+                        { id: "serviceauthenabled", post_field: "ServiceAuthEnabled", label: _("Enable authenticated methods of the Service API"), type: "check" },
+                        { id: "servicemediafileimage", post_field: "ServiceMediaFileImageOnly", label: _("Forbid access to HTML and PDF document media via the media_file Service API method"), type: "check" },
+                        { id: "servicemediafileimageex", post_field: "ServiceMediaFileImageExclude", label: _("Forbid access to excluded images via Service API media_file/media_image methods"), type: "check" }
+                    ]},
                     { id: "tab-shelterview", title: _("Shelter view"), fields: [
                         { id: "shelterviewdefault", post_field: "ShelterViewDefault", label: _("Default view"), prelabel: "hcb", type: "select", options: html.shelter_view_options() }, 
                         { id: "shelterviewdragdrop", post_field: "ShelterViewDragDrop", label: _("Allow drag and drop to move animals between locations"), type: "check", fullrow: true }, 

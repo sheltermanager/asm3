@@ -1288,6 +1288,33 @@ Security
   The "View Roles" control allows a user to specify exactly which
   users can see the person record.    
 
+Service API
+-----------
+
+* Enable the Service API: If enabled, the :ref:`serviceapi` can be used. The service
+  API allows your website to retrieve and use data.
+
+* Enable authenticated methods of the service API: If enabled, methods of the
+  API that can return potentially sensitive data can be called. They require
+  a username and password, or a key to be used to authenticate the call.
+  Methods that require authentication are outlined in the service API section
+  of the manual.
+
+* Forbid access to HTML and PDF document media via the media_file Service API
+  method: If enabled, this option prevents the media_file call from returning
+  anything but images. Useful to prevent attackers guessing ID numbers to
+  retrieve documentation and paperwork. Note however that if you are using
+  the csvexport/import functionality with media from one database to another
+  that this option will prevent the target database from being able to import
+  your media.
+
+* Forbid access to excluded images via Service API media_file/media_image
+  methods: If enabled, the media_file and media_image methods will refuse
+  to service images that have the "Exclude from Publish" flag on them.
+  Again, if you are using the csvexport/import functionality with media from
+  one database to another, this option can prevent the target database from
+  being able to import excluded photos.
+
 Shelter View
 ------------
 

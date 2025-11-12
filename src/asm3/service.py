@@ -32,7 +32,7 @@ from asm3.i18n import _, now, add_seconds, format_currency, format_time, python2
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
 from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, JQUERY_UI_CSS, MOUSETRAP_JS
 from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
-from asm3.typehints import Database, PostedData, Results, ServiceResponse
+from asm3.typehints import Database, PostedData, Results, ResultRow, ServiceResponse
 
 # Service methods that require authentication
 AUTH_METHODS = [
@@ -189,6 +189,12 @@ def image_protect(filename: str) -> None:
     filename = filename.lower()
     if not filename.endswith(".jpg") and not filename.endswith(".jpeg"):
         raise asm3.utils.ASMPermissionError("Non-image file requested from image-only endpoint")
+    
+def image_exclude_protect(m: ResultRow) -> None:
+    """ Protect a method from serving images that have been excluded from publish """
+    if m is None: return
+    if m.EXCLUDEFROMPUBLISH == 1:
+        raise asm3.utils.ASMPermissionError("Excluded image requested from endpoint")
 
 def safe_cache_key(method: str, qs: str) -> str:
     """ 
@@ -676,6 +682,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
+        image_protect(title)
         if title.startswith("/"):
             imagedata = asm3.dbfs.get_string_filepath(dbo, title)
         else:
@@ -693,15 +700,19 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     elif method == "media_image":
         hotlink_protect("media_image", referer)
+        m = asm3.media.get_media_by_id(dbo, mediaid)
+        if m is None: return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        image_protect(m.MEDIANAME)
+        if asm3.configuration.service_media_file_image_exclude(dbo): image_exclude_protect(m)
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
-        if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
-        image_protect(title)
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
 
     elif method == "media_file":
+        m = asm3.media.get_media_by_id(dbo, mediaid)
+        if m is None: return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        if asm3.configuration.service_media_file_image_only(dbo): image_protect(m.MEDIANAME)
+        if asm3.configuration.service_media_file_image_exclude(dbo): image_exclude_protect(m)
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
-        if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
-        if asm3.configuration.service_media_file_imageonly(dbo): image_protect(medianame)
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
     
     elif method == "html_adoptable_animals":

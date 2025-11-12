@@ -112,6 +112,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#reports">Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#security">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-api">Service API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#waiting-list">Waiting List</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watermark">Watermark</a></li>
@@ -1224,6 +1225,31 @@ users can see the incident.</p></li>
 adds a “View Roles” control to the add person and person record screens.
 The “View Roles” control allows a user to specify exactly which
 users can see the person record.</p></li>
+</ul>
+</section>
+<section id="service-api">
+<h2>Service API<a class="headerlink" href="#service-api" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Enable the Service API: If enabled, the <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a> can be used. The service
+API allows your website to retrieve and use data.</p></li>
+<li><p>Enable authenticated methods of the service API: If enabled, methods of the
+API that can return potentially sensitive data can be called. They require
+a username and password, or a key to be used to authenticate the call.
+Methods that require authentication are outlined in the service API section
+of the manual.</p></li>
+<li><p>Forbid access to HTML and PDF document media via the media_file Service API
+method: If enabled, this option prevents the media_file call from returning
+anything but images. Useful to prevent attackers guessing ID numbers to
+retrieve documentation and paperwork. Note however that if you are using
+the csvexport/import functionality with media from one database to another
+that this option will prevent the target database from being able to import
+your media.</p></li>
+<li><p>Forbid access to excluded images via Service API media_file/media_image
+methods: If enabled, the media_file and media_image methods will refuse
+to service images that have the “Exclude from Publish” flag on them.
+Again, if you are using the csvexport/import functionality with media from
+one database to another, this option can prevent the target database from
+being able to import excluded photos.</p></li>
 </ul>
 </section>
 <section id="shelter-view">

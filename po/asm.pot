@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-11-12 09:35+0000\n"
+"POT-Creation-Date: 2025-11-12 10:38+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5443,6 +5443,10 @@ msgid "Enable accounts functionality"
 msgstr ""
 
 #: options.js
+msgid "Enable authenticated methods of the Service API"
+msgstr ""
+
+#: options.js
 msgid "Enable location filters"
 msgstr ""
 
@@ -5452,6 +5456,10 @@ msgstr ""
 
 #: options.js
 msgid "Enable multiple sites"
+msgstr ""
+
+#: options.js
+msgid "Enable the Service API"
 msgstr ""
 
 #: options.js
@@ -6464,6 +6472,12 @@ msgstr ""
 msgid ""
 "Forbid access to HTML and PDF document media via the media_file Service API "
 "method"
+msgstr ""
+
+#: options.js
+msgid ""
+"Forbid access to excluded images via Service API media_file/media_image "
+"methods"
 msgstr ""
 
 #: person.py users.py common_personchooser.js common_html.js
@@ -12979,6 +12993,10 @@ msgstr ""
 
 #: options.js
 msgid "Server clock adjustment"
+msgstr ""
+
+#: options.js
+msgid "Service API"
 msgstr ""
 
 #: event_animals.js

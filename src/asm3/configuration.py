@@ -395,6 +395,7 @@ DEFAULTS = {
     "ServiceEnabled": "Yes",
     "ServiceAuthEnabled": "Yes", 
     "ServiceMediaFileImageOnly": "Yes",
+    "ServiceMediaFileImageExclude": "Yes",
     "ShelterViewDefault": "location",
     "ShelterViewDragDrop": "Yes",
     "ShelterViewReserves": "Yes", 
@@ -1697,8 +1698,11 @@ def service_enabled(dbo: Database) -> bool:
 def service_auth_enabled(dbo: Database) -> bool:
     return cboolean(dbo, "ServiceAuthEnabled", DEFAULTS["ServiceAuthEnabled"] == "Yes")
 
-def service_media_file_imageonly(dbo: Database) -> bool:
+def service_media_file_image_only(dbo: Database) -> bool:
     return cboolean(dbo, "ServiceMediaFileImageOnly", DEFAULTS["ServiceMediaFileImageOnly"] == "Yes")
+
+def service_media_file_image_exclude(dbo: Database) -> bool:
+    return cboolean(dbo, "ServiceMediaFileImageExclude", DEFAULTS["ServiceMediaFileImageExclude"] == "Yes")
 
 def show_first_time_screen(dbo: Database, change = False, newvalue = False) -> Any:
     if not change:
