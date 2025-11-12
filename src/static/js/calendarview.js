@@ -27,9 +27,7 @@ $(function() {
 
         render: function() {
             const chk = function(id, data, icon, label, tag="") {
-                if (tag) {
-                    tag = " " + tag;
-                }
+                if (tag) {tag = " " + tag;}
                 return '<span class="asm-calendar-legend' + tag + '">' + 
                     html.icon(icon) + 
                     '<input id="' + id + '" data="' + data + '" type="checkbox" class="asm-checkbox" /> ' +
