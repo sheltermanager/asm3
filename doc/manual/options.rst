@@ -1310,7 +1310,7 @@ Service API
 
 * Forbid access to excluded images via Service API media_file/media_image
   methods: If enabled, the media_file and media_image methods will refuse
-  to service images that have the "Exclude from Publish" flag on them.
+  to serve images that have the "Exclude from Publish" flag on them.
   Again, if you are using the csvexport/import functionality with media from
   one database to another, this option can prevent the target database from
   being able to import excluded photos.
