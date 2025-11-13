@@ -203,6 +203,7 @@ DEFAULTS = {
     "DisableDocumentRepo": "No",
     "DisableOnlineForms": "No",
     "DisableRetailer": "No",
+    "DisableDiaryEndDatetime": "Yes",
     "DocumentWordProcessor": "HTML",
     "DocumentSignedNotifyCoordinator": "No",
     "DonationDateOverride": "No",

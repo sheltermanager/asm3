@@ -2720,11 +2720,15 @@ class calendar_events(ASMEndpoint):
                     diaryfilter = "future"
                 if d.DATECOMPLETED is not None:
                     diaryfilter = "completed"
+                if d.DIARYENDDATETIME:
+                    diaryenddatetime = d.DIARYENDDATETIME
+                else:
+                    diaryenddatetime = add_minutes(d.DIARYDATETIME, 60)
                 events.append({ 
                     "title": d.SUBJECT, 
                     "allDay": allday, 
                     "start": d.DIARYDATETIME,
-                    "end": add_minutes(d.DIARYDATETIME, 60),
+                    "end": diaryenddatetime,
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
                     "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}",

@@ -372,6 +372,7 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         "LinkType":         linktypeid,
         "LinkInfo":         linkinfo,
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
+        "DiaryEndDateTime": post.datetime("diarydate", "diaryendtime"),
         "DiaryForName":     post["diaryfor"],
         "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],
@@ -384,7 +385,7 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     return diaryid
 
-def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str, emailnow: bool = False, colourschemeid: int = 0) -> int:
+def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str, emailnow: bool = False, colourschemeid: int = 0, diaryenddatetime: datetime = None) -> int:
     """
     Creates a diary note from the form data
     username: User creating the diary
@@ -402,6 +403,7 @@ def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, dia
         "LinkType":         linktypeid,
         "LinkInfo":         linkinfo,
         "DiaryDateTime":    diarydate,
+        "DiaryEndDateTime": diaryenddatetime,
         "DiaryForName":     diaryfor,
         "ColourSchemeID":   colourschemeid,
         "Subject":          subject,
@@ -433,6 +435,7 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
     diaryid = post.integer("diaryid")
     dbo.update("diary", diaryid, {
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
+        "DiaryEndDateTime": post.datetime("diarydate", "diaryendtime"),
         "DiaryForName":     post["diaryfor"],
         "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],
