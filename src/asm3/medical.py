@@ -821,7 +821,7 @@ def calculate_given_remaining(dbo: Database, amid: int) -> None:
 
 def complete_vaccination(dbo: Database, username: str, vaccinationid: int, newdate: datetime, 
                          givenby: str = "", vetid: int = 0, dateexpires: datetime = None, 
-                         batchnumber: str = "", manufacturer: str = "", cost: int = 0, rabiestag: str = "") -> None:
+                         batchnumber: str = "", manufacturer: str = "", cost: int = 0, rabiestag: str = "", givenbatchexpires: datetime = None) -> None:
     """
     Marks a vaccination given/completed on newdate.
     Will only update most of the fields if they have a non-zero/blank value.
@@ -833,6 +833,7 @@ def complete_vaccination(dbo: Database, username: str, vaccinationid: int, newda
         "GivenBy":              asm3.utils.iif(givenby == "", username, givenby),
     }
     if dateexpires: v["DateExpires"] = dateexpires
+    if givenbatchexpires: v["BatchExpiryDate"] = givenbatchexpires
     if vetid > 0: v["AdministeringVetID"] = vetid
     if cost > 0: v["Cost"] = cost
     if batchnumber != "": v["BatchNumber"] = batchnumber

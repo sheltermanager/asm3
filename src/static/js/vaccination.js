@@ -378,6 +378,8 @@ $(function() {
                     { post_field: "givennewdate", type: "date", label: _("Given"), date_nofuture: true },
                     { post_field: "givenexpires", type: "date", label: _("Expires"),  
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
+                    { post_field: "givenbatchexpires", type: "date", label: _("Expiry"), 
+                        callout: _('Optional, the date that the vaccine can administered until according to the manufacturer') },
                     { post_field: "givenbatch", type: "text", label: _("Batch Number") },
                     { post_field: "givenmanufacturer", type: "text", label: _("Manufacturer") },
                     { post_field: "givencost", type: "currency", label: _("Cost") },
