@@ -372,6 +372,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
         elif filename.lower().endswith(".png"): ext = ".png"
         elif filetype.find("pdf") != -1 or filename.lower().endswith(".pdf"): ext = ".pdf"
         elif filetype.find("html") != -1 or filename.lower().endswith(".html"): ext = ".html"
+        elif filetype.find("mp4") != -1 or filename.lower().endswith(".mp4"): ext = ".mp4"
         # Strip the data:mime prefix so we just have base64 data
         if filedata.startswith("data:"):
             filedata = filedata[filedata.find(",")+1:]

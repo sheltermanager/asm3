@@ -188,11 +188,15 @@ $(function() {
 
         render: function() {
             this.model();
+            let htmlinfo = _("Please select a PDF, HTML or JPG image file to attach")
+            if (!config.bool("DisableVideoSupport")) {
+                htmlinfo = _("Please select a PDF, HTML, MP4 or JPG image file to attach")
+            }
             let h = [
                 tableform.dialog_render(this.dialog),
 
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Attach File")) + '">',
-                html.info(_("Please select a PDF, HTML or JPG image file to attach")),
+                html.info(htmlinfo),
                 '<form id="addform" method="post" enctype="multipart/form-data" action="media">',
                 tableform.fields_render([
                     { type: "hidden", name: "mode", value: "create" },
@@ -469,8 +473,20 @@ $(function() {
 
             // We're only allowed to upload files of a certain type
             if ( !media.is_jpeg(file.name) && !media.is_extension(file.name, "png") && 
-                 !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
-                header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
+                 !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") && !media.is_extension(file.name, "mp4") ) {
+                header.show_error(_("Only PDF, HTML, MP4 and JPG image files can be attached."));
+                deferred.resolve();
+                return deferred.promise();
+            }
+
+            if (config.bool("DisableVideoSupport") && media.is_extension(file.name, "mp4")) {
+                header.show_error(_("Video support is currently disabled. It may be enabled via the options."));
+                deferred.resolve();
+                return deferred.promise();
+            }
+
+            if ( media.is_extension(file.name, "mp4") && file.size > 10485760 ) {
+                header.show_error(_("Video files over 10MB may not be uploaded."));
                 deferred.resolve();
                 return deferred.promise();
             }
@@ -613,11 +629,20 @@ $(function() {
             // If we don't have a file, fail validation
             if (!validate.notblank([ "filechooser" ])) { return; }
 
-            // If the file isn't a jpeg or a PDF, fail validation
+            // If the file isn't html, jpeg, PDF or mp4, fail validation
             let fname = $("#filechooser").val();
-            if ( !media.is_jpeg(fname) && !media.is_extension(fname, "png") && 
-                 !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") ) {
-                header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
+            if ( !media.is_jpeg(fname) && !media.is_extension(fname, "png") && !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") && !media.is_extension(fname, "mp4") ) {
+                header.show_error(_("Only PDF, HTML, MP4 and JPG image files can be attached."));
+                return;
+            }
+
+            if (config.bool("DisableVideoSupport") && media.is_extension(fname, "mp4")) {
+                header.show_error(_("Video support is currently disabled. It may be enabled via the options."));
+                return;
+            }
+
+            if ( media.is_extension(fname, "mp4") && $("#filechooser")[0].files[0].size > 10485760 ) {
+                header.show_error(_("Video files over 10MB may not be uploaded."));
                 return;
             }
 
