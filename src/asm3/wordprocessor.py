@@ -720,6 +720,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             "VACCINATIONREQUIRED":      "d:DATEREQUIRED",
             "VACCINATIONGIVEN":         "d:DATEOFVACCINATION",
             "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
+            "VACCINATIONEXPIRY":        "d:BATCHEXPIRYDATE",
             "VACCINATIONBATCH":         "BATCHNUMBER",
             "VACCINATIONMANUFACTURER":  "MANUFACTURER",
             "VACCINATIONRABIESTAG":     "RABIESTAG",
