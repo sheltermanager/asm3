@@ -32,6 +32,8 @@ $(function() {
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
+                    { json_field: "BATCHEXPIRYDATE", post_field: "batchexpires", label: _("Expiry"), type: "date",
+                        callout: _('Optional, the date that the vaccine can administered until according to the manufacturer') },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
                     { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "autotext", 
                         minlength: 3, options: controller.manufacturers.split("|") },
