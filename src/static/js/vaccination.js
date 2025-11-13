@@ -416,6 +416,7 @@ $(function() {
             $("#item").change(function() {
                 let si = common.get_row(controller.stockitems, $("#item").val(), "ID");
                 $("#givenbatch").val( si.BATCHNUMBER );
+                $("#givenbatchexpires").val(format.date(si.EXPIRY));
                 $("#givencost").currency("value", si.UNITPRICE);
             });
             givenbuttons[_("Give")] = {
