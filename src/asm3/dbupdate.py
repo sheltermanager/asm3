@@ -1004,6 +1004,7 @@ def sql_structure(dbo: Database) -> str:
         fint("LinkID"),
         fint("LinkType"),
         fdate("DiaryDateTime"),
+        fdate("DiaryEndDateTime", True),
         fstr("DiaryForName"),
         flongstr("Subject"),
         flongstr("Note"),

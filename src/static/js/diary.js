@@ -23,6 +23,10 @@ $(function() {
                         callout: _("The color scheme to be used when displaying this note on the calendar and home screen") },
                     { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
+                    { json_field: "DIARYENDDATETIME", post_field: "diaryendtime", label: _("Until"), type: "time", 
+                        hideif: function() {
+                            return config.bool("DisableDiaryEndDatetime");
+                        } },
                     { json_field: "DATECOMPLETED", post_field: "completed", label: _("Completed"), type: "date" },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
                     { json_field: "NOTE", label: _("Note"), post_field: "note", type: "textarea" },
@@ -81,7 +85,18 @@ $(function() {
                 },
                 columns: [
                     { field: "DIARYFORNAME", display: _("For") },
-                    { field: "DIARYDATETIME", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DIARYDATETIME", display: _("Date"), initialsort: true, initialsortdirection: "desc",
+                        formatter: function(row) {
+                            let starttime = tableform.format_time_blank(row, row.DIARYDATETIME);
+                            let endtime = tableform.format_time_blank(row, row.DIARYENDDATETIME);
+                            let dateoutput = format.date(row.DIARYDATETIME);
+                            if (starttime) { dateoutput += " " + starttime; }
+                            if ( !config.bool("DisableDiaryEndDatetime") ) {
+                                if (endtime) { dateoutput += _(" to ") + endtime; }
+                            }
+                            return dateoutput;
+                        }
+                    },
                     { field: "DATECOMPLETED", display: _("Completed"), formatter: tableform.format_date },
                     { field: "LINKINFO", display: _("Link"), 
                         formatter: function(row) {

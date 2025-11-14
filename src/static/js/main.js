@@ -475,6 +475,12 @@ $(function() {
                 if (d.LINKTYPE == 7) { link = "incident?id=" + d.LINKID; }
                 s.push('<tr title="' + html.title(common.substitute(_("Added by {0} on {1}"), { "0": d.CREATEDBY, "1": format.date(d.CREATEDDATE) })) + '">');
                 s.push('<td>' + format.date(d.DIARYDATETIME));
+                let starttime = tableform.format_time_blank(d, d.DIARYDATETIME);
+                if (starttime) { s.push(' ' + starttime ); }
+                if ( !config.bool("DisableDiaryEndDatetime") ) {
+                    let endtime = tableform.format_time_blank(d, d.DIARYENDDATETIME);
+                    if (endtime) { s.push(_(" to ") + endtime); }
+                }
                 if (d.DIARYFORNAME != asm.user) {
                     s.push(" <i>(" + d.DIARYFORNAME + ")</i>");
                 }
