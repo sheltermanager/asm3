@@ -473,6 +473,10 @@ Diary and Messages
   For this option to work, you must have configured the system email in
   the Email tab of this screen and your users must have email addresses set.
 
+* Email users their outstanding diary notes once per week on: This option will cause
+  the system to send users an email containing their outstanding diary notes
+  as part of the overnight batch on the day of the week you specify.
+
 * Email users immediately when a diary note assigned to them is created or
   updated: This option will cause an email be sent to any users a diary note is
   assigned to as soon as you create or make a change to it. 
