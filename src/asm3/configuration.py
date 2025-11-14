@@ -228,6 +228,8 @@ DEFAULTS = {
     "EmailClinicReminderDays": "2",
     "EmailClinicReminderTemplate": "0",
     "EmailDiaryNotes": "Yes", 
+    "EmailDiaryNotesWeekly": "No",
+    "EmailDiaryNotesWeeklyDay": "0",
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
     "EmailDuePayment": "No",
@@ -1121,6 +1123,12 @@ def email_clinic_reminder_template(dbo: Database) -> int:
 
 def email_diary_notes(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "Yes")
+
+def email_diary_notes_weekly(dbo: Database) -> int:
+    chosendow = -1
+    if cboolean(dbo, "EmailDiaryNotesWeekly", DEFAULTS["EmailDiaryNotesWeekly"] == "No"):
+        chosendow = cint(dbo, "EmailDiaryNotesWeeklyDay", DEFAULTS["EmailDiaryNotesWeeklyDay"])
+    return chosendow
 
 def email_diary_on_change(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryOnChange", DEFAULTS["EmailDiaryOnChange"] == "Yes")

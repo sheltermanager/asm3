@@ -31,7 +31,9 @@ def email_uncompleted_upto_today(dbo: Database) -> None:
     Goes through all system users and emails them their diary for the
     day - unless the option is turned off.
     """
-    if not asm3.configuration.email_diary_notes(dbo): return
+    # If the option to email outstanding diary notes daily is off AND today is NOT the week day specified for weekly outstanding diary note reminders then exit
+    if not asm3.configuration.email_diary_notes(dbo) and asm3.configuration.email_diary_notes_weekly(dbo) != asm3.i18n.today().isoweekday() - 1:
+        return
     l = dbo.locale
     try:
         allusers = asm3.users.get_users(dbo)
