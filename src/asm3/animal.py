@@ -2622,13 +2622,6 @@ def get_animalconditions(dbo: Database, animalid: int, sort: int = ASCENDING) ->
         sql += " ORDER BY ac.StartDatetime DESC"
     return dbo.query(sql, [animalid] )
 
-def get_conditions(dbo: Database) -> Results:
-    """
-    Returns all active lkcondition records:
-    """
-    sql = "SELECT * FROM lkcondition ORDER BY ConditionName"
-    return dbo.query(sql)
-
 def get_diets(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     """
     Returns diet records for the given animal:

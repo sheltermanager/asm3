@@ -2125,7 +2125,7 @@ class animal_condition(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         animalconditions = asm3.animal.get_animalconditions(dbo, animalid)
-        conditions = asm3.animal.get_conditions(dbo)
+        conditions = asm3.lookups.get_conditions(dbo)
         asm3.al.debug("got %d conditions for animal %s %s" % (len(conditions), a["CODE"], a["ANIMALNAME"]), "main.animal_condition", dbo)
         return {
             "rows": animalconditions,

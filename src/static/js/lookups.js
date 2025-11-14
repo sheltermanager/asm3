@@ -216,7 +216,6 @@ $(function() {
                             "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups");
                         let row = {};
                         row.ID = response;
-                        console.log(dialog.fields);
                         tableform.fields_update_row(dialog.fields, row);
                         if (row.SPECIESID) {
                             row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");

@@ -40,6 +40,7 @@ LOOKUP_TABLES = {
     "citationtype":         (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
     "lksclinicstatus":      (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
     "lkcondition":          (_("Conditions"), "ConditionName", _("Name"), "Description", "add del ret conditiontype haszoonotic", ("animalcondition.ConditionID",)),
+    "lksconditiontype":     (_("Condition Types"), "ConditionTypeName", _("Name"), "Description", ""),
     "costtype":             (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
     "deathreason":          (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
     "diet":                 (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
@@ -896,6 +897,12 @@ def get_clinic_invoice_items(dbo: Database) -> Results:
 
 def get_clinic_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkclinictype ORDER BY ClinicTypeName")
+
+def get_conditions(dbo: Database) -> Results:
+    """
+    Returns all active lkcondition records:
+    """
+    return dbo.query("SELECT * FROM lkcondition ORDER BY ConditionName")
 
 def get_condition_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksconditiontype ORDER BY ConditionTypeName")

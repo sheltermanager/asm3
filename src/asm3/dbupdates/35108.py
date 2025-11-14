@@ -32,11 +32,8 @@ fields = ",".join([
 ])
 execute(dbo, dbo.ddl_add_table("lksconditiontype", fields) )
 
-for conditiontype in (
-    _("GI"),
-    _("Respiratory"),
-    _("Miscellaneous"),
-    _("Reproductive"),
-    _("Symptom")
-):
-    dbo.execute("INSERT INTO lksconditiontype (ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?)", [conditiontype, "", 0] )
+dbo.execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [1, _("GI"), "", 0] )
+dbo.execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [2, _("Respiratory"), "", 0] )
+dbo.execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [3, _("Miscellaneous"), "", 0] )
+dbo.execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [4, _("Reproductive"), "", 0] )
+dbo.execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [5, _("Symptom"), "", 0] )
