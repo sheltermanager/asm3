@@ -266,18 +266,14 @@ def check_permission_map_bool(superuser: int, securitymap: str, flag: str) -> bo
 
 def check_role_bool(session: Session, roles: List[int]) -> bool:
     """
-    Returns True if a user has a role assigned from the provided roles list
+    Returns True if the current user has one of the roles in the provided list
     """
     if "superuser" not in session or "securitymap" not in session: return False
     if session.superuser == 1: return True
-
     userroles = session.dbo.query_list("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [session.user])
-    
-    hasperm = False
     for ur in userroles:
-        if ur in roles:
-            hasperm = True
-    return hasperm
+        if ur in roles: return True
+    return False
 
 def has_security_flag(securitymap: str, flag: str) -> bool:
     """
