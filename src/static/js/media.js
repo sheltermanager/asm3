@@ -89,9 +89,7 @@ $(function() {
                     if (rows.length > 0 && no_links()) {
                         $("#button-email").button("option", "disabled", false);
                     }
-                    // Only allow the email pdf button to be pressed if the
-                    // selection only contains documents
-                    if (rows.length > 0 && all_of_type("text/html")) {
+                    if (rows.length > 0) {
                         $("#button-emailpdf").button("option", "disabled", false); 
                     }
                     // Only allow the sign buttons to be pressed if the
