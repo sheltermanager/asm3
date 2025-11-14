@@ -11,7 +11,7 @@ import asm3.smcom
 import asm3.utils
 
 from asm3.sitedefs import BASE_URL
-from asm3.typehints import Database, PostedData, ResultRow, Results, Session
+from asm3.typehints import Database, List, PostedData, ResultRow, Results, Session
 
 import os
 import sys
@@ -264,19 +264,16 @@ def check_permission_map_bool(superuser: int, securitymap: str, flag: str) -> bo
     if has_security_flag(securitymap, flag): return True
     return False
 
-def check_role_bool(session: Session, roles: list) -> bool:
+def check_role_bool(session: Session, roles: List[int]) -> bool:
     """
     Returns True if a user has a role assigned from the provided roles list
     """
     if "superuser" not in session or "securitymap" not in session: return False
     if session.superuser == 1: return True
 
-    userroles = []
-    for ur in session.dbo.query("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [session.user]):
-        userroles.append(ur.ROLEID)
+    userroles = session.dbo.query_list("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [session.user])
+    
     hasperm = False
-    if session.superuser:
-        hasperm = True
     for ur in userroles:
         if ur in roles:
             hasperm = True
