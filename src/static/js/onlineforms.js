@@ -58,6 +58,7 @@ $(function() {
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
                         callout: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
+                    { json_field: "SETMEDIAFLAGS", post_field: "mediaflags", label: _("Media Flags"), type: "selectmulti" },
                     { json_field: "AUTOPROCESS", post_field: "autoprocess", label: _("Auto Process"), 
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
@@ -290,6 +291,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             this.load_person_flags();
+            html.media_flag_options(controller.mediaflags, $("#mediaflags"));
             $("#filechooser").change(function() {
                 let importfile = $("#filechooser").val();
                 if ( !importfile.toLowerCase().endsWith(".html") && !importfile.toLowerCase().endsWith(".json") ) {
