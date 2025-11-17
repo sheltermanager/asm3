@@ -51,6 +51,11 @@ CHANGE_VACCINATION              = "cav"
 DELETE_VACCINATION              = "dav"
 BULK_COMPLETE_VACCINATION       = "bcav"
 
+ADD_CONDITION                   = "aaco"
+VIEW_CONDITION                  = "vaco"
+CHANGE_CONDITION                = "caco"
+DELETE_CONDITION                = "daco"
+
 ADD_TEST                        = "aat"
 VIEW_TEST                       = "vat"
 CHANGE_TEST                     = "cat"
