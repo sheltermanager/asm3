@@ -23,10 +23,10 @@ $(function() {
                         callout: _("The color scheme to be used when displaying this note on the calendar and home screen") },
                     { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
-                    { json_field: "DIARYENDDATETIME", post_field: "diaryendtime", label: _("Until"), type: "time", 
-                        hideif: function() {
+                    { json_field: "DIARYENDDATETIME", post_field: "diaryendtime", label: _("Until"), type: "time", hideif: function() {
                             return config.bool("DisableDiaryEndDatetime");
-                        } },
+                        }
+                    },
                     { json_field: "DATECOMPLETED", post_field: "completed", label: _("Completed"), type: "date" },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
                     { json_field: "NOTE", label: _("Note"), post_field: "note", type: "textarea" },
@@ -45,6 +45,9 @@ $(function() {
                             try {
                                 tableform.fields_update_row(dialog.fields, row);
                                 row.COLOURSCHEMEID = $("#diarycolourscheme").selectcolour("value");
+                                let endtime = $("#diaryendtime").val();
+                                if (endtime) { endtime += ":00"; }
+                                row.DIARYENDDATETIME = format.date_iso($("#diarydate").val() + " " + endtime);
                                 await tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, "diary");
                                 tableform.table_update(table);
                                 tableform.dialog_close();
@@ -90,9 +93,11 @@ $(function() {
                             let starttime = tableform.format_time_blank(row, row.DIARYDATETIME);
                             let endtime = tableform.format_time_blank(row, row.DIARYENDDATETIME);
                             let dateoutput = format.date(row.DIARYDATETIME);
-                            if (starttime) { dateoutput += " " + starttime; }
+                            if ( starttime || endtime ) { dateoutput += " " + tableform.format_time(row, row.DIARYDATETIME); }
                             if ( !config.bool("DisableDiaryEndDatetime") ) {
-                                if (endtime) { dateoutput += _(" to ") + endtime; }
+                                if (endtime) {
+                                    dateoutput = _("{0} to {1}").replace(/\{0\}/g, dateoutput).replace(/\{1\}/g, endtime);
+                                }
                             }
                             return dateoutput;
                         }

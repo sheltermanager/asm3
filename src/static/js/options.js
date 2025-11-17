@@ -942,7 +942,7 @@ $(function() {
                         { id: "disablerota", post_field: "DisableRota", label: _("Remove the rota functionality from menus and screens"), type: "check" }, 
                         { id: "disablestockcontrol", post_field: "DisableStockControl", label: _("Remove the stock control functionality from menus and screens"), type: "check" }, 
                         { id: "disabletransport", post_field: "DisableTransport", label: _("Remove the transport functionality from menus and screens"), type: "check" }, 
-                        { id: "disablediaryenddatetime", post_field: "DisableDiaryEndDatetime", label: _("Remove the diary note end datetime functionality from menus and screens"), type: "check" }, 
+                        { id: "disablediaryenddatetime", post_field: "DisableDiaryEndDatetime", label: _("Remove the end date and time fields when displaying and editing diary notes"), type: "check" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("People") + '</p>' }, 
                         { id: "towncounty", post_field: "HideTownCounty", label: _("Remove the city/state fields from person details"), type: "check" }, 
                         { id: "hcountry", post_field: "HideCountry", label: _("Remove the country field from person details"), type: "check" }, 

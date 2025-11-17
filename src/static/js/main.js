@@ -474,13 +474,17 @@ $(function() {
                 if (d.LINKTYPE == 5) { link = "waitinglist?id=" + d.LINKID; }
                 if (d.LINKTYPE == 7) { link = "incident?id=" + d.LINKID; }
                 s.push('<tr title="' + html.title(common.substitute(_("Added by {0} on {1}"), { "0": d.CREATEDBY, "1": format.date(d.CREATEDDATE) })) + '">');
-                s.push('<td>' + format.date(d.DIARYDATETIME));
+                
                 let starttime = tableform.format_time_blank(d, d.DIARYDATETIME);
-                if (starttime) { s.push(' ' + starttime ); }
+                let endtime = tableform.format_time_blank(d, d.DIARYENDDATETIME);
+                let dateoutput = format.date(d.DIARYDATETIME);
+                if ( starttime || endtime ) { dateoutput += " " + tableform.format_time(d, d.DIARYDATETIME); }
                 if ( !config.bool("DisableDiaryEndDatetime") ) {
-                    let endtime = tableform.format_time_blank(d, d.DIARYENDDATETIME);
-                    if (endtime) { s.push(_(" to ") + endtime); }
+                    if (endtime) {
+                        dateoutput = _("{0} to {1}").replace(/\{0\}/g, dateoutput).replace(/\{1\}/g, endtime);
+                    }
                 }
+                s.push('<td>' + dateoutput);
                 if (d.DIARYFORNAME != asm.user) {
                     s.push(" <i>(" + d.DIARYFORNAME + ")</i>");
                 }
