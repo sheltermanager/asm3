@@ -821,7 +821,7 @@ def calculate_given_remaining(dbo: Database, amid: int) -> None:
 
 def complete_vaccination(dbo: Database, username: str, vaccinationid: int, newdate: datetime, 
                          givenby: str = "", vetid: int = 0, dateexpires: datetime = None, 
-                         batchnumber: str = "", manufacturer: str = "", cost: int = 0, rabiestag: str = "", batchexpiry: datetime = None) -> None:
+                         batchnumber: str = "", batchexpiry: datetime = None, manufacturer: str = "", cost: int = 0, rabiestag: str = "") -> None:
     """
     Marks a vaccination given/completed on newdate.
     Will only update most of the fields if they have a non-zero/blank value.
