@@ -1976,7 +1976,7 @@ class animal(JSONEndpoint):
 class animal_boarding(JSONEndpoint):
     url = "animal_boarding"
     js_module = "boarding"
-    get_permissions = asm3.users.VIEW_BOARDING
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_BOARDING )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2029,7 +2029,7 @@ class animal_bulk(JSONEndpoint):
 class animal_clinic(JSONEndpoint):
     url = "animal_clinic"
     js_module = "clinic_appointment"
-    get_permissions = asm3.users.VIEW_CLINIC
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_CLINIC )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2055,7 +2055,7 @@ class animal_clinic(JSONEndpoint):
 
 class animal_costs(JSONEndpoint):
     url = "animal_costs"
-    get_permissions = asm3.users.VIEW_COST
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_COST )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2097,7 +2097,7 @@ class animal_costs(JSONEndpoint):
 class animal_diary(JSONEndpoint):
     url = "animal_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2120,7 +2120,7 @@ class animal_diary(JSONEndpoint):
 
 class animal_diet(JSONEndpoint):
     url = "animal_diet"
-    get_permissions = asm3.users.VIEW_DIET
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_DIET )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2153,7 +2153,7 @@ class animal_diet(JSONEndpoint):
 class animal_donations(JSONEndpoint):
     url = "animal_donations"
     js_module = "donations"
-    get_permissions = asm3.users.VIEW_DONATION
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_DONATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2292,7 +2292,7 @@ class animal_find_results(JSONEndpoint):
 class animal_licence(JSONEndpoint):
     url = "animal_licence"
     js_module = "licence"
-    get_permissions = asm3.users.VIEW_LICENCE
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_LICENCE )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2314,7 +2314,7 @@ class animal_licence(JSONEndpoint):
 class animal_log(JSONEndpoint):
     url = "animal_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2339,7 +2339,7 @@ class animal_log(JSONEndpoint):
 class animal_media(JSONEndpoint):
     url = "animal_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2369,7 +2369,7 @@ class animal_media(JSONEndpoint):
 class animal_medical(JSONEndpoint):
     url = "animal_medical"
     js_module = "medical"
-    get_permissions = asm3.users.VIEW_MEDICAL
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_MEDICAL )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2397,7 +2397,7 @@ class animal_medical(JSONEndpoint):
 class animal_movements(JSONEndpoint):
     url = "animal_movements"
     js_module = "movements"
-    get_permissions = asm3.users.VIEW_MOVEMENT
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_MOVEMENT )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2488,7 +2488,7 @@ class animal_observations(JSONEndpoint):
 class animal_test(JSONEndpoint):
     url = "animal_test"
     js_module = "test"
-    get_permissions = asm3.users.VIEW_TEST
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_TEST )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2511,7 +2511,7 @@ class animal_test(JSONEndpoint):
 class animal_transport(JSONEndpoint):
     url = "animal_transport"
     js_module = "transport"
-    get_permissions = asm3.users.VIEW_TRANSPORT
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_TRANSPORT )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2534,7 +2534,7 @@ class animal_transport(JSONEndpoint):
 class animal_vaccination(JSONEndpoint):
     url = "animal_vaccination"
     js_module = "vaccination"
-    get_permissions = asm3.users.VIEW_VACCINATION
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_VACCINATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4098,7 +4098,7 @@ class foundanimal(JSONEndpoint):
 class foundanimal_diary(JSONEndpoint):
     url = "foundanimal_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_FOUND_ANIMAL, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4155,7 +4155,7 @@ class foundanimal_find_results(JSONEndpoint):
 class foundanimal_log(JSONEndpoint):
     url = "foundanimal_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_FOUND_ANIMAL, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4178,7 +4178,7 @@ class foundanimal_log(JSONEndpoint):
 class foundanimal_media(JSONEndpoint):
     url = "foundanimal_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_FOUND_ANIMAL, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4365,7 +4365,7 @@ class incident(JSONEndpoint):
 class incident_citations(JSONEndpoint):
     url = "incident_citations"
     js_module = "citations"
-    get_permissions = asm3.users.VIEW_CITATION
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_CITATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4420,7 +4420,7 @@ class incident_find_results(JSONEndpoint):
 class incident_diary(JSONEndpoint):
     url = "incident_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4441,7 +4441,7 @@ class incident_diary(JSONEndpoint):
 class incident_log(JSONEndpoint):
     url = "incident_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4477,7 +4477,7 @@ class incident_map(JSONEndpoint):
 class incident_media(JSONEndpoint):
     url = "incident_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4769,7 +4769,7 @@ class lostanimal(JSONEndpoint):
 class lostanimal_diary(JSONEndpoint):
     url = "lostanimal_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4826,7 +4826,7 @@ class lostanimal_find_results(JSONEndpoint):
 class lostanimal_log(JSONEndpoint):
     url = "lostanimal_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4849,7 +4849,7 @@ class lostanimal_log(JSONEndpoint):
 class lostanimal_media(JSONEndpoint):
     url = "lostanimal_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6506,7 +6506,7 @@ class person(JSONEndpoint):
 class person_boarding(JSONEndpoint):
     url = "person_boarding"
     js_module = "boarding"
-    get_permissions = asm3.users.VIEW_BOARDING
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_BOARDING )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6530,7 +6530,7 @@ class person_boarding(JSONEndpoint):
 class person_citations(JSONEndpoint):
     url = "person_citations"
     js_module = "citations"
-    get_permissions = asm3.users.VIEW_CITATION
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_CITATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6551,7 +6551,7 @@ class person_citations(JSONEndpoint):
 class person_clinic(JSONEndpoint):
     url = "person_clinic"
     js_module = "clinic_appointment"
-    get_permissions = asm3.users.VIEW_CLINIC
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_CLINIC )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6577,7 +6577,7 @@ class person_clinic(JSONEndpoint):
 class person_diary(JSONEndpoint):
     url = "person_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6599,7 +6599,7 @@ class person_diary(JSONEndpoint):
 class person_donations(JSONEndpoint):
     url = "person_donations"
     js_module = "donations"
-    get_permissions = asm3.users.VIEW_DONATION
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_DONATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6623,7 +6623,7 @@ class person_donations(JSONEndpoint):
 class person_costs(JSONEndpoint):
     url = "person_costs"
     js_module = "animal_costs"
-    get_permissions = asm3.users.VIEW_COST
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_COST )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6775,7 +6775,7 @@ class person_find_results(JSONEndpoint):
 
 class person_investigation(JSONEndpoint):
     url = "person_investigation"
-    get_permissions = asm3.users.VIEW_INVESTIGATION
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_INVESTIGATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6805,7 +6805,7 @@ class person_investigation(JSONEndpoint):
 class person_licence(JSONEndpoint):
     url = "person_licence"
     js_module = "licence"
-    get_permissions = asm3.users.VIEW_LICENCE
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_LICENCE )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6826,7 +6826,7 @@ class person_licence(JSONEndpoint):
 class person_log(JSONEndpoint):
     url = "person_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6859,7 +6859,7 @@ class person_lookingfor(ASMEndpoint):
 
 class person_links(JSONEndpoint):
     url = "person_links"
-    get_permissions = asm3.users.VIEW_PERSON_LINKS
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_PERSON_LINKS )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6876,7 +6876,7 @@ class person_links(JSONEndpoint):
 class person_media(JSONEndpoint):
     url = "person_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6904,7 +6904,7 @@ class person_media(JSONEndpoint):
 class person_movements(JSONEndpoint):
     url = "person_movements"
     js_module = "movements"
-    get_permissions = asm3.users.VIEW_MOVEMENT
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_MOVEMENT )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6953,7 +6953,7 @@ class person_new(JSONEndpoint):
 class person_rota(JSONEndpoint):
     url = "person_rota"
     js_module = "rota"
-    get_permissions = asm3.users.VIEW_ROTA
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_ROTA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6986,7 +6986,7 @@ class person_rota(JSONEndpoint):
 class person_traploan(JSONEndpoint):
     url = "person_traploan"
     js_module = "traploan"
-    get_permissions = asm3.users.VIEW_TRAPLOAN
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_TRAPLOAN )
 
     def controller(self, o):
         dbo = o.dbo
@@ -7005,7 +7005,7 @@ class person_traploan(JSONEndpoint):
 class person_vouchers(JSONEndpoint):
     url = "person_vouchers"
     js_module = "vouchers"
-    get_permissions = asm3.users.VIEW_VOUCHER
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_VOUCHER )
 
     def controller(self, o):
         dbo = o.dbo
@@ -8333,7 +8333,7 @@ class waitinglist(JSONEndpoint):
 class waitinglist_diary(JSONEndpoint):
     url = "waitinglist_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_WAITING_LIST, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -8354,7 +8354,7 @@ class waitinglist_diary(JSONEndpoint):
 class waitinglist_log(JSONEndpoint):
     url = "waitinglist_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_WAITING_LIST, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -8378,7 +8378,7 @@ class waitinglist_log(JSONEndpoint):
 class waitinglist_media(JSONEndpoint):
     url = "waitinglist_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_WAITING_LIST, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
