@@ -352,9 +352,9 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
     post: A PostedData object
     """
     l = dbo.locale
-    if post["diarydate"] == "":
+    if post["diarydatetimedate"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date cannot be blank", l))
-    if post.date("diarydate") is None:
+    if post.date("diarydatetimedate") is None:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date is not valid", l))
     if post["subject"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary subject cannot be blank", l))
@@ -371,8 +371,8 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         "LinkID":           linkid,
         "LinkType":         linktypeid,
         "LinkInfo":         linkinfo,
-        "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
-        "DiaryEndDateTime": post.datetime("diarydate", "diaryendtime"),
+        "DiaryDateTime":    post.datetime("diarydatetimedate", "diarydatetimetime"),
+        "DiaryEndDateTime": post.datetime("diaryenddatetimedate", "diaryenddatetimetime"),
         "DiaryForName":     post["diaryfor"],
         "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],
@@ -419,9 +419,9 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
     Updates a diary note from form data
     """
     l = dbo.locale
-    if post["diarydate"] == "":
+    if post["diarydatetimedate"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date cannot be blank", l))
-    if post.date("diarydate") is None:
+    if post.date("diarydatetimedate") is None:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date is not valid", l))
     if post["subject"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary subject cannot be blank", l))
@@ -434,8 +434,8 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
 
     diaryid = post.integer("diaryid")
     dbo.update("diary", diaryid, {
-        "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
-        "DiaryEndDateTime": post.datetime("diarydate", "diaryendtime"),
+        "DiaryDateTime":    post.datetime("diarydatetimedate", "diarydatetimetime"),
+        "DiaryEndDateTime": post.datetime("diaryenddatetimedate", "diaryenddatetimetime"),
         "DiaryForName":     post["diaryfor"],
         "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],
