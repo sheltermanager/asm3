@@ -33,8 +33,8 @@ $(function() {
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
-                    { json_field: "BATCHEXPIRYDATE", post_field: "batchexpires", label: _("Batch Expiry"), type: "date",
-                        callout: _('Optional, the use by date provided by the manufacturer') },
+                    { json_field: "BATCHEXPIRYDATE", post_field: "batchexpiry", label: _("Batch Expiry"), type: "date",
+                        callout: _('Optional. The manufacturer use by date from the vaccine packaging') },
                     { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "autotext", 
                         minlength: 3, options: controller.manufacturers.split("|") },
                     { json_field: "RABIESTAG", post_field: "rabiestag", label: _("Rabies Tag"), type: "text" },
@@ -379,7 +379,7 @@ $(function() {
                     { post_field: "givenexpires", type: "date", label: _("Expires"),  
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { post_field: "givenbatch", type: "text", label: _("Batch Number") },
-                    { post_field: "givenbatchexpires", type: "date", label: _("Batch Expiry"), 
+                    { post_field: "givenbatchexpiry", type: "date", label: _("Batch Expiry"), 
                         callout: _('Optional, the use by date provided by the manufacturer') },
                     { post_field: "givenmanufacturer", type: "text", label: _("Manufacturer") },
                     { post_field: "givencost", type: "currency", label: _("Cost") },
@@ -416,7 +416,7 @@ $(function() {
             $("#item").change(function() {
                 let si = common.get_row(controller.stockitems, $("#item").val(), "ID");
                 $("#givenbatch").val( si.BATCHNUMBER );
-                $("#givenbatchexpires").val(format.date(si.EXPIRY));
+                $("#givenbatchexpiry").val(format.date(si.EXPIRY));
                 $("#givencost").currency("value", si.UNITPRICE);
             });
             givenbuttons[_("Give")] = {
