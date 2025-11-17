@@ -8236,7 +8236,7 @@ class vaccination(JSONEndpoint):
         givenrabiestag = post["givenrabiestag"]
         vet = post.integer("givenvet")
         for vid in post.integer_list("ids"):
-            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenmanufacturer, givencost, givenrabiestag, givenbatchexpiry)
+            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenbatchexpiry, givenmanufacturer, givencost, givenrabiestag)
             if rescheduledate is not None:
                 asm3.medical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
         if post.integer("item") != -1:
