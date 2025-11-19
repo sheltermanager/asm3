@@ -311,6 +311,13 @@ class ASMEndpoint(object):
         lf = asm3.animal.LocationFilter(session.locationfilter, session.siteid, session.visibleanimalids)
         if not lf.match(a):
             raise asm3.utils.ASMPermissionError("animal not in location filter/site")
+        viewroles = session.dbo.query_list("SELECT RoleID FROM animalrole WHERE AnimalID = ? AND CanView = 1", [a.ID])
+        # No view roles means anyone can view
+        if len(viewroles) == 0:
+            return True
+        # Does the user have any of the view roles?
+        if not asm3.users.check_role_bool(session, viewroles):
+            raise asm3.utils.ASMPermissionError("User does not have necessary role to view")
 
     def check_locked_db(self) -> None:
         if session.dbo and session.dbo.locked: 
@@ -1903,6 +1910,7 @@ class animal(JSONEndpoint):
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
             "posneg": asm3.lookups.get_posneg(dbo),
             "reports": asm3.reports.get_ask_animal_reports(dbo, o["session"].superuser, o["session"].roleids),
+            "roles": asm3.users.get_roles(dbo),
             "returnedexitmovements": asm3.animal.get_returned_exit_movements(dbo, a.ID),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
