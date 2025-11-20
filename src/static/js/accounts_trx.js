@@ -10,6 +10,7 @@ $(function() {
             return [
                 '<div id="dialog-edit" style="display: none" title="' + html.title(_("Edit transaction")) + '">',
                 tableform.fields_render([
+                    { post_field: "supplier", label: _("Supplier"), type: "person", personfilter: "supplier", personmode: "brief" },
                     { post_field: "description", label: _("Description"), type: "text", doublesize: true, 
                         xmarkup: '<input type="hidden" id="trxid" />' },
                     { post_field: "trxdate", label: _("Date"), type: "date" },
@@ -106,6 +107,9 @@ $(function() {
                 }
                 if (t.DONATIONOWNERID) {
                     desc += html.person_link(t.DONATIONOWNERID, t.DONATIONOWNERNAME);
+                }
+                if (t.OWNERID) {
+                    desc += " " + html.icon("right") + " " + html.person_link(t.OWNERID, t.OWNERNAME);
                 }
                 if (t.DONATIONANIMALID) {
                     desc += " " + html.icon("right") + " " + 
@@ -279,6 +283,15 @@ $(function() {
                 const row = common.get_row(controller.rows, $(this).attr("data-id"));
                 validate.reset("dialog-edit");
                 $("#trxid").val(row.ID);
+                $("#supplier").personchooser("clear");
+                if (row.ANIMALCOSTID || row.OWNERDONATIONID) {
+                    $("#supplierrow").hide();
+                } else {
+                    $("#supplierrow").show();
+                }
+                if (row.OWNERID) {
+                    $("#supplier").personchooser("loadbyid", row.OWNERID);
+                }
                 $("#trxdate").val(format.date(row.TRXDATE));
                 $("#description").val(html.decode(row.DESCRIPTION));
                 $("#reconciled").select("value", row.RECONCILED);
@@ -350,6 +363,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-edit");
+            common.widget_destroy("#supplier", "personchooser");
             tableform.dialog_destroy();
         },
 
