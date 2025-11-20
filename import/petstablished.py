@@ -14,12 +14,12 @@ Steps to export data from Petstablished:
     
     Then return to Reports page and once finished will show under Reports Available for Download
 
-7th June 2022
+20th November, 2025
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 START_ID = 100
-PATH = "/home/robin/tmp/asm3_import_data/petstablished_sr2794"
+PATH = "/home/robin/tmp/asm3_import_data/ps_ss3537"
 
 def getdate(d, noblanks=False):
     rv = asm.getdate_guess(d)
@@ -75,17 +75,36 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
         a = asm.Animal()
         animals.append(a)
         ppa[d["Petstablished ID"]] = a
-        if d["Pet Type"] == "Cat":
+        breed1 = ""
+        breed2 = ""
+        breeds = [ "" ]
+        if "Pet Breed" in d: 
+            breeds = d["Pet Breed"].split(",")
+            breed1 = breeds[0]
+            breed2 = ""
+            if len(breeds) > 1: breed2 = breeds[1]
+        elif "Pet Primary Breed" in d and "Pet Secondary Breed" in d:
+            breed1 = d["Pet Primary Breed"]
+            breed2 = d["Pet Secondary Breed"]
+            breeds = [ breed1, breed2 ]
+        asm.breed_ids(a, breed1, breed2)
+        pettype = "Dog"
+        if "Pet Type" in d: 
+            pettype = d["Pet Type"]
+        else:
+            if breed1.find("Domestic") != -1:
+                pettype = "Cat"
+        if pettype == "Cat":
             a.AnimalTypeID = 11 # Unwanted Cat
             if d["Type of Intake"] == "Stray At Large":
                 a.AnimalTypeID = 12 # Stray Cat
-        elif d["Pet Type"] == "Dog":
+        elif pettype == "Dog":
             a.AnimalTypeID = 2 # Unwanted Dog
             if d["Type of Intake"] == "Stray At Large":
                 a.AnimalTypeID = 10 # Stray Dog
         else:
             a.AnimalTypeID = 40 # Misc
-        a.SpeciesID = asm.species_id_for_name(d["Pet Type"])
+        a.SpeciesID = asm.species_id_for_name(pettype)
         a.AnimalName = d["Pet Name"]
         if a.AnimalName.strip() == "":
             a.AnimalName = "(unknown)"
@@ -100,16 +119,10 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
             a.IsTransfer = 1
         a.generateCode()
         a.ShortCode = d["Petstablished ID"]
-
         a.IsNotAvailableForAdoption = 0
         a.Sex = asm.getsex_mf(d["Gender"])
         a.Size = asm.size_from_db(d["Size"])
         a.Weight = asm.atof(d["Weight"])
-        breeds = d["Pet Breed"].split(",")
-        breed1 = breeds[0]
-        breed2 = ""
-        if len(breeds) > 1: breed2 = breeds[1]
-        asm.breed_ids(a, breed1, breed2)
         colors = d["Color"].split(",")
         color1 = colors[0]
         color2 = ""
@@ -139,14 +152,16 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
         a.IdentichipNumber = d["Microchip ID"]
         if a.IdentichipNumber != "": a.Identichipped = 1
 
-        comments = "Intake type: " + d["Type of Intake"] + ", breed: " + d["Pet Breed"]
+        comments = "Intake type: " + d["Type of Intake"] + ", breed: " + breed1 + "/" + breed2
         comments += ", color: " + d["Color"] + ", coat: " + d["Coat Pattern"] + " " + d["Coat Length"] + ", age: " + d["Age in Years"]
         a.Markings = comments
 
-        if d["Current Status"] == "Available":
+        status = d["Current Pet Status"]
+
+        if status == "Available":
             a.Archived = 0
 
-        elif d["Current Status"] == "Adopted":
+        elif status == "Adopted":
             o = None
             if d["Current Foster/Adopter"] in ppo:
                 o = ppo[d["Current Foster/Adopter"]]
@@ -163,9 +178,9 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
                     o.OwnerSurname = o.OwnerName
                 extract_address(o, d["Current Location"])
                 o.EmailAddress = d["Current Foster/Adopter Email"]
-                o.HomeTelephone = d["Pet Owner's Home Number"]
-                o.MobileTelephone = d["Pet Owner's Cell Number"]
-                o.WorkTelephone = d["Pet Owner's Work Phone"]
+                if "Pet Owner's Home Number" in d: o.HomeTelephone = d["Pet Owner's Home Number"]
+                if "Pet Owner's Cell Number" in d: o.MobileTelephone = d["Pet Owner's Cell Number"]
+                if "Pet Owner's Work Phone" in d: o.WorkTelephone = d["Pet Owner's Work Phone"]
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
@@ -178,13 +193,13 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
             a.LastChangedDate = m.MovementDate
             movements.append(m)
 
-        elif d["Current Status"] == "Deceased":
+        elif status == "Deceased":
             a.DeceasedDate = a.DateBroughtIn
             a.PutToSleep = 0
             a.PTSReasonID = 2 # Died
             a.Archived = 1
 
-        elif d["Current Status"] == "Free-Roaming":
+        elif status == "Free-Roaming":
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
@@ -197,16 +212,16 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
             a.LastChangedDate = m.MovementDate
             movements.append(m)
 
-        elif d["Current Status"] == "Hold":
+        elif status == "Hold":
             a.IsHold = 1
 
-        elif d["Current Status"] == "Not Available":
+        elif status == "Not Available":
             pass # What is this?
 
-        elif d["Current Status"] == "Quarantined":
+        elif status == "Quarantined":
             a.IsQuarantine = 1
 
-        elif d["Current Status"] == "Returned to Owner":
+        elif status == "Returned to Owner":
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
@@ -219,7 +234,7 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
             a.LastChangedDate = m.MovementDate
             movements.append(m)
 
-        elif d["Current Status"] == "Transferred":
+        elif status == "Transferred":
             m = asm.Movement()
             m.AnimalID = a.ID
             m.OwnerID = o.ID
