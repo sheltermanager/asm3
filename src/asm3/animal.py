@@ -4274,6 +4274,7 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
         namid = dbo.insert("animalmedical", {
             "AnimalID":             nid,
             "MedicalProfileID":     am.medicalprofileid,
+            "MedicalTypeID":        am.medicaltypeid,
             "TreatmentName":        am.treatmentname,
             "StartDate":            am.startdate,
             "Dosage":               am.dosage,
