@@ -4,15 +4,19 @@ import asm
 
 """
 Import script for Petstablished databases exported as CSV
-(requires animals.csv)
+(requires animals.csv and optionally medical.csv)
 
 Steps to export data from Petstablished:
 
     My Organization->Reports->Create New Report
     Custom Report
+    Tick all the boxes
     Export CSV
     
     Then return to Reports page and once finished will show under Reports Available for Download
+
+    Medical data can be extracted by doing the same thing, but
+    choosing "Medical Report" instead of Custom Report and ticking all the boxes.
 
 20th November, 2025
 """
@@ -46,15 +50,26 @@ def psYesNoUnknown(v):
 owners = []
 movements = []
 animals = []
+animalmedicals = []
+animaltests = []
+animalvaccinations = []
 ppa = {}
 ppo = {}
 
 asm.setid("animal", START_ID)
+asm.setid("animalmedical", START_ID)
+asm.setid("animalmedicaltreatment", START_ID)
+asm.setid("animaltest", START_ID)
+asm.setid("animalvaccination", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("adoption", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
 print("DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalmedical WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalmedicaltreatment WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalvaccination WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 
@@ -69,7 +84,7 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
     # If it's a repeat of the header row, skip
     if d["Pet Name"] == "Pet Name": continue
     # Each row contains an animal, intake and outcome
-    if "Petstablished ID" in ppa:
+    if d["Petstablished ID"] in ppa:
         a = ppa[d["Petstablished ID"]]
     else:
         a = asm.Animal()
@@ -156,7 +171,7 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
         comments += ", color: " + d["Color"] + ", coat: " + d["Coat Pattern"] + " " + d["Coat Length"] + ", age: " + d["Age in Years"]
         a.Markings = comments
 
-        status = d["Current Pet Status"]
+        status = d["Current Status"]
 
         if status == "Available":
             a.Archived = 0
@@ -247,6 +262,73 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
             a.LastChangedDate = m.MovementDate
             movements.append(m)
 
+# If the medical.csv file exists, import medical data from it
+if asm.file_exists(PATH + "/medical.csv"):
+    for d in asm.csv_to_list(PATH + "/medical.csv"):
+        # If it's a repeat of the header row, skip
+        if d["Pet Name"] == "Pet Name": continue
+        a = ppa[d["Petstablished ID"]]
+
+        if d["Subtype"] == "Vaccines Given":
+            av = asm.AnimalVaccination()
+            animalvaccinations.append(av)
+            vaccname = d["Vaccine Name"]
+            vaccdate = getdate(d["Date of Visit"])
+            if vaccdate is None:
+                vaccdate = a.DateBroughtIn
+            vaccexpires = getdate(d["Vaccine Expiration Date"])
+            av.AnimalID = a.ID
+            av.VaccinationID = 8
+            vaccmap = {
+                "Bordatella": 6,
+                "Bordetella": 6,
+                "6-in-1 Canine": 8,
+                "5-in-1 Canine": 8,
+                "4-in-1 Canine": 8,
+                "D-A2-P": 8,
+                "DHPP": 8,
+                "Rabies": 4,
+                "FeLV": 12,
+                "FVRCP": 14,
+                "Distemper": 1
+            }
+            for k, i in vaccmap.items():
+                if vaccname.find(k) != -1: av.VaccinationID = i
+            av.DateRequired = vaccdate
+            av.DateOfVaccination = vaccdate
+            av.DateExpires = vaccexpires
+            av.RabiesTag = d["Tag ID"]
+            if av.RabiesTag != "" and a.RabiesTag == "": a.RabiesTag = av.RabiesTag
+            av.Manufacturer = d["Vaccine Manufacturer Name"]
+            av.BatchNumber = d["Vaccine Serial Number"]
+            av.Comments = "Type: %s\n%s" % (vaccname, d["Description"])
+
+        elif d["Subtype"] == "Viral Testing":
+            at = asm.AnimalTest()
+            animaltests.append(at)
+            testdate = getdate(d["Date of Visit"])
+            if testdate is None:
+                testdate = a.DateBroughtIn
+            at.DateRequired = testdate
+            at.DateOfTest = testdate
+            result = d["Test Result"]
+            asmresult = 0
+            if result == "Negative": asmresult = 1
+            if result == "Positive": asmresult = 2
+            at.TestResultID = asmresult + 1
+            at.TestTypeID = 1 # Everything is FIV, customer didn't use anything else, but Name field contains test type
+            at.Comments = "%s %s" % (d["Name"], d["Description"])
+
+        else:
+            # Surgery/Procedure... basically anything that wants a medical rather than vacc and test
+            meddate = getdate(d["Date of Visit"])
+            comments = d["Description"]
+            if meddate is None:
+                meddate = a.DateBroughtIn
+            animalmedicals.append( asm.animal_regimen_single(a.ID, meddate, d["Name"], "N/A", comments) )
+
+
+
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
 # asm.adopt_older_than(animals, movements, uo.ID, 365)
@@ -258,10 +340,17 @@ for o in owners:
     print(o)
 for m in movements:
     print(m)
+for am in animalmedicals:
+    print(am)
+for at in animaltests:
+    print(at)
+for av in animalvaccinations:
+    print(av)
+
 
 #asm.stderr_allanimals(animals)
 #asm.stderr_onshelter(animals)
-asm.stderr_summary(animals=animals, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animaltests=animaltests, animalvaccinations=animalvaccinations, owners=owners, movements=movements)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
