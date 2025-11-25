@@ -1348,6 +1348,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("RedirectUrlAfterPOST", True),
         fstr("SetOwnerFlags", True),
         fint("AutoProcess", True),
+        flongstr("SubmitterReplyAddress", True),
         fint("RetainFor", True),
         fint("EmailSubmitter", True),
         fint("EmailCoordinator", True),
