@@ -969,23 +969,7 @@ def get_animal(dbo: Database, animalid: int) -> ResultRow:
     a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
     calc_ages(dbo, [a])
     embellish_mother(dbo, a)
-    roles = dbo.query("SELECT animalrole.*, role.RoleName FROM animalrole " \
-        "INNER JOIN role ON animalrole.RoleID = role.ID WHERE animalrole.AnimalID = ?", [animalid])
-    viewroleids = []
-    viewrolenames = []
-    editroleids = []
-    editrolenames = []
-    for r in roles:
-        if r.canview == 1:
-            viewroleids.append(str(r.roleid))
-            viewrolenames.append(str(r.rolename))
-        if r.canedit == 1:
-            editroleids.append(str(r.roleid))
-            editrolenames.append(str(r.rolename))
-    a["VIEWROLEIDS"] = "|".join(viewroleids)
-    a["VIEWROLES"] = "|".join(viewrolenames)
-    a["EDITROLEIDS"] = "|".join(editroleids)
-    a["EDITROLES"] = "|".join(editrolenames)
+    asm3.users.embellish_vieweditroles(dbo, "animalrole", "AnimalID", animalid, a)
     return a
 
 def get_animal_sheltercode(dbo: Database, code: str) -> ResultRow:

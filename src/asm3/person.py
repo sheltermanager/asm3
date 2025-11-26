@@ -79,23 +79,7 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = ?", [personid]) )
     if p is None: return None
     p = embellish_latest_movement(dbo, p)
-    roles = dbo.query("SELECT ownerrole.*, role.RoleName FROM ownerrole " \
-        "INNER JOIN role ON ownerrole.RoleID = role.ID WHERE ownerrole.OwnerID = ?", [personid])
-    viewroleids = []
-    viewrolenames = []
-    editroleids = []
-    editrolenames = []
-    for r in roles:
-        if r.canview == 1:
-            viewroleids.append(str(r.roleid))
-            viewrolenames.append(str(r.rolename))
-        if r.canedit == 1:
-            editroleids.append(str(r.roleid))
-            editrolenames.append(str(r.rolename))
-    p["VIEWROLEIDS"] = "|".join(viewroleids)
-    p["VIEWROLES"] = "|".join(viewrolenames)
-    p["EDITROLEIDS"] = "|".join(editroleids)
-    p["EDITROLES"] = "|".join(editrolenames)
+    p = asm3.users.embellish_vieweditroles(dbo, "ownerrole", "OwnerID", personid, p)
     return p
 
 def get_person_embedded(dbo: Database, personid: int) -> ResultRow:

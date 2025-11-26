@@ -104,28 +104,10 @@ def get_animalcontrol(dbo: Database, acid: int) -> ResultRow:
     """
     Returns an animal control incident record
     """
-    rows = dbo.query(get_animalcontrol_query(dbo) + " WHERE ac.ID = ?", [acid])
-    if rows is None or len(rows) == 0:
-        return None
-    else:
-        ac = rows[0]
-        roles = dbo.query("SELECT acr.*, r.RoleName FROM animalcontrolrole acr INNER JOIN role r ON acr.RoleID = r.ID WHERE acr.AnimalControlID = ?", [acid])
-        viewroleids = []
-        viewrolenames = []
-        editroleids = []
-        editrolenames = []
-        for r in roles:
-            if r.canview == 1:
-                viewroleids.append(str(r.roleid))
-                viewrolenames.append(str(r.rolename))
-            if r.canedit == 1:
-                editroleids.append(str(r.roleid))
-                editrolenames.append(str(r.rolename))
-        ac["VIEWROLEIDS"] = "|".join(viewroleids)
-        ac["VIEWROLES"] = "|".join(viewrolenames)
-        ac["EDITROLEIDS"] = "|".join(editroleids)
-        ac["EDITROLES"] = "|".join(editrolenames)
-        return ac
+    if acid is None or acid == 0: return None
+    ac = dbo.first_row( dbo.query(get_animalcontrol_query(dbo) + " WHERE ac.ID = ?", [acid]) )
+    ac = asm3.users.embellish_vieweditroles(dbo, "animalcontrolrole", "AnimalControlID", acid, ac)
+    return ac
 
 def get_animalcontrol_numbertype(dbo: Database, acid: int) -> str:
     """ Return the number and type of an incident (used by diary notes) """

@@ -587,6 +587,33 @@ def logout(session: Session, remoteip: str = "", useragent: str = "") -> None:
     except:
         pass
 
+def embellish_vieweditroles(dbo: Database, tablename: str, fieldname: str, iid: int, r: ResultRow) -> ResultRow:
+    """
+    Adds the VIEWROLES, VIEWROLEIDS, EDITROLES, EDITROLEIDS columns to result row r
+    tablename: The role table to read, eg: animalrole, ownerrole, etc
+    fieldname: The ID column in tablename, eg: AnimalID, OwnerID
+    iid: The ID value
+    r: The result row to add the new columns to
+    """
+    roles = dbo.query(f"SELECT {tablename}.*, role.RoleName FROM {tablename} " \
+        f"INNER JOIN role ON {tablename}.RoleID = role.ID WHERE {tablename}.{fieldname} = ?", [iid])
+    viewroleids = []
+    viewrolenames = []
+    editroleids = []
+    editrolenames = []
+    for r in roles:
+        if r.canview == 1:
+            viewroleids.append(str(r.roleid))
+            viewrolenames.append(str(r.rolename))
+        if r.canedit == 1:
+            editroleids.append(str(r.roleid))
+            editrolenames.append(str(r.rolename))
+    r["VIEWROLEIDS"] = "|".join(viewroleids)
+    r["VIEWROLES"] = "|".join(viewrolenames)
+    r["EDITROLEIDS"] = "|".join(editroleids)
+    r["EDITROLES"] = "|".join(editrolenames)
+    return r
+
 def update_role_table(dbo: Database, tablename: str, fieldname: str, iid: int, viewroles: List[int], editroles: List[int]) -> None:
     """
     Updates one of the role tables with access permissions for a record, 
