@@ -3801,7 +3801,7 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
     if post["diaryfor"] != "" and post.date("diarydate") is not None and post["diarysubject"] != "":
         for animalid in post.integer_list("animals"):
             asm3.diary.insert_diary(dbo, username, asm3.diary.ANIMAL, animalid, post.datetime("diarydate", "diarytime"), 
-                post["diaryfor"], post["diarysubject"], post["diarynotes"], colourschemeid=post.integer("diarycolourscheme"))
+                post["diaryfor"], post["diarysubject"], post["diarynotes"], colourschemeid=post.integer("diarycolourscheme"), diaryenddate=post.datetime("diaryenddate", "diaryendtime"))
     if post.integer("logtype") != -1:
         for animalid in post.integer_list("animals"):
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
