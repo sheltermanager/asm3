@@ -1300,24 +1300,7 @@ def update_person_roles(dbo: Database, pid: int, viewroles: List[int], editroles
     viewroles:  a list of integer role ids
     editroles:  a list of integer role ids
     """
-    dbo.execute("DELETE FROM ownerrole WHERE OwnerID = ?", [pid])
-    for rid in viewroles:
-        dbo.insert("ownerrole", {
-            "OwnerID":          pid,
-            "RoleID":           rid,
-            "CanView":          1,
-            "CanEdit":          0
-        }, generateID=False)
-    for rid in editroles:
-        if rid in viewroles:
-            dbo.execute("UPDATE ownerrole SET CanEdit = 1 WHERE OwnerID = ? AND RoleID = ?", (pid, rid))
-        else:
-            dbo.insert("ownerrole", {
-                "OwnerID":          pid,
-                "RoleID":           rid,
-                "CanView":          0,
-                "CanEdit":          1
-            }, generateID=False)
+    asm3.users.update_role_table(dbo, "ownerrole", "OwnerID", pid, viewroles, editroles)
 
 def update_add_flag(dbo: Database, username: str, personid: int, flag: str) -> None:
     """

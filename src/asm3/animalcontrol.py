@@ -668,24 +668,7 @@ def update_animalcontrol_roles(dbo: Database, acid: int, viewroles: List[int], e
     viewroles:  a list of integer role ids
     editroles:  a list of integer role ids
     """
-    dbo.execute("DELETE FROM animalcontrolrole WHERE AnimalControlID = ?", [acid])
-    for rid in viewroles:
-        dbo.insert("animalcontrolrole", {
-            "AnimalControlID":  acid,
-            "RoleID":           rid,
-            "CanView":          1,
-            "CanEdit":          0
-        }, generateID=False)
-    for rid in editroles:
-        if rid in viewroles:
-            dbo.execute("UPDATE animalcontrolrole SET CanEdit = 1 WHERE AnimalControlID = ? AND RoleID = ?", (acid, rid))
-        else:
-            dbo.insert("animalcontrolrole", {
-                "AnimalControlID":  acid,
-                "RoleID":           rid,
-                "CanView":          0,
-                "CanEdit":          1
-            }, generateID=False)
+    asm3.users.update_role_table(dbo, "animalcontrolrole", "AnimalControlID", acid, viewroles, editroles)
 
 def update_animalcontrol_addlink(dbo: Database, username: str, acid: int, animalid: int) -> None:
     """

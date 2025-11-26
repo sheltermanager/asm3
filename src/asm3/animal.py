@@ -3865,24 +3865,7 @@ def update_animal_roles(dbo: Database, aid: int, viewroles: List[int], editroles
     viewroles:  a list of integer role ids
     editroles:  a list of integer role ids
     """
-    dbo.execute("DELETE FROM animalrole WHERE AnimalID = ?", [aid])
-    for rid in viewroles:
-        dbo.insert("animalrole", {
-            "AnimalID":         aid,
-            "RoleID":           rid,
-            "CanView":          1,
-            "CanEdit":          0
-        }, generateID=False)
-    for rid in editroles:
-        if rid in viewroles:
-            dbo.execute("UPDATE animalrole SET CanEdit = 1 WHERE AnimalID = ? AND RoleID = ?", (aid, rid))
-        else:
-            dbo.insert("animalrole", {
-                "AnimalID":         aid,
-                "RoleID":           rid,
-                "CanView":          0,
-                "CanEdit":          1
-            }, generateID=False)
+    asm3.users.update_role_table(dbo, "animalrole", "AnimalID", aid, viewroles, editroles)
 
 def update_deceased_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """

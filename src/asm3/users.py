@@ -587,6 +587,35 @@ def logout(session: Session, remoteip: str = "", useragent: str = "") -> None:
     except:
         pass
 
+def update_role_table(dbo: Database, tablename: str, fieldname: str, iid: int, viewroles: List[int], editroles: List[int]) -> None:
+    """
+    Updates one of the role tables with access permissions for a record, 
+    eg: animalcontrolrole, animalrole, personrole
+    tablename: The table to update
+    fieldname: The table column that contains the foreign key, eg: AnimalID, OwnerID
+    iid: The ID of the record being updated in fieldname
+    viewroles: A list of role IDs that can view this record
+    editroles: A list of role IDs that can edit this record
+    """
+    dbo.execute(f"DELETE FROM {tablename} WHERE {fieldname} = ?", [iid])
+    for rid in viewroles:
+        dbo.insert("animalrole", {
+            "AnimalID":         iid,
+            "RoleID":           rid,
+            "CanView":          1,
+            "CanEdit":          0
+        }, generateID=False)
+    for rid in editroles:
+        if rid in viewroles:
+            dbo.execute(f"UPDATE {tablename} SET CanEdit = 1 WHERE {fieldname} = ? AND RoleID = ?", (iid, rid))
+        else:
+            dbo.insert("animalrole", {
+                "AnimalID":         iid,
+                "RoleID":           rid,
+                "CanView":          0,
+                "CanEdit":          1
+            }, generateID=False)
+
 def update_user_activity(dbo: Database, user: str, timenow: bool = True) -> None:
     """
     If timenow is True, updates this user's last activity time to now.
