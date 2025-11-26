@@ -549,6 +549,7 @@ def get_onlineformincoming_html(dbo: Database, collationid: int,
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
+        if f.FIELDNAME == "submitterreplyto": continue
         if f.FIELDNAME in SYSTEM_FIELDS and not include_system: continue
         if v.startswith("RAW::") and not include_raw: continue
         if v.startswith("data:") and not include_images: continue
