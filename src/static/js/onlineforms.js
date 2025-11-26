@@ -88,7 +88,8 @@ $(function() {
                     { json_field: "SUBMITTERREPLYADDRESS", post_field: "submitterreplyaddress", label: _("Reply address for confirmation email"), 
                         type: "text", classes: "asm-doubletextbox",
                         tooltip: _("The reply-to email address provided by the notification email sent to the submitter."),
-                        callout: _("The reply-to email address provided by the notification email sent to the submitter.") },
+                        callout: _("The reply-to email address provided by the notification email sent to the submitter.")
+                    },
                     { json_field: "EMAILMESSAGE", post_field: "emailmessage", label: _("Confirmation message"), type: "richtextarea", 
                         margintop: "0px", height: "100px", width: "600px",
                         tooltip: _("The confirmation email message to send to the form submitter."),
@@ -112,6 +113,9 @@ $(function() {
                                 tableform.table_update(table);
                                 tableform.dialog_enable_buttons();
                                 tableform.dialog_info(_("Updated"));
+                            },
+                            onload: function() {
+                                $("#emailsubmitter").change();
                             }
                         });
                         
@@ -172,6 +176,7 @@ $(function() {
                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", perm: "aof", 
                     click: async function() { 
                         try {
+                            $("#emailsubmitter").change();
                             await tableform.dialog_show_add(dialog);
                             onlineforms.check_redirect_url();
                             let response = await tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
@@ -302,6 +307,13 @@ $(function() {
                 }
             });
             $("#formaterror").hide();
+            $("#emailsubmitter").change(function() {
+                if ($("#emailsubmitter").val() == 0) {
+                    $("#submitterreplyaddressrow").hide();
+                } else {
+                    $("#submitterreplyaddressrow").show();
+                }
+            });
         },
 
         destroy: function() {
