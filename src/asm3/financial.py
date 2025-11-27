@@ -1315,10 +1315,19 @@ def delete_account(dbo: Database, username: str, aid: int) -> None:
     dbo.delete("accountsrole", "AccountID=%d" % aid)
     dbo.delete("accounts", aid, username)
 
+def validate_trx_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+    other = get_account_id(dbo, post["otheraccount"])
+    if other == 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Account code '{0}' is not valid.", l).format(post["otheraccount"]))
+    if post.date("trxdate") is None:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Date '{0}' is not valid.", l).format(post["trxdate"]))
+
 def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a transaction from posted form data
     """
+    validate_trx_from_form(dbo, post)
     l = dbo.locale
     amount = 0
     source = 0
@@ -1327,11 +1336,6 @@ def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     withdrawal = post.integer("withdrawal")
     account = post.integer("accountid")
     other = get_account_id(dbo, post["otheraccount"])
-
-    if other == 0:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Account code '{0}' is not valid.", l).format(post["otheraccount"]))
-    if post.date("trxdate") is None:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Date '{0}' is not valid.", l).format(post["trxdate"]))
 
     if deposit > 0:
         amount = deposit
@@ -1356,6 +1360,7 @@ def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Updates a transaction from posted form data
     """
+    validate_trx_from_form(dbo, post)
     l = dbo.locale
     amount = 0
     source = 0
@@ -1365,9 +1370,7 @@ def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     account = post.integer("accountid")
     trxid = post.integer("trxid")
     other = get_account_id(dbo, post["otheraccount"])
-
-    if other == 0:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Account code '{0}' is not valid.", l).format(post["otheraccount"]))
+    
     if deposit > 0:
         amount = deposit
         source = other

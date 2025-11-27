@@ -446,7 +446,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 errors.append( (rowno, str(row), 'Account "%s" not found' % row["ACCOUNTSSOURCE"]) )
             elif asm3.financial.get_account_id(dbo, gks(row, "ACCOUNTSDESTINATION")) == 0:
                 errors.append( (rowno, str(row), 'Account "%s" not found' % row["ACCOUNTSDESTINATION"]) )
-            elif not dryrun:
+            elif dryrun:
+                asm3.financial.validate_trx_from_form(dbo, asm3.utils.PostedData(a, dbo.locale))
+            else:
                 asm3.financial.insert_trx_from_form(dbo, user, asm3.utils.PostedData(a, dbo.locale))
 
 
