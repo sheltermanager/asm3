@@ -346,13 +346,7 @@ def update_link_info_incomplete(dbo: Database) -> None:
     asm3.al.info(f"updated {len(rows)} diary link info elements", "diary.update_link_info_incomplete", dbo)
     return "OK %d" % len(rows)
 
-def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid: int, post: PostedData) -> int:
-    """
-    Creates a diary note from the form data
-    username: User creating the diary
-    linktypeid, linkid: The link
-    post: A PostedData object
-    """
+def validate_diary_from_form(dbo: Database, post: PostedData) -> bool:
     l = dbo.locale
     if post["diarydate"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date cannot be blank", l))
@@ -366,6 +360,16 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
             raise asm3.utils.ASMValidationError(asm3.i18n._("Invalid time, times should be in HH:MM format", l))
         if not asm3.utils.is_numeric(diarytime.replace(":", "")):
             raise asm3.utils.ASMValidationError(asm3.i18n._("Invalid time, times should be in HH:MM format", l))
+
+def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid: int, post: PostedData) -> int:
+    """
+    Creates a diary note from the form data
+    username: User creating the diary
+    linktypeid, linkid: The link
+    post: A PostedData object
+    """
+    validate_diary_from_form(dbo, post)
+    l = dbo.locale
 
     linkinfo = get_link_info(dbo, linktypeid, linkid)
 
@@ -419,18 +423,6 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
     Updates a diary note from form data
     """
     l = dbo.locale
-    if post["diarydate"] == "":
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date cannot be blank", l))
-    if post.date("diarydate") is None:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date is not valid", l))
-    if post["subject"] == "":
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Diary subject cannot be blank", l))
-    diarytime = post["diarytime"].strip()
-    if diarytime != "":
-        if diarytime.find(":") == -1:
-            raise asm3.utils.ASMValidationError(asm3.i18n._("Invalid time, times should be in HH:MM format", l))
-        if not asm3.utils.is_numeric(diarytime.replace(":", "")):
-            raise asm3.utils.ASMValidationError(asm3.i18n._("Invalid time, times should be in HH:MM format", l))
 
     diaryid = post.integer("diaryid")
     dbo.update("diary", diaryid, {

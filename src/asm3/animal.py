@@ -4878,13 +4878,17 @@ def delete_diet(dbo: Database, username: str, did: int) -> None:
     """
     dbo.delete("animaldiet", did, username)
 
+def validate_cost_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+    if post.date("costdate") is None:
+        raise asm3.utils.ASMValidationError(_("Cost date must be a valid date", l))
+
 def insert_cost_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a cost record from posted form data
     """
+    validate_cost_from_form(dbo, post)
     l = dbo.locale
-    if post.date("costdate") is None:
-        raise asm3.utils.ASMValidationError(_("Cost date must be a valid date", l))
     ncostid = dbo.insert("animalcost", {
         "AnimalID":         post.integer("animal"),
         "CostTypeID":       post.integer("type"),
@@ -4902,6 +4906,7 @@ def update_cost_from_form(dbo: Database, username: str, post: PostedData) -> Non
     """
     Updates a cost record from posted form data
     """
+    validate_cost_from_form(dbo, post)
     costid = post.integer("costid")
     dbo.update("animalcost", costid, {
         "AnimalID":         post.integer("animal"),

@@ -697,7 +697,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                             cvid = dups[0]["ID"]
                             a["currentvet"] = str(cvid)
                     if "currentvet" not in a:
-                        if not dryrun: 
+                        if dryrun:
+                            asm3.person.validate_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale))
+                        else:
                             cvid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                             a["currentvet"] = str(cvid)
                     # If both a current vet and neutering date has been given, set the neutering vet
@@ -727,7 +729,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         # Update flags if present
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
-                if animalid == 0 and not dryrun:
+                if animalid == 0 and dryrun:
+                    asm3.animal.validate_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale))
+                elif animalid:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Add any flags that were set
                     if a["flags"] != "":
@@ -891,7 +895,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                             # otherwise we do a regular merge which only fills in any blanks)
                             force = dbo.query_string("SELECT EmailAddress FROM owner WHERE ID=?", [personid]) == p["emailaddress"]
                             asm3.person.merge_person_details(dbo, user, personid, p, force=force)
-                    if personid == 0 and not dryrun:
+                    if personid == 0 and dryrun:
+                        asm3.person.validate_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale))
+                    elif personid == 0:
                         personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create/merge them
                     if not dryrun: create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
@@ -982,7 +988,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["completedtime"] = gks(row, "INCIDENTCOMPLETEDTIME")
             d["completedtype"] = gkl(dbo, row, "INCIDENTCOMPLETEDTYPE", "incidentcompleted", "CompletedName", True)
             try:
-                if not dryrun: incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
+                if dryrun:
+                    asm3.animalcontrol.validate_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale))
+                else:
+                    incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
             except Exception as e:
                 row_error(errors, "incident", rowno, row, e, dbo, sys.exc_info())
         
@@ -1031,7 +1040,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
 
             c["vatamount"] = asm3.utils.cint(row["CLINICAPPOINTMENTVATAMOUNT"])
 
-            if not dryrun: asm3.clinic.insert_appointment_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+            if dryrun:
+                asm3.clinic.validate_appointment_from_form(dbo, asm3.utils.PostedData(c, dbo.locale))
+            else:
+                asm3.clinic.insert_appointment_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
         
         # Diary note
         if hasdiary:
@@ -1041,8 +1053,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             d["subject"] = gks(row, "DIARYSUBJECT")
             d["note"] = gks(row, "DIARYNOTE")
 
-            if d["diarydate"] == "" or dryrun:
+            if d["diarydate"] == "":
                 pass
+            elif dryrun:
+                asm3.diary.validate_diary_from_form(dbo, asm3.utils.PostedData(d, dbo.locale))
             elif animalid != 0:
                 asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMAL, animalid, asm3.utils.PostedData(d, dbo.locale))
             elif incidentid != 0:
@@ -1080,7 +1094,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             v["rabiestag"] = gks(row, "VACCINATIONRABIESTAG")
             v["comments"] = gks(row, "VACCINATIONCOMMENTS")
             try:
-                if not dryrun: asm3.medical.insert_vaccination_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+                if dryrun: 
+                    asm3.medical.validate_vaccination_from_form(dbo, asm3.utils.PostedData(v, dbo.locale))
+                else:
+                    asm3.medical.insert_vaccination_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
 
@@ -1094,7 +1111,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             v["given"] = gkd(dbo, row, "TESTPERFORMEDDATE")
             v["comments"] = gks(row, "TESTCOMMENTS")
             try:
-                if not dryrun: asm3.medical.insert_test_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
+                if dryrun:
+                    asm3.medical.validate_test_from_form(dbo, asm3.utils.PostedData(v, dbo.locale))
+                else:
+                    asm3.medical.insert_test_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
                 row_error(errors, "test", rowno, row, e, dbo, sys.exc_info())
 
@@ -1110,7 +1130,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             m["singlemulti"] = "0" # single treatment
             m["status"] = "2" # completed
             try:
-                if not dryrun: asm3.medical.insert_regimen_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
+                if dryrun:
+                    asm3.medical.validate_regimen_from_form(dbo, asm3.utils.PostedData(m, dbo.locale))
+                else:
+                    asm3.medical.insert_regimen_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
 
@@ -1123,7 +1146,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             c["cost"] = str(gkc(row, "COSTAMOUNT", dbo.locale))
             c["description"] = gks(row, "COSTDESCRIPTION")
             try:
-                if not dryrun: asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
+                if dryrun:
+                    asm3.animal.validate_cost_from_form(dbo, asm3.utils.PostedData(c, dbo.locale))
+                else:
+                    asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
             except Exception as e:
                 row_error(errors, "cost", rowno, row, e, dbo, sys.exc_info())
 
@@ -1154,7 +1180,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 linkid = personid
 
             try:
-                if not dryrun: asm3.log.insert_log_from_form(dbo, user, linktype, linkid, asm3.utils.PostedData(l, dbo.locale))
+                if dryrun:
+                    asm3.log.validate_log_from_form(dbo, asm3.utils.PostedData(l, dbo.locale))
+                else:
+                    asm3.log.insert_log_from_form(dbo, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
 
@@ -1171,7 +1200,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
             l["comments"] = gks(row, "LICENSECOMMENTS")
             try:
-                if not dryrun: asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
+                if dryrun:
+                    asm3.financial.validate_licence_from_form(dbo, asm3.utils.PostedData(l, dbo.locale))
+                else:
+                    asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
 
@@ -1188,7 +1220,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
             l["comments"] = gks(row, "LICENSECOMMENTS")
             try:
-                if not dryrun: asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
+                if dryrun:
+                    asm3.financial.validate_licence_from_form(dbo, asm3.utils.PostedData(l, dbo.locale))
+                else:
+                    asm3.financial.insert_licence_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
         
@@ -1238,7 +1273,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             s["comments"] = asm3.i18n._("Imported from CSV", dbo.locale)
 
             try:
-                if not dryrun: asm3.stock.insert_stocklevel_from_form(dbo, asm3.utils.PostedData(s, dbo.locale), user)
+                if dryrun:
+                    asm3.stock.validate_stocklevel_from_form(dbo, asm3.utils.PostedData(s, dbo.locale))
+                else:
+                    asm3.stock.insert_stocklevel_from_form(dbo, asm3.utils.PostedData(s, dbo.locale), user)
             except Exception as e:
                 row_error(errors, "stocklevel", rowno, row, e, dbo, sys.exc_info())
 

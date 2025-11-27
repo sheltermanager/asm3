@@ -605,14 +605,12 @@ def update_animalcontrol_from_form(dbo: Database, post: PostedData, username: st
     Updates an animal control incident record from the screen
     data: The webpy data object containing form parameters
     """
+    validate_animalcontrol_from_form(dbo, post)
     l = dbo.locale
     acid = post.integer("id")
 
     if not dbo.optimistic_check("animalcontrol", post.integer("id"), post.integer("recordversion")):
         raise asm3.utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
-
-    if post.date("incidentdate") is None:
-        raise asm3.utils.ASMValidationError(_("Incident date cannot be blank", l))
 
     dbo.update("animalcontrol", acid, {
         "IncidentCode":         post["incidentcode"],
@@ -704,14 +702,16 @@ def update_animalcontrol_removelink(dbo: Database, username: str, acid: int, ani
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid))
     asm3.audit.delete(dbo, username, "animalcontrolanimal", acid, "", "incident %d no longer linked to animal %d" % (acid, animalid))
 
+def validate_animalcontrol_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+
 def insert_animalcontrol_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
     Inserts a new animal control incident record from the screen
     data: The webpy data object containing form parameters
     """
+    validate_animalcontrol_from_form(dbo, post)
     l = dbo.locale
-    if post.date("incidentdate") is None:
-        raise asm3.utils.ASMValidationError(_("Incident date cannot be blank", l))
 
     nid = dbo.get_id("animalcontrol")
     dbo.insert("animalcontrol", {

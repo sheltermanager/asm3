@@ -113,13 +113,17 @@ def get_invoice_items(dbo: Database, appointmentid: int) -> Results:
     """
     return dbo.query(get_clinic_invoice_query(dbo) + " WHERE ClinicAppointmentID = ? ORDER BY ID", [appointmentid])
 
+def validate_appointment_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+    if post.datetime("apptdate", "appttime") is None:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Appointment date must be a valid date", l))
+
 def insert_appointment_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a clinic appointment from posted form data
     """
+    validate_appointment_from_form(dbo, post)
     l = dbo.locale
-    if post.datetime("apptdate", "appttime") is None:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Appointment date must be a valid date", l))
 
     return dbo.insert("clinicappointment", {
         "AnimalID":             post.integer("personanimal") or post.integer("animal"),
@@ -144,9 +148,8 @@ def update_appointment_from_form(dbo: Database, username: str, post: PostedData)
     Updates an appointment from form data.
     NOTE: Amount and VATAmount are not set because they are calculated after invoice item crud.
     """
+    validate_appointment_from_form(dbo, post)
     l = dbo.locale
-    if post.datetime("apptdate", "appttime") is None:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Appointment date must be a valid date", l))
 
     dbo.update("clinicappointment", post.integer("appointmentid"), {
         "AnimalID":             post.integer("personanimal") or post.integer("animal"),

@@ -245,16 +245,11 @@ def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
     the ID of the stocklevel to adjust and a usage record will be
     written so usage data should be sent too.
     """
+    validate_stocklevel_from_form(dbo, post)
     l = dbo.locale
     slid = post.integer("stocklevelid")
     if slid == 0:
         raise asm3.utils.ASMValidationError("Invalid stock level")
-    if post["name"] == "":
-        raise asm3.utils.ASMValidationError(_("Stock level must have a name", l))
-    if post["unitname"] == "":
-        raise asm3.utils.ASMValidationError(_("Stock level must have a unit", l))
-    if post.date("usagedate") is None:
-        raise asm3.utils.ASMValidationError(_("Stock usage must have a date", l))
 
     diff = post.floating("balance") - dbo.query_float("SELECT Balance FROM stocklevel WHERE ID = ?", [slid])
 
@@ -455,11 +450,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["comments"] = post["comments"]
             insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
 
-def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> int:
-    """
-    Inserts a stocklevel item from a dialog.
-    A usage record will be written, so usage data should be sent too.
-    """
+def validate_stocklevel_from_form(dbo: Database, post: PostedData) -> bool:
     l = dbo.locale
     if post["name"] == "":
         raise asm3.utils.ASMValidationError(_("Stock level must have a name", l))
@@ -467,7 +458,15 @@ def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
         raise asm3.utils.ASMValidationError(_("Stock level must have a unit", l))
     if post.date("usagedate") is None:
         raise asm3.utils.ASMValidationError(_("Stock usage must have a date", l))
-   
+
+def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> int:
+    """
+    Inserts a stocklevel item from a dialog.
+    A usage record will be written, so usage data should be sent too.
+    """
+    validate_stocklevel_from_form(dbo, post)
+    l = dbo.locale
+
     nid = dbo.insert("stocklevel", {
         "Name":             post["name"],
         "ProductID":        post.integer("productlist"),

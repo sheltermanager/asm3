@@ -106,6 +106,11 @@ def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort
         sql += "ORDER BY l.Date DESC"
     return dbo.query(sql)
 
+def validate_log_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+    if post.date("logdate") is None:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Log date must be a valid date", l))
+
 def insert_log_from_form(dbo: Database, username: str, linktype: int, linkid: int, post: PostedData) -> int:
     """
     Creates a log from the form data
@@ -113,9 +118,8 @@ def insert_log_from_form(dbo: Database, username: str, linktype: int, linkid: in
     linktypeid, linkid: The link
     data: The web.py form object
     """
+    validate_log_from_form(dbo, post)
     l = dbo.locale
-    if post.date("logdate") is None:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Log date must be a valid date", l))
 
     return dbo.insert("log", {
         "LogTypeID":        post.integer("type"),
@@ -129,9 +133,8 @@ def update_log_from_form(dbo: Database, username: str, post: PostedData) -> None
     """
     Updates a log from form data
     """
+    validate_log_from_form(dbo, post)
     l = dbo.locale
-    if post.date("logdate") is None:
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Log date must be a valid date", l))
 
     # Set the linktype/id again so that it appears on the audit trail of the parent record
     logid = post.integer("logid") 

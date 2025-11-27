@@ -1040,15 +1040,19 @@ def insert_treatments_custom(dbo: Database, username: str, amid: int, startdate:
     # Update the number of treatments given and remaining
     calculate_given_remaining(dbo, amid)
 
-def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> int:
-    """
-    Creates a regimen record from posted form data
-    """
+def validate_regimen_from_form(dbo: Database, post: PostedData) -> bool:
     l = dbo.locale
     if post.date("startdate") is None:
         raise asm3.utils.ASMValidationError(_("Start date must be a valid date", l))
     if post["treatmentname"] == "":
         raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
+
+def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Creates a regimen record from posted form data
+    """
+    validate_regimen_from_form(dbo, post)
+    l = dbo.locale
 
     timingrule = post.integer("timingrule")
     timingrulenofrequencies = post.integer("timingrulenofrequencies")
@@ -1140,12 +1144,9 @@ def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
     """
     Updates a regimen record from posted form data
     """
+    validate_regimen_from_form(dbo, post)
     l = dbo.locale
     regimenid = post.integer("regimenid")
-    if post.date("startdate") is None:
-        raise asm3.utils.ASMValidationError(_("Start date must be a valid date", l))
-    if post["treatmentname"] == "":
-        raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
     
     dbo.update("animalmedical", regimenid, {
         "AnimalID":         post.integer("animal"),
@@ -1162,16 +1163,19 @@ def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
 
     update_medical_treatments(dbo, username, post.integer("regimenid"))
 
+def validate_vaccination_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+    if post.integer("animal") == 0:
+        raise asm3.utils.ASMValidationError(_("Vaccinations require an animal", l))
+    if post.date("required") is None:
+        raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
+
 def insert_vaccination_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a vaccination record from posted form data
     """
+    validate_vaccination_from_form(dbo, post)
     l = dbo.locale
-    if post.integer("animal") == 0:
-        raise asm3.utils.ASMValidationError(_("Vaccinations require an animal", l))
-
-    if post.date("required") is None:
-        raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
 
     vaccid = dbo.insert("animalvaccination", {
         "AnimalID":             post.integer("animal"),
@@ -1196,10 +1200,9 @@ def update_vaccination_from_form(dbo: Database, username: str, post: PostedData)
     """
     Updates a vaccination record from posted form data
     """
+    validate_vaccination_from_form(dbo, post)
     l = dbo.locale
     vaccid = post.integer("vaccid")
-    if post.date("required") is None:
-        raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
 
     dbo.update("animalvaccination", vaccid, {
         "AnimalID":             post.integer("animal"),
@@ -1229,13 +1232,17 @@ def update_rabies_tag(dbo: Database, username: str, animalid: int) -> None:
         "AND RabiesTag <> '' ORDER BY DateOfVaccination DESC", [animalid])
     if rabiestag != "": dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
 
+def validate_test_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+    if post.date("required") is None:
+        raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
+
 def insert_test_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a test record from posted form data
     """
+    validate_test_from_form(dbo, post)
     l = dbo.locale
-    if post.date("required") is None:
-        raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
 
     ntestid = dbo.insert("animaltest", {
         "AnimalID":         post.integer("animal"),
@@ -1256,10 +1263,9 @@ def update_test_from_form(dbo: Database, username: str, post: PostedData) -> Non
     """
     Updates a test record from posted form data
     """
+    validate_test_from_form(dbo, post)
     l = dbo.locale
     testid = post.integer("testid")
-    if post.date("required") is None:
-        raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
 
     dbo.update("animaltest", testid, {
         "AnimalID":         post.integer("animal"),
