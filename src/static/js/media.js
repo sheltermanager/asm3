@@ -379,6 +379,10 @@ $(function() {
                 h.push('<a href="media?id=' + m.ID + '">');
                 h.push('<img class="' + tc + '" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
             }
+            else if (m.MEDIAMIMETYPE == "video/mp4") {
+                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<img class="' + tc + '" ' + tt + ' src="video_thumbnail?db=' + asm.useraccount + '&dbfsid=' + m.DBFSID + '" /></a>');
+            }
             else {
                 h.push('<a href="media?id=' + m.ID + '">');
                 h.push('<img class="' + tc + '" ' + tt + ' src="static/images/ui/file-media.png" /></a>');
@@ -485,8 +489,9 @@ $(function() {
                 return deferred.promise();
             }
 
-            if ( media.is_extension(file.name, "mp4") && file.size > 10485760 ) {
-                header.show_error(_("Video files over 10MB may not be uploaded."));
+            if ( media.is_extension(file.name, "mp4") && file.size > controller.videosizelimit ) {
+                let videosizelimit = controller.videosizelimit / 1024 / 1024;
+                header.show_error(_("Video files over " + videosizelimit + "MB may not be uploaded."));
                 deferred.resolve();
                 return deferred.promise();
             }
@@ -641,8 +646,9 @@ $(function() {
                 return;
             }
 
-            if ( media.is_extension(fname, "mp4") && $("#filechooser")[0].files[0].size > 10485760 ) {
-                header.show_error(_("Video files over 10MB may not be uploaded."));
+            if ( media.is_extension(fname, "mp4") && $("#filechooser")[0].files[0].size > controller.videosizelimit ) {
+                let videosizelimit = controller.videosizelimit / 1024 / 1024;
+                header.show_error(_("Video files over " + videosizelimit + "MB may not be uploaded."));
                 return;
             }
 

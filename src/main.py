@@ -671,6 +671,12 @@ class image(ASMEndpoint):
             if o.post["nopic"] == "404": self.notfound()
             self.redirect("image?db=%s&mode=nopic" % o.dbo.name())
 
+class video_thumbnail(ASMEndpoint):
+    url = "video_thumbnail"
+
+    def content(self, o):
+        return asm3.media.get_video_thumbnail(o.dbo, o.post.integer("dbfsid"))
+
 class configjs(ASMEndpoint):
     url = "config.js"
     check_logged_in = False
@@ -2358,6 +2364,7 @@ class animal_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4195,6 +4202,7 @@ class foundanimal_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4494,6 +4502,7 @@ class incident_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4866,6 +4875,7 @@ class lostanimal_media(JSONEndpoint):
             "name": self.url, 
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -6893,6 +6903,7 @@ class person_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -8395,6 +8406,7 @@ class waitinglist_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }

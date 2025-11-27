@@ -410,3 +410,5 @@ WATERMARK_FONT_BASEDIRECTORY = get_string("watermark_font_basedirectory", "/usr/
 # Toggle for enabling AMQP messages from audit log calls
 AMQP_ENABLED = get_boolean("amqp_enabled", False)
 
+# Max video upload size in bytes
+VIDEO_SIZE_LIMIT = get_integer("video_size_limit", 10485760)

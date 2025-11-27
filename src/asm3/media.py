@@ -69,6 +69,7 @@ def mime_type(filename: str) -> str:
         "ods"   : "application/vnd.oasis.opendocument.spreadsheet",
         "odp"   : "application/vnd.oasis.opendocument.presentation",
         "pdf"   : "application/pdf",
+        "mp4"   : "video/mp4",
         "mpg"   : "video/mpg",
         "mp3"   : "audio/mpeg3",
         "avi"   : "video/avi",
@@ -746,6 +747,17 @@ def get_signature_link(dbo: Database, mid: int, post: PostedData) -> str:
     token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
     url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.name(), asm3.utils.strip_email_address(post["to"]).replace("@", "%40"), mid, token)
     return url
+
+def get_video_thumbnail(dbo: Database, dbfsid: int) -> bytes:
+    inputfile = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+    vdata = asm3.dbfs.get_string_id(dbo, dbfsid)
+    inputfile.write(vdata)
+    inputfile.close()
+    outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+    os.system("ffmpeg -v 0 -y -an -i \"" + inputfile.name + "\" -ss '00:00:2.000' -vframes 1 \"" + outputfile.name + "\" > /dev/null")
+    idata = outputfile.read()
+    return idata
+
 
 def send_signature_request(dbo: Database, username: str, mid: int, post: PostedData) -> None:
     """
