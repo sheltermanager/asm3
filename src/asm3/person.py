@@ -1037,15 +1037,21 @@ def insert_address_change_log(dbo: Database, username: str, personid: int, newad
             "AD00:" + _("Address changed from '{0}' to '{1}'", l).format(oldaddress, newaddress).replace("\n", ", ")
         )
 
+def validate_person_from_form(dbo: Database, post: PostedData) -> bool:
+    l = dbo.locale
+    if post["surname"].strip() == "":
+        raise asm3.utils.ASMValidationError(_("Person must have a surname.", l))
+    if post.date("dateofbirth") and post.date("dateofbirth") > dbo.today():
+        raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
+    if post.date("dateofbirth2") and post.date("dateofbirth2") > dbo.today():
+        raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
+
 def insert_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
     Creates a new person record from incoming form data
     Returns the ID of the new record
     """
-    l = dbo.locale
-    if post["surname"].strip() == "":
-        raise asm3.utils.ASMValidationError(_("Person must have a surname.", l))
-    
+    validate_person_from_form(dbo, post)
     pid = dbo.get_id("owner")
     ownercode = post["ownercode"]
     if post["ownercode"] == "": ownercode = calculate_owner_code(pid, post["surname"])
@@ -1174,12 +1180,8 @@ def update_person_from_form(dbo: Database, post: PostedData, username: str, geoc
     """
     Updates an existing person record from incoming form data
     """
+    validate_person_from_form(dbo, post)
     l = dbo.locale
-    if not dbo.optimistic_check("owner", post.integer("id"), post.integer("recordversion")):
-        raise asm3.utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
-
-    if post["surname"].strip() == "":
-        raise asm3.utils.ASMValidationError(_("Person must have a surname.", l))
 
     pid = post.integer("id")
 

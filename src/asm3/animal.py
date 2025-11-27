@@ -3196,46 +3196,6 @@ def get_shelterview_animals(dbo: Database, lf: LocationFilter = None) -> Results
 
 def validate_animal_from_form(dbo: Database, post: PostedData) -> bool:
     l = dbo.locale
-
-    ########################################################################################
-
-    # if post["dateofbirth"] == "" or post.date("dateofbirth") is None:
-    #     estimatedage = post.floating("estimatedage")
-    #     estimateddob = 1
-    #     dob = subtract_years(dbo.today(), estimatedage)
-    #     if estimatedage <= 0 or estimatedage > 100:
-    #         raise asm3.utils.ASMValidationError(_("Estimated age '{0}' is not valid.", l).format(estimatedage))
-    # else:
-    #     estimateddob = 0
-    #     dob = post.date("dateofbirth")
-    # sheltercode = post["sheltercode"]
-    # if sheltercode.strip() == "":
-    #     raise asm3.utils.ASMValidationError(_("You must supply a code.", l))
-    # if 0 != dbo.query_int("SELECT COUNT(ID) FROM animal WHERE LOWER(ShelterCode) = LOWER(?)", [sheltercode]):
-    #     raise asm3.utils.ASMValidationError(_("This code has already been used.", l))
-    
-    # # Validate form fields
-    # if post["animalname"] == "":
-    #     raise asm3.utils.ASMValidationError(_("Name cannot be blank", l))
-    # if post["microchipnumber"].strip() != "" and not asm3.configuration.allow_duplicate_microchip(dbo):
-    #     if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE IdentichipNumber Like ? AND ID <> ?", (post["microchipnumber"], post.integer("id"))) > 0:
-    #         raise asm3.utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
-    # if dob > dbo.today():
-    #     raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    # # Enforce a limit on the number of days in the future that brought in date can be
-    # futurelimit = asm3.configuration.date_brought_in_future_limit(dbo)
-    # datebroughtin = post.datetime("datebroughtin", "timebroughtin")
-    # if datebroughtin is None:
-    #     if asm3.configuration.add_animals_show_time_brought_in(dbo):
-    #         datebroughtin = dbo.now()
-    #     else:
-    #         datebroughtin = dbo.today()
-    # if futurelimit and datebroughtin > dbo.today(offset=futurelimit):
-    #     raise asm3.utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
-
-    ########################################################################################
-
-    # Validate form fields
     aid = post.integer("id")
     if post["animalname"] == "":
         raise asm3.utils.ASMValidationError(_("Name cannot be blank", l))
@@ -3265,7 +3225,6 @@ def validate_animal_from_form(dbo: Database, post: PostedData) -> bool:
         datebroughtin = post.date("datebroughtin")
         if deceaseddate is not None and datebroughtin is not None and deceaseddate < datebroughtin:
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
-
 
 def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
