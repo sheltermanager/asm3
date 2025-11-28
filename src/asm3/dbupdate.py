@@ -26,7 +26,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "adoption", "animal", "animalboarding", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
     "animalcondition", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
     "animalfound", "animallitter", "animallocation", "animallost", "animallostfoundmatch", 
-    "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
+    "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", "animalrole", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "clinicappointment", "clinicinvoiceitem", "configuration", 
     "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
@@ -60,30 +60,33 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
 
 # Tables that don't have an ID column (we don't create sequences for these tables for supporting dbs like postgres)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
-    "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
-    "deletion", "onlineformincoming", "ownerlookingfor", "ownerrole", "userrole" )
+    "animalcontrolrole", "animallostfoundmatch", "animalpublished", "animalrole", 
+    "configuration", "customreportrole", "deletion", "onlineformincoming", 
+    "ownerlookingfor", "ownerrole", "userrole" )
 
 # Tables that contain data rather than lookups - used by reset_db
 # to determine which tables to delete data from
 TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
     "animal", "animalboarding", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
-    "animallocation", "animallostfoundmatch", "animalpublished", 
+    "animallocation", "animallostfoundmatch", "animalpublished", "animalrole", 
     "animalcondition", "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
     "log", "logmulti", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
-    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", 
-    "stocklevel", "stockusage" )
+    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", 
+    "ownervoucher", "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkcondition", "lksconditiontype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
-    "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", 
-    "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", 
-    "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkcondition", "lkclinicinvoiceitems", 
+    "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
+    "lksaccounttype", "lksclinicstatus", "lksconditiontype", "lksdiarylink", "lksdonationfreq", 
+    "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", 
+    "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", 
+    "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
     "lkwaitinglistremoval", "lkworktype", 
     "logtype", "medicalprofile", "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", 
     "stocklocation", "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
@@ -151,11 +154,13 @@ def sql_structure(dbo: Database) -> str:
         fstr("Description"),
         fint("Reconciled"),
         fint("Amount"),
+        fint("OwnerID", True), 
         fint("SourceAccountID"),
         fint("DestinationAccountID"),
         fint("AnimalCostID", True), 
         fint("OwnerDonationID", True) ))
     sql += index("accountstrx_TrxDate", "accountstrx", "TrxDate")
+    sql += index("accountstrx_OwnerID", "accountstrx", "OwnerID")
     sql += index("accountstrx_Source", "accountstrx", "SourceAccountID")
     sql += index("accountstrx_Dest", "accountstrx", "DestinationAccountID")
     sql += index("accountstrx_Cost", "accountstrx", "AnimalCostID")
@@ -764,6 +769,13 @@ def sql_structure(dbo: Database) -> str:
         fstr("Extra", True) ), False)
     sql += index("animalpublished_AnimalIDPublishedTo", "animalpublished", "AnimalID,PublishedTo", True)
     sql += index("animalpublished_SentDate", "animalpublished", "SentDate")
+
+    sql += table("animalrole", (
+        fint("AnimalID"),
+        fint("RoleID"),
+        fint("CanView"),
+        fint("CanEdit") ), False)
+    sql += index("animalrole_AnimalRoleID", "animalrole", "AnimalID, RoleID", True)
 
     sql += table("animaltest", (
         fid(),

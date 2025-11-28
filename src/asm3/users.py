@@ -622,6 +622,7 @@ def embellish_vieweditroles(dbo: Database, tablename: str, fieldname: str, iid: 
     iid: The ID value
     r: The result row to add the new columns to
     """
+    if row is None: return
     roles = dbo.query(f"SELECT {tablename}.*, role.RoleName FROM {tablename} " \
         f"INNER JOIN role ON {tablename}.RoleID = role.ID WHERE {tablename}.{fieldname} = ?", [iid])
     viewroleids = []
