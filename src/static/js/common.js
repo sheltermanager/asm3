@@ -1685,6 +1685,24 @@ const format = {
         var days = [ _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") ];
         if (i && (i < 0 || i > 6)) { return ""; }
         return days[i];
+    },
+
+    datetime_from_to: function(isostart, isoend) {
+        let startdate = format.date(isostart);
+        let starttime = tableform.format_time_blank(null, isostart);
+        let enddate = format.date(isoend);
+        let endtime = tableform.format_time_blank(null, isoend);
+        let dateoutput = startdate;
+        if ( !config.bool("DisableDiaryEndDatetime") ) {
+            if ( starttime || endtime ) { dateoutput += " " + tableform.format_time(null, isostart); }
+            if ( enddate && enddate != startdate ) {
+                dateoutput = _("{0} to {1}").replace("{0}", dateoutput).replace("{1}", enddate);
+                if (endtime) { dateoutput += " " + endtime; }
+            } else if (enddate) {
+                dateoutput = _("{0} to {1}").replace("{0}", dateoutput).replace("{1}", endtime);
+            }
+        }
+        return dateoutput;
     }
 
 };

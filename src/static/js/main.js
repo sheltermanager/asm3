@@ -474,7 +474,7 @@ $(function() {
                 if (d.LINKTYPE == 5) { link = "waitinglist?id=" + d.LINKID; }
                 if (d.LINKTYPE == 7) { link = "incident?id=" + d.LINKID; }
                 s.push('<tr title="' + html.title(common.substitute(_("Added by {0} on {1}"), { "0": d.CREATEDBY, "1": format.date(d.CREATEDDATE) })) + '">');
-                s.push('<td>' + format.date(d.DIARYDATETIME));
+                s.push('<td>' + format.datetime_from_to(d.DIARYDATETIME, d.DIARYENDDATETIME));
                 if (d.DIARYFORNAME != asm.user) {
                     s.push(" <i>(" + d.DIARYFORNAME + ")</i>");
                 }
