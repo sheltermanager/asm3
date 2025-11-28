@@ -190,6 +190,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
     h.append('<input type="hidden" name="mediaflags" value="%s" />' % form.SETMEDIAFLAGS)
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
+    h.append('<input type="hidden" name="submitterreplyto" value="%s" />' % asm3.html.escape(form.SUBMITTERREPLYADDRESS))
     h.append('<table class="asm-onlineform-table">')
     shelteranimals = None
     adoptableanimals = None
@@ -549,6 +550,7 @@ def get_onlineformincoming_html(dbo: Database, collationid: int,
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
+        if f.FIELDNAME == "submitterreplyto": continue
         if f.FIELDNAME in SYSTEM_FIELDS and not include_system: continue
         if v.startswith("RAW::") and not include_raw: continue
         if v.startswith("data:") and not include_images: continue
@@ -701,6 +703,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
+        "SubmitterReplyAddress": post["submitterreplyaddress"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
@@ -723,6 +726,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
+        "SubmitterReplyAddress": post["submitterreplyaddress"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
@@ -730,7 +734,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
-        "*Description":         post["description"],
+        "*Description":         post["description"]
     }, username, setLastChanged=False)
 
 def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
@@ -945,6 +949,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
 
     l = dbo.locale
     formname = post["formname"]
+    replyaddress = post["submitterreplyto"]
     posteddate = dbo.now()
     flags = post["flags"]
     mediaflags = post["mediaflags"]
@@ -1089,6 +1094,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             if fld.FIELDNAME in SYSTEM_FIELDS: continue
             if fld.FIELDNAME in ("firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
+            if fld.FIELDNAME == "submitterreplyto": continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
 
@@ -1127,7 +1133,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             body += "\n" + formdata
             attachments = images
         # Send
-        asm3.utils.send_email(dbo, "", emailaddress, "", "", 
+        asm3.utils.send_email(dbo, replyaddress, emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
 
@@ -1145,7 +1151,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # and want to use an applicant's details but don't want them to see it or accidentally
         # reply to them about it (prime example, forms related to performing homechecks)
         replyto = ""
-        if formdef.emailsubmitter != 0: replyto = emailaddress 
+        if formdef.emailsubmitter != 0: replyto = replyaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         # NOTE: We send emails to shelter contacts as bulk=True to try and prevent
         # backscatter since most shelter emails have some kind of autoresponder
