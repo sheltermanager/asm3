@@ -54,6 +54,7 @@ DEFAULTS = {
     "AnimalNameChangeLog": "No",
     "AnimalNameChangeLogType": "3",
     "AnimalFiguresSplitEntryReason": "No",
+    "AnimalPermissions": "No",
     "AnimalSearchResultsNewTab": "No",
     "PersonSearchResultsNewTab": "No",
     "AnnualFiguresShowBabies": "Yes",
@@ -203,6 +204,7 @@ DEFAULTS = {
     "DisableDocumentRepo": "No",
     "DisableOnlineForms": "No",
     "DisableRetailer": "No",
+    "DisableDiaryEndDatetime": "Yes",
     "DocumentWordProcessor": "HTML",
     "DocumentSignedNotifyCoordinator": "No",
     "DonationDateOverride": "No",
@@ -362,6 +364,7 @@ DEFAULTS = {
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
+    "PersonPermissions": "No",
     "PetFinderSendStrays": "No",
     "PetFinderSendHolds": "No",
     "PetFinderSendAdopted": "No",

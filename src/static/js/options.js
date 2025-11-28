@@ -955,6 +955,7 @@ $(function() {
                         { id: "disablerota", post_field: "DisableRota", label: _("Remove the rota functionality from menus and screens"), type: "check" }, 
                         { id: "disablestockcontrol", post_field: "DisableStockControl", label: _("Remove the stock control functionality from menus and screens"), type: "check" }, 
                         { id: "disabletransport", post_field: "DisableTransport", label: _("Remove the transport functionality from menus and screens"), type: "check" }, 
+                        { id: "disablediaryenddatetime", post_field: "DisableDiaryEndDatetime", label: _("Remove the end date and time fields when displaying and editing diary notes"), type: "check" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("People") + '</p>' }, 
                         { id: "towncounty", post_field: "HideTownCounty", label: _("Remove the city/state fields from person details"), type: "check" }, 
                         { id: "hcountry", post_field: "HideCountry", label: _("Remove the country field from person details"), type: "check" }, 
@@ -1007,6 +1008,7 @@ $(function() {
                     { id: "tab-security", title: _("Security"), fields: [
                         { id: "force2fa", post_field: "Force2FA", label: _("Force users to enable 2 factor authentication"), type: "check" }, 
                         { id: "forcestrongpasswords", post_field: "ForceStrongPasswords", label: _("Force users to set strong passwords (8+ characters of mixed case and numbers)"), type: "check" }, 
+                        { id: "animalpermissions", post_field: "AnimalPermissions", label: _("Enable access permissions for animal records"), type: "check" }, 
                         { id: "incidentpermissions", post_field: "IncidentPermissions", label: _("Enable access permissions for incident records"), type: "check" }, 
                         { id: "personpermissions", post_field: "PersonPermissions", label: _("Enable access permissions for person records"), type: "check" }
                     ]}, 

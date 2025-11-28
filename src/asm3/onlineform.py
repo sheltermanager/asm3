@@ -188,6 +188,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<input type="hidden" name="redirect" value="%s" />' % form.REDIRECTURLAFTERPOST)
     h.append('<input type="hidden" name="retainfor" value="%s" />' % form.RETAINFOR)
     h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
+    h.append('<input type="hidden" name="mediaflags" value="%s" />' % form.SETMEDIAFLAGS)
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
     h.append('<input type="hidden" name="submitterreplyto" value="%s" />' % asm3.html.escape(form.SUBMITTERREPLYADDRESS))
     h.append('<table class="asm-onlineform-table">')
@@ -695,21 +696,22 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
     Create an onlineform record from posted data
     """
     return dbo.insert("onlineform", {
-        "Name":                     post["name"],
-        "RedirectUrlAfterPOST":     post["redirect"],
-        "AutoProcess":              post.integer("autoprocess"),
-        "RetainFor":                post.integer("retainfor"),
-        "SetOwnerFlags":            post["flags"],
-        "EmailAddress":             post["email"],
-        "SubmitterReplyAddress":    post["submitterreplyaddress"],
-        "EmailCoordinator":         post.boolean("emailcoordinator"),
-        "EmailFosterer":            post.boolean("emailfosterer"),
-        "EmailSubmitter":           post.integer("emailsubmitter"),
-        "InternalUse":              post.boolean("internaluse"),
-        "*EmailMessage":            post["emailmessage"],
-        "*Header":                  post["header"],
-        "*Footer":                  post["footer"],
-        "*Description":             post["description"]
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "AutoProcess":          post.integer("autoprocess"),
+        "RetainFor":            post.integer("retainfor"),
+        "SetOwnerFlags":        post["flags"],
+        "SetMediaFlags":        post["mediaflags"],
+        "EmailAddress":         post["email"],
+        "SubmitterReplyAddress": post["submitterreplyaddress"],
+        "EmailCoordinator":     post.boolean("emailcoordinator"),
+        "EmailFosterer":        post.boolean("emailfosterer"),
+        "EmailSubmitter":       post.integer("emailsubmitter"),
+        "InternalUse":          post.boolean("internaluse"),
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
     }, username, setCreated=False)
 
 def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) -> int:
@@ -717,21 +719,22 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
     Update an onlineform record from posted data
     """
     return dbo.update("onlineform", post.integer("formid"), {
-        "Name":                     post["name"],
-        "RedirectUrlAfterPOST":     post["redirect"],
-        "AutoProcess":              post.integer("autoprocess"),
-        "RetainFor":                post.integer("retainfor"),
-        "SetOwnerFlags":            post["flags"],
-        "EmailAddress":             post["email"],
-        "SubmitterReplyAddress":    post["submitterreplyaddress"],
-        "EmailCoordinator":         post.boolean("emailcoordinator"),
-        "EmailFosterer":            post.boolean("emailfosterer"),
-        "EmailSubmitter":           post.integer("emailsubmitter"),
-        "InternalUse":              post.boolean("internaluse"),
-        "*EmailMessage":            post["emailmessage"],
-        "*Header":                  post["header"],
-        "*Footer":                  post["footer"],
-        "*Description":             post["description"]
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "AutoProcess":          post.integer("autoprocess"),
+        "RetainFor":            post.integer("retainfor"),
+        "SetOwnerFlags":        post["flags"],
+        "SetMediaFlags":        post["mediaflags"],
+        "EmailAddress":         post["email"],
+        "SubmitterReplyAddress": post["submitterreplyaddress"],
+        "EmailCoordinator":     post.boolean("emailcoordinator"),
+        "EmailFosterer":        post.boolean("emailfosterer"),
+        "EmailSubmitter":       post.integer("emailsubmitter"),
+        "InternalUse":          post.boolean("internaluse"),
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
     }, username, setLastChanged=False)
 
 def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
@@ -949,6 +952,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     replyaddress = post["submitterreplyto"]
     posteddate = dbo.now()
     flags = post["flags"]
+    mediaflags = post["mediaflags"]
     address = ""
     emailaddress = ""
     emailsubmissionto = ""
@@ -1031,6 +1035,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     "FormName":         formname,
                     "PostedDate":       posteddate,
                     "Flags":            flags,
+                    "MediaFlags":       mediaflags,
                     "FieldName":        fieldname,
                     "Label":            label,
                     "DisplayIndex":     displayindex,
@@ -1374,6 +1379,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
             "FormName":         fo.FORMNAME,
             "PostedDate":       fo.POSTEDDATE,
             "Flags":            fo.FLAGS,
+            "MediaFlags":       fo.MEDIAFLAGS,
             "FieldName":        "processed",
             "Label":            "",
             "DisplayIndex":     0,
@@ -1386,7 +1392,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
             "onlineform.attach_form", dbo)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     retainfor = get_onlineformincoming_retainfor(dbo, collationid)
-    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor)
+    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor, mediaflags=fo.MEDIAFLAGS)
     if asm3.configuration.auto_hash_processed_forms(dbo):
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
         asm3.media.sign_document(dbo, username, mid, "", \

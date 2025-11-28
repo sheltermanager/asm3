@@ -311,6 +311,13 @@ class ASMEndpoint(object):
         lf = asm3.animal.LocationFilter(session.locationfilter, session.siteid, session.visibleanimalids)
         if not lf.match(a):
             raise asm3.utils.ASMPermissionError("animal not in location filter/site")
+        viewroles = session.dbo.query_list("SELECT RoleID FROM animalrole WHERE AnimalID = ? AND CanView = 1", [a.ID])
+        # No view roles means anyone can view
+        if len(viewroles) == 0:
+            return True
+        # Does the user have any of the view roles?
+        if not asm3.users.check_role_bool(session, viewroles):
+            raise asm3.utils.ASMPermissionError("User does not have necessary role to view")
 
     def check_locked_db(self) -> None:
         if session.dbo and session.dbo.locked: 
@@ -1903,6 +1910,7 @@ class animal(JSONEndpoint):
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
             "posneg": asm3.lookups.get_posneg(dbo),
             "reports": asm3.reports.get_ask_animal_reports(dbo, o["session"].superuser, o["session"].roleids),
+            "roles": asm3.users.get_roles(dbo),
             "returnedexitmovements": asm3.animal.get_returned_exit_movements(dbo, a.ID),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
@@ -2117,6 +2125,40 @@ class animal_diary(JSONEndpoint):
             "diarytasks": asm3.diary.get_animal_tasks(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo)
         }
+
+class animal_condition(JSONEndpoint):
+    url = "animal_condition"
+    get_permissions = asm3.users.VIEW_DIET
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = asm3.animal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        self.check_animal(a)
+        animalconditions = asm3.animal.get_animalconditions(dbo, animalid)
+        conditions = asm3.lookups.get_conditions(dbo)
+        asm3.al.debug("got %d conditions for animal %s %s" % (len(conditions), a["CODE"], a["ANIMALNAME"]), "main.animal_condition", dbo)
+        return {
+            "rows": animalconditions,
+            "conditions": conditions,
+            "animal": a,
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
+            "diettypes": asm3.lookups.get_diets(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_CONDITION)
+        return str(asm3.animal.insert_animalcondition_from_form(o.dbo, o.user, o.post))
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_CONDITION)
+        asm3.animal.update_animalcondition_from_form(o.dbo, o.user, o.post)
+        
+    def post_delete(self, o):
+        self.check( asm3.users.DELETE_CONDITION)
+        for did in o.post.integer_list("ids"):
+            asm3.animal.delete_animalcondition(o.dbo, o.user, did)
 
 class animal_diet(JSONEndpoint):
     url = "animal_diet"
@@ -2724,11 +2766,15 @@ class calendar_events(ASMEndpoint):
                     diaryfilter = "future"
                 if d.DATECOMPLETED is not None:
                     diaryfilter = "completed"
+                if d.DIARYENDDATETIME:
+                    diaryenddatetime = d.DIARYENDDATETIME
+                else:
+                    diaryenddatetime = add_minutes(d.DIARYDATETIME, 60)
                 events.append({ 
                     "title": d.SUBJECT, 
                     "allDay": allday, 
                     "start": d.DIARYDATETIME,
-                    "end": add_minutes(d.DIARYDATETIME, 60),
+                    "end": diaryenddatetime,
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
                     "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}",
@@ -4685,6 +4731,8 @@ class lookups(JSONEndpoint):
             "namefield": table[1].upper(),
             "namelabel": table[2],
             "descfield": table[3].upper(),
+            "hasconditiontype": "conditiontype" in modifiers,
+            "haszoonotic": "haszoonotic" in modifiers,
             "hasspecies": "species" in modifiers,
             "hastaxrate": "taxrate" in modifiers,
             "haspfspecies": "pubspec" in modifiers,
@@ -4700,6 +4748,7 @@ class lookups(JSONEndpoint):
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
             "accounts": asm3.financial.get_accounts(dbo, onlyactive=True),
+            "conditiontypes": asm3.lookups.get_condition_types(dbo),
             "species": asm3.lookups.get_species(dbo),
             "tables": asm3.html.json_lookup_tables(l)
         }
@@ -4707,12 +4756,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
 
     def post_update(self, o):
         post = o.post
         asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
@@ -6133,6 +6182,7 @@ class onlineforms(JSONEndpoint):
         return {
             "rows": onlineforms,
             "flags": asm3.lookups.get_person_flags(dbo),
+            "mediaflags": asm3.lookups.get_media_flags(dbo),
             "header": asm3.onlineform.get_onlineform_header(dbo),
             "footer": asm3.onlineform.get_onlineform_footer(dbo)
         }
@@ -8233,13 +8283,14 @@ class vaccination(JSONEndpoint):
         reschedulecomments = post["reschedulecomments"]
         givenexpires = post.date("givenexpires")
         givenbatch = post["givenbatch"]
+        givenbatchexpiry = post.date("givenbatchexpiry")
         givencost = post.integer("givencost")
         givenmanufacturer = post["givenmanufacturer"]
         givenby = post["givenby"]
         givenrabiestag = post["givenrabiestag"]
         vet = post.integer("givenvet")
         for vid in post.integer_list("ids"):
-            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenmanufacturer, givencost, givenrabiestag)
+            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenbatchexpiry, givenmanufacturer, givencost, givenrabiestag)
             if rescheduledate is not None:
                 asm3.medical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
         if post.integer("item") != -1:

@@ -76,7 +76,11 @@ $(function() {
                     options: animal_bulk.options(controller.forlist, "USERNAME", "USERNAME", 3),
                     xmarkup: [ " ", _("on"), 
                         tableform.render_date({ post_field: "diarydate", halfsize: true, justwidget: true}),
-                        tableform.render_time({ post_field: "diarytime", halfsize: true, justwidget: true }) 
+                        tableform.render_time({ post_field: "diarytime", halfsize: true, justwidget: true }),
+                        '<span class="diaryend">' + _(" to "),
+                        tableform.render_date({ post_field: "diaryenddate", halfsize: true, justwidget: true}),
+                        tableform.render_time({ post_field: "diaryendtime", halfsize: true, justwidget: true }),
+                        '</span>'
                         ].join("\n")
                 },
                { post_field: "diarycolourscheme", label: _("Color Scheme"), type: "selectcolour", defaultval: 1, 
@@ -151,6 +155,12 @@ $(function() {
                  html.content_footer()
             ].join("\n");
         }, 
+
+        sync: function() {
+            if (config.bool("DisableDiaryEndDatetime")) {
+                $(".diaryend").hide();
+            }
+        },
 
         bind: function() {
 
