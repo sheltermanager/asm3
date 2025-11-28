@@ -833,6 +833,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("GivenBy", True),
         fdate("DateRequired"),
         fdate("DateExpires", True),
+        fdate("BatchExpiryDate", True),
         fstr("BatchNumber", True),
         fstr("Manufacturer", True),
         fstr("RabiesTag", True),
