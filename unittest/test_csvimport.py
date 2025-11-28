@@ -25,6 +25,7 @@ class TestCSVImport(unittest.TestCase):
             'ANIMALTRANSFER': 'N',
             'ANIMALFLAGS': 'quarantine',
             'ANIMALNAME': 'TestioCSV',
+            'ANIMALDOB': datetime.date(2001, 9, 11),
             'ANIMALIMAGE': 'https://sheltermanager.com/images/bg-hero-pets.png',
             'ANIMALSEX': 'Male',
             'ANIMALTYPE': 'M (Miscellaneous)',

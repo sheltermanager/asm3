@@ -3194,26 +3194,30 @@ def get_shelterview_animals(dbo: Database, lf: LocationFilter = None) -> Results
         f"WHERE Archived = 0 {locationfilter} ORDER BY HasPermanentFoster, animal.ID DESC", limit=limit)
     return calc_age_group_rows(dbo, animals)
 
-def validate_animal_from_form(dbo: Database, post: PostedData) -> bool:
+def validate_animal_from_form(dbo: Database, post: PostedData, insert: bool = False) -> bool:
     l = dbo.locale
     aid = post.integer("id")
     if post["animalname"] == "":
         raise asm3.utils.ASMValidationError(_("Name cannot be blank", l))
-    if post["dateofbirth"] == "" or post.date("dateofbirth") is None:
-        estimatedage = post.floating("estimatedage")
-        if estimatedage <= 0 or estimatedage > 100:
-            raise asm3.utils.ASMValidationError(_("Estimated age '{0}' is not valid.", l).format(estimatedage))
-    if post.date("dateofbirth") is None:
+    if insert:
+        if post["dateofbirth"] == "" or post.date("dateofbirth") is None:
+            estimatedage = post.floating("estimatedage")
+            if estimatedage <= 0 or estimatedage > 100:
+                raise asm3.utils.ASMValidationError(_("Estimated age '{0}' is not valid.", l).format(estimatedage))
+    elif post.date("dateofbirth") is None:
         raise asm3.utils.ASMValidationError(_("Date of birth is not valid", l))
-    if post.date("dateofbirth") > dbo.today():
+    elif post.date("dateofbirth") > dbo.today():
         raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    if post["datebroughtin"] == "":
+    
+    if post["datebroughtin"] == "" and not insert:
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be blank", l))
-    if post.datetime("datebroughtin", "timebroughtin") is None:
+    if post.datetime("datebroughtin", "timebroughtin") is None and not insert:
         raise asm3.utils.ASMValidationError(_("Date brought in is not valid", l))
-    if post.datetime("datebroughtin", "timebroughtin") > dbo.today(offset=30):
+    if not insert and post.datetime("datebroughtin", "timebroughtin") > dbo.today(offset=30):
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
-    if post["sheltercode"] == "":
+    if post["sheltercode"] == "" and not insert:
+        raise asm3.utils.ASMValidationError(_("Shelter code cannot be blank", l))
+    if post["sheltercode"] == "" and insert and asm3.configuration.manual_codes(dbo):
         raise asm3.utils.ASMValidationError(_("Shelter code cannot be blank", l))
     if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE ShelterCode Like ? AND ID <> ?", (post["sheltercode"], aid)) > 0:
         raise asm3.utils.ASMValidationError(_("Shelter code {0} has already been allocated to another animal.", l).format(post["sheltercode"]))
@@ -3235,15 +3239,6 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     l = dbo.locale
     nextid = dbo.get_id("animal")
     post.data["id"] = nextid
-    validate_animal_from_form(dbo, post)
-    if post["dateofbirth"] == "" or post.date("dateofbirth") is None:
-        estimatedage = post.floating("estimatedage")
-        estimateddob = 1
-        dob = subtract_years(dbo.today(), estimatedage)
-    else:
-        estimateddob = 0
-        dob = post.date("dateofbirth")
-
     # Set brought in by date
     datebroughtin = post.datetime("datebroughtin", "timebroughtin")
     if datebroughtin is None:
@@ -3251,7 +3246,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
             datebroughtin = dbo.now()
         else:
             datebroughtin = dbo.today()
-
+        post["datebroughtin"] = python2display(l, datebroughtin)
     # Set the code manually if we were given a code, or the option was turned on
     if asm3.configuration.manual_codes(dbo) or post["sheltercode"] != "":
         sheltercode = post["sheltercode"]
@@ -3261,7 +3256,16 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     else:
         # Generate a new code
         sheltercode, shortcode, unique, year = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
-
+        post["sheltercode"] = sheltercode
+    validate_animal_from_form(dbo, post, True)
+    if post["dateofbirth"] == "" or post.date("dateofbirth") is None:
+        estimatedage = post.floating("estimatedage")
+        estimateddob = 1
+        dob = subtract_years(dbo.today(), estimatedage)
+    else:
+        estimateddob = 0
+        dob = post.date("dateofbirth")
+    
     # Default good with to unknown
     goodwithcats = 2
     if "goodwithcats" in post: goodwithcats = post.integer("goodwithcats")

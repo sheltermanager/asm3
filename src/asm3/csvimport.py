@@ -730,8 +730,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
                 if animalid == 0 and dryrun:
-                    asm3.animal.validate_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale))
-                elif animalid:
+                    asm3.animal.validate_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), True)
+                elif animalid == 0:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Add any flags that were set
                     if a["flags"] != "":
@@ -1183,7 +1183,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 if dryrun:
                     asm3.log.validate_log_from_form(dbo, asm3.utils.PostedData(l, dbo.locale))
                 else:
-                    asm3.log.insert_log_from_form(dbo, asm3.utils.PostedData(l, dbo.locale))
+                    asm3.log.insert_log_from_form(dbo, user, linktype, linkid, asm3.utils.PostedData(l, dbo.locale))
             except Exception as e:
                 row_error(errors, "log", rowno, row, e, dbo, sys.exc_info())
 

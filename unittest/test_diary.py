@@ -84,6 +84,7 @@ class TestDiary(unittest.TestCase):
     def test_execute_diary_task(self):
         data = {
             "animalname": "TestioDiary",
+            "dateofbirth": "01/01/2025",
             "estimatedage": "1",
             "animaltype": "1",
             "entryreason": "1",

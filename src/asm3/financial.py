@@ -1560,10 +1560,14 @@ def delete_citation(dbo: Database, username: str, cid: int) -> None:
     """
     dbo.delete("ownercitation", cid, username)
 
-def validate_licence_from_form(dbo: Database, post: PostedData) -> bool:
+def validate_licence_from_form(dbo: Database, post: PostedData, insert: bool = False) -> bool:
     l = dbo.locale
-    if asm3.configuration.unique_licence_numbers(dbo) and 0 != dbo.query_int("SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = ?", [post["number"]]):
-        raise asm3.utils.ASMValidationError(asm3.i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
+    if insert:
+        if asm3.configuration.unique_licence_numbers(dbo) and 0 != dbo.query_int("SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = ?", [post["number"]]):
+            raise asm3.utils.ASMValidationError(asm3.i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
+    else:
+        if asm3.configuration.unique_licence_numbers(dbo) and 0 != dbo.query_int("SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = ? AND ID != ?", [post["number"], post.integer("licenceid")]):
+            raise asm3.utils.ASMValidationError(asm3.i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
     if post.date("issuedate") is None or post.date("expirydate") is None:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Issue date and expiry date must be valid dates.", l))
 

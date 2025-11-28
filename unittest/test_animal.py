@@ -23,7 +23,8 @@ class TestAnimal(unittest.TestCase):
             "species": "1",
             "internallocation": str(self.lid),
             "unit": "Iron Maiden",
-            "datebroughtin": "01/01/2025"
+            "datebroughtin": "01/01/2025",
+            "dateofbirth": "01/01/2024"
         }
         post = asm3.utils.PostedData(data, "en")
         self.nid, self.code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
