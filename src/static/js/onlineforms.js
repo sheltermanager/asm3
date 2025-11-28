@@ -88,8 +88,7 @@ $(function() {
                         options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.email_submitter_options } },
                     { json_field: "SUBMITTERREPLYADDRESS", post_field: "submitterreplyaddress", label: _("Reply address for confirmation email"), 
                         type: "text", classes: "asm-doubletextbox",
-                        tooltip: _("The reply-to email address provided by the notification email sent to the submitter."),
-                        callout: _("The reply-to email address provided by the notification email sent to the submitter.")
+                        callout: _("The reply address that will be used on the notification email sent to the submitter. If blank, the address from Settings->Options->Email will be used.")
                     },
                     { json_field: "EMAILMESSAGE", post_field: "emailmessage", label: _("Confirmation message"), type: "richtextarea", 
                         margintop: "0px", height: "100px", width: "600px",

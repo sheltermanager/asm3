@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-11-12 10:38+0000\n"
+"POT-Creation-Date: 2025-11-28 10:33+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -18,6 +18,10 @@ msgstr ""
 
 #: options.js
 msgid " days."
+msgstr ""
+
+#: animal_bulk.js
+msgid " to "
 msgstr ""
 
 #: users.js
@@ -452,6 +456,10 @@ msgid "Add Clinic Appointment"
 msgstr ""
 
 #: roles.js
+msgid "Add Conditions"
+msgstr ""
+
+#: roles.js
 msgid "Add Cost"
 msgstr ""
 
@@ -678,6 +686,10 @@ msgstr ""
 
 #: citations.js
 msgid "Add citation"
+msgstr ""
+
+#: animal_condition.js
+msgid "Add condition"
 msgstr ""
 
 #: animal_costs.js
@@ -2135,6 +2147,10 @@ msgid "Batch"
 msgstr ""
 
 #: vaccination.js
+msgid "Batch Expiry"
+msgstr ""
+
+#: vaccination.js
 msgid "Batch Number"
 msgstr ""
 
@@ -2843,6 +2859,10 @@ msgid "Change Clinic Apointment"
 msgstr ""
 
 #: roles.js
+msgid "Change Conditions"
+msgstr ""
+
+#: roles.js
 msgid "Change Cost"
 msgstr ""
 
@@ -3346,11 +3366,11 @@ msgstr ""
 #: person_find_results.js event_animals.js rota.js move_transfer.js
 #: move_retailer.js movements.js licence.js clinic_appointment.js medical.js
 #: vouchers.js waitinglist_new.js move_foster.js medicalprofile.js donations.js
-#: accounts.js animal.js vaccination.js mobile_ui_person.js staff_rota.js
-#: waitinglist_results.js move_adopt.js move_reclaim.js move_reserve.js
-#: header_edit_header.js test.js lostfound_new.js receipt_bulk.js product.js
-#: boarding.js waitinglist.js stock_level.js litters.js diary.js lostfound.js
-#: traploan.js common_widgets_comp.js
+#: animal_condition.js accounts.js animal.js vaccination.js mobile_ui_person.js
+#: staff_rota.js waitinglist_results.js move_adopt.js move_reclaim.js
+#: move_reserve.js header_edit_header.js test.js lostfound_new.js
+#: receipt_bulk.js product.js boarding.js waitinglist.js stock_level.js
+#: litters.js diary.js lostfound.js traploan.js common_widgets_comp.js
 msgid "Comments"
 msgstr ""
 
@@ -3434,6 +3454,22 @@ msgstr ""
 
 #: incident.js incident_find_results.js
 msgid "Completion Type"
+msgstr ""
+
+#: animal_condition.js
+msgid "Condition"
+msgstr ""
+
+#: lookups.js
+msgid "Condition Type"
+msgstr ""
+
+#: lookups.py
+msgid "Condition Types"
+msgstr ""
+
+#: lookups.py header_edit_header.js roles.js
+msgid "Conditions"
 msgstr ""
 
 #: html.py
@@ -4309,12 +4345,13 @@ msgstr ""
 #: rota.js onlineform.js clinic_invoice.js onlineforms.js movements.js
 #: licence.js clinic_appointment.js vouchers.js person_investigation.js
 #: diarytask.js medicalprofile.js report_images.js htmltemplates.js reports.js
-#: donations.js animal_costs.js accounts.js document_templates.js animal.js
-#: onlineform_incoming.js vaccination.js staff_rota.js waitinglist_results.js
-#: common_html.js person.js animal_bulk.js roles.js test.js event.js
-#: accounts_trx.js product.js boarding.js additional.js waitinglist.js
-#: lookups.js stock_level.js diarytasks.js litters.js common_tableform.js
-#: document_repository.js media.js diary.js lostfound.js traploan.js
+#: donations.js animal_costs.js animal_condition.js accounts.js
+#: document_templates.js animal.js onlineform_incoming.js vaccination.js
+#: staff_rota.js waitinglist_results.js common_html.js person.js animal_bulk.js
+#: roles.js test.js event.js accounts_trx.js product.js boarding.js
+#: additional.js waitinglist.js lookups.js stock_level.js diarytasks.js
+#: litters.js common_tableform.js document_repository.js media.js diary.js
+#: lostfound.js traploan.js
 msgid "Delete"
 msgstr ""
 
@@ -4336,6 +4373,10 @@ msgstr ""
 
 #: roles.js
 msgid "Delete Clinic Appointment"
+msgstr ""
+
+#: roles.js
+msgid "Delete Conditions"
 msgstr ""
 
 #: roles.js
@@ -5103,6 +5144,10 @@ msgstr ""
 msgid "Edit citation"
 msgstr ""
 
+#: animal_condition.js
+msgid "Edit condition"
+msgstr ""
+
 #: animal_costs.js
 msgid "Edit cost"
 msgstr ""
@@ -5410,6 +5455,10 @@ msgstr ""
 msgid "Email users their outstanding diary notes once per day"
 msgstr ""
 
+#: options.js
+msgid "Email users their outstanding diary notes weekly on "
+msgstr ""
+
 #: document_templates.js
 msgid "Emails"
 msgstr ""
@@ -5428,6 +5477,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "Enable FTP uploading"
+msgstr ""
+
+#: options.js
+msgid "Enable access permissions for animal records"
 msgstr ""
 
 #: options.js
@@ -5472,6 +5525,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "Enabled"
+msgstr ""
+
+#: animal_condition.js
+msgid "End"
 msgstr ""
 
 #: html.py event_find_results.js animal.js event.js event_new.js
@@ -9066,7 +9123,7 @@ msgstr ""
 msgid "Media"
 msgstr ""
 
-#: lookups.py
+#: lookups.py onlineforms.js
 msgid "Media Flags"
 msgstr ""
 
@@ -9668,6 +9725,10 @@ msgstr ""
 
 #: citations.js
 msgid "New Citation"
+msgstr ""
+
+#: animal_condition.js
+msgid "New Condition"
 msgstr ""
 
 #: animal_costs.js
@@ -10281,6 +10342,10 @@ msgstr ""
 msgid "Only active accounts"
 msgstr ""
 
+#: animal.js
+msgid "Only allow users with one of these roles to view this animal record"
+msgstr ""
+
 #: incident.js incident_new.js
 msgid "Only allow users with one of these roles to view this incident"
 msgstr ""
@@ -10359,6 +10424,14 @@ msgstr ""
 msgid ""
 "Optional, the date the vaccination "wears off" and needs to be administered "
 "again"
+msgstr ""
+
+#: vaccination.js
+msgid "Optional, the use by date provided by the manufacturer"
+msgstr ""
+
+#: vaccination.js
+msgid "Optional. The manufacturer use by date from the vaccine packaging"
 msgstr ""
 
 #: html.py main.js options.js additional.js
@@ -12000,6 +12073,10 @@ msgid "Remove the document repository functionality from menus"
 msgstr ""
 
 #: options.js
+msgid "Remove the end date and time fields when displaying and editing diary notes"
+msgstr ""
+
+#: options.js
 msgid "Remove the entry history section from animal records"
 msgstr ""
 
@@ -12139,6 +12216,10 @@ msgstr ""
 
 #: options.js
 msgid "Replies to the fosterer email should go to"
+msgstr ""
+
+#: onlineforms.js
+msgid "Reply address for confirmation email"
 msgstr ""
 
 #: reports.py reports.js animal.js common_html.js person.js
@@ -14000,6 +14081,10 @@ msgstr ""
 msgid "Standardbred"
 msgstr ""
 
+#: animal_condition.js
+msgid "Start"
+msgstr ""
+
 #: html.py wordprocessor.py animal_diet.js medical.js event_find_results.js
 #: animal.js event.js event_new.js
 msgid "Start Date"
@@ -14261,7 +14346,7 @@ msgstr ""
 msgid "Superuser"
 msgstr ""
 
-#: common_html.js header_edit_header.js product.js lookups.js
+#: common_html.js header_edit_header.js accounts_trx.js product.js lookups.js
 msgid "Supplier"
 msgstr ""
 
@@ -14727,6 +14812,12 @@ msgstr ""
 
 #: stock_level.js
 msgid "The remaining units in the container"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The reply address that will be used on the notification email sent to the "
+"submitter. If blank, the address from Settings->Options->Email will be used."
 msgstr ""
 
 #: stock_level.js
@@ -15312,7 +15403,7 @@ msgstr ""
 msgid "Tiger"
 msgstr ""
 
-#: dbupdate.py log.js log_new.js onlineform.js diary.js
+#: dbupdate.py log.js log_new.js onlineform.js
 msgid "Time"
 msgstr ""
 
@@ -15706,14 +15797,14 @@ msgstr ""
 #: boarding_availability.js transport.js incident_new.js rota.js onlineform.js
 #: movements.js licence.js clinic_appointment.js medical.js vouchers.js
 #: report_criteria.js medicalprofile.js person_links.js licence_renewal.js
-#: csvimport_stripe.js reports.js donations.js animal_costs.js accounts.js
-#: animal.js vaccination.js mobile_ui_person.js staff_rota.js common_html.js
-#: animal_bulk.js mailmerge.js mobile_ui_incident.js options.js test.js
-#: animal_find.js accounts_trx.js receipt_bulk.js product.js boarding.js
-#: additional.js common_animalchooser.js diarytasks.js mobile_ui_addanimal.js
-#: document_repository.js reports_querybuilder.js media.js animal_new.js
-#: csvimport_paypal.js mobile_ui_animal.js traploan.js common_widgets_comp.js
-#: mobile_report.js
+#: csvimport_stripe.js reports.js donations.js animal_costs.js
+#: animal_condition.js accounts.js animal.js vaccination.js mobile_ui_person.js
+#: staff_rota.js common_html.js animal_bulk.js mailmerge.js
+#: mobile_ui_incident.js options.js test.js animal_find.js accounts_trx.js
+#: receipt_bulk.js product.js boarding.js additional.js common_animalchooser.js
+#: diarytasks.js mobile_ui_addanimal.js document_repository.js
+#: reports_querybuilder.js media.js animal_new.js csvimport_paypal.js
+#: mobile_ui_animal.js traploan.js common_widgets_comp.js mobile_report.js
 msgid "Type"
 msgstr ""
 
@@ -15862,6 +15953,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Unsuitable Accomodation"
+msgstr ""
+
+#: diary.js
+msgid "Until"
 msgstr ""
 
 #: main.js header.js options.js
@@ -16251,6 +16346,10 @@ msgid "View Clinic Appointment"
 msgstr ""
 
 #: roles.js
+msgid "View Conditions"
+msgstr ""
+
+#: roles.js
 msgid "View Consulting Room"
 msgstr ""
 
@@ -16350,7 +16449,7 @@ msgstr ""
 msgid "View Report"
 msgstr ""
 
-#: incident.js incident_new.js reports.js accounts.js person.js
+#: incident.js incident_new.js reports.js accounts.js animal.js person.js
 msgid "View Roles"
 msgstr ""
 
@@ -17154,6 +17253,10 @@ msgstr ""
 msgid "Zipcode contains"
 msgstr ""
 
+#: lookups.js
+msgid "Zoonotic"
+msgstr ""
+
 #: mailmerge.js
 msgid "[ {0}/{1} in the last {2} hours ]"
 msgstr ""
@@ -17340,7 +17443,8 @@ msgstr ""
 
 #: animal_diet.js log.js transport.js movements.js licence.js
 #: clinic_appointment.js medical.js vouchers.js donations.js animal_costs.js
-#: animal.js vaccination.js test.js boarding.js media.js diary.js
+#: animal_condition.js animal.js vaccination.js test.js boarding.js media.js
+#: diary.js
 msgid "{0} - {1} ({2} {3} aged {4})"
 msgstr ""
 
@@ -17436,6 +17540,10 @@ msgstr ""
 
 #: reports_querybuilder.js
 msgid "{0} test result"
+msgstr ""
+
+#: common.js
+msgid "{0} to {1}"
 msgstr ""
 
 #: medical.py
