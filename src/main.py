@@ -2126,6 +2126,40 @@ class animal_diary(JSONEndpoint):
             "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
+class animal_condition(JSONEndpoint):
+    url = "animal_condition"
+    get_permissions = asm3.users.VIEW_DIET
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = asm3.animal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        self.check_animal(a)
+        animalconditions = asm3.animal.get_animalconditions(dbo, animalid)
+        conditions = asm3.lookups.get_conditions(dbo)
+        asm3.al.debug("got %d conditions for animal %s %s" % (len(conditions), a["CODE"], a["ANIMALNAME"]), "main.animal_condition", dbo)
+        return {
+            "rows": animalconditions,
+            "conditions": conditions,
+            "animal": a,
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
+            "diettypes": asm3.lookups.get_diets(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_CONDITION)
+        return str(asm3.animal.insert_animalcondition_from_form(o.dbo, o.user, o.post))
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_CONDITION)
+        asm3.animal.update_animalcondition_from_form(o.dbo, o.user, o.post)
+        
+    def post_delete(self, o):
+        self.check( asm3.users.DELETE_CONDITION)
+        for did in o.post.integer_list("ids"):
+            asm3.animal.delete_animalcondition(o.dbo, o.user, did)
+
 class animal_diet(JSONEndpoint):
     url = "animal_diet"
     get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_DIET )
@@ -4693,6 +4727,8 @@ class lookups(JSONEndpoint):
             "namefield": table[1].upper(),
             "namelabel": table[2],
             "descfield": table[3].upper(),
+            "hasconditiontype": "conditiontype" in modifiers,
+            "haszoonotic": "haszoonotic" in modifiers,
             "hasspecies": "species" in modifiers,
             "hastaxrate": "taxrate" in modifiers,
             "haspfspecies": "pubspec" in modifiers,
@@ -4708,6 +4744,7 @@ class lookups(JSONEndpoint):
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
             "accounts": asm3.financial.get_accounts(dbo, onlyactive=True),
+            "conditiontypes": asm3.lookups.get_condition_types(dbo),
             "species": asm3.lookups.get_species(dbo),
             "tables": asm3.html.json_lookup_tables(l)
         }
@@ -4715,12 +4752,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
 
     def post_update(self, o):
         post = o.post
         asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
