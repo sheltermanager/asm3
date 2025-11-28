@@ -195,6 +195,7 @@ DEFAULTS = {
     "DisableAnimalControl": "No",
     "DisableBoarding": "Yes",
     "DisableClinic": "No",
+    "DisableConditions": "Yes",
     "DisableEntryHistory": "Yes",
     "DisableEvents": "Yes",
     "DisableStockControl": "No",

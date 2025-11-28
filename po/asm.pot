@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-11-28 10:33+0000\n"
+"POT-Creation-Date: 2025-11-28 10:59+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -12034,6 +12034,10 @@ msgstr ""
 
 #: options.js
 msgid "Remove the adoption fee field from animal details"
+msgstr ""
+
+#: options.js
+msgid "Remove the animal conditions tab"
 msgstr ""
 
 #: options.js

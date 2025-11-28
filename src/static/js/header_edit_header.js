@@ -249,11 +249,11 @@ edit_header = {
         ].join("\n");
         var tabs = [[ "animal", "animal", _("Animal"), "", "va" ],
             [ "vaccination", "animal_vaccination", _("Vaccination"), "vaccination", "vav" ],
-            [ "condition", "animal_condition", _("Conditions"), "health", "vaco" ],
             [ "test", "animal_test", _("Test"), "test", "vat" ],
             [ "medical", "animal_medical", _("Medical"), "medical", "mvam" ],
             [ "boarding", "animal_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "animal_clinic", _("Clinic"), "health", "vcl" ],
+            [ "condition", "animal_condition", _("Conditions"), "health", "vaco" ],
             [ "licence", "animal_licence", _("License"), "licence", "vapl" ],
             [ "diet", "animal_diet", _("Diet"), "diet", "dvad" ],
             [ "costs", "animal_costs", _("Costs"), "cost", "cvad" ],
@@ -269,6 +269,7 @@ edit_header = {
             if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "boarding") && a.HASACTIVEBOARDING == 0 && a.ARCHIVED == 0) { return; } // don't show boarding tab for non-owned shelter animals
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
+            if ((key == "condition") && config.bool("DisableConditions")) { return; }
             if ((key == "licence") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
             if ((key == "movements") && a.NONSHELTERANIMAL == 1) { return; }
