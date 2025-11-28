@@ -215,7 +215,7 @@ const tableform = {
 
     /** Formats a value as a time, returning blank for midnight */
     format_time_blank: function(row, v) {
-        return (format.time(v) == "00:00:00" ? "" : format.time(v));
+        return format.time(v, null, true);
     },
 
     /**
