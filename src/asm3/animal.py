@@ -163,7 +163,7 @@ class LocationFilter(object):
 
     def reduce(self, rows: Results, animalidcolumn: str = "ANIMALID") -> Results:
         """
-        Given a resultset of rows, removes all rows that are no present in visibleanimalids.
+        Given a resultset of rows, removes all rows that are not present in visibleanimalids.
         """
         if self.visibleanimalids == "": return rows
         rowsout = []
@@ -970,6 +970,7 @@ def get_animal(dbo: Database, animalid: int) -> ResultRow:
     a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
     calc_ages(dbo, [a])
     embellish_mother(dbo, a)
+    asm3.users.embellish_vieweditroles(dbo, "animalrole", "AnimalID", animalid, a)
     return a
 
 def get_animal_sheltercode(dbo: Database, code: str) -> ResultRow:
@@ -3668,6 +3669,9 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, aid)
 
+    # Update roles needed to view
+    update_animal_roles(dbo, aid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
     # If this animal is part of a litter, update its counts
     if post["litterid"] != "":
         update_litter_count(dbo, post["litterid"])
@@ -3838,6 +3842,15 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
         for animalid in post.integer_list("animals"):
             asm3.audit.edit(dbo, username, "animal", animalid, "", ", ".join(aud))
     return len(post.integer_list("animals"))
+
+def update_animal_roles(dbo: Database, aid: int, viewroles: List[int], editroles: List[int]) -> None:
+    """
+    Updates the view and edit roles for an animal record
+    aid:       The animal ID
+    viewroles:  a list of integer role ids
+    editroles:  a list of integer role ids
+    """
+    asm3.users.update_role_table(dbo, "animalrole", "AnimalID", aid, viewroles, editroles)
 
 def update_deceased_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """

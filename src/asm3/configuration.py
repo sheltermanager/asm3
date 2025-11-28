@@ -54,6 +54,7 @@ DEFAULTS = {
     "AnimalNameChangeLog": "No",
     "AnimalNameChangeLogType": "3",
     "AnimalFiguresSplitEntryReason": "No",
+    "AnimalPermissions": "No",
     "AnimalSearchResultsNewTab": "No",
     "PersonSearchResultsNewTab": "No",
     "AnnualFiguresShowBabies": "Yes",
@@ -362,6 +363,7 @@ DEFAULTS = {
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
+    "PersonPermissions": "No",
     "PetFinderSendStrays": "No",
     "PetFinderSendHolds": "No",
     "PetFinderSendAdopted": "No",

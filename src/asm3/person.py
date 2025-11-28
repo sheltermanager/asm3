@@ -79,23 +79,7 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = ?", [personid]) )
     if p is None: return None
     p = embellish_latest_movement(dbo, p)
-    roles = dbo.query("SELECT ownerrole.*, role.RoleName FROM ownerrole " \
-        "INNER JOIN role ON ownerrole.RoleID = role.ID WHERE ownerrole.OwnerID = ?", [personid])
-    viewroleids = []
-    viewrolenames = []
-    editroleids = []
-    editrolenames = []
-    for r in roles:
-        if r.canview == 1:
-            viewroleids.append(str(r.roleid))
-            viewrolenames.append(str(r.rolename))
-        if r.canedit == 1:
-            editroleids.append(str(r.roleid))
-            editrolenames.append(str(r.rolename))
-    p["VIEWROLEIDS"] = "|".join(viewroleids)
-    p["VIEWROLES"] = "|".join(viewrolenames)
-    p["EDITROLEIDS"] = "|".join(editroleids)
-    p["EDITROLES"] = "|".join(editrolenames)
+    p = asm3.users.embellish_vieweditroles(dbo, "ownerrole", "OwnerID", personid, p)
     return p
 
 def get_person_embedded(dbo: Database, personid: int) -> ResultRow:
@@ -1300,24 +1284,7 @@ def update_person_roles(dbo: Database, pid: int, viewroles: List[int], editroles
     viewroles:  a list of integer role ids
     editroles:  a list of integer role ids
     """
-    dbo.execute("DELETE FROM ownerrole WHERE OwnerID = ?", [pid])
-    for rid in viewroles:
-        dbo.insert("ownerrole", {
-            "OwnerID":          pid,
-            "RoleID":           rid,
-            "CanView":          1,
-            "CanEdit":          0
-        }, generateID=False)
-    for rid in editroles:
-        if rid in viewroles:
-            dbo.execute("UPDATE ownerrole SET CanEdit = 1 WHERE OwnerID = ? AND RoleID = ?", (pid, rid))
-        else:
-            dbo.insert("ownerrole", {
-                "OwnerID":          pid,
-                "RoleID":           rid,
-                "CanView":          0,
-                "CanEdit":          1
-            }, generateID=False)
+    asm3.users.update_role_table(dbo, "ownerrole", "OwnerID", pid, viewroles, editroles)
 
 def update_add_flag(dbo: Database, username: str, personid: int, flag: str) -> None:
     """
