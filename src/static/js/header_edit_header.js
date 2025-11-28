@@ -253,7 +253,7 @@ edit_header = {
             [ "medical", "animal_medical", _("Medical"), "medical", "mvam" ],
             [ "boarding", "animal_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "animal_clinic", _("Clinic"), "health", "vcl" ],
-            [ "condition", "animal_condition", _("Conditions"), "health", "vaco" ],
+            [ "condition", "animal_condition", _("Conditions"), "condition", "vaco" ],
             [ "licence", "animal_licence", _("License"), "licence", "vapl" ],
             [ "diet", "animal_diet", _("Diet"), "diet", "dvad" ],
             [ "costs", "animal_costs", _("Costs"), "cost", "cvad" ],
