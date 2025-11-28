@@ -380,6 +380,7 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "a.ID AS DonationAnimalID, " \
         "o.ID AS DonationOwnerID, o.OwnerName AS DonationOwnerName, " \
         "oac.ID AS CostOwnerID, oac.OwnerName AS CostOwnerName, " \
+        "s.OwnerName AS OwnerName, " \
         "a.AnimalName AS DonationAnimalName, " \
         "od.ReceiptNumber AS DonationReceiptNumber, " \
         "dt.DonationName AS DonationTypeName, " \
@@ -409,6 +410,7 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "LEFT OUTER JOIN animalcost ac ON ac.ID = t.AnimalCostID " \
         "LEFT OUTER JOIN owner oac ON oac.ID = ac.OwnerID " \
         "LEFT OUTER JOIN animal aca ON aca.ID = ac.AnimalID " \
+        "LEFT OUTER JOIN owner s ON t.OwnerID = s.ID " \
         "WHERE t.TrxDate >= %s AND t.TrxDate <= %s%s " \
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \
         "ORDER BY t.TrxDate, t.ID" % ( dbo.sql_date(datefrom, includeTime=False), dbo.sql_date(dateto, includeTime=False), recfilter, accountid, accountid))
@@ -1064,7 +1066,8 @@ def update_matching_cost_transaction(dbo: Database, username: str, acid: int, de
         "SourceAccountID":  source,
         "DestinationAccountID": target,
         "OwnerDonationID":  0,
-        "AnimalCostID":     acid
+        "AnimalCostID":     acid,
+        "OwnerID":          c.OWNERID
     }, username)
     asm3.al.debug("Trx created with ID %d" % tid, "financial.update_matching_cost_transaction", dbo)
 
@@ -1161,7 +1164,8 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
         "SourceAccountID":      source,
         "DestinationAccountID": target,
         "AnimalCostID":         0,
-        "OwnerDonationID":      odid
+        "OwnerDonationID":      odid,
+        "OwnerID":              d.OWNERID
     }, username)
     asm3.al.debug("Trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
@@ -1179,7 +1183,8 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
             "SourceAccountID":      vatac,
             "DestinationAccountID": target,
             "AnimalCostID":         0,
-            "OwnerDonationID":      odid
+            "OwnerDonationID":      odid,
+            "OwnerID":              d.OWNERID
         }, username)
         asm3.al.debug("VAT trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
@@ -1197,7 +1202,8 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
             "SourceAccountID":      target,
             "DestinationAccountID": feeac,
             "AnimalCostID":         0,
-            "OwnerDonationID":      odid
+            "OwnerDonationID":      odid,
+            "OwnerID":              d.OWNERID
         }, username)
         asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
@@ -1349,7 +1355,8 @@ def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
         "Amount":               amount,
         "SourceAccountID":      source,
         "DestinationAccountID": target,
-        "OwnerDonationID":      0
+        "OwnerDonationID":      0,
+        "OwnerID":              0
     }, username)
 
 def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
@@ -1383,7 +1390,8 @@ def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
         "Reconciled":           post.boolean("reconciled"),
         "Amount":               amount,
         "SourceAccountID":      source,
-        "DestinationAccountID": target
+        "DestinationAccountID": target,
+        "OwnerID":              post.integer("supplier")
     }, username)
 
 def delete_trx(dbo: Database, username: str, tid: int) -> None:
