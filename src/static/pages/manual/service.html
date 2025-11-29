@@ -974,8 +974,12 @@ results to be in. The default is adoption date descending. Options are:</p>
 <li><p>litterid_asc / litterid_desc - animal litter ID</p></li>
 <li><p>name_asc / name_desc - animal name</p></li>
 </ul>
-<p>You can also pass a “days” parameter to indicate how far you would like to
-go back. If you do not set it, the default is anihttps://service.sheltermanager.com/asmservice?account=robin&amp;method=html_found_animals&amp;order=code_asc</p>
+<p>You can also pass a “days” parameter to indicate how far you would like to go
+back. If you do not set it, the default is animals adopted in the last 30 days:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_adopted_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60
+http://localhost:5000/service?method=html_adopted_animals&amp;order=adopted_asc
+</pre></div>
+</div>
 </section>
 <section id="html-deceased-animals">
 <h2>html_deceased_animals<a class="headerlink" href="#html-deceased-animals" title="Link to this heading">¶</a></h2>
