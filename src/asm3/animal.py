@@ -3208,7 +3208,6 @@ def validate_animal_from_form(dbo: Database, post: PostedData, insert: bool = Fa
         raise asm3.utils.ASMValidationError(_("Date of birth is not valid", l))
     elif post.date("dateofbirth") > dbo.today():
         raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    
     if post["datebroughtin"] == "" and not insert:
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be blank", l))
     if post.datetime("datebroughtin", "timebroughtin") is None and not insert:

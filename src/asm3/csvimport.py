@@ -1285,7 +1285,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     if htmlresults:
         h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
         for rowno, row, err in errors:
-            h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
+            h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row.replace("|", "&#1234;"), err))
         h.append("</table>")
         return "".join(h)
     else:
