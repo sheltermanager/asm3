@@ -3927,11 +3927,14 @@ def update_diary_linkinfo(dbo: Database, animalid: int, a: ResultRow = None, dia
 def update_animallocation(dbo: Database, animalid: int, username: str):
     """ Checks and rebuilds the animallocation entries for animalid based on deceased date movements """
     # Grab all data relevant to animal movement/death
-    animaldata = dbo.query("SELECT ShelterCode, AnimalName, DateBroughtIn, DeceasedDate FROM animal WHERE ID = ?", (animalid,))[0]
-    entrydate = asm3.i18n.remove_time(animaldata.DATEBROUGHTIN)
-    deceaseddate = asm3.i18n.remove_time(animaldata.DECEASEDDATE)
-    animalname = animaldata.ANIMALNAME
-    sheltercode = animaldata.SHELTERCODE
+    a = dbo.first_row(dbo.query("SELECT ShelterCode, AnimalName, DateBroughtIn, DeceasedDate, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID = ?", [animalid]))
+    if a is None: return
+    entrydate = asm3.i18n.remove_time(a.DATEBROUGHTIN)
+    deceaseddate = a.DECEASEDDATE
+    animalname = a.ANIMALNAME
+    sheltercode = a.SHELTERCODE
+    curlocid = a.SHELTERLOCATION
+    curunit = a.SHELTERLOCATIONUNIT
     movetypes = ['1', '3', '4', '5', '6', '7']
     if not asm3.configuration.foster_on_shelter(dbo):
         movetypes.append('2')
@@ -4044,8 +4047,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                         (asm3.i18n.remove_time(movementrow.RETURNDATE), locationrow.ID))
             else:
                 # No return location was found, need to create one
-                fromid, fromunit = find_location_before(movementrow.MOVEMENTDATE)
-                insert_animallocation(dbo, username, animalid, animalname, sheltercode, 0, '*', fromid, fromunit, 
+                insert_animallocation(dbo, username, animalid, animalname, sheltercode, 0, '*', curlocid, curunit, 
                     movementid=movementrow.ID, date=movementrow.RETURNDATE)
     if deceaseddate:
         # Animal is deceased

@@ -12,9 +12,8 @@ class TestAnimal(unittest.TestCase):
     nid = 0
 
     def setUp(self):
-        self.lid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "internallocation", "The Dungeon", "Just a test location")
-        self.lid2 = asm3.lookups.insert_lookup(base.get_dbo(), "test", "internallocation", "The Trainspotting Toilet", "Just a test location")
-
+        self.lid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "internallocation", "Location 1", "")
+        self.lid2 = asm3.lookups.insert_lookup(base.get_dbo(), "test", "internallocation", "Location 2", "")
         data = {
             "animalname": "Testio",
             "estimatedage": "1",
@@ -22,48 +21,37 @@ class TestAnimal(unittest.TestCase):
             "entryreason": "1",
             "species": "1",
             "internallocation": str(self.lid),
-            "unit": "Iron Maiden",
+            "unit": "Unit 1",
             "datebroughtin": "01/01/2025"
         }
         post = asm3.utils.PostedData(data, "en")
         self.nid, self.code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
 
     def tearDown(self):
-        base.get_dbo().execute(
-            "DELETE FROM animallocation WHERE AnimalID = ?",
-            (self.nid,)
-        )
-        base.get_dbo().execute(
-            "DELETE FROM adoption WHERE AnimalID = ?",
-            (self.nid,)
-        )
+        base.get_dbo().execute("DELETE FROM animallocation WHERE AnimalID = ?", [self.nid])
+        base.get_dbo().execute("DELETE FROM adoption WHERE AnimalID = ?", [self.nid])
         asm3.animal.delete_animal(base.get_dbo(), "test", self.nid)
         asm3.lookups.delete_lookup(base.get_dbo(), "test", "internallocation", self.lid)
         asm3.lookups.delete_lookup(base.get_dbo(), "test", "internallocation", self.lid2)
     
     def test_update_animallocation(self):
         def get_animallocation_rows(dbo, animalid):
-            return dbo.query(
-                "SELECT * FROM animallocation WHERE AnimalID = ?",
-                (animalid,)
-            )
-        def print_animallocation_rows(rows):
+            return dbo.query("SELECT * FROM animallocation WHERE AnimalID = ?", [animalid])
+        def print_animallocation_rows(evname, rows):
+            return # uncomment this for debug info about the animallocation rows when running tests
+            print(evname)
+            print("====================\n")
             for row in rows:
-                # print(str(row))
-                pass
-            # print()
+                print(str(row))
+            print()
         
         dbo = base.get_dbo()
-        ## Create an animal
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(1, len(animallocationrows)) ## Expect a single row representing the animal entering the shelter
+        print_animallocation_rows("Before any changes (1)", animallocationrows)
+        self.assertEqual(1, len(animallocationrows)) # Expect a single row representing the animal entering the shelter
         
-        arv = dbo.query(
-            "SELECT RecordVersion FROM animal WHERE ID = ?",
-            (self.nid,)
-        )[0]["RECORDVERSION"]
-        ## Move animal internally
+        # Move animal internally
+        arv = dbo.first_row(dbo.query("SELECT RecordVersion FROM animal WHERE ID = ?", (self.nid,))).RECORDVERSION
         data = {
             "id": str(self.nid),
             "animalname": "Testio",
@@ -74,35 +62,16 @@ class TestAnimal(unittest.TestCase):
             "entryreason": "1",
             "species": "1",
             "internallocation": str(self.lid2),
-            "unit": "Cubicle 3",
+            "unit": "Unit 2",
             "recordversion": str(arv)
         }
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
+        print_animallocation_rows("Move animal internally (2)", animallocationrows)
         self.assertEqual(2, len(animallocationrows))
 
-        ## Adopt out animal
-        data = {
-            "animal": str(self.nid),
-            "person": "1",
-            "movementdate": base.today_display(),
-            "type": "1"
-        }
-        post = asm3.utils.PostedData(data, "en")
-        mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
-
-        animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows))
-
-        asm3.movement.delete_movement(dbo, "test", mid)
-        animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows))
-
-        ## Adopt out animal BEFORE most recent movement
+        # Adopt out animal
         data = {
             "animal": str(self.nid),
             "person": "1",
@@ -111,12 +80,11 @@ class TestAnimal(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
-
         animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows("Adopt out animal - removes internal movement (2)", animallocationrows)
         self.assertEqual(2, len(animallocationrows))
-        print_animallocation_rows(animallocationrows)
 
-        ## Return from adoption
+        # Return from adoption
         data = {
             "movementid": str(mid),
             "animal": str(self.nid),
@@ -128,14 +96,17 @@ class TestAnimal(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         asm3.movement.update_movement_from_form(dbo, "test", post)
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(2, len(animallocationrows))
+        print_animallocation_rows("Return from adoption (3)", animallocationrows)
+        self.assertEqual(3, len(animallocationrows))
 
-        arv = dbo.query(
-            "SELECT RecordVersion FROM animal WHERE ID = ?",
-            (self.nid,)
-        )[0]["RECORDVERSION"]
-        ## Kill animal
+        # Delete adoption
+        asm3.movement.delete_movement(dbo, "test", mid)
+        animallocationrows = get_animallocation_rows(dbo, self.nid)
+        print_animallocation_rows("Delete adoption (1)", animallocationrows)
+        self.assertEqual(1, len(animallocationrows))
+
+        # Kill animal
+        arv = dbo.first_row(dbo.query("SELECT RecordVersion FROM animal WHERE ID = ?", (self.nid,))).RECORDVERSION
         data = {
             "id": str(self.nid),
             "animalname": "Testio",
@@ -147,20 +118,17 @@ class TestAnimal(unittest.TestCase):
             "entryreason": "1",
             "species": "1",
             "internallocation": str(self.lid2),
-            "unit": "Cubicle 3",
+            "unit": "Unit 2",
             "recordversion": str(arv)
         }
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(4, len(animallocationrows))
+        print_animallocation_rows("Kill animal (2)", animallocationrows)
+        self.assertEqual(2, len(animallocationrows))
 
-        ## Change deceased date
-        arv = dbo.query(
-            "SELECT RecordVersion FROM animal WHERE ID = ?",
-            (self.nid,)
-        )[0]["RECORDVERSION"]
+        # Change deceased date
+        arv = dbo.first_row(dbo.query("SELECT RecordVersion FROM animal WHERE ID = ?", (self.nid,))).RECORDVERSION
         data = {
             "id": str(self.nid),
             "animalname": "Testio",
@@ -172,20 +140,17 @@ class TestAnimal(unittest.TestCase):
             "entryreason": "1",
             "species": "1",
             "internallocation": str(self.lid2),
-            "unit": "Cubicle 3",
+            "unit": "Unit 2",
             "recordversion": str(arv)
         }
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(4, len(animallocationrows)) ## Expect four rows as number of movements has not changed
+        print_animallocation_rows("Change deceased date (2)", animallocationrows)
+        self.assertEqual(2, len(animallocationrows))
 
-        ## Remove deceased date
-        arv = dbo.query(
-            "SELECT RecordVersion FROM animal WHERE ID = ?",
-            (self.nid,)
-        )[0]["RECORDVERSION"]
+        # Remove deceased date
+        arv = dbo.first_row(dbo.query("SELECT RecordVersion FROM animal WHERE ID = ?", (self.nid,))).RECORDVERSION
         data = {
             "id": str(self.nid),
             "animalname": "Testio",
@@ -196,14 +161,14 @@ class TestAnimal(unittest.TestCase):
             "entryreason": "1",
             "species": "1",
             "internallocation": str(self.lid2),
-            "unit": "Cubicle 3",
+            "unit": "Unit 2",
             "recordversion": str(arv)
         }
         post = asm3.utils.PostedData(data, "en")
         asm3.animal.update_animal_from_form(dbo, post, "test")
         animallocationrows = get_animallocation_rows(dbo, self.nid)
-        print_animallocation_rows(animallocationrows)
-        self.assertEqual(3, len(animallocationrows))
+        print_animallocation_rows("Remove deceased date (1)", animallocationrows)
+        self.assertEqual(1, len(animallocationrows))
 
     def test_get_animal(self):
         self.assertIsNotNone(asm3.animal.get_animal(base.get_dbo(), self.nid))
