@@ -835,6 +835,7 @@ $.fn.personchooser = asm_widget({
         else if (f == "donor") { title = _("Find donor"); }
         else if (f == "driver") { title = _("Find driver"); }
         else if (f == "sponsor") { title = _("Find sponsor"); }
+        else if (f == "supplier") { title = _("Find supplier"); }
         else { title = _("Find person"); }
         t.data("title", title);
         if (t.data("dialog")) {
