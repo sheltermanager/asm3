@@ -854,8 +854,6 @@ def get_video_thumbnail(dbo: Database, dbfsid: int) -> bytes:
     inputfile.close()
     outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
 
-    # os.system("ffmpeg -v 0 -y -an -i \"" + inputfile.name + "\" -ss '00:00:2.000' -vframes 1 \"" + outputfile.name + "\" > /dev/null")
-
     os.system(VIDEO_THUMBNAIL_CMD % { "output": outputfile.name, "input": inputfile.name})
 
     idata = outputfile.read()
