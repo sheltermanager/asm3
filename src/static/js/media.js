@@ -76,7 +76,7 @@ $(function() {
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
-                    if (rows.length == 1 && rows[0].MEDIATYPE == 2) {
+                    if (rows.length == 1 && (rows[0].MEDIATYPE == 2 || rows[0].MEDIAMIMETYPE == "video/mp4")) {
                         $("#button-video").button("option", "disabled", false);
                     }
                     // Only allow the image buttons to be pressed if the
@@ -189,7 +189,7 @@ $(function() {
         render: function() {
             this.model();
             let htmlinfo = _("Please select a PDF, HTML or JPG image file to attach")
-            if (!config.bool("DisableVideoSupport")) {
+            if (controller.videoenabled) {
                 htmlinfo = _("Please select a PDF, HTML, MP4 or JPG image file to attach")
             }
             let h = [
@@ -483,8 +483,8 @@ $(function() {
                 return deferred.promise();
             }
 
-            if (config.bool("DisableVideoSupport") && media.is_extension(file.name, "mp4")) {
-                header.show_error(_("Video support is currently disabled. It may be enabled via the options."));
+            if (!controller.videoenabled && media.is_extension(file.name, "mp4")) {
+                header.show_error(_("Video support is currently disabled."));
                 deferred.resolve();
                 return deferred.promise();
             }
@@ -641,8 +641,8 @@ $(function() {
                 return;
             }
 
-            if (config.bool("DisableVideoSupport") && media.is_extension(fname, "mp4")) {
-                header.show_error(_("Video support is currently disabled. It may be enabled via the options."));
+            if (!controller.videoenabled && media.is_extension(fname, "mp4")) {
+                header.show_error(_("Video support is currently disabled."));
                 return;
             }
 

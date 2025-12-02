@@ -7,7 +7,7 @@ import asm3.dbfs
 import asm3.log
 import asm3.utils
 from asm3.i18n import _
-from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, WATERMARK_FONT_BASEDIRECTORY
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, VIDEO_ENABLED, VIDEO_THUMBNAIL_CMD, WATERMARK_FONT_BASEDIRECTORY
 from asm3.typehints import Database, Dict, PostedData, ResultRow, Results, Tuple
 
 from datetime import datetime
@@ -95,6 +95,11 @@ def get_web_preferred(dbo: Database, linktype: int, linkid: int) -> ResultRow:
     """ Returns the media record for the web preferred (or None if there isn't one) """
     return dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
         "LinkID = ? AND WebsitePhoto = 1", (linktype, linkid)))
+
+def get_web_preferred_video(dbo: Database, linktype: int, linkid: int) -> ResultRow:
+    """ Returns the media record for the web preferred (or None if there isn't one) """
+    return dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
+        "LinkID = ? AND WebsiteVideo = 1", (linktype, linkid)))
 
 def get_media_by_seq(dbo: Database, linktype: int, linkid: int, seq: int) -> ResultRow:
     """ Returns image media by a one-based sequence number. 
@@ -269,6 +274,100 @@ def get_image_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
     
     elif mode == "foundanimalthumb":
         return thumb_mrec( get_web_preferred(dbo, FOUNDANIMAL, iid) )
+
+    elif mode == "media":
+        return mrec( get_media_by_id(dbo, iid) )
+
+    elif mode == "dbfs":
+        if justdate:
+            return dbo.now()
+        else:
+            if sid.startswith("/"):
+                # Complete path was given
+                return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, sid))
+            else:
+                # Only name was given
+                return (dbo.now(), asm3.dbfs.get_string(dbo, sid))
+
+    elif mode == "nopic":
+        if asm3.dbfs.file_exists(dbo, "nopic.jpg"):
+            return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, "/reports/nopic.jpg"))
+        else:
+            return (dbo.now(), asm3.utils.read_binary_file(dbo.installpath + "media/reports/nopic.jpg"))
+
+    else:
+        return nopic()
+
+def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, justdate: bool = False) -> Tuple[datetime, bytes]:
+    """
+    Gets a video
+    mode: animal | media | animalthumb | person | personthumb | dbfs
+    iid: (str) The id of the animal for animal/thumb mode or the media record
+        or a template path for dbfs mode
+    seq: (int) If the mode is animal or person, returns image X for that person/animal
+         The first image is always the preferred photo and seq is 1-based.
+    if justdate is True, returns the last modified date
+    if justdate is False, returns a tuple containing the last modified date and image data
+    """
+    def nopic():
+        NOPIC_DATE = datetime(2011, 1, 1)
+        if justdate: return NOPIC_DATE
+        return (NOPIC_DATE, b"NOPIC")
+    def thumb_nopic():
+        NOPIC_DATE = datetime(2011, 1, 1)
+        if justdate: return NOPIC_DATE
+        return (NOPIC_DATE, b"NOPIC")
+    def mrec(mm):
+        if mm is None: return nopic()
+        if justdate: return mm.DATE
+        return (mm.DATE, asm3.dbfs.get_string_id(dbo, mm.DBFSID))
+    def thumb_mrec(mm):
+        if mm is None: return thumb_nopic()
+        if justdate: return mm.DATE
+        return (mm.DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm.DBFSID), asm3.configuration.thumbnail_size(dbo)))
+
+    sid = str(iid)
+    iid = asm3.utils.cint(iid)
+
+    if mode == "animal":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, ANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, ANIMAL, iid, seq) )
+    elif mode == "person":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, PERSON, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, PERSON, iid, seq) )
+    if mode == "waitinglist":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, WAITINGLIST, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, WAITINGLIST, iid, seq) )
+    if mode == "lostanimal":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, LOSTANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, LOSTANIMAL, iid, seq) )
+    if mode == "foundanimal":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, FOUNDANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, FOUNDANIMAL, iid, seq) )
+    elif mode == "animalthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, ANIMAL, iid) )
+
+    elif mode == "personthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, PERSON, iid) )
+    
+    elif mode == "waitinglistthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, WAITINGLIST, iid) )
+    
+    elif mode == "lostanimalthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, LOSTANIMAL, iid) )
+    
+    elif mode == "foundanimalthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, FOUNDANIMAL, iid) )
 
     elif mode == "media":
         return mrec( get_media_by_id(dbo, iid) )
@@ -754,7 +853,11 @@ def get_video_thumbnail(dbo: Database, dbfsid: int) -> bytes:
     inputfile.write(vdata)
     inputfile.close()
     outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-    os.system("ffmpeg -v 0 -y -an -i \"" + inputfile.name + "\" -ss '00:00:2.000' -vframes 1 \"" + outputfile.name + "\" > /dev/null")
+
+    # os.system("ffmpeg -v 0 -y -an -i \"" + inputfile.name + "\" -ss '00:00:2.000' -vframes 1 \"" + outputfile.name + "\" > /dev/null")
+
+    os.system(VIDEO_THUMBNAIL_CMD % { "output": outputfile.name, "input": inputfile.name})
+
     idata = outputfile.read()
     return idata
 
