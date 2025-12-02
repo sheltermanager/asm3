@@ -384,8 +384,7 @@ class TestPublish(unittest.TestCase):
     # savourlife
     def test_savourlife(self):
         pc = asm3.publishers.base.PublishCriteria()
-        sl = asm3.publishers.petrescue.PetRescuePublisher(base.get_dbo(), pc)
-        sl.load_breeds()
+        sl = asm3.publishers.savourlife.SavourLifePublisher(base.get_dbo(), pc)
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         sl.load_breeds()
         self.assertIsNotNone(sl.breeds)
