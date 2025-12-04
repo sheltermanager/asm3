@@ -139,8 +139,8 @@ $.fn.animalchoosermulti = asm_widget({
     destroy: function(t) {
         try {
             let o = t.data("o");
-            o.dialog.empty();
             o.dialog.dialog("destroy"); 
+            o.dialog.remove();
         }
         catch (ex) {}
     },

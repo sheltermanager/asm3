@@ -344,12 +344,15 @@ $.fn.animalchooser = asm_widget({
     },
 
     destroy: function(t) {
+        let dialog = t.data("dialog"), dialogadd = t.data("dialogadd");
         // Next 3 lines are to clean up additional fields that created choosers
-        try { t.data("dialogadd").find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
-        try { t.data("dialogadd").find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
-        try { t.data("dialogadd").find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
-        try { t.data("dialog").dialog("destroy"); } catch (ex) {}
-        try { t.data("dialogadd").dialog("destroy"); } catch (exa) {}
+        try { dialogadd.find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
+        try { dialogadd.find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
+        try { dialogadd.find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
+        try { dialog.dialog("destroy"); } catch (ex) {}
+        try { dialog.remove(); } catch (ex) {}
+        try { dialogadd.dialog("destroy"); } catch (exa) {}
+        try { dialogadd.remove(); } catch (exa) {}
     },
 
     /** Loads an animal into the widget by ID */
