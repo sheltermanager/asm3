@@ -2461,6 +2461,7 @@ class animal_movements(JSONEndpoint):
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo),
             "name": self.url
         }
 
@@ -5465,7 +5466,8 @@ class move_adopt(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "taxrates": asm3.lookups.get_tax_rates(dbo)
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo)
         }
 
     def post_create(self, o):
