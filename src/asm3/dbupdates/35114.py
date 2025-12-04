@@ -12,8 +12,8 @@ execute(dbo, dbo.ddl_add_table("lkadoptionsource", fields) )
 
 
 
-dbo.execute("INSERT INTO lkadoptionsource (ID, SourceName, Description, IsRetired) VALUES (?, ?, ?, ?)", [1, "AdoptAPet.com", "", 0] )
+dbo.execute("INSERT INTO lkadoptionsource (ID, SourceName, Description, IsRetired) VALUES (?, ?, ?, ?)", [1, _("AdoptAPet.com"), "", 0] )
 dbo.execute("INSERT INTO lkadoptionsource (ID, SourceName, Description, IsRetired) VALUES (?, ?, ?, ?)", [2, _("Facebook"), "", 0] )
 dbo.execute("INSERT INTO lkadoptionsource (ID, SourceName, Description, IsRetired) VALUES (?, ?, ?, ?)", [3, _("Newspaper"), "", 0] )
-dbo.execute("INSERT INTO lkadoptionsource (ID, SourceName, Description, IsRetired) VALUES (?, ?, ?, ?)", [4, "PetFinder", "", 0] )
+dbo.execute("INSERT INTO lkadoptionsource (ID, SourceName, Description, IsRetired) VALUES (?, ?, ?, ?)", [4, _("PetFinder"), "", 0] )
 dbo.execute("INSERT INTO lkadoptionsource (ID, SourceName, Description, IsRetired) VALUES (?, ?, ?, ?)", [5, _("Word of Mouth"), "", 0] )
