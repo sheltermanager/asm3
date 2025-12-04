@@ -300,7 +300,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         photourls = self.getPhotoUrls(an.ID) # List of photo URL strings
         if VIDEO_ENABLED:
-            photourls.append(self.getVideoUrls(an.ID))
+            photourls = photourls + self.getVideoUrls(an.ID)
         # Construct and return a dictionary of info for this animal
         return {
             "remote_id":                str(an.ID), # animal identifier in ASM

@@ -304,10 +304,10 @@ def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
     mode: animal | media | animalthumb | person | personthumb | dbfs
     iid: (str) The id of the animal for animal/thumb mode or the media record
         or a template path for dbfs mode
-    seq: (int) If the mode is animal or person, returns image X for that person/animal
-         The first image is always the preferred photo and seq is 1-based.
+    seq: (int) If the mode is animal or person, returns video X for that person/animal
+         The first video is always the preferred video and seq is 1-based.
     if justdate is True, returns the last modified date
-    if justdate is False, returns a tuple containing the last modified date and image data
+    if justdate is False, returns a tuple containing the last modified date and video data
     """
     def nopic():
         NOPIC_DATE = datetime(2011, 1, 1)
@@ -324,7 +324,7 @@ def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
     def thumb_mrec(mm):
         if mm is None: return thumb_nopic()
         if justdate: return mm.DATE
-        return (mm.DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm.DBFSID), asm3.configuration.thumbnail_size(dbo)))
+        return (mm.DATE, get_video_thumbnail(dbo, mm.DBFSID))
 
     sid = str(iid)
     iid = asm3.utils.cint(iid)
@@ -384,10 +384,10 @@ def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
                 return (dbo.now(), asm3.dbfs.get_string(dbo, sid))
 
     elif mode == "nopic":
-        if asm3.dbfs.file_exists(dbo, "nopic.jpg"):
-            return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, "/reports/nopic.jpg"))
+        if asm3.dbfs.file_exists(dbo, "novid.jpg"):
+            return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, "/reports/novid.jpg"))
         else:
-            return (dbo.now(), asm3.utils.read_binary_file(dbo.installpath + "media/reports/nopic.jpg"))
+            return (dbo.now(), asm3.utils.read_binary_file(dbo.installpath + "media/reports/novid.jpg"))
 
     else:
         return nopic()
@@ -853,9 +853,7 @@ def get_video_thumbnail(dbo: Database, dbfsid: int) -> bytes:
     inputfile.write(vdata)
     inputfile.close()
     outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-
-    os.system(VIDEO_THUMBNAIL_CMD % { "output": outputfile.name, "input": inputfile.name})
-
+    asm3.utils.cmd(VIDEO_THUMBNAIL_CMD % { "output": outputfile.name, "input": inputfile.name}, False)
     idata = outputfile.read()
     return idata
 

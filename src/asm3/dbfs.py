@@ -167,7 +167,7 @@ class S3Storage(DBFSStorage):
         #name = name.lower()
         #if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
         #return (86400 * 2) # Cache everything else for two days
-        if name.endswith(".mp4"): return (86400 * 2) # Cache images for 2 days
+        if name.endswith(".mp4"): return (86400 * 2) # Cache videos for 2 days
         return (86400 * 7) # Cache everything else for 1 week
 
     def _s3client(self) -> S3Client:
