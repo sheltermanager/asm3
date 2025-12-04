@@ -14,7 +14,11 @@ $(function() {
         dialog_row: null,
 
         model: function() {
-
+            let dayofmonthoptions = [];
+            for ( let a = 1; a < 29; a++ ) {
+                dayofmonthoptions.push(a + "|" + a);
+            }
+            dayofmonthoptions.push("0|" + _("Last"));
             const dialog = {
                 add_title: _("Add payment"),
                 edit_title: _("Edit payment"),
@@ -26,6 +30,7 @@ $(function() {
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
+                    { json_field: "DAYOFMONTH", post_field: "dayofmonth", label: _("Day of Month"), type: "select", options: dayofmonthoptions},
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
                     { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
                     { json_field: "QUANTITY", post_field: "quantity", label: _("Quantity"), type: "number", 
