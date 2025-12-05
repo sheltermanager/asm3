@@ -1,0 +1,48 @@
+Adoption Sources by Date
+###
+Movements
+###
+35114/Any rev01
+###
+Sources of Adoptions between two dates
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT SpeciesName,
+CASE WHEN adoption.AdoptionSourceID = 0 THEN "Unrecorded"
+ELSE lkadoptionsource.SourceName
+END AS SourceName,
+COUNT(adoption.ID) AS AdoptionCount
+FROM species
+INNER JOIN animal ON animal.SpeciesID = species.ID
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+LEFT JOIN lkadoptionsource ON adoption.AdoptionSourceID = lkadoptionsource.ID
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' GROUP BY SpeciesName, SourceName ORDER BY SpeciesName, SourceName
+
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border=1><tr>
+<td><b>Source</b></td>
+<td><b>Count</b></td>
+</tr>
+$$FOOT
+</table>
+<p><b>Total for $SpeciesName: {COUNT.SourceName.0}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$SourceName</td>
+<td>$AdoptionCount</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

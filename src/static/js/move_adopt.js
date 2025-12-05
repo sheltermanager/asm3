@@ -21,7 +21,7 @@ $(function() {
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
                     { post_field: "person", label: _("New Owner"), type: "person" },
-                    { post_field: "source", label: _("Adoption Source"), type: "select", options: html.list_to_options(controller.adoptionsources, "ID", "SOURCENAME") },
+                    { post_field: "source", label: _("Adoption Source"), type: "select", options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources, prepend: '<option value="0"></option>' } },
                     { post_field: "homechecked", label: _("Mark this owner homechecked"), type: "check", rowid: "homecheckrow" },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", callout: _("A unique number to identify this movement"), rowid: "movementnumberrow" },
                     { post_field: "movementdate", label: _("Date"), type: "date" },

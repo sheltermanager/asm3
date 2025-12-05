@@ -51,7 +51,7 @@ $(function() {
                     { json_field: "MOVEMENTTYPE", post_field: "type", label: _("Movement Type"), type: "select", 
                         options: { displayfield: "MOVEMENTTYPE", valuefield: "ID", rows: choosetypes }},
                     { json_field: "ADOPTIONSOURCEID", post_field: "source", label: _("Adoption Source"), type: "select", 
-                        options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources }},
+                        options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources, prepend: '<option value="0"></option>' }},
                     { json_field: "MOVEMENTDATE", post_field: "movementdate", label: _("Movement Date"), type: "date" },
                     { json_field: "ISPERMANENTFOSTER", post_field: "permanentfoster", label: _("Permanent Foster"), tooltip: _("Is this a permanent foster?"), type: "check" },
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },

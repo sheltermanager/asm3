@@ -18,7 +18,7 @@ $(function() {
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
                     { post_field: "person", label: _("Reservation For"), type: "person" },
-                    { post_field: "source", label: _("Adoption Source"), type: "select", options: html.list_to_options(controller.adoptionsources, "ID", "SOURCENAME") },
+                    { post_field: "source", label: _("Adoption Source"), type: "select", options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources, prepend: '<option value="0"></option>' } },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", rowid: "movementnumberrow", 
                         callout: _("A unique number to identify this movement") },
                     { post_field: "reservationdate", label: _("Date"), type: "date" },
