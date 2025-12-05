@@ -949,7 +949,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
 
     l = dbo.locale
     formname = post["formname"]
-    replyaddress = post["submitterreplyto"]
+    submitterreplyto = post["submitterreplyto"]
     posteddate = dbo.now()
     flags = post["flags"]
     mediaflags = post["mediaflags"]
@@ -1133,7 +1133,9 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             body += "\n" + formdata
             attachments = images
         # Send
-        asm3.utils.send_email(dbo, replyaddress, emailaddress, "", "", 
+        replyto = submitterreplyto
+        if replyto == "": replyto = asm3.configuration.email(dbo)
+        asm3.utils.send_email(dbo, replyto, emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
 
@@ -1151,7 +1153,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # and want to use an applicant's details but don't want them to see it or accidentally
         # reply to them about it (prime example, forms related to performing homechecks)
         replyto = ""
-        if formdef.emailsubmitter != 0: replyto = replyaddress 
+        if formdef.emailsubmitter != 0 and emailaddress != "": replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         # NOTE: We send emails to shelter contacts as bulk=True to try and prevent
         # backscatter since most shelter emails have some kind of autoresponder
