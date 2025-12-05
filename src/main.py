@@ -5687,6 +5687,7 @@ class move_book_soft_release(JSONEndpoint):
             "rows": movements,
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -5708,6 +5709,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -5729,6 +5731,7 @@ class move_book_unneutered(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
