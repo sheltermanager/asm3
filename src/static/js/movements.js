@@ -923,9 +923,11 @@ $(function() {
             // Show the reservation date field for both reserves and adoptions
             if (mt == 1 || mt == 0) {
                 $("#reservationrow").fadeIn();
+                $("#sourcerow").fadeIn();
             }
             else {
                 $("#reservationrow").fadeOut();
+                $("#sourcerow").fadeOut();
             }
             // Show the other reservation fields for reserves
             if (mt == 0) {
@@ -950,11 +952,9 @@ $(function() {
             // show event link only when movement type is adoption
             if (mt == 1) {
                 $("#eventlinkrow").fadeIn();
-                $("#sourcerow").fadeIn();
             }
             else {
                 $("#eventlinkrow").fadeOut();
-                $("#sourcerow").fadeOut();
             }
             // show event selection if eventlink is checked
             if (mt == 1 && $("#eventlink").is(":checked")) {

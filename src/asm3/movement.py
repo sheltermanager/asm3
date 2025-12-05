@@ -495,7 +495,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "IsPermanentFoster":            post.boolean("permanentfoster"),
         "TrialEndDate":                 post.date("trialenddate"),
         "Comments":                     post["comments"],
-        "AdoptionSourceID":             post.integer("adoptionsource")
+        "AdoptionSourceID":             post.integer("source")
     }, username, generateID=False)
     asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
 
@@ -537,7 +537,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "IsPermanentFoster":            post.boolean("permanentfoster"),
         "TrialEndDate":                 post.date("trialenddate"),
         "Comments":                     post["comments"],
-        "AdoptionSourceID":             post.integer("adoptionsource")
+        "AdoptionSourceID":             post.integer("source")
     }, username)
 
     asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
@@ -890,6 +890,7 @@ def insert_reserve_from_form(dbo: Database, username: str, post: PostedData) -> 
     move_dict = {
         "person"                : post["person"],
         "animal"                : post["animal"],
+        "source"                : post["source"],
         "reservationdate"       : post["reservationdate"],
         "reservationstatus"     : post["reservationstatus"],
         "adoptionno"            : post["movementnumber"],

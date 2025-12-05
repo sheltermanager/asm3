@@ -865,7 +865,7 @@ def _merge_db_flags(dbflags: Results, flags: str = "") -> Results:
     return out
 
 def get_adoptionsources(dbo: Database) -> Results:
-    return dbo.query("SELECT ID, SourceName FROM lkadoptionsource ORDER BY SourceName")
+    return dbo.query("SELECT * FROM lkadoptionsource ORDER BY SourceName")
 
 def get_animal_flags(dbo: Database, flags: str = "") -> Results:
     dbflags = dbo.query("SELECT * FROM lkanimalflags WHERE IsRetired=0 ORDER BY Flag")
