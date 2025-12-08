@@ -1697,8 +1697,8 @@ const format = {
         let enddate = format.date(isoend);
         let endtime = format.time(isoend, null, true);
         let dateoutput = startdate;
+        if (starttime) { dateoutput += " " + starttime; }
         if ( !config.bool("DisableDiaryEndDatetime") ) {
-            if ( starttime || endtime ) { dateoutput += " " + format.time(isostart); }
             if ( enddate && enddate != startdate ) {
                 dateoutput = _("{0} to {1}").replace("{0}", dateoutput).replace("{1}", enddate);
                 if (endtime) { dateoutput += " " + endtime; }
