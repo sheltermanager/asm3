@@ -768,7 +768,8 @@ class configjs(ASMEndpoint):
             "menustructure": asm3.html.menu_structure(o.locale, 
                 asm3.publish.PUBLISHER_LIST,
                 asm3.reports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
-                asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser)),
+                asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser),
+                asm3.reports.get_internalforms_menu(dbo, o.session.roleids, o.session.superuser)),
             "publishers": asm3.publish.PUBLISHER_LIST
         }
         return "const asm = %s;" % asm3.utils.json(c)

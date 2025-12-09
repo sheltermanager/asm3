@@ -130,6 +130,17 @@ def get_reports(dbo: Database) -> Results:
         r.VIEWROLES = "|".join(viewrolenames)
     return reps
 
+# def get_internalforms(dbo: Database) -> Results:
+#     """
+#     Returns a list of internal online forms. Return
+#     value is a tuple of category, ID and title.
+#     """
+#     forms = dbo.query("SELECT ID, Name FROM onlineform WHERE InternalUse = 1 ORDER BY Name")
+#     for form in forms:
+#         if not r.HTMLBODY.startswith("MAIL"): continue
+#         reps.append(r)
+#     return reps
+
 def get_raw_report_header(dbo: Database) -> str:
     header, body, footer = asm3.template.get_html_template(dbo, "report")
     if header.strip() == "": header = asm3.utils.read_text_file(dbo.installpath + "media/reports/head.html")
@@ -730,6 +741,21 @@ def get_mailmerges_menu(dbo: Database, roleids: str = "", superuser: bool = Fals
             mv.append( ("", "", "", "--cat", "", lastcat) )
         if superuser or m.VIEWROLEIDS == "" or asm3.utils.list_overlap(m.VIEWROLEIDS.split("|"), roleids.split("|")):
             mv.append( ( asm3.users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m.ID, "", m.TITLE ) )
+    return mv
+
+def get_internalforms_menu(dbo: Database, roleids: str = "", superuser: bool = False) -> MenuItems:
+    """
+    Reads the list of internal online forms and returns them as a list for inserting into
+    our menu structure.
+    The return value is a list of online forms with a tuple containing URL and
+    name.
+    roleids: comma separated list of roleids for the current user
+    superuser: true if the user is a superuser
+    """
+    mv = []
+    forms = dbo.query("SELECT ID, Name FROM onlineform WHERE InternalUse = 1 ORDER BY Name")
+    for form in forms:
+        mv.append( ( asm3.users.VIEW_ONLINE_FORMS, "", "", "/onlineform_view?formid=%d" % form.ID, "", form.NAME ) )
     return mv
 
 def email_daily_reports(dbo: Database) -> None:
