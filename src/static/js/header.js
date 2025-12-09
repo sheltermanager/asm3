@@ -230,21 +230,24 @@ header = {
         $.each(asm.menustructure, function(im, vm) {
             var permission = vm[0], name = vm[1], display = vm[2], items = vm[3];
             if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
-                // Render the menu button and body
-                menu.push("<div id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</div>");
-                menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
-                // If the option is on or there are more than 120 items to show, 
-                // render report and mail merge menus in accordions by category instead
-                if ((config.bool("ReportMenuAccordion") || items.length > 120) && (name == "reports" || name == "mailmerge")) {
-                    menus.push('<input id="search-' + name + '" type="text" placeholder="' + _("Filter") + '" class="asm-menu-filter asm-textbox">');
-                    self.menu_html_accordion_renderer(menus, items, name);
-                } else if (name == "reports" || name == "mailmerge") {
-                    menus.push('<input id="search-' + name + '" type="text" placeholder="' + _("Filter") + '" class="asm-menu-filter asm-textbox">');
-                    self.menu_html_flat_renderer(menus, items, { breakafter: 25 });
+                if (name == "internalforms" && items.length == 0) {
                 } else {
-                    self.menu_html_flat_renderer(menus, items, { breakafter: 25 });
+                    // Render the menu button and body
+                    menu.push("<div id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</div>");
+                    menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
+                    // If the option is on or there are more than 120 items to show, 
+                    // render report and mail merge menus in accordions by category instead
+                    if ((config.bool("ReportMenuAccordion") || items.length > 120) && (name == "reports" || name == "mailmerge")) {
+                        menus.push('<input id="search-' + name + '" type="text" placeholder="' + _("Filter") + '" class="asm-menu-filter asm-textbox">');
+                        self.menu_html_accordion_renderer(menus, items, name);
+                    } else if (name == "reports" || name == "mailmerge") {
+                        menus.push('<input id="search-' + name + '" type="text" placeholder="' + _("Filter") + '" class="asm-menu-filter asm-textbox">');
+                        self.menu_html_flat_renderer(menus, items, { breakafter: 25 });
+                    } else {
+                        self.menu_html_flat_renderer(menus, items, { breakafter: 25 });
+                    }
+                    menus.push("</div>");
                 }
-                menus.push("</div>");
             }
         });
         return [ menu.join(""), menus.join("\n") ];
