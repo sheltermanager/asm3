@@ -2713,6 +2713,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += medicaltype(27, _("Surgery: Other", l), 1)
     sql += medicaltype(28, _("Topical treatment", l), 0)
     sql += medicaltype(29, _("Identification: Other", l), 1)
+    sql += medicaltype(30, _("Fluids", l), 0)
     sql += lookup1("lksoutcome", "Outcome", 1, _("On Shelter", l))
     sql += lookup1("lksoutcome", "Outcome", 2, _("Died", l))
     sql += lookup1("lksoutcome", "Outcome", 3, _("DOA", l))
