@@ -673,7 +673,7 @@ def create_document_media(dbo: Database, username: str, linktype: int, linkid: i
         "DBFSID":               dbfsid,
         "MediaSize":            len(content),
         "MediaSource":          MEDIASOURCE_DOCUMENT,
-        "MediaFlags":           mediaflags.replace(",", "|") + "|",
+        "MediaFlags":           asm3.utils.nulltostr(mediaflags).replace(",", "|") + "|",
         "MediaName":            "%d.html" % mediaid,
         "MediaMimeType":        "text/html",
         "MediaType":            0,
