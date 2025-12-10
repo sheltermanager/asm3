@@ -89,8 +89,8 @@ header = {
         66: ["search?q=adopted", "asm-icon-movement", _("Recently adopted")],
         67: ["search?q=entered", "asm-icon-animal", _("Recently entered")],
         68: ["incident_find_results?dispatchedaco=" + asm.user + "&filter=incomplete", "asm-icon-call", _("My Incidents")],
-        69: ["onlineform_incoming", "asm-icon-forms", _("Incoming forms")],
-        70: ["onlineforms", "asm-icon-forms", _("Edit online forms")]
+        69: ["onlineform_incoming", "asm-icon-forms", _("View Incoming Forms")],
+        70: ["onlineforms", "asm-icon-forms", _("Edit Online Forms")]
     },
 
     show_error: function(text, duration) {
