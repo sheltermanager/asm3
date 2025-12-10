@@ -14,6 +14,7 @@ import asm3.al
 import asm3.additional
 import asm3.animal
 import asm3.animalcontrol
+import asm3.automail
 import asm3.asynctask
 import asm3.audit
 import asm3.cachedisk
@@ -2659,6 +2660,10 @@ class batch(JSONEndpoint):
     def post_resetnnncodes(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Reset NNN animal code counts for this year", l), asm3.animal.maintenance_reset_nnn_codes, o.dbo)
+    
+    def post_sendfostererweekly(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Send the weekly fosterer email now", l), asm3.automail.fosterer_weekly, o.dbo, o.user, True)
 
 class boarding(JSONEndpoint):
     url = "boarding"
