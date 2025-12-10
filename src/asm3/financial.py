@@ -685,6 +685,9 @@ def get_recent_licences(dbo: Database) -> Results:
         "WHERE ol.IssueDate >= ? " \
         "ORDER BY ol.IssueDate DESC", [dbo.today(offset=-30)])
 
+def get_regulardebits(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM regulardebit")
+
 def get_licence_find_simple(dbo: Database, licnum: str, dummy: int = 0) -> Results:
     return dbo.query(get_licence_query(dbo) + \
         "WHERE UPPER(ol.LicenceNumber) LIKE UPPER(?)", [licnum])
@@ -1320,6 +1323,37 @@ def delete_account(dbo: Database, username: str, aid: int) -> None:
     dbo.delete("accountstrx", "SourceAccountID=%d OR DestinationAccountID=%d" % (aid, aid), username)
     dbo.delete("accountsrole", "AccountID=%d" % aid)
     dbo.delete("accounts", aid, username)
+
+def insert_regulardebit_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Creates a regular debit from posted form data 
+    """
+
+    rdid = dbo.insert("regulardebit", {
+        "StartDate":        post.date("startdate"),
+        "EndDate":          post.date("enddate"),
+        "Period":           post.integer("period")
+    }, username)
+
+    return rdid
+
+def update_regulardebit_from_form(dbo: Database, username: str, post: PostedData) -> None:
+    """
+    Updates a regular debit from posted form data
+    """
+    rdid = post.integer("id")
+
+    dbo.update("accounts", rdid, {
+        "StartDate":        post.date("startdate"),
+        "EndDate":          post.date("enddate"),
+        "Period":           post.integer("period")
+    }, username)
+
+def delete_regulardebit(dbo: Database, username: str, rdid: int) -> None:
+    """
+    Deletes a regular debit
+    """
+    dbo.delete("regulardebit", rdid, username)
 
 def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
