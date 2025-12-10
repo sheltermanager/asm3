@@ -93,7 +93,7 @@ SPAMBOT_TXT = 'a_emailaddress'
 SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
 
 # Hidden fields that are sent with forms, but are not part of the form data
-IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method" ]
+IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method", "mediaflags", "submitterreplyto" ]
 
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
@@ -1094,7 +1094,6 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             if fld.FIELDNAME in SYSTEM_FIELDS: continue
             if fld.FIELDNAME in ("firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
-            if fld.FIELDNAME == "submitterreplyto": continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
 
