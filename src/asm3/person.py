@@ -1711,11 +1711,13 @@ def update_latlong(dbo: Database, personid: int, latlong: str) -> None:
     """
     dbo.update("owner", personid, { "LatLong": latlong })
 
-def delete_person(dbo: Database, username: str, personid: int) -> None:
+def delete_person(dbo: Database, username: str, personid: int, remove_movements: bool = False) -> None:
     """
     Deletes a person and all its satellite records.
+    remove_movements: If True, remove all movements for this person first to prevent validation failing
     """
     l = dbo.locale
+    if remove_movements: dbo.delete("adoption", "OwnerID=%d" % personid, username)
     if dbo.query_int("SELECT COUNT(ID) FROM adoption WHERE OwnerID=? OR RetailerID=? OR ReturnedByOwnerID=?", (personid, personid, personid)):
         raise asm3.utils.ASMValidationError(_("This person has movements and cannot be removed.", l))
     if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=? OR BroughtInByOwnerID=? OR OriginalOwnerID=? OR CurrentVetID=? OR OwnersVetID=? OR NeuteredByVetID = ?", (personid, personid, personid, personid, personid, personid)):
@@ -2187,7 +2189,7 @@ def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, usern
         "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID) " \
         "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID) ", [cutoff])
     for p in people:
-        delete_person(dbo, username, p.ID)
+        delete_person(dbo, username, p.ID, remove_movements = True)
     asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
     return "OK %s" % len(people)
 
