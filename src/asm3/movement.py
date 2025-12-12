@@ -494,7 +494,8 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "IsTrial":                      post.boolean("trial"),
         "IsPermanentFoster":            post.boolean("permanentfoster"),
         "TrialEndDate":                 post.date("trialenddate"),
-        "Comments":                     post["comments"]
+        "Comments":                     post["comments"],
+        "AdoptionSourceID":             post.integer("source")
     }, username, generateID=False)
     asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
 
@@ -535,7 +536,8 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "IsTrial":                      post.boolean("trial"),
         "IsPermanentFoster":            post.boolean("permanentfoster"),
         "TrialEndDate":                 post.date("trialenddate"),
-        "Comments":                     post["comments"]
+        "Comments":                     post["comments"],
+        "AdoptionSourceID":             post.integer("source")
     }, username)
 
     asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
@@ -651,7 +653,8 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
         "trial"                 : post["trial"],
         "trialenddate"          : post["trialenddate"],
         "comments"              : post["comments"],
-        "event"                 : post["event"]
+        "event"                 : post["event"],
+        "adoptionsource"        : post["source"]
     }
     move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     # Is this animal currently on foster? If so, return the foster
@@ -887,6 +890,7 @@ def insert_reserve_from_form(dbo: Database, username: str, post: PostedData) -> 
     move_dict = {
         "person"                : post["person"],
         "animal"                : post["animal"],
+        "source"                : post["source"],
         "reservationdate"       : post["reservationdate"],
         "reservationstatus"     : post["reservationstatus"],
         "adoptionno"            : post["movementnumber"],

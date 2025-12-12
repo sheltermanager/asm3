@@ -2462,6 +2462,7 @@ class animal_movements(JSONEndpoint):
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo),
             "name": self.url
         }
 
@@ -5470,7 +5471,8 @@ class move_adopt(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "taxrates": asm3.lookups.get_tax_rates(dbo)
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo)
         }
 
     def post_create(self, o):
@@ -5649,6 +5651,7 @@ class move_book_reservation(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo),
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -5713,6 +5716,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
@@ -5853,6 +5857,7 @@ class move_reserve(JSONEndpoint):
             "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RESERVATION)),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "taxrates": asm3.lookups.get_tax_rates(dbo)
@@ -6975,6 +6980,7 @@ class person_movements(JSONEndpoint):
             "name": "person_movements",
             "rows": movements,
             "person": p,
+            "adoptionsources": asm3.lookups.get_adoptionsources(dbo),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
