@@ -48,9 +48,6 @@ class TestFinancial(unittest.TestCase):
         trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
 
         self.assertEqual(1, len(trxs))
-
-        for trx in trxs:
-            asm3.financial.delete_trx(base.get_dbo(), "test", trx)
         
         asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
 
@@ -134,6 +131,7 @@ class TestFinancial(unittest.TestCase):
 
         base.execute("DELETE FROM accounts WHERE Code LIKE 'Test%'")
         base.execute("DELETE FROM regulardebit WHERE Comments = 'Just some test data'")
+        base.execute("DELETE FROM accountstrx WHERE CreatedBy = 'test'")
 
     def test_get_account_code(self):
         asm3.financial.get_account_code(base.get_dbo(), 0)
