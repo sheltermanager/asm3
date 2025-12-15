@@ -181,10 +181,11 @@ $(function() {
                             vacctype = v.VACCINATIONID;
                         });
                         $("#usagecomments").html(comments);
-                        $("#givenexpires, #givenbatch, #givenmanufacturer, #givenrabiestag").val("");
+                        $("#givenexpires, #givenbatch, #givenbatchexpiry, #givenmanufacturer, #givenrabiestag").val("");
                         $("#givencost").currency("value", row.COST);
                         $("#givenmanufacturer").val(row.MANUFACTURER);
                         $("#givenbatch").val(row.BATCHNUMBER);
+                        $("#givenbatchexpiry").val(format.date(row.BATCHEXPIRYDATE));
                         $("#givennewdate").date("today");
                         let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
                         if (rd) { $("#rescheduledate, #givenexpires").date("setDate", rd); }
@@ -564,7 +565,7 @@ $(function() {
             });
         },
 
-        /** Sets the batch number and manufacturer fields on the given dialog
+        /** Sets the batch number, expiry and manufacturer fields on the given dialog
          *  based on the last vacc of this type we saw
          */
         set_given_batch: function(vacctype) {
@@ -572,8 +573,9 @@ $(function() {
             if (!config.bool("AutoDefaultVaccBatch")) { return; }
             $.each(controller.batches, function(i, v) {
                 if (vacctype == v.ID) {
-                    $("#givenbatch, #givenmanufacturer").val("");
+                    $("#givenbatch, #givenmanufacturer, #givenbatchexpiry").val("");
                     if (v.BATCHNUMBER) { $("#givenbatch").val(v.BATCHNUMBER); }
+                    if (v.BATCHEXPIRYDATE) { $("#givenbatchexpiry").val(v.BATCHEXPIRYDATE); }
                     if (v.MANUFACTURER) { $("#givenmanufacturer").val(v.MANUFACTURER); }
                 }
                 return true;
