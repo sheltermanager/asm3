@@ -633,9 +633,10 @@ def get_person_citations(dbo: Database, oid: int, sort: int = ASCENDING) -> Resu
     order = "oc.CitationDate DESC"
     if sort == ASCENDING:
         order = "oc.CitationDate"
-    return dbo.query(get_citation_query(dbo) + \
+    rows = dbo.query(get_citation_query(dbo) + \
         "WHERE oc.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
+    return asm3.additional.append_to_results(dbo, rows, "citation")
 
 def get_unpaid_fines(dbo: Database) -> Results:
     """
@@ -643,9 +644,10 @@ def get_unpaid_fines(dbo: Database) -> Results:
     ID, CITATIONTYPEID, CITATIONNAME, CITATIONDATE, FINEDUEDATE, FINEPAIDDATE,
     FINEAMOUNT, OWNERNAME, INCIDENTNAME
     """
-    return dbo.query(get_citation_query(dbo) + \
+    rows = dbo.query(get_citation_query(dbo) + \
         "WHERE oc.FineDueDate Is Not Null AND oc.FineDueDate <= ? AND oc.FinePaidDate Is Null " \
         "ORDER BY oc.CitationDate DESC", [dbo.today()])
+    return asm3.additional.append_to_results(dbo, rows, "citation")
 
 def get_animal_licences(dbo: Database, aid: int, sort: int = ASCENDING) -> Results:
     """
