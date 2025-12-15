@@ -7,6 +7,10 @@ $(function() {
     const regular_debits = {
 
         model: function() {
+            let daysofmonth = [];
+            for (let a = 1; a < 29; a++ ) {
+                daysofmonth.push(a + "|" + a);
+            }
             const dialog = {
                 add_title: _("Add regular debit"),
                 edit_title: _("Edit regular debit"),
@@ -16,17 +20,49 @@ $(function() {
                 columns: 1,
                 width: 500,
                 fields: [
+                    { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", personfilter: "all", personmode: "brief" },
                     { json_field: "STARTDATE", post_field: "startdate", label: _("Active from"), type: "date", validation: "notblank" },
-                    { json_field: "ENDATE", post_field: "enddate", label: _("Active to"), type: "date" },
+                    { json_field: "ENDDATE", post_field: "enddate", label: _("Active to"), type: "date" },
+                    { json_field: "AMOUNT", post_field: "amount", label: _("Amount"), type: "currency", validation: "notzero" },
+                    { json_field: "FROMACCOUNT", post_field: "fromaccount", label: _("From account"), type: "select", options: { rows: controller.accounts, displayfield: "CODE" } },
+                    { json_field: "TOACCOUNT", post_field: "toaccount", label: _("To account"), type: "select", options: { rows: controller.accounts, displayfield: "CODE" } },
                     { json_field: "PERIOD", post_field: "period", label: _("Period"), type: "select",
                         options: [
-                            "1|Daily",
-                            "7|Weekly",
-                            "30|Monthly",
-                            "365|Yearly"
+                            "1|" + _("Daily"),
+                            "7|" + _("Weekly"),
+                            "30|" + _("Monthly"),
+                            "365|" + _("Yearly")
                         ]
                     },
-
+                    { json_field: "WEEKDAY", post_field: "weekday", label: _("Day of week"), type: "select",
+                        options: [
+                            "0|" + _("Monday"),
+                            "1|" + _("Tuesday"),
+                            "2|" + _("Wednesday"),
+                            "3|" + _("Thursday"),
+                            "4|" + _("Friday"),
+                            "5|" + _("Saturday"),
+                            "6|" + _("Sunday")
+                        ]
+                    },
+                    { json_field: "DAYOFMONTH", post_field: "dayofmonth", label: _("Day of month"), type: "select", options: daysofmonth },
+                    { json_field: "MONTH", post_field: "month", label: _("Month"), type: "select",
+                        options: [
+                            "0|" + _("January"),
+                            "1|" + _("February"),
+                            "2|" + _("March"),
+                            "3|" + _("April"),
+                            "4|" + _("May"),
+                            "5|" + _("June"),
+                            "6|" + _("July"),
+                            "7|" + _("August"),
+                            "8|" + _("September"),
+                            "9|" + _("October"),
+                            "10|" + _("November"),
+                            "11|" + _("December")
+                        ]
+                    },
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
                 ]
             };
 
@@ -36,24 +72,87 @@ $(function() {
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
                     tableform.dialog_show_edit(dialog, row, {
+                        onvalidate: function() {
+                            return regular_debits.validation();
+                        },
                         onchange: async function() {
-                            
+                            tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "regular_debits")
+                                .then(function(response) {
+                                    row.OWNERNAME = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                })
+                                .fail(function(response) {
+                                    tableform.dialog_error(response);
+                                    tableform.dialog_enable_buttons();
+                                });
                         },
                         onload: function() {
-
+                            regular_debits.period_changed();
                         }
                     });
                 },
                 columns: [
-                    { field: "STARTDATE", display: _("Active from"), formatter: tableform.format_date },
+                    { field: "STARTDATE", display: _("Active from"),
+                        formatter: function(row) {
+                            return tableform.table_render_edit_link(row.ID, tableform.format_date(row, row.STARTDATE));
+                        }
+                    },
                     { field: "ENDDATE", display: _("Active to"), formatter: tableform.format_date },
+                    { field: "OWNERID", display: _("Person"),
+                        formatter: function(row) {
+                            if (row.OWNERID == 0) {
+                                return "";
+                            } else {
+                                return '<a href="person?id=' + row.OWNERID + '">' + row.OWNERNAME + '</a>';
+                            }
+                        }
+                    },
+                    { field: "AMOUNT", display: _("Amount"), formatter: tableform.format_currency },
+                    { field: "PERIOD", display: _("Period"),
+                        formatter: function(row) {
+                            if (row.PERIOD == 1) {
+                                return _("Daily");
+                            } else if (row.PERIOD == 7) {
+                                return _("Weekly");
+                            } else if (row.PERIOD == 30) {
+                                return _("Monthly");
+                            } else {
+                                return _("Yearly");
+                            }
+                        }
+                    },
+                    { field: "FROMACCOUNT", display: _("From Account"),
+                        formatter: function(row) {
+                            let accountcode = "";
+                            $.each(controller.accounts, function(i, v) {
+                                if (v.ID == row.FROMACCOUNT) { accountcode = v.CODE; }
+                            });
+                            return accountcode;
+                        }
+                    },
+                    { field: "TOACCOUNT", display: _("To Account"),
+                        formatter: function(row) {
+                            let accountcode = "";
+                            $.each(controller.accounts, function(i, v) {
+                                if (v.ID == row.TOACCOUNT) { accountcode = v.CODE; }
+                            });
+                            return accountcode;
+                        }
+                    },
+                    { field: "COMMENTS", display: _("Comments") }
                 ]
             };
 
             const buttons = [
                { id: "new", text: _("New Regular Debit"), icon: "new", enabled: "always", perm: "aac",
                     click: async function() { 
-                        await tableform.dialog_show_add(dialog);
+                        await tableform.dialog_show_add(dialog, {
+                            onvalidate: function() {
+                                return regular_debits.validation();
+                            }
+                        });
                         let response = await tableform.fields_post(dialog.fields, "mode=create", "regular_debits");
                         let row = {};
                         row.ID = response;
@@ -73,15 +172,67 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
+                { id: "filter", type: "dropdownfilter", 
+                    options: [
+                        "active|" + _("Active"),
+                        "inactive|" + _("Inactive"),
+                        "all|" + _("All")
+                    ],
+                    click: function(selval) {
+                        controller.filter = selval;
+                        common.route("regular_debits?filter=" + selval);
+                    }
+                }
             ];
             this.dialog = dialog;
             this.buttons = buttons;
             this.table = table;
         },
 
+        period_changed: function() {
+            if ($("#period").val() == 1) {
+                $("#weekdayrow").hide();
+                $("#dayofmonthrow").hide();
+                $("#monthrow").hide();
+            } else if ($("#period").val() == 7) {
+                $("#weekdayrow").show();
+                $("#dayofmonthrow").hide();
+                $("#monthrow").hide();
+            } else if ($("#period").val() == 30) {
+                $("#weekdayrow").hide();
+                $("#dayofmonthrow").show();
+                $("#monthrow").hide();
+            } else {
+                $("#weekdayrow").hide();
+                $("#dayofmonthrow").show();
+                $("#monthrow").show();
+            }
+        },
+
+        validation: function() {
+            let startdate = $("#startdate").val();
+            let enddate = $("#enddate").val();
+            if (enddate != "" && enddate < startdate) {
+                tableform.dialog_error(_("End date cannot be before start date."));
+                return false;
+            }
+            let fromaccount = $("#fromaccount").val();
+            let toaccount = $("#toaccount").val();
+            if (fromaccount == toaccount) {
+                tableform.dialog_error(_("From account and to account must be different."));
+                return false;
+            }
+            let amount = $("#amount").currency("value");
+            if (amount <= 0) {
+                tableform.dialog_error(_("Invalid amount."));
+                return false;
+            }
+            return true;
+        },
+
         render: function() {
-            this.model();
             let s = "";
+            this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Regular debits"));
             s += tableform.buttons_render(this.buttons);
@@ -91,23 +242,28 @@ $(function() {
         },
         
         bind: function() {
+            $("#period").change(regular_debits.period_changed);
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
         },
 
         sync: function() {
-            
+            if (controller.filter == "") {
+                $("#filter").val("active");
+            } else {
+                $("#filter").val(controller.filter);
+            }
+            regular_debits.period_changed();
         },
 
-        destroy: function() {
-        },
+        destroy: function() {},
 
         name: "regular_debits",
         animation: "book",
         title: function() { return _("Regular debits"); },
         routes: {
-            "regular_debits": function() { common.module_loadandstart("regular_debits", "filter?" + this.rawqs); }
+            "regular_debits": function() { common.module_loadandstart("regular_debits", "regular_debits?filter=" + controller.filter); }
         }
 
     };

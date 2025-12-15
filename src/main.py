@@ -7317,7 +7317,9 @@ class regular_debits(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "rows": asm3.financial.get_regulardebits(dbo)
+            "rows": asm3.financial.get_regulardebits(dbo, filter=o.post["filter"]),
+            "accounts": asm3.financial.get_accounts(dbo),
+            "filter": o.post["filter"]
         }
     
     def post_create(self, o):
@@ -7326,7 +7328,7 @@ class regular_debits(JSONEndpoint):
 
     def post_update(self, o):
         self.check(asm3.users.CHANGE_ACCOUNT)
-        asm3.financial.update_regulardebit_from_form(o.dbo, o.user, o.post)
+        return asm3.financial.update_regulardebit_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         self.check(asm3.users.DELETE_ACCOUNT)

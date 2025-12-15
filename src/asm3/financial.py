@@ -685,8 +685,16 @@ def get_recent_licences(dbo: Database) -> Results:
         "WHERE ol.IssueDate >= ? " \
         "ORDER BY ol.IssueDate DESC", [dbo.today(offset=-30)])
 
-def get_regulardebits(dbo: Database) -> Results:
-    return dbo.query("SELECT * FROM regulardebit")
+def get_regulardebits(dbo: Database, filter="all") -> Results:
+    concatsql = dbo.sql_concat(("OwnerName", "' '", "OwnerCode"))
+    wheresql = ""
+    today = asm3.i18n.format_date(dbo.today())
+    if filter == "active":
+        wheresql = f" WHERE '{today}' BETWEEN rd.StartDate AND rd.EndDate OR ( rd.StartDate <= '{today}' AND rd.EndDate IS NULL )"
+    elif filter == "inactive":
+        wheresql = f" WHERE rd.StartDate > '{today}' OR rd.EndDate < '{today}'"
+    sql = "SELECT rd.*, " + concatsql + " AS OwnerName FROM regulardebit rd LEFT JOIN owner o ON rd.OwnerID = o.ID" + wheresql
+    return dbo.query(sql)
 
 def get_licence_find_simple(dbo: Database, licnum: str, dummy: int = 0) -> Results:
     return dbo.query(get_licence_query(dbo) + \
@@ -1330,9 +1338,17 @@ def insert_regulardebit_from_form(dbo: Database, username: str, post: PostedData
     """
 
     rdid = dbo.insert("regulardebit", {
+        "OwnerID":          post.integer("person"),
         "StartDate":        post.date("startdate"),
         "EndDate":          post.date("enddate"),
-        "Period":           post.integer("period")
+        "Amount":           post.integer("amount"),
+        "FromAccount":      post.integer("fromaccount"),
+        "ToAccount":        post.integer("toaccount"),
+        "Period":           post.integer("period"),
+        "Weekday":          post.integer("weekday"),
+        "DayOfMonth":       post.integer("dayofmonth"),
+        "Month":            post.integer("month"),
+        "Comments":         post["comments"]
     }, username)
 
     return rdid
@@ -1343,11 +1359,24 @@ def update_regulardebit_from_form(dbo: Database, username: str, post: PostedData
     """
     rdid = post.integer("id")
 
-    dbo.update("accounts", rdid, {
+    dbo.update("regulardebit", rdid, {
+        "OwnerID":          post.integer("person"),
         "StartDate":        post.date("startdate"),
         "EndDate":          post.date("enddate"),
-        "Period":           post.integer("period")
+        "Amount":           post.integer("amount"),
+        "FromAccount":      post.integer("fromaccount"),
+        "ToAccount":        post.integer("toaccount"),
+        "Period":           post.integer("period"),
+        "Weekday":          post.integer("weekday"),
+        "DayOfMonth":       post.integer("dayofmonth"),
+        "Month":            post.integer("month"),
+        "Comments":         post["comments"]
     }, username)
+
+    if post.integer("person"):
+        concatsql = dbo.sql_concat(("OwnerName", "' '", "OwnerCode"))
+        return dbo.query_string("SELECT " + concatsql + " AS OwnerName FROM owner WHERE ID = ?", [post.integer("person")])
+
 
 def delete_regulardebit(dbo: Database, username: str, rdid: int) -> None:
     """
