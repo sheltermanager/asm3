@@ -36,30 +36,31 @@ $(function() {
                     },
                     { json_field: "WEEKDAY", post_field: "weekday", label: _("Day of week"), type: "select",
                         options: [
-                            "0|" + _("Monday"),
-                            "1|" + _("Tuesday"),
-                            "2|" + _("Wednesday"),
-                            "3|" + _("Thursday"),
-                            "4|" + _("Friday"),
-                            "5|" + _("Saturday"),
-                            "6|" + _("Sunday")
+                            "0|" + _("Sunday"),
+                            "1|" + _("Monday"),
+                            "2|" + _("Tuesday"),
+                            "3|" + _("Wednesday"),
+                            "4|" + _("Thursday"),
+                            "5|" + _("Friday"),
+                            "6|" + _("Saturday")
+                            
                         ]
                     },
                     { json_field: "DAYOFMONTH", post_field: "dayofmonth", label: _("Day of month"), type: "select", options: daysofmonth },
                     { json_field: "MONTH", post_field: "month", label: _("Month"), type: "select",
                         options: [
-                            "0|" + _("January"),
-                            "1|" + _("February"),
-                            "2|" + _("March"),
-                            "3|" + _("April"),
-                            "4|" + _("May"),
-                            "5|" + _("June"),
-                            "6|" + _("July"),
-                            "7|" + _("August"),
-                            "8|" + _("September"),
-                            "9|" + _("October"),
-                            "10|" + _("November"),
-                            "11|" + _("December")
+                            "1|" + _("January"),
+                            "2|" + _("February"),
+                            "3|" + _("March"),
+                            "4|" + _("April"),
+                            "5|" + _("May"),
+                            "6|" + _("June"),
+                            "7|" + _("July"),
+                            "8|" + _("August"),
+                            "9|" + _("September"),
+                            "10|" + _("October"),
+                            "11|" + _("November"),
+                            "12|" + _("December")
                         ]
                     },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
