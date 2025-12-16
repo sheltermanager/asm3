@@ -486,6 +486,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "ReturnedReasonID":             post.integer("returncategory"),
         "Donation":                     post.integer("donation"),
         "InsuranceNumber":              post["insurance"],
+        "AdoptionSourceID":             post.integer("source"),
         "ReasonForReturn":              post["reason"],
         "ReturnedByOwnerID":            post.integer("returnedby"),
         "ReservationDate":              post.datetime("reservationdate", "reservationtime"),
@@ -494,8 +495,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "IsTrial":                      post.boolean("trial"),
         "IsPermanentFoster":            post.boolean("permanentfoster"),
         "TrialEndDate":                 post.date("trialenddate"),
-        "Comments":                     post["comments"],
-        "AdoptionSourceID":             post.integer("source")
+        "Comments":                     post["comments"]
     }, username, generateID=False)
     asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
 
@@ -528,6 +528,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "ReturnedReasonID":             post.integer("returncategory"),
         "Donation":                     post.integer("donation"),
         "InsuranceNumber":              post["insurance"],
+        "AdoptionSourceID":             post.integer("source"),
         "ReasonForReturn":              post["reason"],
         "ReturnedByOwnerID":            post.integer("returnedby"),
         "ReservationDate":              post.datetime("reservationdate", "reservationtime"),
@@ -536,8 +537,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "IsTrial":                      post.boolean("trial"),
         "IsPermanentFoster":            post.boolean("permanentfoster"),
         "TrialEndDate":                 post.date("trialenddate"),
-        "Comments":                     post["comments"],
-        "AdoptionSourceID":             post.integer("source")
+        "Comments":                     post["comments"]
     }, username)
 
     asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
@@ -644,17 +644,17 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
     move_dict = {
         "person"                : post["person"],
         "animal"                : post["animal"],
+        "event"                 : post["event"],
         "adoptionno"            : post["movementnumber"],
         "movementdate"          : post["movementdate"],
         "type"                  : str(ADOPTION),
         "donation"              : post["amount"],
         "insurance"             : post["insurance"],
+        "adoptionsource"        : post["source"],
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "trial"                 : post["trial"],
         "trialenddate"          : post["trialenddate"],
-        "comments"              : post["comments"],
-        "event"                 : post["event"],
-        "adoptionsource"        : post["source"]
+        "comments"              : post["comments"]
     }
     move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     # Is this animal currently on foster? If so, return the foster
