@@ -3,7 +3,7 @@ import asm3.al
 import asm3.animal
 import asm3.configuration
 import asm3.utils
-from asm3.i18n import _, add_days
+from asm3.i18n import _, add_days, parse_time
 from asm3.typehints import datetime, Database, Dict, List, LocationFilter, PostedData, ResultRow, Results
 
 # Medical treatment rules
@@ -698,12 +698,23 @@ def get_treatments_outstanding(dbo: Database, offset: str = "m31", lf: LocationF
     """
     ec = ""
     offsetdays = asm3.utils.atoi(offset)
+    # We compare against date-only literals, so use an exclusive upper bound
+    # (next day) to include all times within the end date.
     if offset.startswith("m"):
-        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s AND amt.DateGiven Is Null AND am.Status=0" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
+        start = dbo.today(offset=offsetdays * -1)
+        end = add_days(dbo.today(), 1)
+        ec = " AND amt.DateRequired >= %s AND amt.DateRequired < %s AND amt.DateGiven Is Null AND am.Status=0" % (
+            dbo.sql_date(start), dbo.sql_date(end))
     if offset.startswith("p"):
-        ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s AND amt.DateGiven Is Null AND am.Status=0" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
+        start = dbo.today()
+        end = add_days(dbo.today(offset=offsetdays), 1)
+        ec = " AND amt.DateRequired >= %s AND amt.DateRequired < %s AND amt.DateGiven Is Null AND am.Status=0" % (
+            dbo.sql_date(start), dbo.sql_date(end))
     if offset.startswith("g"):
-        ec = " AND amt.DateGiven >= %s AND amt.DateGiven <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
+        start = dbo.today(offset=offsetdays * -1)
+        end = add_days(dbo.today(), 1)
+        ec = " AND amt.DateGiven >= %s AND amt.DateGiven < %s" % (
+            dbo.sql_date(start), dbo.sql_date(end))
     locationfilter = ""
     if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
@@ -977,7 +988,22 @@ def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
         ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
         insert_treatments(dbo, username, amid, ldg, False)
 
-def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True) -> datetime:
+def _parse_treatment_times(times: str, perday: int) -> List[str]:
+    """
+    Parses a comma separated list of HH:MM times, returning a list
+    truncated/padded to perday elements.
+    """
+    if not times or perday <= 0:
+        return []
+    parts = [t.strip() for t in times.split(",") if t.strip()]
+    if len(parts) > perday:
+        parts = parts[0:perday]
+    while len(parts) < perday:
+        parts.append("")
+    return parts
+
+
+def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True, times: List[str] = None) -> datetime:
     """
     Creates new treatment records for the given medical record
     with the required date given. isstart says that the date passed
@@ -1002,11 +1028,14 @@ def insert_treatments(dbo: Database, username: str, amid: int, requireddate: dat
     if norecs == 0: norecs = 1
     
     for x in range(1, norecs+1):
+        dt = requireddate
+        if times and x <= len(times) and times[x-1]:
+            dt = parse_time(requireddate, times[x-1])
         dbo.insert("animalmedicaltreatment", {
             "AnimalID":             am.ANIMALID,
             "AnimalMedicalID":      amid,
             "CustomTreatmentName":  "",
-            "DateRequired":         requireddate,
+            "DateRequired":         dt,
             "DateGiven":            None,
             "GivenBy":              "",
             "TreatmentNumber":      x,
@@ -1109,19 +1138,22 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         txdays = parse_custom_timing(post["customtiming"])
         insert_treatments_custom(dbo, username, nregid, post.date("startdate"), txdays)
     elif treatmentrule == FIXED_LENGTH and asm3.configuration.medical_precreate_treatments(dbo):
+        times = _parse_treatment_times(post["treatmenttimes"], timingrule)
         if timingrule == ONEOFF:
-            insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
+            insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True, times = times)
         else:
             created = 1
             reqdate = post.date("startdate")
-            insert_treatments(dbo, username, nregid, reqdate, isstart = True)
+            insert_treatments(dbo, username, nregid, reqdate, isstart = True, times = times)
             while created < totalnumberoftreatments:
-                reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False)
+                reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False, times = times)
                 created += 1
     else:
-        # We aren't pre-creating, or we have an unspecified length regimen,
-        # just create the first treatment(s).
-        update_medical_treatments(dbo, username, nregid)
+        times = _parse_treatment_times(post["treatmenttimes"], timingrule)
+        if singlemulti == TREATMENT_MULTI and timingrule > 0 and times:
+            insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True, times = times)
+        else:
+            update_medical_treatments(dbo, username, nregid)
 
     # If the user chose a completed status, mark the regimen completed
     # and mark any treatments we created as given on the start date
@@ -1160,6 +1192,25 @@ def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "CostPaidDate":     post.date("costpaid"),
         "Comments":         post["comments"]
     }, username)
+
+    times = _parse_treatment_times(post["treatmenttimes"], dbo.query_int("SELECT TimingRule FROM animalmedical WHERE ID = ?", [regimenid]) or 1)
+    if times:
+        rows = list(dbo.query(
+            "SELECT ID, DateRequired, TreatmentNumber "
+            "FROM animalmedicaltreatment "
+            "WHERE AnimalMedicalID = ? AND DateGiven Is Null "
+            "ORDER BY DateRequired, TreatmentNumber",
+            [regimenid]
+        ))
+        if rows:
+            first_date = rows[0].DATEREQUIRED.date()
+            for r in rows:
+                if r.DATEREQUIRED.date() != first_date:
+                    break
+                tn = r.TREATMENTNUMBER
+                if 1 <= tn <= len(times) and times[tn-1]:
+                    newdt = parse_time(r.DATEREQUIRED, times[tn-1])
+                    update_treatment_required(dbo, username, r.ID, newdt)
 
     update_medical_treatments(dbo, username, post.integer("regimenid"))
 

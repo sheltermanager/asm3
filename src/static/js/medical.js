@@ -12,6 +12,53 @@ $(function() {
         TREATMENT_CUSTOM: 2,
         MEDICAL_TYPES_WITHOUT_DOSAGE: [ 11,12,13,14,15,16,18,19,26,27,29 ],
 
+        /**
+         * Returns a default treatment time string for the given row,
+         * based on the configured work day and the TreatmentNumber /
+         * TotalTreatments for the regimen.
+         *
+         * The work day comes from DefaultShiftStart/DefaultShiftEnd
+         * (eg: 08:00–20:00). For N treatments, we divide the span
+         * into (N + 1) segments and place treatment i at:
+         *   start + i * span/(N+1)
+         * so 1 treatment lands mid‑day, 2 treatments land roughly
+         * one‑third and two‑thirds through the day, etc.
+         * This affects display only; users can still change dates
+         * via the existing “Change Date Required” action.
+         */
+        treatment_time_for: function(row) {
+            const tn = parseInt(row.TREATMENTNUMBER, 10);
+            const total = parseInt(row.TOTALTREATMENTS, 10);
+            if (!tn || tn <= 0 || !total || total <= 0) { return ""; }
+
+            const startStr = config.str("DefaultShiftStart") || "08:00";
+            const endStr = config.str("DefaultShiftEnd") || "20:00";
+
+            const parseTime = function(t) {
+                const parts = (t || "").split(":");
+                if (parts.length < 2) { return null; }
+                const h = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10);
+                if (isNaN(h) || isNaN(m)) { return null; }
+                return h * 60 + m;
+            };
+
+            const startMin = parseTime(startStr);
+            const endMin = parseTime(endStr);
+            if (startMin === null || endMin === null || endMin <= startMin) { return ""; }
+
+            const span = endMin - startMin;
+            const step = span / (total + 1);
+            const minutes = startMin + step * tn;
+
+            // Round to nearest 5 minutes for sanity
+            const rounded = Math.round(minutes / 5) * 5;
+            const rh = Math.floor(rounded / 60);
+            const rm = Math.floor(rounded % 60);
+            const pad = function(x) { return (x < 10 ? "0" : "") + x; };
+            return pad(rh) + ":" + pad(rm);
+        },
+
         model: function() {
             const dialog = {
                 add_title: _("Add medical regimen"),
@@ -77,6 +124,7 @@ $(function() {
                             _("An optional label may be applied with '{label}={days since start}'") + "<br>" + 
                             _("Examples") + "<br>'1,2,10'<br>'first=1,second=2,final=10'<br>'morning=0,evening=0,after 3 days=3'"
                     },
+                    { type: "raw", id: "treatmenttimes", label: _("Treatment times (per day)"), markup: "" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -97,10 +145,20 @@ $(function() {
                     $("#customtimingrow").hide();
                     tableform.fields_populate_from_json(dialog.fields, row);
                     medical.change_medicaltype();
+                    medical.change_values();
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     medical.set_extra_fields(row);
-                    await tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, "medical");
+                    let perday = format.to_int($("#timingrule").val() || "1");
+                    let times = [];
+                    for (let i = 1; i <= perday; i++) {
+                        times.push($("input[name='treatmenttime" + i + "']").val());
+                    }
+                    let extra = "";
+                    if (times.length) {
+                        extra = "&treatmenttimes=" + encodeURIComponent(times.join(","));
+                    }
+                    await tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID + extra, "medical");
                     tableform.table_update(table);
                     tableform.dialog_close();
                 },
@@ -109,7 +167,7 @@ $(function() {
                     return false;
                 },
                 overdue: function(row) {
-                    return !row.DATEGIVEN && row.STATUS == 0 && format.date_js(row.DATEREQUIRED) < common.today_no_time();
+                    return !row.DATEGIVEN && row.STATUS == 0 && format.date_js(row.DATEREQUIRED) < new Date();
                 },
                 columns: [
                     { field: "TREATMENTNAME", display: _("Name"),
@@ -181,8 +239,8 @@ $(function() {
                             status = row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS;
                         }
                         return status + " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")<br/>" +
-                            (row.TREATMENTSREMAINING > 0 ? 
-                                _("({0} given, {1} remaining)").replace("{0}", row.TREATMENTSGIVEN).replace("{1}", row.TREATMENTSREMAINING) 
+                            (row.TREATMENTSREMAINING > 0 ?
+                                _("({0} given, {1} remaining)").replace("{0}", row.TREATMENTSGIVEN).replace("{1}", row.TREATMENTSREMAINING)
                                 : "");
                     }},
                     { field: "COST", display: _("Cost"), 
@@ -195,9 +253,11 @@ $(function() {
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
-                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, 
+                    { field: "DATEREQUIRED", display: _("Required Date"), formatter: tableform.format_date, initialsort: true, 
                         initialsortdirection: controller.name == "medical" ? "asc" : "desc" },
-                    { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_date },
+                    { field: "REQUIREDTIME", display: _("Required Time"),
+                        formatter: function(row) { return format.time(row.DATEREQUIRED, "%H:%M", true); } },
+                    { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_datetime },
                     { field: "GIVENBY", display: _("By"), 
                         formatter: function(row) {
                             if (!row.ADMINISTERINGVETID) { return row.GIVENBY; }
@@ -444,7 +504,16 @@ $(function() {
                 },
                 onadd: async function() {
                     try {
-                        await tableform.fields_post(dialog.fields, "mode=create", "medical");
+                        let perday = format.to_int($("#timingrule").val() || "1");
+                        let times = [];
+                        for (let i = 1; i <= perday; i++) {
+                            times.push($("input[name='treatmenttime" + i + "']").val());
+                        }
+                        let extra = "";
+                        if (times.length) {
+                            extra = "&treatmenttimes=" + encodeURIComponent(times.join(","));
+                        }
+                        await tableform.fields_post(dialog.fields, "mode=create" + extra, "medical");
                         tableform.dialog_close();
                         if (config.bool("ReloadMedical")) {
                             common.route_reload();
@@ -542,6 +611,7 @@ $(function() {
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Give Treatments")) + '">',
                 tableform.fields_render([
                     { post_field: "newdate", type: "date", label: _("Given"), date_nofuture: true },
+                    { post_field: "newtime", type: "time", label: _("at") },
                     { post_field: "givenby", type: "select", label: _("By"), 
                         options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>' }},
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
@@ -576,12 +646,12 @@ $(function() {
                     $("#usagedate").val($("#newdate").val()); // copy given to usage
                     $("#dialog-given").disable_dialog_buttons();
                     let ids = medical.selected_treatment_ids();
-                    let newdate = encodeURIComponent($("#newdate").val());
                     try {
                         await common.ajax_post("medical", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids);
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.COMPOSITEID)) {
-                                v.DATEGIVEN = format.date_iso($("#newdate").val());
+                                let d = $("#newdate").val(), t = $("#newtime").val();
+                                v.DATEGIVEN = d + (t ? (" " + t) : "");
                                 if (!v.GIVENBY) { v.GIVENBY = asm.user; }
                                 v.TREATMENTCOMMENTS = $("#treatmentcomments").val();
                             }
@@ -721,6 +791,7 @@ $(function() {
                 $("#treatmentrulerow").fadeOut();
                 $("#customtimingrow").fadeIn();
             }
+            medical.change_values();
         },
 
         /* Recalculate ends after period and update screen*/
@@ -735,6 +806,40 @@ $(function() {
             } else {
                 $("#treatmentrulecalc").hide();
             }
+            medical.rebuild_treatment_times();
+        },
+
+        rebuild_treatment_times: function() {
+            const sm = $("#singlemulti").val();
+            const row = $("#treatmenttimesrow");
+            const table = row.closest("table");
+
+            table.find("tr.asm-tx-time-row").remove();
+
+            if (sm != medical.TREATMENT_MULTI && sm != medical.TREATMENT_SINGLE) {
+                row.hide();
+                return;
+            }
+
+            const perday = (sm == medical.TREATMENT_SINGLE) ? 1 : format.to_int($("#timingrule").val() || "1");
+            if (!perday || perday <= 0) {
+                row.hide();
+                return;
+            }
+
+            row.show();
+
+            let html = "";
+            for (let i = 1; i <= perday; i++) {
+                const t = medical.treatment_time_for({ TREATMENTNUMBER: i, TOTALTREATMENTS: perday }) || "";
+                html += '<tr class="asm-formfield asm-tx-time-row">' +
+                        '<td><label>' + _("Dose {0}").replace("{0}", i) + '</label></td>' +
+                        '<td><input type="text" class="asm-textbox asm-timebox" ' +
+                        'name="treatmenttime' + i + '" value="' + t + '"/></td>' +
+                        '</tr>';
+            }
+            row.after(html);
+            $(".asm-timebox").time();
         },
 
         bind: function() {
@@ -754,6 +859,7 @@ $(function() {
             $("#singlemulti").change(function() {
                 medical.change_singlemulti();
             });
+            medical.change_values();
 
             $("#treatmentrule").change(function() {
                 if ($("#treatmentrule").val() == "1") {

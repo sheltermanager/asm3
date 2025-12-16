@@ -35,6 +35,7 @@ import asm3.lookups
 import asm3.lostfound
 import asm3.media
 import asm3.medical
+import asm3.i18n
 import asm3.movement
 import asm3.onlineform
 import asm3.paymentprocessor.base
@@ -5415,6 +5416,9 @@ class medical(JSONEndpoint):
         self.check(asm3.users.BULK_COMPLETE_MEDICAL)
         post = o.post
         newdate = post.date("newdate")
+        newtime = post["newtime"]
+        if newdate is not None and newtime:
+            newdate = asm3.i18n.parse_time(newdate, newtime)
         vet = post.integer("givenvet")
         by = post["givenby"]
         comments = post["treatmentcomments"]
@@ -8552,4 +8556,3 @@ elif DEPLOYMENT_TYPE == "fcgi":
 
 if __name__ == "__main__":
     app.run()
-
