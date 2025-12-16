@@ -1751,6 +1751,20 @@ def sql_structure(dbo: Database) -> str:
     sql += index("publishlog_PublishDateTime", "publishlog", "PublishDateTime")
     sql += index("publishlog_Name", "publishlog", "Name")
 
+    sql += table("regulardebit", (
+        fid(),
+        fint("OwnerID"),
+        fdate("StartDate"),
+        fdate("EndDate", True),
+        fint("Amount"),
+        fint("FromAccount"),
+        fint("ToAccount"),
+        fint("Period"),
+        fint("Weekday"),
+        fint("DayOfMonth"),
+        fint("Month"),
+        flongstr("Comments") ), True)
+
     sql += table("reservationstatus", (
         fid(),
         fstr("StatusName"),
