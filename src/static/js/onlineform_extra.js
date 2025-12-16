@@ -614,14 +614,18 @@ $(document).ready(function() {
         }
     });
 
-    let ro = new ResizeObserver(function(e) {
-            window.parent.postMessage(document.querySelector("html").offsetHeight, "*");
-    });
-    ro.observe(document.querySelector("html"));
+    try {
+        let ro = new ResizeObserver(function(e) {
+                window.parent.postMessage(document.querySelector("html").offsetHeight, "*");
+        });
+        ro.observe(document.querySelector("html"));
+    } catch(err) {
+        log.error(err, err);
+    }
 
     if (["en_CA", "fr_CA", "en_GB", "en_IE", "nl"].includes(LOCALE) && $(".asm-onlineform-postcode").length && $(".asm-onlineform-address").length) {
         $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;"></span>');
-        $("#postcodelookup").click(async function() {
+        $("#postcodelookup").click(function() {
             $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
             let country = "";
             if (LOCALE == "en_GB") {
@@ -647,7 +651,6 @@ $(document).ready(function() {
                 dataType: "text",
                 success: function(response) {
                     let rows = jQuery.parseJSON(response);
-                    console.log(rows);
                     $(".asm-onlineform-address").val( rows[0].street );
                     $(".asm-onlineform-town").val( rows[0].town );
                     $(".asm-onlineform-county").val( rows[0].county );

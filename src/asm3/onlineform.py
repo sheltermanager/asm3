@@ -234,14 +234,14 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = " asm-onlineform-postcode"
-            elif f.FIELDNAME == "address": extraclass = " asm-onlineform-address"
-            elif f.FIELDNAME == "town": extraclass = " asm-onlineform-town"
-            elif f.FIELDNAME == "country": extraclass = " asm-onlineform-county"
-            h.append(f'<input class="asm-onlineform-text{extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
+            if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
+            elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
+            elif f.FIELDNAME == "town": extraclass = "asm-onlineform-town"
+            elif f.FIELDNAME == "country": extraclass = "asm-onlineform-county"
+            h.append(f'<input class="asm-onlineform-text {extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NUMBER:
-            if f.FIELDNAME == "zipcode": extraclass = " asm-onlineform-postcode"
-            h.append(f'<input class="asm-onlineform-number{extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
+            if f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
+            h.append(f'<input class="asm-onlineform-number {extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
             h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
             if f.FIELDNAME == "emailaddress":
@@ -264,8 +264,8 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_TIME:
             h.append('<input class="asm-onlineform-time" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NOTES:
-            if f.FIELDNAME == "address": extraclass = " asm-onlineform-address"
-            h.append(f'<textarea class="asm-onlineform-notes{extraclass}" id="%s" name="%s" %s></textarea>' % ( fid, cname, requiredtext))
+            if f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
+            h.append(f'<textarea class="asm-onlineform-notes {extraclass}" id="%s" name="%s" %s></textarea>' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_LOOKUP:
             h.append('<select class="asm-onlineform-lookup" id="%s" name="%s" %s>' % ( fid, cname, required))
             for lv in asm3.utils.nulltostr(f["LOOKUPS"]).split("|"):
