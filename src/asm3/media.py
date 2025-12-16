@@ -309,20 +309,20 @@ def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
     if justdate is True, returns the last modified date
     if justdate is False, returns a tuple containing the last modified date and video data
     """
-    def nopic():
+    def novid():
+        NOVID_DATE = datetime(2011, 1, 1)
+        if justdate: return NOVID_DATE
+        return (NOVID_DATE, b"NOVID")
+    def thumb_novid():
         NOPIC_DATE = datetime(2011, 1, 1)
         if justdate: return NOPIC_DATE
-        return (NOPIC_DATE, b"NOPIC")
-    def thumb_nopic():
-        NOPIC_DATE = datetime(2011, 1, 1)
-        if justdate: return NOPIC_DATE
-        return (NOPIC_DATE, b"NOPIC")
+        return (NOPIC_DATE, b"NOVID")
     def mrec(mm):
-        if mm is None: return nopic()
+        if mm is None: return novid()
         if justdate: return mm.DATE
         return (mm.DATE, asm3.dbfs.get_string_id(dbo, mm.DBFSID))
     def thumb_mrec(mm):
-        if mm is None: return thumb_nopic()
+        if mm is None: return thumb_novid()
         if justdate: return mm.DATE
         return (mm.DATE, get_video_thumbnail(dbo, mm.DBFSID))
 
@@ -383,14 +383,14 @@ def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
                 # Only name was given
                 return (dbo.now(), asm3.dbfs.get_string(dbo, sid))
 
-    elif mode == "nopic":
+    elif mode == "novid":
         if asm3.dbfs.file_exists(dbo, "novid.jpg"):
             return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, "/reports/novid.jpg"))
         else:
             return (dbo.now(), asm3.utils.read_binary_file(dbo.installpath + "media/reports/novid.jpg"))
 
     else:
-        return nopic()
+        return novid()
 
 def get_dbfs_path(linkid: int, linktype: int) -> str:
     path = "/animal/%d" % int(linkid)
@@ -848,13 +848,25 @@ def get_signature_link(dbo: Database, mid: int, post: PostedData) -> str:
     return url
 
 def get_video_thumbnail(dbo: Database, dbfsid: int) -> bytes:
+    cache_ttl = 86400 * 7
+    cache_key = f"vid_thumbnail_{dbfsid}"
+    idata = asm3.cachedisk.touch(cache_key, dbo.name(), cache_ttl)
+    if idata is not None: return idata
+
     inputfile = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
     vdata = asm3.dbfs.get_string_id(dbo, dbfsid)
     inputfile.write(vdata)
     inputfile.close()
     outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-    asm3.utils.cmd(VIDEO_THUMBNAIL_CMD % { "output": outputfile.name, "input": inputfile.name}, False)
+    response = asm3.utils.cmd(VIDEO_THUMBNAIL_CMD % { "output": outputfile.name, "input": inputfile.name}, False)
+    if response[0] != 0:
+        raise asm3.utils.ASMError("Failed creating video thumbnail")
     idata = outputfile.read()
+    os.unlink(inputfile.name)
+    os.unlink(outputfile.name)
+
+    asm3.cachedisk.put(cache_key, dbo.name(), idata, cache_ttl)
+
     return idata
 
 

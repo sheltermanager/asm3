@@ -673,8 +673,11 @@ class image(ASMEndpoint):
 
 class video_thumbnail(ASMEndpoint):
     url = "video_thumbnail"
+    session_cookie = False # Disable sending the cookie with the response to assist with CDN caching
 
     def content(self, o):
+        self.content_type("video/mp4")
+        self.cache_control(CACHE_ONE_MONTH, CACHE_ONE_DAY)
         return asm3.media.get_video_thumbnail(o.dbo, o.post.integer("dbfsid"))
 
 class configjs(ASMEndpoint):
