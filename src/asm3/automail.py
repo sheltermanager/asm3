@@ -111,7 +111,7 @@ def _vaccination_followup_query(dbo: Database, cutoff: datetime) -> Results:
         "INNER JOIN animalvaccination v ON v.AnimalID = a.ID " \
         "WHERE v.DateRequired=? AND a.NonShelterAnimal = 1 " \
         "AND a.DeceasedDate Is Null " \
-        "ORDER BY a.ID", [ cutoff, cutoff ])
+        "ORDER BY ID", [ cutoff, cutoff ])
 
 def vaccination_followup(dbo: Database, user = "system") -> None:
     """
