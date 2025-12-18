@@ -2243,10 +2243,9 @@ def generate_citation_doc(dbo: Database, templateid: int, citationids: List[int]
     if len(citations) == 0: 
         raise asm3.utils.ASMValidationError("%s does not contain any valid citation IDs" % citationids)
     c = citations[0]
-    # tags = person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID))
-    tags = {}
+    tags = person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID))
     tags = append_tags(tags, citation_tags(dbo, citations))
-    # tags = append_tags(tags, org_tags(dbo, username))
+    tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
 def generate_clinic_doc(dbo: Database, templateid: int, appointmentid: int, username: str) -> bytes_or_str:
