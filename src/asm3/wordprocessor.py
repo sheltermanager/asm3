@@ -1303,13 +1303,13 @@ def citation_tags(dbo: Database, citations: Results) -> Tags:
     totalunpaidfines = 0
     def add_to_tags(i, p):
         x = {
-            "SELECTEDCITATIONNAME"+i:           p["CITATIONNAME"],
-            "SELECTEDCITATIONDATE"+i:           python2display(l, p["CITATIONDATE"]),
-            "SELECTEDCITATIONNUMBER"+i:         p["CITATIONNUMBER"],
-            "SELECTEDCITATIONFINEAMOUNT"+i:     format_currency_no_symbol(l, p["FINEAMOUNT"]),
-            "SELECTEDCITATIONFINEDUEDATE"+i:    python2display(l, p["FINEDUEDATE"]),
-            "SELECTEDCITATIONFINEPAIDDATE"+i:   python2display(l, p["FINEPAIDDATE"]),
-            "SELECTEDCITATIONCOMMENTS"+i:       p["COMMENTS"]
+            "CITATIONNAME"+i:           p["CITATIONNAME"],
+            "CITATIONDATE"+i:           python2display(l, p["CITATIONDATE"]),
+            "CITATIONNUMBER"+i:         p["CITATIONNUMBER"],
+            "CITATIONFINEAMOUNT"+i:     format_currency_no_symbol(l, p["FINEAMOUNT"]),
+            "CITATIONFINEDUEDATE"+i:    python2display(l, p["FINEDUEDATE"]),
+            "CITATIONFINEPAIDDATE"+i:   python2display(l, p["FINEPAIDDATE"]),
+            "CITATIONCOMMENTS"+i:       p["COMMENTS"]
         }
         tags.update(x)
         rawadditionaltags = additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "citation"), "SELECTEDCITATIONADDITIONAL")
@@ -1328,9 +1328,9 @@ def citation_tags(dbo: Database, citations: Results) -> Tags:
         add_to_tags(str(i+1), d)
     tags.update(
         {
-            "SELECTEDCITATIONSTOTALFINES":          format_currency_no_symbol(l, totalfines),
-            "SELECTEDCITATIONSTOTALPAIDFINES":      format_currency_no_symbol(l, totalpaidfines),
-            "SELECTEDCITATIONSTOTALUNPAIDFINES":    format_currency_no_symbol(l, totalunpaidfines)
+            "CITATIONSTOTALFINES":          format_currency_no_symbol(l, totalfines),
+            "CITATIONSTOTALPAIDFINES":      format_currency_no_symbol(l, totalpaidfines),
+            "CITATIONSTOTALUNPAIDFINES":    format_currency_no_symbol(l, totalunpaidfines)
         }
     )
     return tags
@@ -1583,7 +1583,7 @@ def clinic_tags(dbo: Database, c: ResultRow) -> Tags:
     tags.update(table_tags(dbo, d, asm3.clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=False, includeVouchers=False) -> Tags:
+def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=False, includeVouchers=False, includeCitations=True) -> Tags:
     """
     Generates a list of tags from a person result (the deep type from
     calling asm3.person.get_person)
@@ -1726,15 +1726,16 @@ def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person")))
 
     # Citations
-    d = {
-        "CITATIONNAME":         "CITATIONNAME",
-        "CITATIONDATE":         "d:CITATIONDATE",
-        "CITATIONCOMMENTS":     "COMMENTS",
-        "FINEAMOUNT":           "c:FINEAMOUNT",
-        "FINEDUEDATE":          "d:FINEDUEDATE",
-        "FINEPAIDDATE":         "d:FINEPAIDDATE"
-    }
-    tags.update(table_tags(dbo, d, asm3.financial.get_person_citations(dbo, p["ID"]), "CITATIONNAME", "CITATIONDATE", "FINEPAIDDATE"))
+    if includeCitations:
+        d = {
+            "CITATIONNAME":         "CITATIONNAME",
+            "CITATIONDATE":         "d:CITATIONDATE",
+            "CITATIONCOMMENTS":     "COMMENTS",
+            "FINEAMOUNT":           "c:FINEAMOUNT",
+            "FINEDUEDATE":          "d:FINEDUEDATE",
+            "FINEPAIDDATE":         "d:FINEPAIDDATE"
+        }
+        tags.update(table_tags(dbo, d, asm3.financial.get_person_citations(dbo, p["ID"]), "CITATIONNAME", "CITATIONDATE", "FINEPAIDDATE"))
 
     # Logs
     d = {
@@ -2243,7 +2244,7 @@ def generate_citation_doc(dbo: Database, templateid: int, citationids: List[int]
     if len(citations) == 0: 
         raise asm3.utils.ASMValidationError("%s does not contain any valid citation IDs" % citationids)
     c = citations[0]
-    tags = person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID))
+    tags = person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID), includeCitations=False)
     tags = append_tags(tags, citation_tags(dbo, citations))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
