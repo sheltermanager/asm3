@@ -608,6 +608,19 @@ def get_person_boarding(dbo: Database, oid: int) -> Results:
         "WHERE ab.OwnerID = ? " \
         "ORDER BY InDateTime", [oid])
 
+# def get_citation(dbo: Database, cid: int) -> Results:
+#     """
+#     Returns an individual citation record
+#     """
+#     rows = dbo.query(get_citation_query(dbo) + "WHERE oc.ID = ?", cid)
+#     return dbo.first_row(rows)
+
+def get_citations_by_ids(dbo: Database, cids: List[int]) -> Results:
+    """
+    Returns multiple citations with a list of ids
+    """
+    return dbo.query(get_citation_query(dbo) + "WHERE oc.ID IN (%s) ORDER BY oc.CitationDate" % ",".join(str(x) for x in cids))
+
 def get_incident_citations(dbo: Database, iid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the citation records for an incident, along with

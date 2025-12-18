@@ -10,6 +10,7 @@ $(function() {
             { VALUE: "everywhere", DISPLAY: _("(everywhere)") },
             { VALUE: "nowhere", DISPLAY: _("(nowhere)") },
             { VALUE: "animal", DISPLAY: _("Animals") },
+            { VALUE: "citation", DISPLAY: _("Citations") },
             { VALUE: "clinic", DISPLAY: _("Clinic") },
             { VALUE: "email", DISPLAY: _("Emails") },
             { VALUE: "foundanimal", DISPLAY: _("Found Animals") },

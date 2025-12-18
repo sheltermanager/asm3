@@ -3451,6 +3451,9 @@ class document_gen(ASMEndpoint):
         elif linktype == "BOARDING":
             loglinktype = asm3.log.PERSON
             content = asm3.wordprocessor.generate_boarding_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "CITATION":
+            loglinktype = asm3.log.PERSON
+            content = asm3.wordprocessor.generate_citation_doc(dbo, dtid, post.integer_list("id"), o.user)
         elif linktype == "CLINIC":
             loglinktype = asm3.log.PERSON
             content = asm3.wordprocessor.generate_clinic_doc(dbo, dtid, post.integer("id"), o.user)
@@ -4431,6 +4434,7 @@ class incident_citations(JSONEndpoint):
             "rows": citations,
             "incident": a,
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")
@@ -6603,6 +6607,7 @@ class person_citations(JSONEndpoint):
             "rows": citations,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
+            "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")

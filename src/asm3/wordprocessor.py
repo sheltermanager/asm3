@@ -1291,6 +1291,50 @@ def donation_tags(dbo: Database, donations: Results) -> Tags:
     tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["gross"])
     return tags
 
+def citation_tags(dbo: Database, citations: Results) -> Tags:
+    """
+    Generates a list of tags from a citation result.
+    donations: a list of donation records
+    """
+    l = dbo.locale
+    tags = {}
+    totalfines = 0
+    totalpaidfines = 0
+    totalunpaidfines = 0
+    def add_to_tags(i, p):
+        x = {
+            "SELECTEDCITATIONNAME"+i:           p["CITATIONNAME"],
+            "SELECTEDCITATIONDATE"+i:           python2display(l, p["CITATIONDATE"]),
+            "SELECTEDCITATIONNUMBER"+i:         p["CITATIONNUMBER"],
+            "SELECTEDCITATIONFINEAMOUNT"+i:     format_currency_no_symbol(l, p["FINEAMOUNT"]),
+            "SELECTEDCITATIONFINEDUEDATE"+i:    python2display(l, p["FINEDUEDATE"]),
+            "SELECTEDCITATIONFINEPAIDDATE"+i:   python2display(l, p["FINEPAIDDATE"]),
+            "SELECTEDCITATIONCOMMENTS"+i:       p["COMMENTS"]
+        }
+        tags.update(x)
+        rawadditionaltags = additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "citation"), "SELECTEDCITATIONADDITIONAL")
+        additionaltags = {}
+        for tagkey in rawadditionaltags.keys():
+            additionaltags[tagkey+i] = rawadditionaltags[tagkey]
+        tags.update(additionaltags)
+    if len(citations) > 0:
+        add_to_tags("", citations[0]) 
+    for i, d in enumerate(citations):
+        totalfines += d["FINEAMOUNT"]
+        if d["FINEPAIDDATE"]:
+            totalpaidfines += d["FINEAMOUNT"]
+        else:
+            totalunpaidfines += d["FINEAMOUNT"]
+        add_to_tags(str(i+1), d)
+    tags.update(
+        {
+            "SELECTEDCITATIONSTOTALFINES":          format_currency_no_symbol(l, totalfines),
+            "SELECTEDCITATIONSTOTALPAIDFINES":      format_currency_no_symbol(l, totalpaidfines),
+            "SELECTEDCITATIONSTOTALUNPAIDFINES":    format_currency_no_symbol(l, totalunpaidfines)
+        }
+    )
+    return tags
+
 def foundanimal_tags(dbo: Database, a: ResultRow) -> Tags:
     """
     Generates a list of tags from a foundanimal result (asm3.lostfound.get_foundanimal)
@@ -2187,6 +2231,22 @@ def generate_boarding_doc(dbo: Database, templateid: int, animalboardingid: int,
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, b.OWNERID)))
     tags = append_tags(tags, boarding_tags(dbo, b))
     tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_citation_doc(dbo: Database, templateid: int, citationids: List[int], username: str) -> bytes_or_str:
+    """
+    Generates a citation document from a template
+    templateid: The ID of the template
+    cid: The citation id to generate for
+    """
+    citations = asm3.financial.get_citations_by_ids(dbo, citationids)
+    if len(citations) == 0: 
+        raise asm3.utils.ASMValidationError("%s does not contain any valid citation IDs" % citationids)
+    c = citations[0]
+    # tags = person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID))
+    tags = {}
+    tags = append_tags(tags, citation_tags(dbo, citations))
+    # tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
 def generate_clinic_doc(dbo: Database, templateid: int, appointmentid: int, username: str) -> bytes_or_str:
