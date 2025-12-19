@@ -1312,7 +1312,7 @@ def citation_tags(dbo: Database, citations: Results) -> Tags:
             "CITATIONCOMMENTS"+i:       p["COMMENTS"]
         }
         tags.update(x)
-        rawadditionaltags = additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "citation"), "SELECTEDCITATIONADDITIONAL")
+        rawadditionaltags = additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "citation"), "CITATIONADDITIONAL")
         additionaltags = {}
         for tagkey in rawadditionaltags.keys():
             additionaltags[tagkey+i] = rawadditionaltags[tagkey]
