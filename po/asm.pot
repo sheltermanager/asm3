@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2025-12-10 11:06+0000\n"
+"POT-Creation-Date: 2025-12-19 11:12+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3391,7 +3391,7 @@ msgid "Commit"
 msgstr ""
 
 #: animal.py
-msgid "Commments changed from '%s' to '%s'"
+msgid "Commments changed from '{0}' to '{1}'"
 msgstr ""
 
 #: dbupdate.py
@@ -6571,7 +6571,7 @@ msgstr ""
 msgid "Format telephone numbers according to my locale"
 msgstr ""
 
-#: onlineform_incoming.js
+#: html.py onlineform_incoming.js
 msgid "Forms"
 msgstr ""
 
@@ -7283,7 +7283,7 @@ msgid "Hidden Comments"
 msgstr ""
 
 #: animal.py
-msgid "Hidden Commments changed from '%s' to '%s'"
+msgid "Hidden Commments changed from '{0}' to '{1}'"
 msgstr ""
 
 #: animal.js
@@ -9651,7 +9651,7 @@ msgid "Name cannot be blank"
 msgstr ""
 
 #: animal.py
-msgid "Name changed from '%s' to '%s'"
+msgid "Name changed from '{0}' to '{1}'"
 msgstr ""
 
 #: person_find.js

@@ -4114,7 +4114,7 @@ def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: 
     if asm3.configuration.animalname_change_log(dbo):
         if newname != oldname:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalname_change_log_type(dbo),
-                _("Name changed from '%s' to '%s'", l) % (oldname, newname))
+                _("Name changed from '{0}' to '{1}'", l).format(oldname, newname))
 
 def insert_commentschange_log(dbo: Database, username: str, animalid: int, newcomments: str, oldcomments: str, newhiddencomments: str, oldhiddencomments: str) -> None:
     """ Writes an entry to the log when an animal's comments/hidden comments change."""
@@ -4122,10 +4122,10 @@ def insert_commentschange_log(dbo: Database, username: str, animalid: int, newco
     if asm3.configuration.animalcomments_change_log(dbo):
         if newcomments != oldcomments:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalcomments_change_log_type(dbo),
-                _("Commments changed from '%s' to '%s'", l) % (oldcomments, newcomments))
+                _("Commments changed from '{0}' to '{1}'", l).format(oldcomments, newcomments))
         if newhiddencomments != oldhiddencomments:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalcomments_change_log_type(dbo),
-                _("Hidden Commments changed from '%s' to '%s'", l) % (oldhiddencomments, newhiddencomments))
+                _("Hidden Commments changed from '{0}' to '{1}'", l).format(oldhiddencomments, newhiddencomments))
 
 def insert_weight_log(dbo: Database, username: str, animalid: int, newweight: float = 0, oldweight: float = -1) -> None:
     """ Writes an entry to the log when an animal's weight changes. 
