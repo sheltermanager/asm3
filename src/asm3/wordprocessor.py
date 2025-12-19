@@ -1154,6 +1154,7 @@ def animalcontrol_tags(dbo: Database, ac: ResultRow) -> Tags:
     # Citations
     d = {
         "CITATIONNAME":         "CITATIONNAME",
+        "CITATIONNUMBER":       "CITATIONNUMBER",
         "CITATIONDATE":         "d:CITATIONDATE",
         "CITATIONCOMMENTS":     "COMMENTS",
         "FINEAMOUNT":           "c:FINEAMOUNT",
@@ -1306,9 +1307,9 @@ def citation_tags(dbo: Database, citations: Results) -> Tags:
             "CITATIONNAME"+i:           p["CITATIONNAME"],
             "CITATIONDATE"+i:           python2display(l, p["CITATIONDATE"]),
             "CITATIONNUMBER"+i:         p["CITATIONNUMBER"],
-            "CITATIONFINEAMOUNT"+i:     format_currency_no_symbol(l, p["FINEAMOUNT"]),
-            "CITATIONFINEDUEDATE"+i:    python2display(l, p["FINEDUEDATE"]),
-            "CITATIONFINEPAIDDATE"+i:   python2display(l, p["FINEPAIDDATE"]),
+            "FINEAMOUNT"+i:             format_currency_no_symbol(l, p["FINEAMOUNT"]),
+            "FINEDUEDATE"+i:            python2display(l, p["FINEDUEDATE"]),
+            "FINEPAIDDATE"+i:           python2display(l, p["FINEPAIDDATE"]),
             "CITATIONCOMMENTS"+i:       p["COMMENTS"]
         }
         tags.update(x)
@@ -1729,6 +1730,7 @@ def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=
     if includeCitations:
         d = {
             "CITATIONNAME":         "CITATIONNAME",
+            "CITATIONNUMBER":       "CITATIONNUMBER",
             "CITATIONDATE":         "d:CITATIONDATE",
             "CITATIONCOMMENTS":     "COMMENTS",
             "FINEAMOUNT":           "c:FINEAMOUNT",
