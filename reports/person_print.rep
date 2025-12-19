@@ -2,7 +2,7 @@ Print Person Record
 ###
 Auditing
 ###
-34702/Any rev06
+34702/Any rev07
 ###
 A complete printout of a person record.
 ###
@@ -97,8 +97,8 @@ $$BODY
 <h2>Additional</h2>
 {SUBREPORT.SUBREPORT_PersonPrintAdditional.PERSONID}
 
-<!-- Uncomment to include audit trail
-<h2>Audit</h2>
+<!-- Uncomment to include audit trail -->
+G<h2>Audit</h2>
 {SUBREPORT.SUBREPORT_PersonPrintAudit.PERSONID}
 -->
 
@@ -276,9 +276,8 @@ SUBREPORT_PersonPrintAudit
 +++
 SELECT AuditDate, UserName, TableName, Description
 FROM audittrail
-WHERE TableName = 'owner'
-AND (LinkID = $PARENTKEY$ OR ParentLinks LIKE '%owner=$PARENTKEY$%')
-AND Action IN (0,1,2,3)
+WHERE Action IN (0,1,2,3)
+AND ((TableName = 'owner' AND LinkID = $PARENTKEY$) OR ParentLinks LIKE '%owner=$PARENTKEY$%'))
 ORDER BY AuditDate DESC
 +++
 $$HEADER
