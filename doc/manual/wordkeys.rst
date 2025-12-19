@@ -1158,12 +1158,20 @@ PersonDocumentImgSrc
 Citation Keys
 -------------
 
-You must use a qualifier suffix to access these records.
+If you are creating a document from the aincident records, then you must
+use a qualifier suffix to access these records.
 
 .. note:: The Recent keyword returns citations where the fine is paid where Due returns unpaid.
 
+However, if you create a document from the citation tab of a
+person or incident record, you can select multiple citations
+before creating the document and access the information by suffixing a number
+to the end of the keys listed below (eg: CitationName1, FineAmount1)
+
 CitationName
     The type of citation being issued
+CItationNumber
+    The identification number of the citation
 CitationDate
     The date of the citation
 CitationComments
@@ -1174,6 +1182,16 @@ FineDueDate
     The date the fine is due to be paid
 FinePaidDate
     The date the fine was paid
+
+The following fields are only available to citations generated via
+the citation tab of incident and person records: 
+
+CitationsTotalFines
+    The total amount of fines within the selected citations
+CitationsTotalPaidFines
+    The total amount of fines within the selected citations that have been paid
+CitationsTotalUnpaidFines
+    The total amount of fines within the selected citations that have not been paid
 
 Equipment Loan Keys
 -------------------
