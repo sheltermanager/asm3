@@ -10,6 +10,7 @@ $(function() {
         TREATMENT_SINGLE: 0,
         TREATMENT_MULTI: 1,
         TREATMENT_CUSTOM: 2,
+        TREATMENT_MULTI_TIME: 3,
         MEDICAL_TYPES_WITHOUT_DOSAGE: [ 11,12,13,14,15,16,18,19,26,27,29 ],
 
         /**
@@ -59,6 +60,33 @@ $(function() {
             return pad(rh) + ":" + pad(rm);
         },
 
+        format_required: function(row, v) {
+            if (!v) { return ""; }
+            const date = format.date(v);
+            const time = format.time(v, "%H:%M", true);
+            if (time) { return '<span style="white-space: nowrap;">' + date + " " + time + "</span>"; }
+            return date;
+        },
+
+        treatment_times_enabled: function() {
+            return $("#singlemulti").val() == medical.TREATMENT_MULTI_TIME;
+        },
+
+        treatment_times_per_day: function() {
+            return format.to_int($("#timingrule").val() || "1");
+        },
+
+        read_treatment_times: function() {
+            if (!medical.treatment_times_enabled()) { return []; }
+            const perday = medical.treatment_times_per_day();
+            if (!perday || perday <= 0) { return []; }
+            let times = [];
+            for (let i = 1; i <= perday; i++) {
+                times.push($("input[name='treatmenttime" + i + "']").val());
+            }
+            return times;
+        },
+
         model: function() {
             const dialog = {
                 add_title: _("Add medical regimen"),
@@ -90,6 +118,7 @@ $(function() {
                     { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' + 
+                        '<option value="3">' + _("Multiple Treatments with times") + '</option>' +
                         '<option value="2">' + _("Custom Frequency") + '</option>' },
 
                     { json_field: "TIMINGRULE", post_field: "timingrule", type: "intnumber", label: "", 
@@ -149,11 +178,7 @@ $(function() {
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     medical.set_extra_fields(row);
-                    let perday = format.to_int($("#timingrule").val() || "1");
-                    let times = [];
-                    for (let i = 1; i <= perday; i++) {
-                        times.push($("input[name='treatmenttime" + i + "']").val());
-                    }
+                    let times = medical.read_treatment_times();
                     let extra = "";
                     if (times.length) {
                         extra = "&treatmenttimes=" + encodeURIComponent(times.join(","));
@@ -167,7 +192,14 @@ $(function() {
                     return false;
                 },
                 overdue: function(row) {
-                    return !row.DATEGIVEN && row.STATUS == 0 && format.date_js(row.DATEREQUIRED) < new Date();
+                    if (row.DATEGIVEN || row.STATUS != 0) { return false; }
+                    const req = row.DATEREQUIRED;
+                    if (!req) { return false; }
+                    const hasTime = !!format.time(req, "%H:%M", true);
+                    if (hasTime) {
+                        return format.date_js(req) < new Date();
+                    }
+                    return format.date_js(req, true) < common.today_no_time();
                 },
                 columns: [
                     { field: "TREATMENTNAME", display: _("Name"),
@@ -253,10 +285,8 @@ $(function() {
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
-                    { field: "DATEREQUIRED", display: _("Required Date"), formatter: tableform.format_date, initialsort: true, 
+                    { field: "DATEREQUIRED", display: _("Required"), formatter: medical.format_required, initialsort: true,
                         initialsortdirection: controller.name == "medical" ? "asc" : "desc" },
-                    { field: "REQUIREDTIME", display: _("Required Time"),
-                        formatter: function(row) { return format.time(row.DATEREQUIRED, "%H:%M", true); } },
                     { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_datetime },
                     { field: "GIVENBY", display: _("By"), 
                         formatter: function(row) {
@@ -504,11 +534,7 @@ $(function() {
                 },
                 onadd: async function() {
                     try {
-                        let perday = format.to_int($("#timingrule").val() || "1");
-                        let times = [];
-                        for (let i = 1; i <= perday; i++) {
-                            times.push($("input[name='treatmenttime" + i + "']").val());
-                        }
+                        let times = medical.read_treatment_times();
                         let extra = "";
                         if (times.length) {
                             extra = "&treatmenttimes=" + encodeURIComponent(times.join(","));
@@ -766,7 +792,7 @@ $(function() {
                 $("#treatmentrulerow").fadeOut();
                 $("#customtiming").val("");
                 $("#customtimingrow").fadeOut();
-            } else if ($("#singlemulti").val() == medical.TREATMENT_MULTI) {
+            } else if ($("#singlemulti").val() == medical.TREATMENT_MULTI || $("#singlemulti").val() == medical.TREATMENT_MULTI_TIME) {
                 $("#timingrule").val("1");
                 $("#timingrulenofrequencies").val("1");
                 $("#timingrulefrequency").select("value", "0");
@@ -810,18 +836,17 @@ $(function() {
         },
 
         rebuild_treatment_times: function() {
-            const sm = $("#singlemulti").val();
             const row = $("#treatmenttimesrow");
             const table = row.closest("table");
 
             table.find("tr.asm-tx-time-row").remove();
 
-            if (sm != medical.TREATMENT_MULTI && sm != medical.TREATMENT_SINGLE) {
+            if (!medical.treatment_times_enabled()) {
                 row.hide();
                 return;
             }
 
-            const perday = (sm == medical.TREATMENT_SINGLE) ? 1 : format.to_int($("#timingrule").val() || "1");
+            const perday = medical.treatment_times_per_day();
             if (!perday || perday <= 0) {
                 row.hide();
                 return;
@@ -832,11 +857,12 @@ $(function() {
             let html = "";
             for (let i = 1; i <= perday; i++) {
                 const t = medical.treatment_time_for({ TREATMENTNUMBER: i, TOTALTREATMENTS: perday }) || "";
-                html += '<tr class="asm-formfield asm-tx-time-row">' +
-                        '<td><label>' + _("Dose {0}").replace("{0}", i) + '</label></td>' +
-                        '<td><input type="text" class="asm-textbox asm-timebox" ' +
-                        'name="treatmenttime' + i + '" value="' + t + '"/></td>' +
-                        '</tr>';
+                html += tableform.render_time({
+                    name: "treatmenttime" + i,
+                    value: t,
+                    label: _("Dose {0}").replace("{0}", i),
+                    rowclasses: "asm-tx-time-row"
+                });
             }
             row.after(html);
             $(".asm-timebox").time();

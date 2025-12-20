@@ -34,6 +34,7 @@ DESCENDING_GIVEN = 2
 TREATMENT_SINGLE = 0
 TREATMENT_MULTI = 1
 TREATMENT_CUSTOM = 2
+TREATMENT_MULTI_TIME = 3
 
 def get_medicaltreatment_query(dbo: Database) -> str:
     return "SELECT " \
@@ -1138,7 +1139,7 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         txdays = parse_custom_timing(post["customtiming"])
         insert_treatments_custom(dbo, username, nregid, post.date("startdate"), txdays)
     elif treatmentrule == FIXED_LENGTH and asm3.configuration.medical_precreate_treatments(dbo):
-        times = _parse_treatment_times(post["treatmenttimes"], timingrule)
+        times = _parse_treatment_times(post["treatmenttimes"], timingrule) if singlemulti == TREATMENT_MULTI_TIME else []
         if timingrule == ONEOFF:
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True, times = times)
         else:
@@ -1149,8 +1150,8 @@ def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
                 reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False, times = times)
                 created += 1
     else:
-        times = _parse_treatment_times(post["treatmenttimes"], timingrule)
-        if singlemulti == TREATMENT_MULTI and timingrule > 0 and times:
+        times = _parse_treatment_times(post["treatmenttimes"], timingrule) if singlemulti == TREATMENT_MULTI_TIME else []
+        if singlemulti == TREATMENT_MULTI_TIME and timingrule > 0 and times:
             insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True, times = times)
         else:
             update_medical_treatments(dbo, username, nregid)
@@ -1193,24 +1194,26 @@ def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Comments":         post["comments"]
     }, username)
 
-    times = _parse_treatment_times(post["treatmenttimes"], dbo.query_int("SELECT TimingRule FROM animalmedical WHERE ID = ?", [regimenid]) or 1)
-    if times:
-        rows = list(dbo.query(
-            "SELECT ID, DateRequired, TreatmentNumber "
-            "FROM animalmedicaltreatment "
-            "WHERE AnimalMedicalID = ? AND DateGiven Is Null "
-            "ORDER BY DateRequired, TreatmentNumber",
-            [regimenid]
-        ))
-        if rows:
-            first_date = rows[0].DATEREQUIRED.date()
-            for r in rows:
-                if r.DATEREQUIRED.date() != first_date:
-                    break
-                tn = r.TREATMENTNUMBER
-                if 1 <= tn <= len(times) and times[tn-1]:
-                    newdt = parse_time(r.DATEREQUIRED, times[tn-1])
-                    update_treatment_required(dbo, username, r.ID, newdt)
+    singlemulti = post.integer("singlemulti")
+    if singlemulti == TREATMENT_MULTI_TIME:
+        times = _parse_treatment_times(post["treatmenttimes"], dbo.query_int("SELECT TimingRule FROM animalmedical WHERE ID = ?", [regimenid]) or 1)
+        if times:
+            rows = list(dbo.query(
+                "SELECT ID, DateRequired, TreatmentNumber "
+                "FROM animalmedicaltreatment "
+                "WHERE AnimalMedicalID = ? AND DateGiven Is Null "
+                "ORDER BY DateRequired, TreatmentNumber",
+                [regimenid]
+            ))
+            if rows:
+                first_date = rows[0].DATEREQUIRED.date()
+                for r in rows:
+                    if r.DATEREQUIRED.date() != first_date:
+                        break
+                    tn = r.TREATMENTNUMBER
+                    if 1 <= tn <= len(times) and times[tn-1]:
+                        newdt = parse_time(r.DATEREQUIRED, times[tn-1])
+                        update_treatment_required(dbo, username, r.ID, newdt)
 
     update_medical_treatments(dbo, username, post.integer("regimenid"))
 
@@ -1470,14 +1473,14 @@ def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> 
         while customtimingrule[-1] == ",":
             customtimingrule = customtimingrule[:-1]
     
-    if post.integer("singlemulti") == 2:
+    if post.integer("singlemulti") == TREATMENT_CUSTOM:
         totalnumberoftreatments = len(customtimingrule.split(","))
     else:
         totalnumberoftreatments = post.integer("totalnumberoftreatments")
         
         treatmentrule = post.integer("treatmentrule")
         singlemulti = post.integer("singlemulti")
-        if singlemulti == 0:
+        if singlemulti == TREATMENT_SINGLE:
             timingrule = 0
             timingrulenofrequencies = 0
             timingrulefrequency = 0
@@ -1567,4 +1570,3 @@ def update_vaccination_required(dbo: Database, username: str, vaccid: int, newda
         "AnimalID":         animalid,
         "DateRequired":     newdate
     }, username)
-
