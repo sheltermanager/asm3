@@ -1171,9 +1171,19 @@ class Database(object):
 
     def switch_param_placeholder(self, sql: str) -> str:
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 
-            override if your DB driver wants another char.
+            Override this function if your DB driver wants another char.
+            Only substitutes the ? if it is not inside single/string literal quotes
+            to prevent adding extra param placeholders when ? appears in string data.
         """
-        return sql.replace("?", "%s")
+        o = []
+        inq = False
+        for x in sql:
+            if x == "'": inq = not inq
+            if x == "?" and not inq:
+                o.append("%s")
+            else:
+                o.append(x)
+        return "".join(o)
 
     def update_primarykey(self, table: str, nextid: int) -> None:
         """
