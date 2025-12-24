@@ -46,7 +46,7 @@ def get_all_report_titles(dbo: Database):
 
 def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
     filteredreports = []
-    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask animal$%'])
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Category, Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask animal$%'])
     roles = dbo.query("SELECT * FROM customreportrole")
     for report in allreports:
         viewroleids = []
@@ -60,7 +60,7 @@ def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
 
 def get_ask_person_reports(dbo: Database, superuser: int, roleids: str):
     filteredreports = []
-    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask person$%'])
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Category, Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask person$%'])
     roles = dbo.query("SELECT * FROM customreportrole")
     for report in allreports:
         viewroleids = []
