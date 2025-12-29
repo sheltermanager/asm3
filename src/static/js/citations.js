@@ -134,6 +134,9 @@ $(function() {
                         
                     } 
                 },
+                { id: "document", text: _("Document"), icon: "document", enabled: "multi", perm: "vacc", 
+                    tooltip: _("Generate document(s) from this citation"), type: "buttonmenu"
+                },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dacc", 
                     click: async function() { 
                         await tableform.delete_dialog();
@@ -168,6 +171,10 @@ $(function() {
             let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            s += '<div id="button-document-body" class="asm-menu-body">' +
+                '<ul class="asm-menu-list">' +
+                edit_header.template_list(controller.templates, "CITATION", 0) +
+                '</ul></div>';
             if (controller.name.indexOf("incident_") == 0) {
                 s += edit_header.incident_edit_header(controller.incident, "citation", controller.tabcounts);
             }
@@ -188,6 +195,15 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            // Add click handlers to templates
+            $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
+                let template_name = $(this).attr("data");
+                let ids = tableform.table_ids(citations.table);
+                $(this).prop("href", "document_gen?linktype=CITATION&id=" + ids + "&dtid=" + template_name);
+            });
         },
 
         type_change: function() {
