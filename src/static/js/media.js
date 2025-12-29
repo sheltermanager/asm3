@@ -1000,7 +1000,18 @@ $(function() {
 
             $("#button-signlink").click(async function() {
                 $("#button-sign").asmmenu("hide_all");
-                let signaturelinks = await common.ajax_post("media", "mode=signlink&ids=" + tableform.table_ids(media.table));
+                let toadd = "";
+                if (controller.name == "animal_media") { toadd = controller.animal.CURRENTOWNEREMAILADDRESS; }
+                else if (controller.name == "foundanimal_media") { toadd = controller.animal.EMAILADDRESS; }
+                else if (controller.name == "lostanimal_media") { toadd = controller.animal.EMAILADDRESS; }
+                else if (controller.name == "person_media") { toadd = controller.person.EMAILADDRESS; }
+                else if (controller.name == "waitinglist_media") { toadd = controller.animal.EMAILADDRESS; }
+                let formdata = {
+                    mode: "signlink",
+                    ids: tableform.table_ids(media.table),
+                    to: toadd
+                };
+                let signaturelinks = await common.ajax_post("media", formdata);
                 $("#signaturelinks").empty();
                 $.each(signaturelinks.split("||"), function(i, link) {
                     let [mediadesc, signaturelink] = link.split("==");
