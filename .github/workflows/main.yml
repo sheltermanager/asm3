@@ -61,7 +61,7 @@ jobs:
             sed -i "/git log/s/^/#/" Makefile
           fi
           # Now run the make command, which will succeed either way
-          make all dist
+          make all
 
       - name: Run tests
         id: tests
