@@ -382,7 +382,11 @@ continue to keep creating treatments until the animal dies).
 
 You can view all outstanding medical treatments at any one time by visiting
 :menuselection:`Medical --> Medical Book`, you can also print currently
-outstanding treatments from here.
+outstanding treatments from here. Each treatment shows both the date and time
+it is due and, when recorded, the date and time it was given. For regimens
+with more than one treatment per day, you can configure the default treatment
+times when creating or editing the regimen and then override individual times
+in the medical book if required.
 
 Medical records can also have a cost associated with them for reporting. The
 cost is for the whole medical item (ie. If it's a course of tablets, then the
