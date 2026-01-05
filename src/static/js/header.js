@@ -599,6 +599,8 @@ header = {
 
     bind: function() {  
 
+        header.viewport_resize();
+
         var timezone = config.str("Timezone");
         if (timezone.indexOf("-") == -1) {
             timezone = "+" + timezone;
