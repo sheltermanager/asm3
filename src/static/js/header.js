@@ -587,12 +587,9 @@ header = {
 
     viewport_resize: function() {
         let viewportsize = $(window).width();
-        console.log(viewportsize);
         if (viewportsize <= 480) {
-            console.log("Hiding");
             $(".asm-menu-icon").hide();
         } else {
-            console.log("Showing");
             $(".asm-menu-icon").show();
         }
     },
@@ -696,13 +693,6 @@ header = {
         catch(err) {}
 
         $("#asm-menu-burger").click(function() {
-            // if ($(this).hasClass("asm-burger-menu-active")) {
-            //     $(".asm-menu-icon").show();
-            // } else {
-            //     $(".asm-menu-icon").hide();
-            // }
-            // $(this).toggleClass("asm-burger-menu-active");
-            console.log("Click");
             $(".asm-menu-icon").toggle();
         });
 

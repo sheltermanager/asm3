@@ -1150,7 +1150,6 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 @media screen and (max-width:480px) {
-
     #asm-menu-burger-container {
         display: inline-block;
         position: fixed;
@@ -1166,19 +1165,15 @@ select:disabled, input:disabled, textarea:disabled {
         margin: 3px;
         vertical-align: middle;
     }
-
     #asm-menu-burger {
         display: block;
     }
-
     #asm-topline-logo img {
         padding-bottom: 5px;
     }
-
     .ui-icon {
         display: none !important;
     }
-
     .asm-menu-icon {
         display: block;
     }
