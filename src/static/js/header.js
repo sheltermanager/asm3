@@ -586,8 +586,7 @@ header = {
     },
 
     viewport_resize: function() {
-        let viewportsize = $(window).width();
-        if (viewportsize <= 480) {
+        if ($(window).width() <= 480) {
             $(".asm-menu-icon").hide();
         } else {
             $(".asm-menu-icon").show();
