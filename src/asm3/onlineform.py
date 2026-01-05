@@ -1365,7 +1365,10 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
     l = dbo.locale
     fo = dbo.first_row(dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=? %s" % dbo.sql_limit(1), [collationid]))
     formname = asm3.i18n._("Online Form", l)
-    if fo is not None: formname = fo.FORMNAME
+    mediaflags = ""
+    if fo is not None: 
+        formname = fo.FORMNAME
+        mediaflags = fo.MEDIAFLAGS
     animalname, firstname, lastname = get_onlineformincoming_animalperson(dbo, collationid)
     if linktype == asm3.media.ANIMAL and firstname != "":
         formname = "%s - %s %s" % (formname, firstname, lastname)
@@ -1393,7 +1396,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
             "onlineform.attach_form", dbo)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     retainfor = get_onlineformincoming_retainfor(dbo, collationid)
-    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor, mediaflags=fo.MEDIAFLAGS)
+    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor, mediaflags=mediaflags)
     if asm3.configuration.auto_hash_processed_forms(dbo):
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
         asm3.media.sign_document(dbo, username, mid, "", \
