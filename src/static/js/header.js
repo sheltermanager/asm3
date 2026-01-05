@@ -409,6 +409,7 @@ header = {
             homeicon = "custom_logo?smaccount=" + asm.useraccount;
         }
         var h = [
+            '<div id="asm-menu-burger-container"><div id="asm-menu-burger">☰</div></div>',
             '<div id="asm-topline" class="no-print" style="display: none">',
                 '<div class="topline-element">',
                     '<a id="asm-topline-logo" href="main" title="' + _("Home") + '"><img src="' + homeicon + '" /></a>',
@@ -584,6 +585,18 @@ header = {
         }
     },
 
+    viewport_resize: function() {
+        let viewportsize = $(window).width();
+        console.log(viewportsize);
+        if (viewportsize <= 480) {
+            console.log("Hiding");
+            $(".asm-menu-icon").hide();
+        } else {
+            console.log("Showing");
+            $(".asm-menu-icon").show();
+        }
+    },
+
     bind: function() {  
 
         var timezone = config.str("Timezone");
@@ -678,7 +691,24 @@ header = {
                 $(".emergencynotice").fadeIn();
             }
         }
-        catch(err) {} 
+        catch(err) {}
+
+        $("#asm-menu-burger").click(function() {
+            // if ($(this).hasClass("asm-burger-menu-active")) {
+            //     $(".asm-menu-icon").show();
+            // } else {
+            //     $(".asm-menu-icon").hide();
+            // }
+            // $(this).toggleClass("asm-burger-menu-active");
+            console.log("Click");
+            $(".asm-menu-icon").toggle();
+        });
+
+        $(window).resize(
+            function() {
+                header.viewport_resize();
+            }
+        );
     },
 
     bind_search: function() {

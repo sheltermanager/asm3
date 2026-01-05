@@ -1136,6 +1136,55 @@ select:disabled, input:disabled, textarea:disabled {
 
 }
 
+#asm-menu-burger-container {
+    font-size: 150%;
+    display: none;
+    padding: 6px;
+    padding-right: 10px;
+    position: absolute;
+    padding-top: 0;
+    top: 0;
+    right: 6px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+@media screen and (max-width:480px) {
+
+    #asm-menu-burger-container {
+        display: inline-block;
+        position: fixed;
+        background-color: white;
+        border: 1px black solid;
+        border-radius: 3px;
+        top: 5px;
+        right: 10px;
+        z-index: 9999;
+        text-align: right;
+        padding: 3px;
+        padding-top: 0;
+        margin: 3px;
+        vertical-align: middle;
+    }
+
+    #asm-menu-burger {
+        display: block;
+    }
+
+    #asm-topline-logo img {
+        padding-bottom: 5px;
+    }
+
+    .ui-icon {
+        display: none !important;
+    }
+
+    .asm-menu-icon {
+        display: block;
+    }
+
+}
+
 /** Hide elements from printing by giving them the no-print class */
 @media print
 {
