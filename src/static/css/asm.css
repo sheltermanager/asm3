@@ -1171,11 +1171,27 @@ select:disabled, input:disabled, textarea:disabled {
     #asm-topline-logo img {
         padding-bottom: 5px;
     }
-    .ui-icon {
-        display: none !important;
+    #asm-topline .ui-icon {
+        /* display: none !important; */
+        position: absolute;
+        margin-top: 3px;
+        right: 10px;
+        /* top: -10px; */
     }
     .asm-menu-icon {
         display: block;
+    }
+    #asm-topline-user-div {
+        display: block !important;
+    }
+    #asm-topline-help-div {
+        display: block !important;
+    }
+    #topline-q-div {
+        width: calc(100% - 70px);
+    }
+    #topline-q {
+        width: 100%;
     }
 
 }
