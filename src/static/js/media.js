@@ -110,7 +110,7 @@ $(function() {
                     },
                     { field: "PREVIEW", classes: "mode-table", display: "", formatter: function(m) {
                         let h = [];
-                        h.push(media.render_preview_thumbnail(m, false, true));
+                        h.push(media.render_preview_thumbnail(m, false, true, false));
                         h.push(media.render_mods(m, true));
                         return h.join("");
                     }},
@@ -143,9 +143,11 @@ $(function() {
                         let h = [], flags = m.MEDIAFLAGS;
                         if (!flags) { flags = ""; }
                         h.push("<div class=\"centered\">");
-                        h.push(media.render_preview_thumbnail(m, true, false));
+                        h.push(media.render_preview_thumbnail(m, true, false, true));
                         h.push("<br/>");
-                        if (m.MEDIAMIMETYPE != "image/jpeg") { h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); }
+                        if (m.MEDIAMIMETYPE != "image/jpeg" && m.MEDIAMIMETYPE != "video/mp4") { 
+                            h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); 
+                        }
                         h.push(tableform.table_render_edit_link(m.ID, format.date(m.DATE)));
                         h.push("<br/>");
                         h.push(media.render_mods(m));
@@ -168,9 +170,9 @@ $(function() {
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
+                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "move", text: _("Move/Copy"), type: "buttonmenu", icon: "copy" },
-                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { 
                         return common.browser_is.mobile;
@@ -343,8 +345,9 @@ $(function() {
          * m: record from media results
          * notestooltip: true if the title attribute should contain the media notes
          * smallthumbnail: true if asm-thumbnail-small should be used
+         * cornericon: true if corner icons should be used for videos
          */
-        render_preview_thumbnail: function(m, notestooltip, smallthumbnail) {
+        render_preview_thumbnail: function(m, notestooltip, smallthumbnail, cornericon) {
             let h = [ '<div class="asm-media-thumb">' ];
             let tt = "", tc = "asm-thumbnail thumbnailshadow";
             if (notestooltip) { tt = 'title="' + html.title(html.truncate(html.decode(m.MEDIANOTES), 70)) + '"'; }
@@ -380,6 +383,7 @@ $(function() {
             else if (m.MEDIAMIMETYPE == "video/mp4") {
                 h.push('<a href="media?id=' + m.ID + '">');
                 h.push('<img class="' + tc + '" ' + tt + ' src="video_thumbnail?db=' + asm.useraccount + '&dbfsid=' + m.DBFSID + '" /></a>');
+                if (cornericon) { h.push(html.icon("video", _("Video"), "margin-left: -28px; margin-right: 10px; margin-top: 64px; height: 16px")); }
             }
             else {
                 h.push('<a href="media?id=' + m.ID + '">');
