@@ -3059,6 +3059,7 @@ class citations(JSONEndpoint):
         return {
             "name": "citations",
             "rows": citations,
+            "templates": asm3.template.get_document_templates(o.dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(o.dbo),
             "additional": asm3.additional.get_field_definitions(o.dbo, "citation"),
             "nextid": o.dbo.get_id_max("ownercitation")
