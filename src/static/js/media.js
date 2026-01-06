@@ -186,9 +186,9 @@ $(function() {
 
         render: function() {
             this.model();
-            let htmlinfo = _("Please select a PDF, HTML or JPG image file to attach")
+            let htmlinfo = _("Please select a PDF, HTML or JPG image file to attach");
             if (controller.videoenabled) {
-                htmlinfo = _("Please select a PDF, HTML, MP4 or JPG image file to attach")
+                htmlinfo = _("Please select a PDF, HTML, MP4 or JPG image file to attach");
             }
             let h = [
                 tableform.dialog_render(this.dialog),

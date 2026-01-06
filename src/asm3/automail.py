@@ -99,7 +99,8 @@ def adopter_followup(dbo: Database, user = "system") -> None:
     asm3.al.info(f"Sent {len(rows)} adopter followup emails.", "automail.adopter_followup", dbo)
 
 def _vaccination_followup_query(dbo: Database, cutoff: datetime) -> Results:
-    return dbo.query("SELECT a.ID, a.OwnerID, o.EmailAddress " \
+    return dbo.query("SELECT * FROM " \
+        "(SELECT a.ID, a.OwnerID, o.EmailAddress " \
         "FROM animal a " \
         "INNER JOIN owner o ON o.ID = a.OwnerID " \
         "INNER JOIN animalvaccination v ON v.AnimalID = a.ID " \
@@ -110,7 +111,7 @@ def _vaccination_followup_query(dbo: Database, cutoff: datetime) -> Results:
         "INNER JOIN owner o ON o.ID = a.OwnerID " \
         "INNER JOIN animalvaccination v ON v.AnimalID = a.ID " \
         "WHERE v.DateRequired=? AND a.NonShelterAnimal = 1 " \
-        "AND a.DeceasedDate Is Null " \
+        "AND a.DeceasedDate Is Null) " \
         "ORDER BY ID", [ cutoff, cutoff ])
 
 def vaccination_followup(dbo: Database, user = "system") -> None:

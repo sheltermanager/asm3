@@ -13,7 +13,7 @@ class TestHtml(unittest.TestCase):
         self.assertEqual(asm3.html.escape("><"), "&gt;&lt;")
 
     def test_menu_structure(self):
-        self.assertIsNotNone(asm3.html.menu_structure("en", asm3.publish.PUBLISHER_LIST, [], []))
+        self.assertIsNotNone(asm3.html.menu_structure("en", asm3.publish.PUBLISHER_LIST, [], [], []))
 
     def test_json_animalfindcolumns(self):
         self.assertIsNotNone(asm3.html.json_animalfindcolumns(base.get_dbo()))
