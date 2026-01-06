@@ -589,7 +589,8 @@ header = {
         if ($(window).width() <= 480) {
             $("#topline-q-div").insertAfter('#asm-topline-logo-div');
             $(".asm-menu-icon").hide();
-            // $("#asm-topline-q-whitespace").remove();
+            // $(".asm-menu-body").hide();
+            $("#asm-topline .ui-state-active").click();
         } else {
             if (!$(".asm-topline-q-whitespace").length) {
                 let whitespace = document.createElement("span");

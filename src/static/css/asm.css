@@ -1150,6 +1150,9 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 @media screen and (max-width:480px) {
+    .asm-menu-body {
+        width: calc(100% - 25px);
+    }
     #asm-menu-burger-container {
         display: inline-block;
         position: fixed;
