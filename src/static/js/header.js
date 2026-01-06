@@ -693,6 +693,7 @@ header = {
 
         $("#asm-menu-burger").click(function() {
             $(".asm-menu-icon").toggle();
+            $("html,body").animate({scrollTop:0},0);
         });
 
         $(window).resize(
