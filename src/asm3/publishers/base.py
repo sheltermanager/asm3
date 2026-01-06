@@ -728,6 +728,20 @@ class AbstractPublisher(threading.Thread):
             ts = asm3.i18n.python2unix(m.DATE)
             photo_urls.append(f"{SERVICE_URL}?account={self.dbo.name()}&method=media_image&mediaid={m.ID}&ts={ts}")
         return photo_urls
+    
+    def getVideoUrls(self, animalid: int) -> List[str]:
+        """
+        Returns a list of photo URLs for animalid. The preferred is always first.
+        """
+        video_urls = []
+        videos = self.dbo.query("SELECT ID, Date FROM media " \
+            "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'video/mp4' " \
+            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "ORDER BY WebsiteVideo DESC, ID", [animalid])
+        for m in videos:
+            ts = asm3.i18n.python2unix(m.DATE)
+            video_urls.append(f"{SERVICE_URL}?account={self.dbo.name()}&method=media_video&mediaid={m.ID}&ts={ts}")
+        return video_urls
 
     def getPublisherBreed(self, an: ResultRow, b1or2: int = 1) -> str:
         """
