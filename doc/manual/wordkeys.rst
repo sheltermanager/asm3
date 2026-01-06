@@ -1158,10 +1158,10 @@ PersonDocumentImgSrc
 Citation Keys
 -------------
 
-If you are creating a document from the aincident records, then you must
+If you are creating a document from the incident records, then you must
 use a qualifier suffix to access these records.
 
-.. note:: The Recent keyword returns citations where the fine is paid where Due returns unpaid.
+.. note:: The Recent keyword returns citations where the fine has been paid, where Due returns unpaid.
 
 However, if you create a document from the citation tab of a
 person or incident record, you can select multiple citations
