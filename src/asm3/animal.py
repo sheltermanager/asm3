@@ -163,7 +163,7 @@ class LocationFilter(object):
 
     def reduce(self, rows: Results, animalidcolumn: str = "ANIMALID") -> Results:
         """
-        Given a resultset of rows, removes all rows that are no present in visibleanimalids.
+        Given a resultset of rows, removes all rows that are not present in visibleanimalids.
         """
         if self.visibleanimalids == "": return rows
         rowsout = []
@@ -970,6 +970,7 @@ def get_animal(dbo: Database, animalid: int) -> ResultRow:
     a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
     calc_ages(dbo, [a])
     embellish_mother(dbo, a)
+    asm3.users.embellish_vieweditroles(dbo, "animalrole", "AnimalID", animalid, a)
     return a
 
 def get_animal_sheltercode(dbo: Database, code: str) -> ResultRow:
@@ -2607,6 +2608,21 @@ def get_costs_for_payee(dbo: Database, personid: int, sort: int = ASCENDING) -> 
         sql += " ORDER BY a.CostDate DESC"
     return dbo.query(sql, [personid])
 
+def get_animalconditions(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
+    """
+    Returns animalcondition records for the given animal:
+    """
+    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, " \
+        "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate " \
+        "FROM animalcondition ac INNER JOIN lkcondition c ON ac.ConditionID = c.ID " \
+        "INNER JOIN lksconditiontype ct ON c.ConditionTypeID = ct.ID " \
+        "WHERE ac.AnimalID = ?"
+    if sort == ASCENDING:
+        sql += " ORDER BY ac.StartDatetime"
+    else:
+        sql += " ORDER BY ac.StartDatetime DESC"
+    return dbo.query(sql, [animalid] )
+
 def get_diets(dbo: Database, animalid: int, sort: int = ASCENDING) -> Results:
     """
     Returns diet records for the given animal:
@@ -3024,6 +3040,7 @@ def get_satellite_counts(dbo: Database, animalid: int) -> Results:
     """
     return dbo.query("SELECT a.ID, " \
         "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID) AS vaccination, " \
+        "(SELECT COUNT(*) FROM animalcondition aco WHERE aco.AnimalID = a.ID) AS condition, " \
         "(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID) AS test, " \
         "(SELECT COUNT(*) FROM animalmedical am WHERE am.AnimalID = a.ID) AS medical, " \
         "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.AnimalID = a.ID) AS boarding, " \
@@ -3668,6 +3685,9 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, aid)
 
+    # Update roles needed to view
+    update_animal_roles(dbo, aid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
     # If this animal is part of a litter, update its counts
     if post["litterid"] != "":
         update_litter_count(dbo, post["litterid"])
@@ -3801,7 +3821,7 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
     if post["diaryfor"] != "" and post.date("diarydate") is not None and post["diarysubject"] != "":
         for animalid in post.integer_list("animals"):
             asm3.diary.insert_diary(dbo, username, asm3.diary.ANIMAL, animalid, post.datetime("diarydate", "diarytime"), 
-                post["diaryfor"], post["diarysubject"], post["diarynotes"], colourschemeid=post.integer("diarycolourscheme"))
+                post["diaryfor"], post["diarysubject"], post["diarynotes"], colourschemeid=post.integer("diarycolourscheme"), diaryenddate=post.datetime("diaryenddate", "diaryendtime"))
     if post.integer("logtype") != -1:
         for animalid in post.integer_list("animals"):
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
@@ -3838,6 +3858,15 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
         for animalid in post.integer_list("animals"):
             asm3.audit.edit(dbo, username, "animal", animalid, "", ", ".join(aud))
     return len(post.integer_list("animals"))
+
+def update_animal_roles(dbo: Database, aid: int, viewroles: List[int], editroles: List[int]) -> None:
+    """
+    Updates the view and edit roles for an animal record
+    aid:       The animal ID
+    viewroles:  a list of integer role ids
+    editroles:  a list of integer role ids
+    """
+    asm3.users.update_role_table(dbo, "animalrole", "AnimalID", aid, viewroles, editroles)
 
 def update_deceased_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
@@ -3898,11 +3927,14 @@ def update_diary_linkinfo(dbo: Database, animalid: int, a: ResultRow = None, dia
 def update_animallocation(dbo: Database, animalid: int, username: str):
     """ Checks and rebuilds the animallocation entries for animalid based on deceased date movements """
     # Grab all data relevant to animal movement/death
-    animaldata = dbo.query("SELECT ShelterCode, AnimalName, DateBroughtIn, DeceasedDate FROM animal WHERE ID = ?", (animalid,))[0]
-    entrydate = asm3.i18n.remove_time(animaldata.DATEBROUGHTIN)
-    deceaseddate = asm3.i18n.remove_time(animaldata.DECEASEDDATE)
-    animalname = animaldata.ANIMALNAME
-    sheltercode = animaldata.SHELTERCODE
+    a = dbo.first_row(dbo.query("SELECT ShelterCode, AnimalName, DateBroughtIn, DeceasedDate, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID = ?", [animalid]))
+    if a is None: return
+    entrydate = asm3.i18n.remove_time(a.DATEBROUGHTIN)
+    deceaseddate = a.DECEASEDDATE
+    animalname = a.ANIMALNAME
+    sheltercode = a.SHELTERCODE
+    curlocid = a.SHELTERLOCATION
+    curunit = a.SHELTERLOCATIONUNIT
     movetypes = ['1', '3', '4', '5', '6', '7']
     if not asm3.configuration.foster_on_shelter(dbo):
         movetypes.append('2')
@@ -4015,8 +4047,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                         (asm3.i18n.remove_time(movementrow.RETURNDATE), locationrow.ID))
             else:
                 # No return location was found, need to create one
-                fromid, fromunit = find_location_before(movementrow.MOVEMENTDATE)
-                insert_animallocation(dbo, username, animalid, animalname, sheltercode, 0, '*', fromid, fromunit, 
+                insert_animallocation(dbo, username, animalid, animalname, sheltercode, 0, '*', curlocid, curunit, 
                     movementid=movementrow.ID, date=movementrow.RETURNDATE)
     if deceaseddate:
         # Animal is deceased
@@ -4083,7 +4114,7 @@ def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: 
     if asm3.configuration.animalname_change_log(dbo):
         if newname != oldname:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalname_change_log_type(dbo),
-                _("Name changed from '%s' to '%s'", l) % (oldname, newname))
+                _("Name changed from '{0}' to '{1}'", l).format(oldname, newname))
 
 def insert_commentschange_log(dbo: Database, username: str, animalid: int, newcomments: str, oldcomments: str, newhiddencomments: str, oldhiddencomments: str) -> None:
     """ Writes an entry to the log when an animal's comments/hidden comments change."""
@@ -4091,10 +4122,10 @@ def insert_commentschange_log(dbo: Database, username: str, animalid: int, newco
     if asm3.configuration.animalcomments_change_log(dbo):
         if newcomments != oldcomments:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalcomments_change_log_type(dbo),
-                _("Commments changed from '%s' to '%s'", l) % (oldcomments, newcomments))
+                _("Commments changed from '{0}' to '{1}'", l).format(oldcomments, newcomments))
         if newhiddencomments != oldhiddencomments:
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.animalcomments_change_log_type(dbo),
-                _("Hidden Commments changed from '%s' to '%s'", l) % (oldhiddencomments, newhiddencomments))
+                _("Hidden Commments changed from '{0}' to '{1}'", l).format(oldhiddencomments, newhiddencomments))
 
 def insert_weight_log(dbo: Database, username: str, animalid: int, newweight: float = 0, oldweight: float = -1) -> None:
     """ Writes an entry to the log when an animal's weight changes. 
@@ -4274,6 +4305,7 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
         namid = dbo.insert("animalmedical", {
             "AnimalID":             nid,
             "MedicalProfileID":     am.medicalprofileid,
+            "MedicalTypeID":        am.medicaltypeid,
             "TreatmentName":        am.treatmentname,
             "StartDate":            am.startdate,
             "Dosage":               am.dosage,
@@ -4862,6 +4894,36 @@ def update_preferred_web_media_notes(dbo: Database, username: str, animalid: int
         })
         asm3.audit.edit(dbo, username, "media", mediaid, "", str(mediaid) + "notes => " + newnotes)
  
+def insert_animalcondition_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Creates an animalcondition record from posted form data
+    """
+    return dbo.insert("animalcondition", {
+        "AnimalID":         post.integer("animalid"),
+        "ConditionID":      post.integer("conditionid"),
+        "StartDatetime":    post.datetime("startdate", "starttime"),
+        "EndDatetime":      post.datetime("enddate", "endtime"),
+        "Comments":         post["comments"]
+    }, username)
+
+def update_animalcondition_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Updates an animalcondition record from posted form data
+    """
+    dbo.update("animalcondition", post.integer("animalconditionid"), {
+        "AnimalID":         post.integer("animalid"),
+        "ConditionID":      post.integer("conditionid"),
+        "StartDatetime":    post.datetime("startdate", "starttime"),
+        "EndDatetime":      post.datetime("enddate", "endtime"),
+        "Comments":         post["comments"]
+    }, username)
+
+def delete_animalcondition(dbo: Database, username: str, acid: int) -> None:
+    """
+    Deletes the selected animalcondition
+    """
+    dbo.delete("animalcondition", acid, username)
+
 def insert_diet_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a diet record from posted form data

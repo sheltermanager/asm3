@@ -145,6 +145,7 @@ const mobile_ui_addanimal = {
                 "animalname": $("#animalname").val(),
                 "sheltercode": $("#sheltercode").val(),
                 "estimatedage": $("#estimatedage").val(),
+                "animaltype": $("#animaltype").val(),
                 "sex": $("#sex").val(),
                 "type": $("#type").val(),
                 "species": $("#species").val(),

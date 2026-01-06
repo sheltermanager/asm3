@@ -29,6 +29,9 @@ $(function() {
                     tableform.render_hidden({ post_field: "yearcode", json_field: "YEARCODEID", justwidget: true }),
                     '<button id="button-gencode">' + _("Generate a new animal code") + '</button>',
                     '</span>' ].join("\n") },
+                { post_field: "viewroles", json_field: "VIEWROLEIDS", type: "selectmulti", label: _("View Roles"), 
+                    callout: _("Only allow users with one of these roles to view this animal record"),
+                    options: { displayfield: "ROLENAME", rows: controller.roles }},
                 { post_field: "litterid", json_field: "ACCEPTANCENUMBER", label: _("Litter"), type: "autotext", 
                     options: { rows: controller.activelitters, displayfield: "label", valuefield: "value" }},
                 { post_field: "animalname", json_field: "ANIMALNAME", label: _("Name"), type: "text", 
@@ -349,20 +352,20 @@ $(function() {
             ];
             
             let typemap = {
-                "AIL": [ _("Littermate"), "animal?id=" ],
-                "AFA": [ "", "animal?id=" ],
-                "AFP": [ "", "person?id=" ],
-                "AFW": [ "", "waitinglist?id=" ]
+                "AIL": [ _("Littermate"), "animal?id={linkid}" ],
+                "AFA": [ "", "animal?id={linkid}" ],
+                "AFP": [ "", "person?id={linkid}" ],
+                "AFW": [ "", "waitinglist?id={linkid}" ],
+                "APL": [ "", "animal_find_results?mode=ADVANCED&filter=includedeceased&litterid={linkdisplay}" ]
             };
 
             $.each(controller.links, function(i, v) {
                 h.push('<tr>');
                 h.push('<td>' + v.TYPEDISPLAY + '</td>');
-                if (v.TYPE == "APL") {
-                    h.push('<td>' + v.LINKDISPLAY + '</td>');
-                } else {
-                    h.push('<td><b><a href="' + typemap[v.TYPE][1] + v.LINKID + '">' + v.LINKDISPLAY + '</a></b></td>');
-                }
+                let url = typemap[v.TYPE][1];
+                url = url.replace("{linkid}", v.LINKID);
+                url = url.replace("{linkdisplay}", v.LINKDISPLAY);
+                h.push('<td><b><a href="' + url + '">' + v.LINKDISPLAY + '</a></b></td>');
                 h.push('<td>' + v.FIELD2 + '</td>');
                 h.push('</tr>');
             });
@@ -533,7 +536,7 @@ $(function() {
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
                     { id: "waitinglist", text: _("Waiting List"), icon: "waitinglist", tooltip: _("Add to Waiting List"),
-                        hideif: function() { return controller.animal.ARCHIVED == 0; }
+                        hideif: function() { return controller.animal.ARCHIVED == 0 || config.bool("DisableWaitingList"); }
                     },
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
                 ]),
@@ -638,6 +641,11 @@ $(function() {
         enable_widgets: function() {
 
             // DATA ===========================================
+
+            // Hide the view roles controls if incident permissions are off
+            if (!config.bool("AnimalPermissions")) {
+                $("#viewrolesrow").hide();
+            }
 
             // Hide the additional accordion section if there aren't any additional fields declared
             $("#asm-details-accordion").asmaccordion("hideNoInput", 2);

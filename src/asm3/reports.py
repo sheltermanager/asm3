@@ -46,7 +46,7 @@ def get_all_report_titles(dbo: Database):
 
 def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
     filteredreports = []
-    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask animal$%'])
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Category, Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask animal$%'])
     roles = dbo.query("SELECT * FROM customreportrole")
     for report in allreports:
         viewroleids = []
@@ -60,7 +60,7 @@ def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
 
 def get_ask_person_reports(dbo: Database, superuser: int, roleids: str):
     filteredreports = []
-    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask person$%'])
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Category, Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask person$%'])
     roles = dbo.query("SELECT * FROM customreportrole")
     for report in allreports:
         viewroleids = []
@@ -730,6 +730,21 @@ def get_mailmerges_menu(dbo: Database, roleids: str = "", superuser: bool = Fals
             mv.append( ("", "", "", "--cat", "", lastcat) )
         if superuser or m.VIEWROLEIDS == "" or asm3.utils.list_overlap(m.VIEWROLEIDS.split("|"), roleids.split("|")):
             mv.append( ( asm3.users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m.ID, "", m.TITLE ) )
+    return mv
+
+def get_internalforms_menu(dbo: Database) -> MenuItems:
+    """
+    Reads the list of internal online forms and returns them as a list for inserting into
+    our menu structure.
+    The return value is a list of online forms with a tuple containing URL and
+    name.
+    roleids: comma separated list of roleids for the current user
+    superuser: true if the user is a superuser
+    """
+    mv = []
+    forms = dbo.query("SELECT ID, Name FROM onlineform WHERE InternalUse = 1 ORDER BY Name")
+    for form in forms:
+        mv.append( ( asm3.users.VIEW_ONLINE_FORMS, "", "", "/onlineform_view?formid=%d" % form.ID, "", form.NAME ) )
     return mv
 
 def email_daily_reports(dbo: Database) -> None:
@@ -1708,8 +1723,6 @@ class Report:
             $(".chartplaceholder").show();
         """)
 
-        
-
         labels = []
         datasets = []
 
@@ -1742,7 +1755,7 @@ class Report:
                 for label in labels:
                     dpvalue = 0
                     for dp in ds[1]:
-                        if dp[0] == label:
+                        if dp[0] == label and type(dp[1]) in (float, int):
                             dpvalue += dp[1]
                     dsdata.append(dpvalue)
                 dataset = {

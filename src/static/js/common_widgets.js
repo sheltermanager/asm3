@@ -99,7 +99,7 @@ const asm_widget = function(obj) {
 };
 
 // Calls the destroy method of all asm widgets in the selector, eg: #asm-content .asm-widget
-// Generally only called when unloading a module in common
+// Called when unloading a module in common.module_start
 $.fn.destroy_asm_widgets = function() {
     this.each(function() {
         let t = $(this);
@@ -111,6 +111,14 @@ $.fn.destroy_asm_widgets = function() {
                 }
             });
         }
+    });
+    // This is a bit of a fudge, references to some dialogs get unloaded before they
+    // should, which causes their destructors not to be able to remove them from the DOM.
+    // This code removes common dialogs that have been left hanging around in the DOM 
+    // between screen transitions to make sure they get cleaned up.
+    $(".animalchooser-find, .animalchooser-add, .personchooser-add, .personchooser-find").each(function() {
+        let t = $(this);
+        t.closest(".ui-dialog").remove();
     });
 };
 

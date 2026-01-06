@@ -54,6 +54,7 @@ DEFAULTS = {
     "AnimalNameChangeLog": "No",
     "AnimalNameChangeLogType": "3",
     "AnimalFiguresSplitEntryReason": "No",
+    "AnimalPermissions": "No",
     "AnimalSearchResultsNewTab": "No",
     "PersonSearchResultsNewTab": "No",
     "AnnualFiguresShowBabies": "Yes",
@@ -194,6 +195,7 @@ DEFAULTS = {
     "DisableAnimalControl": "No",
     "DisableBoarding": "Yes",
     "DisableClinic": "No",
+    "DisableConditions": "Yes",
     "DisableEntryHistory": "Yes",
     "DisableEvents": "Yes",
     "DisableStockControl": "No",
@@ -203,6 +205,7 @@ DEFAULTS = {
     "DisableDocumentRepo": "No",
     "DisableOnlineForms": "No",
     "DisableRetailer": "No",
+    "DisableDiaryEndDatetime": "Yes",
     "DocumentWordProcessor": "HTML",
     "DocumentSignedNotifyCoordinator": "No",
     "DonationDateOverride": "No",
@@ -228,6 +231,8 @@ DEFAULTS = {
     "EmailClinicReminderDays": "2",
     "EmailClinicReminderTemplate": "0",
     "EmailDiaryNotes": "Yes", 
+    "EmailDiaryNotesWeekly": "No",
+    "EmailDiaryNotesWeeklyDay": "0",
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
     "EmailDuePayment": "No",
@@ -360,6 +365,7 @@ DEFAULTS = {
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
+    "PersonPermissions": "No",
     "PetFinderSendStrays": "No",
     "PetFinderSendHolds": "No",
     "PetFinderSendAdopted": "No",
@@ -1121,6 +1127,12 @@ def email_clinic_reminder_template(dbo: Database) -> int:
 
 def email_diary_notes(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "Yes")
+
+def email_diary_notes_weekly(dbo: Database) -> int:
+    chosendow = -1
+    if cboolean(dbo, "EmailDiaryNotesWeekly", DEFAULTS["EmailDiaryNotesWeekly"] == "No"):
+        chosendow = cint(dbo, "EmailDiaryNotesWeeklyDay", DEFAULTS["EmailDiaryNotesWeeklyDay"])
+    return chosendow
 
 def email_diary_on_change(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryOnChange", DEFAULTS["EmailDiaryOnChange"] == "Yes")

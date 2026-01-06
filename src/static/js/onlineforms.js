@@ -58,6 +58,7 @@ $(function() {
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
                         callout: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
+                    { json_field: "SETMEDIAFLAGS", post_field: "mediaflags", label: _("Media Flags"), type: "selectmulti" },
                     { json_field: "AUTOPROCESS", post_field: "autoprocess", label: _("Auto Process"), 
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
@@ -85,6 +86,10 @@ $(function() {
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("If this form has a populated emailaddress field during submission, send a confirmation email to it"),
                         options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.email_submitter_options } },
+                    { json_field: "SUBMITTERREPLYADDRESS", post_field: "submitterreplyaddress", label: _("Reply address for confirmation email"), 
+                        type: "text", classes: "asm-doubletextbox",
+                        callout: _("The reply address that will be used on the notification email sent to the submitter. If blank, the address from Settings->Options->Email will be used.")
+                    },
                     { json_field: "EMAILMESSAGE", post_field: "emailmessage", label: _("Confirmation message"), type: "richtextarea", 
                         margintop: "0px", height: "100px", width: "600px",
                         tooltip: _("The confirmation email message to send to the form submitter."),
@@ -108,6 +113,9 @@ $(function() {
                                 tableform.table_update(table);
                                 tableform.dialog_enable_buttons();
                                 tableform.dialog_info(_("Updated"));
+                            },
+                            onload: function() {
+                                $("#emailsubmitter").change();
                             }
                         });
                         
@@ -168,6 +176,7 @@ $(function() {
                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", perm: "aof", 
                     click: async function() { 
                         try {
+                            $("#emailsubmitter").change();
                             await tableform.dialog_show_add(dialog);
                             onlineforms.check_redirect_url();
                             let response = await tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
@@ -290,6 +299,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             this.load_person_flags();
+            html.media_flag_options(controller.mediaflags, $("#mediaflags"));
             $("#filechooser").change(function() {
                 let importfile = $("#filechooser").val();
                 if ( !importfile.toLowerCase().endsWith(".html") && !importfile.toLowerCase().endsWith(".json") ) {
@@ -298,6 +308,13 @@ $(function() {
                 }
             });
             $("#formaterror").hide();
+            $("#emailsubmitter").change(function() {
+                if ($("#emailsubmitter").val() == 0) {
+                    $("#submitterreplyaddressrow").hide();
+                } else {
+                    $("#submitterreplyaddressrow").show();
+                }
+            });
         },
 
         destroy: function() {

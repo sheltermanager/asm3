@@ -495,12 +495,17 @@ $.fn.personchooser = asm_widget({
     },
 
     destroy: function(t) {
-        try { t.data("dialogadd").find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
-        try { t.data("dialogadd").find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
-        try { t.data("dialogadd").find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
-        try { t.data("dialog").dialog("destroy"); } catch (ex) {}
-        try { t.data("dialogadd").dialog("destroy"); } catch (exa) {}
-        try { t.data("dialogsimilar").dialog("destroy"); } catch (exs) {}
+        let dialog = t.data("dialog"), dialogadd = t.data("dialogadd"), dialogsimilar = t.data("dialogsimilar");
+        // Next 3 lines are to clean up additional fields that created choosers
+        try { dialogadd.find(".asm-animalchooser").animalchooser("destroy"); } catch (eac) {}
+        try { dialogadd.find(".asm-animalchoosermulti").animalchoosermulti("destroy"); } catch (eacm) {}
+        try { dialogadd.find(".asm-personchooser").personchooser("destroy"); } catch (epc) {}
+        try { dialog.dialog("destroy"); } catch (ex) {}
+        try { dialog.remove(); } catch (er) {}
+        try { dialogadd.dialog("destroy"); } catch (exa) {}
+        try { dialogadd.remove(); } catch (era) {}
+        try { dialogsimilar.dialog("destroy"); } catch (exs) {}
+        try { dialogsimilar.remove(); } catch (ers) {}
     },
 
     /**
@@ -835,6 +840,7 @@ $.fn.personchooser = asm_widget({
         else if (f == "donor") { title = _("Find donor"); }
         else if (f == "driver") { title = _("Find driver"); }
         else if (f == "sponsor") { title = _("Find sponsor"); }
+        else if (f == "supplier") { title = _("Find supplier"); }
         else { title = _("Find person"); }
         t.data("title", title);
         if (t.data("dialog")) {

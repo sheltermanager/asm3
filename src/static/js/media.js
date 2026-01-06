@@ -89,9 +89,7 @@ $(function() {
                     if (rows.length > 0 && no_links()) {
                         $("#button-email").button("option", "disabled", false);
                     }
-                    // Only allow the email pdf button to be pressed if the
-                    // selection only contains documents
-                    if (rows.length > 0 && all_of_type("text/html")) {
+                    if (rows.length > 0) {
                         $("#button-emailpdf").button("option", "disabled", false); 
                     }
                     // Only allow the sign buttons to be pressed if the
@@ -1033,7 +1031,18 @@ $(function() {
 
             $("#button-signlink").click(async function() {
                 $("#button-sign").asmmenu("hide_all");
-                let signaturelinks = await common.ajax_post("media", "mode=signlink&ids=" + tableform.table_ids(media.table));
+                let toadd = "";
+                if (controller.name == "animal_media") { toadd = controller.animal.CURRENTOWNEREMAILADDRESS; }
+                else if (controller.name == "foundanimal_media") { toadd = controller.animal.EMAILADDRESS; }
+                else if (controller.name == "lostanimal_media") { toadd = controller.animal.EMAILADDRESS; }
+                else if (controller.name == "person_media") { toadd = controller.person.EMAILADDRESS; }
+                else if (controller.name == "waitinglist_media") { toadd = controller.animal.EMAILADDRESS; }
+                let formdata = {
+                    mode: "signlink",
+                    ids: tableform.table_ids(media.table),
+                    to: toadd
+                };
+                let signaturelinks = await common.ajax_post("media", formdata);
                 $("#signaturelinks").empty();
                 $.each(signaturelinks.split("||"), function(i, link) {
                     let [mediadesc, signaturelink] = link.split("==");

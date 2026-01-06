@@ -21,8 +21,11 @@ $(function() {
                     { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), 
                         type: "selectcolour", defaultval: 1, 
                         callout: _("The color scheme to be used when displaying this note on the calendar and home screen") },
-                    { json_field: "DIARYDATETIME", post_field: "diarydate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
-                    { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
+                    { json_field: "DIARYDATETIME", post_field: "diary", label: _("Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
+                    { json_field: "DIARYENDDATETIME", post_field: "diaryend", label: _("Until"), type: "datetime", hideif: function() {
+                            return config.bool("DisableDiaryEndDatetime");
+                        }
+                    },
                     { json_field: "DATECOMPLETED", post_field: "completed", label: _("Completed"), type: "date" },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
                     { json_field: "NOTE", label: _("Note"), post_field: "note", type: "textarea" },
@@ -41,6 +44,10 @@ $(function() {
                             try {
                                 tableform.fields_update_row(dialog.fields, row);
                                 row.COLOURSCHEMEID = $("#diarycolourscheme").selectcolour("value");
+                                let enddate = $("#diaryenddate").val();
+                                let endtime = $("#diaryendtime").val();
+                                if (endtime) { endtime += ":00"; }
+                                if (enddate) { row.DIARYENDDATETIME = format.date_iso(enddate + " " + endtime); }
                                 await tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, "diary");
                                 tableform.table_update(table);
                                 tableform.dialog_close();
@@ -81,7 +88,11 @@ $(function() {
                 },
                 columns: [
                     { field: "DIARYFORNAME", display: _("For") },
-                    { field: "DIARYDATETIME", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DIARYDATETIME", display: _("Date"), initialsort: true, initialsortdirection: "desc",
+                        formatter: function(row) {
+                            return format.datetime_from_to(row.DIARYDATETIME, row.DIARYENDDATETIME);
+                        }
+                    },
                     { field: "DATECOMPLETED", display: _("Completed"), formatter: tableform.format_date },
                     { field: "LINKINFO", display: _("Link"), 
                         formatter: function(row) {
@@ -280,6 +291,10 @@ $(function() {
 
         new_note: function() {
             tableform.dialog_show_add(diary.dialog, {
+                onvalidate: function() {
+                    if (!$("#diarytime").val()) { $("#diarytime").val("00:00:00"); } // default midnight if no value given
+                    return true;
+                },
                 onadd: async function() {
                     let response = await tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid, "diary");
                     var row = {};
@@ -300,6 +315,11 @@ $(function() {
 
                     $("#emailnow").prop("checked", config.bool("EmailDiaryOnChange"));
                     $("#emailnowrow").show();
+
+                    // Clear the fields
+                    $("#subject").val();
+                    $("#notes, #comments").textarea("value", "");
+                    $("#completed, #diarydate, #diarytime, #diaryenddate, #diaryendtime").val("");
 
                     // If a default diary person is set, choose them
                     if (config.str("AFDefaultDiaryPerson")) {

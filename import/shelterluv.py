@@ -5,7 +5,7 @@ import asm, os
 """
 Import module to read from ShelterLuv CSV export.
 
-Last updated 1st Apr, 2022
+Last updated 17th December, 2025
 
 The following files are needed:
 
@@ -37,8 +37,9 @@ ssconvert "Events - Treatments Completed.xlsx" medical.csv
 ssconvert "Events - Vaccines Administered.xlsx" vaccinations.csv
 """
 
-PATH = "/home/jon/tmp/shelterluv_cs3353"
+PATH = "/home/robin/tmp/asm3_import_data/sl_bu3558"
 
+IMPORT_PICTURES = True
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
 USE_SMDB_ENTRY_TYPE = False # If False, maps to new db defaults, if True looks up animal type and entry reason in target db
@@ -64,12 +65,25 @@ asm.setid("owner", START_ID)
 asm.setid("ownerdonation", START_ID)
 asm.setid("testtype", START_ID)
 asm.setid("vaccinationtype", START_ID)
+if IMPORT_PICTURES:
+    asm.setid("dbfs", START_ID)
+    asm.setid("media", START_ID)
 
 def getdate(s):
     if DATE_FORMAT == "DMY":
         return asm.getdate_ddmmyyyy(s)
     else:
         return asm.getdate_mmddyyyy(s)
+
+def getimage(url, a):
+    """
+    Retrieves the image with name and outputs the SQL for it. 
+    """
+    if not IMPORT_PICTURES: return
+    if url is None or url.strip() == "" or not url.startswith("http"): return
+    imdata = asm.load_image_from_url(url)
+    if imdata is not None:
+        asm.animal_image(a.ID, imdata)
 
 def size_id_for_name(name):
     return {
@@ -106,6 +120,10 @@ print("DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID)
 print("DELETE FROM testtype WHERE ID >= %s;" % START_ID)
 print("DELETE FROM vaccinationtype WHERE ID >= %s;" % START_ID)
 
+if IMPORT_PICTURES:
+    print("DELETE FROM dbfs WHERE ID >= %s;" % START_ID)
+    print("DELETE FROM media WHERE ID >= %s;" % START_ID)
+
 for d in asm.csv_to_list("%s/people.csv" % PATH):
     if d["Name"] == "Name": continue # skip repeated header rows
     if d["Name"] in ppo: continue # skip repeated rows
@@ -115,12 +133,12 @@ for d in asm.csv_to_list("%s/people.csv" % PATH):
     ppo[d["Name"]] = o
     # ppo[d["Person ID"]] = o # Never seen one in a person file so have to use name
     o.SplitName(d["Name"])
-    o.OwnerAddress = d["Street"]
+    o.OwnerAddress = d["Street Address 1"]
     o.OwnerTown = d["City"]
     o.OwnerCounty = d["State"]
     if "Zip Code" in d: o.OwnerPostcode = d["Zip Code"]
     o.EmailAddress = d["Primary Email"]
-    o.HomeTelephone = d["Phone"]
+    o.HomeTelephone = d["Primary Phone"]
     # Last file I saw had repeated "Comments" columns, so need to be renumbered manually
     if "Comments" in d and d["Comments"] != "": 
         o.Comments += d["Comments"]
@@ -135,7 +153,8 @@ for d in asm.csv_to_list("%s/people.csv" % PATH):
         if d["Attributes"].find("Banned") != -1: o.IsBanned = 1
         if d["Attributes"].find("Foster") != -1: o.IsFosterer = 1
 
-for d in asm.csv_to_list("%s/animals.csv" % PATH):
+acsv = asm.csv_to_list("%s/animals.csv" % PATH)
+for i, d in enumerate(acsv):
     if d["Animal ID"] == "Animal ID": continue # skip repeated header rows
     if d["Animal ID"] in ppa: continue # skip repeated rows
     a = asm.Animal()
@@ -205,13 +224,18 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
     #if "In Custody" in d and d["In Custody"]: a.Archived = asm.iif(d["In Custody"] == "No", 1, 0)
+    if IMPORT_PICTURES: 
+        if "Photo" in d and d["Photo"].startswith("http"):
+            url = d["Photo"]
+            asm.stderr(f"retrieving picture {url} ({i}/{len(acsv)})")
+            getimage(d["Photo"], a)
 
 for d in asm.csv_to_list("%s/intake.csv" % PATH):
     if d["Animal ID"] == "Animal ID": continue
     if d["Animal ID"] not in ppa: continue
     a = ppa[d["Animal ID"]]
     intaketype = d["Intake Type"] # Seems to change names a lot, has been AnimalIntakeType, Entry Category
-    subtype = d["Intake Sub-Type"] # Also seems to change, has been AnimalIntakeSub-Type, Animal Type
+    subtype = d["Intake Subtype"] # Also seems to change, has been AnimalIntakeSub-Type, Animal Type
     # Animal name
     if "Name" in d: a.AnimalName = d["Name"]
     # Intake Date
@@ -271,7 +295,7 @@ if asm.file_exists("%s/fosters.csv" % PATH):
     for d in asm.csv_to_list("%s/fosters.csv" % PATH):
         if d["Animal ID"] == "Animal ID": continue # skip repeated headers
         o = None
-        if d["Foster Parent Name"] in ppo: o = ppo[d["Foster Parent Name"]]
+        if d["Foster Placement Person Name"] in ppo: o = ppo[d["Foster Placement Person Name"]]
         a = None
         if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
         if o is None or a is None: continue
@@ -284,7 +308,7 @@ if asm.file_exists("%s/fosters.csv" % PATH):
         m.AnimalID = a.ID
         m.OwnerID = o.ID
         m.MovementType = 2
-        m.MovementDate = getdate(d["Outcome Date"])
+        m.MovementDate = getdate(d["Foster Placement Event Date"])
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 2
@@ -310,7 +334,7 @@ if asm.file_exists("%s/nonshelter.csv" % PATH):
 for d in asm.csv_to_list("%s/outcome.csv" % PATH):
     if d["Animal ID"] == "Animal ID": continue # skip repeated headers
     o = None
-    if d["Assoc. Person Name"] in ppo: o = ppo[d["Assoc. Person Name"]]
+    if d["Outcome To Person Name"] in ppo: o = ppo[d["Outcome To Person Name"]]
     a = None
     if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
     if a is None: continue
@@ -358,7 +382,7 @@ for d in asm.csv_to_list("%s/outcome.csv" % PATH):
         if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
-    elif d["Outcome Type"] == "Return To Owner/Guardian" or d["Outcome Type"] == "Return to Owner/Guardian" or d["Outcome Type"] == "Reclaimed":
+    elif d["Outcome Type"] in ("Return to Owner", "Return To Owner/Guardian", "Return to Owner/Guardian", "Reclaimed"):
         if o is None: o = uo
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -373,7 +397,7 @@ for d in asm.csv_to_list("%s/outcome.csv" % PATH):
         if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
-    elif d["Outcome Type"] == "Stolen / Lost":
+    elif d["Outcome Type"] in ("Lost/Stolen", "Stolen / Lost"):
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = 0
@@ -387,7 +411,7 @@ for d in asm.csv_to_list("%s/outcome.csv" % PATH):
         if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
-    elif d["Outcome Type"] == "Service Out" or d["Outcome Type"] == "feral/wildlife":
+    elif d["Outcome Type"] in ("Service Out", "feral/wildlife", "Field/Wildlife Release"):
         # This seems to be what ShelterLuv calls TNRs
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -407,7 +431,7 @@ for d in asm.csv_to_list("%s/outcome.csv" % PATH):
         a.PutToSleep = 1
         a.PTSReasonID = 4 # Sick
         a.Archived = 1
-    elif d["Outcome Type"] == "Died":
+    elif d["Outcome Type"] in ("Unassisted Death in Custody", "Died"):
         a.DeceasedDate = getdate(d["Outcome Date"])
         a.PutToSleep = 0
         a.PTSReasonID = 2 # Died
@@ -420,8 +444,8 @@ if asm.file_exists("%s/tests.csv" % PATH):
         if d["Animal ID"] == "Animal ID": continue
         if d["Animal ID"] not in ppa: continue
         a = ppa[d["Animal ID"]]
-        testdate = getdate(d["Date"])
-        t = asm.animal_test(a.ID, testdate, testdate, d["Product"], d["Result"])
+        testdate = getdate(d["Test Date"])
+        t = asm.animal_test(a.ID, testdate, testdate, d["Test Product"], d["Result"])
         animaltests.append(t)
 
 if asm.file_exists("%s/procedures.csv" % PATH):
@@ -429,7 +453,7 @@ if asm.file_exists("%s/procedures.csv" % PATH):
         if d["Animal ID"] == "Animal ID": continue
         if d["Animal ID"] not in ppa: continue
         a = ppa[d["Animal ID"]]
-        meddate = getdate(d["Date"])
+        meddate = getdate(d["Date Completed"])
         treatmentname = ""
         comments = ""
         if "Treatment" in d: treatmentname = d["Treatment"]
@@ -443,8 +467,8 @@ if asm.file_exists("%s/medical.csv" % PATH):
         if d["Animal ID"] == "Animal ID": continue
         if d["Animal ID"] not in ppa: continue
         a = ppa[d["Animal ID"]]
-        meddate = getdate(d["Date given"])
-        m = asm.animal_regimen_single(a.ID, meddate, d["Product"], d["Amount"], d["Dose notes"])
+        meddate = getdate(d["Date Given"])
+        m = asm.animal_regimen_single(a.ID, meddate, d["Product"], d["Amount"], d["Dose Notes"])
         animalmedicals.append(m)
 
 if asm.file_exists("%s/vaccinations.csv" % PATH):
@@ -452,10 +476,10 @@ if asm.file_exists("%s/vaccinations.csv" % PATH):
         if d["Animal ID"] == "Animal ID": continue
         if d["Animal ID"] not in ppa: continue
         a = ppa[d["Animal ID"]]
-        vaccdate = getdate(d["Date given"])
+        vaccdate = getdate(d["Date Completed"])
         lotno = ""
         if "Lot #" in d: lotno = d["Lot #"]
-        t = asm.animal_vaccination(a.ID, vaccdate, vaccdate, d["Vaccine product"], rabiestag=d["Rabies tag number"], batchnumber = lotno)
+        t = asm.animal_vaccination(a.ID, vaccdate, vaccdate, d["Vaccine Product"], rabiestag=d["Rabies Tag Number"], batchnumber = lotno)
         animalvaccinations.append(t)
 
 # Allow shelter animals to have their chips registered

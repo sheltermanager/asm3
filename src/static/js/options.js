@@ -598,12 +598,25 @@ $(function() {
                         { id: "medianotesfile", post_field: "DefaultMediaNotesFromFile", label: _("Prefill new media notes with the filename if left blank"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-diaryandmessages", title: _("Diary and Messages"), fields: [
-                        { id: "alldiaryhomepage", post_field: "AllDiaryHomePage", label: _("Show the full diary (instead of just my notes) on the home page"), type: "check" }, 
-                        { id: "diarycompleteondeath", post_field: "DiaryCompleteOnDeath", label: _("Auto complete diary notes linked to animals when they are marked deceased"), type: "check" }, 
-                        { id: "emaildiarynotes", post_field: "EmailDiaryNotes", label: _("Email users their outstanding diary notes once per day"), type: "check" }, 
-                        { id: "emaildiaryonchange", post_field: "EmailDiaryOnChange", label: _("Email users immediately when a diary note assigned to them is created or updated"), type: "check" }, 
-                        { id: "emaildiaryoncomplete", post_field: "EmailDiaryOnComplete", label: _("Email diary note creators when a diary note is marked complete"), type: "check" }, 
-                        { id: "emailmessages", post_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check" }, 
+                        { id: "alldiaryhomepage", post_field: "AllDiaryHomePage", label: _("Show the full diary (instead of just my notes) on the home page"), type: "check", fullrow: true }, 
+                        { id: "diarycompleteondeath", post_field: "DiaryCompleteOnDeath", label: _("Auto complete diary notes linked to animals when they are marked deceased"), type: "check", fullrow: true }, 
+                        { id: "emaildiarynotes", post_field: "EmailDiaryNotes", label: _("Email users their outstanding diary notes once per day"), type: "check", fullrow: true }, 
+                        { id: "emaildiarynotesweekly", post_field: "EmailDiaryNotesWeekly", label: _("Email users their outstanding diary notes weekly on "), type: "check", fullrow: true,
+                            xmarkup: '<select id="emaildiarynotesweeklyday" data-post="EmailDiaryNotesWeeklyDay" class="asm-field asm-selectbox asm-widget">' + 
+                            html.list_to_options(
+                            [
+                                "0|" + _("Monday"),
+                                "1|" + _("Tuesday"),
+                                "2|" + _("Wednesday"),
+                                "3|" + _("Thursday"),
+                                "4|" + _("Friday"),
+                                "5|" + _("Saturday"),
+                                "6|" + _("Sunday")
+                            ]) + '</select>'
+                        },
+                        { id: "emaildiaryonchange", post_field: "EmailDiaryOnChange", label: _("Email users immediately when a diary note assigned to them is created or updated"), type: "check", fullrow: true }, 
+                        { id: "emaildiaryoncomplete", post_field: "EmailDiaryOnComplete", label: _("Email diary note creators when a diary note is marked complete"), type: "check", fullrow: true }, 
+                        { id: "emailmessages", post_field: "EmailMessages", label: _("When a message is created, email it to each matching user"), type: "check", fullrow: true }
                     ]}, 
                     { id: "tab-display", title: _("Display"), fields: [
                         { id: "disableeffects", post_field: "rc:DisableEffects", label: _("Enable visual effects"), type: "check", fullrow: true }, 
@@ -942,6 +955,7 @@ $(function() {
                         { id: "disablerota", post_field: "DisableRota", label: _("Remove the rota functionality from menus and screens"), type: "check" }, 
                         { id: "disablestockcontrol", post_field: "DisableStockControl", label: _("Remove the stock control functionality from menus and screens"), type: "check" }, 
                         { id: "disabletransport", post_field: "DisableTransport", label: _("Remove the transport functionality from menus and screens"), type: "check" }, 
+                        { id: "disablediaryenddatetime", post_field: "DisableDiaryEndDatetime", label: _("Remove the end date and time fields when displaying and editing diary notes"), type: "check" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("People") + '</p>' }, 
                         { id: "towncounty", post_field: "HideTownCounty", label: _("Remove the city/state fields from person details"), type: "check" }, 
                         { id: "hcountry", post_field: "HideCountry", label: _("Remove the country field from person details"), type: "check" }, 
@@ -954,6 +968,7 @@ $(function() {
                         { type: "nextcol" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("Animals") + '</p>' }, 
                         { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", classes: "us" }, 
+                        { id: "disableconditions", post_field: "DisableConditions", label: _("Remove the animal conditions tab"), type: "check" }, 
                         { id: "disableentryhistory", post_field: "DisableEntryHistory", label: _("Remove the entry history section from animal records"), type: "check" }, 
                         { id: "entrytype", post_field: "DontShowEntryType", label: _("Remove the entry type field from animal entry details"), type: "check" }, 
                         { id: "coattype", post_field: "DontShowCoatType", label: _("Remove the coat type field from animal details"), type: "check" }, 
@@ -994,6 +1009,7 @@ $(function() {
                     { id: "tab-security", title: _("Security"), fields: [
                         { id: "force2fa", post_field: "Force2FA", label: _("Force users to enable 2 factor authentication"), type: "check" }, 
                         { id: "forcestrongpasswords", post_field: "ForceStrongPasswords", label: _("Force users to set strong passwords (8+ characters of mixed case and numbers)"), type: "check" }, 
+                        { id: "animalpermissions", post_field: "AnimalPermissions", label: _("Enable access permissions for animal records"), type: "check" }, 
                         { id: "incidentpermissions", post_field: "IncidentPermissions", label: _("Enable access permissions for incident records"), type: "check" }, 
                         { id: "personpermissions", post_field: "PersonPermissions", label: _("Enable access permissions for person records"), type: "check" }
                     ]}, 

@@ -1613,8 +1613,9 @@ const format = {
      * Turns an iso or js date into a display time
      * empty string is returned if iso is undefined/null
      * f: the format to use, %H, %h, %M, %S are supported
+     * midnight_blank: If true and the date is midnight, return an empty string instead
      */
-    time: function(iso, f) {
+    time: function(iso, f = "%H:%M:%S", midnight_blank = false) {
         var d; 
         if (!f) { f = "%H:%M:%S"; }
         if (!iso) { return ""; }
@@ -1627,6 +1628,9 @@ const format = {
         f = f.replace("%H", this.padleft(d.getHours(), 2));
         f = f.replace("%M", this.padleft(d.getMinutes(), 2));
         f = f.replace("%S", this.padleft(d.getSeconds(), 2));
+        if (midnight_blank && d.getHours() == 0 && d.getMinutes() == 0 && d.getSeconds() == 0) { 
+            return "";
+        }
         return f;
     },
 
@@ -1685,6 +1689,24 @@ const format = {
         var days = [ _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") ];
         if (i && (i < 0 || i > 6)) { return ""; }
         return days[i];
+    },
+
+    datetime_from_to: function(isostart, isoend) {
+        let startdate = format.date(isostart);
+        let starttime = format.time(isostart, null, true);
+        let enddate = format.date(isoend);
+        let endtime = format.time(isoend, null, true);
+        let dateoutput = startdate;
+        if (starttime) { dateoutput += " " + starttime; }
+        if ( !config.bool("DisableDiaryEndDatetime") ) {
+            if ( enddate && enddate != startdate ) {
+                dateoutput = _("{0} to {1}").replace("{0}", dateoutput).replace("{1}", enddate);
+                if (endtime) { dateoutput += " " + endtime; }
+            } else if (enddate) {
+                dateoutput = _("{0} to {1}").replace("{0}", dateoutput).replace("{1}", endtime);
+            }
+        }
+        return dateoutput;
     }
 
 };

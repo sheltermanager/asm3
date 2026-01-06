@@ -111,7 +111,7 @@ def _vaccination_followup_query(dbo: Database, cutoff: datetime) -> Results:
         "INNER JOIN animalvaccination v ON v.AnimalID = a.ID " \
         "WHERE v.DateRequired=? AND a.NonShelterAnimal = 1 " \
         "AND a.DeceasedDate Is Null " \
-        "ORDER BY a.ID", [ cutoff, cutoff ])
+        "ORDER BY ID", [ cutoff, cutoff ])
 
 def vaccination_followup(dbo: Database, user = "system") -> None:
     """
@@ -213,26 +213,29 @@ def _fosterer_weekly_animals(dbo: Database, personid: int):
         "AND MovementDate <= ? AND a.DeceasedDate Is Null " \
         "AND (ReturnDate Is Null OR ReturnDate > ?) ORDER BY MovementDate", ( personid, dbo.today(), dbo.today() ))
 
-def fosterer_weekly(dbo: Database, user = "system") -> None:
+def fosterer_weekly(dbo: Database, user: str = "system", force: bool = False) -> None:
     """
     Finds all people on file with at least 1 active foster, then constructs an email 
     containing any info on overdue medical items and items due in the current week. 
     Intended to be sent as part of the overnight batch on the first day of the week.
     Unlike the other functions in this module, this one pre-dates email templates and
     does not use them, instead allowing the user to configure some extra text to be included.
+    force: If True, ignores the configured send day and sends the emails right now, 
+            used by the "Trigger Batch Processes" screen
     """
     l = dbo.locale
+    esent = 0
 
     # If this option is not turned on, bail out
     if not asm3.configuration.fosterer_emails(dbo): 
         asm3.al.debug("FostererEmails configuration option is set to No", "automail.fosterer_weekly", dbo)
-        return
+        return "OK 0"
 
     # Check the day of the week, (default is 0 for monday)
     sendday = asm3.configuration.fosterer_email_send_day(dbo)
-    if dbo.now().weekday() != sendday:
+    if dbo.now().weekday() != sendday and not force:
         asm3.al.debug(f"now.weekday != {sendday}: no need to send fosterer emails", "automail.fosterer_weekly", dbo)
-        return
+        return "OK 0"
 
     # Custom message and reply to if set
     msg = asm3.configuration.fosterer_emails_msg(dbo)
@@ -314,6 +317,7 @@ def fosterer_weekly(dbo: Database, user = "system") -> None:
             # If the option to send emails if there were no medical items is off and there
             # weren't any medical items, skip to the next fosterer
             if asm3.configuration.fosterer_email_skip_no_medical(dbo) and not hasmedicaldue: continue
+            esent += 1
             subject = asm3.i18n._("Fosterer Medical Report", l)
             body = "\n".join(lines)
             asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject=subject, body=body, contenttype="html", exceptions=False)
@@ -323,6 +327,8 @@ def fosterer_weekly(dbo: Database, user = "system") -> None:
                 asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS2, subject=subject, body=body, contenttype="html", exceptions=False)
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, user, replyto, f.EMAILADDRESS2, "", "", subject, body)
+
+    return "OK %d" % esent
 
 def _licence_reminder_query(dbo: Database, cutoff: datetime) -> Results:
     return dbo.query("SELECT ol.ID, ol.OwnerID, o.EmailAddress " \

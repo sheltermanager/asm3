@@ -24,16 +24,16 @@ import os, sys
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalboarding", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
-    "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
+    "animalcondition", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
     "animalfound", "animallitter", "animallocation", "animallost", "animallostfoundmatch", 
-    "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
+    "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", "animalrole", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "clinicappointment", "clinicinvoiceitem", "configuration", 
     "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
     "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", 
-    "lkownerflags", "lkproducttype", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
+    "lkcondition", "lksconditiontype", "lkownerflags", "lkproducttype", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lktaxrate", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", 
     "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", 
     "lkstransportstatus", "lkurgency", "lkwaitinglistremoval", "lkworktype", 
@@ -60,30 +60,33 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
 
 # Tables that don't have an ID column (we don't create sequences for these tables for supporting dbs like postgres)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
-    "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
-    "deletion", "onlineformincoming", "ownerlookingfor", "ownerrole", "userrole" )
+    "animalcontrolrole", "animallostfoundmatch", "animalpublished", "animalrole", 
+    "configuration", "customreportrole", "deletion", "onlineformincoming", 
+    "ownerlookingfor", "ownerrole", "userrole" )
 
 # Tables that contain data rather than lookups - used by reset_db
 # to determine which tables to delete data from
 TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
     "animal", "animalboarding", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
-    "animallocation", "animallostfoundmatch", "animalpublished", 
-    "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
+    "animallocation", "animallostfoundmatch", "animalpublished", "animalrole", 
+    "animalcondition", "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
     "log", "logmulti", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
-    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", 
-    "stocklevel", "stockusage" )
+    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", 
+    "ownervoucher", "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
-    "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", 
-    "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", 
-    "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkcondition", "lkclinicinvoiceitems", 
+    "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
+    "lksaccounttype", "lksclinicstatus", "lksconditiontype", "lksdiarylink", "lksdonationfreq", 
+    "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", 
+    "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", 
+    "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
     "lkwaitinglistremoval", "lkworktype", 
     "logtype", "medicalprofile", "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", 
     "stocklocation", "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
@@ -151,11 +154,13 @@ def sql_structure(dbo: Database) -> str:
         fstr("Description"),
         fint("Reconciled"),
         fint("Amount"),
+        fint("OwnerID", True), 
         fint("SourceAccountID"),
         fint("DestinationAccountID"),
         fint("AnimalCostID", True), 
         fint("OwnerDonationID", True) ))
     sql += index("accountstrx_TrxDate", "accountstrx", "TrxDate")
+    sql += index("accountstrx_OwnerID", "accountstrx", "OwnerID")
     sql += index("accountstrx_Source", "accountstrx", "SourceAccountID")
     sql += index("accountstrx_Dest", "accountstrx", "DestinationAccountID")
     sql += index("accountstrx_Cost", "accountstrx", "AnimalCostID")
@@ -425,6 +430,15 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animalboarding_BoardingTypeID", "animalboarding", "BoardingTypeID")
     sql += index("animalboarding_InDateTime", "animalboarding", "InDateTime")
     sql += index("animalboarding_OutDateTime", "animalboarding", "OutDateTime")
+
+    sql += table("animalcondition", (
+        fid(),
+        fdate("StartDatetime"),
+        fdate("EndDatetime", True),
+        fint("AnimalID"),
+        fint("ConditionID"),
+        flongstr("Comments", True) ))
+    sql += index("animalcondition_ConditionID", "animalcondition", "ConditionID")
 
     sql += table("animalcontrol", (
         fid(),
@@ -756,6 +770,13 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animalpublished_AnimalIDPublishedTo", "animalpublished", "AnimalID,PublishedTo", True)
     sql += index("animalpublished_SentDate", "animalpublished", "SentDate")
 
+    sql += table("animalrole", (
+        fint("AnimalID"),
+        fint("RoleID"),
+        fint("CanView"),
+        fint("CanEdit") ), False)
+    sql += index("animalrole_AnimalRoleID", "animalrole", "AnimalID, RoleID", True)
+
     sql += table("animaltest", (
         fid(),
         fint("AnimalID"),
@@ -824,6 +845,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("GivenBy", True),
         fdate("DateRequired"),
         fdate("DateExpires", True),
+        fdate("BatchExpiryDate", True),
         fstr("BatchNumber", True),
         fstr("Manufacturer", True),
         fstr("RabiesTag", True),
@@ -1004,6 +1026,7 @@ def sql_structure(dbo: Database) -> str:
         fint("LinkID"),
         fint("LinkType"),
         fdate("DiaryDateTime"),
+        fdate("DiaryEndDateTime", True),
         fstr("DiaryForName"),
         flongstr("Subject"),
         flongstr("Note"),
@@ -1156,6 +1179,21 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lkcoattype", (
         fid(), fstr("CoatType") ), False)
+    
+    sql += table("lkcondition", (
+        fid(),
+        fint("ConditionTypeID"),
+        fint("IsZoonotic"),
+        fstr("ConditionName"),
+        fstr("Description", True),
+        fint("IsRetired", True) ), False)
+    sql += index("lkcondition_ConditionTypeID", "lkcondition", "ConditionTypeID")
+
+    sql += table("lksconditiontype", (
+        fid(),
+        fstr("ConditionTypeName"),
+        fstr("Description", True),
+        fint("IsRetired", True) ), False)
     
     sql += table("lkproducttype", (
         fid(),
@@ -1346,8 +1384,10 @@ def sql_structure(dbo: Database) -> str:
         fid(),
         fstr("Name"),
         fstr("RedirectUrlAfterPOST", True),
+        fstr("SetMediaFlags", True),
         fstr("SetOwnerFlags", True),
         fint("AutoProcess", True),
+        flongstr("SubmitterReplyAddress", True),
         fint("RetainFor", True),
         fint("EmailSubmitter", True),
         fint("EmailCoordinator", True),
@@ -1382,6 +1422,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("FormName"),
         fdate("PostedDate"),
         fstr("Flags", True),
+        fstr("MediaFlags", True),
         fstr("FieldName"),
         fstr("Label", True),
         fint("DisplayIndex", True),
@@ -1891,6 +1932,8 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
         return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( tid, dbo.escape(name), dbo.escape(petfinder), str(speciesid) )
     def basecolour(tid: int, name: str, adoptapet: str) -> str:
         return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (tid, dbo.escape(name), adoptapet)
+    def conditiontype(cid: int, name: str) -> str:
+        return "INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (%s, '%s', '', 0)|=\n" % ( cid, dbo.escape(name) )
     def internallocation(lid: int, name: str) -> str:
         return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, SiteID, IsRetired) VALUES (%s, '%s', '', '', 1, 0)|=\n" % ( lid, dbo.escape(name) )
     def medicalprofile(pid: int, name: str, dosage: str) -> str:
@@ -2430,6 +2473,11 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += breed(440, _("Llama", l), "Llama", 16)
     sql += breed(441, _("Pig (Farm)", l), "Pig (Farm)", 28)
     sql += breed(442, _("Mixed Breed", l), "Mixed Breed", 1)
+    sql += conditiontype(1, "GI")
+    sql += conditiontype(2, "Respiratory")
+    sql += conditiontype(3, "Miscellaneous")
+    sql += conditiontype(4, "Reproductive")
+    sql += conditiontype(5, "Symptom")
     sql += lookup2money("citationtype", "CitationName", 1, _("First offence", l))
     sql += lookup2money("citationtype", "CitationName", 2, _("Second offence", l))
     sql += lookup2money("citationtype", "CitationName", 3, _("Third offence", l))

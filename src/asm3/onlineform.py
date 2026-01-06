@@ -93,7 +93,7 @@ SPAMBOT_TXT = 'a_emailaddress'
 SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
 
 # Hidden fields that are sent with forms, but are not part of the form data
-IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method" ]
+IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method", "mediaflags", "submitterreplyto" ]
 
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
@@ -188,7 +188,9 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<input type="hidden" name="redirect" value="%s" />' % form.REDIRECTURLAFTERPOST)
     h.append('<input type="hidden" name="retainfor" value="%s" />' % form.RETAINFOR)
     h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
+    h.append('<input type="hidden" name="mediaflags" value="%s" />' % form.SETMEDIAFLAGS)
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
+    h.append('<input type="hidden" name="submitterreplyto" value="%s" />' % asm3.html.escape(form.SUBMITTERREPLYADDRESS))
     h.append('<table class="asm-onlineform-table">')
     shelteranimals = None
     adoptableanimals = None
@@ -548,6 +550,7 @@ def get_onlineformincoming_html(dbo: Database, collationid: int,
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
+        if f.FIELDNAME == "submitterreplyto": continue
         if f.FIELDNAME in SYSTEM_FIELDS and not include_system: continue
         if v.startswith("RAW::") and not include_raw: continue
         if v.startswith("data:") and not include_images: continue
@@ -698,7 +701,9 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "AutoProcess":          post.integer("autoprocess"),
         "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
+        "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
+        "SubmitterReplyAddress": post["submitterreplyaddress"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
@@ -719,7 +724,9 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "AutoProcess":          post.integer("autoprocess"),
         "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
+        "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
+        "SubmitterReplyAddress": post["submitterreplyaddress"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
@@ -727,7 +734,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
-        "*Description":         post["description"],
+        "*Description":         post["description"]
     }, username, setLastChanged=False)
 
 def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
@@ -942,8 +949,10 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
 
     l = dbo.locale
     formname = post["formname"]
+    submitterreplyto = post["submitterreplyto"]
     posteddate = dbo.now()
     flags = post["flags"]
+    mediaflags = post["mediaflags"]
     address = ""
     emailaddress = ""
     emailsubmissionto = ""
@@ -1026,6 +1035,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     "FormName":         formname,
                     "PostedDate":       posteddate,
                     "Flags":            flags,
+                    "MediaFlags":       mediaflags,
                     "FieldName":        fieldname,
                     "Label":            label,
                     "DisplayIndex":     displayindex,
@@ -1122,7 +1132,9 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             body += "\n" + formdata
             attachments = images
         # Send
-        asm3.utils.send_email(dbo, "", emailaddress, "", "", 
+        replyto = submitterreplyto
+        if replyto == "": replyto = asm3.configuration.email(dbo)
+        asm3.utils.send_email(dbo, replyto, emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
 
@@ -1140,7 +1152,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # and want to use an applicant's details but don't want them to see it or accidentally
         # reply to them about it (prime example, forms related to performing homechecks)
         replyto = ""
-        if formdef.emailsubmitter != 0: replyto = emailaddress 
+        if formdef.emailsubmitter != 0 and emailaddress != "": replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         # NOTE: We send emails to shelter contacts as bulk=True to try and prevent
         # backscatter since most shelter emails have some kind of autoresponder
@@ -1353,7 +1365,10 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
     l = dbo.locale
     fo = dbo.first_row(dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=? %s" % dbo.sql_limit(1), [collationid]))
     formname = asm3.i18n._("Online Form", l)
-    if fo is not None: formname = fo.FORMNAME
+    mediaflags = ""
+    if fo is not None: 
+        formname = fo.FORMNAME
+        mediaflags = fo.MEDIAFLAGS
     animalname, firstname, lastname = get_onlineformincoming_animalperson(dbo, collationid)
     if linktype == asm3.media.ANIMAL and firstname != "":
         formname = "%s - %s %s" % (formname, firstname, lastname)
@@ -1368,6 +1383,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
             "FormName":         fo.FORMNAME,
             "PostedDate":       fo.POSTEDDATE,
             "Flags":            fo.FLAGS,
+            "MediaFlags":       fo.MEDIAFLAGS,
             "FieldName":        "processed",
             "Label":            "",
             "DisplayIndex":     0,
@@ -1380,7 +1396,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
             "onlineform.attach_form", dbo)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     retainfor = get_onlineformincoming_retainfor(dbo, collationid)
-    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor)
+    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor, mediaflags=mediaflags)
     if asm3.configuration.auto_hash_processed_forms(dbo):
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
         asm3.media.sign_document(dbo, username, mid, "", \

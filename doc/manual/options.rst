@@ -233,10 +233,18 @@ You can build and use any format string you like, using the following tokens:
   never be used for another animal), padded to 4 digits. If the number
   overflows, more digits will be used. 
 
-* XXX - (3 digits) a number which is unique for all animals within the year
+* XXXX - (4 digits) a number which is unique for all animals within the year
+  padded to 4 digits. If the number overflows, more digits will be used.
 
+* XXX - (3 digits) a number which is unique for all animals within the year
+  padded to 3 digits. If the number overflows, more digits will be used.
+  
 * XX - A number which is unique for all animals within the year, no padding is
   done.
+
+* NNNN - (4 digits) a number representing the animal, which is unique within the
+  year brought in for the animal's type and padded to 4 digits. If the number
+  overflows, more digits will be used.
 
 * NNN - (3 digits) a number representing the animal, which is unique within the
   year brought in for the animal's type and padded to 3 digits. If the number
@@ -244,6 +252,18 @@ You can build and use any format string you like, using the following tokens:
 
 * NN - A number representing the animal, which is unique within the year
   brought in for the animal's type. No padding is done. 
+
+* PPPP - (4 digits) a number representing the animal, which is unique within the
+  year brought in for the animal's species and padded to 4 digits. If the number
+  overflows, more digits will be used.
+
+* PPP - (3 digits) a number representing the animal, which is unique within the
+  year brought in for the animal's species and padded to 3 digits. If the number
+  overflows, more digits will be used. 
+
+* PP - A number representing the animal, which is unique within the year
+  brought in for the animal's species. No padding is done. 
+
 
 Here are some examples: 
 
@@ -472,6 +492,10 @@ Diary and Messages
   your recommended locale/cron times will be between midnight and 4am.
   For this option to work, you must have configured the system email in
   the Email tab of this screen and your users must have email addresses set.
+
+* Email users their outstanding diary notes once per week on: This option will cause
+  the system to send users an email containing their outstanding diary notes
+  as part of the overnight batch on the day of the week you specify.
 
 * Email users immediately when a diary note assigned to them is created or
   updated: This option will cause an email be sent to any users a diary note is

@@ -215,7 +215,7 @@ const tableform = {
 
     /** Formats a value as a time, returning blank for midnight */
     format_time_blank: function(row, v) {
-        return (format.time(v) == "00:00:00" ? "" : format.time(v));
+        return format.time(v, null, true);
     },
 
     /**
@@ -751,8 +751,12 @@ const tableform = {
         $("#dialog-tableform").dialog("close");
     },
 
-    dialog_destroy: function() {
-        common.widget_destroy("#dialog-tableform", "dialog", false);
+    /**
+     * Destroys the dialog widget so it can be recreated.
+     * If no arg is given, removes the dialog from the DOM as well (called by screen destructors)
+     */
+    dialog_destroy: function(remove_from_dom = true) {
+        common.widget_destroy("#dialog-tableform", "dialog", remove_from_dom);
     },
 
     /**
@@ -807,7 +811,7 @@ const tableform = {
         var deferred = $.Deferred();
 
         // Make sure any existing dialog is destroyed before starting
-        tableform.dialog_destroy();
+        tableform.dialog_destroy(false);
 
         var b = {}; 
 
@@ -909,7 +913,7 @@ const tableform = {
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
-                tableform.dialog_destroy();
+                tableform.dialog_destroy(false);
                 tableform.dialog_state = 0;
             }
         });
@@ -937,7 +941,7 @@ const tableform = {
         var deferred = $.Deferred();
 
         // Make sure any existing dialog is destroyed before starting
-        tableform.dialog_destroy();
+        tableform.dialog_destroy(false);
 
         // Find any select fields in the dialog and reload their lookups. 
         // This is necessary in case opening a previous record removed a retired lookup element.
@@ -1077,7 +1081,7 @@ const tableform = {
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
-                tableform.dialog_destroy();
+                tableform.dialog_destroy(false);
                 tableform.dialog_state = 0;
             }
         });

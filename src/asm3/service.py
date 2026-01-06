@@ -186,10 +186,12 @@ def hotlink_protect(method: str, referer: str) -> None:
     
 def image_protect(filename: str) -> None:
     """ Protect a method from serving anything where the source filename is not an image """
+    IMAGE_EXTENSIONS = [ ".apng", ".avif", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp" ]
     if filename is None: filename = ""
-    filename = filename.lower()
-    if not filename.endswith(".jpg") and not filename.endswith(".jpeg"):
-        raise asm3.utils.ASMPermissionError("Non-image file requested from image-only endpoint")
+    filename = filename.lower()    
+    for ext in IMAGE_EXTENSIONS:
+        if filename.endswith(ext): return
+    raise asm3.utils.ASMPermissionError("Non-image file requested from image-only endpoint")
 
 def video_protect(filename: str) -> None:
     """ Protect a method from serving anything where the source filename is not a video """
@@ -197,7 +199,7 @@ def video_protect(filename: str) -> None:
     filename = filename.lower()
     if not filename.endswith(".mp4"):
         raise asm3.utils.ASMPermissionError("Non-video file requested from video-only endpoint")
-    
+
 def image_exclude_protect(m: ResultRow) -> None:
     """ Protect a method from serving images that have been excluded from publish """
     if m is None: return

@@ -754,7 +754,7 @@ def create_document_animalperson(dbo: Database, username: str, animalid: int, pe
     }, username, generateID=False)
     return (mediaida, mediaidp)
 
-def create_document_media(dbo: Database, username: str, linktype: int, linkid: int, template: str, content: bytes, retainfor: int = 0) -> int:
+def create_document_media(dbo: Database, username: str, linktype: int, linkid: int, template: str, content: bytes, retainfor: int = 0, mediaflags: str = "") -> int:
     """
     Creates a new media record for a document for the link given.
     linktype: ANIMAL, PERSON, etc
@@ -774,7 +774,7 @@ def create_document_media(dbo: Database, username: str, linktype: int, linkid: i
         "DBFSID":               dbfsid,
         "MediaSize":            len(content),
         "MediaSource":          MEDIASOURCE_DOCUMENT,
-        "MediaFlags":           "",
+        "MediaFlags":           asm3.utils.nulltostr(mediaflags).replace(",", "|") + "|",
         "MediaName":            "%d.html" % mediaid,
         "MediaMimeType":        "text/html",
         "MediaType":            0,

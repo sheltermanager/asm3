@@ -39,6 +39,8 @@ LOOKUP_TABLES = {
     "lkcoattype":           (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
     "citationtype":         (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
     "lksclinicstatus":      (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
+    "lkcondition":          (_("Conditions"), "ConditionName", _("Name"), "Description", "add del ret conditiontype haszoonotic", ("animalcondition.ConditionID",)),
+    "lksconditiontype":     (_("Condition Types"), "ConditionTypeName", _("Name"), "Description", ""),
     "costtype":             (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
     "deathreason":          (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
     "diet":                 (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
@@ -896,6 +898,15 @@ def get_clinic_invoice_items(dbo: Database) -> Results:
 def get_clinic_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkclinictype ORDER BY ClinicTypeName")
 
+def get_conditions(dbo: Database) -> Results:
+    """
+    Returns all active lkcondition records:
+    """
+    return dbo.query("SELECT * FROM lkcondition ORDER BY ConditionName")
+
+def get_condition_types(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lksconditiontype ORDER BY ConditionTypeName")
+
 def get_species_for_breed(dbo: Database, bid: int) -> int:
     return dbo.query_int("SELECT SpeciesID FROM breed WHERE ID=?", [bid])
 
@@ -1036,7 +1047,7 @@ def get_lookup(dbo: Database, tablename: str, namefield: str) -> Results:
 def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: str = "", 
                   speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", 
                   units: str = "", site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0) -> int:
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, iszoonotic: int = 0) -> int:
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -1068,6 +1079,14 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
             "SpeciesDescription":   desc,
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
+        }, username, setCreated=False)
+    elif lookup == "lkcondition":
+        return dbo.insert("lkcondition", {
+            "ConditionName":    name,
+            "ConditionTypeID":  conditiontypeid,
+            "IsZoonotic":       iszoonotic,
+            "Description":      desc,
+            "IsRetired":        retired
         }, username, setCreated=False)
     elif lookup == "costtype":
         # Create a matching account if the option is on and link it
@@ -1140,7 +1159,7 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
 def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str, desc: str = "", 
                   speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", units: str = "", 
                   site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0) -> None:
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, iszoonotic: int = 0) -> None:
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1171,6 +1190,14 @@ def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str
             "SpeciesDescription":   desc,
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
+        }, username, setLastChanged=False)
+    elif lookup == "lkcondition":
+        return dbo.update("lkcondition", iid, {
+            "ConditionName":    name,
+            "Description":      desc,
+            "ConditionTypeID":  conditiontypeid,
+            "IsZoonotic":       iszoonotic,
+            "IsRetired":        retired
         }, username, setLastChanged=False)
     elif lookup == "costtype":
         dbo.update(lookup, iid, {
