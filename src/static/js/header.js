@@ -409,7 +409,7 @@ header = {
             homeicon = "custom_logo?smaccount=" + asm.useraccount;
         }
         var h = [
-            '<div id="asm-menu-burger-container"><div id="asm-menu-burger">☰</div></div>',
+            '<div id="asm-menu-burger" class="ui-button ui-corner-all ui-widget">☰</div>',
             '<div id="asm-topline" class="no-print" style="display: none">',
                 '<div id="asm-topline-logo-div" class="topline-element">',
                     '<a id="asm-topline-logo" href="main" title="' + _("Home") + '"><img src="' + homeicon + '" /></a>',
@@ -589,8 +589,8 @@ header = {
         if ($(window).width() <= 480) {
             $("#topline-q-div").insertAfter('#asm-topline-logo-div');
             $(".asm-menu-icon").hide();
-            // $(".asm-menu-body").hide();
-            $("#asm-topline .ui-state-active").click();
+            $("#asm-topline .ui-state-active").asmmenu("hide_all");
+
         } else {
             if (!$(".asm-topline-q-whitespace").length) {
                 let whitespace = document.createElement("span");
@@ -598,7 +598,6 @@ header = {
                 $(whitespace).text(" ");
                 $(whitespace).insertAfter('#asm-menu-settings'); 
             }
-            
             $("#topline-q-div").insertAfter($(".asm-topline-q-whitespace").first()); 
             $(".asm-menu-icon").show();   
         }
