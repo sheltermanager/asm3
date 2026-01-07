@@ -1136,6 +1136,55 @@ select:disabled, input:disabled, textarea:disabled {
 
 }
 
+#asm-menu-burger {
+    font-size: 150%;
+    display: none;
+    padding: 6px;
+    position: absolute;
+    padding-top: 0;
+    top: 5px;
+    right: 6px;
+}
+
+@media screen and (max-width:480px) {
+    .asm-menu-body {
+        width: calc(100% - 25px);
+    }
+    #asm-menu-burger{
+        display: inline-block;
+        position: fixed;
+        right: 10px;
+        z-index: 9999;
+        text-align: right;
+    }
+    #asm-topline-logo img {
+        padding-bottom: 5px;
+    }
+    #asm-topline .ui-icon {
+        position: absolute;
+        margin-top: 3px;
+        right: 10px;
+    }
+    .asm-menu-icon {
+        display: block;
+    }
+    #asm-topline-user-div {
+        display: block !important;
+    }
+    #asm-topline-help-div {
+        display: block !important;
+    }
+    #topline-q-div {
+        width: calc(100% - 75px);
+    }
+    #topline-q {
+        width: 100%;
+    }
+    #searchgo {
+        display: none !important;
+    }
+}
+
 /** Hide elements from printing by giving them the no-print class */
 @media print
 {
