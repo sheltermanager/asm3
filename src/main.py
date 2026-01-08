@@ -679,6 +679,15 @@ class image(ASMEndpoint):
             if o.post["nopic"] == "404": self.notfound()
             self.redirect("image?db=%s&mode=nopic" % o.dbo.name())
 
+class video_thumbnail(ASMEndpoint):
+    url = "video_thumbnail"
+    session_cookie = False # Disable sending the cookie with the response to assist with CDN caching
+
+    def content(self, o):
+        self.content_type("video/mp4")
+        self.cache_control(CACHE_ONE_MONTH, CACHE_ONE_DAY)
+        return asm3.media.get_video_thumbnail(o.dbo, o.post.integer("dbfsid"))
+
 class configjs(ASMEndpoint):
     url = "config.js"
     check_logged_in = False
@@ -2406,6 +2415,8 @@ class animal_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -3048,6 +3059,7 @@ class citations(JSONEndpoint):
         return {
             "name": "citations",
             "rows": citations,
+            "templates": asm3.template.get_document_templates(o.dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(o.dbo),
             "additional": asm3.additional.get_field_definitions(o.dbo, "citation"),
             "nextid": o.dbo.get_id_max("ownercitation")
@@ -3451,6 +3463,9 @@ class document_gen(ASMEndpoint):
         elif linktype == "BOARDING":
             loglinktype = asm3.log.PERSON
             content = asm3.wordprocessor.generate_boarding_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "CITATION":
+            loglinktype = asm3.log.PERSON
+            content = asm3.wordprocessor.generate_citation_doc(dbo, dtid, post.integer_list("id"), o.user)
         elif linktype == "CLINIC":
             loglinktype = asm3.log.PERSON
             content = asm3.wordprocessor.generate_clinic_doc(dbo, dtid, post.integer("id"), o.user)
@@ -4252,6 +4267,8 @@ class foundanimal_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4431,6 +4448,7 @@ class incident_citations(JSONEndpoint):
             "rows": citations,
             "incident": a,
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")
@@ -4551,6 +4569,8 @@ class incident_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4926,6 +4946,8 @@ class lostanimal_media(JSONEndpoint):
             "name": self.url, 
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -6603,6 +6625,7 @@ class person_citations(JSONEndpoint):
             "rows": citations,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
+            "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")
@@ -6957,6 +6980,8 @@ class person_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -8460,6 +8485,8 @@ class waitinglist_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }

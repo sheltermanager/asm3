@@ -76,7 +76,7 @@ $(function() {
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
-                    if (rows.length == 1 && rows[0].MEDIATYPE == 2) {
+                    if (rows.length == 1 && (rows[0].MEDIATYPE == 2 || rows[0].MEDIAMIMETYPE == "video/mp4")) {
                         $("#button-video").button("option", "disabled", false);
                     }
                     // Only allow the image buttons to be pressed if the
@@ -110,7 +110,7 @@ $(function() {
                     },
                     { field: "PREVIEW", classes: "mode-table", display: "", formatter: function(m) {
                         let h = [];
-                        h.push(media.render_preview_thumbnail(m, false, true));
+                        h.push(media.render_preview_thumbnail(m, false, true, false));
                         h.push(media.render_mods(m, true));
                         return h.join("");
                     }},
@@ -143,9 +143,11 @@ $(function() {
                         let h = [], flags = m.MEDIAFLAGS;
                         if (!flags) { flags = ""; }
                         h.push("<div class=\"centered\">");
-                        h.push(media.render_preview_thumbnail(m, true, false));
+                        h.push(media.render_preview_thumbnail(m, true, false, true));
                         h.push("<br/>");
-                        if (m.MEDIAMIMETYPE != "image/jpeg") { h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); }
+                        if (m.MEDIAMIMETYPE != "image/jpeg" && m.MEDIAMIMETYPE != "video/mp4") { 
+                            h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); 
+                        }
                         h.push(tableform.table_render_edit_link(m.ID, format.date(m.DATE)));
                         h.push("<br/>");
                         h.push(media.render_mods(m));
@@ -168,9 +170,9 @@ $(function() {
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
+                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "move", text: _("Move/Copy"), type: "buttonmenu", icon: "copy" },
-                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { 
                         return common.browser_is.mobile;
@@ -186,11 +188,15 @@ $(function() {
 
         render: function() {
             this.model();
+            let htmlinfo = _("Please select a PDF, HTML or JPG image file to attach");
+            if (controller.videoenabled) {
+                htmlinfo = _("Please select a PDF, HTML, MP4 or JPG image file to attach");
+            }
             let h = [
                 tableform.dialog_render(this.dialog),
 
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Attach File")) + '">',
-                html.info(_("Please select a PDF, HTML or JPG image file to attach")),
+                html.info(htmlinfo),
                 '<form id="addform" method="post" enctype="multipart/form-data" action="media">',
                 tableform.fields_render([
                     { type: "hidden", name: "mode", value: "create" },
@@ -339,8 +345,9 @@ $(function() {
          * m: record from media results
          * notestooltip: true if the title attribute should contain the media notes
          * smallthumbnail: true if asm-thumbnail-small should be used
+         * cornericon: true if corner icons should be used for videos
          */
-        render_preview_thumbnail: function(m, notestooltip, smallthumbnail) {
+        render_preview_thumbnail: function(m, notestooltip, smallthumbnail, cornericon) {
             let h = [ '<div class="asm-media-thumb">' ];
             let tt = "", tc = "asm-thumbnail thumbnailshadow";
             if (notestooltip) { tt = 'title="' + html.title(html.truncate(html.decode(m.MEDIANOTES), 70)) + '"'; }
@@ -372,6 +379,11 @@ $(function() {
             else if (m.MEDIAMIMETYPE == "application/pdf") {
                 h.push('<a href="media?id=' + m.ID + '">');
                 h.push('<img class="' + tc + '" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
+            }
+            else if (m.MEDIAMIMETYPE == "video/mp4") {
+                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<img class="' + tc + '" ' + tt + ' src="video_thumbnail?db=' + asm.useraccount + '&dbfsid=' + m.DBFSID + '" /></a>');
+                if (cornericon) { h.push(html.icon("video", _("Video"), "margin-left: -28px; margin-right: 10px; margin-top: 64px; height: 16px")); }
             }
             else {
                 h.push('<a href="media?id=' + m.ID + '">');
@@ -467,8 +479,21 @@ $(function() {
 
             // We're only allowed to upload files of a certain type
             if ( !media.is_jpeg(file.name) && !media.is_extension(file.name, "png") && 
-                 !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
-                header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
+                 !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") && !media.is_extension(file.name, "mp4") ) {
+                header.show_error(_("Only PDF, HTML, MP4 and JPG image files can be attached."));
+                deferred.resolve();
+                return deferred.promise();
+            }
+
+            if (!controller.videoenabled && media.is_extension(file.name, "mp4")) {
+                header.show_error(_("Video support is currently disabled."));
+                deferred.resolve();
+                return deferred.promise();
+            }
+
+            if ( media.is_extension(file.name, "mp4") && file.size > controller.videosizelimit ) {
+                let videosizelimit = controller.videosizelimit / 1024 / 1024;
+                header.show_error(_("Video files over " + videosizelimit + "MB may not be uploaded."));
                 deferred.resolve();
                 return deferred.promise();
             }
@@ -611,11 +636,21 @@ $(function() {
             // If we don't have a file, fail validation
             if (!validate.notblank([ "filechooser" ])) { return; }
 
-            // If the file isn't a jpeg or a PDF, fail validation
+            // If the file isn't html, jpeg, PDF or mp4, fail validation
             let fname = $("#filechooser").val();
-            if ( !media.is_jpeg(fname) && !media.is_extension(fname, "png") && 
-                 !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") ) {
-                header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
+            if ( !media.is_jpeg(fname) && !media.is_extension(fname, "png") && !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") && !media.is_extension(fname, "mp4") ) {
+                header.show_error(_("Only PDF, HTML, MP4 and JPG image files can be attached."));
+                return;
+            }
+
+            if (!controller.videoenabled && media.is_extension(fname, "mp4")) {
+                header.show_error(_("Video support is currently disabled."));
+                return;
+            }
+
+            if ( media.is_extension(fname, "mp4") && $("#filechooser")[0].files[0].size > controller.videosizelimit ) {
+                let videosizelimit = controller.videosizelimit / 1024 / 1024;
+                header.show_error(_("Video files over " + videosizelimit + "MB may not be uploaded."));
                 return;
             }
 

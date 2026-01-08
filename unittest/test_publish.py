@@ -30,6 +30,7 @@ import asm3.utils
 class TestPublish(unittest.TestCase):
  
     def setUp(self):
+        self.mediaids = []
         sparsepersondata = {
             "title": "Mr",
             "forenames": "Test",
@@ -97,12 +98,17 @@ class TestPublish(unittest.TestCase):
         f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
         imagedata = f.read()
         f.close()
+        f = open(base.PATH + "videosample.mp4", "rb")
+        videodata = f.read()
+        f.close()
         self.animals = []
         for animal in animaldata:
             post = asm3.utils.PostedData(animal, "en")
             animalid, sheltercode = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
             post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
-            asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+            self.mediaids.append(asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_ATTACHFILE, post))
+            post = asm3.utils.PostedData({ "filename": "video.mp4", "filetype": "video/mp4", "filedata": "data:video/mp4;base64,%s" % asm3.utils.base64encode(videodata) }, "en")
+            self.mediaids.append(asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_ATTACHFILE, post))
             self.animals.append((animalid, sheltercode))
         self.nid = self.animals[0][0] 
 
@@ -121,7 +127,7 @@ class TestPublish(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         laid = asm3.lostfound.insert_lostanimal_from_form(base.get_dbo(), post, "test")
         post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
-        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.LOSTANIMAL, laid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+        self.mediaids.append(asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.LOSTANIMAL, laid, asm3.media.MEDIASOURCE_ATTACHFILE, post))
 
         data = {
             "datefound": base.today_display(),
@@ -138,7 +144,7 @@ class TestPublish(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         faid = asm3.lostfound.insert_foundanimal_from_form(base.get_dbo(), post, "test")
         post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
-        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.FOUNDANIMAL, faid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
+        self.mediaids.append(asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.FOUNDANIMAL, faid, asm3.media.MEDIASOURCE_ATTACHFILE, post))
         data = {
             "animal": int(self.animals[2][0]),
             "person": self.rnid,
@@ -156,6 +162,8 @@ class TestPublish(unittest.TestCase):
             asm3.animal.delete_animal(base.get_dbo(), "test", aid)
         asm3.person.delete_person(base.get_dbo(), "test", self.pnid)
         asm3.person.delete_person(base.get_dbo(), "test", self.rnid)
+        for mediaid in self.mediaids:
+            asm3.media.delete_media(base.get_dbo(), "test", mediaid)
 
     # base
     def test_get_adoption_status(self):
