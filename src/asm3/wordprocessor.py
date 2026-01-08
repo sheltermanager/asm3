@@ -304,6 +304,8 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         displaydob = a["AGEGROUP"]
         displayage = a["AGEGROUP"]
         estimate = _("estimate", l)
+    
+    # if a["WEBSITEVIDEOURL"]
 
     # make a list of names for the BONDEDNAMES, BONDEDCODES and BONDEDMICROCHIPS tokens
     bondednames = [ a["ANIMALNAME"] ]

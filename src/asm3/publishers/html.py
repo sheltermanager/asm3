@@ -310,8 +310,13 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
         if head == "": raise asm3.utils.ASMPermissionError("animal is not adoptable")
     if asm3.smcom.active():
         a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.name(), animalid)
+        if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
+            a.WEBSITEVIDEOURL = "%s?account=%s&method=animal_video&animalid=%d" % (SERVICE_URL, dbo.name(), animalid)
     else:
         a.WEBSITEMEDIANAME = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, animalid)
+        if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
+            a.WEBSITEVIDEOURL = "%s?method=animal_video&animalid=%d" % (SERVICE_URL, animalid)
+    # a.WEBSITEVIDEOTAG = f'<video controls><source src="{a.WEBSITEVIDEOURL}" type="video/mp4"></video>'
     s = head + body + foot
     tags = asm3.wordprocessor.animal_tags_publisher(dbo, a)
     tags = asm3.wordprocessor.append_tags(tags, asm3.wordprocessor.org_tags(dbo, "system"))
@@ -323,7 +328,13 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
     notes = asm3.utils.nulltostr(a.WEBSITEMEDIANOTES)
     notes += asm3.configuration.third_party_publisher_sig(dbo)
     tags["WEBMEDIANOTES"] = notes 
-    tags["WEBSITEMEDIANOTES"] = notes 
+    tags["WEBSITEMEDIANOTES"] = notes
+    if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
+        tags["WEBSITEVIDEOTAG"] = f'<video controls><source src="{a.WEBSITEVIDEOURL}" type="video/mp4"></video>'
+    elif a.WEBSITEVIDEOMIMETYPE == "text/url":
+        #tags["WEBSITEVIDEOTAG"] = f'<iframe src="{a.WEBSITEVIDEOURL}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
+
+        tags["WEBSITEVIDEOTAG"] = f'<iframe src="{a.WEBSITEVIDEOURL.replace("watch?v=", "embed/") + "?showinfo=0"}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
     s = asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     return s
 
