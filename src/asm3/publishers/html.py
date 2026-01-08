@@ -330,11 +330,9 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
     tags["WEBMEDIANOTES"] = notes 
     tags["WEBSITEMEDIANOTES"] = notes
     if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
-        tags["WEBSITEVIDEOTAG"] = f'<video controls><source src="{a.WEBSITEVIDEOURL}" type="video/mp4"></video>'
+        tags["WEBSITEVIDEOTAG"] = f'<video class="asm-video" controls><source src="{a.WEBSITEVIDEOURL}" type="video/mp4"></video>'
     elif a.WEBSITEVIDEOMIMETYPE == "text/url":
-        #tags["WEBSITEVIDEOTAG"] = f'<iframe src="{a.WEBSITEVIDEOURL}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-
-        tags["WEBSITEVIDEOTAG"] = f'<iframe src="{a.WEBSITEVIDEOURL.replace("watch?v=", "embed/") + "?showinfo=0"}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
+        tags["WEBSITEVIDEOTAG"] = f'<iframe class="asm-video" src="{a.WEBSITEVIDEOURL.replace("watch?v=", "embed/") + "?showinfo=0"}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
     s = asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     return s
 
