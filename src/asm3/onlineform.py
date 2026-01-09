@@ -234,7 +234,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            extraclass = "";
+            extraclass = ""
             if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
             elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
             elif f.FIELDNAME == "town": extraclass = "asm-onlineform-town"
@@ -390,6 +390,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
         footer = get_onlineform_footer(dbo)
+        h.append(footer.replace("$$TITLE$$", form.NAME))
     return "\n".join(h)
 
 def get_onlineform_js(dbo: Database, formid: int) -> str:
