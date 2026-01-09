@@ -6692,7 +6692,6 @@ class person_costs(JSONEndpoint):
 
 class person_embed(ASMEndpoint):
     url = "person_embed"
-    check_logged_in = False
 
     def content(self, o):
         if not o.dbo: raise asm3.utils.ASMPermissionError("No session")
@@ -7071,6 +7070,15 @@ class person_vouchers(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "voucher"),
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
+
+class postcode_lookup(ASMEndpoint):
+    url = "postcode_lookup"
+    check_logged_in = False
+
+    def post_getaddress(self, o):
+        self.content_type("application/json")
+        self.cache_control(120)
+        return asm3.geo.get_address(o.dbo, o.post["postcode"], o.post["country"])
 
 class product(JSONEndpoint):
     url = "product"

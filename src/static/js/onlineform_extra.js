@@ -622,9 +622,9 @@ $(document).ready(function() {
     } catch(err) {
         log.error(err, err);
     }
-
-    if (["en_CA", "fr_CA", "en_GB", "en_IE", "nl"].includes(LOCALE) && $(".asm-onlineform-postcode").length && $(".asm-onlineform-address").length) {
-        $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;"></span>');
+    SMCOM = true;
+    if (SMCOM && ["en_CA", "fr_CA", "en_GB", "en_IE", "nl"].includes(LOCALE) && $(".asm-onlineform-postcode").length && $(".asm-onlineform-address").length) {
+        $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
         $("#postcodelookup").click(function() {
             $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
             let country = "";
@@ -643,17 +643,24 @@ $(document).ready(function() {
                 $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
                 return;
             }
-            let formdata = "mode=postcodelookup&country=" + country + "&postcode=" + postcode + "&locale=" + LOCALE + "&account=" + USERACCOUNT;
+            let formdata = "mode=getaddress&country=" + country + "&postcode=" + postcode + "&locale=" + LOCALE + "&account=" + USERACCOUNT;
             $.ajax({
                 type: "POST",
-                url:  "person_embed",
+                url:  "postcode_lookup",
                 data: formdata,
                 dataType: "text",
                 success: function(response) {
                     let rows = jQuery.parseJSON(response);
-                    $(".asm-onlineform-address").val( rows[0].street );
+                    console.log(rows);
+                    let address = rows[0].street;
+                    if (rows[0].locality) {
+                        address += "\n" + rows[0].locality;
+                    }
+                    $(".asm-onlineform-address").val( address );
                     $(".asm-onlineform-town").val( rows[0].town );
+                    $(".asm-onlineform-city").val( rows[0].town );
                     $(".asm-onlineform-county").val( rows[0].county );
+                    $(".asm-onlineform-country").val( rows[0].country );
                     $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
                 },
                 error: function(jqxhr, textstatus, response) {

@@ -164,7 +164,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         # references into the header block
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
-        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s'\n</script>\n" % (df, l, dbo.name())
+        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
         extra += "<base href=\"%s\" />\n" % BASE_URL
         extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
             asm3.html.css_tag(ASMSELECT_CSS) + \
@@ -234,10 +234,12 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
+            extraclass = "";
             if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
             elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
             elif f.FIELDNAME == "town": extraclass = "asm-onlineform-town"
-            elif f.FIELDNAME == "country": extraclass = "asm-onlineform-county"
+            elif f.FIELDNAME == "county": extraclass = "asm-onlineform-county"
+            elif f.FIELDNAME == "country": extraclass = "asm-onlineform-country"
             h.append(f'<input class="asm-onlineform-text {extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NUMBER:
             if f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
