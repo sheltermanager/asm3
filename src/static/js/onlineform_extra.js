@@ -622,7 +622,7 @@ $(document).ready(function() {
     } catch(err) {
         log.error(err, err);
     }
-    SMCOM = true;
+    
     if (SMCOM && ["en_CA", "fr_CA", "en_GB", "en_IE", "nl"].includes(LOCALE) && $(".asm-onlineform-postcode").length && $(".asm-onlineform-address").length) {
         $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
         $("#postcodelookup").click(function() {
