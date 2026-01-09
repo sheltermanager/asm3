@@ -1,4 +1,4 @@
-/*global $, jQuery, alert, FileReader, DATE_FORMAT, IS_FORM */
+/*global $, jQuery, alert, FileReader, DATE_FORMAT, LOCALE, SMCOM */
 
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
@@ -31,6 +31,15 @@ const PHONE_RULES = [
     { locale: "en_ES", prefix: "", length: 9, elements: 3,extract: /^(\d{3})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" },
     { locale: "en_ES", prefix: "34", length: 11, elements: 3,extract: /(?<=34)(\d{3})(\d{3})(\d{3})/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" }
 ];
+
+const AL_COUNTRIES = {
+    en:     "USA",
+    en_AU:  "Australia",
+    en_GB:  "United Kingdom",
+    en_CA:  "Canada",
+    en_IE:  "Ireland",
+    fr_CA:  "Canada"
+};
 
 $(document).ready(function() {
 
@@ -614,36 +623,25 @@ $(document).ready(function() {
         }
     });
 
+    // This is used to handle resizing the form when it is embedded in an iframe
     try {
         let ro = new ResizeObserver(function(e) {
-                window.parent.postMessage(document.querySelector("html").offsetHeight, "*");
+            window.parent.postMessage(document.querySelector("html").offsetHeight, "*");
         });
         ro.observe(document.querySelector("html"));
     } catch(err) {
         log.error(err, err);
     }
     
-    if (SMCOM && ["en_CA", "fr_CA", "en_GB", "en_IE", "nl"].includes(LOCALE) && $(".asm-onlineform-postcode").length && $(".asm-onlineform-address").length) {
+    // If address/postcode fields are present, offer an address lookup button to complete the address
+    if (AL_COUNTRIES.hasOwnProperty(LOCALE) && $(".asm-onlineform-postcode").length > 0 && $(".asm-onlineform-address").length > 0) {
         $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
         $("#postcodelookup").click(function() {
-            $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
-            let country = "";
-            if (LOCALE == "en_GB") {
-                country = "United Kingdom";
-            } else if (LOCALE == "en_CA" || LOCALE == "fr-CA") {
-                country = "Canada";
-            } else if (LOCALE == "en_IE") {
-                country = "Ireland";
-            } else if (LOCALE == "nl") {
-                country = "Nederland";
-            }
-            
+            let country = AL_COUNTRIES[LOCALE];
             let postcode = $(".asm-onlineform-postcode").val();
-            if (!postcode) {
-                $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
-                return;
-            }
+            if (!postcode || !SMCOM) { return; }
             let formdata = "mode=getaddress&country=" + country + "&postcode=" + postcode + "&locale=" + LOCALE + "&account=" + USERACCOUNT;
+            $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
             $.ajax({
                 type: "POST",
                 url:  "postcode_lookup",
