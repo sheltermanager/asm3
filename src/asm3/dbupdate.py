@@ -1763,7 +1763,10 @@ def sql_structure(dbo: Database) -> str:
         fint("Weekday"),
         fint("DayOfMonth"),
         fint("Month"),
+        flongstr("Description"),
         flongstr("Comments") ), True)
+    sql += index("regulardebit_StartDate", "regulardebit", "StartDate")
+    sql += index("regulardebit_EndDate", "regulardebit", "EndDate")
 
     sql += table("reservationstatus", (
         fid(),

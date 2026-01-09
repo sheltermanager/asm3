@@ -63,6 +63,7 @@ $(function() {
                             "12|" + _("December")
                         ]
                     },
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
                 ]
             };
@@ -142,7 +143,7 @@ $(function() {
                             return accountcode;
                         }
                     },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "DESCRIPTION", display: _("Description") }
                 ]
             };
 

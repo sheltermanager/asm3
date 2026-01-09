@@ -47,6 +47,9 @@ ASCENDING = 0
 DESCENDING = 1
 
 def create_trx_from_regular_debits(dbo: Database, username: str) -> List[int]:
+    """
+    Called once per day as part of the overnight batch. Creates transactions based on active regular debits.
+    """
     activerds = get_regulardebits(dbo, "all")
     today = dbo.today()
     trxlist = []
@@ -65,7 +68,7 @@ def create_trx_from_regular_debits(dbo: Database, username: str) -> List[int]:
             trxlist.append(
                 dbo.insert("accountstrx", {
                     "TrxDate":              today,
-                    "Description":          asm3.i18n._("Transaction created automatically from a regular debit."),
+                    "Description":          rd.DESCRIPTION,
                     "Reconciled":           0,
                     "Amount":               rd.AMOUNT,
                     "SourceAccountID":      rd.FROMACCOUNT,
@@ -718,12 +721,12 @@ def get_recent_licences(dbo: Database) -> Results:
 def get_regulardebits(dbo: Database, filter="all") -> Results:
     concatsql = dbo.sql_concat(("OwnerName", "' '", "OwnerCode"))
     wheresql = ""
-    today = asm3.i18n.format_date(dbo.today())
+    today = dbo.sql_value(dbo.today())
     if filter == "active":
-        wheresql = f" WHERE '{today}' BETWEEN rd.StartDate AND rd.EndDate OR ( rd.StartDate <= '{today}' AND rd.EndDate IS NULL )"
+        wheresql = f" WHERE '{today}' BETWEEN rd.StartDate AND rd.EndDate OR ( rd.StartDate <= {today} AND rd.EndDate IS NULL )"
     elif filter == "inactive":
-        wheresql = f" WHERE rd.StartDate > '{today}' OR rd.EndDate < '{today}'"
-    sql = "SELECT rd.*, " + concatsql + " AS OwnerName FROM regulardebit rd LEFT JOIN owner o ON rd.OwnerID = o.ID" + wheresql
+        wheresql = f" WHERE rd.StartDate > {today} OR rd.EndDate < {today}"
+    sql = f"SELECT rd.*, {concatsql} AS OwnerName FROM regulardebit rd LEFT JOIN owner o ON rd.OwnerID = o.ID" + wheresql
     return dbo.query(sql)
 
 def get_licence_find_simple(dbo: Database, licnum: str, dummy: int = 0) -> Results:
@@ -1367,7 +1370,7 @@ def insert_regulardebit_from_form(dbo: Database, username: str, post: PostedData
     Creates a regular debit from posted form data 
     """
 
-    rdid = dbo.insert("regulardebit", {
+    return dbo.insert("regulardebit", {
         "OwnerID":          post.integer("person"),
         "StartDate":        post.date("startdate"),
         "EndDate":          post.date("enddate"),
@@ -1378,10 +1381,9 @@ def insert_regulardebit_from_form(dbo: Database, username: str, post: PostedData
         "Weekday":          post.integer("weekday"),
         "DayOfMonth":       post.integer("dayofmonth"),
         "Month":            post.integer("month"),
+        "Description":      post["description"],
         "Comments":         post["comments"]
     }, username)
-
-    return rdid
 
 def update_regulardebit_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
@@ -1400,12 +1402,13 @@ def update_regulardebit_from_form(dbo: Database, username: str, post: PostedData
         "Weekday":          post.integer("weekday"),
         "DayOfMonth":       post.integer("dayofmonth"),
         "Month":            post.integer("month"),
+        "Description":      post["description"],
         "Comments":         post["comments"]
     }, username)
 
     if post.integer("person"):
         concatsql = dbo.sql_concat(("OwnerName", "' '", "OwnerCode"))
-        return dbo.query_string("SELECT " + concatsql + " AS OwnerName FROM owner WHERE ID = ?", [post.integer("person")])
+        return dbo.query_string(f"SELECT {concatsql} AS OwnerName FROM owner WHERE ID = ?", [post.integer("person")])
 
 
 def delete_regulardebit(dbo: Database, username: str, rdid: int) -> None:
