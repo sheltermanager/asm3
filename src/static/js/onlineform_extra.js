@@ -614,5 +614,61 @@ $(document).ready(function() {
         }
     });
 
-});
+    try {
+        let ro = new ResizeObserver(function(e) {
+                window.parent.postMessage(document.querySelector("html").offsetHeight, "*");
+        });
+        ro.observe(document.querySelector("html"));
+    } catch(err) {
+        log.error(err, err);
+    }
+    
+    if (SMCOM && ["en_CA", "fr_CA", "en_GB", "en_IE", "nl"].includes(LOCALE) && $(".asm-onlineform-postcode").length && $(".asm-onlineform-address").length) {
+        $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
+        $("#postcodelookup").click(function() {
+            $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
+            let country = "";
+            if (LOCALE == "en_GB") {
+                country = "United Kingdom";
+            } else if (LOCALE == "en_CA" || LOCALE == "fr-CA") {
+                country = "Canada";
+            } else if (LOCALE == "en_IE") {
+                country = "Ireland";
+            } else if (LOCALE == "nl") {
+                country = "Nederland";
+            }
+            
+            let postcode = $(".asm-onlineform-postcode").val();
+            if (!postcode) {
+                $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
+                return;
+            }
+            let formdata = "mode=getaddress&country=" + country + "&postcode=" + postcode + "&locale=" + LOCALE + "&account=" + USERACCOUNT;
+            $.ajax({
+                type: "POST",
+                url:  "postcode_lookup",
+                data: formdata,
+                dataType: "text",
+                success: function(response) {
+                    let rows = jQuery.parseJSON(response);
+                    console.log(rows);
+                    let address = rows[0].street;
+                    if (rows[0].locality) {
+                        address += "\n" + rows[0].locality;
+                    }
+                    $(".asm-onlineform-address").val( address );
+                    $(".asm-onlineform-town").val( rows[0].town );
+                    $(".asm-onlineform-city").val( rows[0].town );
+                    $(".asm-onlineform-county").val( rows[0].county );
+                    $(".asm-onlineform-country").val( rows[0].country );
+                    $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
+                },
+                error: function(jqxhr, textstatus, response) {
+                    console.log("Error finding address from postcode. " + response);
+                    $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
+                }
+            });
+        });
+    }
 
+});
