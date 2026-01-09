@@ -634,12 +634,12 @@ $(document).ready(function() {
     }
     
     // If address/postcode fields are present, offer an address lookup button to complete the address
-    if (AL_COUNTRIES.hasOwnProperty(LOCALE) && $(".asm-onlineform-postcode").length > 0 && $(".asm-onlineform-address").length > 0) {
+    if (SMCOM && AL_COUNTRIES.hasOwnProperty(LOCALE) && $(".asm-onlineform-postcode").length > 0 && $(".asm-onlineform-address").length > 0) {
         $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
         $("#postcodelookup").click(function() {
             let country = AL_COUNTRIES[LOCALE];
             let postcode = $(".asm-onlineform-postcode").val();
-            if (!postcode || !SMCOM) { return; }
+            if (!postcode) { return; }
             let formdata = "mode=getaddress&country=" + country + "&postcode=" + postcode + "&locale=" + LOCALE + "&account=" + USERACCOUNT;
             $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
             $.ajax({
