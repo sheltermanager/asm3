@@ -920,7 +920,7 @@ $(function() {
             else {
                 $("#insurancerow").fadeOut();
             }
-            // Show the reservation date field for both reserves and adoptions
+            // Show the reservation date field and adoption source field for both reserves and adoptions
             if (mt == 1 || mt == 0) {
                 $("#reservationrow").fadeIn();
                 $("#sourcerow").fadeIn();
