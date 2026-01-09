@@ -1299,6 +1299,8 @@ def substitute_tags(searchin: str, tags: Dict[str, str], escape_html: bool = Tru
         # image, URL or already contains HTML entities
         if escape_html and \
             not v.lower().startswith("<img") and \
+            not v.lower().startswith("<video") and \
+            not v.lower().startswith("<iframe") and \
             not v.lower().find("&#") != -1 and \
             not v.lower().find("/>") != -1 and \
             not v.lower().startswith("<table") and \

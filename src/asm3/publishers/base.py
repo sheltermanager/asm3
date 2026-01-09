@@ -731,7 +731,7 @@ class AbstractPublisher(threading.Thread):
     
     def getVideoUrls(self, animalid: int) -> List[str]:
         """
-        Returns a list of photo URLs for animalid. The preferred is always first.
+        Returns a list of video URLs for animalid. The preferred is always first.
         """
         video_urls = []
         videos = self.dbo.query("SELECT ID, Date FROM media " \

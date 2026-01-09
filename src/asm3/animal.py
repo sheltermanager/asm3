@@ -385,6 +385,7 @@ def get_animal_query(dbo: Database) -> str:
         "doc.MediaName AS DocMediaName, " \
         "doc.Date AS DocMediaDate, " \
         "vid.MediaName AS WebsiteVideoURL, " \
+        "vid.MediaMimeType AS WebsiteVideoMimeType, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
         f"CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > {today}) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "fo.OwnerName AS FutureOwnerName, " \
