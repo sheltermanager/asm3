@@ -2,6 +2,36 @@
 
 import unittest
 import base
+import functools
+
+import asm3.utils
+import asm3.sitedefs
+
+SMTP_CONFIG = {
+    "sendmail": False,
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "usetls": True,
+    "username": "dummy-test-user@gmail.com",
+    "password": "dummy-password"
+}
+
+asm3.utils.SMTP_SERVER = SMTP_CONFIG
+asm3.sitedefs.cfg = { "smtp_server": SMTP_CONFIG }
+
+original_send_email = asm3.utils.send_email
+
+@functools.wraps(original_send_email)
+def mock_send_email_suppress_exceptions(*args, **kwargs):
+    """
+    This mock function intercepts calls to send_email and
+    forces 'exceptions=False' to prevent SMTP errors
+    from crashing the test run.
+    """
+    kwargs['exceptions'] = False
+    return original_send_email(*args, **kwargs)
+
+asm3.utils.send_email = mock_send_email_suppress_exceptions
 
 import test_additional
 import test_animalcontrol
@@ -80,7 +110,14 @@ fullsuite = [
 # fullsuite = [ lt(test_animal) ]
 
 if __name__ == "__main__":
+    import sys
+
     s = unittest.TestSuite(fullsuite)
     runner = unittest.TextTestRunner()
-    runner.run(s)
+
+    result = runner.run(s)
+
+    if not result.wasSuccessful():
+        print("Tests failed! Exiting with non-zero code.")
+        sys.exit(1)
 
