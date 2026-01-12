@@ -866,22 +866,18 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             "CONDITIONNAME":            "CONDITIONNAME",
             "CONDITIONTYPENAME":        "CONDITIONTYPENAME",
             "CONDITIONSTARTDATETIME":   "d:STARTDATETIME",
-            "CONDITIONENDDATETIME":     "d:ENDDATETIME"
+            "CONDITIONENDDATETIME":     "d:ENDDATETIME",
+            "CONDITIONCOMMENTS":        "COMMENTS"
         }
         conditions = asm3.animal.get_animalconditions(dbo, a["ID"])
-        tags.update(table_tags(dbo, d, conditions, "CONDITIONNAME", "STARTDATETIME", "ENDDATETIME"))
+        tags.update(table_tags(dbo, d, conditions, "CONDITIONNAME"))
         tags["ANIMALCONDITIONS"] = html_table(l, conditions, (
             ( "CONDITIONNAME", _("Condition", l) ),
             ( "CONDITIONTYPENAME", _("ConditionType", l) ),
             ( "STARTDATETIME", _("From", l) ),
-            ( "ENDDATETIME", _("To", l) )
+            ( "ENDDATETIME", _("To", l) ),
+            ( "COMMENTS", _("Comments", l) )
         ))
-
-        # for cond in conditions:
-        #     tagname = "MEDICALTYPE" + mt["MEDICALTYPENAME"].replace(" ", "").replace("/", "").upper()
-        #     tags[tagname] = mt["MEDICALTYPENAME"].upper()
-        #     tags[tagname + "GIVEN"] = python2display(l, mt["DATEGIVEN"])
-        #     tags[tagname + "DUE"] = python2display(l, mt["DATEREQUIRED"])
 
     # Diary
     if includeDiary:
