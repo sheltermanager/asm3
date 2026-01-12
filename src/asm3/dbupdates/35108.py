@@ -3,7 +3,7 @@ from asm3.dbupdate import execute, add_index
 fields = ",".join([
     dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
     dbo.ddl_add_table_column("StartDatetime", dbo.type_datetime, False),
-    dbo.ddl_add_table_column("EndDatetime", dbo.type_integer, True),
+    dbo.ddl_add_table_column("EndDatetime", dbo.datetime, True),
     dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
     dbo.ddl_add_table_column("ConditionID", dbo.type_integer, False),
     dbo.ddl_add_table_column("Comments", dbo.type_longtext, False)
