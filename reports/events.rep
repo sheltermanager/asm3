@@ -2,12 +2,15 @@ Events between two dates
 ###
 Events
 ###
-34603/Any rev01
+34603/Any rev02
 ###
 Events between two dates with animals
 ###
 en
 ###
+$VAR from DATE Event between$
+$VAR to DATE and$
+
 SELECT e.EventName, e.EventDescription, e.EventAddress, e.EventTown, e.EventCounty, e.EventPostCode,
 e.StartDateTime, e.EndDateTime, a.ID AS AID, e.ID AS EID,  
 a.AnimalName, a.ShelterCode, s.SpeciesName,
