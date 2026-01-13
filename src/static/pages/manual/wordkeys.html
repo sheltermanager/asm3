@@ -1294,13 +1294,20 @@ increments of 100 upto 500px if you would like the image to be larger, eg:
 </section>
 <section id="citation-keys">
 <h2>Citation Keys<a class="headerlink" href="#citation-keys" title="Link to this heading">¶</a></h2>
-<p>You must use a qualifier suffix to access these records.</p>
+<p>If you are creating a document from the incident records, then you must
+use a qualifier suffix to access these records.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The Recent keyword returns citations where the fine is paid where Due returns unpaid.</p>
+<p>The Recent keyword returns citations where the fine has been paid, where Due returns unpaid.</p>
 </div>
+<p>However, if you create a document from the citation tab of a
+person or incident record, you can select multiple citations
+before creating the document and access the information by suffixing a number
+to the end of the keys listed below (eg: CitationName1, FineAmount1)</p>
 <dl class="simple">
 <dt>CitationName</dt><dd><p>The type of citation being issued</p>
+</dd>
+<dt>CItationNumber</dt><dd><p>The identification number of the citation</p>
 </dd>
 <dt>CitationDate</dt><dd><p>The date of the citation</p>
 </dd>
@@ -1311,6 +1318,16 @@ increments of 100 upto 500px if you would like the image to be larger, eg:
 <dt>FineDueDate</dt><dd><p>The date the fine is due to be paid</p>
 </dd>
 <dt>FinePaidDate</dt><dd><p>The date the fine was paid</p>
+</dd>
+</dl>
+<p>The following fields are only available to citations generated via
+the citation tab of incident and person records:</p>
+<dl class="simple">
+<dt>CitationsTotalFines</dt><dd><p>The total amount of fines within the selected citations</p>
+</dd>
+<dt>CitationsTotalPaidFines</dt><dd><p>The total amount of fines within the selected citations that have been paid</p>
+</dd>
+<dt>CitationsTotalUnpaidFines</dt><dd><p>The total amount of fines within the selected citations that have not been paid</p>
 </dd>
 </dl>
 </section>
