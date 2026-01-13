@@ -26,7 +26,16 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    await tableform.dialog_show_edit(dialog, row);
+                    await tableform.dialog_show_edit(dialog, row, {
+                            onvalidate: function() {
+                                if (!$("#starttime").val()) { $("#starttime").val("00:00:00"); }
+                                let enddate = $("#enddate").val();
+                                let endtime = $("#endtime").val();
+                                if (enddate && !endtime) { $("#endtime").val("00:00:00"); }
+                                return true;
+                            }
+                        }
+                    );
                     tableform.fields_update_row(dialog.fields, row);
                     row.CONDITIONNAME = common.get_field(controller.conditions, row.CONDITIONID, "CONDITIONNAME");
                     await tableform.fields_post(dialog.fields, "mode=update&animalconditionid=" + row.ID, "animal_condition");
@@ -35,16 +44,37 @@ $(function() {
                 },
                 columns: [
                     { field: "CONDITIONNAME", display: _("Condition") },
-                    { field: "STARTDATETIME", display: _("Start"), formatter: tableform.format_datetime },
-                    { field: "ENDDATETIME", display: _("End"), formatter: tableform.format_datetime },
+                    { field: "STARTDATETIME", display: _("Start"), 
+                        formatter: function(row, v) {
+                            return format.date(v) + " " + format.time(v, "%H:%M:%S", true);
+                        }
+                    },
+                    { field: "ENDDATETIME", display: _("End"), 
+                        formatter: function(row, v) {
+                            return format.date(v) + " " + format.time(v, "%H:%M:%S", true);
+                        }
+                    },
                     { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
 
             const buttons = [
                 { id: "new", text: _("New Condition"), icon: "new", enabled: "always", perm: "aaco",
-                    click: async function() { 
-                        await tableform.dialog_show_add(dialog);
+                    click: async function() {
+                        await tableform.dialog_show_add(dialog, {
+                            onvalidate: function() {
+                                if (!$("#starttime").val()) { $("#starttime").val("00:00:00"); }
+                                let enddate = $("#enddate").val();
+                                let endtime = $("#endtime").val();
+                                if (enddate && !endtime) { $("#endtime").val("00:00:00"); }
+                                return true;
+                            },
+                            onload: function() {
+                                // Reset the date fields
+                                $("#startdate").datepicker("setDate", new Date());
+                                $("#starttime, #enddate, #endtime").val("");
+                            }
+                        });
                         let response = await tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_condition");
                         let row = {};
                         row.ID = response;
