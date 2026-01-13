@@ -4911,7 +4911,6 @@ def update_animalcondition_from_form(dbo: Database, username: str, post: PostedD
     Updates an animalcondition record from posted form data
     """
     dbo.update("animalcondition", post.integer("animalconditionid"), {
-        "AnimalID":         post.integer("animalid"),
         "ConditionID":      post.integer("conditionid"),
         "StartDatetime":    post.datetime("startdate", "starttime"),
         "EndDatetime":      post.datetime("enddate", "endtime"),
