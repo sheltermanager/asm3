@@ -7,7 +7,7 @@ import asm3.dbfs
 import asm3.log
 import asm3.utils
 from asm3.i18n import _
-from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, VIDEO_ENABLED, VIDEO_THUMBNAIL_CMD, WATERMARK_FONT_BASEDIRECTORY
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, VIDEO_THUMBNAIL_CMD, WATERMARK_FONT_BASEDIRECTORY
 from asm3.typehints import Database, Dict, PostedData, ResultRow, Results, Tuple
 
 from datetime import datetime

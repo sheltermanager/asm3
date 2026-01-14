@@ -2015,17 +2015,19 @@ const tableform = {
             // No default value given, use a blank
             if (!v.defaultval) {
                 if (v.type == "check") { $("#" + v.post_field).prop("checked", false); return; }
-                if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
-                if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
-                if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
-                if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
-                if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
-                if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
-                if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
-                if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
-                if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
-                if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
-                if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
+                else if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
+                else if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
+                else if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
+                else if (v.type == "datetime") { $("#" + v.post_field + "date, #" + v.post_field + "time").val(""); return; }
+                else if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
+                else if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
+                else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
+                else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
+                else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
+                else if (v.type == "select") {  $("#" + v.post_field).select("firstvalue"); return; }
+                else if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
+                else if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
+                else if ([ "phone", "number", "intnumber", "date", "time", "text" ].includes(v.type)) { $("#" + v.post_field).val(""); return; }
             }
             else {
                 // Is the default value a function? If so, run it 
@@ -2047,8 +2049,9 @@ const tableform = {
                 else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
                 else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
                 else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
+                else if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
                 else if (v.type == "selectcolour") { $("#" + v.post_field).selectcolour("value", dval); return; }
-                else { $("#" + v.post_field).val(dval); }
+                else { $("#" + v.post_field).val(dval); return; }
             }
         });
     },

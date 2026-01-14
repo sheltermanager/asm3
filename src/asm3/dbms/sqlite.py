@@ -16,7 +16,9 @@ class DatabaseSQLite3(Database):
     type_float = "REAL"
    
     def connect(self) -> Any:
-        return sqlite3.connect(self.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
+        c = sqlite3.connect(self.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
+        c.execute("PRAGMA journal_mode = WAL") # Use WAL journalling for performance
+        return c
 
     def name(self) -> str:
         """ Returns the database name. Strip the path from SQLite databases """

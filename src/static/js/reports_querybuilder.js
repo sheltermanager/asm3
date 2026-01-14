@@ -199,6 +199,7 @@ $(function() {
             [ _("Member"), "member", "IsMember=1" ],
             [ _("No active license held"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
                 "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
+            [ _("Not homechecked"), "nothomechecked", "IDCheck=0" ],
             [ _("Retailer"), "retailer", "IsRetailer=1" ],
             [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
             [ _("Staff"), "staff", "IsStaff=1" ],

@@ -1252,12 +1252,56 @@ online_form_js
 .. rubric:: Requires username/password: NO
 
 Similar to animal_view_adoptable_js, this method allows you to put a div placeholder
-in your page and load a script. The script will insert a responsive iframe into
-your page at the div, which displays the output of the online_form_html service
-call. This allows embedding of the form in a more transparent manner. 
+in your page and load a script to insert an online form. 
 
-    <div id="asm3-form-iframe" />
+The script will insert a responsive iframe into your page inside the div, which
+displays the output of the online_form_html service call. 
+
+The injected iframe will have a class of asm3-form-iframe. The scrollbars and
+border are removed and it will take up 100% of the width of the container. The
+height of the iframe will be automatically resized based on the content in the
+form. 
+
+This effectively injects the form into your webpage without it looking like it's
+in an iframe.
+
+    <div id="asm3-onlineform" />
     <script src="http://localhost:5000/service?method=online_form_js&id=1"></script>
+
+animal_view_adoptable_js
+------------------------
+
+.. rubric:: Cache time: 10 minutes
+.. rubric:: Permissions required: None
+.. rubric:: Requires username/password: NO
+
+Returns a javascript file that when executed injects thumbnails of all
+adoptable animals into the page with links to the animal_view service call. It
+is most useful as the src attribute for a <script> tag.
+
+The page must contain a div with an id attribute of "asm3-adoptables", where
+the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
+found, a popup error message will appear.
+
+Here's an example page showing how to inject your adoptable animal list::
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>Adoptable Animals</title>
+    <style>
+    .asm3-adoptable-thumbnail { border-radius: 8px; }
+    </style>
+    <body>
+    
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+    </body>
+    </html>
+
+.. warning:: You cannot import the script file more than once, or have more than one asm3-adoptables div inside a single web page.
+
 
 rss_timeline
 ------------
