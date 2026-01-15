@@ -33,7 +33,6 @@ const PHONE_RULES = [
 ];
 
 const AL_COUNTRIES = {
-    en:     "USA",
     en_AU:  "Australia",
     en_GB:  "United Kingdom",
     en_CA:  "Canada",
