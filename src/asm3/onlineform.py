@@ -397,7 +397,8 @@ def get_onlineform_js(dbo: Database, formid: int) -> str:
     """ Returns js that outputs a responsive online form iframe into a host div """
     js = asm3.utils.read_text_file("%s/static/js/onlineform_embed.js" % dbo.installpath)
     js = js.replace("{SERVICE_URL}", SERVICE_URL)
-    js = js.replace("{TOKEN_FORMID}", str(formid))
+    js = js.replace("{FORMID}", str(formid))
+    js = js.replace("{ACCOUNT}", str(dbo.name()))
     return js
 
 def get_onlineform_json(dbo: Database, formid: int) -> str:
