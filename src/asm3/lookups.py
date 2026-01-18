@@ -70,7 +70,7 @@ LOOKUP_TABLES = {
     "pickuplocation":       (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID", "animalcontrol.PickupLocationID")),
     "reservationstatus":    (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",)),
     "site":                 (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID")),
-    "species":              (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
+    "species":              (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID"), "AFDefaultSpecies"),
     "stocklocation":        (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
     "stockusagetype":       (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
     "lkurgency":            (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
@@ -91,6 +91,7 @@ LOOKUP_NAMELABEL = 2
 LOOKUP_DESCFIELD = 3
 LOOKUP_MODIFIERS = 4
 LOOKUP_FOREIGNKEYS = 5
+LOOKUP_DEFAULTCONFIG = 6
 
 COLOURSCHEMES = [
     { "ID": 1, "FGCOL": "", "BGCOL": "" },
@@ -1268,6 +1269,14 @@ def update_lookup_retired(dbo: Database, username: str, lookup: str, iid: int, r
 def delete_lookup(dbo: Database, username: str, lookup: str, iid: int) -> None:
     l = dbo.locale
     t = LOOKUP_TABLES[lookup]
+    default_key = t[LOOKUP_DEFAULTCONFIG] if len(t) > LOOKUP_DEFAULTCONFIG else ""
+    if default_key:
+        default_iid = asm3.configuration.cint(dbo, default_key, 0)
+        if default_iid == iid:
+            raise asm3.utils.ASMValidationError(
+                _("This item is set as the default and cannot be deleted.", l)
+            )
+
     for fv in t[LOOKUP_FOREIGNKEYS]:
         table, field = fv.split(".")
         if 0 < dbo.query_int("SELECT COUNT(*) FROM %s WHERE %s = %s" % (table, field, iid)):
