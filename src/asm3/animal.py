@@ -4147,7 +4147,7 @@ def update_location_unit(dbo: Database, username: str, animalid: int, newlocatio
     Updates the shelterlocation and shelterlocationunit fields of the animal given.
     This is typically called in response to drag and drop events on shelterview and
     means that the animal should be on shelter rather than with a fosterer, etc.
-    If the animal has an activemovement, it will be returned before the location is changed.
+    If the animal has an activemovement, it will be returned before the location is changed (unless returnactivemovement == False)
     """
     # Record the internal location change if necessary
     oldloc = dbo.first_row( dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid]) )

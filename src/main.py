@@ -7700,11 +7700,11 @@ class shelterview(JSONEndpoint):
 
     def post_movelocation(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
-        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"))
+        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), returnactivemovement=o.post.integer("boarding")==0)
 
     def post_moveunit(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
-        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), o.post["unit"])
+        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), o.post["unit"], returnactivemovement=o.post.integer("boarding")==0)
 
     def post_movefoster(self, o):
         self.check(asm3.users.ADD_MOVEMENT)
