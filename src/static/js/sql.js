@@ -85,16 +85,16 @@ $(function() {
          */
         add_to_history: function(v) {
             v = v.replace("\n", "\\n");
-            // If v is already in the queue, move it to the top
+            // If v is already in the history, remove it so we can add it at the beginning
             if (sql.history.includes(v)) {
                 sql.history = sql.history.filter(function(item) {
                     return item != v;
                 });
             }
-            sql.history.push(v);
+            sql.history.unshift(v); // prepend the latest query to the front
             if (sql.history.length > 50) { sql.history.length = 50; } // truncate the history to 50 elements
             common.local_set("sql_history", sql.history.join("||"));
-            $("#history").html(html.list_to_options(sql.history.toReversed()));
+            $("#history").html(html.list_to_options(sql.history));
         },
 
         /**
@@ -107,7 +107,7 @@ $(function() {
             }
             else {
                 sql.history = h.split("||");
-                $("#history").html(html.list_to_options(sql.history.toReversed()));
+                $("#history").html(html.list_to_options(sql.history));
                 $("#history").val("");
             }
         },
