@@ -158,7 +158,13 @@ def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> No
     if exclude == 1:
         d["WebsitePhoto"] = 0
         d["DocPhoto"] = 0
+    elif link.LinkTypeID == 0:
+        if dbo.query("SELECT COUNT(ID) AS WPCount FROM media WHERE WebsitePhoto = 1 AND LinkTypeID = 0 AND LinkID = ?", [link.LINKID])[0].WPCOUNT == 0:
+            d["WebsitePhoto"] = 1
+
     dbo.update("media", mid, d, username)
+    if link.LINKTYPEID == 0:
+        asm3.animal.update_animal_status(dbo, link.LINKID, username=username)
 
 def get_name_for_id(dbo: Database, mid: int) -> str:
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
@@ -583,7 +589,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
 
     # Verify this record has a web/doc default if we aren't excluding it from publishing
     if ispicture and excludefrompublish == 0:
-        check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
+        check_default_web_doc_pic(dbo, mediaid, linkid, linktype, username)
 
     return mediaid
 
@@ -634,7 +640,7 @@ def calc_retainuntil_from_retainfor(dbo: Database, retainfor: int) -> datetime:
         retainuntil = dbo.today( retainfor * 365 )
     return retainuntil
 
-def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype: int) -> None:
+def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype: int, username: str = "system") -> None:
     """
     Checks if linkid/type has a default pic for the web or documents. If not,
     sets mediaid to be the default.
@@ -645,6 +651,10 @@ def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype
         "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
     if existing_web == 0:
         dbo.update("media", mediaid, { "WebsitePhoto": 1 })
+        if linktype == 0:
+            animalrow = dbo.query(asm3.animal.get_animal_status_query(dbo) + " WHERE a.ID = ?", (linkid,))[0]
+            movements = dbo.query(asm3.animal.get_animal_movement_status_query(dbo) + " WHERE m.AnimalID = ?", (linkid,))
+            asm3.animal.update_animal_status(dbo, linkid, animalrow, movements, username=username)
     if existing_doc == 0:
         dbo.update("media", mediaid, { "DocPhoto": 1 })
 
@@ -1057,7 +1067,13 @@ def delete_media(dbo: Database, username: str, mid: int) -> None:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
-        if ml: set_web_preferred(dbo, username, ml.ID)
+        if ml:
+            set_web_preferred(dbo, username, ml.ID)
+        elif mr.LINKTYPEID == 0:
+            animalrow = dbo.query(asm3.animal.get_animal_status_query(dbo) + " WHERE a.ID = ?", (mr.LINKID,))[0]
+            movements = dbo.query(asm3.animal.get_animal_movement_status_query(dbo) + " WHERE m.AnimalID = ?", (mr.LINKID,))
+            asm3.animal.update_animal_status(dbo, mr.LINKID, animalrow, movements, username=username)
+
     if mr.DOCPHOTO == 1:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
