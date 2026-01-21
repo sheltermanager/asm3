@@ -3466,6 +3466,9 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     # If a weight was specified and we're logging, mark it in the log
     insert_weight_log(dbo, username, nextid, post.floating("weight"), 0)
 
+    # If changes to adoptable status are bing logged, log it
+    insert_adoptable_status_log(dbo, username, nextid, -1, notforadoption)
+
     # If the animal is held and we're logging it, mark it in the log
     if asm3.configuration.hold_change_log(dbo) and post.boolean("hold"):
         asm3.log.add_log(dbo, username, asm3.log.ANIMAL, nextid, asm3.configuration.hold_change_log_type(dbo),
@@ -3522,7 +3525,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails FROM animal WHERE ID=?", [aid]))
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, IsNotAvailableForAdoption FROM animal WHERE ID=?", [aid]))
 
     # Record the location if it has changed
     insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
@@ -3559,6 +3562,9 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     nonshelter = bi("nonshelter" in flags)
     quarantine = bi("quarantine" in flags)
     flagstr = "|".join(flags) + "|"
+
+    # If changes to adoptable status are being logged and it has changed, log it
+    insert_adoptable_status_log(dbo, username, aid, prerow.ISNOTAVAILABLEFORADOPTION, notforadoption)
 
     # If the option is on and the flags have changed, log it
     if asm3.configuration.animal_flag_change_log(dbo):
@@ -4068,6 +4074,16 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                 # Row found representing death, removing it
                 dbo.execute("DELETE FROM animallocation WHERE ID = ?", [locationrow.ID] )
 
+def insert_adoptable_status_log(dbo: Database, username: str, animalid: int, wasnotforadoption: int = 0, isnotforadoption: int = 0) -> None:
+    """ Writes an entry to the log when an animal's adoptable status changes. """
+    # If the option is on and the adoptable status has changed, log it
+    if asm3.configuration.adoptable_change_log(dbo) and wasnotforadoption != isnotforadoption:
+        if isnotforadoption:
+            logtext = "Not available for adoption"
+        else:
+            logtext = "Available for adoption"
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.adoptable_change_log_type(dbo), logtext)
+
 def insert_animallocation(dbo: Database, username: str, animalid: int, animalname: str, sheltercode: str, 
                           fromid: int, fromunit: str, toid: int, tounit: str, isdeath: int = 0, movementid: int = 0, date: datetime = None) -> int:
     """
@@ -4147,7 +4163,7 @@ def update_location_unit(dbo: Database, username: str, animalid: int, newlocatio
     Updates the shelterlocation and shelterlocationunit fields of the animal given.
     This is typically called in response to drag and drop events on shelterview and
     means that the animal should be on shelter rather than with a fosterer, etc.
-    If the animal has an activemovement, it will be returned before the location is changed (unless returnactivemovement == False)
+    If the animal has an activemovement, it will be returned before the location is changed.
     """
     # Record the internal location change if necessary
     oldloc = dbo.first_row( dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid]) )
