@@ -22,9 +22,10 @@ class DatabaseSQLite3(Database):
         return c
 
     def name(self) -> str:
-        """ Returns the database name. Strip the path from SQLite databases """
+        """ Returns the database name. Strip the path and extension from SQLite databases """
         n = self.database
         if n.rfind("/") != -1: n = n[n.rfind("/")+1:]
+        if n.rfind(".") != -1: n = n[:n.rfind(".")]
         return n.replace(".", "")
     
     def sql_age(self, date1: str, date2: str) -> str:
