@@ -5269,6 +5269,11 @@ class maint_ping(ASMEndpoint):
         keywords = ["pong"]
         frules = asm3.smcom.iptables_rules()
         if frules.find("REJECT") != -1 or frules.find("DROP") != -1: keywords.append("firewall")
+        try:
+            debianver = asm3.utils.read_text_file("/etc/debian_version")
+            keywords.append(f"osver={debianver}")
+        except:
+            pass
         return " ".join(keywords)
     
 class maint_reset_task(ASMEndpoint):
