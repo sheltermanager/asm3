@@ -43,6 +43,7 @@ FIELDTYPE_EMAIL = 19
 FIELDTYPE_NUMBER = 20
 FIELDTYPE_FOSTERANIMAL = 21
 FIELDTYPE_TELEPHONE = 22
+FIELDTYPE_CHECKBOX_AL = 23
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -68,7 +69,8 @@ FIELDTYPE_MAP = {
     "EMAIL": 19,
     "NUMBER": 20,
     "FOSTERANIMAL": 21,
-    "TELEPHONE": 22
+    "TELEPHONE": 22,
+    "CHECKBOX_AL": 23
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -233,6 +235,9 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
+            h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' % \
+                (fid, cname, required))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
             extraclass = ""
             if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
