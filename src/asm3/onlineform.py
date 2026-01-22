@@ -220,6 +220,11 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<td class="asm-onlineform-td asm-onlineform-raw" colspan="2">')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<td class="asm-onlineform-td">%s</td><td class="asm-onlineform-td">' % requiredspan)
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
+            h.append('<td class="asm-onlineform-td">')
+            h.append('<label for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('</td>')
+            h.append('<td class="asm-onlineform-td">')
         else:
             # Add label and cell wrapper if it's not raw markup or a checkbox
             h.append('<td class="asm-onlineform-td">')
@@ -1025,7 +1030,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                             v = "RAW::%s" % tooltip
                         # If we have a checkbox field with a tooltip, it contains additional
                         # person flags, add them to our set
-                        if fieldtype == FIELDTYPE_CHECKBOX and asm3.utils.nulltostr(tooltip) != "" and v == "on":
+                        if ( fieldtype == FIELDTYPE_CHECKBOX or fieldtype == FIELDTYPE_CHECKBOX_AL ) and asm3.utils.nulltostr(tooltip) != "" and v == "on":
                             if flags != "": flags += ","
                             flags += tooltip
                             dbo.update("onlineformincoming", "CollationID=%s" % collationid, {

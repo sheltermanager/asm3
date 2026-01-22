@@ -185,7 +185,7 @@ $(function() {
                 $("#tooltiprow").fadeOut();
                 $("#rawmarkuprow").fadeIn();
             }
-            else if (ft == 11) {
+            else if (ft == 11 || ft == 23) {
                 $("#tooltiprow").find("label").html(_("Flags"));
                 $("#tooltiprow").fadeIn();
                 $("#rawmarkuprow").fadeOut();
