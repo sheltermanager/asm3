@@ -5663,6 +5663,9 @@ def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, move
         # No - don't do anything
         return
 
+    if old.adoptable != a.adoptable:
+        insert_adoptable_status_log(dbo, username, animalid, old.adoptable, a.adoptable)
+
     # Update the location on any diary notes for this animal
     update_diary_linkinfo(dbo, animalid, a, diaryupdatebatch)
   
@@ -5701,9 +5704,6 @@ def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, move
             "HasPermanentFoster":   b2i(haspermanentfoster),
             "MostRecentEntryDate":  mostrecententrydate
         })
-    
-    if old.adoptable != a.adoptable:
-        insert_adoptable_status_log(dbo, username, animalid, old.adoptable, a.adoptable)
 
 def get_number_animals_on_shelter(dbo: Database, date: datetime, speciesid: int = 0, animaltypeid: int = 0, internallocationid: int = 0, ageselection: int = 0, startofday: bool = False) -> int:
     """
