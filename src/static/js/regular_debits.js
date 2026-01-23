@@ -79,8 +79,8 @@ $(function() {
                         },
                         onchange: async function() {
                             tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "regular_debits")
-                                .then(function(response) {
-                                    row.OWNERNAME = response;
+                                .then(function() {
+                                    row.OWNERNAME = $("#personrow .asm-embed-name").text();
                                     tableform.fields_update_row(dialog.fields, row);
                                     tableform.table_update(table);
                                     tableform.dialog_close();
@@ -158,6 +158,7 @@ $(function() {
                         let response = await tableform.fields_post(dialog.fields, "mode=create", "regular_debits");
                         let row = {};
                         row.ID = response;
+                        row.OWNERNAME = $("#personrow .asm-embed-name").text();
                         tableform.fields_update_row(dialog.fields, row);
                         controller.rows.push(row);
                         tableform.table_update(table);
@@ -192,23 +193,10 @@ $(function() {
         },
 
         period_changed: function() {
-            if ($("#period").val() == 1) {
-                $("#weekdayrow").hide();
-                $("#dayofmonthrow").hide();
-                $("#monthrow").hide();
-            } else if ($("#period").val() == 7) {
-                $("#weekdayrow").show();
-                $("#dayofmonthrow").hide();
-                $("#monthrow").hide();
-            } else if ($("#period").val() == 30) {
-                $("#weekdayrow").hide();
-                $("#dayofmonthrow").show();
-                $("#monthrow").hide();
-            } else {
-                $("#weekdayrow").hide();
-                $("#dayofmonthrow").show();
-                $("#monthrow").show();
-            }
+            let period = $("#period").val();
+            $("#weekdayrow").toggle( period == 7 );
+            $("#dayofmonthrow").toggle( period == 30 || period == 365 );
+            $("#monthrow").toggle( period == 365 );
         },
 
         validation: function() {

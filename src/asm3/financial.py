@@ -1406,11 +1406,6 @@ def update_regulardebit_from_form(dbo: Database, username: str, post: PostedData
         "Comments":         post["comments"]
     }, username)
 
-    if post.integer("person"):
-        concatsql = dbo.sql_concat(("OwnerName", "' '", "OwnerCode"))
-        return dbo.query_string(f"SELECT {concatsql} AS OwnerName FROM owner WHERE ID = ?", [post.integer("person")])
-
-
 def delete_regulardebit(dbo: Database, username: str, rdid: int) -> None:
     """
     Deletes a regular debit
