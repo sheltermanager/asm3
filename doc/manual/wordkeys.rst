@@ -985,6 +985,22 @@ LogComments
 LogCreatedBy
     The person who created the log entry
 
+Condition Keys
+--------
+
+You must use a qualifier suffix to access these records.
+
+ConditionName
+    The name of the condition
+ConditionTypeName
+    The name of the condition type
+ConditionStartDatetime
+    When the condition started
+ConditionEndDatetime
+    When the condition ended
+ConditionComments
+    Any comments on the condition
+
 Movement Keys
 -------------
 
@@ -1625,6 +1641,8 @@ AnimalLogs
    Inserts a table containing all of the animal's log entries
 AnimalLogsTYPE
    Inserts a table containing all of the animal's log entries of TYPE
+AnimalConditions
+   Inserts a table containing all of the animal's recorded conditions
 IncidentLogs
    Inserts a table containing all of the incident's log entries
 LitterMates
