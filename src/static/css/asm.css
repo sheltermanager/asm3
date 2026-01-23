@@ -1127,6 +1127,11 @@ select:disabled, input:disabled, textarea:disabled {
     width: 113px;
 }
 
+/** Don't display the menu burger button when >480px */
+#asm-menu-burger {
+    display: none;
+}
+
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {
 
@@ -1134,23 +1139,16 @@ select:disabled, input:disabled, textarea:disabled {
      *  that they don't overflow and require horizontal scrolling */
     .asm-nested-table-td { display: block; }
 
-}
-
-#asm-menu-burger {
-    font-size: 150%;
-    display: none;
-    padding: 6px;
-    position: absolute;
-    padding-top: 0;
-    top: 5px;
-    right: 6px;
-}
-
-@media screen and (max-width:480px) {
+    /** Styles to reformat the main menu into a burger on portrait mobiles */
     .asm-menu-body {
         width: calc(100% - 25px);
     }
     #asm-menu-burger{
+        font-size: 150%;
+        padding: 6px;
+        padding-top: 0;
+        top: 5px;
+        right: 6px;
         display: inline-block;
         position: fixed;
         right: 10px;
