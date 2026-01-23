@@ -11,7 +11,7 @@ import asm3.utils
 
 from asm3.i18n import _, translate, now, python2unix, real_locale
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
-from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CHART_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CHART_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, POS_CSS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
 from asm3.typehints import Any, ColumnList, Database, Dict, List, MenuItems, MenuStructure, ResultRow, Results, Session
 from asm3.__version__ import BUILD
 
@@ -173,6 +173,7 @@ def bare_header(title: str, theme: str = "asm", locale: str = LOCALE, config_db:
             "title": title, 
             "scripts": 
                 css_tag(ASMSELECT_CSS) + 
+                css_tag(POS_CSS) + 
                 css_tag(CODEMIRROR_CSS) + 
                 css_tag(CODEMIRROR_BASE + "addon/display/fullscreen.css") + 
                 css_tag(CODEMIRROR_BASE + "addon/hint/show-hint.css") + 
