@@ -581,6 +581,8 @@ header = {
 
     bind: function() {  
 
+        if (asm.disablepos) { $(".tagpos").hide(); }
+
         var timezone = config.str("Timezone");
         if (timezone.indexOf("-") == -1) {
             timezone = "+" + timezone;

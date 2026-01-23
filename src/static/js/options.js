@@ -885,7 +885,7 @@ $(function() {
                         { id: "spamurls", post_field: "OnlineFormSpamURLs", label: _("Spambot protection: URLs in any field"), type: "check", fullrow: true }, 
                         { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
-                    { id: "tab-pos", title: _("Point of Sale"), fields: [
+                    { id: "tab-pos", title: _("Point of Sale"), classes: "postab", fields: [
                         { id: "posbarcodes", post_field: "POSBarcodeScanner", label: _("Use barcode scanner"), type: "check" },
                         { id: "posstocklocation", post_field: "POSStockLocation", label: _("POS Stock Location"), type: "select", options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
                         { id: "possaleusagetype", post_field: "POSSaleUsageType", label: _("POS Sale Usage"), type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
@@ -1183,7 +1183,7 @@ $(function() {
         },
 
         sync: function() {
-            
+            if (controller.disablepos) { $(".postab").hide(); }
         },
 
         delay: function() {
