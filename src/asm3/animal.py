@@ -4068,17 +4068,6 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
                 # Row found representing death, removing it
                 dbo.execute("DELETE FROM animallocation WHERE ID = ?", [locationrow.ID] )
 
-def insert_adoptable_status_log(dbo: Database, username: str, animalid: int, wasadoptable: int = 0, isadoptable: int = 0) -> None:
-    """ Writes an entry to the log when an animal's adoptable status changes. """
-    # If the option is on and the adoptable status has changed, log it
-    l = dbo.locale
-    if asm3.configuration.adoptable_change_log(dbo) and wasadoptable != isadoptable:
-        if isadoptable:
-            logtext = _("Status: Available for adoption", l)
-        else:
-            logtext = _("Status: Not available for adoption", l)
-        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.adoptable_change_log_type(dbo), logtext)
-
 def insert_animallocation(dbo: Database, username: str, animalid: int, animalname: str, sheltercode: str, 
                           fromid: int, fromunit: str, toid: int, tounit: str, isdeath: int = 0, movementid: int = 0, date: datetime = None) -> int:
     """
@@ -4118,6 +4107,17 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
     if asm3.configuration.location_change_log(dbo):
         asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.location_change_log_type(dbo), msg)
     return alid
+
+def insert_adoptable_status_log(dbo: Database, username: str, animalid: int, wasadoptable: int = 0, isadoptable: int = 0) -> None:
+    """ Writes an entry to the log when an animal's adoptable status changes. """
+    # If the option is on and the adoptable status has changed, log it
+    l = dbo.locale
+    if asm3.configuration.adoptable_change_log(dbo) and wasadoptable != isadoptable:
+        if isadoptable:
+            logtext = _("Status: Available for adoption", l)
+        else:
+            logtext = _("Status: Not available for adoption", l)
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.adoptable_change_log_type(dbo), logtext)
 
 def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: str, oldname: str) -> None:
     """ Writes an entry to the log when an animal's name changes."""
