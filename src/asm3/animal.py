@@ -3452,7 +3452,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
 
     # Update denormalised fields after the insert
     update_animal_check_bonds(dbo, nextid)
-    update_animal_status(dbo, nextid)
+    update_animal_status(dbo, nextid, username=username)
     update_variable_animal_data(dbo, nextid)
 
     # If a fosterer was specified, foster the animal
@@ -3525,7 +3525,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails FROM animal WHERE ID=?", [aid]))
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
 
     # Record the location if it has changed
     insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
@@ -3683,7 +3683,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
 
     # Update denormalised fields after the change
     update_animal_check_bonds(dbo, aid)
-    update_animal_status(dbo, aid)
+    update_animal_status(dbo, aid, username=username)
     update_variable_animal_data(dbo, aid)
 
     # Update any diary notes linked to this animal
@@ -4111,6 +4111,17 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
         asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.location_change_log_type(dbo), msg)
     return alid
 
+def insert_adoptable_status_log(dbo: Database, username: str, animalid: int, wasadoptable: int = 0, isadoptable: int = 0) -> None:
+    """ Writes an entry to the log when an animal's adoptable status changes. """
+    # If the option is on and the adoptable status has changed, log it
+    l = dbo.locale
+    if asm3.configuration.adoptable_change_log(dbo) and wasadoptable != isadoptable:
+        if isadoptable:
+            logtext = _("Status: Available for adoption", l)
+        else:
+            logtext = _("Status: Not available for adoption", l)
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.adoptable_change_log_type(dbo), logtext)
+
 def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: str, oldname: str) -> None:
     """ Writes an entry to the log when an animal's name changes."""
     # If the option is on and the name has changed, log it
@@ -4150,7 +4161,7 @@ def update_location_unit(dbo: Database, username: str, animalid: int, newlocatio
     Updates the shelterlocation and shelterlocationunit fields of the animal given.
     This is typically called in response to drag and drop events on shelterview and
     means that the animal should be on shelter rather than with a fosterer, etc.
-    If the animal has an activemovement, it will be returned before the location is changed (unless returnactivemovement == False)
+    If the animal has an activemovement, it will be returned before the location is changed.
     """
     # Record the internal location change if necessary
     oldloc = dbo.first_row( dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid]) )
@@ -5447,7 +5458,7 @@ def update_on_shelter_animal_statuses(dbo: Database) -> str:
     asm3.al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
-def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, movements: Results = None, animalupdatebatch: List[Tuple] = None, diaryupdatebatch: List[Tuple] = None) -> None:
+def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, movements: Results = None, animalupdatebatch: List[Tuple] = None, diaryupdatebatch: List[Tuple] = None, username: str = "system") -> None:
     """
     Updates the movement status fields on an animal record: 
         ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, 
@@ -5655,6 +5666,9 @@ def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, move
         old.displaylocation == a.displaylocation:
         # No - don't do anything
         return
+
+    if old.adoptable != a.adoptable:
+        insert_adoptable_status_log(dbo, username, animalid, old.adoptable, a.adoptable)
 
     # Update the location on any diary notes for this animal
     update_diary_linkinfo(dbo, animalid, a, diaryupdatebatch)

@@ -158,7 +158,12 @@ def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> No
     if exclude == 1:
         d["WebsitePhoto"] = 0
         d["DocPhoto"] = 0
+    elif link.LinkTypeID == ANIMAL:
+        if 0 == dbo.query_int("SELECT COUNT(ID) FROM media WHERE WebsitePhoto = 1 AND LinkTypeID = ? AND LinkID = ?", [ANIMAL, link.LINKID]):
+            d["WebsitePhoto"] = 1
     dbo.update("media", mid, d, username)
+    if link.LINKTYPEID == ANIMAL:
+        asm3.animal.update_animal_status(dbo, link.LINKID, username=username)
 
 def get_name_for_id(dbo: Database, mid: int) -> str:
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
@@ -583,7 +588,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
 
     # Verify this record has a web/doc default if we aren't excluding it from publishing
     if ispicture and excludefrompublish == 0:
-        check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
+        check_default_web_doc_pic(dbo, mediaid, linkid, linktype, username=username)
 
     return mediaid
 
@@ -634,7 +639,7 @@ def calc_retainuntil_from_retainfor(dbo: Database, retainfor: int) -> datetime:
         retainuntil = dbo.today( retainfor * 365 )
     return retainuntil
 
-def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype: int) -> None:
+def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype: int, username: str = "system") -> None:
     """
     Checks if linkid/type has a default pic for the web or documents. If not,
     sets mediaid to be the default.
@@ -645,6 +650,8 @@ def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype
         "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
     if existing_web == 0:
         dbo.update("media", mediaid, { "WebsitePhoto": 1 })
+        if linktype == ANIMAL:
+            asm3.animal.update_animal_status(dbo, linkid, username=username)
     if existing_doc == 0:
         dbo.update("media", mediaid, { "DocPhoto": 1 })
 
@@ -1057,7 +1064,11 @@ def delete_media(dbo: Database, username: str, mid: int) -> None:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
-        if ml: set_web_preferred(dbo, username, ml.ID)
+        if ml:
+            set_web_preferred(dbo, username, ml.ID)
+        elif mr.LINKTYPEID == ANIMAL:
+            asm3.animal.update_animal_status(dbo, mr.LINKID, username=username)
+
     if mr.DOCPHOTO == 1:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
