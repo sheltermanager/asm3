@@ -69,7 +69,7 @@ class PostedData(object):
         """ Returns an integer 1/0 value from a checkbox input """
         if field not in self.data:
             return 0
-        if self.data[field] == "checked" or self.data[field] == "on":
+        if self.data[field] == "on":
             return 1
         else:
             return 0
@@ -555,6 +555,15 @@ def cmd(c: str, shell: bool = False) -> Tuple[int, str]:
         return (0, output)
     except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
+    
+def coalesce(l: list) -> Any:
+    """
+    Returns the first element with a truthy value from list l.
+    Returns None if all the elements of the list equate to false/None
+    """
+    for x in l:
+        if x: return x 
+    return None
 
 def deduplicate_list(l: List) -> List:
     """
@@ -1290,6 +1299,8 @@ def substitute_tags(searchin: str, tags: Dict[str, str], escape_html: bool = Tru
         # image, URL or already contains HTML entities
         if escape_html and \
             not v.lower().startswith("<img") and \
+            not v.lower().startswith("<video") and \
+            not v.lower().startswith("<iframe") and \
             not v.lower().find("&#") != -1 and \
             not v.lower().find("/>") != -1 and \
             not v.lower().startswith("<table") and \

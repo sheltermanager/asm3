@@ -985,6 +985,22 @@ LogComments
 LogCreatedBy
     The person who created the log entry
 
+Condition Keys
+--------
+
+You must use a qualifier suffix to access these records.
+
+ConditionName
+    The name of the condition
+ConditionTypeName
+    The name of the condition type
+ConditionStartDatetime
+    When the condition started
+ConditionEndDatetime
+    When the condition ended
+ConditionComments
+    Any comments on the condition
+
 Movement Keys
 -------------
 
@@ -1158,12 +1174,20 @@ PersonDocumentImgSrc
 Citation Keys
 -------------
 
-You must use a qualifier suffix to access these records.
+If you are creating a document from the incident records, then you must
+use a qualifier suffix to access these records.
 
-.. note:: The Recent keyword returns citations where the fine is paid where Due returns unpaid.
+.. note:: The Recent keyword returns citations where the fine has been paid, where Due returns unpaid.
+
+However, if you create a document from the citation tab of a
+person or incident record, you can select multiple citations
+before creating the document and access the information by suffixing a number
+to the end of the keys listed below (eg: CitationName1, FineAmount1)
 
 CitationName
     The type of citation being issued
+CItationNumber
+    The identification number of the citation
 CitationDate
     The date of the citation
 CitationComments
@@ -1174,6 +1198,16 @@ FineDueDate
     The date the fine is due to be paid
 FinePaidDate
     The date the fine was paid
+
+The following fields are only available to citations generated via
+the citation tab of incident and person records: 
+
+CitationsTotalFines
+    The total amount of fines within the selected citations
+CitationsTotalPaidFines
+    The total amount of fines within the selected citations that have been paid
+CitationsTotalUnpaidFines
+    The total amount of fines within the selected citations that have not been paid
 
 Equipment Loan Keys
 -------------------
@@ -1607,6 +1641,8 @@ AnimalLogs
    Inserts a table containing all of the animal's log entries
 AnimalLogsTYPE
    Inserts a table containing all of the animal's log entries of TYPE
+AnimalConditions
+   Inserts a table containing all of the animal's recorded conditions
 IncidentLogs
    Inserts a table containing all of the incident's log entries
 LitterMates

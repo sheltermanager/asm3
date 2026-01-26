@@ -40,7 +40,7 @@ $(function() {
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
                         options: '<option value="0">' + _("Active") + '</option><option value="1">' 
                             + _("Paused") + '</option><option value="2">' + _("Completed") + '</option>' },
-                    { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
+                    { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, defaultval: 1, 
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' + 
                         '<option value="2">' + _("Custom Frequency") + '</option>' },
@@ -748,8 +748,7 @@ $(function() {
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
-            $("#animal").bind("animalchooserchange", function(event, rec) { medical.lastanimal = rec; });
-            $("#animal").bind("animalchooserloaded", function(event, rec) { medical.lastanimal = rec; });
+            $("#animal").on("change loaded", function(event, rec) { medical.lastanimal = rec; });
 
             $("#medicaltype").change(medical.change_medicaltype);
             $("#singlemulti").change(function() {
@@ -847,6 +846,7 @@ $(function() {
                 row.LOCATIONNAME = controller.animal.SHELTERLOCATIONNAME;
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
             else if (medical.lastanimal) {
@@ -858,6 +858,7 @@ $(function() {
                 }
                 row.ANIMALNAME = medical.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = medical.lastanimal.SHELTERCODE;
+                row.SHORTCODE = medical.lastanimal.SHORTCODE;
                 row.WEBSITEMEDIANAME = medical.lastanimal.WEBSITEMEDIANAME;
             }
         },

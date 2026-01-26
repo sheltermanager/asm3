@@ -314,11 +314,11 @@ $.fn.emailform = asm_widget({
                 let link = '<a target="blank" href="' + o.url + '">' + o.urltext + '</a>';
                 if (j.BODY.indexOf("$URL") == -1 && o.url) { j.BODY = j.BODY += link; }
                 if (j.BODY.indexOf("$URL") != -1 && o.url) { j.BODY = j.BODY.replace("$URL", link); }
-                if (j.TO) { $("#em-to").val(j.TO); }
-                if (j.SUBJECT) { $("#em-subject").val(j.SUBJECT); }
-                if (j.FROM) { $("#em-from").val(j.FROM); }
-                if (j.CC) { $("#em-cc").val(j.CC); }
-                if (j.BCC) { $("#em-bcc").val(j.BCC); }
+                if (j.TO) { $("#em-to").val(html.decode(j.TO)); }
+                if (j.SUBJECT) { $("#em-subject").val(html.decode(j.SUBJECT)); }
+                if (j.FROM) { $("#em-from").val(html.decode(j.FROM)); }
+                if (j.CC) { $("#em-cc").val(html.decode(j.CC)); }
+                if (j.BCC) { $("#em-bcc").val(html.decode(j.BCC)); }
                 $("#em-body").html(j.BODY); 
             });
         });

@@ -235,17 +235,11 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
         if locationid > 0 and a.SHELTERLOCATION != locationid: continue
         if underweeks > 0 and a.DATEOFBIRTH < dbo.today(offset=underweeks * -7): continue
         if overweeks > 0 and a.DATEOFBIRTH >= dbo.today(offset=overweeks * -7): continue
-        # Translate website media name to the service call for images
-        if asm3.smcom.active():
-            a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.name(), a.ID)
-        else:
-            a.WEBSITEMEDIANAME = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, a.ID)
         # Generate tags for this row
         tags = asm3.wordprocessor.animal_tags_publisher(dbo, a)
         tags = asm3.wordprocessor.append_tags(tags, org_tags)
-        # Add extra tags for websitemedianame2-10 if they exist
-        for x in range(2, 11):
-            if a.WEBSITEIMAGECOUNT > x-1: tags["WEBMEDIAFILENAME%d" % x] = "%s&seq=%d" % (a.WEBSITEMEDIANAME, x)
+        # Add WebsiteMedia/Video columns/tags
+        embellish_media_urls(dbo, a, tags)
         # Set the description
         if asm3.configuration.publisher_use_comments(dbo):
             a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
@@ -308,24 +302,54 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
         # If there is no animalviewnotadoptable template, produce an error
         head, body, foot = asm3.template.get_html_template(dbo, ustyle)
         if head == "": raise asm3.utils.ASMPermissionError("animal is not adoptable")
-    if asm3.smcom.active():
-        a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.name(), animalid)
-    else:
-        a.WEBSITEMEDIANAME = "%s?method=animal_image&animalid=%d" % (SERVICE_URL, animalid)
     s = head + body + foot
     tags = asm3.wordprocessor.animal_tags_publisher(dbo, a)
     tags = asm3.wordprocessor.append_tags(tags, asm3.wordprocessor.org_tags(dbo, "system"))
     tags = asm3.wordprocessor.append_tags(tags, get_html_template_tags(dbo, [a]))
-    # Add extra tags for websitemedianame2-10 if they exist
-    for x in range(2, 11):
-        if a.WEBSITEIMAGECOUNT > x-1: tags["WEBMEDIAFILENAME%d" % x] = "%s&seq=%d" % (a.WEBSITEMEDIANAME, x)
+    # Add WebsiteMedia/Video columns/tags
+    embellish_media_urls(dbo, a, tags)
     # Add extra publishing text
     notes = asm3.utils.nulltostr(a.WEBSITEMEDIANOTES)
     notes += asm3.configuration.third_party_publisher_sig(dbo)
     tags["WEBMEDIANOTES"] = notes 
-    tags["WEBSITEMEDIANOTES"] = notes 
+    tags["WEBSITEMEDIANOTES"] = notes
     s = asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     return s
+
+def embellish_media_urls(dbo: Database, a: ResultRow, tags: Dict[str, str]) -> None:
+    """
+    Sets the columns WEBSITEMEDIANAME, WEBSITEVIDEOURL and WEBSITEVIDEOTAG on the given animal row a
+    Adds additional tags based on those columns to tags
+    """
+    # Set WebsiteMediaName to the correct service link
+    if asm3.smcom.active():
+        a.WEBSITEMEDIANAME = f"{SERVICE_URL}?account={dbo.name()}&method=animal_image&animalid={a.ID}"
+    else:
+        a.WEBSITEMEDIANAME = f"{SERVICE_URL}?method=animal_image&animalid={a.ID}"
+    tags["WEBSITEMEDIANAME"] = a.WEBSITEMEDIANAME
+    tags["WEBMEDIAFILENAME"] = a.WEBSITEMEDIANAME
+    # Add extra tags for websitemedianame2-10 if they exist
+    for x in range(2, 11):
+        if a.WEBSITEIMAGECOUNT > x-1: tags[f"WEBMEDIAFILENAME{x}"] = f"{a.WEBSITEMEDIANAME}&seq={x}"
+    # Set WebsiteVideoURL if the preferred video is an uploaded file rather than a link
+    if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
+        if asm3.smcom.active():
+            a.WEBSITEVIDEOURL = f"{SERVICE_URL}?account={dbo.name()}&method=animal_video&animalid={a.ID}"
+        else:
+            a.WEBSITEVIDEOURL = f"{SERVICE_URL}?method=animal_video&animalid={a.ID}"
+        tags["WEBSITEVIDEOURL"] = a.WEBSITEVIDEOURL
+    # If we have a video URL, Add a tag for WEBSITEVIDEOTAG to embed that video in the page
+    a.WEBSITEVIDEOTAG = ""
+    if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
+        a.WEBSITEVIDEOTAG = f'<video class="asm-video" controls><source src="{a.WEBSITEVIDEOURL}" type="video/mp4"></video>'
+    elif a.WEBSITEVIDEOMIMETYPE == "text/url" and a.WEBSITEVIDEOURL.find("watch?") != -1:
+        youtubeurl = a.WEBSITEVIDEOURL.replace("watch?v=", "embed/") + "?showinfo=0"
+        youtubeattrs = 'frameborder="0" ' \
+            'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' \
+            'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen'
+        a.WEBSITEVIDEOTAG = f'<iframe class="asm-video" src="{youtubeurl}" {youtubeattrs}></iframe>'
+    tags["WEBSITEVIDEOTAG"] = a.WEBSITEVIDEOTAG
+    return a
 
 def get_animal_view_adoptable_html(dbo: Database, style: str = "animalviewadoptable") -> str:
     """ Returns an HTML wrapper around get_animal_view_adoptable_js - uses
@@ -837,7 +861,7 @@ class HTMLPublisher(FTPPublisher):
 
             # Clear any existing uploaded images
             if self.pc.forceReupload:
-                self.clearExistingImages()
+                self.clearExistingImages(clearLocal = True)
 
         except Exception as err:
             self.setLastError("Error setting up page: %s" % err)

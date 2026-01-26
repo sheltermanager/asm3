@@ -54,6 +54,7 @@ DEFAULTS = {
     "AnimalNameChangeLog": "No",
     "AnimalNameChangeLogType": "3",
     "AnimalFiguresSplitEntryReason": "No",
+    "AnimalPermissions": "No",
     "AnimalSearchResultsNewTab": "No",
     "PersonSearchResultsNewTab": "No",
     "AnnualFiguresShowBabies": "Yes",
@@ -194,6 +195,7 @@ DEFAULTS = {
     "DisableAnimalControl": "No",
     "DisableBoarding": "Yes",
     "DisableClinic": "No",
+    "DisableConditions": "Yes",
     "DisableEntryHistory": "Yes",
     "DisableEvents": "Yes",
     "DisableStockControl": "No",
@@ -204,6 +206,7 @@ DEFAULTS = {
     "DisableOnlineForms": "No",
     "DisablePOS": "Yes", 
     "DisableRetailer": "No",
+    "DisableDiaryEndDatetime": "Yes",
     "DocumentWordProcessor": "HTML",
     "DocumentSignedNotifyCoordinator": "No",
     "DonationDateOverride": "No",
@@ -229,6 +232,8 @@ DEFAULTS = {
     "EmailClinicReminderDays": "2",
     "EmailClinicReminderTemplate": "0",
     "EmailDiaryNotes": "Yes", 
+    "EmailDiaryNotesWeekly": "No",
+    "EmailDiaryNotesWeeklyDay": "0",
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
     "EmailDuePayment": "No",
@@ -361,6 +366,7 @@ DEFAULTS = {
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
+    "PersonPermissions": "No",
     "PetFinderSendStrays": "No",
     "PetFinderSendHolds": "No",
     "PetFinderSendAdopted": "No",
@@ -395,6 +401,8 @@ DEFAULTS = {
     "SearchSort": "6",
     "ServiceEnabled": "Yes",
     "ServiceAuthEnabled": "Yes", 
+    "ServiceMediaFileImageOnly": "No",
+    "ServiceMediaFileImageExclude": "No",
     "ShelterViewDefault": "location",
     "ShelterViewDragDrop": "Yes",
     "ShelterViewReserves": "Yes", 
@@ -592,12 +600,12 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
                 put(k, v, sanitiseXSS = False)
         elif k.startswith("rc:"):
             # It's a NOT check
-            if v == "checked": v = "No"
+            if v == "on": v = "No"
             if v == "off": v = "Yes"
             put(k[3:], v)
-        elif v == "checked" or v == "off":
+        elif v == "on" or v == "off":
             # It's a checkbox
-            if v == "checked": v = "Yes"
+            if v == "on": v = "Yes"
             if v == "off": v = "No"
             put(k, v)
         else:
@@ -1121,6 +1129,12 @@ def email_clinic_reminder_template(dbo: Database) -> int:
 def email_diary_notes(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "Yes")
 
+def email_diary_notes_weekly(dbo: Database) -> int:
+    chosendow = -1
+    if cboolean(dbo, "EmailDiaryNotesWeekly", DEFAULTS["EmailDiaryNotesWeekly"] == "No"):
+        chosendow = cint(dbo, "EmailDiaryNotesWeeklyDay", DEFAULTS["EmailDiaryNotesWeeklyDay"])
+    return chosendow
+
 def email_diary_on_change(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryOnChange", DEFAULTS["EmailDiaryOnChange"] == "Yes")
 
@@ -1475,6 +1489,9 @@ def petrescue_all_desexed(dbo: Database) -> bool:
 def petrescue_all_microchips(dbo: Database) -> bool:
     return cboolean(dbo, "PetRescueAllMicrochips")
 
+def petrescue_sa_daconumber(dbo: Database) -> bool:
+    return cstring(dbo, "PetRescueSADACONumber")
+
 def petrescue_email(dbo: Database) -> str:
     return cstring(dbo, "PetRescueEmail")
 
@@ -1699,6 +1716,12 @@ def service_enabled(dbo: Database) -> bool:
 
 def service_auth_enabled(dbo: Database) -> bool:
     return cboolean(dbo, "ServiceAuthEnabled", DEFAULTS["ServiceAuthEnabled"] == "Yes")
+
+def service_media_file_image_only(dbo: Database) -> bool:
+    return cboolean(dbo, "ServiceMediaFileImageOnly", DEFAULTS["ServiceMediaFileImageOnly"] == "Yes")
+
+def service_media_file_image_exclude(dbo: Database) -> bool:
+    return cboolean(dbo, "ServiceMediaFileImageExclude", DEFAULTS["ServiceMediaFileImageExclude"] == "Yes")
 
 def show_first_time_screen(dbo: Database, change = False, newvalue = False) -> Any:
     if not change:

@@ -18,7 +18,6 @@ from asm3.sitedefs import SERVICE_URL
 from asm3.typehints import Any, Database, Dict, List
 
 from datetime import datetime
-import re
 import sys
 
 VALID_FIELDS = [
@@ -76,20 +75,11 @@ VALID_FIELDS = [
     "STOCKLEVELBALANCE", "STOCKLEVELLOW", "STOCKLEVELEXPIRY", "STOCKLEVELBATCHNUMBER", "STOCKLEVELCOST", "STOCKLEVELUNITPRICE"
 ]
 
-def gkc(m: Dict, f: str, locale: str) -> int:
+def gkc(m: Dict, f: str, l: str) -> int:
     """ reads field f from map m, assuming a currency amount and returning 
         an integer """
     if f not in m: return 0
-    try:
-        # Remove non-numeric characters
-        v = re.sub(r'[^\d\-\.]+', '', str(m[f]))
-        fl = float(v)
-        dp = asm3.i18n.get_currency_dp(locale)
-        multiplier = 1 * (10 ** dp)
-        fl = fl * multiplier
-        return int(fl)
-    except:
-        return 0
+    return asm3.i18n.parse_currency(str(m[f]), l)
 
 def gks(m: Dict, f: str) -> str:
     """ reads field f from map m, returning a string. 

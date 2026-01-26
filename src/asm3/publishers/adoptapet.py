@@ -486,4 +486,28 @@ class AdoptAPetPublisher(FTPPublisher):
         else:
             line.append(str(int(asm3.utils.cint(an.FEE) / 100)))
         return self.csvLine(line)
+    
+    def removeAllImages(self) -> str:
+        """
+        Log in to the FTP account with AdoptAPet and remove all images
+        Useful when an account has gone over their 800MB quota. This is called 
+        by the maint_adoptapet endpoint.
+        Return value is the publishing log for display.
+        """
+        self.log("AdoptAPetPublisher clearing listings ...")
+
+        shelterid = asm3.configuration.adoptapet_user(self.dbo)
+        if shelterid == "":
+            raise Exception("No adoptapet.com shelter id has been set.")
+
+        if not self.openFTPSocket(): 
+            raise Exception("Failed opening FTP socket.")
+
+        try:
+            self.chdir("photos", "photos")
+            self.clearExistingImages()
+        except Exception as err:
+            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+
+        return "\n".join(self.logBuffer)
 

@@ -113,6 +113,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#media-file-and-media-image">media_file and media_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#online-form-html-and-online-form-json">online_form_html and online_form_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#online-form-js">online_form_js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">animal_view_adoptable_js</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rss-timeline">rss_timeline</a></li>
 </ul>
 </li>
@@ -974,8 +975,12 @@ results to be in. The default is adoption date descending. Options are:</p>
 <li><p>litterid_asc / litterid_desc - animal litter ID</p></li>
 <li><p>name_asc / name_desc - animal name</p></li>
 </ul>
-<p>You can also pass a “days” parameter to indicate how far you would like to
-go back. If you do not set it, the default is anihttps://service.sheltermanager.com/asmservice?account=robin&amp;method=html_found_animals&amp;order=code_asc</p>
+<p>You can also pass a “days” parameter to indicate how far you would like to go
+back. If you do not set it, the default is animals adopted in the last 30 days:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_adopted_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60
+http://localhost:5000/service?method=html_adopted_animals&amp;order=adopted_asc
+</pre></div>
+</div>
 </section>
 <section id="html-deceased-animals">
 <h2>html_deceased_animals<a class="headerlink" href="#html-deceased-animals" title="Link to this heading">¶</a></h2>
@@ -1302,13 +1307,52 @@ http://localhost:5000/service?method=media_image&amp;mediaid=28
 <p class="rubric">Permissions required: None</p>
 <p class="rubric">Requires username/password: NO</p>
 <p>Similar to animal_view_adoptable_js, this method allows you to put a div placeholder
-in your page and load a script. The script will insert a responsive iframe into
-your page at the div, which displays the output of the online_form_html service
-call. This allows embedding of the form in a more transparent manner.</p>
+in your page and load a script to insert an online form.</p>
+<p>The script will insert a responsive iframe into your page inside the div, which
+displays the output of the online_form_html service call.</p>
+<p>The injected iframe will have a class of asm3-form-iframe. The scrollbars and
+border are removed and it will take up 100% of the width of the container. The
+height of the iframe will be automatically resized based on the content in the
+form.</p>
+<p>This effectively injects the form into your webpage without it looking like it’s
+in an iframe.</p>
 <blockquote>
-<div><p>&lt;div id=”asm3-form-iframe” /&gt;
+<div><p>&lt;div id=”asm3-onlineform” /&gt;
 &lt;script src=”<a class="reference external" href="http://localhost:5000/service?method=online_form_js&amp;id=1">http://localhost:5000/service?method=online_form_js&amp;id=1</a>”&gt;&lt;/script&gt;</p>
 </div></blockquote>
+</section>
+<section id="id1">
+<h2>animal_view_adoptable_js<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p class="rubric">Cache time: 10 minutes</p>
+<p class="rubric">Permissions required: None</p>
+<p class="rubric">Requires username/password: NO</p>
+<p>Returns a javascript file that when executed injects thumbnails of all
+adoptable animals into the page with links to the animal_view service call. It
+is most useful as the src attribute for a &lt;script&gt; tag.</p>
+<p>The page must contain a div with an id attribute of “asm3-adoptables”, where
+the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
+found, a popup error message will appear.</p>
+<p>Here’s an example page showing how to inject your adoptable animal list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Adoptable Animals&lt;/title&gt;
+&lt;style&gt;
+.asm3-adoptable-thumbnail { border-radius: 8px; }
+&lt;/style&gt;
+&lt;body&gt;
+
+&lt;div id=&quot;asm3-adoptables&quot; /&gt;
+&lt;script src=&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;&gt;&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You cannot import the script file more than once, or have more than one asm3-adoptables div inside a single web page.</p>
+</div>
 </section>
 <section id="rss-timeline">
 <h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Link to this heading">¶</a></h2>

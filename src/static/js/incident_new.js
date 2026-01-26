@@ -98,7 +98,7 @@ $(function() {
                 incident_new.reset();
             });
 
-            $("#caller").personchooser().bind("personchooserchange", function(event, rec) { 
+            $("#caller").on("change", function(event, rec) { 
                 // Default dispatch to the caller address if it's not set
                 if (!$("#dispatchaddress").val()) {
                     $("#dispatchaddress").val(rec.OWNERADDRESS);
@@ -112,7 +112,7 @@ $(function() {
                 }
             });
 
-            $("#owner").personchooser().bind("personchooserchange", async function(event, rec) {
+            $("#owner").on("change", async function(event, rec) {
                 // Warn if the suspect is flagged as dangerous
                 $("#incident-warnings").empty();
                 if (rec.ISDANGEROUS) {

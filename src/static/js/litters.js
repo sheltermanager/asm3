@@ -156,8 +156,8 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { litters.lastanimal = rec; $("#species").select("value", rec.SPECIESID); });
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { litters.lastanimal = rec; });
+            $("#animal").on("change", function(event, rec) { litters.lastanimal = rec; $("#species").select("value", rec.SPECIESID); });
+            $("#animal").on("loaded", function(event, rec) { litters.lastanimal = rec; });
         },
 
         sync: function() {

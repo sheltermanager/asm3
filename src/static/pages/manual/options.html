@@ -112,6 +112,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#reports">Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#security">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-api">Service API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#waiting-list">Waiting List</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watermark">Watermark</a></li>
@@ -328,14 +329,28 @@ overflows, more digits will be used.</p></li>
 <li><p>UUUU - (4 digits) a unique number representing the animal (this number will
 never be used for another animal), padded to 4 digits. If the number
 overflows, more digits will be used.</p></li>
-<li><p>XXX - (3 digits) a number which is unique for all animals within the year</p></li>
+<li><p>XXXX - (4 digits) a number which is unique for all animals within the year
+padded to 4 digits. If the number overflows, more digits will be used.</p></li>
+<li><p>XXX - (3 digits) a number which is unique for all animals within the year
+padded to 3 digits. If the number overflows, more digits will be used.</p></li>
 <li><p>XX - A number which is unique for all animals within the year, no padding is
 done.</p></li>
+<li><p>NNNN - (4 digits) a number representing the animal, which is unique within the
+year brought in for the animal’s type and padded to 4 digits. If the number
+overflows, more digits will be used.</p></li>
 <li><p>NNN - (3 digits) a number representing the animal, which is unique within the
 year brought in for the animal’s type and padded to 3 digits. If the number
 overflows, more digits will be used.</p></li>
 <li><p>NN - A number representing the animal, which is unique within the year
 brought in for the animal’s type. No padding is done.</p></li>
+<li><p>PPPP - (4 digits) a number representing the animal, which is unique within the
+year brought in for the animal’s species and padded to 4 digits. If the number
+overflows, more digits will be used.</p></li>
+<li><p>PPP - (3 digits) a number representing the animal, which is unique within the
+year brought in for the animal’s species and padded to 3 digits. If the number
+overflows, more digits will be used.</p></li>
+<li><p>PP - A number representing the animal, which is unique within the year
+brought in for the animal’s species. No padding is done.</p></li>
 </ul>
 <p>Here are some examples:</p>
 <ul class="simple">
@@ -548,6 +563,9 @@ The system will send it as part of the overnight batch, which depending on
 your recommended locale/cron times will be between midnight and 4am.
 For this option to work, you must have configured the system email in
 the Email tab of this screen and your users must have email addresses set.</p></li>
+<li><p>Email users their outstanding diary notes once per week on: This option will cause
+the system to send users an email containing their outstanding diary notes
+as part of the overnight batch on the day of the week you specify.</p></li>
 <li><p>Email users immediately when a diary note assigned to them is created or
 updated: This option will cause an email be sent to any users a diary note is
 assigned to as soon as you create or make a change to it.</p></li>
@@ -984,7 +1002,11 @@ that mandatory fields are not blank on the client, however bots will quite
 happily post forms with blanks in mandatory fields. This option flags any
 forms that contain blanks in mandatory fields as spam.</p></li>
 <li><p>Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
-and lower case letters in the applicants name fields and marks these as spam.</p></li>
+and lower case letters in the applicants name fields and marks these as spam. It
+will also check for email addresses or URLs in name fields.</p></li>
+<li><p>Spambot protection: URLs in any field: It’s highly unusual for forms to need the
+user to include URLs - something that spammers do a lot. This will tag any
+form as spam if there’s a link found (http: or https:) in any form field.</p></li>
 <li><p>Spambot protection: Zipcode / Postcode contains numbers: Checks that the Zipcode /
 Postcode field contains numbers, marks forms as spam where no number is present.</p></li>
 </ul>
@@ -1220,6 +1242,31 @@ users can see the incident.</p></li>
 adds a “View Roles” control to the add person and person record screens.
 The “View Roles” control allows a user to specify exactly which
 users can see the person record.</p></li>
+</ul>
+</section>
+<section id="service-api">
+<h2>Service API<a class="headerlink" href="#service-api" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Enable the Service API: If enabled, the <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a> can be used. The service
+API allows your website to retrieve and use data.</p></li>
+<li><p>Enable authenticated methods of the service API: If enabled, methods of the
+API that can return potentially sensitive data can be called. They require
+a username and password, or a key to be used to authenticate the call.
+Methods that require authentication are outlined in the service API section
+of the manual.</p></li>
+<li><p>Forbid access to HTML and PDF document media via the media_file Service API
+method: If enabled, this option prevents the media_file call from returning
+anything but images. Useful to prevent attackers guessing ID numbers to
+retrieve documentation and paperwork. Note however that if you are using
+the csvexport/import functionality with media from one database to another
+that this option will prevent the target database from being able to import
+your media.</p></li>
+<li><p>Forbid access to excluded images via Service API media_file/media_image
+methods: If enabled, the media_file and media_image methods will refuse
+to serve images that have the “Exclude from Publish” flag on them.
+Again, if you are using the csvexport/import functionality with media from
+one database to another, this option can prevent the target database from
+being able to import excluded photos.</p></li>
 </ul>
 </section>
 <section id="shelter-view">

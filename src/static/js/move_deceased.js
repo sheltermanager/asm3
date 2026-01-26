@@ -51,7 +51,7 @@ $(function() {
             validate.indicator([ "animal", "deceaseddate" ]);
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").on("change", function(event, rec) {
               
                 // If the animal is not on the shelter, automatically
                 // tick the died off shelter box

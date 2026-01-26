@@ -11,7 +11,7 @@ import asm3.smcom
 import asm3.utils
 
 from asm3.sitedefs import BASE_URL
-from asm3.typehints import Database, PostedData, ResultRow, Results, Session
+from asm3.typehints import Database, List, PostedData, ResultRow, Results, Session
 
 import os
 import sys
@@ -50,6 +50,11 @@ VIEW_VACCINATION                = "vav"
 CHANGE_VACCINATION              = "cav"
 DELETE_VACCINATION              = "dav"
 BULK_COMPLETE_VACCINATION       = "bcav"
+
+ADD_CONDITION                   = "aaco"
+VIEW_CONDITION                  = "vaco"
+CHANGE_CONDITION                = "caco"
+DELETE_CONDITION                = "daco"
 
 ADD_TEST                        = "aat"
 VIEW_TEST                       = "vat"
@@ -264,6 +269,17 @@ def check_permission_map_bool(superuser: int, securitymap: str, flag: str) -> bo
     if has_security_flag(securitymap, flag): return True
     return False
 
+def check_role_bool(session: Session, roles: List[int]) -> bool:
+    """
+    Returns True if the current user has one of the roles in the provided list
+    """
+    if "superuser" not in session or "securitymap" not in session: return False
+    if session.superuser == 1: return True
+    userroles = session.dbo.query_list("SELECT RoleID FROM userrole INNER JOIN users ON userrole.UserID = users.ID WHERE users.UserName LIKE ?", [session.user])
+    for ur in userroles:
+        if ur in roles: return True
+    return False
+
 def has_security_flag(securitymap: str, flag: str) -> bool:
     """
     Returns true if the given flag is in the given map
@@ -271,6 +287,18 @@ def has_security_flag(securitymap: str, flag: str) -> bool:
     if securitymap is None: return False
     perms = securitymap.split("*")
     return flag + " " in perms
+
+def add_role_to_users(dbo: Database, userids: List[int], roleid: int) -> list:
+    """
+    Adds role with ID roleid to all users with IDs in userids if not already present.
+    Returns a list of userids that were updated.
+    """
+    updatedusers = []
+    for userid in userids:
+        if roleid not in get_roles_ids_for_userid(dbo, userid):
+            dbo.insert("userrole", { "UserID": userid, "RoleID": roleid }, generateID=False)
+            updatedusers.append(userid)
+    return updatedusers
 
 def add_security_flag(securitymap: str, flag: str) -> str:
     """
@@ -426,6 +454,16 @@ def get_roles_ids_for_user(dbo: Database, username: str) -> Results:
         roles.append(r.ROLEID)
     return roles
 
+def get_roles_ids_for_userid(dbo: Database, userid: int) -> Results:
+    """
+    Returns a list of role ids a user id is in
+    """
+    rolesd = dbo.query("SELECT RoleID FROM userrole WHERE UserID = ?", [userid])
+    roles = []
+    for r in rolesd:
+        roles.append(r.ROLEID)
+    return roles
+
 def get_roles_for_user(dbo: Database, user: str) -> Results:
     """
     Returns a list of roles a user is in
@@ -575,6 +613,63 @@ def logout(session: Session, remoteip: str = "", useragent: str = "") -> None:
         session.kill()
     except:
         pass
+
+def embellish_vieweditroles(dbo: Database, tablename: str, fieldname: str, iid: int, row: ResultRow) -> ResultRow:
+    """
+    Adds the VIEWROLES, VIEWROLEIDS, EDITROLES, EDITROLEIDS columns to result row r
+    tablename: The role table to read, eg: animalrole, ownerrole, etc
+    fieldname: The ID column in tablename, eg: AnimalID, OwnerID
+    iid: The ID value
+    r: The result row to add the new columns to
+    """
+    if row is None: return
+    roles = dbo.query(f"SELECT {tablename}.*, role.RoleName FROM {tablename} " \
+        f"INNER JOIN role ON {tablename}.RoleID = role.ID WHERE {tablename}.{fieldname} = ?", [iid])
+    viewroleids = []
+    viewrolenames = []
+    editroleids = []
+    editrolenames = []
+    for r in roles:
+        if r.canview == 1:
+            viewroleids.append(str(r.roleid))
+            viewrolenames.append(str(r.rolename))
+        if r.canedit == 1:
+            editroleids.append(str(r.roleid))
+            editrolenames.append(str(r.rolename))
+    row.VIEWROLEIDS = "|".join(viewroleids)
+    row.VIEWROLES = "|".join(viewrolenames)
+    row.EDITROLEIDS = "|".join(editroleids)
+    row.EDITROLES = "|".join(editrolenames)
+    return row
+
+def update_role_table(dbo: Database, tablename: str, fieldname: str, iid: int, viewroles: List[int], editroles: List[int]) -> None:
+    """
+    Updates one of the role tables with access permissions for a record, 
+    eg: animalcontrolrole, animalrole, personrole
+    tablename: The table to update
+    fieldname: The table column that contains the foreign key, eg: AnimalID, OwnerID
+    iid: The ID of the record being updated in fieldname
+    viewroles: A list of role IDs that can view this record
+    editroles: A list of role IDs that can edit this record
+    """
+    dbo.execute(f"DELETE FROM {tablename} WHERE {fieldname} = ?", [iid])
+    for rid in viewroles:
+        dbo.insert("animalrole", {
+            "AnimalID":         iid,
+            "RoleID":           rid,
+            "CanView":          1,
+            "CanEdit":          0
+        }, generateID=False)
+    for rid in editroles:
+        if rid in viewroles:
+            dbo.execute(f"UPDATE {tablename} SET CanEdit = 1 WHERE {fieldname} = ? AND RoleID = ?", (iid, rid))
+        else:
+            dbo.insert("animalrole", {
+                "AnimalID":         iid,
+                "RoleID":           rid,
+                "CanView":          0,
+                "CanEdit":          1
+            }, generateID=False)
 
 def update_user_activity(dbo: Database, user: str, timenow: bool = True) -> None:
     """

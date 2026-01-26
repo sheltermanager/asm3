@@ -73,7 +73,6 @@ $(function() {
                     $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
                     $("#receiptnumberrow").show();
                     $("#receiptnumber").prop("disabled", true);
-                    donations.editmode = true;
                     $("#vatratechoicerow").hide();
                     if (row.ISVAT == 1) {
                         $("#vatraterow").show();
@@ -188,17 +187,10 @@ $(function() {
                                 $("#giftaid").prop("checked", false);
                                 $("#receiptnumber").val("");
                                 $("#receiptnumberrow").hide();
-                                donations.type_change();
-                                $("#vatratechoicerow").hide();
-                                $("#vatraterow").hide();
-                                $("#vatamountrow").hide();
-                                donations.editmode = false;
-                                if (config.bool("VATEnabled")) {
-                                    $("#vat").prop("checked", true);
-                                } else {
-                                    $("#vat").prop("checked", false);
-                                }
+                                $("#amount").currency("value", 0);
+                                $("#vat").prop("checked", false); 
                                 $("#vat").change();
+                                donations.type_change(); // this will re-enable vat box if the type has it
                             }
                         });
                     } 
@@ -274,6 +266,7 @@ $(function() {
             $("#vat").change();
             if (config.bool("DonationQuantities")) {
                 $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
+                donations.amount_change();
             }
         },
 
@@ -331,6 +324,7 @@ $(function() {
             row.FREQUENCYNAME = common.get_field(controller.frequencies, row.FREQUENCY, "FREQUENCY");
         },
 
+        /** Calculates the totals line at the bottom of the table */
         calculate_total: function() {
             let tot = 0, due = 0, vat = 0, net = 0, fee = 0;
             $.each(controller.rows, function(i, v) {
@@ -350,6 +344,49 @@ $(function() {
             $("#feetotal").html(format.currency(fee));
             $("#vattotal").html(format.currency(vat));
             $("#totals").toggle(due > 0 || tot > 0 || net > 0 || fee > 0 || vat > 0);
+        },
+
+        /** Calculates the vat amount from the amount.
+         *  Note that if VATExclusive is on and you call this function multiple times, it will keep increasing the amount. */
+        calculate_vat: function() {
+            if (config.bool("VATExclusive")) {
+                $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
+                $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
+            }
+            else {
+                $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
+            }
+        },
+
+        /** What to do when the amount is changed. 
+         * If we're adding a new payment, always recalculate the VAT 
+         * If we're editing, and VAT inclusive mode is on, don't recalculate to avoid confusion 
+         *     as amount_change can be triggered by other events */
+        amount_change: function() {
+            if (donations.create_semaphore) { donations.calculate_vat(); }
+            else if (!donations.create_semaphore && !config.bool("VATExclusive")) { donations.calculate_vat(); }
+        },
+
+        /** Shows the vat fields based on whether the vat checkbox is set */
+        vat_change: function() {
+            if ($("#vat").prop("checked")) {
+                if (donations.create_semaphore == true) {
+                    $("#vatratechoice").change();
+                    $("#vatratechoicerow").fadeIn();
+                    $("#vatraterow").fadeOut();
+                } else {
+                    $("#vatraterow").fadeIn();
+                }
+                
+                $("#vatamountrow").fadeIn();
+            }
+            else {
+                $("#vatamount").currency("value", "0");
+                $("#vatrate").val("0"); 
+                $("#vatratechoicerow").fadeOut();
+                $("#vatraterow").fadeOut();
+                $("#vatamountrow").fadeOut();
+            }
         },
 
         render: function() {
@@ -463,21 +500,17 @@ $(function() {
 
             $("#movementrow").hide();
 
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").on("change loaded", function(event, rec) {
                 donations.lastanimal = rec;
             });
 
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
-                donations.lastanimal = rec;
-            });
-
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").on("change", function(event, rec) {
                 donations.lastperson = rec;
                 donations.update_movements(rec.ID);
                 $("#giftaid").prop("checked", rec.ISGIFTAID == 1);
             });
 
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
+            $("#person").on("loaded", function(event, rec) {
                 donations.lastperson = rec;
                 if (donations.create_semaphore) {
                     $("#giftaid").prop("checked", rec.ISGIFTAID == 1);
@@ -490,58 +523,17 @@ $(function() {
 
             $("#quantity, #unitprice").blur(function() {
                 $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
+                donations.amount_change();
             });
 
-            $("#vat").change(function() {
-                if ($(this).is(":checked")) {
-                    //$("#vatratechoice").val(config.str("AFDefaultTaxRate"));
-                    if (donations.editmode == false) {
-                        $("#vatratechoice").change();
-                        $("#vatratechoicerow").fadeIn();
-                        $("#vatraterow").fadeOut();
-                    } else {
-                        $("#vatraterow").fadeIn();
-                    }
-                    
-                    $("#vatamountrow").fadeIn();
-                }
-                else {
-                    $("#vatamount").currency("value", "0");
-                    $("#vatrate").val("0"); 
-                    $("#vatratechoicerow").fadeOut();
-                    $("#vatraterow").fadeOut();
-                    $("#vatamountrow").fadeOut();
-                }
-            });
-
-            const calc_vat = function() {
-                if (config.bool("VATExclusive")) {
-                    $("#vatamount").currency("value", common.tax_from_exclusive($("#amount").currency("value"), $("#vatrate").val()));
-                    $("#amount").currency("value", $("#amount").currency("value") + $("#vatamount").currency("value"));
-                }
-                else {
-                    $("#vatamount").currency("value", common.tax_from_inclusive($("#amount").currency("value"), $("#vatrate").val()));
-                }
-            };
-
-            // NOTE: Trigger recalculating the vat on amount change - but only if the amount is inclusive of VAT
-            // otherwise, the amount will keep going up with each recalculation
-            $("#amount").change(function() {
-                if (!config.bool("VATExclusive")) { calc_vat(); }
-            });
-            $("#vatrate").change(calc_vat);
-
+            $("#amount").change(donations.amount_change);
+            $("#vat").change(donations.vat_change);
             $("#vatratechoice").change(function() {
-                let taxrate = 0.0;
-                $.each(controller.taxrates, function(trcount, tr) {
-                    if (tr.ID == $("#vatratechoice").val()) {
-                        taxrate = tr.TAXRATE;
-                        return false;
-                    }
-                });
+                let taxrate = common.get_field(controller.taxrates, $("#vatratechoice").val(), "TAXRATE") || 0.0;
                 $("#vatrate").val(taxrate);
-                calc_vat();
+                $("#vatrate").change();
             });
+            $("#vatrate").change(donations.calculate_vat);
 
             $("#emailform").emailform();
 

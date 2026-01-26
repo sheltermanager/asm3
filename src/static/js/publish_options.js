@@ -276,6 +276,9 @@ $(function() {
                             { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", 
                                 callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. ' + 
                                 'Mandatory for dog listings in South Australia where "bredincareofgroup" is selected.' }, 
+                            { id: "daconumber", post_field: "PetRescueSADACONumber", label: 'DACO Number', type: "text", 
+                                callout: 'Your organisation "Dog and Cat Online" registration number if applicable. ' +
+                                'Mandatory for cat and dog listings in South Australia. ' }, 
                             { id: "nswrehomingorgid", post_field: "PetRescueNSWRehomingOrgID", label: 'NSW Rehoming Organisation ID', type: "text", 
                                 callout: 'For cats and dogs being rehomed in NSW, a rehoming organisation ID is required OR microchip number OR breeder id' }, 
                             { id: "vicpicnumber", post_field: "PetRescueVICPICNumber", label: 'VIC PIC Number', type: "text", 

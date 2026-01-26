@@ -86,6 +86,7 @@ locale_maps = {
     "en_EG":    ( "English", "Egypt", DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_EG ),
     "en_ES":    ( "English", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK ),
     "en_HK":    ( "English", "Hong Kong", HDMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_HU":    ( "English", "Hungary", DYMD, "Ft",  PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK), 
     "en_KH":    ( "English", "Cambodia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ".", ",", "" ),
     "en_KW":    ( "English", "Kuwait", DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_KY":    ( "English", "Cayman Islands", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
@@ -174,10 +175,10 @@ def real_locale(locale: str = "en") -> str:
     #   en_CA (Canada)
     #   en_GB (UK)
     if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_EG", 
-        "en_ES", "en_HK", "en_ID", "en_IE", "en_IN", "en_JO", "en_JP", "en_KE", "en_KH", "en_LB", 
-        "en_LU", "en_LV", "en_MU", "en_MY", "en_MZ", "en_NA", "en_NP", "en_PH", "en_PT", "en_QA", 
-        "en_RO", "en_RO2", "en_SA", "en_TH", "en_TR", "en_TW", "en_TW2", "en_TZ", "en_UG", "en_VN", 
-        "en_ZA", "en_ZW"):
+        "en_ES", "en_HK", "en_HU", "en_ID", "en_IE", "en_IN", "en_JO", "en_JP", "en_KE", "en_KH", 
+        "en_LB", "en_LU", "en_LV", "en_MU", "en_MY", "en_MZ", "en_NA", "en_NP", "en_PH", "en_PT", 
+        "en_QA", "en_RO", "en_RO2", "en_SA", "en_TH", "en_TR", "en_TW", "en_TW2", "en_TZ", "en_UG", 
+        "en_VN", "en_ZA", "en_ZW"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
         "en_MX"):
@@ -394,6 +395,31 @@ def format_currency_no_symbol(locale: str, value: int) -> str:
     Formats a currency value, but leaves off the currency symbol
     """
     return format_currency(locale, value, includeSymbol = False)
+
+def parse_currency(s: str, l: str) -> int:
+    """
+    Parses a display currency amount to an integer number of the smallest denomination of that currency
+    for storing in the database.
+    Calculation is done according to the locale l 
+    eg: $1.82/en would become 182 US cents
+         1.932/en_JO would become 1932 Jordanian fulus, etc.
+    """
+    try:
+        v = re.sub(r'[^\d\-\.\,]+', '', s) # Remove anything that isn't numeric or sign/decimal mark/grouping
+        if get_currency_radix(l) == ".": # UK/US/etc already use . for decimal mark and , for grouping
+            v = v.replace(",", "") # throw away comma/grouping
+        elif get_currency_radix(l) == ",": # EU locales that use , for decimal mark and . for grouping
+            v = v.replace(".", "") # throw away dot/grouping
+            v = v.replace(",", ".") # replace decimal mark , with a . so float() works properly
+        if v.startswith("."): v = v[1:] # Some currency symbols such as Rupees have a . in them and they end up at the front, discard
+        fl = float(v)
+        dp = get_currency_dp(l)
+        multiplier = pow(10, dp)
+        fl = fl * multiplier
+        fl += 0.5 # This will correct IEEE rounding errors where eg: 170 becomes 169.999999
+        return int(fl)
+    except:
+        return 0
 
 def format_time(d: datetime, timeformat: str = "%H:%M:%S") -> str:
     if d is None: return ""

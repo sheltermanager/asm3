@@ -154,10 +154,7 @@ $(function() {
             };
 
             // When contact changes, keep track of the record
-            $("#owner").personchooser().bind("personchooserchange", function(event, rec) {
-                waitinglist.current_person = rec;
-            });
-            $("#owner").personchooser().bind("personchooserloaded", function(event, rec) {
+            $("#owner").on("change loaded", function(event, rec) {
                 waitinglist.current_person = rec;
             });
 

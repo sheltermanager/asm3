@@ -145,6 +145,7 @@ const mobile_ui_addanimal = {
                 "animalname": $("#animalname").val(),
                 "sheltercode": $("#sheltercode").val(),
                 "estimatedage": $("#estimatedage").val(),
+                "animaltype": $("#animaltype").val(),
                 "sex": $("#sex").val(),
                 "type": $("#type").val(),
                 "species": $("#species").val(),
@@ -180,6 +181,10 @@ const mobile_ui_addanimal = {
     },
 
     sync: () => {
+        // Remove retired options from the screen
+        $("#content-addanimal option").each(function() {
+            if ($(this).attr("data-retired") == "1") { $(this).remove(); }
+        });
         $("#age").val(config.str("DefaultAnimalAge"));
         $("#animaltype").val(config.str("AFDefaultType"));
         $("#basecolour").val(config.str("AFDefaultColour"));

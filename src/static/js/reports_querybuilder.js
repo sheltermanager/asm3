@@ -19,6 +19,8 @@ $(function() {
                 "NeuteredDate>='$ASK DATE {0}$' AND NeuteredDate<='$ASK DATE {1}$'"
                 .replace("{0}", _("Altered between"))
                 .replace("{1}", _("and")) ],
+            [ _("Ask the user for an animal"), "askanimal", "ID=$ASK ANIMAL$" ],
+            [ _("Ask the user for multiple shelter animals"), "askanimals", "ID IN ($ASK ANIMALS$)" ],
             [ _("Ask the user for a color"), "askcolor", "BaseColourName LIKE '%$ASK STRING Color$%'" ],
             [ _("Ask the user for an entry category"), "askentry", "EntryReasonID=$ASK ENTRYCATEGORY$" ],
             [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK ANIMALFLAG$%'" ],
@@ -199,6 +201,7 @@ $(function() {
             [ _("Member"), "member", "IsMember=1" ],
             [ _("No active license held"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
                 "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
+            [ _("Not homechecked"), "nothomechecked", "IDCheck=0" ],
             [ _("Retailer"), "retailer", "IsRetailer=1" ],
             [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
             [ _("Staff"), "staff", "IsStaff=1" ],

@@ -79,23 +79,7 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = ?", [personid]) )
     if p is None: return None
     p = embellish_latest_movement(dbo, p)
-    roles = dbo.query("SELECT ownerrole.*, role.RoleName FROM ownerrole " \
-        "INNER JOIN role ON ownerrole.RoleID = role.ID WHERE ownerrole.OwnerID = ?", [personid])
-    viewroleids = []
-    viewrolenames = []
-    editroleids = []
-    editrolenames = []
-    for r in roles:
-        if r.canview == 1:
-            viewroleids.append(str(r.roleid))
-            viewrolenames.append(str(r.rolename))
-        if r.canedit == 1:
-            editroleids.append(str(r.roleid))
-            editrolenames.append(str(r.rolename))
-    p["VIEWROLEIDS"] = "|".join(viewroleids)
-    p["VIEWROLES"] = "|".join(viewrolenames)
-    p["EDITROLEIDS"] = "|".join(editroleids)
-    p["EDITROLES"] = "|".join(editrolenames)
+    p = asm3.users.embellish_vieweditroles(dbo, "ownerrole", "OwnerID", personid, p)
     return p
 
 def get_person_embedded(dbo: Database, personid: int) -> ResultRow:
@@ -1300,24 +1284,7 @@ def update_person_roles(dbo: Database, pid: int, viewroles: List[int], editroles
     viewroles:  a list of integer role ids
     editroles:  a list of integer role ids
     """
-    dbo.execute("DELETE FROM ownerrole WHERE OwnerID = ?", [pid])
-    for rid in viewroles:
-        dbo.insert("ownerrole", {
-            "OwnerID":          pid,
-            "RoleID":           rid,
-            "CanView":          1,
-            "CanEdit":          0
-        }, generateID=False)
-    for rid in editroles:
-        if rid in viewroles:
-            dbo.execute("UPDATE ownerrole SET CanEdit = 1 WHERE OwnerID = ? AND RoleID = ?", (pid, rid))
-        else:
-            dbo.insert("ownerrole", {
-                "OwnerID":          pid,
-                "RoleID":           rid,
-                "CanView":          0,
-                "CanEdit":          1
-            }, generateID=False)
+    asm3.users.update_role_table(dbo, "ownerrole", "OwnerID", pid, viewroles, editroles)
 
 def update_add_flag(dbo: Database, username: str, personid: int, flag: str) -> None:
     """
@@ -1744,11 +1711,13 @@ def update_latlong(dbo: Database, personid: int, latlong: str) -> None:
     """
     dbo.update("owner", personid, { "LatLong": latlong })
 
-def delete_person(dbo: Database, username: str, personid: int) -> None:
+def delete_person(dbo: Database, username: str, personid: int, remove_movements: bool = False) -> None:
     """
     Deletes a person and all its satellite records.
+    remove_movements: If True, remove all movements for this person first to prevent validation failing
     """
     l = dbo.locale
+    if remove_movements: dbo.delete("adoption", "OwnerID=%d" % personid, username)
     if dbo.query_int("SELECT COUNT(ID) FROM adoption WHERE OwnerID=? OR RetailerID=? OR ReturnedByOwnerID=?", (personid, personid, personid)):
         raise asm3.utils.ASMValidationError(_("This person has movements and cannot be removed.", l))
     if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=? OR BroughtInByOwnerID=? OR OriginalOwnerID=? OR CurrentVetID=? OR OwnersVetID=? OR NeuteredByVetID = ?", (personid, personid, personid, personid, personid, personid)):
@@ -2220,7 +2189,7 @@ def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, usern
         "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID) " \
         "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID) ", [cutoff])
     for p in people:
-        delete_person(dbo, username, p.ID)
+        delete_person(dbo, username, p.ID, remove_movements = True)
     asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
     return "OK %s" % len(people)
 

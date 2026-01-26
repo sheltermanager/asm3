@@ -31,7 +31,9 @@ def email_uncompleted_upto_today(dbo: Database) -> None:
     Goes through all system users and emails them their diary for the
     day - unless the option is turned off.
     """
-    if not asm3.configuration.email_diary_notes(dbo): return
+    # If the option to email outstanding diary notes daily is off AND today is NOT the week day specified for weekly outstanding diary note reminders then exit
+    if not asm3.configuration.email_diary_notes(dbo) and asm3.configuration.email_diary_notes_weekly(dbo) != asm3.i18n.today().isoweekday() - 1:
+        return
     l = dbo.locale
     try:
         allusers = asm3.users.get_users(dbo)
@@ -372,6 +374,7 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         "LinkType":         linktypeid,
         "LinkInfo":         linkinfo,
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
+        "DiaryEndDateTime": post.datetime("diaryenddate", "diaryendtime"),
         "DiaryForName":     post["diaryfor"],
         "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],
@@ -384,7 +387,7 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     return diaryid
 
-def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str, emailnow: bool = False, colourschemeid: int = 0) -> int:
+def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str, emailnow: bool = False, colourschemeid: int = 0, diaryenddate: datetime = None) -> int:
     """
     Creates a diary note from the form data
     username: User creating the diary
@@ -402,6 +405,7 @@ def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, dia
         "LinkType":         linktypeid,
         "LinkInfo":         linkinfo,
         "DiaryDateTime":    diarydate,
+        "DiaryEndDateTime": diaryenddate,
         "DiaryForName":     diaryfor,
         "ColourSchemeID":   colourschemeid,
         "Subject":          subject,
@@ -433,6 +437,7 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
     diaryid = post.integer("diaryid")
     dbo.update("diary", diaryid, {
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
+        "DiaryEndDateTime": post.datetime("diaryenddate", "diaryendtime"),
         "DiaryForName":     post["diaryfor"],
         "ColourSchemeID":   post.integer("diarycolourscheme"),
         "Subject":          post["subject"],

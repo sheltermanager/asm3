@@ -1672,6 +1672,7 @@ def load_image_from_file(fpath, case_sensitive = True):
         f = open(fpath, "rb")
         s = f.read()
         f.close()
+        s = scale_image(s) # scale down to appropriate size
         return s
     except:
         return None
@@ -1683,6 +1684,7 @@ def load_file_from_url(url, cache=True):
     """
     Returns a file from a URL. If cache == True, will remember the URL in /tmp/import_cache/
     so that repeated calls do not go back to the origin.
+    Scales images down on the fly, with the cache containing the original data.
     """
     try:
         if url.startswith("//"): 
@@ -1694,16 +1696,43 @@ def load_file_from_url(url, cache=True):
         if cache and os.path.exists(cachename):
             sys.stderr.write("(retrieved from %s)\n" % cachename)
             with open(cachename, "rb") as f:
-                return f.read()
+                return scale_image(f.read())
         filedata = urllib2.urlopen(url).read()
         sys.stderr.write("200 OK %s\n" % url)
         if cache:
             with open(cachename, "wb") as f:
                 f.write(filedata)
+        filedata = scale_image(filedata) # scale down to appropriate size
     except Exception as err:
         sys.stderr.write(str(err) + "\n")
         return None
     return filedata
+
+def scale_image(imagedata, resizespec="1024x1024"):
+    """ Scales an image to 1024px, also effectively converts PNG to JPG """
+    from io import BytesIO
+    from PIL import Image
+    try:
+        # Turn the scalespec into a tuple of the largest side
+        ws, hs = resizespec.split("x")
+        w = int(ws)
+        h = int(hs)
+        size = w, w
+        if h > w: size = h, h
+        # Load the image data and scale it
+        file_data = BytesIO(imagedata)
+        im = Image.open(file_data)
+        im.thumbnail(size, Image.Resampling.LANCZOS)
+        if im.mode in ("RGBA", "P"): im = im.convert("RGB") # throw away alpha layer so we can output as JPEG
+        # Save the scaled down image data
+        output = BytesIO()
+        im.save(output, "JPEG")
+        scaled_data = output.getvalue()
+        output.close()
+        return scaled_data
+    except Exception as err:
+        sys.stderr.write("failed scaling image: %s" % str(err))
+        return imagedata
 
 def petfinder_get_adoptable(shelterid):
     """

@@ -508,7 +508,7 @@ def doc_img_src(dbo: Database, row: ResultRow) -> str:
     else:
         return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.name(), row.DOCMEDIAID, row.DOCMEDIADATE.isoformat())
 
-def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: MenuItems) -> MenuStructure:
+def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: MenuItems, internalforms: MenuItems) -> MenuStructure:
     """
     Returns a list of lists representing the main menu structure
     l: The locale
@@ -644,6 +644,11 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
         ] + publishers + [
             (asm3.users.USE_INTERNET_PUBLISHER, "", "", "publish_logs", "asm-icon-log", _("View publishing logs", l) )
         ]),
+
+        (asm3.users.VIEW_INCOMING_FORMS, "internalforms", _("Forms", l),
+            internalforms
+        ),
+
         (asm3.users.MAIL_MERGE, "mailmerge", _("Mail", l),
             mailmerges
         ),

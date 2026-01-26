@@ -215,7 +215,7 @@ const tableform = {
 
     /** Formats a value as a time, returning blank for midnight */
     format_time_blank: function(row, v) {
-        return (format.time(v) == "00:00:00" ? "" : format.time(v));
+        return format.time(v, null, true);
     },
 
     /**
@@ -250,10 +250,11 @@ const tableform = {
      *
      * bodyonly: If you only want the tbody contents, set this to true
      */
-    table_render: function(table, bodyonly) {
+    table_render: function(table, bodyonly = false) {
         var t = [];
-        t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
         if (!bodyonly) {
+            t.push("<table id=\"tableform\" width=\"100%\">");
+            t.push("<thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
                 if (i == 0) {
@@ -261,6 +262,7 @@ const tableform = {
                     t.push('<th>');
                     t.push('<button id="tableform-select-all">' + _("Select all") + '</button>');
                     t.push('<button id="tableform-toggle-filter">' + _("Filter") + '</button>');
+                    t.push('<span id="tableform-row-count">' + table.rows.length + '</span>');
                     t.push(' <span>' + v.display + '</span></th>');
                 }
                 else {
@@ -318,7 +320,10 @@ const tableform = {
             t.push("</tr>");
         });
         if (!bodyonly) {
-            t.push("</tbody></table>");
+            t.push("</tbody>");
+            t.push("<tfoot></tfoot>");
+            t.push("</tfoot>");
+            t.push("</table>");
         }
         return t.join("\n");
     },
@@ -415,6 +420,24 @@ const tableform = {
         }
     },
 
+    /** Updates the table row count according to how many rows are visible */
+    table_update_count: function(table) {
+        setTimeout(function() {
+            let rowsvisible = $("#tableform tbody tr:visible").not(".table-nocount").length;
+            let rowcount = $("#tableform tbody tr").not(".table-nocount").length;
+            let o = "";
+            if (rowsvisible < rowcount) { o = rowsvisible + " / " + rowcount; }
+            else if (rowsvisible == rowcount && rowcount > 0) { o = rowcount; }
+            if (!o) { 
+                $("#tableform-row-count").hide();
+            }
+            else {
+                $("#tableform-row-count").html(o);
+                $("#tableform-row-count").show();
+            }
+        }, 1500);
+    },
+
     /**
      * Binds table events and widgets. If there's a toolbar button set, can be
      * passed to bind watching for selections to them.
@@ -492,6 +515,9 @@ const tableform = {
         table.filter_toggle = false;
         $(".tablesorter-filter-row").toggle(table.filter_toggle);
         $(".tablesorter-filter").prop("placeholder", _("Filter"));
+
+        // As filters are updated, update the visible row count
+        $(".tablesorter-filter").keyup(function() { tableform.table_update_count(table); });
 
         // Bind the select all link in the table header
         // Unlike the CTRL+A sequence, this one will toggle between select/unselect
@@ -725,8 +751,12 @@ const tableform = {
         $("#dialog-tableform").dialog("close");
     },
 
-    dialog_destroy: function() {
-        common.widget_destroy("#dialog-tableform", "dialog", false);
+    /**
+     * Destroys the dialog widget so it can be recreated.
+     * If no arg is given, removes the dialog from the DOM as well (called by screen destructors)
+     */
+    dialog_destroy: function(remove_from_dom = true) {
+        common.widget_destroy("#dialog-tableform", "dialog", remove_from_dom);
     },
 
     /**
@@ -781,7 +811,7 @@ const tableform = {
         var deferred = $.Deferred();
 
         // Make sure any existing dialog is destroyed before starting
-        tableform.dialog_destroy();
+        tableform.dialog_destroy(false);
 
         var b = {}; 
 
@@ -883,7 +913,7 @@ const tableform = {
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
-                tableform.dialog_destroy();
+                tableform.dialog_destroy(false);
                 tableform.dialog_state = 0;
             }
         });
@@ -911,7 +941,7 @@ const tableform = {
         var deferred = $.Deferred();
 
         // Make sure any existing dialog is destroyed before starting
-        tableform.dialog_destroy();
+        tableform.dialog_destroy(false);
 
         // Find any select fields in the dialog and reload their lookups. 
         // This is necessary in case opening a previous record removed a retired lookup element.
@@ -1051,7 +1081,7 @@ const tableform = {
             close: function() {
                 tableform.dialog_hide_callouts();
                 tableform.dialog_enable_buttons();
-                tableform.dialog_destroy();
+                tableform.dialog_destroy(false);
                 tableform.dialog_state = 0;
             }
         });
@@ -1985,17 +2015,19 @@ const tableform = {
             // No default value given, use a blank
             if (!v.defaultval) {
                 if (v.type == "check") { $("#" + v.post_field).prop("checked", false); return; }
-                if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
-                if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
-                if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
-                if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
-                if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
-                if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
-                if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
-                if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
-                if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
-                if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
-                if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
+                else if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
+                else if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
+                else if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
+                else if (v.type == "datetime") { $("#" + v.post_field + "date, #" + v.post_field + "time").val(""); return; }
+                else if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
+                else if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
+                else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
+                else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
+                else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
+                else if (v.type == "select") {  $("#" + v.post_field).select("firstvalue"); return; }
+                else if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
+                else if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
+                else if ([ "phone", "number", "intnumber", "date", "time", "text" ].includes(v.type)) { $("#" + v.post_field).val(""); return; }
             }
             else {
                 // Is the default value a function? If so, run it 
@@ -2017,8 +2049,9 @@ const tableform = {
                 else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
                 else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
                 else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
+                else if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
                 else if (v.type == "selectcolour") { $("#" + v.post_field).selectcolour("value", dval); return; }
-                else { $("#" + v.post_field).val(dval); }
+                else { $("#" + v.post_field).val(dval); return; }
             }
         });
     },
@@ -2213,7 +2246,7 @@ const tableform = {
             if (v.type == "check") {
                 if (post != "") { post += "&"; }
                 if (n.is(":checked")) {
-                    post += v.post_field + "=checked";
+                    post += v.post_field + "=on";
                 }
                 else {
                     post += v.post_field + "=off";

@@ -183,6 +183,7 @@ select:disabled, input:disabled, textarea:disabled {
 
 .asm-menu-item {
     border: 1px solid transparent;
+    cursor: pointer;
 }
 .asm-menu-item a {
     padding-left: 15px;
@@ -637,6 +638,15 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-warningrow { color: #ff0000; }
 .asm-smallertext {font-size: 80%; }
 #tableform-select-all, #tableform-toggle-filter { float: left; margin-top: -4px; }
+#tableform-row-count { 
+    float: left; 
+    border: 1px solid #3a87cd;
+    color: #3a87cd;
+    background: #fff;
+    padding: 2px;
+    font-weight: normal;
+    white-space: nowrap;
+}
 #tableform .filtered { display: none !important; } /* also applied by .tablesorter .filtered css but without !important does not work for elements that have changed display */
 
 /** This CSS handles reflowing of tables on portrait mobiles */
@@ -1117,6 +1127,11 @@ select:disabled, input:disabled, textarea:disabled {
     width: 113px;
 }
 
+/** Don't display the menu burger button when >480px */
+#asm-menu-burger {
+    display: none;
+}
+
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {
 
@@ -1124,6 +1139,48 @@ select:disabled, input:disabled, textarea:disabled {
      *  that they don't overflow and require horizontal scrolling */
     .asm-nested-table-td { display: block; }
 
+    /** Styles to reformat the main menu into a burger on portrait mobiles */
+    .asm-menu-body {
+        width: calc(100% - 25px);
+    }
+    #asm-menu-burger{
+        font-size: 150%;
+        padding: 6px;
+        padding-top: 0;
+        top: 5px;
+        right: 6px;
+        display: inline-block;
+        position: fixed;
+        right: 10px;
+        z-index: 9999;
+        text-align: right;
+    }
+    #asm-topline-logo img {
+        padding-bottom: 5px;
+    }
+    #asm-topline .ui-icon {
+        position: absolute;
+        margin-top: 3px;
+        right: 10px;
+    }
+    .asm-menu-icon {
+        display: block;
+    }
+    #asm-topline-user-div {
+        display: block !important;
+    }
+    #asm-topline-help-div {
+        display: block !important;
+    }
+    #topline-q-div {
+        width: calc(100% - 75px);
+    }
+    #topline-q {
+        width: 100%;
+    }
+    #searchgo {
+        display: none !important;
+    }
 }
 
 /** Hide elements from printing by giving them the no-print class */

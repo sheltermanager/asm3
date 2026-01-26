@@ -136,4 +136,6 @@ smtp_server = { "sendmail": true }
 # {alias} database alias
 from_address = you@yourdomain.com
 
-
+video_enabled = true
+video_size_limit = 10485760
+video_thumbnail_cmd = ffmpeg -v 0 -y -an -i %(input)s -ss 00:00:2.000 -vframes 1 %(output)s

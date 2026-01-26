@@ -343,6 +343,7 @@ $(function() {
         set_extra_fields: function(row) {
             row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
             row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+            row.SHORTCODE = $("#animal").animalchooser("get_selected").SHORTCODE;
             row.TRANSPORTTYPENAME = common.get_field(controller.transporttypes, row.TRANSPORTTYPEID, "TRANSPORTTYPENAME");
             if (row.DRIVEROWNERID && row.DRIVEROWNERID != "0") { 
                 row.DRIVEROWNERNAME = $("#driver").personchooser("get_selected").OWNERNAME; 
@@ -408,14 +409,14 @@ $(function() {
             validate.indicator([ "animal", "animals" ]);
             
             // When we pickup and dropoff people, autofill the addresses
-            $("#pickup").personchooser().bind("personchooserchange", function(event, rec) { 
+            $("#pickup").on("change", function(event, rec) { 
                 $("#pickupaddress").val(html.decode(rec.OWNERADDRESS.replace("\n", ", ")));
                 $("#pickuptown").val(html.decode(rec.OWNERTOWN));
                 $("#pickupcounty").val(html.decode(rec.OWNERCOUNTY));
                 $("#pickuppostcode").val(html.decode(rec.OWNERPOSTCODE));
                 $("#pickupcountry").val(html.decode(rec.OWNERCOUNTRY));
             });
-            $("#dropoff").personchooser().bind("personchooserchange", function(event, rec) { 
+            $("#dropoff").on("change", function(event, rec) { 
                 $("#dropoffaddress").val(html.decode(rec.OWNERADDRESS.replace("\n", ", ")));
                 $("#dropofftown").val(html.decode(rec.OWNERTOWN));
                 $("#dropoffcounty").val(html.decode(rec.OWNERCOUNTY));

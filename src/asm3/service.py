@@ -32,7 +32,7 @@ from asm3.i18n import _, now, add_seconds, format_currency, format_time, python2
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
 from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, JQUERY_UI_CSS, MOUSETRAP_JS
 from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
-from asm3.typehints import Database, PostedData, Results, ServiceResponse
+from asm3.typehints import Database, PostedData, Results, ResultRow, ServiceResponse
 
 # Service methods that require authentication
 AUTH_METHODS = [
@@ -54,6 +54,7 @@ AUTH_METHODS = [
 # These are service methods that are defended against cache busting
 CACHE_PROTECT_METHODS = {
     "animal_image": [ "animalid", "seq" ],
+    "animal_video": [ "animalid", "seq" ],
     "animal_thumbnail": [ "animalid", "seq", "d" ],
     "animal_view": [ "animalid", "template" ],
     "animal_view_adoptable_js": [], 
@@ -182,6 +183,28 @@ def hotlink_protect(method: str, referer: str) -> None:
         if d != "" and referer.find(d) != -1: fromhldomain = True
     if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
         raise asm3.utils.ASMPermissionError("Hotlinking to %s from %s is forbidden" % (method, referer))
+    
+def image_protect(filename: str) -> None:
+    """ Protect a method from serving anything where the source filename is not an image """
+    IMAGE_EXTENSIONS = [ ".apng", ".avif", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp" ]
+    if filename is None: filename = ""
+    filename = filename.lower()    
+    for ext in IMAGE_EXTENSIONS:
+        if filename.endswith(ext): return
+    raise asm3.utils.ASMPermissionError("Non-image file requested from image-only endpoint")
+
+def video_protect(filename: str) -> None:
+    """ Protect a method from serving anything where the source filename is not a video """
+    if filename is None: filename = ""
+    filename = filename.lower()
+    if not filename.endswith(".mp4"):
+        raise asm3.utils.ASMPermissionError("Non-video file requested from video-only endpoint")
+
+def image_exclude_protect(m: ResultRow) -> None:
+    """ Protect a method from serving images that have been excluded from publish """
+    if m is None: return
+    if m.EXCLUDEFROMPUBLISH == 1:
+        raise asm3.utils.ASMPermissionError("Excluded image requested from endpoint")
 
 def safe_cache_key(method: str, qs: str) -> str:
     """ 
@@ -601,6 +624,16 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             dummy, data = asm3.media.get_image_file_data(dbo, "animal", asm3.utils.cint(animalid), seq)
             if data == "NOPIC": dummy, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
             return set_cached_response(cache_key, account, "image/jpeg", 86400, 3600, data)
+        
+    if method =="animal_video":
+        hotlink_protect("animal_video", referer)
+        if asm3.utils.cint(animalid) == 0:
+            asm3.al.error("video failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid animalid")
+        else:
+            dummy, data = asm3.media.get_video_file_data(dbo, "animal", asm3.utils.cint(animalid), seq)
+            if data == "NOVID": dummy, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
+            return set_cached_response(cache_key, account, "image/jpeg", 86400, 3600, data)
 
     elif method =="animal_thumbnail":
         if asm3.utils.cint(animalid) == 0:
@@ -669,6 +702,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
+        image_protect(title)
         if title.startswith("/"):
             imagedata = asm3.dbfs.get_string_filepath(dbo, title)
         else:
@@ -681,17 +715,33 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     
     elif method == "extra_image":
         hotlink_protect("extra_image", referer)
+        image_protect(title)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
 
     elif method == "media_image":
         hotlink_protect("media_image", referer)
+        m = asm3.media.get_media_by_id(dbo, mediaid)
+        if m is None: return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        image_protect(m.MEDIANAME)
+        if asm3.configuration.service_media_file_image_exclude(dbo): image_exclude_protect(m)
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
-        if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
+    
+    elif method == "media_video":
+        hotlink_protect("media_video", referer)
+        m = asm3.media.get_media_by_id(dbo, mediaid)
+        if m is None: return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        video_protect(m.MEDIANAME)
+        if asm3.configuration.service_media_file_image_exclude(dbo): image_exclude_protect(m)
+        lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
 
     elif method == "media_file":
+        m = asm3.media.get_media_by_id(dbo, mediaid)
+        if m is None: return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        if asm3.configuration.service_media_file_image_only(dbo): image_protect(m.MEDIANAME)
+        if asm3.configuration.service_media_file_image_exclude(dbo): image_exclude_protect(m)
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
-        if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
     
     elif method == "html_adoptable_animals":

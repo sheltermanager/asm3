@@ -14,6 +14,7 @@ import asm3.al
 import asm3.additional
 import asm3.animal
 import asm3.animalcontrol
+import asm3.automail
 import asm3.asynctask
 import asm3.audit
 import asm3.cachedisk
@@ -312,6 +313,13 @@ class ASMEndpoint(object):
         lf = asm3.animal.LocationFilter(session.locationfilter, session.siteid, session.visibleanimalids)
         if not lf.match(a):
             raise asm3.utils.ASMPermissionError("animal not in location filter/site")
+        viewroles = session.dbo.query_list("SELECT RoleID FROM animalrole WHERE AnimalID = ? AND CanView = 1", [a.ID])
+        # No view roles means anyone can view
+        if len(viewroles) == 0:
+            return True
+        # Does the user have any of the view roles?
+        if not asm3.users.check_role_bool(session, viewroles):
+            raise asm3.utils.ASMPermissionError("User does not have necessary role to view")
 
     def check_locked_db(self) -> None:
         if session.dbo and session.dbo.locked: 
@@ -672,6 +680,15 @@ class image(ASMEndpoint):
             if o.post["nopic"] == "404": self.notfound()
             self.redirect("image?db=%s&mode=nopic" % o.dbo.name())
 
+class video_thumbnail(ASMEndpoint):
+    url = "video_thumbnail"
+    session_cookie = False # Disable sending the cookie with the response to assist with CDN caching
+
+    def content(self, o):
+        self.content_type("video/mp4")
+        self.cache_control(CACHE_ONE_MONTH, CACHE_ONE_DAY)
+        return asm3.media.get_video_thumbnail(o.dbo, o.post.integer("dbfsid"))
+
 class configjs(ASMEndpoint):
     url = "config.js"
     check_logged_in = False
@@ -762,7 +779,8 @@ class configjs(ASMEndpoint):
             "menustructure": asm3.html.menu_structure(o.locale, 
                 asm3.publish.PUBLISHER_LIST,
                 asm3.reports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
-                asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser)),
+                asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser),
+                asm3.reports.get_internalforms_menu(dbo)),
             "publishers": asm3.publish.PUBLISHER_LIST
         }
         return "const asm = %s;" % asm3.utils.json(c)
@@ -940,13 +958,17 @@ class media(ASMEndpoint):
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: self.notfound()
-            if m.MEDIAMIMETYPE != "text/html": continue
             linktypeid = m.LINKTYPEID
             linkid = m.LINKID
-            content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
-            contentpdf = asm3.utils.html_to_pdf(dbo, content)
-            filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
-            attachments.append(( filename, "application/pdf", contentpdf ))
+            if m.MEDIAMIMETYPE == "text/html":
+                content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
+                contentpdf = asm3.utils.html_to_pdf(dbo, content)
+                filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
+                attachments.append(( filename, "application/pdf", contentpdf ))
+            else:
+                content = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+                filename = asm3.media._get_media_filename(m)
+                attachments.append(( filename, m.MEDIAMIMETYPE, content ))
             subject.append(filename)
         # handle attaching selected repository documents
         for drid in post.integer_list("docrepo"):
@@ -1900,6 +1922,7 @@ class animal(JSONEndpoint):
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
             "posneg": asm3.lookups.get_posneg(dbo),
             "reports": asm3.reports.get_ask_animal_reports(dbo, o["session"].superuser, o["session"].roleids),
+            "roles": asm3.users.get_roles(dbo),
             "returnedexitmovements": asm3.animal.get_returned_exit_movements(dbo, a.ID),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
@@ -1962,6 +1985,10 @@ class animal(JSONEndpoint):
     def post_forgetpublish(self, o):
         asm3.animal.delete_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
 
+    def post_waitinglist(self, o):
+        self.check(asm3.users.ADD_WAITING_LIST)
+        return asm3.animal.create_waitinglist(o.dbo, o.user, o.post.integer("animalid"))
+
     def post_webnotes(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         asm3.animal.update_preferred_web_media_notes(o.dbo, o.user, o.post.integer("id"), o.post["comments"])
@@ -1969,7 +1996,7 @@ class animal(JSONEndpoint):
 class animal_boarding(JSONEndpoint):
     url = "animal_boarding"
     js_module = "boarding"
-    get_permissions = asm3.users.VIEW_BOARDING
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_BOARDING )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2022,7 +2049,7 @@ class animal_bulk(JSONEndpoint):
 class animal_clinic(JSONEndpoint):
     url = "animal_clinic"
     js_module = "clinic_appointment"
-    get_permissions = asm3.users.VIEW_CLINIC
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_CLINIC )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2048,7 +2075,7 @@ class animal_clinic(JSONEndpoint):
 
 class animal_costs(JSONEndpoint):
     url = "animal_costs"
-    get_permissions = asm3.users.VIEW_COST
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_COST )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2090,7 +2117,7 @@ class animal_costs(JSONEndpoint):
 class animal_diary(JSONEndpoint):
     url = "animal_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2111,9 +2138,43 @@ class animal_diary(JSONEndpoint):
             "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
+class animal_condition(JSONEndpoint):
+    url = "animal_condition"
+    get_permissions = asm3.users.VIEW_DIET
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = asm3.animal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        self.check_animal(a)
+        animalconditions = asm3.animal.get_animalconditions(dbo, animalid)
+        conditions = asm3.lookups.get_conditions(dbo)
+        asm3.al.debug("got %d conditions for animal %s %s" % (len(conditions), a["CODE"], a["ANIMALNAME"]), "main.animal_condition", dbo)
+        return {
+            "rows": animalconditions,
+            "conditions": conditions,
+            "animal": a,
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
+            "diettypes": asm3.lookups.get_diets(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_CONDITION)
+        return str(asm3.animal.insert_animalcondition_from_form(o.dbo, o.user, o.post))
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_CONDITION)
+        asm3.animal.update_animalcondition_from_form(o.dbo, o.user, o.post)
+        
+    def post_delete(self, o):
+        self.check( asm3.users.DELETE_CONDITION)
+        for did in o.post.integer_list("ids"):
+            asm3.animal.delete_animalcondition(o.dbo, o.user, did)
+
 class animal_diet(JSONEndpoint):
     url = "animal_diet"
-    get_permissions = asm3.users.VIEW_DIET
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_DIET )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2146,7 +2207,7 @@ class animal_diet(JSONEndpoint):
 class animal_donations(JSONEndpoint):
     url = "animal_donations"
     js_module = "donations"
-    get_permissions = asm3.users.VIEW_DONATION
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_DONATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2285,7 +2346,7 @@ class animal_find_results(JSONEndpoint):
 class animal_licence(JSONEndpoint):
     url = "animal_licence"
     js_module = "licence"
-    get_permissions = asm3.users.VIEW_LICENCE
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_LICENCE )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2307,7 +2368,7 @@ class animal_licence(JSONEndpoint):
 class animal_log(JSONEndpoint):
     url = "animal_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2332,7 +2393,7 @@ class animal_log(JSONEndpoint):
 class animal_media(JSONEndpoint):
     url = "animal_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2355,6 +2416,8 @@ class animal_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -2362,7 +2425,7 @@ class animal_media(JSONEndpoint):
 class animal_medical(JSONEndpoint):
     url = "animal_medical"
     js_module = "medical"
-    get_permissions = asm3.users.VIEW_MEDICAL
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_MEDICAL )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2390,7 +2453,7 @@ class animal_medical(JSONEndpoint):
 class animal_movements(JSONEndpoint):
     url = "animal_movements"
     js_module = "movements"
-    get_permissions = asm3.users.VIEW_MOVEMENT
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_MOVEMENT )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2481,7 +2544,7 @@ class animal_observations(JSONEndpoint):
 class animal_test(JSONEndpoint):
     url = "animal_test"
     js_module = "test"
-    get_permissions = asm3.users.VIEW_TEST
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_TEST )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2504,7 +2567,7 @@ class animal_test(JSONEndpoint):
 class animal_transport(JSONEndpoint):
     url = "animal_transport"
     js_module = "transport"
-    get_permissions = asm3.users.VIEW_TRANSPORT
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_TRANSPORT )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2527,7 +2590,7 @@ class animal_transport(JSONEndpoint):
 class animal_vaccination(JSONEndpoint):
     url = "animal_vaccination"
     js_module = "vaccination"
-    get_permissions = asm3.users.VIEW_VACCINATION
+    get_permissions = ( asm3.users.VIEW_ANIMAL, asm3.users.VIEW_VACCINATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -2610,6 +2673,10 @@ class batch(JSONEndpoint):
     def post_resetnnncodes(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Reset NNN animal code counts for this year", l), asm3.animal.maintenance_reset_nnn_codes, o.dbo)
+    
+    def post_sendfostererweekly(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Send the weekly fosterer email now", l), asm3.automail.fosterer_weekly, o.dbo, o.user, True)
 
 class boarding(JSONEndpoint):
     url = "boarding"
@@ -2717,11 +2784,15 @@ class calendar_events(ASMEndpoint):
                     diaryfilter = "future"
                 if d.DATECOMPLETED is not None:
                     diaryfilter = "completed"
+                if d.DIARYENDDATETIME:
+                    diaryenddatetime = d.DIARYENDDATETIME
+                else:
+                    diaryenddatetime = add_minutes(d.DIARYDATETIME, 60)
                 events.append({ 
                     "title": d.SUBJECT, 
                     "allDay": allday, 
                     "start": d.DIARYDATETIME,
-                    "end": add_minutes(d.DIARYDATETIME, 60),
+                    "end": diaryenddatetime,
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
                     "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}",
@@ -2989,7 +3060,9 @@ class citations(JSONEndpoint):
         return {
             "name": "citations",
             "rows": citations,
+            "templates": asm3.template.get_document_templates(o.dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(o.dbo),
+            "additional": asm3.additional.get_field_definitions(o.dbo, "citation"),
             "nextid": o.dbo.get_id_max("ownercitation")
         }
 
@@ -3391,6 +3464,9 @@ class document_gen(ASMEndpoint):
         elif linktype == "BOARDING":
             loglinktype = asm3.log.PERSON
             content = asm3.wordprocessor.generate_boarding_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "CITATION":
+            loglinktype = asm3.log.PERSON
+            content = asm3.wordprocessor.generate_citation_doc(dbo, dtid, post.integer_list("id"), o.user)
         elif linktype == "CLINIC":
             loglinktype = asm3.log.PERSON
             content = asm3.wordprocessor.generate_clinic_doc(dbo, dtid, post.integer("id"), o.user)
@@ -4091,7 +4167,7 @@ class foundanimal(JSONEndpoint):
 class foundanimal_diary(JSONEndpoint):
     url = "foundanimal_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_FOUND_ANIMAL, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4148,7 +4224,7 @@ class foundanimal_find_results(JSONEndpoint):
 class foundanimal_log(JSONEndpoint):
     url = "foundanimal_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_FOUND_ANIMAL, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4171,7 +4247,7 @@ class foundanimal_log(JSONEndpoint):
 class foundanimal_media(JSONEndpoint):
     url = "foundanimal_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_FOUND_ANIMAL, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4192,6 +4268,8 @@ class foundanimal_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4358,7 +4436,7 @@ class incident(JSONEndpoint):
 class incident_citations(JSONEndpoint):
     url = "incident_citations"
     js_module = "citations"
-    get_permissions = asm3.users.VIEW_CITATION
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_CITATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4371,6 +4449,7 @@ class incident_citations(JSONEndpoint):
             "rows": citations,
             "incident": a,
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")
@@ -4413,7 +4492,7 @@ class incident_find_results(JSONEndpoint):
 class incident_diary(JSONEndpoint):
     url = "incident_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4434,7 +4513,7 @@ class incident_diary(JSONEndpoint):
 class incident_log(JSONEndpoint):
     url = "incident_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4470,7 +4549,7 @@ class incident_map(JSONEndpoint):
 class incident_media(JSONEndpoint):
     url = "incident_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4491,6 +4570,8 @@ class incident_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -4678,6 +4759,8 @@ class lookups(JSONEndpoint):
             "namefield": table[1].upper(),
             "namelabel": table[2],
             "descfield": table[3].upper(),
+            "hasconditiontype": "conditiontype" in modifiers,
+            "haszoonotic": "haszoonotic" in modifiers,
             "hasspecies": "species" in modifiers,
             "hastaxrate": "taxrate" in modifiers,
             "haspfspecies": "pubspec" in modifiers,
@@ -4693,6 +4776,7 @@ class lookups(JSONEndpoint):
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
             "accounts": asm3.financial.get_accounts(dbo, onlyactive=True),
+            "conditiontypes": asm3.lookups.get_condition_types(dbo),
             "species": asm3.lookups.get_species(dbo),
             "tables": asm3.html.json_lookup_tables(l)
         }
@@ -4700,12 +4784,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
 
     def post_update(self, o):
         post = o.post
         asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
@@ -4762,7 +4846,7 @@ class lostanimal(JSONEndpoint):
 class lostanimal_diary(JSONEndpoint):
     url = "lostanimal_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4819,7 +4903,7 @@ class lostanimal_find_results(JSONEndpoint):
 class lostanimal_log(JSONEndpoint):
     url = "lostanimal_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4842,7 +4926,7 @@ class lostanimal_log(JSONEndpoint):
 class lostanimal_media(JSONEndpoint):
     url = "lostanimal_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -4863,6 +4947,8 @@ class lostanimal_media(JSONEndpoint):
             "name": self.url, 
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -5057,6 +5143,20 @@ class mailmerge(JSONEndpoint):
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         return ", ".join(self.recipients(rows))
 
+class maint_adoptapet(ASMEndpoint):
+    url = "maint_adoptapet"
+
+    def content(self, o):
+        """ Clears all Adoptapet listings """
+        self.content_type("text/plain")
+        self.cache_control(0)
+        try:
+            pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
+            p = asm3.publishers.adoptapet.AdoptAPetPublisher(o.dbo, pc)
+            return p.removeAllImages()
+        except Exception as err:
+            return str(err)
+        
 class maint_be_user(ASMEndpoint):
     url = "maint_be_user"
 
@@ -5170,6 +5270,11 @@ class maint_ping(ASMEndpoint):
         keywords = ["pong"]
         frules = asm3.smcom.iptables_rules()
         if frules.find("REJECT") != -1 or frules.find("DROP") != -1: keywords.append("firewall")
+        try:
+            debianver = asm3.utils.read_text_file("/etc/debian_version")
+            keywords.append(f"osver={debianver}")
+        except:
+            pass
         return " ".join(keywords)
     
 class maint_reset_task(ASMEndpoint):
@@ -5617,6 +5722,7 @@ class move_book_soft_release(JSONEndpoint):
             "rows": movements,
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -5638,6 +5744,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -5659,6 +5766,7 @@ class move_book_unneutered(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -6112,6 +6220,7 @@ class onlineforms(JSONEndpoint):
         return {
             "rows": onlineforms,
             "flags": asm3.lookups.get_person_flags(dbo),
+            "mediaflags": asm3.lookups.get_media_flags(dbo),
             "header": asm3.onlineform.get_onlineform_header(dbo),
             "footer": asm3.onlineform.get_onlineform_footer(dbo)
         }
@@ -6513,7 +6622,7 @@ class person(JSONEndpoint):
 class person_boarding(JSONEndpoint):
     url = "person_boarding"
     js_module = "boarding"
-    get_permissions = asm3.users.VIEW_BOARDING
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_BOARDING )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6537,7 +6646,7 @@ class person_boarding(JSONEndpoint):
 class person_citations(JSONEndpoint):
     url = "person_citations"
     js_module = "citations"
-    get_permissions = asm3.users.VIEW_CITATION
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_CITATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6550,6 +6659,7 @@ class person_citations(JSONEndpoint):
             "rows": citations,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
+            "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
             "nextid": dbo.get_id_max("ownercitation")
@@ -6558,7 +6668,7 @@ class person_citations(JSONEndpoint):
 class person_clinic(JSONEndpoint):
     url = "person_clinic"
     js_module = "clinic_appointment"
-    get_permissions = asm3.users.VIEW_CLINIC
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_CLINIC )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6584,7 +6694,7 @@ class person_clinic(JSONEndpoint):
 class person_diary(JSONEndpoint):
     url = "person_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6606,7 +6716,7 @@ class person_diary(JSONEndpoint):
 class person_donations(JSONEndpoint):
     url = "person_donations"
     js_module = "donations"
-    get_permissions = asm3.users.VIEW_DONATION
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_DONATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6630,7 +6740,7 @@ class person_donations(JSONEndpoint):
 class person_costs(JSONEndpoint):
     url = "person_costs"
     js_module = "animal_costs"
-    get_permissions = asm3.users.VIEW_COST
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_COST )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6649,7 +6759,6 @@ class person_costs(JSONEndpoint):
 
 class person_embed(ASMEndpoint):
     url = "person_embed"
-    check_logged_in = False
 
     def content(self, o):
         if not o.dbo: raise asm3.utils.ASMPermissionError("No session")
@@ -6782,7 +6891,7 @@ class person_find_results(JSONEndpoint):
 
 class person_investigation(JSONEndpoint):
     url = "person_investigation"
-    get_permissions = asm3.users.VIEW_INVESTIGATION
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_INVESTIGATION )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6812,7 +6921,7 @@ class person_investigation(JSONEndpoint):
 class person_licence(JSONEndpoint):
     url = "person_licence"
     js_module = "licence"
-    get_permissions = asm3.users.VIEW_LICENCE
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_LICENCE )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6833,7 +6942,7 @@ class person_licence(JSONEndpoint):
 class person_log(JSONEndpoint):
     url = "person_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6866,7 +6975,7 @@ class person_lookingfor(ASMEndpoint):
 
 class person_links(JSONEndpoint):
     url = "person_links"
-    get_permissions = asm3.users.VIEW_PERSON_LINKS
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_PERSON_LINKS )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6883,7 +6992,7 @@ class person_links(JSONEndpoint):
 class person_media(JSONEndpoint):
     url = "person_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6904,6 +7013,8 @@ class person_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -6911,7 +7022,7 @@ class person_media(JSONEndpoint):
 class person_movements(JSONEndpoint):
     url = "person_movements"
     js_module = "movements"
-    get_permissions = asm3.users.VIEW_MOVEMENT
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_MOVEMENT )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6960,7 +7071,7 @@ class person_new(JSONEndpoint):
 class person_rota(JSONEndpoint):
     url = "person_rota"
     js_module = "rota"
-    get_permissions = asm3.users.VIEW_ROTA
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_ROTA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -6993,7 +7104,7 @@ class person_rota(JSONEndpoint):
 class person_traploan(JSONEndpoint):
     url = "person_traploan"
     js_module = "traploan"
-    get_permissions = asm3.users.VIEW_TRAPLOAN
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_TRAPLOAN )
 
     def controller(self, o):
         dbo = o.dbo
@@ -7012,7 +7123,7 @@ class person_traploan(JSONEndpoint):
 class person_vouchers(JSONEndpoint):
     url = "person_vouchers"
     js_module = "vouchers"
-    get_permissions = asm3.users.VIEW_VOUCHER
+    get_permissions = ( asm3.users.VIEW_PERSON, asm3.users.VIEW_VOUCHER )
 
     def controller(self, o):
         dbo = o.dbo
@@ -7028,6 +7139,15 @@ class person_vouchers(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "voucher"),
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
+
+class postcode_lookup(ASMEndpoint):
+    url = "postcode_lookup"
+    check_logged_in = False
+
+    def post_getaddress(self, o):
+        self.content_type("application/json")
+        self.cache_control(120)
+        return asm3.geo.get_address(o.dbo, o.post["postcode"], o.post["country"])
 
 class product(JSONEndpoint):
     url = "product"
@@ -7614,11 +7734,11 @@ class shelterview(JSONEndpoint):
 
     def post_movelocation(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
-        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"))
+        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), returnactivemovement=o.post.integer("boarding")==0)
 
     def post_moveunit(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
-        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), o.post["unit"])
+        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), o.post["unit"], returnactivemovement=o.post.integer("boarding")==0)
 
     def post_movefoster(self, o):
         self.check(asm3.users.ADD_MOVEMENT)
@@ -8022,6 +8142,12 @@ class systemusers(JSONEndpoint):
     def post_update(self, o):
         self.check(asm3.users.EDIT_USER)
         asm3.users.update_user_from_form(o.dbo, o.user, o.post)
+    
+    def post_addrole(self, o):
+        self.check(asm3.users.EDIT_USER)
+        userids = o.post.integer_list("ids")
+        roleid = o.post.integer("roleid")
+        return asm3.users.add_role_to_users(o.dbo, userids, roleid)
 
     def post_delete(self, o):
         self.check(asm3.users.EDIT_USER)
@@ -8234,13 +8360,14 @@ class vaccination(JSONEndpoint):
         reschedulecomments = post["reschedulecomments"]
         givenexpires = post.date("givenexpires")
         givenbatch = post["givenbatch"]
+        givenbatchexpiry = post.date("givenbatchexpiry")
         givencost = post.integer("givencost")
         givenmanufacturer = post["givenmanufacturer"]
         givenby = post["givenby"]
         givenrabiestag = post["givenrabiestag"]
         vet = post.integer("givenvet")
         for vid in post.integer_list("ids"):
-            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenmanufacturer, givencost, givenrabiestag)
+            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenbatchexpiry, givenmanufacturer, givencost, givenrabiestag)
             if rescheduledate is not None:
                 asm3.medical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
         if post.integer("item") != -1:
@@ -8334,7 +8461,7 @@ class waitinglist(JSONEndpoint):
 class waitinglist_diary(JSONEndpoint):
     url = "waitinglist_diary"
     js_module = "diary"
-    get_permissions = asm3.users.VIEW_DIARY
+    get_permissions = ( asm3.users.VIEW_WAITING_LIST, asm3.users.VIEW_DIARY )
 
     def controller(self, o):
         dbo = o.dbo
@@ -8355,7 +8482,7 @@ class waitinglist_diary(JSONEndpoint):
 class waitinglist_log(JSONEndpoint):
     url = "waitinglist_log"
     js_module = "log"
-    get_permissions = asm3.users.VIEW_LOG
+    get_permissions = ( asm3.users.VIEW_WAITING_LIST, asm3.users.VIEW_LOG )
 
     def controller(self, o):
         dbo = o.dbo
@@ -8379,7 +8506,7 @@ class waitinglist_log(JSONEndpoint):
 class waitinglist_media(JSONEndpoint):
     url = "waitinglist_media"
     js_module = "media"
-    get_permissions = asm3.users.VIEW_MEDIA
+    get_permissions = ( asm3.users.VIEW_WAITING_LIST, asm3.users.VIEW_MEDIA )
 
     def controller(self, o):
         dbo = o.dbo
@@ -8400,6 +8527,8 @@ class waitinglist_media(JSONEndpoint):
             "name": self.url,
             "flags": asm3.lookups.get_media_flags(dbo),
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
             "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }

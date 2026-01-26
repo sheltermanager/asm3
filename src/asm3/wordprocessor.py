@@ -720,6 +720,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             "VACCINATIONREQUIRED":      "d:DATEREQUIRED",
             "VACCINATIONGIVEN":         "d:DATEOFVACCINATION",
             "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
+            "VACCINATIONBATCHEXPIRY":   "d:BATCHEXPIRYDATE",
             "VACCINATIONBATCH":         "BATCHNUMBER",
             "VACCINATIONMANUFACTURER":  "MANUFACTURER",
             "VACCINATIONRABIESTAG":     "RABIESTAG",
@@ -859,6 +860,24 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             tags[tagname] = mt["MEDICALTYPENAME"].upper()
             tags[tagname + "GIVEN"] = python2display(l, mt["DATEGIVEN"])
             tags[tagname + "DUE"] = python2display(l, mt["DATEREQUIRED"])
+        
+        # Conditions
+        d = {
+            "CONDITIONNAME":            "CONDITIONNAME",
+            "CONDITIONTYPENAME":        "CONDITIONTYPENAME",
+            "CONDITIONSTARTDATETIME":   "d:STARTDATETIME",
+            "CONDITIONENDDATETIME":     "d:ENDDATETIME",
+            "CONDITIONCOMMENTS":        "COMMENTS"
+        }
+        conditions = asm3.animal.get_animalconditions(dbo, a["ID"])
+        tags.update(table_tags(dbo, d, conditions, "CONDITIONNAME"))
+        tags["ANIMALCONDITIONS"] = html_table(l, conditions, (
+            ( "CONDITIONNAME", _("Condition", l) ),
+            ( "CONDITIONTYPENAME", _("ConditionType", l) ),
+            ( "STARTDATETIME", _("From", l) ),
+            ( "ENDDATETIME", _("To", l) ),
+            ( "COMMENTS", _("Comments", l) )
+        ))
 
     # Diary
     if includeDiary:
@@ -1153,6 +1172,7 @@ def animalcontrol_tags(dbo: Database, ac: ResultRow) -> Tags:
     # Citations
     d = {
         "CITATIONNAME":         "CITATIONNAME",
+        "CITATIONNUMBER":       "CITATIONNUMBER",
         "CITATIONDATE":         "d:CITATIONDATE",
         "CITATIONCOMMENTS":     "COMMENTS",
         "FINEAMOUNT":           "c:FINEAMOUNT",
@@ -1288,6 +1308,50 @@ def donation_tags(dbo: Database, donations: Results) -> Tags:
     tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTALGROSS"] = format_currency_no_symbol(l, totals["gross"])
     tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["gross"])
+    return tags
+
+def citation_tags(dbo: Database, citations: Results) -> Tags:
+    """
+    Generates a list of tags from a citation result.
+    donations: a list of donation records
+    """
+    l = dbo.locale
+    tags = {}
+    totalfines = 0
+    totalpaidfines = 0
+    totalunpaidfines = 0
+    def add_to_tags(i, p):
+        x = {
+            "CITATIONNAME"+i:           p["CITATIONNAME"],
+            "CITATIONDATE"+i:           python2display(l, p["CITATIONDATE"]),
+            "CITATIONNUMBER"+i:         p["CITATIONNUMBER"],
+            "FINEAMOUNT"+i:             format_currency_no_symbol(l, p["FINEAMOUNT"]),
+            "FINEDUEDATE"+i:            python2display(l, p["FINEDUEDATE"]),
+            "FINEPAIDDATE"+i:           python2display(l, p["FINEPAIDDATE"]),
+            "CITATIONCOMMENTS"+i:       p["COMMENTS"]
+        }
+        tags.update(x)
+        rawadditionaltags = additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "citation"), "CITATIONADDITIONAL")
+        additionaltags = {}
+        for tagkey in rawadditionaltags.keys():
+            additionaltags[tagkey+i] = rawadditionaltags[tagkey]
+        tags.update(additionaltags)
+    if len(citations) > 0:
+        add_to_tags("", citations[0]) 
+    for i, d in enumerate(citations):
+        totalfines += d["FINEAMOUNT"]
+        if d["FINEPAIDDATE"]:
+            totalpaidfines += d["FINEAMOUNT"]
+        else:
+            totalunpaidfines += d["FINEAMOUNT"]
+        add_to_tags(str(i+1), d)
+    tags.update(
+        {
+            "CITATIONSTOTALFINES":          format_currency_no_symbol(l, totalfines),
+            "CITATIONSTOTALPAIDFINES":      format_currency_no_symbol(l, totalpaidfines),
+            "CITATIONSTOTALUNPAIDFINES":    format_currency_no_symbol(l, totalunpaidfines)
+        }
+    )
     return tags
 
 def foundanimal_tags(dbo: Database, a: ResultRow) -> Tags:
@@ -1538,7 +1602,7 @@ def clinic_tags(dbo: Database, c: ResultRow) -> Tags:
     tags.update(table_tags(dbo, d, asm3.clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=False, includeVouchers=False) -> Tags:
+def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=False, includeVouchers=False, includeCitations=True) -> Tags:
     """
     Generates a list of tags from a person result (the deep type from
     calling asm3.person.get_person)
@@ -1681,15 +1745,17 @@ def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person")))
 
     # Citations
-    d = {
-        "CITATIONNAME":         "CITATIONNAME",
-        "CITATIONDATE":         "d:CITATIONDATE",
-        "CITATIONCOMMENTS":     "COMMENTS",
-        "FINEAMOUNT":           "c:FINEAMOUNT",
-        "FINEDUEDATE":          "d:FINEDUEDATE",
-        "FINEPAIDDATE":         "d:FINEPAIDDATE"
-    }
-    tags.update(table_tags(dbo, d, asm3.financial.get_person_citations(dbo, p["ID"]), "CITATIONNAME", "CITATIONDATE", "FINEPAIDDATE"))
+    if includeCitations:
+        d = {
+            "CITATIONNAME":         "CITATIONNAME",
+            "CITATIONNUMBER":       "CITATIONNUMBER",
+            "CITATIONDATE":         "d:CITATIONDATE",
+            "CITATIONCOMMENTS":     "COMMENTS",
+            "FINEAMOUNT":           "c:FINEAMOUNT",
+            "FINEDUEDATE":          "d:FINEDUEDATE",
+            "FINEPAIDDATE":         "d:FINEPAIDDATE"
+        }
+        tags.update(table_tags(dbo, d, asm3.financial.get_person_citations(dbo, p["ID"]), "CITATIONNAME", "CITATIONDATE", "FINEPAIDDATE"))
 
     # Logs
     d = {
@@ -2185,6 +2251,21 @@ def generate_boarding_doc(dbo: Database, templateid: int, animalboardingid: int,
     if b.OWNERID is not None and b.OWNERID != 0:
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, b.OWNERID)))
     tags = append_tags(tags, boarding_tags(dbo, b))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_citation_doc(dbo: Database, templateid: int, citationids: List[int], username: str) -> bytes_or_str:
+    """
+    Generates a citation document from a template
+    templateid: The ID of the template
+    cid: The citation id to generate for
+    """
+    citations = asm3.financial.get_citations_by_ids(dbo, citationids)
+    if len(citations) == 0: 
+        raise asm3.utils.ASMValidationError("%s does not contain any valid citation IDs" % citationids)
+    c = citations[0]
+    tags = person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID), includeCitations=False)
+    tags = append_tags(tags, citation_tags(dbo, citations))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 

@@ -48,7 +48,7 @@ $(function() {
             $("#ownerwarn").hide();
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
+            $("#animal").on("change", function(event, a) {
               
                 $("#animalwarn").hide();
                 $("#button-transfer").button("enable");
@@ -67,7 +67,7 @@ $(function() {
             });
 
             // Callback when person is changed
-            $("#person").personchooser().bind("personchooserchange", function(event, p) {
+            $("#person").on("change", function(event, p) {
 
                 let warn = html.person_movement_warnings(p);
                 if (warn.length > 0) {

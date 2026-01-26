@@ -413,18 +413,18 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").on("change", function(event, rec) {
                 clinic_appointment.lastperson = rec;
                 clinic_appointment.update_person_animals(rec.ID);
                 clinic_appointment.show_person_animals(true);
             });
 
-            $("#person").personchooser().bind("personchoosercleared", function(event) {
+            $("#person").on("cleared", function(event) {
                 $("#personanimal").val("0");
                 clinic_appointment.show_person_animals(false);
             });
 
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
+            $("#person").on("loaded", function(event, rec) {
                 clinic_appointment.lastperson = rec;
             });
 

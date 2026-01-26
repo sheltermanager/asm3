@@ -728,6 +728,20 @@ class AbstractPublisher(threading.Thread):
             ts = asm3.i18n.python2unix(m.DATE)
             photo_urls.append(f"{SERVICE_URL}?account={self.dbo.name()}&method=media_image&mediaid={m.ID}&ts={ts}")
         return photo_urls
+    
+    def getVideoUrls(self, animalid: int) -> List[str]:
+        """
+        Returns a list of video URLs for animalid. The preferred is always first.
+        """
+        video_urls = []
+        videos = self.dbo.query("SELECT ID, Date FROM media " \
+            "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'video/mp4' " \
+            "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "ORDER BY WebsiteVideo DESC, ID", [animalid])
+        for m in videos:
+            ts = asm3.i18n.python2unix(m.DATE)
+            video_urls.append(f"{SERVICE_URL}?account={self.dbo.name()}&method=media_video&mediaid={m.ID}&ts={ts}")
+        return video_urls
 
     def getPublisherBreed(self, an: ResultRow, b1or2: int = 1) -> str:
         """
@@ -1392,35 +1406,45 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
-    def clearExistingImages(self) -> None:
-        try:
-            oldfiles = glob.glob(os.path.join(self.publishDir, "*.jpg"))
-            for f in oldfiles:
-                os.remove(f)
-        except Exception as err:
-            self.logError("warning: failed removing %s from filesystem: %s" % (oldfiles, err), sys.exc_info())
+    def clearExistingImages(self, clearLocal = False) -> None:
+        if clearLocal:
+            try:
+                oldfiles = glob.glob(os.path.join(self.publishDir, "*.jpg"))
+                for f in oldfiles:
+                    os.remove(f)
+            except Exception as err:
+                self.logError("warning: failed removing %s from filesystem: %s" % (oldfiles, err), sys.exc_info())
         if not self.pc.uploadDirectly: return
         try:
-            for f in self.socket.nlst("*.jpg"):
-                self.socket.delete(f)
+            nlst = self.socket.nlst("*.jpg")
         except Exception as err:
-            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+            self.logError("warning: failed retrieving FTP directory: %s" % err, sys.exc_info())
+            return
+        for f in nlst:
+            try:
+                self.log("delete image: %s" % f)
+                self.socket.delete(f)
+            except Exception as err:
+                self.logError("warning: failed deleting '%s' from FTP server: %s" % (f, err), sys.exc_info())
 
     def clearUnusedFTPImages(self, animals: Results) -> None:
         """ given a set of animals, removes images from the current FTP folder that do not
             start with a sheltercode that is in the list of animals """
         sheltercodes = [x.SHELTERCODE for x in animals]
-        # self.log("removing unused images (valid prefixes = %s)" % sheltercodes)
+        self.log("removing unused images (valid prefixes = %s)" % sheltercodes)
         try:
             nlst = self.socket.nlst("*.jpg")
-            # self.log("NLST: %s" % nlst)
-            for f in nlst:
-                c = f[:f.find("-")]
-                if c not in sheltercodes: 
+        except Exception as err:
+            self.logError("warning: failed retrieving FTP directory: %s" % err, sys.exc_info())
+            return
+        for f in nlst:
+            c = f[:f.find("-")]
+            if c not in sheltercodes: 
+                try:
                     self.log("delete unreferenced image: %s" % f)
                     self.socket.delete(f)
-        except Exception as err:
-            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+                except Exception as err:
+                    self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
     def cleanup(self, save_log: bool = True) -> None:
         """

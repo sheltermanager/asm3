@@ -99,7 +99,7 @@ const asm_widget = function(obj) {
 };
 
 // Calls the destroy method of all asm widgets in the selector, eg: #asm-content .asm-widget
-// Generally only called when unloading a module in common
+// Called when unloading a module in common.module_start
 $.fn.destroy_asm_widgets = function() {
     this.each(function() {
         let t = $(this);
@@ -112,9 +112,17 @@ $.fn.destroy_asm_widgets = function() {
             });
         }
     });
+    // This is a bit of a fudge, references to some dialogs get unloaded before they
+    // should, which causes their destructors not to be able to remove them from the DOM.
+    // This code removes common dialogs that have been left hanging around in the DOM 
+    // between screen transitions to make sure they get cleaned up.
+    $(".animalchooser-find, .animalchooser-add, .personchooser-add, .personchooser-find").each(function() {
+        let t = $(this);
+        t.closest(".ui-dialog").remove();
+    });
 };
 
-// Disables autocomplete on the given JQuery node t
+/** Disables autocomplete on the given JQuery node t */
 const disable_autocomplete = function(t) {
     // Only disable it if autocomplete hasn't already been
     // set by the markup (eg: for password fields that are textbox)
@@ -124,37 +132,17 @@ const disable_autocomplete = function(t) {
     }
 };
 
-// Generates a javascript object of parameters by looking
-// at the data attribute of all items matching the
-// selector
-$.fn.toJSON = function() {
-    let params = {};
-    this.each(function() {
-        let t = $(this);
-        if (t.attr("type") == "checkbox" && t.attr("data")) {
-            if (t.is(":checked")) {
-                params[t.attr("data")] = "checked";
-            }
-        }
-        else if (t.attr("data") && t.val()) {
-            params[t.attr("data")] = t.val();
-        }
-    });
-    return params;
-};
-
-// Populates fields matching the selector by looking up their
-// data-json attribute 
+/** Sets the value of elements based on their data-json attribute and a row of data */
 $.fn.fromJSON = function(row) {
     this.each(function() {
         let n = $(this);
         let f = $(this).attr("data-json");
         if (f === undefined || f == null || f == "") { return; }
         if (n.hasClass("asm-animalchooser")) {
-            n.animalchooser().animalchooser("loadbyid", row[f]);
+            n.animalchooser("loadbyid", row[f]);
         }
         else if (n.hasClass("asm-personchooser")) {
-            n.personchooser().personchooser("loadbyid", row[f]);
+            n.personchooser("loadbyid", row[f]);
         }
         else if (n.hasClass("asm-currencybox")) {
             n.val(format.currency(row[f]));
@@ -186,10 +174,11 @@ $.fn.fromJSON = function(row) {
     });
 };
 
-// Generates a URL encoded form data string of parameters
-// by looking at the data-post or data attribute of all items 
-// matching the selector. 
-// includeblanks: true if you want fields with empty values sent instead of omitted.
+/** Generates a URL encoded form data string of parameters
+  * by looking at the data-post or data attribute of all items 
+  * matching the selector. 
+  * includeblanks: true if you want fields with empty values sent instead of omitted.
+  */
 $.fn.toPOST = function(includeblanks = false) {
     let post = [];
     this.each(function() {
@@ -198,12 +187,7 @@ $.fn.toPOST = function(includeblanks = false) {
         if (!pname) { pname = t.attr("data"); }
         if (!pname) { return; }
         if (t.attr("type") == "checkbox") {
-            if (t.is(":checked")) {
-                post.push(pname + "=checked");
-            }
-            else {
-                post.push(pname + "=off");
-            }
+            post.push(pname + (t.prop("checked") ? "=on" : "=off" ));
         }
         else if (t.hasClass("asm-currencybox")) {
             post.push(pname + "=" + encodeURIComponent(t.currency("value")));
@@ -1324,6 +1308,9 @@ $.fn.textbox = asm_widget({
 
     _create: function(t) {
         disable_autocomplete(t);
+        if (t.attr("data-noedit") == "true") { 
+            t.prop("disabled", true); 
+        }
         t.on("keypress", function(e) {
             if (t.prop("disabled")) {
                 e.preventDefault();
@@ -1493,8 +1480,11 @@ $.fn.richtextarea = asm_widget({
 $.fn.textarea = asm_widget({
     
     _create: function(t) {
-        
-        let buttonstyle = "margin-left: -56px; margin-top: -24px; height: 16px",
+       
+        // position the zoom button over the bottom right corner by adjusting its
+        // margins with negative values. The margin-right: 28px corrects elements after the
+        // textarea from overlapping it due to the negative margin (it's the left margin less the width of the button)
+        let buttonstyle = "margin-left: -56px; margin-right: 28px; margin-top: -24px; height: 16px",
             self = this;
 
         if (t.attr("data-zoom")) { return; }

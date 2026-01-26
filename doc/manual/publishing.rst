@@ -501,6 +501,8 @@ records.
 * medicalissues (Text): Any information you want to pass to SavourLife about
   medical issues the animal has.
 
+* indooronly (Yes/No): Indicates that this cat is indoor only.
+
 * needsfoster (Yes/No): Indicates that foster care is required for the animal.
 
 * interstateadoptable (Yes/No): Overrides the global interstate adoptable value on

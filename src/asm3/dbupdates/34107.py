@@ -15,13 +15,8 @@ fields = ",".join([
     dbo.ddl_add_table_column("Amount", dbo.type_integer, False),
     dbo.ddl_add_table_column("IsVAT", dbo.type_integer, False),
     dbo.ddl_add_table_column("VATRate", dbo.type_float, False),
-    dbo.ddl_add_table_column("VATAmount", dbo.type_integer, False),
-    dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
-    dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
-    dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
-])
+    dbo.ddl_add_table_column("VATAmount", dbo.type_integer, False)
+]) + dbo.ddl_audit_table_columns()
 execute(dbo, dbo.ddl_add_table("clinicappointment", fields) )
 execute(dbo, dbo.ddl_add_index("clinicappointment_AnimalID", "clinicappointment", "AnimalID") )
 execute(dbo, dbo.ddl_add_index("clinicappointment_OwnerID", "clinicappointment", "OwnerID") )
@@ -31,13 +26,8 @@ fields = ",".join([
     dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
     dbo.ddl_add_table_column("ClinicAppointmentID", dbo.type_integer, False),
     dbo.ddl_add_table_column("Description", dbo.type_longtext, False),
-    dbo.ddl_add_table_column("Amount", dbo.type_integer, False),
-    dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, True),
-    dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
-    dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
-    dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
-])
+    dbo.ddl_add_table_column("Amount", dbo.type_integer, False)
+]) + dbo.ddl_audit_table_columns()
 execute(dbo, dbo.ddl_add_table("clinicinvoiceitem", fields) )
 execute(dbo, dbo.ddl_add_index("clinicinvoiceitem_ClinicAppointmentID", "clinicinvoiceitem", "ClinicAppointmentID") )
 fields = ",".join([

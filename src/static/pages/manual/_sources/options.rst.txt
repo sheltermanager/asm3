@@ -233,10 +233,18 @@ You can build and use any format string you like, using the following tokens:
   never be used for another animal), padded to 4 digits. If the number
   overflows, more digits will be used. 
 
-* XXX - (3 digits) a number which is unique for all animals within the year
+* XXXX - (4 digits) a number which is unique for all animals within the year
+  padded to 4 digits. If the number overflows, more digits will be used.
 
+* XXX - (3 digits) a number which is unique for all animals within the year
+  padded to 3 digits. If the number overflows, more digits will be used.
+  
 * XX - A number which is unique for all animals within the year, no padding is
   done.
+
+* NNNN - (4 digits) a number representing the animal, which is unique within the
+  year brought in for the animal's type and padded to 4 digits. If the number
+  overflows, more digits will be used.
 
 * NNN - (3 digits) a number representing the animal, which is unique within the
   year brought in for the animal's type and padded to 3 digits. If the number
@@ -244,6 +252,18 @@ You can build and use any format string you like, using the following tokens:
 
 * NN - A number representing the animal, which is unique within the year
   brought in for the animal's type. No padding is done. 
+
+* PPPP - (4 digits) a number representing the animal, which is unique within the
+  year brought in for the animal's species and padded to 4 digits. If the number
+  overflows, more digits will be used.
+
+* PPP - (3 digits) a number representing the animal, which is unique within the
+  year brought in for the animal's species and padded to 3 digits. If the number
+  overflows, more digits will be used. 
+
+* PP - A number representing the animal, which is unique within the year
+  brought in for the animal's species. No padding is done. 
+
 
 Here are some examples: 
 
@@ -472,6 +492,10 @@ Diary and Messages
   your recommended locale/cron times will be between midnight and 4am.
   For this option to work, you must have configured the system email in
   the Email tab of this screen and your users must have email addresses set.
+
+* Email users their outstanding diary notes once per week on: This option will cause
+  the system to send users an email containing their outstanding diary notes
+  as part of the overnight batch on the day of the week you specify.
 
 * Email users immediately when a diary note assigned to them is created or
   updated: This option will cause an email be sent to any users a diary note is
@@ -1006,7 +1030,12 @@ the preview column and deleted in one click using the "Delete Spam" button.
   forms that contain blanks in mandatory fields as spam.
 
 * Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
-  and lower case letters in the applicants name fields and marks these as spam.
+  and lower case letters in the applicants name fields and marks these as spam. It
+  will also check for email addresses or URLs in name fields.
+
+* Spambot protection: URLs in any field: It's highly unusual for forms to need the
+  user to include URLs - something that spammers do a lot. This will tag any
+  form as spam if there's a link found (http: or https:) in any form field.
 
 * Spambot protection: Zipcode / Postcode contains numbers: Checks that the Zipcode / 
   Postcode field contains numbers, marks forms as spam where no number is present.
@@ -1282,6 +1311,33 @@ Security
   adds a "View Roles" control to the add person and person record screens. 
   The "View Roles" control allows a user to specify exactly which
   users can see the person record.    
+
+Service API
+-----------
+
+* Enable the Service API: If enabled, the :ref:`serviceapi` can be used. The service
+  API allows your website to retrieve and use data.
+
+* Enable authenticated methods of the service API: If enabled, methods of the
+  API that can return potentially sensitive data can be called. They require
+  a username and password, or a key to be used to authenticate the call.
+  Methods that require authentication are outlined in the service API section
+  of the manual.
+
+* Forbid access to HTML and PDF document media via the media_file Service API
+  method: If enabled, this option prevents the media_file call from returning
+  anything but images. Useful to prevent attackers guessing ID numbers to
+  retrieve documentation and paperwork. Note however that if you are using
+  the csvexport/import functionality with media from one database to another
+  that this option will prevent the target database from being able to import
+  your media.
+
+* Forbid access to excluded images via Service API media_file/media_image
+  methods: If enabled, the media_file and media_image methods will refuse
+  to serve images that have the "Exclude from Publish" flag on them.
+  Again, if you are using the csvexport/import functionality with media from
+  one database to another, this option can prevent the target database from
+  being able to import excluded photos.
 
 Shelter View
 ------------

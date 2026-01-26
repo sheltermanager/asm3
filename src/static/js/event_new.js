@@ -53,7 +53,7 @@ $(function() {
                 check_for_similar();
             });
             //insert values to corresponding fields when a location is selected
-            $("#location").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#location").on("change", function(event, rec) {
                 $("#address").val(html.decode(rec.OWNERADDRESS));
                 $("#town").val(html.decode(rec.OWNERTOWN));
                 $("#county").val(html.decode(rec.OWNERCOUNTY));
@@ -62,7 +62,7 @@ $(function() {
             });
 
             //insert value to the same date of the chosen Start date if End date field is empty
-            $("#startdate").bind("change", function() {
+            $("#startdate").on("change", function() {
                 if($("#enddate").val() == "" && $("#startdate").val() != "")
                     $("#enddate").val($("#startdate").val());
             });
@@ -84,7 +84,7 @@ $(function() {
                 }
                 header.show_loading(_("Creating..."));
                 try{
-                    let formdata = "ownerid=" + $("#location").personchooser().val() + "&" + $("input, textarea, select, #description, #location").toPOST();
+                    let formdata = "ownerid=" + $("#location").val() + "&" + $("input, textarea, select, #description, #location").toPOST();
                     let eventid = await common.ajax_post("event_new", formdata);
                     if(eventid && event_new.create_and_edit)
                         common.route("event?id=" + eventid);

@@ -1,4 +1,4 @@
-/*global $, jQuery, alert, FileReader, DATE_FORMAT, IS_FORM */
+/*global $, jQuery, alert, FileReader, DATE_FORMAT, LOCALE, SMCOM */
 
 // This file is included with all online forms and used to load
 // widgets and implement validation behaviour, etc.
@@ -31,6 +31,14 @@ const PHONE_RULES = [
     { locale: "en_ES", prefix: "", length: 9, elements: 3,extract: /^(\d{3})(\d{3})(\d{3})$/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" },
     { locale: "en_ES", prefix: "34", length: 11, elements: 3,extract: /(?<=34)(\d{3})(\d{3})(\d{3})/, display: "{1} {2} {3}", placeholder: "NNN NNN NNN" }
 ];
+
+const AL_COUNTRIES = {
+    en_AU:  "Australia",
+    en_GB:  "United Kingdom",
+    en_CA:  "Canada",
+    en_IE:  "Ireland",
+    fr_CA:  "Canada"
+};
 
 $(document).ready(function() {
 
@@ -354,20 +362,23 @@ $(document).ready(function() {
                 $("input, select").each(function() {
                     if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
                         let v = $(this).val();
+                        // Calcluate a numeric version of this value for < > comparisons, since 
+                        // no-one cares about alpha/ascii comparison
+                        let nv = parseFloat(v);
                         // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
                         if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
                         // Radio buttons need reading differently to find the selected value
                         if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
                         if (cond == "=" && v != value) { andshow = false; }
                         else if (cond == "!" && v == value) { andshow = false; }
-                        else if (cond == ">" && v <= value) { andshow = false; }
-                        else if (cond == "<" && v >= value) { andshow = false; }
+                        else if (cond == ">" && nv <= value) { andshow = false; }
+                        else if (cond == "<" && nv >= value) { andshow = false; }
                         else if (cond == "*" && String(v).indexOf(value) == -1) { andshow = false; }
                         else if (cond == "^" && String(v).indexOf(value) != -1) { andshow = false; }
                         if (cond == "=" && v == value) { orshow = true; }
                         else if (cond == "!" && v != value) { orshow = true; }
-                        else if (cond == ">" && v >= value) { orshow = true; }
-                        else if (cond == "<" && v <= value) { orshow = true; }
+                        else if (cond == ">" && nv >= value) { orshow = true; }
+                        else if (cond == "<" && nv <= value) { orshow = true; }
                         else if (cond == "*" && String(v).indexOf(value) != -1) { orshow = true; }
                         else if (cond == "^" && String(v).indexOf(value) == -1) { orshow = true; }
                         return false; // stop iterating fields, we found it
@@ -614,5 +625,50 @@ $(document).ready(function() {
         }
     });
 
-});
+    // This is used to handle resizing the form when it is embedded in an iframe
+    try {
+        let ro = new ResizeObserver(function(e) {
+            window.parent.postMessage(document.querySelector("html").offsetHeight, "*");
+        });
+        ro.observe(document.querySelector("html"));
+    } catch(err) {
+        log.error(err, err);
+    }
+    
+    // If address/postcode fields are present, offer an address lookup button to complete the address
+    if (SMCOM && AL_COUNTRIES.hasOwnProperty(LOCALE) && $(".asm-onlineform-postcode").length > 0 && $(".asm-onlineform-address").length > 0) {
+        $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
+        $("#postcodelookup").click(function() {
+            let country = AL_COUNTRIES[LOCALE];
+            let postcode = $(".asm-onlineform-postcode").val();
+            if (!postcode) { return; }
+            let formdata = "mode=getaddress&country=" + country + "&postcode=" + postcode + "&locale=" + LOCALE + "&account=" + USERACCOUNT;
+            $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
+            $.ajax({
+                type: "POST",
+                url:  "postcode_lookup",
+                data: formdata,
+                dataType: "text",
+                success: function(response) {
+                    let rows = jQuery.parseJSON(response);
+                    console.log(rows);
+                    let address = rows[0].street;
+                    if (rows[0].locality) {
+                        address += "\n" + rows[0].locality;
+                    }
+                    $(".asm-onlineform-address").val( address );
+                    $(".asm-onlineform-town").val( rows[0].town );
+                    $(".asm-onlineform-city").val( rows[0].town );
+                    $(".asm-onlineform-county").val( rows[0].county );
+                    $(".asm-onlineform-country").val( rows[0].country );
+                    $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
+                },
+                error: function(jqxhr, textstatus, response) {
+                    console.log("Error finding address from postcode. " + response);
+                    $("#postcodelookup img").attr("src", "/static/images/icons/find.png");
+                }
+            });
+        });
+    }
 
+});

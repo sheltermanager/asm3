@@ -587,7 +587,8 @@ def return_movement(dbo: Database, movementid: int, username: str, animalid: int
     if returndate is None: returndate = dbo.today()
     if animalid == 0: animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [movementid])
     personid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID = ?", [movementid])
-    dbo.update("adoption", movementid, { "ReturnDate": returndate })
+    ud = { "AnimalID": animalid, "OwnerID": personid, "ReturnDate": returndate } # reset animalid/ownerid for auditing
+    dbo.update("adoption", movementid, ud, username)
     asm3.animal.update_animal_status(dbo, animalid)
     asm3.person.update_adopter_flag(dbo, username, personid)
 
@@ -597,7 +598,7 @@ def trial_to_full_adoption(dbo: Database, username: str, movementid: int) -> Non
     If the trial end date on the record is blank, sets it to today
     """
     m = dbo.first_row(dbo.query("SELECT AnimalID, OwnerID, TrialEndDate FROM adoption WHERE ID=?", [movementid]))
-    ud = { "IsTrial": 0 }
+    ud = { "AnimalID": m.ANIMALID, "OwnerID": m.OWNERID, "IsTrial": 0 } # reset animalid/ownerid for auditing
     if m.TRIALENDDATE is None: ud["TrialEndDate"] = dbo.today()
     dbo.update("adoption", movementid, ud, username)
     asm3.animal.update_animal_status(dbo, m.ANIMALID)

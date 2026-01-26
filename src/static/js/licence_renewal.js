@@ -64,7 +64,7 @@ $(function() {
             };
 
             // Callback when person is changed
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").on("change", function(event, rec) {
                 licence_renewal.lastperson = rec;
                 // Default giftaid if the person is registered
                 $("#payment").payments("set_giftaid", rec.ISGIFTAID == 1);
