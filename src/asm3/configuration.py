@@ -202,6 +202,7 @@ DEFAULTS = {
     "DisableAsilomar": "No",
     "DisableDocumentRepo": "No",
     "DisableOnlineForms": "No",
+    "DisablePOS": "Yes", 
     "DisableRetailer": "No",
     "DocumentWordProcessor": "HTML",
     "DocumentSignedNotifyCoordinator": "No",

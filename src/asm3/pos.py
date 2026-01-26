@@ -1,10 +1,10 @@
 
-from asm3.i18n import _, now, python2display
+from asm3.i18n import _, python2display
 import asm3.stock
 import asm3.configuration
 import json
 
-from asm3.typehints import datetime, Database, List, PaymentProcessor, PostedData, ResultRow, Results
+from asm3.typehints import Database, PostedData
 
 def insert_receipt_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
@@ -21,7 +21,6 @@ def insert_receipt_from_form(dbo: Database, username: str, post: PostedData) -> 
     }, username)
 
     for receiptitem in receiptitems:
-        stockusageid = 0
         stockusagedata = {
             "movementdate": python2display(dbo.locale, dbo.today()),
             "producttypeid": int(receiptitem["producttypeid"]),
@@ -48,3 +47,4 @@ def insert_receipt_from_form(dbo: Database, username: str, post: PostedData) -> 
         }, username)
 
     return salesreceiptid
+

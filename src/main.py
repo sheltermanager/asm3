@@ -763,8 +763,7 @@ class configjs(ASMEndpoint):
                 asm3.publish.PUBLISHER_LIST,
                 asm3.reports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
                 asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser)),
-            "publishers": asm3.publish.PUBLISHER_LIST,
-            "disablepos": asm3.sitedefs.DISABLE_POS
+            "publishers": asm3.publish.PUBLISHER_LIST
         }
         return "const asm = %s;" % asm3.utils.json(c)
 
@@ -6215,7 +6214,6 @@ class options(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
             "personflags": asm3.lookups.get_person_flags(dbo),
-            "disablepos": asm3.sitedefs.DISABLE_POS,
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
             "pp_square": pp_square,

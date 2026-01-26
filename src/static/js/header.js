@@ -284,6 +284,9 @@ header = {
             if (config.bool("DisableClinic")) {
                 $(".tagclinic").hide();
             }
+            if (config.bool("DisablePOS")) { 
+                $(".tagpos").hide(); 
+            }
             // If retailer is disabled, hide menu entries for it
             if (config.bool("DisableRetailer")) {
                 $(".tagretailer").hide();
@@ -581,9 +584,7 @@ header = {
 
     bind: function() {  
 
-        if (asm.disablepos) { $(".tagpos").hide(); }
-
-        var timezone = config.str("Timezone");
+        let timezone = config.str("Timezone");
         if (timezone.indexOf("-") == -1) {
             timezone = "+" + timezone;
         }

@@ -410,6 +410,3 @@ WATERMARK_FONT_BASEDIRECTORY = get_string("watermark_font_basedirectory", "/usr/
 # Toggle for enabling AMQP messages from audit log calls
 AMQP_ENABLED = get_boolean("amqp_enabled", False)
 
-# Toggle for disabling POS
-DISABLE_POS = get_boolean("disable_pos", True)
-POS_CSS = get_string("pos_css", 'static/css/asm-pos.css')
