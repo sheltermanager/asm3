@@ -645,6 +645,9 @@ $(function() {
             else if (viewmode == "speciescolor") {
                 this.render_view("SPECIESNAME", "BASECOLOURNAME", "SPECIESNAME,BASECOLOURNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "speciesdiet") {
+                this.render_view("SPECIESNAME", "ACTIVEDIETNAME", "SPECIESNAME,ACTIVEDIETNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "speciesfosterer") {
                 this.render_view("SPECIESNAME", "CURRENTOWNERNAME", "SPECIESNAME,CURRENTOWNERNAME,ANIMALNAME", false, false);
             }

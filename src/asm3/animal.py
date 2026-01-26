@@ -532,6 +532,7 @@ def get_animal_brief_query(dbo: Database) -> str:
             "ELSE " \
             "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
+        "diet.DietName AS ActiveDietName, " \
         "er.ReasonName AS EntryReasonName, " \
         "et.EntryTypeName AS EntryTypeName, " \
         "a.FLVResult, " \
@@ -593,6 +594,8 @@ def get_animal_brief_query(dbo: Database) -> str:
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
+        "LEFT OUTER JOIN animaldiet adi ON adi.ID = (SELECT MAX(ID) FROM animaldiet sadi WHERE sadi.AnimalID = a.ID) " \
+        "LEFT OUTER JOIN diet ON diet.ID = adi.DietID " \
         "LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
         "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
         "LEFT OUTER JOIN species sp ON sp.ID = a.SpeciesID " \
