@@ -6,6 +6,132 @@ import asm3.financial
 import asm3.utils
 
 class TestFinancial(unittest.TestCase):
+    
+    def test_apply_regular_debits(self):
+        base.execute("DELETE FROM accounts WHERE Code LIKE 'Test%'")
+        base.execute("DELETE FROM regulardebit WHERE Comments = 'Just some test data'")
+
+        data = {
+            "code": "Testiofromo",
+            "type": "5",
+            "donationtype": "0",
+            "description": "Test from account"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        faid = asm3.financial.insert_account_from_form(base.get_dbo(), "test", post)
+
+        data = {
+            "code": "Testioto",
+            "type": "8",
+            "donationtype": "0",
+            "description": "Test to account"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        taid = asm3.financial.insert_account_from_form(base.get_dbo(), "test", post)
+
+        data = {
+            "person": "0",
+            "startdate": "01/01/2025",
+            "enddate": "",
+            "amount": "500",
+            "fromaccount": str(faid),
+            "toaccount": str(taid),
+            "period": "1",
+            "weekday": "0",
+            "dayofmonth": "1",
+            "month": "1",
+            "comments": "Just some test data"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
+
+        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
+
+        self.assertEqual(1, len(trxs))
+        
+        asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
+
+        currentweekday = int(base.get_dbo().today().strftime("%w"))
+        if currentweekday == 6:
+            weekday = 0
+        else:
+            weekday = currentweekday + 1
+
+        data = {
+            "person": "0",
+            "startdate": "01/01/2025",
+            "enddate": "",
+            "amount": "500",
+            "fromaccount": str(faid),
+            "toaccount": str(taid),
+            "period": "7",
+            "weekday": str(weekday),
+            "dayofmonth": "1",
+            "month": "1",
+            "comments": "Just some test data"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
+
+        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
+
+        self.assertEqual(0, len(trxs))
+
+        asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
+
+        currentmonth = base.get_dbo().today().month
+        currentdayofmonth = base.get_dbo().today().day
+
+        data = {
+            "person": "0",
+            "startdate": "01/01/2025",
+            "enddate": "",
+            "amount": "500",
+            "fromaccount": str(faid),
+            "toaccount": str(taid),
+            "period": "365",
+            "weekday": "0",
+            "dayofmonth": str(currentdayofmonth),
+            "month": str(currentmonth),
+            "comments": "Just some test data"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
+
+        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
+
+        self.assertEqual(1, len(trxs))
+
+        asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
+
+        if currentmonth == 12:
+            currentmonth = 1
+        else:
+            currentmonth = currentmonth + 1
+
+        data = {
+            "person": "0",
+            "startdate": "01/01/2025",
+            "enddate": "",
+            "amount": "500",
+            "fromaccount": str(faid),
+            "toaccount": str(taid),
+            "period": "365",
+            "weekday": "0",
+            "dayofmonth": str(currentdayofmonth),
+            "month": str(currentmonth),
+            "comments": "Just some test data"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
+
+        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
+
+        self.assertEqual(0, len(trxs))
+
+        base.execute("DELETE FROM accounts WHERE Code LIKE 'Test%'")
+        base.execute("DELETE FROM regulardebit WHERE Comments = 'Just some test data'")
+        base.execute("DELETE FROM accountstrx WHERE CreatedBy = 'test'")
 
     def test_get_account_code(self):
         asm3.financial.get_account_code(base.get_dbo(), 0)
