@@ -586,7 +586,10 @@ header = {
     },
 
     viewport_resize: function() {
-        if ($(window).width() <= 480) {
+        if (false) {
+        //if ($(window).width() <= 480) {
+            // TODO: temporarily disabled, along with burger menu CSS in asm.css due to issues
+            // with toolbar menus, and positioning of burger button
             $("#topline-q-div").insertAfter('#asm-topline-logo-div');
             $(".asm-menu-icon").hide();
             $("#asm-topline .ui-state-active").asmmenu("hide_all");

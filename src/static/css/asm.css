@@ -1139,7 +1139,7 @@ select:disabled, input:disabled, textarea:disabled {
      *  that they don't overflow and require horizontal scrolling */
     .asm-nested-table-td { display: block; }
 
-    /** Styles to reformat the main menu into a burger on portrait mobiles */
+    /** Styles to reformat the main menu into a burger on portrait mobiles
     .asm-menu-body {
         width: calc(100% - 25px);
     }
@@ -1181,6 +1181,7 @@ select:disabled, input:disabled, textarea:disabled {
     #searchgo {
         display: none !important;
     }
+    */
 }
 
 /** Hide elements from printing by giving them the no-print class */
