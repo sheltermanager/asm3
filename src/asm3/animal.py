@@ -4071,11 +4071,12 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
 def insert_adoptable_status_log(dbo: Database, username: str, animalid: int, wasadoptable: int = 0, isadoptable: int = 0) -> None:
     """ Writes an entry to the log when an animal's adoptable status changes. """
     # If the option is on and the adoptable status has changed, log it
+    l = dbo.locale
     if asm3.configuration.adoptable_change_log(dbo) and wasadoptable != isadoptable:
         if isadoptable:
-            logtext = _("Available for adoption")
+            logtext = _("Status: Available for adoption", l)
         else:
-            logtext = _("NOT available for adoption")
+            logtext = _("Status: Not available for adoption", l)
         asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.adoptable_change_log_type(dbo), logtext)
 
 def insert_animallocation(dbo: Database, username: str, animalid: int, animalname: str, sheltercode: str, 

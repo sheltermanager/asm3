@@ -159,7 +159,7 @@ def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> No
         d["WebsitePhoto"] = 0
         d["DocPhoto"] = 0
     elif link.LinkTypeID == ANIMAL:
-        if 0 == dbo.query_int(f"SELECT COUNT(ID) FROM media WHERE WebsitePhoto = 1 AND LinkTypeID = ? AND LinkID = ?", [ANIMAL, link.LINKID]):
+        if 0 == dbo.query_int("SELECT COUNT(ID) FROM media WHERE WebsitePhoto = 1 AND LinkTypeID = ? AND LinkID = ?", [ANIMAL, link.LINKID]):
             d["WebsitePhoto"] = 1
     dbo.update("media", mid, d, username)
     if link.LINKTYPEID == ANIMAL:
