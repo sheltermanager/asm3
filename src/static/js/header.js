@@ -586,10 +586,11 @@ header = {
     },
 
     viewport_resize: function() {
-        if (false) {
-        //if ($(window).width() <= 480) {
-            // TODO: temporarily disabled, along with burger menu CSS in asm.css due to issues
-            // with toolbar menus, and positioning of burger button
+        // TODO: temporarily disabled, along with burger menu CSS in asm.css due to issues
+        // with toolbar menus, and positioning of burger button
+        // See ticket 1398 for more info
+        return;
+        if ($(window).width() <= 480) {
             $("#topline-q-div").insertAfter('#asm-topline-logo-div');
             $(".asm-menu-icon").hide();
             $("#asm-topline .ui-state-active").asmmenu("hide_all");
@@ -709,11 +710,8 @@ header = {
             $("html,body").animate({scrollTop:0},0);
         });
 
-        $(window).resize(
-            function() {
-                header.viewport_resize();
-            }
-        );
+        // Handle window resize events 
+        $(window).resize(header.viewport_resize);
     },
 
     bind_search: function() {
