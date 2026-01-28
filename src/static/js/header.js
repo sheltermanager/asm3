@@ -210,7 +210,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + tableform.hotkey_display(accesskey) + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;
@@ -590,6 +590,7 @@ header = {
         // with toolbar menus, and positioning of burger button
         // See ticket 1398 for more info
         return;
+        /*
         if ($(window).width() <= 480) {
             $("#topline-q-div").insertAfter('#asm-topline-logo-div');
             $(".asm-menu-icon").hide();
@@ -605,6 +606,7 @@ header = {
             $("#topline-q-div").insertAfter($(".asm-topline-q-whitespace").first()); 
             $(".asm-menu-icon").show();   
         }
+        */
     },
 
     bind: function() {  
