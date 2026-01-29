@@ -310,6 +310,11 @@ const mobile_ui_animal = {
             }
         });
 
+        // Remove retired locations from the daily obs locations
+        $("#dailyobslocation option").each(function() {
+            if ($(this).attr("data-retired") == "1") { $(this).remove(); }
+        });
+
         $("#btn-commit-dailyobs").click(async function() {
             // Send the logs to the backend in the format:
             //    ANIMALID==FIELD1=VALUE1, FIELD2=VALUE2^^ANIMALID==FIELD1=VALUE1,
