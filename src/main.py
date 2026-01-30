@@ -1494,6 +1494,10 @@ class main(JSONEndpoint):
         # frontend doesn't keep receiving the same build number via configjs 
         # and get into an endless loop of reloads
         if o.post["b"] != "": self.reload_config()
+        # Make sure the database object is actually valid and working
+        if not dbo.check():
+            asm3.al.error("dbo.check failed, database connection is broken, logging out", "main.main", dbo)
+            self.redirect("logout")
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
