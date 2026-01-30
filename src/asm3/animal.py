@@ -3188,19 +3188,21 @@ def get_publish_history(dbo: Database, animalid: int) -> Results:
     """
     return dbo.query("SELECT PublishedTo, SentDate, Extra FROM animalpublished WHERE AnimalID = ? ORDER BY SentDate DESC", [animalid])
 
-def insert_publish_history(dbo: Database, animalid: int, service: str) -> None:
+def insert_publish_history(dbo: Database, username: str, animalid: int, service: str) -> None:
     """
     Marks an animal as published to a particular service now
     """
-    dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, service))
-    dbo.execute("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (?, ?, ?)", \
-        (animalid, service, dbo.now()))
+    delete_publish_history(dbo, username, animalid, service)
+    dbo.insert("animalpublished", { "AnimalID": animalid, "PublishedTo": service, "SentDate": dbo.now() }, 
+        generateID=False, setRecordVersion=False, setCreated=False)
+    asm3.audit.create(dbo, username, "animalpublished", 0, f"animal={animalid} ", service)
 
-def delete_publish_history(dbo: Database, animalid: int, service: str) -> None:
+def delete_publish_history(dbo: Database, username: str, animalid: int, service: str) -> None:
     """
     Forgets an animal has been published to a particular service.
     """
-    dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, service))
+    dbo.delete("animalpublished", f"AnimalID={animalid} AND PublishedTo='{service}'", username, writeDeletion=False)
+    asm3.audit.delete(dbo, username, "animalpublished", 0, f"animal={animalid} ", service)
 
 def get_shelterview_animals(dbo: Database, lf: LocationFilter = None) -> Results:
     """

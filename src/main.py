@@ -1974,7 +1974,7 @@ class animal(JSONEndpoint):
         return asm3.animal.get_random_name(o.dbo, o.post.integer("sex"))
 
     def post_shared(self, o):
-        asm3.animal.insert_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
+        asm3.animal.insert_publish_history(o.dbo, o.user, o.post.integer("id"), o.post["service"])
 
     def post_clone(self, o):
         self.check(asm3.users.CLONE_ANIMAL)
@@ -1982,7 +1982,7 @@ class animal(JSONEndpoint):
         return str(nid)
 
     def post_forgetpublish(self, o):
-        asm3.animal.delete_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
+        asm3.animal.delete_publish_history(o.dbo, o.user, o.post.integer("id"), o.post["service"])
 
     def post_waitinglist(self, o):
         self.check(asm3.users.ADD_WAITING_LIST)
