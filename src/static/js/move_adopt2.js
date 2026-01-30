@@ -4,11 +4,14 @@ $(function() {
 
     "use strict";
 
-    const move_adopt = {
+    const move_adopt2 = {
 
         render: function() {
             return [
                 '<div id="asm-content">',
+                '<div id="dialog-adopt-confirm" style="display: none" title="' + html.title(_("Adopt")) + '">',
+                '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Proceed?") + '</p>',
+                '</div>',
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Adopt an animal"), true),
                 html.warn('<span id="bonddata"></span>', "bonddisplay"),
@@ -19,7 +22,7 @@ $(function() {
                 html.info('<span id="awarntext"></span>', "animalwarn"),
                 html.info('<span id="warntext"></span>', "ownerwarn"),
                 tableform.fields_render([
-                    { post_field: "animal", label: _("Animal"), type: "animal" },
+                    { post_field: "animals", label: _("Animals"), type: "animalmulti", validation: "notblank" },
                     { post_field: "person", label: _("New Owner"), type: "person" },
                     { post_field: "homechecked", label: _("Mark this owner homechecked"), type: "check", rowid: "homecheckrow" },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", callout: _("A unique number to identify this movement"), rowid: "movementnumberrow" },
@@ -28,13 +31,18 @@ $(function() {
                     { post_field: "event", label: _(""), type: "select"},
                     { post_field: "trial", label: _("Trial adoption"), type: "check", rowid: "trialrow1" },
                     { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
-                    { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
+                    // { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" },
                     { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
                 html.content_footer(),
+                html.content_header(_("Insurance"), true),
+                tableform.fields_render([
+                    { type: "raw", rowid: "insurancerow", markup: '<table id="insurancetable"></table>', doublesize: true },
+                ], { full_width: false }),
+                html.content_footer(),
                 '<div id="payment"></div>',
-                html.content_header(_("Boarding Cost"), true),
+                html.content_header(_("Boarding Costs"), true),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
@@ -64,6 +72,12 @@ $(function() {
                         options: edit_header.template_list_options(controller.templatesemail) },
                 ], { full_width: false }),
                 html.content_footer(),
+                html.content_header(_("Extra Adoption Paperwork"), true),
+                tableform.fields_render([
+                    { post_field: "nonsigtemplateids", label: _("Paperwork templates"), type: "selectmulti",
+                        options: { displayfield: "NAME", valuefield: "ID", rows: controller.templates } },
+                ], { full_width: false }),
+                html.content_footer(),
                 tableform.buttons_render([
                    { id: "adopt", icon: "movement", text: _("Adopt") }
                 ], { render_box: true }),
@@ -72,13 +86,17 @@ $(function() {
         },
 
         bind: function() {
+
+            $("#animals").on("cleared", function() {
+                $("#animals").change();
+            });
             
             const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
                 // animal
-                if (!validate.notzero([ "animal" ])) {
+                if (!validate.notblank([ "animals" ])) {
                     header.show_error(_("Movements require an animal."));
                     return false;
                 }
@@ -132,12 +150,10 @@ $(function() {
 
             validate.indicator([ "animal", "person", "movementdate" ]);
 
-            let lastanimal, lastperson;
+            let lastperson;
 
             // Callback when animal is changed
-            $("#animal").on("change", async function(event, a) {
-                lastanimal = a;
-                console.log(a);
+            $("#animals").on("change", function(event, animals) {
                 // Hide things before we start
                 $("#bonddisplay").hide();
                 $("#costdisplay").closest(".ui-widget").hide();
@@ -147,72 +163,147 @@ $(function() {
                 $("#feeinfo").hide();
                 $("#animalwarn").hide();
                 $("#button-adopt").button("enable");
+                $("#costdata").html("");
 
-                // Disable the adoption button if the animal cannot be adopted because it isn't
-                // on the shelter or is held, a cruelty case or quarantined
-                if ((a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) ||
-                    a.ISHOLD == 1 || a.CRUELTYCASE == 1 || a.ISQUARANTINE == 1) {
-                    $("#button-adopt").button("disable");
-                }
+                let disable = false;
+                let fosters = [];
+                let atretailer = [];
+                let reservations = [];
+                let bondedanimals = [];
+                let noadoptionfee = [];
+                let warn = [];
+                let costs = [];
+                let totalcost = 0;
 
-                if (a.ACTIVEMOVEMENTTYPE == 2) {
-                    $("#fosterinfo").show();
-                }
+                $("#payment #paymentlines tr").remove();
+                $("#payment").payments("update_totals");
+                $("#insurancetable tr").remove();
 
-                if (a.ACTIVEMOVEMENTTYPE == 8) {
-                    $("#retailerinfo").show();
-                }
+                if ($("#animals").val()) {
+                    $.each($("#animals").animalchoosermulti("get_selected_rows"), function(i, a) {
+                        // Disable the adoption button if the animal cannot be adopted because it isn't
+                        // on the shelter or is held, a cruelty case or quarantined
+                        if ((a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) ||
+                            a.ISHOLD == 1 || a.CRUELTYCASE == 1 || a.ISQUARANTINE == 1) {
+                            disable = true;
+                        }
 
-                if (a.HASACTIVERESERVE == 1 && config.bool("CancelReservesOnAdoption")) {
-                    $("#reserveinfo").show();
-                }
+                        if (a.ACTIVEMOVEMENTTYPE == 2) {
+                            fosters.push(
+                                _("{0} {1} is currently fostered and will be automatically returned first.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME)
+                            );
+                        }
 
-                // Show bonded animal info
-                if (a.BONDEDANIMALID || a.BONDEDANIMAL2ID) {
-                    let bw = "";
-                    if (a.BONDEDANIMAL1ARCHIVED == 0 && a.BONDEDANIMAL1NAME) {
-                        bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
+                        if (a.ACTIVEMOVEMENTTYPE == 8) {
+                            atretailer.push(
+                                _("{0} {1} is currently at a retailer and will be automatically returned first.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME)
+                            );
+                        }
+
+                        if (a.HASACTIVERESERVE == 1 && config.bool("CancelReservesOnAdoption")) {
+                            reservations.push(
+                                _("{0} {1} has active reservations, they will be cancelled.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME)
+                            );
+                        }
+
+                        // Show bonded animal info
+                        if (a.BONDEDANIMALID && a.BONDEDANIMAL1ARCHIVED == 0) {
+                            if (!$("#animals").val().split(",").includes(a.BONDEDANIMALID)) {
+                                bondedanimals.push(
+                                    _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", a.BONDEDANIMAL1CODE).replace("{3}", a.BONDEDANIMAL1NAME)
+                                );
+                            }
+                        }
+
+                        if (a.BONDEDANIMAL2ID && a.BONDEDANIMAL2ARCHIVED == 0) {
+                            if (!$("#animals").val().split(",").includes(a.BONDEDANIMAL2ID)) {
+                                bondedanimals.push(
+                                    _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", a.BONDEDANIMAL2CODE).replace("{3}", a.BONDEDANIMAL2NAME)
+                                );
+                            }
+                        }
+
+                        // Grab cost information if option is on
+                        if (config.bool("CreateBoardingCostOnAdoption")) {
+                            let formdata = "mode=cost&id=" + a.ID;
+                            common.ajax_post("move_adopt2", formdata).then(function(response) {
+                                let [costamount, costdata] = response.split("||");
+                                costs.push(a.SHELTERCODE + " " + a.ANIMALNAME + " " + costdata);
+                                totalcost += parseInt(costamount);
+                                if (config.bool("CreateBoardingCostOnAdoption")) {
+                                    $("#costamount").val(costamount);
+                                    $("#costtype").val(config.str("BoardingCostType"));
+                                    $("#costdata").html(costs.join("<br>"));
+                                    $("#costcreate").prop("checked", true);
+                                    $("#costdisplay").closest(".ui-widget").show();
+                                }
+                            });
+                        }
+
+                        // If we have adoption fee fields, override the first donation
+                        // with the fee from the animal assuming it's nonzero
+                        if (!config.bool("DontShowAdoptionFee") && a.FEE) {
+                            $(".takepayment").first().click();
+                            let newrow = $("#paymentlines tr").last();
+                            newrow.find(".amount").currency("value", a.FEE);
+                            newrow.find(".unitprice").currency("value", a.FEE);
+                            newrow.find(".asm-textbox").last().val(a.SHELTERCODE + " " + a.ANIMALNAME);
+                            // $("#amount1").currency("value", a.FEE);
+                            // if ($("#vat1").is(":checked")) { 
+                                // Recalculate the tax
+                                $("#vat1").change();
+                            // }
+
+                            if (newrow.find(".asm-checkbox").is(":checked")) {
+                                newrow.find(".asm-checkbox").change();
+                            }
+                            // $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(a.FEE)));
+                            noadoptionfee.push(a);
+                            // $("#feeinfo").show();
+                        }
+
+                        let warnings = html.animal_movement_warnings(a, true, true);
+                        warn = warn.concat(warnings);
+                        if (warn.length > 0) {
+                            $("#awarntext").html(warn.join("<br>"));
+                            $("#animalwarn").show();
+                        }
+
+                        $("#insurancetable").html($("#insurancetable").html() + '<tr><td>' + a.SHELTERCODE + ' ' + a.ANIMALNAME + ' (' + a.SPECIESNAME + ')</td><td>' +
+                        tableform.fields_render([
+                            { post_field: "insurance" + a.ID, type: "text", rowclasses: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
+                        ]) + 
+                        '</td></tr>');
+                        $(".insurancerow button")
+                            .button({ icons: { primary: "ui-icon-cart" }, text: false })
+                            .click(async function() {
+                                $(this).button("disable");
+                                let response = await common.ajax_post("move_adopt2", "mode=insurance");
+                                // $(this).prev().id(response);
+                                $(this).prev().val(response);
+                                $(this).button("enable");
+                            }
+                        );
+                        $("#payment").payments("update_totals");
+                    });
+                    if (disable) { $("#button-adopt").button("disable"); }
+                    if (fosters.length) {
+                        $("#fosterinfo").html('<div class="ui-state-highlight ui-corner-all" style="padding: 5px;"><p><span class="ui-icon ui-icon-info"></span>' + fosters.join("<br>") + '</p></div>');
+                        $("#fosterinfo").show();
                     }
-                    if (a.BONDEDANIMAL2ARCHIVED == 0 && a.BONDEDANIMAL2NAME) {
-                        if (bw != "") { bw += ", "; }
-                        bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
+                    if (atretailer.length) {
+                        $("#retailerinfo").html('<div class="ui-state-highlight ui-corner-all" style="padding: 5px;"><p><span class="ui-icon ui-icon-info"></span>' + atretailer.join("<br>") + '</p></div>');
+                        $("#retailerinfo").show();
                     }
-                    if (bw != "") {
-                        $("#bonddata").html(_("This animal is bonded with {0}. Adoption movement records will be created for all bonded animals.").replace("{0}", bw));
+                    if (reservations.length) {
+                        $("#reserveinfo").html('<div class="ui-state-highlight ui-corner-all" style="padding: 5px;"><p><span class="ui-icon ui-icon-info"></span>' + reservations.join("<br>") + '</p></div>');
+                        $("#reserveinfo").show();
+                    }
+                    if (bondedanimals.length) {
+                        $("#bonddisplay").html('<div class="ui-state-highlight ui-corner-all" style="padding: 5px;"><p><span class="ui-icon ui-icon-alert"></span>' + bondedanimals.join("<br>") + '</p></div>');
                         $("#bonddisplay").show();
                     }
                 }
-
-                // Grab cost information if option is on
-                if (config.bool("CreateBoardingCostOnAdoption")) {
-                    let formdata = "mode=cost&id=" + a.ID;
-                    let response = await common.ajax_post("move_adopt", formdata);
-                    const [costamount, costdata] = response.split("||");
-                    $("#costcreate").prop("selected", true);
-                    $("#costdata").html(costdata);
-                    $("#costamount").val(format.currency_to_int(costamount));
-                    $("#costtype").val(config.str("BoardingCostType"));
-                    $("#costdisplay").closest(".ui-widget").show();
-                }
-
-                // If we have adoption fee fields, override the first donation
-                // with the fee from the animal assuming it's nonzero
-                if (!config.bool("DontShowAdoptionFee") && a.FEE) {
-                    $("#amount1").currency("value", a.FEE);
-                    if ($("#vat1").is(":checked")) { 
-                        // Recalculate the tax
-                        $("#vat1").change();
-                    }
-                    $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(a.FEE)));
-                    $("#feeinfo").show();
-                }
-
-                let warn = html.animal_movement_warnings(a, true);
-                if (warn.length > 0) {
-                    $("#awarntext").html(warn.join("<br>"));
-                    $("#animalwarn").show();
-                }
-
             });
 
             // Callback when person is changed
@@ -224,20 +315,38 @@ $(function() {
                 $("#ownerwarn").hide();
                 $("#checkoutcreate").closest(".ui-widget").hide();
                 $("#sigpaperwork").closest(".ui-widget").hide();
+                $("#nonsigtemplateids").closest(".ui-widget").hide();
 
                 // Show the checkout section if it's configured and there's an animal with 
                 // a non-zero adoption fee
-                if (config.str("AdoptionCheckoutProcessor") && config.str("AdoptionCheckoutProcessor") != "null" && lastanimal && lastanimal.FEE > 0) {
+                let animalselected = false;
+                let adoptionfeefound = false;
+                let reservedanimals = [];
+                if ($("#animals").val()) {
+                    animalselected = true;
+                    $.each($("#animals").animalchoosermulti("get_selected_rows"), function(i, v) {
+                        if (v.FEE > 0) {
+                            adoptionfeefound = true;
+                        }
+                        if (v.HASACTIVERESERVE) {
+                            reservedanimals.push([v.ID, v.SHELTERCODE, v.ANIMALNAME]);
+                        }
+                            
+                    });
+                }
+                if (config.str("AdoptionCheckoutProcessor") && config.str("AdoptionCheckoutProcessor") != "null" && animalselected && adoptionfeefound) {
                     $("#emailaddress").val(p.EMAILADDRESS);
                     $("#templateid").select("value", config.str("AdoptionCheckoutTemplateID"));
                     $("#feetypeid").select("value", config.str("AdoptionCheckoutFeeID"));
                     $("#checkoutcreate").closest(".ui-widget").show();
+                    $("#nonsigtemplateids").closest(".ui-widget").show();
                 }
                 // If it isnt, show the request signed contract section if that is configured
                 else if (config.bool("MoveAdoptGeneratePaperwork")) {
                     $("#sigemailaddress").val(p.EMAILADDRESS);
                     $("#sigtemplateid").select("value", config.str("AdoptionCheckoutTemplateID"));
                     $("#sigpaperwork").closest(".ui-widget").show();
+                    $("#nonsigtemplateids").closest(".ui-widget").show();
                 }
 
                 // Show tickbox if owner not homechecked
@@ -258,10 +367,12 @@ $(function() {
 
                 // Check whether the animal has reservations. 
                 // If it does, show a warning if this person does not have one on the animal.
-                if (config.bool("WarnNoReserve") && lastanimal && lastanimal.HASACTIVERESERVE == 1) {
-                    if (!common.array_in(String(lastanimal.ID), p.RESERVEDANIMALIDS.split(","))) {
-                        warn.push(_("This person does not have a reservation on this animal."));
-                    }
+                if (config.bool("WarnNoReserve") && animalselected && reservedanimals) {
+                    $.each(reservedanimals, function(i, v) {
+                        if (!common.array_in(String(v[0]), p.RESERVEDANIMALIDS.split(","))) {
+                            warn.push(_(v[1] + " " + v[2] + " is reserved by another person."));
+                        }
+                    });
                 }
 
                 if (warn.length > 0) {
@@ -274,6 +385,7 @@ $(function() {
             $("#costdisplay").closest(".ui-widget").hide();
             $("#checkoutcreate").closest(".ui-widget").hide();
             $("#sigpaperwork").closest(".ui-widget").hide();
+            $("#nonsigtemplateids").closest(".ui-widget").hide();
             $("#bonddisplay").hide();
             $("#animalwarn").hide();
             $("#ownerwarn").hide();
@@ -307,6 +419,9 @@ $(function() {
                 $("#payment").payments({ controller: controller });
             }
 
+            $("#payment #paymentlines tr").remove();
+            $("#payment").payments("update_totals");
+
             // If checkout is turned on, hide the payments section
             $("#checkoutcreate").change(function() {
                 $("#payment").toggle(!$("#checkoutcreate").prop("checked"));
@@ -317,7 +432,7 @@ $(function() {
                 .button({ icons: { primary: "ui-icon-cart" }, text: false })
                 .click(async function() {
                 $("#button-insurance").button("disable");
-                let response = await common.ajax_post("move_adopt", "mode=insurance");
+                let response = await common.ajax_post("move_adopt2", "mode=insurance");
                 $("#insurance").val(response);
                 $("#button-insurance").button("enable");
             });
@@ -341,7 +456,7 @@ $(function() {
                 $("#event").empty();
                 if ($("#eventlink").prop("checked")) {
                     $("#eventrow").show();
-                    move_adopt.populate_event_dates();
+                    move_adopt2.populate_event_dates();
                 }
                 else {
                     $("#eventrow").hide();
@@ -375,12 +490,13 @@ $(function() {
             $("#trial").click(trial_change).keyup(trial_change);
 
             $("#button-adopt").button().click(async function() {
+                await tableform.show_okcancel_dialog("#dialog-adopt-confirm", _("Adopt"));
                 if (!validation()) { return; }
                 $("#button-adopt").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
-                    let response = await common.ajax_post("move_adopt", formdata);
+                    let response = await common.ajax_post("move_adopt2", formdata);
                     $("#movementid").val(response);
                     header.hide_loading();
                     let u = "move_gendoc";
@@ -431,16 +547,16 @@ $(function() {
             common.widget_destroy("#person");
         },
 
-        name: "move_adopt",
+        name: "move_adopt2",
         animation: "newdata",
         autofocus: "#asm-content button:first",
         title: function() { return _("Adopt an animal"); },
         routes: {
-            "move_adopt": function() { common.module_loadandstart("move_adopt", "move_adopt"); }
+            "move_adopt2": function() { common.module_loadandstart("move_adopt2", "move_adopt2"); }
         }
 
     };
 
-    common.module_register(move_adopt);
+    common.module_register(move_adopt2);
 
 });

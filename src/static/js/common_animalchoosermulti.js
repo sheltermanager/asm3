@@ -13,6 +13,7 @@
  *
  * events: select (after selectbyids is complete)
  *         change (after user has clicked select button)
+ *         cleared (after user clicks the clear button)
  */
 $.fn.animalchoosermulti = asm_widget({
 
@@ -116,19 +117,20 @@ $.fn.animalchoosermulti = asm_widget({
         node.find(".animalchoosermulti-link-clear")
             .button({ icons: { primary: "ui-icon-trash" }, text: false })
             .click(function() {
-                self.clear.call(self, t);
+                self.clear.call(self, t, true);
             });
     },
 
     /**
      * Empties the widget
      */
-    clear: function(t) {
+    clear: function(t, fireclearedevent = false) {
         t.val("");
         let o = t.data("o");
         o.display.html("");
         o.results.find(":checked").prop("checked", false);
         this.update_status(t);
+        if (fireclearedevent) { t.trigger("cleared"); }
     },
 
     is_empty: function(t) {
@@ -156,6 +158,15 @@ $.fn.animalchoosermulti = asm_widget({
             }
         });
         return rv;
+    },
+
+    get_selected_rows: function(t) {
+        let rows = [];
+        self = this;
+        $.each(t.val().split(","), function(i, v) {
+            rows.push(self.get_row(t, v));
+        });
+        return rows;
     },
 
     /**
