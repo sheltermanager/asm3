@@ -968,7 +968,7 @@ $(function() {
                         { id: "lookingforno", post_field: "HideLookingFor", label: _("Remove the looking for functionality from the person menus and screens"), type: "check" }, 
                         { type: "nextcol" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("Animals") + '</p>' }, 
-                        { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", classes: "us" }, 
+                        { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", rowclasses: "us" }, 
                         { id: "disableconditions", post_field: "DisableConditions", label: _("Remove the animal conditions tab"), type: "check" }, 
                         { id: "disableentryhistory", post_field: "DisableEntryHistory", label: _("Remove the entry history section from animal records"), type: "check" }, 
                         { id: "entrytype", post_field: "DontShowEntryType", label: _("Remove the entry type field from animal entry details"), type: "check" }, 
