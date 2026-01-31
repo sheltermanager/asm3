@@ -808,6 +808,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         # Medical
         d = {
             "MEDICALNAME":              "TREATMENTNAME",
+            "MEDICALTYPE":              "MEDICALTYPENAME",
             "MEDICALCOMMENTS":          "COMMENTS",
             "MEDICALFREQUENCY":         "NAMEDFREQUENCY",
             "MEDICALNUMBEROFTREATMENTS": "NAMEDNUMBEROFTREATMENTS",

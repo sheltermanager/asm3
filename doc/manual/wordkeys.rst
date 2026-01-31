@@ -697,6 +697,8 @@ medical regimen.
 
 MedicalName
     The name of the medical treatment 
+MedicalType
+    The type of medical treatment from the fixed list of medical types
 MedicalFrequency
     How often the treatment is given (eg: Monthly) 
 MedicalNumberOfTreatments
