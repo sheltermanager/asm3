@@ -836,7 +836,8 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
     h = h[h.find("<body>")+6:h.find("</body>")+7] # Extract the body only and throw away styles
     if landscape: h = "<!-- pdf orientation landscape -->" + h
     styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
-        "td, th { padding-top: 1px; }" ]
+        "td, th { padding-top: 1px; }",
+        "th { text-align: center; }" ]
     return asm3.utils.html_to_pdf_pisa(dbo, h, styles=styles)
 
 def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:

@@ -1705,7 +1705,7 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str) -> bytes:
     os.unlink(outputfile.name)
     return pdfdata
 
-def html_to_pdf_pisa(dbo: Database, htmldata: str, styles = "") -> bytes:
+def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> bytes:
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     styles: Extra CSS styles to be inserted into the header style tag
