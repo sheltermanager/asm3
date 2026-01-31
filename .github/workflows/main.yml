@@ -59,7 +59,7 @@ jobs:
       - name: Install JS project
         run: npm ci
 
-      - name: Generate build assets resiliently
+      - name: Generate build assets
         run: |
           PREV_TAG=$(cat VERSION_PREVTAG)
           # If the previous version tag doesn't exist, comment out the git log line to prevent build failure
@@ -75,6 +75,4 @@ jobs:
         continue-on-error: ${{github.event.inputs.ignore_test_failures == 'true'}}
         run: make tests
 
-      - name: Note test outcome
-        run: |
-          echo "Unit tests outcome: ${{ steps.tests.outcome }}"
+
