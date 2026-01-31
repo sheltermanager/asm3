@@ -39,15 +39,22 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Install apt (.deb) Packages
+      - name: Install apt (.deb) packages
         run: |
-          sudo apt-get update 
+          sudo apt-get update
           sudo apt-get install -y \
-            make nodejs npm \
+            exuberant-ctags
+
+      - name: Install cacheable apt (.deb) packages
+        uses: awalsh128/cache-apt-pkgs-action@v1.6.0
+        with:
+          packages: make nodejs npm \
             python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-memcache \
-            flake8 exuberant-ctags flake8 imagemagick wkhtmltopdf \
+            flake8 flake8 imagemagick wkhtmltopdf \
             python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk \
-            python3-lxml python3-qrcode python3-reportlab 
+            python3-lxml python3-qrcode python3-reportlab
+          version: 1.0
+          execute_install_scripts: true
 
       - name: Install JS project
         run: npm ci
