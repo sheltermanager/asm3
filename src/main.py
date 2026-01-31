@@ -7517,11 +7517,7 @@ class report_export_pdf(ASMEndpoint):
         disp = asm3.configuration.pdf_inline(dbo) and "inline" or "attachment"
         self.content_type("application/pdf")
         self.content_disposition(disp, "report.pdf")
-        reporthtml = asm3.reports.execute(dbo, crid, o.user, p)
-        if post["landscape"] == "true":
-            reporthtml = "<!-- pdf orientation landscape -->" + reporthtml
-
-        return asm3.utils.html_to_pdf(dbo, reporthtml)
+        return asm3.reports.execute_pdf(dbo, crid, o.user, p, landscape=post["landscape"] == "true")
 
 class report_images(JSONEndpoint):
     url = "report_images"

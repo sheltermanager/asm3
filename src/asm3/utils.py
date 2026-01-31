@@ -1705,9 +1705,10 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str) -> bytes:
     os.unlink(outputfile.name)
     return pdfdata
 
-def html_to_pdf_pisa(dbo: Database, htmldata: str) -> bytes:
+def html_to_pdf_pisa(dbo: Database, htmldata: str, styles = "") -> bytes:
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
+    styles: Extra CSS styles to be inserted into the header style tag
     NOTE: wkhtmltopdf is far superior, but this is a pure Python solution and it does work.
     """
     # Allow orientation and papersize to be set
@@ -1725,13 +1726,14 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str) -> bytes:
     # Not supported in any meaningful way by pisa (not smart scaling)
     # zm = regex_one("pdf zoom (.+?) end", htmldata)
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
-    margins = "2cm"
+    margins = "1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)
     if mg != "":
         margins = mg
     header = "<!DOCTYPE html>\n<html>\n<head>"
     header += '<style>'
-    header += '@page {size: %s %s; margin: %s}' % ( papersize, orientation, margins )
+    header += '@page {size: %s %s; margin: %s}\n' % ( papersize, orientation, margins )
+    header += "\n".join(styles)
     header += '</style>' 
     header += "</head><body>"
     footer = "</body></html>"

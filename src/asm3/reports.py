@@ -825,6 +825,20 @@ def execute(dbo: Database, customreportid: int, username: str = "system", params
     r.toolbar = toolbar
     return r.Execute(customreportid, username, params)
 
+def execute_pdf(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None, landscape: bool = False) -> bytes:
+    """
+    Same as execute, but returns the report as a PDF.
+    Return value is the raw bytes of the PDF.
+    """
+    r = Report(dbo)
+    r.toolbar = False
+    h = r.Execute(customreportid, username, params)
+    h = h[h.find("<body>")+6:h.find("</body>")+7] # Extract the body only and throw away styles
+    if landscape: h = "<!-- pdf orientation landscape -->" + h
+    styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
+        "td, th { padding-top: 1px; }" ]
+    return asm3.utils.html_to_pdf_pisa(dbo, h, styles=styles)
+
 def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:
     """
     Executes a custom report query by its ID. 'params' is a tuple of 
