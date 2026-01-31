@@ -1239,6 +1239,7 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
                 u = url("dbfs_image", "title=%s" % qsp(l, "id"))
             elif mode == "media":
                 u = url("media_image", "mediaid=%s" % qsp(l, "id"))
+            u = u.replace(" ", "+") # Spaces in image URLs can break them with pisa/reportlab
             s = s.replace(l, u)
             s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
