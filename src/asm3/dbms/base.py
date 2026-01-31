@@ -132,6 +132,14 @@ class Database(object):
     type_integer = "INTEGER"
     type_float = "REAL"
 
+    def check(self) -> bool:
+        """ Runs a test query and returns True if the database connection is ok and a result was returned """
+        try:
+            self.query_int("SELECT 1")
+            return True
+        except:
+            return False
+
     def connect(self) -> Any:
         """ Virtual: Connect to the database and return the connection """
         raise NotImplementedError()
@@ -532,7 +540,7 @@ class Database(object):
         if params:
             for p in params:
                 sql = sql.replace("%s", self.sql_value(p), 1)
-        with open(DB_EXEC_LOG.replace("{database}", self.database), "a", encoding="utf-8") as f:
+        with open(DB_EXEC_LOG.replace("{database}", self.name()), "a", encoding="utf-8") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
     def _named_params(self, sql: str, params: Dict) -> Tuple[str, List]:

@@ -8,7 +8,7 @@
     var render_iframe = function() {
         var hostdiv = document.getElementById(div_id);
         hostdiv.innerHTML = '<iframe id="asm3-form-iframe" scrolling="no" style="width: 100%;border: 0;height: auto;"></iframe>';
-        document.getElementById("asm3-form-iframe").src = '{SERVICE_URL}?method=online_form_html&formid={TOKEN_FORMID}';
+        document.getElementById("asm3-form-iframe").src = '{SERVICE_URL}?method=online_form_html&account={ACCOUNT}&formid={FORMID}';
     };
 
     var onReady = function(event) {

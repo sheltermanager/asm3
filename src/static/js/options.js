@@ -815,6 +815,7 @@ $(function() {
                         { id: "animalcommentschangelog", post_field: "AnimalCommentsChangeLog", label: _("When I change the description or hidden comments on an animal, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AnimalCommentsChangeLogType" id="animalcommentschangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                         { id: "addresschangelog", post_field: "AddressChangeLog", label: _("When I change the address of a person, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AddressChangeLogType" id="addresschangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                         { id: "logemailbydefault", post_field: "LogEmailByDefault", label: _("When I send an email, record it in the log with this type"), type: "check", xmarkup: ' <select data="EmailLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "animaladoptablechangelog", post_field: "AnimalAdoptableChangeLog", label: _("When an animal's adoptable status changes, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AnimalAdoptableLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                     ]}, 
                     { id: "tab-lostandfound", title: _("Lost and Found"), fields: [
                         { id: "disablelostfound", post_field: "rc:DisableLostAndFound", label: _("Enable lost and found functionality"), type: "check", fullrow: true }, 
@@ -967,7 +968,7 @@ $(function() {
                         { id: "lookingforno", post_field: "HideLookingFor", label: _("Remove the looking for functionality from the person menus and screens"), type: "check" }, 
                         { type: "nextcol" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("Animals") + '</p>' }, 
-                        { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", classes: "us" }, 
+                        { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", rowclasses: "us" }, 
                         { id: "disableconditions", post_field: "DisableConditions", label: _("Remove the animal conditions tab"), type: "check" }, 
                         { id: "disableentryhistory", post_field: "DisableEntryHistory", label: _("Remove the entry history section from animal records"), type: "check" }, 
                         { id: "entrytype", post_field: "DontShowEntryType", label: _("Remove the entry type field from animal entry details"), type: "check" }, 

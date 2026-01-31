@@ -335,7 +335,6 @@ def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
     Returns a recordset of medicaltypes for an animal:
     MEDICALTYPE, DATEREQUIRED, LASTGIVEN
     """
-
     sql = "SELECT mt.MedicalTypeName, " \
         "(" \
             "SELECT DateRequired " \
@@ -343,15 +342,15 @@ def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
             "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
-            "ORDER BY DateRequired desc " \
-            "LIMIT 1" \
+            "ORDER BY DateRequired desc LIMIT 1" \
         ") AS DateRequired," \
         "(" \
             "SELECT DateGiven " \
             "FROM animalmedicaltreatment " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
-            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID ORDER BY DateGiven desc LIMIT 1" \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID AND DateGiven IS NOT NULL " \
+            "ORDER BY DateGiven desc LIMIT 1" \
         ") AS DateGiven " \
         "FROM lksmedicaltype mt"
     return dbo.query(sql, [animalid, dbo.today(), animalid ])

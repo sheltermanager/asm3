@@ -18,12 +18,14 @@ class DatabaseSQLite3(Database):
     def connect(self) -> Any:
         c = sqlite3.connect(self.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
         c.execute("PRAGMA journal_mode = WAL") # Use WAL journalling for performance
+        c.execute("PRAGMA cache_size = -64000") # 64MB cache size (default is 2MB)
         return c
 
     def name(self) -> str:
-        """ Returns the database name. Strip the path from SQLite databases """
+        """ Returns the database name. Strip the path and extension from SQLite databases """
         n = self.database
         if n.rfind("/") != -1: n = n[n.rfind("/")+1:]
+        if n.rfind(".") != -1: n = n[:n.rfind(".")]
         return n.replace(".", "")
     
     def sql_age(self, date1: str, date2: str) -> str:

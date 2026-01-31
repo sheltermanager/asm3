@@ -19,6 +19,8 @@ $(function() {
                 "NeuteredDate>='$ASK DATE {0}$' AND NeuteredDate<='$ASK DATE {1}$'"
                 .replace("{0}", _("Altered between"))
                 .replace("{1}", _("and")) ],
+            [ _("Ask the user for an animal"), "askanimal", "ID=$ASK ANIMAL$" ],
+            [ _("Ask the user for multiple shelter animals"), "askanimals", "ID IN ($ASK ANIMALS$)" ],
             [ _("Ask the user for a color"), "askcolor", "BaseColourName LIKE '%$ASK STRING Color$%'" ],
             [ _("Ask the user for an entry category"), "askentry", "EntryReasonID=$ASK ENTRYCATEGORY$" ],
             [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK ANIMALFLAG$%'" ],

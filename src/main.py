@@ -1494,6 +1494,10 @@ class main(JSONEndpoint):
         # frontend doesn't keep receiving the same build number via configjs 
         # and get into an endless loop of reloads
         if o.post["b"] != "": self.reload_config()
+        # Make sure the database object is actually valid and working
+        if not dbo.check():
+            asm3.al.error("dbo.check failed, database connection is broken, logging out", "main.main", dbo)
+            self.redirect("logout")
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
@@ -1974,7 +1978,7 @@ class animal(JSONEndpoint):
         return asm3.animal.get_random_name(o.dbo, o.post.integer("sex"))
 
     def post_shared(self, o):
-        asm3.animal.insert_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
+        asm3.animal.insert_publish_history(o.dbo, o.user, o.post.integer("id"), o.post["service"])
 
     def post_clone(self, o):
         self.check(asm3.users.CLONE_ANIMAL)
@@ -1982,7 +1986,7 @@ class animal(JSONEndpoint):
         return str(nid)
 
     def post_forgetpublish(self, o):
-        asm3.animal.delete_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
+        asm3.animal.delete_publish_history(o.dbo, o.user, o.post.integer("id"), o.post["service"])
 
     def post_waitinglist(self, o):
         self.check(asm3.users.ADD_WAITING_LIST)
@@ -5269,6 +5273,11 @@ class maint_ping(ASMEndpoint):
         keywords = ["pong"]
         frules = asm3.smcom.iptables_rules()
         if frules.find("REJECT") != -1 or frules.find("DROP") != -1: keywords.append("firewall")
+        try:
+            debianver = asm3.utils.read_text_file("/etc/debian_version")
+            keywords.append(f"osver={debianver}")
+        except:
+            pass
         return " ".join(keywords)
     
 class maint_reset_task(ASMEndpoint):
@@ -7700,11 +7709,11 @@ class shelterview(JSONEndpoint):
 
     def post_movelocation(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
-        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"))
+        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), returnactivemovement=o.post.integer("boarding")==0)
 
     def post_moveunit(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
-        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), o.post["unit"])
+        asm3.animal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), o.post["unit"], returnactivemovement=o.post.integer("boarding")==0)
 
     def post_movefoster(self, o):
         self.check(asm3.users.ADD_MOVEMENT)

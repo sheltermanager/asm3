@@ -33,7 +33,6 @@ const PHONE_RULES = [
 ];
 
 const AL_COUNTRIES = {
-    en:     "USA",
     en_AU:  "Australia",
     en_GB:  "United Kingdom",
     en_CA:  "Canada",
@@ -363,20 +362,23 @@ $(document).ready(function() {
                 $("input, select").each(function() {
                     if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
                         let v = $(this).val();
+                        // Calcluate a numeric version of this value for < > comparisons, since 
+                        // no-one cares about alpha/ascii comparison
+                        let nv = parseFloat(v);
                         // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
                         if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
                         // Radio buttons need reading differently to find the selected value
                         if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
                         if (cond == "=" && v != value) { andshow = false; }
                         else if (cond == "!" && v == value) { andshow = false; }
-                        else if (cond == ">" && v <= value) { andshow = false; }
-                        else if (cond == "<" && v >= value) { andshow = false; }
+                        else if (cond == ">" && nv <= value) { andshow = false; }
+                        else if (cond == "<" && nv >= value) { andshow = false; }
                         else if (cond == "*" && String(v).indexOf(value) == -1) { andshow = false; }
                         else if (cond == "^" && String(v).indexOf(value) != -1) { andshow = false; }
                         if (cond == "=" && v == value) { orshow = true; }
                         else if (cond == "!" && v != value) { orshow = true; }
-                        else if (cond == ">" && v >= value) { orshow = true; }
-                        else if (cond == "<" && v <= value) { orshow = true; }
+                        else if (cond == ">" && nv >= value) { orshow = true; }
+                        else if (cond == "<" && nv <= value) { orshow = true; }
                         else if (cond == "*" && String(v).indexOf(value) != -1) { orshow = true; }
                         else if (cond == "^" && String(v).indexOf(value) == -1) { orshow = true; }
                         return false; // stop iterating fields, we found it

@@ -370,6 +370,18 @@ const common = {
         return { name: M[0], version: M[1] };
     },
 
+    /**
+     * Returns a best estimate at the platform, returning one of:
+     * windows, linux, macos, unknown
+     */
+    platform_name: function() {
+        const platform = navigator.platform.toLowerCase();
+        if (platform.includes('mac')) { return "macos"; }
+        else if (platform.includes('win')) { return "windows"; }
+        else if (platform.includes('linux')) { return "linux"; }
+        else { return 'unknown'; }
+    },
+
     has_permission: function(flag) {
         if (asm.superuser) { return true; }
         if (asm.securitymap.indexOf(flag + " ") != -1) { return true; }

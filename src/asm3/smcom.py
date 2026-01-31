@@ -81,6 +81,11 @@ def get_database_info(alias: str) -> Database:
     dbo.username = dbo.database
     dbo.password = dbo.database
 
+    if "backend" in a and a["backend"] == "sqlite":
+        dbo = asm3.db.get_dbo("SQLITE")
+        dbo.database = "/root/db/%s.sqlite" % a["user"]
+        dbo.alias = alias
+
     # dbo.alias is used in particular when sending emails to make a friendlier
     # bounce address. If the account has one, set it here. We used to just set
     # this on login above, but if they logged in with their account number the 
