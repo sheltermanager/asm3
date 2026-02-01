@@ -714,7 +714,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, imagedata)
 
     elif method == "document_repository":
-        return set_cached_response(cache_key, account, asm3.media.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, 
+        return set_cached_response(cache_key, account, asm3.utils.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, 
             asm3.dbfs.get_string_id(dbo, mediaid))
     
     elif method == "extra_image":

@@ -934,7 +934,7 @@ class media(ASMEndpoint):
         for drid in post.integer_list("docrepo"):
             content = asm3.dbfs.get_string_id(dbo, drid)
             filename = asm3.dbfs.get_name_for_id(dbo, drid)
-            mimetype = asm3.media.mime_type(filename)
+            mimetype = asm3.utils.mime_type(filename)
             attachments.append(( filename, mimetype, content))
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
@@ -973,7 +973,7 @@ class media(ASMEndpoint):
         for drid in post.integer_list("docrepo"):
             content = asm3.dbfs.get_string_id(dbo, drid)
             filename = asm3.dbfs.get_name_for_id(dbo, drid)
-            mimetype = asm3.media.mime_type(filename)
+            mimetype = asm3.utils.mime_type(filename)
             attachments.append(( filename, mimetype, content))
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
@@ -3815,7 +3815,7 @@ class document_repository(JSONEndpoint):
         for dbfsid in post.integer_list("ids"):
             name = asm3.dbfs.get_name_for_id(dbo, dbfsid)
             content = asm3.dbfs.get_string_id(dbo, dbfsid)
-            attachments.append(( name, asm3.media.mime_type(name), content ))
+            attachments.append(( name, asm3.utils.mime_type(name), content ))
         asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], post["body"])
@@ -3831,7 +3831,7 @@ class document_repository_file(ASMEndpoint):
     def content(self, o):
         if o.post.integer("dbfsid") != 0:
             name = asm3.dbfs.get_name_for_id(o.dbo, o.post.integer("dbfsid"))
-            mimetype = asm3.media.mime_type(name)
+            mimetype = asm3.utils.mime_type(name)
             disp = "attachment"
             if mimetype == "application/pdf": disp = "inline" # Try to show PDFs in place
             self.content_type(mimetype)

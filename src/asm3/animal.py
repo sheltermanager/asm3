@@ -4413,7 +4413,7 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
             "DBFSID":               0,
             "MediaSize":            0,
             "MediaName":            medianame,
-            "MediaMimeType":        asm3.media.mime_type(medianame),
+            "MediaMimeType":        asm3.utils.mime_type(medianame),
             "MediaType":            me.mediatype,
             "MediaNotes":           me.medianotes,
             "WebsitePhoto":         me.websitephoto,
