@@ -1661,7 +1661,9 @@ def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     """
-    if HTML_TO_PDF == "pisa" or htmldata.find("pdf renderer pisa") != -1:
+    if htmldata.find("pdf renderer cmd") != -1 and HTML_TO_PDF != "pisa":
+        return html_to_pdf_cmd(dbo, htmldata)
+    elif HTML_TO_PDF == "pisa" or htmldata.find("pdf renderer pisa") != -1:
         return html_to_pdf_pisa(dbo, htmldata)
     else:
         return html_to_pdf_cmd(dbo, htmldata)
