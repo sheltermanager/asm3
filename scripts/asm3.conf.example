@@ -102,7 +102,7 @@ scale_pdf_cmd = convert -density 120 -quality 60 %(input)s -compress Jpeg %(outp
 
 # Shell command to convert HTML to PDF
 # html_to_pdf = wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s
-html_to_pdf = pisa
+# html_to_pdf = pisa
 
 # Electronic signature activation (uncomment to enable)
 # electronic_signatures = touch

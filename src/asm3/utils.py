@@ -587,6 +587,14 @@ def file_contains(f: str, v: str) -> bool:
     """
     return 0 == os.system("grep %s %s" % (v, f))
 
+def firstword(s: str) -> str:
+    """
+    Returns the first word in s
+    """
+    if s is None or len(s) == 0: return ""
+    if s.find(" ") == -1: return s
+    return s[0:s.find(" ")+1]
+
 def iif(c: bool, t: Any, f: Any) -> Any:
     """
     Evaluates c and returns t for True or f for False.
@@ -1661,9 +1669,13 @@ def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     """
-    if htmldata.find("pdf renderer cmd") != -1 and HTML_TO_PDF != "pisa":
-        return html_to_pdf_cmd(dbo, htmldata)
-    elif HTML_TO_PDF == "pisa" or htmldata.find("pdf renderer pisa") != -1:
+    mode = asm3.configuration.pdf_converter(dbo) # start with mode from config
+    if mode == "": mode = "cmd"
+    if htmldata.find("pdf renderer cmd") != -1: mode = "cmd" # renderer directives override config
+    elif htmldata.find("pdf renderer pisa") != -1: mode = "pisa"
+    # If we wanted cmd mode, but there is no external cmd, switch back to internal/pisa
+    if mode == "cmd" and HTML_TO_PDF == "pisa": mode = "pisa"
+    if mode == "pisa":
         return html_to_pdf_pisa(dbo, htmldata)
     else:
         return html_to_pdf_cmd(dbo, htmldata)

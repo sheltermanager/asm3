@@ -377,6 +377,7 @@ DEFAULTS = {
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
     "PicturesInBooksClinic": "No",
+    "PDFConverter": "pisa",
     "PDFInline": "Yes",
     "PDFZoom": "100",
     "ProductImageScale": "200x200",
@@ -1525,6 +1526,9 @@ def petrescue_vic_picnumber(dbo: Database) -> str:
 
 def petrescue_use_coordinator(dbo: Database) -> bool:
     return cint(dbo, "PetRescueUseCoordinator")
+
+def pdf_converter(dbo: Database) -> int:
+    return cstring(dbo, "PDFConverter", DEFAULTS["PDFConverter"])
 
 def pdf_inline(dbo: Database) -> bool:
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")

@@ -676,6 +676,9 @@ $(function() {
                         { id: "includeincompletemedical", post_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check", fullrow: true }, 
                         { id: "notifycoordicatorondocsign", post_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check", fullrow: true }, 
                         { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", fullrow: true, xmarkup: ' <select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "pdfconverter", post_field: "PDFConverter", label: _("PDF conversion tool"), prelabel: "hcb", type: "select", 
+                            options: '<option value="pisa">' + _("Internal") + '</option>' +
+                                (controller.htmltopdfcmd != "pisa" && controller.htmltopdfcmd != "" ? '<option value="cmd">' + controller.htmltopdfcmd + '</option>' : "") },
                         { id: "pdfzoom", post_field: "PDFZoom", label: _("Default zoom level when converting documents to PDF"), prelabel: "hcb", type: "number", xmarkup: "%" }
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
