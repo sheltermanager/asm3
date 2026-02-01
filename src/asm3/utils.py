@@ -1765,11 +1765,15 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> by
     if mg != "":
         margins = mg
     header = "<!DOCTYPE html>\n<html>\n<head>"
-    header += '<style>'
+    header += '<style>\n'
     header += '@page {size: %s %s; margin: %s}\n' % ( papersize, orientation, margins )
     header += "\n".join(styles)
-    header += '</style>' 
-    header += "</head><body>"
+    header += '</style>\n' 
+    header += "</head>\n<body>\n"
+    # This is necessary to enable RTL on Hebrew characters, it's possible a custom font
+    # needs to be declared as well, like we do in reports/execute_pdf
+    if dbo.locale == "he": 
+        header += '<pdf:language name="hebrew" />\n'
     footer = "</body></html>"
     htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
     htmldata = htmldata.replace("font-size: x-small", "font-size: 8pt")

@@ -836,10 +836,18 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
     h = h[h.find("<body>")+6:h.find("</body>")+7] # Extract the body only
     h = asm3.utils.strip_style_tags(h) # Throw away styles
     h = asm3.utils.strip_script_tags(h) # Throw away scripts
-    if landscape: h = "<!-- pdf orientation landscape -->" + h
+    if landscape: h = "<!-- pdf orientation landscape -->\n" + h
     styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
         "td, th { padding-top: 1px; }",
-        "th { text-align: center; }" ]
+        "th { text-align: center; }",
+        "@font-face { font-family: DejaVu; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf); }",
+        "@font-face { font-family: DejaVu; font-weight: bold; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf); }",
+        "@font-face { font-family: DejaVu; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf); }",
+        "@font-face { font-family: DejaVu; font-weight: bold; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf); }",
+        "html { font-family: DejaVu; }"
+    ]
+    if dbo.locale == "he": 
+        h = '<pdf:language name="hebrew" />\n' + h
     return asm3.utils.html_to_pdf_pisa(dbo, h, styles=styles)
 
 def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:
