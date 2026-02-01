@@ -833,7 +833,9 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
     r = Report(dbo)
     r.toolbar = False
     h = r.Execute(customreportid, username, params)
-    h = h[h.find("<body>")+6:h.find("</body>")+7] # Extract the body only and throw away styles
+    h = h[h.find("<body>")+6:h.find("</body>")+7] # Extract the body only
+    h = asm3.utils.strip_style_tags(h) # Throw away styles
+    h = asm3.utils.strip_script_tags(h) # Throw away scripts
     if landscape: h = "<!-- pdf orientation landscape -->" + h
     styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
         "td, th { padding-top: 1px; }",
