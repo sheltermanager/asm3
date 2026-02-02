@@ -705,7 +705,7 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
     cost_create = post.boolean("costcreate")
     if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
-            "animalid"          : post["animal"],
+            "animal"            : post["animal"],
             "type"              : cost_type,
             "costdate"          : post["movementdate"],
             "costpaid"          : post["movementdate"],
@@ -803,7 +803,7 @@ def insert_reclaim_from_form(dbo: Database, username: str, post: PostedData) -> 
     cost_create = post.boolean("costcreate")
     if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
-            "animalid"          : post["animal"],
+            "animal"            : post["animal"],
             "type"              : cost_type,
             "costdate"          : post["movementdate"],
             "costpaid"          : post["movementdate"],
