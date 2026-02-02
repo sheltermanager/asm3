@@ -137,7 +137,6 @@ $(function() {
             // Callback when animal is changed
             $("#animal").on("change", async function(event, a) {
                 lastanimal = a;
-                console.log(a);
                 // Hide things before we start
                 $("#bonddisplay").hide();
                 $("#costdisplay").closest(".ui-widget").hide();

@@ -5607,7 +5607,6 @@ class move_adopt2(JSONEndpoint):
             raise asm3.utils.ASMValidationError("No template given for paperwork")
         if paperwork and post.integer("sigemailtemplateid") == 0:
             raise asm3.utils.ASMValidationError("No email template given for request signature email")
-        # movementids = []
         for animalid in post["animals"].split(","):
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
