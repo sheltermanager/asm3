@@ -377,7 +377,7 @@ DEFAULTS = {
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
     "PicturesInBooksClinic": "No",
-    "PDFConverter": "pisa",
+    "PDFConverter": "cmd",
     "PDFInline": "Yes",
     "PDFZoom": "100",
     "ProductImageScale": "200x200",
