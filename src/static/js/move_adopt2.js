@@ -44,7 +44,7 @@ $(function() {
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Costs"), true),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
-                '<input id="costamount" data="costamount" type="hidden" />',
+                // '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
                 tableform.fields_render([
                     { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
