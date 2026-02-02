@@ -1679,12 +1679,16 @@ def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     """
     mode = asm3.configuration.pdf_converter(dbo) # start with mode from config
     if mode == "": mode = "cmd"
+    if mode == "internal": mode = "weasyprint"
     if htmldata.find("pdf renderer cmd") != -1: mode = "cmd" # renderer directives override config
     elif htmldata.find("pdf renderer pisa") != -1: mode = "pisa"
-    # If we wanted cmd mode, but there is no external cmd, switch back to internal/pisa
-    if mode == "cmd" and HTML_TO_PDF == "pisa": mode = "pisa"
+    elif htmldata.find("pdf renderer weasyprint") != -1: mode = "weasyprint"
+    # If we wanted cmd mode, but there is no valid external cmd, use weasyprint
+    if mode == "cmd" and HTML_TO_PDF.find("input") == -1: mode = "weasyprint"
     if mode == "pisa":
         return html_to_pdf_pisa(dbo, htmldata)
+    elif mode == "weasyprint":
+        return html_to_pdf_weasyprint(dbo, htmldata)
     else:
         return html_to_pdf_cmd(dbo, htmldata)
 
@@ -1763,7 +1767,6 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> by
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     styles: Extra CSS styles to be inserted into the header style tag
-    NOTE: wkhtmltopdf is far superior, but this is a pure Python solution and it does work.
     """
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
@@ -1817,10 +1820,69 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> by
         pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
         if pdf.err:
             raise IOError(pdf.err)
+        return out.getvalue()
     except Exception as err:
         asm3.al.error(str(err), "html_to_pdf_pisa", dbo)
         raise ASMError(str(err))
-    return out.getvalue()
+
+def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = []) -> bytes:
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    styles: Extra CSS styles to be inserted into the header style tag
+    """
+    # Allow orientation and papersize to be set
+    # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
+    orientation = "portrait"
+    # Sort out page size arguments
+    papersize = "A4"
+    if htmldata.find("pdf orientation landscape") != -1: orientation = "landscape"
+    if htmldata.find("pdf orientation portrait") != -1: orientation = "portrait"
+    if htmldata.find("pdf papersize a5") != -1: papersize = "A5"
+    if htmldata.find("pdf papersize a4") != -1: papersize = "A4"
+    if htmldata.find("pdf papersize a3") != -1: papersize = "A3"
+    if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
+    # Zoom - eg: <!-- pdf zoom 0.5 end -->
+    # Not supported in any meaningful way by pisa (not smart scaling)
+    # zm = regex_one("pdf zoom (.+?) end", htmldata)
+    # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
+    margins = "1cm"
+    mg = regex_one("pdf margins (.+?) end", htmldata)
+    if mg != "":
+        margins = mg
+    header = "<!DOCTYPE html>\n<html>\n<head>"
+    header += '<style>\n'
+    header += '@page {size: %s %s; margin: %s}\n' % ( papersize, orientation, margins )
+    header += "\n".join(styles)
+    header += '</style>\n' 
+    header += "</head>\n<body>\n"
+    footer = "</body></html>"
+    htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
+    htmldata = htmldata.replace("font-size: x-small", "font-size: 8pt")
+    htmldata = htmldata.replace("font-size: small", "font-size: 10pt")
+    htmldata = htmldata.replace("font-size: medium", "font-size: 14pt")
+    htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
+    htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
+    htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
+    # Remove any img tags with signature:placeholder/user as the src
+    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
+    # Remove anything that could be a security risk
+    htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
+    htmldata = re.sub(r'<link.*>', '', htmldata, flags=re.I)
+    htmldata = strip_script_tags(htmldata)
+    # Switch relative document uris to absolute service based calls
+    htmldata = fix_relative_document_uris(dbo, htmldata)
+    # Do the conversion
+    from weasyprint import HTML
+    try:
+        out = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+        out.close()
+        HTML(string=header + htmldata + footer).write_pdf(out.name, presentational_hints=True)
+        data = read_binary_file(out.name)
+        os.unlink(out.name)
+        return data
+    except Exception as err:
+        asm3.al.error(str(err), "html_to_pdf_weasyprint", dbo)
+        raise ASMError(str(err))
 
 def generate_image_pdf(locale: str, imagedata: bytes) -> bytes:
     """
