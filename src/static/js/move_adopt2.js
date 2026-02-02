@@ -173,7 +173,7 @@ $(function() {
                 let noadoptionfee = [];
                 let warn = [];
                 let costs = [];
-                let totalcost = 0;
+                let hiddencostinputs = [];
 
                 $("#payment #paymentlines tr").remove();
                 $("#payment").payments("update_totals");
@@ -229,11 +229,13 @@ $(function() {
                             common.ajax_post("move_adopt2", formdata).then(function(response) {
                                 let [costamount, costdata] = response.split("||");
                                 costs.push(a.SHELTERCODE + " " + a.ANIMALNAME + " " + costdata);
-                                totalcost += parseInt(costamount);
+                                // hiddencostinputs.push('<input id="animalcost' + a.ID + '" type=hidden value="' + costamount + '">');
+                                // totalcost += parseInt(costamount);
                                 if (config.bool("CreateBoardingCostOnAdoption")) {
                                     $("#costamount").val(costamount);
                                     $("#costtype").val(config.str("BoardingCostType"));
                                     $("#costdata").html(costs.join("<br>"));
+                                    $("#costdisplay").after('<input id="animalcost' + a.ID + '" type=hidden value="' + costamount + '">');
                                     $("#costcreate").prop("checked", true);
                                     $("#costdisplay").closest(".ui-widget").show();
                                 }

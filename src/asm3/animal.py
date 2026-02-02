@@ -4960,7 +4960,7 @@ def insert_cost_from_form(dbo: Database, username: str, post: PostedData) -> int
     if post.date("costdate") is None:
         raise asm3.utils.ASMValidationError(_("Cost date must be a valid date", l))
     ncostid = dbo.insert("animalcost", {
-        "AnimalID":         post.integer("animalid"), ## Need to make sure that this change doesn't affect other areas of the system that expect the key to be "animal"
+        "Animal":           post.integer("animalid"), ## Need to make sure that this change doesn't affect other areas of the system that expect the key to be "animal"
         "CostTypeID":       post.integer("type"),
         "CostDate":         post.date("costdate"),
         "CostPaidDate":     post.date("costpaid"),
