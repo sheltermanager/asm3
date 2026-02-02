@@ -1805,9 +1805,13 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> by
     # Do the conversion
     from xhtml2pdf import pisa
     out = bytesio()
-    pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
-    if pdf.err:
-        raise IOError(pdf.err)
+    try:
+        pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
+        if pdf.err:
+            raise IOError(pdf.err)
+    except Exception as err:
+        asm3.al.error(str(err), "html_to_pdf_pisa", dbo)
+        raise ASMError(str(err))
     return out.getvalue()
 
 def generate_image_pdf(locale: str, imagedata: bytes) -> bytes:

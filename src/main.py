@@ -6316,7 +6316,7 @@ class options(JSONEndpoint):
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "haspaypal": PAYPAL_VALIDATE_IPN_URL != "",
             "hassquare": SQUARE_PAYMENT_ENVIRONMENT != "",
-            "htmltopdfcmd": asm3.utils.firstword(HTML_TO_PDF),
+            "htmltopdfcmd": asm3.utils.iif(HTML_TO_PDF.find("wkhtmltopdf") != -1, "wkhtmltopdf", asm3.utils.firstword(HTML_TO_PDF)),
             "incidentfindcolumns": asm3.html.json_incidentfindcolumns(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "locales": get_locales(),
