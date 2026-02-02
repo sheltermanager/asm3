@@ -1266,6 +1266,7 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
     p = ImgSrcHTMLParser()
     p.feed(s)
     for l in p.links:
+        # relative image? links
         if l.startswith("image?"):
             mode = qsp(l, "mode")
             u = ""
@@ -1283,9 +1284,16 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
             s = s.replace(l, u)
             s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
+        # invalid links we can't do anything with
         elif not l.startswith("http") and not l.startswith("data:") and not l.startswith("//"):
             s = s.replace(l, "") # cannot use this type of url
             asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
+        # absolute links that contain spaces
+        elif l.startswith("http") and l.find(" ") != -1:
+            u = l.replace(" ", "+") # Spaces in image URLs can break pisa/reportlab
+            s = s.replace(l, u)
+            s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
+            asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
     return s
 
 def fix_tinymce_uris(s: str) -> str:
