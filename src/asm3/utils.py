@@ -1280,7 +1280,7 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
                 u = url("dbfs_image", "title=%s" % qsp(l, "id"))
             elif mode == "media":
                 u = url("media_image", "mediaid=%s" % qsp(l, "id"))
-            u = u.replace(" ", "+") # Spaces in image URLs can break them with pisa/reportlab
+            u = u.replace(" ", "+") # Spaces in image URLs can break some pdf converters
             s = s.replace(l, u)
             s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
@@ -1290,7 +1290,7 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
             asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
         # absolute links that contain spaces
         elif l.startswith("http") and l.find(" ") != -1:
-            u = l.replace(" ", "+") # Spaces in image URLs can break pisa/reportlab
+            u = l.replace(" ", "+") # Spaces in image URLs can break some pdf converters
             s = s.replace(l, u)
             s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
@@ -1681,12 +1681,12 @@ def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     if mode == "": mode = "cmd"
     if mode == "internal": mode = "weasyprint"
     if htmldata.find("pdf renderer cmd") != -1: mode = "cmd" # renderer directives override config
-    elif htmldata.find("pdf renderer pisa") != -1: mode = "pisa"
+    elif htmldata.find("pdf renderer xhtml2pdf") != -1: mode = "xhtml2pdf"
     elif htmldata.find("pdf renderer weasyprint") != -1: mode = "weasyprint"
     # If we wanted cmd mode, but there is no valid external cmd, use weasyprint
     if mode == "cmd" and HTML_TO_PDF.find("input") == -1: mode = "weasyprint"
-    if mode == "pisa":
-        return html_to_pdf_pisa(dbo, htmldata)
+    if mode == "xhtml2pdf":
+        return html_to_pdf_xhtml2pdf(dbo, htmldata)
     elif mode == "weasyprint":
         return html_to_pdf_weasyprint(dbo, htmldata)
     else:
@@ -1719,6 +1719,11 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str) -> bytes:
         zoom = "<style>\nbody { zoom: %s; }\n</style>\n" % zm
     else:
         zoom = "<style>\nbody { zoom: %s%%; }\n</style>\n" % asm3.configuration.pdf_zoom(dbo) # use the default from config
+    # Scale - eg: <!-- pdf scale 0.5 end -->
+    sc = regex_one("pdf scale (.+?) end", htmldata)
+    scale = ""
+    if sc != "":
+        scale = "<style>\nbody { transform: scale(%s, %s); }\n</style>\n" % sc
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
     margins = "--margin-top 1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)
@@ -1728,6 +1733,7 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str) -> bytes:
     header = "<!DOCTYPE HTML>\n<html>\n<head>"
     header += '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
     header += zoom
+    header += scale
     header += "</head><body>"
     footer = "</body></html>"
     htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
@@ -1763,7 +1769,7 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str) -> bytes:
     os.unlink(outputfile.name)
     return pdfdata
 
-def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> bytes:
+def html_to_pdf_xhtml2pdf(dbo: Database, htmldata: str, styles: List[str] = []) -> bytes:
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
     styles: Extra CSS styles to be inserted into the header style tag
@@ -1780,8 +1786,12 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> by
     if htmldata.find("pdf papersize a3") != -1: papersize = "A3"
     if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
     # Zoom - eg: <!-- pdf zoom 0.5 end -->
-    # Not supported in any meaningful way by pisa (not smart scaling)
+    # Not supported in any meaningful way by xhtml2pdf (not smart scaling)
     # zm = regex_one("pdf zoom (.+?) end", htmldata)
+    # Scale - eg: <!-- pdf scale 0.5 end -->
+    # Not supported in any meaningful way by xhtml2pdf (not smart scaling)
+    #if scale != "":
+    #    styles.append("body { transform: scale(%s, %s); }\n" % (scale, scale))
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
     margins = "1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)
@@ -1822,7 +1832,7 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str, styles: List[str] = []) -> by
             raise IOError(pdf.err)
         return out.getvalue()
     except Exception as err:
-        asm3.al.error(str(err), "html_to_pdf_pisa", dbo)
+        asm3.al.error(str(err), "html_to_pdf_xhtml2pdf", dbo)
         raise ASMError(str(err))
 
 def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = []) -> bytes:
@@ -1841,9 +1851,21 @@ def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = [])
     if htmldata.find("pdf papersize a4") != -1: papersize = "A4"
     if htmldata.find("pdf papersize a3") != -1: papersize = "A3"
     if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
-    # Zoom - eg: <!-- pdf zoom 0.5 end -->
-    # Not supported in any meaningful way by pisa (not smart scaling)
-    # zm = regex_one("pdf zoom (.+?) end", htmldata)
+    # Eg: <!-- pdf papersize exact 52mmx86mm end -->
+    ps = regex_one("pdf papersize exact (.+?) end", htmldata) 
+    if ps != "":
+        w, h = ps.split("x")
+        papersize = f"{w} {h}"
+        orientation = "" # orientation makes no sense with exact paper size
+    # Zoom - eg: <!-- pdf zoom 130% end -->
+    # NOTE: zoom CSS is not supported by weasyprint
+    #zm = regex_one("pdf zoom (.+?) end", htmldata)
+    #if zm != "":
+    #    styles.append("body { zoom: %s; }\n" % (zm))
+    # Scale - eg: <!-- pdf scale 0.5 end -->
+    scale = regex_one("pdf scale (.+?) end", htmldata)
+    if scale != "":
+        styles.append("body { transform: scale(%s, %s); }\n" % (scale, scale))
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
     margins = "1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)

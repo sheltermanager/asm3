@@ -100,9 +100,8 @@ resize_images_spec = 1024x1024
 scale_pdf_during_attach = false
 scale_pdf_cmd = convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s
 
-# Shell command to convert HTML to PDF
+# Shell command to convert HTML to PDF (default use weasyprint)
 # html_to_pdf = wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s
-# html_to_pdf = pisa
 
 # Electronic signature activation (uncomment to enable)
 # electronic_signatures = touch

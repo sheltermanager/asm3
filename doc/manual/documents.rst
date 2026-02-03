@@ -74,17 +74,15 @@ Use the margins directive to set the PDF margins::
 
 Margins are in the order top, bottom, left then right.
 
-The PDF engine will scale the document to fit the page horizontally based on the
-widest element in it. Use the zoom directive to override this behaviour and
-specify a scaling amount (this sets a zoom CSS value on the body element)::
+Use the zoom directive to set the scaling amount to use when converting
+the document (this sets a zoom CSS value on the body element)::
 
     <div><!-- pdf zoom 130% end --></div>
 
-Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
-engine used by the Chrome and Safari web browsers). An alternative, simpler PDF
-engine can also be used by specifying::
+Similar to zoom, can be used by pdf engines that do not support zoom to
+scale the page to a factor of 1. Eg: To render at half the normal size::
 
-   <div><!-- pdf renderer pisa --></div>
+    <div><!-- pdf scale 0.5 end --></div>
 
 Email Tokens in Document Templates
 ----------------------------------

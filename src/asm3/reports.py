@@ -844,10 +844,8 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
         "@font-face { font-family: DejaVu; font-weight: bold; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf); }",
         "@font-face { font-family: DejaVu; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf); }",
         "@font-face { font-family: DejaVu; font-weight: bold; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf); }",
-        "html { font-family: DejaVu; }"
+        "html { font-family: DejaVu; font-size: 80%; }"
     ]
-    #if dbo.locale == "he": 
-    #    h = '<pdf:language name="hebrew" />\n' + h
     return asm3.utils.html_to_pdf_weasyprint(dbo, h, styles=styles)
 
 def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:
