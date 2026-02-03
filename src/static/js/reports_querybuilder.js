@@ -78,13 +78,14 @@ $(function() {
                 .replace("{1}", _("and")) ],
             [ _("Licensed"), "activelicense", "EXISTS(SELECT ID FROM ownerlicense WHERE AnimalID=v_animal.ID " +
                 "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
+            [ _("Microchipped"), "microchip", "Identichipped=1" ],
             [ _("No license"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicense WHERE AnimalID=v_animal.ID " +
                 "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
             [ _("Non-shelter"), "nonshelter", "NonShelterAnimal=1" ],
             [ _("Not adoptable"), "notadoptable", "IsNotAvailableForAdoption=1" ],
             [ _("Not altered"), "notaltered", "Neutered=0" ],
             [ _("Not deceased"), "notdeceased", "DeceasedDate Is Null" ],
-            [ _("Not microchipped"), "notmicrochip", "IdentichipNumber=0" ],
+            [ _("Not microchipped"), "notmicrochip", "Identichipped=0" ],
             [ _("Not non-shelter"), "notnonshelter", "NonShelterAnimal=0" ],
             [ _("No tattoo"), "nottattoo", "Tattoo=0" ],
             [ _("Reclaimed"), "reclaimed", "ActiveMovementDate Is Not Null AND ActiveMovementType=5" ],
