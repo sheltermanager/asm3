@@ -1894,14 +1894,9 @@ def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = [])
     # Switch relative document uris to absolute service based calls
     htmldata = fix_relative_document_uris(dbo, htmldata)
     # Do the conversion
-    from weasyprint import HTML
     try:
-        out = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-        out.close()
-        HTML(string=header + htmldata + footer).write_pdf(out.name, presentational_hints=True)
-        data = read_binary_file(out.name)
-        os.unlink(out.name)
-        return data
+        from weasyprint import HTML
+        return HTML(string=header + htmldata + footer).write_pdf(presentational_hints=True, zoom=1)
     except Exception as err:
         asm3.al.error(str(err), "html_to_pdf_weasyprint", dbo)
         raise ASMError(str(err))
