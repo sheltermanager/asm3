@@ -1,0 +1,41 @@
+Petrescue and Savourlife publishing errors in the last 7 days
+###
+Maintenance
+###
+Animals with outstanding publishing errors within the last 7 days
+###
+33202/Any rev01
+###
+en_AU
+###
+SELECT ap.Extra, a.AnimalName, a.ID AS AID, a.ShelterCode, ap.SentDate 
+FROM animalpublished ap
+INNER JOIN animal a ON a.ID =ap.AnimalId 
+WHERE Extra NOT IN ('', 'rehomed', 'removed', 'held', 'adopted', 'on_hold')
+AND ap.Sentdate > CURRENT_DATE - 7
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Animal Name</th>
+<th>Shelter Code</th>
+<th>Error</th>  
+<th>Sent Date</th>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+<td>$EXTRA</td>  
+<td>$SENTDATE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total: {COUNT.EXTRA}</h2>
+FOOTER$$
