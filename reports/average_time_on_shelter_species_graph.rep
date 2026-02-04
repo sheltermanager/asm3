@@ -2,28 +2,6 @@ Average Time On Shelter By Species
 ###
 Movement Charts
 ###
-33018/MySQL rev01
-###
-Average time spent on shelter for all animals by year and species.
-###
-en
-###
-SELECT
-SpeciesName,
-YEAR(DateBroughtIn) AS biyear,
-AVG(DaysOnShelter) AS TimeOnShelter
-FROM animal
-INNER JOIN species ON species.ID = animal.SpeciesID
-WHERE DaysOnShelter > 0
-AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
-GROUP BY SpeciesName, YEAR(DateBroughtIn)
-###
-GRAPH LINES
-&&&
-Average Time On Shelter By Species
-###
-Movement Charts
-###
 33018/Any rev03
 ###
 Average time spent on shelter for all animals by year and species.
