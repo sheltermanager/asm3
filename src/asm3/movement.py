@@ -624,20 +624,6 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
         raise asm3.utils.ASMValidationError("Adoption POST has an invalid animal ID: %d" % post.integer("animal"))
     asm3.al.debug("Creating adoption for %d (%s - %s)" % (a["ID"], a["SHELTERCODE"], a["ANIMALNAME"]), "movement.insert_adoption_from_form", dbo)
     creating.append(a.ID)
-    # If the animal is bonded to other animals, we call this function
-    # again with a copy of the data and the bonded animal substituted
-    # so we can create their adoption records too. We only do this if
-    # the other animals are still on shelter (therefore alive).
-    if a.BONDEDANIMALID is not None and a.BONDEDANIMALID != 0 and a.BONDEDANIMAL1ARCHIVED == 0 and a.BONDEDANIMALID not in creating:
-        asm3.al.debug("Found bond to animal %d, creating adoption..." % a.BONDEDANIMALID, "movement.insert_adoption_from_form", dbo)
-        newdata = dict(post.data)
-        newdata["animal"] = str(a.BONDEDANIMALID)
-        insert_adoption_from_form(dbo, username, asm3.utils.PostedData(newdata, dbo.locale), creating, create_payments = False)
-    if a.BONDEDANIMAL2ID is not None and a.BONDEDANIMAL2ID != 0 and a.BONDEDANIMAL2ARCHIVED == 0 and a.BONDEDANIMAL2ID not in creating:
-        asm3.al.debug("Found bond to animal %d, creating adoption..." % a.BONDEDANIMAL2ID, "movement.insert_adoption_from_form", dbo)
-        newdata = dict(post.data)
-        newdata["animal"] = str(a.BONDEDANIMAL2ID)
-        insert_adoption_from_form(dbo, username, asm3.utils.PostedData(newdata, dbo.locale), creating, create_payments = False)
     cancel_reserves = asm3.configuration.cancel_reserves_on_adoption(dbo)
     # Prepare a dictionary of data for the movement table via insert_movement_from_form
     move_dict = {

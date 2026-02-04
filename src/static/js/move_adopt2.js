@@ -7,7 +7,6 @@ $(function() {
     const move_adopt2 = {
 
         render: function() {
-            // move_adopt2.bondedanimals = [];
             return [
                 '<div id="asm-content">',
                 '<div id="dialog-adopt-confirm" style="display: none" title="' + html.title(_("Adopt")) + '">',
@@ -395,7 +394,6 @@ $(function() {
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
-                    console.log(formdata);
                     let response = await common.ajax_post("move_adopt2", formdata);
                     $("#movementid").val(response);
                     header.hide_loading();

@@ -5651,6 +5651,12 @@ class move_adopt2(JSONEndpoint):
                     "body":     tokens["BODY"]
                 }
                 asm3.media.send_signature_request(dbo, o.user, pmid, asm3.utils.PostedData(d, dbo.locale))
+            for templateid in post.integer_list("nonsigtemplateids"):
+                content = asm3.wordprocessor.generate_movement_doc(dbo, templateid, movementid, o.user)
+                tempname = asm3.template.get_document_template_name(dbo, templateid)
+                tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
+                    asm3.person.get_person_name(dbo, o.post.integer("person")))
+                asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
         return True
 
     def post_cost(self, o):
