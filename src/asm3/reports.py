@@ -1778,8 +1778,8 @@ class Report:
                 for label in labels:
                     dpvalue = 0
                     for dp in ds[1]:
-                        if dp[0] == label and type(dp[1]) in (float, int):
-                            dpvalue += dp[1]
+                        if dp[0] == label:
+                            dpvalue += asm3.utils.cfloat(dp[1])
                     dsdata.append(dpvalue)
                 dataset = {
                     'label': ds[0],
