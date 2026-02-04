@@ -24,7 +24,7 @@ Average Time On Shelter By Species
 ###
 Movement Charts
 ###
-33018/Any rev02
+33018/Any rev03
 ###
 Average time spent on shelter for all animals by year and species.
 ###
@@ -39,6 +39,6 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE DaysOnShelter > 0
 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 GROUP BY SpeciesName, $SQL YEAR DateBroughtIn$
-ORDER BY SpeciesName, biyear
+ORDER BY biyear, SpeciesName
 ###
 GRAPH LINES
