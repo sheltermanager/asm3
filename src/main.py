@@ -5610,6 +5610,8 @@ class move_adopt2(JSONEndpoint):
         for animalid in post["animals"].split(","):
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
+            post["costamount"] = post["animalcost" + animalid]
+            post["cost"] = post["animalcost" + animalid]
             movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
             if checkout:
                 l = o.dbo.locale

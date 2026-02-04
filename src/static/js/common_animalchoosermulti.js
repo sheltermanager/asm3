@@ -158,7 +158,7 @@ $.fn.animalchoosermulti = asm_widget({
             }
         });
         return rv;
-    },
+    }, 
 
     get_selected_rows: function(t) {
         let rows = [];
@@ -246,15 +246,15 @@ $.fn.animalchoosermulti = asm_widget({
     /**
      * Selects animals based on a comma separated list of ids as a string
      */
-    selectbyids: function(t, animalids) {
+    selectbyids: function(t, animalids, ignorechange=false) {
         let self = this, o = t.data("o");
-        self.clear.call(self, t);
+        if (!ignorechange) { self.clear.call(self, t); }
         if (!animalids) { return; }
         $.each(animalids.split(","), function(i, v) {
-            o.results.find("data=['" + v + "']").prop("checked", true);
+            o.results.find("[data='" + v + "']").prop("checked", true);
         });
         self.update_status(t);
-        t.trigger("change", [animalids] );
+        if (!ignorechange) { t.trigger("change", [animalids] ); }
     },
 
     load: function(t) {
@@ -361,5 +361,44 @@ $.fn.animalchoosermulti = asm_widget({
                 log.error(response);
             }
         });
+    },
+
+    value: function(t, newval) {
+        let self = this;
+        if (newval === undefined) {
+            return t.val();
+        }
+        if (!newval) { newval = ""; }
+        t.val(newval);
+        let o = t.data("o");
+        o.display.html("");
+        if (!t.data("o").rows) {
+            let formdata = "mode=multiselect";
+            $.ajax({
+                type: "POST",
+                url:  "animal_embed",
+                data: formdata,
+                dataType: "text",
+                success: function(data, textStatus, jqXHR) {
+                    let rv = jQuery.parseJSON(data);
+                    o.rows = rv.rows;
+                    $.each(newval.split(","), function(i, v) {
+                        let rec = self.get_row(t, parseInt(v));
+                        let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+                        o.display.append(disp);
+                        o.display.append("<br />");
+                    });
+                }
+            });
+        } else {
+            $.each(newval.split(","), function(i, v) {
+                let rec = self.get_row(t, parseInt(v));
+                let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+                o.display.append(disp);
+                o.display.append("<br />");
+            });
+        }
+        self.selectbyids(t, newval, true);
+        // t.trigger("change", [newval]);
     }
 });

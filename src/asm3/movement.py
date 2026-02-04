@@ -705,11 +705,11 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
     cost_create = post.boolean("costcreate")
     if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
-            "animal"            : post["animal"],
+            "animalid"          : post["animal"],
             "type"              : cost_type,
             "costdate"          : post["movementdate"],
             "costpaid"          : post["movementdate"],
-            "cost"              : post["animalcost" + post["animal"]]
+            "cost"              : post["cost"]
         }
         asm3.animal.insert_cost_from_form(dbo, username, asm3.utils.PostedData(boc_dict, l))
     return movementid
