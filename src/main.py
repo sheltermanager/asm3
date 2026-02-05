@@ -5607,6 +5607,7 @@ class move_adopt2(JSONEndpoint):
             raise asm3.utils.ASMValidationError("No template given for paperwork")
         if paperwork and post.integer("sigemailtemplateid") == 0:
             raise asm3.utils.ASMValidationError("No email template given for request signature email")
+        createdocuments = []
         for animalid in post["animals"].split(","):
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
@@ -5656,8 +5657,8 @@ class move_adopt2(JSONEndpoint):
                 tempname = asm3.template.get_document_template_name(dbo, templateid)
                 tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
                     asm3.person.get_person_name(dbo, o.post.integer("person")))
-                asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
-        return True
+                createdocuments.append([asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)[1], tempname])
+        return createdocuments
 
     def post_cost(self, o):
         dbo = o.dbo

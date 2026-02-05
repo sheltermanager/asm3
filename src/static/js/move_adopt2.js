@@ -10,7 +10,7 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<div id="dialog-adopt-confirm" style="display: none" title="' + html.title(_("Adopt")) + '">',
-                '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Proceed?") + '</p>',
+                '<p><span class="ui-icon ui-icon-alert"></span> ' + _("This will create {0} movement records. Are you sure that you would like to continue?").replace('{0}', '<span id="numofmovements">0</span>') + '</p>',
                 '</div>',
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Adopt an animal"), true),
@@ -388,6 +388,7 @@ $(function() {
             $("#trial").click(trial_change).keyup(trial_change);
 
             $("#button-adopt").button().click(async function() {
+                $("#numofmovements").html($("#animals").animalchoosermulti("value").split(",").length);
                 await tableform.show_okcancel_dialog("#dialog-adopt-confirm", _("Adopt"));
                 if (!validation()) { return; }
                 $("#button-adopt").button("disable");
@@ -395,23 +396,32 @@ $(function() {
                 try {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
                     let response = await common.ajax_post("move_adopt2", formdata);
-                    $("#movementid").val(response);
+                    let jsondata = JSON.parse(response.replace(/'/g, '"'));
                     header.hide_loading();
-                    let u = "move_gendoc";
-                    // If the option to allow editing payments after creating the adoption is set, take
-                    // the user to a payment screen that allows them to see the movement payments in order
-                    // to take payment, request payment by email, generate an invoice/receipt, etc.
-                    if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
-                        u = "move_donations";
+                    $(".ui-accordion").hide();
+                    $("#button-adopt").hide();
+                    let successmessage = [
+                        html.content_header(_("Adoption(s) successfully created")),
+                        '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
+                        '<p><span class="ui-icon ui-icon-info"></span> ' + _("Details") + '</p>',
+                    ];
+                    successmessage.push("<p>" + $(".animalchoosermulti-display").html() + "</p>");
+                    successmessage.push("<p>" + _("adopted to") + "</p>");
+                    successmessage.push("<p>" + $(".personchooser-display .justlink").html() + "</p>");
+
+                    if (jsondata) {
+                        successmessage.push("<p>Extra adoption paperwork</p><ul>");
+                        $.each(jsondata, function(i, v) {
+                            successmessage.push('<li><a href="/document_media_edit?id=' + v[0] + '&redirecturl=person_media?id=' + $("#person").val() + '"><b>' + v[1] + '</b></a></li>');
+                        });
+                        successmessage.push("</ul>");
                     }
-                    u += "?" +
-                        "linktype=MOVEMENT&id=" + response +
-                        "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
-                            $(".animalchooser-display").html() + " " + html.icon("right") + " " +
-                            $(".personchooser-display .justlink").html() )) + 
-                            "&animalid=" + $("#animal").val() + 
-                            "&ownerid=" + $("#person").val();
-                    common.route(u);
+
+                    successmessage.push('</div>');
+                    successmessage.push(html.content_footer());
+                    console.log(successmessage);
+                    $("#asm-body-container").html(successmessage.join("\n"));
+                    $("#asm-content").show();
                 }
                 catch(err) {
                     log.error(err, err);
