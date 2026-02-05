@@ -25,7 +25,7 @@ Monthly Adoptions By Species
 ###
 Financial Charts
 ###
-3000/Any rev02
+3000/Any rev03
 ###
 The number of adoptions per month, broken down by species.
 ###
@@ -40,6 +40,6 @@ INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE $SQL YEAR ad.MovementDate$ = $ASK STRING Which year to display for?$
 AND ad.MovementType = 1
-GROUP BY s.SpeciesName, $SQL MONTH ad.MovementDate$
+GROUP BY $SQL MONTH ad.MovementDate$, s.SpeciesName
 ###
 GRAPH BARS
