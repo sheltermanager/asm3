@@ -5640,6 +5640,7 @@ class move_adopt2(JSONEndpoint):
                 tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
                     asm3.person.get_person_name(dbo, o.post.integer("person")))
                 amid, pmid = asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
+                createdocuments.append([pmid, tempname])
                 # Generate the email body from the email template
                 sigbody = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("sigemailtemplateid"), movementid, o.user)
                 tokens = asm3.wordprocessor.extract_mail_tokens(sigbody)

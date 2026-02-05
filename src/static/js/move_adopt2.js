@@ -157,50 +157,9 @@ $(function() {
             $("#animals").on("change", function(event, animals) {
                 move_adopt2.bondedanimals = [];
                 while (move_adopt2.add_bonded_animals()) {
-                    console.log("Bonded animal found!");
+                    // console.log("Bonded animal found!");
                 }
-                // console.log(move_adopt2.add_bonded_animals());
-                // console.log(move_adopt2.add_bonded_animals());
-                console.log("Run out of bonded animals, continuing");
                 move_adopt2.update_animal_feedback();
-                // let additionalids = [];
-                // if ($("#animals").animalchoosermulti("value")) {
-                //     $.each($("#animals").animalchoosermulti("get_selected_rows"), function(i, a) {
-                //         if (a.BONDEDANIMALID && a.BONDEDANIMAL1ARCHIVED == 0) {
-                //             if (!$("#animals").val().split(",").includes(a.BONDEDANIMALID)) {
-                //                 move_adopt2.bondedanimals.push(
-                //                     [
-                //                         a.BONDEDANIMALID,
-                //                         _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", a.BONDEDANIMAL1CODE).replace("{3}", a.BONDEDANIMAL1NAME)
-                //                     ]
-                //                 );
-                //                 console.log(a.BONDEDANIMAL1NAME + " added.");
-                //                 additionalids.push(a.BONDEDANIMALID);
-                //                 // $("#animals").animalchoosermulti("value", $("#animals").animalchoosermulti("value") + "," + a.BONDEDANIMALID);
-                //             }
-                //         }
-                //         if (a.BONDEDANIMAL2ID && a.BONDEDANIMAL2ARCHIVED == 0) {
-                //             if (!$("#animals").animalchoosermulti("value").split(",").includes(a.BONDEDANIMAL2ID)) {
-                //                 move_adopt2.bondedanimals.push(
-                //                     [
-                //                         a.BONDEDANIMAL2ID,
-                //                         _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", a.BONDEDANIMAL2CODE).replace("{3}", a.BONDEDANIMAL2NAME)
-                //                     ]
-                //                 );
-                //                 console.log(a.BONDEDANIMAL2NAME + " added.");
-                //                 additionalids.push(a.BONDEDANIMAL2ID);
-                //                 // $("#animals").animalchoosermulti("value", $("#animals").animalchoosermulti("value") + "," + a.BONDEDANIMAL2ID);
-                //             }
-                //         }
-                //     });
-                //     if (additionalids) {
-                //         $("#animals").animalchoosermulti("value", $("#animals").animalchoosermulti("value") + "," + additionalids.join(","));
-                //         $("#animals").change();
-                //     } else {
-                //         console.log("Done.");
-                //         move_adopt2.update_animal_feedback();
-                //     }
-                // }
             });
             
 
@@ -409,7 +368,7 @@ $(function() {
                     successmessage.push("<p>" + _("adopted to") + "</p>");
                     successmessage.push("<p>" + $(".personchooser-display .justlink").html() + "</p>");
 
-                    if (jsondata) {
+                    if (jsondata.length) {
                         successmessage.push("<p>Extra adoption paperwork</p><ul>");
                         $.each(jsondata, function(i, v) {
                             successmessage.push('<li><a href="/document_media_edit?id=' + v[0] + '&redirecturl=person_media?id=' + $("#person").val() + '"><b>' + v[1] + '</b></a></li>');
@@ -419,7 +378,6 @@ $(function() {
 
                     successmessage.push('</div>');
                     successmessage.push(html.content_footer());
-                    console.log(successmessage);
                     $("#asm-body-container").html(successmessage.join("\n"));
                     $("#asm-content").show();
                 }
@@ -480,14 +438,9 @@ $(function() {
                 });
 
                 if (additionalids.length) {
-                    // console.log(additionalids);
                     let newids = additionalids.join(",");
-                    console.log("currentval = " + currentval);
-                    console.log("newids = " + newids);
                     let newval = currentval + "," + newids;
-                    // console.log(newval);
                     $("#animals").animalchoosermulti("value", newval);
-                    // console.log("Added bonded animal(s)");
                     return true;
                 } else {
                     console.log("No bonded animals found");
