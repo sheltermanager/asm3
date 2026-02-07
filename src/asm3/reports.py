@@ -938,7 +938,9 @@ class Report:
         flag is set, returns a basic header, if it's a subreport,
         returns nothing.
         """
-        if self.omitHeaderFooter:
+        if self.isSubReport:
+            return ""
+        elif self.omitHeaderFooter:
             return "<!DOCTYPE html>\n" \
                 "<html>\n" \
                 "<head>\n" \
@@ -946,8 +948,6 @@ class Report:
                 "<title></title>\n" \
                 "</head>\n" \
                 "<body>\n"
-        elif self.isSubReport:
-            return ""
         else:
             # Look it up from the DB
             s = get_raw_report_header(self.dbo)
@@ -960,10 +960,10 @@ class Report:
         flag is set, returns a basic footer, if it's a subreport,
         returns nothing.
         """
-        if self.omitHeaderFooter:
-            return "</body></html>"
-        elif self.isSubReport:
+        if self.isSubReport:
             return ""
+        elif self.omitHeaderFooter:
+            return "</body></html>"
         else:
             # Look it up from the DB
             s = get_raw_report_footer(self.dbo)
@@ -1317,8 +1317,6 @@ class Report:
                 # Get the content from it
                 r = Report(self.dbo)
                 value = r.Execute(crid, self.user, subparams)
-                # If we have HTML header/footer, strip it to prevent malformed HTML
-                if value.find("<body>") != -1: value = value[value.find("<body>")+6:value.find("</body>")+7]
 
             # Modify our block with the token value
             if valid:
@@ -2251,8 +2249,6 @@ class Report:
                     # Get the content from it
                     r = Report(self.dbo)
                     value = r.Execute(crid, self.user, subparams)
-                    # If we have HTML header/footer, strip it to prevent malformed HTML
-                    if value.find("<body>") != -1: value = value[value.find("<body>")+6:value.find("</body>")+7]
 
                 if valid:
                     tempbody = tempbody[0:startkey] + value + tempbody[endkey+1:]
