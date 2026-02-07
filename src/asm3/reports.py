@@ -1317,6 +1317,8 @@ class Report:
                 # Get the content from it
                 r = Report(self.dbo)
                 value = r.Execute(crid, self.user, subparams)
+                # If we have HTML header/footer, strip it to prevent malformed HTML
+                if value.find("<body>") != -1: value = value[value.find("<body>")+6:value.find("</body>")+7]
 
             # Modify our block with the token value
             if valid:
@@ -2249,6 +2251,8 @@ class Report:
                     # Get the content from it
                     r = Report(self.dbo)
                     value = r.Execute(crid, self.user, subparams)
+                    # If we have HTML header/footer, strip it to prevent malformed HTML
+                    if value.find("<body>") != -1: value = value[value.find("<body>")+6:value.find("</body>")+7]
 
                 if valid:
                     tempbody = tempbody[0:startkey] + value + tempbody[endkey+1:]
