@@ -15,6 +15,8 @@ $(function() {
             [ _("Aged under 6 months"), "under6months", "DateOfBirth >= '$CURRENT_DATE-182$'" ],
             [ _("Aged over 6 months"), "over6months", "DateOfBirth < '$CURRENT_DATE-182$'" ],
             [ _("Altered"), "altered", "Neutered=1" ],
+            [ _("Altered in care"), "alteredic", "Neutered=1 AND NeuteredDate >= DateBroughtIn" ],
+            [ _("Altered prior to care"), "alteredpc", "Neutered=1 AND NeuteredDate Is Null" ],
             [ _("Altered between two dates"), "alteredtwodates", 
                 "NeuteredDate>='$ASK DATE {0}$' AND NeuteredDate<='$ASK DATE {1}$'"
                 .replace("{0}", _("Altered between"))
