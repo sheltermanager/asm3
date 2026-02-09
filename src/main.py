@@ -5584,6 +5584,7 @@ class move_adopt2(JSONEndpoint):
         dbo = o.dbo
         return {
             "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION)),
+            # "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -5608,11 +5609,19 @@ class move_adopt2(JSONEndpoint):
         if paperwork and post.integer("sigemailtemplateid") == 0:
             raise asm3.utils.ASMValidationError("No email template given for request signature email")
         createdocuments = []
+        incnumberwidgets = []
+        for key in post.data.keys():
+            if key[:13] == "asm-incnumber":
+                incnumberwidgets.append(key[13:])
+        for key in incnumberwidgets:
+            post.data[key] = post.data["asm-incnumber" + key]
+            del post.data["asm-incnumber" + key]
         for animalid in post["animals"].split(","):
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
             post["costamount"] = post["animalcost" + animalid]
             post["cost"] = post["animalcost" + animalid]
+            # asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION))
             movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
             if checkout:
                 l = o.dbo.locale
@@ -5659,6 +5668,9 @@ class move_adopt2(JSONEndpoint):
                 tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
                     asm3.person.get_person_name(dbo, o.post.integer("person")))
                 createdocuments.append([asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)[1], tempname])
+            asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION))
+            for widget in incnumberwidgets:
+                post[widget] = str(int(post[widget]) + 1)
         return createdocuments
 
     def post_cost(self, o):

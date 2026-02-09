@@ -31,7 +31,6 @@ $(function() {
                     { post_field: "event", label: _(""), type: "select"},
                     { post_field: "trial", label: _("Trial adoption"), type: "check", rowid: "trialrow1" },
                     { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
-                    // { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" },
                     { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
@@ -44,7 +43,6 @@ $(function() {
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Costs"), true),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
-                // '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
                 tableform.fields_render([
                     { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
@@ -353,7 +351,12 @@ $(function() {
                 $("#button-adopt").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
-                    let formdata = "mode=create&" + $("input, select, textarea").toPOST();
+                    let formdata = "mode=create&" + $("input, select, textarea").not(".asm-incnumber").toPOST();
+                    $.each($(".asm-incnumber"), function(i, v) {
+                        $(v).val(parseInt(v) + 1);
+                    });
+                    formdata += "&" + $(".asm-incnumber").toPOST(false, true);
+                    console.log(formdata);
                     let response = await common.ajax_post("move_adopt2", formdata);
                     let jsondata = JSON.parse(response.replace(/'/g, '"'));
                     header.hide_loading();
