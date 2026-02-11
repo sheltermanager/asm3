@@ -12,6 +12,8 @@ $(function() {
                 personfilter = "fosterer";
             } else if (controller.mode == "transfer") {
                 personfilter = "shelter";
+            } else if (controller.mode == "retail") {
+                personfilter = "retailer";
             }
             return [
                 '<div id="asm-content">',
@@ -135,6 +137,20 @@ $(function() {
                 $("#payment").hide(); // Hide payment panel
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Transfer"));
+            } else if (controller.mode == "retail") {
+                $("#personrow label").html(_("Retailer"));
+                $("#trialrow1, #trialrow2").hide();
+                $(".ui-accordion-header").first().html(_("Move animal(s)"))
+                $($(".ui-accordion-header")[1]).hide(); // Hide insurance tab
+                $($(".ui-accordion")[3]).hide(); // Hide insurance panel
+                $($(".ui-widget-content")[11]).hide(); // Hide insurance panel
+                $($(".ui-accordion-header")[3]).hide(); // Hide boarding cost tab
+                $($(".asm-fields-container")[2]).hide(); // Hide boarding cost panel
+                $("#costcreaterow").hide(); // Hide create cost checkbox row
+                $($(".ui-accordion-header")[2]).hide(); // Hide payment tab
+                $("#payment").hide(); // Hide payment panel
+                $("#eventlinkrow").hide();
+                $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Move"));
             }
         },
 
@@ -410,6 +426,8 @@ $(function() {
                         formdata += "movementtype=foster&";
                     } else if (controller.mode == "transfer") {
                         formdata += "movementtype=transfer&";
+                    } else if (controller.mode == "retail") {
+                        formdata += "movementtype=retail&";
                     } else {
                         formdata += "movementtype=adopt&";
                     }
@@ -435,6 +453,8 @@ $(function() {
                         successmessage.push("<p>" + _("fostered by") + "</p>");
                     } else if (controller.mode == "transfer") {
                         successmessage.push("<p>" + _("transfered to") + "</p>");
+                    } else if (controller.mode == "retail") {
+                        successmessage.push("<p>" + _("moved to") + "</p>");
                     } else {
                         successmessage.push("<p>" + _("adopted to") + "</p>");
                     }
@@ -672,6 +692,10 @@ $(function() {
                 return _("Reserve animal(s)");
             } else if (controller.mode == "foster") {
                 return _("Foster animal(s)");
+            } else if (controller.mode == "transfer") {
+                return _("Transfer animal(s)");
+            } else if (controller.mode == "retail") {
+                return _("Move animal(s)");
             }
             return _("Adopt animal(s)");
         },
@@ -682,6 +706,10 @@ $(function() {
                     common.module_loadandstart("move_workflow", "move_reserve");
                 } else if (controller.mode == "foster") {
                     common.module_loadandstart("move_workflow", "move_foster");
+                } else if (controller.mode == "transfer") {
+                    common.module_loadandstart("move_workflow", "move_transfer");
+                } else if (controller.mode == "retail") {
+                    common.module_loadandstart("move_workflow", "move_retailer");
                 } else {
                     common.module_loadandstart("move_workflow", "move_adopt");
                 }
