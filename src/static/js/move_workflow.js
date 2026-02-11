@@ -7,6 +7,12 @@ $(function() {
     const move_workflow = {
 
         render: function() {
+            let personfilter = "all";
+            if (controller.mode == "foster") {
+                personfilter = "fosterer";
+            } else if (controller.mode == "transfer") {
+                personfilter = "shelter";
+            }
             return [
                 '<div id="asm-content">',
                 '<div id="dialog-adopt-confirm" style="display: none" title="' + html.title(_("Adopt")) + '">',
@@ -23,7 +29,7 @@ $(function() {
                 html.info('<span id="warntext"></span>', "ownerwarn"),
                 tableform.fields_render([
                     { post_field: "animals", label: _("Animals"), type: "animalmulti", validation: "notblank" },
-                    { post_field: "person", label: _("New Owner"), type: "person" },
+                    { post_field: "person", label: _("New Owner"), type: "person", personfilter: personfilter },
                     { post_field: "homechecked", label: _("Mark this owner homechecked"), type: "check", rowid: "homecheckrow" },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", callout: _("A unique number to identify this movement"), rowid: "movementnumberrow" },
                     { post_field: "movementdate", label: _("Date"), type: "date" },
@@ -90,7 +96,6 @@ $(function() {
         },
 
         sync: function() {
-            console.log("Syncing");
             if (controller.mode == "reserve") {
                 $("#personrow label").html(_("Person"));
                 $("#trialrow1, #trialrow2").hide();
@@ -116,6 +121,20 @@ $(function() {
                 $("#payment").hide(); // Hide payment panel
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Foster"));
+            } else if (controller.mode == "transfer") {
+                $("#personrow label").html(_("Transfer to"));
+                $("#trialrow1, #trialrow2").hide();
+                $(".ui-accordion-header").first().html(_("Transfer animal(s)"))
+                $($(".ui-accordion-header")[1]).hide(); // Hide insurance tab
+                $($(".ui-accordion")[3]).hide(); // Hide insurance panel
+                $($(".ui-widget-content")[11]).hide(); // Hide insurance panel
+                $($(".ui-accordion-header")[3]).hide(); // Hide boarding cost tab
+                $($(".asm-fields-container")[2]).hide(); // Hide boarding cost panel
+                $("#costcreaterow").hide(); // Hide create cost checkbox row
+                $($(".ui-accordion-header")[2]).hide(); // Hide payment tab
+                $("#payment").hide(); // Hide payment panel
+                $("#eventlinkrow").hide();
+                $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Transfer"));
             }
         },
 
@@ -389,6 +408,8 @@ $(function() {
                         formdata += "movementtype=reserve&";
                     } else if (controller.mode == "foster") {
                         formdata += "movementtype=foster&";
+                    } else if (controller.mode == "transfer") {
+                        formdata += "movementtype=transfer&";
                     } else {
                         formdata += "movementtype=adopt&";
                     }
@@ -408,10 +429,12 @@ $(function() {
                         '<p><span class="ui-icon ui-icon-info"></span> ' + _("Details") + '</p>',
                     ];
                     successmessage.push("<p>" + $(".animalchoosermulti-display").html() + "</p>");
-                    if (controller.method == "reserve") {
+                    if (controller.mode == "reserve") {
                         successmessage.push("<p>" + _("reserved by") + "</p>");
-                    } else if (controller.method == "foster") {
+                    } else if (controller.mode == "foster") {
                         successmessage.push("<p>" + _("fostered by") + "</p>");
+                    } else if (controller.mode == "transfer") {
+                        successmessage.push("<p>" + _("transfered to") + "</p>");
                     } else {
                         successmessage.push("<p>" + _("adopted to") + "</p>");
                     }

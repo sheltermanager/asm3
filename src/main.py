@@ -5557,6 +5557,9 @@ class move_workfow(JSONEndpoint):
             elif post["movementtype"] == "foster":
                 post["fosterdate"] = post["movementdate"]
                 movementid = asm3.movement.insert_foster_from_form(dbo, o.user, post)
+            elif post["movementtype"] == "transfer":
+                post["transferdate"] = post["movementdate"]
+                movementid = asm3.movement.insert_transfer_from_form(dbo, o.user, post)
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
@@ -5963,13 +5966,17 @@ class move_retailer(JSONEndpoint):
 
 class move_transfer(JSONEndpoint):
     url = "move_transfer"
+    js_module = "move_workflow"
     get_permissions = asm3.users.ADD_MOVEMENT
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "mode": "transfer"
         }
 
     def post_create(self, o):
