@@ -5563,6 +5563,8 @@ class move_workfow(JSONEndpoint):
             elif post["movementtype"] == "retail":
                 post["retailerdate"] = post["movementdate"]
                 movementid = asm3.movement.insert_retailer_from_form(dbo, o.user, post)
+            elif post["movementtype"] == "reclaim":
+                movementid = asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
@@ -5901,6 +5903,7 @@ class move_gendoc(JSONEndpoint):
 class move_reclaim(JSONEndpoint):
     url = "move_reclaim"
     get_permissions = asm3.users.ADD_MOVEMENT
+    js_module = "move_workflow"
 
     def controller(self, o):
         dbo = o.dbo
@@ -5909,7 +5912,10 @@ class move_reclaim(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "taxrates": asm3.lookups.get_tax_rates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "mode": "reclaim"
         }
 
     def post_create(self, o):

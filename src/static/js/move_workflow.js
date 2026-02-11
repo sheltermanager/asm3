@@ -151,6 +151,15 @@ $(function() {
                 $("#payment").hide(); // Hide payment panel
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Move"));
+            } else if (controller.mode == "reclaim") {
+                $("#personrow label").html(_("Owner"));
+                $("#trialrow1, #trialrow2").hide();
+                $(".ui-accordion-header").first().html(_("Reclaim animal(s)"))
+                $($(".ui-accordion-header")[1]).hide(); // Hide insurance tab
+                $($(".ui-accordion")[3]).hide(); // Hide insurance panel
+                $($(".ui-widget-content")[11]).hide(); // Hide insurance panel
+                $("#eventlinkrow").hide();
+                $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Reclaim"));
             }
         },
 
@@ -419,18 +428,20 @@ $(function() {
                 $("#button-adopt").button("disable");
                 header.show_loading(_("Creating..."));
                 try {
-                    let formdata = "";
-                    if (controller.mode == "reserve") {
-                        formdata += "movementtype=reserve&";
-                    } else if (controller.mode == "foster") {
-                        formdata += "movementtype=foster&";
-                    } else if (controller.mode == "transfer") {
-                        formdata += "movementtype=transfer&";
-                    } else if (controller.mode == "retail") {
-                        formdata += "movementtype=retail&";
-                    } else {
-                        formdata += "movementtype=adopt&";
-                    }
+                    let formdata = "movementtype=" + controller.mode + "&";
+                    // if (controller.mode == "reserve") {
+                    //     formdata += "movementtype=reserve&";
+                    // } else if (controller.mode == "foster") {
+                    //     formdata += "movementtype=foster&";
+                    // } else if (controller.mode == "transfer") {
+                    //     formdata += "movementtype=transfer&";
+                    // } else if (controller.mode == "retail") {
+                    //     formdata += "movementtype=retail&";
+                    // } else if (controller.mode == "reclaim") {
+                    //     formdata += "movementtype=reclaim&";
+                    // } else {
+                    //     formdata += "movementtype=adopt&";
+                    // }
                     formdata += "mode=create&" + $("input, select, textarea").not(".asm-incnumber").toPOST();
                     $.each($(".asm-incnumber"), function(i, v) {
                         $(v).val(parseInt(v) + 1);
@@ -455,6 +466,8 @@ $(function() {
                         successmessage.push("<p>" + _("transfered to") + "</p>");
                     } else if (controller.mode == "retail") {
                         successmessage.push("<p>" + _("moved to") + "</p>");
+                    } else if (controller.mode == "reclaim") {
+                        successmessage.push("<p>" + _("reclaimed by") + "</p>");
                     } else {
                         successmessage.push("<p>" + _("adopted to") + "</p>");
                     }
@@ -591,7 +604,9 @@ $(function() {
                 }
 
                 // Grab cost information if option is on
-                if (controller.method == "adopt" && config.bool("CreateBoardingCostOnAdoption")) {
+                console.log("Checking costs");
+                if ( (controller.mode == "adopt" || controller.mode == "reclaim") && config.bool("CreateBoardingCostOnAdoption") ) {
+                    console.log("Getting costs");
                     let formdata = "mode=cost&id=" + a.ID;
                     common.ajax_post("move_workflow", formdata).then(function(response) {
                         let [costamount, costdata] = response.split("||");
@@ -609,7 +624,7 @@ $(function() {
                     });
                 }
 
-                if (controller.method == "adopt" && !config.bool("DontShowAdoptionFee") && a.FEE) {
+                if ( (controller.mode == "adopt" || controller.mode == "reclaim") && !config.bool("DontShowAdoptionFee") && a.FEE ) {
                     $(".takepayment").first().click();
                     let newrow = $("#paymentlines tr").last();
                     newrow.find(".amount").currency("value", a.FEE);
@@ -636,7 +651,7 @@ $(function() {
                     $("#animalwarn").show();
                 }
 
-                if (controller.method == "adopt") {
+                if (controller.mode == "adopt") {
                     $("#insurancetable").html($("#insurancetable").html() + '<tr><td>' + a.SHELTERCODE + ' ' + a.ANIMALNAME + ' (' + a.SPECIESNAME + ')</td><td>' +
                     tableform.fields_render([
                         { post_field: "insurance" + a.ID, type: "text", rowclasses: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
@@ -696,6 +711,8 @@ $(function() {
                 return _("Transfer animal(s)");
             } else if (controller.mode == "retail") {
                 return _("Move animal(s)");
+            } else if (controller.mode == "reclaim") {
+                return _("Reclaim animal(s)");
             }
             return _("Adopt animal(s)");
         },
@@ -710,6 +727,8 @@ $(function() {
                     common.module_loadandstart("move_workflow", "move_transfer");
                 } else if (controller.mode == "retail") {
                     common.module_loadandstart("move_workflow", "move_retailer");
+                } else if (controller.mode == "reclaim") {
+                    common.module_loadandstart("move_workflow", "move_reclaim");
                 } else {
                     common.module_loadandstart("move_workflow", "move_adopt");
                 }
