@@ -102,6 +102,20 @@ $(function() {
                 $($(".asm-fields-container")[2]).hide(); // Hide boarding cost panel
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Reserve"));
+            } else if (controller.mode == "foster") {
+                $("#personrow label").html(_("Fosterer"));
+                $("#trialrow1, #trialrow2").hide();
+                $(".ui-accordion-header").first().html(_("Foster animal(s)"))
+                $($(".ui-accordion-header")[1]).hide(); // Hide insurance tab
+                $($(".ui-accordion")[3]).hide(); // Hide insurance panel
+                $($(".ui-widget-content")[11]).hide(); // Hide insurance panel
+                $($(".ui-accordion-header")[3]).hide(); // Hide boarding cost tab
+                $($(".asm-fields-container")[2]).hide(); // Hide boarding cost panel
+                $("#costcreaterow").hide(); // Hide create cost checkbox row
+                $($(".ui-accordion-header")[2]).hide(); // Hide payment tab
+                $("#payment").hide(); // Hide payment panel
+                $("#eventlinkrow").hide();
+                $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Foster"));
             }
         },
 
@@ -371,8 +385,10 @@ $(function() {
                 header.show_loading(_("Creating..."));
                 try {
                     let formdata = "";
-                    if (controller.mode = "reserve") {
+                    if (controller.mode == "reserve") {
                         formdata += "movementtype=reserve&";
+                    } else if (controller.mode == "foster") {
+                        formdata += "movementtype=foster&";
                     } else {
                         formdata += "movementtype=adopt&";
                     }
@@ -394,6 +410,8 @@ $(function() {
                     successmessage.push("<p>" + $(".animalchoosermulti-display").html() + "</p>");
                     if (controller.method == "reserve") {
                         successmessage.push("<p>" + _("reserved by") + "</p>");
+                    } else if (controller.method == "foster") {
+                        successmessage.push("<p>" + _("fostered by") + "</p>");
                     } else {
                         successmessage.push("<p>" + _("adopted to") + "</p>");
                     }
@@ -629,6 +647,8 @@ $(function() {
         title: function() {
             if (controller.mode == "reserve") {
                 return _("Reserve animal(s)");
+            } else if (controller.mode == "foster") {
+                return _("Foster animal(s)");
             }
             return _("Adopt animal(s)");
         },
@@ -637,6 +657,8 @@ $(function() {
             "move_workflow": function() {
                 if (controller.mode == "reserve") {
                     common.module_loadandstart("move_workflow", "move_reserve");
+                } else if (controller.mode == "foster") {
+                    common.module_loadandstart("move_workflow", "move_foster");
                 } else {
                     common.module_loadandstart("move_workflow", "move_adopt");
                 }

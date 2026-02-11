@@ -5554,6 +5554,9 @@ class move_workfow(JSONEndpoint):
             elif post["movementtype"] == "reserve":
                 post["reservationdate"] = post["movementdate"]
                 movementid = asm3.movement.insert_reserve_from_form(dbo, o.user, post)
+            elif post["movementtype"] == "foster":
+                post["fosterdate"] = post["movementdate"]
+                movementid = asm3.movement.insert_foster_from_form(dbo, o.user, post)
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
@@ -5859,16 +5862,19 @@ class move_donations(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "payment")
         }
 
-
 class move_foster(JSONEndpoint):
     url = "move_foster"
+    js_module = "move_workflow"
     get_permissions = asm3.users.ADD_MOVEMENT
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "mode": "foster"
         }
 
     def post_create(self, o):
