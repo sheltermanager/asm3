@@ -1,4 +1,4 @@
-Animal Shelter Manager v3 (sheltermanager3)
+Animal Shelter Manager v3 (sheltermanager3) [![.github/workflows/main.yml](https://github.com/sheltermanager/asm3/actions/workflows/main.yml/badge.svg)](https://github.com/sheltermanager/asm3/actions/workflows/main.yml)
 ===========================================
 
 This program is covered by the terms of the GNU General Public Licence v3. 
