@@ -29,6 +29,7 @@ import re
 #   taxrate - has a TaxRate column
 LOOKUP_TABLES = {
     "lksaccounttype":       (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",)),
+    "lkadoptionsource":     (_("Adoption Sources"), "SourceName", _("Source Name"), "", "add del ret", "adoption.AdoptionSourceID"),
     "lkanimalflags":        (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", ""),
     "animaltype":           (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",)),
     "basecolour":           (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
@@ -862,6 +863,9 @@ def _merge_db_flags(dbflags: Results, flags: str = "") -> Results:
         if not match:
             out.append({ "FLAG": f, "ISRETIRED": 0 })
     return out
+
+def get_adoption_sources(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lkadoptionsource ORDER BY SourceName")
 
 def get_animal_flags(dbo: Database, flags: str = "") -> Results:
     dbflags = dbo.query("SELECT * FROM lkanimalflags WHERE IsRetired=0 ORDER BY Flag")

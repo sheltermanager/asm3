@@ -32,7 +32,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
-    "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", 
+    "jurisdiction", "licencetype", "lkadoptionsource", "lkanimalflags", "lkboardingtype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", 
     "lkcondition", "lksconditiontype", "lkownerflags", "lkproducttype", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lktaxrate", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", 
     "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", 
@@ -81,7 +81,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkcondition", "lkclinicinvoiceitems", 
+    "licencetype", "lkadoptionsource", "lkanimalflags", "lkboardingtype", "lkcondition", "lkclinicinvoiceitems", 
     "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", "lkproducttype", "lktaxrate", 
     "lksaccounttype", "lksclinicstatus", "lksconditiontype", "lksdiarylink", "lksdonationfreq", 
     "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", 
@@ -195,6 +195,7 @@ def sql_structure(dbo: Database) -> str:
     sql += table("adoption", (
         fid(),
         fstr("AdoptionNumber"),
+        fint("AdoptionSourceID", True),
         fint("AnimalID"),
         fint("OwnerID", True),
         fint("RetailerID", True),
@@ -232,6 +233,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
     sql += index("adoption_TrialEndDate", "adoption", "TrialEndDate")
     sql += index("adoption_EventID", "adoption", "EventID")
+    sql += index("adoption_AdoptionSourceID", "adoption", "AdoptionSourceID")
 
     sql += table("animal", (
         fid(),
@@ -1144,6 +1146,12 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lksaccounttype", (
         fid(), fstr("AccountType") ), False)
+    
+    sql += table("lkadoptionsource", (
+        fid(),
+        fstr("SourceName"),
+        fstr("Description", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("lkanimalflags", (
         fid(), fstr("Flag"), fint("IsRetired", True) ), False)
@@ -2545,6 +2553,11 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2money("licencetype", "LicenceTypeName", 2, _("Unaltered Dog - 1 year", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 3, _("Altered Dog - 3 year", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 4, _("Unaltered Dog - 3 year", l))
+    sql += lookup2("lkadoptionsource", "SourceName", 1, _("AdoptAPet.com", l))
+    sql += lookup2("lkadoptionsource", "SourceName", 2, _("Social Media", l))
+    sql += lookup2("lkadoptionsource", "SourceName", 3, _("Newspaper", l))
+    sql += lookup2("lkadoptionsource", "SourceName", 4, _("PetFinder.com", l))
+    sql += lookup2("lkadoptionsource", "SourceName", 5, _("Word of Mouth", l))
     sql += lookup1("lksex", "Sex", 0, _("Female", l))
     sql += lookup1("lksex", "Sex", 1, _("Male", l))
     sql += lookup1("lksex", "Sex", 2, _("Unknown", l))
