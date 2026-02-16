@@ -5538,19 +5538,24 @@ class move_workfow(JSONEndpoint):
             raise asm3.utils.ASMValidationError("No email template given for request signature email")
         createdocuments = []
         incnumberwidgets = []
+        movementdata = {}
+
+        # Create post data for virtual incrementing number fields
         for key in post.data.keys():
             if key[:13] == "asm-incnumber":
                 incnumberwidgets.append(key[13:])
         for key in incnumberwidgets:
             post.data[key] = post.data["asm-incnumber" + key]
             del post.data["asm-incnumber" + key]
+        
         for animalid in post["animals"].split(","):
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
             post["costamount"] = post["animalcost" + animalid]
             post["cost"] = post["animalcost" + animalid]
+            movementid = 0
             if post["movementtype"] == "adopt":
-                movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
+                movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments=False)
             elif post["movementtype"] == "reserve":
                 post["reservationdate"] = post["movementdate"]
                 movementid = asm3.movement.insert_reserve_from_form(dbo, o.user, post)
@@ -5565,6 +5570,27 @@ class move_workfow(JSONEndpoint):
                 movementid = asm3.movement.insert_retailer_from_form(dbo, o.user, post)
             elif post["movementtype"] == "reclaim":
                 movementid = asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
+            movementdata[animalid] = movementid
+            # if not checkout:
+            #     # Add adoption fee payments
+            #     for postkey in post.data.keys():
+            #         if postkey[:11] == "adoptionfee" and postkey[11:] == animalid:
+            #                 post["receiptnumber"] = ""
+            #                 post["amount"] = str(post.integer(postkey))
+            #                 post["frequency"] = "0"
+            #                 post["movement"] = str(movementid)
+            #                 post["type"] = asm3.configuration.adoption_checkout_feeid(dbo)
+            #                 post["quantity"] = "1"
+            #                 post["unitprice"] = str(post.integer(postkey))
+            #                 post["amount"] = str(post.integer(postkey))
+            #                 if asm3.configuration.movement_donations_default_due(dbo):
+            #                     post["due"] = str(asm3.i18n.python2display(l, dbo.today()))
+            #                     post["received"] = ""
+            #                 else:
+            #                     post["due"] = ""
+            #                     post["received"] = str(asm3.i18n.python2display(l, dbo.today()))
+            #                 asm3.financial.insert_donation_from_form(dbo, o.user, post)
+            #                 break
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
@@ -5613,7 +5639,20 @@ class move_workfow(JSONEndpoint):
             asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION))
             for widget in incnumberwidgets:
                 post[widget] = str(int(post[widget]) + 1)
-        return createdocuments
+        # payments = []
+        # for postkey in post.data.keys():
+        #     if postkey[:7] == "payment":
+        #         payments.append(int(postkey[7:]))
+        # for payment in payments:
+        #     asm3.financial.insert_donation_from_form(dbo, o.user, post)
+        # return createdocuments
+        # return asm3.utils.json_handler(movementdata)
+        return asm3.utils.json(
+            {
+                "movementdata": movementdata,
+                "documents": createdocuments
+            }
+        )
 
     def post_cost(self, o):
         dbo = o.dbo

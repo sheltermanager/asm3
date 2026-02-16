@@ -1127,6 +1127,12 @@ select:disabled, input:disabled, textarea:disabled {
     width: 113px;
 }
 
+.asm-adoptionfee {
+    text-align: center;
+    max-width: 900px;
+    margin: auto;
+}
+
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {
 
