@@ -444,10 +444,8 @@ $(function() {
                     $.each(move_workflow.adoptionfees, function(i, v){
                         formdata += "&adoptionfee" + i + "=" + v;
                     });
-                    console.log(formdata);
                     let response = await common.ajax_post("move_workflow", formdata);
                     let jsondata = JSON.parse(response.replace(/'/g, '"'));
-                    console.log(jsondata);
                     header.hide_loading();
                     $(".ui-accordion").hide();
                     $("#button-adopt").hide();
@@ -479,11 +477,31 @@ $(function() {
                         });
                         successmessage.push("</ul>");
                     }
+                    if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
+                        successmessage.push('<p><a href="/person_donations?id=' + $("#person").val() + '"><button id="asm-settlebutton">' + _("Settle Payments") + '</button></a>');
+                    }
 
                     successmessage.push('</div>');
                     successmessage.push(html.content_footer());
                     $("#asm-body-container").html(successmessage.join("\n"));
+                    $("#asm-settlebutton").button();
                     $("#asm-content").show();
+                    // If the option to allow editing payments after creating the adoption is set, take
+                    // the user to a payment screen that allows them to see the movement payments in order
+                    // to take payment, request payment by email, generate an invoice/receipt, etc.
+                    // let movementdata = "";
+                    // JSON.parse(response.movementdata);
+                    // console.log(JSON.parse(response));
+                    // if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
+                    //     let u = "move_donations?" +
+                    //         "linktype=MOVEMENT&id=" + response +
+                    //         "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
+                    //             $(".animalchooser-display").html() + " " + html.icon("right") + " " +
+                    //             $(".personchooser-display .justlink").html() )) + 
+                    //             "&animalid=" + $("#animals").val() + 
+                    //             "&ownerid=" + $("#person").val();
+                    //     common.route(u);
+                    // }
                 }
                 catch(err) {
                     log.error(err, err);

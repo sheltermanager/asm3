@@ -5504,7 +5504,7 @@ class move_adopt(JSONEndpoint):
             "mode": "adopt"
         }
 
-class move_workfow(JSONEndpoint):
+class move_workflow(JSONEndpoint):
     url = "move_workflow"
     get_permissions = asm3.users.ADD_MOVEMENT
 
@@ -5571,26 +5571,26 @@ class move_workfow(JSONEndpoint):
             elif post["movementtype"] == "reclaim":
                 movementid = asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
             movementdata[animalid] = movementid
-            # if not checkout:
-            #     # Add adoption fee payments
-            #     for postkey in post.data.keys():
-            #         if postkey[:11] == "adoptionfee" and postkey[11:] == animalid:
-            #                 post["receiptnumber"] = ""
-            #                 post["amount"] = str(post.integer(postkey))
-            #                 post["frequency"] = "0"
-            #                 post["movement"] = str(movementid)
-            #                 post["type"] = asm3.configuration.adoption_checkout_feeid(dbo)
-            #                 post["quantity"] = "1"
-            #                 post["unitprice"] = str(post.integer(postkey))
-            #                 post["amount"] = str(post.integer(postkey))
-            #                 if asm3.configuration.movement_donations_default_due(dbo):
-            #                     post["due"] = str(asm3.i18n.python2display(l, dbo.today()))
-            #                     post["received"] = ""
-            #                 else:
-            #                     post["due"] = ""
-            #                     post["received"] = str(asm3.i18n.python2display(l, dbo.today()))
-            #                 asm3.financial.insert_donation_from_form(dbo, o.user, post)
-            #                 break
+            if not checkout:
+                # Add adoption fee payments
+                for postkey in post.data.keys():
+                    if postkey[:11] == "adoptionfee" and postkey[11:] == animalid:
+                            post["receiptnumber"] = ""
+                            post["amount"] = str(post.integer(postkey))
+                            post["frequency"] = "0"
+                            post["movement"] = str(movementid)
+                            post["type"] = asm3.configuration.adoption_checkout_feeid(dbo)
+                            post["quantity"] = "1"
+                            post["unitprice"] = str(post.integer(postkey))
+                            post["amount"] = str(post.integer(postkey))
+                            if asm3.configuration.movement_donations_default_due(dbo):
+                                post["due"] = str(asm3.i18n.python2display(l, dbo.today()))
+                                post["received"] = ""
+                            else:
+                                post["due"] = ""
+                                post["received"] = str(asm3.i18n.python2display(l, dbo.today()))
+                            asm3.financial.insert_donation_from_form(dbo, o.user, post)
+                            break
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
@@ -5897,7 +5897,7 @@ class move_donations(JSONEndpoint):
             "message": o.post["message"],
             "id": o.post["id"],
             "animalid": o.post["animalid"],
-            "ownerid": o.post["ownerid"],
+            "ownerid": o.post["person"],
             "linktype": o.post["linktype"],
             "rows": donations,
             "name": "move_donations",
