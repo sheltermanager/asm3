@@ -948,6 +948,18 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     spam = True
                     break
 
+    # URLs found in any fields
+    if asm3.configuration.onlineform_spam_urls(dbo):
+        for k, v in post.data.items():
+            if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
+                fld = get_field_from_name(dbo, k)
+                if fld and fld.FIELDTYPE == FIELDTYPE_IMAGE: 
+                    continue # Apple now use URLs as the filename in image uploads
+                if v.lower().find("http") != -1 and v.find("//") != -1:
+                    spamreason = f"http URL found in field '{k}'"
+                    spam = True
+                    break
+
     collationid = get_collationid(dbo)
 
     l = dbo.locale
@@ -1027,12 +1039,6 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                 if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
                     # Remove prefix of data:image/jpeg;base64, and decode
                     images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
-                # spam check for URLs found in any fields
-                # (ignore image fields as since 2026, Apple devices always include URLs as part of the data)
-                if asm3.configuration.onlineform_spam_urls(dbo):
-                    if fieldtype != FIELDTYPE_IMAGE and v.lower().find("http") != -1 and v.find("//") != -1:
-                        spamreason = f"http URL found in field '{fieldname}'"
-                        spam = True
 
             # Do the insert
             try:
