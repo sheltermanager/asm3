@@ -2789,6 +2789,7 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
     # Reset the animal entry fields, copying values from the last 
     # returned exit movement if one is available.
     entryreasonid = asm3.configuration.default_entry_reason(dbo)
+    entrytypeid = 1 # assume surrender
     broughtinbyownerid = 0
     originalownerid = 0
     istransfer = 0
@@ -2799,6 +2800,8 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
         originalownerid = rxm[0].OWNERID
         istransfer = asm3.utils.iif(rxm[0].MOVEMENTTYPE == 3, 1, 0)
         ispickup = asm3.utils.iif(rxm[0].MOVEMENTTYPE == 5, 1, 0)
+        if istransfer: entrytypeid = 3 # Transfer in 
+        if ispickup: entrytypeid = 2 # Stray
     # Generate a new code for the animal
     code, shortcode, unique, year = calc_shelter_code(dbo, a.ANIMALTYPEID, entryreasonid, a.SPECIESID, a.MOSTRECENTENTRYDATE)
     dbo.update("animal", animalid, {
@@ -2808,7 +2811,7 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
         "YearCodeID":           year,
         # NOTE: DateBroughtIn is never touched, 
         # MostRecentEntryDate is updated by update_animal_status before this code ever runs
-        "EntryTypeID":          1, # Usually a return of some type so default to surrender
+        "EntryTypeID":          entrytypeid, 
         "EntryReasonID":        entryreasonid,
         "AdoptionCoordinatorID": 0,
         "BroughtInByOwnerID":   broughtinbyownerid,
