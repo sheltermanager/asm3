@@ -16,7 +16,7 @@ $(function() {
                 columns: 1,
                 width: 500,
                 fields: [
-                    { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", 
+                    { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", addifmissing: true, 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
                     { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), 
                         type: "selectcolour", defaultval: 1, 

@@ -897,6 +897,13 @@ $.fn.select = asm_widget({
     value: function(t, newval) {
         if (newval !== undefined) {
             t.val(newval);
+            if (t.attr("data-addifmissing")) {
+                // val() returns null if the value wasn't in the list
+                if (t.val() == null) {
+                    t.prepend('<option>' + newval + '</option>');
+                    t.val(newval);
+                }
+            }
             if (t.hasClass("asm-iconselectmenu")) {
                 t.iconselectmenu("refresh");            
             }

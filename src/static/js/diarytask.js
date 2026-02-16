@@ -20,7 +20,7 @@ $(function() {
                         callout: _("Task items are executed in order of index, lowest to highest"), validation: "notblank" },
                     { json_field: "DAYPIVOT", post_field: "pivot", label: _("Day Pivot"), type: "number", 
                         callout: _("Create note this many days from today, or 9999 to ask"), validation: "notblank" },
-                    { json_field: "WHOFOR", post_field: "for", label: _("For"), type: "select", 
+                    { json_field: "WHOFOR", post_field: "for", label: _("For"), type: "select", addifmissing: true, 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME", prepend: ('<option value="taskcreator">' + _("(task creator)") + '</option>') }},
                     { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), 
                         type: "selectcolour", defaultval: 1, 
