@@ -1757,7 +1757,7 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str, pdfopts: Dict[str, str]) -> by
         zoom = "<style>\nbody { zoom: %s%%; }\n</style>\n" % asm3.configuration.pdf_zoom(dbo) # use the default from config
     scale = ""
     if "scale" in pdfopts and pdfopts["scale"] != "":
-        scale = "<style>\nbody { transform: scale(%s, %s); }\n</style>\n" % sc
+        scale = "<style>\nbody { transform: scale(%s, %s); }\n</style>\n" % (pdfopts["scale"], pdfopts["scale"])
     margins = "--margin-top 1cm"
     if "margins" in pdfopts and pdfopts["margins"] != "":
         tm, bm, lm, rm = pdfopts["margins"].split(" ")
@@ -1775,7 +1775,8 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str, pdfopts: Dict[str, str]) -> by
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": pdfopts["orientation"], "papersize": papersize, "zoom": "", "margins": margins }
+    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, 
+        "orientation": pdfopts["orientation"], "papersize": papersize, "zoom": "", "margins": margins }
     code, output = cmd(cmdline)
     if code > 0:
         asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
