@@ -54,13 +54,10 @@ $(function() {
                     { type: "raw", rowid: "insurancerow", markup: '<table id="insurancetable"></table>', doublesize: true },
                 ], { full_width: false }),
                 html.content_footer(),
-                // '<div id="payment"></div>',
                  html.content_header(_("Payment"), true),
                 tableform.fields_render([
                     { post_field: "paymentmethod", label: _("Payment method"), type: "select",
                         options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods } },
-                    // { post_field: "destaccount", label: _("Deposit accocunt"), type: "select",
-                    //     options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts } },
                 ], { full_width: false }),
                 html.content_footer(),
                 html.content_header(_("Boarding Costs"), true),
@@ -106,7 +103,7 @@ $(function() {
         },
 
         sync: function() {
-            // $("#payment .ui-widget-content").prepend('<div id="adoptionfees"></div>');
+            $($(".ui-accordion")[2]).find(".ui-widget-content").append('<div id="adoptionfees"></div>');
             $("#paymentmethod").select("value", config.str("AFDefaultPaymentMethod"));
             // $("#destaccount").select("value", config.str("DonationTargetAccount"));
 
@@ -126,8 +123,7 @@ $(function() {
                 $($(".ui-accordion")[1]).hide(); // Hide insurance
                 $($(".ui-accordion")[3]).hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion")[2]).hide(); // Hide payment tab
-                // $("#payment").hide(); // Hide payment panel
+                $($(".ui-accordion")[2]).hide(); // Hide payments
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Foster"));
             } else if (controller.mode == "transfer") {
@@ -137,8 +133,7 @@ $(function() {
                 $($(".ui-accordion")[1]).hide(); // Hide insurance
                 $($(".ui-accordion")[3]).hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion")[2]).hide(); // Hide payment tab
-                // $("#payment").hide(); // Hide payment panel
+                $($(".ui-accordion")[2]).hide(); // Hide payments
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Transfer"));
             } else if (controller.mode == "retail") {
@@ -148,19 +143,19 @@ $(function() {
                 $($(".ui-accordion")[1]).hide(); // Hide insurance
                 $($(".ui-accordion")[3]).hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion")[2]).hide(); // Hide payment tab
-                // $("#payment").hide(); // Hide payment panel
+                $($(".ui-accordion")[2]).hide(); // Hide payments
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Move"));
             } else if (controller.mode == "reclaim") {
                 $("#personrow label").html(_("Owner"));
                 $("#trialrow1, #trialrow2").hide();
                 $(".ui-accordion-header").first().html(_("Reclaim animal(s)"));
-                $($(".ui-accordion-header")[1]).hide(); // Hide insurance tab
-                $($(".ui-accordion")[3]).hide(); // Hide insurance panel
-                $($(".ui-widget-content")[11]).hide(); // Hide insurance panel
+                $($(".ui-accordion")[1]).hide(); // Hide insurance
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Reclaim"));
+            }
+            if (!config.bool("UseAutoInsurance")) {
+                $($(".ui-accordion")[1]).hide(); // Hide insurance
             }
         },
 
@@ -169,6 +164,7 @@ $(function() {
                 move_workflow.bondedanimals = [];
                 move_workflow.adoptionfees = {};
                 $("#animals").change();
+                $("#adoptionfees").html("");
             });
             
             const validation = function() {
@@ -348,17 +344,8 @@ $(function() {
                 $("#insurancerow").hide();
             }
 
-            // Payments
-            // if (common.has_permission("oaod")) {
-            //     $("#payment").payments({ controller: controller });
-            // }
-
-            // $("#payment #paymentlines tr").remove();
-            // $("#payment").payments("update_totals");
-
             // If checkout is turned on, hide the payments section
             $("#checkoutcreate").change(function() {
-                // $("#payment").toggle(!$("#checkoutcreate").prop("checked"));
                 $($(".ui-accordion-header")[2]).toggle();
             });
 
@@ -498,22 +485,6 @@ $(function() {
                     $("#asm-body-container").html(successmessage.join("\n"));
                     $("#asm-settlebutton").button();
                     $("#asm-content").show();
-                    // If the option to allow editing payments after creating the adoption is set, take
-                    // the user to a payment screen that allows them to see the movement payments in order
-                    // to take payment, request payment by email, generate an invoice/receipt, etc.
-                    // let movementdata = "";
-                    // JSON.parse(response.movementdata);
-                    // console.log(JSON.parse(response));
-                    // if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
-                    //     let u = "move_donations?" +
-                    //         "linktype=MOVEMENT&id=" + response +
-                    //         "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
-                    //             $(".animalchooser-display").html() + " " + html.icon("right") + " " +
-                    //             $(".personchooser-display .justlink").html() )) + 
-                    //             "&animalid=" + $("#animals").val() + 
-                    //             "&ownerid=" + $("#person").val();
-                    //     common.route(u);
-                    // }
                 }
                 catch(err) {
                     log.error(err, err);
@@ -654,13 +625,13 @@ $(function() {
                     newrow.find(".amount").currency("value", a.FEE);
                     newrow.find(".unitprice").currency("value", a.FEE);
                     newrow.find(".asm-textbox").last().val(a.SHELTERCODE + " " + a.ANIMALNAME);
-                    // $("#adoptionfees").html($("#adoptionfees").html() + 
-                    //     [
-                    //         '<div class="asm-adoptionfee">',
-                    //         a.SHELTERCODE + " " + a.ANIMALNAME + " " + format.currency(a.FEE),
-                    //         '</div>'
-                    //     ].join("\n")
-                    // );
+                    $("#adoptionfees").html($("#adoptionfees").html() + 
+                        [
+                            '<div class="asm-adoptionfee">',
+                            a.SHELTERCODE + " " + a.ANIMALNAME + " " + format.currency(a.FEE),
+                            '</div>'
+                        ].join("\n")
+                    );
                     // $("#amount1").currency("value", a.FEE);
                     // if ($("#vat1").is(":checked")) { 
                         // Recalculate the tax
