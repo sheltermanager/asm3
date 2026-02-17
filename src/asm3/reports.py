@@ -790,9 +790,9 @@ def email_daily_reports(dbo: Database) -> None:
             continue
         if r.DAILYEMAILSENDASPDF:
             l = dbo.locale
-            pdfdata = asm3.utils.html_to_pdf(dbo, body)
-            body = asm3.i18n._("Please find your report attached.", l)
-            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3, attachments=[ ("report.pdf", "application/pdf", pdfdata) ])
+            pdfdata = execute_pdf(dbo, r.ID, "dailyemail")
+            msg = asm3.i18n._("Please find your report attached.", l)
+            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, msg, "html", exceptions=False, retries=3, attachments=[ ("report.pdf", "application/pdf", pdfdata) ])
         else:
             asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
@@ -838,13 +838,14 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
     h = asm3.utils.strip_script_tags(h) # Throw away scripts
     if landscape: h = "<!-- pdf orientation landscape -->\n" + h
     styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
+        "table { width: 100%; }",
         "td, th { padding-top: 1px; }",
         "th { text-align: center; }",
         "@font-face { font-family: DejaVu; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf); }",
         "@font-face { font-family: DejaVu; font-weight: bold; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf); }",
         "@font-face { font-family: DejaVu; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf); }",
         "@font-face { font-family: DejaVu; font-weight: bold; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf); }",
-        "html { font-family: DejaVu; font-size: 80%; }"
+        "html { font-family: DejaVu; font-size: 60%; }"
     ]
     return asm3.utils.html_to_pdf_weasyprint(dbo, h, styles=styles)
 

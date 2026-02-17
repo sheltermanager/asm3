@@ -241,8 +241,6 @@ SCALE_PDF_CMD = get_string("scale_pdf_cmd", "convert -density 120 -quality 60 %(
 
 # Shell command to convert HTML to PDF
 HTML_TO_PDF = get_string("html_to_pdf", "")
-#HTML_TO_PDF = get_string("html_to_pdf", "wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s")
-#HTML_TO_PDF = "html2pdf %(input)s %(output)s"
 
 # Target for viewing an address on a map, {0} is the address
 MAP_LINK = get_string("map_link", "https://www.openstreetmap.org/search?query={0}")
