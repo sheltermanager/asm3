@@ -836,6 +836,7 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
     h = h[h.find("<body>")+6:h.find("</body>")+7] # Extract the body only
     h = asm3.utils.strip_style_tags(h) # Throw away styles
     h = asm3.utils.strip_script_tags(h) # Throw away scripts
+    h = asm3.utils.fix_relative_document_uris(dbo, h) # Fix any relative uris just in case there are images
     if landscape: h = "<!-- pdf orientation landscape -->\n" + h
     styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
         "table { width: 100%; }",
