@@ -5580,6 +5580,7 @@ class move_workflow(JSONEndpoint):
                             post["frequency"] = "0"
                             post["movement"] = str(movementid)
                             post["type"] = asm3.configuration.adoption_checkout_feeid(dbo)
+                            post["payment"] = post["paymentmethod"]
                             post["quantity"] = "1"
                             post["unitprice"] = str(post.integer(postkey))
                             post["amount"] = str(post.integer(postkey))
@@ -5589,6 +5590,7 @@ class move_workflow(JSONEndpoint):
                             else:
                                 post["due"] = ""
                                 post["received"] = str(asm3.i18n.python2display(l, dbo.today()))
+                            post["destaccount"] = str(asm3.configuration.donation_target_account(dbo))
                             asm3.financial.insert_donation_from_form(dbo, o.user, post)
                             break
             if checkout:

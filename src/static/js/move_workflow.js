@@ -54,7 +54,15 @@ $(function() {
                     { type: "raw", rowid: "insurancerow", markup: '<table id="insurancetable"></table>', doublesize: true },
                 ], { full_width: false }),
                 html.content_footer(),
-                '<div id="payment"></div>',
+                // '<div id="payment"></div>',
+                 html.content_header(_("Payment"), true),
+                tableform.fields_render([
+                    { post_field: "paymentmethod", label: _("Payment method"), type: "select",
+                        options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods } },
+                        { post_field: "destaccount", label: _("Deposit accocunt"), type: "select",
+                        options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts } },
+                ], { full_width: false }),
+                html.content_footer(),
                 html.content_header(_("Boarding Costs"), true),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
                 '<input id="costtype" data="costtype" type="hidden" />',
@@ -98,7 +106,10 @@ $(function() {
         },
 
         sync: function() {
-            $("#payment .ui-widget-content").prepend('<div id="adoptionfees"></div>');
+            // $("#payment .ui-widget-content").prepend('<div id="adoptionfees"></div>');
+            $("#paymentmethod").select("value", config.str("AFDefaultPaymentMethod"));
+            $("#destaccount").select("value", config.str("DonationTargetAccount"));
+
             if (controller.mode == "reserve") {
                 $("#personrow label").html(_("Person"));
                 $("#trialrow1, #trialrow2").hide();
@@ -115,8 +126,8 @@ $(function() {
                 $($(".ui-accordion")[1]).hide(); // Hide insurance
                 $($(".ui-accordion")[3]).hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion-header")[2]).hide(); // Hide payment tab
-                $("#payment").hide(); // Hide payment panel
+                $($(".ui-accordion")[2]).hide(); // Hide payment tab
+                // $("#payment").hide(); // Hide payment panel
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Foster"));
             } else if (controller.mode == "transfer") {
@@ -126,8 +137,8 @@ $(function() {
                 $($(".ui-accordion")[1]).hide(); // Hide insurance
                 $($(".ui-accordion")[3]).hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion-header")[2]).hide(); // Hide payment tab
-                $("#payment").hide(); // Hide payment panel
+                $($(".ui-accordion")[2]).hide(); // Hide payment tab
+                // $("#payment").hide(); // Hide payment panel
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Transfer"));
             } else if (controller.mode == "retail") {
@@ -137,8 +148,8 @@ $(function() {
                 $($(".ui-accordion")[1]).hide(); // Hide insurance
                 $($(".ui-accordion")[3]).hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion-header")[2]).hide(); // Hide payment tab
-                $("#payment").hide(); // Hide payment panel
+                $($(".ui-accordion")[2]).hide(); // Hide payment tab
+                // $("#payment").hide(); // Hide payment panel
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Move"));
             } else if (controller.mode == "reclaim") {
@@ -279,10 +290,10 @@ $(function() {
                 }
 
                 // Default giftaid if the person is registered
-                if (common.has_permission("oaod")) {
-                    $("#payment").payments("set_giftaid", p.ISGIFTAID == 1);
-                    $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
-                }
+                // if (common.has_permission("oaod")) {
+                //     $("#payment").payments("set_giftaid", p.ISGIFTAID == 1);
+                //     $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
+                // }
 
                 let oopostcode = $(".animalchooser-oopostcode").val();
                 let bipostcode = $(".animalchooser-bipostcode").val(); 
@@ -338,16 +349,17 @@ $(function() {
             }
 
             // Payments
-            if (common.has_permission("oaod")) {
-                $("#payment").payments({ controller: controller });
-            }
+            // if (common.has_permission("oaod")) {
+            //     $("#payment").payments({ controller: controller });
+            // }
 
-            $("#payment #paymentlines tr").remove();
-            $("#payment").payments("update_totals");
+            // $("#payment #paymentlines tr").remove();
+            // $("#payment").payments("update_totals");
 
             // If checkout is turned on, hide the payments section
             $("#checkoutcreate").change(function() {
-                $("#payment").toggle(!$("#checkoutcreate").prop("checked"));
+                // $("#payment").toggle(!$("#checkoutcreate").prop("checked"));
+                $($(".ui-accordion-header")[2]).toggle();
             });
 
             // Insurance related stuff
