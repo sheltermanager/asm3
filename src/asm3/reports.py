@@ -841,13 +841,10 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
         "table { width: 100%; }",
         "td, th { padding-top: 1px; }",
         "th { text-align: center; }",
-        "@font-face { font-family: DejaVu; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf); }",
-        "@font-face { font-family: DejaVu; font-weight: bold; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf); }",
-        "@font-face { font-family: DejaVu; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf); }",
-        "@font-face { font-family: DejaVu; font-weight: bold; font-style: italic; src: url(/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf); }",
-        "html { font-family: DejaVu; font-size: 60%; }"
+        "html { font-family: sans-serif; font-size: 60%; }" # scales h1/h2/td nicely since reports don't set explicit font sizes
     ]
-    return asm3.utils.html_to_pdf_weasyprint(dbo, h, styles=styles)
+    opts = { "orientation": asm3.utils.iif(landscape, "landscape", "portrait"), "papersize": "A4" }
+    return asm3.utils.html_to_pdf_weasyprint(dbo, h, styles=styles, pdfopts=opts)
 
 def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:
     """
