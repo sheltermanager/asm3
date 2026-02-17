@@ -1794,6 +1794,8 @@ def html_to_pdf_xhtml2pdf(dbo: Database, htmldata: str, styles: List[str] = [], 
     """
     margins = "1cm"
     if "margins" in pdfopts and pdfopts["margins"] != "": margins = pdfopts["margins"]
+    if len(styles) == 0:
+        styles = [ "body { font-family: sans-serif; }" ]
     header = "<!DOCTYPE html>\n<html>\n<head>"
     header += '<style>\n'
     header += '@page {size: %s %s; margin: %s}\n' % ( pdfopts["papersize"], pdfopts["orientation"], margins )
@@ -1824,6 +1826,8 @@ def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = [],
     """
     orientation = pdfopts["orientation"]
     papersize = pdfopts["papersize"]
+    if len(styles) == 0:
+        styles = [ "body { font-family: sans-serif; }" ]
     if "paperheight" in pdfopts and pdfopts["paperheight"] != "": 
         papersize = "%s %s" % (pdfopts["paperwidth"], pdfopts["paperheight"])
         orientation = "" # makes no sense with explicit height/width set
@@ -1833,10 +1837,6 @@ def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = [],
         styles.append("body { transform: scale(%s, %s); }\n" % (pdfopts["scale"], pdfopts["scale"]))
     margins = "1cm"
     if "margins" in pdfopts and pdfopts["margins"] != "": margins = pdfopts["margins"]
-    # Setting a body width can stop extra wide content from overflowing the page, so
-    # we add this if we weren't passed any styles and scale wasn't set above
-    if len(styles) <= 1:
-        styles = [ "body { font-family: sans-serif; width: 700px; }" ]
     header = "<!DOCTYPE html>\n<html>\n<head>"
     header += '<style>\n'
     header += '@page {size: %s %s; margin: %s}\n' % ( papersize, orientation, margins )
