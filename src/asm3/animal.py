@@ -534,6 +534,7 @@ def get_animal_brief_query(dbo: Database) -> str:
         "END AS DisplayLocationName, " \
         "er.ReasonName AS EntryReasonName, " \
         "et.EntryTypeName AS EntryTypeName, " \
+        "a.Fee, " \
         "a.FLVResult, " \
         "CASE WHEN ab.ID Is Not Null THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "a.HasActiveReserve, " \
