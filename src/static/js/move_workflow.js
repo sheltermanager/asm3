@@ -59,8 +59,8 @@ $(function() {
                 tableform.fields_render([
                     { post_field: "paymentmethod", label: _("Payment method"), type: "select",
                         options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods } },
-                        { post_field: "destaccount", label: _("Deposit accocunt"), type: "select",
-                        options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts } },
+                    // { post_field: "destaccount", label: _("Deposit accocunt"), type: "select",
+                    //     options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts } },
                 ], { full_width: false }),
                 html.content_footer(),
                 html.content_header(_("Boarding Costs"), true),
@@ -108,7 +108,7 @@ $(function() {
         sync: function() {
             // $("#payment .ui-widget-content").prepend('<div id="adoptionfees"></div>');
             $("#paymentmethod").select("value", config.str("AFDefaultPaymentMethod"));
-            $("#destaccount").select("value", config.str("DonationTargetAccount"));
+            // $("#destaccount").select("value", config.str("DonationTargetAccount"));
 
             if (controller.mode == "reserve") {
                 $("#personrow label").html(_("Person"));
@@ -746,12 +746,12 @@ $(function() {
             return _("Adopt animal(s)");
         },
         routes: {
-            "move_reserve": function() { common.module_loadandstart("move_workflow", "move_reserve"); },
-            "move_foster": function() { common.module_loadandstart("move_workflow", "move_foster"); },
-            "move_transfer": function() { common.module_loadandstart("move_workflow", "move_transfer"); },
-            "move_retailer": function() { common.module_loadandstart("move_workflow", "move_retailer"); },
-            "move_reclaim": function() { common.module_loadandstart("move_workflow", "move_reclaim"); },
-            "move_adopt": function() { common.module_loadandstart("move_workflow", "move_adopt"); },
+            "move_reserve_multi": function() { common.module_loadandstart("move_workflow", "move_reserve_multi"); },
+            "move_foster_multi": function() { common.module_loadandstart("move_workflow", "move_foster_multi"); },
+            "move_transfer_multi": function() { common.module_loadandstart("move_workflow", "move_transfer_multi"); },
+            "move_retailer_multi": function() { common.module_loadandstart("move_workflow", "move_retailer_multi"); },
+            "move_reclaim_multi": function() { common.module_loadandstart("move_workflow", "move_reclaim_multi"); },
+            "move_adopt_multi": function() { common.module_loadandstart("move_workflow", "move_adopt_multi"); },
         }
     };
 
