@@ -5189,7 +5189,8 @@ class maint_db_stats(ASMEndpoint):
         def rnd(x):
             if x is None: return "0"
             return round(x, 1)
-        return f"first record added on {s.firstrecord}\n\n" \
+        return f"{o.dbo.dbtype}/{o.dbo.name()}\n\n" \
+            f"first record added on {s.firstrecord}\n\n" \
             f"{s.shelteranimals:,} shelter animals\n" \
             f"{s.totalanimals:,} total animals (max id {s.maxidanimal})\n" \
             f"{s.totalvacc:,} vaccinations (max id {s.maxidanimalvaccination})\n" \
