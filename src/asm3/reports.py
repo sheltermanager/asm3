@@ -446,7 +446,10 @@ def generate_html(dbo: Database, username: str, sql: str) -> str:
     f = "$$FOOTER\n"
     for c in cols:
         th += "<th>%s</th>\n" % c
-        b += "<td>$%s</td>\n" % c.upper()
+        if c == "ANIMALPHOTO":
+            b += '<td><img style="width: 150px; height: 150px; object-fit: contain" src="{IMAGE.$ANIMALPHOTO}" /></td>'
+        else:
+            b += "<td>$%s</td>\n" % c.upper()
     th += "</thead>\n<tbody>\n"
     g = ""
     if sql.find("-- GRP:") != -1:

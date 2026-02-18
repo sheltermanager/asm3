@@ -375,6 +375,7 @@ def get_animal_query(dbo: Database) -> str:
             "WHEN a.ActiveMovementDate Is Not Null THEN co.OwnerName " \
             "ELSE '' " \
         "END AS OutcomeQualifier, " \
+        "a.ID AS AnimalPhoto, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
