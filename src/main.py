@@ -6091,12 +6091,7 @@ class move_workflow(JSONEndpoint):
             asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION))
             for widget in incnumberwidgets:
                 post[widget] = str(int(post[widget]) + 1)
-        return asm3.utils.json(
-            {
-                "movementdata": movementdata,
-                "documents": createdocuments
-            }
-        )
+        return asm3.utils.json(createdocuments)
 
     def post_cost(self, o):
         dbo = o.dbo

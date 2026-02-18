@@ -103,7 +103,7 @@ $(function() {
         },
 
         sync: function() {
-            $($(".ui-accordion")[2]).find(".ui-widget-content").append('<div id="adoptionfees"></div>');
+            $($(".ui-accordion")[2]).find(".ui-widget-content").prepend('<div id="asm-adoptionfees" class="ui-state-highlight ui-corner-all"><p></p></div>');
             $("#paymentmethod").select("value", config.str("AFDefaultPaymentMethod"));
             if (controller.mode == "reserve") {
                 $("#personrow label").html(_("Person"));
@@ -227,7 +227,8 @@ $(function() {
             let lastperson;
 
             // Callback when animal is changed
-            $("#animals").on("change", function(event, animals) {
+            $("#animals").on("change", function() {
+                $("#asm-adoptionfees").hide();
                 move_workflow.bondedanimals = [];
                 move_workflow.adoptionfees = {};
                 while (move_workflow.add_bonded_animals()) {}
@@ -244,13 +245,12 @@ $(function() {
                 $("#payment #paymentlines tr").remove();
                 $("#payment").payments("update_totals");
                 $("#insurancetable tr").remove();
-                $("#adoptionfees").html('<h3 align="center">' + _("Adoption fees") + '</h3>');
+                $("#adoptionfees").html("");
 
                 let disable = false;
                 let fosters = [];
                 let atretailer = [];
                 let reservations = [];
-                // let bondedanimals = [];
                 let noadoptionfee = [];
                 let warn = [];
                 let costs = [];
@@ -295,15 +295,16 @@ $(function() {
                     }
                     if ( ( controller.mode == "adopt" || controller.mode == "reclaim") && !config.bool("DontShowAdoptionFee") && a.FEE ) {
                         move_workflow.adoptionfees[a.ID] = a.FEE;
-                        $(".takepayment").first().click();
-                        let newrow = $("#paymentlines tr").last();
-                        newrow.attr("data-animalid", a.ID);
-                        newrow.find(".amount").currency("value", a.FEE);
-                        newrow.find(".unitprice").currency("value", a.FEE);
-                        newrow.find(".asm-textbox").last().val(a.SHELTERCODE + " " + a.ANIMALNAME);
-                        $("#adoptionfees").html($("#adoptionfees").html() + 
+                        $("#asm-adoptionfees").show();
+                        // $(".takepayment").first().click();
+                        // let newrow = $("#paymentlines tr").last();
+                        // newrow.attr("data-animalid", a.ID);
+                        // newrow.find(".amount").currency("value", a.FEE);
+                        // newrow.find(".unitprice").currency("value", a.FEE);
+                        // newrow.find(".asm-textbox").last().val(a.SHELTERCODE + " " + a.ANIMALNAME);
+                        $("#asm-adoptionfees p").html($("#asm-adoptionfees p").html() + 
                             [
-                                '<div class="asm-adoptionfee">',
+                                '<div>',
                                 a.SHELTERCODE + " " + a.ANIMALNAME + " " + format.currency(a.FEE),
                                 '</div>'
                             ].join("\n")
@@ -314,9 +315,9 @@ $(function() {
                             $("#vat1").change();
                         // }
 
-                        if (newrow.find(".asm-checkbox").is(":checked")) {
-                            newrow.find(".asm-checkbox").change();
-                        }
+                        // if (newrow.find(".asm-checkbox").is(":checked")) {
+                        //     newrow.find(".asm-checkbox").change();
+                        // }
                         // $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(a.FEE)));
                         noadoptionfee.push(a);
                         // $("#feeinfo").show();
@@ -579,6 +580,7 @@ $(function() {
                     });
                     let response = await common.ajax_post("move_workflow", formdata);
                     let jsondata = JSON.parse(response.replace(/'/g, '"'));
+                    console.log(jsondata);
                     header.hide_loading();
                     $(".ui-accordion").hide();
                     $("#button-adopt").hide();
@@ -602,7 +604,7 @@ $(function() {
                         successmessage.push("<p>" + _("adopted to") + "</p>");
                     }
                     successmessage.push("<p>" + $(".personchooser-display .justlink").html() + "</p>");
-
+                    console.log(jsondata.length);
                     if (jsondata.length) {
                         successmessage.push("<p>Extra adoption paperwork</p><ul>");
                         $.each(jsondata, function(i, v) {
@@ -650,25 +652,48 @@ $(function() {
         add_bonded_animals: function() {
             let additionalids = [];
             let currentval = $("#animals").animalchoosermulti("value");
+            let allanimals = $("#animals").animalchoosermulti("get_rows");
+            let allanimalids = [];
+            $.each(allanimals, function(i, v) {
+                allanimalids.push(v.ID);
+            });
             if (currentval) {
                 $.each($("#animals").animalchoosermulti("get_selected_rows"), function(i, a) {
-                    if (a.BONDEDANIMALID && a.BONDEDANIMAL1ARCHIVED == 0) {
+                    if (a.BONDEDANIMALID && allanimalids.includes(a.BONDEDANIMALID)) {
                         if (!currentval.split(",").includes(a.BONDEDANIMALID.toString()) && !additionalids.includes(a.BONDEDANIMALID)) {
+                            let bondedanimalname = _("Unknown");
+                            let bondedanimalcode = _("Unknown");
+                            $.each(allanimals, function(i, v) {
+                                if (v.ID == a.BONDEDANIMALID) {
+                                    bondedanimalname = a.ANIMALNAME;
+                                    bondedanimalcode = a.SHELTERCODE;
+                                    return;
+                                }
+                            });
                             move_workflow.bondedanimals.push(
                                 [
                                     a.BONDEDANIMALID,
-                                    _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", a.BONDEDANIMAL1CODE).replace("{3}", a.BONDEDANIMAL1NAME)
+                                    _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", bondedanimalcode).replace("{3}", bondedanimalname)
                                 ]
                             );
                             additionalids.push(a.BONDEDANIMALID);
                         }
                     }
-                    if (a.BONDEDANIMAL2ID && a.BONDEDANIMAL2ARCHIVED == 0) {
+                    if (a.BONDEDANIMAL2ID && allanimalids.includes(a.BONDEDANIMAL2ID)) {
                         if (!currentval.split(",").includes(a.BONDEDANIMAL2ID.toString()) && !additionalids.includes(a.BONDEDANIMAL2ID)) {
+                            let bondedanimalname = _("Unknown");
+                            let bondedanimalcode = _("Unknown");
+                            $.each(allanimals, function(i, v) {
+                                if (v.ID == a.BONDEDANIMALID) {
+                                    bondedanimalname = a.ANIMALNAME;
+                                    bondedanimalcode = a.SHELTERCODE;
+                                    return;
+                                }
+                            });
                             move_workflow.bondedanimals.push(
                                 [
                                     a.BONDEDANIMAL2ID,
-                                    _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", a.BONDEDANIMAL2CODE).replace("{3}", a.BONDEDANIMAL2NAME)
+                                    _("{0} {1} is bonded to {2} {3} who is not selected, they will be included.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME).replace("{2}", bondedanimalcode).replace("{3}", bondedanimalname)
                                 ]
                             );
                             additionalids.push(a.BONDEDANIMAL2ID);
@@ -687,10 +712,6 @@ $(function() {
             }
             return false;
         },
-
-        // process_animals: async function() {
-            
-        // },
 
         destroy: function() {
             common.widget_destroy("#animal");

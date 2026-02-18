@@ -160,6 +160,10 @@ $.fn.animalchoosermulti = asm_widget({
         return rv;
     }, 
 
+    get_rows: function(t) {
+        return t.data("o").rows;
+    }, 
+
     get_selected_rows: function(t) {
         let rows = [];
         self = this;

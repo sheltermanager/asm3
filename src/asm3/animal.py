@@ -1075,6 +1075,7 @@ def get_animals_brief(animals: Results) -> Results:
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
             "ENTRYTYPENAME": a["ENTRYTYPENAME"],
+            "FEE": a["FEE"],
             "FLVRESULT": a["FLVRESULT"],
             "HASACTIVEBOARDING": a["HASACTIVEBOARDING"],
             "HASACTIVERESERVE": a["HASACTIVERESERVE"],
