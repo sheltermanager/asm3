@@ -7360,6 +7360,32 @@ class receipt_bulk(JSONEndpoint):
                 asm3.al.error(f"failed sending message '{subject}' to '{to}': {err}", "automail._send_email_from_template", dbo)
         return True
 
+class regular_debits(JSONEndpoint):
+    url = "regular_debits"
+    js_module = "regular_debits"
+    get_permissions = asm3.users.VIEW_ACCOUNT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "rows": asm3.financial.get_regulardebits(dbo, filter=o.post["filter"]),
+            "accounts": asm3.financial.get_accounts(dbo),
+            "filter": o.post["filter"]
+        }
+    
+    def post_create(self, o):
+        self.check(asm3.users.ADD_ACCOUNT)
+        return asm3.financial.insert_regulardebit_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_ACCOUNT)
+        return asm3.financial.update_regulardebit_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_ACCOUNT)
+        for rdid in o.post.integer_list("ids"):
+            asm3.financial.delete_regulardebit(o.dbo, o.user, rdid)
+
 class report(ASMEndpoint):
     url = "report"
     get_permissions = asm3.users.VIEW_REPORT

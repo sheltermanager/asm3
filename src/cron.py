@@ -132,6 +132,9 @@ def daily(dbo: Database):
         # Send automated person emails
         ttask(automail.send_all, dbo)
 
+        # Create transactions from regular debits
+        ttask(financial.create_trx_from_regular_debits, dbo)
+
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running batch tasks: %s" % em, "cron.daily", dbo, sys.exc_info())
