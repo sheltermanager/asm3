@@ -7561,6 +7561,7 @@ class reports(JSONEndpoint):
             "additionalfields": asm3.additional.get_fields(dbo),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
+            "diets": asm3.lookups.get_diets(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),

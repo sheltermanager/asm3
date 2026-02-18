@@ -496,6 +496,12 @@ $(function() {
                             "AND asm_to_date(Value, " + dformat + ") <= '$ASK DATE To date $')" ]);
                 }
             });
+            $.each(controller.diets, function(i, v) {
+                reports_querybuilder.qb_animal_criteria.push(
+                    [_("Diet is {0}").replace("{0}", v.DIETNAME), "diet" + v.ID, 
+                        "EXISTS(SELECT ID FROM animaldiet WHERE DateStarted <= '$CURRENT_DATE$' AND " +
+                        "AnimalID=v_animal.ID AND DietID=" + v.ID + ")"]);
+            });
             $.each(controller.entryreasons, function(i, v) {
                 reports_querybuilder.qb_animal_criteria.push(
                     [_("Entry category is {0}").replace("{0}", v.REASONNAME), "entryreason" + v.ID, "EntryReasonID=" + v.ID]);
