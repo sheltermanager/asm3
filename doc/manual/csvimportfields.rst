@@ -199,7 +199,7 @@ CURRENTVETADDITIONAL<fieldname>
 DIARYDATE
     The date of the diary entry.
 DIARYCOMPLETED
-    The date a diray note was completed.
+    The date a diary note was completed.
 DIARYFOR
     The person the diary note is for.
 DIARYSUBJECT

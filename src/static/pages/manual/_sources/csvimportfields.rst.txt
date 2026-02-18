@@ -198,10 +198,12 @@ CURRENTVETADDITIONAL<fieldname>
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth CURRENTVETADDITIONALDATEOFBIRTH.
 DIARYDATE
     The date of the diary entry.
+DIARYCOMPLETED
+    The date a diray note was completed.
 DIARYFOR
     The person the diary note is for.
 DIARYSUBJECT
-    The subject of the diary note.
+    The subject of the diary note (must be included when importing diary notes).
 DIARYNOTE
     The diary note section.
 DONATIONDATE
