@@ -10,8 +10,7 @@ from asm3.typehints import datetime, Database, Dict, List, LocationFilter, Resul
 import re
 
 # Look up tables map
-# tablename : ( tablelabel, namefield, namelabel, descfield, hasspecies, haspfspecies, haspfbreed, hasapcolour, hasdefaultcost, hasunits, hassite, canadd, candelete, canretire,(foreignkeys) )
-# tablename : ( tablelabel, namefield, namelabel, descfield, modifiers,(foreignkeys) )
+# tablename : ( tablelabel, namefield, namelabel, descfield, modifiers, (foreignkeys), defaultconfig )
 # modifiers: 
 #   add - add new records
 #   del - can delete
@@ -28,63 +27,63 @@ import re
 #   vat - has an IsVAT column (donationtype)
 #   taxrate - has a TaxRate column
 LOOKUP_TABLES = {
-    "lksaccounttype":       (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",)),
-    "lkanimalflags":        (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", ""),
+    "lksaccounttype":       (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",), ""),
+    "lkanimalflags":        (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", "", ""),
     "animaltype":           (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",), "AFDefaultType"),
     "basecolour":           (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID"), "AFDefaultColour"),
-    "lkboardingtype":       (_("Boarding Types"), "BoardingName", _("Boarding Type"), "BoardingDescription", "add del ret cost", ("animalboarding.BoardingTypeID",)),
+    "lkboardingtype":       (_("Boarding Types"), "BoardingName", _("Boarding Type"), "BoardingDescription", "add del ret cost", ("animalboarding.BoardingTypeID",), ""),
     "lkclinictype":         (_("Clinic Appointment Types"), "ClinicTypeName", _("Appointment Type"), "ClinicTypeDescription", "add del ret", ("clinicappointment.ClinicTypeID",), "AFDefaultClinicType"),
-    "lkclinicinvoiceitems": (_("Clinic Invoice Items"), "ClinicInvoiceItemName", _("Item Name"), "ClinicInvoiceItemDescription", "add del ret cost", ""),
+    "lkclinicinvoiceitems": (_("Clinic Invoice Items"), "ClinicInvoiceItemName", _("Item Name"), "ClinicInvoiceItemDescription", "add del ret cost", "", ""),
     "breed":                (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", "add del ret species pubbreed", ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID"), "AFDefaultBreed"),
     "lkcoattype":           (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",), "AFDefaultCoatType"),
-    "citationtype":         (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
-    "lksclinicstatus":      (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
-    "lkcondition":          (_("Conditions"), "ConditionName", _("Name"), "Description", "add del ret conditiontype haszoonotic", ("animalcondition.ConditionID",)),
-    "lksconditiontype":     (_("Condition Types"), "ConditionTypeName", _("Name"), "Description", ""),
-    "costtype":             (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
+    "citationtype":         (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",), ""),
+    "lksclinicstatus":      (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",), ""),
+    "lkcondition":          (_("Conditions"), "ConditionName", _("Name"), "Description", "add del ret conditiontype haszoonotic", ("animalcondition.ConditionID",), ""),
+    "lksconditiontype":     (_("Condition Types"), "ConditionTypeName", _("Name"), "Description", "", ""),
+    "costtype":             (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",), ""),
     "deathreason":          (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",), "AFDefaultDeathReason"),
-    "diet":                 (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
+    "diet":                 (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",), ""),
     "donationpayment":      (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", "add del ret", ("ownerdonation.DonationPaymentID",), "AFDefaultPaymentMethod"),
     "donationtype":         (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat acc", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID"), "AFDefaultDonationType"),
     "entryreason":          (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.EntryReasonID", "adoption.ReturnedReasonID"),"AFDefaultEntryReason"),
     "lksentrytype":         (_("Entry Types"), "EntryTypeName", _("Type"), "", "", ("animal.EntryTypeID", "animalentry.EntryTypeID"), "AFDefaultEntryType"),
-    "incidentcompleted":    (_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", "add del ret", ("animalcontrol.IncidentCompletedID",)),
+    "incidentcompleted":    (_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", "add del ret", ("animalcontrol.IncidentCompletedID",), ""),
     "incidenttype":         (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", "add del ret", ("animalcontrol.IncidentTypeID",), "DefaultIncidentType"),
     "internallocation":     (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret units site", ("animal.ShelterLocation",), "AFDefaultLocation"),
     "jurisdiction":         (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animal.JurisdictionID", "animalcontrol.JurisdictionID","owner.JurisdictionID"), "DefaultJurisdiction"),
-    "licencetype":          (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",)),
+    "licencetype":          (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",), ""),
     "logtype":              (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",), "AFDefaultLogType"),
-    "lkmediaflags":         (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", ""),
-    "lksmedicaltype":       (_("Medical Types"), "MedicalTypeName", _("Type"), "Description", ""),
-    "lksmovementtype":      (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
-    "lksoutcome":           (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
-    "lkownerflags":         (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
-    "lkproducttype":        (_("Product Types"), "ProductTypeName", _("Name"), _("Description"), "add del ret", ""),
-    "lksrotatype":          (_("Rota Types"), "RotaType", _("Type"), "", "", ("ownerrota.RotaTypeID",)),
-    "lksex":                (_("Sexes"), "Sex", _("Sex"), "", "", ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
+    "lkmediaflags":         (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", "", ""),
+    "lksmedicaltype":       (_("Medical Types"), "MedicalTypeName", _("Type"), "Description", "", ""),
+    "lksmovementtype":      (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",), ""),
+    "lksoutcome":           (_("Outcomes"), "Outcome", _("Outcome"), "", "", "", ""),
+    "lkownerflags":         (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", "", ""),
+    "lkproducttype":        (_("Product Types"), "ProductTypeName", _("Name"), _("Description"), "add del ret", "", ""),
+    "lksrotatype":          (_("Rota Types"), "RotaType", _("Type"), "", "", ("ownerrota.RotaTypeID",), ""),
+    "lksex":                (_("Sexes"), "Sex", _("Sex"), "", "", ("animal.Sex", "animallost.Sex", "animalfound.Sex"), ""),
     "lksize":               (_("Sizes"), "Size", _("Size"), "", "", ("animal.Size",), "AFDefaultSize"),
-    "lksyesno":             (_("Yes/No"), "Name", _("Yes/No"), "", "", ("animal.Neutered",)),
-    "lksynun":              (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", "", ("animal.IsHouseTrained",)),
-    "lksynunk":             (_("Good with kids"), "Name", _("Good with kids"), "", "", ("animal.IsGoodWithChildren",)),
-    "lksposneg":            (_("Positive/Negative"), "Name", _("Positive/Negative"), "", "", ("animal.CombiTestResult",)),
-    "pickuplocation":       (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID", "animalcontrol.PickupLocationID")),
+    "lksyesno":             (_("Yes/No"), "Name", _("Yes/No"), "", "", ("animal.Neutered",), ""),
+    "lksynun":              (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", "", ("animal.IsHouseTrained",), ""),
+    "lksynunk":             (_("Good with kids"), "Name", _("Good with kids"), "", "", ("animal.IsGoodWithChildren",), ""),
+    "lksposneg":            (_("Positive/Negative"), "Name", _("Positive/Negative"), "", "", ("animal.CombiTestResult",), ""),
+    "pickuplocation":       (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID", "animalcontrol.PickupLocationID"), ""),
     "reservationstatus":    (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",), "AFDefaultReservationStatus"),
-    "site":                 (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID")),
+    "site":                 (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID"), ""),
     "species":              (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID"), "AFDefaultSpecies"),
-    "stocklocation":        (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
-    "stockusagetype":       (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
-    "lkurgency":            (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
-    "lktaxrate":            (_("Tax Rate"), "TaxRateName", _("Name"), _("Description"), "add del ret taxrate", ("lktaxrate.TaxRate",)),
+    "stocklocation":        (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",), ""),
+    "stockusagetype":       (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",), ""),
+    "lkurgency":            (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",), ""),
+    "lktaxrate":            (_("Tax Rate"), "TaxRateName", _("Name"), _("Description"), "add del ret taxrate", ("lktaxrate.TaxRate",), ""),
     "testtype":             (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost sched", ("animaltest.TestTypeID",), "AFDefaultTestType"),
-    "testresult":           (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
-    "lkstransportstatus":   (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
+    "testresult":           (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",), ""),
+    "lkstransportstatus":   (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",), ""),
     "transporttype":        (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",), "AFDefaultTransportType"),
-    "traptype":             (_("Equipment Loan Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
+    "traptype":             (_("Equipment Loan Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",), ""),
     "vaccinationtype":  
         (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",), "AFDefaultVaccinationType"),
-    "voucher":              (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",)),
-    "lkwaitinglistremoval": (_("Waiting List Removal"), "RemovalName", _("Type"), "", "add del", ("animalwaitinglist.WaitingListRemovalID",)),
-    "lkworktype":           (_("Work Types"), "WorkType", _("Type"), "", "add del ret", ("ownerrota.WorkTypeID",))
+    "voucher":              (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",), ""),
+    "lkwaitinglistremoval": (_("Waiting List Removal"), "RemovalName", _("Type"), "", "add del", ("animalwaitinglist.WaitingListRemovalID",), ""),
+    "lkworktype":           (_("Work Types"), "WorkType", _("Type"), "", "add del ret", ("ownerrota.WorkTypeID",), "")
 }
 LOOKUP_TABLELABEL = 0
 LOOKUP_NAMEFIELD = 1
@@ -1239,14 +1238,11 @@ def update_lookup_retired(dbo: Database, username: str, lookup: str, iid: int, r
 def delete_lookup(dbo: Database, username: str, lookup: str, iid: int) -> None:
     l = dbo.locale
     t = LOOKUP_TABLES[lookup]
-    default_key = t[LOOKUP_DEFAULTCONFIG] if len(t) > LOOKUP_DEFAULTCONFIG else ""
-    if default_key:
+    default_key = t[LOOKUP_DEFAULTCONFIG]
+    if default_key != "":
         default_iid = asm3.configuration.cint(dbo, default_key, 0)
         if default_iid == iid:
-            raise asm3.utils.ASMValidationError(
-                _("This item is set as the default and cannot be deleted.", l)
-            )
-
+            raise asm3.utils.ASMValidationError(_("This item is set as the default and cannot be deleted.", l))
     for fv in t[LOOKUP_FOREIGNKEYS]:
         table, field = fv.split(".")
         if 0 < dbo.query_int("SELECT COUNT(*) FROM %s WHERE %s = %s" % (table, field, iid)):
