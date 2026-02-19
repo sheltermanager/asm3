@@ -1127,14 +1127,6 @@ select:disabled, input:disabled, textarea:disabled {
     width: 113px;
 }
 
-#asm-adoptionfees {
-    max-width: 900px;
-    margin: auto;
-    margin-bottom: 3px;
-    display: none;
-    padding: 5px;
-}
-
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {
 

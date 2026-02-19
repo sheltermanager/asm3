@@ -199,9 +199,6 @@ $.fn.toPOST = function(includeblanks=false, markincnumbers=false) {
             post.push(pname + "=" + encodeURIComponent(t.selectcolour("value")));
         }
         else if (t.hasClass("asm-incnumber") && markincnumbers) {
-            // post.push("asm-incnumber" + pname + "=" + encodeURIComponent(t.val()));
-            console.log(t);
-            console.log(t.attr("value"));
             post.push("asm-incnumber" + pname + "=" + encodeURIComponent(parseInt(t.attr("value"))));
         }
         else if (t.hasClass("asm-mask")) {

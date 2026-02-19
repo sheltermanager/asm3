@@ -5501,6 +5501,80 @@ class move_adopt(JSONEndpoint):
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
+    
+    def post_create(self, o):
+        self.check(asm3.users.ADD_MOVEMENT)
+        dbo = o.dbo
+        post = o.post
+        l = dbo.locale
+        checkout = o.post.boolean("checkoutcreate")
+        paperwork = o.post.boolean("sigpaperwork")
+        if checkout and post.integer("templateid") == 0:
+            raise asm3.utils.ASMValidationError("No template given for checkout")
+        if checkout and post.integer("emailtemplateid") == 0:
+            raise asm3.utils.ASMValidationError("No email template given for checkout email")
+        if paperwork and post.integer("sigtemplateid")== 0:
+            raise asm3.utils.ASMValidationError("No template given for paperwork")
+        if paperwork and post.integer("sigemailtemplateid") == 0:
+            raise asm3.utils.ASMValidationError("No email template given for request signature email")
+        movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
+        if checkout:
+            l = o.dbo.locale
+            body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
+            tokens = asm3.wordprocessor.extract_mail_tokens(body)
+            d = {
+                "id":           str(movementid),
+                "animalid":     post["animal"],
+                "personid":     post["person"],
+                "templateid":   post["templateid"],
+                "feetypeid":    post["feetypeid"],
+                "from":         tokens["FROM"] or asm3.configuration.email(dbo),
+                "to":           post["emailaddress"],
+                "cc":           tokens["CC"] or "",
+                "bcc":          tokens["BCC"] or "",
+                "subject":      tokens["SUBJECT"] or _("Adoption Checkout", l),
+                "body":         tokens["BODY"]
+            }
+            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale), substitute_url=True)
+        elif paperwork:
+            # Generate the adoption paperwork and save it to the animal/person
+            dtid = post.integer("sigtemplateid")
+            content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, movementid, o.user)
+            tempname = asm3.template.get_document_template_name(dbo, dtid)
+            tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
+                asm3.person.get_person_name(dbo, o.post.integer("person")))
+            amid, pmid = asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
+            # Generate the email body from the email template
+            sigbody = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("sigemailtemplateid"), movementid, o.user)
+            tokens = asm3.wordprocessor.extract_mail_tokens(sigbody)
+            d = {
+                "addtolog": "on",
+                "logtype":  str(asm3.configuration.system_log_type(dbo)),
+                "from":     tokens["FROM"] or asm3.configuration.email(dbo),
+                "to":       post["sigemailaddress"],
+                "subject":  tokens["SUBJECT"] or _("Document signing request", l),
+                "body":     tokens["BODY"]
+            }
+            asm3.media.send_signature_request(dbo, o.user, pmid, asm3.utils.PostedData(d, dbo.locale))
+        return movementid
+    
+    def post_cost(self, o):
+        dbo = o.dbo
+        post = o.post
+        l = o.locale
+        self.check(asm3.users.VIEW_COST)
+        dailyboardcost = asm3.animal.get_daily_boarding_cost(dbo, post.integer("id"))
+        dailyboardcostdisplay = format_currency(l, dailyboardcost)
+        daysonshelter = asm3.animal.get_days_on_shelter(dbo, post.integer("id"))
+        totaldisplay = format_currency(l, dailyboardcost * daysonshelter)
+        return totaldisplay + "||" + \
+            _("On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
+    
+    def post_donationdefault(self, o):
+        return asm3.lookups.get_donation_default(o.dbo, o.post.integer("donationtype"))
+
+    def post_insurance(self, o):
+        return asm3.movement.generate_insurance_number(o.dbo)
 
 class move_adopt_multi(JSONEndpoint):
     url = "move_adopt_multi"
@@ -5982,7 +6056,7 @@ class move_workflow(JSONEndpoint):
             raise asm3.utils.ASMValidationError("No template given for checkout")
         if checkout and post.integer("emailtemplateid") == 0:
             raise asm3.utils.ASMValidationError("No email template given for checkout email")
-        if paperwork and post.integer("sigtemplateid")== 0:
+        if paperwork and post.integer("sigtemplateid") == 0:
             raise asm3.utils.ASMValidationError("No template given for paperwork")
         if paperwork and post.integer("sigemailtemplateid") == 0:
             raise asm3.utils.ASMValidationError("No email template given for request signature email")
@@ -5990,7 +6064,7 @@ class move_workflow(JSONEndpoint):
         incnumberwidgets = []
         movementdata = {}
 
-        # Create post data for virtual incrementing number fields
+        ## Create post data for virtual incrementing number fields
         for key in post.data.keys():
             if key[:13] == "asm-incnumber":
                 incnumberwidgets.append(key[13:])
@@ -5998,14 +6072,34 @@ class move_workflow(JSONEndpoint):
             post.data[key] = post.data["asm-incnumber" + key]
             del post.data["asm-incnumber" + key]
         
+        ## Loop through animals
         for animalid in post["animals"].split(","):
+            
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
             post["costamount"] = post["animalcost" + animalid]
             post["cost"] = post["animalcost" + animalid]
             movementid = 0
+
+            ## Reconstruct payment post data for this animal only
+            virtualpostkeys = []
+            postkeys = []
+            for key in post.data.keys():
+                postkeys.append(key)
+            for key in postkeys:
+                if key[:12] == "paymentinput":
+                    aid = key[12:].split("||")[0]
+                    if aid == animalid:
+                        virtualfield = key.split("||")[1]
+                        
+                        ## Setting numeric component to zero to avoid skipping in insert_donations_from_form
+                        virtualfield = virtualfield.replace(asm3.utils.digits_only(virtualfield), "1")
+
+                        virtualpostkeys.append(virtualfield)
+                        post[virtualfield] = post[key]
+
             if post["movementtype"] == "adopt":
-                movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments=False)
+                movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
             elif post["movementtype"] == "reserve":
                 post["reservationdate"] = post["movementdate"]
                 movementid = asm3.movement.insert_reserve_from_form(dbo, o.user, post)
@@ -6021,28 +6115,33 @@ class move_workflow(JSONEndpoint):
             elif post["movementtype"] == "reclaim":
                 movementid = asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
             movementdata[animalid] = movementid
-            if not checkout:
-                # Add adoption fee payments
-                for postkey in post.data.keys():
-                    if postkey[:11] == "adoptionfee" and postkey[11:] == animalid:
-                            post["receiptnumber"] = ""
-                            post["amount"] = str(post.integer(postkey))
-                            post["frequency"] = "0"
-                            post["movement"] = str(movementid)
-                            post["type"] = asm3.configuration.adoption_checkout_feeid(dbo)
-                            post["payment"] = post["paymentmethod"]
-                            post["quantity"] = "1"
-                            post["unitprice"] = str(post.integer(postkey))
-                            post["amount"] = str(post.integer(postkey))
-                            if asm3.configuration.movement_donations_default_due(dbo):
-                                post["due"] = str(asm3.i18n.python2display(l, dbo.today()))
-                                post["received"] = ""
-                            else:
-                                post["due"] = ""
-                                post["received"] = str(asm3.i18n.python2display(l, dbo.today()))
-                            post["destaccount"] = str(asm3.configuration.donation_target_account(dbo))
-                            asm3.financial.insert_donation_from_form(dbo, o.user, post)
-                            break
+
+            ## Remove virtual payment posts
+            for vf in virtualpostkeys.copy():
+                post.data.pop(vf)
+
+
+            # if not checkout:
+            #     # Add adoption fee payments
+            #     for postkey in post.data.keys():
+            #         if postkey[:11] == "adoptionfee" and postkey[11:] == animalid:
+            #                 post["amount"] = str(post.integer(postkey))
+            #                 post["frequency"] = "0"
+            #                 post["movement"] = str(movementid)
+            #                 post["type"] = asm3.configuration.adoption_checkout_feeid(dbo)
+            #                 post["payment"] = post["paymentmethod"]
+            #                 post["quantity"] = "1"
+            #                 post["unitprice"] = str(post.integer(postkey))
+            #                 post["amount"] = str(post.integer(postkey))
+            #                 if asm3.configuration.movement_donations_default_due(dbo):
+            #                     post["due"] = str(asm3.i18n.python2display(l, dbo.today()))
+            #                     post["received"] = ""
+            #                 else:
+            #                     post["due"] = ""
+            #                     post["received"] = str(asm3.i18n.python2display(l, dbo.today()))
+            #                 post["destaccount"] = str(asm3.configuration.donation_target_account(dbo))
+            #                 asm3.financial.insert_donation_from_form(dbo, o.user, post)
+            #                 break
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
