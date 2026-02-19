@@ -615,22 +615,50 @@ $(function() {
                         html.content_header(_("Adoption(s) successfully created")),
                         '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
                         '<p><span class="ui-icon ui-icon-info"></span> ' + _("Details") + '</p>',
+                        '<p>' + _("Animals") + '</p>'
                     ];
-                    successmessage.push("<p>" + $(".animalchoosermulti-display").html() + "</p>");
+                    successmessage.push("<ul>" + $(".animalchoosermulti-display").html().replace(/\<br\>/g, "").replace(/\<a/g, "<li><a").replace(/\<\/a\>/g, "</a></li>") + "</ul>");
                     if (controller.mode == "reserve") {
-                        successmessage.push("<p>" + _("reserved by") + "</p>");
+                        successmessage.push("<p>" + _("Reserved by") + "</p>");
                     } else if (controller.mode == "foster") {
-                        successmessage.push("<p>" + _("fostered by") + "</p>");
+                        successmessage.push("<p>" + _("Fostered by") + "</p>");
                     } else if (controller.mode == "transfer") {
-                        successmessage.push("<p>" + _("transfered to") + "</p>");
+                        successmessage.push("<p>" + _("Transfered to") + "</p>");
                     } else if (controller.mode == "retail") {
-                        successmessage.push("<p>" + _("moved to") + "</p>");
+                        successmessage.push("<p>" + _("Moved to") + "</p>");
                     } else if (controller.mode == "reclaim") {
-                        successmessage.push("<p>" + _("reclaimed by") + "</p>");
+                        successmessage.push("<p>" + _("Reclaimed by") + "</p>");
                     } else {
-                        successmessage.push("<p>" + _("adopted to") + "</p>");
+                        successmessage.push("<p>" + _("Adopted to") + "</p>");
                     }
-                    successmessage.push("<p>" + $(".personchooser-display .justlink").html() + "</p>");
+                    successmessage.push("<ul><li>" + $(".personchooser-display .justlink").html() + "</li></ul>");
+
+                    successmessage.push("<p>" + _("Payments") + "</p>");
+                    if ($("#payment tbody tr").length) {
+                        successmessage.push("<ul>");
+                        $.each($("#payment tbody tr"), function(i, v) {
+                            let paymentamount = $(v).find(".amount").val();
+                            let paymenttypeid = $(v).find("select").first().val();
+                            let paymenttype = _("Unknown");
+                            $.each(controller.donationtypes, function(i, v) {
+                                if (v.ID == paymenttypeid) {
+                                    paymenttype = v.DONATIONNAME;
+                                    return;
+                                }
+                            });
+                            let paymentmethodid = $($(v).find("select")[1]).val();
+                            let paymentmethod = _("Unknown");
+                            $.each(controller.paymentmethods, function(i, v) {
+                                if (v.ID == paymentmethodid) {
+                                    paymentmethod = v.PAYMENTNAME;
+                                    return;
+                                }
+                            });
+                            successmessage.push("<li><b>" + paymenttype + " " + paymentamount + " " + paymentmethod + "</b></li>");
+                        });
+                        successmessage.push("</ul>");
+                    }
+
                     if (jsondata.length) {
                         successmessage.push("<p>Extra adoption paperwork</p><ul>");
                         $.each(jsondata, function(i, v) {
@@ -641,7 +669,6 @@ $(function() {
                     if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
                         successmessage.push('<p><a href="/person_donations?id=' + $("#person").val() + '"><button id="asm-settlebutton">' + _("Settle Payments") + '</button></a>');
                     }
-
                     successmessage.push('</div>');
                     successmessage.push(html.content_footer());
                     $("#asm-body-container").html(successmessage.join("\n"));
