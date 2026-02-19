@@ -6072,9 +6072,27 @@ class move_workflow(JSONEndpoint):
             post.data[key] = post.data["asm-incnumber" + key]
             del post.data["asm-incnumber" + key]
         
+        ## Reconstruct payment post data for non adoption payments
+        # virtualpostkeys = []
+        # postkeys = []
+        # for key in post.data.keys():
+        #     postkeys.append(key)
+        # for key in postkeys:
+        #     if key[:12] == "paymentinput":
+        #         aid = key[12:].split("||")[0]
+        #         if aid == "0":
+        #             virtualfield = key.split("||")[1]
+                    
+        #             # ## Setting numeric component to 1 to avoid unneccessary looping in insert_donations_from_form
+        #             # virtualfield = virtualfield.replace(asm3.utils.digits_only(virtualfield), "1")
+
+        #             virtualpostkeys.append(virtualfield)
+        #             post[virtualfield] = post[key]
+
         ## Loop through animals
+        animalcount = 0
         for animalid in post["animals"].split(","):
-            
+            animalcount = animalcount + 1
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
             post["costamount"] = post["animalcost" + animalid]
@@ -6089,11 +6107,12 @@ class move_workflow(JSONEndpoint):
             for key in postkeys:
                 if key[:12] == "paymentinput":
                     aid = key[12:].split("||")[0]
-                    if aid == animalid:
+                    if aid == animalid or (aid == "0" and animalcount == 1):
+                        
                         virtualfield = key.split("||")[1]
                         
-                        ## Setting numeric component to zero to avoid skipping in insert_donations_from_form
-                        virtualfield = virtualfield.replace(asm3.utils.digits_only(virtualfield), "1")
+                        # ## Setting numeric component to 1 to avoid unneccessary looping in insert_donations_from_form
+                        # virtualfield = virtualfield.replace(asm3.utils.digits_only(virtualfield), "1")
 
                         virtualpostkeys.append(virtualfield)
                         post[virtualfield] = post[key]
@@ -6118,8 +6137,10 @@ class move_workflow(JSONEndpoint):
 
             ## Remove virtual payment posts
             for vf in virtualpostkeys.copy():
-                post.data.pop(vf)
-
+                try:
+                    post.data.pop(vf)
+                except:
+                    pass
 
             # if not checkout:
             #     # Add adoption fee payments

@@ -105,6 +105,7 @@ $(function() {
 
         sync: function() {
             $("#paymentlines tr").remove();
+            $("#payment").payments("update_totals");
             $("#paymentmethod").select("value", config.str("AFDefaultPaymentMethod"));
             if (controller.mode == "reserve") {
                 $("#personrow label").html(_("Person"));
@@ -592,6 +593,10 @@ $(function() {
                     // Process payment inputs
                     $.each($(".paymentinput"), function(i, v) {
                         let animalid = $(v).closest("tr").attr("data-animalid");
+                        // Set animalid to zero for non adoption fee payments
+                        if (!animalid) {
+                            animalid = 0;
+                        }
                         let postname = "paymentinput" + animalid + "||" + $(v).prop("id");
                         formdata += "&" + postname + "=" + $(v).val();
                         if ($(v).hasClass("asm-currencybox")) {
