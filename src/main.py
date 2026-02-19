@@ -6071,23 +6071,6 @@ class move_workflow(JSONEndpoint):
         for key in incnumberwidgets:
             post.data[key] = post.data["asm-incnumber" + key]
             del post.data["asm-incnumber" + key]
-        
-        ## Reconstruct payment post data for non adoption payments
-        # virtualpostkeys = []
-        # postkeys = []
-        # for key in post.data.keys():
-        #     postkeys.append(key)
-        # for key in postkeys:
-        #     if key[:12] == "paymentinput":
-        #         aid = key[12:].split("||")[0]
-        #         if aid == "0":
-        #             virtualfield = key.split("||")[1]
-                    
-        #             # ## Setting numeric component to 1 to avoid unneccessary looping in insert_donations_from_form
-        #             # virtualfield = virtualfield.replace(asm3.utils.digits_only(virtualfield), "1")
-
-        #             virtualpostkeys.append(virtualfield)
-        #             post[virtualfield] = post[key]
 
         ## Loop through animals
         animalcount = 0
@@ -6108,12 +6091,7 @@ class move_workflow(JSONEndpoint):
                 if key[:12] == "paymentinput":
                     aid = key[12:].split("||")[0]
                     if aid == animalid or (aid == "0" and animalcount == 1):
-                        
                         virtualfield = key.split("||")[1]
-                        
-                        # ## Setting numeric component to 1 to avoid unneccessary looping in insert_donations_from_form
-                        # virtualfield = virtualfield.replace(asm3.utils.digits_only(virtualfield), "1")
-
                         virtualpostkeys.append(virtualfield)
                         post[virtualfield] = post[key]
 
@@ -6141,28 +6119,7 @@ class move_workflow(JSONEndpoint):
                     post.data.pop(vf)
                 except:
                     pass
-
-            # if not checkout:
-            #     # Add adoption fee payments
-            #     for postkey in post.data.keys():
-            #         if postkey[:11] == "adoptionfee" and postkey[11:] == animalid:
-            #                 post["amount"] = str(post.integer(postkey))
-            #                 post["frequency"] = "0"
-            #                 post["movement"] = str(movementid)
-            #                 post["type"] = asm3.configuration.adoption_checkout_feeid(dbo)
-            #                 post["payment"] = post["paymentmethod"]
-            #                 post["quantity"] = "1"
-            #                 post["unitprice"] = str(post.integer(postkey))
-            #                 post["amount"] = str(post.integer(postkey))
-            #                 if asm3.configuration.movement_donations_default_due(dbo):
-            #                     post["due"] = str(asm3.i18n.python2display(l, dbo.today()))
-            #                     post["received"] = ""
-            #                 else:
-            #                     post["due"] = ""
-            #                     post["received"] = str(asm3.i18n.python2display(l, dbo.today()))
-            #                 post["destaccount"] = str(asm3.configuration.donation_target_account(dbo))
-            #                 asm3.financial.insert_donation_from_form(dbo, o.user, post)
-            #                 break
+            
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
