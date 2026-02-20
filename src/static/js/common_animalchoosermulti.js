@@ -166,7 +166,7 @@ $.fn.animalchoosermulti = asm_widget({
 
     get_selected_rows: function(t) {
         let rows = [];
-        self = this;
+        let self = this;
         $.each(t.val().split(","), function(i, v) {
             rows.push(self.get_row(t, v));
         });
@@ -403,6 +403,5 @@ $.fn.animalchoosermulti = asm_widget({
             });
         }
         self.selectbyids(t, newval, true);
-        // t.trigger("change", [newval]);
     }
 });

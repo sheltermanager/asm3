@@ -54,12 +54,6 @@ $(function() {
                     { type: "raw", rowid: "insurancerow", markup: '<table id="insurancetable"></table>', doublesize: true },
                 ], { full_width: false }),
                 html.content_footer(),
-                // html.content_header(_("Payment"), true),
-                // tableform.fields_render([
-                //     { post_field: "paymentmethod", label: _("Payment method"), type: "select",
-                //         options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods } },
-                // ], { full_width: false }),
-                // html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Costs"), true),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
@@ -160,13 +154,12 @@ $(function() {
         },
 
         bind: function() {
-            let adoptionfees = {}
+            let adoptionfees = {};
             let bondedanimals = [];
             $("#animals").on("cleared", function() {
                 bondedanimals = [];
                 adoptionfees = {};
                 $("#animals").change();
-                // $("#adoptionfeestext").html("");
             });
             
             const validation = function() {
@@ -251,7 +244,6 @@ $(function() {
                 let fosters = [];
                 let atretailer = [];
                 let reservations = [];
-                let noadoptionfee = [];
                 let warn = [];
                 let costs = [];
                 let adoptionfeeinfo = [];
@@ -283,8 +275,6 @@ $(function() {
                         common.ajax_post("move_workflow", formdata).then(function(response) {
                             let [costamount, costdata] = response.split("||");
                             costs.push(a.SHELTERCODE + " " + a.ANIMALNAME + " " + costdata);
-                            // hiddencostinputs.push('<input id="animalcost' + a.ID + '" type=hidden value="' + costamount + '">');
-                            // totalcost += parseInt(costamount);
                             if (config.bool("CreateBoardingCostOnAdoption")) {
                                 $("#costamount").val(costamount);
                                 $("#costtype").val(config.str("BoardingCostType"));
@@ -310,22 +300,6 @@ $(function() {
                         newrow.find(".unitprice").val(format.currency(a.FEE));
                         newrow.find(".amount").val(format.currency(a.FEE));
                         newrow.find(".asm-textbox").last().val(a.SHELTERCODE + " " + a.ANIMALNAME);
-                        
-                        // $("#adoptionfeestext").html(adoptionfeeinfo.join("<br>"));
-                        // $("#adoptionfees").show();
-                        // $("#adoptionfeestext").html($("#adoptionfeestext").html() + a.SHELTERCODE + " " + a.ANIMALNAME + " " + format.currency(a.FEE));
-                        // $("#amount1").currency("value", a.FEE);
-                        // if ($("#vat1").is(":checked")) { 
-                            // Recalculate the tax
-                            // $("#vat1").change();
-                        // }
-
-                        // if (newrow.find(".asm-checkbox").is(":checked")) {
-                        //     newrow.find(".asm-checkbox").change();
-                        // }
-                        // $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(a.FEE)));
-                        noadoptionfee.push(a);
-                        // $("#feeinfo").show();
                     }
                     let warnings = html.animal_movement_warnings(a, true, true);
                     warn = warn.concat(warnings);
@@ -617,7 +591,11 @@ $(function() {
                         '<p><span class="ui-icon ui-icon-info"></span> ' + _("Details") + '</p>',
                         '<p>' + _("Animals") + '</p>'
                     ];
-                    successmessage.push("<ul>" + $(".animalchoosermulti-display").html().replace(/\<br\>/g, "").replace(/\<a/g, "<li><a").replace(/\<\/a\>/g, "</a></li>") + "</ul>");
+                    successmessage.push("<ul>");
+                    $.each($("#animals").animalchoosermulti("get_selected_rows"), function(i, v) {
+                        successmessage.push('<li><a href="/animal?id=' + v.ID + '"><b>' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</b></a></li>');
+                    });
+                    successmessage.push("</ul>");
                     if (controller.mode == "reserve") {
                         successmessage.push("<p>" + _("Reserved by") + "</p>");
                     } else if (controller.mode == "foster") {
@@ -657,6 +635,9 @@ $(function() {
                             successmessage.push("<li><b>" + paymenttype + " " + paymentamount + " " + paymentmethod + "</b></li>");
                         });
                         successmessage.push("</ul>");
+                        if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
+                            successmessage.push('<p><a href="/person_donations?id=' + $("#person").val() + '"><button id="asm-settlebutton">' + _("Settle Payments") + '</button></a>');
+                        }
                     }
 
                     if (jsondata.length) {
@@ -665,9 +646,6 @@ $(function() {
                             successmessage.push('<li><a href="/document_media_edit?id=' + v[0] + '&redirecturl=person_media?id=' + $("#person").val() + '"><b>' + v[1] + '</b></a></li>');
                         });
                         successmessage.push("</ul>");
-                    }
-                    if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
-                        successmessage.push('<p><a href="/person_donations?id=' + $("#person").val() + '"><button id="asm-settlebutton">' + _("Settle Payments") + '</button></a>');
                     }
                     successmessage.push('</div>');
                     successmessage.push(html.content_footer());
