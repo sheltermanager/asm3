@@ -1920,6 +1920,7 @@ const tableform = {
             if (v.full_width === undefined) { v.full_width = false; }
             if (v.centered === undefined) { v.centered = true; }
             if (v.markup) { h.push(v.markup); }
+            if (v.info) { h.push(html.info(v.info)); }
             if (v.fields && v.fields.length > 0) {
                 h.push( tableform.fields_render(v.fields, { full_width: v.full_width, centered: v.centered } ));
             }
