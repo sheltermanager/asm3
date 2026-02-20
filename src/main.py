@@ -6062,7 +6062,6 @@ class move_workflow(JSONEndpoint):
             raise asm3.utils.ASMValidationError("No email template given for request signature email")
         createdocuments = []
         incnumberwidgets = []
-        movementdata = {}
 
         ## Create post data for virtual incrementing number fields
         for key in post.data.keys():
@@ -6096,22 +6095,21 @@ class move_workflow(JSONEndpoint):
                         post[virtualfield] = post[key]
 
             if post["movementtype"] == "adopt":
-                movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
+                asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout, adopt_bonded=False)
             elif post["movementtype"] == "reserve":
                 post["reservationdate"] = post["movementdate"]
-                movementid = asm3.movement.insert_reserve_from_form(dbo, o.user, post)
+                asm3.movement.insert_reserve_from_form(dbo, o.user, post)
             elif post["movementtype"] == "foster":
                 post["fosterdate"] = post["movementdate"]
-                movementid = asm3.movement.insert_foster_from_form(dbo, o.user, post)
+                asm3.movement.insert_foster_from_form(dbo, o.user, post)
             elif post["movementtype"] == "transfer":
                 post["transferdate"] = post["movementdate"]
-                movementid = asm3.movement.insert_transfer_from_form(dbo, o.user, post)
+                asm3.movement.insert_transfer_from_form(dbo, o.user, post)
             elif post["movementtype"] == "retail":
                 post["retailerdate"] = post["movementdate"]
-                movementid = asm3.movement.insert_retailer_from_form(dbo, o.user, post)
+                asm3.movement.insert_retailer_from_form(dbo, o.user, post)
             elif post["movementtype"] == "reclaim":
-                movementid = asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
-            movementdata[animalid] = movementid
+                asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
 
             ## Remove virtual payment posts
             for vf in virtualpostkeys.copy():
