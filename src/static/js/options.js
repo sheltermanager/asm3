@@ -902,6 +902,11 @@ $(function() {
                         { id: "spamurls", post_field: "OnlineFormSpamURLs", label: _("Spambot protection: URLs in any field"), type: "check", fullrow: true }, 
                         { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
+                    /*{ id: "tab-pos", title: _("Point of Sale"), classes: "postab", fields: [
+                        { id: "posbarcodes", post_field: "POSBarcodeScanner", label: _("Use barcode scanner"), type: "check" },
+                        { id: "posstocklocation", post_field: "POSStockLocation", label: _("POS Stock Location"), type: "select", options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
+                        { id: "possaleusagetype", post_field: "POSSaleUsageType", label: _("POS Sale Usage"), type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
+                    ]},*/
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
                         { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), doublesize: true, type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
                         { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), doublesize: true, type: "text", colclasses: "bottomborder" }, 
@@ -950,6 +955,7 @@ $(function() {
                         { id: "disableboarding", post_field: "DisableBoarding", label: _("Remove boarding functionality from screens and menus"), type: "check" }, 
                         { id: "disableclinic", post_field: "DisableClinic", label: _("Remove clinic functionality from screens and menus"), type: "check" }, 
                         { id: "disablemovements", post_field: "DisableMovements", label: _("Remove move menu and the movements tab from animal and person screens"), type: "check" }, 
+                        //{ id: "disablepos", post_field: "DisablePOS", label: _("Remove POS functionality from menus"), type: "check" }, 
                         { id: "disableretailer", post_field: "DisableRetailer", label: _("Remove retailer functionality from the movement screens and menus"), type: "check" }, 
                         { id: "disabledocumentrepo", post_field: "DisableDocumentRepo", label: _("Remove the document repository functionality from menus"), type: "check" }, 
                         { id: "disableonlineforms", post_field: "DisableOnlineForms", label: _("Remove the online form functionality from menus"), type: "check" }, 
@@ -1203,7 +1209,6 @@ $(function() {
         },
 
         sync: function() {
-            
         },
 
         delay: function() {
