@@ -582,7 +582,7 @@ def sql_structure(dbo: Database) -> str:
         fint("D9"), fint("D10"), fint("D11"), fint("D12"), fint("D13"), fint("D14"), fint("D15"),
         fint("D16"), fint("D17"), fint("D18"), fint("D19"), fint("D20"), fint("D21"), fint("D22"),
         fint("D23"), fint("D24"), fint("D25"), fint("D26"), fint("D27"), fint("D28"), fint("D29"),
-        fint("D30"), fint("D31"), fstr("TOTAL"), ffloat("AVERAGE")), False)
+        fint("D30"), fint("D31"), fstr("TOTAL", True), ffloat("AVERAGE")), False)
     sql += index("animalfigures_AnimalTypeID", "animalfigures", "AnimalTypeID")
     sql += index("animalfigures_SpeciesID", "animalfigures", "SpeciesID")
     sql += index("animalfigures_Month", "animalfigures", "Month")
@@ -595,7 +595,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("Code"),
         fint("AnimalTypeID"),
         fint("SpeciesID"),
-        fint("EntryReasonID"),
+        fint("EntryReasonID", True),
         fstr("GroupHeading"),
         fstr("Heading"),
         fint("Bold"),
