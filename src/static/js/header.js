@@ -19,6 +19,7 @@ if (common.current_url().indexOf("/login") != -1 ||
  */
 
 header = {
+    compact_menu: false,
 
     QUICKLINKS_SET: {
         1: ["animal_find", "asm-icon-animal-find", _("Find animal")],
@@ -586,17 +587,12 @@ header = {
     },
 
     viewport_resize: function() {
-        // TODO: temporarily disabled, along with burger menu CSS in asm.css due to issues
-        // with toolbar menus, and positioning of burger button
-        // See ticket 1398 for more info
-        return;
-        /*
-        if ($(window).width() <= 480) {
+        if ($(window).width() <= 480 && !header.compact_menu) {
             $("#topline-q-div").insertAfter('#asm-topline-logo-div');
-            $(".asm-menu-icon").hide();
+            $("#asm-topline .asm-menu-icon").hide();
             $("#asm-topline .ui-state-active").asmmenu("hide_all");
-
-        } else {
+            header.compact_menu = true;
+        } else if ($(window).width() > 480 && header.compact_menu) {
             if (!$(".asm-topline-q-whitespace").length) {
                 let whitespace = document.createElement("span");
                 $(whitespace).addClass("asm-topline-q-whitespace");
@@ -604,9 +600,9 @@ header = {
                 $(whitespace).insertAfter('#asm-menu-settings'); 
             }
             $("#topline-q-div").insertAfter($(".asm-topline-q-whitespace").first()); 
-            $(".asm-menu-icon").show();   
+            $("#asm-topline .asm-menu-icon").show();   
+            header.compact_menu = false;
         }
-        */
     },
 
     bind: function() {  
@@ -708,7 +704,7 @@ header = {
         catch(err) {}
 
         $("#asm-menu-burger").click(function() {
-            $(".asm-menu-icon").toggle();
+            $("#asm-topline .asm-menu-icon").toggle();
             $("html,body").animate({scrollTop:0},0);
         });
 

@@ -1133,24 +1133,24 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** Tweaks for when displaying on portrait mobile devices */
-@media screen and (max-device-width:480px) {
+@media screen and (max-width:480px) {
 
     /** Stack table cells containing nested tables on mobile so
      *  that they don't overflow and require horizontal scrolling */
     .asm-nested-table-td { display: block; }
 
-    /** Styles to reformat the main menu into a burger on portrait mobiles
+    /** Styles to reformat the main menu into a burger on portrait mobiles */
     .asm-menu-body {
         width: calc(100% - 25px);
     }
-    #asm-menu-burger{
+    #asm-menu-burger {
         font-size: 150%;
         padding: 6px;
         padding-top: 0;
         top: 5px;
         right: 6px;
         display: inline-block;
-        position: fixed;
+        position: absolute;
         right: 10px;
         z-index: 9999;
         text-align: right;
@@ -1163,7 +1163,7 @@ select:disabled, input:disabled, textarea:disabled {
         margin-top: 3px;
         right: 10px;
     }
-    .asm-menu-icon {
+    #asm-topline .asm-menu-icon {
         display: block;
     }
     #asm-topline-user-div {
@@ -1181,7 +1181,6 @@ select:disabled, input:disabled, textarea:disabled {
     #searchgo {
         display: none !important;
     }
-    */
 }
 
 /** Hide elements from printing by giving them the no-print class */
