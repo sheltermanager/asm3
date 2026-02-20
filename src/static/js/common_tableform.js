@@ -1713,7 +1713,8 @@ const tableform = {
         return tableform._render_formfield(v, v.markup);
     },
 
-    render_number: function(v) {
+    render_number: function(v, inc=false) {
+        if (inc) { v.classes += " asm-incnumber"; }
         let d = "";
         tableform._check_id(v);
         d += "<input type=\"text\" ";

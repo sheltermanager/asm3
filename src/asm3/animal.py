@@ -536,6 +536,7 @@ def get_animal_brief_query(dbo: Database) -> str:
         "diet.DietName AS ActiveDietName, " \
         "er.ReasonName AS EntryReasonName, " \
         "et.EntryTypeName AS EntryTypeName, " \
+        "a.Fee, " \
         "a.FLVResult, " \
         "CASE WHEN ab.ID Is Not Null THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "a.HasActiveReserve, " \
@@ -1078,6 +1079,7 @@ def get_animals_brief(animals: Results) -> Results:
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
             "ENTRYTYPENAME": a["ENTRYTYPENAME"],
+            "FEE": a["FEE"],
             "FLVRESULT": a["FLVRESULT"],
             "HASACTIVEBOARDING": a["HASACTIVEBOARDING"],
             "HASACTIVERESERVE": a["HASACTIVERESERVE"],

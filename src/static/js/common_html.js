@@ -376,52 +376,86 @@ const html = {
     /** Returns an array of warnings for moving an animal out of the shelter
      *  a: animal result from the backend
      *  adopt: If true, show warnings specific to adoptions */
-    animal_movement_warnings: function(a, adopt) {
+    animal_movement_warnings: function(a, adopt, specifyanimal=false) {
         let warn = [];
         // Animal isn't on the shelter
         if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) {
-            warn.push(_("This animal is not on the shelter."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} animal is not on the shelter.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal is not on the shelter."));
+            }
         }
         // If the animal is marked not for adoption
         if (a.ISNOTAVAILABLEFORADOPTION == 1 && adopt) {
-            warn.push(_("This animal is marked not for adoption."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} animal is marked not for adoption.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal is marked not for adoption."));
+            }
         }
         // If the animal is held, we shouldn't be allowed to adopt it
         if (a.ISHOLD == 1 && adopt) {
-            warn.push(_("This animal is currently held and cannot be adopted."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} is currently held and cannot be adopted.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal is currently held and cannot be adopted."));
+            }
         }
         // Cruelty case
         if (a.CRUELTYCASE == 1) {
-            warn.push(_("This animal is part of a cruelty case and should not leave the shelter."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} is part of a cruelty case and should not leave the shelter.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal is part of a cruelty case and should not leave the shelter."));
+            }
         }
         // Outstanding medical
         if (config.bool("WarnOSMedical") && a.HASOUTSTANDINGMEDICAL == 1) {
-            warn.push(_("This animal has outstanding medical treatments."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} has outstanding medical treatments.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal has outstanding medical treatments."));
+            }
         }
         // Quarantined
         if (a.ISQUARANTINE == 1) {
-            warn.push(_("This animal is currently quarantined and should not leave the shelter."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} is currently quarantined and should not leave the shelter.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal is currently quarantined and should not leave the shelter."));
+            }
         }
         // Unaltered
         if (config.bool("WarnUnaltered") && a.NEUTERED == 0 && adopt) {
-            warn.push(_("This animal has not been altered."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} has not been altered.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal has not been altered."));
+            }
         }
         // Not microchipped
         if (config.bool("WarnNoMicrochip") && a.IDENTICHIPPED == 0) {
-            warn.push(_("This animal has not been microchipped."));
+            if (specifyanimal) {
+                warn.push(_("{0} {1} has not been microchipped.").replace("{0}", a.SHELTERCODE).replace("{1}", a.ANIMALNAME));
+            } else {
+                warn.push(_("This animal has not been microchipped."));
+            }
         }
-       // Check for bonded animals and warn
-        if (a.BONDEDANIMALID || a.BONDEDANIMAL2ID) {
-            let bw = "";
-            if (a.BONDEDANIMAL1NAME) {
-                bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
-            }
-            if (a.BONDEDANIMAL2NAME) {
-                if (bw != "") { bw += ", "; }
-                bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
-            }
-            if (bw != "") {
-                warn.push(_("This animal is bonded with {0}").replace("{0}", bw));
+        // Check for bonded animals and warn
+        if (!specifyanimal) {
+            if (a.BONDEDANIMALID || a.BONDEDANIMAL2ID) {
+                let bw = "";
+                if (a.BONDEDANIMAL1NAME) {
+                    bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
+                }
+                if (a.BONDEDANIMAL2NAME) {
+                    if (bw != "") { bw += ", "; }
+                    bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
+                }
+                if (bw != "") {
+                    warn.push(_("This animal is bonded with {0}").replace("{0}", bw));
+                }
             }
         }
         // Animal has a warning

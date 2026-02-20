@@ -806,7 +806,8 @@ $(function() {
                         { id: "autoinsurance", post_field: "UseAutoInsurance", label: _("Use Automatic Insurance Numbers"), type: "check" }, 
                         { id: "insurancestart", post_field: "UseAutoAutoInsuranceStartInsurance", label: _("Start at"), type: "number" }, 
                         { id: "insuranceend", post_field: "AutoInsuranceEnd", label: _("End at"), type: "number" }, 
-                        { id: "insurancenext", post_field: "AutoInsuranceNext", label: _("Next"), type: "number" } 
+                        { id: "insurancenext", post_field: "AutoInsuranceNext", label: _("Next"), type: "number" },
+                        // { id: "insurablespecies", post_field: "InsurableSpecies", label: _("Insurable Species"), type: "selectmulti", options: html.list_to_options(controller.species, "ID", "SPECIESNAME") }
                     ]}, 
                     { id: "tab-logs", title: _("Logs"), fields: [
                         { id: "animalflagchangelog", post_field: "AnimalFlagChangeLog", label: _("When I change the flags on an animal, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AnimalFlagChangeLogType" id="animalflagchangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 

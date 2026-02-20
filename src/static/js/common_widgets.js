@@ -179,7 +179,7 @@ $.fn.fromJSON = function(row) {
   * matching the selector. 
   * includeblanks: true if you want fields with empty values sent instead of omitted.
   */
-$.fn.toPOST = function(includeblanks = false) {
+$.fn.toPOST = function(includeblanks=false, markincnumbers=false) {
     let post = [];
     this.each(function() {
         let t = $(this);
@@ -197,6 +197,9 @@ $.fn.toPOST = function(includeblanks = false) {
         }
         else if (t.hasClass("asm-selectcolour")) {
             post.push(pname + "=" + encodeURIComponent(t.selectcolour("value")));
+        }
+        else if (t.hasClass("asm-incnumber") && markincnumbers) {
+            post.push("asm-incnumber" + pname + "=" + encodeURIComponent(parseInt(t.attr("value"))));
         }
         else if (t.hasClass("asm-mask")) {
             if (t.val() && t.val() != MASK_VALUE) {

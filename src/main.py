@@ -5506,7 +5506,7 @@ class move_adopt(JSONEndpoint):
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
-
+    
     def post_create(self, o):
         self.check(asm3.users.ADD_MOVEMENT)
         dbo = o.dbo
@@ -5562,7 +5562,7 @@ class move_adopt(JSONEndpoint):
             }
             asm3.media.send_signature_request(dbo, o.user, pmid, asm3.utils.PostedData(d, dbo.locale))
         return movementid
-
+    
     def post_cost(self, o):
         dbo = o.dbo
         post = o.post
@@ -5580,6 +5580,24 @@ class move_adopt(JSONEndpoint):
 
     def post_insurance(self, o):
         return asm3.movement.generate_insurance_number(o.dbo)
+
+class move_adopt_multi(JSONEndpoint):
+    url = "move_adopt_multi"
+    get_permissions = asm3.users.ADD_MOVEMENT
+    js_module = "move_workflow"
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION)),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "mode": "adopt"
+        }
 
 class move_book_foster(JSONEndpoint):
     url = "move_book_foster"
@@ -5805,7 +5823,7 @@ class move_donations(JSONEndpoint):
             "message": o.post["message"],
             "id": o.post["id"],
             "animalid": o.post["animalid"],
-            "ownerid": o.post["ownerid"],
+            "ownerid": o.post["person"],
             "linktype": o.post["linktype"],
             "rows": donations,
             "name": "move_donations",
@@ -5817,7 +5835,6 @@ class move_donations(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "payment")
         }
 
-
 class move_foster(JSONEndpoint):
     url = "move_foster"
     get_permissions = asm3.users.ADD_MOVEMENT
@@ -5826,11 +5843,28 @@ class move_foster(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
     def post_create(self, o):
         return str(asm3.movement.insert_foster_from_form(o.dbo, o.user, o.post))
+
+class move_foster_multi(JSONEndpoint):
+    url = "move_foster_multi"
+    js_module = "move_workflow"
+    get_permissions = asm3.users.ADD_MOVEMENT
+    post_permissions = asm3.users.ADD_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "mode": "foster"
+        }
 
 class move_gendoc(JSONEndpoint):
     url = "move_gendoc"
@@ -5855,6 +5889,8 @@ class move_reclaim(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
@@ -5876,6 +5912,24 @@ class move_reclaim(JSONEndpoint):
     def post_donationdefault(self, o):
         return asm3.lookups.get_donation_default(o.dbo, o.post.integer("donationtype"))
 
+class move_reclaim_multi(JSONEndpoint):
+    url = "move_reclaim_multi"
+    get_permissions = asm3.users.ADD_MOVEMENT
+    js_module = "move_workflow"
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RECLAIMED)),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "mode": "reclaim"
+        }
+
 class move_reserve(JSONEndpoint):
     url = "move_reserve"
     get_permissions = asm3.users.ADD_MOVEMENT
@@ -5888,12 +5942,34 @@ class move_reserve(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
         return str(asm3.movement.insert_reserve_from_form(o.dbo, o.user, o.post))
+
+class move_reserve_multi(JSONEndpoint):
+    url = "move_reserve_multi"
+    js_module = "move_workflow"
+    get_permissions = asm3.users.ADD_MOVEMENT
+    post_permissions = asm3.users.ADD_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RESERVATION)),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "mode": "reserve"
+        }
 
 class move_retailer(JSONEndpoint):
     url = "move_retailer"
@@ -5903,11 +5979,28 @@ class move_retailer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RETAILER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RETAILER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
     def post_create(self, o):
         return str(asm3.movement.insert_retailer_from_form(o.dbo, o.user, o.post))
+
+class move_retailer_multi(JSONEndpoint):
+    url = "move_retailer_multi"
+    js_module = "move_workflow"
+    get_permissions = asm3.users.ADD_MOVEMENT
+    post_permissions = asm3.users.ADD_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RETAILER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "mode": "retail"
+        }
 
 class move_transfer(JSONEndpoint):
     url = "move_transfer"
@@ -5917,11 +6010,187 @@ class move_transfer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER))
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
     def post_create(self, o):
         return str(asm3.movement.insert_transfer_from_form(o.dbo, o.user, o.post))
+
+class move_transfer_multi(JSONEndpoint):
+    url = "move_transfer_multi"
+    js_module = "move_workflow"
+    get_permissions = asm3.users.ADD_MOVEMENT
+    post_permissions = asm3.users.ADD_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER)),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "mode": "transfer"
+        }
+
+class move_workflow(JSONEndpoint):
+    url = "move_workflow"
+    get_permissions = asm3.users.ADD_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION)),
+            # "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_MOVEMENT)
+        dbo = o.dbo
+        post = o.post
+        l = dbo.locale
+        checkout = o.post.boolean("checkoutcreate")
+        paperwork = o.post.boolean("sigpaperwork")
+        if checkout and post.integer("templateid") == 0:
+            raise asm3.utils.ASMValidationError("No template given for checkout")
+        if checkout and post.integer("emailtemplateid") == 0:
+            raise asm3.utils.ASMValidationError("No email template given for checkout email")
+        if paperwork and post.integer("sigtemplateid") == 0:
+            raise asm3.utils.ASMValidationError("No template given for paperwork")
+        if paperwork and post.integer("sigemailtemplateid") == 0:
+            raise asm3.utils.ASMValidationError("No email template given for request signature email")
+        createdocuments = []
+        incnumberwidgets = []
+
+        ## Create post data for virtual incrementing number fields
+        for key in post.data.keys():
+            if key[:13] == "asm-incnumber":
+                incnumberwidgets.append(key[13:])
+        for key in incnumberwidgets:
+            post.data[key] = post.data["asm-incnumber" + key]
+            del post.data["asm-incnumber" + key]
+
+        ## Loop through animals
+        animalcount = 0
+        for animalid in post["animals"].split(","):
+            animalcount = animalcount + 1
+            post["animal"] = animalid
+            post["insurance"] = post["insurance" + animalid]
+            post["costamount"] = post["animalcost" + animalid]
+            post["cost"] = post["animalcost" + animalid]
+            movementid = 0
+
+            ## Reconstruct payment post data for this animal only
+            virtualpostkeys = []
+            postkeys = []
+            for key in post.data.keys():
+                postkeys.append(key)
+            for key in postkeys:
+                if key[:12] == "paymentinput":
+                    aid = key[12:].split("||")[0]
+                    if aid == animalid or (aid == "0" and animalcount == 1):
+                        virtualfield = key.split("||")[1]
+                        virtualpostkeys.append(virtualfield)
+                        post[virtualfield] = post[key]
+
+            if post["movementtype"] == "adopt":
+                asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout, adopt_bonded=False)
+            elif post["movementtype"] == "reserve":
+                post["reservationdate"] = post["movementdate"]
+                asm3.movement.insert_reserve_from_form(dbo, o.user, post)
+            elif post["movementtype"] == "foster":
+                post["fosterdate"] = post["movementdate"]
+                asm3.movement.insert_foster_from_form(dbo, o.user, post)
+            elif post["movementtype"] == "transfer":
+                post["transferdate"] = post["movementdate"]
+                asm3.movement.insert_transfer_from_form(dbo, o.user, post)
+            elif post["movementtype"] == "retail":
+                post["retailerdate"] = post["movementdate"]
+                asm3.movement.insert_retailer_from_form(dbo, o.user, post)
+            elif post["movementtype"] == "reclaim":
+                asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
+
+            ## Remove virtual payment posts
+            for vf in virtualpostkeys.copy():
+                try:
+                    post.data.pop(vf)
+                except:
+                    pass
+            
+            if checkout:
+                l = o.dbo.locale
+                body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
+                tokens = asm3.wordprocessor.extract_mail_tokens(body)
+                d = {
+                    "id":           str(movementid),
+                    "animalid":     post["animal"],
+                    "personid":     post["person"],
+                    "templateid":   post["templateid"],
+                    "feetypeid":    post["feetypeid"],
+                    "from":         tokens["FROM"] or asm3.configuration.email(dbo),
+                    "to":           post["emailaddress"],
+                    "cc":           tokens["CC"] or "",
+                    "bcc":          tokens["BCC"] or "",
+                    "subject":      tokens["SUBJECT"] or _("Adoption Checkout", l),
+                    "body":         tokens["BODY"]
+                }
+                asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale), substitute_url=True)
+            elif paperwork:
+                # Generate the adoption paperwork and save it to the animal/person
+                dtid = post.integer("sigtemplateid")
+                content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, movementid, o.user)
+                tempname = asm3.template.get_document_template_name(dbo, dtid)
+                tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
+                    asm3.person.get_person_name(dbo, o.post.integer("person")))
+                amid, pmid = asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
+                createdocuments.append([pmid, tempname])
+                # Generate the email body from the email template
+                sigbody = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("sigemailtemplateid"), movementid, o.user)
+                tokens = asm3.wordprocessor.extract_mail_tokens(sigbody)
+                d = {
+                    "addtolog": "on",
+                    "logtype":  str(asm3.configuration.system_log_type(dbo)),
+                    "from":     tokens["FROM"] or asm3.configuration.email(dbo),
+                    "to":       post["sigemailaddress"],
+                    "subject":  tokens["SUBJECT"] or _("Document signing request", l),
+                    "body":     tokens["BODY"]
+                }
+                asm3.media.send_signature_request(dbo, o.user, pmid, asm3.utils.PostedData(d, dbo.locale))
+            for templateid in post.integer_list("nonsigtemplateids"):
+                content = asm3.wordprocessor.generate_movement_doc(dbo, templateid, movementid, o.user)
+                tempname = asm3.template.get_document_template_name(dbo, templateid)
+                tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
+                    asm3.person.get_person_name(dbo, o.post.integer("person")))
+                createdocuments.append([asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)[1], tempname])
+            asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION))
+            for widget in incnumberwidgets:
+                post[widget] = str(int(post[widget]) + 1)
+        return asm3.utils.json(createdocuments)
+
+    def post_cost(self, o):
+        dbo = o.dbo
+        post = o.post
+        l = o.locale
+        self.check(asm3.users.VIEW_COST)
+        dailyboardcost = asm3.animal.get_daily_boarding_cost(dbo, post.integer("id"))
+        dailyboardcostdisplay = format_currency(l, dailyboardcost)
+        daysonshelter = asm3.animal.get_days_on_shelter(dbo, post.integer("id"))
+        total = dailyboardcost * daysonshelter
+        totaldisplay = format_currency(l, total)
+        return str(total) + "||" + \
+            _("on shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
+    
+    def post_donationdefault(self, o):
+        return asm3.lookups.get_donation_default(o.dbo, o.post.integer("donationtype"))
+
+    def post_insurance(self, o):
+        return asm3.movement.generate_insurance_number(o.dbo)
 
 class movement(JSONEndpoint):
     url = "movement"

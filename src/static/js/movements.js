@@ -1048,7 +1048,7 @@ $(function() {
         }
 
     };
-
+    
     common.module_register(movements);
 
 });
