@@ -6028,22 +6028,9 @@ class move_transfer_multi(JSONEndpoint):
             "mode": "transfer"
         }
 
-class move_workflow(JSONEndpoint):
+class move_workflow(ASMEndpoint):
     url = "move_workflow"
     get_permissions = asm3.users.ADD_MOVEMENT
-
-    def controller(self, o):
-        dbo = o.dbo
-        return {
-            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION)),
-            # "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION),
-            "donationtypes": asm3.lookups.get_donation_types(dbo),
-            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
-            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "taxrates": asm3.lookups.get_tax_rates(dbo)
-        }
 
     def post_create(self, o):
         self.check(asm3.users.ADD_MOVEMENT)
@@ -6062,19 +6049,17 @@ class move_workflow(JSONEndpoint):
             raise asm3.utils.ASMValidationError("No email template given for request signature email")
         createdocuments = []
         incnumberwidgets = []
-
-        ## Create post data for virtual incrementing number fields
-        for key in post.data.keys():
-            if key[:13] == "asm-incnumber":
+        
+        for key in list(post.data.keys()):
+            if key.startswith("asm-incnumber"):
                 incnumberwidgets.append(key[13:])
-        for key in incnumberwidgets:
-            post.data[key] = post.data["asm-incnumber" + key]
-            del post.data["asm-incnumber" + key]
+                post.data[key[13:]] = post.data[key]
+                del post.data[key]
 
         ## Loop through animals
-        animalcount = 0
-        for animalid in post["animals"].split(","):
-            animalcount = animalcount + 1
+        # animalcount = 0
+        for animalcount, animalid in enumerate(post["animals"].split(",")):
+            # animalcount = animalcount + 1
             post["animal"] = animalid
             post["insurance"] = post["insurance" + animalid]
             post["costamount"] = post["animalcost" + animalid]
@@ -6082,12 +6067,10 @@ class move_workflow(JSONEndpoint):
             movementid = 0
 
             ## Reconstruct payment post data for this animal only
+            ## Non adoption fee payments are included only if this is the first animal in the loop
             virtualpostkeys = []
-            postkeys = []
-            for key in post.data.keys():
-                postkeys.append(key)
-            for key in postkeys:
-                if key[:12] == "paymentinput":
+            for key in list(post.data.keys()):
+                if key.startswith("paymentinput"):
                     aid = key[12:].split("||")[0]
                     if aid == animalid or (aid == "0" and animalcount == 1):
                         virtualfield = key.split("||")[1]
@@ -6113,10 +6096,7 @@ class move_workflow(JSONEndpoint):
 
             ## Remove virtual payment posts
             for vf in virtualpostkeys.copy():
-                try:
-                    post.data.pop(vf)
-                except:
-                    pass
+                post.data.pop(vf)
             
             if checkout:
                 l = o.dbo.locale

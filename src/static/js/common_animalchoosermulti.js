@@ -368,40 +368,21 @@ $.fn.animalchoosermulti = asm_widget({
     },
 
     value: function(t, newval) {
+        // Possible race condition if this function is called before load function has completed
         let self = this;
-        if (newval === undefined) {
+        if (newval === undefined) { // Value is being extracted rather than updated
             return t.val();
         }
         if (!newval) { newval = ""; }
         t.val(newval);
         let o = t.data("o");
         o.display.html("");
-        if (!t.data("o").rows) {
-            let formdata = "mode=multiselect";
-            $.ajax({
-                type: "POST",
-                url:  "animal_embed",
-                data: formdata,
-                dataType: "text",
-                success: function(data, textStatus, jqXHR) {
-                    let rv = jQuery.parseJSON(data);
-                    o.rows = rv.rows;
-                    $.each(newval.split(","), function(i, v) {
-                        let rec = self.get_row(t, parseInt(v));
-                        let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
-                        o.display.append(disp);
-                        o.display.append("<br />");
-                    });
-                }
-            });
-        } else {
-            $.each(newval.split(","), function(i, v) {
-                let rec = self.get_row(t, parseInt(v));
-                let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
-                o.display.append(disp);
-                o.display.append("<br />");
-            });
-        }
+        $.each(newval.split(","), function(i, v) {
+            let rec = self.get_row(t, parseInt(v));
+            let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+            o.display.append(disp);
+            o.display.append("<br />");
+        });
         self.selectbyids(t, newval, true);
     }
 });

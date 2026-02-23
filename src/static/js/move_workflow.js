@@ -275,14 +275,12 @@ $(function() {
                         common.ajax_post("move_workflow", formdata).then(function(response) {
                             let [costamount, costdata] = response.split("||");
                             costs.push(a.SHELTERCODE + " " + a.ANIMALNAME + " " + costdata);
-                            if (config.bool("CreateBoardingCostOnAdoption")) {
-                                $("#costamount").val(costamount);
-                                $("#costtype").val(config.str("BoardingCostType"));
-                                $("#costdata").html(costs.join("<br>"));
-                                $("#costdisplay").after('<input id="animalcost' + a.ID + '" data-post="animalcost' + a.ID + '" type=hidden value="' + costamount + '">');
-                                $("#costcreate").prop("checked", true);
-                                $("#costdisplay").closest(".ui-widget").show();
-                            }
+                            $("#costamount").val(costamount);
+                            $("#costtype").val(config.str("BoardingCostType"));
+                            $("#costdata").html(costs.join("<br>"));
+                            $("#costdisplay").after('<input id="animalcost' + a.ID + '" data-post="animalcost' + a.ID + '" type=hidden value="' + costamount + '">');
+                            $("#costcreate").prop("checked", true);
+                            $("#costdisplay").closest(".ui-widget").show();
                         });
                     }
                     if ( ( controller.mode == "adopt" || controller.mode == "reclaim") && !config.bool("DontShowAdoptionFee") && a.FEE ) {
@@ -556,8 +554,8 @@ $(function() {
                     // Process additional incremental number fields
                     $.each($(".asm-incnumber"), function(i, v) {
                         $(v).val(parseInt(v) + 1);
+                        formdata += "&" + "asm-incnumber" + $(v).attr("data-post") + "=" + encodeURIComponent(parseInt($(v).attr("value")));
                     });
-                    formdata += "&" + $(".asm-incnumber").toPOST(false, true);
 
                     // Process adoption fees
                     $.each(adoptionfees, function(i, v){
