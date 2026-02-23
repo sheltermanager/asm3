@@ -856,6 +856,15 @@ def complete_test(dbo: Database, username: str, testid: int, newdate: datetime, 
     dbo.update("animaltest", testid, v, username)
     update_animal_tests(dbo, username, testid)
 
+def replace_manufacturers(dbo: Database, username: str, post: PostedData) -> None:
+    """
+    Replaces the manufacturer in all vaccination records from posted form data
+    """
+    
+    return dbo.update("animalvaccination", "Manufacturer = '%s'" % post["manufacturerfind"], {
+        "Manufacturer": post["manufacturerreplace"]
+    }, username)
+
 def reschedule_test(dbo: Database, username: str, testid: int, newdate: datetime, comments: str) -> None:
     """
     Reschedules a test for a new date, copying data from the existing one.
