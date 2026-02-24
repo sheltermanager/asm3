@@ -634,8 +634,12 @@ def get_vaccinations_expiring_two_dates(dbo: Database, start: Database, end: Dat
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
-def get_vacc_manufacturers(dbo: Database) -> List[str]:
-    rows = dbo.query("SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null AND Manufacturer <> '' ORDER BY Manufacturer")
+def get_vacc_manufacturers(dbo: Database, includeblank=False) -> List[str]:
+    
+    if includeblank:
+        rows = dbo.query("SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null ORDER BY Manufacturer")
+    else:
+        rows = dbo.query("SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null AND Manufacturer <> '' ORDER BY Manufacturer")
     mf = []
     for r in rows:
         mf.append(r.MANUFACTURER)
