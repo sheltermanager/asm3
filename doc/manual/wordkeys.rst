@@ -1653,5 +1653,6 @@ ActiveLitterMates
    Inserts a table containing a list of the animal's littermates (only those still in care)
 MovementPayments
    Inserts a table containing all of the payments for the active movement for
-   the person, animal or movement the document is being generated for.
-
+   the person, animal or movement the document is being generated for
+AnimalDiets
+    Inserts a table containing all of the animal's diets into the document
