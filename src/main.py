@@ -5252,6 +5252,12 @@ class maint_find_replace(JSONEndpoint):
     def post_replacemanufacturers(self, o):
         return str(asm3.medical.replace_manufacturers(o.dbo, o.user, o.post))
 
+    def post_replacecities(self, o):
+        return str(asm3.person.replace_cities(o.dbo, o.user, o.post))
+    
+    def post_replacestates(self, o):
+        return str(asm3.person.replace_states(o.dbo, o.user, o.post))
+
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
     check_logged_in = False

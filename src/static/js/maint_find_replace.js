@@ -40,7 +40,7 @@ $(function() {
                     }
                 ]),
                 '</td>',
-                '<td><button>' + _("Go") + '</button></td></tr>',
+                '<td><button id="replacecities">' + _("Go") + '</button></td></tr>',
                 '<tr><td>' + _("State") + '</td><td>',
                 tableform.fields_render([
                     { post_field: "statefind", type: "select", justwidget: true,
@@ -55,7 +55,7 @@ $(function() {
                     }
                 ]),
                 '</td>',
-                '<td><button>' + _("Go") + '</button></td></tr>',
+                '<td><button id="replacestates">' + _("Go") + '</button></td></tr>',
                 '</tbody>',
                 '</table>',
                 html.content_footer()
@@ -65,11 +65,28 @@ $(function() {
         },
 
         bind: function() {
+
+            // Replace manufacturer names
             $("#replacemanufacturers").click(async function() {
                 let formdata = "mode=replacemanufacturers&" + $("#manufacturerfind, #manufacturerreplace").toPOST();
                 let result = await common.ajax_post("maint_find_replace", formdata);
                 header.show_info(_("{0} vaccination record(s) affected").replace("{0}", result));
             });
+
+            // Replace city/town names
+            $("#replacecities").click(async function() {
+                let formdata = "mode=replacecities&" + $("#cityfind, #cityreplace").toPOST();
+                let result = await common.ajax_post("maint_find_replace", formdata);
+                header.show_info(_("{0} person record(s) affected").replace("{0}", result));
+            });
+
+            // Replace state/county names
+            $("#replacestates").click(async function() {
+                let formdata = "mode=replacestates&" + $("#statefind, #statereplace").toPOST();
+                let result = await common.ajax_post("maint_find_replace", formdata);
+                header.show_info(_("{0} person record(s) affected").replace("{0}", result));
+            });
+
         },
 
         sync: function() {

@@ -2193,6 +2193,24 @@ def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, usern
     asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
     return "OK %s" % len(people)
 
+def replace_cities(dbo: Database, username: str, post: PostedData) -> None:
+    """
+    Replaces the town/city in all person records from posted form data
+    """
+    
+    return dbo.update("owner", "OwnerTown = '%s'" % post["cityfind"], {
+        "OwnerTown": post["cityreplace"]
+    }, username)
+
+def replace_states(dbo: Database, username: str, post: PostedData) -> None:
+    """
+    Replaces the county/state in all person records from posted form data
+    """
+    
+    return dbo.update("owner", "OwnerCounty = '%s'" % post["statefind"], {
+        "OwnerCounty": post["statereplace"]
+    }, username)
+
 def update_anonymise_personal_data(dbo: Database, years: int = None, username: str = "system") -> str:
     """
     Anonymises personal data once the retention period in years is up.
