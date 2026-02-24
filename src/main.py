@@ -5239,6 +5239,7 @@ class maint_error(ASMEndpoint):
 
 class maint_find_replace(JSONEndpoint):
     url = "maint_find_replace"
+    get_permissions = asm3.users.USE_SQL_INTERFACE
 
     def controller(self, o):
         dbo = o.dbo
