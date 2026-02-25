@@ -1684,8 +1684,8 @@ def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     if htmldata.find("pdf renderer cmd") != -1: mode = "cmd" # renderer directives override config
     elif htmldata.find("pdf renderer xhtml2pdf") != -1: mode = "xhtml2pdf"
     elif htmldata.find("pdf renderer weasyprint") != -1: mode = "weasyprint"
-    # If we wanted cmd mode, but there is no valid external cmd, use weasyprint
-    if mode == "cmd" and HTML_TO_PDF.find("input") == -1: mode = "weasyprint"
+    # If we wanted cmd mode, but there is no valid external cmd, use our preferred internal converter
+    if mode == "cmd" and HTML_TO_PDF == "": mode = "weasyprint"
     # Look for directives in our HTML data and set pdf options to pass to our converters
     pdfopts = { 
         "orientation":  "portrait",
