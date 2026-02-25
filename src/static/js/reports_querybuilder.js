@@ -148,6 +148,13 @@ $(function() {
                 .replace("{0}", _("Enter a treatment name")) ],
             [ _("Ask the user for a medical type"), "askmedicaltype", "MedicalTypeName LIKE '%$ASK STRING {0}$%'"
                 .replace("{0}", _("Enter a medical type name")) ],
+
+            [ _("Ask the user for a test type"), "asktesttype", "TreatmentName LIKE '%$ASK STRING {0}$%' AND MedicalTypeID = -2"
+            .replace("{0}", _("Enter a test type")) ],
+
+            [ _("Ask the user for a vaccination type"), "askvaccinationtype", "TreatmentName LIKE '%$ASK STRING {0}$%' AND MedicalTypeID = -1"
+            .replace("{0}", _("Enter a vaccination type")) ],
+
             [ _("Due"), "duenow", "DateGiven Is Null" ],
             [ _("Due between two dates"), "duetwo", 
                 "DateRequired>='$ASK DATE {0}$' AND DateRequired<='$ASK DATE {1}$'"
