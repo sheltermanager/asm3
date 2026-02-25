@@ -73,7 +73,7 @@ $(function() {
                     { post_field: "county", json_field: "OWNERCOUNTY", type: "select", label: _("State"), rowclasses: "towncounty", 
                         options: html.states_us_options(config.str("OrganisationCounty")) },
                     { post_field: "county", json_field: "OWNERCOUNTY", type: "autotext", label: _("State"), rowclasses: "towncounty", 
-                        minlength: 3, options: controller.counties }),
+                        minlength: 2, options: controller.counties }),
                 { post_field: "postcode", json_field: "OWNERPOSTCODE", type: "text", label: _("Zipcode") },
                 { post_field: "country", json_field: "OWNERCOUNTRY", type: "text", label: _("Country") }, 
                 { post_field: "latlong", json_field: "LATLONG", type: "latlong", label: _("Latitude/Longitude"), 

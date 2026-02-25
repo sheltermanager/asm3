@@ -9,55 +9,20 @@ $(function() {
         render: function() {
             let s = [
                 html.content_header(_("Find/replace")),
-                '<table id="findreplacetable">',
-                '<tbody>',
-                '<tr><td>' + _("Vaccine manufacturer") + '</td><td>',
                 tableform.fields_render([
-                    { post_field: "manufacturerfind", type: "select", justwidget: true,
-                        options: controller.manufacturers
-                    }
-                ]),
-                '</td><td>' + _("replace with") + '</td>',
-                '<td>',
-                tableform.fields_render([
-                    { post_field: "manufacturerreplace", type: "autotext", justwidget: true,
-                        options: controller.manufacturers
-                    }
-                ]),
-                '</td>',
-                '<td><button id="replacemanufacturers">' + _("Go") + '</button></td></tr>',
-                '<tr><td>' + _("City") + '</td><td>',
-                tableform.fields_render([
-                    { post_field: "cityfind", type: "select", justwidget: true,
-                        options: controller.towns
-                    }
-                ]),
-                '</td><td>' + _("replace with") + '</td>',
-                '<td>',
-                tableform.fields_render([
-                    { post_field: "cityreplace", type: "autotext", justwidget: true,
-                        options: controller.towns
-                    }
-                ]),
-                '</td>',
-                '<td><button id="replacecities">' + _("Go") + '</button></td></tr>',
-                '<tr><td>' + _("State") + '</td><td>',
-                tableform.fields_render([
-                    { post_field: "statefind", type: "select", justwidget: true,
-                        options: controller.counties
-                    }
-                ]),
-                '</td><td>' + _("replace with") + '</td>',
-                '<td>',
-                tableform.fields_render([
-                    { post_field: "statereplace", type: "autotext", justwidget: true,
-                        options: controller.counties
-                    }
-                ]),
-                '</td>',
-                '<td><button id="replacestates">' + _("Go") + '</button></td></tr>',
-                '</tbody>',
-                '</table>',
+                    { type: "raw", markup: '<h3>' + _("Vaccine manufacturer") + '</h3>' },
+                    { post_field: "manufacturerfind", label: _("Find"), type: "select", options: controller.manufacturers },
+                    { post_field: "manufacturerreplace", label: _("Replace with"), type: "autotext", options: controller.manufacturers },
+                    { type: "raw", markup: '<button class="replacebutton" id="replacemanufacturers">' + _("Go") + '</button>' },
+                    { type: "raw", markup: '<h3>' + _("Cities") + '</h3>' },
+                    { post_field: "cityfind", label: _("Find"), type: "select", options: controller.towns },
+                    { post_field: "cityreplace", label: _("Replace with"), type: "autotext", options: controller.towns },
+                    { type: "raw", markup: '<button class="replacebutton" id="replacemanufacturers">' + _("Go") + '</button>' },
+                    { type: "raw", markup: '<h3>' + _("States") + '</h3>' },
+                    { post_field: "statefind", label: _("Find"), type: "select", options: controller.counties },
+                    { post_field: "statereplace", label: _("Replace with"), type: "autotext", options: controller.counties },
+                    { type: "raw", markup: '<button class="replacebutton" id="replacemanufacturers">' + _("Go") + '</button>' },
+                ], { full_width: false }),
                 html.content_footer()
             ].join("\n");
 
@@ -71,14 +36,7 @@ $(function() {
                 let formdata = "mode=replacemanufacturers&" + $("#manufacturerfind, #manufacturerreplace").toPOST();
                 let result = await common.ajax_post("maint_find_replace", formdata);
                 $("#manufacturerfind option:selected").remove();
-                let termpresent = false;
-                $.each($("#manufacturerfind option"), function(i, v) {
-                    if ( $(v).val() == $("#manufacturerreplace").val() ) {
-                        termpresent = true;
-                        return;
-                    }
-                });
-                if (!termpresent) {
+                if ( !$("#manufacturerfind").select("hasOption", $("#manufacturerreplace").val()) ) {
                     $("#manufacturerfind").append('<option>' + $("#manufacturerreplace").val() + '</option>');
                 }
                 header.show_info(_("{0} vaccination record(s) affected").replace("{0}", result));
@@ -89,14 +47,7 @@ $(function() {
                 let formdata = "mode=replacecities&" + $("#cityfind, #cityreplace").toPOST();
                 let result = await common.ajax_post("maint_find_replace", formdata);
                 $("#cityfind option:selected").remove();
-                let termpresent = false;
-                $.each($("#cityfind option"), function(i, v) {
-                    if ( $(v).val() == $("#cityreplace").val() ) {
-                        termpresent = true;
-                        return;
-                    }
-                });
-                if (!termpresent) {
+                if ( !$("#cityfind").select("hasOption", $("#cityreplace").val()) ) {
                     $("#cityfind").append('<option>' + $("#cityreplace").val() + '</option>');
                 }
                 header.show_info(_("{0} person record(s) affected").replace("{0}", result));
@@ -107,14 +58,7 @@ $(function() {
                 let formdata = "mode=replacestates&" + $("#statefind, #statereplace").toPOST();
                 let result = await common.ajax_post("maint_find_replace", formdata);
                 $("#statefind option:selected").remove();
-                let termpresent = false;
-                $.each($("#statefind option"), function(i, v) {
-                    if ( $(v).val() == $("#statereplace").val() ) {
-                        termpresent = true;
-                        return;
-                    }
-                });
-                if (!termpresent) {
+                if ( !$("#statefind").select("hasOption", $("#statereplace").val()) ) {
                     $("#statefind").append('<option>' + $("#statereplace").val() + '</option>');
                 }
                 header.show_info(_("{0} person record(s) affected").replace("{0}", result));
@@ -123,7 +67,7 @@ $(function() {
         },
 
         sync: function() {
-            $("#findreplacetable button").button();
+            $(".replacebutton").button();
         },
 
         name: "maint_find_replace",

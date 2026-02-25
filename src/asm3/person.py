@@ -254,11 +254,14 @@ def get_staff_volunteers(dbo: Database, siteid: int = 0) -> Results:
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
     return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 %s ORDER BY o.IsStaff DESC, o.OwnerSurname, o.OwnerForeNames" % sitefilter)
 
-def get_towns(dbo: Database) -> List[str]:
+def get_towns(dbo: Database, excludeblanks: bool = False) -> List[str]:
     """
     Returns a list of all towns
     """
-    rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner ORDER BY OwnerTown")
+    if excludeblanks:
+        rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner WHERE OwnerTown <> '' ORDER BY OwnerTown")
+    else:
+        rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner ORDER BY OwnerTown")
     if rows is None: return []
     towns = []
     for r in rows:
@@ -276,11 +279,14 @@ def get_town_to_county(dbo: Database) -> List[str]:
         tc[r.OWNERTOWN] = r.OWNERCOUNTY
     return tc
 
-def get_counties(dbo: Database) -> List[str]:
+def get_counties(dbo: Database, excludeblanks: bool = False) -> List[str]:
     """
     Returns a list of counties
     """
-    rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner")
+    if excludeblanks:
+        rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner WHERE OwnerCounty <> '' ORDER BY OwnerCounty")
+    else:
+        rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner ORDER BY OwnerCounty")
     if rows is None: return []
     counties = []
     for r in rows:
@@ -2193,22 +2199,22 @@ def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, usern
     asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
     return "OK %s" % len(people)
 
-def replace_cities(dbo: Database, username: str, post: PostedData) -> None:
+def replace_cities(dbo: Database, username: str, find: str, replace: str) -> None:
     """
-    Replaces the town/city in all person records from posted form data
+    Replaces the town/city in all person records
     """
     
-    return dbo.update("owner", "OwnerTown = '%s'" % post["cityfind"], {
-        "OwnerTown": post["cityreplace"]
+    return dbo.update("owner", "OwnerTown = %s" % dbo.sql_value(find), {
+        "OwnerTown": replace
     }, username)
 
-def replace_states(dbo: Database, username: str, post: PostedData) -> None:
+def replace_states(dbo: Database, username: str, find: str, replace: str) -> None:
     """
-    Replaces the county/state in all person records from posted form data
+    Replaces the county/state in all person records
     """
     
-    return dbo.update("owner", "OwnerCounty = '%s'" % post["statefind"], {
-        "OwnerCounty": post["statereplace"]
+    return dbo.update("owner", "OwnerCounty = %s" % dbo.sql_value(find), {
+        "OwnerCounty": replace
     }, username)
 
 def update_anonymise_personal_data(dbo: Database, years: int = None, username: str = "system") -> str:
