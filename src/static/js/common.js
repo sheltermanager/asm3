@@ -540,6 +540,7 @@ const common = {
             if (common.route_is_client(href)) {
                 e.preventDefault();
                 common.route(href);
+                if (header.compact_menu) { $("#asm-topline .asm-menu-icon").hide(); }
                 return false;
             }
         });
