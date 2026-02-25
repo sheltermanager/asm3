@@ -757,6 +757,9 @@ def get_citation_find_simple(dbo: Database, cinumber: str, dummy: int = 0) -> Re
     return dbo.query(get_citation_query(dbo) + \
         "WHERE UPPER(oc.CitationNumber) LIKE UPPER(?)", [cinumber])
 
+def get_donation_find_simple(dbo: Database, searchkey: str, dummy: int = 0) -> Results:
+    return dbo.query(get_donation_query(dbo) + "WHERE UPPER(od.ReceiptNumber) LIKE UPPER(?) OR UPPER(od.ChequeNumber) LIKE UPPER(?)", [searchkey, searchkey])
+
 def get_vouchers(dbo: Database, offset: str = "i31") -> Results:
     """
     Returns a list of vouchers 
