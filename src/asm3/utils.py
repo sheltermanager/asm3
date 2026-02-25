@@ -1679,7 +1679,7 @@ def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     The HTML should only include the contents of the body tag, but not the tag itself.
     """
     mode = asm3.configuration.pdf_converter(dbo) # start with mode from config
-    if mode == "": mode = "cmd"
+    if mode == "" or mode == "null": mode = "cmd"
     if mode == "internal": mode = "weasyprint"
     if htmldata.find("pdf renderer cmd") != -1: mode = "cmd" # renderer directives override config
     elif htmldata.find("pdf renderer xhtml2pdf") != -1: mode = "xhtml2pdf"
