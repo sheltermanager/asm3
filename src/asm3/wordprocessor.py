@@ -900,7 +900,14 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             "DIETDATESTARTED":          "d:DATESTARTED",
             "DIETCOMMENTS":             "COMMENTS"
         }
+        diets = asm3.animal.get_diets(dbo, a["ID"], not iic)
         tags.update(table_tags(dbo, d, asm3.animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED", "DATESTARTED"))
+        tags["ANIMALDIETS"] = html_table(l, diets, (
+            ( "DIETNAME", _("Name", l) ),
+            ( "DIETDESCRIPTION", _("Description", l)),
+            ( "DATESTARTED", _("Started", l)),
+            ( "COMMENTS", _("Comments", l))
+        ))
 
     # Donations
     if includeDonations:
