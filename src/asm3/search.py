@@ -168,6 +168,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     lisort = ""
     cisort = ""
     cosort = ""
+    dosort = ""
     fasort = ""
     vosort = ""
     losort = ""
@@ -183,6 +184,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lisort = "OWNERNAME"
         cisort = "OWNERNAME"
         cosort = "INVOICENUMBER"
+        dosort = "OWNERNAME"
         fasort = "OWNERNAME"
         vosort = "OWNERNAME"
         losort = "RECORDDETAIL"
@@ -198,6 +200,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lisort = "OWNERNAME"
         cisort = "OWNERNAME"
         cosort = "INVOICENUMBER"
+        dosort = "OWNERNAME"
         fasort = "OWNERNAME"
         vosort = "OWNERNAME"
         losort = "RECORDDETAIL"
@@ -213,6 +216,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lisort = "ISSUEDATE"
         cisort = "CITATIONDATE"
         cosort = "LASTCHANGEDDATE"
+        dosort = "LASTCHANGEDDATE"
         fasort = "LASTCHANGEDDATE"
         vosort = "DATEISSUED"
         losort = "LASTCHANGEDDATE"
@@ -228,6 +232,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lisort = "ISSUEDATE"
         cisort = "CITATIONDATE"
         cosort = "LASTCHANGEDDATE"
+        dosort = "LASTCHANGEDDATE"
         fasort = "LASTCHANGEDDATE"
         vosort = "DATEISSUED"
         losort = "LASTCHANGEDDATE"
@@ -243,6 +248,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lisort = "COMMENTS"
         cisort = "COMMENTS"
         cosort = "SPECIESNAME"
+        dosort = "SPECIESNAME"
         fasort = "SPECIESNAME"
         vosort = "COMMENTS"
         losort = "RECORDDETAIL"
@@ -257,6 +263,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lisort = "COMMENTS"
         cisort = "COMMENTS"
         cosort = "SPECIESNAME"
+        dosort = "SPECIESNAME"
         fasort = "SPECIESNAME"
         vosort = "COMMENTS"
         losort = "RECORDDETAIL"
@@ -271,6 +278,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         lisort = "RELEVANCE"
         cisort = "RELEVANCE"
         cosort = "RELEVANCE"
+        dosort = "RELEVANCE"
         fasort = "RELEVANCE"
         vosort = "RELEVANCE"
         losort = "RELEVANCE"
@@ -526,7 +534,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         q = q[q.find(":")+1:].strip()
         explain = _("Payments with receipt or cheque numbers matching '{0}'.", l).format(q)
         if cp(asm3.users.VIEW_DONATION):
-            ar( asm3.financial.get_donation_find_simple(dbo, q, limit), "DONATION", cisort )
+            ar( asm3.financial.get_donation_find_simple(dbo, q, limit), "DONATION", dosort )
 
     # No special tokens, search everything and collate
     else:
