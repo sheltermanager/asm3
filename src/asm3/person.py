@@ -1303,7 +1303,7 @@ def update_remove_flag(dbo: Database, username: str, personid: int, flag: str) -
     if flags.find("%s|" % flag) != -1:
         update_flags(dbo, username, personid, flags.replace("%s|" % flag, "").split("|"))
 
-def update_flags(dbo: Database, username: str, personid: int, flags: str) -> None:
+def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) -> None:
     """
     Updates the flags on a person record from a list of flags
     """
