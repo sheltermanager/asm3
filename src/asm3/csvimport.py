@@ -156,7 +156,7 @@ def gkynu(m: Dict, f: str) -> str:
     """ reads field f from map m, returning a tri-state
         switch. Returns 2 (unknown) for a blank field
         Input should start with Y/N/U or 0/1/2 """
-    if f not in m: return 2
+    if f not in m: return "2"
     if m[f].upper().startswith("A") or m[f] == "-1": return "-1" # (any) for match good with
     if m[f].upper().startswith("Y") or m[f] == "0": return "0"
     if m[f].upper().startswith("N") or m[f] == "1": return "1"
@@ -720,6 +720,16 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         # a new animal. If no actual location was given in the file, we remove that default location
                         # value now to prevent merge_animal_details overwriting the existing value on the record. #1516
                         if gks(row, "ANIMALLOCATION") == "": a["internallocation"] = "0"
+                        # The code above will set goodwith fields to unknown if not present in the file,
+                        # assuming a new animal. If they aren't present, we need to blank them so that 
+                        # merge doesn't overwrite the existing values and set them all to unknown
+                        if gks(row, "ANIMALHOUSETRAINED") == "": a["housetrained"] = ""
+                        if gks(row, "ANIMALCRATETRAINED") == "": a["cratetrained"] = ""
+                        if gks(row, "ANIMALGOODWITHCATS") == "": a["goodwithcats"] = ""
+                        if gks(row, "ANIMALGOODWITHDOGS") == "": a["goodwithdogs"] = ""
+                        if gks(row, "ANIMALGOODWITHKIDS") == "": a["goodwithkids"] = ""
+                        if gks(row, "ANIMALGOODWITHELDERLY") == "": a["goodwithelderly"] = ""
+                        if gks(row, "ANIMALGOODONLEAD") == "": a["goodonlead"] = ""
                         # Overwrite newly supplied fields if they are present and have a value
                         asm3.animal.merge_animal_details(dbo, user, dup.ID, a, force=True)
                         # Update flags if present

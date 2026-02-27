@@ -4806,6 +4806,12 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
         if a[fieldname] is None or a[fieldname] == "" or force:
             uv[fieldname] = d[dictfield]
             a[fieldname] = uv[fieldname]
+    def merge_bool(dictfield, fieldname):
+        if dictfield not in d or d[dictfield] == "": return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            if d[dictfield] == "on": 
+                uv[fieldname] = 1
+                a[fieldname] = 1
     def merge_date(dictfield, fieldname):
         if dictfield not in d or display2python(dbo.locale, d[dictfield]) is None: return
         if a[fieldname] is None or force:
@@ -4826,12 +4832,6 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
         if a[fieldname] is None or a[fieldname] == 0 or force:
             uv[fieldname] = asm3.utils.cint(d[dictfield])
             a[fieldname] = uv[fieldname]
-    def merge_bool(dictfield, fieldname):
-        if dictfield not in d or d[dictfield] == "": return
-        if a[fieldname] is None or a[fieldname] == 0 or force:
-            if d[dictfield] == "on": 
-                uv[fieldname] = 1
-                a[fieldname] = 1
     merge("comments", "ANIMALCOMMENTS")
     merge("healthproblems", "HEALTHPROBLEMS")
     merge("microchipnumber", "IDENTICHIPNUMBER")
