@@ -19,6 +19,7 @@ import asm3.publishers.html
 import asm3.publishers.maddiesfund
 import asm3.publishers.mypetuk
 import asm3.publishers.petcademy 
+import asm3.publishers.petcolovelost 
 import asm3.publishers.petfinder
 import asm3.publishers.petlink
 import asm3.publishers.petrescue

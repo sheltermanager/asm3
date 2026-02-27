@@ -15,6 +15,7 @@ import asm3.publishers.homeagain
 import asm3.publishers.maddiesfund
 import asm3.publishers.mypetuk
 import asm3.publishers.petcademy
+import asm3.publishers.petcolovelost
 import asm3.publishers.petfbi
 import asm3.publishers.petfinder
 import asm3.publishers.petlink
@@ -271,6 +272,15 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         self.assertIsNotNone(asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).getData(214))
         self.assertIsNotNone(asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).processAnimal(a))
+    
+    # petcolovelost
+    def test_petcolovelost(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        # a.EVENTDATE = a.MOSTRECENTENTRYDATE
+        # self.assertIsNotNone(asm3.publishers.petcolovelost.PetcoLoveLostPublisher(base.get_dbo(), pc).processAnimal(a))
+        asm3.publishers.petcolovelost.PetcoLoveLostPublisher(base.get_dbo(), pc).run()
+        asm3.publishers.petcolovelost.PetcoLoveLostPublisher(base.get_dbo(), pc).validate(a)
 
     # petfbi
     def test_petfbi(self):
