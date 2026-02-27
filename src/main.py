@@ -7603,11 +7603,9 @@ class reports(JSONEndpoint):
         self.reload_config()
 
     def post_sql(self, o):
-        self.check(asm3.users.USE_SQL_INTERFACE)
         asm3.reports.check_sql(o.dbo, o.user, o.post["sql"])
 
     def post_genhtml(self, o):
-        self.check(asm3.users.USE_SQL_INTERFACE)
         return asm3.reports.generate_html(o.dbo, o.user, o.post["sql"])
 
     def post_headfoot(self, o):
