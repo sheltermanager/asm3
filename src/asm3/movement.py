@@ -486,6 +486,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "ReturnedReasonID":             post.integer("returncategory"),
         "Donation":                     post.integer("donation"),
         "InsuranceNumber":              post["insurance"],
+        "AdoptionSourceID":             post.integer("source"),
         "ReasonForReturn":              post["reason"],
         "ReturnedByOwnerID":            post.integer("returnedby"),
         "ReservationDate":              post.datetime("reservationdate", "reservationtime"),
@@ -500,7 +501,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
 
     if animalid > 0:
         asm3.animal.update_current_owner(dbo, username, animalid)
-        asm3.animal.update_animal_status(dbo, animalid)
+        asm3.animal.update_animal_status(dbo, animalid, username=username)
         asm3.animal.update_variable_animal_data(dbo, animalid)
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
@@ -527,6 +528,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         "ReturnedReasonID":             post.integer("returncategory"),
         "Donation":                     post.integer("donation"),
         "InsuranceNumber":              post["insurance"],
+        "AdoptionSourceID":             post.integer("source"),
         "ReasonForReturn":              post["reason"],
         "ReturnedByOwnerID":            post.integer("returnedby"),
         "ReservationDate":              post.datetime("reservationdate", "reservationtime"),
@@ -547,7 +549,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
 
     if post.integer("animal") > 0:
         asm3.animal.update_current_owner(dbo, username, post.integer("animal"))
-        asm3.animal.update_animal_status(dbo, post.integer("animal"))
+        asm3.animal.update_animal_status(dbo, post.integer("animal"), username=username)
         asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
@@ -564,7 +566,7 @@ def delete_movement(dbo: Database, username: str, mid: int) -> None:
     dbo.delete("adoption", mid, username)
     if m.ANIMALID > 0:
         asm3.animal.update_current_owner(dbo, username, m.ANIMALID)
-        asm3.animal.update_animal_status(dbo, m.ANIMALID)
+        asm3.animal.update_animal_status(dbo, m.ANIMALID, username=username)
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
         asm3.animal.update_animallocation(dbo, m.ANIMALID, username)
@@ -644,16 +646,17 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
     move_dict = {
         "person"                : post["person"],
         "animal"                : post["animal"],
+        "event"                 : post["event"],
         "adoptionno"            : post["movementnumber"],
         "movementdate"          : post["movementdate"],
         "type"                  : str(ADOPTION),
         "donation"              : post["amount"],
         "insurance"             : post["insurance"],
+        "adoptionsource"        : post["source"],
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "trial"                 : post["trial"],
         "trialenddate"          : post["trialenddate"],
-        "comments"              : post["comments"],
-        "event"                 : post["event"]
+        "comments"              : post["comments"]
     }
     move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     # Is this animal currently on foster? If so, return the foster
@@ -706,7 +709,7 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
     cost_create = post.boolean("costcreate")
     if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
-            "animal"          : post["animal"],
+            "animal"            : post["animal"],
             "type"              : cost_type,
             "costdate"          : post["movementdate"],
             "costpaid"          : post["movementdate"],
@@ -804,7 +807,7 @@ def insert_reclaim_from_form(dbo: Database, username: str, post: PostedData) -> 
     cost_create = post.boolean("costcreate")
     if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
-            "animalid"          : post["animal"],
+            "animal"            : post["animal"],
             "type"              : cost_type,
             "costdate"          : post["movementdate"],
             "costpaid"          : post["movementdate"],
@@ -889,6 +892,7 @@ def insert_reserve_from_form(dbo: Database, username: str, post: PostedData) -> 
     move_dict = {
         "person"                : post["person"],
         "animal"                : post["animal"],
+        "source"                : post["source"],
         "reservationdate"       : post["reservationdate"],
         "reservationstatus"     : post["reservationstatus"],
         "adoptionno"            : post["movementnumber"],

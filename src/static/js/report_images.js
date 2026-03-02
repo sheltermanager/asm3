@@ -35,10 +35,10 @@ $(function() {
                     { field: "NAME", display: _("Image file"), initialsort: true },
                     { field: "NAME", display: _("URL"), 
                         formatter: function(row) {
-                            let relurl = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME,
+                            let relurl = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + encodeURIComponent(row.NAME),
                                 absurl = asm.serviceurl + "?";
                             if (asm.useraccountalias) { absurl += "account=" + asm.useraccountalias + "&"; }
-                            absurl += "method=extra_image&title=" + row.NAME;
+                            absurl += "method=extra_image&title=" + encodeURIComponent(row.NAME);
                             return relurl + ' <button type="button" data-icon="link" data="' + relurl + '">' + 
                                 _("Copy relative URL to the clipboard (for use with documents and reports)") + '</button>' +
                                 ' <button type="button" data-icon="extlink" data="' + absurl + '">' + 

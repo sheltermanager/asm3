@@ -697,6 +697,8 @@ medical regimen.
 
 MedicalName
     The name of the medical treatment 
+MedicalType
+    The type of medical treatment from the fixed list of medical types
 MedicalFrequency
     How often the treatment is given (eg: Monthly) 
 MedicalNumberOfTreatments
@@ -984,6 +986,22 @@ LogComments
     The log entry
 LogCreatedBy
     The person who created the log entry
+
+Condition Keys
+--------
+
+You must use a qualifier suffix to access these records.
+
+ConditionName
+    The name of the condition
+ConditionTypeName
+    The name of the condition type
+ConditionStartDatetime
+    When the condition started
+ConditionEndDatetime
+    When the condition ended
+ConditionComments
+    Any comments on the condition
 
 Movement Keys
 -------------
@@ -1625,6 +1643,8 @@ AnimalLogs
    Inserts a table containing all of the animal's log entries
 AnimalLogsTYPE
    Inserts a table containing all of the animal's log entries of TYPE
+AnimalConditions
+   Inserts a table containing all of the animal's recorded conditions
 IncidentLogs
    Inserts a table containing all of the incident's log entries
 LitterMates

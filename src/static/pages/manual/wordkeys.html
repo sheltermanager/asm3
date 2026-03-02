@@ -98,6 +98,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#diary-keys">Diary Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diet-keys">Diet Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#log-keys">Log Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#condition-keys">Condition Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#movement-keys">Movement Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#person-keys">Person Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#citation-keys">Citation Keys</a></li>
@@ -837,6 +838,8 @@ medical regimen.</p>
 <dl class="simple">
 <dt>MedicalName</dt><dd><p>The name of the medical treatment</p>
 </dd>
+<dt>MedicalType</dt><dd><p>The type of medical treatment from the fixed list of medical types</p>
+</dd>
 <dt>MedicalFrequency</dt><dd><p>How often the treatment is given (eg: Monthly)</p>
 </dd>
 <dt>MedicalNumberOfTreatments</dt><dd><p>The total number of treatments</p>
@@ -1119,6 +1122,22 @@ the transport tab or book:</p>
 <dt>LogComments</dt><dd><p>The log entry</p>
 </dd>
 <dt>LogCreatedBy</dt><dd><p>The person who created the log entry</p>
+</dd>
+</dl>
+</section>
+<section id="condition-keys">
+<h2>Condition Keys<a class="headerlink" href="#condition-keys" title="Link to this heading">¶</a></h2>
+<p>You must use a qualifier suffix to access these records.</p>
+<dl class="simple">
+<dt>ConditionName</dt><dd><p>The name of the condition</p>
+</dd>
+<dt>ConditionTypeName</dt><dd><p>The name of the condition type</p>
+</dd>
+<dt>ConditionStartDatetime</dt><dd><p>When the condition started</p>
+</dd>
+<dt>ConditionEndDatetime</dt><dd><p>When the condition ended</p>
+</dd>
+<dt>ConditionComments</dt><dd><p>Any comments on the condition</p>
 </dd>
 </dl>
 </section>
@@ -1762,6 +1781,8 @@ there are.  Records are output in ascending order of date.</p>
 <dt>AnimalLogs</dt><dd><p>Inserts a table containing all of the animal’s log entries</p>
 </dd>
 <dt>AnimalLogsTYPE</dt><dd><p>Inserts a table containing all of the animal’s log entries of TYPE</p>
+</dd>
+<dt>AnimalConditions</dt><dd><p>Inserts a table containing all of the animal’s recorded conditions</p>
 </dd>
 <dt>IncidentLogs</dt><dd><p>Inserts a table containing all of the incident’s log entries</p>
 </dd>

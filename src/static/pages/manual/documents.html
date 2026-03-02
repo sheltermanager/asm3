@@ -171,16 +171,14 @@ papersize exact directive.</p>
 </pre></div>
 </div>
 <p>Margins are in the order top, bottom, left then right.</p>
-<p>The PDF engine will scale the document to fit the page horizontally based on the
-widest element in it. Use the zoom directive to override this behaviour and
-specify a scaling amount (this sets a zoom CSS value on the body element):</p>
+<p>Use the zoom directive to set the scaling amount to use when converting
+the document (this sets a zoom CSS value on the body element):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf zoom 130% end --&gt;&lt;/div&gt;
 </pre></div>
 </div>
-<p>Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
-engine used by the Chrome and Safari web browsers). An alternative, simpler PDF
-engine can also be used by specifying:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf renderer pisa --&gt;&lt;/div&gt;
+<p>Similar to zoom, can be used by pdf engines that do not support zoom to
+scale the page to a factor of 1. Eg: To render at half the normal size:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf scale 0.5 end --&gt;&lt;/div&gt;
 </pre></div>
 </div>
 </section>

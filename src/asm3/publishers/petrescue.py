@@ -157,6 +157,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         try:
             # Get a list of all animals that we sent to PR recently (6 months)
+            # NOTE: This can potentially include listings that were never sent if they were rejected with an error
             prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='petrescue'", [self.dbo.today(offset=-182)])
             
             # Build a list of IDs we just sent, along with a list of ids for animals

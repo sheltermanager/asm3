@@ -14,7 +14,7 @@ $(function() {
                 '<span id="callout-sql" class="asm-callout">' + 
                     _("SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete table and column names") + 
                 '</span>'},
-                { id: "exec", text: _("Execute"), tooltip: _("Execute the SQL in the box below"), icon: "sql", hotkey: "ctrl+e",
+                { id: "exec", text: _("Execute"), tooltip: _("Execute the SQL in the box below"), icon: "sql", hotkey: "mod+e",
                     click: function() {
                         // if the editor has the focus when you press CTRL+E, what you see on screen
                         // won't be returned by the value method until it loses the focus

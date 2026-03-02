@@ -375,6 +375,7 @@ def get_animal_query(dbo: Database) -> str:
             "WHEN a.ActiveMovementDate Is Not Null THEN co.OwnerName " \
             "ELSE '' " \
         "END AS OutcomeQualifier, " \
+        "a.ID AS AnimalPhoto, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
@@ -532,6 +533,7 @@ def get_animal_brief_query(dbo: Database) -> str:
             "ELSE " \
             "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
+        "diet.DietName AS ActiveDietName, " \
         "er.ReasonName AS EntryReasonName, " \
         "et.EntryTypeName AS EntryTypeName, " \
         "a.Fee, " \
@@ -594,6 +596,8 @@ def get_animal_brief_query(dbo: Database) -> str:
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
+        "LEFT OUTER JOIN animaldiet adi ON adi.ID = (SELECT MAX(ID) FROM animaldiet sadi WHERE sadi.AnimalID = a.ID) " \
+        "LEFT OUTER JOIN diet ON diet.ID = adi.DietID " \
         "LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
         "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
         "LEFT OUTER JOIN species sp ON sp.ID = a.SpeciesID " \
@@ -2788,6 +2792,7 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
     # Reset the animal entry fields, copying values from the last 
     # returned exit movement if one is available.
     entryreasonid = asm3.configuration.default_entry_reason(dbo)
+    entrytypeid = 1 # assume surrender
     broughtinbyownerid = 0
     originalownerid = 0
     istransfer = 0
@@ -2798,6 +2803,8 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
         originalownerid = rxm[0].OWNERID
         istransfer = asm3.utils.iif(rxm[0].MOVEMENTTYPE == 3, 1, 0)
         ispickup = asm3.utils.iif(rxm[0].MOVEMENTTYPE == 5, 1, 0)
+        if istransfer: entrytypeid = 3 # Transfer in 
+        if ispickup: entrytypeid = 2 # Stray
     # Generate a new code for the animal
     code, shortcode, unique, year = calc_shelter_code(dbo, a.ANIMALTYPEID, entryreasonid, a.SPECIESID, a.MOSTRECENTENTRYDATE)
     dbo.update("animal", animalid, {
@@ -2807,7 +2814,7 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
         "YearCodeID":           year,
         # NOTE: DateBroughtIn is never touched, 
         # MostRecentEntryDate is updated by update_animal_status before this code ever runs
-        "EntryTypeID":          1, # Usually a return of some type so default to surrender
+        "EntryTypeID":          entrytypeid, 
         "EntryReasonID":        entryreasonid,
         "AdoptionCoordinatorID": 0,
         "BroughtInByOwnerID":   broughtinbyownerid,
@@ -3187,19 +3194,21 @@ def get_publish_history(dbo: Database, animalid: int) -> Results:
     """
     return dbo.query("SELECT PublishedTo, SentDate, Extra FROM animalpublished WHERE AnimalID = ? ORDER BY SentDate DESC", [animalid])
 
-def insert_publish_history(dbo: Database, animalid: int, service: str) -> None:
+def insert_publish_history(dbo: Database, username: str, animalid: int, service: str) -> None:
     """
     Marks an animal as published to a particular service now
     """
-    dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, service))
-    dbo.execute("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (?, ?, ?)", \
-        (animalid, service, dbo.now()))
+    delete_publish_history(dbo, username, animalid, service)
+    dbo.insert("animalpublished", { "AnimalID": animalid, "PublishedTo": service, "SentDate": dbo.now() }, 
+        generateID=False, setRecordVersion=False, setCreated=False)
+    asm3.audit.create(dbo, username, "animalpublished", 0, f"animal={animalid} ", service)
 
-def delete_publish_history(dbo: Database, animalid: int, service: str) -> None:
+def delete_publish_history(dbo: Database, username: str, animalid: int, service: str) -> None:
     """
     Forgets an animal has been published to a particular service.
     """
-    dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, service))
+    dbo.delete("animalpublished", f"AnimalID={animalid} AND PublishedTo='{service}'", username, writeDeletion=False)
+    asm3.audit.delete(dbo, username, "animalpublished", 0, f"animal={animalid} ", service)
 
 def get_shelterview_animals(dbo: Database, lf: LocationFilter = None) -> Results:
     """
@@ -3451,7 +3460,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
 
     # Update denormalised fields after the insert
     update_animal_check_bonds(dbo, nextid)
-    update_animal_status(dbo, nextid)
+    update_animal_status(dbo, nextid, username=username)
     update_variable_animal_data(dbo, nextid)
 
     # If a fosterer was specified, foster the animal
@@ -3524,7 +3533,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails FROM animal WHERE ID=?", [aid]))
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
 
     # Record the location if it has changed
     insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
@@ -3682,7 +3691,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
 
     # Update denormalised fields after the change
     update_animal_check_bonds(dbo, aid)
-    update_animal_status(dbo, aid)
+    update_animal_status(dbo, aid, username=username)
     update_variable_animal_data(dbo, aid)
 
     # Update any diary notes linked to this animal
@@ -4110,6 +4119,17 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
         asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.location_change_log_type(dbo), msg)
     return alid
 
+def insert_adoptable_status_log(dbo: Database, username: str, animalid: int, wasadoptable: int = 0, isadoptable: int = 0) -> None:
+    """ Writes an entry to the log when an animal's adoptable status changes. """
+    # If the option is on and the adoptable status has changed, log it
+    l = dbo.locale
+    if asm3.configuration.adoptable_change_log(dbo) and wasadoptable != isadoptable:
+        if isadoptable:
+            logtext = _("Status: Available for adoption", l)
+        else:
+            logtext = _("Status: Not available for adoption", l)
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.adoptable_change_log_type(dbo), logtext)
+
 def insert_namechange_log(dbo: Database, username: str, animalid: int, newname: str, oldname: str) -> None:
     """ Writes an entry to the log when an animal's name changes."""
     # If the option is on and the name has changed, log it
@@ -4149,7 +4169,7 @@ def update_location_unit(dbo: Database, username: str, animalid: int, newlocatio
     Updates the shelterlocation and shelterlocationunit fields of the animal given.
     This is typically called in response to drag and drop events on shelterview and
     means that the animal should be on shelter rather than with a fosterer, etc.
-    If the animal has an activemovement, it will be returned before the location is changed (unless returnactivemovement == False)
+    If the animal has an activemovement, it will be returned before the location is changed.
     """
     # Record the internal location change if necessary
     oldloc = dbo.first_row( dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid]) )
@@ -4399,7 +4419,7 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
             "DBFSID":               0,
             "MediaSize":            0,
             "MediaName":            medianame,
-            "MediaMimeType":        asm3.media.mime_type(medianame),
+            "MediaMimeType":        asm3.utils.mime_type(medianame),
             "MediaType":            me.mediatype,
             "MediaNotes":           me.medianotes,
             "WebsitePhoto":         me.websitephoto,
@@ -4788,6 +4808,12 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
         if a[fieldname] is None or a[fieldname] == "" or force:
             uv[fieldname] = d[dictfield]
             a[fieldname] = uv[fieldname]
+    def merge_bool(dictfield, fieldname):
+        if dictfield not in d or d[dictfield] == "": return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            if d[dictfield] == "on": 
+                uv[fieldname] = 1
+                a[fieldname] = 1
     def merge_date(dictfield, fieldname):
         if dictfield not in d or display2python(dbo.locale, d[dictfield]) is None: return
         if a[fieldname] is None or force:
@@ -4808,12 +4834,6 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
         if a[fieldname] is None or a[fieldname] == 0 or force:
             uv[fieldname] = asm3.utils.cint(d[dictfield])
             a[fieldname] = uv[fieldname]
-    def merge_bool(dictfield, fieldname):
-        if dictfield not in d or d[dictfield] == "": return
-        if a[fieldname] is None or a[fieldname] == 0 or force:
-            if d[dictfield] == "on": 
-                uv[fieldname] = 1
-                a[fieldname] = 1
     merge("comments", "ANIMALCOMMENTS")
     merge("healthproblems", "HEALTHPROBLEMS")
     merge("microchipnumber", "IDENTICHIPNUMBER")
@@ -4914,7 +4934,6 @@ def update_animalcondition_from_form(dbo: Database, username: str, post: PostedD
     Updates an animalcondition record from posted form data
     """
     dbo.update("animalcondition", post.integer("animalconditionid"), {
-        "AnimalID":         post.integer("animalid"),
         "ConditionID":      post.integer("conditionid"),
         "StartDatetime":    post.datetime("startdate", "starttime"),
         "EndDatetime":      post.datetime("enddate", "endtime"),
@@ -5446,7 +5465,7 @@ def update_on_shelter_animal_statuses(dbo: Database) -> str:
     asm3.al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
-def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, movements: Results = None, animalupdatebatch: List[Tuple] = None, diaryupdatebatch: List[Tuple] = None) -> None:
+def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, movements: Results = None, animalupdatebatch: List[Tuple] = None, diaryupdatebatch: List[Tuple] = None, username: str = "system") -> None:
     """
     Updates the movement status fields on an animal record: 
         ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, 
@@ -5654,6 +5673,9 @@ def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, move
         old.displaylocation == a.displaylocation:
         # No - don't do anything
         return
+
+    if old.adoptable != a.adoptable:
+        insert_adoptable_status_log(dbo, username, animalid, old.adoptable, a.adoptable)
 
     # Update the location on any diary notes for this animal
     update_diary_linkinfo(dbo, animalid, a, diaryupdatebatch)

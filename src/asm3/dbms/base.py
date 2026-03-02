@@ -132,6 +132,14 @@ class Database(object):
     type_integer = "INTEGER"
     type_float = "REAL"
 
+    def check(self) -> bool:
+        """ Runs a test query and returns True if the database connection is ok and a result was returned """
+        try:
+            self.query_int("SELECT 1")
+            return True
+        except:
+            return False
+
     def connect(self) -> Any:
         """ Virtual: Connect to the database and return the connection """
         raise NotImplementedError()

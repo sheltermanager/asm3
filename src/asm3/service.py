@@ -582,6 +582,10 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if dbo.database in asm3.db.ERROR_VALUES:
             asm3.al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid database (%s)" % dbo.database)
+        
+        if not dbo.check():
+            asm3.al.error("dbo.check failed: account=%s, ip=%s, db=%s" % (account, remoteip, dbo.database), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Failed accessing %s" % dbo.database)
 
         # If the database has disabled the service API, stop now
         if not asm3.configuration.service_enabled(dbo):
@@ -710,7 +714,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, imagedata)
 
     elif method == "document_repository":
-        return set_cached_response(cache_key, account, asm3.media.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, 
+        return set_cached_response(cache_key, account, asm3.utils.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, 
             asm3.dbfs.get_string_id(dbo, mediaid))
     
     elif method == "extra_image":

@@ -15,6 +15,8 @@ $(function() {
             [ _("Aged under 6 months"), "under6months", "DateOfBirth >= '$CURRENT_DATE-182$'" ],
             [ _("Aged over 6 months"), "over6months", "DateOfBirth < '$CURRENT_DATE-182$'" ],
             [ _("Altered"), "altered", "Neutered=1" ],
+            [ _("Altered in care"), "alteredic", "Neutered=1 AND NeuteredDate >= DateBroughtIn" ],
+            [ _("Altered prior to care"), "alteredpc", "Neutered=1 AND NeuteredDate Is Null" ],
             [ _("Altered between two dates"), "alteredtwodates", 
                 "NeuteredDate>='$ASK DATE {0}$' AND NeuteredDate<='$ASK DATE {1}$'"
                 .replace("{0}", _("Altered between"))
@@ -78,13 +80,14 @@ $(function() {
                 .replace("{1}", _("and")) ],
             [ _("Licensed"), "activelicense", "EXISTS(SELECT ID FROM ownerlicense WHERE AnimalID=v_animal.ID " +
                 "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
+            [ _("Microchipped"), "microchip", "Identichipped=1" ],
             [ _("No license"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicense WHERE AnimalID=v_animal.ID " +
                 "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
             [ _("Non-shelter"), "nonshelter", "NonShelterAnimal=1" ],
             [ _("Not adoptable"), "notadoptable", "IsNotAvailableForAdoption=1" ],
             [ _("Not altered"), "notaltered", "Neutered=0" ],
             [ _("Not deceased"), "notdeceased", "DeceasedDate Is Null" ],
-            [ _("Not microchipped"), "notmicrochip", "IdentichipNumber=0" ],
+            [ _("Not microchipped"), "notmicrochip", "Identichipped=0" ],
             [ _("Not non-shelter"), "notnonshelter", "NonShelterAnimal=0" ],
             [ _("No tattoo"), "nottattoo", "Tattoo=0" ],
             [ _("Reclaimed"), "reclaimed", "ActiveMovementDate Is Not Null AND ActiveMovementType=5" ],
@@ -145,6 +148,13 @@ $(function() {
                 .replace("{0}", _("Enter a treatment name")) ],
             [ _("Ask the user for a medical type"), "askmedicaltype", "MedicalTypeName LIKE '%$ASK STRING {0}$%'"
                 .replace("{0}", _("Enter a medical type name")) ],
+
+            [ _("Ask the user for a test type"), "asktesttype", "TreatmentName LIKE '%$ASK STRING {0}$%' AND MedicalTypeID = -2"
+            .replace("{0}", _("Enter a test type")) ],
+
+            [ _("Ask the user for a vaccination type"), "askvaccinationtype", "TreatmentName LIKE '%$ASK STRING {0}$%' AND MedicalTypeID = -1"
+            .replace("{0}", _("Enter a vaccination type")) ],
+
             [ _("Due"), "duenow", "DateGiven Is Null" ],
             [ _("Due between two dates"), "duetwo", 
                 "DateRequired>='$ASK DATE {0}$' AND DateRequired<='$ASK DATE {1}$'"
@@ -492,6 +502,12 @@ $(function() {
                             "AND LinkID=v_owner.ID AND asm_to_date(Value, " + dformat + ") >= '$ASK DATE From date $' " +
                             "AND asm_to_date(Value, " + dformat + ") <= '$ASK DATE To date $')" ]);
                 }
+            });
+            $.each(controller.diets, function(i, v) {
+                reports_querybuilder.qb_animal_criteria.push(
+                    [_("Diet is {0}").replace("{0}", v.DIETNAME), "diet" + v.ID, 
+                        "EXISTS(SELECT ID FROM animaldiet WHERE DateStarted <= '$CURRENT_DATE$' AND " +
+                        "AnimalID=v_animal.ID AND DietID=" + v.ID + ")"]);
             });
             $.each(controller.entryreasons, function(i, v) {
                 reports_querybuilder.qb_animal_criteria.push(

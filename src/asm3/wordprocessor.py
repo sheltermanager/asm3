@@ -808,6 +808,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         # Medical
         d = {
             "MEDICALNAME":              "TREATMENTNAME",
+            "MEDICALTYPE":              "MEDICALTYPENAME",
             "MEDICALCOMMENTS":          "COMMENTS",
             "MEDICALFREQUENCY":         "NAMEDFREQUENCY",
             "MEDICALNUMBEROFTREATMENTS": "NAMEDNUMBEROFTREATMENTS",
@@ -860,6 +861,24 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             tags[tagname] = mt["MEDICALTYPENAME"].upper()
             tags[tagname + "GIVEN"] = python2display(l, mt["DATEGIVEN"])
             tags[tagname + "DUE"] = python2display(l, mt["DATEREQUIRED"])
+        
+        # Conditions
+        d = {
+            "CONDITIONNAME":            "CONDITIONNAME",
+            "CONDITIONTYPENAME":        "CONDITIONTYPENAME",
+            "CONDITIONSTARTDATETIME":   "d:STARTDATETIME",
+            "CONDITIONENDDATETIME":     "d:ENDDATETIME",
+            "CONDITIONCOMMENTS":        "COMMENTS"
+        }
+        conditions = asm3.animal.get_animalconditions(dbo, a["ID"])
+        tags.update(table_tags(dbo, d, conditions, "CONDITIONNAME"))
+        tags["ANIMALCONDITIONS"] = html_table(l, conditions, (
+            ( "CONDITIONNAME", _("Condition", l) ),
+            ( "CONDITIONTYPENAME", _("ConditionType", l) ),
+            ( "STARTDATETIME", _("From", l) ),
+            ( "ENDDATETIME", _("To", l) ),
+            ( "COMMENTS", _("Comments", l) )
+        ))
 
     # Diary
     if includeDiary:
@@ -881,7 +900,14 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             "DIETDATESTARTED":          "d:DATESTARTED",
             "DIETCOMMENTS":             "COMMENTS"
         }
+        diets = asm3.animal.get_diets(dbo, a["ID"])
         tags.update(table_tags(dbo, d, asm3.animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED", "DATESTARTED"))
+        tags["ANIMALDIETS"] = html_table(l, diets, (
+            ( "DIETNAME", _("Name", l) ),
+            ( "DIETDESCRIPTION", _("Description", l)),
+            ( "DATESTARTED", _("Started", l)),
+            ( "COMMENTS", _("Comments", l))
+        ))
 
     # Donations
     if includeDonations:
@@ -1958,10 +1984,12 @@ def html_table(l: str, rows: Results, cols: List[Tuple[str, str]]):
     Eg: ( ( "ID", "Text for ID field" ) )
     """
     h = []
-    h.append("<table border=\"1\">")
+    colstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;">{0}</td>'
+    headstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;"><strong>{0}</strong></td>'
+    h.append('<table style="border-collapse: collapse; width: 100%" border="1">')
     h.append("<thead><tr>")
     for colfield, coltext in cols:
-        h.append("<th>%s</th>" % coltext)
+        h.append(headstyle.format(coltext))
     h.append("</tr></thead>")
     h.append("<tbody>")
     for r in rows:
@@ -1969,15 +1997,15 @@ def html_table(l: str, rows: Results, cols: List[Tuple[str, str]]):
         for colfield, coltext in cols:
             v = r[colfield]
             if asm3.utils.is_date(v):
-                h.append("<td>%s</td>" % python2displaytime(l, r[colfield]))
+                h.append(colstyle.format(python2displaytime(l, r[colfield])))
             elif asm3.utils.is_currency(colfield):
-                h.append("<td>%s</td>" % format_currency(l, r[colfield]))
+                h.append(colstyle.format(format_currency(l, r[colfield])))
             elif r[colfield] is None:
-                h.append("<td></td>")
+                h.append(colstyle.format(""))
             elif asm3.utils.is_str(r[colfield]) or asm3.utils.is_unicode(r[colfield]):
-                h.append("<td>%s</td>" % r[colfield].replace("\n", "<br/>"))
+                h.append(colstyle.format( r[colfield].replace("\n", "<br/>") ))
             else:
-                h.append("<td>%s</td>" % r[colfield])
+                h.append(colstyle.format( r[colfield] ))
         h.append("</tr>")
     h.append("</tbody>")
     h.append("</table>")

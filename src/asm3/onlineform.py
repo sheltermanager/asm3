@@ -43,6 +43,7 @@ FIELDTYPE_EMAIL = 19
 FIELDTYPE_NUMBER = 20
 FIELDTYPE_FOSTERANIMAL = 21
 FIELDTYPE_TELEPHONE = 22
+FIELDTYPE_CHECKBOX_AL = 23
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -68,7 +69,8 @@ FIELDTYPE_MAP = {
     "EMAIL": 19,
     "NUMBER": 20,
     "FOSTERANIMAL": 21,
-    "TELEPHONE": 22
+    "TELEPHONE": 22,
+    "CHECKBOX_AL": 23
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -218,6 +220,11 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<td class="asm-onlineform-td asm-onlineform-raw" colspan="2">')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<td class="asm-onlineform-td">%s</td><td class="asm-onlineform-td">' % requiredspan)
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
+            h.append('<td class="asm-onlineform-td">')
+            h.append('<label for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('</td>')
+            h.append('<td class="asm-onlineform-td">')
         else:
             # Add label and cell wrapper if it's not raw markup or a checkbox
             h.append('<td class="asm-onlineform-td">')
@@ -233,6 +240,9 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
+            h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' % \
+                (fid, cname, required))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
             extraclass = ""
             if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
@@ -695,6 +705,14 @@ def get_internal_forms(dbo: Database) -> Results:
     forms = dbo.query("SELECT * FROM onlineform WHERE InternalUse = 1")
     return forms
 
+def get_field_from_name(dbo: Database, k: str) -> ResultRow:
+    """ Retrieves the onlineformfield definition from the name given """
+    if k.find("_") == -1: return None
+    fid = asm3.utils.cint(k[k.rfind("_")+1:])
+    if fid != 0:
+        return dbo.first_row(dbo.query("SELECT FieldName, FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
+    return None
+
 def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Create an onlineform record from posted data
@@ -922,28 +940,21 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     if asm3.configuration.onlineform_spam_mandatory(dbo):
         for k, v in post.data.items():
             if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
-                label = ""
-                displayindex = 0
-                fieldname = k
-                fieldtype = FIELDTYPE_TEXT
-                tooltip = ""
+                v = v.strip() 
                 # We're only interested in fields that have definitions in onlineformfield
-                if k.find("_") != -1:
-                    fid = asm3.utils.cint(k[k.rfind("_")+1:])
-                    fieldname = k[0:k.rfind("_")]
-                    v = v.strip() 
-                    # Only bother checking where the field value is blank
-                    if fid != 0 and v == "":
-                        fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
-                        if fld is not None and fld.MANDATORY == 1:
-                            spamreason = f"empty value found in mandatory field '{fieldname}'"
-                            spam = True
-                            break
+                fld = get_field_from_name(dbo, k)
+                if fld and fld.MANDATORY == 1 and v == "":
+                    spamreason = f"empty value found in mandatory field '{k}'"
+                    spam = True
+                    break
 
     # URLs found in any fields
     if asm3.configuration.onlineform_spam_urls(dbo):
         for k, v in post.data.items():
             if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
+                fld = get_field_from_name(dbo, k)
+                if fld and fld.FIELDTYPE == FIELDTYPE_IMAGE: 
+                    continue # Apple now use URLs as the filename in image uploads
                 if v.lower().find("http") != -1 and v.find("//") != -1:
                     spamreason = f"http URL found in field '{k}'"
                     spam = True
@@ -984,53 +995,50 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             tooltip = ""
 
             # Form fields should have a _ONLINEFORMFIELD.ID suffix we can use to get the
-            # original label and display position.
-            if k.find("_") != -1:
-                fid = asm3.utils.cint(k[k.rfind("_")+1:])
-                fieldname = k[0:k.rfind("_")]
+            # original field definition for extra info
+            fld = get_field_from_name(dbo, k)
+            if fld:
                 v = v.strip() # no reason for whitespace, can't see it in preview and in address fields it makes a mess
-                if fid != 0:
-                    fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
-                    if fld is not None:
-                        label = fld.LABEL
-                        displayindex = fld.DISPLAYINDEX
-                        fieldtype = fld.FIELDTYPE
-                        tooltip = fld.TOOLTIP
-                        # Store a few known fields for access later
-                        if fieldname == "address":
-                            address = v
-                        if fieldname == "emailaddress": 
-                            emailaddress = v
-                        if fieldname == "emailsubmissionto":
-                            emailsubmissionto = v
-                        if fieldname == "firstname" or fieldname == "forenames": 
-                            firstname = v
-                        if fieldname == "lastname" or fieldname == "surname":
-                            lastname = v
-                        if fieldname == "mobiletelephone" or fieldname == "celltelephone":
-                            mobile = v
-                        if fieldname == "animalname" or fieldname == "reserveanimalname":
-                            animalname = v
-                        if fieldname == "animalname2" or fieldname == "reserveanimalname2":
-                            animalname2 = v
-                        if fieldname == "animalname3" or fieldname == "reserveanimalname3":
-                            animalname3 = v
-                        # If it's a raw markup field, store the markup as the value
-                        if fieldtype == FIELDTYPE_RAWMARKUP:
-                            v = "RAW::%s" % tooltip
-                        # If we have a checkbox field with a tooltip, it contains additional
-                        # person flags, add them to our set
-                        if fieldtype == FIELDTYPE_CHECKBOX and asm3.utils.nulltostr(tooltip) != "" and v == "on":
-                            if flags != "": flags += ","
-                            flags += tooltip
-                            dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
-                                "Flags":    flags
-                            })
-                        # We decode images and put them into an images list so that they can
-                        # be included as attachments with confirmation emails.
-                        if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
-                            # Remove prefix of data:image/jpeg;base64, and decode
-                            images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
+                fieldname = fld.FIELDNAME
+                label = fld.LABEL
+                displayindex = fld.DISPLAYINDEX
+                fieldtype = fld.FIELDTYPE
+                tooltip = fld.TOOLTIP
+                # Store a few known fields for access later
+                if fieldname == "address":
+                    address = v
+                if fieldname == "emailaddress": 
+                    emailaddress = v
+                if fieldname == "emailsubmissionto":
+                    emailsubmissionto = v
+                if fieldname == "firstname" or fieldname == "forenames": 
+                    firstname = v
+                if fieldname == "lastname" or fieldname == "surname":
+                    lastname = v
+                if fieldname == "mobiletelephone" or fieldname == "celltelephone":
+                    mobile = v
+                if fieldname == "animalname" or fieldname == "reserveanimalname":
+                    animalname = v
+                if fieldname == "animalname2" or fieldname == "reserveanimalname2":
+                    animalname2 = v
+                if fieldname == "animalname3" or fieldname == "reserveanimalname3":
+                    animalname3 = v
+                # If it's a raw markup field, store the markup as the value
+                if fieldtype == FIELDTYPE_RAWMARKUP:
+                    v = "RAW::%s" % tooltip
+                # If we have a checkbox field with a tooltip, it contains additional
+                # person flags, add them to our set
+                if ( fieldtype == FIELDTYPE_CHECKBOX or fieldtype == FIELDTYPE_CHECKBOX_AL ) and asm3.utils.nulltostr(tooltip) != "" and v == "on":
+                    if flags != "": flags += ","
+                    flags += tooltip
+                    dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
+                        "Flags":    flags
+                    })
+                # We decode images and put them into an images list so that they can
+                # be included as attachments with confirmation emails.
+                if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
+                    # Remove prefix of data:image/jpeg;base64, and decode
+                    images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
 
             # Do the insert
             try:

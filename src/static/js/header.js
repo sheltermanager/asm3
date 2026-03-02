@@ -210,7 +210,7 @@ header = {
                     }
                     var accesskeydisp = "", target = "";
                     if (accesskey != "") {
-                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                        accesskeydisp = "<span class=\"asm-menu-hotkey\">" + tableform.hotkey_display(accesskey) + "</span>";
                         Mousetrap.bind(accesskey, function(e) {
                             common.route(url);
                             return false;
@@ -288,6 +288,9 @@ header = {
             // If clinic is disabled, hide menu entries for it
             if (config.bool("DisableClinic")) {
                 $(".tagclinic").hide();
+            }
+            if (config.bool("DisablePOS")) { 
+                $(".tagpos").hide(); 
             }
             // If retailer is disabled, hide menu entries for it
             if (config.bool("DisableRetailer")) {
@@ -409,19 +412,20 @@ header = {
             homeicon = "custom_logo?smaccount=" + asm.useraccount;
         }
         var h = [
+            '<div id="asm-menu-burger" class="ui-button ui-corner-all ui-widget">☰</div>',
             '<div id="asm-topline" class="no-print" style="display: none">',
-                '<div class="topline-element">',
+                '<div id="asm-topline-logo-div" class="topline-element">',
                     '<a id="asm-topline-logo" href="main" title="' + _("Home") + '"><img src="' + homeicon + '" /></a>',
                 '</div>',
                 ' ',
                 menubuttons,
                 ' ',
-                '<div class="topline-element">',
+                '<div id="topline-q-div" class="topline-element">',
                     '<span style="white-space: nowrap">',
                     '<input id="topline-q" name="q" type="search" class="asm-textbox" title="' + 
                         html.title("ALT+SHIFT+S " + _("filters") + ": " +
                             "a:animal, ac:animalcontrol, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal, " + 
-                            "li:licence, co:animalcost, lo:logs, vo:voucher, ci:citation \n" +
+                            "li:licence, co:animalcost, lo:logs, vo:voucher, ci:citation, py: payment. \n" +
                             _("keywords") + ": " + "onshelter/os, notforadoption, aco, banned, donors, deceased, vets, " + 
                             "retailers, staff, fosterers, volunteers, homecheckers, members, drivers, overduedonations, " +
                             "signed, unsigned, activelost, activefound") +
@@ -430,10 +434,10 @@ header = {
                     '</span>',
                 '</div>',
                 ' ',
-                '<div class="topline-element">',
+                '<div id="asm-topline-user-div" class="topline-element">',
                     '<div id="asm-topline-user" class="asm-menu-icon"><img id="asm-topline-flag" /> <span id="asm-topline-username"></span></div>',
                 '</div>',
-                '<div class="topline-element">',
+                '<div id="asm-topline-help-div" class="topline-element">',
                     '<div id="asm-topline-help" class="asm-menu-icon">' + html.icon("callout") + '</div>',
                 '</div>',
             '</div>',
@@ -584,9 +588,35 @@ header = {
         }
     },
 
+    viewport_resize: function() {
+        // TODO: temporarily disabled, along with burger menu CSS in asm.css due to issues
+        // with toolbar menus, and positioning of burger button
+        // See ticket 1398 for more info
+        return;
+        /*
+        if ($(window).width() <= 480) {
+            $("#topline-q-div").insertAfter('#asm-topline-logo-div');
+            $(".asm-menu-icon").hide();
+            $("#asm-topline .ui-state-active").asmmenu("hide_all");
+
+        } else {
+            if (!$(".asm-topline-q-whitespace").length) {
+                let whitespace = document.createElement("span");
+                $(whitespace).addClass("asm-topline-q-whitespace");
+                $(whitespace).text(" ");
+                $(whitespace).insertAfter('#asm-menu-settings'); 
+            }
+            $("#topline-q-div").insertAfter($(".asm-topline-q-whitespace").first()); 
+            $(".asm-menu-icon").show();   
+        }
+        */
+    },
+
     bind: function() {  
 
-        var timezone = config.str("Timezone");
+        header.viewport_resize();
+      
+        let timezone = config.str("Timezone");
         if (timezone.indexOf("-") == -1) {
             timezone = "+" + timezone;
         }
@@ -678,7 +708,15 @@ header = {
                 $(".emergencynotice").fadeIn();
             }
         }
-        catch(err) {} 
+        catch(err) {}
+
+        $("#asm-menu-burger").click(function() {
+            $(".asm-menu-icon").toggle();
+            $("html,body").animate({scrollTop:0},0);
+        });
+
+        // Handle window resize events 
+        $(window).resize(header.viewport_resize);
     },
 
     bind_search: function() {

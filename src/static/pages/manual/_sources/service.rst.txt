@@ -1242,7 +1242,7 @@ online_form_html and online_form_json
 
 Responds with the online form HTML or JSON for the id given.
 
-    http://localhost:5000/service?method=online_form_html&id=1
+    http://localhost:5000/service?method=online_form_html&formid=1
 
 online_form_js
 --------------
