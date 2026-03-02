@@ -179,7 +179,7 @@ $.fn.fromJSON = function(row) {
   * matching the selector. 
   * includeblanks: true if you want fields with empty values sent instead of omitted.
   */
-$.fn.toPOST = function(includeblanks = false) {
+$.fn.toPOST = function(includeblanks=false) {
     let post = [];
     this.each(function() {
         let t = $(this);
