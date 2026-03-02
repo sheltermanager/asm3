@@ -1199,13 +1199,12 @@ $.fn.asmmenu = asm_widget({
         // Hide the menu/body
         body.hide();
 
-        // Hide all menus if any form content is clicked, as long as it's
-        // not a menu opening button/icon that was clicked anyway
-        // make sure we only do this once
+        // Hide all the menus if any non-menu element is clicked
         if (!$("body").attr("data-menu-hide")) {
             $("body").attr("data-menu-hide", "true");
             $("body").click(function(e) {
                 let t = $(e.target);
+                if (t.attr("id") == "asm-menu-burger") { return true; }
                 if (t.hasClass("asm-menu-icon") || t.parent().hasClass("asm-menu-icon")) { return true; }
                 if (t.hasClass("asm-menu-button") || t.parent().hasClass("asm-menu-button")) { return true; }
                 if (t.hasClass("asm-menu-filter") || t.parent().hasClass("asm-menu-filter")) { return true; }
@@ -1213,6 +1212,8 @@ $.fn.asmmenu = asm_widget({
                 if (e.target.offsetParent && e.target.offsetParent.classList &&
                     e.target.offsetParent.classList.contains("asm-menu-button")) { return true; }
                 self.hide_all();
+                // If we're on a portrait mobile, hide the burger menu items
+                if (header.compact_menu) { $("#asm-topline .asm-menu-icon").hide(); }
             });
         }
     },
