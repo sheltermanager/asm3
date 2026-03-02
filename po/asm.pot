@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2026-03-02 10:49+0000\n"
+"POT-Creation-Date: 2026-03-02 11:45+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5082,6 +5082,10 @@ msgstr ""
 msgid "Dosage"
 msgstr ""
 
+#: medical.js
+msgid "Dose {0}"
+msgstr ""
+
 #: dbupdate.py
 msgid "Dove"
 msgstr ""
@@ -9807,6 +9811,10 @@ msgstr ""
 
 #: medical.js medicalprofile.js
 msgid "Multiple Treatments"
+msgstr ""
+
+#: medical.js
+msgid "Multiple Treatments with times"
 msgstr ""
 
 #: dbupdate.py
@@ -16146,6 +16154,10 @@ msgstr ""
 msgid "Treatment name cannot be blank"
 msgstr ""
 
+#: medical.js
+msgid "Treatment times (per day)"
+msgstr ""
+
 #: html.py medical.js medicalprofile.js
 msgid "Treatments"
 msgstr ""
@@ -17556,6 +17568,10 @@ msgstr ""
 msgid "Work Types"
 msgstr ""
 
+#: options.js
+msgid "Working hours"
+msgstr ""
+
 #: dbupdate.py
 msgid "Wormer"
 msgstr ""
@@ -17757,7 +17773,7 @@ msgstr ""
 msgid "are sent to"
 msgstr ""
 
-#: transport.js rota.js reports.js staff_rota.js
+#: transport.js rota.js medical.js reports.js staff_rota.js
 msgid "at"
 msgstr ""
 
