@@ -183,6 +183,7 @@ def bare_header(title: str, theme: str = "asm", locale: str = LOCALE, config_db:
                 css_tag(BOOTSTRAP_GRID_CSS) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
+                asm_css_tag("asm-pos.css") + 
                 script_tag(JQUERY_JS) +
                 script_tag(JQUERY_UI_JS) +
                 script_tag(MOMENT_JS) + 
@@ -578,6 +579,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.ADD_MOVEMENT, "alt+shift+o", "", "move_foster", "asm-icon-blank", _("Foster an animal", l) ),
             ( asm3.users.ADD_MOVEMENT, "", "", "move_transfer", "asm-icon-blank", _("Transfer an animal", l) ),
             ( asm3.users.ADD_MOVEMENT, "alt+shift+a", "", "move_adopt", "asm-icon-person", _("Adopt an animal", l) ),
+            ( asm3.users.ADD_MOVEMENT, "", "", "move_adopt_multi", "asm-icon-blank", _("Adopt animal(s)", l) ),
             ( asm3.users.ADD_MOVEMENT, "", "", "move_reclaim", "asm-icon-blank", _("Reclaim an animal", l) ),
             ( asm3.users.ADD_MOVEMENT, "", "tagretailer", "move_retailer", "asm-icon-blank", _("Move an animal to a retailer", l) ),
             ( asm3.users.CHANGE_ANIMAL, "", "", "move_deceased", "asm-icon-death", _("Mark an animal deceased", l) ),
@@ -615,6 +617,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
         )),
         ("", "financial", _("Financial", l), (
             ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
+            ( asm3.users.VIEW_ACCOUNT, "", "tagaccounts", "regular_debits", "asm-icon-diary", _("Regular debits", l) ),
             ( asm3.users.VIEW_COST, "", "tagcostbook", "cost_book", "asm-icon-cost", _("Cost book", l) ),
             ( asm3.users.VIEW_VOUCHER, "", "", "voucher", "asm-icon-blank", _("Voucher book", l) ),
             ( asm3.users.VIEW_BOARDING, "", "tagboarding", "--cat", "", _("Boarding", l) ),
@@ -631,6 +634,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.VIEW_DONATION, "", "tagstock", "--cat", "", _("Stock control", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_level", "asm-icon-stock", _("Stock levels", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_usage", "asm-icon-stock-usage", _("Stock usage", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock tagpos", "pos", "asm-icon-transactions", _("Point of Sale", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "product", "asm-icon-product", _("Products", l) )
         )),
         (asm3.users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), [

@@ -198,6 +198,19 @@ $(function() {
                     h.push(html.truncate(r.COMMENTS));
                     h.push('</p>');
                 }
+                else if (r.RESULTTYPE == "DONATION") {
+                    if (controller.results.length == 1) {
+                        common.route("person_donations?id=" + r.OWNERID);
+                    }
+                    h.push('<p class="asm-search-result"><span class="asm-search-name">');
+                    h.push(html.icon("donation", _("Payment")));
+                    h.push('<a href="person_donations?id=' + r.OWNERID + '">' + r.OWNERNAME  + ' - ' + r.RECEIPTNUMBER + '</a></span> ');
+                    h.push('<br />');
+                    h.push('<span class="asm-search-personflags">' + r.DONATIONNAME + ', ' + format.currency(r.DONATION) + ", " + format.date(r.DATE) + '</span>');
+                    h.push('<br/>');
+                    h.push(html.truncate(r.COMMENTS));
+                    h.push('</p>');
+                }
                 else if (r.RESULTTYPE == "WAITINGLIST") {
                     if (controller.results.length == 1) {
                         common.route("waitinglist?id=" + r.ID);

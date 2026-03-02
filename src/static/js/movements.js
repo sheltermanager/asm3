@@ -50,6 +50,8 @@ $(function() {
 
                     { json_field: "MOVEMENTTYPE", post_field: "type", label: _("Movement Type"), type: "select", 
                         options: { displayfield: "MOVEMENTTYPE", valuefield: "ID", rows: choosetypes }},
+                    { json_field: "ADOPTIONSOURCEID", post_field: "source", label: _("Adoption Source"), type: "select", 
+                        options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources, prepend: '<option value="0"></option>' }},
                     { json_field: "MOVEMENTDATE", post_field: "movementdate", label: _("Movement Date"), type: "date" },
                     { json_field: "ISPERMANENTFOSTER", post_field: "permanentfoster", label: _("Permanent Foster"), tooltip: _("Is this a permanent foster?"), type: "check" },
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },
@@ -194,6 +196,9 @@ $(function() {
                         formatter: function(row, v) {
                             return html.person_link(row.HOMECHECKEDBYID, row.HOMECHECKEDBYNAME) +
                             '<br/>' + format.date(row.DATELASTHOMECHECKED);
+                        },
+                        sorttext: function(row) {
+                            return row.HOMECHECKEDBYNAME;
                         }
                     },
                     { field: "ADOPTIONCOORDINATORNAME", display: _("Coordinator"),
@@ -205,6 +210,9 @@ $(function() {
                         },
                         formatter: function(row, v) {
                             return html.person_link(row.ADOPTIONCOORDINATORID, row.ADOPTIONCOORDINATORNAME);
+                        },
+                        sorttext: function(row) {
+                            return row.ADOPTIONCOORDINATORNAME;
                         }
                     },
                     { field: "RETURNDATE", display: _("Returned"), 
@@ -269,6 +277,9 @@ $(function() {
                         hideif: function(row) {
                             // Don't show this column for animal_movement
                             return controller.name == "animal_movements";
+                        },
+                        sorttext: function(row) {
+                            return row.ANIMALNAME;
                         }
                     },
                     { field: "PERSON", display: _("Person"),
@@ -284,6 +295,9 @@ $(function() {
                         },
                         hideif: function(row) {
                             return controller.name == "move_book_retailer" || controller.name == "person_movements";
+                        },
+                        sorttext: function(row) {
+                            return row.OWNERNAME;
                         }
                     },
                     { field: "RETAILER", display: _("Retailer"),
@@ -299,6 +313,9 @@ $(function() {
                         hideif: function(row) {
                             // Hide if retailer stuff is off or we're in a book that shouldn't show it
                             return config.bool("DisableRetailer") || controller.name == "move_book_foster" || controller.name == "move_book_reservation";
+                        },
+                        sorttext: function(row) {
+                            return row.RETAILERNAME || row.OWNERNAME;
                         }
                     },
                     { field: "ANIMALAGE", display: _("Age"),
@@ -918,12 +935,14 @@ $(function() {
             else {
                 $("#insurancerow").fadeOut();
             }
-            // Show the reservation date field for both reserves and adoptions
+            // Show the reservation date field and adoption source field for both reserves and adoptions
             if (mt == 1 || mt == 0) {
                 $("#reservationrow").fadeIn();
+                $("#sourcerow").fadeIn();
             }
             else {
                 $("#reservationrow").fadeOut();
+                $("#sourcerow").fadeOut();
             }
             // Show the other reservation fields for reserves
             if (mt == 0) {
@@ -1048,7 +1067,7 @@ $(function() {
         }
 
     };
-
+    
     common.module_register(movements);
 
 });

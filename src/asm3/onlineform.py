@@ -43,6 +43,7 @@ FIELDTYPE_EMAIL = 19
 FIELDTYPE_NUMBER = 20
 FIELDTYPE_FOSTERANIMAL = 21
 FIELDTYPE_TELEPHONE = 22
+FIELDTYPE_CHECKBOX_AL = 23
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -68,7 +69,8 @@ FIELDTYPE_MAP = {
     "EMAIL": 19,
     "NUMBER": 20,
     "FOSTERANIMAL": 21,
-    "TELEPHONE": 22
+    "TELEPHONE": 22,
+    "CHECKBOX_AL": 23
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -164,7 +166,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         # references into the header block
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
-        extra = "<script>\nDATE_FORMAT = '%s';\n</script>\n" % df
+        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
         extra += "<base href=\"%s\" />\n" % BASE_URL
         extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
             asm3.html.css_tag(ASMSELECT_CSS) + \
@@ -195,6 +197,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     shelteranimals = None
     adoptableanimals = None
     fosteranimals = None
+    extraclass = ""
     for f in formfields:
         fname = "%s_%s" % (f.FIELDNAME, f.ID)
         cname = asm3.html.escape(fname)
@@ -217,6 +220,11 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<td class="asm-onlineform-td asm-onlineform-raw" colspan="2">')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<td class="asm-onlineform-td">%s</td><td class="asm-onlineform-td">' % requiredspan)
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
+            h.append('<td class="asm-onlineform-td">')
+            h.append('<label for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('</td>')
+            h.append('<td class="asm-onlineform-td">')
         else:
             # Add label and cell wrapper if it's not raw markup or a checkbox
             h.append('<td class="asm-onlineform-td">')
@@ -232,10 +240,20 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
+            h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' % \
+                (fid, cname, required))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
+            extraclass = ""
+            if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
+            elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
+            elif f.FIELDNAME == "town": extraclass = "asm-onlineform-town"
+            elif f.FIELDNAME == "county": extraclass = "asm-onlineform-county"
+            elif f.FIELDNAME == "country": extraclass = "asm-onlineform-country"
+            h.append(f'<input class="asm-onlineform-text {extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NUMBER:
-            h.append('<input class="asm-onlineform-number" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
+            if f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
+            h.append(f'<input class="asm-onlineform-number {extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
             h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
             if f.FIELDNAME == "emailaddress":
@@ -258,7 +276,8 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_TIME:
             h.append('<input class="asm-onlineform-time" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NOTES:
-            h.append('<textarea class="asm-onlineform-notes" id="%s" name="%s" %s></textarea>' % ( fid, cname, requiredtext))
+            if f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
+            h.append(f'<textarea class="asm-onlineform-notes {extraclass}" id="%s" name="%s" %s></textarea>' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_LOOKUP:
             h.append('<select class="asm-onlineform-lookup" id="%s" name="%s" %s>' % ( fid, cname, required))
             for lv in asm3.utils.nulltostr(f["LOOKUPS"]).split("|"):
@@ -381,20 +400,15 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
         footer = get_onlineform_footer(dbo)
-        extrajs = '<script>\n' \
-            'let ro = new ResizeObserver(function(e) {\n' \
-            '    window.parent.postMessage(document.querySelector("html").offsetHeight, "*");\n' \
-            '});\n' \
-            'ro.observe(document.querySelector("html"));\n' \
-            '</script>\n'
-        h.append(footer.replace("$$TITLE$$", form.NAME).replace("</body>", extrajs + "</body>"))
+        h.append(footer.replace("$$TITLE$$", form.NAME))
     return "\n".join(h)
 
 def get_onlineform_js(dbo: Database, formid: int) -> str:
     """ Returns js that outputs a responsive online form iframe into a host div """
     js = asm3.utils.read_text_file("%s/static/js/onlineform_embed.js" % dbo.installpath)
     js = js.replace("{SERVICE_URL}", SERVICE_URL)
-    js = js.replace("{TOKEN_FORMID}", str(formid))
+    js = js.replace("{FORMID}", str(formid))
+    js = js.replace("{ACCOUNT}", str(dbo.name()))
     return js
 
 def get_onlineform_json(dbo: Database, formid: int) -> str:
@@ -691,6 +705,14 @@ def get_internal_forms(dbo: Database) -> Results:
     forms = dbo.query("SELECT * FROM onlineform WHERE InternalUse = 1")
     return forms
 
+def get_field_from_name(dbo: Database, k: str) -> ResultRow:
+    """ Retrieves the onlineformfield definition from the name given """
+    if k.find("_") == -1: return None
+    fid = asm3.utils.cint(k[k.rfind("_")+1:])
+    if fid != 0:
+        return dbo.first_row(dbo.query("SELECT FieldName, FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
+    return None
+
 def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Create an onlineform record from posted data
@@ -918,28 +940,21 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     if asm3.configuration.onlineform_spam_mandatory(dbo):
         for k, v in post.data.items():
             if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
-                label = ""
-                displayindex = 0
-                fieldname = k
-                fieldtype = FIELDTYPE_TEXT
-                tooltip = ""
+                v = v.strip() 
                 # We're only interested in fields that have definitions in onlineformfield
-                if k.find("_") != -1:
-                    fid = asm3.utils.cint(k[k.rfind("_")+1:])
-                    fieldname = k[0:k.rfind("_")]
-                    v = v.strip() 
-                    # Only bother checking where the field value is blank
-                    if fid != 0 and v == "":
-                        fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
-                        if fld is not None and fld.MANDATORY == 1:
-                            spamreason = f"empty value found in mandatory field '{fieldname}'"
-                            spam = True
-                            break
+                fld = get_field_from_name(dbo, k)
+                if fld and fld.MANDATORY == 1 and v == "":
+                    spamreason = f"empty value found in mandatory field '{k}'"
+                    spam = True
+                    break
 
     # URLs found in any fields
     if asm3.configuration.onlineform_spam_urls(dbo):
         for k, v in post.data.items():
             if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
+                fld = get_field_from_name(dbo, k)
+                if fld and fld.FIELDTYPE == FIELDTYPE_IMAGE: 
+                    continue # Apple now use URLs as the filename in image uploads
                 if v.lower().find("http") != -1 and v.find("//") != -1:
                     spamreason = f"http URL found in field '{k}'"
                     spam = True
@@ -980,53 +995,50 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             tooltip = ""
 
             # Form fields should have a _ONLINEFORMFIELD.ID suffix we can use to get the
-            # original label and display position.
-            if k.find("_") != -1:
-                fid = asm3.utils.cint(k[k.rfind("_")+1:])
-                fieldname = k[0:k.rfind("_")]
+            # original field definition for extra info
+            fld = get_field_from_name(dbo, k)
+            if fld:
                 v = v.strip() # no reason for whitespace, can't see it in preview and in address fields it makes a mess
-                if fid != 0:
-                    fld = dbo.first_row(dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex, Mandatory FROM onlineformfield WHERE ID = ?", [fid]))
-                    if fld is not None:
-                        label = fld.LABEL
-                        displayindex = fld.DISPLAYINDEX
-                        fieldtype = fld.FIELDTYPE
-                        tooltip = fld.TOOLTIP
-                        # Store a few known fields for access later
-                        if fieldname == "address":
-                            address = v
-                        if fieldname == "emailaddress": 
-                            emailaddress = v
-                        if fieldname == "emailsubmissionto":
-                            emailsubmissionto = v
-                        if fieldname == "firstname" or fieldname == "forenames": 
-                            firstname = v
-                        if fieldname == "lastname" or fieldname == "surname":
-                            lastname = v
-                        if fieldname == "mobiletelephone" or fieldname == "celltelephone":
-                            mobile = v
-                        if fieldname == "animalname" or fieldname == "reserveanimalname":
-                            animalname = v
-                        if fieldname == "animalname2" or fieldname == "reserveanimalname2":
-                            animalname2 = v
-                        if fieldname == "animalname3" or fieldname == "reserveanimalname3":
-                            animalname3 = v
-                        # If it's a raw markup field, store the markup as the value
-                        if fieldtype == FIELDTYPE_RAWMARKUP:
-                            v = "RAW::%s" % tooltip
-                        # If we have a checkbox field with a tooltip, it contains additional
-                        # person flags, add them to our set
-                        if fieldtype == FIELDTYPE_CHECKBOX and asm3.utils.nulltostr(tooltip) != "" and v == "on":
-                            if flags != "": flags += ","
-                            flags += tooltip
-                            dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
-                                "Flags":    flags
-                            })
-                        # We decode images and put them into an images list so that they can
-                        # be included as attachments with confirmation emails.
-                        if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
-                            # Remove prefix of data:image/jpeg;base64, and decode
-                            images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
+                fieldname = fld.FIELDNAME
+                label = fld.LABEL
+                displayindex = fld.DISPLAYINDEX
+                fieldtype = fld.FIELDTYPE
+                tooltip = fld.TOOLTIP
+                # Store a few known fields for access later
+                if fieldname == "address":
+                    address = v
+                if fieldname == "emailaddress": 
+                    emailaddress = v
+                if fieldname == "emailsubmissionto":
+                    emailsubmissionto = v
+                if fieldname == "firstname" or fieldname == "forenames": 
+                    firstname = v
+                if fieldname == "lastname" or fieldname == "surname":
+                    lastname = v
+                if fieldname == "mobiletelephone" or fieldname == "celltelephone":
+                    mobile = v
+                if fieldname == "animalname" or fieldname == "reserveanimalname":
+                    animalname = v
+                if fieldname == "animalname2" or fieldname == "reserveanimalname2":
+                    animalname2 = v
+                if fieldname == "animalname3" or fieldname == "reserveanimalname3":
+                    animalname3 = v
+                # If it's a raw markup field, store the markup as the value
+                if fieldtype == FIELDTYPE_RAWMARKUP:
+                    v = "RAW::%s" % tooltip
+                # If we have a checkbox field with a tooltip, it contains additional
+                # person flags, add them to our set
+                if ( fieldtype == FIELDTYPE_CHECKBOX or fieldtype == FIELDTYPE_CHECKBOX_AL ) and asm3.utils.nulltostr(tooltip) != "" and v == "on":
+                    if flags != "": flags += ","
+                    flags += tooltip
+                    dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
+                        "Flags":    flags
+                    })
+                # We decode images and put them into an images list so that they can
+                # be included as attachments with confirmation emails.
+                if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
+                    # Remove prefix of data:image/jpeg;base64, and decode
+                    images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
 
             # Do the insert
             try:
@@ -1365,7 +1377,10 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
     l = dbo.locale
     fo = dbo.first_row(dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=? %s" % dbo.sql_limit(1), [collationid]))
     formname = asm3.i18n._("Online Form", l)
-    if fo is not None: formname = fo.FORMNAME
+    mediaflags = ""
+    if fo is not None: 
+        formname = fo.FORMNAME
+        mediaflags = fo.MEDIAFLAGS
     animalname, firstname, lastname = get_onlineformincoming_animalperson(dbo, collationid)
     if linktype == asm3.media.ANIMAL and firstname != "":
         formname = "%s - %s %s" % (formname, firstname, lastname)
@@ -1393,7 +1408,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
             "onlineform.attach_form", dbo)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     retainfor = get_onlineformincoming_retainfor(dbo, collationid)
-    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor, mediaflags=fo.MEDIAFLAGS)
+    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor, mediaflags=mediaflags)
     if asm3.configuration.auto_hash_processed_forms(dbo):
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
         asm3.media.sign_document(dbo, username, mid, "", \
@@ -1962,4 +1977,3 @@ def auto_remove_old_incoming_forms(dbo: Database) -> None:
     for r in rows:
         delete_onlineformincoming(dbo, "system", r.COLLATIONID)
     asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
-

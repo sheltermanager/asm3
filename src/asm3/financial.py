@@ -46,6 +46,39 @@ ANNUALLY = 6
 ASCENDING = 0
 DESCENDING = 1
 
+def create_trx_from_regular_debits(dbo: Database, username: str) -> List[int]:
+    """
+    Called once per day as part of the overnight batch. Creates transactions based on active regular debits.
+    """
+    activerds = get_regulardebits(dbo, "all")
+    today = dbo.today()
+    trxlist = []
+    for rd in activerds:
+        debitdue = False
+        if rd.PERIOD == 1:
+            debitdue = True
+        elif rd.PERIOD == 7 and rd.WEEKDAY == int(today.strftime("%w")):
+            debitdue = True
+        elif rd.PERIOD == 30 and rd.DAYOFMONTH == today.day:
+            debitdue = True
+        elif rd.PERIOD == 365 and rd.MONTH == today.month and rd.DAYOFMONTH == today.day:
+            debitdue = True
+        
+        if debitdue:
+            trxlist.append(
+                dbo.insert("accountstrx", {
+                    "TrxDate":              today,
+                    "Description":          rd.DESCRIPTION,
+                    "Reconciled":           0,
+                    "Amount":               rd.AMOUNT,
+                    "SourceAccountID":      rd.FROMACCOUNT,
+                    "DestinationAccountID": rd.TOACCOUNT,
+                    "OwnerDonationID":      0,
+                    "OwnerID":              rd.OWNERID
+                }, username)
+            )
+        return trxlist
+
 def get_boarding_query(dbo: Database) -> str:
     return "SELECT ab.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
@@ -608,6 +641,12 @@ def get_person_boarding(dbo: Database, oid: int) -> Results:
         "WHERE ab.OwnerID = ? " \
         "ORDER BY InDateTime", [oid])
 
+def get_citations_by_ids(dbo: Database, cids: List[int]) -> Results:
+    """
+    Returns multiple citations with a list of ids
+    """
+    return dbo.query(get_citation_query(dbo) + "WHERE oc.ID IN (%s) ORDER BY oc.CitationDate" % ",".join(str(x) for x in cids))
+
 def get_incident_citations(dbo: Database, iid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the citation records for an incident, along with
@@ -687,6 +726,17 @@ def get_recent_licences(dbo: Database) -> Results:
         "WHERE ol.IssueDate >= ? " \
         "ORDER BY ol.IssueDate DESC", [dbo.today(offset=-30)])
 
+def get_regulardebits(dbo: Database, filter="all") -> Results:
+    concatsql = dbo.sql_concat(("OwnerName", "' '", "OwnerCode"))
+    wheresql = ""
+    today = dbo.sql_value(dbo.today())
+    if filter == "active":
+        wheresql = f" WHERE '{today}' BETWEEN rd.StartDate AND rd.EndDate OR ( rd.StartDate <= {today} AND rd.EndDate IS NULL )"
+    elif filter == "inactive":
+        wheresql = f" WHERE rd.StartDate > {today} OR rd.EndDate < {today}"
+    sql = f"SELECT rd.*, {concatsql} AS OwnerName FROM regulardebit rd LEFT JOIN owner o ON rd.OwnerID = o.ID" + wheresql
+    return dbo.query(sql)
+
 def get_licence_find_simple(dbo: Database, licnum: str, dummy: int = 0) -> Results:
     return dbo.query(get_licence_query(dbo) + \
         "WHERE UPPER(ol.LicenceNumber) LIKE UPPER(?)", [licnum])
@@ -750,6 +800,9 @@ def get_voucher_find_simple(dbo: Database, vocode: str, dummy: int = 0) -> Resul
 def get_citation_find_simple(dbo: Database, cinumber: str, dummy: int = 0) -> Results:
     return dbo.query(get_citation_query(dbo) + \
         "WHERE UPPER(oc.CitationNumber) LIKE UPPER(?)", [cinumber])
+
+def get_donation_find_simple(dbo: Database, searchkey: str, dummy: int = 0) -> Results:
+    return dbo.query(get_donation_query(dbo) + "WHERE UPPER(od.ReceiptNumber) LIKE UPPER(?) OR UPPER(od.ChequeNumber) LIKE UPPER(?)", [searchkey, searchkey])
 
 def get_vouchers(dbo: Database, offset: str = "i31") -> Results:
     """
@@ -1322,6 +1375,53 @@ def delete_account(dbo: Database, username: str, aid: int) -> None:
     dbo.delete("accountstrx", "SourceAccountID=%d OR DestinationAccountID=%d" % (aid, aid), username)
     dbo.delete("accountsrole", "AccountID=%d" % aid)
     dbo.delete("accounts", aid, username)
+
+def insert_regulardebit_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Creates a regular debit from posted form data 
+    """
+
+    return dbo.insert("regulardebit", {
+        "OwnerID":          post.integer("person"),
+        "StartDate":        post.date("startdate"),
+        "EndDate":          post.date("enddate"),
+        "Amount":           post.integer("amount"),
+        "FromAccount":      post.integer("fromaccount"),
+        "ToAccount":        post.integer("toaccount"),
+        "Period":           post.integer("period"),
+        "Weekday":          post.integer("weekday"),
+        "DayOfMonth":       post.integer("dayofmonth"),
+        "Month":            post.integer("month"),
+        "Description":      post["description"],
+        "Comments":         post["comments"]
+    }, username)
+
+def update_regulardebit_from_form(dbo: Database, username: str, post: PostedData) -> None:
+    """
+    Updates a regular debit from posted form data
+    """
+    rdid = post.integer("id")
+
+    dbo.update("regulardebit", rdid, {
+        "OwnerID":          post.integer("person"),
+        "StartDate":        post.date("startdate"),
+        "EndDate":          post.date("enddate"),
+        "Amount":           post.integer("amount"),
+        "FromAccount":      post.integer("fromaccount"),
+        "ToAccount":        post.integer("toaccount"),
+        "Period":           post.integer("period"),
+        "Weekday":          post.integer("weekday"),
+        "DayOfMonth":       post.integer("dayofmonth"),
+        "Month":            post.integer("month"),
+        "Description":      post["description"],
+        "Comments":         post["comments"]
+    }, username)
+
+def delete_regulardebit(dbo: Database, username: str, rdid: int) -> None:
+    """
+    Deletes a regular debit
+    """
+    dbo.delete("regulardebit", rdid, username)
 
 def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """

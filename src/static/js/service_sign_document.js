@@ -68,6 +68,12 @@ $(document).ready(function() {
 
     $("#signature").asmsignature({ guideline: true, bootstrap: true });
 
+    // If we don't have a valid email address, untick the send copy box and hide it
+    if (!controller.email || String(controller.email).indexOf("@") == -1) {
+        $("#sendsigned").prop("checked", false);
+        $("#sendsigned").parent().hide();
+    }
+
     $("#sig-sign").click(function() {
         let formdata = {
             "account":      controller.account,

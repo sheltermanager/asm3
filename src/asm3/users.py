@@ -654,8 +654,8 @@ def update_role_table(dbo: Database, tablename: str, fieldname: str, iid: int, v
     """
     dbo.execute(f"DELETE FROM {tablename} WHERE {fieldname} = ?", [iid])
     for rid in viewroles:
-        dbo.insert("animalrole", {
-            "AnimalID":         iid,
+        dbo.insert(tablename, {
+            fieldname:          iid,
             "RoleID":           rid,
             "CanView":          1,
             "CanEdit":          0
@@ -664,8 +664,8 @@ def update_role_table(dbo: Database, tablename: str, fieldname: str, iid: int, v
         if rid in viewroles:
             dbo.execute(f"UPDATE {tablename} SET CanEdit = 1 WHERE {fieldname} = ? AND RoleID = ?", (iid, rid))
         else:
-            dbo.insert("animalrole", {
-                "AnimalID":         iid,
+            dbo.insert(tablename, {
+                fieldname:          iid,
                 "RoleID":           rid,
                 "CanView":          0,
                 "CanEdit":          1

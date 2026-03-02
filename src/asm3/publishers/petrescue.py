@@ -5,7 +5,7 @@ import asm3.medical
 import asm3.utils
 
 from .base import AbstractPublisher
-from asm3.sitedefs import PETRESCUE_URL
+from asm3.sitedefs import PETRESCUE_URL, VIDEO_ENABLED
 from asm3.typehints import Database, Dict, List, PublishCriteria, ResultRow
 
 import sys
@@ -157,6 +157,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         try:
             # Get a list of all animals that we sent to PR recently (6 months)
+            # NOTE: This can potentially include listings that were never sent if they were rejected with an error
             prevsent = self.dbo.query("SELECT AnimalID FROM animalpublished WHERE SentDate>=? AND PublishedTo='petrescue'", [self.dbo.today(offset=-182)])
             
             # Build a list of IDs we just sent, along with a list of ids for animals
@@ -298,6 +299,9 @@ class PetRescuePublisher(AbstractPublisher):
             location_postcode.startswith("2") or location_postcode.startswith("3")):
             microchip_number = asm3.utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, "")
 
+        photourls = self.getPhotoUrls(an.ID) # List of photo URL strings
+        if VIDEO_ENABLED:
+            photourls = photourls + self.getVideoUrls(an.ID)
         # Construct and return a dictionary of info for this animal
         return {
             "remote_id":                str(an.ID), # animal identifier in ASM
@@ -346,7 +350,7 @@ class PetRescuePublisher(AbstractPublisher):
             "adoptable_in_abbrs":       adoptable_in_list, # array of states for adoption in: ACT NSW NT QLD SA TAS VIC WA 
             "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
             "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
-            "photo_urls":               self.getPhotoUrls(an.ID), # List of photo URL strings
+            "photo_urls":               photourls,
             "status":                   "active" # active | removed | on_hold | rehomed 
         }
 

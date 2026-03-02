@@ -311,7 +311,7 @@ $(function() {
                                 doublesize: true }
                         ]
                     }, 
-                    { id: "tab-savourlife", title: "SavourLife.com.au", classes: 'localeau hassavourlife', 
+                    { id: "tab-savourlife", title: "SavourLife.com.au", classes: 'localeau localenz hassavourlife', 
                         info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
                             { id: "enabledsl", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "sltoken", post_field: "SavourLifeToken", label: 'Authentication Token', type: "text" }, 
@@ -527,10 +527,12 @@ $(function() {
             $(".localeca").hide();
             $(".localegb").hide();
             $(".localemx").hide();
+            $(".localenz").hide();
             $(".english").hide();
             if (asm.locale.indexOf("en") == 0) { $(".english").show(); }
             if (asm.locale == "en") { $(".localeus").show(); }
             if (asm.locale == "en_AU") { $(".localeau").show(); }
+            if (asm.locale == "en_NZ") { $(".localenz").show(); }
             if (asm.locale == "en_GB") { $(".localegb").show(); }
             if (asm.locale == "en_CA" || asm.locale == "fr_CA") { $(".localeca").show(); }
             if (asm.locale == "en_MX" || asm.locale == "es_MX") { $(".localemx").show(); }

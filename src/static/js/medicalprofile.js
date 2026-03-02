@@ -29,14 +29,14 @@ $(function() {
                         callout: _("The total cost of all treatments.") },
                     { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency",
                         callout: _("If this field has a value, the cost field above will be automatically calculated after each treatment is given.") },
-                    { post_field: "singlemulti", label: _("Frequency"), type: "select",  
+                    { post_field: "singlemulti", label: _("Frequency"), type: "select", defaultval: 1,
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' + 
                         '<option value="2">' + _("Custom Frequency") + '</option>' },
-                    { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", label: "", halfsize: true, defaultval: "1", 
+                    { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", label: "", halfsize: true, defaultval: 1, 
                         xmarkup: ' ' + _("treatments, every") + ' ',
                         rowclose: false },
-                    { json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", type: "intnumber", justwidget: true, halfsize: true, defaultval: "1" },
+                    { json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", type: "intnumber", justwidget: true, halfsize: true, defaultval: 1 },
                     { json_field: "TIMINGRULEFREQUENCY", post_field: "timingrulefrequency", type: "select", justwidget: true, halfsize: true, options: 
                                 '<option value="0">' + _("days") + '</option>' + 
                                 '<option value="4">' + _("weekdays") + '</option>' +
@@ -50,7 +50,7 @@ $(function() {
                         xmarkup: ' <span id="treatmentrulecalc">',
                         rowclose: false },
                     { json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", 
-                            type: "intnumber", justwidget: true, halfsize: true, defaultval: "1" },
+                            type: "intnumber", justwidget: true, halfsize: true, defaultval: 1 },
                     { type: "raw", justwidget: true, markup: ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
                             '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
                             '</span>'},

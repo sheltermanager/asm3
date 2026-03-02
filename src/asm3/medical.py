@@ -118,7 +118,8 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
         "am.MedicalTypeID, lksmedicaltype.MedicalTypeName, " \
         "am.TreatmentName, '' AS TreatmentResult, am.Dosage, amt.TreatmentNumber, " \
-        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, NULL AS DateExpires, am.Comments " \
+        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, NULL AS DateExpires, am.Comments, " \
+        "'' AS Manufacturer, '' AS BatchNumber, '' AS BatchExpiryDate " \
         "FROM animal a " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
@@ -137,7 +138,8 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
         "-1 AS MedicalTypeID, 'Vaccination' AS MedicalTypeName, " \
         "v.VaccinationType AS TreatmentName, '' AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.DateExpires, av.Comments " \
+        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.DateExpires, av.Comments, " \
+        "av.Manufacturer, av.BatchNumber, av.DateExpires AS BatchExpiryDate " \
         "FROM animal a " \
         "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
         "INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID " \
@@ -155,7 +157,8 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
         "-2 AS MedicalTypeID, 'Test' AS MedicalTypeName, " \
         "tt.TestName AS TreatmentName, tr.ResultName AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, NULL AS DateExpires, at.Comments " \
+        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, NULL AS DateExpires, at.Comments, " \
+        "'' AS Manufacturer, '' AS BatchNumber, '' AS BatchExpiryDate " \
         "FROM animal a " \
         "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
         "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
@@ -336,7 +339,6 @@ def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
     Returns a recordset of medicaltypes for an animal:
     MEDICALTYPE, DATEREQUIRED, LASTGIVEN
     """
-
     sql = "SELECT mt.MedicalTypeName, " \
         "(" \
             "SELECT DateRequired " \
@@ -344,15 +346,15 @@ def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
             "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
-            "ORDER BY DateRequired desc " \
-            "LIMIT 1" \
+            "ORDER BY DateRequired desc LIMIT 1" \
         ") AS DateRequired," \
         "(" \
             "SELECT DateGiven " \
             "FROM animalmedicaltreatment " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
-            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID ORDER BY DateGiven desc LIMIT 1" \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID AND DateGiven IS NOT NULL " \
+            "ORDER BY DateGiven desc LIMIT 1" \
         ") AS DateGiven " \
         "FROM lksmedicaltype mt"
     return dbo.query(sql, [animalid, dbo.today(), animalid ])
@@ -637,6 +639,7 @@ def get_vaccinations_expiring_two_dates(dbo: Database, start: Database, end: Dat
         "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
 def get_vacc_manufacturers(dbo: Database) -> List[str]:
+    
     rows = dbo.query("SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null AND Manufacturer <> '' ORDER BY Manufacturer")
     mf = []
     for r in rows:
@@ -868,6 +871,15 @@ def complete_test(dbo: Database, username: str, testid: int, newdate: datetime, 
     if cost > 0: v["Cost"] = cost
     dbo.update("animaltest", testid, v, username)
     update_animal_tests(dbo, username, testid)
+
+def replace_manufacturers(dbo: Database, username: str, find: str, replace: str) -> None:
+    """
+    Replaces the manufacturer in all vaccination records
+    """
+    
+    return dbo.update("animalvaccination", "Manufacturer = %s" % dbo.sql_value(find), {
+        "Manufacturer": replace
+    }, username)
 
 def reschedule_test(dbo: Database, username: str, testid: int, newdate: datetime, comments: str) -> None:
     """

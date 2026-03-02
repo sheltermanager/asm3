@@ -46,7 +46,7 @@ def get_all_report_titles(dbo: Database):
 
 def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
     filteredreports = []
-    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask animal$%'])
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Category, Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask animal$%'])
     roles = dbo.query("SELECT * FROM customreportrole")
     for report in allreports:
         viewroleids = []
@@ -60,7 +60,7 @@ def get_ask_animal_reports(dbo: Database, superuser: int, roleids: str):
 
 def get_ask_person_reports(dbo: Database, superuser: int, roleids: str):
     filteredreports = []
-    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask person$%'])
+    allreports = dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s ORDER BY Category, Title" % dbo.sql_ilike("SQLCommand", "?"), ['%$ask person$%'])
     roles = dbo.query("SELECT * FROM customreportrole")
     for report in allreports:
         viewroleids = []
@@ -446,7 +446,10 @@ def generate_html(dbo: Database, username: str, sql: str) -> str:
     f = "$$FOOTER\n"
     for c in cols:
         th += "<th>%s</th>\n" % c
-        b += "<td>$%s</td>\n" % c.upper()
+        if c == "ANIMALPHOTO":
+            b += '<td><img style="width: 150px; height: 150px; object-fit: contain" src="{IMAGE.$ANIMALPHOTO}" /></td>'
+        else:
+            b += "<td>$%s</td>\n" % c.upper()
     th += "</thead>\n<tbody>\n"
     g = ""
     if sql.find("-- GRP:") != -1:
@@ -790,9 +793,9 @@ def email_daily_reports(dbo: Database) -> None:
             continue
         if r.DAILYEMAILSENDASPDF:
             l = dbo.locale
-            pdfdata = asm3.utils.html_to_pdf(dbo, body)
-            body = asm3.i18n._("Please find your report attached.", l)
-            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3, attachments=[ ("report.pdf", "application/pdf", pdfdata) ])
+            pdfdata = execute_pdf(dbo, r.ID, "dailyemail")
+            msg = asm3.i18n._("Please find your report attached.", l)
+            asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, msg, "html", exceptions=False, retries=3, attachments=[ ("report.pdf", "application/pdf", pdfdata) ])
         else:
             asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
@@ -824,6 +827,28 @@ def execute(dbo: Database, customreportid: int, username: str = "system", params
     r = Report(dbo)
     r.toolbar = toolbar
     return r.Execute(customreportid, username, params)
+
+def execute_pdf(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None, landscape: bool = False) -> bytes:
+    """
+    Same as execute, but returns the report as a PDF.
+    Return value is the raw bytes of the PDF.
+    """
+    r = Report(dbo)
+    r.toolbar = False
+    h = r.Execute(customreportid, username, params)
+    h = h[h.find("<body>")+6:h.find("</body>")+7] # Extract the body only
+    h = asm3.utils.strip_style_tags(h) # Throw away styles
+    h = asm3.utils.strip_script_tags(h) # Throw away scripts
+    h = asm3.utils.fix_relative_document_uris(dbo, h) # Fix any relative uris just in case there are images
+    if landscape: h = "<!-- pdf orientation landscape -->\n" + h
+    styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
+        "table { width: 100%; }",
+        "td, th { padding-top: 1px; }",
+        "th { text-align: center; }",
+        "html { font-family: sans-serif; font-size: 60%; }" # scales h1/h2/td nicely since reports don't set explicit font sizes
+    ]
+    opts = { "orientation": asm3.utils.iif(landscape, "landscape", "portrait"), "papersize": "A4" }
+    return asm3.utils.html_to_pdf_weasyprint(dbo, h, styles=styles, pdfopts=opts)
 
 def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:
     """
@@ -915,7 +940,9 @@ class Report:
         flag is set, returns a basic header, if it's a subreport,
         returns nothing.
         """
-        if self.omitHeaderFooter:
+        if self.isSubReport:
+            return ""
+        elif self.omitHeaderFooter:
             return "<!DOCTYPE html>\n" \
                 "<html>\n" \
                 "<head>\n" \
@@ -923,8 +950,6 @@ class Report:
                 "<title></title>\n" \
                 "</head>\n" \
                 "<body>\n"
-        elif self.isSubReport:
-            return ""
         else:
             # Look it up from the DB
             s = get_raw_report_header(self.dbo)
@@ -937,10 +962,10 @@ class Report:
         flag is set, returns a basic footer, if it's a subreport,
         returns nothing.
         """
-        if self.omitHeaderFooter:
-            return "</body></html>"
-        elif self.isSubReport:
+        if self.isSubReport:
             return ""
+        elif self.omitHeaderFooter:
+            return "</body></html>"
         else:
             # Look it up from the DB
             s = get_raw_report_footer(self.dbo)
@@ -1723,8 +1748,6 @@ class Report:
             $(".chartplaceholder").show();
         """)
 
-        
-
         labels = []
         datasets = []
 
@@ -1758,7 +1781,7 @@ class Report:
                     dpvalue = 0
                     for dp in ds[1]:
                         if dp[0] == label:
-                            dpvalue += dp[1]
+                            dpvalue += asm3.utils.cfloat(dp[1])
                     dsdata.append(dpvalue)
                 dataset = {
                     'label': ds[0],

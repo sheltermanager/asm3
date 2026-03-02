@@ -587,6 +587,14 @@ def file_contains(f: str, v: str) -> bool:
     """
     return 0 == os.system("grep %s %s" % (v, f))
 
+def firstword(s: str) -> str:
+    """
+    Returns the first word in s
+    """
+    if s is None or len(s) == 0: return ""
+    if s.find(" ") == -1: return s
+    return s[0:s.find(" ")+1]
+
 def iif(c: bool, t: Any, f: Any) -> Any:
     """
     Evaluates c and returns t for True or f for False.
@@ -844,6 +852,38 @@ def epoch_b32() -> str:
         base36 = alphabet[i] + base36
     return base36
 
+def mime_type(filename: str) -> str:
+    """
+    Returns the mime type for a file with the given name
+    """
+    types = {
+        "jpg"   : "image/jpeg",
+        "jpeg"  : "image/jpeg",
+        "bmp"   : "image/bmp",
+        "gif"   : "image/gif",
+        "png"   : "image/png",
+        "doc"   : "application/msword",
+        "xls"   : "application/vnd.ms-excel",
+        "ppt"   : "application/vnd.ms-powerpoint",
+        "docx"  : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "pptx"  : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "xslx"  : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "odt"   : "application/vnd.oasis.opendocument.text",
+        "sxw"   : "application/vnd.oasis.opendocument.text",
+        "ods"   : "application/vnd.oasis.opendocument.spreadsheet",
+        "odp"   : "application/vnd.oasis.opendocument.presentation",
+        "pdf"   : "application/pdf",
+        "mp4"   : "video/mp4",
+        "mpg"   : "video/mpg",
+        "mp3"   : "audio/mpeg3",
+        "avi"   : "video/avi",
+        "htm"   : "text/html",
+        "html"  : "text/html"
+    }
+    ext = filename[filename.rfind(".")+1:].lower()
+    if ext in types:
+        return types[ext]
+    return "application/octet-stream"
 
 def pbkdf2_hash_hex(plaintext: str, salt: str = "", algorithm: str = "sha1", iterations: int = 1000) -> str:
     """ Returns a hex pbkdf2 hash of the plaintext given. 
@@ -1226,6 +1266,7 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
     p = ImgSrcHTMLParser()
     p.feed(s)
     for l in p.links:
+        # relative image? links
         if l.startswith("image?"):
             mode = qsp(l, "mode")
             u = ""
@@ -1239,12 +1280,20 @@ def fix_relative_document_uris(dbo: Database, s: str) -> str:
                 u = url("dbfs_image", "title=%s" % qsp(l, "id"))
             elif mode == "media":
                 u = url("media_image", "mediaid=%s" % qsp(l, "id"))
+            u = u.replace(" ", "+") # Spaces in image URLs can break some pdf converters
             s = s.replace(l, u)
             s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
             asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
+        # invalid links we can't do anything with
         elif not l.startswith("http") and not l.startswith("data:") and not l.startswith("//"):
             s = s.replace(l, "") # cannot use this type of url
             asm3.al.debug("strip invalid url '%s'" % l, "utils.fix_relative_document_uris", dbo)
+        # absolute links that contain spaces
+        elif l.startswith("http") and l.find(" ") != -1:
+            u = l.replace(" ", "+") # Spaces in image URLs can break some pdf converters
+            s = s.replace(l, u)
+            s = s.replace(l.replace("&", "&amp;"), u) # HTMLParser can fix &amp; back to &, breaking previous replace
+            asm3.al.debug("translate '%s' to '%s'" % (l, u), "utils.fix_relative_document_uris", dbo)
     return s
 
 def fix_tinymce_uris(s: str) -> str:
@@ -1299,6 +1348,8 @@ def substitute_tags(searchin: str, tags: Dict[str, str], escape_html: bool = Tru
         # image, URL or already contains HTML entities
         if escape_html and \
             not v.lower().startswith("<img") and \
+            not v.lower().startswith("<video") and \
+            not v.lower().startswith("<iframe") and \
             not v.lower().find("&#") != -1 and \
             not v.lower().find("/>") != -1 and \
             not v.lower().startswith("<table") and \
@@ -1625,113 +1676,49 @@ def html_to_text(htmldata: str) -> str:
 def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     """
     Converts HTML content to PDF and returns the PDF file data as bytes.
+    The HTML should only include the contents of the body tag, but not the tag itself.
     """
-    if HTML_TO_PDF == "pisa" or htmldata.find("pdf renderer pisa") != -1:
-        return html_to_pdf_pisa(dbo, htmldata)
-    else:
-        return html_to_pdf_cmd(dbo, htmldata)
-
-def html_to_pdf_cmd(dbo: Database, htmldata: str) -> bytes:
-    """
-    Converts HTML content to PDF and returns the PDF file data as bytes.
-    Uses the command line tool specified in HTML_TO_PDF (which is typically wkhtmltopdf)
-    """
-    # Allow orientation and papersize to be set
-    # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
-    orientation = "portrait"
-    # Sort out page size arguments
-    papersize = "--page-size a4"
-    if htmldata.find("pdf orientation landscape") != -1: orientation = "landscape"
-    if htmldata.find("pdf orientation portrait") != -1: orientation = "portrait"
-    if htmldata.find("pdf papersize a5") != -1: papersize = "--page-size a5"
-    if htmldata.find("pdf papersize a4") != -1: papersize = "--page-size a4"
-    if htmldata.find("pdf papersize a3") != -1: papersize = "--page-size a3"
-    if htmldata.find("pdf papersize letter") != -1: papersize = "--page-size letter"
-    # Eg: <!-- pdf papersize exact 52mmx86mm end -->
+    mode = asm3.configuration.pdf_converter(dbo) # start with mode from config
+    if mode == "" or mode == "null": mode = "cmd"
+    if mode == "internal": mode = "weasyprint"
+    if htmldata.find("pdf renderer cmd") != -1: mode = "cmd" # renderer directives override config
+    elif htmldata.find("pdf renderer xhtml2pdf") != -1: mode = "xhtml2pdf"
+    elif htmldata.find("pdf renderer weasyprint") != -1: mode = "weasyprint"
+    # If we wanted cmd mode, but there is no valid external cmd, use our preferred internal converter
+    if mode == "cmd" and HTML_TO_PDF == "": mode = "weasyprint"
+    # Look for directives in our HTML data and set pdf options to pass to our converters
+    pdfopts = { 
+        "orientation":  "portrait",
+        "papersize":    "a4",
+        "paperheight":  "",
+        "paperwidth":   "",
+        "zoom":         "100%",
+        "scale":        "1",
+        "margins":      ""
+    }
+    # Paper size and orientation
+    if htmldata.find("pdf orientation landscape") != -1: pdfopts["orientation"] = "landscape"
+    if htmldata.find("pdf orientation portrait") != -1: pdfopts["orientation"] = "portrait"
+    if htmldata.find("pdf papersize a5") != -1: pdfopts["papersize"] = "a5"
+    if htmldata.find("pdf papersize a4") != -1: pdfopts["papersize"] = "a4"
+    if htmldata.find("pdf papersize a3") != -1: pdfopts["papersize"] = "a3"
+    if htmldata.find("pdf papersize letter") != -1: pdfopts["papersize"] = "letter"
+    # Paper height/width, eg: <!-- pdf papersize exact 52mmx86mm end -->
     ps = regex_one("pdf papersize exact (.+?) end", htmldata) 
     if ps != "":
         w, h = ps.split("x")
-        papersize = "--page-width %s --page-height %s" % (w, h)
+        pdfopts["paperheight"] = h
+        pdfopts["paperwidth"] = w
     # Zoom - eg: <!-- pdf zoom 130% end -->
     zm = regex_one("pdf zoom (.+?) end", htmldata)
-    if zm != "":
-        zoom = "<style>\nbody { zoom: %s; }\n</style>\n" % zm
-    else:
-        zoom = "<style>\nbody { zoom: %s%%; }\n</style>\n" % asm3.configuration.pdf_zoom(dbo) # use the default from config
+    if zm != "": pdfopts["zoom"] = zm
+    # Scale - eg: <!-- pdf scale 0.5 end -->
+    sc = regex_one("pdf scale (.+?) end", htmldata)
+    if sc != "": pdfopts["scale"] = sc
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
-    margins = "--margin-top 1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)
-    if mg != "":
-        tm, bm, lm, rm = mg.split(" ")
-        margins = "--margin-top %s --margin-bottom %s --margin-left %s --margin-right %s" % (tm, bm, lm, rm)
-    header = "<!DOCTYPE HTML>\n<html>\n<head>"
-    header += '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
-    header += zoom
-    header += "</head><body>"
-    footer = "</body></html>"
-    htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
-    htmldata = htmldata.replace("font-size: x-small", "font-size: 8pt")
-    htmldata = htmldata.replace("font-size: small", "font-size: 10pt")
-    htmldata = htmldata.replace("font-size: medium", "font-size: 14pt")
-    htmldata = htmldata.replace("font-size: large", "font-size: 18pt")
-    htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
-    htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
-    # Remove any img tags with signature:placeholder/user as the src
-    htmldata = re.sub(r'<img.*?signature\:.*?\/>', '', htmldata)
-    # Remove anything that could be a security risk
-    htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
-    htmldata = re.sub(r'<link.*>', '', htmldata, flags=re.I)
-    htmldata = strip_script_tags(htmldata)
-    # Switch relative document uris to absolute service based calls
-    htmldata = fix_relative_document_uris(dbo, htmldata)
-    # Use temp files
-    inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
-    outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-    inputfile.write(str2bytes(header + htmldata + footer))
-    inputfile.flush()
-    inputfile.close()
-    outputfile.close()
-    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize, "zoom": "", "margins": margins }
-    code, output = cmd(cmdline)
-    if code > 0:
-        asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
-        return output
-    with open(outputfile.name, "rb") as f:
-        pdfdata = f.read()
-    os.unlink(inputfile.name)
-    os.unlink(outputfile.name)
-    return pdfdata
-
-def html_to_pdf_pisa(dbo: Database, htmldata: str) -> bytes:
-    """
-    Converts HTML content to PDF and returns the PDF file data as bytes.
-    NOTE: wkhtmltopdf is far superior, but this is a pure Python solution and it does work.
-    """
-    # Allow orientation and papersize to be set
-    # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
-    orientation = "portrait"
-    # Sort out page size arguments
-    papersize = "A4"
-    if htmldata.find("pdf orientation landscape") != -1: orientation = "landscape"
-    if htmldata.find("pdf orientation portrait") != -1: orientation = "portrait"
-    if htmldata.find("pdf papersize a5") != -1: papersize = "A5"
-    if htmldata.find("pdf papersize a4") != -1: papersize = "A4"
-    if htmldata.find("pdf papersize a3") != -1: papersize = "A3"
-    if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
-    # Zoom - eg: <!-- pdf zoom 0.5 end -->
-    # Not supported in any meaningful way by pisa (not smart scaling)
-    # zm = regex_one("pdf zoom (.+?) end", htmldata)
-    # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
-    margins = "2cm"
-    mg = regex_one("pdf margins (.+?) end", htmldata)
-    if mg != "":
-        margins = mg
-    header = "<!DOCTYPE html>\n<html>\n<head>"
-    header += '<style>'
-    header += '@page {size: %s %s; margin: %s}' % ( papersize, orientation, margins )
-    header += '</style>' 
-    header += "</head><body>"
-    footer = "</body></html>"
+    if mg != "": pdfopts["margins"] = mg
+    # Pre-processing - fix odd/old TinyMCE named font-sizes
     htmldata = htmldata.replace("font-size: xx-small", "font-size: 6pt")
     htmldata = htmldata.replace("font-size: x-small", "font-size: 8pt")
     htmldata = htmldata.replace("font-size: small", "font-size: 10pt")
@@ -1748,12 +1735,122 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str) -> bytes:
     # Switch relative document uris to absolute service based calls
     htmldata = fix_relative_document_uris(dbo, htmldata)
     # Do the conversion
+    if mode == "xhtml2pdf":
+        return html_to_pdf_xhtml2pdf(dbo, htmldata, [], pdfopts)
+    elif mode == "weasyprint":
+        return html_to_pdf_weasyprint(dbo, htmldata, [], pdfopts)
+    else:
+        return html_to_pdf_cmd(dbo, htmldata, pdfopts)
+
+def html_to_pdf_cmd(dbo: Database, htmldata: str, pdfopts: Dict[str, str]) -> bytes:
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    Uses the command line tool specified in HTML_TO_PDF (which is typically wkhtmltopdf)
+    """
+    papersize = "--page-size %s" % pdfopts["papersize"]
+    if "paperheight" in pdfopts and pdfopts["paperheight"] != "":
+        papersize = "-- page-width %s --page-height %s" % (pdfopts["paperheight"], pdfopts["paperwidth"])
+    zoom = ""
+    if "zoom" in pdfopts and pdfopts["zoom"] != "": 
+        zoom = "<style>\nbody { zoom: %s; }\n</style>\n" % pdfopts["zoom"]
+    else:
+        zoom = "<style>\nbody { zoom: %s%%; }\n</style>\n" % asm3.configuration.pdf_zoom(dbo) # use the default from config
+    scale = ""
+    if "scale" in pdfopts and pdfopts["scale"] != "":
+        scale = "<style>\nbody { transform: scale(%s, %s); }\n</style>\n" % (pdfopts["scale"], pdfopts["scale"])
+    margins = "--margin-top 1cm"
+    if "margins" in pdfopts and pdfopts["margins"] != "":
+        tm, bm, lm, rm = pdfopts["margins"].split(" ")
+        margins = "--margin-top %s --margin-bottom %s --margin-left %s --margin-right %s" % (tm, bm, lm, rm)
+    header = "<!DOCTYPE HTML>\n<html>\n<head>"
+    header += '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
+    header += zoom
+    header += scale
+    header += "</head><body>"
+    footer = "</body></html>"
+    # Use temp files
+    inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
+    outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+    inputfile.write(str2bytes(header + htmldata + footer))
+    inputfile.flush()
+    inputfile.close()
+    outputfile.close()
+    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, 
+        "orientation": pdfopts["orientation"], "papersize": papersize, "zoom": "", "margins": margins }
+    code, output = cmd(cmdline)
+    if code > 0:
+        asm3.al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
+        return output
+    with open(outputfile.name, "rb") as f:
+        pdfdata = f.read()
+    os.unlink(inputfile.name)
+    os.unlink(outputfile.name)
+    return pdfdata
+
+def html_to_pdf_xhtml2pdf(dbo: Database, htmldata: str, styles: List[str] = [], pdfopts: Dict[str, str] = {}) -> bytes:
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    styles: Extra CSS styles to be inserted into the header style tag
+    """
+    margins = "1cm"
+    if "margins" in pdfopts and pdfopts["margins"] != "": margins = pdfopts["margins"]
+    if len(styles) == 0:
+        styles = [ "body { font-family: sans-serif; }" ]
+    header = "<!DOCTYPE html>\n<html>\n<head>"
+    header += '<style>\n'
+    header += '@page {size: %s %s; margin: %s}\n' % ( pdfopts["papersize"], pdfopts["orientation"], margins )
+    header += "\n".join(styles)
+    header += '</style>\n' 
+    header += "</head>\n<body>\n"
+    # This is necessary to enable RTL on Hebrew characters, it's possible a custom font
+    # needs to be declared as well, like we do in reports/execute_pdf
+    if dbo.locale == "he": 
+        header += '<pdf:language name="hebrew" />\n'
+    footer = "</body></html>"
+    # Do the conversion
     from xhtml2pdf import pisa
     out = bytesio()
-    pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
-    if pdf.err:
-        raise IOError(pdf.err)
-    return out.getvalue()
+    try:
+        pdf = pisa.pisaDocument(stringio(header + htmldata + footer), dest=out)
+        if pdf.err:
+            raise IOError(pdf.err)
+        return out.getvalue()
+    except Exception as err:
+        asm3.al.error(str(err), "html_to_pdf_xhtml2pdf", dbo)
+        raise ASMError(str(err))
+
+def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = [], pdfopts: Dict[str, str] = {}) -> bytes:
+    """
+    Converts HTML content to PDF and returns the PDF file data as bytes.
+    styles: Extra CSS styles to be inserted into the header style tag
+    """
+    orientation = pdfopts["orientation"]
+    papersize = pdfopts["papersize"]
+    if len(styles) == 0:
+        styles = [ "body { font-family: sans-serif; }" ]
+    if "paperheight" in pdfopts and pdfopts["paperheight"] != "": 
+        papersize = "%s %s" % (pdfopts["paperwidth"], pdfopts["paperheight"])
+        orientation = "" # makes no sense with explicit height/width set
+    if "zoom" in pdfopts and pdfopts["zoom"] != "":
+        pass # no CSS zoom support in weasyprint
+    if "scale" in pdfopts and pdfopts["scale"] != "":
+        styles.append("body { transform: scale(%s, %s); }\n" % (pdfopts["scale"], pdfopts["scale"]))
+    margins = "1cm"
+    if "margins" in pdfopts and pdfopts["margins"] != "": margins = pdfopts["margins"]
+    header = "<!DOCTYPE html>\n<html>\n<head>"
+    header += '<style>\n'
+    header += '@page {size: %s %s; margin: %s}\n' % ( papersize, orientation, margins )
+    header += "\n".join(styles)
+    header += '</style>\n' 
+    header += "</head>\n<body>\n"
+    footer = "</body></html>"
+    # Do the conversion
+    try:
+        from weasyprint import HTML
+        return HTML(string=header + htmldata + footer).write_pdf(presentational_hints=True, zoom=1)
+    except Exception as err:
+        asm3.al.error(str(err), "html_to_pdf_weasyprint", dbo)
+        raise ASMError(str(err))
 
 def generate_image_pdf(locale: str, imagedata: bytes) -> bytes:
     """

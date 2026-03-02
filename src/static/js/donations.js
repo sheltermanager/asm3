@@ -63,39 +63,46 @@ $(function() {
             const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: async function(row) {
-                    tableform.fields_populate_from_json(dialog.fields, row);
-                    donations.dialog_row = row;
-                    donations.create_semaphore = false;
-                    donations.update_movements(row.OWNERID);
-                    // Only allow destination account to be overridden when the received date
-                    // hasn't been set yet.
-                    $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
-                    $("#receiptnumberrow").show();
-                    $("#receiptnumber").prop("disabled", true);
-                    $("#vatratechoicerow").hide();
-                    if (row.ISVAT == 1) {
-                        $("#vatraterow").show();
-                        $("#vatamountrow").show();
-                    }
-                    else {
-                        $("#vatraterow").hide();
-                        $("#vatamountrow").hide();
-                    }
-                    try {
-                        await tableform.dialog_show_edit(dialog, row);
-                        if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                        tableform.fields_update_row(dialog.fields, row);
-                        donations.set_extra_fields(row);
-                        await tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, "donation");
-                        donations.calculate_total();
-                        tableform.table_update(table);
-                        tableform.dialog_close();
-                    }
-                    catch(err) {
-                        log.error(err, err);
-                        tableform.dialog_enable_buttons();
-                    }
+                edit: function(row) {
+                    tableform.dialog_show_edit(dialog, row, {
+                        onvalidate: function() {
+                            return donations.validation();
+                        },
+                        onchange: function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            donations.set_extra_fields(row);
+                            tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, "donation")
+                                .then(function(response) {
+                                    donations.calculate_total();
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                })
+                                .fail(function() {
+                                    tableform.dialog_enable_buttons();
+                                });
+                        },
+                        onload: function() {
+                            tableform.fields_populate_from_json(dialog.fields, row);
+                            donations.dialog_row = row;
+                            donations.create_semaphore = false;
+                            donations.update_movements(row.OWNERID);
+                            // Only allow destination account to be overridden when the received date
+                            // hasn't been set yet.
+                            $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
+                            $("#destaccount").select("value", config.integer("DonationTargetAccount"));
+                            $("#receiptnumberrow").show();
+                            $("#receiptnumber").prop("disabled", true);
+                            $("#vatratechoicerow").hide();
+                            if (row.ISVAT == 1) {
+                                $("#vatraterow").show();
+                                $("#vatamountrow").show();
+                            }
+                            else {
+                                $("#vatraterow").hide();
+                                $("#vatamountrow").hide();
+                            }
+                        }
+                    });
                 },
                 complete: function(row) {
                 },

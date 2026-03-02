@@ -2,7 +2,7 @@ Print Incident Record
 ###
 Animal Control
 ###
-34806/Any rev09
+34806/Any rev10
 ###
 A complete printout of an incident record.
 ###
@@ -127,6 +127,10 @@ $$BODY
 <h2>Media</h2>
 {SUBREPORT.SUBREPORT_IncidentPrintMedia.INCIDENTNUMBER}
 
+<!-- Uncomment to include audit trail -->
+<!-- <h2>Audit</h2> -->
+<!-- {SUBREPORT.SUBREPORT_IncidentPrintAudit.INCIDENTNUMBER} -->
+
 BODY$$
 
 $$FOOTER
@@ -240,6 +244,37 @@ HEADER$$
 $$BODY
 <tr><td>$DATE</td><td>$MEDIAMIMETYPE</td><td>$MEDIASIZE</td><td>$MEDIANOTES</td><td>$RETAINUNTIL</td><td><a target="_blank" href="$LINK">$MEDIANAME</a></td></tr>
 BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_IncidentPrintAudit
++++
+SELECT AuditDate, UserName, TableName, Description
+FROM audittrail
+WHERE Action IN (0,1,2,3)
+AND ((TableName = 'animalcontrol' AND LinkID = $PARENTKEY$) OR ParentLinks LIKE '%animalcontrol=$PARENTKEY$%')
+ORDER BY AuditDate DESC
++++
+$$HEADER
+<table>
+<tr>
+<td><b>Date</b></td>
+<td><b>Table</b></td>
+<td><b>User</b></td>
+<td></td>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$AUDITDATE</td>
+<td>$TABLENAME</td>
+<td>$USERNAME</td>
+<td>$DESCRIPTION</td>
+</tr>
+BODY$$
+
 $$FOOTER
 </table>
 FOOTER$$

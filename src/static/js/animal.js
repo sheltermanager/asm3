@@ -536,7 +536,7 @@ $(function() {
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
                     { id: "waitinglist", text: _("Waiting List"), icon: "waitinglist", tooltip: _("Add to Waiting List"),
-                        hideif: function() { return controller.animal.ARCHIVED == 0; }
+                        hideif: function() { return controller.animal.ARCHIVED == 0 || config.bool("DisableWaitingList"); }
                     },
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
                 ]),
