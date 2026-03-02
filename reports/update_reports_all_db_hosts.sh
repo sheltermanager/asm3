@@ -7,7 +7,7 @@
 source ../../smcom_asmdb/hostsrc
 
 for i in $ALL_DB_SERVERS; do
-    HOST=${i}dx.sheltermanager.com
+    HOST=${i}.sheltermanager.com
     echo $HOST
     scp -C reports.txt root@${HOST}:/root/asmdb/
 done

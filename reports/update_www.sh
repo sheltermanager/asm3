@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HOST=wwwdx.sheltermanager.com
+HOST=www.sheltermanager.com
 
 ./update.py
 scp -C reports.txt root@${HOST}:/var/www/sheltermanager.com/repo/

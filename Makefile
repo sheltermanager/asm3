@@ -123,8 +123,8 @@ manual:
 	@echo "[manual] =========================="
 	cd doc/manual && $(MAKE) clean html latexpdf
 	cp -rf doc/manual/_build/html/* src/static/pages/manual/
-	scp -C doc/manual/_build/latex/asm3.pdf root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
-	rsync -a doc/manual/_build/html/ root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help/
+	scp -C doc/manual/_build/latex/asm3.pdf root@www.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
+	rsync -a doc/manual/_build/html/ root@www.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help/
 
 chipprefixes:
 	@echo "[reports] ========================="
