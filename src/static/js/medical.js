@@ -60,14 +60,6 @@ $(function() {
             return pad(rh) + ":" + pad(rm);
         },
 
-        format_required: function(row, v) {
-            if (!v) { return ""; }
-            const date = format.date(v);
-            const time = format.time(v, "%H:%M", true);
-            if (time) { return '<span style="white-space: nowrap;">' + date + " " + time + "</span>"; }
-            return date;
-        },
-
         treatment_times_enabled: function() {
             return $("#singlemulti").val() == medical.TREATMENT_MULTI_TIME;
         },
@@ -285,7 +277,7 @@ $(function() {
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
-                    { field: "DATEREQUIRED", display: _("Required"), formatter: medical.format_required, initialsort: true,
+                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_datetime, initialsort: true,
                         initialsortdirection: controller.name == "medical" ? "asc" : "desc" },
                     { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_datetime },
                     { field: "GIVENBY", display: _("By"), 

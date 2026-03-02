@@ -199,7 +199,7 @@ const tableform = {
 
     /** Formats a value as a date and time */
     format_datetime: function(row, v) {
-        return '<span style="white-space: nowrap;">' + format.date(v) + " " + format.time(v) + '</span>';
+        return '<span style="white-space: nowrap;">' + tableform.format_date(row, v) + " " + tableform.format_time_blank(row, v) + '</span>';
     },
 
     /** Formats a value as a string */
