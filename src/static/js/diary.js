@@ -16,7 +16,7 @@ $(function() {
                 columns: 1,
                 width: 500,
                 fields: [
-                    { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", 
+                    { json_field: "DIARYFORNAME", post_field: "diaryfor", label: _("For"), type: "select", addifmissing: true, 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
                     { json_field: "COLOURSCHEMEID", post_field: "diarycolourscheme", label: _("Color Scheme"), 
                         type: "selectcolour", defaultval: 1, 
@@ -291,6 +291,10 @@ $(function() {
 
         new_note: function() {
             tableform.dialog_show_add(diary.dialog, {
+                onvalidate: function() {
+                    if (!$("#diarytime").val()) { $("#diarytime").val("00:00:00"); } // default midnight if no value given
+                    return true;
+                },
                 onadd: async function() {
                     let response = await tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid, "diary");
                     var row = {};
@@ -311,6 +315,11 @@ $(function() {
 
                     $("#emailnow").prop("checked", config.bool("EmailDiaryOnChange"));
                     $("#emailnowrow").show();
+
+                    // Clear the fields
+                    $("#subject").val();
+                    $("#notes, #comments").textarea("value", "");
+                    $("#completed, #diarydate, #diarytime, #diaryenddate, #diaryendtime").val("");
 
                     // If a default diary person is set, choose them
                     if (config.str("AFDefaultDiaryPerson")) {

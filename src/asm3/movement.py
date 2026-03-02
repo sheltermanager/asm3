@@ -501,7 +501,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
 
     if animalid > 0:
         asm3.animal.update_current_owner(dbo, username, animalid)
-        asm3.animal.update_animal_status(dbo, animalid)
+        asm3.animal.update_animal_status(dbo, animalid, username=username)
         asm3.animal.update_variable_animal_data(dbo, animalid)
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
@@ -549,7 +549,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
 
     if post.integer("animal") > 0:
         asm3.animal.update_current_owner(dbo, username, post.integer("animal"))
-        asm3.animal.update_animal_status(dbo, post.integer("animal"))
+        asm3.animal.update_animal_status(dbo, post.integer("animal"), username=username)
         asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
@@ -566,7 +566,7 @@ def delete_movement(dbo: Database, username: str, mid: int) -> None:
     dbo.delete("adoption", mid, username)
     if m.ANIMALID > 0:
         asm3.animal.update_current_owner(dbo, username, m.ANIMALID)
-        asm3.animal.update_animal_status(dbo, m.ANIMALID)
+        asm3.animal.update_animal_status(dbo, m.ANIMALID, username=username)
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
         asm3.animal.update_animallocation(dbo, m.ANIMALID, username)
@@ -589,7 +589,8 @@ def return_movement(dbo: Database, movementid: int, username: str, animalid: int
     if returndate is None: returndate = dbo.today()
     if animalid == 0: animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", [movementid])
     personid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID = ?", [movementid])
-    dbo.update("adoption", movementid, { "ReturnDate": returndate })
+    ud = { "AnimalID": animalid, "OwnerID": personid, "ReturnDate": returndate } # reset animalid/ownerid for auditing
+    dbo.update("adoption", movementid, ud, username)
     asm3.animal.update_animal_status(dbo, animalid)
     asm3.person.update_adopter_flag(dbo, username, personid)
 
@@ -599,7 +600,7 @@ def trial_to_full_adoption(dbo: Database, username: str, movementid: int) -> Non
     If the trial end date on the record is blank, sets it to today
     """
     m = dbo.first_row(dbo.query("SELECT AnimalID, OwnerID, TrialEndDate FROM adoption WHERE ID=?", [movementid]))
-    ud = { "IsTrial": 0 }
+    ud = { "AnimalID": m.ANIMALID, "OwnerID": m.OWNERID, "IsTrial": 0 } # reset animalid/ownerid for auditing
     if m.TRIALENDDATE is None: ud["TrialEndDate"] = dbo.today()
     dbo.update("adoption", movementid, ud, username)
     asm3.animal.update_animal_status(dbo, m.ANIMALID)
@@ -707,7 +708,7 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
     cost_create = post.boolean("costcreate")
     if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
-            "animalid"          : post["animal"],
+            "animal"            : post["animal"],
             "type"              : cost_type,
             "costdate"          : post["movementdate"],
             "costpaid"          : post["movementdate"],
@@ -805,7 +806,7 @@ def insert_reclaim_from_form(dbo: Database, username: str, post: PostedData) -> 
     cost_create = post.boolean("costcreate")
     if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
-            "animalid"          : post["animal"],
+            "animal"            : post["animal"],
             "type"              : cost_type,
             "costdate"          : post["movementdate"],
             "costpaid"          : post["movementdate"],

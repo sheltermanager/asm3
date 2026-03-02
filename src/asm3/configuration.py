@@ -49,6 +49,8 @@ DEFAULTS = {
     "AddAnimalsShowWeight": "No",
     "AdoptionCheckoutDonationMsg": "Our organization depends on the kind donations of individuals to provide animals with medical care, food and shelter.\n<br/><br/><b>We need your help!</b>",
     "AdoptionCheckoutDonationTiers": "$0=No thanks\n$10=Microchip one pet\n$25=One week of milk for a litter of kittens\n$50=Vaccinate a litter of puppies\n$100=Spay/neuter and vaccinate one pet\n$200=Contribute to surgery for pets in need",
+    "AnimalAdoptableChangeLog": "No",
+    "AnimalAdoptableLogType": "3",
     "AnimalCommentsChangeLog": "No",
     "AnimalCommentsChangeLogType": "3",
     "AnimalNameChangeLog": "No",
@@ -204,6 +206,7 @@ DEFAULTS = {
     "DisableAsilomar": "No",
     "DisableDocumentRepo": "No",
     "DisableOnlineForms": "No",
+    "DisablePOS": "Yes", 
     "DisableRetailer": "No",
     "DisableDiaryEndDatetime": "Yes",
     "DocumentWordProcessor": "HTML",
@@ -375,6 +378,7 @@ DEFAULTS = {
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
     "PicturesInBooksClinic": "No",
+    "PDFConverter": "internal",
     "PDFInline": "Yes",
     "PDFZoom": "100",
     "ProductImageScale": "200x200",
@@ -644,6 +648,12 @@ def accounting_period(dbo: Database) -> str:
 
 def add_animals_show_time_brought_in(dbo: Database) -> bool:
     return cboolean(dbo, "AddAnimalsShowTimeBroughtIn", DEFAULTS["AddAnimalsShowTimeBroughtIn"] == "Yes")
+
+def adoptable_change_log(dbo: Database) -> bool:
+    return cboolean(dbo, "AnimalAdoptableChangeLog", DEFAULTS["AnimalAdoptableChangeLog"] == "Yes")
+
+def adoptable_change_log_type(dbo: Database) -> int:
+    return cint(dbo, "AnimalAdoptableLogType", DEFAULTS["AnimalAdoptableLogType"])
 
 def adoptapet_user(dbo: Database) -> str:
     return cstring(dbo, "SaveAPetFTPUser")
@@ -1518,6 +1528,9 @@ def petrescue_vic_picnumber(dbo: Database) -> str:
 def petrescue_use_coordinator(dbo: Database) -> bool:
     return cint(dbo, "PetRescueUseCoordinator")
 
+def pdf_converter(dbo: Database) -> int:
+    return cstring(dbo, "PDFConverter", DEFAULTS["PDFConverter"])
+
 def pdf_inline(dbo: Database) -> bool:
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")
 
@@ -1526,6 +1539,12 @@ def pdf_zoom(dbo: Database) -> int:
 
 def person_search_columns(dbo: Database) -> str:
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
+
+def pos_stock_location(dbo: Database) -> int:
+    return cint(dbo, "POSStockLocation", 1)
+
+def pos_stock_usage_type(dbo: Database) -> int:
+    return cint(dbo, "POSSaleUsageType", 5)
 
 def product_movement_usage_type(dbo: Database) -> int:
     return cint(dbo, "StockMovementUsageTypeID", 1)
@@ -1953,5 +1972,3 @@ def weight_change_log(dbo: Database) -> bool:
 
 def weight_change_log_type(dbo: Database) -> int:
     return cint(dbo, "WeightChangeLogType", DEFAULTS["WeightChangeLogType"])
-
-

@@ -30,7 +30,7 @@ $(function() {
                 columns: 2,
                 width: 800,
                 fields: [
-                    { json_field: "APPTFOR", post_field: "for", label: _("For"), type: "select", 
+                    { json_field: "APPTFOR", post_field: "for", label: _("For"), type: "select", addifmissing: true, 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
                     { json_field: "ANIMALID", post_field: "personanimal", label: _("Animal"), type: "select" },

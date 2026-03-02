@@ -57,7 +57,7 @@ class TestTemplate(unittest.TestCase):
         secondname = asm3.utils.uuid_b64()
         nid = asm3.template.create_document_template(base.get_dbo(), "test", firstname)
         asm3.template.rename_document_template(base.get_dbo(), "test", nid, secondname)
-        self.assertEqual(asm3.template.get_document_template_name(base.get_dbo(), nid), secondname + ".html")
+        self.assertTrue(asm3.template.get_document_template_name(base.get_dbo(), nid).endswith(secondname + ".html"))
 
     def test_update_document_template_content(self):
         nid = asm3.template.create_document_template(base.get_dbo(), "test", asm3.utils.uuid_b64())

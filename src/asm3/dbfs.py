@@ -10,7 +10,6 @@ from asm3.sitedefs import DBFS_S3_MIGRATE_BUCKET, DBFS_S3_MIGRATE_ACCESS_KEY_ID,
 from asm3.sitedefs import DBFS_S3_BACKUP_BUCKET, DBFS_S3_BACKUP_ACCESS_KEY_ID, DBFS_S3_BACKUP_SECRET_ACCESS_KEY, DBFS_S3_BACKUP_ENDPOINT_URL
 from asm3.typehints import Database, List, Results, S3Client
 
-import mimetypes
 import os, sys, threading, time
 
 import web070 as web
@@ -167,7 +166,8 @@ class S3Storage(DBFSStorage):
         #name = name.lower()
         #if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
         #return (86400 * 2) # Cache everything else for two days
-        return (86400 * 7) # Cache everything for 1 week
+        if name.endswith(".mp4"): return (86400 * 2) # Cache videos for 2 days
+        return (86400 * 7) # Cache everything else for 1 week
 
     def _s3client(self) -> S3Client:
         """ Gets an s3 client.
@@ -547,8 +547,7 @@ def get_document_repository(dbo: Database) -> Results:
     rows = dbo.query("SELECT ID, Name, Path FROM dbfs WHERE " \
         "Path Like '/document_repository%' AND Name Like '%.%' ORDER BY Path, Name")
     for r in rows:
-        mimetype, dummy = mimetypes.guess_type("file://" + r.name, strict=False)
-        r["MIMETYPE"] = mimetype
+        r["MIMETYPE"] = asm3.utils.mime_type(r.NAME)
     return rows
 
 def get_report_images(dbo: Database) -> Results:

@@ -70,7 +70,7 @@ VALID_FIELDS = [
     "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHGOODWITHELDERLY", 
     "PERSONMATCHHOUSETRAINED", "PERSONMATCHCRATETRAINED", "PERSONMATCHGOODTRAVELLER", "PERSONMATCHGOODONLEAD", "PERSONMATCHENERGYLEVEL", "PERSONMATCHDECLAWED", 
     "PERSONMATCHCOMMENTSCONTAIN",
-    "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE", 
+    "DIARYDATE", "DIARYCOMPLETED", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE", 
     "STOCKLEVELNAME", "STOCKLEVELDESCRIPTION", "STOCKLEVELBARCODE", "STOCKLEVELLOCATIONNAME", "STOCKLEVELUNITNAME", "STOCKLEVELTOTAL", 
     "STOCKLEVELBALANCE", "STOCKLEVELLOW", "STOCKLEVELEXPIRY", "STOCKLEVELBATCHNUMBER", "STOCKLEVELCOST", "STOCKLEVELUNITPRICE"
 ]
@@ -156,7 +156,7 @@ def gkynu(m: Dict, f: str) -> str:
     """ reads field f from map m, returning a tri-state
         switch. Returns 2 (unknown) for a blank field
         Input should start with Y/N/U or 0/1/2 """
-    if f not in m: return 2
+    if f not in m: return "2"
     if m[f].upper().startswith("A") or m[f] == "-1": return "-1" # (any) for match good with
     if m[f].upper().startswith("Y") or m[f] == "0": return "0"
     if m[f].upper().startswith("N") or m[f] == "1": return "1"
@@ -720,6 +720,16 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         # a new animal. If no actual location was given in the file, we remove that default location
                         # value now to prevent merge_animal_details overwriting the existing value on the record. #1516
                         if gks(row, "ANIMALLOCATION") == "": a["internallocation"] = "0"
+                        # The code above will set goodwith fields to unknown if not present in the file,
+                        # assuming a new animal. If they aren't present, we need to blank them so that 
+                        # merge doesn't overwrite the existing values and set them all to unknown
+                        if gks(row, "ANIMALHOUSETRAINED") == "": a["housetrained"] = ""
+                        if gks(row, "ANIMALCRATETRAINED") == "": a["cratetrained"] = ""
+                        if gks(row, "ANIMALGOODWITHCATS") == "": a["goodwithcats"] = ""
+                        if gks(row, "ANIMALGOODWITHDOGS") == "": a["goodwithdogs"] = ""
+                        if gks(row, "ANIMALGOODWITHKIDS") == "": a["goodwithkids"] = ""
+                        if gks(row, "ANIMALGOODWITHELDERLY") == "": a["goodwithelderly"] = ""
+                        if gks(row, "ANIMALGOODONLEAD") == "": a["goodonlead"] = ""
                         # Overwrite newly supplied fields if they are present and have a value
                         asm3.animal.merge_animal_details(dbo, user, dup.ID, a, force=True)
                         # Update flags if present
@@ -1035,18 +1045,21 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         if hasdiary:
             d = {}
             d["diarydate"] = gkd(dbo, row, "DIARYDATE")
+            d["completed"] = gkd(dbo, row, "DIARYCOMPLETED")
             d["diaryfor"] = gks(row, "DIARYFOR")
             d["subject"] = gks(row, "DIARYSUBJECT")
             d["note"] = gks(row, "DIARYNOTE")
-
-            if d["diarydate"] == "" or dryrun:
-                pass
-            elif animalid != 0:
-                asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMAL, animalid, asm3.utils.PostedData(d, dbo.locale))
-            elif incidentid != 0:
-                asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMALCONTROL, incidentid, asm3.utils.PostedData(d, dbo.locale))
-            else:
-                asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.PERSON, personid, asm3.utils.PostedData(d, dbo.locale))
+            try:
+                if d["diarydate"] == "" or dryrun:
+                    pass
+                elif animalid != 0:
+                    asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMAL, animalid, asm3.utils.PostedData(d, dbo.locale))
+                elif incidentid != 0:
+                    asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.ANIMALCONTROL, incidentid, asm3.utils.PostedData(d, dbo.locale))
+                else:
+                    asm3.diary.insert_diary_from_form(dbo, user, asm3.diary.PERSON, personid, asm3.utils.PostedData(d, dbo.locale))
+            except Exception as e:
+                row_error(errors, "diary", rowno, row, e, dbo, sys.exc_info())
 
         # Equipment loans
         if hasequipmentloan and personid != 0 and gkd(dbo, row, "LOANDATE") != "":
@@ -1060,8 +1073,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             t["returnduedate"] = gkd(dbo, row, "RETURNDUEDATE")
             t["returndate"] = gkd(dbo, row, "RETURNDATE")
             t["comments"] = gks(row, "TRAPLOANCOMMENTS")
-
-            if not dryrun: asm3.animalcontrol.insert_traploan_from_form(dbo, user, asm3.utils.PostedData(t, dbo.locale))
+            try:
+                if not dryrun: asm3.animalcontrol.insert_traploan_from_form(dbo, user, asm3.utils.PostedData(t, dbo.locale))
+            except Exception as e:
+                row_error(errors, "traploan", rowno, row, e, dbo, sys.exc_info())
 
         # Vaccination
         if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
@@ -1842,12 +1857,11 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "LOANDATE", "TRAPTYPE", "TRAPNUMBER", "DEPOSITAMOUNT", "DEPOSITRETURNDATE", "RETURNDUEDATE", "RETURNDATE", "TRAPLOANCOMMENTS",
         "DONATIONNAME", "DONATIONDATE", "DONATIONAMOUNT", "PAYMENTNAME", "PAYMENTISGIFTAID", "PAYMENTFREQUENCY", "PAYMENTRECEIPTNUMBER", "PAYMENTCHEQUENUMBER", "PAYMENTFEE", "PAYMENTISVAT", "PAYMENTVATRATE", "PAYMENTVATAMOUNT", "PAYMENTCOMMENTS",
         "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE", "VOUCHERCODE", "VOUCHERCOMMENTS", 
-        "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE",
         "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", 
         "CLINICAPPOINTMENTDATE", "CLINICAPPOINTMENTTIME",     "CLINICARRIVEDDATE", "CLINICARRIVEDTIME", 
         "CLINICWITHVETDATE", "CLINICWITHVETTIME", "CLINICCOMPLETEDDATE", "CLINICCOMPLETEDDATE", 
         "CLINICAPPOINTMENTISVAT", "CLINICAPPOINTMENTVATRATE", "CLINICAPPOINTMENTVATAMOUNT", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTREASON", "CLINICAPPOINTMENTCOMMENTS", "CLINICAMOUNT", 
-        "DIARYDATE", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE" ]
+        "DIARYDATE", "DIARYCOMPLETED", "DIARYFOR", "DIARYSUBJECT", "DIARYNOTE" ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1970,6 +1984,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
             row = {}
             row["PERSONCODE"] = "XP-" + nn(p["OWNERCODE"])
             row["DIARYDATE"] = asm3.i18n.python2display(l, n["DIARYDATETIME"])
+            row["DIARYCOMPLETED"] = asm3.i18n.python2display(l, n["DATECOMPLETED"])
             row["DIARYFOR"] = nn(n["DIARYFORNAME"])
             row["DIARYSUBJECT"] = nn(n["SUBJECT"])
             row["DIARYNOTE"] = nn(n["NOTE"])

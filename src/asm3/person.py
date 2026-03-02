@@ -254,11 +254,14 @@ def get_staff_volunteers(dbo: Database, siteid: int = 0) -> Results:
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
     return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 %s ORDER BY o.IsStaff DESC, o.OwnerSurname, o.OwnerForeNames" % sitefilter)
 
-def get_towns(dbo: Database) -> List[str]:
+def get_towns(dbo: Database, excludeblanks: bool = False) -> List[str]:
     """
     Returns a list of all towns
     """
-    rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner ORDER BY OwnerTown")
+    if excludeblanks:
+        rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner WHERE OwnerTown <> '' ORDER BY OwnerTown")
+    else:
+        rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner ORDER BY OwnerTown")
     if rows is None: return []
     towns = []
     for r in rows:
@@ -276,11 +279,14 @@ def get_town_to_county(dbo: Database) -> List[str]:
         tc[r.OWNERTOWN] = r.OWNERCOUNTY
     return tc
 
-def get_counties(dbo: Database) -> List[str]:
+def get_counties(dbo: Database, excludeblanks: bool = False) -> List[str]:
     """
     Returns a list of counties
     """
-    rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner")
+    if excludeblanks:
+        rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner WHERE OwnerCounty <> '' ORDER BY OwnerCounty")
+    else:
+        rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner ORDER BY OwnerCounty")
     if rows is None: return []
     counties = []
     for r in rows:
@@ -1303,7 +1309,7 @@ def update_remove_flag(dbo: Database, username: str, personid: int, flag: str) -
     if flags.find("%s|" % flag) != -1:
         update_flags(dbo, username, personid, flags.replace("%s|" % flag, "").split("|"))
 
-def update_flags(dbo: Database, username: str, personid: int, flags: str) -> None:
+def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) -> None:
     """
     Updates the flags on a person record from a list of flags
     """
@@ -1711,11 +1717,13 @@ def update_latlong(dbo: Database, personid: int, latlong: str) -> None:
     """
     dbo.update("owner", personid, { "LatLong": latlong })
 
-def delete_person(dbo: Database, username: str, personid: int) -> None:
+def delete_person(dbo: Database, username: str, personid: int, remove_movements: bool = False) -> None:
     """
     Deletes a person and all its satellite records.
+    remove_movements: If True, remove all movements for this person first to prevent validation failing
     """
     l = dbo.locale
+    if remove_movements: dbo.delete("adoption", "OwnerID=%d" % personid, username)
     if dbo.query_int("SELECT COUNT(ID) FROM adoption WHERE OwnerID=? OR RetailerID=? OR ReturnedByOwnerID=?", (personid, personid, personid)):
         raise asm3.utils.ASMValidationError(_("This person has movements and cannot be removed.", l))
     if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=? OR BroughtInByOwnerID=? OR OriginalOwnerID=? OR CurrentVetID=? OR OwnersVetID=? OR NeuteredByVetID = ?", (personid, personid, personid, personid, personid, personid)):
@@ -2187,9 +2195,27 @@ def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, usern
         "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID) " \
         "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID) ", [cutoff])
     for p in people:
-        delete_person(dbo, username, p.ID)
+        delete_person(dbo, username, p.ID, remove_movements = True)
     asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
     return "OK %s" % len(people)
+
+def replace_cities(dbo: Database, username: str, find: str, replace: str) -> None:
+    """
+    Replaces the town/city in all person records
+    """
+    
+    return dbo.update("owner", "OwnerTown = %s" % dbo.sql_value(find), {
+        "OwnerTown": replace
+    }, username)
+
+def replace_states(dbo: Database, username: str, find: str, replace: str) -> None:
+    """
+    Replaces the county/state in all person records
+    """
+    
+    return dbo.update("owner", "OwnerCounty = %s" % dbo.sql_value(find), {
+        "OwnerCounty": replace
+    }, username)
 
 def update_anonymise_personal_data(dbo: Database, years: int = None, username: str = "system") -> str:
     """

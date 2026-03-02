@@ -7,6 +7,7 @@ $(function() {
     const fieldtypes = [
         { "ID": 0, "NAME": _("Yes/No") },
         { "ID": 11, "NAME": _("Checkbox") },
+        { "ID": 23, "NAME": _("Checkbox (align label)") },
         { "ID": 1, "NAME": _("Text") },
         { "ID": 19, "NAME": _("Email") },
         { "ID": 10, "NAME": _("Date") },
@@ -184,7 +185,7 @@ $(function() {
                 $("#tooltiprow").fadeOut();
                 $("#rawmarkuprow").fadeIn();
             }
-            else if (ft == 11) {
+            else if (ft == 11 || ft == 23) {
                 $("#tooltiprow").find("label").html(_("Flags"));
                 $("#tooltiprow").fadeIn();
                 $("#rawmarkuprow").fadeOut();

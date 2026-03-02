@@ -40,7 +40,7 @@ $(function() {
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
                         options: '<option value="0">' + _("Active") + '</option><option value="1">' 
                             + _("Paused") + '</option><option value="2">' + _("Completed") + '</option>' },
-                    { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
+                    { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, defaultval: 1, 
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' + 
                         '<option value="2">' + _("Custom Frequency") + '</option>' },
@@ -542,7 +542,7 @@ $(function() {
                 '<div id="dialog-given" style="display: none" title="' + html.title(_("Give Treatments")) + '">',
                 tableform.fields_render([
                     { post_field: "newdate", type: "date", label: _("Given"), date_nofuture: true },
-                    { post_field: "givenby", type: "select", label: _("By"), 
+                    { post_field: "givenby", type: "select", label: _("By"), addifmissing: true, 
                         options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>' }},
                     { post_field: "givenvet", type: "person", label: _("Administering Vet"), personfilter: "vet" },
                     { post_field: "treatmentcomments", type: "textarea", label: _("Comments") },

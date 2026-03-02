@@ -196,6 +196,9 @@ $(function() {
                         formatter: function(row, v) {
                             return html.person_link(row.HOMECHECKEDBYID, row.HOMECHECKEDBYNAME) +
                             '<br/>' + format.date(row.DATELASTHOMECHECKED);
+                        },
+                        sorttext: function(row) {
+                            return row.HOMECHECKEDBYNAME;
                         }
                     },
                     { field: "ADOPTIONCOORDINATORNAME", display: _("Coordinator"),
@@ -207,6 +210,9 @@ $(function() {
                         },
                         formatter: function(row, v) {
                             return html.person_link(row.ADOPTIONCOORDINATORID, row.ADOPTIONCOORDINATORNAME);
+                        },
+                        sorttext: function(row) {
+                            return row.ADOPTIONCOORDINATORNAME;
                         }
                     },
                     { field: "RETURNDATE", display: _("Returned"), 
@@ -271,6 +277,9 @@ $(function() {
                         hideif: function(row) {
                             // Don't show this column for animal_movement
                             return controller.name == "animal_movements";
+                        },
+                        sorttext: function(row) {
+                            return row.ANIMALNAME;
                         }
                     },
                     { field: "PERSON", display: _("Person"),
@@ -286,6 +295,9 @@ $(function() {
                         },
                         hideif: function(row) {
                             return controller.name == "move_book_retailer" || controller.name == "person_movements";
+                        },
+                        sorttext: function(row) {
+                            return row.OWNERNAME;
                         }
                     },
                     { field: "RETAILER", display: _("Retailer"),
@@ -301,6 +313,9 @@ $(function() {
                         hideif: function(row) {
                             // Hide if retailer stuff is off or we're in a book that shouldn't show it
                             return config.bool("DisableRetailer") || controller.name == "move_book_foster" || controller.name == "move_book_reservation";
+                        },
+                        sorttext: function(row) {
+                            return row.RETAILERNAME || row.OWNERNAME;
                         }
                     },
                     { field: "ANIMALAGE", display: _("Age"),

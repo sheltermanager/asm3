@@ -183,6 +183,7 @@ def bare_header(title: str, theme: str = "asm", locale: str = LOCALE, config_db:
                 css_tag(BOOTSTRAP_GRID_CSS) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
+                asm_css_tag("asm-pos.css") + 
                 script_tag(JQUERY_JS) +
                 script_tag(JQUERY_UI_JS) +
                 script_tag(MOMENT_JS) + 
@@ -507,7 +508,7 @@ def doc_img_src(dbo: Database, row: ResultRow) -> str:
     else:
         return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.name(), row.DOCMEDIAID, row.DOCMEDIADATE.isoformat())
 
-def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: MenuItems) -> MenuStructure:
+def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: MenuItems, internalforms: MenuItems) -> MenuStructure:
     """
     Returns a list of lists representing the main menu structure
     l: The locale
@@ -631,6 +632,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.VIEW_DONATION, "", "tagstock", "--cat", "", _("Stock control", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_level", "asm-icon-stock", _("Stock levels", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stock_usage", "asm-icon-stock-usage", _("Stock usage", l) ),
+            ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock tagpos", "pos", "asm-icon-transactions", _("Point of Sale", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "product", "asm-icon-product", _("Products", l) )
         )),
         (asm3.users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), [
@@ -642,6 +644,11 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
         ] + publishers + [
             (asm3.users.USE_INTERNET_PUBLISHER, "", "", "publish_logs", "asm-icon-log", _("View publishing logs", l) )
         ]),
+
+        (asm3.users.VIEW_INCOMING_FORMS, "internalforms", _("Forms", l),
+            internalforms
+        ),
+
         (asm3.users.MAIL_MERGE, "mailmerge", _("Mail", l),
             mailmerges
         ),

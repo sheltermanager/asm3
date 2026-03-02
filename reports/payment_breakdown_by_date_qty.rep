@@ -132,7 +132,7 @@ Payment Breakdown By Type and Method (with Quantities)
 ###
 Financial
 ###
-33900/Any rev02
+33900/Any rev03
 ###
 All payments by method for a given date period, with quantities totals.
 ###
@@ -186,6 +186,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
+<td>$chequenumber</td>
 <td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$quantity</td>
 <td>$amt</td>

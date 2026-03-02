@@ -240,8 +240,7 @@ SCALE_PDF_CMD = get_string("scale_pdf_cmd", "convert -density 120 -quality 60 %(
 #SCALE_PDF_CMD = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%(output)s %(input)s"
 
 # Shell command to convert HTML to PDF
-HTML_TO_PDF = get_string("html_to_pdf", "wkhtmltopdf --orientation %(orientation)s %(papersize)s %(input)s %(output)s")
-#HTML_TO_PDF = "html2pdf %(input)s %(output)s"
+HTML_TO_PDF = get_string("html_to_pdf", "")
 
 # Target for viewing an address on a map, {0} is the address
 MAP_LINK = get_string("map_link", "https://www.openstreetmap.org/search?query={0}")
@@ -410,3 +409,7 @@ WATERMARK_FONT_BASEDIRECTORY = get_string("watermark_font_basedirectory", "/usr/
 # Toggle for enabling AMQP messages from audit log calls
 AMQP_ENABLED = get_boolean("amqp_enabled", False)
 
+# Max video upload size in bytes
+VIDEO_ENABLED = get_boolean("video_enabled", False)
+VIDEO_SIZE_LIMIT = get_integer("video_size_limit", 10485760)
+VIDEO_THUMBNAIL_CMD = get_string("video_thumbnail_cmd", "ffmpeg -v 0 -y -an -i %(input)s -ss 00:00:2.000 -vframes 1 %(output)s")

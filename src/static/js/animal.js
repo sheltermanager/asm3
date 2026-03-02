@@ -352,20 +352,20 @@ $(function() {
             ];
             
             let typemap = {
-                "AIL": [ _("Littermate"), "animal?id=" ],
-                "AFA": [ "", "animal?id=" ],
-                "AFP": [ "", "person?id=" ],
-                "AFW": [ "", "waitinglist?id=" ]
+                "AIL": [ _("Littermate"), "animal?id={linkid}" ],
+                "AFA": [ "", "animal?id={linkid}" ],
+                "AFP": [ "", "person?id={linkid}" ],
+                "AFW": [ "", "waitinglist?id={linkid}" ],
+                "APL": [ "", "animal_find_results?mode=ADVANCED&filter=includedeceased&litterid={linkdisplay}" ]
             };
 
             $.each(controller.links, function(i, v) {
                 h.push('<tr>');
                 h.push('<td>' + v.TYPEDISPLAY + '</td>');
-                if (v.TYPE == "APL") {
-                    h.push('<td>' + v.LINKDISPLAY + '</td>');
-                } else {
-                    h.push('<td><b><a href="' + typemap[v.TYPE][1] + v.LINKID + '">' + v.LINKDISPLAY + '</a></b></td>');
-                }
+                let url = typemap[v.TYPE][1];
+                url = url.replace("{linkid}", v.LINKID);
+                url = url.replace("{linkdisplay}", v.LINKDISPLAY);
+                h.push('<td><b><a href="' + url + '">' + v.LINKDISPLAY + '</a></b></td>');
                 h.push('<td>' + v.FIELD2 + '</td>');
                 h.push('</tr>');
             });
@@ -536,7 +536,7 @@ $(function() {
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
                     { id: "waitinglist", text: _("Waiting List"), icon: "waitinglist", tooltip: _("Add to Waiting List"),
-                        hideif: function() { return controller.animal.ARCHIVED == 0; }
+                        hideif: function() { return controller.animal.ARCHIVED == 0 || config.bool("DisableWaitingList"); }
                     },
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
                 ]),

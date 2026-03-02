@@ -7,7 +7,7 @@ import asm3.dbfs
 import asm3.log
 import asm3.utils
 from asm3.i18n import _
-from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, WATERMARK_FONT_BASEDIRECTORY
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, VIDEO_THUMBNAIL_CMD, WATERMARK_FONT_BASEDIRECTORY
 from asm3.typehints import Database, Dict, PostedData, ResultRow, Results, Tuple
 
 from datetime import datetime
@@ -48,38 +48,6 @@ MEDIATYPE_VIDEO_LINK = 2
 DEFAULT_RESIZE_SPEC = "1024x1024" # If no valid resize spec is configured, the default to use
 MAX_PDF_PAGES = 50 # Do not scale PDFs with more than this many pages
 
-def mime_type(filename: str) -> str:
-    """
-    Returns the mime type for a file with the given name
-    """
-    types = {
-        "jpg"   : "image/jpeg",
-        "jpeg"  : "image/jpeg",
-        "bmp"   : "image/bmp",
-        "gif"   : "image/gif",
-        "png"   : "image/png",
-        "doc"   : "application/msword",
-        "xls"   : "application/vnd.ms-excel",
-        "ppt"   : "application/vnd.ms-powerpoint",
-        "docx"  : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "pptx"  : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "xslx"  : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "odt"   : "application/vnd.oasis.opendocument.text",
-        "sxw"   : "application/vnd.oasis.opendocument.text",
-        "ods"   : "application/vnd.oasis.opendocument.spreadsheet",
-        "odp"   : "application/vnd.oasis.opendocument.presentation",
-        "pdf"   : "application/pdf",
-        "mpg"   : "video/mpg",
-        "mp3"   : "audio/mpeg3",
-        "avi"   : "video/avi",
-        "htm"   : "text/html",
-        "html"  : "text/html"
-    }
-    ext = filename[filename.rfind(".")+1:].lower()
-    if ext in types:
-        return types[ext]
-    return "application/octet-stream"
-
 def get_resize_images_spec(dbo: Database):
     scaleto = asm3.configuration.resize_images_spec(dbo)
     if not scaleto:
@@ -94,6 +62,11 @@ def get_web_preferred(dbo: Database, linktype: int, linkid: int) -> ResultRow:
     """ Returns the media record for the web preferred (or None if there isn't one) """
     return dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
         "LinkID = ? AND WebsitePhoto = 1", (linktype, linkid)))
+
+def get_web_preferred_video(dbo: Database, linktype: int, linkid: int) -> ResultRow:
+    """ Returns the media record for the web preferred (or None if there isn't one) """
+    return dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
+        "LinkID = ? AND WebsiteVideo = 1", (linktype, linkid)))
 
 def get_media_by_seq(dbo: Database, linktype: int, linkid: int, seq: int) -> ResultRow:
     """ Returns image media by a one-based sequence number. 
@@ -152,7 +125,12 @@ def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> No
     if exclude == 1:
         d["WebsitePhoto"] = 0
         d["DocPhoto"] = 0
+    elif link.LinkTypeID == ANIMAL:
+        if 0 == dbo.query_int("SELECT COUNT(ID) FROM media WHERE WebsitePhoto = 1 AND LinkTypeID = ? AND LinkID = ?", [ANIMAL, link.LINKID]):
+            d["WebsitePhoto"] = 1
     dbo.update("media", mid, d, username)
+    if link.LINKTYPEID == ANIMAL:
+        asm3.animal.update_animal_status(dbo, link.LINKID, username=username)
 
 def get_name_for_id(dbo: Database, mid: int) -> str:
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
@@ -292,6 +270,100 @@ def get_image_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
     else:
         return nopic()
 
+def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, justdate: bool = False) -> Tuple[datetime, bytes]:
+    """
+    Gets a video
+    mode: animal | media | animalthumb | person | personthumb | dbfs
+    iid: (str) The id of the animal for animal/thumb mode or the media record
+        or a template path for dbfs mode
+    seq: (int) If the mode is animal or person, returns video X for that person/animal
+         The first video is always the preferred video and seq is 1-based.
+    if justdate is True, returns the last modified date
+    if justdate is False, returns a tuple containing the last modified date and video data
+    """
+    def novid():
+        NOVID_DATE = datetime(2011, 1, 1)
+        if justdate: return NOVID_DATE
+        return (NOVID_DATE, b"NOVID")
+    def thumb_novid():
+        NOPIC_DATE = datetime(2011, 1, 1)
+        if justdate: return NOPIC_DATE
+        return (NOPIC_DATE, b"NOVID")
+    def mrec(mm):
+        if mm is None: return novid()
+        if justdate: return mm.DATE
+        return (mm.DATE, asm3.dbfs.get_string_id(dbo, mm.DBFSID))
+    def thumb_mrec(mm):
+        if mm is None: return thumb_novid()
+        if justdate: return mm.DATE
+        return (mm.DATE, get_video_thumbnail(dbo, mm.DBFSID))
+
+    sid = str(iid)
+    iid = asm3.utils.cint(iid)
+
+    if mode == "animal":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, ANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, ANIMAL, iid, seq) )
+    elif mode == "person":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, PERSON, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, PERSON, iid, seq) )
+    if mode == "waitinglist":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, WAITINGLIST, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, WAITINGLIST, iid, seq) )
+    if mode == "lostanimal":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, LOSTANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, LOSTANIMAL, iid, seq) )
+    if mode == "foundanimal":
+        if seq == 0:
+            return mrec( get_web_preferred_video(dbo, FOUNDANIMAL, iid) )
+        else:
+            return mrec( get_media_by_seq(dbo, FOUNDANIMAL, iid, seq) )
+    elif mode == "animalthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, ANIMAL, iid) )
+
+    elif mode == "personthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, PERSON, iid) )
+    
+    elif mode == "waitinglistthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, WAITINGLIST, iid) )
+    
+    elif mode == "lostanimalthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, LOSTANIMAL, iid) )
+    
+    elif mode == "foundanimalthumb":
+        return thumb_mrec( get_web_preferred_video(dbo, FOUNDANIMAL, iid) )
+
+    elif mode == "media":
+        return mrec( get_media_by_id(dbo, iid) )
+
+    elif mode == "dbfs":
+        if justdate:
+            return dbo.now()
+        else:
+            if sid.startswith("/"):
+                # Complete path was given
+                return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, sid))
+            else:
+                # Only name was given
+                return (dbo.now(), asm3.dbfs.get_string(dbo, sid))
+
+    elif mode == "novid":
+        if asm3.dbfs.file_exists(dbo, "novid.jpg"):
+            return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, "/reports/novid.jpg"))
+        else:
+            return (dbo.now(), asm3.utils.read_binary_file(dbo.installpath + "media/reports/novid.jpg"))
+
+    else:
+        return novid()
+
 def get_dbfs_path(linkid: int, linktype: int) -> str:
     path = "/animal/%d" % int(linkid)
     if linktype == PERSON:
@@ -372,6 +444,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
         elif filename.lower().endswith(".png"): ext = ".png"
         elif filetype.find("pdf") != -1 or filename.lower().endswith(".pdf"): ext = ".pdf"
         elif filetype.find("html") != -1 or filename.lower().endswith(".html"): ext = ".html"
+        elif filetype.find("mp4") != -1 or filename.lower().endswith(".mp4"): ext = ".mp4"
         # Strip the data:mime prefix so we just have base64 data
         if filedata.startswith("data:"):
             filedata = filedata[filedata.find(",")+1:]
@@ -462,7 +535,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
         "MediaFlags":           flags,
         "MediaSize":            len(filedata),
         "MediaName":            medianame,
-        "MediaMimeType":        mime_type(medianame),
+        "MediaMimeType":        asm3.utils.mime_type(medianame),
         "MediaType":            0,
         "MediaNotes":           comments,
         "WebsitePhoto":         0,
@@ -482,7 +555,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
 
     # Verify this record has a web/doc default if we aren't excluding it from publishing
     if ispicture and excludefrompublish == 0:
-        check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
+        check_default_web_doc_pic(dbo, mediaid, linkid, linktype, username=username)
 
     return mediaid
 
@@ -533,7 +606,7 @@ def calc_retainuntil_from_retainfor(dbo: Database, retainfor: int) -> datetime:
         retainuntil = dbo.today( retainfor * 365 )
     return retainuntil
 
-def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype: int) -> None:
+def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype: int, username: str = "system") -> None:
     """
     Checks if linkid/type has a default pic for the web or documents. If not,
     sets mediaid to be the default.
@@ -544,6 +617,8 @@ def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype
         "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
     if existing_web == 0:
         dbo.update("media", mediaid, { "WebsitePhoto": 1 })
+        if linktype == ANIMAL:
+            asm3.animal.update_animal_status(dbo, linkid, username=username)
     if existing_doc == 0:
         dbo.update("media", mediaid, { "DocPhoto": 1 })
 
@@ -673,7 +748,7 @@ def create_document_media(dbo: Database, username: str, linktype: int, linkid: i
         "DBFSID":               dbfsid,
         "MediaSize":            len(content),
         "MediaSource":          MEDIASOURCE_DOCUMENT,
-        "MediaFlags":           mediaflags.replace(",", "|") + "|",
+        "MediaFlags":           asm3.utils.nulltostr(mediaflags).replace(",", "|") + "|",
         "MediaName":            "%d.html" % mediaid,
         "MediaMimeType":        "text/html",
         "MediaType":            0,
@@ -745,6 +820,29 @@ def get_signature_link(dbo: Database, mid: int, post: PostedData) -> str:
     token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
     url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.name(), asm3.utils.strip_email_address(post["to"]).replace("@", "%40"), mid, token)
     return url
+
+def get_video_thumbnail(dbo: Database, dbfsid: int) -> bytes:
+    cache_ttl = 86400 * 7
+    cache_key = f"vid_thumbnail_{dbfsid}"
+    idata = asm3.cachedisk.touch(cache_key, dbo.name(), cache_ttl)
+    if idata is not None: return idata
+
+    inputfile = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+    vdata = asm3.dbfs.get_string_id(dbo, dbfsid)
+    inputfile.write(vdata)
+    inputfile.close()
+    outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+    response = asm3.utils.cmd(VIDEO_THUMBNAIL_CMD % { "output": outputfile.name, "input": inputfile.name}, False)
+    if response[0] != 0:
+        raise asm3.utils.ASMError("Failed creating video thumbnail")
+    idata = outputfile.read()
+    os.unlink(inputfile.name)
+    os.unlink(outputfile.name)
+
+    asm3.cachedisk.put(cache_key, dbo.name(), idata, cache_ttl)
+
+    return idata
+
 
 def send_signature_request(dbo: Database, username: str, mid: int, post: PostedData) -> None:
     """
@@ -933,7 +1031,11 @@ def delete_media(dbo: Database, username: str, mid: int) -> None:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
-        if ml: set_web_preferred(dbo, username, ml.ID)
+        if ml:
+            set_web_preferred(dbo, username, ml.ID)
+        elif mr.LINKTYPEID == ANIMAL:
+            asm3.animal.update_animal_status(dbo, mr.LINKID, username=username)
+
     if mr.DOCPHOTO == 1:
         ml = dbo.first_row(dbo.query("SELECT ID FROM media WHERE LinkID = ? AND LinkTypeID = ? " \
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \

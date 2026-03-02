@@ -41,7 +41,7 @@ const tableform = {
                     b += " " + v.text;
                 }
                 if (v.hotkey) { 
-                    b += ' <span class="asm-hotkey">' + v.hotkey.toUpperCase() + '</span>';
+                    b += ' <span class="asm-hotkey">' + tableform.hotkey_display(v.hotkey) + '</span>';
                 }
                 b += "</button>";
             }
@@ -108,7 +108,7 @@ const tableform = {
             if (!v.type || v.type == "button") {
                 $("#button-" + v.id).button();
                 if (v.click) { $("#button-" + v.id).click(v.click); }
-                if (v.hotkey) { Mousetrap.bind(v.hotkey.toLowerCase(), function() { v.click(); return false; }); }
+                if (v.hotkey) { Mousetrap.bind(v.hotkey, function() { v.click(); return false; }); }
                 if (v.mouseover) { $("#button-" + v.id).mouseover(v.mouseover); }
                 if (v.mouseleave) { $("#button-" + v.id).mouseleave(v.mouseleave); }
                 if (v.enabled == "one" || v.enabled == "multi") { $("#button-" + v.id).button("disable"); }
@@ -162,7 +162,7 @@ const tableform = {
     buttons_destroy: function(buttons) {
         $.each(buttons, function(i, v) {
             if (v.hotkey) {
-                Mousetrap.unbind(v.hotkey.toLowerCase());
+                Mousetrap.unbind(v.hotkey);
             }
         });
     },
@@ -216,6 +216,15 @@ const tableform = {
     /** Formats a value as a time, returning blank for midnight */
     format_time_blank: function(row, v) {
         return format.time(v, null, true);
+    },
+
+    /** Formats a hotkey value for display. 
+     *  Translates Mousetrap generic 'mod' into the right value for the platform */
+    hotkey_display: function(s) {
+        s = s.toLowerCase();
+        if (common.platform_name() == "macos") { s = s.replace("mod", "cmd").replace("meta", "cmd").replace("alt", "opt"); }
+        else { s = s.replace("mod", "ctrl"); }
+        return s.toUpperCase();
     },
 
     /**
@@ -1800,6 +1809,7 @@ const tableform = {
         d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
         if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.addifmissing) { d += "data-addifmissing=\"true\" "; }
         if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.readonly) { d += "data-noedit=\"true\" "; }
@@ -1910,6 +1920,7 @@ const tableform = {
             if (v.full_width === undefined) { v.full_width = false; }
             if (v.centered === undefined) { v.centered = true; }
             if (v.markup) { h.push(v.markup); }
+            if (v.info) { h.push(html.info(v.info)); }
             if (v.fields && v.fields.length > 0) {
                 h.push( tableform.fields_render(v.fields, { full_width: v.full_width, centered: v.centered } ));
             }
@@ -2015,17 +2026,19 @@ const tableform = {
             // No default value given, use a blank
             if (!v.defaultval) {
                 if (v.type == "check") { $("#" + v.post_field).prop("checked", false); return; }
-                if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
-                if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
-                if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
-                if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
-                if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
-                if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
-                if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
-                if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
-                if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
-                if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
-                if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
+                else if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
+                else if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
+                else if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
+                else if (v.type == "datetime") { $("#" + v.post_field + "date, #" + v.post_field + "time").val(""); return; }
+                else if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
+                else if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
+                else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
+                else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
+                else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
+                else if (v.type == "select") {  $("#" + v.post_field).select("firstvalue"); return; }
+                else if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
+                else if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
+                else if ([ "phone", "number", "intnumber", "date", "time", "text" ].includes(v.type)) { $("#" + v.post_field).val(""); return; }
             }
             else {
                 // Is the default value a function? If so, run it 
@@ -2047,8 +2060,9 @@ const tableform = {
                 else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
                 else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
                 else if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
+                else if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
                 else if (v.type == "selectcolour") { $("#" + v.post_field).selectcolour("value", dval); return; }
-                else { $("#" + v.post_field).val(dval); }
+                else { $("#" + v.post_field).val(dval); return; }
             }
         });
     },

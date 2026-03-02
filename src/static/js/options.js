@@ -676,6 +676,9 @@ $(function() {
                         { id: "includeincompletemedical", post_field: "IncludeIncompleteMedicalDoc", label: _("Include incomplete medical records when generating document templates"), type: "check", fullrow: true }, 
                         { id: "notifycoordicatorondocsign", post_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check", fullrow: true }, 
                         { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", fullrow: true, xmarkup: ' <select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "pdfconverter", post_field: "PDFConverter", label: _("PDF conversion tool"), prelabel: "hcb", type: "select", 
+                            options: '<option value="internal">' + _("Internal") + '</option>' +
+                                (controller.htmltopdfcmd != "" ? '<option value="cmd">' + controller.htmltopdfcmd + '</option>' : "") },
                         { id: "pdfzoom", post_field: "PDFZoom", label: _("Default zoom level when converting documents to PDF"), prelabel: "hcb", type: "number", xmarkup: "%" }
                     ]}, 
                     { id: "tab-email", title: _("Email"), fields: [
@@ -815,6 +818,7 @@ $(function() {
                         { id: "animalcommentschangelog", post_field: "AnimalCommentsChangeLog", label: _("When I change the description or hidden comments on an animal, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AnimalCommentsChangeLogType" id="animalcommentschangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                         { id: "addresschangelog", post_field: "AddressChangeLog", label: _("When I change the address of a person, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AddressChangeLogType" id="addresschangelogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                         { id: "logemailbydefault", post_field: "LogEmailByDefault", label: _("When I send an email, record it in the log with this type"), type: "check", xmarkup: ' <select data="EmailLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
+                        { id: "animaladoptablechangelog", post_field: "AnimalAdoptableChangeLog", label: _("When an animal's adoptable status changes, make a note of it in the log with this type"), type: "check", xmarkup: ' <select data="AnimalAdoptableLogType" id="emaillogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                     ]}, 
                     { id: "tab-lostandfound", title: _("Lost and Found"), fields: [
                         { id: "disablelostfound", post_field: "rc:DisableLostAndFound", label: _("Enable lost and found functionality"), type: "check", fullrow: true }, 
@@ -898,6 +902,11 @@ $(function() {
                         { id: "spamurls", post_field: "OnlineFormSpamURLs", label: _("Spambot protection: URLs in any field"), type: "check", fullrow: true }, 
                         { id: "spampostcode", post_field: "OnlineFormSpamPostcode", label: _("Spambot protection: Zipcode contains numbers"), type: "check", fullrow: true }
                     ]}, 
+                    /*{ id: "tab-pos", title: _("Point of Sale"), classes: "postab", fields: [
+                        { id: "posbarcodes", post_field: "POSBarcodeScanner", label: _("Use barcode scanner"), type: "check" },
+                        { id: "posstocklocation", post_field: "POSStockLocation", label: _("POS Stock Location"), type: "select", options: html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME") },
+                        { id: "possaleusagetype", post_field: "POSSaleUsageType", label: _("POS Sale Usage"), type: "select", options: html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME") },
+                    ]},*/
                     { id: "tab-processors", title: _("Payment Processors"), info: _("ASM can talk to payment processors and request payment from your customers and donors."), fields: [
                         { id: "currencycode", post_field: "CurrencyCode", label: _("Request payments in"), doublesize: true, type: "select", options: html.list_to_options(controller.currencies, "CODE", "DISPLAY") }, 
                         { id: "paymentreturn", post_field: "PaymentReturnUrl", label: _("Redirect to this URL after successful payment"), doublesize: true, type: "text", colclasses: "bottomborder" }, 
@@ -946,6 +955,7 @@ $(function() {
                         { id: "disableboarding", post_field: "DisableBoarding", label: _("Remove boarding functionality from screens and menus"), type: "check" }, 
                         { id: "disableclinic", post_field: "DisableClinic", label: _("Remove clinic functionality from screens and menus"), type: "check" }, 
                         { id: "disablemovements", post_field: "DisableMovements", label: _("Remove move menu and the movements tab from animal and person screens"), type: "check" }, 
+                        //{ id: "disablepos", post_field: "DisablePOS", label: _("Remove POS functionality from menus"), type: "check" }, 
                         { id: "disableretailer", post_field: "DisableRetailer", label: _("Remove retailer functionality from the movement screens and menus"), type: "check" }, 
                         { id: "disabledocumentrepo", post_field: "DisableDocumentRepo", label: _("Remove the document repository functionality from menus"), type: "check" }, 
                         { id: "disableonlineforms", post_field: "DisableOnlineForms", label: _("Remove the online form functionality from menus"), type: "check" }, 
@@ -967,7 +977,7 @@ $(function() {
                         { id: "lookingforno", post_field: "HideLookingFor", label: _("Remove the looking for functionality from the person menus and screens"), type: "check" }, 
                         { type: "nextcol" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("Animals") + '</p>' }, 
-                        { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", classes: "us" }, 
+                        { id: "disableasilomar", post_field: "DisableAsilomar", label: _("Remove the asilomar fields from the entry/deceased sections"), type: "check", rowclasses: "us" }, 
                         { id: "disableconditions", post_field: "DisableConditions", label: _("Remove the animal conditions tab"), type: "check" }, 
                         { id: "disableentryhistory", post_field: "DisableEntryHistory", label: _("Remove the entry history section from animal records"), type: "check" }, 
                         { id: "entrytype", post_field: "DontShowEntryType", label: _("Remove the entry type field from animal entry details"), type: "check" }, 
@@ -1199,7 +1209,6 @@ $(function() {
         },
 
         sync: function() {
-            
         },
 
         delay: function() {

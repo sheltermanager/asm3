@@ -608,6 +608,12 @@ def get_person_boarding(dbo: Database, oid: int) -> Results:
         "WHERE ab.OwnerID = ? " \
         "ORDER BY InDateTime", [oid])
 
+def get_citations_by_ids(dbo: Database, cids: List[int]) -> Results:
+    """
+    Returns multiple citations with a list of ids
+    """
+    return dbo.query(get_citation_query(dbo) + "WHERE oc.ID IN (%s) ORDER BY oc.CitationDate" % ",".join(str(x) for x in cids))
+
 def get_incident_citations(dbo: Database, iid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the citation records for an incident, along with
@@ -633,9 +639,10 @@ def get_person_citations(dbo: Database, oid: int, sort: int = ASCENDING) -> Resu
     order = "oc.CitationDate DESC"
     if sort == ASCENDING:
         order = "oc.CitationDate"
-    return dbo.query(get_citation_query(dbo) + \
+    rows = dbo.query(get_citation_query(dbo) + \
         "WHERE oc.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
+    return asm3.additional.append_to_results(dbo, rows, "citation")
 
 def get_unpaid_fines(dbo: Database) -> Results:
     """
@@ -643,9 +650,10 @@ def get_unpaid_fines(dbo: Database) -> Results:
     ID, CITATIONTYPEID, CITATIONNAME, CITATIONDATE, FINEDUEDATE, FINEPAIDDATE,
     FINEAMOUNT, OWNERNAME, INCIDENTNAME
     """
-    return dbo.query(get_citation_query(dbo) + \
+    rows = dbo.query(get_citation_query(dbo) + \
         "WHERE oc.FineDueDate Is Not Null AND oc.FineDueDate <= ? AND oc.FinePaidDate Is Null " \
         "ORDER BY oc.CitationDate DESC", [dbo.today()])
+    return asm3.additional.append_to_results(dbo, rows, "citation")
 
 def get_animal_licences(dbo: Database, aid: int, sort: int = ASCENDING) -> Results:
     """
@@ -748,6 +756,9 @@ def get_voucher_find_simple(dbo: Database, vocode: str, dummy: int = 0) -> Resul
 def get_citation_find_simple(dbo: Database, cinumber: str, dummy: int = 0) -> Results:
     return dbo.query(get_citation_query(dbo) + \
         "WHERE UPPER(oc.CitationNumber) LIKE UPPER(?)", [cinumber])
+
+def get_donation_find_simple(dbo: Database, searchkey: str, dummy: int = 0) -> Results:
+    return dbo.query(get_donation_query(dbo) + "WHERE UPPER(od.ReceiptNumber) LIKE UPPER(?) OR UPPER(od.ChequeNumber) LIKE UPPER(?)", [searchkey, searchkey])
 
 def get_vouchers(dbo: Database, offset: str = "i31") -> Results:
     """

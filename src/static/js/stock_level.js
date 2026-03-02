@@ -313,8 +313,8 @@ $(function() {
                         unittype = "l";
                     } else if (activeproduct.PURCHASEUNITTYPEID == 4) {
                         unittype = "ml";
-                    } else if (activeproducttype.PURCHASEUNITTYPE == 5) {
-                        unittype = activeproducttype.CUSTOMPURCHASEUNIT;
+                    } else if (activeproduct.PURCHASEUNITTYPE == 5) {
+                        unittype = activeproduct.CUSTOMPURCHASEUNIT;
                     }
                 } else if (activeproduct.UNITTYPEID == 1) {
                     unittype = "kg";
@@ -341,7 +341,6 @@ $(function() {
                     $("#stocklevelimage").closest("a").prop("href", "image?db=asmtestdbdb&amp;mode=nopic");
                     $("#stocklevelimage").closest("a").hide();
                 }
-                
                 $("#namerow").fadeIn();
             });
 

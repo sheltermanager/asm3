@@ -1,19 +1,17 @@
-
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
+"Report-Msgid-Bugs-To: help@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2019-01-31 10:04+0000\n"
-"Last-Translator: Anonymous Pootle User\n"
+"PO-Revision-Date: 2026-01-19 18:31+0100\n"
+"Last-Translator: Sven Thoenissen\n"
 "Language-Team: Benedictus\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
-
+"X-Generator: Poedit 3.8\n"
 
 #: options.js
 msgid " days."
@@ -31,14 +29,12 @@ msgid "(any)"
 msgstr "(elke)"
 
 #: person_find.js animal_find.js
-#, fuzzy
-#| msgid "(none)"
 msgid "(anyone)"
-msgstr "(geen)"
+msgstr "(iedereen)"
 
 #: animal.js animal_new.js
 msgid "(available)"
-msgstr ""
+msgstr "(beschikbaar)"
 
 #: person_find_results.js csvimport.py
 msgid "(blank)"
@@ -188,7 +184,7 @@ msgstr "ASM"
 
 #: main.js
 msgid "ASM 3 is compatible with your iPad and other tablets."
-msgstr "ASM 3 is compatibel met uw iPad en andere tablets"
+msgstr "ASM 3 is compatibel met uw iPad en andere tablets."
 
 #: main.js
 msgid "ASM News"
@@ -2247,10 +2243,8 @@ msgid "Change Citations"
 msgstr ""
 
 #: roles.js
-#, fuzzy
-#| msgid "Change Animal Movements"
 msgid "Change Clinic Apointment"
-msgstr "Wijzig mutaties"
+msgstr "Wijzig afspraken"
 
 #: roles.js
 msgid "Change Cost"
@@ -2337,9 +2331,8 @@ msgid "Change System Options"
 msgstr "Wijzig systeemopties"
 
 #: roles.js
-#, fuzzy
 msgid "Change Tests"
-msgstr "Wijzig kosten"
+msgstr "Wijzig tests"
 
 #: roles.js
 msgid "Change Transactions"
@@ -2542,9 +2535,8 @@ msgid "Clinic Invoice - {0}"
 msgstr ""
 
 #: lookups.py
-#, fuzzy
 msgid "Clinic Statuses"
-msgstr "Reserveringsdatum"
+msgstr "Kliniek statussen"
 
 #: staff_rota.js animal.js roles.js htmltemplates.js reports.js
 #: document_templates.js onlineforms.js stocklevel.js transport.js
@@ -2730,9 +2722,8 @@ msgid "Confirmation message"
 msgstr ""
 
 #: transport.js
-#, fuzzy
 msgid "Confirmed"
-msgstr "Bevestig"
+msgstr "Bevestigd"
 
 #: html.py
 msgid "Consulting Room"
@@ -2837,10 +2828,8 @@ msgid "Could not find animal with name '{0}'"
 msgstr ""
 
 #: options.js
-#, fuzzy
-#| msgid "Country:"
 msgid "Country"
-msgstr "Land:"
+msgstr "Land"
 
 #: header_edit_header.js common.js html.py
 msgid "Courtesy Listing"
@@ -2869,25 +2858,20 @@ msgid "Create Log"
 msgstr "Maak logboek aan"
 
 #: clinic_appointment.js
-#, fuzzy
-#| msgid "Treatment"
 msgid "Create Payment"
-msgstr "Behandeling"
+msgstr "Nieuwe betaling"
 
 #: lostfound.js
-#, fuzzy
 msgid "Create Waiting List"
-msgstr "Wijzig wachtlijst"
+msgstr "Nieuw wachtlijst"
 
 #: move_reclaim.js move_adopt.js
 msgid "Create a cost record"
 msgstr "Maak een nieuw kostendossier aan"
 
 #: clinic_appointment.js
-#, fuzzy
-#| msgid "Create a document for this movement"
 msgid "Create a due or received payment record from this appointment"
-msgstr "Maak een document aan voor deze mutatie"
+msgstr "Maak een document aan voor deze afspraak"
 
 #: animal.js
 msgid "Create a new animal by copying this one"
@@ -3074,10 +3058,8 @@ msgid "Data"
 msgstr "Data"
 
 #: options.js
-#, fuzzy
-#| msgid "Default Location"
 msgid "Data Protection"
-msgstr "Standaardlocatie"
+msgstr "Data beveiliging"
 
 #: login.js mobile.py
 msgid "Database"
@@ -3092,10 +3074,8 @@ msgid "Date"
 msgstr "Datum"
 
 #: financial.py
-#, fuzzy
-#| msgid "Account code '{0}' is not valid."
 msgid "Date '{0}' is not valid."
-msgstr "Rekeningcode '{0}' is niet geldig."
+msgstr "Datum '{0}' is niet geldig."
 
 #: animal.js animal_new.js mobile.py html.py
 msgid "Date Brought In"
@@ -3134,10 +3114,8 @@ msgid "Date brought in cannot be blank"
 msgstr "Datum binnengebracht mag niet leeg zijn"
 
 #: animal.py
-#, fuzzy
-#| msgid "Date brought in cannot be blank"
 msgid "Date brought in cannot be in the future."
-msgstr "Datum binnengebracht mag niet leeg zijn"
+msgstr "Ingevoerd datum mag niet in de toekomst zijn."
 
 #: animal.py
 msgid "Date brought in is not valid"
@@ -3273,10 +3251,8 @@ msgid "Declawed"
 msgstr "Ontnageld"
 
 #: header_edit_header.js
-#, fuzzy
-#| msgid "Declawed"
 msgid "Declined"
-msgstr "Ontnageld"
+msgstr "Afgewezen"
 
 #: options.js
 msgid "Default Breed"
@@ -3303,18 +3279,16 @@ msgid "Default Death Reason"
 msgstr "Standaarddoodsoorzaak"
 
 #: options.js
-#, fuzzy
 msgid "Default Diary Person"
-msgstr "Standaarddoodsoorzaak"
+msgstr "Standaard dagboek persoon"
 
 #: options.js
 msgid "Default Entry Reason"
 msgstr "Standaardreden van binnenkomst"
 
 #: options.js
-#, fuzzy
 msgid "Default Incident Type"
-msgstr "Standaardvachttype"
+msgstr "Standaard voorval type"
 
 #: options.js
 msgid "Default Location"
@@ -3325,19 +3299,16 @@ msgid "Default Log Filter"
 msgstr "Standaardlogboekfilter"
 
 #: options.js
-#, fuzzy
 msgid "Default Log Type"
-msgstr "Standaardvachttype"
+msgstr "Standaard log type"
 
 #: options.js
-#, fuzzy
 msgid "Default Payment Method"
-msgstr "Standaardvachttype"
+msgstr "Standaard betaalmiddel"
 
 #: options.js
-#, fuzzy
 msgid "Default Payment Type"
-msgstr "Standaardvachttype"
+msgstr "Standaard betaal type"
 
 #: options.js
 msgid "Default Reservation Status"
@@ -3455,10 +3426,8 @@ msgid "Delete Citations"
 msgstr ""
 
 #: roles.js
-#, fuzzy
-#| msgid "Delete Animal Movements"
 msgid "Delete Clinic Appointment"
-msgstr "Verwijder mutaties"
+msgstr "Verwijder kliniek afspraak"
 
 #: roles.js
 msgid "Delete Cost"
@@ -3545,9 +3514,8 @@ msgid "Delete Stock"
 msgstr ""
 
 #: roles.js
-#, fuzzy
 msgid "Delete Tests"
-msgstr "Verwijder kosten"
+msgstr "Verwijder tests"
 
 #: roles.js
 msgid "Delete Transport"
@@ -3787,15 +3755,12 @@ msgid "Distemper"
 msgstr ""
 
 #: common.js
-#, fuzzy
-#| msgid "Publish"
 msgid "Do Not Publish"
-msgstr "Publiceer"
+msgstr "Niet publiceeren"
 
 #: animal_bulk.js common.js
-#, fuzzy
 msgid "Do Not Register Microchip"
-msgstr "Heeft chip"
+msgstr "Chip niet registreren"
 
 #: options.js
 msgid "Do not show"
@@ -3811,9 +3776,8 @@ msgid "Document"
 msgstr "Document"
 
 #: media.js dbupdate.py
-#, fuzzy
 msgid "Document Link"
-msgstr "Documentbestand"
+msgstr "Document Link"
 
 #: document_repository.js roles.js html.py
 msgid "Document Repository"
@@ -3828,9 +3792,8 @@ msgid "Document file"
 msgstr "Documentbestand"
 
 #: service.py
-#, fuzzy
 msgid "Document signed"
-msgstr "Documentbestand"
+msgstr "Document getekend"
 
 #: code.py
 msgid "Document signing request"
@@ -3841,9 +3804,8 @@ msgid "Document templates"
 msgstr "Documentsjablonen"
 
 #: options.js
-#, fuzzy
 msgid "Documents"
-msgstr "Document"
+msgstr "Documenten"
 
 #: dbupdate.py
 msgid "Dog"
@@ -3898,9 +3860,8 @@ msgid "Donations for animals entering the shelter"
 msgstr "Donaties voor dieren die het asiel binnenkomen"
 
 #: common.js
-#, fuzzy
 msgid "Done"
-msgstr "Duif"
+msgstr "Greed"
 
 #: dbupdate.py
 msgid "Donkey"
@@ -4205,9 +4166,8 @@ msgid "Edit template"
 msgstr "Sjabloon bewerken"
 
 #: test.js
-#, fuzzy
 msgid "Edit test"
-msgstr "Bewerk kosten"
+msgstr "Test bijwerken"
 
 #: header.js html.py configuration.py
 msgid "Edit the current waiting list"
@@ -4548,7 +4508,7 @@ msgstr "Dieren weglaten die jonger zijn dan"
 
 #: header_edit_header.js common.js mobile.py
 msgid "Exclude from bulk email"
-msgstr ""
+msgstr "Van massa-email uitsluiten"
 
 #: options.js
 #, fuzzy
@@ -5103,7 +5063,8 @@ msgstr "Pleegverzorgingsboek"
 
 #: movement.py
 msgid "Foster movements must have a valid foster date."
-msgstr "Pleegverzorgermutaties moeten een geldige pleegverzorgingsdatum hebben"
+msgstr ""
+"Pleegverzorgermutaties moeten een geldige pleegverzorgingsdatum hebben."
 
 #: move_foster.js
 msgid "Foster successfully created."
@@ -6434,16 +6395,12 @@ msgstr "Juni"
 #: person_find_results.js incident_new.js person.js person_find.js
 #: person_new.js incident.js incident_find.js common_personchooser.js
 #: incident_find_results.js html.py lookups.py
-#, fuzzy
-#| msgid "Duration"
 msgid "Jurisdiction"
-msgstr "Duur"
+msgstr "Bevoegdheid"
 
 #: lookups.py
-#, fuzzy
-#| msgid "Transactions"
 msgid "Jurisdictions"
-msgstr "Transacties"
+msgstr "Bevoegdheiden"
 
 #: dbupdate.py
 msgid "Kai Dog"
@@ -6745,10 +6702,8 @@ msgid "Loan"
 msgstr "Lening"
 
 #: dbupdate.py
-#, fuzzy
-#| msgid "Locale"
 msgid "Local"
-msgstr "Land/taal-instellingen"
+msgstr "Lokaal"
 
 #: options.js reports.js change_user_settings.js
 msgid "Locale"
@@ -6803,7 +6758,7 @@ msgstr "Logboekdatum moet een geldige datum zijn"
 
 #: log.js
 msgid "Log entries need a date and text."
-msgstr "Logboekinvoeren moeten een datum en tekst hebben"
+msgstr "Logboekinvoeren moeten een datum en tekst hebben."
 
 #: log_new.js
 msgid "Log requires a date."
@@ -7825,11 +7780,11 @@ msgstr ""
 
 #: publish.js
 msgid "No publishers are running."
-msgstr "Er zijn geen publicaties bezig"
+msgstr "Er zijn geen publicaties bezig."
 
 #: timeline.js search.js
 msgid "No results found."
-msgstr "Geen resultaten gevonden"
+msgstr "Geen resultaten gevonden."
 
 #: sql.js
 msgid "No results."
@@ -7919,9 +7874,8 @@ msgid "Not For Adoption"
 msgstr "Niet beschikbaar voor adoptie"
 
 #: options.js common.js
-#, fuzzy
 msgid "Not Microchipped"
-msgstr "Heeft chip"
+msgstr "Geen chip"
 
 #: accounts_trx.js
 msgid "Not Reconciled"
@@ -8060,7 +8014,7 @@ msgstr "In asiel voor {0} dagen. Totaalbedrag kosten: {1}"
 
 #: options.js
 msgid "Once assigned, codes cannot be changed"
-msgstr "Eenmaal toegewezen kunnen codes niet meer gewijzigd worden."
+msgstr "Eenmaal toegewezen kunnen codes niet meer gewijzigd worden"
 
 #: mobile.py service.py
 msgid "Once signed, this document cannot be edited or tampered with."
@@ -10091,7 +10045,7 @@ msgstr "Stel publicatieopties in"
 
 #: waitinglist.js
 msgid "Set this to 0 to never automatically remove."
-msgstr "Stel dit in op 0 om nooit automatisch te verwijderen"
+msgstr "Stel dit in op 0 om nooit automatisch te verwijderen."
 
 #: options.js
 msgid "Set to 0 to never update urgencies."
@@ -10136,7 +10090,7 @@ msgstr "Instellingen, Systeemgebruikersaccounts"
 #: animal.js incident.js lostfound.js animal_find.js incident_find.js
 #: animal_new.js shelterview.js mobile.py html.py person.py lookups.py
 msgid "Sex"
-msgstr "Geslacht:"
+msgstr "Geslacht"
 
 #: options.js shelterview.js
 #, fuzzy
@@ -10400,9 +10354,8 @@ msgid "Show the transfer in field"
 msgstr "Toon het veld ´Nest-ID´"
 
 #: options.js
-#, fuzzy
 msgid "Show the weight field"
-msgstr "Toon het veld ´Grootte´"
+msgstr "Toon het veld ´Gewicht´"
 
 #: options.js
 #, fuzzy
@@ -11006,10 +10959,8 @@ msgid "Tan and White"
 msgstr "Lichtbruin en Wit"
 
 #: task.js
-#, fuzzy
-#| msgid "Scan complete"
 msgid "Task complete."
-msgstr "Scan voltooid"
+msgstr "Scan voltooid."
 
 #: diarytask.js
 msgid "Task items are executed in order of index, lowest to highest"
@@ -11075,14 +11026,12 @@ msgid "Terrier"
 msgstr "Terrier"
 
 #: header_edit_header.js calendarview.js mobile.py
-#, fuzzy
 msgid "Test"
-msgstr "Tekst"
+msgstr "Test"
 
 #: mobile.py
-#, fuzzy
 msgid "Test Animal"
-msgstr "Vermist dier"
+msgstr "Test dier"
 
 #: test.js
 msgid "Test Book"
@@ -11097,9 +11046,8 @@ msgid "Test Results"
 msgstr ""
 
 #: lookups.py
-#, fuzzy
 msgid "Test Types"
-msgstr "Kosttypes"
+msgstr "Test types"
 
 #: html.py
 msgid "Test book"
@@ -11110,14 +11058,12 @@ msgid "Test marked as performed for {0} - {1}"
 msgstr ""
 
 #: roles.js html.py
-#, fuzzy
 msgid "Tests"
-msgstr "Tekst"
+msgstr "Tests"
 
 #: test.js
-#, fuzzy
 msgid "Tests need an animal and at least a required date."
-msgstr "Vaccinatie moeten een dier en minstens een datum hebben."
+msgstr "Tests moeten een dier en minstens een datum hebben."
 
 #: onlineform.js common_tableform.js dbupdate.py
 msgid "Text"
@@ -11169,11 +11115,9 @@ msgid "The animal name"
 msgstr "Naam van dier"
 
 #: animal.py
-#, fuzzy
-#| msgid "The person record to merge must be different from the original."
 msgid "The animal record to merge must be different from the original."
 msgstr ""
-"Het persoonsdossier om samen te voegen moet verschillen van het "
+"Het dierendossier om samen te voegen moet verschillen van het "
 "oorspronkelijke dossier."
 
 #: animal.js
@@ -11209,18 +11153,16 @@ msgid "The date the animal died"
 msgstr "De overlijdingsdatum"
 
 #: animal.js
-#, fuzzy
 msgid "The date the animal was FIV/L tested"
-msgstr "De datum waarop het dier is geadopteerd"
+msgstr "De datum waarop het dier op FIV/L is getest"
 
 #: move_adopt.js
 msgid "The date the animal was adopted"
 msgstr "De datum waarop het dier is geadopteerd"
 
 #: animal.js
-#, fuzzy
 msgid "The date the animal was altered"
-msgstr "De datum waarop het dier is getatoeëerd"
+msgstr "De datum waarop het dier werd gesteriliseerd/gecastreerd"
 
 #: animal.js animal_new.js
 msgid "The date the animal was born"
@@ -11231,18 +11173,16 @@ msgid "The date the animal was brought into the shelter"
 msgstr "De datum waarop het dier binnengebracht werd in het asiel"
 
 #: animal.js
-#, fuzzy
 msgid "The date the animal was heartworm tested"
-msgstr "De datum waarop het dier is geadopteerd"
+msgstr "De datum waarop het dier op hartworm is getest"
 
 #: animal.js animal_new.js
 msgid "The date the animal was microchipped"
 msgstr "Datum waarop de chip is aangebracht"
 
 #: move_reclaim.js
-#, fuzzy
 msgid "The date the animal was reclaimed"
-msgstr "De datum waarop het dier is geadopteerd"
+msgstr "De datum waarop het dier werd opgehaald"
 
 #: animal.js animal_new.js
 msgid "The date the animal was tattooed"
@@ -11287,15 +11227,12 @@ msgid "The date the trial adoption is over"
 msgstr "De datum waarop de proefadoptie wordt beëindigd"
 
 #: vaccination.js
-#, fuzzy
-#| msgid "The date the animal was returned to the shelter"
 msgid "The date the vaccination is required/due to be administered"
-msgstr "De datum waarop het dier teruggebracht is naar het opvangcentrum"
+msgstr "De datum waarop de vaccinatie vereist is/moet worden toegediend"
 
 #: vaccination.js
-#, fuzzy
 msgid "The date the vaccination was administered"
-msgstr "De datum waarop het dier is getatoeëerd"
+msgstr "De datum waarop de vaccinatie werd toegediend"
 
 #: lostfound_new.js lostfound.js
 msgid "The date this animal was found"
@@ -11314,9 +11251,8 @@ msgid "The date this animal was removed from the waiting list"
 msgstr "De datum waarop het dier van de wachtlijst is verwijderd"
 
 #: movements.js
-#, fuzzy
 msgid "The date this animal was reserved"
-msgstr "De datum waarop dit dier vermist is"
+msgstr "De datum waarop dit dier gereserveerd was"
 
 #: lostfound.js
 msgid "The date this animal was returned to its owner"
@@ -11431,9 +11367,8 @@ msgid "The size of this animal"
 msgstr "De grootte van dit dier"
 
 #: animal.js
-#, fuzzy
 msgid "The species of this animal"
-msgstr "De grootte van dit dier"
+msgstr "De soort van dit dier"
 
 #: animal.js animal_new.js
 msgid "The tattoo number"
@@ -11444,10 +11379,8 @@ msgid "The type of unit in the container, eg: tablet, vial, etc."
 msgstr ""
 
 #: person.js
-#, fuzzy
-#| msgid "The shelter reference number"
 msgid "The veterinary license number."
-msgstr "Het asielreferentienummer"
+msgstr "Het nummer van de dierenartsvergunning."
 
 #: stocklevel.js
 msgid "The wholesale/trade price the container was bought for"
@@ -11605,38 +11538,32 @@ msgid "This animal has an adoption fee of {0}"
 msgstr ""
 
 #: animal.js
-#, fuzzy
 msgid "This animal has been FIV/L tested"
-msgstr "Dit dier is ontnageld"
+msgstr "Dit dier is getest op FIV/L"
 
 #: animal.js
-#, fuzzy
 msgid "This animal has been altered"
-msgstr "Dit dier is ontnageld"
+msgstr "Dit dier is gesteriliseerd"
 
 #: animal.js
 msgid "This animal has been declawed"
 msgstr "Dit dier is ontnageld"
 
 #: animal.js
-#, fuzzy
 msgid "This animal has been heartworm tested"
-msgstr "Dit dier is ontnageld"
+msgstr "Dit dier is getest op hartworm"
 
 #: animal.py
 msgid "This animal has movements and cannot be removed."
-msgstr ""
+msgstr "Dit dier heeft bewegingen en kan niet worden verwijderd."
 
 #: movements.js move_adopt.js
-#, fuzzy
 msgid "This animal has not been altered."
-msgstr "Dit dier is ontnageld"
+msgstr "Dit dier is niet gesteriliseerd."
 
 #: movements.js move_adopt.js
-#, fuzzy
-#| msgid "This animal is microchipped"
 msgid "This animal has not been microchipped."
-msgstr "Dit dier heeft een microchip"
+msgstr "Dit dier heeft geen microchip."
 
 #: animal.js
 msgid "This animal has special needs"
@@ -11981,9 +11908,9 @@ msgid "This will permanently remove this animal, are you sure?"
 msgstr "Hierdoor zal dit dier definitief verwijderd worden, weet u het zeker?"
 
 #: incident.js
-#, fuzzy
 msgid "This will permanently remove this incident, are you sure?"
-msgstr "Hierdoor zal dit dier definitief verwijderd worden, weet u het zeker?"
+msgstr ""
+"Hierdoor zal dit incident definitief verwijderd worden, weet u het zeker?"
 
 #: person.js
 msgid "This will permanently remove this person, are you sure?"
@@ -12048,7 +11975,6 @@ msgid "Time"
 msgstr "Tijd"
 
 #: animal.js animal_new.js
-#, fuzzy
 msgid "Time Brought In"
 msgstr "Binnenkomstdatum"
 
@@ -12136,10 +12062,8 @@ msgid "Tonkinese"
 msgstr "Tonkanees"
 
 #: dbupdate.py
-#, fuzzy
-#| msgid "Clone Animals"
 msgid "Too Many Animals"
-msgstr "Kloon dieren"
+msgstr "Te veel dieren"
 
 #: onlineform.js additional.js common_tableform.js
 msgid "Tooltip"
@@ -12235,27 +12159,24 @@ msgid "Transferred"
 msgstr "Overgeplaatst"
 
 #: animal.js animal_new.js
-#, fuzzy
 msgid "Transferred From"
-msgstr "Overgeplaatst naar asiel"
+msgstr "Overgeplaatst van"
 
 #: animal.py
 msgid "Transferred In"
 msgstr "Overgeplaatst naar asiel"
 
 #: animal.py
-#, fuzzy
 msgid "Transferred In {0}"
-msgstr "Overgeplaatst naar asiel"
+msgstr "Overgeplaatst naar asiel {0}"
 
 #: animal.py
 msgid "Transferred Out"
 msgstr "Overgeplaatst naar"
 
 #: animal.py
-#, fuzzy
 msgid "Transferred Out {0}"
-msgstr "Overgeplaatst naar"
+msgstr "Overgeplaatst naar {0}"
 
 #: movement.py
 msgid "Transfers must have a valid transfer date."
@@ -12271,9 +12192,8 @@ msgid "Transport Book"
 msgstr ""
 
 #: lookups.py
-#, fuzzy
 msgid "Transport Types"
-msgstr "Kosttypes"
+msgstr "Transporttypes"
 
 #: html.py
 msgid "Transport book"
@@ -12420,7 +12340,6 @@ msgid "Type"
 msgstr "Soort"
 
 #: options.js
-#, fuzzy
 msgid "Type of animal links to show"
 msgstr "Aantal dierkoppelingen om te tonen"
 
@@ -12522,10 +12441,8 @@ msgid "Up for adoption"
 msgstr "Geschikt voor adoptie"
 
 #: movement.py
-#, fuzzy
-#| msgid "Incoming Media Scaling:"
 msgid "Upcoming medical items"
-msgstr "Schaling inkomende media:"
+msgstr "Aankomende medische artikelen"
 
 #: animal_bulk.js
 msgid "Update"
@@ -12590,9 +12507,8 @@ msgid ""
 msgstr ""
 
 #: document_repository.js media.js
-#, fuzzy
 msgid "Uploading..."
-msgstr "Laden..."
+msgstr "Uploaden…"
 
 #: lookups.py
 msgid "Urgencies"
@@ -13001,10 +12917,8 @@ msgid "Vouchers need an issue and expiry date."
 msgstr "Waardebonnen hebben een omschrijving en vervaldatum nodig."
 
 #: movement.py
-#, fuzzy
-#| msgid "This animal is microchipped"
 msgid "WARNING: This animal has not been microchipped"
-msgstr "Dit dier heeft een microchip"
+msgstr "PAS OP: Dit dier heeft geen microchip"
 
 #: movement.py
 msgid ""
@@ -13012,10 +12926,8 @@ msgid ""
 msgstr ""
 
 #: clinic_appointment.js dbupdate.py
-#, fuzzy
-#| msgid "Biting"
 msgid "Waiting"
-msgstr "Bijten"
+msgstr "Wacht"
 
 #: options.js search.js header_edit_header.js waitinglist_results.js roles.js
 #: onlineform_incoming.js html.py dbupdate.py
@@ -13051,10 +12963,8 @@ msgid "Waiting List: {0}"
 msgstr "Wachtlijst: {0}"
 
 #: clinic_appointment.js html.py
-#, fuzzy
-#| msgid "Waiting List"
 msgid "Waiting Room"
-msgstr "Wachtlijst"
+msgstr "Wachtzaal"
 
 #: mobile.py
 msgid "Waiting for documents..."
@@ -13093,18 +13003,13 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr ""
 
 #: options.js
-#, fuzzy
-#| msgid "Warn when adopting to a person who has not been homechecked"
 msgid "Warn when adopting an animal who has not been microchipped"
 msgstr ""
-"Geef een waarschuwing wanneer een persoon, die nog geen huiscontrole heeft "
-"gehad, een adoptie wil doen"
+"Geef een waarschuwing bij adoptie van een dier, die nog geen microchip heeft"
 
 #: options.js
-#, fuzzy
-#| msgid "Warn when adopting to a banned owner"
 msgid "Warn when adopting an unaltered animal"
-msgstr "Waarschuw bij plaatsing bij een ongewenste eigenaar"
+msgstr "Geef een waarschuwing bij adoptie van een niet gecastreerde dier"
 
 #: options.js
 msgid ""
@@ -13516,7 +13421,7 @@ msgstr ""
 
 #: animal.py
 msgid "You must supply a code."
-msgstr "U moet een code invoeren"
+msgstr "U moet een code invoeren."
 
 #: dbupdate.py
 msgid "Young Adult"
@@ -13657,7 +13562,7 @@ msgstr "weken"
 
 #: waitinglist.js
 msgid "weeks after last contact."
-msgstr "weken na laatste contact"
+msgstr "weken na laatste contact."
 
 #: medical.js medicalprofile.js medical.py
 msgid "years"
@@ -13725,7 +13630,7 @@ msgstr ""
 
 #: sql.js
 msgid "{0} results."
-msgstr "{0} resultaten"
+msgstr "{0} resultaten."
 
 #: code.py
 msgid "{0} rows affected."

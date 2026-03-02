@@ -1,0 +1,61 @@
+Events between two dates
+###
+Events
+###
+34603/Any rev02
+###
+Events between two dates with animals
+###
+en
+###
+$VAR from DATE Event between$
+$VAR to DATE and$
+
+SELECT e.EventName, e.EventDescription, e.EventAddress, e.EventTown, e.EventCounty, e.EventPostCode,
+e.StartDateTime, e.EndDateTime, a.ID AS AID, e.ID AS EID,  
+a.AnimalName, a.ShelterCode, s.SpeciesName,
+CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 
+AND adoption.EventID = e.ID)THEN 'Adopted' WHEN a.ID IS NULL THEN '' ELSE 'Not Adopted' END AS Adopted
+FROM event e 
+LEFT OUTER JOIN eventanimal ea ON ea.EventID = e.ID
+LEFT OUTER JOIN animal a ON a.ID = ea.AnimalID 
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+WHERE e.StartDateTime >= '$@from$' AND e.EndDateTime <= '$@to$'
+ORDER BY EventName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_EventName
+$$HEAD
+<h2><td><a target="_blank" href="event?id=$EID">$EVENTNAME</a></h2>
+<p>$StartDateTime - $EndDateTime</p>
+<p>$EVENTDESCRIPTION</p>
+
+<table border="1">
+<thead>
+<tr>
+<th>Animal Name</th>
+<th>Shelter Code</th>
+<th>Species</th>
+<th>Adopted</th>  
+</tr>  
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>  
+
+GROUP$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+<td>$SPECIESNAME</td>
+<td>$ADOPTED</td>  
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
