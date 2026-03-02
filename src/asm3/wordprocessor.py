@@ -1984,10 +1984,12 @@ def html_table(l: str, rows: Results, cols: List[Tuple[str, str]]):
     Eg: ( ( "ID", "Text for ID field" ) )
     """
     h = []
-    h.append("<table border=\"1\">")
+    colstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;">{0}</td>'
+    headstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;"><strong>{0}</strong></td>'
+    h.append('<table style="border-collapse: collapse; width: 100%" border="1">')
     h.append("<thead><tr>")
     for colfield, coltext in cols:
-        h.append("<th>%s</th>" % coltext)
+        h.append(headstyle.format(coltext))
     h.append("</tr></thead>")
     h.append("<tbody>")
     for r in rows:
@@ -1995,15 +1997,15 @@ def html_table(l: str, rows: Results, cols: List[Tuple[str, str]]):
         for colfield, coltext in cols:
             v = r[colfield]
             if asm3.utils.is_date(v):
-                h.append("<td>%s</td>" % python2displaytime(l, r[colfield]))
+                h.append(colstyle.format(python2displaytime(l, r[colfield])))
             elif asm3.utils.is_currency(colfield):
-                h.append("<td>%s</td>" % format_currency(l, r[colfield]))
+                h.append(colstyle.format(format_currency(l, r[colfield])))
             elif r[colfield] is None:
-                h.append("<td></td>")
+                h.append(colstyle.format(""))
             elif asm3.utils.is_str(r[colfield]) or asm3.utils.is_unicode(r[colfield]):
-                h.append("<td>%s</td>" % r[colfield].replace("\n", "<br/>"))
+                h.append(colstyle.format( r[colfield].replace("\n", "<br/>") ))
             else:
-                h.append("<td>%s</td>" % r[colfield])
+                h.append(colstyle.format( r[colfield] ))
         h.append("</tr>")
     h.append("</tbody>")
     h.append("</table>")
