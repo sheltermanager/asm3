@@ -1405,6 +1405,9 @@ def get_tax_rates(dbo: Database) -> Results:
     return dbo.query("SELECT ID, %s AS TaxRateName, TaxRate FROM lktaxrate ORDER BY TaxRateName" % \
         dbo.sql_concat([ "TaxRateName", "' ('", "TaxRate", "'%'", "')'" ]))
 
+def get_raw_tax_rates(dbo: Database) -> Results:
+    return dbo.query("SELECT ID, TaxRateName, TaxRate FROM lktaxrate ORDER BY TaxRateName")
+
 def get_test_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM testtype ORDER BY TestName")
 
