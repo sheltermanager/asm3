@@ -5237,6 +5237,28 @@ class maint_error(ASMEndpoint):
     def content(self, o):
         return 1 / 0 # Test error handling
 
+class maint_find_replace(JSONEndpoint):
+    url = "maint_find_replace"
+    get_permissions = asm3.users.USE_SQL_INTERFACE
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "manufacturers": asm3.medical.get_vacc_manufacturers(dbo),
+            "towns": asm3.person.get_towns(dbo, excludeblanks=True),
+            "counties": asm3.person.get_counties(dbo, excludeblanks=True),
+            "towncounties": asm3.person.get_town_to_county(dbo)
+        }
+    
+    def post_replacemanufacturers(self, o):
+        return str(asm3.medical.replace_manufacturers(o.dbo, o.user, o.post["manufacturerfind"], o.post["manufacturerreplace"]))
+
+    def post_replacecities(self, o):
+        return str(asm3.person.replace_cities(o.dbo, o.user, o.post["cityfind"], o.post["cityreplace"]))
+    
+    def post_replacestates(self, o):
+        return str(asm3.person.replace_states(o.dbo, o.user, o.post["statefind"], o.post["statereplace"]))
+
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
     check_logged_in = False

@@ -638,6 +638,7 @@ def get_vaccinations_expiring_two_dates(dbo: Database, start: Database, end: Dat
         "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
 def get_vacc_manufacturers(dbo: Database) -> List[str]:
+    
     rows = dbo.query("SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null AND Manufacturer <> '' ORDER BY Manufacturer")
     mf = []
     for r in rows:
@@ -858,6 +859,15 @@ def complete_test(dbo: Database, username: str, testid: int, newdate: datetime, 
     if cost > 0: v["Cost"] = cost
     dbo.update("animaltest", testid, v, username)
     update_animal_tests(dbo, username, testid)
+
+def replace_manufacturers(dbo: Database, username: str, find: str, replace: str) -> None:
+    """
+    Replaces the manufacturer in all vaccination records
+    """
+    
+    return dbo.update("animalvaccination", "Manufacturer = %s" % dbo.sql_value(find), {
+        "Manufacturer": replace
+    }, username)
 
 def reschedule_test(dbo: Database, username: str, testid: int, newdate: datetime, comments: str) -> None:
     """

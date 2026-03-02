@@ -867,6 +867,18 @@ $.fn.select = asm_widget({
         }
     },
 
+    /** Returns true if an option provided value exists, otherwise returns false */
+    hasOption: function(t, value) {
+        let result = false;
+        $.each(t.find("option"), function(i, v) {
+            if ($(v).val() == value) {
+                result = true;
+                return;
+            }
+        });
+        return result;
+    },
+
     /** Return the label for the selected option value */
     label: function(t) {
         return t.find("option:selected").html();
