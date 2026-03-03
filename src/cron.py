@@ -133,7 +133,7 @@ def daily(dbo: Database):
         ttask(automail.send_all, dbo)
 
         # Create transactions from regular debits
-        ttask(financial.create_trx_from_regular_debits, dbo)
+        ttask(financial.insert_trx_from_regular_debits, dbo)
 
     except:
         em = str(sys.exc_info()[0])
