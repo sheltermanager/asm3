@@ -46,39 +46,6 @@ ANNUALLY = 6
 ASCENDING = 0
 DESCENDING = 1
 
-def create_trx_from_regular_debits(dbo: Database, username: str) -> List[int]:
-    """
-    Called once per day as part of the overnight batch. Creates transactions based on active regular debits.
-    """
-    activerds = get_regulardebits(dbo, "all")
-    today = dbo.today()
-    trxlist = []
-    for rd in activerds:
-        debitdue = False
-        if rd.PERIOD == 1:
-            debitdue = True
-        elif rd.PERIOD == 7 and rd.WEEKDAY == int(today.strftime("%w")):
-            debitdue = True
-        elif rd.PERIOD == 30 and rd.DAYOFMONTH == today.day:
-            debitdue = True
-        elif rd.PERIOD == 365 and rd.MONTH == today.month and rd.DAYOFMONTH == today.day:
-            debitdue = True
-        
-        if debitdue:
-            trxlist.append(
-                dbo.insert("accountstrx", {
-                    "TrxDate":              today,
-                    "Description":          rd.DESCRIPTION,
-                    "Reconciled":           0,
-                    "Amount":               rd.AMOUNT,
-                    "SourceAccountID":      rd.FROMACCOUNT,
-                    "DestinationAccountID": rd.TOACCOUNT,
-                    "OwnerDonationID":      0,
-                    "OwnerID":              rd.OWNERID
-                }, username)
-            )
-        return trxlist
-
 def get_boarding_query(dbo: Database) -> str:
     return "SELECT ab.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
@@ -1460,6 +1427,39 @@ def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
         "OwnerDonationID":      0,
         "OwnerID":              0
     }, username)
+
+def insert_trx_from_regular_debits(dbo: Database, username: str = "system") -> List[int]:
+    """
+    Called once per day as part of the overnight batch. Creates transactions based on active regular debits.
+    """
+    activerds = get_regulardebits(dbo, "all")
+    today = dbo.today()
+    trxlist = []
+    for rd in activerds:
+        debitdue = False
+        if rd.PERIOD == 1:
+            debitdue = True
+        elif rd.PERIOD == 7 and rd.WEEKDAY == int(today.strftime("%w")):
+            debitdue = True
+        elif rd.PERIOD == 30 and rd.DAYOFMONTH == today.day:
+            debitdue = True
+        elif rd.PERIOD == 365 and rd.MONTH == today.month and rd.DAYOFMONTH == today.day:
+            debitdue = True
+        
+        if debitdue:
+            trxlist.append(
+                dbo.insert("accountstrx", {
+                    "TrxDate":              today,
+                    "Description":          rd.DESCRIPTION,
+                    "Reconciled":           0,
+                    "Amount":               rd.AMOUNT,
+                    "SourceAccountID":      rd.FROMACCOUNT,
+                    "DestinationAccountID": rd.TOACCOUNT,
+                    "OwnerDonationID":      0,
+                    "OwnerID":              rd.OWNERID
+                }, username)
+            )
+        return trxlist
 
 def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
