@@ -8593,7 +8593,6 @@ class zipfile_download(ASMEndpoint):
             mids = []
             for mid in o.post["mediaids"].split(","):
                 if mid: mids.append(int(mid))
-            # asm3.media.zip_media_files_by_id(o.dbo, mids)
             asm3.asynctask.function_task(o.dbo, _("Export Media as Zip File", l), asm3.media.zip_media_files_by_id, o.dbo, mids)
             self.redirect("task")
 

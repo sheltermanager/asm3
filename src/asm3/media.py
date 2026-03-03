@@ -1598,7 +1598,6 @@ def zip_media_files_by_id(dbo: Database, mediaids: List[int]):
     ## Create the zip file
     zo = asm3.utils.bytesio()
     zfo = zipfile.ZipFile(zo, 'w')
-    # zfo = zipfile.ZipFile("/home/adam-spencer/workspace/test.zip", 'w')
     for mid in mediaids:
         mediafile = get_media_file_data(dbo, mid)
         filename = mediafile[1]
@@ -1606,16 +1605,8 @@ def zip_media_files_by_id(dbo: Database, mediaids: List[int]):
         zfo.writestr(filename, filedata)
     zfo.close()
     
-    # return zf
-    # out = open("/home/adam-spencer/workspace/test.zip", "wb")
-    # out.write(zo.read1())
-    # out.close()
-    # zo.close()
-    
     key = asm3.utils.uuid_str()
-    # key = "adamwozere"
     asm3.cachedisk.put(key, dbo.name(), zo.getvalue(), 86400)
-    # url = asm3.cachedisk.get("media_zip", dbo.name())
     completemessage = _("Archiving complete ({0} files).").replace("{0}", str(len(mediaids)))
     return f'<p>' + completemessage + ' <a target="_blank" href="/zipfile_download?get={key}"><b>' + _("Download File") + '</b></a></p>'
 
