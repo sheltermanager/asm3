@@ -1067,10 +1067,6 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             links.append("%s==%s" % (asm3.media.get_notes_for_id(o.dbo, mid), asm3.media.get_signature_link(o.dbo, mid, o.post)))
         return "||".join(links)
-    
-    # def post_zip(self, o):
-    #     self.check(asm3.users.VIEW_MEDIA)
-    #     return asm3.media.zip_media_files_by_id(o.dbo, o.post.integer_list("ids"))
 
 class mobile(ASMEndpoint):
     url = "mobile"
@@ -8578,8 +8574,8 @@ class waitinglist_results(JSONEndpoint):
 
 class zipfile_download(ASMEndpoint):
     url = "zipfile_download"
-    # get_permissions = asm3.users.EXPORT_REPORT
-
+    get_permissions = asm3.users.VIEW_MEDIA
+    
     def content(self, o):
         # If we're retrieving an already saved zip file, serve it.
         if o.post["get"] != "":
