@@ -860,12 +860,7 @@ $(function() {
             });
 
             $("#button-zip").button({disabled: true}).click(function() {
-                console.log("Zipping");
                 let formdata = "mediaids=" + tableform.table_ids(media.table);
-                // common.ajax_post("zipfile_download", formdata).then(function(response) {
-                //     console.log(response);
-                //     console.log("Done");
-                // });
                 common.route("zipfile_download?" + formdata);
             });
 
