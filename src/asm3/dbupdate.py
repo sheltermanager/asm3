@@ -40,7 +40,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "log", "logmulti", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "product", "publishlog", 
-    "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
+    "regulardebit", "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
     "vaccinationtype", "voucher" )
 
@@ -75,7 +75,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
     "log", "logmulti", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
     "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", 
-    "ownervoucher", "stocklevel", "stockusage" )
+    "ownervoucher", "regulardebit", "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
