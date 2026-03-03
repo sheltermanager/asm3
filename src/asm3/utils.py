@@ -1678,14 +1678,18 @@ def html_to_pdf(dbo: Database, htmldata: str) -> bytes:
     Converts HTML content to PDF and returns the PDF file data as bytes.
     The HTML should only include the contents of the body tag, but not the tag itself.
     """
+    VALID_OPTIONS = ( "weasyprint", "xhtml2pdf", "cmd")
+    DEFAULT_OPTION = "weasyprint"
     mode = asm3.configuration.pdf_converter(dbo) # start with mode from config
     if mode == "" or mode == "null": mode = "cmd"
-    if mode == "internal": mode = "weasyprint"
+    if mode == "internal" or mode == "default": mode = DEFAULT_OPTION
     if htmldata.find("pdf renderer cmd") != -1: mode = "cmd" # renderer directives override config
     elif htmldata.find("pdf renderer xhtml2pdf") != -1: mode = "xhtml2pdf"
     elif htmldata.find("pdf renderer weasyprint") != -1: mode = "weasyprint"
-    # If we wanted cmd mode, but there is no valid external cmd, use our preferred internal converter
-    if mode == "cmd" and HTML_TO_PDF == "": mode = "weasyprint"
+    # Make sure that the option we've picked is valid
+    if mode not in VALID_OPTIONS: mode = DEFAULT_OPTION
+    # If we wanted cmd mode, but there is no valid external cmd, use our default
+    if mode == "cmd" and HTML_TO_PDF == "": mode = DEFAULT_OPTION
     # Look for directives in our HTML data and set pdf options to pass to our converters
     pdfopts = { 
         "orientation":  "portrait",

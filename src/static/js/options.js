@@ -680,7 +680,10 @@ $(function() {
                         { id: "notifycoordicatorondocsign", post_field: "DocumentSignedNotifyCoordinator", label: _("Notify adoption coordinator when documents are signed"), type: "check", fullrow: true }, 
                         { id: "generatedocumentlog", post_field: "GenerateDocumentLog", label: _("When I generate a document, make a note of it in the log with this type"), type: "check", fullrow: true, xmarkup: ' <select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' }, 
                         { id: "pdfconverter", post_field: "PDFConverter", label: _("PDF conversion tool"), prelabel: "hcb", type: "select", 
-                            options: '<option value="internal">' + _("Internal") + '</option>' +
+                            options: 
+                                '<option value="internal">' + _("Default (weasyprint)") + '</option>' +
+                                '<option value="weasyprint">weasyprint</option>' +
+                                '<option value="xhtml2pdf">xhtml2pdf</option>' +
                                 (controller.htmltopdfcmd != "" ? '<option value="cmd">' + controller.htmltopdfcmd + '</option>' : "") },
                         { id: "pdfzoom", post_field: "PDFZoom", label: _("Default zoom level when converting documents to PDF"), prelabel: "hcb", type: "number", xmarkup: "%" }
                     ]}, 
