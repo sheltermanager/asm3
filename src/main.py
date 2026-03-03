@@ -6093,7 +6093,7 @@ class move_workflow(ASMEndpoint):
                 post.data[key[13:]] = post.data[key]
                 del post.data[key]
 
-        ## Loop through animals
+        # Loop through animals
         # animalcount = 0
         for animalcount, animalid in enumerate(post["animals"].split(",")):
             # animalcount = animalcount + 1
@@ -6103,8 +6103,8 @@ class move_workflow(ASMEndpoint):
             post["cost"] = post["animalcost" + animalid]
             movementid = 0
 
-            ## Reconstruct payment post data for this animal only
-            ## Non adoption fee payments are included only if this is the first animal in the loop
+            # Reconstruct payment post data for this animal only
+            # Non adoption fee payments are included only if this is the first animal in the loop
             virtualpostkeys = []
             for key in list(post.data.keys()):
                 if key.startswith("paymentinput"):
@@ -6131,7 +6131,7 @@ class move_workflow(ASMEndpoint):
             elif post["movementtype"] == "reclaim":
                 asm3.movement.insert_reclaim_from_form(dbo, o.user, post)
 
-            ## Remove virtual payment posts
+            # Remove virtual payment posts
             for vf in virtualpostkeys.copy():
                 post.data.pop(vf)
             
