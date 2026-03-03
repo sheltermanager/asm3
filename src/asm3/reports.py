@@ -843,6 +843,8 @@ def execute_pdf(dbo: Database, customreportid: int, username: str = "system", pa
     if landscape: h = "<!-- pdf orientation landscape -->\n" + h
     styles = [ "table, td, tr { border: 1px dotted #ccc; }", 
         "table { width: 100%; }",
+        "thead { display: table-header-group; }",
+        "tfoot { display: table-footer-group; }", # these keep the table header/footer repeating over multiple pages
         "td, th { padding-top: 1px; }",
         "th { text-align: center; }",
         "html { font-family: sans-serif; font-size: 60%; }" # scales h1/h2/td nicely since reports don't set explicit font sizes
