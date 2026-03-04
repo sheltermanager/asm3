@@ -1606,7 +1606,7 @@ def zip_media_files_by_id(dbo: Database, mediaids: List[int]):
     zfo.close()
     
     key = asm3.utils.uuid_str()
-    asm3.cachedisk.put(key, dbo.name(), zo.getvalue(), 86400)
+    asm3.cachedisk.put(key, dbo.name(), zo.getvalue(), 3600)
     completemessage = _("Archiving complete ({0} files).").replace("{0}", str(len(mediaids)))
     return f'<p>' + completemessage + ' <a target="_blank" href="/zipfile_download?get={key}"><b>' + _("Download File") + '</b></a></p>'
 
