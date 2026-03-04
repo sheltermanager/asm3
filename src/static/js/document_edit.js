@@ -60,7 +60,7 @@ $(function() {
 
         // Necessary for fontsizeselect to work
         convert_fonts_to_spans: true,
-        fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 36pt 72pt",
+        fontsize_formats: "5pt 6pt 7pt 8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 36pt 40pt 48pt 56pt 64pt 72pt",
 
         // Available fonts
         font_formats: [ "Andale Mono=andale mono,times",
