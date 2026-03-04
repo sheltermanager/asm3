@@ -591,7 +591,7 @@ $(function() {
                     ];
                     successmessage.push("<ul>");
                     $.each($("#animals").animalchoosermulti("get_selected_rows"), function(i, v) {
-                        successmessage.push('<li><a href="/animal?id=' + v.ID + '"><b>' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</b></a></li>');
+                        successmessage.push('<li><a href="animal?id=' + v.ID + '"><b>' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</b></a></li>');
                     });
                     successmessage.push("</ul>");
                     if (controller.mode == "reserve") {
@@ -634,14 +634,14 @@ $(function() {
                         });
                         successmessage.push("</ul>");
                         if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
-                            successmessage.push('<p><a href="/person_donations?id=' + $("#person").val() + '"><button id="asm-settlebutton">' + _("Settle Payments") + '</button></a>');
+                            successmessage.push('<p><a href="person_donations?id=' + $("#person").val() + '"><button id="asm-settlebutton">' + _("Settle Payments") + '</button></a>');
                         }
                     }
 
                     if (jsondata.length) {
                         successmessage.push("<p>Extra adoption paperwork</p><ul>");
                         $.each(jsondata, function(i, v) {
-                            successmessage.push('<li><a href="/document_media_edit?id=' + v[0] + '&redirecturl=person_media?id=' + $("#person").val() + '"><b>' + v[1] + '</b></a></li>');
+                            successmessage.push('<li><a href="document_media_edit?id=' + v[0] + '&redirecturl=person_media?id=' + $("#person").val() + '"><b>' + v[1] + '</b></a></li>');
                         });
                         successmessage.push("</ul>");
                     }

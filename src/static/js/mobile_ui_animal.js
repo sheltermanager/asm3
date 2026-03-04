@@ -183,8 +183,8 @@ const mobile_ui_animal = {
         $("#content-animal").on("click", ".media-thumb", function() {
             $(this).parent().find(".media-thumb").css("border-color", "#fff");
             $(this).css("border-color", "#000");
-            $("#animalimage-image").prop("src", "/image?db=" + asm.useraccount + "&mode=media&id=" + $(this).attr("data-imageid"));
-            $("#animalimage-anchor").prop("href", "/image?db=" + asm.useraccount + "&mode=media&id=" + $(this).attr("data-imageid"));
+            $("#animalimage-image").prop("src", "image?db=" + asm.useraccount + "&mode=media&id=" + $(this).attr("data-imageid"));
+            $("#animalimage-anchor").prop("href", "image?db=" + asm.useraccount + "&mode=media&id=" + $(this).attr("data-imageid"));
             $("#animalimage-notes").html($(this).attr("data-description"));
         });
 
@@ -370,11 +370,11 @@ const mobile_ui_animal = {
                                 v.CURRENTOWNERNAME + '<br>' + v.CURRENTOWNERADDRESS + ', ' + v.CURRENTOWNERTOWN + ' ' + v.CURRENTOWNERCOUNTY + ' ' + v.CURRENTOWNERPOSTCODE;
                             $.each([v.CURRENTOWNERHOMETELEPHONE, v.CURRENTOWNERWORKTELEPHONE, v.CURRENTOWNERMOBILETELEPHONE], function(i, v) {
                                 if (v) {
-                                    h += '<br><a href=tel:' + v.replace(/ /g, '') + '>' + v + '</a>';
+                                    h += '<br><a href="tel:' + encodeURIComponent(v.replace(/ /g, '')) + '">' + v + '</a>';
                                 }
                             });
                             if (v.CURRENTOWNEREMAILADDRESS) {
-                                h += '<br><a href=mailto:' + v.CURRENTOWNEREMAILADDRESS + '>' + v.CURRENTOWNEREMAILADDRESS + '</a>';
+                                h += '<br><a href="mailto:' + encodeURIComponent(v.CURRENTOWNEREMAILADDRESS) + '">' + v.CURRENTOWNEREMAILADDRESS + '</a>';
                             }
                             h += '</small>';
                             

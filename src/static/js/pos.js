@@ -581,7 +581,7 @@ $(function() {
             });
 
             $("#posleavebutton").click(function() {
-                location.href = "/main";
+                location.href = "main";
             });
 
             $("#posstartbutton").click(function() {
