@@ -95,6 +95,10 @@ $(function() {
                         }
                     });
                 },
+                complete: function(row) {
+                    return (format.date_js(row.STARTDATE) > common.today_no_time() || 
+                        (row.ENDDATE && format.date_js(row.ENDDATE) < common.today_no_time()) );
+                },
                 columns: [
                     { field: "STARTDATE", display: _("Active from"),
                         formatter: function(row) {
@@ -177,9 +181,9 @@ $(function() {
                 },
                 { id: "filter", type: "dropdownfilter", 
                     options: [
+                        "all|" + _("(all)"),
                         "active|" + _("Active"),
-                        "inactive|" + _("Inactive"),
-                        "all|" + _("All")
+                        "inactive|" + _("Inactive")
                     ],
                     click: function(selval) {
                         controller.filter = selval;
@@ -239,11 +243,7 @@ $(function() {
         },
 
         sync: function() {
-            if (controller.filter == "") {
-                $("#filter").val("active");
-            } else {
-                $("#filter").val(controller.filter);
-            }
+            $("#filter").val(controller.filter);
             regular_debits.period_changed();
         },
 

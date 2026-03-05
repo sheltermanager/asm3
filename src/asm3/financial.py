@@ -698,7 +698,7 @@ def get_regulardebits(dbo: Database, filter="all") -> Results:
     wheresql = ""
     today = dbo.sql_value(dbo.today())
     if filter == "active":
-        wheresql = f" WHERE '{today}' BETWEEN rd.StartDate AND rd.EndDate OR ( rd.StartDate <= {today} AND rd.EndDate IS NULL )"
+        wheresql = f" WHERE {today} BETWEEN rd.StartDate AND rd.EndDate OR ( rd.StartDate <= {today} AND rd.EndDate IS NULL )"
     elif filter == "inactive":
         wheresql = f" WHERE rd.StartDate > {today} OR rd.EndDate < {today}"
     sql = f"SELECT rd.*, {concatsql} AS OwnerName FROM regulardebit rd LEFT JOIN owner o ON rd.OwnerID = o.ID" + wheresql

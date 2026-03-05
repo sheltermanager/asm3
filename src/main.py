@@ -7677,10 +7677,12 @@ class regular_debits(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
+        filter = o.post["filter"]
+        if filter == "": filter = "all"
         return {
-            "rows": asm3.financial.get_regulardebits(dbo, filter=o.post["filter"]),
+            "rows": asm3.financial.get_regulardebits(dbo, filter=filter),
             "accounts": asm3.financial.get_accounts(dbo),
-            "filter": o.post["filter"]
+            "filter": filter
         }
     
     def post_create(self, o):
