@@ -119,7 +119,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "am.MedicalTypeID, lksmedicaltype.MedicalTypeName, " \
         "am.TreatmentName, '' AS TreatmentResult, am.Dosage, amt.TreatmentNumber, " \
         "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, NULL AS DateExpires, am.Comments, " \
-        "'' AS Manufacturer, '' AS BatchNumber, '' AS BatchExpiryDate " \
+        "'' AS Manufacturer, '' AS BatchNumber, NULL AS BatchExpiryDate " \
         "FROM animal a " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
@@ -158,7 +158,7 @@ def get_medicalcombined_query(dbo: Database) -> str:
         "-2 AS MedicalTypeID, 'Test' AS MedicalTypeName, " \
         "tt.TestName AS TreatmentName, tr.ResultName AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
         "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, NULL AS DateExpires, at.Comments, " \
-        "'' AS Manufacturer, '' AS BatchNumber, '' AS BatchExpiryDate " \
+        "'' AS Manufacturer, '' AS BatchNumber, NULL AS BatchExpiryDate " \
         "FROM animal a " \
         "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
         "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
