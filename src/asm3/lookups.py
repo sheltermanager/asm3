@@ -28,7 +28,7 @@ import re
 #   taxrate - has a TaxRate column
 LOOKUP_TABLES = {
     "lksaccounttype":       (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",), ""),
-    "lkadoptionsource":     (_("Adoption Sources"), "SourceName", _("Source Name"), "", "add del ret", "adoption.AdoptionSourceID", ""),
+    "lkadoptionsource":     (_("Adoption Sources"), "SourceName", _("Source Name"), "Description", "add del ret", "adoption.AdoptionSourceID", ""),
     "lkanimalflags":        (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", "", ""),
     "animaltype":           (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",), "AFDefaultType"),
     "basecolour":           (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID"), "AFDefaultColour"),
