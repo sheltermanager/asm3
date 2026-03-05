@@ -1347,7 +1347,6 @@ def insert_regulardebit_from_form(dbo: Database, username: str, post: PostedData
     """
     Creates a regular debit from posted form data 
     """
-
     return dbo.insert("regulardebit", {
         "OwnerID":          post.integer("person"),
         "StartDate":        post.date("startdate"),

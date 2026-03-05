@@ -4,7 +4,7 @@ fields = ",".join([
     dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
     dbo.ddl_add_table_column("OwnerID", dbo.type_integer, True),
     dbo.ddl_add_table_column("StartDate", dbo.type_datetime, False),
-    dbo.ddl_add_table_column("EndDate", dbo.type_integer, True),
+    dbo.ddl_add_table_column("EndDate", dbo.type_datetime, True),
     dbo.ddl_add_table_column("Amount", dbo.type_integer, False),
     dbo.ddl_add_table_column("FromAccount", dbo.type_integer, False),
     dbo.ddl_add_table_column("ToAccount", dbo.type_integer, False),
