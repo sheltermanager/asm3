@@ -2676,6 +2676,10 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Regenerate 'Match lost and found animals' report", l), asm3.lostfound.update_match_report, o.dbo)
 
+    def post_genregdebits(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Regenerate regular debits for today", l), asm3.financial.insert_trx_from_regular_debits, o.dbo, o.user)
+
     def post_resetnnncodes(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Reset NNN animal code counts for this year", l), asm3.animal.maintenance_reset_nnn_codes, o.dbo)

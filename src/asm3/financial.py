@@ -1427,13 +1427,13 @@ def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
         "OwnerID":              0
     }, username)
 
-def insert_trx_from_regular_debits(dbo: Database, username: str = "system") -> List[int]:
+def insert_trx_from_regular_debits(dbo: Database, username: str = "system") -> str:
     """
     Called once per day as part of the overnight batch. Creates transactions based on active regular debits.
     """
-    activerds = get_regulardebits(dbo, "all")
+    activerds = get_regulardebits(dbo, "active")
     today = dbo.today()
-    trxlist = []
+    count = 0
     for rd in activerds:
         debitdue = False
         if rd.PERIOD == 1:
@@ -1444,21 +1444,19 @@ def insert_trx_from_regular_debits(dbo: Database, username: str = "system") -> L
             debitdue = True
         elif rd.PERIOD == 365 and rd.MONTH == today.month and rd.DAYOFMONTH == today.day:
             debitdue = True
-        
         if debitdue:
-            trxlist.append(
-                dbo.insert("accountstrx", {
-                    "TrxDate":              today,
-                    "Description":          rd.DESCRIPTION,
-                    "Reconciled":           0,
-                    "Amount":               rd.AMOUNT,
-                    "SourceAccountID":      rd.FROMACCOUNT,
-                    "DestinationAccountID": rd.TOACCOUNT,
-                    "OwnerDonationID":      0,
-                    "OwnerID":              rd.OWNERID
-                }, username)
-            )
-        return trxlist
+            count += 1
+            dbo.insert("accountstrx", {
+                "TrxDate":              today,
+                "Description":          rd.DESCRIPTION,
+                "Reconciled":           0,
+                "Amount":               rd.AMOUNT,
+                "SourceAccountID":      rd.FROMACCOUNT,
+                "DestinationAccountID": rd.TOACCOUNT,
+                "OwnerDonationID":      0,
+                "OwnerID":              rd.OWNERID
+            }, username)
+    return f"OK {count}"
 
 def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """

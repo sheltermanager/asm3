@@ -18,6 +18,7 @@ $(function() {
                 '<option value="genownername">' + _("Regenerate person names in selected format") + '</option>',
                 '<option value="genownerflags">' + _("Regenerate person flags column") + '</option>',
                 '<option value="genlostfound">' + _("Regenerate 'Match lost and found animals' report") + '</option>',
+                '<option value="genregdebits">' + _("Regenerate regular debits for today") + '</option>',
                 '<option value="genfigyear">' + _("Regenerate annual animal figures for") + '</option>',
                 '<option value="genfigmonth">' + _("Regenerate monthly animal figures for") + '</option>',
                 '<option value="resetnnncodes">' + _("Reset NNN animal code counts for this year") + '</option>',
