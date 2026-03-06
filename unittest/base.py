@@ -9,10 +9,13 @@ sys.path.append(PATH + "../src")
 
 import asm3.db
 
+# Use singleton dbo for speed
+dbo = asm3.db.get_dbo("SQLITE")
+dbo.database = f"{DB_PATH}/test.db"
+dbo.installpath = f"{PATH}../src/"
+
 def get_dbo():
-    dbo = asm3.db.get_dbo("SQLITE")
-    dbo.database = f"{DB_PATH}/test.db"
-    dbo.installpath = f"{PATH}../src/"
+    global dbo
     return dbo
 
 def execute(sql):

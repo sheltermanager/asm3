@@ -12,7 +12,7 @@ class TestFinancial(unittest.TestCase):
         base.execute("DELETE FROM regulardebit WHERE Comments = 'Just some test data'")
 
         data = {
-            "code": "Testiofromo",
+            "code": "Testfrom",
             "type": "5",
             "donationtype": "0",
             "description": "Test from account"
@@ -21,7 +21,7 @@ class TestFinancial(unittest.TestCase):
         faid = asm3.financial.insert_account_from_form(base.get_dbo(), "test", post)
 
         data = {
-            "code": "Testioto",
+            "code": "Testto",
             "type": "8",
             "donationtype": "0",
             "description": "Test to account"
@@ -45,9 +45,8 @@ class TestFinancial(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
 
-        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
-
-        self.assertEqual(1, len(trxs))
+        trxs = asm3.financial.insert_trx_from_regular_debits(base.get_dbo(), "test")
+        self.assertEqual("OK 1", trxs)
         
         asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
 
@@ -73,9 +72,8 @@ class TestFinancial(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
 
-        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
-
-        self.assertEqual(0, len(trxs))
+        trxs = asm3.financial.insert_trx_from_regular_debits(base.get_dbo(), "test")
+        self.assertEqual("OK 0", trxs)
 
         asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
 
@@ -98,9 +96,8 @@ class TestFinancial(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
 
-        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
-
-        self.assertEqual(1, len(trxs))
+        trxs = asm3.financial.insert_trx_from_regular_debits(base.get_dbo(), "test")
+        self.assertEqual("OK 1", trxs)
 
         asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
 
@@ -125,9 +122,8 @@ class TestFinancial(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         rdid = asm3.financial.insert_regulardebit_from_form(base.get_dbo(), "test", post)
 
-        trxs = asm3.financial.create_trx_from_regular_debits(base.get_dbo(), "test")
-
-        self.assertEqual(0, len(trxs))
+        trxs = asm3.financial.insert_trx_from_regular_debits(base.get_dbo(), "test")
+        self.assertEqual("OK 0", trxs)
 
         base.execute("DELETE FROM accounts WHERE Code LIKE 'Test%'")
         base.execute("DELETE FROM regulardebit WHERE Comments = 'Just some test data'")

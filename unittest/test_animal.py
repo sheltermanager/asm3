@@ -295,7 +295,7 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.get_publish_history(base.get_dbo(), self.nid)
 
     def test_insert_publish_history(self):
-        asm3.animal.insert_publish_history(base.get_dbo(), self.nid, "fakeservice")
+        asm3.animal.insert_publish_history(base.get_dbo(), "unittest", self.nid, "fakeservice")
 
     def test_get_satellite_counts(self):
         self.assertNotEqual(0, len(asm3.animal.get_satellite_counts(base.get_dbo(), self.nid)))
