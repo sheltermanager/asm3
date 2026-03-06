@@ -1,0 +1,78 @@
+# Run on alternatives:
+# - The master branch
+# - PRs using master as a base
+# - Manual dispatch
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Run common and dev deployment jobs?'
+        required: false
+        type: boolean
+        default: false
+      ignore_test_failures:
+        description: "Ignore test failures"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.expose.outputs.tag }}
+      image: ${{ steps.expose.outputs.image }}
+      image_ref: ${{ steps.expose.outputs.image_ref }}
+    steps:
+      - name: Check out full repository history and tags
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install apt (.deb) packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            exuberant-ctags
+
+      - name: Install cacheable apt (.deb) packages
+        uses: awalsh128/cache-apt-pkgs-action@v1.6.0
+        with:
+          packages: make nodejs npm \
+            python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-memcache \
+            flake8 flake8 imagemagick wkhtmltopdf \
+            python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk \
+            python3-lxml python3-qrcode python3-reportlab
+          version: 1.0
+          execute_install_scripts: true
+
+      - name: Install JS project
+        run: npm ci
+
+      - name: Generate build assets
+        run: |
+          PREV_TAG=$(cat VERSION_PREVTAG)
+          # If the previous version tag doesn't exist, comment out the git log line to prevent build failure
+          if ! git rev-parse -q --verify "refs/tags/$PREV_TAG"; then
+            echo "Warning: Previous version tag '$PREV_TAG' not found. Skipping detailed changelog generation."
+            sed -i "/git log/s/^/#/" Makefile
+          fi
+          # Now run the make command, which will succeed either way
+          make all
+
+      - name: Run tests
+        id: tests
+        continue-on-error: ${{github.event.inputs.ignore_test_failures == 'true'}}
+        run: make tests
+
+

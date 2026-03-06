@@ -48,8 +48,12 @@ changelog.txt:
 	cat VERSION > src/static/pages/changelog.txt
 	echo "======" >> src/static/pages/changelog.txt
 	echo >> src/static/pages/changelog.txt
-	#git log --no-merges --date=short --oneline --pretty=format:'%C(auto)%h%d %cd [%cn] %s' `cat VERSION_PREVTAG`..HEAD >> src/static/pages/changelog.txt
-	git log --no-merges --date=short --oneline --pretty=format:'%cd %s [%an] %C(auto)%h%d' `cat VERSION_PREVTAG`..HEAD >> src/static/pages/changelog.txt
+	@set -e; \
+	git fetch --tags >/dev/null 2>&1 || true; \
+	prev_tag=$$(git tag --sort=-creatordate | sed -n '2p'); \
+	if [ -z "$$prev_tag" ]; then prev_tag=$$(git rev-list --max-parents=0 HEAD); fi; \
+	echo "Using previous tag: $$prev_tag"; \
+	git log --no-merges --date=short --oneline --pretty=format:'%cd %s [%an] %C(auto)%h%d' "$$prev_tag"..HEAD >> src/static/pages/changelog.txt
 
 changelog: changelog.txt
 	less src/static/pages/changelog.txt
@@ -75,8 +79,8 @@ rollup: compat
 	mkdir -p src/static/js/bundle
 	# minify the regenerator-runtime
 	npm --silent run minify_regenrt
-	scripts/rollup/rollup.py > src/static/js/bundle/rollup.js
-	scripts/rollup/rollup_compat.py > src/static/js/bundle/rollup_compat.js
+	python3 scripts/rollup/rollup.py > src/static/js/bundle/rollup.js
+	python3 scripts/rollup/rollup_compat.py > src/static/js/bundle/rollup_compat.js
 	# minify them and remove originals
 	npm --silent run minify
 	npm --silent run minify_compat
@@ -87,12 +91,12 @@ schema: scripts/schema/schema.db version
 	# SQL within the program
 	@echo "[schema] ============================="
 	mkdir -p src/static/js/bundle
-	scripts/schema/schema.py > src/static/js/bundle/schema.js
+	python3 scripts/schema/schema.py > src/static/js/bundle/schema.js
 
 scripts/schema/schema.db:
 	# Updates the schema.db sqlite database used for building the schema.js file.
 	@echo "[schema.db] =========================="
-	scripts/schema/make_db.py
+	python3 scripts/schema/make_db.py
 
 compile: compilejs compilepy 
 
