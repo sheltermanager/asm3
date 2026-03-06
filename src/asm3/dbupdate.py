@@ -2912,16 +2912,18 @@ def install_db_structure(dbo: Database) -> None:
         if (s.strip() != ""):
             execute(dbo, s.strip())
 
-def install_db_views(dbo: Database) -> None:
+def install_db_views(dbo: Database) -> int:
     """
-    Installs all the database views.
+    Installs all the database views. Returns the number of errors.
     """
+    errors = 0
     def create_view(viewname: str, sql: str) -> None:
         try:
             execute(dbo, dbo.ddl_drop_view(viewname) )
             execute(dbo, dbo.ddl_add_view(viewname, sql) )
         except Exception as err:
             asm3.al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
+            errors += 1
 
     # Set us upto date to stop race condition/other clients trying to install
     asm3.configuration.db_view_seq_version(dbo, str(_dbupdates_latest_ver(dbo)))
@@ -2943,16 +2945,24 @@ def install_db_views(dbo: Database) -> None:
     create_view("v_ownervoucher", asm3.financial.get_voucher_query(dbo))
     create_view("v_product", asm3.stock.get_product_query(dbo))
     create_view("v_stock", asm3.stock.get_stocklevel_query(dbo))
+    return errors
 
-def install_db_sequences(dbo: Database) -> None:
+def install_db_sequences(dbo: Database) -> int:
     """
     Installs database sequences if supported and sets their initial values
+    Returns the number of errors.
     """
+    errors = 0
     for table in TABLES:
         if table in TABLES_NO_ID_COLUMN: continue
-        initialvalue = dbo.get_id_max(table)
-        execute(dbo, dbo.ddl_drop_sequence(table) )
-        execute(dbo, dbo.ddl_add_sequence(table, initialvalue) )
+        try:
+            initialvalue = dbo.get_id_max(table)
+            execute(dbo, dbo.ddl_drop_sequence(table) )
+            execute(dbo, dbo.ddl_add_sequence(table, initialvalue) )
+        except Exception as err:
+            errors += 1
+            asm3.al.error(str(err), "dbupdate.install_db_sequences", dbo)
+    return errors
 
 def install_db_stored_procedures(dbo: Database) -> None:
     """
@@ -3592,12 +3602,14 @@ def _dbupdates_checktable(dbo: Database, dbv: int = 0) -> None:
             if i <= dbv:
                 execute(dbo, "INSERT INTO dbupdates (ID, Date) VALUES (?, ?)", [ i, dbo.now() ])
 
-def _dbupdates_exec(dbo: Database, stdout = False, stoponexception = False) -> int:
+def _dbupdates_exec(dbo: Database, stdout = False, stoponexception = False) -> Tuple[int, int]:
     """
     Executes any updates that have not been run.
-    Returns the highest number of any update that was run so that the caller can update DBV if necessary.
+    Returns the highest number of any update that was run so that the caller can update DBV if necessary
+    along with the number of errors.
     """
     maxdbv = 0
+    errors = 0
     alreadyrun = dbo.query_list("SELECT * FROM dbupdates")
     for i in _dbupdates_list(dbo):
         if i not in alreadyrun:
@@ -3613,6 +3625,7 @@ def _dbupdates_exec(dbo: Database, stdout = False, stoponexception = False) -> i
                 execute(dbo, "INSERT INTO dbupdates (ID, Date) VALUES (?, ?)", [i, dbo.now()])
                 if i > maxdbv: maxdbv = i
             except Exception as err:
+                errors += 1
                 import traceback
                 msg = f"ERROR: {err}\n{traceback.format_exc()}"
                 if stdout:
@@ -3620,7 +3633,7 @@ def _dbupdates_exec(dbo: Database, stdout = False, stoponexception = False) -> i
                     if stoponexception: return
                 else:
                     asm3.al.error(msg, "dbupdate._dbupdates_exec", dbo, sys.exc_info())
-    return maxdbv
+    return maxdbv, errors
 
 def _dbupdates_latest_ver(dbo: Database) -> int:
     """
@@ -3640,17 +3653,17 @@ def _dbupdates_list(dbo: Database) -> List[int]:
     updates = sorted(updates)
     return updates
 
-def perform_updates(dbo: Database) -> int:
+def perform_updates(dbo: Database) -> Tuple[int, int]:
     """
     Performs any updates that need to be run against the database. 
-    Returns the new database version.
+    Returns the new database version and the number of errors.
     """
     ver = asm3.configuration.dbv(dbo)
     _dbupdates_checktable(dbo, ver)
-    v = _dbupdates_exec(dbo)
+    v, errs = _dbupdates_exec(dbo)
     if v > ver:
         asm3.configuration.dbv(dbo, v)
-    return asm3.configuration.dbv(dbo)
+    return asm3.configuration.dbv(dbo), errs
 
 def perform_updates_stdout(dbo: Database, stoponexc = False) -> None:
     """
@@ -3659,7 +3672,7 @@ def perform_updates_stdout(dbo: Database, stoponexc = False) -> None:
     """
     ver = asm3.configuration.dbv(dbo)
     _dbupdates_checktable(dbo, ver)
-    v = _dbupdates_exec(dbo, stdout=True, stoponexception = stoponexc)
+    v, dummy = _dbupdates_exec(dbo, stdout=True, stoponexception = stoponexc)
     if v > ver:
         asm3.configuration.dbv(dbo, v)
 
