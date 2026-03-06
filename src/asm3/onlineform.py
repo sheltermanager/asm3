@@ -1279,6 +1279,19 @@ def delete_onlineformincoming(dbo: Database, username: str, collationid: int) ->
     asm3.audit.delete(dbo, username, "onlineformincoming", collationid, "", "%s %s %s" % (processed, preview, values))
     dbo.delete("onlineformincoming", "CollationID=%s" % collationid, username, writeAudit=False, writeDeletion=False)
 
+def guess_lookup(dbo: Database, s: str, tablename: str, fieldname: str, defaultid: int = -1):
+    """ Helper function for finding an ID from a lookup """
+    s = str(s).lower().strip()
+    guesses = dbo.query("SELECT ID, LOWER({fieldname}) AS Name FROM {tablename} WHERE LOWER({fieldname}) LIKE ?", [f"%{s}%"])
+    if len(guesses) == 0:
+        if defaultid != -1: 
+            return defaultid
+        else:
+            return dbo.query_int("SELECT ID FROM {fieldname} ORDER BY ID LIMIT 1") # return the first record if no default specified
+    for g in guesses:
+        if g.NAME == s: return g.ID # exact match
+    return guesses[0].ID
+
 def guess_agegroup(dbo: Database, s: str) -> str:
     """ Guesses an agegroup, returns the third band (adult by default) if no match is found """
     s = str(s).lower().strip()
@@ -1289,50 +1302,27 @@ def guess_agegroup(dbo: Database, s: str) -> str:
 
 def guess_animaltype(dbo: Database, s: str) -> int:
     """ Guesses an animal type, returns the default if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM animaltype WHERE LOWER(AnimalType) LIKE ?", ["%%%s%%" % s])
-    if guess != 0: return guess
-    return asm3.configuration.default_type(dbo)
+    return guess_lookup(dbo, s, "animaltype", "AnimalType", asm3.configuration.default_type(dbo))
 
 def guess_breed(dbo: Database, s: str) -> int:
     """ Guesses a breed, returns the default if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) LIKE ?", ["%%%s%%" % s])
-    if guess != 0: return guess
-    return asm3.configuration.default_breed(dbo)
+    return guess_lookup(dbo, s, "breed", "BreedName", asm3.configuration.default_breed(dbo))
 
 def guess_colour(dbo: Database, s: str) -> int:
     """ Guesses a colour, returns the default if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%s" % s])
-    if guess != 0: return guess
-    guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%%%s%%" % s])
-    if guess != 0: return guess
-    return asm3.configuration.default_colour(dbo)
+    return guess_lookup(dbo, s, "basecolour", "BaseColour", asm3.configuration.default_color(dbo))
 
 def guess_entryreason(dbo: Database, s: str) -> int:
     """ Guesses an entry reason, returns the default if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE ?", ["%%%s%%" % s])
-    if guess != 0: return guess
-    return asm3.configuration.default_entry_reason(dbo)
+    return guess_lookup(dbo, s, "entryreason", "ReasonName", asm3.configuration.default_entry_reason(dbo))
 
 def guess_entrytype(dbo: Database, s: str) -> int:
     """ Guesses an entry type, returns the default if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM lksentrytype WHERE LOWER(EntryTypeName) LIKE ?", ["%%%s%%" % s])
-    if guess != 0: return guess
-    return asm3.configuration.default_entry_type(dbo)
+    return guess_lookup(dbo, s, "lksentrytype", "EntryTypeName", asm3.configuration.default_entry_type(dbo))
 
 def guess_equipmenttype(dbo: Database, s: str) -> int:
     """ Guesses an equipment type, returns the first equipment type found by ID if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM traptype WHERE LOWER(TrapTypeName) LIKE ?", ["%%%s%%" % s])
-    if guess != 0:
-        return guess
-    else:
-        fallback = dbo.query_int("SELECT ID FROM traptype ORDER BY ID LIMIT 1")
-        return fallback
+    return guess_lookup(dbo, s, "traptype", "TrapTypeName")
 
 def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
@@ -1345,24 +1335,15 @@ def guess_sex(dummy: Any, s: str) -> int:
 
 def guess_size(dbo: Database, s: str) -> int:
     """ Guesses a size """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM lksize WHERE LOWER(Size) LIKE ?", ["%%%s%%" % s])
-    if guess != 0: return guess
-    return asm3.configuration.default_size(dbo)
+    return guess_lookup(dbo, s, "lksize", "Size", asm3.configuration.default_size(dbo))
 
 def guess_species(dbo: Database, s: str) -> int:
     """ Guesses a species, returns the default if no match is found """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM species WHERE LOWER(SpeciesName) LIKE ?", [s])
-    if guess != 0: return guess
-    return asm3.configuration.default_species(dbo)
+    return guess_lookup(dbo, s, "species", "SpeciesName", asm3.configuration.default_species(dbo))
 
 def guess_transporttype(dbo: Database, s: str) -> int:
     """ Guesses a transporttype """
-    s = str(s).lower().strip()
-    guess = dbo.query_int("SELECT ID FROM transporttype WHERE LOWER(TransportTypeName) LIKE ?", [s])
-    if guess != 0: return guess
-    return dbo.query_int("SELECT ID FROM transporttype ORDER BY ID")
+    return guess_lookup(dbo, s, "transporttype", "TransportTypeName")
 
 def truncs(s: str) -> str:
     """ Truncates a string for inserting to short text columns """

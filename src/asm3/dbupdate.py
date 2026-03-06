@@ -2918,12 +2918,13 @@ def install_db_views(dbo: Database) -> int:
     """
     errors = 0
     def create_view(viewname: str, sql: str) -> None:
+        nonlocal errors
         try:
             execute(dbo, dbo.ddl_drop_view(viewname) )
             execute(dbo, dbo.ddl_add_view(viewname, sql) )
         except Exception as err:
-            asm3.al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
             errors += 1
+            asm3.al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
 
     # Set us upto date to stop race condition/other clients trying to install
     asm3.configuration.db_view_seq_version(dbo, str(_dbupdates_latest_ver(dbo)))
