@@ -32,8 +32,8 @@ fields = ",".join([
 ])
 execute(dbo, dbo.ddl_add_table("lksconditiontype", fields) )
 
-execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [1, _("GI"), "", 0] )
-execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [2, _("Respiratory"), "", 0] )
-execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [3, _("Miscellaneous"), "", 0] )
-execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [4, _("Reproductive"), "", 0] )
-execute("INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [5, _("Symptom"), "", 0] )
+execute(dbo, "INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [1, _("GI"), "", 0] )
+execute(dbo, "INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [2, _("Respiratory"), "", 0] )
+execute(dbo, "INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [3, _("Miscellaneous"), "", 0] )
+execute(dbo, "INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [4, _("Reproductive"), "", 0] )
+execute(dbo, "INSERT INTO lksconditiontype (ID, ConditionTypeName, Description, IsRetired) VALUES (?, ?, ?, ?)", [5, _("Symptom"), "", 0] )
