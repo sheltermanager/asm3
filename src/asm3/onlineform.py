@@ -1282,12 +1282,12 @@ def delete_onlineformincoming(dbo: Database, username: str, collationid: int) ->
 def guess_lookup(dbo: Database, s: str, tablename: str, fieldname: str, defaultid: int = -1):
     """ Helper function for finding an ID from a lookup """
     s = str(s).lower().strip()
-    guesses = dbo.query("SELECT ID, LOWER({fieldname}) AS Name FROM {tablename} WHERE LOWER({fieldname}) LIKE ?", [f"%{s}%"])
+    guesses = dbo.query(f"SELECT ID, LOWER({fieldname}) AS Name FROM {tablename} WHERE LOWER({fieldname}) LIKE ?", [f"%{s}%"])
     if len(guesses) == 0:
         if defaultid != -1: 
             return defaultid
         else:
-            return dbo.query_int("SELECT ID FROM {fieldname} ORDER BY ID LIMIT 1") # return the first record if no default specified
+            return dbo.query_int(f"SELECT ID FROM {tablename} ORDER BY ID LIMIT 1") # return the first record if no default specified
     for g in guesses:
         if g.NAME == s: return g.ID # exact match
     return guesses[0].ID
@@ -1310,7 +1310,7 @@ def guess_breed(dbo: Database, s: str) -> int:
 
 def guess_colour(dbo: Database, s: str) -> int:
     """ Guesses a colour, returns the default if no match is found """
-    return guess_lookup(dbo, s, "basecolour", "BaseColour", asm3.configuration.default_color(dbo))
+    return guess_lookup(dbo, s, "basecolour", "BaseColour", asm3.configuration.default_colour(dbo))
 
 def guess_entryreason(dbo: Database, s: str) -> int:
     """ Guesses an entry reason, returns the default if no match is found """
