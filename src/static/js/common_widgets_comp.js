@@ -487,7 +487,7 @@ $.fn.payments = asm_widget({
         let o = { controller: options.controller, count: 0, giftaid: false };
         t.data("o", o);
         t.append([
-            html.content_header(_("Payment"), true),
+            html.content_header(_("Payment"), "panepayment"),
             '<table class="asm-table-layout">',
             '<thead>',
             '<tr>',

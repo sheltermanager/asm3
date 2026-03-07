@@ -10,7 +10,7 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
-                html.content_header(_("Move an animal to a retailer"), true),
+                html.content_header(_("Move an animal to a retailer"), "paneretailer"),
                 html.textbar(_("This animal is not on the shelter."), { id: "notonshelter", state: "error", icon: "alert", maxwidth: "600px" }),
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },

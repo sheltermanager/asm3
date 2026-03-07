@@ -1013,13 +1013,12 @@ const html = {
     /**
      * The header that should wrap all content on screens
      * title: The title to show in the box heading
-     * notcontent: If undefined, an id of asm-content is set
+     * id: If set, use this as the id instead of asm-content
      */
-    content_header: function(title, notcontent) {
-        var ids = "";
-        if (!notcontent) {
-            ids = "id=\"asm-content\" ";
-        }
+    content_header: function(title, id = "") {
+        let ids = "";
+        id = id || "asm-content"
+        ids = 'id="' + id + '" ';
         if (title) {
             return "<div " + ids + " class=\"ui-accordion ui-widget ui-helper-reset ui-accordion-icons\">" +
                 "<h3 class=\"ui-accordion-header ui-helper-reset ui-corner-top ui-state-active centered\">" +

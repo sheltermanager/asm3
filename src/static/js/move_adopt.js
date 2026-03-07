@@ -10,7 +10,7 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
-                html.content_header(_("Adopt an animal"), true),
+                html.content_header(_("Adopt an animal"), "paneadoptananimal"),
                 html.warn('<span id="bonddata"></span>', "bonddisplay"),
                 html.info(_("This animal is currently fostered, it will be automatically returned first."), "fosterinfo"),
                 html.info(_("This animal is currently at a retailer, it will be automatically returned first."), "retailerinfo"),
@@ -37,7 +37,7 @@ $(function() {
                 ], { full_width: false }),
                 html.content_footer(),
                 '<div id="payment"></div>',
-                html.content_header(_("Boarding Cost"), true),
+                html.content_header(_("Boarding Cost"), "paneboardingcost"),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
@@ -45,7 +45,7 @@ $(function() {
                     { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
                 ], { full_width: false }),
                 html.content_footer(),
-                html.content_header(_("Signed Adoption Paperwork"), true),
+                html.content_header(_("Signed Adoption Paperwork"), "panesignedpaperwork"),
                 tableform.fields_render([
                     { post_field: "sigpaperwork", label: _("Request signed paperwork from the adopter by email"), type: "check" },
                     { post_field: "sigtemplateid", label: _("Adoption paperwork template"), type: "select",
@@ -55,7 +55,7 @@ $(function() {
                         options: edit_header.template_list_options(controller.templatesemail) },
                 ], { full_width: false }),
                 html.content_footer(),
-                html.content_header(_("Adoption Checkout"), true),
+                html.content_header(_("Adoption Checkout"), "panecheckout"),
                 tableform.fields_render([
                     { post_field: "checkoutcreate", label: _("Send the checkout email to the adopter"), type: "check" },
                     { post_field: "templateid", label: _("Adoption paperwork template"), type: "select",

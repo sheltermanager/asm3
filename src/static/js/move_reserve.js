@@ -9,7 +9,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                html.content_header(_("Reserve an animal"), true),
+                html.content_header(_("Reserve an animal"), "panereserveanimal"),
                 html.textbar('<span class="subtext"></span>', { id: "feeinfo", maxwidth: "600px" }),
                 html.textbar('<span id="awarntext"></span>', { id: "animalwarn", state: "error", icon: "alert", maxwidth: "600px" }),
                 html.textbar('<span id="warntext"></span>', { id: "ownerwarn", state: "error", icon: "alert", maxwidth: "600px" }),

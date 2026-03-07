@@ -9,7 +9,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                html.content_header(_("Transfer an animal"), true),
+                html.content_header(_("Transfer an animal"), "panetransfer"),
                 html.textbar('<span id="awarntext"></span>', { id: "animalwarn", state: "error", icon: "alert", maxwidth: "600px" }),
                 html.textbar('<span id="warntext"></span>', { id: "ownerwarn", state: "error", icon: "alert", maxwidth: "600px" }),
                 tableform.fields_render([

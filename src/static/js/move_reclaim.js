@@ -9,7 +9,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                html.content_header(_("Reclaim an animal"), true),
+                html.content_header(_("Reclaim an animal"), "panereclaim"),
                 html.textbar(_("This animal is currently fostered, it will be automatically returned first."), { id: "fosterinfo", maxwidth: "600px" }),
                 html.textbar(_("This animal is currently at a retailer, it will be automatically returned first."), { id: "retailerinfo", maxwidth: "600px" }),
                 html.textbar(_("This animal has active reservations, they will be cancelled."), { id: "reserveinfo", maxwidth: "600px" }),
@@ -26,7 +26,7 @@ $(function() {
                 ], { full_width: false }),
                 html.content_footer(),
                 '<div id="payment"></div>',
-                html.content_header(_("Boarding Cost"), true),
+                html.content_header(_("Boarding Cost"), "paneboardingcost"),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',

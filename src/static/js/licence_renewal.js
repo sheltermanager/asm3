@@ -11,7 +11,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                html.content_header(_("Renew license"), true),
+                html.content_header(_("Renew license"), "panerenewlicence"),
                 tableform.fields_render([
                     { post_field: "animal", type: "animal", label: _("Animal (optional)"), nonshelter: true },
                     { post_field: "person", type: "person", label: _("Person") },

@@ -10,7 +10,7 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<input id="donationid" type="hidden" />',
-                html.content_header(_("Receive a payment"), true),
+                html.content_header(_("Receive a payment"), "panereceivepayment"),
                 tableform.fields_render([
                     { post_field: "animal", type: "animal", label: _("Animal (optional)") },
                     { post_field: "person", type: "person", label: _("Person") },

@@ -9,7 +9,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="asm-content">',
-                html.content_header(_("Mark an animal deceased"), true),
+                html.content_header(_("Mark an animal deceased"), "panemarkdeceased"),
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
                     { post_field: "deceaseddate", label: _("Deceased Date"), type: "date" },
@@ -20,7 +20,7 @@ $(function() {
                     { post_field: "ptsreason", label: _("Notes"), type: "textarea", rows: 8 },
                 ], { full_width: false }),
                 html.content_footer(),
-                html.content_header(_("Stock"), true),
+                html.content_header(_("Stock"), "panestock"),
                 html.textbar(_("These fields allow you to deduct stock for any euthanasia administered."), { maxwidth: "600px" }),
                 tableform.fields_render([
                     { post_field: "item", label: _("Item"), type: "select", 

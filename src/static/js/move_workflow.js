@@ -21,7 +21,7 @@ $(function() {
                 '<p><span class="ui-icon ui-icon-alert"></span> ' + _("This will create {0} records. Are you sure that you would like to continue?").replace('{0}', '<span id="numofmovements">0</span>') + '</p>',
                 '</div>',
                 '<input id="movementid" type="hidden" />',
-                html.content_header(_("Adopt animal(s)"), true),
+                html.content_header(_("Adopt animal(s)"), "paneadoptanimals"),
                 html.warn('<span id="bonddata"></span>', "bonddisplay"),
                 html.info(_("This animal is currently fostered, it will be automatically returned first."), "fosterinfo"),
                 html.info(_("This animal is currently at a retailer, it will be automatically returned first."), "retailerinfo"),
@@ -49,20 +49,20 @@ $(function() {
                     { type: "additional", markup: additional.additional_new_fields(controller.additional) }
                 ], { full_width: false }),
                 html.content_footer(),
-                html.content_header(_("Insurance"), true),
+                html.content_header(_("Insurance"), "paneinsurance"),
                 tableform.fields_render([
                     { type: "raw", rowid: "insurancerow", markup: '<table id="insurancetable"></table>', doublesize: true },
                 ], { full_width: false }),
                 html.content_footer(),
                 '<div id="payment"></div>',
-                html.content_header(_("Boarding Costs"), true),
+                html.content_header(_("Boarding Costs"), "paneboardingcosts"),
                 html.info("<span id=\"costdata\"></span>", "costdisplay"),
                 '<input id="costtype" data="costtype" type="hidden" />',
                 tableform.fields_render([
                     { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
                 ], { full_width: false }),
                 html.content_footer(),
-                html.content_header(_("Signed Paperwork"), true),
+                html.content_header(_("Signed Paperwork"), "panesignedpaperwork"),
                 tableform.fields_render([
                     { post_field: "sigpaperwork", label: _("Request signed paperwork from the adopter by email"), type: "check" },
                     { post_field: "sigtemplateid", label: _("Adoption paperwork template"), type: "select",
@@ -72,7 +72,7 @@ $(function() {
                         options: edit_header.template_list_options(controller.templatesemail) },
                 ], { full_width: false }),
                 html.content_footer(),
-                html.content_header(_("Checkout"), true),
+                html.content_header(_("Checkout"), "panecheckout"),
                 tableform.fields_render([
                     { post_field: "checkoutcreate", label: _("Send the checkout email to the adopter"), type: "check" },
                     { post_field: "templateid", label: _("Adoption paperwork template"), type: "select",
@@ -84,7 +84,7 @@ $(function() {
                         options: edit_header.template_list_options(controller.templatesemail) },
                 ], { full_width: false }),
                 html.content_footer(),
-                html.content_header(_("Extra Paperwork"), true),
+                html.content_header(_("Extra Paperwork"), "paneextrapaperwork"),
                 tableform.fields_render([
                     { post_field: "nonsigtemplateids", label: _("Paperwork templates"), type: "selectmulti",
                         options: { displayfield: "NAME", valuefield: "ID", rows: controller.templates } },
@@ -105,51 +105,51 @@ $(function() {
                 $("#personrow label").html(_("Person"));
                 $("#trialrow1, #trialrow2").hide();
                 $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
-                $(".ui-accordion-header").first().html(_("Reserve animal(s)"));
-                $($(".ui-accordion")[1]).hide(); // Hide insurance
-                $($(".ui-accordion")[3]).hide(); // Hide boarding costs
+                move_workflow.set_workflow_title(_("Reserve animal(s)"));
+                $("#paneinsurance").hide(); // Hide insurance
+                $("#paneboardingcosts").hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
                 $("#button-adopt").html('<span class="asm-icon asm-icon-reservation"></span>' + _("Reserve"));
             } else if (controller.mode == "foster") {
                 $("#personrow label").html(_("Fosterer"));
                 $("#trialrow1, #trialrow2").hide();
-                $(".ui-accordion-header").first().html(_("Foster animal(s)"));
-                $($(".ui-accordion")[1]).hide(); // Hide insurance
-                $($(".ui-accordion")[3]).hide(); // Hide boarding costs
+                move_workflow.set_workflow_title(_("Foster animal(s)"));
+                $("#paneinsurance").hide(); // Hide insurance
+                $("#paneboardingcosts").hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion")[2]).hide(); // Hide payments
+                $("#panepayments").hide(); // Hide payments
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Foster"));
             } else if (controller.mode == "transfer") {
                 $("#personrow label").html(_("Transfer to"));
                 $("#trialrow1, #trialrow2").hide();
-                $(".ui-accordion-header").first().html(_("Transfer animal(s)"));
-                $($(".ui-accordion")[1]).hide(); // Hide insurance
-                $($(".ui-accordion")[3]).hide(); // Hide boarding costs
+                move_workflow.set_workflow_title(_("Transfer animal(s)"));
+                $("#paneinsurance").hide(); // Hide insurance
+                $("#paneboardingcosts").hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion")[2]).hide(); // Hide payments
+                $("#panepayments").hide(); // Hide payments
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Transfer"));
             } else if (controller.mode == "retail") {
                 $("#personrow label").html(_("Retailer"));
                 $("#trialrow1, #trialrow2").hide();
-                $(".ui-accordion-header").first().html(_("Move animal(s)"));
-                $($(".ui-accordion")[1]).hide(); // Hide insurance
-                $($(".ui-accordion")[3]).hide(); // Hide boarding costs
+                move_workflow.set_workflow_title(_("Move animal(s)"));
+                $("#paneinsurance").hide(); // Hide insurance
+                $("#paneboardingcosts").hide(); // Hide boarding costs
                 $("#costcreaterow").hide(); // Hide create cost checkbox row
-                $($(".ui-accordion")[2]).hide(); // Hide payments
+                $("#panepayments").hide(); // Hide payments
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Move"));
             } else if (controller.mode == "reclaim") {
                 $("#personrow label").html(_("Owner"));
                 $("#trialrow1, #trialrow2").hide();
-                $(".ui-accordion-header").first().html(_("Reclaim animal(s)"));
-                $($(".ui-accordion")[1]).hide(); // Hide insurance
+                move_workflow.set_workflow_title(_("Reclaim animal(s)"));
+                $("#paneinsurance").hide(); // Hide insurance
                 $("#eventlinkrow").hide();
                 $("#button-adopt").html('<span class="asm-icon asm-icon-movement"></span>' + _("Reclaim"));
             }
             if (!config.bool("UseAutoInsurance")) {
-                $($(".ui-accordion")[1]).hide(); // Hide insurance
+                $("#paneinsurance").hide(); // Hide insurance
             }
         },
 
@@ -584,7 +584,7 @@ $(function() {
                     $(".ui-accordion").hide();
                     $("#button-adopt").hide();
                     let successmessage = [
-                        html.content_header(_("Adoption(s) successfully created")),
+                        html.content_header(_("Adoption(s) successfully created"), "panesuccess"),
                         '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
                         '<p><span class="ui-icon ui-icon-info"></span> ' + _("Details") + '</p>',
                         '<p>' + _("Animals") + '</p>'
@@ -740,6 +740,10 @@ $(function() {
                 }
             }
             return false;
+        },
+
+        set_workflow_title: function(s) {
+            $("#paneadoptanimals a").html(s);
         },
 
         destroy: function() {
