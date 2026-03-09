@@ -211,7 +211,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                         ]
                     }
                     pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
-                    self.log(str(pr))
+                    self.log("pr = " + str(pr))
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed_animals.append(an)
