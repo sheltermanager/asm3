@@ -206,7 +206,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                     imagepayload = {
                         "photos": [
                             {
-                                "url": imageurl
+                                "url": imageurl + "&something=.jpg"
                             }
                         ]
                     }
