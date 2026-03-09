@@ -210,12 +210,12 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                             }
                         ]
                     }
-                    asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
+                    photoresponse = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed_animals.append(an)
                 else:
-                    self.logError("status != COMPLETE: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.logError("status != 201: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
