@@ -467,6 +467,7 @@ $(function() {
                     $("#pcllshelterid").val("");
                     let formdata = "mode=pcllshelterid";
                     let response = await common.ajax_post("publish", formdata);
+                    console.log(response);
                     let responsejson = JSON.parse(response);
                     if (responsejson.message) {
                         let erroroutput = responsejson.message + "<p><ul>";
