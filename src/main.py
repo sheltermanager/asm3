@@ -7563,6 +7563,7 @@ class service(ASMEndpoint):
             self.content_type(contenttype)
             self.cache_control(client_ttl, cache_ttl) 
             self.header("Access-Control-Allow-Origin", "*") # CORS
+            self.header("Content-Length", str(len(response)))
             return response
 
     def content(self, o):
