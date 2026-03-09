@@ -1831,7 +1831,7 @@ def html_to_pdf_weasyprint(dbo: Database, htmldata: str, styles: List[str] = [],
     orientation = pdfopts["orientation"]
     papersize = pdfopts["papersize"]
     if len(styles) == 0:
-        styles = [ "body { font-family: sans-serif; }" ]
+        styles = [ "body { font-family: sans-serif; font-size: 11px; }" ] # this matches tinymce stylesheet if no styling given
     if "paperheight" in pdfopts and pdfopts["paperheight"] != "": 
         papersize = "%s %s" % (pdfopts["paperwidth"], pdfopts["paperheight"])
         orientation = "" # makes no sense with explicit height/width set
