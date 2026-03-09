@@ -277,10 +277,12 @@ class TestPublish(unittest.TestCase):
     def test_petcolovelost(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        # a.EVENTDATE = a.MOSTRECENTENTRYDATE
-        # self.assertIsNotNone(asm3.publishers.petcolovelost.PetcoLoveLostPublisher(base.get_dbo(), pc).processAnimal(a))
-        asm3.publishers.petcolovelost.PetcoLoveLostPublisher(base.get_dbo(), pc).run()
-        asm3.publishers.petcolovelost.PetcoLoveLostPublisher(base.get_dbo(), pc).validate(a)
+
+        animallist = base.get_dbo().query(
+            asm3.publishers.petcolovelost.getAnimalDataQuery() +
+            "WHERE a.AnimalName = 'Testio' OR a.AnimalName = 'Heldio Strayio' OR a.AnimalName = 'Chipio'"
+        )
+        asm3.publishers.petcolovelost.PetcoLoveLostPublisher(base.get_dbo(), pc).run(animallist)
 
     # petfbi
     def test_petfbi(self):

@@ -45,6 +45,7 @@ import asm3.publish
 import asm3.publishers.base
 import asm3.publishers.html
 import asm3.publishers.vetenvoy
+import asm3.publishers.petcolovelost
 import asm3.reports
 import asm3.search
 import asm3.service
@@ -7084,8 +7085,20 @@ class publish(JSONEndpoint):
             asm3.publish.start_publisher(dbo, mode, user=o.user, newthread=True)
         return { "failed": failed }
 
+    def post_pcllshelterid(self, o):
+        sid = asm3.publishers.petcolovelost.create_shelter(o.dbo)
+        return sid
+    
+    def post_pcllpublished(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        return asm3.publishers.petcolovelost.getPublishedAnimals(auth)
+
     def post_poll(self, o):
         return "%s|%d|%s" % (asm3.asynctask.get_task_name(o.dbo), asm3.asynctask.get_progress_percent(o.dbo), asm3.asynctask.get_last_error(o.dbo))
+    
+    def post_pcllpurge(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        return asm3.publishers.petcolovelost.purge(auth)
 
     def post_stop(self, o):
         asm3.asynctask.set_cancel(o.dbo, True)

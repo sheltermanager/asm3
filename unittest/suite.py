@@ -81,6 +81,6 @@ fullsuite = [
 
 if __name__ == "__main__":
     s = unittest.TestSuite(fullsuite)
-    # runner = unittest.TextTestRunner()
-    # runner.run(s)
+    runner = unittest.TextTestRunner()
+    runner.run(s)
 

@@ -1432,13 +1432,15 @@ def post_data(url: str, data: bytes, contenttype: str = "", httpmethod: str = "P
     try:
         if contenttype != "": headers["Content-Type"] = contenttype
         if isinstance(data, str): data = str2bytes(data)
-        headers = _add_http_headers(headers)
+        # headers = _add_http_headers(headers)
         if httpmethod == "POST":
             r = requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
         elif httpmethod == "PATCH":
             r = requests.patch(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
         elif httpmethod == "PUT":
             r = requests.put(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
+        elif httpmethod == "DELETE":
+            r = requests.delete(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
         else:
             raise NotImplementedError(f"Unsupported HTTP method {httpmethod}")
     except Exception as err:

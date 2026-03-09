@@ -351,6 +351,7 @@ DEFAULTS = {
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
+    "OrganisationWebsite": "Website",
     "OwnerAddressCheck": "Yes",
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
@@ -1441,6 +1442,9 @@ def organisation_latlong(dbo: Database, newvalue: str = "") -> str:
 def organisation_telephone(dbo: Database) -> str:
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
+def organisation_website(dbo: Database) -> str:
+    return cstring(dbo, "OrganisationWebsite", DEFAULTS["OrganisationWebsite"])
+
 def osm_map_tiles_override(dbo: Database) -> str:
     return cstring(dbo, "OSMMapTilesOverride")
 
@@ -1470,6 +1474,9 @@ def petcolovelost_email(dbo: Database) -> str:
 
 def petcolovelost_password(dbo: Database) -> str:
     return cstring(dbo, "PetCoLoveLostPassword")
+
+def petcolovelost_shelterid(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostShelterID")
 
 def petrescue_adoptable_in(dbo: Database) -> str:
     return cstring(dbo, "PetRescueAdoptableIn")
