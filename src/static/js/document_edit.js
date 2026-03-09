@@ -48,6 +48,16 @@ $(function() {
         // Whether to show visual aids (dotted line around tables without borders)
         visual: visualaids,
 
+        // Stop TinyMCE setting heights on table elements. There is no good reason for it
+        // to do this and it messes up PDF conversion. The values can be space
+        // separated, eg: 'width height'
+        invalid_styles: { 
+            'table': 'height', 
+            'tr' : 'height',
+            'th' : 'height',
+            'td' : 'height'
+        },
+
         // readonly: readonly, // This takes out too much stuff, we remove contenteditable from iframe instead.
 
         // enable browser spellchecking and allow saving at any time
