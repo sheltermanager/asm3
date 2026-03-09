@@ -205,7 +205,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                         photourls = self.getPhotoUrls(an["ID"])
                     imagepayload = {"photos": []}
                     for photourl in photourls:
-                        imagepayload["photos"].append({"url": photourl})
+                        imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")})
                     pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
                     self.log("pr = " + str(pr))
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
