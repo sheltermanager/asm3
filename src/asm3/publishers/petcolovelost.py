@@ -196,7 +196,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                 if r["status"] == 201:
                     responsejson = asm3.utils.json_parse(r["response"])
                     pcllid = responsejson["id"]
-                    # testing = True
+                    testing = True
                     if testing:
                         # Won't accept imageurls from non https connections so using a placeholder when testing
                         imageurl = "https://sheltermanager.com/images/bg-hero-pets.png" 
