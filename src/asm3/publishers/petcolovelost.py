@@ -196,20 +196,16 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                 if r["status"] == 201:
                     responsejson = asm3.utils.json_parse(r["response"])
                     pcllid = responsejson["id"]
-                    testing = True
+                    # testing = True
                     if testing:
                         # Won't accept imageurls from non https connections so using a placeholder when testing
-                        imageurl = "https://sheltermanager.com/images/bg-hero-pets.png" 
+                        photourls = ["https://sheltermanager.com/images/bg-hero-pets.png",]
                         
                     else:
-                        imageurl = f"{BASE_URL}/image?db=asmtestdbdb&mode=animal&id={an["ID"]}"
-                    imagepayload = {
-                        "photos": [
-                            {
-                                "url": imageurl
-                            }
-                        ]
-                    }
+                        photourls = self.getPhotoUrls(an["ID"])
+                    imagepayload = {"photos": []}
+                    for photourl in photourls:
+                        imagepayload["photos"].append({"url": photourl})
                     pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
                     self.log("pr = " + str(pr))
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
