@@ -165,7 +165,7 @@ PUBLISHER_LIST["pl"] = {
 PUBLISHER_LIST["st"] = {
     "label":    "Register microchips with SmartTag Pet ID",
     "class":    asm3.publishers.smarttag.SmartTagPublisher,
-    "locales":  "en",
+    "locales":  "en en_MX es_MX",
     "sub24hour": False
 }
 PUBLISHER_LIST["ll"] = {
