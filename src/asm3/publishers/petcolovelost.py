@@ -53,20 +53,12 @@ def getAnimalDataQuery() -> str:
         "LEFT OUTER JOIN entryreason er ON a.EntryReasonID = er.ID " \
         "LEFT JOIN owner o ON a.OriginalOwnerID = o.ID "
 
-def getAuthDetails(dbo: Database, testing: bool = False) -> Dict:
-    auth = {}
-    if testing:
-        username = "help@sheltermanager.com"
-        password = "7e2c0f71-e5a4-4693-a03b-af0c8238156b"
-        apikey = "DyTGYV6egOasrRIDLUcUs2FCP5kNIPjp23tVAPr9"
-        url = "https://api-dev.petcolove.org"
-        shelterid = "66113416-090e-468b-b484-043cd4d8413d"
-    else:
-        username = asm3.configuration.petcolovelost_email(dbo)
-        password = asm3.configuration.petcolovelost_password(dbo)
-        apikey = PETCO_LOVELOST_API_KEY
-        url = PETCO_LOVELOST_BASE_URL
-        shelterid = asm3.configuration.petcolovelost_shelterid(dbo)
+def getAuthDetails(dbo: Database) -> Dict:
+    username = asm3.configuration.petcolovelost_email(dbo)
+    password = asm3.configuration.petcolovelost_password(dbo)
+    apikey = PETCO_LOVELOST_API_KEY
+    url = PETCO_LOVELOST_BASE_URL
+    shelterid = asm3.configuration.petcolovelost_shelterid(dbo)
 
     payload = {
         "email": username,
@@ -116,8 +108,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
     Handles sending found animal data to Petco Love Lost
     """
     def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
-        # publishCriteria.uploadDirectly = True
-        # publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("petcolovelost", "Petcolovelost Publisher")
         self.dbo = dbo
@@ -137,12 +127,8 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         self.updatePublisherProgress(0)
         self.setLastError("")
         self.setStartPublishing()
-
-        testing = False
-        if animallist:
-            testing = True
         
-        auth = getAuthDetails(self.dbo, testing)
+        auth = getAuthDetails(self.dbo)
 
         cheaders = {
             'x-api-key': auth["apikey"],
@@ -194,19 +180,19 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                 if r["status"] == 201:
                     responsejson = asm3.utils.json_parse(r["response"])
                     pcllid = responsejson["id"]
-                    if testing:
-                        # Won't accept imageurls from non https connections so using a placeholder when testing locally
-                        photourls = ["https://sheltermanager.com/images/bg-hero-pets.png",]
-                        
-                    else:
-                        photourls = self.getPhotoUrls(an["ID"])
+                    photourls = self.getPhotoUrls(an["ID"])
                     imagepayload = {"photos": []}
                     for photourl in photourls:
-                        imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) ## Tweak to allow photos through to Petco Love Lost on dev server
+                        ## Tweak to allow photos through to Petco Love Lost on dev server, may be swapped for line below when live
+                        imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
                         # imagepayload["photos"].append({"url": photourl})
                     pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
-                    self.log("pr = " + str(pr))
-                    self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    prjson = asm3.utils.json_parse(pr["response"])
+                    if "id" in prjson.keys():
+                        self.log(f"Successfully processed {len(photourls)} x photo")
+                    else:
+                        self.log(f"Error processing photo(s): {prjson["message"]}")
+                    # self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed_animals.append(an)
                 else:
