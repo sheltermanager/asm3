@@ -306,16 +306,15 @@ ASM can send data to petcolove.org, a website that
 publishes lost and found animals. On shelter, non cruelty case animals 
 will be added to their database.
 
-Where a pickup address is not provided, the shelter address will be used 
-as the area found.
+.. note:: Where a pickup address is not provided, the shelter address will be used as the area found.
 
-You will need to register an email address with petcolove.org and use the 
-password that they provide.
+You will need to register an email address with petcolove.org and make a note of 
+the password that they provide.
 
 Before you are able to publish you must generate a petcolove.org Shelter ID. 
-The button next to the Shelter ID field in the Petco Love Lost publisher options 
+The button next to the Shelter ID field in :menuselection:`Publishing --> Set Publishing Options` 
 will attempt to obtain a Shelter ID from petcolove.org using the Shelter Details 
-defined in the system options.
+defined in :menuselection:`Setting --> Options`.
 
 If successful, the Shelter ID field will populate. If not, the feedback from 
 petcolove.org will be shown so that you can make adjustments and retry. Without 
