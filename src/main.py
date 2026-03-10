@@ -72,6 +72,7 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCO_LOVELOST_BASE_URL, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
+    PETCO_LOVELOST_EXTRAS, \
     RESIZE_IMAGES_DURING_ATTACH, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_HOST, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL, SQUARE_PAYMENT_ENVIRONMENT, cfg_file
@@ -7155,6 +7156,7 @@ class publish_options(JSONEndpoint):
             "hassavourlife": SAVOURLIFE_URL != "",
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
+            "pcllextras": PETCO_LOVELOST_EXTRAS,
             "styles": asm3.template.get_html_template_names(dbo),
             "users": asm3.users.get_users(dbo)
         }

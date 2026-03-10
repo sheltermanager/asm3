@@ -419,14 +419,17 @@ $(function() {
                             { id: "pcllemail", post_field: "PetCoLoveLostEmail", label: "Email Address", type: "text", doublesize: true }, 
                             { id: "pcllpassword", post_field: "PetCoLoveLostPassword", label: "Password", type: "text", doublesize: true },
                             { id: "pcllshelterid", post_field: "PetCoLoveLostShelterID", label: "Shelter ID", type: "text", doublesize: true,
-                                callout: _("The information from Options > Shelter Details will be used."),
+                                callout: _("The information from Options > Shelter Details and the email address from Options > Email will be used."),
                                 xmarkup: ' <button id="button-pcllgetshelterid" class="pcllbutton">' + _("Generate a Petco Love Lost shelter ID") + '</button>' +
                                 '<img id="pcllgetshelteridwait" src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;display: none;"/>'
                             },
                             { type: "raw", markup: '<button id="button-pcllpublished" class="pcllbutton">Show Published</button> ' +
-                                '<button id="button-pcllpurge" class="pcllbutton">Purge</button>'
+                                '<button id="button-pcllpurge" class="pcllbutton">Purge</button>',
+                                hideif: function() { return !controller.pcllextras; }
                             },
-                            { type: "raw", markup: '<div id="pclldata" style="padding-top: 3px;"></div>'}
+                            { type: "raw", markup: '<div id="pclldata" style="padding-top: 3px;"></div>',
+                                hideif: function() { return !controller.pcllextras; }
+                            }
                         ]}, 
                     { id: "tab-petlink", title: "PetLink Microchips", classes: 'localeus localeca localemx haspetlink',
                         info: 'These settings are for uploading new owner information to the PetLink/DataMARS microchip database.<br />' +
@@ -467,7 +470,6 @@ $(function() {
                     $("#pcllshelterid").val("");
                     let formdata = "mode=pcllshelterid";
                     let response = await common.ajax_post("publish", formdata);
-                    console.log(response);
                     let responsejson = JSON.parse(response);
                     if (responsejson.message) {
                         let erroroutput = responsejson.message + "<p><ul>";
