@@ -116,14 +116,13 @@ class PetcoLoveLostPublisher(AbstractPublisher):
     Handles sending found animal data to Petco Love Lost
     """
     def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
-        publishCriteria.uploadDirectly = True
-        publishCriteria.thumbnails = False
+        # publishCriteria.uploadDirectly = True
+        # publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("petcolovelost", "Petcolovelost Publisher")
         self.dbo = dbo
     
     def getAnimalData(self) -> str:
-        # sql = getAnimalDataQuery() + "WHERE a.Archived = 0 AND ( s.SpeciesName = 'Dog' OR s.SpeciesName = 'Cat' ) AND et.ID = 2"
         return self.dbo.query(
             getAnimalDataQuery() +
             "WHERE a.Archived = 0 AND ( s.SpeciesName = 'Dog' OR s.SpeciesName = 'Cat' ) AND et.ID = 2 AND CrueltyCase = 0" ## Include only archived, non case stray, cats and dogs
@@ -185,7 +184,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
-                if not self.validate(an): continue
                 headers = {
                     'x-api-key': auth["apikey"],
                     'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -196,9 +194,8 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                 if r["status"] == 201:
                     responsejson = asm3.utils.json_parse(r["response"])
                     pcllid = responsejson["id"]
-                    # testing = True
                     if testing:
-                        # Won't accept imageurls from non https connections so using a placeholder when testing
+                        # Won't accept imageurls from non https connections so using a placeholder when testing locally
                         photourls = ["https://sheltermanager.com/images/bg-hero-pets.png",]
                         
                     else:
@@ -301,9 +298,3 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             ro["sex"] = "male"
 
         return ro
-    
-    def validate(self, an: ResultRow) -> bool:
-        """ Validate an animal record is ok to send """
-    
-        return True
-
