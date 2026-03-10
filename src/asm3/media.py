@@ -1,6 +1,7 @@
 
 import asm3.al
 import asm3.animal
+import asm3.asynctask
 import asm3.audit
 import asm3.cachedisk
 import asm3.configuration
@@ -9,7 +10,7 @@ import asm3.log
 import asm3.utils
 from asm3.i18n import _
 from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, VIDEO_THUMBNAIL_CMD, WATERMARK_FONT_BASEDIRECTORY
-from asm3.typehints import Database, Dict, PostedData, ResultRow, Results, Tuple, List
+from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results, Tuple
 
 from datetime import datetime
 import os
@@ -1595,6 +1596,7 @@ def watermark_with_transparency(dbo: Database, imagedata: bytes, animalname: str
         return imagedata
 
 def zip_media_files_by_id(dbo: Database, mediaids: List[int]):
+    asm3.asynctask.set_progress_max(dbo, len(mediaids))
     ## Create the zip file
     zo = asm3.utils.bytesio()
     zfo = zipfile.ZipFile(zo, 'w')
@@ -1603,12 +1605,13 @@ def zip_media_files_by_id(dbo: Database, mediaids: List[int]):
         filename = mediafile[1]
         filedata = mediafile[3]
         zfo.writestr(filename, filedata)
+        asm3.asynctask.increment_progress_value(dbo)
     zfo.close()
     
     key = asm3.utils.uuid_str()
     asm3.cachedisk.put(key, dbo.name(), zo.getvalue(), 3600)
     completemessage = _("Archiving complete ({0} files).").replace("{0}", str(len(mediaids)))
-    return f'<p>' + completemessage + ' <a target="_blank" href="/zipfile_download?get={key}"><b>' + _("Download File") + '</b></a></p>'
+    return f'<p>' + completemessage + f' <a target="_blank" href="/zipfile_download?get={key}"><b>' + _("Download File") + '</b></a></p>'
 
         
 
