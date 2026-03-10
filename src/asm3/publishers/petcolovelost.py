@@ -13,7 +13,6 @@ import sys
 
 def create_shelter(dbo: Database) -> int:
     auth = getAuthDetails(dbo)
-
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -119,7 +118,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         )
 
     
-    def run(self, animallist: List[ResultRow] = []) -> None:
+    def run(self) -> None:
         
         self.log("Petco Love Lost Publisher starting...")
 
@@ -140,10 +139,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         for pa in cjson["pets"]:
             publishedanimalids.append((pa["metadata"]["system_animal_id"], pa["id"]))
 
-        if animallist:
-            animals = animallist
-        else:
-            animals = self.getAnimalData()
+        animals = self.getAnimalData()
 
         weightunit = "kg"
         if asm3.configuration.show_weight_in_lbs(self.dbo):
@@ -181,19 +177,23 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                     responsejson = asm3.utils.json_parse(r["response"])
                     pcllid = responsejson["id"]
                     photourls = self.getPhotoUrls(an["ID"])
-                    imagepayload = {"photos": []}
-                    for photourl in photourls:
-                        ## Tweak to allow photos through to Petco Love Lost on dev server, may be swapped for line below when live
-                        imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
-                        # imagepayload["photos"].append({"url": photourl})
-                    pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
-                    prjson = asm3.utils.json_parse(pr["response"])
-                    if "id" in prjson.keys():
-                        self.log(f"Successfully processed {len(photourls)} x photo")
+                    if len(photourls):
+                        imagepayload = {"photos": []}
+                        for photourl in photourls:
+
+                            ## Tweak to allow photos through to Petco Love Lost on dev server, may be swapped for line below when live
+                            imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
+                            # imagepayload["photos"].append({"url": photourl})
+
+                        pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
+                        prjson = asm3.utils.json_parse(pr["response"])
+                        if "id" in prjson.keys():
+                            self.log(f"Successfully processed {len(photourls)} x photo")
+                        else:
+                            self.log(f"Error processing photo(s): {prjson["message"]}")
+                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     else:
-                        self.log(f"Error processing photo(s): {prjson["message"]}")
-                    # self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        self.log(f"No photos found")
                     processed_animals.append(an)
                 else:
                     self.logError("status != 201: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
