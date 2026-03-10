@@ -94,7 +94,7 @@ def purge(auth: Dict):
     for animal in animalsjson["pets"]:
         removeAnimal(auth, animal["id"])
 
-def removeAnimal(auth: Dict, pcllaid: str):
+def removeAnimal(auth: Dict, pcllaid: str) -> Dict:
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]

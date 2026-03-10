@@ -1432,7 +1432,7 @@ def post_data(url: str, data: bytes, contenttype: str = "", httpmethod: str = "P
     try:
         if contenttype != "": headers["Content-Type"] = contenttype
         if isinstance(data, str): data = str2bytes(data)
-        # headers = _add_http_headers(headers)
+        headers = _add_http_headers(headers)
         if httpmethod == "POST":
             r = requests.post(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
         elif httpmethod == "PATCH":
