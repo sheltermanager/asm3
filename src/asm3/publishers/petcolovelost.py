@@ -80,7 +80,7 @@ def getAuthDetails(dbo: Database) -> Dict:
         "accesstoken": responsejson["accessToken"]
     }
 
-def getPublishedAnimals(auth) -> Dict:
+def getPublishedAnimals(auth: Dict) -> Dict:
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -88,7 +88,7 @@ def getPublishedAnimals(auth) -> Dict:
     response = asm3.utils.get_url(f'{auth["url"]}/v2/animals/?limit=25&offset=0', headers)
     return response["response"]
 
-def purge(auth):
+def purge(auth: Dict):
     animals = getPublishedAnimals(auth)
     animalsjson = asm3.utils.json_parse(animals)
     for animal in animalsjson["pets"]:
