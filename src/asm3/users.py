@@ -253,7 +253,7 @@ def check_permission_bool(session: Session, flag: str) -> bool:
     if has_security_flag(session.securitymap, flag): return True
     return False
 
-def check_permission_map(l: str, superuser: int, securitymap: str, flag: str) -> None:
+def check_permission_map(l: str, superuser: int, securitymap: str, flag: str, apikey: bool = False) -> None:
     """
     Throws an ASMPermissionError if the flag is not in the map
     """

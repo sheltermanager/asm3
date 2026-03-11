@@ -812,6 +812,18 @@ def anonymise_personal_data(dbo: Database) -> bool:
 def anonymise_after_years(dbo: Database) -> int:
     return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
 
+def api_keys(dbo: Database) -> List:
+    keys = []
+    for a in range(1, 11):
+        if cstring(dbo, f"APIKey{str(a)}") and cstring(dbo, f"APIMethods{str(a)}"):
+            keys.append(
+                (
+                    cstring(dbo, f"APIKey{str(a)}"),
+                    cstring(dbo, f"APIMethods{str(a)}").split(",")
+                )
+            )
+    return keys
+
 def audit_on_view_record(dbo: Database) -> bool:
     return cboolean(dbo, "AuditOnViewRecord", DEFAULTS["AuditOnViewRecord"] == "Yes")
 

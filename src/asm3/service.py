@@ -36,7 +36,7 @@ from asm3.typehints import Database, PostedData, Results, ResultRow, ServiceResp
 
 # Service methods that require authentication
 AUTH_METHODS = [
-    "csv_adoptable_animals", "csv_import", "csv_mail", "csv_report", 
+    "csv_import", "csv_mail", "csv_report", 
     "json_report", "json_mail", 
     "html_report", "rss_timeline", "upload_animal_image", 
     "xml_adoptable_animal", "json_adoptable_animal", "csv_adoptable_animal", 
@@ -132,6 +132,10 @@ FLOOD_PROTECT_METHODS = {
     "json_mail": [ 5, 60, 60 ],
     "online_form_post": [ 1, 15, 15 ]
 }
+
+class api_key:
+    SUPERUSER = 1
+    USERNAME = _("API_Key")
 
 def flood_protect(method: str, remoteip: str) -> None:
     """ 
@@ -529,6 +533,13 @@ def strip_personal_data(rows: Results) -> Results:
     """ Shorthand to save typing the module name repeatedly """
     return asm3.publishers.base.strip_sensitive_data(rows)
 
+# def validate_api_key(key: str, method: str):
+#     registeredkeys = []
+#     for a in range(1, 11):
+#         if 
+#     appropriatekeys = [registeredkey for registeredkey in registeredkeys if "a" in x]
+
+
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, ispost: bool, dbo: Database = None) -> ServiceResponse:
     """ Handles the various service method types.
     post:        The GET/POST parameters
@@ -543,6 +554,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     """
     # Get service parameters
     account = post["account"]
+    apikey = post["key"]
     username = post["username"]
     password = post["password"]
     method = post["method"]
@@ -601,11 +613,30 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if not asm3.configuration.service_auth_enabled(dbo):
             asm3.al.error("Service API for auth methods is disabled (%s)" % method, "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Service API for authenticated methods is disabled")
-        user = asm3.users.authenticate(dbo, username, password)
-        if user is None:
-            asm3.al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
-            return ("text/plain", 0, 0, "ERROR: Invalid username and password")
-        securitymap = asm3.users.get_security_map(dbo, user.ID)
+        if apikey:
+            validkey = False
+            keys = asm3.configuration.api_keys(dbo)
+            for k in keys:
+                if k[0] == apikey and method in k[1]:
+                    validkey = True
+                    break
+            if not validkey:
+                asm3.al.error("Invalid API Key (%s)" % method, "service.handler", dbo)
+                return ("text/plain", 0, 0, "ERROR: Invalid API Key")
+            user = api_key()
+            strip_personal = True
+        else:
+            user = asm3.users.authenticate(dbo, username, password)
+            if user is None:
+                asm3.al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
+                return ("text/plain", 0, 0, "ERROR: Invalid username and password")
+            securitymap = asm3.users.get_security_map(dbo, user.ID)
+
+            # If the user does not have VIEW_PERSON permissions, force stripping of personal info from 
+            # methods that support it
+            if user is not None and user.SUPERUSER is not None:
+                if not asm3.users.check_permission_map_bool(user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON):
+                    strip_personal = True
 
     # Get the preferred locale and timezone for the site
     l = asm3.configuration.locale(dbo)
@@ -613,12 +644,6 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     dbo.timezone = asm3.configuration.timezone(dbo)
     dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
     asm3.al.info("call @%s --> %s [%s]" % (username, method, querystring), "service.handler", dbo)
-
-    # If the user does not have VIEW_PERSON permissions, force stripping of personal info from 
-    # methods that support it
-    if user is not None and user.SUPERUSER is not None:
-        if not asm3.users.check_permission_map_bool(user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON):
-            strip_personal = True
 
     if method =="animal_image":
         hotlink_protect("animal_image", referer)
