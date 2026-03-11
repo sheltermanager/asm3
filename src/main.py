@@ -7567,6 +7567,7 @@ class publish_options(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
+            "authmethods": asm3.service.AUTH_METHODS,
             "breeds": asm3.lookups.get_breeds(dbo),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
@@ -7593,6 +7594,9 @@ class publish_options(JSONEndpoint):
         }
         asm3.al.debug("loaded lookups", "main.publish_options", dbo)
         return c
+    
+    def post_uuid(self, o):
+        return asm3.utils.uuid_str()
 
     def post_save(self, o):
         asm3.configuration.csave(o.dbo, o.user, o.post)

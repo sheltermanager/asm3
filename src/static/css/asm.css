@@ -1127,6 +1127,10 @@ select:disabled, input:disabled, textarea:disabled {
     width: 113px;
 }
 
+.asm-apimethods td{
+    padding-bottom: 10px;
+}
+
 /** Don't display the menu burger button when >480px */
 #asm-menu-burger {
     display: none;

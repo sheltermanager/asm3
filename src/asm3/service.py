@@ -44,6 +44,7 @@ AUTH_METHODS = [
     "xml_adopted_animals", "json_adopted_animals", "csv_adopted_animals",
     "xml_found_animals", "json_found_animals", "csv_found_animals", 
     "xml_held_animals", "json_held_animals", "csv_held_animals", 
+    "xml_microchip_registrations", "json_microchip_registrations", "csv_microchip_registration", 
     "xml_lost_animals", "json_lost_animals", "csv_lost_animals", 
     "xml_recent_adoptions", "json_recent_adoptions", "csv_recent_adoptions", 
     "xml_recent_changes", "json_recent_changes", "csv_recent_changes", 
