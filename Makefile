@@ -153,6 +153,13 @@ tests: scripts/unittestdb/base.db
 	cd unittest && python3 suite.py
 	rm -f unittest/*.pyc && rm -rf unittest/__pycache__
 
+tests_emailerrors: scripts/unittestdb/base.db
+	@echo "[tests] ========================"
+	rm -rf /tmp/asm_disk_cache/*
+	cp scripts/unittestdb/base.db scripts/unittestdb/test.db
+	cd unittest && python3 suite.py emailerrors
+	rm -f unittest/*.pyc && rm -rf unittest/__pycache__
+
 tests_dbupdates: 
 	@echo "[tests_dbupdates] =============="
 	rm -f scripts/unittestdb/dbupdates.db
