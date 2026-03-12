@@ -1595,9 +1595,14 @@ def watermark_with_transparency(dbo: Database, imagedata: bytes, animalname: str
         asm3.al.error("failed watermarking image: %s" % str(err), "media.watermark_with_transparency")
         return imagedata
 
-def zip_media_files_by_id(dbo: Database, mediaids: List[int]):
+def zip_media_link(dbo: Database, mediaids: List[int]) -> str:
+    """
+    Expected to be called by asynctask. Grabs the binary data for mediaids and
+    creates a zip file. Stores it in the disk cache for an hour and returns an HTML link
+    to download that file. 
+    """
+    l = dbo.locale
     asm3.asynctask.set_progress_max(dbo, len(mediaids))
-    ## Create the zip file
     zo = asm3.utils.bytesio()
     zfo = zipfile.ZipFile(zo, 'w')
     for mid in mediaids:
@@ -1607,12 +1612,8 @@ def zip_media_files_by_id(dbo: Database, mediaids: List[int]):
         zfo.writestr(filename, filedata)
         asm3.asynctask.increment_progress_value(dbo)
     zfo.close()
-    
     key = asm3.utils.uuid_str()
     asm3.cachedisk.put(key, dbo.name(), zo.getvalue(), 3600)
-    completemessage = _("Archiving complete ({0} files).").replace("{0}", str(len(mediaids)))
-    return f'<p>' + completemessage + f' <a target="_blank" href="/zipfile_download?get={key}"><b>' + _("Download File") + '</b></a></p>'
-
-        
-
+    completemessage = _("Archiving complete ({0} files).", l).replace("{0}", str(len(mediaids)))
+    return f'<p>{completemessage} <a target="_blank" href="/media_zipfile?get={key}"><b>' + _("Download File") + '</b></a></p>'
 

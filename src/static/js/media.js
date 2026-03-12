@@ -173,7 +173,7 @@ $(function() {
                 { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "move", text: _("Move/Copy"), type: "buttonmenu", icon: "copy" },
-                { id: "zip", text: _("Download Zip"), icon: "save", enabled: "multi" },
+                { id: "zip", text: _("Download"), icon: "save", enabled: "multi" },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { 
                         return common.browser_is.mobile;
@@ -861,7 +861,7 @@ $(function() {
 
             $("#button-zip").button({disabled: true}).click(function() {
                 let formdata = "mediaids=" + tableform.table_ids(media.table);
-                common.route("zipfile_download?" + formdata);
+                common.route("media_zipfile?" + formdata);
             });
 
             // If we aren't including preferred, hide the buttons
