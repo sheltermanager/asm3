@@ -19,6 +19,7 @@ import asm3.publishers.html
 import asm3.publishers.maddiesfund
 import asm3.publishers.mypetuk
 import asm3.publishers.petcademy 
+import asm3.publishers.petcolovelost 
 import asm3.publishers.petfinder
 import asm3.publishers.petlink
 import asm3.publishers.petrescue
@@ -164,6 +165,12 @@ PUBLISHER_LIST["pl"] = {
 PUBLISHER_LIST["st"] = {
     "label":    "Register microchips with SmartTag Pet ID",
     "class":    asm3.publishers.smarttag.SmartTagPublisher,
+    "locales":  "en en_MX es_MX",
+    "sub24hour": False
+}
+PUBLISHER_LIST["ll"] = {
+    "label":    "Register found pets with Petco Love Lost",
+    "class":    asm3.publishers.petcolovelost.PetcoLoveLostPublisher,
     "locales":  "en",
     "sub24hour": False
 }
