@@ -1985,7 +1985,7 @@ def html_table(l: str, rows: Results, cols: List[Tuple[str, str]]):
     """
     h = []
     colstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;">{0}</td>'
-    headstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;"><strong>{0}</strong></td>'
+    headstyle = '<th><span style="font-family: sans-serif; font-size: 10pt;"><strong>{0}</strong></th>'
     h.append('<table style="border-collapse: collapse; width: 100%" border="1">')
     h.append("<thead><tr>")
     for colfield, coltext in cols:
