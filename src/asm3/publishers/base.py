@@ -403,64 +403,63 @@ def get_microchip_data_export(dbo: Database, prefix: str = "", days: int = 30) -
     trialclause = ""
     if movementtypes.find("11") == -1:
         trialclause = "AND a.HasTrialAdoption = 0"
-    # try:
-    sql = "SELECT a.ID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, c.BaseColour, z.Size, a.DateOfBirth, a.NonShelterAnimal, a.Archived, a.ActiveMovementDate, " \
-    "a.IdentichipDate, a.IdentichipStatus, a.IdentichipNumber, a.Identichip2Date, a.Identichip2Status, a.Identichip2Number, " \
-    "oo.OwnerName AS OriginalOwnerName, " \
-    "oo.OwnerTitle AS OriginalOwnerTitle, " \
-    "oo.OwnerInitials AS OriginalOwnerInitials, " \
-    "oo.OwnerForeNames AS OriginalOwnerForeNames, " \
-    "oo.OwnerSurname AS OriginalOwnerSurname, " \
-    "oo.OwnerAddress AS OriginalOwnerAddress, " \
-    "oo.OwnerTown AS OriginalOwnerTown, " \
-    "oo.OwnerCounty AS OriginalOwnerCounty, " \
-    "oo.OwnerPostcode AS OriginalOwnerPostcode, " \
-    "oo.OwnerCountry AS OriginalOwnerCountry, " \
-    "oo.HomeTelephone AS OriginalOwnerHomeTelephone, " \
-    "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
-    "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
-    "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
-    "oo.IdentificationNumber AS OriginalOwnerIDNumber, " \
-    "co.ID AS CurrentOwnerID, " \
-    "co.OwnerName AS CurrentOwnerName, " \
-    "co.OwnerTitle AS CurrentOwnerTitle, " \
-    "co.OwnerInitials AS CurrentOwnerInitials, " \
-    "co.OwnerForeNames AS CurrentOwnerForeNames, " \
-    "co.OwnerSurname AS CurrentOwnerSurname, " \
-    "co.OwnerAddress AS CurrentOwnerAddress, " \
-    "co.OwnerTown AS CurrentOwnerTown, " \
-    "co.OwnerCounty AS CurrentOwnerCounty, " \
-    "co.OwnerPostcode AS CurrentOwnerPostcode, " \
-    "co.OwnerCountry AS CurrentOwnerCountry, " \
-    "co.HomeTelephone AS CurrentOwnerHomeTelephone, " \
-    "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
-    "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
-    "co.EmailAddress AS CurrentOwnerEmailAddress, " \
-    "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
-    "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
-    "co.Comments AS CurrentOwnerComments " \
-    "FROM animal a " \
-    "INNER JOIN species s ON a.SpeciesID = s.ID " \
-    "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
-    "INNER JOIN lksize z ON a.Size = z.ID " \
-    "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
-    "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
-    "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
-    "WHERE a.DeceasedDate Is Null " \
-    "AND a.Identichipped = 1 " \
-    "AND (a.IdentichipNumber LIKE '%(prefix)s%%' OR a.Identichip2Number LIKE '%(prefix)s%%') " \
-    "AND (a.IsNotForRegistration IS NULL OR a.IsNotForRegistration = 0) " \
-    "AND a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
-    "AND a.ActiveMovementDate > %(regfrom)s AND a.ActiveMovementDate <= %(regto)s" % {
-        "prefix": dbo.escape(prefix),
-        "movementtypes": movementtypes, 
-        "trialclause": trialclause,
-        "regfrom": dbo.sql_value(registerfrom), 
-        "regto": dbo.sql_value(registerto),
-    }
-    rows = dbo.query(sql)
-    # except Exception as err:
-    #     asm3.al.error(str(err), "publisher.get_microchip_data_export", dbo, sys.exc_info())
+    try:
+        rows = dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, c.BaseColour, z.Size, a.DateOfBirth, a.NonShelterAnimal, a.Archived, a.ActiveMovementDate, " \
+        "a.IdentichipDate, a.IdentichipStatus, a.IdentichipNumber, a.Identichip2Date, a.Identichip2Status, a.Identichip2Number, " \
+        "oo.OwnerName AS OriginalOwnerName, " \
+        "oo.OwnerTitle AS OriginalOwnerTitle, " \
+        "oo.OwnerInitials AS OriginalOwnerInitials, " \
+        "oo.OwnerForeNames AS OriginalOwnerForeNames, " \
+        "oo.OwnerSurname AS OriginalOwnerSurname, " \
+        "oo.OwnerAddress AS OriginalOwnerAddress, " \
+        "oo.OwnerTown AS OriginalOwnerTown, " \
+        "oo.OwnerCounty AS OriginalOwnerCounty, " \
+        "oo.OwnerPostcode AS OriginalOwnerPostcode, " \
+        "oo.OwnerCountry AS OriginalOwnerCountry, " \
+        "oo.HomeTelephone AS OriginalOwnerHomeTelephone, " \
+        "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
+        "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
+        "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
+        "oo.IdentificationNumber AS OriginalOwnerIDNumber, " \
+        "co.ID AS CurrentOwnerID, " \
+        "co.OwnerName AS CurrentOwnerName, " \
+        "co.OwnerTitle AS CurrentOwnerTitle, " \
+        "co.OwnerInitials AS CurrentOwnerInitials, " \
+        "co.OwnerForeNames AS CurrentOwnerForeNames, " \
+        "co.OwnerSurname AS CurrentOwnerSurname, " \
+        "co.OwnerAddress AS CurrentOwnerAddress, " \
+        "co.OwnerTown AS CurrentOwnerTown, " \
+        "co.OwnerCounty AS CurrentOwnerCounty, " \
+        "co.OwnerPostcode AS CurrentOwnerPostcode, " \
+        "co.OwnerCountry AS CurrentOwnerCountry, " \
+        "co.HomeTelephone AS CurrentOwnerHomeTelephone, " \
+        "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
+        "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
+        "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
+        "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
+        "co.Comments AS CurrentOwnerComments " \
+        "FROM animal a " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID " \
+        "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
+        "INNER JOIN lksize z ON a.Size = z.ID " \
+        "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
+        "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
+        "WHERE a.DeceasedDate Is Null " \
+        "AND a.Identichipped = 1 " \
+        "AND (a.IdentichipNumber LIKE '%(prefix)s%%' OR a.Identichip2Number LIKE '%(prefix)s%%') " \
+        "AND (a.IsNotForRegistration IS NULL OR a.IsNotForRegistration = 0) " \
+        "AND a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
+        "AND a.ActiveMovementDate > %(regfrom)s AND a.ActiveMovementDate <= %(regto)s" % {
+            "prefix": dbo.escape(prefix),
+            "movementtypes": movementtypes, 
+            "trialclause": trialclause,
+            "regfrom": dbo.sql_value(registerfrom), 
+            "regto": dbo.sql_value(registerto),
+        })
+    except Exception as err:
+        asm3.al.error(str(err), "publisher.get_microchip_data_export", dbo, sys.exc_info())
 
     rows = calc_microchip_data(dbo, rows)
     return rows
