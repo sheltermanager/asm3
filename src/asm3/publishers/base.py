@@ -438,7 +438,11 @@ def get_microchip_data_export(dbo: Database, prefix: str = "", days: int = 30) -
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
         "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
         "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
-        "co.Comments AS CurrentOwnerComments " \
+        "co.Comments AS CurrentOwnerComments, " \
+        "a.ActiveMovementID, " \
+        "a.MostRecentEntryDate, " \
+        "a.ActiveMovementType, " \
+        "mt.MovementType AS ActiveMovementTypeName " \
         "FROM animal a " \
         "INNER JOIN species s ON a.SpeciesID = s.ID " \
         "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
@@ -446,12 +450,17 @@ def get_microchip_data_export(dbo: Database, prefix: str = "", days: int = 30) -
         "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
         "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "WHERE a.DeceasedDate Is Null " \
         "AND a.Identichipped = 1 " \
         "AND (a.IdentichipNumber LIKE '%(prefix)s%%' OR a.Identichip2Number LIKE '%(prefix)s%%') " \
         "AND (a.IsNotForRegistration IS NULL OR a.IsNotForRegistration = 0) " \
-        "AND a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
-        "AND a.ActiveMovementDate > %(regfrom)s AND a.ActiveMovementDate <= %(regto)s" % {
+        "AND ( " \
+        "( a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
+        "AND a.ActiveMovementDate > %(regfrom)s AND a.ActiveMovementDate <= %(regto)s ) " \
+        "OR ( a.ARCHIVED = 0 AND a.MostRecentEntryDate > %(regfrom)s AND a.MostRecentEntryDate <= %(regto)s ) "
+        ") " \
+              % {
             "prefix": dbo.escape(prefix),
             "movementtypes": movementtypes, 
             "trialclause": trialclause,
@@ -551,6 +560,11 @@ def calc_microchip_data(dbo: Database, rows: Results, organisation_email: str = 
         # animals can't have an active movement or entry date
         r.EVENTDATE = r.ACTIVEMOVEMENTDATE or r.MOSTRECENTENTRYDATE
         if r.NONSHELTERANIMAL == 1: r.EVENTDATE = r.IDENTICHIPDATE
+
+        if r.ACTIVEMOVEMENTTYPENAME:
+            r.EVENTTYPE = r.ACTIVEMOVEMENTTYPENAME
+        else:
+            r.EVENTTYPE = asm3.i18n._("Intake", dbo.locale)
 
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
         # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
