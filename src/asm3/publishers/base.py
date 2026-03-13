@@ -404,7 +404,8 @@ def get_microchip_data_export(dbo: Database, prefix: str = "", days: int = 30) -
     if movementtypes.find("11") == -1:
         trialclause = "AND a.HasTrialAdoption = 0"
     try:
-        rows = dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, c.BaseColour, z.Size, a.DateOfBirth, a.NonShelterAnimal, a.Archived, a.ActiveMovementDate, " \
+        rows = dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, c.BaseColour, z.Size, a.DateOfBirth, a.NonShelterAnimal, a.Archived, " \
+        "a.MostRecentEntryDate, a.ActiveMovementID, a.ActiveMovementType, a.ActiveMovementDate, " \
         "a.IdentichipDate, a.IdentichipStatus, a.IdentichipNumber, a.Identichip2Date, a.Identichip2Status, a.Identichip2Number, " \
         "oo.OwnerName AS OriginalOwnerName, " \
         "oo.OwnerTitle AS OriginalOwnerTitle, " \
@@ -439,9 +440,6 @@ def get_microchip_data_export(dbo: Database, prefix: str = "", days: int = 30) -
         "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
         "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
         "co.Comments AS CurrentOwnerComments, " \
-        "a.ActiveMovementID, " \
-        "a.MostRecentEntryDate, " \
-        "a.ActiveMovementType, " \
         "mt.MovementType AS ActiveMovementTypeName " \
         "FROM animal a " \
         "INNER JOIN species s ON a.SpeciesID = s.ID " \
