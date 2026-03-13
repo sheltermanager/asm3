@@ -1017,7 +1017,7 @@ const html = {
      */
     content_header: function(title, id = "") {
         let ids = "";
-        id = id || "asm-content"
+        id = id || "asm-content";
         ids = 'id="' + id + '" ';
         if (title) {
             return "<div " + ids + " class=\"ui-accordion ui-widget ui-helper-reset ui-accordion-icons\">" +

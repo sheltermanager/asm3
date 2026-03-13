@@ -92,7 +92,7 @@ CACHE_PROTECT_METHODS = {
     "json_adopted_animals": [ "fromdate", "todate", "sensitive" ],
     "xml_adopted_animals": [ "fromdate", "todate", "sensitive" ],
     "csv_found_animals": [ "sensitive" ],
-    "c": [ "sensitive" ],
+    "json_found_animals": [ "sensitive" ],
     "xml_found_animals": [ "sensitive" ],
     "csv_held_animals": [ "sensitive" ],
     "json_held_animals": [ "sensitive" ],
@@ -100,6 +100,9 @@ CACHE_PROTECT_METHODS = {
     "csv_lost_animals": [ "sensitive" ],
     "json_lost_animals": [ "sensitive" ],
     "xml_lost_animals": [ "sensitive" ],
+    "json_microchip_registrations": [ "prefix", "days" ],
+    "xml_microchip_registrations": [ "prefix", "days" ],
+    "csv_microchip_registrations": [ "prefix", "days" ],
     "csv_recent_adoptions": [ "sensitive" ], 
     "json_recent_adoptions": [ "sensitive" ], 
     "xml_recent_adoptions": [ "sensitive" ],
@@ -749,7 +752,11 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
     
     elif method in ("json_microchip_registrations", "xml_microchip_registrations", "csv_microchip_registrations"):
-        animals = asm3.publishers.base.get_microchip_data_export(dbo)
+        if not post["days"]:
+            days = 30
+        else:
+            days = post.integer("days")
+        animals = asm3.publishers.base.get_microchip_data_export(dbo, post["prefix"], days)
         if len(animals) == 0:
             return ("text/plain", 0, 0, "ERROR: No microchips found to register")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, animals))
