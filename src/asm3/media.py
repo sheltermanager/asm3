@@ -989,7 +989,7 @@ def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, lin
         ext = m.MEDIANAME
         ext = ext[ext.rfind(".")+1:]
         dbfsid = asm3.dbfs.put_string(dbo, f"{nextid}.{ext}", path, data)
-    mid = dbo.insert("media", {
+    dbo.insert("media", {
         "ID":                   nextid,
         "DBFSID":               dbfsid,
         "MediaSize":            m.MEDIASIZE,
@@ -1013,6 +1013,7 @@ def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, lin
         "CreatedDate":          dbo.now(),
         "RetainUntil":          m.RETAINUNTIL
     }, username, generateID=False)
+    return nextid
 
 def update_media_link(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
     """ Updates the media with id to have a new link """
