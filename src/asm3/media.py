@@ -978,13 +978,20 @@ def update_media_from_form(dbo: Database, username: str, post: PostedData) -> No
         "UpdatedSinceLastPublish": 1
     }, username)
 
-def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
-    """ Clones a media record with a new link """
+def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int, deepcopy: bool = True) -> None:
+    """ Clones a media record with a new link. If deepcopy is set, clones the DBFS data as well """
     m = get_media_by_id(dbo, mediaid)
+    dbfsid = m.DBFSID
     nextid = dbo.get_id("media")
-    return dbo.insert("media", {
+    if deepcopy:
+        data = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+        path = get_dbfs_path(m.LINKID, m.LINKTYPEID)
+        ext = m.MEDIANAME
+        ext = ext[ext.rfind(".")+1:]
+        dbfsid = asm3.dbfs.put_string(dbo, f"{nextid}.{ext}", path, data)
+    mid = dbo.insert("media", {
         "ID":                   nextid,
-        "DBFSID":               m.DBFSID,
+        "DBFSID":               dbfsid,
         "MediaSize":            m.MEDIASIZE,
         "MediaSource":          MEDIASOURCE_CLONE,
         "MediaFlags":           m.MEDIAFLAGS,
