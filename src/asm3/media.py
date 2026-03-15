@@ -1577,7 +1577,8 @@ def watermark_with_transparency(dbo: Database, imagedata: bytes, animalname: str
                 break
 
         font = ImageFont.truetype(font_file, fontsize)
-        font_position = height - (fontsize + y_offset)
+        font_height = fontsize + 30 # This is a fudge, we used to get font_height from draw.textsize(), but that was deprecated/removed
+        font_position = height - (font_height + y_offset)
 
         draw.text((font_offset-stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
         draw.text((font_offset+stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
