@@ -1564,13 +1564,13 @@ def watermark_with_transparency(dbo: Database, imagedata: bytes, animalname: str
 
         for fontsize in range(20, font_maxsize, 5):
             font = ImageFont.truetype(font_file, fontsize)
-            font_dimensions = draw.textsize(animalname,font=font)
-            if font_dimensions[0]+font_offset > (width-wm_width-font_offset):
+            font_width_px = draw.textlength(animalname,font=font)
+            if font_width_px + font_offset > (width-wm_width-font_offset):
                 fontsize = fontsize - 10
                 break
 
         font = ImageFont.truetype(font_file, fontsize)
-        font_position = height - (font_dimensions[1] + y_offset)
+        font_position = height - (fontsize + y_offset)
 
         draw.text((font_offset-stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
         draw.text((font_offset+stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
