@@ -58,6 +58,8 @@ $(function() {
                     tableform.render_intnumber({ id: "weightoz", justwidget: true, style: "width: 70px" }),
                     '<span id="ozlabel">' + _("oz") + '</span>',
                     '</span>' ].join("\n") },
+                { post_field: "weight1", json_field: "WEIGHT1", type: "hidden" },
+                { post_field: "weight2", json_field: "WEIGHT2", type: "hidden" },
 
                 { type: "nextcol" }, 
 
