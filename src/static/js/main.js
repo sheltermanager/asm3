@@ -125,10 +125,10 @@ $(function() {
                         _("{plural3} medical treatments need to be administered today")
                     ]));
             }
-            if (alerts.LOSINGWEIGHT > 0 && common.has_permission("va") && config.bool("AlertWeightLoss")) {
-                totalalerts += alerts.LOSINGWEIGHT;
+            if (alerts.LOSTWEIGHT > 0 && common.has_permission("va") && config.bool("AlertWeightLoss")) {
+                totalalerts += alerts.LOSTWEIGHT;
                 oa("search?q=lostweight", "medical", 
-                    common.ntranslate(alerts.LOSINGWEIGHT, [
+                    common.ntranslate(alerts.LOSTWEIGHT, [
                         _("{plural0} animal is losing weight"),
                         _("{plural1} animals are losing weight"),
                         _("{plural2} animals are losing weight"),

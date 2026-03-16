@@ -49,7 +49,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     forpublish, people, vets, retailers, staff, fosterers, volunteers, 
     shelters, aco, banned, homechecked, homecheckers, members, donors, drivers,
     reservenohomecheck, nevervacc, norabies, notmicrochipped, unsigned, signed,
-    losingweight
+    lostweight
 
     returns a tuple of:
     results, timetaken, explain, sortname

@@ -1646,7 +1646,7 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
-        "(SELECT COUNT(*) FROM animal WHERE Weight1 IS NOT NULL AND Weight2 IS NOT NULL AND Weight < Weight1 AND Weight1 < Weight2 AND Archived = 0) AS losingweight, " \
+        "(SELECT COUNT(*) FROM animal WHERE Weight1 IS NOT NULL AND Weight2 IS NOT NULL AND Weight < Weight1 AND Weight1 < Weight2 AND Archived = 0) AS lostweight, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 

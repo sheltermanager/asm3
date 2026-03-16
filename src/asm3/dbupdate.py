@@ -336,6 +336,8 @@ def sql_structure(dbo: Database) -> str:
         fint("DiedOffShelter"),
         fint("Size"),
         ffloat("Weight", True),
+        ffloat("Weight1", True),
+        ffloat("Weight2", True),
         fstr("RabiesTag", True),
         fint("Archived"),
         fint("Adoptable", True),
