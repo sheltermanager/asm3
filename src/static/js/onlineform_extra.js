@@ -111,10 +111,10 @@ $(document).ready(function() {
         let imreader = new FileReader();
         imreader.onload = function(e) { 
             filedata = e.target.result;
+            if (filedata.length > 384000) { alert("File is too large"); field.val(""); return; }
             $("input[name='" + field.attr("data-name") + "']").val(filedata);
         };
         let file = field[0].files[0];
-        let ext = file.name.split(".").pop().toLowerCase();
 
         // Is this a pdf? If not, stop now
         if (!file.type.match('application.pdf')) { alert("File is not a pdf"); field.val(""); return; }
