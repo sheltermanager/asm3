@@ -329,9 +329,12 @@ $(function() {
                 } else {
                     let taxrate = pos.activetaxrate;
                     let refund = 1;
-                    if (pos.refund) { refund = -1; }
                     let price = parseInt($("#numpadscreen").text()) * refund;
                     let taxamount = parseInt(parseFloat(price)  * taxrate);
+                    if (pos.refund) { refund = -1; }
+                    if ( config.bool("VATExclusive") ) {
+                        price += taxamount;
+                    }
                     $("#transactionlog").append(
                         [
                             '<div class="receiptitemcontainer">',
@@ -409,7 +412,6 @@ $(function() {
                     $("#enterkey").addClass("voidkey");
                     pos.update_subtotal();
                 } else if (pos.activereceiptitem) {
-                    console.log(pos.activereceiptitem);
                     pos.activereceiptitem.css("text-decoration", "line-through");
                     pos.activereceiptitem.attr("data-voided", "true");
                     pos.activereceiptitem = false;
@@ -433,7 +435,6 @@ $(function() {
             });
             $("#infopanel").on("keyup", "#posproductsearch", function() {
                 let searchkey = $("#posproductsearch").val();
-                console.log(searchkey);
                 $.each($(".productcontainer"), function(i, productcontainer) {
                     if ( $(productcontainer).find(".productinfodescription").text().toLowerCase().includes(searchkey.toLowerCase()) ) {
                         $(productcontainer).show();
@@ -458,6 +459,9 @@ $(function() {
                         });
                         let taxamount = parseInt(v.RETAILPRICE * taxrate * pos.multiplier * refund);
                         let price = v.RETAILPRICE * pos.multiplier * refund;
+                        if ( config.bool("VATExclusive") ) {
+                            price += taxamount;
+                        }
                         pos.activeproduct = v;
                         $("#transactionlog").append(
                             [
