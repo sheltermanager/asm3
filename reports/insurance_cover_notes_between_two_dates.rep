@@ -2,7 +2,7 @@ Insurance Cover Notes between two dates
 ###	
 Movements
 ###
-34004/Any rev04
+34004/Any rev05
 ###
 Insurance cover notes issued between two dates
 ###
@@ -16,9 +16,9 @@ species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.Identich
 animaltype.AnimalType AS theType,
 animal.BreedName,
 oo.OwnerName AS OOName, oo.ID AS OID, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
-oo.EmailAddress AS OOEmail,
-no.OwnerName, no.ID AS NID, no.OwnerAddress,
-no.OwnerTown, no.OwnerCounty,
+oo.EmailAddress AS OOEmail, oo.HomeTelephone AS OOHomePhone, oo.WorkTelephone AS OOWorkPhone, oo.MobileTelephone AS OOMobilePhone,
+no.OwnerName, no.ID AS NID,
+no.OwnerAddress, no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
@@ -58,6 +58,14 @@ $$BODY
 <td>$MostRecentEntryDate</td>
 <td>$TimeOnShelter ($DaysOnShelter days)</td>
 <td><i><a target="_blank" href="person?id=$OID">$OOName</a></i><br/>
+$OOAddress<br/>
+$OOTown<br/>
+$OOCounty<br/>
+$OOPostcode<br/>
+$OOEmail<br/>
+H: $OOHOMEPHONE, W: $OOWORKPHONE, C: $OOMOBILEPHONE</td> 
+<td>$MovementDate</td>  
+<td><i><a target="_blank" href="person?id=$NID">$OwnerName</a></i><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>
