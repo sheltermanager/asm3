@@ -65,7 +65,7 @@ FIELDTYPE_MAP = {
     "LOOKUP_MULTI": 14,
     "GDPR_CONTACT_OPTIN": 15,
     "TIME": 16,
-    "PDF": 24,
+    "IMAGE": 17,
     "CHECKBOXGROUP": 18,
     "EMAIL": 19,
     "NUMBER": 20,
