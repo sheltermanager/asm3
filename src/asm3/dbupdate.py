@@ -40,7 +40,8 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "log", "logmulti", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "product", "publishlog", 
-    "regulardebit", "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
+    "regulardebit", "reservationstatus", "role", "salesreceipt", "salesreceiptdetail", "site", "species", 
+    "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", "userrole", "users", 
     "vaccinationtype", "voucher" )
 
@@ -75,7 +76,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
     "log", "logmulti", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
     "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrole", "ownerrota", "ownertraploan", 
-    "ownervoucher", "regulardebit", "stocklevel", "stockusage" )
+    "ownervoucher", "regulardebit", "salesreceipt", "salesreceiptdetail", "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
@@ -1787,6 +1788,22 @@ def sql_structure(dbo: Database) -> str:
         fstr("Rolename"),
         flongstr("SecurityMap")), False)
     sql += index("role_Rolename", "role", "Rolename")
+
+    sql += table("salesreceipt", (
+        fid(),
+        fdate("Date"),
+        fint("Balance") ))
+
+    sql += table("salesreceiptdetail", (
+        fid(),
+        fint("SalesReceiptID"),
+        fint("ProductID"),
+        fint("TaxRate"),
+        fint("Price"),
+        fstr("Description") ))
+    sql += index("salesreceiptdetail_SalesReceiptID", "salesreceiptdetail", "SalesReceiptID")
+    sql += index("salesreceiptdetail_ProductID", "salesreceiptdetail", "ProductID")
+    sql += index("salesreceiptdetail_Description", "salesreceiptdetail", "Description")
 
     sql += table("site", (
         fid(),
