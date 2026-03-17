@@ -171,7 +171,7 @@ $(document).ready(function() {
             let fieldname = $(this).attr("data-name"),
                 v = $(this).val();
             if (!v) {
-                alert("You must attach an image");
+                alert("You must attach a PDF file");
                 $(this).focus();
                 rv = false;
                 return false;
