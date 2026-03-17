@@ -160,6 +160,7 @@ $(function() {
 
             $('#species').change(function() {
                 waitinglist.updatebreedselect();
+                additional.toggle_elements_by_species("additional", $("#species").val());
             });
 
             // Handlers for when on-screen fields are edited

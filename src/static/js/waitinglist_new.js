@@ -116,6 +116,7 @@ $(function() {
 
             $('#species').change(function() {
                 waitinglist_new.update_breed_select();
+                additional.toggle_elements_by_species("additional", $("#species").val());
             });
 
             // Buttons
