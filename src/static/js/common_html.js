@@ -16,10 +16,10 @@ const html = {
             exwks = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludeunder")),
             exrsv = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludereserves")),
             locs = common.url_param(p.replace(/ /g, "&"), "includelocations");
+        if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
         if (a.ISCOURTESY == 1) { return [ true, _("Courtesy Listing") ]; }
         if (a.ISNOTAVAILABLEFORADOPTION == 1) { return [ false, _("Not for adoption flag set") ]; }
         if (a.NONSHELTERANIMAL == 1) { return [ false, _("Non-Shelter") ]; }
-        if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
         if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return [ false, _("Cruelty Case") ]; }
         if (a.NEUTERED == 0 && p.indexOf("includenonneutered") == -1 && 
             common.array_in(String(a.SPECIESID), config.str("AlertSpeciesNeuter").split(","))
