@@ -105,6 +105,23 @@ $(document).ready(function() {
         imreader.readAsDataURL(file);
     };
 
+    // Loads and scales a pdf into an pdf form field for upload
+    const process_pdf = function(field) {
+        let filedata = null;
+        let imreader = new FileReader();
+        imreader.onload = function(e) { 
+            filedata = e.target.result;
+            $("input[name='" + field.attr("data-name") + "']").val(filedata);
+        };
+        let file = field[0].files[0];
+        let ext = file.name.split(".").pop().toLowerCase();
+
+        // Is this a pdf? If not, stop now
+        if (!file.type.match('application.pdf')) { alert("File is not a pdf"); field.val(""); return; }
+        
+        imreader.readAsDataURL(file);
+    };
+
     // Validates that all mandatory signature fields have something in them.
     // returns false for failure.
     const validate_signatures = function() {
@@ -132,6 +149,23 @@ $(document).ready(function() {
     const validate_images = function() {
         let rv = true;
         $(".asm-onlineform-image").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
+            let fieldname = $(this).attr("data-name"),
+                v = $(this).val();
+            if (!v) {
+                alert("You must attach an image");
+                $(this).focus();
+                rv = false;
+                return false;
+            }
+        });
+        return rv;
+    };
+
+    const validate_pdfs = function() {
+        let rv = true;
+        $(".asm-onlineform-pdf").each(function() {
             if (!$(this).attr("data-required")) { return; }
             if (!$(this).parent().is(":visible")) { return; }
             let fieldname = $(this).attr("data-name"),
@@ -530,6 +564,13 @@ $(document).ready(function() {
         });
     });
 
+    // Attach event handlers to load pdfs when they are selected
+    $(".asm-onlineform-pdf").each(function() {
+        $(this).change(function(e) {
+            process_pdf($(this));
+        });
+    });
+
     // Show a thumbnail for adoptable animals
     $(".asm-onlineform-adoptableanimal").each(function() {
        $(this).change(function(e) {
@@ -614,6 +655,7 @@ $(document).ready(function() {
         if (!validate_number()) { enable(); return false; }
         if (!validate_required()) { enable(); return false; }
         if (!validate_images()) { enable(); return false; }
+        if (!validate_pdfs()) { enable(); return false; }
         if (!validate_phone()) { enable(); return false; }
         if (html5_required && !$("form")[0].checkValidity()) { 
             enable(); // the default behaviour highlights the required fields so we need it to happen
