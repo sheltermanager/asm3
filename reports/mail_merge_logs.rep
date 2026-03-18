@@ -1,0 +1,40 @@
+Mail Merge Logs
+###
+Auditing
+###
+35100/Any rev01
+###
+Mail merge logs created between two dates
+###
+en
+###
+SELECT Date, OwnerName, links.Comments
+FROM (SELECT ID, Date, Comments, regexp_split_to_table(LinkIDs, '[,]') AS OwnerID FROM logmulti ORDER BY ID) AS links
+LEFT OUTER JOIN owner o ON o.ID = links.OwnerID::integer
+WHERE links.date >= '$ASK DATE Enter the from date$'
+AND links.date <= '$ASK DATE Enter the to date$ 23:59:59'
+ORDER BY links.date, links desc
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>Date</th>
+<th>Person</th>
+<th>Log Comments</th>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATE</td>
+<td>$OWNERNAME</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total: {COUNT.DATE}</h2>
+FOOTER$$
