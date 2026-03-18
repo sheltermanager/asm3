@@ -7594,9 +7594,6 @@ class publish_options(JSONEndpoint):
         }
         asm3.al.debug("loaded lookups", "main.publish_options", dbo)
         return c
-    
-    def post_uuid(self, o):
-        return asm3.utils.uuid_str()
 
     def post_save(self, o):
         asm3.configuration.csave(o.dbo, o.user, o.post)

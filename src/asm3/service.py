@@ -136,10 +136,6 @@ FLOOD_PROTECT_METHODS = {
     "online_form_post": [ 1, 15, 15 ]
 }
 
-class api_key:
-    SUPERUSER = 1
-    USERNAME = _("API_Key")
-
 def flood_protect(method: str, remoteip: str) -> None:
     """ 
     Implements flood protection for methods.
@@ -536,11 +532,11 @@ def strip_personal_data(rows: Results) -> Results:
     """ Shorthand to save typing the module name repeatedly """
     return asm3.publishers.base.strip_sensitive_data(rows)
 
-# def validate_api_key(key: str, method: str):
-#     registeredkeys = []
-#     for a in range(1, 11):
-#         if 
-#     appropriatekeys = [registeredkey for registeredkey in registeredkeys if "a" in x]
+def validate_api_key(dbo: Database, key: str, method: str):
+    for a in range(1, 11):
+        if asm3.configuration.cstring(dbo, f"APIKey{a}") == key and method in asm3.configuration.cstring(dbo, f"APIMethods{a}").split(","):
+            return True
+    return False
 
 
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, ispost: bool, dbo: Database = None) -> ServiceResponse:
@@ -617,16 +613,10 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.al.error("Service API for auth methods is disabled (%s)" % method, "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Service API for authenticated methods is disabled")
         if apikey:
-            validkey = False
-            keys = asm3.configuration.api_keys(dbo)
-            for k in keys:
-                if k[0] == apikey and method in k[1]:
-                    validkey = True
-                    break
-            if not validkey:
+            if not validate_api_key(dbo, apikey, method):
                 asm3.al.error("Invalid API Key (%s)" % method, "service.handler", dbo)
                 return ("text/plain", 0, 0, "ERROR: Invalid API Key")
-            user = api_key()
+            user = dbo.first_row(dbo.query("SELECT 1 AS SuperUser, 'api_key' AS UserName"))
             strip_personal = True
         else:
             user = asm3.users.authenticate(dbo, username, password)
@@ -752,13 +742,9 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
     
     elif method in ("json_microchip_registrations", "xml_microchip_registrations", "csv_microchip_registrations"):
-        if not post["days"]:
-            days = 30
-        else:
-            days = post.integer("days")
+        days = post.integer("days")
+        if days == 0: days = 30
         animals = asm3.publishers.base.get_microchip_data_export(dbo, post["prefix"], days)
-        if len(animals) == 0:
-            return ("text/plain", 0, 0, "ERROR: No microchips found to register")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, animals))
 
     elif method == "media_image":

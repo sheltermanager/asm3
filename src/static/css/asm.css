@@ -108,6 +108,10 @@ select:disabled, input:disabled, textarea:disabled {
     text-decoration: underline; 
 }
 
+.bottompadding {
+    padding-bottom: 10px;
+}
+
 /** LOGIN SCREEN ============= */
 #asm-login-window {
     padding: 0px;
@@ -1125,10 +1129,6 @@ select:disabled, input:disabled, textarea:disabled {
     top: 0;
     left: 200px;
     width: 113px;
-}
-
-.asm-apimethods td{
-    padding-bottom: 10px;
 }
 
 /** Don't display the menu burger button when >480px */
