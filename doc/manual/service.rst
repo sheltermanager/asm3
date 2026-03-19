@@ -1124,8 +1124,8 @@ determines whether the format returned is JSON, CSV or XML::
 json_adopted_animals, xml_adopted_animals and csv_adopted_animals
 -----------------------------------------------------------------
 
-.. rubric:: Cache time: 30 minutes
-.. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
+.. rubric:: Cache time: 1 hour
+.. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing animals adopted between two dates as passed in the
@@ -1133,7 +1133,9 @@ Returns a dataset containing animals adopted between two dates as passed in the
 for the current database locale (eg: M/D/Y for US locales, D/M/Y for European,
 Y/M/D for some Asian locales, etc).
 
-Note that the "View Movement" permission is required to call this method.
+Animals will not be repeated, and only animals who are still alive with
+an adoption as their most recent movement in the date range given will
+be returned.
 
 The method name determines whether the format returned is JSON, CSV or XML::
 

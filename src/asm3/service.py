@@ -830,12 +830,10 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             return ("text/plain", 0, 0, "ERROR: Invalid fromdate/todate values")
         else:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
-            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
-                movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))
+            rs = asm3.animal.get_animals_adopted_two_dates(dbo, post.date("fromdate"), post.date("todate"))
             if strip_personal: rs = strip_personal_data(rs)
             rs = asm3.media.embellish_photo_urls(dbo, rs)
-            return set_cached_response(cache_key, account, method_mimetype(method), 1800, 1800, method_output(method, l, rs))
+            return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
         
     elif method in ("json_found_animals", "xml_found_animals", "csv_found_animals"):
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_FOUND_ANIMAL)
