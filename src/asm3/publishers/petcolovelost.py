@@ -7,9 +7,12 @@ import datetime
 from .base import AbstractPublisher
 
 from asm3.sitedefs import PETCO_LOVELOST_BASE_URL, PETCO_LOVELOST_API_KEY, BASE_URL
-from asm3.typehints import Database, Dict, PublishCriteria, ResultRow, List
+from asm3.typehints import Database, Dict, PublishCriteria, ResultRow, Results, List
 
 import sys
+
+# ID type keys used in the ExtraIDs column
+IDTYPE_PETCOLOVELOST = "petcolovelost"
 
 def create_shelter(dbo: Database) -> int:
     auth = getAuthDetails(dbo)
@@ -39,7 +42,7 @@ def create_shelter(dbo: Database) -> int:
 def getAnimalDataQuery() -> str:
     return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, " \
         "a.Sex, a.Size, a.DateOfBirth, a.DateBroughtIn, a.Weight, a.PickupAddress, " \
-        "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, " \
+        "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, a.ExtraIds, " \
         "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, " \
         "a.Neutered, a.Declawed, a.IdentichipNumber, a.Identichip2Number, s.SpeciesName, z.Size, " \
         "o.OwnerTown, o.OwnerCountry, o.OwnerAddress, o.OwnerPostcode, o.OwnerCounty " \
@@ -80,19 +83,31 @@ def getAuthDetails(dbo: Database) -> Dict:
         "accesstoken": responsejson["accessToken"]
     }
 
-def getPublishedAnimals(auth: Dict) -> Dict:
+def getActualPublishedAnimals(auth: Dict) -> Dict:
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
     }
-    response = asm3.utils.get_url(f'{auth["url"]}/v2/animals/?limit=25&offset=0', headers)
+    response = asm3.utils.get_url(f'{auth["url"]}/v2/animals/?limit=100&offset=0', headers)
     return response["response"]
 
-def purge(auth: Dict):
-    animals = getPublishedAnimals(auth)
+def getRecordedPublishedAnimals(dbo: Database) -> Results:
+    return dbo.query(
+        getAnimalDataQuery() +
+        f"INNER JOIN animalpublished ap ON ap.AnimalID = a.ID WHERE ap.PublishedTo = '{IDTYPE_PETCOLOVELOST}'"
+    )
+
+def purgeActualPublished(auth: Dict):
+    animals = getActualPublishedAnimals(auth)
     animalsjson = asm3.utils.json_parse(animals)
     for animal in animalsjson["pets"]:
         removeAnimal(auth, animal["id"])
+
+def purgeRecordedPublished(publisher: AbstractPublisher):
+    for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
+        publisher.markAnimalUnpublished(publishedanimal["ANIMALID"])
+    for an in publisher.dbo.query(getAnimalDataQuery() + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
+        asm3.animal.remove_extra_id(publisher.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST)
 
 def removeAnimal(auth: Dict, pcllaid: str) -> Dict:
     headers = {
@@ -128,17 +143,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         self.setStartPublishing()
         
         auth = getAuthDetails(self.dbo)
-
-        cheaders = {
-            'x-api-key': auth["apikey"],
-            'Authorization': 'Bearer ' + auth["accesstoken"]
-        }
-        c = asm3.utils.get_url(f'{auth["url"]}/v2/animals/?limit=25&offset=0', cheaders)
-        cjson = asm3.utils.json_parse(c["response"])
-        publishedanimalids = []
-        for pa in cjson["pets"]:
-            publishedanimalids.append((pa["metadata"]["system_animal_id"], pa["id"]))
-
+        
         animals = self.getAnimalData()
 
         weightunit = "kg"
@@ -151,31 +156,41 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         processed_animals = []
         for an in animals:
             anCount += 1
-            published = False
-            for paid in publishedanimalids:
-                if an["ID"] == paid[0]:
-                    self.logSuccess("Skipping already published: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                    processed_animals.append(an)
-                    published = True
-                    continue
-            if published: continue
             try:
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+
                 # If the user cancelled, stop now
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
+
                 headers = {
                     'x-api-key': auth["apikey"],
                     'Authorization': 'Bearer ' + auth["accesstoken"]
                 }
                 payload = self.processAnimal(an, auth["shelterid"], weightunit)
-                r = asm3.utils.post_json(f"{auth["url"]}/v2/animals", asm3.utils.json(payload), headers)
 
-                if r["status"] == 201:
+                # Do we already have a PetcoLoveLost ID for this animal?
+                # This function returns empty string for no animalid
+                pcllid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_PETCOLOVELOST)
+
+                if pcllid:
+                    # Update existing post
+                    self.log("Updating: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    del payload["shelterId"]
+                    del payload["species"]
+                    r = asm3.utils.patch_json(f"{auth["url"]}/v2/animals/{pcllid}", asm3.utils.json(payload), headers)
+                else:
+                    # Create new post
+                    self.log("Creating: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    r = asm3.utils.post_json(f"{auth["url"]}/v2/animals", asm3.utils.json(payload), headers)
+
+                if r["status"] in (200, 201):
                     responsejson = asm3.utils.json_parse(r["response"])
-                    pcllid = responsejson["id"]
+                    if not pcllid:
+                        pcllid = responsejson["id"]
+                    asm3.animal.set_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, pcllid)
                     photourls = self.getPhotoUrls(an["ID"])
                     if len(photourls):
                         imagepayload = {"photos": []}
@@ -191,12 +206,12 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                             self.log(f"Successfully processed {len(photourls)} x photo")
                         else:
                             self.log(f"Error processing photo(s): {prjson["message"]}")
-                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     else:
                         self.log(f"No photos found")
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed_animals.append(an)
                 else:
-                    self.logError("status != 201: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    self.logError("Error: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -206,16 +221,16 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             self.markAnimalsPublished(processed_animals)
         
         ## Unpublish animals that were not in animallist
-        removalcount = 0
-        for p in publishedanimalids:
-            pvalid = False
-            for an in animals:
-                if p[0] == an["ID"]:
-                    pvalid = True
-            if not pvalid:
-                removeAnimal(auth, p[1])
-                removalcount = removalcount + 1
-        self.log("Removed %s obsolete animals" % ( str(removalcount)))
+        # removalcount = 0
+        # for p in publishedanimalids:
+        #     pvalid = False
+        #     for an in animals:
+        #         if p[0] == an["ID"]:
+        #             pvalid = True
+        #     if not pvalid:
+        #         removeAnimal(auth, p[1])
+        #         removalcount = removalcount + 1
+        # self.log("Removed %s obsolete animals" % ( str(removalcount)))
 
         self.saveLog()
         self.setPublisherComplete()
