@@ -1164,6 +1164,20 @@ determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=json_held_animals&username=user&password=letmein
 
+json_monthly_stats, xml_monthly_stats, csv_monthly_stats
+--------------------------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+.. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
+.. rubric:: Requires username/password: YES
+
+Requires month (integer), year (integer) and species (string) parameters. 
+Returns a dataset containing monthly statistics. 
+The method determines whether the format returned is JSON, CSV or XML::
+
+    http://localhost:5000/service?method=csv_montly_stats&username=user&password=letmein&month=1&year=2026&species=cat
+
+
 json_recent_adoptions, xml_recent_adoptions, csv_recent_adoptions
 -----------------------------------------------------------------
 
