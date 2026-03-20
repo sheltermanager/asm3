@@ -585,7 +585,7 @@ def get_onlineformincoming_html(dbo: Database, collationid: int,
         elif v.startswith("data:application/pdf"):
             h.append('<tr>')
             h.append('<td>%s</td>' % label )
-            h.append('<td>%s</td>' % asm3.i18n._("Uploaded PDF file"))
+            h.append('<td>%s</td>' % asm3.i18n._("Uploaded PDF file", dbo.locale))
             h.append('</tr>')
         elif f.FIELDNAME == "useragent":
             # Some user agent strings can be huge and without wrappable characters,
@@ -1051,7 +1051,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     # Remove prefix of data:image/jpeg;base64, and decode
                     images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
                 if fieldtype == FIELDTYPE_PDF and v.startswith("data:application/pdf"):
-                    # Remove prefix of data:image/jpeg;base64, and decode
+                    # Remove prefix of data:application/pdf;base64, and decode
                     pdfs.append( ("%s.pdf" % fieldname, "application/pdf", asm3.utils.base64decode(v[v.find(",")+1:])) )
 
             # Do the insert
@@ -1421,7 +1421,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
                 if linktype == 0:
                     d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
                 asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.media.MEDIASOURCE_ONLINEFORM, asm3.utils.PostedData(d, dbo.locale))
-            elif f.VALUE.startswith("data:application/pdf"):
+            elif f.VALUE.startswith("data:application/pdf") and len(f.VALUE.length) <= 2097152:
                 d = {
                     "retainfor":    str(retainfor),
                     "filename":     "document.pdf",
