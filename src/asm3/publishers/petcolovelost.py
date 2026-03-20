@@ -84,6 +84,7 @@ def getAuthDetails(dbo: Database) -> Dict:
     }
 
 def getActualPublishedAnimals(auth: Dict) -> Dict:
+    ## This is hidden from public, just useful for testing/debugging
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -228,17 +229,15 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             self.log("successfully published %d animals, marking sent" % len(processed_animals))
             self.markAnimalsPublished(processed_animals)
         
-        ## Unpublish animals that were not in animallist
-        # removalcount = 0
-        # for p in publishedanimalids:
-        #     pvalid = False
-        #     for an in animals:
-        #         if p[0] == an["ID"]:
-        #             pvalid = True
-        #     if not pvalid:
-        #         removeAnimal(auth, p[1])
-        #         removalcount = removalcount + 1
-        # self.log("Removed %s obsolete animals" % ( str(removalcount)))
+        # animalids_to_cancel = set([ str(x.ID) for x in published_animals if x.ID not in processed_animals])
+        removalcount = 0
+        for an in getRecordedPublishedAnimals(self.dbo):
+            pcllid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_PETCOLOVELOST)
+            if pcllid:
+                removeAnimal(auth, pcllid)
+            asm3.animal.remove_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST)
+            removalcount += 1
+        self.log("Removed %s obsolete animals" % ( str(removalcount)))
 
         self.saveLog()
         self.setPublisherComplete()
