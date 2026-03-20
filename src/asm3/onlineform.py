@@ -1421,7 +1421,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
                 if linktype == 0:
                     d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
                 asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.media.MEDIASOURCE_ONLINEFORM, asm3.utils.PostedData(d, dbo.locale))
-            elif f.VALUE.startswith("data:application/pdf") and len(f.VALUE.length) <= 2097152:
+            elif f.VALUE.startswith("data:application/pdf") and len(f.VALUE) <= 2097152:
                 d = {
                     "retainfor":    str(retainfor),
                     "filename":     "document.pdf",
