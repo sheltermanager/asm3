@@ -137,7 +137,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
     def getAnimalData(self) -> str:
         return self.dbo.query(
             getAnimalDataQuery() +
-            "WHERE a.Archived = 0 AND ( s.SpeciesName = 'Dog' OR s.SpeciesName = 'Cat' ) AND et.ID = 2 AND CrueltyCase = 0" ## Include only archived, non case stray, cats and dogs
+            "WHERE a.Archived = 0 AND ( s.SpeciesName = 'Dog' OR s.SpeciesName = 'Cat' ) AND et.ID = 2 AND a.CrueltyCase = 0" ## Include only archived, non case stray, cats and dogs
         )
 
     
