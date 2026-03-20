@@ -231,7 +231,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         
         # animalids_to_cancel = set([ str(x.ID) for x in published_animals if x.ID not in processed_animals])
         removalcount = 0
-        animals_to_remove = set([ an for an in getRecordedPublishedAnimals(self.dbo) if an not in processed_animals])
+        animals_to_remove = [ an for an in getRecordedPublishedAnimals(self.dbo) if an not in processed_animals ]
         for an in animals_to_remove:
             pcllid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_PETCOLOVELOST)
             if pcllid:
