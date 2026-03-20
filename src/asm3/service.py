@@ -45,6 +45,7 @@ AUTH_METHODS = [
     "xml_found_animals", "json_found_animals", "csv_found_animals", 
     "xml_held_animals", "json_held_animals", "csv_held_animals", 
     "xml_lost_animals", "json_lost_animals", "csv_lost_animals", 
+    "xml_monthly_stats", "json_monthly_stats", "csv_monthly_stats", 
     "xml_recent_adoptions", "json_recent_adoptions", "csv_recent_adoptions", 
     "xml_recent_changes", "json_recent_changes", "csv_recent_changes", 
     "xml_shelter_animals", "json_shelter_animals", "csv_shelter_animals", 
@@ -99,6 +100,9 @@ CACHE_PROTECT_METHODS = {
     "csv_lost_animals": [ "sensitive" ],
     "json_lost_animals": [ "sensitive" ],
     "xml_lost_animals": [ "sensitive" ],
+    "csv_monthly_stats": [ "month", "year", "species" ],
+    "json_monthly_stats": [ "month", "year", "species" ],
+    "xml_monthly_stats": [ "month", "year", "species" ],
     "csv_recent_adoptions": [ "sensitive" ], 
     "json_recent_adoptions": [ "sensitive" ], 
     "xml_recent_adoptions": [ "sensitive" ],
@@ -855,6 +859,16 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.LOSTANIMAL)
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
+    
+    elif method in ("json_monthly_stats", "xml_monthly_stats", "csv_monthly_stats"):
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
+        month = post.integer("month")
+        year = post.integer("year")
+        speciesname = post["species"]
+        pc = asm3.publish.PublishCriteria(asm3.configuration.publisher_presets(dbo))
+        ms = asm3.publishers.sacmetrics.SACMetricsPublisher(dbo, pc).processStats(month, year, speciesname)
+        return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, [ms,]))
 
     elif method in ("json_recent_adoptions", "xml_recent_adoptions", "csv_recent_adoptions"):
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
