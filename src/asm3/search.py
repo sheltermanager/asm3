@@ -48,7 +48,8 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     onshelter/os, notforadoption, hold, holdtoday, quarantine, deceased, 
     forpublish, people, vets, retailers, staff, fosterers, volunteers, 
     shelters, aco, banned, homechecked, homecheckers, members, donors, drivers,
-    reservenohomecheck, nevervacc, norabies, notmicrochipped, unsigned, signed
+    reservenohomecheck, nevervacc, norabies, notmicrochipped, unsigned, signed,
+    lostweight
 
     returns a tuple of:
     results, timetaken, explain, sortname
@@ -463,6 +464,11 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         explain = _("Found animals reported in the last 30 days.", l)
         if cp(asm3.users.VIEW_FOUND_ANIMAL):
             ar(asm3.lostfound.get_foundanimal_find_simple(dbo, "", limit=limit, siteid=siteid), "FOUNDANIMAL", fasort)
+    
+    elif q == "lostweight":
+        explain = _("Animals that lost weight on their last 2 consecutive weighings.", l)
+        if cp(asm3.users.VIEW_ANIMAL):
+            ar(asm3.animal.get_lost_weight(dbo), "ANIMAL", fasort)
 
     elif q.startswith("a:") or q.startswith("animal:"):
         q = q[q.find(":")+1:].strip()

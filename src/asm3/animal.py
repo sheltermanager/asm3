@@ -1659,11 +1659,12 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
+        "(SELECT COUNT(*) FROM animal WHERE Weight1 IS NOT NULL AND Weight2 IS NOT NULL AND Weight < Weight1 AND Weight1 < Weight2 AND Archived = 0) AS lostweight, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
                 "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
-                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, 
+                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter,
                 "alertchip": alertchip, "longterm": longterm, "alertneuter": alertneuter, 
                 "alertnevervacc": alertnevervacc, "alertrabies": alertrabies,
                 "alertrsvhck": alertrsvhck, "alertlngterm": alertlngterm }
@@ -2402,6 +2403,12 @@ def get_code(dbo: Database, animalid: int) -> str:
     else:
         rv = get_shelter_code(dbo, animalid)
     return rv
+
+def get_lost_weight(dbo: Database) -> Results:
+    """
+    Returns non-archived animals that have lost weight at 2 consecutive weighings.
+    """
+    return dbo.query(f"{get_animal_brief_query(dbo)} WHERE a.Weight2 > a.Weight1 AND a.Weight1 > a.Weight AND a.Archived = 0")
 
 def get_short_code(dbo: Database, animalid: int) -> str:
     """
@@ -3546,7 +3553,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, Weight1, Weight2, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
 
     # Record the location if it has changed
     insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
@@ -3565,6 +3572,12 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
 
     # If the option is on and the weight has changed, log it
     insert_weight_log(dbo, username, aid, post.floating("weight"), prerow.WEIGHT)
+    if post.floating("weight") != prerow.WEIGHT:
+        weight2 = prerow.WEIGHT1
+        weight1 = prerow.WEIGHT
+    else:
+        weight2 = prerow.WEIGHT2
+        weight1 = prerow.WEIGHT1
 
     # If the animal is newly deceased, mark any diary notes completed
     if post.date("deceaseddate") is not None and asm3.configuration.diary_complete_on_death(dbo):
@@ -3617,6 +3630,8 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "CoatType":             post.integer("coattype"),
         "Size":                 post.integer("size"),
         "Weight":               post.floating("weight"),
+        "Weight1":              weight1,
+        "Weight2":              weight2,
         "SpeciesID":            post.integer("species"),
         "BreedID":              post.integer("breed1"),
         "Breed2ID":             post.integer("breed2"),

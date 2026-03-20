@@ -429,7 +429,7 @@ header = {
                             "li:licence, co:animalcost, lo:logs, vo:voucher, ci:citation, py: payment. \n" +
                             _("keywords") + ": " + "onshelter/os, notforadoption, aco, banned, donors, deceased, vets, " + 
                             "retailers, staff, fosterers, volunteers, homecheckers, members, drivers, overduedonations, " +
-                            "signed, unsigned, activelost, activefound") +
+                            "signed, unsigned, activelost, activefound, lostweight") +
                         '" placeholder="' + html.title(_("Search")) + '" />',
                     '<button id="searchgo" style="display: none">' + _("Search") + '</button>',
                     '</span>',
@@ -717,11 +717,10 @@ header = {
 
     bind_search: function() {
 
-        const keywords = [ "activelost", "activefound", "donors", "deceased", "hold", "holdtoday", 
-            "notforadoption", "onshelter", "quarantine", "forpublish", "reservenohomecheck", "notmicrochipped",
-            "aco", "banned", "donors", "drivers", "homechecked", "homecheckers", 
-            "fosterers", "homecheckers", "members", "people", "retailers", "shelters", "staff", 
-            "vets", "volunteers" ] ;
+        const keywords = [ "aco", "activelost", "activefound", "banned", "deceased", "donors", "drivers", "forpublish", 
+            "hold", "holdtoday", "homechecked", "homecheckers", "notforadoption", "notmicrochipped", "onshelter", 
+            "fosterers", "quarantine", "lostweight", "members", "people", "reservenohomecheck", "retailers", "shelters", 
+            "staff", "vets", "volunteers" ] ;
 
         let previous = common.local_get("asmsearch").split("|");
         let searches = keywords.concat(previous);
