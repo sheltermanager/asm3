@@ -105,7 +105,7 @@ def purgeActualPublished(auth: Dict):
 
 def purgeRecordedPublished(publisher: AbstractPublisher):
     for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
-        publisher.markAnimalUnpublished(publishedanimal["ANIMALID"])
+        publisher.markAnimalUnpublished(publishedanimal["ID"])
     for an in publisher.dbo.query(getAnimalDataQuery() + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
         asm3.animal.remove_extra_id(publisher.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST)
 
