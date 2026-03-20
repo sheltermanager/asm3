@@ -48,6 +48,7 @@ import asm3.publish
 import asm3.publishers.base
 import asm3.publishers.html
 import asm3.publishers.vetenvoy
+import asm3.publishers.petcolovelost
 import asm3.reports
 import asm3.search
 import asm3.service
@@ -72,7 +73,8 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, HTML_TO_PDF, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
-    MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
+    MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, \
+    PETCO_LOVELOST_BASE_URL, PETCO_LOVELOST_EXTRAS, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
     RESIZE_IMAGES_DURING_ATTACH, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_HOST, \
@@ -7552,8 +7554,22 @@ class publish(JSONEndpoint):
             asm3.publish.start_publisher(dbo, mode, user=o.user, newthread=True)
         return { "failed": failed }
 
+    def post_pcllshelterid(self, o):
+        return asm3.publishers.petcolovelost.create_shelter(o.dbo)
+    
+    def post_pcllpublished(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        return asm3.publishers.petcolovelost.getActualPublishedAnimals(auth)
+
     def post_poll(self, o):
         return "%s|%d|%s" % (asm3.asynctask.get_task_name(o.dbo), asm3.asynctask.get_progress_percent(o.dbo), asm3.asynctask.get_last_error(o.dbo))
+    
+    def post_pcllpurge(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        asm3.publishers.petcolovelost.purgeActualPublished(auth)
+        dummypc = asm3.publishers.base.PublishCriteria() ## Publish criteria not relevant but required by Abstract Publisher
+        publisher = asm3.publishers.petcolovelost.PetcoLoveLostPublisher(o.dbo, dummypc)
+        asm3.publishers.petcolovelost.purgeRecordedPublished(publisher)
 
     def post_stop(self, o):
         asm3.asynctask.set_cancel(o.dbo, True)
@@ -7596,6 +7612,7 @@ class publish_options(JSONEndpoint):
             "hasbuddyid": BUDDYID_BASE_URL != "",
             "hasfindpet": FINDPET_BASE_URL != "",
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
+            "haspetcolovelost": PETCO_LOVELOST_BASE_URL != "",
             "hashomeagain": HOMEAGAIN_BASE_URL != "",
             "hashtmlftp": HTMLFTP_PUBLISHER_ENABLED,
             "hasmaddiesfund": MADDIES_FUND_TOKEN_URL != "",
@@ -7609,6 +7626,7 @@ class publish_options(JSONEndpoint):
             "hassavourlife": SAVOURLIFE_URL != "",
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
+            "pcllextras": PETCO_LOVELOST_EXTRAS,
             "styles": asm3.template.get_html_template_names(dbo),
             "users": asm3.users.get_users(dbo)
         }
@@ -8040,6 +8058,7 @@ class service(ASMEndpoint):
             self.content_type(contenttype)
             self.cache_control(client_ttl, cache_ttl) 
             self.header("Access-Control-Allow-Origin", "*") # CORS
+            self.header("Content-Length", str(len(response)))
             return response
 
     def content(self, o):
