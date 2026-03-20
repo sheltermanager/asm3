@@ -2391,6 +2391,12 @@ def get_code(dbo: Database, animalid: int) -> str:
         rv = get_shelter_code(dbo, animalid)
     return rv
 
+def get_lost_weight(dbo: Database) -> Results:
+    """
+    Returns non-archived animals that have lost weight at 2 consecutive weighings.
+    """
+    return dbo.query(f"{get_animal_brief_query(dbo)} WHERE a.Weight2 > a.Weight1 AND a.Weight1 > a.Weight AND a.Archived = 0")
+
 def get_short_code(dbo: Database, animalid: int) -> str:
     """
     Returns the short code for animalid

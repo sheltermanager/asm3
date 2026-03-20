@@ -468,8 +468,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     elif q == "lostweight":
         explain = _("Animals that lost weight on their last 2 consecutive weighings.", l)
         if cp(asm3.users.VIEW_ANIMAL):
-            rlist = dbo.query(f"{asm3.animal.get_animal_query(dbo)} WHERE a.Weight2 > a.Weight1 AND a.Weight1 > a.Weight AND a.Archived = 0")
-            ar(rlist, "ANIMAL", fasort)
+            ar(asm3.animal.get_lost_weight(dbo), "ANIMAL", fasort)
 
     elif q.startswith("a:") or q.startswith("animal:"):
         q = q[q.find(":")+1:].strip()
