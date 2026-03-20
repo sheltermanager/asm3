@@ -103,6 +103,13 @@ def purgeActualPublished(auth: Dict):
     for animal in animalsjson["pets"]:
         removeAnimal(auth, animal["id"])
 
+def purgeImages(auth: Dict, pcllaid: str):
+    headers = {
+        'x-api-key': auth["apikey"],
+        'Authorization': 'Bearer ' + auth["accesstoken"]
+    }
+    asm3.utils.post_data(f"{auth["url"]}/v2/animals/{pcllaid}/photos", "", httpmethod="DELETE", headers=headers)
+
 def purgeRecordedPublished(publisher: AbstractPublisher):
     for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
         publisher.markAnimalUnpublished(publishedanimal["ID"])
@@ -191,6 +198,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                     if not pcllid:
                         pcllid = responsejson["id"]
                     asm3.animal.set_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, pcllid)
+                    purgeImages(auth, pcllid)
                     photourls = self.getPhotoUrls(an["ID"])
                     if len(photourls):
                         imagepayload = {"photos": []}
