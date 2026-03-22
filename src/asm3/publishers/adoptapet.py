@@ -92,6 +92,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Hound=Hound (Unknown Type)\n" \
             "Illyrian Sheepdog=Shepherd (Unknown Type)\n" \
             "McNab=Shepherd (Unknown Type)\n" \
+            "Miniature Poodle=Poodle (Miniature)\n" \
             "Mixed Breed=Mixed Breed (Medium)\n" \
             "Mountain Dog=Bernese Mountain Dog\n" \
             "New Guinea Singing Dog=Shepherd (Unknown Type)\n" \
