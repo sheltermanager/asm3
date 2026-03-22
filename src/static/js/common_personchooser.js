@@ -128,11 +128,11 @@ $.fn.personchooser = asm_widget({
             '<td><label>' + _("Address") + '</label></td>',
             '<td><textarea class="asm-textareafixed chooser personchooser-address" data="address" rows="3"></textarea></td>',
             '</tr>',
-            '<tr class="personchooser-towncountyrow">',
+            '<tr class="personchooser-townrow">',
             '<td><label>' + _("City") + '</label></td>',
             '<td><input class="asm-textbox chooser personchooser-town" maxlength="100" data="town" type="text" /></td>',
             '</tr>',
-            '<tr class="personchooser-towncountyrow">',
+            '<tr class="personchooser-countyrow">',
             '<td><label>' + _("State") + '</label></td>',
             '<td>',
             common.iif(config.bool("USStateCodes"),
@@ -262,8 +262,12 @@ $.fn.personchooser = asm_widget({
             dialogadd.find(".personchooser-countryrow").hide();
         }
 
-        if (config.bool("HideTownCounty")) {
-            dialogadd.find(".personchooser-towncountyrow").hide();
+        if (config.bool("HideTown")) {
+            dialogadd.find(".personchooser-townrow").hide();
+        }
+
+        if (config.bool("HideCounty")) {
+            dialogadd.find(".personchooser-countyrow").hide();
         }
 
         if (config.bool("HideHomeWorkPhone")) {

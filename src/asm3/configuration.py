@@ -629,6 +629,12 @@ def get_map(dbo: Database) -> Dict[str, str]:
         for r in rows:
             cmap[r.itemname] = r.itemvalue
         asm3.cachedisk.put("config", dbo.name(), cmap, 3600) # one hour cache means direct database updates show up eventually
+    # Backward compatibility: if old combined HideTownCounty is set, default HideTown/HideCounty from it
+    if cmap.get("HideTownCounty", "") == "Yes":
+        if "HideTown" not in cmap or cmap["HideTown"] == "":
+            cmap["HideTown"] = "Yes"
+        if "HideCounty" not in cmap or cmap["HideCounty"] == "":
+            cmap["HideCounty"] = "Yes"
     return cmap
 
 def invalidate_config_cache(dbo: Database) -> None:
