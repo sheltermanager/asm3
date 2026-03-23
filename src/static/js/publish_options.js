@@ -466,10 +466,10 @@ $(function() {
                 .click(async function() {
                     validate.dirty(false);
                     $(".pcllbutton").hide();
-                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> ' + _("Waiting for Petco Love Lost..") + '</p>');
+                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
                     $("#pcllshelterid").val("");
                     let formdata = "mode=pcllshelterid";
-                    let response = await common.ajax_post("publish", formdata);
+                    let response = await common.ajax_post("publish_options", formdata);
                     let responsejson = JSON.parse(response);
                     if (responsejson.message) {
                         let erroroutput = responsejson.message + "<p><ul>";
@@ -481,7 +481,7 @@ $(function() {
                     } else if (responsejson.id) {
                         $("#pcllshelterid").val(responsejson.id);
                     } else {
-                        header.show_info(_("Unable to connect to Petco Love Lost"));
+                        header.show_info("Unable to connect to Petco Love Lost");
                     }
                     validate.dirty(true);
                     $("#pclldata").html("");
@@ -492,12 +492,12 @@ $(function() {
                 .button()
                 .click(async function() {
                     $(".pcllbutton").hide();
-                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> ' + _("Waiting for Petco Love Lost..") + '</p>');
+                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
                     let formdata = "mode=pcllpublished";
-                    let response = await common.ajax_post("publish", formdata);
+                    let response = await common.ajax_post("publish_options", formdata);
                     let responsejson = JSON.parse(response);
                     console.log(responsejson);
-                    let html = '<h3>' + _("Published Animals") + '</h3>';
+                    let html = '<h3>Published Animals</h3>';
                     if (responsejson.pets.length) {
                         html += '<ol>';
                         $.each(responsejson.pets, function(i, v) {
@@ -505,7 +505,7 @@ $(function() {
                         });
                         html += '</ol>';
                     } else {
-                        html += '<p>' + _("None") + "</p>";
+                        html += '<p>None</p>';
                     }
                     $("#pclldata").html(html);
                     $(".pcllbutton").show();
@@ -516,11 +516,11 @@ $(function() {
                 .button()
                 .click(async function() {
                     $(".pcllbutton").hide();
-                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> ' + _("Waiting for Petco Love Lost..") + '</p>');
+                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
                     let formdata = "mode=pcllpurge";
-                    await common.ajax_post("publish", formdata);
+                    await common.ajax_post("publish_options", formdata);
                     $("#pclldata").html("");
-                    header.show_info(_("Petco Love Lost purged"));
+                    header.show_info("Petco Love Lost purged");
                     $(".pcllbutton").show();
                 });
             

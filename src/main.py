@@ -7086,22 +7086,8 @@ class publish(JSONEndpoint):
             asm3.publish.start_publisher(dbo, mode, user=o.user, newthread=True)
         return { "failed": failed }
 
-    def post_pcllshelterid(self, o):
-        return asm3.publishers.petcolovelost.create_shelter(o.dbo)
-    
-    def post_pcllpublished(self, o):
-        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
-        return asm3.publishers.petcolovelost.getActualPublishedAnimals(auth)
-
     def post_poll(self, o):
         return "%s|%d|%s" % (asm3.asynctask.get_task_name(o.dbo), asm3.asynctask.get_progress_percent(o.dbo), asm3.asynctask.get_last_error(o.dbo))
-    
-    def post_pcllpurge(self, o):
-        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
-        asm3.publishers.petcolovelost.purgeActualPublished(auth)
-        dummypc = asm3.publishers.base.PublishCriteria() ## Publish criteria not relevant but required by Abstract Publisher
-        publisher = asm3.publishers.petcolovelost.PetcoLoveLostPublisher(o.dbo, dummypc)
-        asm3.publishers.petcolovelost.purgeRecordedPublished(publisher)
 
     def post_stop(self, o):
         asm3.asynctask.set_cancel(o.dbo, True)
@@ -7164,6 +7150,20 @@ class publish_options(JSONEndpoint):
         }
         asm3.al.debug("loaded lookups", "main.publish_options", dbo)
         return c
+    
+    def post_pcllshelterid(self, o):
+        return asm3.publishers.petcolovelost.create_shelter(o.dbo)
+    
+    def post_pcllpublished(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        return asm3.publishers.petcolovelost.getActualPublishedAnimals(auth)
+    
+    def post_pcllpurge(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        asm3.publishers.petcolovelost.purgeActualPublished(auth)
+        dummypc = asm3.publishers.base.PublishCriteria() ## Publish criteria not relevant but required by Abstract Publisher
+        publisher = asm3.publishers.petcolovelost.PetcoLoveLostPublisher(o.dbo, dummypc)
+        asm3.publishers.petcolovelost.purgeRecordedPublished(publisher)
 
     def post_save(self, o):
         asm3.configuration.csave(o.dbo, o.user, o.post)
