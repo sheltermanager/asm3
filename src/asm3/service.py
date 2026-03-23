@@ -7,6 +7,7 @@ sheltermanager accounts, username and password
 for others.
 """
 
+import asm3.additional
 import asm3.al
 import asm3.animal
 import asm3.cachemem
