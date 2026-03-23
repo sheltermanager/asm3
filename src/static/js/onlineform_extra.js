@@ -108,10 +108,10 @@ $(document).ready(function() {
     // Loads and scales a pdf into an pdf form field for upload
     const process_pdf = function(field) {
         let filedata = null;
-        let imreader = new FileReader();
-        imreader.onload = function(e) { 
+        let pdfreader = new FileReader();
+        pdfreader.onload = function(e) { 
             filedata = e.target.result;
-            if (filedata.length > 2097152) { alert("File is too large"); field.val(""); return; }
+            if (filedata.length > 2097152) { alert("PDF file is too large"); field.val(""); return; }
             $("input[name='" + field.attr("data-name") + "']").val(filedata);
         };
         let file = field[0].files[0];
@@ -119,7 +119,7 @@ $(document).ready(function() {
         // Is this a pdf? If not, stop now
         if (!file.type.match('application.pdf')) { alert("File is not a pdf"); field.val(""); return; }
         
-        imreader.readAsDataURL(file);
+        pdfreader.readAsDataURL(file);
     };
 
     // Validates that all mandatory signature fields have something in them.
