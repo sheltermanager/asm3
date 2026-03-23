@@ -139,7 +139,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             getAnimalDataQuery() +
             "WHERE a.Archived = 0 AND ( s.SpeciesName = 'Dog' OR s.SpeciesName = 'Cat' ) AND et.ID = 2 AND a.CrueltyCase = 0" ## Include only archived, non case stray, cats and dogs
         )
-
     
     def run(self) -> None:
         
@@ -229,7 +228,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             self.log("successfully published %d animals, marking sent" % len(processed_animals))
             self.markAnimalsPublished(processed_animals)
         
-        # animalids_to_cancel = set([ str(x.ID) for x in published_animals if x.ID not in processed_animals])
         removalcount = 0
         animals_to_remove = [ an for an in getRecordedPublishedAnimals(self.dbo) if an not in processed_animals ]
         for an in animals_to_remove:
@@ -268,11 +266,9 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             pickupaddress = ", ".join(
                 (asm3.configuration.organisation_address(self.dbo), asm3.configuration.organisation_postcode(self.dbo))
             )
-            # an["PICKUPADDRESS"] = ", ".join(
-            #     (asm3.configuration.organisation_address(self.dbo), asm3.configuration.organisation_postcode(self.dbo))
-            # )
         else:
             pickupaddress = an["PICKUPADDRESS"]
+        
         # Build the POST data
         ro = {
             "externalId": an["SHELTERCODE"],
