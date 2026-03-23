@@ -265,10 +265,14 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         description = an["ANIMALCOMMENTS"]
 
         if not an["PICKUPADDRESS"]:
-            an["PICKUPADDRESS"] = ", ".join(
+            pickupaddress = ", ".join(
                 (asm3.configuration.organisation_address(self.dbo), asm3.configuration.organisation_postcode(self.dbo))
             )
-
+            # an["PICKUPADDRESS"] = ", ".join(
+            #     (asm3.configuration.organisation_address(self.dbo), asm3.configuration.organisation_postcode(self.dbo))
+            # )
+        else:
+            pickupaddress = an["PICKUPADDRESS"]
         # Build the POST data
         ro = {
             "externalId": an["SHELTERCODE"],
@@ -278,7 +282,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             "address": {
                 "city": "",
                 "country": "",
-                "line1": an["PICKUPADDRESS"],
+                "line1": pickupaddress,
                 "line2": "",
                 "postalCode": "",
                 "state": ""
