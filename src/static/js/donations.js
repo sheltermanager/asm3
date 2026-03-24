@@ -25,6 +25,7 @@ $(function() {
                 fields: [
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
+                    { json_field: "FUNDEDBYOWNERDONATIONID", post_field: "funding", label: _("Fund"), type: "select", options: { displayfield: "FUNDNAME", valuefield: "ID", rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' }},
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
                     { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
@@ -56,7 +57,8 @@ $(function() {
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
-                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { json_field: "AVAILABLEFORFUNDING", post_field: "availableforfunding", label: _("Available for Funding"), type: "check" }
                 ]
             };
 

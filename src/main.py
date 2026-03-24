@@ -7050,6 +7050,7 @@ class person_donations(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
+            "fundablepayments": asm3.financial.get_fundable_donations(dbo),
             "templates": asm3.template.get_document_templates(dbo, "payment"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
             "rows": donations

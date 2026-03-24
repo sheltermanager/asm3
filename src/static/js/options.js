@@ -241,6 +241,7 @@ $(function() {
                         { id: "disableaccounts", post_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", fullrow: true },
                         { id: "createdonations", post_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check", fullrow: true },
                         { id: "createcost", post_field: "CreateCostTrx", label: _("Creating cost and cost types creates matching accounts and transactions"), type: "check", fullrow: true },
+                        { id: "fundedpaymentsenabled", post_field: "FundedPaymentsEnabled", label: _("Enable funded payments"), type: "check", fullrow: true },
                         { id: "donationtrxoverride", post_field: "DonationTrxOverride", label: _("When receiving payments, allow the deposit account to be overridden"), type: "check", fullrow: true },
                         { id: "donationquantities", post_field: "DonationQuantities", label: _("When receiving payments, allow a quantity and unit price to be set"), type: "check", fullrow: true },
                         { id: "donationfees", post_field: "DonationFees", label: _("When receiving payments, allow a transaction fee to be set"), type: "check", fullrow: true },

@@ -76,6 +76,7 @@ def get_citation_query(dbo: Database) -> str:
 def get_donation_query(dbo: Database) -> str:
     return "SELECT od.ID, od.DonationTypeID, od.DonationPaymentID, dt.DonationName, od.Date, od.DateDue, " \
         "od.Donation, od.MovementID, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
+        "od.FundedByOwnerDonationID, od.AvailableForFunding, " \
         "od.Quantity, od.UnitPrice, " \
         "od.Donation AS Gross, " \
         "od.Donation - COALESCE(od.VATAmount, 0) - COALESCE(od.Fee, 0) AS Net, " \
@@ -118,6 +119,10 @@ def get_donation_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner o ON o.ID = od.OwnerID " \
         "LEFT OUTER JOIN donationtype dt ON dt.ID = od.DonationTypeID " \
         "LEFT OUTER JOIN lksdonationfreq fr ON fr.ID = od.Frequency "
+
+def get_fundable_donations(dbo: Database) -> Results:
+    # return dbo.query(f"SELECT d.ID, {dbo.sql_concat(['o.OwnerName', ' ', 'd.ReceiptNumber'])} AS FundName FROM ownerdonation d INNER JOIN owner o ON d.OwnerID = o.ID WHERE d.AvailableForFunding = 1")
+    return dbo.query("SELECT d.ID, CONCAT(o.OwnerSurname, ' ', d.ReceiptNumber) AS FundName FROM ownerdonation d INNER JOIN owner o ON d.OwnerID = o.ID WHERE d.AvailableForFunding = 1")
 
 def get_licence_query(dbo: Database) -> str:
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
@@ -851,26 +856,28 @@ def insert_donation_from_form(dbo: Database, username: str, post: PostedData) ->
         post.data["receiptnumber"] = get_next_receipt_number(dbo)
     
     donationid = dbo.insert("ownerdonation", {
-        "OwnerID":              post.integer("person"),
-        "AnimalID":             post.integer("animal"),
-        "MovementID":           post.integer("movement"),
-        "DonationTypeID":       post.integer("type"),
-        "DonationPaymentID":    post.integer("payment"),
-        "Frequency":            post.integer("frequency"),
-        "Quantity":             post.integer("quantity"),
-        "UnitPrice":            post.integer("unitprice"),
-        "Donation":             post.integer("amount"),
-        "DateDue":              post.date("due"),
-        "Date":                 post.date("received"),
-        "NextCreated":          0,
-        "ChequeNumber":         post["chequenumber"],
-        "ReceiptNumber":        post["receiptnumber"],
-        "Fee":                  post.integer("fee"),
-        "IsGiftAid":            post.boolean("giftaid"),
-        "IsVAT":                post.boolean("vat"),
-        "VATRate":              post.floating("vatrate"),
-        "VATAmount":            post.integer("vatamount"),
-        "Comments":             post["comments"]
+        "OwnerID":                  post.integer("person"),
+        "AnimalID":                 post.integer("animal"),
+        "AvailableForFunding":      post.boolean("availableforfunding"),
+        "MovementID":               post.integer("movement"),
+        "DonationTypeID":           post.integer("type"),
+        "DonationPaymentID":        post.integer("payment"),
+        "FundedByOwnerDonationID":  post.integer("funding"),
+        "Frequency":                post.integer("frequency"),
+        "Quantity":                 post.integer("quantity"),
+        "UnitPrice":                post.integer("unitprice"),
+        "Donation":                 post.integer("amount"),
+        "DateDue":                  post.date("due"),
+        "Date":                     post.date("received"),
+        "NextCreated":              0,
+        "ChequeNumber":             post["chequenumber"],
+        "ReceiptNumber":            post["receiptnumber"],
+        "Fee":                      post.integer("fee"),
+        "IsGiftAid":                post.boolean("giftaid"),
+        "IsVAT":                    post.boolean("vat"),
+        "VATRate":                  post.floating("vatrate"),
+        "VATAmount":                post.integer("vatamount"),
+        "Comments":                 post["comments"]
     }, username)
 
     if asm3.configuration.donation_trx_override(dbo):
@@ -892,26 +899,28 @@ def update_donation_from_form(dbo: Database, username: str, post: PostedData) ->
 
     receiveddate = dbo.query_date("SELECT Date FROM ownerdonation WHERE ID = ?", [donationid])
 
-    dbo.update("ownerdonation", donationid, {
-        "OwnerID":              post.integer("person"),
-        "AnimalID":             post.integer("animal"),
-        "MovementID":           post.integer("movement"),
-        "DonationTypeID":       post.integer("type"),
-        "DonationPaymentID":    post.integer("payment"),
-        "Frequency":            post.integer("frequency"),
-        "Quantity":             post.integer("quantity"),
-        "UnitPrice":            post.integer("unitprice"),
-        "Donation":             post.integer("amount"),
-        "DateDue":              post.date("due"),
-        "Date":                 post.date("received"),
-        "ChequeNumber":         post["chequenumber"],
-        "ReceiptNumber":        post["receiptnumber"],
-        "Fee":                  post.integer("fee"),
-        "IsGiftAid":            post.boolean("giftaid"),
-        "IsVAT":                post.boolean("vat"),
-        "VATRate":              post.floating("vatrate"),
-        "VATAmount":            post.integer("vatamount"),
-        "Comments":             post["comments"]
+    dbo.update("ownerdonation",     donationid, {
+        "OwnerID":                  post.integer("person"),
+        "AnimalID":                 post.integer("animal"),
+        "AvailableForFunding":      post.boolean("availableforfunding"),
+        "MovementID":               post.integer("movement"),
+        "DonationTypeID":           post.integer("type"),
+        "DonationPaymentID":        post.integer("payment"),
+        "FundedByOwnerDonationID":  post.integer("funding"),
+        "Frequency":                post.integer("frequency"),
+        "Quantity":                 post.integer("quantity"),
+        "UnitPrice":                post.integer("unitprice"),
+        "Donation":                 post.integer("amount"),
+        "DateDue":                  post.date("due"),
+        "Date":                     post.date("received"),
+        "ChequeNumber":             post["chequenumber"],
+        "ReceiptNumber":            post["receiptnumber"],
+        "Fee":                      post.integer("fee"),
+        "IsGiftAid":                post.boolean("giftaid"),
+        "IsVAT":                    post.boolean("vat"),
+        "VATRate":                  post.floating("vatrate"),
+        "VATAmount":                post.integer("vatamount"),
+        "Comments":                 post["comments"]
     }, username)
 
     if asm3.configuration.donation_trx_override(dbo) and receiveddate is None:
