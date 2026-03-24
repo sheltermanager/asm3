@@ -103,6 +103,7 @@ $(function() {
                                 $("#vatraterow").hide();
                                 $("#vatamountrow").hide();
                             }
+                            $("#funding").change();
                         }
                     });
                 },
@@ -200,6 +201,7 @@ $(function() {
                                 $("#vat").prop("checked", false); 
                                 $("#vat").change();
                                 donations.type_change(); // this will re-enable vat box if the type has it
+                                $("#funding").change();
                             }
                         });
                     } 
@@ -511,6 +513,19 @@ $(function() {
 
             $("#animal").on("change loaded", function(event, rec) {
                 donations.lastanimal = rec;
+            });
+
+            $("#funding").on("change", function(event, rec) {
+                console.log($("#funding").val());
+                if ($("#funding").val() == "0") {
+                    $("#paymentrow").show();
+                    $("#chequenumberrow").show();
+                    $("#frequencyrow").show();
+                } else {
+                    $("#paymentrow").hide();
+                    $("#chequenumberrow").hide();
+                    $("#frequencyrow").hide();
+                }
             });
 
             $("#person").on("change", function(event, rec) {
