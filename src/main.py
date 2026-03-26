@@ -3169,7 +3169,13 @@ class clinic_invoice(JSONEndpoint):
             "appointment": appointment,
             "appointmentid": appointmentid,
             "rows": rows,
-            "invoiceitems": invoiceitems
+            "invoiceitems": invoiceitems,
+            "products": asm3.stock.get_products(dbo),
+            "producttypes": asm3.stock.get_product_types(dbo),
+            "taxrates": asm3.lookups.get_tax_rates(dbo),
+            "stocklocations": asm3.lookups.get_stock_locations(dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "units": asm3.lookups.get_unit_types(dbo)
         }
 
     def post_create(self, o):
@@ -7509,7 +7515,7 @@ class product(JSONEndpoint):
     
     def post_move(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
-        asm3.stock.insert_productmovement_from_form(o.dbo, o.post, o.user)
+        return asm3.stock.insert_productmovement_from_form(o.dbo, o.post, o.user)
     
     def post_update(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
