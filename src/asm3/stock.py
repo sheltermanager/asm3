@@ -343,6 +343,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     # Get current stock levels of the selected product
     stocklevels = dbo.query("SELECT ID, BatchNumber, Balance, Cost, UnitPrice, Total, Low, Expiry, UnitPrice, StockLocationID FROM stocklevel " \
         "WHERE ProductID = ? ORDER BY Balance", [ post.integer("productid") ])
+    
     if fromlocation != 0:
         for stocklevel in stocklevels:
             if quantity == 0:
@@ -356,7 +357,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                     quantity = quantity - stocklevel["BALANCE"]
                 else:
                     remaining = stocklevel["BALANCE"] - quantity
-                    quantity = quantity - stocklevel["BALANCE"]
+                    quantity = 0
                 slpost = {}
                 slpost["stocklevelid"] = stocklevel["ID"]
                 slpost["productid"] = post.integer("productid")
