@@ -141,6 +141,7 @@ $(function() {
             let quantity = parseInt($("#movementquantity").val()) * parseInt($("#movementunit").val());
             let formdata = {
                 mode: "move",
+                invoiceid: tableform.table_selected_id(clinic_invoice.table),
                 productid: productid,
                 productname: activeproduct.PRODUCTNAME,
                 productdescription: activeproduct.DESCRIPTION,

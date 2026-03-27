@@ -360,7 +360,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                     quantity = quantity - stocklevel["BALANCE"]
                 else:
                     remaining = stocklevel["BALANCE"] - quantity
-                    quantity = quantity - stocklevel["BALANCE"]
+                    quantity = 0
                 slpost = {}
                 slpost["stocklevelid"] = stocklevel["ID"]
                 slpost["productid"] = post.integer("productid")
