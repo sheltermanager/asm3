@@ -18,6 +18,11 @@ CK_ADOPTABLE_ANIMALS = "pfciadoptable"
 CK_HELD_ANIMALS = "pfciheld"
 CK_STRAY_ANIMALS = "pfcistray"
 
+# Age bands to match PF website for Baby, Young, Adult and Senior
+# previously was 182, 730, 3285 for 6 months, 2 years and 9 years
+# Currently 1 year, 3 years and 8 years
+AGE_BANDS = [ 365, 1095, 2920 ] 
+
 class PetFinderPublisher(FTPPublisher):
     """
     Handles publishing to PetFinder.com
@@ -190,14 +195,6 @@ class PetFinderPublisher(FTPPublisher):
         self.mkdir("photos")
         self.chdir("photos", "import/photos")
 
-        # Build a list of age bands for petfinder ages. It's
-        # a list of integers in days for each band.
-        # The defaults are 6 months, 2 years and 9 years. 
-        agebands = asm3.configuration.petfinder_age_bands(self.dbo)
-        if agebands == "" or len(agebands.split(",")) != 3:
-            agebands = "182,730,3285"
-        agebands = [ int(i) for i in agebands.split(",") ]
-
         # It's part of PetFinder's TOS that they will not list animals that
         # are either unaltered, or the shelter will not pre-pay the cost
         # of sterilisation after adoption.
@@ -244,7 +241,7 @@ class PetFinderPublisher(FTPPublisher):
                     self.log("%s is unaltered and petfinder_hide_unaltered == true" % an["ANIMALNAME"])
                     continue
 
-                csv.append( self.processAnimal(an, agebands, hide_size = hide_size, cikeys = adoptablecikeys) )
+                csv.append( self.processAnimal(an, hide_size = hide_size, cikeys = adoptablecikeys) )
 
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -261,7 +258,7 @@ class PetFinderPublisher(FTPPublisher):
             straycikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_STRAY_ANIMALS)
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
-                csv.append( self.processAnimal(an, agebands, status = "F", hide_size = hide_size, cikeys = straycikeys) )
+                csv.append( self.processAnimal(an, status = "F", hide_size = hide_size, cikeys = straycikeys) )
             self.log(f"Added {len(rows)} strays with status 'F'")
         else:
             self.pfRemoveCacheInvalidationKeys(CK_STRAY_ANIMALS)
@@ -273,7 +270,7 @@ class PetFinderPublisher(FTPPublisher):
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 # TODO: Do we need to exclude animals we just sent as strays?
-                csv.append( self.processAnimal(an, agebands, status = "H", hide_size = hide_size, cikeys = heldcikeys ) )
+                csv.append( self.processAnimal(an, status = "H", hide_size = hide_size, cikeys = heldcikeys ) )
             self.log(f"Added {len(rows)} held animals with status 'H'")
         else:
             self.pfRemoveCacheInvalidationKeys(CK_HELD_ANIMALS)
@@ -286,7 +283,7 @@ class PetFinderPublisher(FTPPublisher):
             adopted_photo = asm3.configuration.petfinder_send_adopted_photo(self.dbo)
             adoptedcikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_ADOPTED_ANIMALS)
             for an in rows:
-                csv.append( self.processAnimal(an, agebands, status = "X", hide_size = hide_size, adopted_photo = adopted_photo, cikeys = adoptedcikeys ) )
+                csv.append( self.processAnimal(an, status = "X", hide_size = hide_size, adopted_photo = adopted_photo, cikeys = adoptedcikeys ) )
             photoincluded = ""
             if adopted_photo: photoincluded = "(photo included)"
             self.log(f"Added {len(rows)} previously animals {photoincluded} with status 'X'")
@@ -303,7 +300,7 @@ class PetFinderPublisher(FTPPublisher):
         self.log("\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an: ResultRow, agebands: List[int] = [ 182, 730, 3285 ], status: str = "A", 
+    def processAnimal(self, an: ResultRow, status: str = "A", 
                       hide_size: bool = False, adopted_photo: bool = False, cikeys: CacheInvalidationKeys = {}) -> str:
         """ Processes an animal and returns a CSV line """
         primary_color = ""
@@ -345,9 +342,9 @@ class PetFinderPublisher(FTPPublisher):
         # Age, one of Adult, Baby, Senior and Young
         ageindays = asm3.i18n.date_diff_days(an.DATEOFBIRTH, asm3.i18n.now(self.dbo.timezone))
         agename = "Adult"
-        if ageindays < agebands[0]: agename = "Baby"
-        elif ageindays < agebands[1]: agename = "Young"
-        elif ageindays < agebands[2]: agename = "Adult"
+        if ageindays < AGE_BANDS[0]: agename = "Baby"
+        elif ageindays < AGE_BANDS[1]: agename = "Young"
+        elif ageindays < AGE_BANDS[2]: agename = "Adult"
         else: agename = "Senior"
         line.append(agename)
         # Description
