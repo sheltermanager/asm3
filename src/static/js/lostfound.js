@@ -232,6 +232,7 @@ $(function() {
 
             $('#species').change(function() {
                 lostfound.updatebreedselect();
+                additional.toggle_elements_by_species("additional", $("#species").val());
             });
 
         },

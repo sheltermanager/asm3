@@ -1106,7 +1106,7 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
 json_adoptable_animal, xml_adoptable_animal and csv_adoptable_animal
 --------------------------------------------------------------------
 
-.. rubric:: Cache time: 1 hour
+.. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
@@ -1133,8 +1133,8 @@ determines whether the format returned is JSON, CSV or XML::
 json_adopted_animals, xml_adopted_animals and csv_adopted_animals
 -----------------------------------------------------------------
 
-.. rubric:: Cache time: 30 minutes
-.. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
+.. rubric:: Cache time: 1 hour
+.. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 
 Returns a dataset containing animals adopted between two dates as passed in the
@@ -1142,7 +1142,9 @@ Returns a dataset containing animals adopted between two dates as passed in the
 for the current database locale (eg: M/D/Y for US locales, D/M/Y for European,
 Y/M/D for some Asian locales, etc).
 
-Note that the "View Movement" permission is required to call this method.
+Animals will not be repeated, and only animals who are still alive with
+an adoption as their most recent movement in the date range given will
+be returned.
 
 The method name determines whether the format returned is JSON, CSV or XML::
 
@@ -1172,6 +1174,20 @@ Returns a dataset containing all animals currently held. The method
 determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=json_held_animals&username=user&password=letmein
+
+json_monthly_stats, xml_monthly_stats, csv_monthly_stats
+--------------------------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+.. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
+.. rubric:: Requires username/password: YES
+
+Requires month (integer), year (integer) and species (string) parameters. 
+Returns a dataset containing monthly statistics. 
+The method determines whether the format returned is JSON, CSV or XML::
+
+    http://localhost:5000/service?method=csv_montly_stats&username=user&password=letmein&month=1&year=2026&species=cat
+
 
 json_recent_adoptions, xml_recent_adoptions, csv_recent_adoptions
 -----------------------------------------------------------------

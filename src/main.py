@@ -1070,6 +1070,26 @@ class media(ASMEndpoint):
             links.append("%s==%s" % (asm3.media.get_notes_for_id(o.dbo, mid), asm3.media.get_signature_link(o.dbo, mid, o.post)))
         return "||".join(links)
 
+class media_zipfile(ASMEndpoint):
+    url = "media_zipfile"
+    get_permissions = asm3.users.VIEW_MEDIA
+    
+    def content(self, o):
+        # If we're retrieving an already saved zip file, serve it.
+        if o.post["get"] != "":
+            self.content_type("application/zip")
+            self.content_disposition("attachment", "media.zip")
+            v = asm3.cachedisk.get(o.post["get"], o.dbo.name())
+            if v is None: self.notfound()
+            return v
+        else:
+            l = o.locale
+            mids = []
+            for mid in o.post["mediaids"].split(","):
+                if mid: mids.append(int(mid))
+            asm3.asynctask.function_task(o.dbo, _("Export Media as Zip File", l), asm3.media.zip_media_link, o.dbo, mids)
+            self.redirect("task")
+
 class mobile(ASMEndpoint):
     url = "mobile"
     login_url = "mobile_login"
@@ -5421,6 +5441,7 @@ class maint_update_reports(ASMEndpoint):
         self.cache_control(0)
         return "%s reports updated" % asm3.reports.update_smcom_reports(o.dbo, o.user)
 
+
 class medical(JSONEndpoint):
     url = "medical"
     get_permissions = asm3.users.VIEW_MEDICAL
@@ -8921,6 +8942,7 @@ class waitinglist_results(JSONEndpoint):
         self.check(asm3.users.CHANGE_WAITING_LIST)
         for wid in o.post.integer_list("ids"):
             asm3.waitinglist.update_waitinglist_highlight(o.dbo, wid, o.post["himode"])
+
 
 # List of routes constructed from class definitions
 routes = []

@@ -500,25 +500,26 @@ additional = {
             let t = $(this), 
                 label = $("label[for='" + t.attr("id") + "']");
             // ignore checkboxes
-            if (t.attr("type") != "checkbox") {
-                let d = String(t.attr("data-post"));
-                // mandatory fields have a prefix of a.1 in their post attribute - skip those without
-                if (d.indexOf("a.1") == -1) { return; }
-                // skip checking fields that have been hidden
-                if (t.attr("data-hidden") == "1") { return; }
-                // skip checking mandatory fields that are for a particular species if the species on screen does not match 
-                // NOTE: relies on a #species dropdown existing, this is poor encapsulation/design, 
-                // but the alternatives were far more complex to implement
-                if ($("#species").val() && !common.array_in($("#species").val(), t.attr("data-speciesids").split(","))) { return; }
-                if (common.trim(t.val()) == "") {
-                    header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
-                    // Activate the accordion section this element is in (if it's in an accordion)
-                    t.closest(".asm-accordion").asmaccordion("activeNode", t);
-                    label.addClass(validate.ERROR_LABEL_CLASS);
-                    t.focus();
-                    valid = false;
-                    return false;
-                }
+            if (t.attr("type") == "checkbox") { return; }
+            // mandatory fields have a prefix of a.1 in their post attribute - skip those without
+            let d = String(t.attr("data-post"));
+            if (d.indexOf("a.1") == -1) { return; }
+            // skip checking fields that have been hidden
+            if (t.attr("data-hidden") == "1") { return; }
+            // skip checking any mandatory fields that are for a particular species if the species on screen does not match 
+            // NOTE: relies on a #species dropdown existing, this is poor encapsulation/design, 
+            // but the alternatives were far more complex to implement
+            if ($("#species").length > 0 && t.attr("data-speciesids")) {
+                if (!common.array_in($("#species").val(), t.attr("data-speciesids").split(","))) { return; }
+            }
+            if (common.trim(t.val()) == "") {
+                header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
+                // Activate the accordion section this element is in (if it's in an accordion)
+                t.closest(".asm-accordion").asmaccordion("activeNode", t);
+                label.addClass(validate.ERROR_LABEL_CLASS);
+                t.focus();
+                valid = false;
+                return false;
             }
         });
         return valid;
@@ -537,26 +538,24 @@ additional = {
      * linktype: named additional field link type constant, eg: animal, movement, etc.
      */
     validate_mandatory_dialog: function(additionalclass) {
-        var valid = true, message="";
+        let valid = true, message="";
         $("." + additionalclass).not(".chooser").each(function() {
             // only validate visible additional fields
             if ($(this).is(":visible")) {
-                var t = $(this), 
+                let t = $(this), 
                     label = $("label[for='" + t.attr("id") + "']");
                 // ignore checkboxes
-                if (t.attr("type") != "checkbox") {
-                    var d = String(t.attr("data-post"));
-                    // mandatory additional fields have a post attribute prefixed with a.1
-                    if (d.indexOf("a.1") != -1) {
-                        if (common.trim(t.val()) == "") {
-                            label.addClass(validate.ERROR_LABEL_CLASS);
-                            t.focus();
-                            valid = false;
-                            message = _("{0} cannot be blank").replace("{0}", label.html());
-                            tableform.dialog_error(message);
-                            return false;
-                        }
-                    }
+                if (t.attr("type") == "checkbox") { return; }
+                // mandatory additional fields have a post attribute prefixed with a.1
+                let d = String(t.attr("data-post"));
+                if (d.indexOf("a.1") == -1) { return; }
+                if (common.trim(t.val()) == "") {
+                    label.addClass(validate.ERROR_LABEL_CLASS);
+                    t.focus();
+                    valid = false;
+                    message = _("{0} cannot be blank").replace("{0}", label.html());
+                    tableform.dialog_error(message);
+                    return false;
                 }
             }
         });
@@ -574,18 +573,16 @@ additional = {
             var t = $(this), 
                 label = t.closest(".asm-formfield").find("label");
             // ignore checkboxes
-            if (t.attr("type") != "checkbox") {
-                var d = String(t.attr("data-post"));
-                // mandatory additional fields have a post attribute prefixed with a.1
-                if (d.indexOf("a.1") != -1) {
-                    if (common.trim(t.val()) == "") {
-                        header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
-                        label.addClass(validate.ERROR_LABEL_CLASS);
-                        t.focus();
-                        valid = false;
-                        return false;
-                    }
-                }
+            if (t.attr("type") == "checkbox") { return; }
+            // mandatory additional fields have a post attribute prefixed with a.1
+            let d = String(t.attr("data-post"));
+            if (d.indexOf("a.1") == -1) { return; }
+            if (common.trim(t.val()) == "") {
+                header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
+                label.addClass(validate.ERROR_LABEL_CLASS);
+                t.focus();
+                valid = false;
+                return false;
             }
         });
         return valid;

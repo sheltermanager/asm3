@@ -1417,6 +1417,19 @@ def get_animals_adoptable(dbo: Database) -> Results:
     sql = f"{query} WHERE a.Adoptable=1 ORDER BY AnimalName"
     return dbo.query(sql)
 
+def get_animals_adopted_two_dates(dbo: Database, fromdate: datetime, todate: datetime) -> Results:
+    """
+    Returns all animals who were adopted between the two dates given.
+    NOTE: Uses the full query rather than brief as this called by the service host.
+    Does not honour location filters for the same reason.
+    """
+    query = get_animal_query(dbo)
+    sql = f"{query} WHERE a.ActiveMovementType=1 AND a.DeceasedDate Is Null " \
+        f"AND a.ActiveMovementDate >= {dbo.sql_value(fromdate)} " \
+        f"AND a.ActiveMovementDate <= {dbo.sql_value(todate)} " \
+        "ORDER BY ActiveMovementDate"
+    return dbo.query(sql, limit=asm3.configuration.record_search_limit(dbo))
+
 def get_animals_never_vacc(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all shelter animals who have never received a vacc of any type

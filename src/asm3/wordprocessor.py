@@ -1985,7 +1985,7 @@ def html_table(l: str, rows: Results, cols: List[Tuple[str, str]]):
     """
     h = []
     colstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;">{0}</td>'
-    headstyle = '<td><span style="font-family: sans-serif; font-size: 10pt;"><strong>{0}</strong></td>'
+    headstyle = '<th><span style="font-family: sans-serif; font-size: 10pt;"><strong>{0}</strong></th>'
     h.append('<table style="border-collapse: collapse; width: 100%" border="1">')
     h.append("<thead><tr>")
     for colfield, coltext in cols:
@@ -2210,14 +2210,19 @@ def generate_animal_doc(dbo: Database, templateid: int, animalid: int, username:
     # But the call below to get_movement_donations will add the totals and allow
     # receipt/invoice type documents to work if there's an active movement
     tags = animal_tags(dbo, a, includeDonations=True)
+    has_person_tags = False
+    # Use the person info from the owner linked to the animal record if one is available
+    if a["OWNERID"] is not None and a["OWNERID"] != 0:
+        has_person_tags = True
+        tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, a["OWNERID"])))
     # Use the person info from the latest open movement for the animal
     # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
     # as get_animal_movements returns them in descending order of movement date
-    has_person_tags = False
     for m in asm3.movement.get_animal_movements(dbo, animalid):
         if m["MOVEMENTDATE"] is not None and m["RETURNDATE"] is None and m["OWNERID"] is not None and m["OWNERID"] != 0:
-            has_person_tags = True
-            tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m["OWNERID"])))
+            if not has_person_tags:
+                has_person_tags = True
+                tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m["OWNERID"])))
             tags = append_tags(tags, movement_tags(dbo, m))
             md = asm3.financial.get_movement_donations(dbo, m["ID"])
             if len(md) > 0: 

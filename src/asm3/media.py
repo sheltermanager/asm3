@@ -1,14 +1,16 @@
 
 import asm3.al
 import asm3.animal
+import asm3.asynctask
 import asm3.audit
+import asm3.cachedisk
 import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
 from asm3.i18n import _
 from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, VIDEO_THUMBNAIL_CMD, WATERMARK_FONT_BASEDIRECTORY
-from asm3.typehints import Database, Dict, PostedData, ResultRow, Results, Tuple
+from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results, Tuple
 
 from datetime import datetime
 import os
@@ -165,7 +167,7 @@ def get_media_export(dbo: Database) -> Results:
             m.DBFSNAME = "%s%s" % (m.DBFSID, ext)
     return rows
 
-def get_media_file_data(dbo: Database, mid: int) -> Tuple[datetime, str, bytes]:
+def get_media_file_data(dbo: Database, mid: int) -> Tuple[datetime, str, str, bytes]:
     """
     Gets a piece of media by id. Returns None if the media record does not exist.
     id: The media id
@@ -976,13 +978,20 @@ def update_media_from_form(dbo: Database, username: str, post: PostedData) -> No
         "UpdatedSinceLastPublish": 1
     }, username)
 
-def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
-    """ Clones a media record with a new link """
+def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int, deepcopy: bool = True) -> None:
+    """ Clones a media record with a new link. If deepcopy is set, clones the DBFS data as well """
     m = get_media_by_id(dbo, mediaid)
+    dbfsid = m.DBFSID
     nextid = dbo.get_id("media")
-    return dbo.insert("media", {
+    if deepcopy:
+        data = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+        path = get_dbfs_path(m.LINKID, m.LINKTYPEID)
+        ext = m.MEDIANAME
+        ext = ext[ext.rfind(".")+1:]
+        dbfsid = asm3.dbfs.put_string(dbo, f"{nextid}.{ext}", path, data)
+    dbo.insert("media", {
         "ID":                   nextid,
-        "DBFSID":               m.DBFSID,
+        "DBFSID":               dbfsid,
         "MediaSize":            m.MEDIASIZE,
         "MediaSource":          MEDIASOURCE_CLONE,
         "MediaFlags":           m.MEDIAFLAGS,
@@ -1004,6 +1013,7 @@ def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, lin
         "CreatedDate":          dbo.now(),
         "RetainUntil":          m.RETAINUNTIL
     }, username, generateID=False)
+    return nextid
 
 def update_media_link(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
     """ Updates the media with id to have a new link """
@@ -1562,13 +1572,14 @@ def watermark_with_transparency(dbo: Database, imagedata: bytes, animalname: str
 
         for fontsize in range(20, font_maxsize, 5):
             font = ImageFont.truetype(font_file, fontsize)
-            font_dimensions = draw.textsize(animalname,font=font)
-            if font_dimensions[0]+font_offset > (width-wm_width-font_offset):
+            font_width_px = draw.textlength(animalname,font=font)
+            if font_width_px + font_offset > (width-wm_width-font_offset):
                 fontsize = fontsize - 10
                 break
 
         font = ImageFont.truetype(font_file, fontsize)
-        font_position = height - (font_dimensions[1] + y_offset)
+        font_height = fontsize + 30 # This is a fudge, we used to get font_height from draw.textsize(), but that was deprecated/removed
+        font_position = height - (font_height + y_offset)
 
         draw.text((font_offset-stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
         draw.text((font_offset+stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
@@ -1593,4 +1604,25 @@ def watermark_with_transparency(dbo: Database, imagedata: bytes, animalname: str
         asm3.al.error("failed watermarking image: %s" % str(err), "media.watermark_with_transparency")
         return imagedata
 
+def zip_media_link(dbo: Database, mediaids: List[int]) -> str:
+    """
+    Expected to be called by asynctask. Grabs the binary data for mediaids and
+    creates a zip file. Stores it in the disk cache for an hour and returns an HTML link
+    to download that file. 
+    """
+    l = dbo.locale
+    asm3.asynctask.set_progress_max(dbo, len(mediaids))
+    zo = asm3.utils.bytesio()
+    zfo = zipfile.ZipFile(zo, 'w')
+    for mid in mediaids:
+        mediafile = get_media_file_data(dbo, mid)
+        filename = mediafile[1]
+        filedata = mediafile[3]
+        zfo.writestr(filename, filedata)
+        asm3.asynctask.increment_progress_value(dbo)
+    zfo.close()
+    key = asm3.utils.uuid_str()
+    asm3.cachedisk.put(key, dbo.name(), zo.getvalue(), 3600)
+    completemessage = _("Archiving complete ({0} files).", l).replace("{0}", str(len(mediaids)))
+    return f'<p>{completemessage} <a target="_blank" href="/media_zipfile?get={key}"><b>' + _("Download File") + '</b></a></p>'
 

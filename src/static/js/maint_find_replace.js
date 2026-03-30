@@ -17,11 +17,11 @@ $(function() {
                     { type: "raw", markup: '<h3>' + _("Cities") + '</h3>' },
                     { post_field: "cityfind", label: _("Find"), type: "select", options: controller.towns },
                     { post_field: "cityreplace", label: _("Replace with"), type: "autotext", options: controller.towns },
-                    { type: "raw", markup: '<button class="replacebutton" id="replacemanufacturers">' + _("Go") + '</button>' },
+                    { type: "raw", markup: '<button class="replacebutton" id="replacecities">' + _("Go") + '</button>' },
                     { type: "raw", markup: '<h3>' + _("States") + '</h3>' },
                     { post_field: "statefind", label: _("Find"), type: "select", options: controller.counties },
                     { post_field: "statereplace", label: _("Replace with"), type: "autotext", options: controller.counties },
-                    { type: "raw", markup: '<button class="replacebutton" id="replacemanufacturers">' + _("Go") + '</button>' },
+                    { type: "raw", markup: '<button class="replacebutton" id="replacestates">' + _("Go") + '</button>' },
                 ], { full_width: false }),
                 html.content_footer()
             ].join("\n");

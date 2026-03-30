@@ -40,6 +40,42 @@ import test_waitinglist
 def lt(modname):
     return unittest.TestLoader().loadTestsFromModule(modname)
 
+def send_email(body):
+    """
+    Sends an email.
+    """
+    import email.utils
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    from subprocess import Popen, PIPE
+    msg = MIMEMultipart("alternative")
+    msg["From"] = "error@sheltermanager.com"
+    msg["To"] = "error@sheltermanager.com"
+    msg["Message-ID"] = email.utils.make_msgid()
+    msg["Date"] = email.utils.formatdate()
+    msg["Subject"] = "Unit Test Errors"
+    msg["Auto-Submitted"] = "auto-generated"
+    # Attach the plaintext message
+    msg.attach(MIMEText(body, "plain"))
+    # Send the email
+    p = Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=PIPE)
+    p.communicate(msg.as_string().encode("utf-8"))
+    
+def execute(fullsuite, emailerrors = False):
+    s = unittest.TestSuite(fullsuite)
+    runner = unittest.TextTestRunner()
+    result = runner.run(s)
+    if not result.wasSuccessful():
+        body = []
+        body.append("FAILURES:")
+        for test, trace in result.failures:
+            body.append(f"{test}: {trace}")
+        body.append("ERRORS:")
+        for test, trace in result.errors:
+            body.append(f"{test}: {trace}")
+        m = "\n\n".join(body)
+        send_email(f"Unit test failure:\n\n{result}\n\n{m}")
+
 fullsuite = [
     lt(test_additional),
     lt(test_animalcontrol),
@@ -80,7 +116,11 @@ fullsuite = [
 # fullsuite = [ lt(test_financial) ]
 
 if __name__ == "__main__":
-    s = unittest.TestSuite(fullsuite)
-    runner = unittest.TextTestRunner()
-    runner.run(s)
+    emailerrors = False
+    import sys
+    for i in sys.argv:
+        if i == "emailerrors":
+            emailerrors = True
+    execute(fullsuite, emailerrors)
+    
 

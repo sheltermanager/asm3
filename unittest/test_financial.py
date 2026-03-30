@@ -47,7 +47,7 @@ class TestFinancial(unittest.TestCase):
 
         trxs = asm3.financial.insert_trx_from_regular_debits(base.get_dbo(), "test")
         self.assertEqual("OK 1", trxs)
-        
+
         asm3.financial.delete_regulardebit(base.get_dbo(), "test", rdid)
 
         currentweekday = int(base.get_dbo().today().strftime("%w"))

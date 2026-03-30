@@ -7,6 +7,7 @@ sheltermanager accounts, username and password
 for others.
 """
 
+import asm3.additional
 import asm3.al
 import asm3.animal
 import asm3.cachemem
@@ -46,6 +47,7 @@ AUTH_METHODS = [
     "xml_held_animals", "json_held_animals", "csv_held_animals", 
     "xml_microchip_registrations", "json_microchip_registrations", "csv_microchip_registrations", 
     "xml_lost_animals", "json_lost_animals", "csv_lost_animals", 
+    "xml_monthly_stats", "json_monthly_stats", "csv_monthly_stats", 
     "xml_recent_adoptions", "json_recent_adoptions", "csv_recent_adoptions", 
     "xml_recent_changes", "json_recent_changes", "csv_recent_changes", 
     "xml_shelter_animals", "json_shelter_animals", "csv_shelter_animals", 
@@ -103,6 +105,9 @@ CACHE_PROTECT_METHODS = {
     "json_microchip_registrations": [ "prefix", "days" ],
     "xml_microchip_registrations": [ "prefix", "days" ],
     "csv_microchip_registrations": [ "prefix", "days" ],
+    "csv_monthly_stats": [ "month", "year", "species" ],
+    "json_monthly_stats": [ "month", "year", "species" ],
+    "xml_monthly_stats": [ "month", "year", "species" ],
     "csv_recent_adoptions": [ "sensitive" ], 
     "json_recent_adoptions": [ "sensitive" ], 
     "xml_recent_adoptions": [ "sensitive" ],
@@ -835,7 +840,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
             rs = asm3.media.embellish_photo_urls(dbo, rs)
-            return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
+            return set_cached_response(cache_key, account, method_mimetype(method), 1800, 1800, method_output(method, l, rs))
 
     elif method in ("json_adoptable_animals_xp", "xml_adoptable_animals_xp", "csv_adoptable_animals_xp"):
         rs = strip_personal_data(asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
@@ -855,18 +860,18 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             return ("text/plain", 0, 0, "ERROR: Invalid fromdate/todate values")
         else:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
-            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
-                movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))
+            rs = asm3.animal.get_animals_adopted_two_dates(dbo, post.date("fromdate"), post.date("todate"))
             if strip_personal: rs = strip_personal_data(rs)
             rs = asm3.media.embellish_photo_urls(dbo, rs)
-            return set_cached_response(cache_key, account, method_mimetype(method), 1800, 1800, method_output(method, l, rs))
+            rs = asm3.additional.append_to_results(dbo, rs, "animal")
+            return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
         
     elif method in ("json_found_animals", "xml_found_animals", "csv_found_animals"):
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_FOUND_ANIMAL)
         rs = asm3.lostfound.get_foundanimal_last_days(dbo)
         if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.FOUNDANIMAL)
+        rs = asm3.additional.append_to_results(dbo, rs, "foundanimal")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
 
     elif method in ("json_held_animals", "xml_held_animals", "csv_held_animals"):
@@ -874,6 +879,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         rs = asm3.animal.get_animals_hold(dbo)
         if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs)
+        rs = asm3.additional.append_to_results(dbo, rs, "animal")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
 
     elif method in ("json_lost_animals", "xml_lost_animals", "csv_lost_animals"):
@@ -881,7 +887,18 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         rs = asm3.lostfound.get_lostanimal_last_days(dbo)
         if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs, asm3.media.LOSTANIMAL)
+        rs = asm3.additional.append_to_results(dbo, rs, "lostanimal")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
+    
+    elif method in ("json_monthly_stats", "xml_monthly_stats", "csv_monthly_stats"):
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
+        month = post.integer("month")
+        year = post.integer("year")
+        speciesname = post["species"]
+        pc = asm3.publish.PublishCriteria(asm3.configuration.publisher_presets(dbo))
+        ms = asm3.publishers.sacmetrics.SACMetricsPublisher(dbo, pc).processStats(month, year, speciesname)
+        return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, [ms,]))
 
     elif method in ("json_recent_adoptions", "xml_recent_adoptions", "csv_recent_adoptions"):
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
@@ -910,6 +927,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_recent_changes(dbo)
         if strip_personal: rs = strip_personal_data(rs)
+        rs = asm3.additional.append_to_results(dbo, rs, "animal")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
 
     elif method in ("json_shelter_animals", "xml_shelter_animals", "csv_shelter_animals"):
@@ -917,6 +935,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         rs = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs)
+        rs = asm3.additional.append_to_results(dbo, rs, "animal")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
 
     elif method in ("json_stray_animals", "xml_stray_animals", "csv_stray_animals"):
@@ -924,6 +943,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         rs = asm3.animal.get_animals_stray(dbo)
         if strip_personal: rs = strip_personal_data(rs)
         rs = asm3.media.embellish_photo_urls(dbo, rs)
+        rs = asm3.additional.append_to_results(dbo, rs, "animal")
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
 
     elif method == "rss_timeline":

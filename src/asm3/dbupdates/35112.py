@@ -27,3 +27,8 @@ fields = ",".join([
     dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
 ])
 execute(dbo, dbo.ddl_add_table("salesreceiptdetail", fields) )
+
+add_index(dbo, "salesreceiptdetail_SalesReceiptID", "salesreceiptdetail", "SalesReceiptID")
+add_index(dbo, "salesreceiptdetail_ProductID", "salesreceiptdetail", "ProductID")
+add_index(dbo, "salesreceiptdetail_Description", "salesreceiptdetail", "Description")
+
