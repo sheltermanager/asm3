@@ -24,15 +24,18 @@ The service requires at least the following parameters:
 
 * method: A service method to call.
 
+Authentication
+--------------
+
+For methods that require authentication. You may either provide a username and password for a valid ASM user using the following parameters.
+
 * username: A valid ASM user. Not all methods need a username and password.
 
-* password: A valid ASM password. 
+* password: A valid ASM password.
 
-From a security standpoint, it's better to create at least one ASM user
-dedicated to calling the service to assist with audit trails and to lock it
-down so an attacker with the URL cannot change your data or view anything you
-don't want them to. You can also set "Can Login" to NO in the user account to
-prevent it logging in to the UI, but still use it to access the service.
+Alternatively you may provide an API Key generated in :menuselection:`Publishing -> Set Publishing Options -> API Keys` using:
+
+* key: A valid API key.
 
 Animal Datasets
 ---------------
@@ -769,6 +772,12 @@ the CSV data and details of errors from any rows that failed to be imported::
         [ 5, "Jeff,2,Dog,928310983219283", "This microchip number has already been used" ]
       ]
     }
+
+From a security standpoint, it's better to create at least one ASM user
+dedicated to calling the service to assist with audit trails and to lock it
+down so an attacker with the URL cannot change your data or view anything you
+don't want them to. You can also set "Can Login" to NO in the user account to
+prevent it logging in to the UI, but still use it to access the service.
 
 csv_mail and csv_report
 -----------------------

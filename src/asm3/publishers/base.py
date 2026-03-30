@@ -391,7 +391,87 @@ def get_microchip_data(dbo: Database, patterns: List[str], publishername: str,
     rows = asm3.media.embellish_photo_urls(dbo, rows, asm3.media.ANIMAL)
     return rows
 
-def calc_microchip_data(dbo: Database, rows: Results, organisation_email: str = "") -> Results:
+def get_microchip_data_export(dbo: Database, prefix: str = "", days: int = 30) -> Results:
+    registerfrom = asm3.i18n.subtract_days(asm3.i18n.today(), days)
+    registrationfloor = asm3.configuration.microchip_register_from(dbo)
+    if registrationfloor:
+        if registerfrom < asm3.i18n.display2python(dbo.locale, registrationfloor):
+            registerfrom = registrationfloor
+
+    registerto = dbo.today(settime="23:59:59")
+    movementtypes = asm3.configuration.microchip_register_movements(dbo)
+    trialclause = ""
+    if movementtypes.find("11") == -1:
+        trialclause = "AND a.HasTrialAdoption = 0"
+    try:
+        rows = dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, c.BaseColour, z.Size, a.DateOfBirth, a.NonShelterAnimal, a.Archived, " \
+        "a.MostRecentEntryDate, a.ActiveMovementID, a.ActiveMovementType, a.ActiveMovementDate, " \
+        "a.IdentichipDate, a.IdentichipStatus, a.IdentichipNumber, a.Identichip2Date, a.Identichip2Status, a.Identichip2Number, " \
+        "oo.OwnerName AS OriginalOwnerName, " \
+        "oo.OwnerTitle AS OriginalOwnerTitle, " \
+        "oo.OwnerInitials AS OriginalOwnerInitials, " \
+        "oo.OwnerForeNames AS OriginalOwnerForeNames, " \
+        "oo.OwnerSurname AS OriginalOwnerSurname, " \
+        "oo.OwnerAddress AS OriginalOwnerAddress, " \
+        "oo.OwnerTown AS OriginalOwnerTown, " \
+        "oo.OwnerCounty AS OriginalOwnerCounty, " \
+        "oo.OwnerPostcode AS OriginalOwnerPostcode, " \
+        "oo.OwnerCountry AS OriginalOwnerCountry, " \
+        "oo.HomeTelephone AS OriginalOwnerHomeTelephone, " \
+        "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
+        "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
+        "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
+        "oo.IdentificationNumber AS OriginalOwnerIDNumber, " \
+        "co.ID AS CurrentOwnerID, " \
+        "co.OwnerName AS CurrentOwnerName, " \
+        "co.OwnerTitle AS CurrentOwnerTitle, " \
+        "co.OwnerInitials AS CurrentOwnerInitials, " \
+        "co.OwnerForeNames AS CurrentOwnerForeNames, " \
+        "co.OwnerSurname AS CurrentOwnerSurname, " \
+        "co.OwnerAddress AS CurrentOwnerAddress, " \
+        "co.OwnerTown AS CurrentOwnerTown, " \
+        "co.OwnerCounty AS CurrentOwnerCounty, " \
+        "co.OwnerPostcode AS CurrentOwnerPostcode, " \
+        "co.OwnerCountry AS CurrentOwnerCountry, " \
+        "co.HomeTelephone AS CurrentOwnerHomeTelephone, " \
+        "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
+        "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
+        "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
+        "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
+        "co.Comments AS CurrentOwnerComments, " \
+        "mt.MovementType AS ActiveMovementTypeName " \
+        "FROM animal a " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID " \
+        "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
+        "INNER JOIN lksize z ON a.Size = z.ID " \
+        "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
+        "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "WHERE a.DeceasedDate Is Null " \
+        "AND a.Identichipped = 1 " \
+        "AND (a.IdentichipNumber LIKE '%(prefix)s%%' OR a.Identichip2Number LIKE '%(prefix)s%%') " \
+        "AND (a.IsNotForRegistration IS NULL OR a.IsNotForRegistration = 0) " \
+        "AND ( " \
+        "( a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
+        "AND a.ActiveMovementDate > %(regfrom)s AND a.ActiveMovementDate <= %(regto)s ) " \
+        "OR ( a.ARCHIVED = 0 AND a.MostRecentEntryDate > %(regfrom)s AND a.MostRecentEntryDate <= %(regto)s ) "
+        ") " \
+              % {
+            "prefix": dbo.escape(prefix),
+            "movementtypes": movementtypes, 
+            "trialclause": trialclause,
+            "regfrom": dbo.sql_value(registerfrom), 
+            "regto": dbo.sql_value(registerto),
+        })
+    except Exception as err:
+        asm3.al.error(str(err), "publisher.get_microchip_data_export", dbo, sys.exc_info())
+
+    rows = calc_microchip_data(dbo, rows)
+    return rows
+
+def calc_microchip_data(dbo: Database, rows: Results, organisation_email: str = "", striporiginalownerdata: bool = True) -> Results:
     """ 
     Given a list of animal microchip rows, 
         1. Updates the addresses such that CURRENTOWNER* contains the correct info for shelter/nsowner/movement person
@@ -479,14 +559,23 @@ def calc_microchip_data(dbo: Database, rows: Results, organisation_email: str = 
         r.EVENTDATE = r.ACTIVEMOVEMENTDATE or r.MOSTRECENTENTRYDATE
         if r.NONSHELTERANIMAL == 1: r.EVENTDATE = r.IDENTICHIPDATE
 
+        if r.ACTIVEMOVEMENTTYPENAME:
+            r.EVENTTYPE = r.ACTIVEMOVEMENTTYPENAME
+        else:
+            r.EVENTTYPE = asm3.i18n._("Intake", dbo.locale)
+
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
         # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
+        if striporiginalownerdata:
+            for c in r.copy().keys():
+                if c.startswith("ORIGINALOWNER"):
+                    del r[c]
         if r.IDENTICHIP2NUMBER and r.IDENTICHIP2NUMBER != "":
             x = r.copy()
             x.IDENTICHIPNUMBER = x.IDENTICHIP2NUMBER
             x.IDENTICHIPDATE = x.IDENTICHIP2DATE
             extras.append(x)
-
+    
     return rows + extras
 
 def get_microchip_data_query(dbo: Database, patterns: List[str], publishername: str, movementtypes: str = "1", 

@@ -37,7 +37,7 @@ from asm3.typehints import Database, PostedData, Results, ResultRow, ServiceResp
 
 # Service methods that require authentication
 AUTH_METHODS = [
-    "csv_adoptable_animals", "csv_import", "csv_mail", "csv_report", 
+    "csv_import", "csv_mail", "csv_report", 
     "json_report", "json_mail", 
     "html_report", "rss_timeline", "upload_animal_image", 
     "xml_adoptable_animal", "json_adoptable_animal", "csv_adoptable_animal", 
@@ -45,6 +45,7 @@ AUTH_METHODS = [
     "xml_adopted_animals", "json_adopted_animals", "csv_adopted_animals",
     "xml_found_animals", "json_found_animals", "csv_found_animals", 
     "xml_held_animals", "json_held_animals", "csv_held_animals", 
+    "xml_microchip_registrations", "json_microchip_registrations", "csv_microchip_registrations", 
     "xml_lost_animals", "json_lost_animals", "csv_lost_animals", 
     "xml_monthly_stats", "json_monthly_stats", "csv_monthly_stats", 
     "xml_recent_adoptions", "json_recent_adoptions", "csv_recent_adoptions", 
@@ -101,6 +102,9 @@ CACHE_PROTECT_METHODS = {
     "csv_lost_animals": [ "sensitive" ],
     "json_lost_animals": [ "sensitive" ],
     "xml_lost_animals": [ "sensitive" ],
+    "json_microchip_registrations": [ "prefix", "days" ],
+    "xml_microchip_registrations": [ "prefix", "days" ],
+    "csv_microchip_registrations": [ "prefix", "days" ],
     "csv_monthly_stats": [ "month", "year", "species" ],
     "json_monthly_stats": [ "month", "year", "species" ],
     "xml_monthly_stats": [ "month", "year", "species" ],
@@ -533,6 +537,13 @@ def strip_personal_data(rows: Results) -> Results:
     """ Shorthand to save typing the module name repeatedly """
     return asm3.publishers.base.strip_sensitive_data(rows)
 
+def validate_api_key(dbo: Database, key: str, method: str):
+    for a in range(1, 11):
+        if asm3.configuration.cstring(dbo, f"APIKey{a}") == key and method in asm3.configuration.cstring(dbo, f"APIMethods{a}").split(","):
+            return True
+    return False
+
+
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str, ispost: bool, dbo: Database = None) -> ServiceResponse:
     """ Handles the various service method types.
     post:        The GET/POST parameters
@@ -547,6 +558,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     """
     # Get service parameters
     account = post["account"]
+    apikey = post["key"]
     username = post["username"]
     password = post["password"]
     method = post["method"]
@@ -605,11 +617,24 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if not asm3.configuration.service_auth_enabled(dbo):
             asm3.al.error("Service API for auth methods is disabled (%s)" % method, "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Service API for authenticated methods is disabled")
-        user = asm3.users.authenticate(dbo, username, password)
-        if user is None:
-            asm3.al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
-            return ("text/plain", 0, 0, "ERROR: Invalid username and password")
-        securitymap = asm3.users.get_security_map(dbo, user.ID)
+        if apikey:
+            if not validate_api_key(dbo, apikey, method):
+                asm3.al.error("Invalid API Key (%s)" % method, "service.handler", dbo)
+                return ("text/plain", 0, 0, "ERROR: Invalid API Key")
+            user = dbo.first_row(dbo.query("SELECT 1 AS SuperUser, 'api_key' AS UserName"))
+            strip_personal = True
+        else:
+            user = asm3.users.authenticate(dbo, username, password)
+            if user is None:
+                asm3.al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
+                return ("text/plain", 0, 0, "ERROR: Invalid username and password")
+            securitymap = asm3.users.get_security_map(dbo, user.ID)
+
+            # If the user does not have VIEW_PERSON permissions, force stripping of personal info from 
+            # methods that support it
+            if user is not None and user.SUPERUSER is not None:
+                if not asm3.users.check_permission_map_bool(user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON):
+                    strip_personal = True
 
     # Get the preferred locale and timezone for the site
     l = asm3.configuration.locale(dbo)
@@ -617,12 +642,6 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     dbo.timezone = asm3.configuration.timezone(dbo)
     dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
     asm3.al.info("call @%s --> %s [%s]" % (username, method, querystring), "service.handler", dbo)
-
-    # If the user does not have VIEW_PERSON permissions, force stripping of personal info from 
-    # methods that support it
-    if user is not None and user.SUPERUSER is not None:
-        if not asm3.users.check_permission_map_bool(user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON):
-            strip_personal = True
 
     if method =="animal_image":
         hotlink_protect("animal_image", referer)
@@ -726,6 +745,12 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         hotlink_protect("extra_image", referer)
         image_protect(title)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
+    
+    elif method in ("json_microchip_registrations", "xml_microchip_registrations", "csv_microchip_registrations"):
+        days = post.integer("days")
+        if days == 0: days = 30
+        animals = asm3.publishers.base.get_microchip_data_export(dbo, post["prefix"], days)
+        return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, animals))
 
     elif method == "media_image":
         hotlink_protect("media_image", referer)

@@ -108,6 +108,10 @@ select:disabled, input:disabled, textarea:disabled {
     text-decoration: underline; 
 }
 
+.bottompadding {
+    padding-bottom: 10px;
+}
+
 /** LOGIN SCREEN ============= */
 #asm-login-window {
     padding: 0px;
