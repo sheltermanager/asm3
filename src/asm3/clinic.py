@@ -246,8 +246,9 @@ def update_invoice_stock_movements(dbo: Database, username: str, invoiceid: int,
         "StockUsageIDs":    ",".join([str(stockusageid) for stockusageid in stockusageids])
     }
     if updateprice:
-        query = f'SELECT SUM(su.Quantity * sl.UnitPrice) AS Price FROM stockusage su INNER JOIN stocklevel sl ON su.StockLevelID = sl.ID WHERE su.ID IN ({",".join([str(stockusageid) for stockusageid in stockusageids])})'
-        price = dbo.query_float(query)
+        price = dbo.query_float(
+            f'SELECT SUM(su.Quantity * sl.UnitPrice * -1) AS Price FROM stockusage su INNER JOIN stocklevel sl ON su.StockLevelID = sl.ID WHERE su.ID IN ({",".join([str(stockusageid) for stockusageid in stockusageids])})'
+        )
         payload["Amount"] = price
     dbo.update("clinicinvoiceitem", invoiceid, payload, username)
 

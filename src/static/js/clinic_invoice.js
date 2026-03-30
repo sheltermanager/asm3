@@ -171,7 +171,7 @@ $(function() {
                 console.log("Moved.");
                 console.log(result);
             });
-            // common.route_reload();
+            common.route_reload();
         },
 
         render_moveproduct: function() {
