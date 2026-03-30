@@ -1198,6 +1198,10 @@ return animals with microchips that have a particular prefix.
 Note that pulling data from ASM puts the burden on the caller to remember which 
 chips they have previously registered.
 
+Eg:
+
+    http://localhost:5000/service?method=json_microchip_registrations&username=user&password=letmein&days=60&prefix=956
+
 A sample microchip dataset looks like this::
 
     [
@@ -1220,9 +1224,6 @@ A sample microchip dataset looks like this::
            "IDENTICHIPDATE": "2026-01-07T00:00:00",
            "IDENTICHIPSTATUS": 1,
            "IDENTICHIPNUMBER": "95609812392321",
-           "IDENTICHIP2DATE": null
-           "IDENTICHIP2STATUS": 0,
-           "IDENTICHIP2NUMBER": "",
            "CURRENTOWNERID": 1,
            "CURRENTOWNERNAME": "Mr Test Testing",
            "CURRENTOWNERTITLE": "Mr",

@@ -1260,6 +1260,10 @@ to keep their databases upto date.</p>
 return animals with microchips that have a particular prefix.</p>
 <p>Note that pulling data from ASM puts the burden on the caller to remember which
 chips they have previously registered.</p>
+<p>Eg:</p>
+<blockquote>
+<div><p><a class="reference external" href="http://localhost:5000/service?method=json_microchip_registrations&amp;username=user&amp;password=letmein&amp;days=60&amp;prefix=956">http://localhost:5000/service?method=json_microchip_registrations&amp;username=user&amp;password=letmein&amp;days=60&amp;prefix=956</a></p>
+</div></blockquote>
 <p>A sample microchip dataset looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
    <span class="p">{</span>
@@ -1281,9 +1285,6 @@ chips they have previously registered.</p>
        <span class="s2">&quot;IDENTICHIPDATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2026-01-07T00:00:00&quot;</span><span class="p">,</span>
        <span class="s2">&quot;IDENTICHIPSTATUS&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
        <span class="s2">&quot;IDENTICHIPNUMBER&quot;</span><span class="p">:</span> <span class="s2">&quot;95609812392321&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;IDENTICHIP2DATE&quot;</span><span class="p">:</span> <span class="n">null</span>
-       <span class="s2">&quot;IDENTICHIP2STATUS&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-       <span class="s2">&quot;IDENTICHIP2NUMBER&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
        <span class="s2">&quot;CURRENTOWNERID&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
        <span class="s2">&quot;CURRENTOWNERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;Mr Test Testing&quot;</span><span class="p">,</span>
        <span class="s2">&quot;CURRENTOWNERTITLE&quot;</span><span class="p">:</span> <span class="s2">&quot;Mr&quot;</span><span class="p">,</span>
