@@ -7517,7 +7517,7 @@ class product(JSONEndpoint):
         self.check(asm3.users.CHANGE_STOCKLEVEL)
         usageids = asm3.stock.insert_productmovement_from_form(o.dbo, o.post, o.user)
         if o.post.integer("invoiceid"):
-            asm3.clinic.update_invoice_stock_movements(o.dbo, o.user, o.post.integer("invoiceid"), usageids)
+            asm3.clinic.update_invoice_stock_movements(o.dbo, o.user, o.post.integer("invoiceid"), usageids, o.post.integer("invoiceprice") == 0)
     
     def post_update(self, o):
         self.check(asm3.users.CHANGE_STOCKLEVEL)

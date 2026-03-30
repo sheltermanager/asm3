@@ -238,13 +238,18 @@ def update_invoice_from_form(dbo: Database, username: str, post: PostedData) -> 
     }, username)
     update_appointment_total(dbo, post.integer("appointmentid"))
 
-def update_invoice_stock_movements(dbo: Database, username: str, invoiceid: int, stockusageids: List[int]):
+def update_invoice_stock_movements(dbo: Database, username: str, invoiceid: int, stockusageids: List[int], updateprice: bool = False):
     """
     Adds a comma seperated string of associated stockusage records to a clinicinvoiceitem
     """
-    dbo.update("clinicinvoiceitem", invoiceid, {
-        "StockUsageIDs":    ",".join([str(stockusageid) for stockusageid in stockusageids])## Do I need to factor in a trailing comma here?
-    }, username)
+    payload = {
+        "StockUsageIDs":    ",".join([str(stockusageid) for stockusageid in stockusageids])
+    }
+    if updateprice:
+        query = f'SELECT SUM(su.Quantity * sl.UnitPrice) AS Price FROM stockusage su INNER JOIN stocklevel sl ON su.StockLevelID = sl.ID WHERE su.ID IN ({",".join([str(stockusageid) for stockusageid in stockusageids])})'
+        price = dbo.query_float(query)
+        payload["Amount"] = price
+    dbo.update("clinicinvoiceitem", invoiceid, payload, username)
 
 def delete_invoice(dbo: Database, username: str, itemid: int) -> None:
     """

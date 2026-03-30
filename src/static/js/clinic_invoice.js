@@ -40,9 +40,24 @@ $(function() {
                         tableform.dialog_enable_buttons();
                     }
                 },
+                change: function(rows) {
+                    $("#button-move").button("option", "disabled", true);
+                    if (rows.length == 1 && !rows[0].STOCKUSAGEIDS) {
+                        $("#button-move").button("option", "disabled", false);
+                    }
+                },
                 columns: [
                     { field: "DESCRIPTION", display: _("Description") },
-                    { field: "AMOUNT", display: _("Amount"), formatter: tableform.format_currency }
+                    { field: "AMOUNT", display: _("Amount"), formatter: tableform.format_currency },
+                    { field: "STOCKUSAGEIDS", display: _("Stock Deducted"), 
+                        formatter: function(row) {
+                            if (row.STOCKUSAGEIDS) {
+                                return _("Yes");
+                            } else {
+                                return _("No");
+                            }
+                        }
+                    }
                 ]
             };
 
@@ -72,17 +87,10 @@ $(function() {
                     }
                 },
                 { id: "move", text: _("Move Stock"), icon: "stock-usage", enabled: "one", perm: "csl",
-                    click: async function() { 
-                        console.log("Moving");
+                    click: async function() {
                         clinic_invoice.move_product_init();
                         tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { 
                             width: 500, okclick: clinic_invoice.move_product, notblank: [ "movementfrom", "movementto" ] });
-                        // await tableform.delete_dialog();
-                        // tableform.buttons_default_state(buttons);
-                        // var ids = tableform.table_ids(table);
-                        // await common.ajax_post("clinic_invoice", "mode=delete&ids=" + ids);
-                        // tableform.table_remove_selected_from_json(table, controller.rows);
-                        // tableform.table_update(table);
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcl",
@@ -142,6 +150,7 @@ $(function() {
             let formdata = {
                 mode: "move",
                 invoiceid: tableform.table_selected_id(clinic_invoice.table),
+                invoiceprice: tableform.table_selected_row(clinic_invoice.table).AMOUNT,
                 productid: productid,
                 productname: activeproduct.PRODUCTNAME,
                 productdescription: activeproduct.DESCRIPTION,
