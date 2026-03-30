@@ -24,15 +24,24 @@ The service requires at least the following parameters:
 
 * method: A service method to call.
 
-* username: A valid ASM user. Not all methods need a username and password.
+Authentication
+--------------
 
-* password: A valid ASM password. 
+For methods that require authentication. You may either provide a username and
+password for a valid ASM user using the "username" and "password" parameters.
+We recommend that user accounts used to make service API calls have "can login"
+set to NO.
 
-From a security standpoint, it's better to create at least one ASM user
-dedicated to calling the service to assist with audit trails and to lock it
-down so an attacker with the URL cannot change your data or view anything you
-don't want them to. You can also set "Can Login" to NO in the user account to
-prevent it logging in to the UI, but still use it to access the service.
+Eg:
+
+    http://localhost:5000/service?method=json_adoptable_animals&username=user&password=letmein
+
+Alternatively you may provide an API key that is allowed to call the method, generated in 
+:menuselection:`Publishing -> Set Publishing Options -> API Keys` using the "key" parameter.
+
+Eg:
+    
+  http://localhost:5000/service?method=json_adoptable_animals&key=4d171e79-8c69-4a9d-a5f1-8e6152c16e98
 
 Animal Datasets
 ---------------
@@ -360,7 +369,7 @@ animal_image
 
 .. rubric:: Cache time: 1 hour
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns an animal's preferred image. Send the id of the animal::
 
@@ -378,7 +387,7 @@ animal_thumbnail
 
 .. rubric:: Cache time: 1 day
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns an animal's preferred image as a thumbnail. Send the id of the animal::
     
@@ -393,7 +402,7 @@ animal_view
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a webpage with information for one adoptable animal, constructed from the
 animalview HTML publishing template (editable at :menuselection:`Publishing ->
@@ -426,7 +435,7 @@ animal_view_adoptable_js
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call. It
@@ -728,7 +737,7 @@ animal_view_adoptable_html
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. If no template is specified, it will look
@@ -742,7 +751,7 @@ csv_import
 ----------
 
 .. rubric:: Permissions required: IMPORT_CSV_FILE
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 The CSV import endpoint can be used to send CSV data to the system. GET or POST
 can be used and it accepts the following parameters:
@@ -770,12 +779,18 @@ the CSV data and details of errors from any rows that failed to be imported::
       ]
     }
 
+From a security standpoint, it's better to create at least one ASM user
+dedicated to calling the service to assist with audit trails and to lock it
+down so an attacker with the URL cannot change your data or view anything you
+don't want them to. You can also set "Can Login" to NO in the user account to
+prevent it logging in to the UI, but still use it to access the service.
+
 csv_mail and csv_report
 -----------------------
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: VIEW_REPORT
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a CSV file containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
@@ -788,7 +803,7 @@ json_mail and json_report
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: VIEW_REPORT
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
@@ -801,7 +816,7 @@ extra_image
 
 .. rubric:: Cache time: 1 day
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns an extra image (see :menuselection:`Settings --> Reports --> Extra
 Images`).  Pass the name of the image in the title parameter::
@@ -813,7 +828,7 @@ html_adoptable_animals
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of adoptable animals.
 
@@ -846,7 +861,7 @@ html_adopted_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of recently adopted
 animals.
@@ -890,7 +905,7 @@ html_deceased_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of recently deceased 
 animals.
@@ -915,7 +930,7 @@ html_events
 
 .. rubric:: Cache time: 1 hour
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document of shelter fundraising/adoption events
 from :menuselection:`ASM --> Events --> Edit Events`
@@ -954,7 +969,7 @@ html_flagged_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of shelter animals
 that have a particular flag.
@@ -980,7 +995,7 @@ html_found_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of animals added to the 
 found animals section of the system.
@@ -1001,7 +1016,7 @@ html_held_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of current held animals.
 
@@ -1021,7 +1036,7 @@ html_lost_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of animals added to the 
 lost animals section of the system.
@@ -1043,7 +1058,7 @@ html_permfoster_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of animals in permanent 
 foster care.
@@ -1064,7 +1079,7 @@ html_report
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: VIEW_REPORT
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
@@ -1079,7 +1094,7 @@ html_stray_animals
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a complete HTML document containing an HTML page of current stray animals.
 
@@ -1097,9 +1112,9 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
 json_adoptable_animal, xml_adoptable_animal and csv_adoptable_animal
 --------------------------------------------------------------------
 
-.. rubric:: Cache time: 1 hour
+.. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: VIEW_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing a single animal record from the list of animals
 available for adoption. The method determines whether the format returned is
@@ -1114,7 +1129,7 @@ json_adoptable_animals, xml_adoptable_animals and csv_adoptable_animals
 
 .. rubric:: Cache time: 10 minutes 
 .. rubric:: Permissions required: VIEW_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON, CSV or XML::
@@ -1124,16 +1139,18 @@ determines whether the format returned is JSON, CSV or XML::
 json_adopted_animals, xml_adopted_animals and csv_adopted_animals
 -----------------------------------------------------------------
 
-.. rubric:: Cache time: 30 minutes
-.. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
-.. rubric:: Requires username/password: YES
+.. rubric:: Cache time: 1 hour
+.. rubric:: Permissions required: VIEW_ANIMAL
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing animals adopted between two dates as passed in the
 "fromdate" and "todate" parameters. The dates themselves should be formatted
 for the current database locale (eg: M/D/Y for US locales, D/M/Y for European,
 Y/M/D for some Asian locales, etc).
 
-Note that the "View Movement" permission is required to call this method.
+Animals will not be repeated, and only animals who are still alive with
+an adoption as their most recent movement in the date range given will
+be returned.
 
 The method name determines whether the format returned is JSON, CSV or XML::
 
@@ -1144,7 +1161,7 @@ json_lost_animals, xml_lost_animals, csv_lost_animals, json_found_animals, xml_f
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_LOST_ANIMAL, VIEW_FOUND_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing all lost or found animals reported in the last 90
 days that are still active.  The method determines whether the format returned
@@ -1157,19 +1174,103 @@ json_held_animals, xml_held_animals, csv_held_animals
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing all animals currently held. The method
 determines whether the format returned is JSON, CSV or XML::
 
     http://localhost:5000/service?method=json_held_animals&username=user&password=letmein
 
+json_microchip_registrations, xml_microchip_registrations, csv_microchip_registrations
+--------------------------------------------------------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+.. rubric:: Permissions required: NONE
+.. rubric:: Requires authentication: YES
+
+Returns a dataset containing animals that have an event that requires microchip
+registration in the last 30 days. This call can be used by microchip registries
+to keep their databases upto date.
+
+Parameters can be passed for "days" (how far back to go) and "prefix" to only
+return animals with microchips that have a particular prefix. 
+
+Note that pulling data from ASM puts the burden on the caller to remember which 
+chips they have previously registered.
+
+A sample microchip dataset looks like this::
+
+    [
+       {
+           "ID": 12345,
+           "SHELTERCODE": "D2021345",
+           "ANIMALNAME": "Rover",
+           "SPECIESNAME": "Dog",
+           "BREEDNAME": "Labrador Retriever",
+           "BASECOLOUR": "Black",
+           "SIZE": "Large",
+           "DATEOFBIRTH": "2010-01-20T00:00:00",
+           "NONSHELTERANIMAL": 0,
+           "ARCHIVED": 1,
+           "MOSTRECENTENTRYDATE": "2025-12-12T00:00:00",
+           "ACTIVEMOVEMENTID": 2983,
+           "ACTIVEMOVEMENTTYPE": 1,
+           "ACTIVEMOVEMENTTYPENAME": "Adoption",
+           "ACTIVEMOVEMENTDATE": "2026-01-08T00:00:00",
+           "IDENTICHIPDATE": "2026-01-07T00:00:00",
+           "IDENTICHIPSTATUS": 1,
+           "IDENTICHIPNUMBER": "95609812392321",
+           "IDENTICHIP2DATE": null
+           "IDENTICHIP2STATUS": 0,
+           "IDENTICHIP2NUMBER": "",
+           "CURRENTOWNERID": 1,
+           "CURRENTOWNERNAME": "Mr Test Testing",
+           "CURRENTOWNERTITLE": "Mr",
+           "CURRENTOWNERFORENAMES": "Test",
+           "CURRENTOWNERSURNAME": "Testing",
+           "CURRENTOWNERADDRESS": "123 Test Street",
+           "CURRENTOWNERTOWN": "Testville",
+           "CURRENTOWNERCOUNTY": "TS",
+           "CURRENTOWNERPOSTCODE": "12345",
+           "CURRENTOWNERCOUNTRY": "USA",
+           "CURRENTOWNERHOMETELEPHONE": "(123) 123-1234",
+           "CURRENTOWNERWORKTELEPHONE": "",
+           "CURRENTOWNERMOBILETELEPHONE": "(123) 123-1234",
+           "CURRENTOWNEREMAILADDRESS": "test@test.com",
+           "CURRENTOWNEREMAILADDRESS2": "test@test.com",
+           "CURRENTOWNERIDNUMBER": "098232",
+           "EVENTDATE": "2026-01-08T00:00:00",
+           "EVENTTYPE": "Adoption"
+        }
+    ]
+
+
+json_monthly_stats, xml_monthly_stats, csv_monthly_stats
+--------------------------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+.. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
+.. rubric:: Requires authentication: YES
+
+Requires month (integer), year (integer) and species (string) parameters. 
+Returns a dataset containing monthly statistics. 
+
+The dataset conforms to the shelteranimalscount.org data 
+specification and species should be one of:
+    
+    canine, feline, rabbit, equine, small_mammal, farm_animal, bird, reptile_or_amphibian
+
+The method determines whether the format returned is JSON, CSV or XML::
+
+    http://localhost:5000/service?method=csv_montly_stats&username=user&password=letmein&month=1&year=2026&species=feline
+
+
 json_recent_adoptions, xml_recent_adoptions, csv_recent_adoptions
 -----------------------------------------------------------------
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL, VIEW_MOVEMENT
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing all recently adopted animals with their new owner
 information. The method name determines whether the format returned is JSON,
@@ -1182,7 +1283,7 @@ json_recent_changes, xml_recent_changes and csv_recent_changes
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing all animals who have been modified in the last
 month. The method determines whether the format returned is JSON, CSV or XML::
@@ -1195,7 +1296,7 @@ json_shelter_animals, xml_shelter_animals and csv_shelter_animals
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing all animals currently in the care of the shelter.
 The method determines whether the format returned is JSON, CSV or XML::
@@ -1213,7 +1314,7 @@ json_stray_animals, xml_stray_animals and csv_stray_animals
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns a dataset containing all stray animals in the care of the shelter. The method
 determines whether the format returned is JSON, CSV or XML::
@@ -1225,7 +1326,7 @@ media_file and media_image
 
 .. rubric:: Cache time: 1 day
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Responds with media file data for the mediaid given. The content type is set to
 the correct MIME type for the data::
@@ -1238,7 +1339,7 @@ online_form_html and online_form_json
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Responds with the online form HTML or JSON for the id given.
 
@@ -1249,7 +1350,7 @@ online_form_js
 
 .. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Similar to animal_view_adoptable_js, this method allows you to put a div placeholder
 in your page and load a script to insert an online form. 
@@ -1273,7 +1374,7 @@ animal_view_adoptable_js
 
 .. rubric:: Cache time: 10 minutes
 .. rubric:: Permissions required: None
-.. rubric:: Requires username/password: NO
+.. rubric:: Requires authentication: NO
 
 Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call. It
@@ -1308,7 +1409,7 @@ rss_timeline
 
 .. rubric:: Cache time: 1 hour 
 .. rubric:: Permissions required: VIEW_ANIMAL
-.. rubric:: Requires username/password: YES
+.. rubric:: Requires authentication: YES
 
 Returns an RSS feed of the timeline for use with feed aggregators::
     
