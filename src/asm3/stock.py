@@ -314,25 +314,20 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     if post["movementdate"] == "":
         raise asm3.utils.ASMValidationError(_("Movement must have a date", l))
     
-    #locations = []
     fromlocation = 0
     tolocation = 0
 
     if post.integer("movementfromtype") == 0 and post.integer("movementtotype") == 1:# Stock to usage
-        #locations = [post.integer("movementfrom"), False]
         fromlocation = post.integer("movementfrom")
         usagetypeid = post.integer("movementto")
     elif post.integer("movementfromtype") == 0 and post.integer("movementtotype") == 0:# Stock to stock
-        #locations = [post.integer("movementfrom"), post.integer("movementto")]
         fromlocation = post.integer("movementfrom")
         tolocation = post.integer("movementto")
         usagetypeid = movementusagetypeid
     elif post.integer("movementfromtype") == 1 and post.integer("movementtotype") == 0:# Usage to stock
-        #locations = [False, post.integer("movementto"),]
         tolocation = post.integer("movementto")
         usagetypeid = post.integer("movementfrom")
     else:# Usage to usage
-        #locations = [post.integer("movementfrom"), post.integer("movementto")]
         fromlocation = post.integer("movementfrom")
         tolocation = post.integer("movementto")
         usagetypeid = movementusagetypeid
@@ -341,7 +336,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     unitratio = post.integer("unitratio")
 
     # Get current stock levels of the selected product
-    stocklevels = dbo.query("SELECT ID, BatchNumber, Balance, Cost, UnitPrice, Total, Low, Expiry, UnitPrice, StockLocationID FROM stocklevel " \
+    stocklevels = dbo.query("SELECT ID, BatchNumber, Balance, Cost, UnitPrice, Total, Low, Expiry, StockLocationID FROM stocklevel " \
         "WHERE ProductID = ? ORDER BY Balance", [ post.integer("productid") ])
     if fromlocation != 0:
         for stocklevel in stocklevels:
@@ -356,7 +351,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                     quantity = quantity - stocklevel["BALANCE"]
                 else:
                     remaining = stocklevel["BALANCE"] - quantity
-                    quantity = quantity - stocklevel["BALANCE"]
+                    quantity = 0
                 slpost = {}
                 slpost["stocklevelid"] = stocklevel["ID"]
                 slpost["productid"] = post.integer("productid")
@@ -448,8 +443,8 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["low"] = 0
             slpost["expiry"] = post["expiry"]
             slpost["batchnumber"] = post["batch"]
-            slpost["cost"] = post.integer("COSTPRICE")
-            slpost["unitprice"] = post.integer("RETAILPRICE")
+            slpost["cost"] = post.integer("costprice")
+            slpost["unitprice"] = post.integer("retailprice")
             slpost["usagedate"] = python2display(dbo.locale, dbo.today())
             slpost["usagetype"] = usagetypeid
             slpost["comments"] = post["comments"]
