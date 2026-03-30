@@ -1097,7 +1097,7 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
 json_adoptable_animal, xml_adoptable_animal and csv_adoptable_animal
 --------------------------------------------------------------------
 
-.. rubric:: Cache time: 1 hour
+.. rubric:: Cache time: 30 minutes
 .. rubric:: Permissions required: VIEW_ANIMAL
 .. rubric:: Requires username/password: YES
 

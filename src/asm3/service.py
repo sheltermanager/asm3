@@ -811,7 +811,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
             rs = asm3.media.embellish_photo_urls(dbo, rs)
-            return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, rs))
+            return set_cached_response(cache_key, account, method_mimetype(method), 1800, 1800, method_output(method, l, rs))
 
     elif method in ("json_adoptable_animals_xp", "xml_adoptable_animals_xp", "csv_adoptable_animals_xp"):
         rs = strip_personal_data(asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
