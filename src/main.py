@@ -3175,6 +3175,7 @@ class clinic_invoice(JSONEndpoint):
             "taxrates": asm3.lookups.get_tax_rates(dbo),
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "label"),
             "units": asm3.lookups.get_unit_types(dbo)
         }
 

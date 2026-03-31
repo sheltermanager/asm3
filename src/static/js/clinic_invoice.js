@@ -93,6 +93,7 @@ $(function() {
                             width: 500, okclick: clinic_invoice.move_product, notblank: [ "movementfrom", "movementto" ] });
                     } 
                 },
+                { id: "label", text: _("Label"), type: "buttonmenu", icon: "document", enabled: "always", tooltip: _("Generate a label for this item") },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcl",
                     click: async function() { 
                         await tableform.delete_dialog();
@@ -197,7 +198,14 @@ $(function() {
         },
 
         render: function() {
-            let h = [this.render_moveproduct(),];
+            let h = [
+                this.render_moveproduct(),
+                '<div id="button-label-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                edit_header.template_list(controller.templates, "CLINIC", controller.appointment.ID),
+                '</ul>',
+                '</div>',
+            ];
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             h.push(html.content_header(this.title()));
@@ -217,15 +225,20 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            // $("#tableform :checkbox").change(function() {
+            //     console.log(tableform.table_selected_id(clinic_invoice.table));
+            //     if (tableform.table_selected_id(clinic_invoice.table)) {
+            //         $.each($("#button-label-body a"), function(i, a) {
+            //             $(a).prop("href", $(a).prop("href").replace(/id=\d+/, "id=" + controller.appointment.ID));
+            //         });
+            //     }
+                
+                
+            // });
             $("#movementproduct").change(function() {
                 let activeproductid = $("#movementproduct").val();
                 if (activeproductid != "0") {
                     let activeproduct = clinic_invoice.get_active_product();
-                    // $.each(controller.products, function(i, v) {
-                    //     if (v.ID == activeproductid) {
-                    //         activeproduct = v;
-                    //     }
-                    // });
                     console.log(activeproduct);
                     let purchaseunit = _("undefined");
                     if (activeproduct.PURCHASEUNITTYPEID == 0) {
