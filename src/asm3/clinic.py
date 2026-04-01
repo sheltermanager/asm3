@@ -240,7 +240,9 @@ def update_invoice_from_form(dbo: Database, username: str, post: PostedData) -> 
 
 def update_invoice_stock_movements(dbo: Database, username: str, invoiceid: int, stockusageids: List[int], updateprice: bool = False):
     """
-    Adds a comma seperated string of associated stockusage records to a clinicinvoiceitem
+    Adds a comma seperated string of associated stockusage records to a clinicinvoiceitem.
+    If updateprice = True, updates clinicinvoiceitem.Amount with the combined value of the 
+    associated stock usage ids.
     """
     payload = {
         "StockUsageIDs":    ",".join([str(stockusageid) for stockusageid in stockusageids])

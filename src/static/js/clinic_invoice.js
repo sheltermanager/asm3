@@ -225,16 +225,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            // $("#tableform :checkbox").change(function() {
-            //     console.log(tableform.table_selected_id(clinic_invoice.table));
-            //     if (tableform.table_selected_id(clinic_invoice.table)) {
-            //         $.each($("#button-label-body a"), function(i, a) {
-            //             $(a).prop("href", $(a).prop("href").replace(/id=\d+/, "id=" + controller.appointment.ID));
-            //         });
-            //     }
-                
-                
-            // });
+            
             $("#movementproduct").change(function() {
                 let activeproductid = $("#movementproduct").val();
                 if (activeproductid != "0") {
