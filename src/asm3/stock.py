@@ -386,8 +386,8 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["low"] = 0
             slpost["expiry"] = post["expiry"]
             slpost["batchnumber"] = post["batch"]
-            slpost["cost"] = post.integer("COSTPRICE")
-            slpost["unitprice"] = post.integer("RETAILPRICE")
+            slpost["cost"] = post.integer("costprice")
+            slpost["unitprice"] = post.integer("retailprice")
             slpost["usagedate"] = python2display(dbo.locale, dbo.today())
             slpost["usagetype"] = usagetypeid
             slpost["comments"] = post["comments"]
