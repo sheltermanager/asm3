@@ -168,10 +168,7 @@ $(function() {
                 expiry: $("#expiry").val(),
                 comments: _("Move: {0} to {1}").replace("{0}", $("#movementfrom option:selected").text()).replace("{1}", $("#movementto option:selected").text()) + "\n" + $("#comments").val()
             };
-            await common.ajax_post("product", formdata).then(function(result) {
-                console.log("Moved.");
-                console.log(result);
-            });
+            await common.ajax_post("product", formdata);
             common.route_reload();
         },
 
@@ -225,12 +222,11 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            
+
             $("#movementproduct").change(function() {
                 let activeproductid = $("#movementproduct").val();
                 if (activeproductid != "0") {
                     let activeproduct = clinic_invoice.get_active_product();
-                    console.log(activeproduct);
                     let purchaseunit = _("undefined");
                     if (activeproduct.PURCHASEUNITTYPEID == 0) {
                         purchaseunit = _("unit");
