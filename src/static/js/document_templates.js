@@ -15,7 +15,6 @@ $(function() {
             { VALUE: "email", DISPLAY: _("Emails") },
             { VALUE: "foundanimal", DISPLAY: _("Found Animals") },
             { VALUE: "incident", DISPLAY: _("Incidents") },
-            { VALUE: "label", DISPLAY: _("Labels") },
             { VALUE: "licence", DISPLAY: _("Licenses") },
             { VALUE: "lostanimal", DISPLAY: _("Lost Animals") },
             { VALUE: "mailmerge", DISPLAY: _("Mail") },
