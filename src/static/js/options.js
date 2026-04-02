@@ -804,7 +804,8 @@ $(function() {
                         
                         { id: "alerttlover", post_field: "AlertTLOver", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true },
                         
-                        { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true }
+                        { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true },
+                        { id: "alertweightloss", post_field: "AlertWeightLoss", label: _("Show an alert when an animal has lost weight on 2 consecutive weighings"), type: "check", fullrow: true }
                         
                         
                     ]}, 
