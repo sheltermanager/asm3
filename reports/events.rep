@@ -2,7 +2,7 @@ Events between two dates
 ###
 Events
 ###
-34603/Any rev02
+34603/Any rev03
 ###
 Events between two dates with animals
 ###
@@ -21,12 +21,12 @@ LEFT OUTER JOIN eventanimal ea ON ea.EventID = e.ID
 LEFT OUTER JOIN animal a ON a.ID = ea.AnimalID 
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 WHERE e.StartDateTime >= '$@from$' AND e.EndDateTime <= '$@to$'
-ORDER BY EventName
+ORDER BY EventName, EID, e.StartDateTime
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_EventName
+$$GROUP_EID
 $$HEAD
 <h2><td><a target="_blank" href="event?id=$EID">$EVENTNAME</a></h2>
 <p>$StartDateTime - $EndDateTime</p>
