@@ -25,7 +25,9 @@ $(function() {
                 fields: [
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
-                    { json_field: "FUNDEDBYOWNERDONATIONID", post_field: "funding", label: _("Fund"), type: "select", options: { displayfield: "FUNDNAME", valuefield: "ID", rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' }},
+                    { json_field: "FUNDEDBYOWNERDONATIONID", post_field: "funding", label: _("Fund"), type: "select", options: { displayfield: "FUNDNAME", valuefield: "ID",
+                        rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' }
+                    },
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
                     { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
@@ -717,6 +719,7 @@ $(function() {
         sync: function() {
 
             this.calculate_total();
+            // $("#funding").val(0);
 
             // If an offset is given in the querystring, update the select
             if (common.querystring_param("offset")) {
