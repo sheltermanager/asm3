@@ -44,6 +44,7 @@ FIELDTYPE_NUMBER = 20
 FIELDTYPE_FOSTERANIMAL = 21
 FIELDTYPE_TELEPHONE = 22
 FIELDTYPE_CHECKBOX_AL = 23
+FIELDTYPE_PDF = 24
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -70,7 +71,8 @@ FIELDTYPE_MAP = {
     "NUMBER": 20,
     "FOSTERANIMAL": 21,
     "TELEPHONE": 22,
-    "CHECKBOX_AL": 23
+    "CHECKBOX_AL": 23,
+    "PDF": 24
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -386,6 +388,9 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         elif f.FIELDTYPE == FIELDTYPE_IMAGE:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<input class="asm-onlineform-image" type="file" id="%s" data-name="%s" data-required="%s" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
+        elif f.FIELDTYPE == FIELDTYPE_PDF:
+            h.append('<input type="hidden" name="%s" value="" />' % cname)
+            h.append('<input class="asm-onlineform-pdf" type="file" id="%s" data-name="%s" data-required="%s" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
         elif f.FIELDTYPE == FIELDTYPE_TELEPHONE:
             h.append('<input class="asm-onlineform-phone" type="text" data-locale="%s" id="%s" name="%s" %s %s />' % ( dbo.locale, fid, cname, autocomplete, requiredtext))
         h.append('</td>')
@@ -572,10 +577,15 @@ def get_onlineformincoming_html(dbo: Database, collationid: int,
             h.append('<tr>')
             h.append('<td colspan="2">%s</td>' % v[5:])
             h.append('</tr>')
-        elif v.startswith("data:"):
+        elif v.startswith("data:image"):
             h.append('<tr>')
             h.append('<td>%s</td>' % label )
             h.append('<td><img src="%s" border="0" /></td>' % v)
+            h.append('</tr>')
+        elif v.startswith("data:application/pdf"):
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td>%s</td>' % asm3.i18n._("Uploaded PDF file", dbo.locale))
             h.append('</tr>')
         elif f.FIELDNAME == "useragent":
             # Some user agent strings can be huge and without wrappable characters,
@@ -978,6 +988,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     animalname2 = ""
     animalname3 = ""
     images = []
+    pdfs = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
     post.data["ipaddress"] = remoteip
     post.data["useragent"] = useragent
@@ -1039,6 +1050,9 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                 if fieldtype == FIELDTYPE_IMAGE and v.startswith("data:image/jpeg"):
                     # Remove prefix of data:image/jpeg;base64, and decode
                     images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
+                if fieldtype == FIELDTYPE_PDF and v.startswith("data:application/pdf"):
+                    # Remove prefix of data:application/pdf;base64, and decode
+                    pdfs.append( ("%s.pdf" % fieldname, "application/pdf", asm3.utils.base64decode(v[v.find(",")+1:])) )
 
             # Do the insert
             try:
@@ -1406,6 +1420,16 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
                 }
                 if linktype == 0:
                     d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
+                asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.media.MEDIASOURCE_ONLINEFORM, asm3.utils.PostedData(d, dbo.locale))
+            elif f.VALUE.startswith("data:application/pdf") and len(f.VALUE) <= 2097152:
+                d = {
+                    "retainfor":    str(retainfor),
+                    "filename":     "document.pdf",
+                    "filetype":     "application/pdf",
+                    "filedata":     f.VALUE
+                }
+                if linktype == 0:
+                    d["excludefrompublish"] = "1" # auto exclude
                 asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.media.MEDIASOURCE_ONLINEFORM, asm3.utils.PostedData(d, dbo.locale))
 
 def attach_animalbyname(dbo: Database, username: str, collationid: int, attachmedia: bool = True) -> Tuple[int, int, str]:
