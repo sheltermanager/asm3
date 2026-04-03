@@ -86,6 +86,7 @@
 15 | ^953                 | Virbac | en_AU en_NZ
 15 | ^953                 | PetLog | en_GB
 15 | ^953                 | Propecuária | en_PT pt
+15 | ^953                 | Datamars | en
 15 | ^955                 | Biolog-ID
 15 | ^956                 | AKC Reunite | en
 15 | ^956                 | Trovan
