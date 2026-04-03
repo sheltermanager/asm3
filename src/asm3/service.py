@@ -895,7 +895,16 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
         month = post.integer("month")
         year = post.integer("year")
+        if month == 0:
+            asm3.al.error("%s failed, invalid month %s" % (method, month), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid month")
+        if year == 0:
+            asm3.al.error("%s failed, invalid year %s" % (method, year), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid year")
         speciesname = post["species"]
+        if speciesname not in asm3.publishers.sacmetrics.SAC_SPECIES:
+            asm3.al.error("%s failed, invalid species %s" % (method, speciesname), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid species")
         pc = asm3.publish.PublishCriteria(asm3.configuration.publisher_presets(dbo))
         ms = asm3.publishers.sacmetrics.SACMetricsPublisher(dbo, pc).processStats(month, year, speciesname)
         return set_cached_response(cache_key, account, method_mimetype(method), 3600, 3600, method_output(method, l, [ms,]))
