@@ -239,11 +239,12 @@ def update_product_from_form(dbo: Database, post: PostedData, username: str) -> 
         "GlobalMinimum":        post.integer("globalminimum")
     }, username)
 
-def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
+def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
     Updates a stocklevel item from a dialog. The post should include
     the ID of the stocklevel to adjust and a usage record will be
     written so usage data should be sent too.
+    Returns stockusageid or 0 if no stockusage row created
     """
     l = dbo.locale
     slid = post.integer("stocklevelid")
@@ -274,7 +275,9 @@ def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) 
     }, username, setLastChanged=False, setRecordVersion=False)
 
     if diff != 0: 
-        insert_stockusage(dbo, username, slid, diff, post.date("usagedate"), post.integer("usagetype"), post["comments"])
+        return insert_stockusage(dbo, username, slid, diff, post.date("usagedate"), post.integer("usagetype"), post["comments"])
+    else:
+        return 0
 
 def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
@@ -305,10 +308,11 @@ def insert_product_from_form(dbo: Database, post: PostedData, username: str) -> 
 
     return pid
 
-def insert_productmovement_from_form(dbo: Database, post: PostedData, username: str) -> int:
+def insert_productmovement_from_form(dbo: Database, post: PostedData, username: str) -> List[int]:
     """
     Inserts a product movement from a dialog.
     """
+    stockusageids = []
     movementusagetypeid = asm3.configuration.product_movement_usage_type(dbo)
     l = dbo.locale
     if post["movementdate"] == "":
@@ -356,7 +360,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                     quantity = quantity - stocklevel["BALANCE"]
                 else:
                     remaining = stocklevel["BALANCE"] - quantity
-                    quantity = quantity - stocklevel["BALANCE"]
+                    quantity = 0
                 slpost = {}
                 slpost["stocklevelid"] = stocklevel["ID"]
                 slpost["productid"] = post.integer("productid")
@@ -377,7 +381,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                 slpost["expiry"] = post["expiry"]
                 slpost["comments"] = post["comments"]
 
-                update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+                stockusageids.append( update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username) )
         
         if quantity > 0:
             slpost = {}
@@ -396,7 +400,8 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["usagedate"] = python2display(dbo.locale, dbo.today())
             slpost["usagetype"] = usagetypeid
             slpost["comments"] = post["comments"]
-            insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+
+            stockusageids.append( insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username) )
     
     quantity = post.integer("movementquantity")
 
@@ -429,7 +434,8 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
                 slpost["usagedate"] = python2display(dbo.locale, dbo.today())
                 slpost["usagetype"] = usagetypeid
                 slpost["comments"] = post["comments"]
-                update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+
+                stockusageids.append( update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username) )
         while quantity > 0:
             if quantity <= unitratio:
                 remaining = quantity
@@ -453,7 +459,10 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
             slpost["usagedate"] = python2display(dbo.locale, dbo.today())
             slpost["usagetype"] = usagetypeid
             slpost["comments"] = post["comments"]
-            insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+
+            stockusageids.append( insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username) )
+    
+    return stockusageids
 
 def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """

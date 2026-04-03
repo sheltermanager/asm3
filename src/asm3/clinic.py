@@ -4,7 +4,7 @@ import asm3.financial
 import asm3.i18n
 import asm3.utils
 
-from asm3.typehints import datetime, Database, PostedData, ResultRow, Results
+from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
 
 SCHEDULED = 0
 INVOICE_ONLY = 1
@@ -237,6 +237,22 @@ def update_invoice_from_form(dbo: Database, username: str, post: PostedData) -> 
         "Amount":                   post.integer("amount")
     }, username)
     update_appointment_total(dbo, post.integer("appointmentid"))
+
+def update_invoice_stock_movements(dbo: Database, username: str, invoiceid: int, stockusageids: List[int], updateprice: bool = False):
+    """
+    Adds a comma seperated string of associated stockusage records to a clinicinvoiceitem.
+    If updateprice = True, updates clinicinvoiceitem.Amount with the combined value of the 
+    associated stock usage ids.
+    """
+    payload = {
+        "StockUsageIDs":    ",".join([str(stockusageid) for stockusageid in stockusageids])
+    }
+    if updateprice:
+        price = dbo.query_float(
+            f'SELECT SUM(su.Quantity * sl.UnitPrice * -1) AS Price FROM stockusage su INNER JOIN stocklevel sl ON su.StockLevelID = sl.ID WHERE su.ID IN ({",".join([str(stockusageid) for stockusageid in stockusageids])})'
+        )
+        payload["Amount"] = price
+    dbo.update("clinicinvoiceitem", invoiceid, payload, username)
 
 def delete_invoice(dbo: Database, username: str, itemid: int) -> None:
     """
