@@ -480,11 +480,6 @@ $(function() {
                         'Contact clientcare@pethealthinc.com to get a folder for automatic batch registrations of microchips.', 
                         fields: [
                             { id: "enabledfa", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                            { id: "fafolder", post_field: "FoundAnimalsFolder", label: "Folder name", type: "text", doublesize: true }, 
-                            { id: "faemail", post_field: "FoundAnimalsEmail", label: "Rescue group email", type: "text", doublesize: true, 
-                                callout: 'To stay on record for every pet you register as the permanent rescue contact, enter your group\'s registry ' + 
-                                'account email in this field.'
-                            }
                         ]}, 
                     { id: "tab-homeagain", title: "HomeAgain Microchips", classes: 'localeus hashomeagain',
                         info: 'Signup at <a target="_blank" href="http://homeagain.4act.com">http://homeagain.4act.com</a> or ' + 
@@ -493,6 +488,25 @@ $(function() {
                             { id: "enabledha", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "hauserid", post_field: "HomeAgainUserId", label: "HomeAgain User ID", type: "text", doublesize: true }, 
                             { id: "hauserpassword", post_field: "HomeAgainUserPassword", label: "HomeAgain User Password", type: "text", doublesize: true }
+                        ]}, 
+                    { id: "tab-petcolovelost", title: "Petco Love Lost", classes: 'localeus localeca haspetcolovelost',
+                        info: 'Find out more at <a target="_blank" href="https://petcolove.org/lost/">petcolove.org/lost/</a>', 
+                        fields: [
+                            { id: "enabledll", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "pcllemail", post_field: "PetCoLoveLostEmail", label: "Email Address", type: "text", doublesize: true }, 
+                            { id: "pcllpassword", post_field: "PetCoLoveLostPassword", label: "Password", type: "text", doublesize: true },
+                            { id: "pcllshelterid", post_field: "PetCoLoveLostShelterID", label: "Shelter ID", type: "text", doublesize: true,
+                                callout: _("The information from Options > Shelter Details and the email address from Options > Email will be used."),
+                                xmarkup: ' <button id="button-pcllgetshelterid" class="pcllbutton">' + _("Generate a Petco Love Lost shelter ID") + '</button>' +
+                                '<img id="pcllgetshelteridwait" src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;display: none;"/>'
+                            },
+                            { type: "raw", markup: '<button id="button-pcllpublished" class="pcllbutton">Show Published</button> ' +
+                                '<button id="button-pcllpurge" class="pcllbutton">Purge</button>',
+                                hideif: function() { return !controller.pcllextras; }
+                            },
+                            { type: "raw", markup: '<div id="pclldata" style="padding-top: 3px;"></div>',
+                                hideif: function() { return !controller.pcllextras; }
+                            }
                         ]}, 
                     { id: "tab-petlink", title: "PetLink Microchips", classes: 'localeus localeca localemx haspetlink',
                         info: 'These settings are for uploading new owner information to the PetLink/DataMARS microchip database.<br />' +
@@ -524,6 +538,69 @@ $(function() {
         },
 
         bind: function() {
+            $("#button-pcllgetshelterid")
+                .button({ icons: { primary: "ui-icon-arrowrefresh-1-s" }, text: false })
+                .click(async function() {
+                    validate.dirty(false);
+                    $(".pcllbutton").hide();
+                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
+                    $("#pcllshelterid").val("");
+                    let formdata = "mode=pcllshelterid";
+                    let response = await common.ajax_post("publish_options", formdata);
+                    let responsejson = JSON.parse(response);
+                    if (responsejson.message) {
+                        let erroroutput = responsejson.message + "<p><ul>";
+                        $.each(responsejson.data, function(i, v) {
+                            erroroutput += "<li>" + v.valuePath + " - " + v.message + "</li>";
+                        });
+                        erroroutput += "</ul></p>";
+                        header.show_info(erroroutput);
+                    } else if (responsejson.id) {
+                        $("#pcllshelterid").val(responsejson.id);
+                    } else {
+                        header.show_info("Unable to connect to Petco Love Lost");
+                    }
+                    validate.dirty(true);
+                    $("#pclldata").html("");
+                    $(".pcllbutton").show();
+                });
+            
+            $("#button-pcllpublished")
+                .button()
+                .click(async function() {
+                    $(".pcllbutton").hide();
+                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
+                    let formdata = "mode=pcllpublished";
+                    let response = await common.ajax_post("publish_options", formdata);
+                    let responsejson = JSON.parse(response);
+                    console.log(responsejson);
+                    let html = '<h3>Published Animals</h3>';
+                    if (responsejson.pets.length) {
+                        html += '<ol>';
+                        $.each(responsejson.pets, function(i, v) {
+                            html += '<li><a href="/animal?id=' + v.metadata.system_animal_id + '"><b>' + v.externalId + ' ' + v.name + '</b></a></li>';
+                        });
+                        html += '</ol>';
+                    } else {
+                        html += '<p>None</p>';
+                    }
+                    $("#pclldata").html(html);
+                    $(".pcllbutton").show();
+                    $("#button-pcllpublished").show();
+                });
+            
+            $("#button-pcllpurge")
+                .button()
+                .click(async function() {
+                    $(".pcllbutton").hide();
+                    $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
+                    let formdata = "mode=pcllpurge";
+                    await common.ajax_post("publish_options", formdata);
+                    $("#pclldata").html("");
+                    header.show_info("Petco Love Lost purged");
+                    $(".pcllbutton").show();
+                });
+            
             const change_checkbox = function() {
                 $(".enablecheck").each(function() {
                     let enabled = $(this).is(":checked");
@@ -532,10 +609,12 @@ $(function() {
                         t.find("select").select("enable");
                         t.find(".asm-textbox, .asm-doubletextbox").removeAttr("disabled");
                         t.find("textarea").removeAttr("disabled");
+                        t.find("button").show();
                     }
                     else {
                         t.find("select").select("disable");
                         t.find(".asm-textbox, .asm-doubletextbox").attr("disabled", "disabled");
+                        t.find("button").hide();
                         $(this).closest("div").find("textarea").attr("disabled", "disabled");
                     }
                 });
@@ -628,6 +707,7 @@ $(function() {
             if (!controller.hasbuddyid) { $(".hasbuddyid").hide(); }
             if (!controller.hasfindpet) { $(".hasfindpet").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
+            if (!controller.haspetcolovelost) { $(".haspetcolovelost").hide(); }
             if (!controller.hashtmlftp) { $(".hashtmlftp").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }

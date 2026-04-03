@@ -299,6 +299,29 @@ ASM can send data to Maddie's Fund/MPA - an application to provide information
 and interactive help to fosterers, adopters and other caregivers. Basic data on
 the animal and contact information for the adopter/fosterer is sent.
 
+petcolove.org
+-------------
+
+ASM can send data to petcolove.org, a website that
+publishes lost and found animals. On shelter, non cruelty case animals 
+will be added to their database.
+
+.. note:: Where a pickup address is not provided, the shelter address will be used as the area found.
+
+You will need to register an email address with petcolove.org and make a note of 
+the password that they provide.
+
+Before you are able to publish you must generate a petcolove.org Shelter ID. 
+The button next to the Shelter ID field in :menuselection:`Publishing --> Set Publishing Options` 
+will attempt to obtain a Shelter ID from petcolove.org using the Shelter Details 
+defined in :menuselection:`Setting --> Options`.
+
+If successful, the Shelter ID field will populate. If not, the feedback from 
+petcolove.org will be shown so that you can make adjustments and retry. Without 
+a valid contact number, website and address a Shelter ID will not be assigned.
+
+petcolove.org works with shelters in the US and Mexico.
+
 petfbi.org
 -------------------
 
