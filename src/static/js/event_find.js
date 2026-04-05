@@ -44,7 +44,8 @@ $(function() {
             });
 
             $("#countryrow").toggle( !config.bool("HideCountry") );
-            $("#countyrow").toggle( !config.bool("HideTownCounty") );
+            $("#cityrow").toggle( !config.bool("HideTown") );
+            $("#countyrow").toggle( !config.bool("HideCounty") );
         },
 
         name: "event_find",

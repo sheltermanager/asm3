@@ -98,7 +98,8 @@ $(function() {
 
             // CONFIG
             $("#countryrow").toggle( !config.bool("HideCountry") );
-            $("#statecounty").toggle( !config.bool("HideTownCounty") );
+            $("#townrow").toggle( !config.bool("HideTown") );
+            $("#countyrow").toggle( !config.bool("HideCounty") );
 
         },
 
