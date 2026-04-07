@@ -27,7 +27,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    if (log.is_system_message(row)) { return; } // Don't allow editing of system log messages
+                    if (!row.ISEDITABLE) { return; }
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -42,7 +42,25 @@ $(function() {
                     }
                 },
                 complete: function(row) {
-                    return log.is_system_message(row);
+                    return row.ISEDITABLE != 1;
+                },
+                change: function(rows) {
+                    let deleteenabled = false;
+                    if (rows.length) {
+                        deleteenabled = true;
+                    }
+                    $.each(rows, function(i, v) {
+                        if (!v.ISDELETABLE) {
+                            deleteenabled = false;
+                            return false;
+                        }
+                    });
+                    console.log(deleteenabled);
+                    if (deleteenabled) {
+                        $("#button-delete").button("option", "disabled", false);
+                    } else {
+                        $("#button-delete").button("option", "disabled", true);
+                    }
                 },
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
@@ -101,16 +119,16 @@ $(function() {
         },
 
         /** Returns true if this is a system log message */
-        is_system_message: function(row) {
-            let prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0", "AD0"], rv = false;
-            $.each(prefixes, function(i, p) {
-                if (row.COMMENTS.indexOf(p) == 0 && row.COMMENTS.indexOf(":") == 4) {
-                    rv = true;
-                    return false;
-                }
-            });
-            return rv;
-        },
+        // is_system_message: function(row) {
+        //     let prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0", "AD0"], rv = false;
+        //     $.each(prefixes, function(i, p) {
+        //         if (row.COMMENTS.indexOf(p) == 0 && row.COMMENTS.indexOf(":") == 4) {
+        //             rv = true;
+        //             return false;
+        //         }
+        //     });
+        //     return rv;
+        // },
 
         set_extra_fields: function(row) {
             row.LOGTYPENAME = common.get_field(controller.logtypes, row.LOGTYPEID, "LOGTYPENAME");

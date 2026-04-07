@@ -105,6 +105,15 @@ def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort
     if sort == DESCENDING:
         sql += "ORDER BY l.Date DESC"
     logs = dbo.query(sql)
+    for log in logs:
+        #(row.COMMENTS.indexOf(p) == 0 && row.COMMENTS.indexOf(":") == 4)
+        prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0", "AD0" ]
+        if log["COMMENTS"][:3] in prefixes and log["COMMENTS"][4] == ":":
+            log["ISEDITABLE"] = 0
+        else:
+            log["ISEDITABLE"] = 1
+        log["ISDELETABLE"] = 1
+
 
     sql = "SELECT lm.*, lt.LogTypeName FROM logmulti lm " \
         "INNER JOIN logtype lt ON lt.ID = lm.LogTypeID " \
@@ -123,6 +132,8 @@ def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort
                 log = logmulti.copy()
                 log["ID"] = 0
                 log["LINKID"] = multilinkid
+                log["ISEDITABLE"] = 0
+                log["ISDELETABLE"] = 0
                 logs.append(log)
 
     return logs
