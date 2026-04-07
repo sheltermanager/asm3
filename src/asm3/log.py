@@ -104,7 +104,28 @@ def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort
         sql += "ORDER BY l.Date"
     if sort == DESCENDING:
         sql += "ORDER BY l.Date DESC"
-    return dbo.query(sql)
+    logs = dbo.query(sql)
+
+    sql = "SELECT lm.*, lt.LogTypeName FROM logmulti lm " \
+        "INNER JOIN logtype lt ON lt.ID = lm.LogTypeID " \
+        "WHERE lm.LinkType = %d " % (linktypeid)
+    if logtype > 0:
+        sql += "AND lm.LogTypeID = %d " % logtype
+    if sort == ASCENDING:
+        sql += "ORDER BY lm.Date"
+    if sort == DESCENDING:
+        sql += "ORDER BY lm.Date DESC"
+    logmultis = dbo.query(sql)
+    
+    for logmulti in logmultis:
+        for multilinkid in [int(lm) for lm in logmulti["LINKIDS"].split(",")]:
+            if multilinkid == linkid:
+                log = logmulti.copy()
+                log["ID"] = 0
+                log["LINKID"] = multilinkid
+                logs.append(log)
+
+    return logs
 
 def insert_log_from_form(dbo: Database, username: str, linktype: int, linkid: int, post: PostedData) -> int:
     """
