@@ -44,6 +44,9 @@ $(function() {
                 complete: function(row) {
                     return row.ISEDITABLE != 1;
                 },
+                overdue: function(row) {
+                    return row.ISDELETABLE != 1;
+                },
                 change: function(rows) {
                     let deleteenabled = false;
                     if (rows.length) {
