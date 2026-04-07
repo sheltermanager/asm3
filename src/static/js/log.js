@@ -58,12 +58,7 @@ $(function() {
                             return false;
                         }
                     });
-                    console.log(deleteenabled);
-                    if (deleteenabled) {
-                        $("#button-delete").button("option", "disabled", false);
-                    } else {
-                        $("#button-delete").button("option", "disabled", true);
-                    }
+                    $("#button-delete").button("option", "disabled", deleteenabled == false);
                 },
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
