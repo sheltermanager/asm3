@@ -76,7 +76,7 @@ def get_citation_query(dbo: Database) -> str:
 def get_donation_query(dbo: Database) -> str:
     return "SELECT od.ID, od.DonationTypeID, od.DonationPaymentID, dt.DonationName, od.Date, od.DateDue, " \
         "od.Donation, od.MovementID, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
-        "od.FundedByOwnerDonationID, od.AvailableForFunding, " \
+        "od.FundedByOwnerDonationID, od.IsFundingSource, " \
         "od.Quantity, od.UnitPrice, " \
         "od.Donation AS Gross, " \
         "od.Donation - COALESCE(od.VATAmount, 0) - COALESCE(od.Fee, 0) AS Net, " \
@@ -121,8 +121,7 @@ def get_donation_query(dbo: Database) -> str:
         "LEFT OUTER JOIN lksdonationfreq fr ON fr.ID = od.Frequency "
 
 def get_fundable_donations(dbo: Database) -> Results:
-    # return dbo.query(f"SELECT d.ID, {dbo.sql_concat(['o.OwnerName', ' ', 'd.ReceiptNumber'])} AS FundName FROM ownerdonation d INNER JOIN owner o ON d.OwnerID = o.ID WHERE d.AvailableForFunding = 1")
-    return dbo.query("SELECT d.ID, CONCAT(o.OwnerSurname, ' ', d.ReceiptNumber) AS FundName FROM ownerdonation d INNER JOIN owner o ON d.OwnerID = o.ID WHERE d.AvailableForFunding = 1")
+    return dbo.query("SELECT d.ID, CONCAT(o.OwnerSurname, ' ', d.ReceiptNumber) AS FundName FROM ownerdonation d INNER JOIN owner o ON d.OwnerID = o.ID WHERE d.IsFundingSource = 1")
 
 def get_licence_query(dbo: Database) -> str:
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
@@ -858,7 +857,7 @@ def insert_donation_from_form(dbo: Database, username: str, post: PostedData) ->
     donationid = dbo.insert("ownerdonation", {
         "OwnerID":                  post.integer("person"),
         "AnimalID":                 post.integer("animal"),
-        "AvailableForFunding":      post.boolean("availableforfunding"),
+        "IsFundingSource":          post.boolean("isfundingsource"),
         "MovementID":               post.integer("movement"),
         "DonationTypeID":           post.integer("type"),
         "DonationPaymentID":        post.integer("payment"),
@@ -902,7 +901,7 @@ def update_donation_from_form(dbo: Database, username: str, post: PostedData) ->
     dbo.update("ownerdonation",     donationid, {
         "OwnerID":                  post.integer("person"),
         "AnimalID":                 post.integer("animal"),
-        "AvailableForFunding":      post.boolean("availableforfunding"),
+        "IsFundingSource":          post.boolean("isfundingsource"),
         "MovementID":               post.integer("movement"),
         "DonationTypeID":           post.integer("type"),
         "DonationPaymentID":        post.integer("payment"),

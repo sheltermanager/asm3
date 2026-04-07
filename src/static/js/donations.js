@@ -60,7 +60,7 @@ $(function() {
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
-                    { json_field: "AVAILABLEFORFUNDING", post_field: "availableforfunding", label: _("Available for Funding"), type: "check" }
+                    { json_field: "ISFUNDINGSOURCE", post_field: "isfundingsource", label: _("Available for Funding"), type: "check" }
                 ]
             };
 
