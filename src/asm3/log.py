@@ -114,7 +114,6 @@ def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort
             log["ISEDITABLE"] = 1
         log["ISDELETABLE"] = 1
 
-
     sql = "SELECT lm.*, lt.LogTypeName FROM logmulti lm " \
         "INNER JOIN logtype lt ON lt.ID = lm.LogTypeID " \
         "WHERE lm.LinkType = %d " % (linktypeid)
