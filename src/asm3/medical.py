@@ -337,7 +337,7 @@ def get_batch_for_vaccination_types(dbo: Database) -> Results:
 def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
     """
     Returns a recordset of medicaltypes for an animal:
-    MEDICALTYPE, TREATMENTNAME, DATEREQUIRED, LASTGIVEN
+    MEDICALTYPE, DATEREQUIRED$$TREATMENTNAME, LASTGIVEN$$TREATMENTNAME
     """
     sql = "SELECT mt.MedicalTypeName, " \
         "(" \
