@@ -337,11 +337,11 @@ def get_batch_for_vaccination_types(dbo: Database) -> Results:
 def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
     """
     Returns a recordset of medicaltypes for an animal:
-    MEDICALTYPE, DATEREQUIRED, LASTGIVEN
+    MEDICALTYPE, TREATMENTNAME, DATEREQUIRED, LASTGIVEN
     """
     sql = "SELECT mt.MedicalTypeName, " \
         "(" \
-            "SELECT DateRequired " \
+            f"SELECT {dbo.sql_concat(['DateRequired', '"$$"', 'TreatmentName'])} " \
             "FROM animalmedicaltreatment " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
@@ -349,7 +349,7 @@ def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
             "ORDER BY DateRequired desc LIMIT 1" \
         ") AS DateRequired," \
         "(" \
-            "SELECT DateGiven " \
+            f"SELECT {dbo.sql_concat(['DateGiven', '"$$"', 'TreatmentName'])} " \
             "FROM animalmedicaltreatment " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
