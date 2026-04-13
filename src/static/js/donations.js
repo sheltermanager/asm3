@@ -519,7 +519,6 @@ $(function() {
             });
 
             $("#funding").on("change", function(event, rec) {
-                console.log($("#funding").val());
                 if ($("#funding").val() == "0") {
                     $("#paymentrow").show();
                     $("#chequenumberrow").show();
@@ -529,6 +528,16 @@ $(function() {
                     $("#chequenumberrow").hide();
                     $("#frequencyrow").hide();
                 }
+            });
+
+            $("#isfundingsource").on("change", function() {
+                if ( $("#isfundingsource").prop("checked") ) {
+                    $("#funding").val(0);
+                    $("#fundingrow").hide();
+                } else {
+                    $("#fundingrow").show();
+                }
+                $("#funding").change();
             });
 
             $("#person").on("change", function(event, rec) {
