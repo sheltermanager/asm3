@@ -2,7 +2,7 @@ Payment Breakdown By Date with Type and Method Totals
 ###
 Financial
 ###
-34204/Any rev03
+34204/Any rev04
 ###
 All payments in a given date period, with payment types, methods and totals
 ###
@@ -20,7 +20,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY ownerdonation.Date, donationtype.DonationName, donationpayment.PaymentName
 ###
 $$HEADER
@@ -78,7 +79,8 @@ SELECT donationtype.DonationName, SUM(od.Donation) AS MoneyAmount, COUNT(od.Dona
 FROM ownerdonation od
 INNER JOIN donationpayment ON donationpayment.ID = od.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = od.DonationTypeID 
-WHERE od.Date BETWEEN '$PARENTARG1$' AND '$PARENTARG2$' 
+WHERE (od.FundedByOwnerDonationID = 0 OR od.FundedByOwnerDonationID IS NULL)
+AND od.Date BETWEEN '$PARENTARG1$' AND '$PARENTARG2$' 
 GROUP BY donationtype.donationname
 +++
 $$HEADER
@@ -113,7 +115,8 @@ COUNT(od.Donation) AS NumberOfPayments
 FROM ownerdonation od
 INNER JOIN donationpayment ON donationpayment.ID = od.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = od.DonationTypeID 
-WHERE od.Date >= '$PARENTARG1$' AND od.Date <= '$PARENTARG2$' 
+WHERE (od.FundedByOwnerDonationID = 0 OR od.FundedByOwnerDonationID IS NULL)
+AND od.Date >= '$PARENTARG1$' AND od.Date <= '$PARENTARG2$' 
 GROUP BY donationpayment.PaymentName
 +++
 $$HEADER

@@ -2,7 +2,7 @@ Payment Breakdown By Date
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type for a given date period, with totals.
 ###
@@ -20,7 +20,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -71,7 +72,7 @@ Payment Breakdown By Date (no movements)
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type for a given date period that are not linked to a movement, with totals.
 ###
@@ -89,7 +90,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$'  AND (ownerdonation.MovementID Is Null OR ownerdonation.MovementID = 0) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$'  AND (ownerdonation.MovementID Is Null OR ownerdonation.MovementID = 0) 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -140,7 +142,7 @@ Payment Breakdown By Date (regular payments only)
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 Regular payments (frequency other than one-off) by type for a given date period, with totals.
 ###
@@ -159,7 +161,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 AND ownerdonation.Frequency > 0
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
@@ -213,7 +216,7 @@ Payment Breakdown By Method
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by method for a given date period, with totals.
 ###
@@ -231,7 +234,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
 $$HEADER
@@ -282,7 +286,7 @@ Payment Breakdown By Type and Method
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by method for a given date period, with totals.
 ###
@@ -300,7 +304,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$'
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$'
 ORDER BY donationtype.DonationName, donationpayment.PaymentName, ownerdonation.Date
 ###
 
@@ -359,7 +364,7 @@ Payment Breakdown By Date (Surname)
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments for a given date period, with total, ordered by person surname.
 ###
@@ -377,7 +382,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$'
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$'
 ORDER BY owner.OwnerSurname, ownerdonation.Date
 ###
 $$HEADER
@@ -423,7 +429,7 @@ Payment Breakdown By Date with Addresses
 ###
 Financial
 ###
-34204/Any rev03
+34204/Any rev04
 ###
 Produces a list of all payments by type for a given date period, with totals and addresses.
 ###
@@ -442,7 +448,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -498,7 +505,7 @@ Payment Breakdown by Date and User
 ###
 Financial
 ###
-34204/Any rev03
+34204/Any rev04
 ###
 All payments by type for a given date period, with totals, broken down by the entering user.
 ###
@@ -516,7 +523,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY ownerdonation.CreatedBy, donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -574,7 +582,7 @@ Payment Breakdown By Person
 ###
 Financial
 ###
-34204/Any rev03
+34204/Any rev04
 ###
 All payments by type and person for a given date period, with totals.
 ###
@@ -593,7 +601,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY owner.OwnerName, donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -652,7 +661,7 @@ Payment Breakdown for Person
 ###
 Financial
 ###
-34204/Any rev04
+34204/Any rev05
 ###
 All payments by type for a single person with totals.
 ###
@@ -671,7 +680,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.OwnerID = $ASK PERSON$
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.OwnerID = $ASK PERSON$
 ORDER BY owner.OwnerName, donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -734,7 +744,7 @@ Payment Breakdown By Person with Flag
 ###
 Financial
 ###
-34204/Any rev03
+34204/Any rev04
 ###
 All payments by type and person for a given date period, with totals, filtered by person flag.
 ###
@@ -754,7 +764,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND owner.AdditionalFlags LIKE '%$@flag$|%' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND owner.AdditionalFlags LIKE '%$@flag$|%' 
 ORDER BY owner.OwnerName, donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -813,7 +824,7 @@ Payment Breakdown By Person with Addresses
 ###
 Financial
 ###
-33011/Any rev02
+33011/Any rev03
 ###
 Produces a list of all payments, totalled by person for a given date period, with addresses.
 ###
@@ -828,7 +839,8 @@ owner.OwnerCounty, owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone
 owner.MobileTelephone, owner.EmailAddress
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
-WHERE ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
 GROUP BY owner.OwnerName, owner.OwnerAddress, owner.OwnerTown,
 owner.OwnerCounty, owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, 
 owner.MobileTelephone, owner.EmailAddress
@@ -867,7 +879,7 @@ Payment Breakdown By Date with Addresses and Animal Info
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 Produces a list of all payments for a given date period, with addresses and adopted animal info where applicable
 ###
@@ -893,7 +905,8 @@ INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPayment
 LEFT OUTER JOIN animal ON ownerdonation.AnimalID = animal.ID
 LEFT OUTER JOIN species ON animal.SpeciesID = species.ID
 LEFT OUTER JOIN lksex ON animal.Sex = lksex.ID
-WHERE ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -952,7 +965,7 @@ Payment Breakdown By Receipt Number
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type for a range of receipt numbers with totals.
 ###
@@ -971,7 +984,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE CAST(ownerdonation.ReceiptNumber AS INTEGER) >= $@from$ AND CAST(ownerdonation.ReceiptNumber AS INTEGER) <= $@to$
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND CAST(ownerdonation.ReceiptNumber AS INTEGER) >= $@from$ AND CAST(ownerdonation.ReceiptNumber AS INTEGER) <= $@to$
 ORDER BY ownerdonation.ID
 ###
 $$HEADER

@@ -2,7 +2,7 @@ Sales Tax Breakdown By Date
 ###
 Financial
 ###
-33712/Any rev02
+33712/Any rev03
 ###
 All payments by type for a given date period, with sales tax totals.
 ###
@@ -19,7 +19,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -67,7 +68,7 @@ VAT Breakdown By Date
 ###
 Financial
 ###
-33712/Any rev02
+33712/Any rev03
 ###
 All payments by type for a given date period, with VAT totals.
 ###
@@ -84,7 +85,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -132,7 +134,7 @@ GST Breakdown By Date
 ###
 Financial
 ###
-33712/Any rev02
+33712/Any rev03
 ###
 All payments by type for a given date period, with GST totals.
 ###
@@ -149,7 +151,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -196,7 +199,7 @@ Sales Tax Breakdown By Method
 ###
 Financial
 ###
-33712/Any rev02
+33712/Any rev03
 ###
 All payments by method for a given date period, with sales tax totals.
 ###
@@ -213,7 +216,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
 $$HEADER
@@ -260,7 +264,7 @@ VAT Breakdown By Method
 ###
 Financial
 ###
-33712/Any rev02
+33712/Any rev03
 ###
 All payments by method for a given date period, with VAT totals.
 ###
@@ -277,7 +281,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
 $$HEADER
@@ -324,7 +329,7 @@ GST Breakdown By Method
 ###
 Financial
 ###
-33712/Any rev02
+33712/Any rev03
 ###
 All payments by method for a given date period, with GST totals.
 ###
@@ -341,7 +346,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
 $$HEADER
