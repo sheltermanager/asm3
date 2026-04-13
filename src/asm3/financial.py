@@ -879,10 +879,11 @@ def insert_donation_from_form(dbo: Database, username: str, post: PostedData) ->
         "Comments":                 post["comments"]
     }, username)
 
-    if asm3.configuration.donation_trx_override(dbo):
-        update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
-    else:
-        update_matching_donation_transaction(dbo, username, donationid)
+    if post.integer("funding") == 0:
+        if asm3.configuration.donation_trx_override(dbo):
+            update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
+        else:
+            update_matching_donation_transaction(dbo, username, donationid)
 
     check_create_next_donation(dbo, username, donationid)
     asm3.movement.update_movement_donation(dbo, post.integer("movement"))
@@ -922,10 +923,13 @@ def update_donation_from_form(dbo: Database, username: str, post: PostedData) ->
         "Comments":                 post["comments"]
     }, username)
 
-    if asm3.configuration.donation_trx_override(dbo) and receiveddate is None:
-        update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
+    if post.integer("funding") == 0:
+        if asm3.configuration.donation_trx_override(dbo) and receiveddate is None:
+            update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
+        else:
+            update_matching_donation_transaction(dbo, username, donationid)
     else:
-        update_matching_donation_transaction(dbo, username, donationid)
+        dbo.delete("accountstrx", "OwnerDonationID = %d" % donationid, username) # remove matching trx if exists
 
     check_create_next_donation(dbo, username, donationid)
     asm3.movement.update_movement_donation(dbo, post.integer("movement"))

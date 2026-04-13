@@ -110,6 +110,7 @@ $(function() {
                     });
                 },
                 complete: function(row) {
+                    return row.FUNDEDBYOWNERDONATIONID != 0;
                 },
                 overdue: function(row) {
                     return !row.DATE && format.date_js(row.DATEDUE) < common.today_no_time();
