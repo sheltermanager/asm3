@@ -272,6 +272,7 @@ DEFAULTS = {
     "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FundedPaymentsEnabled": "No",
     "AnimalFlagChangeLog": "Yes",
     "AnimalFlagChangeLogType": "3",
     "PersonFlagChangeLog": "Yes",

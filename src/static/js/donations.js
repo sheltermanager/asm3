@@ -93,6 +93,8 @@ $(function() {
                             // Only allow destination account to be overridden when the received date
                             // hasn't been set yet.
                             $("#destaccountrow").toggle( config.bool("DonationTrxOverride") && !row.DATE );
+                            $("#fundingrow").toggle(config.bool("FundedPaymentsEnabled"));
+                            $("#isfundingsourcerow").toggle(config.bool("FundedPaymentsEnabled"));
                             $("#destaccount").select("value", config.integer("DonationTargetAccount"));
                             $("#receiptnumberrow").show();
                             $("#receiptnumber").prop("disabled", true);
@@ -179,6 +181,8 @@ $(function() {
                                 donations.create_semaphore = true;
                                 // Editing can hide the destination account field - show it if the option is on
                                 $("#destaccountrow").toggle(config.bool("DonationTrxOverride"));
+                                $("#fundingrow").toggle(config.bool("FundedPaymentsEnabled"));
+                                $("#isfundingsourcerow").toggle(config.bool("FundedPaymentsEnabled"));
                                 $("#animal").animalchooser("clear");
                                 $("#person").personchooser("clear");
                                 $("#movement").select("value", "0");
@@ -518,7 +522,7 @@ $(function() {
                 donations.lastanimal = rec;
             });
 
-            $("#funding").on("change", function(event, rec) {
+            $("#funding").on("change", function() {
                 if ($("#funding").val() == "0") {
                     $("#paymentrow").show();
                     $("#chequenumberrow").show();
@@ -534,10 +538,9 @@ $(function() {
                 if ( $("#isfundingsource").prop("checked") ) {
                     $("#funding").val(0);
                     $("#fundingrow").hide();
-                } else {
+                } else if (config.bool("FundedPaymentsEnabled")) {
                     $("#fundingrow").show();
                 }
-                $("#funding").change();
             });
 
             $("#person").on("change", function(event, rec) {
