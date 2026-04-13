@@ -105,7 +105,7 @@ $(function() {
                                 $("#vatraterow").hide();
                                 $("#vatamountrow").hide();
                             }
-                            $("#funding").change();
+                            $("#isfundingsource").change();
                         }
                     });
                 },
@@ -204,7 +204,7 @@ $(function() {
                                 $("#vat").prop("checked", false); 
                                 $("#vat").change();
                                 donations.type_change(); // this will re-enable vat box if the type has it
-                                $("#funding").change();
+                                $("#isfundingsource").change();
                             }
                         });
                     } 
@@ -729,7 +729,6 @@ $(function() {
         sync: function() {
 
             this.calculate_total();
-            // $("#funding").val(0);
 
             // If an offset is given in the querystring, update the select
             if (common.querystring_param("offset")) {
