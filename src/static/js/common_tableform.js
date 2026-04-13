@@ -365,6 +365,9 @@ const tableform = {
         this.table_bind_widgets(table);
         $("#tableform").trigger("update");
         this.table_apply_sort(table);
+        if (table.buttons) {
+            tableform.table_update_buttons(table, table.buttons);
+        }
     },
 
     /**
@@ -477,6 +480,7 @@ const tableform = {
         // Watch for number of selected checkboxes changing and update 
         // the enable/disabled state of buttons
         if (buttons) {
+            table.buttons = buttons;
             $("#tableform").on("click", "input[type='checkbox']", function() {
                 tableform.table_update_buttons(table, buttons);
             });
