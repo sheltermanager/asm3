@@ -16,7 +16,7 @@ SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 FROM owner o
 INNER JOIN ownerdonation od ON od.OwnerID = o.ID
 INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID 
-WHERE (od.FundedByOwnerDonationID = 0 OR od.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (od.FundedByOwnerDonationID = 0 OR od.FundedByOwnerDonationID IS NULL) 
 AND o.ID = $ASK PERSON$
 AND od.Date >= '$ASK DATE Enter the from date$'
 AND od.Date <= '$ASK DATE Enter the to date $'

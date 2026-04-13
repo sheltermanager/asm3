@@ -17,7 +17,7 @@ owner.OwnerPostcode
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' 
 AND ownerdonation.Date Is Null
 ORDER BY donationtype.DonationName, ownerdonation.DateDue
@@ -75,7 +75,7 @@ owner.OwnerPostcode
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' 
 AND ownerdonation.Date Is Null 
 ORDER BY donationtype.DonationName, ownerdonation.Date
@@ -136,7 +136,7 @@ SUM(ownerdonation.Donation) AS amt, owner.OwnerAddress, owner.OwnerTown,
 owner.OwnerCounty, owner.OwnerPostcode 
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' AND ownerdonation.Date Is Null
 GROUP BY owner.OwnerName, owner.OwnerAddress, owner.OwnerTown,
 owner.OwnerCounty, owner.OwnerPostcode
@@ -190,7 +190,7 @@ owner.OwnerPostcode
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Frequency = 2 AND ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' 
 AND ownerdonation.Date Is Null
 ORDER BY donationtype.DonationName, ownerdonation.DateDue
@@ -248,7 +248,7 @@ owner.OwnerPostcode
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Frequency = 3 AND ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' 
 AND ownerdonation.Date Is Null
 ORDER BY donationtype.DonationName, ownerdonation.DateDue
@@ -306,7 +306,7 @@ owner.OwnerPostcode
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Frequency = 4 AND ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' 
 AND ownerdonation.Date Is Null
 ORDER BY donationtype.DonationName, ownerdonation.DateDue
@@ -364,7 +364,7 @@ owner.OwnerPostcode
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Frequency = 5 AND ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' 
 AND ownerdonation.Date Is Null
 ORDER BY donationtype.DonationName, ownerdonation.DateDue

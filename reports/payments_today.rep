@@ -17,7 +17,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date = '$CURRENT_DATE$'
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
@@ -83,7 +83,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date >= '$CURRENT_DATE-7$' AND ownerdonation.Date <= '$CURRENT_DATE$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###

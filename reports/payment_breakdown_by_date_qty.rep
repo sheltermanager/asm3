@@ -18,7 +18,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
@@ -84,7 +84,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
@@ -150,7 +150,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationtype.DonationName, donationpayment.PaymentName, ownerdonation.Date
 ###
@@ -221,7 +221,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY owner.OwnerSurname, ownerdonation.Date
 ###
@@ -282,7 +282,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###

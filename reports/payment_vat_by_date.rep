@@ -19,7 +19,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
@@ -85,7 +85,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
@@ -151,7 +151,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
@@ -216,7 +216,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
@@ -281,7 +281,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
@@ -346,7 +346,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NOT NULL) 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
 AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.IsVAT = 1
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
