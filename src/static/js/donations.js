@@ -26,7 +26,8 @@ $(function() {
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
                     { json_field: "FUNDEDBYOWNERDONATIONID", post_field: "funding", label: _("Fund"), type: "select", options: { displayfield: "FUNDNAME", valuefield: "ID",
-                        rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' }
+                        rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' },
+                        callout: _("Mark this payment as funded by a specific donation")
                     },
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
