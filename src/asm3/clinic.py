@@ -244,15 +244,16 @@ def update_invoice_stock_movements(dbo: Database, username: str, invoiceid: int,
     If updateprice = True, updates clinicinvoiceitem.Amount with the combined value of the 
     associated stock usage ids.
     """
-    payload = {
+    values = {
         "StockUsageIDs":    ",".join([str(stockusageid) for stockusageid in stockusageids])
     }
     if updateprice:
+        inclause = ",".join([str(stockusageid) for stockusageid in stockusageids])
         price = dbo.query_float(
-            f'SELECT SUM(su.Quantity * sl.UnitPrice * -1) AS Price FROM stockusage su INNER JOIN stocklevel sl ON su.StockLevelID = sl.ID WHERE su.ID IN ({",".join([str(stockusageid) for stockusageid in stockusageids])})'
+            f'SELECT SUM(su.Quantity * sl.UnitPrice * -1) AS Price FROM stockusage su INNER JOIN stocklevel sl ON su.StockLevelID = sl.ID WHERE su.ID IN ({inclause})'
         )
-        payload["Amount"] = price
-    dbo.update("clinicinvoiceitem", invoiceid, payload, username)
+        values["Amount"] = price
+    dbo.update("clinicinvoiceitem", invoiceid, values, username)
 
 def delete_invoice(dbo: Database, username: str, itemid: int) -> None:
     """

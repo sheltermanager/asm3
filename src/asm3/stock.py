@@ -351,30 +351,30 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
         for stocklevel in stocklevels:
             if quantity == 0:
                 break
-            if stocklevel["BALANCE"] != 0 and post["batch"] == stocklevel["BATCHNUMBER"] and post.integer("movementfrom") == stocklevel["STOCKLOCATIONID"]:
-                if stocklevel["BALANCE"] < 0:
-                    remaining = stocklevel["BALANCE"] - quantity
+            if stocklevel.BALANCE != 0 and post["batch"] == stocklevel.BATCHNUMBER and post.integer("movementfrom") == stocklevel.STOCKLOCATIONID:
+                if stocklevel.BALANCE < 0:
+                    remaining = stocklevel.BALANCE - quantity
                     quantity = 0
-                elif quantity >= stocklevel["BALANCE"]:
+                elif quantity >= stocklevel.BALANCE:
                     remaining = 0
-                    quantity = quantity - stocklevel["BALANCE"]
+                    quantity = quantity - stocklevel.BALANCE
                 else:
-                    remaining = stocklevel["BALANCE"] - quantity
+                    remaining = stocklevel.BALANCE - quantity
                     quantity = 0
                 slpost = {}
-                slpost["stocklevelid"] = stocklevel["ID"]
+                slpost["stocklevelid"] = stocklevel.ID
                 slpost["productid"] = post.integer("productid")
                 slpost["name"] = post["productname"]
                 slpost["description"] = post["productdescription"]
                 slpost["location"] = fromlocation
                 slpost["unitname"] = post["movementunit"]
-                slpost["total"] = stocklevel["TOTAL"]
+                slpost["total"] = stocklevel.TOTAL
                 slpost["balance"] = remaining
-                slpost["low"] = stocklevel["LOW"]
-                slpost["expiry"] = stocklevel["EXPIRY"]
-                slpost["batchnumber"] = stocklevel["BATCHNUMBER"]
-                slpost["cost"] = stocklevel["COST"]
-                slpost["unitprice"] = stocklevel["UNITPRICE"]
+                slpost["low"] = stocklevel.LOW
+                slpost["expiry"] = stocklevel.EXPIRY
+                slpost["batchnumber"] = stocklevel.BATCHNUMBER
+                slpost["cost"] = stocklevel.COST
+                slpost["unitprice"] = stocklevel.UNITPRICE
                 slpost["usagedate"] = python2display(dbo.locale, dbo.today())
                 slpost["usagetype"] = usagetypeid
                 slpost["batchnumber"] = post["batch"]
@@ -409,28 +409,28 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
         for stocklevel in stocklevels:
             if quantity == 0:
                 break
-            if stocklevel["BALANCE"] < stocklevel["TOTAL"] and post["batch"] == stocklevel["BATCHNUMBER"] and post.integer("movementto") == stocklevel["STOCKLOCATIONID"]:
-                availablespace = stocklevel["TOTAL"] - stocklevel["BALANCE"]
+            if stocklevel.BALANCE < stocklevel.TOTAL and post["batch"] == stocklevel.BATCHNUMBER and post.integer("movementto") == stocklevel.STOCKLOCATIONID:
+                availablespace = stocklevel.TOTAL - stocklevel.BALANCE
                 if quantity >= availablespace:
-                    balance = stocklevel["TOTAL"]
+                    balance = stocklevel.TOTAL
                     quantity = quantity - availablespace
                 else:
-                    balance = stocklevel["BALANCE"] + quantity
+                    balance = stocklevel.BALANCE + quantity
                     quantity = 0
                 slpost = {}
-                slpost["stocklevelid"] = stocklevel["ID"]
+                slpost["stocklevelid"] = stocklevel.ID
                 slpost["productid"] = post["productid"]
                 slpost["name"] = post["productname"]
                 slpost["description"] = post["productdescription"]
                 slpost["location"] = tolocation
                 slpost["unitname"] = post["movementunit"]
-                slpost["total"] = stocklevel["TOTAL"]
+                slpost["total"] = stocklevel.TOTAL
                 slpost["balance"] = balance
-                slpost["low"] = stocklevel["LOW"]
-                slpost["expiry"] = stocklevel["EXPIRY"]
-                slpost["batchnumber"] = stocklevel["BATCHNUMBER"]
-                slpost["cost"] = stocklevel["COST"]
-                slpost["unitprice"] = stocklevel["UNITPRICE"]
+                slpost["low"] = stocklevel.LOW
+                slpost["expiry"] = stocklevel.EXPIRY
+                slpost["batchnumber"] = stocklevel.BATCHNUMBER
+                slpost["cost"] = stocklevel.COST
+                slpost["unitprice"] = stocklevel.UNITPRICE
                 slpost["usagedate"] = python2display(dbo.locale, dbo.today())
                 slpost["usagetype"] = usagetypeid
                 slpost["comments"] = post["comments"]
