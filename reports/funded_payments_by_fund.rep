@@ -1,0 +1,56 @@
+Funded Payments by Fund
+###
+Financial
+###
+33712/Any rev01
+###
+Show which payments were funded by a specific donation
+###
+en
+###
+SELECT od.ReceiptNumber, od.Date, od.Donation, o.OwnerName 
+FROM ownerdonation od 
+INNER JOIN ownerdonation fd ON od.FundedByOwnerDonationID = fd.ID 
+INNER JOIN owner o ON od.OwnerID = o.ID 
+WHERE fd.ReceiptNumber = '$ASK STRING Enter the receipt number$';
+###
+$$HTMLHEADER
+<DOCTYPE html>
+<html>
+<head>
+<title>Payment Receipt</title>
+</head>
+<body>
+HTMLHEADER$$
+
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>RECEIPTNUMBER</th>
+<th>DATE</th>
+<th>DONATION</th>
+<th>OWNERNAME</th>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$RECEIPTNUMBER</td>
+<td>$DATE</td>
+<td>$DONATION</td>
+<td>$OWNERNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total Payments: {COUNT.RECEIPTNUMBER}</h2>
+<h2>Total Paid: {SUM.DONATION}</h2>
+FOOTER$$
+
+$$HTMLFOOTER
+</body>
+</html>
+HTMLFOOTER$
