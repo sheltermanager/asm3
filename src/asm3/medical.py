@@ -337,27 +337,43 @@ def get_batch_for_vaccination_types(dbo: Database) -> Results:
 def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
     """
     Returns a recordset of medicaltypes for an animal:
-    MEDICALTYPE, DATEREQUIRED$$TREATMENTNAME, LASTGIVEN$$TREATMENTNAME
+    MEDICALTYPE, DATEREQUIRED, DATEREQUIREDTREATMENTNAME, LASTGIVEN, LASTGIVENTREATMENTNAME
     """
     sql = "SELECT mt.MedicalTypeName, " \
         "(" \
-            f"SELECT {dbo.sql_concat(['DateRequired', '"$$"', 'TreatmentName'])} " \
+            "SELECT DateRequired " \
             "FROM animalmedicaltreatment " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
             "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
             "ORDER BY DateRequired desc LIMIT 1" \
-        ") AS DateRequired," \
+        ") AS DateRequired, " \
         "(" \
-            f"SELECT {dbo.sql_concat(['DateGiven', '"$$"', 'TreatmentName'])} " \
+            "SELECT TreatmentName " \
+            "FROM animalmedicaltreatment " \
+            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
+            "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
+            "ORDER BY DateRequired desc LIMIT 1" \
+        ") AS DateRequiredTreatmentName, " \
+        "(" \
+            "SELECT DateGiven " \
             "FROM animalmedicaltreatment " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
             "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID AND DateGiven IS NOT NULL " \
             "ORDER BY DateGiven desc LIMIT 1" \
-        ") AS DateGiven " \
+        ") AS DateGiven, " \
+        "(" \
+            "SELECT TreatmentName " \
+            "FROM animalmedicaltreatment " \
+            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
+            "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
+            "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedical.MedicalTypeID = mt.ID AND DateGiven IS NOT NULL " \
+            "ORDER BY DateGiven desc LIMIT 1" \
+        ") AS DateGivenTreatmentName " \
         "FROM lksmedicaltype mt"
-    return dbo.query(sql, [animalid, dbo.today(), animalid ])
+    return dbo.query(sql, [animalid, dbo.today(), animalid, dbo.today(), animalid, animalid ])
 
 def get_regimens(dbo: Database, animalid: int, onlycomplete: bool = False, onlyactive: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
     """

@@ -21,7 +21,7 @@ import asm3.users
 import asm3.utils
 import asm3.waitinglist
 
-from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff, format_diff_single, format_time, now, parse_date, python2display, python2displaytime, yes_no
+from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff, format_diff_single, format_time, now, python2display, python2displaytime, yes_no
 from asm3.sitedefs import SERVICE_URL
 from asm3.typehints import bytes_or_str, Database, Dict, List, ResultRow, Results, Tags, Tuple
 
@@ -859,22 +859,10 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         for mt in medicaltypes:
             tagname = "MEDICALTYPE" + mt["MEDICALTYPENAME"].replace(" ", "").replace("/", "").upper()
             tags[tagname] = mt["MEDICALTYPENAME"].upper()
-            if mt["DATEGIVEN"]:
-                dategivenstr = mt["DATEGIVEN"].split("$$")[0]
-                dategiven = parse_date("%Y-%m-%d %H:%M:%S", dategivenstr)
-                tags[tagname + "GIVEN"] = python2display(l, dategiven)
-                tags[tagname + "GIVENNAME"] = mt["DATEGIVEN"].split("$$")[1]
-            else:
-                tags[tagname + "GIVEN"] = ""
-                tags[tagname + "GIVENNAME"] = ""
-            if mt["DATEREQUIRED"]:
-                dateduestr = mt["DATEREQUIRED"].split("$$")[0]
-                datedue = parse_date("%Y-%m-%d %H:%M:%S", dateduestr)
-                tags[tagname + "DUE"] = python2display(l, datedue)
-                tags[tagname + "DUENAME"] = mt["DATEREQUIRED"].split("$$")[1]
-            else:
-                tags[tagname + "DUE"] = ""
-                tags[tagname + "DUENAME"] = ""
+            tags[tagname + "GIVEN"] = python2display(l, mt["DATEGIVEN"])
+            tags[tagname + "GIVENNAME"] = mt["DATEGIVENTREATMENTNAME"]
+            tags[tagname + "DUE"] = python2display(l, mt["DATEREQUIRED"])
+            tags[tagname + "DUENAME"] = mt["DATEREQUIREDTREATMENTNAME"]
         
         # Conditions
         d = {
