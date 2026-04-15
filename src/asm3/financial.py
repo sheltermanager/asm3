@@ -879,6 +879,7 @@ def insert_donation_from_form(dbo: Database, username: str, post: PostedData) ->
         "Comments":                 post["comments"]
     }, username)
 
+    ## Only create a transaction if payment is not funded
     if post.integer("funding") == 0:
         if asm3.configuration.donation_trx_override(dbo):
             update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
@@ -923,6 +924,7 @@ def update_donation_from_form(dbo: Database, username: str, post: PostedData) ->
         "Comments":                 post["comments"]
     }, username)
 
+    ## Only create a transaction if payment is not funded
     if post.integer("funding") == 0:
         if asm3.configuration.donation_trx_override(dbo) and receiveddate is None:
             update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))

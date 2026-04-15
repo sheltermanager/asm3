@@ -61,7 +61,9 @@ $(function() {
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
-                    { json_field: "ISFUNDINGSOURCE", post_field: "isfundingsource", label: _("Available for Funding"), type: "check" }
+                    { json_field: "ISFUNDINGSOURCE", post_field: "isfundingsource", label: _("Funding Source"), type: "check",
+                        callout: _("This payment can be used as a source of funds for other payments")
+                    }
                 ]
             };
 

@@ -1,4 +1,4 @@
-Funded Payments by Fund
+Funded Payments
 ###
 Financial
 ###
@@ -14,14 +14,6 @@ INNER JOIN ownerdonation fd ON od.FundedByOwnerDonationID = fd.ID
 INNER JOIN owner o ON od.OwnerID = o.ID 
 WHERE fd.ReceiptNumber = '$ASK STRING Enter the receipt number$';
 ###
-$$HTMLHEADER
-<DOCTYPE html>
-<html>
-<head>
-<title>Payment Receipt</title>
-</head>
-<body>
-HTMLHEADER$$
 
 $$HEADER
 <table border="1">
@@ -50,7 +42,3 @@ $$FOOTER
 <h2>Total Paid: {SUM.DONATION}</h2>
 FOOTER$$
 
-$$HTMLFOOTER
-</body>
-</html>
-HTMLFOOTER$
