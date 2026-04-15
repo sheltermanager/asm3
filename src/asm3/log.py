@@ -108,10 +108,10 @@ def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort
     for log in logs:
         prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0", "AD0" ]
         if log.COMMENTS[:3] in prefixes and log.COMMENTS[4] == ":":
-            log.ISEDITABLE = 0
+            log.CANEDIT = 0
         else:
-            logISEDITABLE = 1
-        log.ISDELETABLE = 1
+            log.CANEDIT = 1
+        log.CANDELETE = 1
 
     sql = "SELECT lm.*, lt.LogTypeName FROM logmulti lm " \
         "INNER JOIN logtype lt ON lt.ID = lm.LogTypeID " \
@@ -128,10 +128,10 @@ def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort
         for multilinkid in [int(lm) for lm in logmulti.LINKIDS.split(",")]:
             if multilinkid == linkid:
                 log = logmulti.copy()
-                log.ID = 0
+                log.ID = logmulti.ID * -1
                 log.LINKID = multilinkid
-                log.ISEDITABLE = 0
-                log.ISDELETABLE = 0
+                log.CANEDIT = 0
+                log.CANDELETE = 0
                 logs.append(log)
 
     return logs

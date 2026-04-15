@@ -27,7 +27,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    if (!row.ISEDITABLE) { return; }
+                    if (!row.CANEDIT) { return; }
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -42,10 +42,10 @@ $(function() {
                     }
                 },
                 complete: function(row) {
-                    return row.ISEDITABLE != 1;
+                    return row.CANEDIT != 1;
                 },
                 overdue: function(row) {
-                    return row.ISDELETABLE != 1;
+                    return row.CANDELETE != 1;
                 },
                 change: function(rows) {
                     let deleteenabled = false;
@@ -53,7 +53,7 @@ $(function() {
                         deleteenabled = true;
                     }
                     $.each(rows, function(i, v) {
-                        if (!v.ISDELETABLE) {
+                        if (!v.CANDELETE) {
                             deleteenabled = false;
                             return false;
                         }
@@ -61,7 +61,15 @@ $(function() {
                     $("#button-delete").button("option", "disabled", deleteenabled == false);
                 },
                 columns: [
-                    { field: "LOGTYPENAME", display: _("Type") },
+                    { field: "LOGTYPENAME", display: _("Type"),
+                        formatter: function(row, v) {
+                            if (row.ID > 0) {
+                                return tableform.table_render_edit_link(row.ID, v);
+                            } else {
+                                return v    
+                            }
+                        }
+                    },
                     { field: "LASTCHANGEDBY", display: _("By") },
                     { field: "DATE", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "COMMENTS", display: _("Note"), formatter: tableform.format_comments }
@@ -82,6 +90,8 @@ $(function() {
                                     let response = await tableform.fields_post(dialog.fields, formdata , "log");
                                     let row = {};
                                     row.ID = response;
+                                    row.CANEDIT = 1;
+                                    row.CANDELETE = 1;
                                     tableform.fields_update_row(dialog.fields, row);
                                     log.set_extra_fields(row);
                                     controller.rows.push(row);
