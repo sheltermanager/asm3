@@ -346,7 +346,8 @@ def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
             "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
-            "ORDER BY DateRequired desc LIMIT 1" \
+            "AND animalmedicaltreatment.DateGiven IS NULL " \
+            "ORDER BY DateRequired LIMIT 1" \
         ") AS DateRequired, " \
         "(" \
             "SELECT TreatmentName " \
@@ -354,7 +355,8 @@ def get_medical_types_animal(dbo: Database, animalid: int) -> Results:
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "INNER JOIN lksmedicaltype ON animalmedical.MedicalTypeID  = lksmedicaltype.ID " \
             "WHERE animalmedicaltreatment.AnimalID = ? AND animalmedicaltreatment.DateRequired >= ? AND animalmedical.MedicalTypeID = mt.ID " \
-            "ORDER BY DateRequired desc LIMIT 1" \
+            "AND animalmedicaltreatment.DateGiven IS NULL " \
+            "ORDER BY DateRequired LIMIT 1" \
         ") AS DateRequiredTreatmentName, " \
         "(" \
             "SELECT DateGiven " \
