@@ -10,7 +10,7 @@ en
 ###
 $VAR receiptno STRING Enter the receipt number$
 
-SELECT od.ReceiptNumber AS RReceiptNo, fd.ReceiptNumber AS FReceiptNo, od.Date, od.Donation, o.OwnerName, d.OwnerName AS DonorName, fd.Donation AS DonationAmount, fd.Date AS DonationDate
+SELECT od.ReceiptNumber AS RReceiptNo, fd.ReceiptNumber AS FReceiptNo, od.Date, od.Donation, o.OwnerName, d.OwnerName AS DonorName, fd.Donation AS moneyDonationAmount, fd.Date AS DonationDate
 FROM ownerdonation od 
 INNER JOIN ownerdonation fd ON od.FundedByOwnerDonationID = fd.ID 
 INNER JOIN owner o ON od.OwnerID = o.ID 
@@ -20,12 +20,12 @@ ORDER BY FReceiptNo
 ###
 
 $$HEADER
-<p><b>$DONORNAME</b> donated <b>$DONATIONAMOUNT</b> on <b>$DONATIONDATE</b></p>
+<p><b>$DONORNAME</b> donated <b>$MONEYDONATIONAMOUNT</b> on <b>$DONATIONDATE</b>.</p>
+<p>This donation has been used to fund:</p>
 HEADER$$
 
 $$GROUP_FReceiptNo
 $$HEAD
-<h2>$FReceiptNo</h2>
 <table border="1">
 <thead>
 <tr>

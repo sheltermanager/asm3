@@ -11,7 +11,7 @@ en
 $VAR fromdate DATE From$
 $VAR todate DATE To$
 
-SELECT o.OwnerName, a.ShelterCode, a.AnimalName, od.Date, od.Donation, od.ReceiptNumber, fd.ReceiptNumber AS DonorReceiptNumber, f.OwnerName AS DonorName, fd.Date AS DonationDate 
+SELECT o.OwnerName, a.ShelterCode, a.AnimalName, od.Date, od.Donation, od.ReceiptNumber, fd.ReceiptNumber AS DonorReceiptNumber, f.OwnerName AS DonorName, fd.Date AS DonationDate, fd.Donation AS moneySourceDonation  
 FROM ownerdonation od 
 INNER JOIN owner o ON od.OwnerID = o.ID 
 INNER JOIN ownerdonation fd ON od.FundedByOwnerDonationID = fd.ID 
@@ -25,7 +25,7 @@ $$HEADER
 HEADER$$
 $$GROUP_DONORRECEIPTNUMBER
 $$HEAD
-<h2>$DONORRECEIPTNUMBER - $DONORNAME ($DONATIONDATE)</h2>
+<h2>$DONORRECEIPTNUMBER - $DONORNAME ($MONEYSOURCEDONATION $DONATIONDATE)</h2>
 <table border="1">
 <thead>
 <tr>
