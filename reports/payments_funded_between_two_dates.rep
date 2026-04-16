@@ -1,0 +1,56 @@
+Funded Payments Between Two Dates
+###
+Financial
+###
+35120/Any rev01
+###
+Show funded payments between two dates
+###
+en
+###
+$VAR fromdate DATE From$
+$VAR todate DATE To$
+
+SELECT o.OwnerName, a.ShelterCode, a.AnimalName, od.Date, od.Donation, od.ReceiptNumber, fd.ReceiptNumber AS DonorReceiptNumber, f.OwnerName AS DonorName, fd.Date AS DonationDate 
+FROM ownerdonation od 
+INNER JOIN owner o ON od.OwnerID = o.ID 
+INNER JOIN ownerdonation fd ON od.FundedByOwnerDonationID = fd.ID 
+INNER JOIN owner f ON fd.OwnerID = f.ID 
+LEFT JOIN animal a ON od.AnimalID = a.ID 
+WHERE od.Date BETWEEN '$@fromdate$' AND '$@todate$' 
+ORDER BY DonorReceiptNumber
+###
+
+$$HEADER
+HEADER$$
+$$GROUP_DONORRECEIPTNUMBER
+$$HEAD
+<h2>$DONORRECEIPTNUMBER - $DONORNAME ($DONATIONDATE)</h2>
+<table border="1">
+<thead>
+<tr>
+<th>Receipt No</th>
+<th>Date</th>
+<th>Name</th>
+<th>Animal</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</table>
+<p>Total: {SUM.DONATION}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$RECEIPTNUMBER</td>
+<td>$DATE</td>
+<td>$OWNERNAME</td>
+<td>$SHELTERCODE $ANIMALNAME</td>
+<td>$DONATION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

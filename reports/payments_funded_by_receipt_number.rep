@@ -8,28 +8,42 @@ Show which payments were funded by a specific donation
 ###
 en
 ###
-SELECT od.ReceiptNumber, od.Date, od.Donation, o.OwnerName 
+$VAR receiptno STRING Enter the receipt number$
+
+SELECT od.ReceiptNumber AS RReceiptNo, fd.ReceiptNumber AS FReceiptNo, od.Date, od.Donation, o.OwnerName, d.OwnerName AS DonorName, fd.Donation AS DonationAmount, fd.Date AS DonationDate
 FROM ownerdonation od 
 INNER JOIN ownerdonation fd ON od.FundedByOwnerDonationID = fd.ID 
 INNER JOIN owner o ON od.OwnerID = o.ID 
-WHERE fd.ReceiptNumber = '$ASK STRING Enter the receipt number$';
+INNER JOIN owner d ON fd.OwnerID = d.ID
+WHERE fd.ReceiptNumber = '$@receiptno$'
+ORDER BY FReceiptNo
 ###
 
 $$HEADER
+<p><b>$DONORNAME</b> donated <b>$DONATIONAMOUNT</b> on <b>$DONATIONDATE</b></p>
+HEADER$$
+
+$$GROUP_FReceiptNo
+$$HEAD
+<h2>$FReceiptNo</h2>
 <table border="1">
 <thead>
 <tr>
-<th>RECEIPTNUMBER</th>
-<th>DATE</th>
-<th>DONATION</th>
-<th>OWNERNAME</th>
+<th>Receipt No</th>
+<th>Date</th>
+<th>Amount</th>
+<th>Name</th>
+</tr>
 </thead>
 <tbody>
-HEADER$$
+$$FOOT
+</table>
+<p>Total: {SUM.DONATION}</p>
+GROUP$$
 
 $$BODY
 <tr>
-<td>$RECEIPTNUMBER</td>
+<td>$RRECEIPTNO</td>
 <td>$DATE</td>
 <td>$DONATION</td>
 <td>$OWNERNAME</td>
@@ -37,8 +51,4 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
-<h2>Total Payments: {COUNT.RECEIPTNUMBER}</h2>
-<h2>Total Paid: {SUM.DONATION}</h2>
 FOOTER$$
-
