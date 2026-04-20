@@ -5084,10 +5084,15 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
-        count = len(rows)
+        count = []
+        if len(rows) > 0 and "EMAILADDRESS" in rows[0]:
+            emails += [r.EMAILADDRESS for r in rows if r.EMAILADDRESS]
+        if len(rows) > 0 and "EMAILADDRESS2" in rows[0]:
+            emails += [r.EMAILADDRESS2 for r in rows if r.EMAILADDRESS2]
+        count = len(emails)
         if asm3.utils.is_smcom_smtp(dbo):
             asm3.smcom.check_bulk_email(dbo, count)
-        elif len(rows) > asm3.configuration.mail_merge_max_emails(dbo):
+        elif count > asm3.configuration.mail_merge_max_emails(dbo):
             raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
         fromadd = post["from"]
         subject = post["subject"]
