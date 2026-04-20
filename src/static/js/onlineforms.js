@@ -63,6 +63,10 @@ $(function() {
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
                         options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.auto_process_options } },
+                    { json_field: "LOGTYPEID", post_field: "logtypeid", label: _("Log Type"), type: "select",
+                        options: { displayfield: "LOGTYPENAME", valuefield: "ID", rows: controller.logtypes, prepend: '<option value="0">' + _("None") + "</option>" },
+                        callout: _("Record the content of the form in an animal log, this only applies to animal related forms")
+                    },
                     { json_field: "RETAINFOR", post_field: "retainfor", label: _("Retain for"),
                         type: "select",
                         callout: _("Retain processed form submissions on the media tab for a number of years"),

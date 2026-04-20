@@ -95,7 +95,7 @@ SPAMBOT_TXT = 'a_emailaddress'
 SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
 
 # Hidden fields that are sent with forms, but are not part of the form data
-IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method", "mediaflags", "submitterreplyto" ]
+IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method", "mediaflags", "submitterreplyto", "formid" ]
 
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
@@ -192,6 +192,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
     h.append('<input type="hidden" name="mediaflags" value="%s" />' % form.SETMEDIAFLAGS)
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
+    h.append('<input type="hidden" name="formid" value="%s" />' % asm3.html.escape(form.ID))
     h.append('<input type="hidden" name="submitterreplyto" value="%s" />' % asm3.html.escape(form.SUBMITTERREPLYADDRESS))
     h.append('<table class="asm-onlineform-table">')
     shelteranimals = None
@@ -721,6 +722,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
+        "LogTypeID":            post.integer("logtypeid"),
         "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
@@ -744,6 +746,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
+        "LogTypeID":            post.integer("logtypeid"),
         "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
@@ -964,6 +967,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
 
     l = dbo.locale
     formname = post["formname"]
+    formid = post.integer("formid")
     submitterreplyto = post["submitterreplyto"]
     posteddate = dbo.now()
     flags = post["flags"]
@@ -1045,6 +1049,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                 dbo.insert("onlineformincoming", {
                     "CollationID":      collationid,
                     "FormName":         formname,
+                    "FormID":           formid,
                     "PostedDate":       posteddate,
                     "Flags":            flags,
                     "MediaFlags":       mediaflags,
@@ -1407,6 +1412,10 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
                 if linktype == 0:
                     d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
                 asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.media.MEDIASOURCE_ONLINEFORM, asm3.utils.PostedData(d, dbo.locale))
+    if linktype == asm3.log.ANIMAL:
+        logtypeid = dbo.query_int("SELECT f.LogTypeID FROM onlineformincoming i INNER JOIN onlineform f ON i.FormID = f.ID WHERE i.CollationID = ? LIMIT 1",  (collationid,))
+        if logtypeid:
+            log_animal_form(dbo, username, linkid, logtypeid, collationid)
 
 def attach_animalbyname(dbo: Database, username: str, collationid: int, attachmedia: bool = True) -> Tuple[int, int, str]:
     """
@@ -1958,3 +1967,18 @@ def auto_remove_old_incoming_forms(dbo: Database) -> None:
     for r in rows:
         delete_onlineformincoming(dbo, "system", r.COLLATIONID)
     asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
+
+def log_animal_form(dbo: Database, username: str, animalid: int, logtypeid: int, collationid: int):
+    logcontent = []
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    for f in fields:
+        if f.FIELDNAME not in SYSTEM_FIELDS:
+            logcontent.append(f"{f.FIELDNAME}={f.VALUE}")
+    data = {
+        "type":     logtypeid,
+        "logdate":  asm3.i18n.format_date(asm3.i18n.today()),
+        "logtime":  asm3.i18n.format_time(asm3.i18n.now()),
+        "entry":    ", ".join(logcontent)
+    }
+    logpost = asm3.utils.PostedData(data, dbo.locale)
+    asm3.log.insert_log_from_form(dbo, username, asm3.log.ANIMAL, animalid, logpost)
