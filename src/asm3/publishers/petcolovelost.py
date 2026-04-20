@@ -84,7 +84,7 @@ def getAuthDetails(dbo: Database) -> Dict:
     }
 
 def getActualPublishedAnimals(auth: Dict) -> Dict:
-    ## This is hidden from public, just useful for testing/debugging
+    """ This is not used in normal publishing, but useful for testing/debugging to see what has been received by Petco """
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -93,18 +93,22 @@ def getActualPublishedAnimals(auth: Dict) -> Dict:
     return response["response"]
 
 def getRecordedPublishedAnimals(dbo: Database) -> Results:
+    """ Retrieve the list of animals already marked as published to Petco """
     return dbo.query(
         getAnimalDataQuery() +
         f"INNER JOIN animalpublished ap ON ap.AnimalID = a.ID WHERE ap.PublishedTo = '{IDTYPE_PETCOLOVELOST}'"
     )
 
 def purgeActualPublished(auth: Dict):
+    """ Remove all animal records from Petco. This is not used by the normal publisher and should only need to be used 
+    if there is an issue """
     animals = getActualPublishedAnimals(auth)
     animalsjson = asm3.utils.json_parse(animals)
     for animal in animalsjson["pets"]:
         removeAnimal(auth, animal["id"])
 
 def purgeImages(auth: Dict, pcllaid: str):
+    """ Removes all images sent to Petco relating to an animal with Petco ID pcllaid """
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -112,6 +116,7 @@ def purgeImages(auth: Dict, pcllaid: str):
     asm3.utils.post_data(f"{auth["url"]}/v2/animals/{pcllaid}/photos", "", httpmethod="DELETE", headers=headers)
 
 def purgeRecordedPublished(publisher: AbstractPublisher):
+    """ Remove all animal records that are marked as published to Petco on ASM """
     for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
         publisher.markAnimalUnpublished(publishedanimal["ID"])
     for an in publisher.dbo.query(getAnimalDataQuery() + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
@@ -137,7 +142,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
     def getAnimalData(self) -> str:
         return self.dbo.query(
             getAnimalDataQuery() +
-            "WHERE a.Archived = 0 AND ( s.SpeciesName = 'Dog' OR s.SpeciesName = 'Cat' ) AND et.ID = 2 AND a.CrueltyCase = 0" ## Include only archived, non case stray, cats and dogs
+            "WHERE a.Archived = 0 AND ( a.SpeciesID = 1 OR a.SpeciesID = 2 ) AND et.ID = 2 AND a.CrueltyCase = 0" # Include only archived, non case stray, cats and dogs
         )
     
     def run(self) -> None:
