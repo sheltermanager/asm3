@@ -2418,7 +2418,7 @@ def remove_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str):
                 if k != idtype: ids.append( "%s=%s" % (k, v))
         extraids = "|".join(ids)
         a.EXTRAIDS = extraids
-        dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
+        dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user, setLastChanged=False)
 
 
 def set_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str, idvalue: str) -> str:
@@ -2439,7 +2439,7 @@ def set_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str, idvalue: s
             if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
     a.EXTRAIDS = extraids
-    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
+    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user, setLastChanged=False)
     return extraids
 
 def get_animal_id_and_bonds(dbo: Database, animalid: int) -> List[int]:

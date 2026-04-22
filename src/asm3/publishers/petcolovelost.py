@@ -2,6 +2,7 @@
 import asm3.configuration
 import asm3.i18n
 import asm3.utils
+import asm3.publish
 import datetime
 
 from .base import AbstractPublisher
@@ -39,13 +40,18 @@ def create_shelter(dbo: Database) -> int:
     response = asm3.utils.post_json(f"{auth["url"]}/v2/shelters", asm3.utils.json(payload), headers)
     return response["response"]
 
-def getAnimalDataQuery() -> str:
+def getAnimalDataQuery(dbo: Database, lastpublished: datetime = None) -> str:
+    if not lastpublished:
+        lastpublished = dbo.sql_date(dbo.today(offset=-90))
+    else:
+        lastpublished = dbo.sql_date(lastpublished)
     return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, " \
-        "a.Sex, a.Size, a.DateOfBirth, a.DateBroughtIn, a.Weight, a.PickupAddress, " \
+        "a.Sex, a.Size, a.DateOfBirth, a.DateBroughtIn, a.Weight, a.PickupAddress, a.LASTCHANGEDDATE, " \
         "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, a.ExtraIds, " \
         "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, " \
         "a.Neutered, a.Declawed, a.IdentichipNumber, a.Identichip2Number, s.SpeciesName, z.Size, " \
-        "o.OwnerTown, o.OwnerCountry, o.OwnerAddress, o.OwnerPostcode, o.OwnerCounty " \
+        "o.OwnerTown, o.OwnerCountry, o.OwnerAddress, o.OwnerPostcode, o.OwnerCounty, " \
+        f"(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= {lastpublished} AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages " \
         "FROM animal a " \
         "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
         "INNER JOIN breed b2 ON a.Breed2ID = b2.ID " \
@@ -95,7 +101,7 @@ def getActualPublishedAnimals(auth: Dict) -> Dict:
 def getRecordedPublishedAnimals(dbo: Database) -> Results:
     """ Retrieve the list of animals already marked as published to Petco """
     return dbo.query(
-        getAnimalDataQuery() +
+        getAnimalDataQuery(dbo) +
         f"INNER JOIN animalpublished ap ON ap.AnimalID = a.ID WHERE ap.PublishedTo = '{IDTYPE_PETCOLOVELOST}'"
     )
 
@@ -119,7 +125,7 @@ def purgeRecordedPublished(publisher: AbstractPublisher):
     """ Remove all animal records that are marked as published to Petco on ASM """
     for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
         publisher.markAnimalUnpublished(publishedanimal["ID"])
-    for an in publisher.dbo.query(getAnimalDataQuery() + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
+    for an in publisher.dbo.query(getAnimalDataQuery(publisher.dbo) + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
         asm3.animal.remove_extra_id(publisher.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST)
 
 def removeAnimal(auth: Dict, pcllaid: str) -> Dict:
@@ -139,9 +145,9 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         self.initLog("petcolovelost", "Petcolovelost Publisher")
         self.dbo = dbo
     
-    def getAnimalData(self) -> str:
+    def getAnimalData(self, lastpublished: datetime = None) -> str:
         return self.dbo.query(
-            getAnimalDataQuery() +
+            getAnimalDataQuery(self.dbo, lastpublished) +
             "WHERE a.Archived = 0 AND ( a.SpeciesID = 1 OR a.SpeciesID = 2 ) AND et.ID = 2 AND a.CrueltyCase = 0" # Include only archived, non case stray, cats and dogs
         )
     
@@ -155,8 +161,10 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         self.setStartPublishing()
         
         auth = getAuthDetails(self.dbo)
+
+        lastpublished = asm3.publish.get_last_published(self.dbo, "petcolovelost")
         
-        animals = self.getAnimalData()
+        animals = self.getAnimalData(lastpublished)
 
         weightunit = "kg"
         if asm3.configuration.show_weight_in_lbs(self.dbo):
@@ -166,8 +174,12 @@ class PetcoLoveLostPublisher(AbstractPublisher):
 
         anCount = 0
         processed_animals = []
+        processed_animalids = []
+        skipped_animals = []
         for an in animals:
             anCount += 1
+            anchanged = True
+            newanimal = False
             try:
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -186,8 +198,12 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                 # Do we already have a PetcoLoveLost ID for this animal?
                 # This function returns empty string for no animalid
                 pcllid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_PETCOLOVELOST)
-
-                if pcllid:
+                if lastpublished and an.LASTCHANGEDDATE < lastpublished:
+                    self.log("Skipping: %s: %s (%d of %d) as not changed since last publish" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    anchanged = False
+                    # skipped_animals.append(an)
+                    processed_animalids.append(an.ID)
+                elif pcllid:
                     # Update existing post
                     self.log("Updating: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     del payload["shelterId"]
@@ -197,44 +213,48 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                     # Create new post
                     self.log("Creating: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     r = asm3.utils.post_json(f"{auth["url"]}/v2/animals", asm3.utils.json(payload), headers)
+                    newanimal = True
 
-                if r["status"] in (200, 201):
-                    responsejson = asm3.utils.json_parse(r["response"])
-                    if not pcllid:
-                        pcllid = responsejson["id"]
-                    asm3.animal.set_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, pcllid)
-                    purgeImages(auth, pcllid)
-                    photourls = self.getPhotoUrls(an["ID"])
-                    if len(photourls):
-                        imagepayload = {"photos": []}
-                        for photourl in photourls:
-
-                            ## Tweak to allow photos through to Petco Love Lost on dev server, may be swapped for line below when live
-                            imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
-                            # imagepayload["photos"].append({"url": photourl})
-
-                        pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
-                        prjson = asm3.utils.json_parse(pr["response"])
-                        if "id" in prjson.keys():
-                            self.log(f"Successfully processed {len(photourls)} x photo")
+                if anchanged or an.RECENTLYCHANGEDIMAGES:
+                    if anchanged:
+                        if r["status"] in (200, 201):
+                            responsejson = asm3.utils.json_parse(r["response"])
+                            if not pcllid:
+                                pcllid = responsejson["id"]
+                            asm3.animal.set_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, pcllid)
                         else:
-                            self.log(f"Error processing photo(s): {prjson["message"]}")
-                    else:
-                        self.log(f"No photos found")
+                            self.logError("Error: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    if newanimal or an.RECENTLYCHANGEDIMAGES:
+                        purgeImages(auth, pcllid)
+                        photourls = self.getPhotoUrls(an["ID"])
+                        if len(photourls):
+                            imagepayload = {"photos": []}
+                            for photourl in photourls:
+                                # Tweak to allow photos through to Petco Love Lost on dev server, may be swapped for line below when live
+                                imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
+                                # imagepayload["photos"].append({"url": photourl})
+
+                            pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
+                            prjson = asm3.utils.json_parse(pr["response"])
+                            if "id" in prjson.keys():
+                                self.log(f"Successfully processed {len(photourls)} x photo")
+                            else:
+                                self.log(f"Error processing photo(s): {prjson["message"]}")
+                        else:
+                            self.log("No photos found")
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed_animals.append(an)
-                else:
-                    self.logError("Error: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    processed_animalids.append(an.ID)
+                
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         if len(processed_animals) > 0:
             self.log("successfully published %d animals, marking sent" % len(processed_animals))
-            self.markAnimalsPublished(processed_animals)
         
         removalcount = 0
-        animals_to_remove = [ an for an in getRecordedPublishedAnimals(self.dbo) if an not in processed_animals ]
+        animals_to_remove = [ an for an in getRecordedPublishedAnimals(self.dbo) if an.ID not in processed_animalids ]
         for an in animals_to_remove:
             pcllid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_PETCOLOVELOST)
             if pcllid:
@@ -242,8 +262,8 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             asm3.animal.remove_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST)
             removalcount += 1
         self.log("Removed %s obsolete animals" % ( str(removalcount)))
-
         self.saveLog()
+        self.markAnimalsPublished(processed_animals)
         self.setPublisherComplete()
     
     def processAnimal(self, an: ResultRow, shelterid: str, weightunit: str) -> Dict:

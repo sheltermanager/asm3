@@ -183,6 +183,13 @@ def delete_old_publish_logs(dbo: Database) -> None:
     asm3.al.debug("removing %d publishing logs (keep for %d days)." % (count, KEEP_DAYS), "publish.delete_old_publish_logs", dbo)
     dbo.execute("DELETE FROM publishlog WHERE PublishDateTime < ?", [cutoff])
 
+def get_last_published(dbo: Database, publishername: str):
+    """ Returns datetime that a specific publisher last ran """
+    return dbo.query_date(
+        "SELECT PublishDateTime FROM publishlog WHERE Name = ? ORDER BY PublishDateTime desc",
+        [publishername]
+    )
+
 def get_publish_logs(dbo: Database) -> Results:
     """ Returns all publishing logs """
     return dbo.query("SELECT ID, PublishDateTime, Name, Success, Alerts FROM publishlog ORDER BY PublishDateTime DESC")

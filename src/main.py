@@ -7161,7 +7161,7 @@ class publish_options(JSONEndpoint):
     def post_pcllpurge(self, o):
         auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
         asm3.publishers.petcolovelost.purgeActualPublished(auth)
-        dummypc = asm3.publishers.base.PublishCriteria() ## Publish criteria not relevant but required by Abstract Publisher
+        dummypc = asm3.publishers.base.PublishCriteria() # Publish criteria not relevant but required by Abstract Publisher
         publisher = asm3.publishers.petcolovelost.PetcoLoveLostPublisher(o.dbo, dummypc)
         asm3.publishers.petcolovelost.purgeRecordedPublished(publisher)
 
