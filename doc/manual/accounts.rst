@@ -76,6 +76,19 @@ Options --> Accounts` where this account can specified). The default
 destination account for payments is the first bank account listed if you do not
 change it.
 
+
+Funded Payments
+---------------
+
+Funded payments can be enabled via 
+:menuselection:`Settings --> Options --> Accounts --> Enable funded payments`.
+
+When enabled, payments may be marked as "Available for Funding". Payments marked 
+this way become available to choose as a "Fund" when making future payments. 
+
+"Funded" payments will not create account transaction records.
+
+
 Reporting
 ---------
 
