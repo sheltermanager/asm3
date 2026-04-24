@@ -515,7 +515,7 @@ $(function() {
                     let formdata = "mode=pcllpublished";
                     let response = await common.ajax_post("publish_options", formdata);
                     let responsejson = JSON.parse(response);
-                    console.log(responsejson);
+                    console.log(responsejson); // This output is very useful when debugging
                     let html = '<h3>Published Animals</h3>';
                     if (responsejson.pets.length) {
                         html += '<ol>';
