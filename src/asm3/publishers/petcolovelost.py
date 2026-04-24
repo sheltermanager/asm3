@@ -7,7 +7,7 @@ import datetime
 
 from .base import AbstractPublisher
 
-from asm3.sitedefs import PETCO_LOVELOST_BASE_URL, PETCO_LOVELOST_API_KEY, PETCO_LOVELOST_DEV_IMAGES
+from asm3.sitedefs import PETCO_LOVELOST_BASE_URL, PETCO_LOVELOST_API_KEY
 from asm3.typehints import Database, Dict, PublishCriteria, ResultRow, Results
 
 import sys
