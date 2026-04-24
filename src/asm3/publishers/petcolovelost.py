@@ -224,24 +224,24 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                             asm3.animal.set_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, pcllid)
                         else:
                             self.logError("Error: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    if newanimal or an.RECENTLYCHANGEDIMAGES:
-                        purgeImages(auth, pcllid)
-                        photourls = self.getPhotoUrls(an["ID"])
-                        if len(photourls):
-                            imagepayload = {"photos": []}
-                            for photourl in photourls:
-                                # Tweak to allow photos through to Petco Love Lost on dev server, may be swapped for line below when live
-                                imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
-                                # imagepayload["photos"].append({"url": photourl})
+                    # if newanimal or an.RECENTLYCHANGEDIMAGES:
+                    purgeImages(auth, pcllid)
+                    photourls = self.getPhotoUrls(an["ID"])
+                    if len(photourls):
+                        imagepayload = {"photos": []}
+                        for photourl in photourls:
+                            # Tweak to allow photos through to Petco Love Lost on dev server, may be swapped for line below when live
+                            imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
+                            # imagepayload["photos"].append({"url": photourl})
 
-                            pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
-                            prjson = asm3.utils.json_parse(pr["response"])
-                            if "id" in prjson.keys():
-                                self.log(f"Successfully processed {len(photourls)} x photo")
-                            else:
-                                self.log(f"Error processing photo(s): {prjson["message"]}")
+                        pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
+                        prjson = asm3.utils.json_parse(pr["response"])
+                        if "id" in prjson.keys():
+                            self.log(f"Successfully processed {len(photourls)} x photo")
                         else:
-                            self.log("No photos found")
+                            self.log(f"Error processing photo(s): {prjson["message"]}")
+                    else:
+                        self.log("No photos found")
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed_animals.append(an)
                     processed_animalids.append(an.ID)

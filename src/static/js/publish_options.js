@@ -511,8 +511,6 @@ $(function() {
             $("#button-pcllpublished")
                 .button()
                 .click(async function() {
-                    // $(".pcllbutton").hide();
-                    // $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
                     header.show_loading(_("Waiting for Petco Love Lost"));
                     let formdata = "mode=pcllpublished";
                     let response = await common.ajax_post("publish_options", formdata);
@@ -530,8 +528,6 @@ $(function() {
                     }
                     $("#pclldata").html(html);
                     header.hide_loading();
-                    // $(".pcllbutton").show();
-                    // $("#button-pcllpublished").show();
                 });
             
             $("#button-pcllpurge")
