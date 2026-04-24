@@ -7,8 +7,8 @@ import datetime
 
 from .base import AbstractPublisher
 
-from asm3.sitedefs import PETCO_LOVELOST_BASE_URL, PETCO_LOVELOST_API_KEY, BASE_URL
-from asm3.typehints import Database, Dict, PublishCriteria, ResultRow, Results, List
+from asm3.sitedefs import PETCO_LOVELOST_BASE_URL, PETCO_LOVELOST_API_KEY
+from asm3.typehints import Database, Dict, PublishCriteria, ResultRow, Results
 
 import sys
 
@@ -177,11 +177,9 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         anCount = 0
         processed_animals = []
         processed_animalids = []
-        skipped_animals = []
         for an in animals:
             anCount += 1
             anchanged = True
-            newanimal = False
             try:
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -203,7 +201,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                 if lastpublished and an.LASTCHANGEDDATE < lastpublished:
                     self.log("Skipping: %s: %s (%d of %d) as not changed since last publish" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     anchanged = False
-                    # skipped_animals.append(an)
                     processed_animalids.append(an.ID)
                 elif pcllid:
                     # Update existing post
@@ -215,7 +212,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                     # Create new post
                     self.log("Creating: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     r = asm3.utils.post_json(f"{auth["url"]}/v2/animals", asm3.utils.json(payload), headers)
-                    newanimal = True
 
                 if anchanged or an.RECENTLYCHANGEDIMAGES:
                     if anchanged:
@@ -226,7 +222,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                             asm3.animal.set_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, pcllid)
                         else:
                             self.logError("Error: HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    # if newanimal or an.RECENTLYCHANGEDIMAGES:
                     purgeImages(auth, pcllid)
                     photourls = self.getPhotoUrls(an["ID"])
                     if len(photourls):
