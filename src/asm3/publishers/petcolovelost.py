@@ -15,8 +15,8 @@ import sys
 # ID type keys used in the ExtraIDs column
 IDTYPE_PETCOLOVELOST = "petcolovelost"
 
-def create_shelter(dbo: Database) -> int:
-    auth = getAuthDetails(dbo)
+def create_shelter(dbo: Database, username: str, password: str) -> int:
+    auth = getAuthDetails(dbo, username, password)
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -61,9 +61,11 @@ def getAnimalDataQuery(dbo: Database, lastpublished: datetime = None) -> str:
         "LEFT OUTER JOIN entryreason er ON a.EntryReasonID = er.ID " \
         "LEFT JOIN owner o ON a.OriginalOwnerID = o.ID "
 
-def getAuthDetails(dbo: Database) -> Dict:
-    username = asm3.configuration.petcolovelost_email(dbo)
-    password = asm3.configuration.petcolovelost_password(dbo)
+def getAuthDetails(dbo: Database, username: str = "", password: str = "") -> Dict:
+    if not username:
+        username = asm3.configuration.petcolovelost_email(dbo)
+    if not password:
+        password = asm3.configuration.petcolovelost_password(dbo)
     apikey = PETCO_LOVELOST_API_KEY
     url = PETCO_LOVELOST_BASE_URL
     shelterid = asm3.configuration.petcolovelost_shelterid(dbo)
@@ -269,7 +271,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
     def processAnimal(self, an: ResultRow, shelterid: str, weightunit: str) -> Dict:
         """ Generate a dictionary of data to post from an animal record """
         
-        ## Weight must be an integer number of ounces
+        # Weight must be an integer number of ounces
         weight = 0
         if weightunit == "kg":
             weight = an["WEIGHT"] * 35.274
