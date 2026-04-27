@@ -660,7 +660,7 @@ def get_onlineformincoming_html_print(dbo: Database, ids: List[int],
             h.append('<div style="page-break-before: always;"></div>')
     h.append("</body></html>")
     s = "\n".join(h)
-    if strip_bgimages: s= asm3.utils.strip_background_images(s)
+    if strip_bgimages: s = asm3.utils.strip_background_images(s)
     if strip_script: s = asm3.utils.strip_script_tags(s)
     if strip_style: s = asm3.utils.strip_style_tags(s)
     return s
@@ -1407,18 +1407,6 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
                 if linktype == 0:
                     d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
                 asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.media.MEDIASOURCE_ONLINEFORM, asm3.utils.PostedData(d, dbo.locale))
-    if linktype == asm3.log.ANIMAL:
-        fields = get_onlineformincoming_detail(dbo, collationid)
-        logtypeid = 0
-        for f in fields:
-            if f.FIELDNAME == "logtype":
-                logtypeid = dbo.query_int(
-                    "SELECT ID FROM logtype WHERE LogTypeName = ? LIMIT 1",  
-                    (f.VALUE,)
-                )
-                break
-        if logtypeid:
-            log_animal_form(dbo, username, linkid, logtypeid, collationid)
 
 def attach_animalbyname(dbo: Database, username: str, collationid: int, attachmedia: bool = True) -> Tuple[int, int, str]:
     """
@@ -1971,17 +1959,30 @@ def auto_remove_old_incoming_forms(dbo: Database) -> None:
         delete_onlineformincoming(dbo, "system", r.COLLATIONID)
     asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
 
-def log_animal_form(dbo: Database, username: str, animalid: int, logtypeid: int, collationid: int):
+def log_animal_form(dbo: Database, username: str, collationid: int):
+    logtypeid = 0
+    animalid = 0
+    animalname, dummy, dumy = get_onlineformincoming_animalperson(dbo, collationid)
+    if animalname:
+        sheltercode = animalname.split("::")[1]
+        animalid = dbo.query_int("SELECT ID FROM animal WHERE ShelterCode = '%s'" % sheltercode)
     logcontent = []
     fields = get_onlineformincoming_detail(dbo, collationid)
     for f in fields:
         if f.FIELDNAME not in SYSTEM_FIELDS:
             logcontent.append(f"{f.FIELDNAME}={f.VALUE}")
-    data = {
-        "type":     logtypeid,
-        "logdate":  asm3.i18n.format_date(asm3.i18n.today()),
-        "logtime":  asm3.i18n.format_time(asm3.i18n.now()),
-        "entry":    ", ".join(logcontent)
-    }
-    logpost = asm3.utils.PostedData(data, dbo.locale)
-    asm3.log.insert_log_from_form(dbo, username, asm3.log.ANIMAL, animalid, logpost)
+        if not logtypeid and f.FIELDNAME == "logtype":
+            logtypename = f.VALUE
+            logtypeid = dbo.query_int("SELECT ID FROM logtype WHERE LogTypeName = '%s'" % logtypename)
+    if animalid:
+        data = {
+            "type":     logtypeid,
+            "logdate":  asm3.i18n.format_date(asm3.i18n.today()),
+            "logtime":  asm3.i18n.format_time(asm3.i18n.now()),
+            "entry":    ", ".join(logcontent)
+        }
+        logpost = asm3.utils.PostedData(data, dbo.locale)
+        asm3.log.insert_log_from_form(dbo, username, asm3.log.ANIMAL, animalid, logpost)
+    else:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Unable to match to an animal record (need animalname).", dbo.locale))
+    return (collationid, animalid, animalname, 1)

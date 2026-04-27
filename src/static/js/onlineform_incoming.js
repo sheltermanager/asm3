@@ -155,6 +155,8 @@ $(function() {
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (non-shelter with owner)") + '</a></li>',
                     '<li id="button-animalbroughtin" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (with brought in person)") + '</a></li>',
+                    '<li id="button-animallog" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("log") + ' ' + _("Animal Log") + '</a></li>',
                     '<li id="button-equipmentloan" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("traploan") + ' ' + _("Equipment Loan") + '</a></li>',
                     '<li id="button-person" class="asm-menu-item"><a '
@@ -205,6 +207,10 @@ $(function() {
             });
             $("#button-animalnonshelter").click(function() {
                 onlineform_incoming.create_record("animalnonshelter", "animal");
+                return false;
+            });
+            $("#button-animallog").click(function() {
+                onlineform_incoming.create_animal_log();
                 return false;
             });
             $("#button-equipmentloan").click(function() {
@@ -368,6 +374,39 @@ $(function() {
                  hide: dlgfx.delete_hide,
                  buttons: ab
             });
+        },
+
+        /**
+         * Make an AJAX post to create an animal log.
+         */
+        create_animal_log: async function() {
+            $("#button-attach").asmmenu("hide_all");
+            header.hide_error();
+            header.show_loading(_("Creating..."));
+            let table = onlineform_incoming.table, buttons = onlineform_incoming.buttons, ids = tableform.table_ids(table);
+            try {
+                let result = await common.ajax_post("onlineform_incoming", "mode=animallog&ids=" + ids);
+                let selrows = tableform.table_selected_rows(table);
+                $.each(selrows, function(i, v) {
+                    $.each(result.split("^$"), function(ir, vr) {
+                        let [collationid, linkid, display, status] = vr.split("|");
+                        if (collationid == v.COLLATIONID) {
+                            v.LINK = '<a target="_blank" href="animal_log?id=' + linkid + '">' + display + '</a>';
+                            if (status && status == 1) {
+                                v.LINK += " " + html.icon("copy", _("Updated existing record"));
+                            }
+                            if (status && status == 2) {
+                                v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
+                            }
+                        }
+                    });
+                });
+                tableform.table_update(table);
+                tableform.table_update_buttons(table, buttons);
+            }
+            finally {
+                header.hide_loading();
+            }
         },
 
         /**
