@@ -6537,7 +6537,6 @@ class onlineforms(JSONEndpoint):
         return {
             "rows": onlineforms,
             "flags": asm3.lookups.get_person_flags(dbo),
-            "logtypes": asm3.lookups.get_log_types(dbo),
             "mediaflags": asm3.lookups.get_media_flags(dbo),
             "header": asm3.onlineform.get_onlineform_header(dbo),
             "footer": asm3.onlineform.get_onlineform_footer(dbo)
