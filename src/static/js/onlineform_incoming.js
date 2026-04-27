@@ -391,13 +391,7 @@ $(function() {
                     $.each(result.split("^$"), function(ir, vr) {
                         let [collationid, linkid, display, status] = vr.split("|");
                         if (collationid == v.COLLATIONID) {
-                            v.LINK = '<a target="_blank" href="animal_log?id=' + linkid + '">' + display + '</a>';
-                            if (status && status == 1) {
-                                v.LINK += " " + html.icon("copy", _("Updated existing record"));
-                            }
-                            if (status && status == 2) {
-                                v.LINK += " " + html.icon("warning", _("This person has been banned from adopting animals."));
-                            }
+                            v.LINK = '<a target="_blank" href="animal_log?id=' + linkid + '">' + display + '</a> ' + html.icon("log", _("Updated existing record"));
                         }
                     });
                 });
