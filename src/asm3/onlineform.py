@@ -1959,7 +1959,7 @@ def auto_remove_old_incoming_forms(dbo: Database) -> None:
         delete_onlineformincoming(dbo, "system", r.COLLATIONID)
     asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
 
-def log_animal_form(dbo: Database, username: str, collationid: int):
+def create_animal_log(dbo: Database, username: str, collationid: int):
     logtypeid = 0
     animalid = 0
     animalname, dummy, dumy = get_onlineformincoming_animalperson(dbo, collationid)

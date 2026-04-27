@@ -6368,7 +6368,7 @@ class onlineform_incoming(JSONEndpoint):
         user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, animalid, animalname, status = asm3.onlineform.log_animal_form(o.dbo, user, pid)
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal_log(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, pid)
         return "^$".join(rv)
