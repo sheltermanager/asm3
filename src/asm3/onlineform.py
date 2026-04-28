@@ -1974,6 +1974,8 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
         if not logtypeid and f.FIELDNAME == "logtype":
             logtypename = f.VALUE
             logtypeid = dbo.query_int("SELECT ID FROM logtype WHERE LogTypeName = '%s'" % logtypename)
+    if not logtypeid:
+        logtypeid = asm3.configuration.default_onlineformlogtype(dbo)
     if animalid:
         data = {
             "type":     logtypeid,

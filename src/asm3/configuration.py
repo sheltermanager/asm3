@@ -349,6 +349,7 @@ DEFAULTS = {
     "MoveAdoptGeneratePaperwork": "Yes",
     "MoveAdoptDonationsEnabled": "No",
     "JSWindowPrint": "Yes",
+    "OnlineFormDefaultLogType": "3",
     "OnlineFormSpamHoneyTrap": "Yes",
     "OnlineFormSpamUACheck": "No",
     "OnlineFormSpamFirstnameMixCase": "Yes",
@@ -1033,6 +1034,9 @@ def default_media_notes_from_file(dbo: Database) -> bool:
 
 def default_nonsheltertype(dbo: Database) -> int:
     return cint(dbo, "AFNonShelterType", 40)
+
+def default_onlineformlogtype(dbo: Database) -> int:
+    return cint(dbo, "OnlineFormDefaultLogType", 3)
 
 def default_payment_method(dbo: Database) -> int:
     return cint(dbo, "AFDefaultPaymentMethod", int(DEFAULTS["AFDefaultPaymentMethod"]))
