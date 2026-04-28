@@ -270,6 +270,7 @@ def get_animal_query(dbo: Database) -> str:
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
         "bo.OwnerTown AS BroughtInByOwnerTown, " \
+        "bo.OwnerCountry AS BroughtInByOwnerCountry, " \
         "bo.OwnerCounty AS BroughtInByOwnerCounty, " \
         "bo.OwnerPostcode AS BroughtInByOwnerPostcode, " \
         "bo.HomeTelephone AS BroughtInByHomeTelephone, " \
