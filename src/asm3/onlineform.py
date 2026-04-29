@@ -92,7 +92,7 @@ AP_CREATEANIMAL_NONSHELTER = 11
 SPAMBOT_TXT = 'a_emailaddress'
 
 # Fields that are added to forms by the system and are not user enterable
-SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed", "logtype" ]
+SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
 
 # Hidden fields that are sent with forms, but are not part of the form data
 IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method", "mediaflags", "submitterreplyto" ]
@@ -1965,15 +1965,15 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
     animalname, dummy, dumy = get_onlineformincoming_animalperson(dbo, collationid)
     if animalname:
         sheltercode = animalname.split("::")[1]
-        animalid = dbo.query_int("SELECT ID FROM animal WHERE ShelterCode = '%s'" % sheltercode)
+        animalid = dbo.query_int("SELECT ID FROM animal WHERE ShelterCode = ?", [sheltercode])
     logcontent = []
     fields = get_onlineformincoming_detail(dbo, collationid)
     for f in fields:
-        if f.FIELDNAME not in SYSTEM_FIELDS:
+        if f.FIELDNAME != "logtype" and f.FIELDNAME not in SYSTEM_FIELDS:
             logcontent.append(f"{f.FIELDNAME}={f.VALUE}")
         if not logtypeid and f.FIELDNAME == "logtype":
             logtypename = f.VALUE
-            logtypeid = dbo.query_int("SELECT ID FROM logtype WHERE LogTypeName = '%s'" % logtypename)
+            logtypeid = dbo.query_int("SELECT ID FROM logtype WHERE LogTypeName = ?", [logtypename])
     if not logtypeid:
         logtypeid = asm3.configuration.default_onlineformlogtype(dbo)
     if animalid:
