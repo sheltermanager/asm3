@@ -94,7 +94,8 @@ $.fn.personchoosermulti = asm_widget({
                 }
             }
         });
-
+        o.dialog.find("table").table({ sticky_header: false });
+        o.dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find.call(self, t); return false; }});
         o.dialog.find("img").hide();
         o.dialog.find(".personchoosermulti-searchbutton").button().css("padding", ".2em 1em").css("top", "-1px");
 
@@ -140,12 +141,13 @@ $.fn.personchoosermulti = asm_widget({
     },
 
     /**
-     * Returns the person row with ID aid
+     * Returns the person row with ID pid
      */
-    get_row: function(t, aid) {
+    get_row: function(t, pid) {
         let rv, o = t.data("o");
+        console.log(o.rows);
         $.each(o.rows, function(i, v) {
-            if (v.ID == aid) {
+            if (v.ID == pid) {
                 rv = v;
             }
         });
@@ -186,8 +188,10 @@ $.fn.personchoosermulti = asm_widget({
         let self = this, o = t.data("o"), selval = [];
         o.display.html("");
         o.results.find(":checked").each(function() {
-            let aid = $(this).attr("data"), rec = self.get_row(t, aid);
-            selval.push(aid);
+            let pid = $(this).attr("data");
+            console.log(pid);
+            let rec = self.get_row(t, pid);
+            selval.push(pid);
             console.log(rec);
             let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a>";
             o.display.append(disp);
@@ -209,9 +213,16 @@ $.fn.personchoosermulti = asm_widget({
             if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, a.ADDITIONALFLAGS.split("|"))) {
                 show = false;
             } else {
+                show = false;
                 let searchkey = o.dialog.find(".personchoosermulti-searchinput").val();
-                if (!a.OWNERNAME.toLowerCase().includes(searchkey.toLowerCase())) {
-                    show = false;
+                if (a.OWNERNAME.toLowerCase().includes(searchkey.toLowerCase())) {
+                    show = true;
+                } else if (a.OWNERADDRESS.toLowerCase().includes(searchkey.toLowerCase())) {
+                    show = true;
+                } else if (a.OWNERPOSTCODE.toLowerCase().replace(/ /g, "").includes(searchkey.toLowerCase().replace(/ /g, ""))) {
+                    show = true;
+                } else if (a.OWNERCODE.toLowerCase() == searchkey.toLowerCase()) {
+                    show = true;
                 }
             }
             // Show/hide the result appropriately
@@ -264,18 +275,21 @@ $.fn.personchoosermulti = asm_widget({
                 // Flags list
                 html.person_flag_options(null, rv.flags, o.flags);
                 //flags.html( html.list_to_options(rv.flags, "FLAG", "FLAG") );
-                o.flags.change();
+                // o.flags.change();
                 o.flags.on("change", function(e) {
+                    self.find.call(self, t);
                     self.update_filters(t);
                 });
                 o.search.on("click", function(e) {
+                    self.find.call(self, t);
                     self.update_filters(t);
                 });
 
                 // Load the list of people
-                $.each(o.rows, function(i, a) {
-                    o.results.append('<tr class="asm-personchoosermulti-result"><td><input type="checkbox" class="personselect" data="' + a.ID + '"> <a href="person?id="' + a.ID + '" target="_blank">' + a.OWNERNAME + '</a></td><td>' + a.OWNERCODE + '</td><td>' + a.OWNERADDRESS + '</td><td>' + a.OWNERPOSTCODE + ' </td></tr>');
-                });
+                // $.each(o.rows, function(i, a) {
+                //     console.log(a.ID);
+                //     o.results.append('<tr class="asm-personchoosermulti-result"><td><input type="checkbox" class="personselect" data="' + a.ID + '"> <a href="person?id=' + a.ID + '" target="_blank">' + a.OWNERNAME + '</a></td><td>' + a.OWNERCODE + '</td><td>' + a.OWNERADDRESS + '</td><td>' + a.OWNERPOSTCODE + ' </td></tr>');
+                // });
 
                 // Delegate event handler for the checkboxes
                 o.results.off("click", "input[type='checkbox']");
@@ -311,6 +325,77 @@ $.fn.personchoosermulti = asm_widget({
             error: function(jqxhr, textstatus, response) {
                 o.dialog.dialog("close");
                 o.dialog.find(".spinner").hide();
+                log.error(response);
+            }
+        });
+    },
+
+    find: function(t) {
+        let o = t.data("o");
+        let self = this, 
+            dialog = o.dialog,
+            node = o.node,
+            display = o.display;
+        dialog.find("img").show();
+        dialog.find("button").button("disable");
+        let q = encodeURIComponent(dialog.find("input").val());
+        let formdata = "mode=find&filter=all&type=all&q=" + q;
+        $.ajax({
+            type: "POST",
+            url:  "person_embed",
+            data: formdata,
+            dataType: "text",
+            success: function(data, textStatus, jqXHR) {
+                let h = "";
+                let people = jQuery.parseJSON(data);
+                o.rows = people;
+                $.each(people, function(i, p) {
+                    h += "<tr class=\"asm-personchoosermulti-result\">";
+                    h += "<td><input type=\"checkbox\" class=\"personselect\" data=\"" + p.ID + "\"><a href=\"#\" data=\"" + p.ID + "\">" + p.OWNERNAME + "</a></td>";
+                    h += "<td>" + p.OWNERCODE + "</td>";
+                    h += "<td>" + p.OWNERADDRESS + "</td>";
+                    h += "<td>" + p.OWNERPOSTCODE + "</td>";
+                    h += "</tr>";
+                });
+                dialog.find("table > tbody").html(h);
+                // Remove any existing events from previous searches
+                dialog.off("click", "a");
+                // Use delegation to bind click events for 
+                // the person once clicked. Triggers the change callback
+                dialog.on("click", "a", function(e) {
+                    let rec = people[$(this).attr("data")];
+                    t.val(rec.ID);
+                    t.data("selected", rec);
+                    display.html(self.render_display.call(self, t, rec));
+                    node.find(".personchooser-briefexpander").click(function() {
+                        let widget = $(this);
+                        if (widget.hasClass("ui-icon-triangle-1-e")) {
+                            widget.removeClass("ui-icon-triangle-1-e");
+                            widget.addClass("ui-icon-triangle-1-s");
+                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideDown(common.fx_speed);
+                        } else {
+                            widget.removeClass("ui-icon-triangle-1-s");
+                            widget.addClass("ui-icon-triangle-1-e");
+                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideUp(common.fx_speed);
+                        }
+                    });
+                    node.find(".personchooser-banned").val(rec.ISBANNED);
+                    node.find(".personchooser-idcheck").val(rec.IDCHECK);
+                    node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
+                    try { validate.dirty(true); } catch(exp) { }
+                    // dialog.dialog("close");
+                    t.trigger("change", [ rec ]);
+                    return false;
+                });
+                dialog.find("table").trigger("update");
+                dialog.find("img").hide();
+                dialog.find("button").button("enable");
+                common.inject_target(); 
+            },
+            error: function(jqxhr, textstatus, response) {
+                // dialog.dialog("close");
+                dialog.find("img").hide();
+                dialog.find("button").button("enable");
                 log.error(response);
             }
         });
