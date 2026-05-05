@@ -23,33 +23,39 @@ $.fn.personchoosermulti = asm_widget({
 
         let h = [
             '<div class="personchoosermulti asm-chooser-container">',
-            '<table style="margin-left: 0px; margin-right: 0px; width: 100%; ">',
-            '<tr>',
-            '<td class="personchoosermulti-display">',
-            '</td>',
-            '<td valign="top" style="text-align: end; white-space: nowrap">',
-            '<button type="button" class="personchoosermulti-link-find">' + _("Select people") + '</button>',
-            '<button type="button" class="personchoosermulti-link-clear">' + _("Clear") + '</button>',
-            '</td>',
-            '</tr>',
-            '</table>',
-            '<div class="personchoosermulti-find" title="' + html.title(_("Select people")) + '">',
-            '<div class="totalselected">',
-            html.info(_("{0} selected").replace("{0}", "0")),
-            '</div>',
-            '<img style="height: 16px" class="spinner" src="static/images/wait/rolling_3a87cd.svg" />',
-            '<div style="border-bottom: 1px solid #aaa; width: 100%">',
-            '<div class="asm-personchoosermulti-filter">',
-            '<a href="#" class="personchoosermulti-selectall" title="Select all"><span class="ui-icon ui-icon-check"></span></a>',
-            '</div>',
-            '<div class="asm-personchoosermulti-filter">',
-             _("Flags") + ': <select multiple="multiple" title="' + _("Filter") + '" class="personchoosermulti-flags asm-selectmulti"></select>', 
-            '</div>',
-            '</div>',
-            '<div>',
-            '<table class="personchoosermulti-results"></table>',
-            '</div>',
-            '</div>', 
+                '<table style="margin-left: 0px; margin-right: 0px; width: 100%; ">',
+                    '<tr>',
+                    '<td class="personchoosermulti-display">',
+                    '</td>',
+                    '<td valign="top" style="text-align: end; white-space: nowrap">',
+                    '<button type="button" class="personchoosermulti-link-find">' + _("Select people") + '</button>',
+                    '<button type="button" class="personchoosermulti-link-clear">' + _("Clear") + '</button>',
+                    '</td>',
+                    '</tr>',
+                '</table>',
+                '<div class="personchoosermulti-find" title="' + html.title(_("Select people")) + '">',
+                    '<div class="totalselected" style="margin-bottom: 5px;">',
+                        html.info(_("{0} selected").replace("{0}", "0")),
+                    '</div>',
+                    '<div style="border-bottom: 1px solid #aaa; width: 100%;padding-bottom: 5px;">',
+                        '<div class="asm-personchoosermulti-filter">',
+                            '<a href="#" class="personchoosermulti-selectall" title="Select all"><span class="ui-icon ui-icon-check"></span></a>',
+                        '</div>',
+                        '<div style="display: inline-block;vertical-align: top;">',
+                            '<input class="asm-textbox personchoosermulti-searchinput" type="text" />',
+                            '<button class="personchoosermulti-searchbutton">' + _("Search") + '</button>',
+                            '<img style="height: 16px" class="spinner" src="static/images/wait/rolling_3a87cd.svg" />',
+                        '</div>',
+                        '<div class="personchoosermulti-flags-container" style="display: inline-block;float: right;">',
+                            '<div style="vertical-align: top;padding-top: 3px;">' + _("Flags") + ':&nbsp;</div>',
+                            '<select style="display: inline-block;" multiple="multiple" title="' + _("Filter") + '" class="personchoosermulti-flags asm-selectmulti"></select>', 
+                        '</div>',
+                        '<div style="clear: right;"></div>',
+                    '</div>',
+                    '<div>',
+                    '<table class="personchoosermulti-results asm-widget asm-table tablesorter tablesorter-default"><thead><tr><th>' + _("Name") + '</th><th>' + _("Code") + '</th><th>' + _("Address") + '</th><th>' + _("Zipcode") + '</th></thead><tbody class="personchoosermulti-results-body"></tbody></table>',
+                    '</div>',
+                '</div>', 
             '</div>'
         ].join("\n");
 
@@ -61,7 +67,7 @@ $.fn.personchoosermulti = asm_widget({
         o.dialog = node.find(".personchoosermulti-find");
         o.display = node.find(".personchoosermulti-display");
         o.flags = node.find(".personchoosermulti-flags");
-        o.results = node.find(".personchoosermulti-results");
+        o.results = node.find(".personchoosermulti-results-body");
         o.loaded = false;
 
         t.parent().append(node);
@@ -80,16 +86,16 @@ $.fn.personchoosermulti = asm_widget({
             hide: dlgfx.edit_hide,
             buttons: acbuttons,
             open: function() {
-                // Load person thumbs when opening the dialog if they
-                // haven't been loaded yet
                 if (!o.loaded) {
                     self.load.call(self, t);
+                    $(".personchoosermulti-flags-container div").css("display", "inline-block");
                     o.loaded = true;
                 }
             }
         });
 
         o.dialog.find("img").hide();
+        o.dialog.find(".personchoosermulti-searchbutton").button().css("padding", ".2em 1em").css("top", "-1px");
 
         // Bind the find button
         node.find(".personchoosermulti-link-find")
@@ -258,7 +264,7 @@ $.fn.personchoosermulti = asm_widget({
 
                 // Load the list of people
                 $.each(o.rows, function(i, a) {
-                    o.results.append('<tr class="asm-personchoosermulti-result"><td><input type="checkbox" class="personselect" data="' + a.ID + '"></td><td>' + a.OWNERNAME + '</td><td>' + a.OWNERADDRESS + '</td><td>' + a.OWNERPOSTCODE + '</td></tr>');
+                    o.results.append('<tr class="asm-personchoosermulti-result"><td><input type="checkbox" class="personselect" data="' + a.ID + '"> <a href="person?id="' + a.ID + '" target="_blank">' + a.OWNERNAME + '</a></td><td>' + a.OWNERCODE + '</td><td>' + a.OWNERADDRESS + '</td><td>' + a.OWNERPOSTCODE + ' </td></tr>');
                 });
 
                 // Delegate event handler for the checkboxes
