@@ -67,6 +67,7 @@ $.fn.personchoosermulti = asm_widget({
         o.dialog = node.find(".personchoosermulti-find");
         o.display = node.find(".personchoosermulti-display");
         o.flags = node.find(".personchoosermulti-flags");
+        o.search = node.find(".personchoosermulti-searchbutton");
         o.results = node.find(".personchoosermulti-results-body");
         o.loaded = false;
 
@@ -205,9 +206,14 @@ $.fn.personchoosermulti = asm_widget({
         $.each(o.rows, function(i, a) {
             let show = true;
             let selflag = String(o.flags.val()).trim().split(",");
-
-            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, a.ADDITIONALFLAGS.split("|"))) { show = false; }
-            
+            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, a.ADDITIONALFLAGS.split("|"))) {
+                show = false;
+            } else {
+                let searchkey = o.dialog.find(".personchoosermulti-searchinput").val();
+                if (!a.OWNERNAME.toLowerCase().includes(searchkey.toLowerCase())) {
+                    show = false;
+                }
+            }
             // Show/hide the result appropriately
             o.dialog.find(".personselect[data='" + a.ID + "']").closest(".asm-personchoosermulti-result").toggle(show);
         });
@@ -260,6 +266,9 @@ $.fn.personchoosermulti = asm_widget({
                 //flags.html( html.list_to_options(rv.flags, "FLAG", "FLAG") );
                 o.flags.change();
                 o.flags.on("change", function(e) {
+                    self.update_filters(t);
+                });
+                o.search.on("click", function(e) {
                     self.update_filters(t);
                 });
 
