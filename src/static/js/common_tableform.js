@@ -1151,7 +1151,7 @@ const tableform = {
      *        options: "<option>test</option>"
      *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
-     *        personfilter: "all",   (only valid for person type)
+     *        personfilter: "all",   (only valid for person and personmulti type)
      *        persontype: "all",   (only valid for person type, other options individual or organization)
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), (note: done in fields_bind, not here)
@@ -1193,6 +1193,7 @@ const tableform = {
         $.each(fields, function(i, v) {
             if (v.type == "animal") { d += tableform.render_animal(v); }
             else if (v.type == "animalmulti") { d += tableform.render_animalmulti(v); }
+            else if (v.type == "personmulti") { d += tableform.render_personmulti(v); }
             else if (v.type == "autotext") { d += tableform.render_autotext(v); }
             else if (v.type == "check") { d += tableform.render_check(v); }
             else if (v.type == "currency") { d += tableform.render_currency(v); }
@@ -1428,6 +1429,25 @@ const tableform = {
         if (v.extraattributes)
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.animalfilter) { d += "data-filter=\"" + v.animalfilter + "\" "; }
+        if (v.validation) { d += tableform._render_validation_attr(v); }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
+        return tableform._render_formfield(v, d);
+    },
+
+    render_personmulti: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "asm-personchoosermulti");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.extraattributes)
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
         if (v.validation) { d += tableform._render_validation_attr(v); }
         if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
         if (v.xattr) { d += v.xattr + " "; }
@@ -2033,6 +2053,7 @@ const tableform = {
                 else if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
                 else if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
                 else if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
+                else if (v.type == "personmulti") { $("#" + v.post_field).personchoosermulti("clear"); return; }
                 else if (v.type == "datetime") { $("#" + v.post_field + "date, #" + v.post_field + "time").val(""); return; }
                 else if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
                 else if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
@@ -2087,6 +2108,10 @@ const tableform = {
             else if (v.type == "animalmulti") {
                 n.animalchoosermulti("clear");
                 n.animalchoosermulti("selectbyids", row[v.json_field]);
+            }
+            else if (v.type == "personmulti") {
+                n.personchoosermulti("clear");
+                n.personchoosermulti("selectbyids", row[v.json_field]);
             }
             else if (v.type == "person") {
                 n.personchooser("clear", false);

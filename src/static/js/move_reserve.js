@@ -16,8 +16,8 @@ $(function() {
                 html.textbar(_("This animal already has an active reservation."), { id: "multiplereserve", state: "error", icon: "alert", maxwidth: "600px" }),
                 html.textbar(_("This animal is not on the shelter."), { id: "notonshelter", state: "error", icon: "alert", maxwidth: "600px" }),
                 tableform.fields_render([
-                    { post_field: "animal", label: _("Animal"), type: "animal" },
-                    { post_field: "person", label: _("Reservation For"), type: "person" },
+                    { post_field: "animal", label: _("Animal"), type: "animalmulti" }, // Changed for testing, need the multi removing before production
+                    { post_field: "person", label: _("Reservation For"), type: "personmulti" },  // Changed for testing, need the multi removing before production
                     { post_field: "source", label: _("Adoption Source"), type: "select",
                         options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources, prepend: '<option value="0"></option>' }
                     },
@@ -84,24 +84,25 @@ $(function() {
 
             // Callback when person is changed
             $("#person").on("change", async function(event, rec) {
-                let response = await edit_header.person_with_adoption_warnings(rec.ID);
-                let p = jQuery.parseJSON(response)[0];
-
-                $("#ownerwarn").hide();
+                // console.log("Changed");
+                // let response = await edit_header.person_with_adoption_warnings(rec.ID);
+                // let p = jQuery.parseJSON(response)[0];
+                // console.log("AJAX executed");
+                // $("#ownerwarn").hide();
          
-                // Default giftaid if the person is registered
-                if (common.has_permission("oaod")) {
-                    $("#payment").payments("set_giftaid", p.ISGIFTAID == 1);
-                    $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
-                }
+                // // Default giftaid if the person is registered
+                // if (common.has_permission("oaod")) {
+                //     $("#payment").payments("set_giftaid", p.ISGIFTAID == 1);
+                //     $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
+                // }
 
-                let oopostcode = $(".animalchooser-oopostcode").val();
-                let bipostcode = $(".animalchooser-bipostcode").val(); 
-                let warn = html.person_movement_warnings(p, oopostcode, bipostcode);
-                if (warn.length > 0) {
-                    $("#warntext").html(warn.join("<br>"));
-                    $("#ownerwarn").show();
-                }
+                // let oopostcode = $(".animalchooser-oopostcode").val();
+                // let bipostcode = $(".animalchooser-bipostcode").val(); 
+                // let warn = html.person_movement_warnings(p, oopostcode, bipostcode);
+                // if (warn.length > 0) {
+                //     $("#warntext").html(warn.join("<br>"));
+                //     $("#ownerwarn").show();
+                // }
             });
 
             // Payments

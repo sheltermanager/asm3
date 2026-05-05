@@ -7104,6 +7104,14 @@ class person_embed(ASMEndpoint):
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "main.person_embed", o.dbo)
         return asm3.utils.json(rows)
 
+    def post_multiselect(self, o):
+        self.content_type("application/json")
+        dbo = o.dbo
+        rows = asm3.person.get_person_find_simple(dbo, "", classfilter="all", limit=asm3.configuration.record_search_limit(dbo))
+        flags = asm3.lookups.get_person_flags(dbo)
+        rv = { "rows": rows, "flags": flags }
+        return asm3.utils.json(rv)
+
     def post_id(self, o):
         self.check(asm3.users.VIEW_PERSON)
         self.content_type("application/json")
@@ -7124,14 +7132,17 @@ class person_embed(ASMEndpoint):
         self.content_type("application/json")
         self.cache_control(120)
         dbo = o.dbo
-        pid = o.post.integer("id")
-        p = asm3.person.get_person_embedded(dbo, pid)
-        if not p:
-            asm3.al.error("get person by id %d found no records." % pid, "main.person_embed", dbo)
-            raise web.notfound()
-        else:
-            asm3.person.embellish_adoption_warnings(dbo, p)
-            return asm3.utils.json((p,))
+        pids = o.post["ids"]
+        rows = []
+        for pid in [int(pid) for pid in pids.split(",")]:
+            p = asm3.person.get_person_embedded(dbo, pid)
+            if not p:
+                asm3.al.error("get person by id %d found no records." % pid, "main.person_embed", dbo)
+                raise web.notfound()
+            else:
+                asm3.person.embellish_adoption_warnings(dbo, p)
+                rows.append(p)
+        return asm3.utils.json(rows)
 
     def post_postcodelookup(self, o):
         self.content_type("application/json")
