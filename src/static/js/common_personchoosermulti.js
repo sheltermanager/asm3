@@ -46,7 +46,7 @@ $.fn.personchoosermulti = asm_widget({
                             '<button class="personchoosermulti-searchbutton">' + _("Search") + '</button>',
                             '<img style="height: 16px" class="spinner" src="static/images/wait/rolling_3a87cd.svg" />',
                         '</div>',
-                        '<div class="personchoosermulti-flags-container" style="display: inline-block;float: right;">',
+                        '<div class="personchoosermulti-flags-container" style="display: inline-block;float: right;max-width: 400px;">',
                             '<div style="vertical-align: top;padding-top: 3px;">' + _("Flags") + ':&nbsp;</div>',
                             '<select style="display: inline-block;" multiple="multiple" title="' + _("Filter") + '" class="personchoosermulti-flags asm-selectmulti"></select>', 
                         '</div>',
@@ -205,8 +205,9 @@ $.fn.personchoosermulti = asm_widget({
         $.each(o.rows, function(i, a) {
             let show = true;
             let selflag = String(o.flags.val()).trim().split(",");
-            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap(selflag, a.ADDITIONALFLAGS.split("|"))) { show = false; }
-            console.log(show);
+
+            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, a.ADDITIONALFLAGS.split("|"))) { show = false; }
+            
             // Show/hide the result appropriately
             o.dialog.find(".personselect[data='" + a.ID + "']").closest(".asm-personchoosermulti-result").toggle(show);
         });
