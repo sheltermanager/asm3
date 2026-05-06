@@ -187,20 +187,33 @@ $.fn.personchoosermulti = asm_widget({
      */
     select: function(t) {
         let self = this, o = t.data("o"), selval = [];
+        let summaryfloor = 5;
         o.display.html("");
-        let h = [
-            '<div class="personchoosermulti-summary">',
-            '<span class="personchooser-summaryexpander ui-icon ui-icon-triangle-1-e" data="0"></span>',
-            '<b>' + _("{0} selected").replace("{0}", o.selectedrows.length) + '</b>',
-            '</div>',
-            '<div class="personchoosermulti-details" style="display: none;">'
-        ];
-        $.each(o.selectedrows, function(i, p) {
-            selval.push(p.ID);
-            h.push("<a class=\"asm-embed-name\" href=\"person?id=" + p.ID + "\">" + p.OWNERNAME + "</a><br />");
-        });
-        h.push('</div>');
-        o.display.append(h.join("\n"));
+        let h = []
+        if (o.selectedrows.length > 0) {
+            if (o.selectedrows.length > summaryfloor) {
+                h = [
+                    '<div class="personchoosermulti-summary">',
+                    '<span class="personchooser-summaryexpander ui-icon ui-icon-triangle-1-e" data="0"></span>',
+                    '<b>' + _("{0} selected").replace("{0}", o.selectedrows.length) + '</b>',
+                    '</div>'
+                ];
+            }
+            h.push('<div class="personchoosermulti-details" style="display: none;">');
+            $.each(o.selectedrows, function(i, p) {
+                selval.push(p.ID);
+                h.push('<a class="asm-embed-name" href="person?id=' + p.ID + '">' + p.OWNERNAME + '</a><br />');
+            });
+            h.push('</div>');
+            if (o.selectedrows.length > summaryfloor) {
+                h.push('</div>');
+            }
+        }
+        let outputhtml = h.join("\n");
+        o.display.html(outputhtml);
+        if (o.selectedrows.length <= summaryfloor) {
+            o.display.find(".personchoosermulti-details").show();
+        }
         t.val(selval.join(","));
         t.trigger("change", [ t.val() ]);
         o.dialog.dialog("close");
