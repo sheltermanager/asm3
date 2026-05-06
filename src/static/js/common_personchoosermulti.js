@@ -188,12 +188,19 @@ $.fn.personchoosermulti = asm_widget({
     select: function(t) {
         let self = this, o = t.data("o"), selval = [];
         o.display.html("");
+        let h = [
+            '<div class="personchoosermulti-summary">',
+            '<span class="personchooser-summaryexpander ui-icon ui-icon-triangle-1-e" data="0"></span>',
+            '<b>' + _("{0} selected").replace("{0}", o.selectedrows.length) + '</b>',
+            '</div>',
+            '<div class="personchoosermulti-details" style="display: none;">'
+        ];
         $.each(o.selectedrows, function(i, p) {
             selval.push(p.ID);
-            let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + p.ID + "\">" + p.OWNERNAME + "</a>";
-            o.display.append(disp);
-            o.display.append("<br />");
+            h.push("<a class=\"asm-embed-name\" href=\"person?id=" + p.ID + "\">" + p.OWNERNAME + "</a><br />");
         });
+        h.push('</div>');
+        o.display.append(h.join("\n"));
         t.val(selval.join(","));
         t.trigger("change", [ t.val() ]);
         o.dialog.dialog("close");
@@ -207,7 +214,7 @@ $.fn.personchoosermulti = asm_widget({
         $.each(o.rows, function(i, p) {
             let show = true;
             let selflag = String(o.flags.val()).trim().split(",");
-            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, a.ADDITIONALFLAGS.split("|"))) {
+            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, p.ADDITIONALFLAGS.split("|"))) {
                 show = false;
             } else {
                 show = false;
@@ -273,12 +280,24 @@ $.fn.personchoosermulti = asm_widget({
                 html.person_flag_options(null, rv.flags, o.flags);
                 o.flags.on("change", function(e) {
                     self.find.call(self, t);
-                    self.update_filters(t);
                 });
                 o.search.on("click", function(e) {
                     self.find.call(self, t);
-                    self.update_filters(t);
                 });
+                o.display.on("click", ".personchooser-summaryexpander", function(e) {
+                    if ($(this).attr("data") == "0") {
+                        $(this).removeClass("ui-icon-triangle-1-e");
+                        $(this).addClass("ui-icon-triangle-1-s");
+                        $(this).attr("data", "1");
+                        o.display.find(".personchoosermulti-details").fadeIn();
+                    } else {
+                        $(this).addClass("ui-icon-triangle-1-e");
+                        $(this).removeClass("ui-icon-triangle-1-s");
+                        $(this).attr("data", "0");
+                        o.display.find(".personchoosermulti-details").fadeOut();
+                    }
+                });
+                // personchooser-summaryexpander
                 o.results.on("change", "input", function(e) {
                     let checkbox = $(e.currentTarget);
                     let rowid = checkbox.attr("data");
@@ -377,37 +396,11 @@ $.fn.personchoosermulti = asm_widget({
                 dialog.find("table > tbody").html(h);
                 // Remove any existing events from previous searches
                 dialog.off("click", "a");
-                // Use delegation to bind click events for 
-                // the person once clicked. Triggers the change callback
-                dialog.on("click", "a", function(e) {
-                    let rec = people[$(this).attr("data")];
-                    t.val(rec.ID);
-                    t.data("selected", rec);
-                    display.html(self.render_display.call(self, t, rec));
-                    node.find(".personchooser-briefexpander").click(function() {
-                        let widget = $(this);
-                        if (widget.hasClass("ui-icon-triangle-1-e")) {
-                            widget.removeClass("ui-icon-triangle-1-e");
-                            widget.addClass("ui-icon-triangle-1-s");
-                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideDown(common.fx_speed);
-                        } else {
-                            widget.removeClass("ui-icon-triangle-1-s");
-                            widget.addClass("ui-icon-triangle-1-e");
-                            widget.closest(".personchooser-display").find(".personchooser-ownerinfo").slideUp(common.fx_speed);
-                        }
-                    });
-                    node.find(".personchooser-banned").val(rec.ISBANNED);
-                    node.find(".personchooser-idcheck").val(rec.IDCHECK);
-                    node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
-                    try { validate.dirty(true); } catch(exp) { }
-                    // dialog.dialog("close");
-                    t.trigger("change", [ rec ]);
-                    return false;
-                });
                 dialog.find("table").trigger("update");
                 dialog.find("img").hide();
                 dialog.find("button").button("enable");
                 common.inject_target(); 
+                self.update_filters(t);
             },
             error: function(jqxhr, textstatus, response) {
                 // dialog.dialog("close");
