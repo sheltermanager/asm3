@@ -314,6 +314,13 @@ $(function() {
                 $("#payment").toggle(!$("#checkoutcreate").prop("checked"));
             });
 
+            // If a checkout email template is selected, automatically enable the checkout
+            $("#emailtemplateid").change(function() {
+                if ($("#emailtemplateid").select("value")) {
+                    $("#checkoutcreate").prop("checked", true).change();
+                }
+            });
+
             // Insurance related stuff
             $("#button-insurance")
                 .button({ icons: { primary: "ui-icon-cart" }, text: false })
