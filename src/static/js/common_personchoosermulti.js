@@ -124,6 +124,7 @@ $.fn.personchoosermulti = asm_widget({
         o.display.html("");
         o.results.find(":checked").prop("checked", false);
         this.update_status(t);
+        o.selectedrows = [];
         if (fireclearedevent) { t.trigger("cleared"); }
     },
 
@@ -187,11 +188,9 @@ $.fn.personchoosermulti = asm_widget({
     select: function(t) {
         let self = this, o = t.data("o"), selval = [];
         o.display.html("");
-        o.results.find(":checked").each(function() {
-            let pid = $(this).attr("data");
-            let rec = self.get_row(t, pid);
-            selval.push(pid);
-            let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a>";
+        $.each(o.selectedrows, function(i, p) {
+            selval.push(p.ID);
+            let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + p.ID + "\">" + p.OWNERNAME + "</a>";
             o.display.append(disp);
             o.display.append("<br />");
         });
@@ -223,16 +222,6 @@ $.fn.personchoosermulti = asm_widget({
                     show = true;
                 }
             }
-            // Show/hide the result appropriately
-            // if (show && !o.selectedrows.includes(p)) {
-            //     o.selectedrows.push(p);
-            // } else if (!show && o.selectedrows.includes(p)) {
-            //     $.each([...o.selectedrows], function(i, r) {
-            //         if (r == p) {
-            //             o.selectedrows.splice(i, 1);
-            //         }
-            //     });
-            // }
             o.dialog.find(".personselect[data='" + p.ID + "']").closest(".asm-personchoosermulti-result").toggle(show);
         });
     },
@@ -243,7 +232,8 @@ $.fn.personchoosermulti = asm_widget({
     update_status: function(t) {
         let o = t.data("o");
         let c = o.selectedrows.length;
-        o.dialog.find(".totalselected").html(html.info(_("{0} selected").replace("{0}", c)));
+        let mc = _("{0} selected").replace("{0}", c);
+        o.dialog.find(".totalselected").html(html.info(mc));
         o.results.find(".asm-personchoosermulti-selected").removeClass("asm-personchoosermulti-selected").removeClass("ui-state-highlight");
         o.results.find(":checked").each(function() {
             let tn = $(this);
@@ -290,10 +280,7 @@ $.fn.personchoosermulti = asm_widget({
                     self.update_filters(t);
                 });
                 o.results.on("change", "input", function(e) {
-                    // console.log($(e.currentTarget));
-                    // console.log(o.rows);
                     let checkbox = $(e.currentTarget);
-                    console.log(checkbox.prop("checked"));
                     let rowid = checkbox.attr("data");
                     $.each(o.rows, function(i, r) {
                         if (r.ID == rowid) {
@@ -303,7 +290,6 @@ $.fn.personchoosermulti = asm_widget({
                                     rowpresent = true;
                                 }
                             });
-                            console.log("rowpresent = " + rowpresent);
                             if (checkbox.prop("checked") && !rowpresent) {
                                 o.selectedrows.push(r);
                             } else if (!checkbox.prop("checked") && rowpresent) {
@@ -316,7 +302,6 @@ $.fn.personchoosermulti = asm_widget({
                         }
                     });
                     self.update_status(t);
-                    console.log(o.selectedrows);
                 });
 
                 // Delegate event handler for the checkboxes
@@ -381,9 +366,7 @@ $.fn.personchoosermulti = asm_widget({
                     h += "<tr class=\"asm-personchoosermulti-result\">";
                     h += "<td><input type=\"checkbox\" class=\"personselect\" data=\"" + p.ID + "\"";
                     $.each(o.selectedrows, function(i, r) {
-                        if (r.ID == p.ID) {
-                            h += " checked";
-                        }
+                        if (r.ID == p.ID) { h += " checked"; }
                     });
                     h += "><a href=\"/person?id=" + p.ID + "\" data=\"" + p.ID + "\">" + p.OWNERNAME + "</a></td>";
                     h += "<td>" + p.OWNERCODE + "</td>";
@@ -433,24 +416,5 @@ $.fn.personchoosermulti = asm_widget({
                 log.error(response);
             }
         });
-    },
-
-    value: function(t, newval) {
-        // Possible race condition if this function is called before load function has completed
-        let self = this;
-        if (newval === undefined) { // Value is being extracted rather than updated
-            return t.val();
-        }
-        if (!newval) { newval = ""; }
-        t.val(newval);
-        let o = t.data("o");
-        o.display.html("");
-        $.each(newval.split(","), function(i, v) {
-            let rec = self.get_row(t, parseInt(v));
-            let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a>";
-            o.display.append(disp);
-            o.display.append("<br />");
-        });
-        self.selectbyids(t, newval, true);
     }
 });
