@@ -69,6 +69,7 @@ $.fn.personchoosermulti = asm_widget({
         o.flags = node.find(".personchoosermulti-flags");
         o.search = node.find(".personchoosermulti-searchbutton");
         o.results = node.find(".personchoosermulti-results-body");
+        o.selectedrows = [];
         o.loaded = false;
 
         t.parent().append(node);
@@ -145,7 +146,6 @@ $.fn.personchoosermulti = asm_widget({
      */
     get_row: function(t, pid) {
         let rv, o = t.data("o");
-        console.log(o.rows);
         $.each(o.rows, function(i, v) {
             if (v.ID == pid) {
                 rv = v;
@@ -189,10 +189,8 @@ $.fn.personchoosermulti = asm_widget({
         o.display.html("");
         o.results.find(":checked").each(function() {
             let pid = $(this).attr("data");
-            console.log(pid);
             let rec = self.get_row(t, pid);
             selval.push(pid);
-            console.log(rec);
             let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a>";
             o.display.append(disp);
             o.display.append("<br />");
@@ -207,7 +205,7 @@ $.fn.personchoosermulti = asm_widget({
      */
     update_filters: function(t) {
         let o = t.data("o");
-        $.each(o.rows, function(i, a) {
+        $.each(o.rows, function(i, p) {
             let show = true;
             let selflag = String(o.flags.val()).trim().split(",");
             if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, a.ADDITIONALFLAGS.split("|"))) {
@@ -215,18 +213,27 @@ $.fn.personchoosermulti = asm_widget({
             } else {
                 show = false;
                 let searchkey = o.dialog.find(".personchoosermulti-searchinput").val();
-                if (a.OWNERNAME.toLowerCase().includes(searchkey.toLowerCase())) {
+                if (p.OWNERNAME.toLowerCase().includes(searchkey.toLowerCase())) {
                     show = true;
-                } else if (a.OWNERADDRESS.toLowerCase().includes(searchkey.toLowerCase())) {
+                } else if (p.OWNERADDRESS.toLowerCase().includes(searchkey.toLowerCase())) {
                     show = true;
-                } else if (a.OWNERPOSTCODE.toLowerCase().replace(/ /g, "").includes(searchkey.toLowerCase().replace(/ /g, ""))) {
+                } else if (p.OWNERPOSTCODE.toLowerCase().replace(/ /g, "").includes(searchkey.toLowerCase().replace(/ /g, ""))) {
                     show = true;
-                } else if (a.OWNERCODE.toLowerCase() == searchkey.toLowerCase()) {
+                } else if (p.OWNERCODE.toLowerCase() == searchkey.toLowerCase()) {
                     show = true;
                 }
             }
             // Show/hide the result appropriately
-            o.dialog.find(".personselect[data='" + a.ID + "']").closest(".asm-personchoosermulti-result").toggle(show);
+            // if (show && !o.selectedrows.includes(p)) {
+            //     o.selectedrows.push(p);
+            // } else if (!show && o.selectedrows.includes(p)) {
+            //     $.each([...o.selectedrows], function(i, r) {
+            //         if (r == p) {
+            //             o.selectedrows.splice(i, 1);
+            //         }
+            //     });
+            // }
+            o.dialog.find(".personselect[data='" + p.ID + "']").closest(".asm-personchoosermulti-result").toggle(show);
         });
     },
 
@@ -235,7 +242,7 @@ $.fn.personchoosermulti = asm_widget({
      */
     update_status: function(t) {
         let o = t.data("o");
-        let c = o.results.find(":checked").length;
+        let c = o.selectedrows.length;
         o.dialog.find(".totalselected").html(html.info(_("{0} selected").replace("{0}", c)));
         o.results.find(".asm-personchoosermulti-selected").removeClass("asm-personchoosermulti-selected").removeClass("ui-state-highlight");
         o.results.find(":checked").each(function() {
@@ -274,8 +281,6 @@ $.fn.personchoosermulti = asm_widget({
 
                 // Flags list
                 html.person_flag_options(null, rv.flags, o.flags);
-                //flags.html( html.list_to_options(rv.flags, "FLAG", "FLAG") );
-                // o.flags.change();
                 o.flags.on("change", function(e) {
                     self.find.call(self, t);
                     self.update_filters(t);
@@ -284,16 +289,39 @@ $.fn.personchoosermulti = asm_widget({
                     self.find.call(self, t);
                     self.update_filters(t);
                 });
-
-                // Load the list of people
-                // $.each(o.rows, function(i, a) {
-                //     console.log(a.ID);
-                //     o.results.append('<tr class="asm-personchoosermulti-result"><td><input type="checkbox" class="personselect" data="' + a.ID + '"> <a href="person?id=' + a.ID + '" target="_blank">' + a.OWNERNAME + '</a></td><td>' + a.OWNERCODE + '</td><td>' + a.OWNERADDRESS + '</td><td>' + a.OWNERPOSTCODE + ' </td></tr>');
-                // });
+                o.results.on("change", "input", function(e) {
+                    // console.log($(e.currentTarget));
+                    // console.log(o.rows);
+                    let checkbox = $(e.currentTarget);
+                    console.log(checkbox.prop("checked"));
+                    let rowid = checkbox.attr("data");
+                    $.each(o.rows, function(i, r) {
+                        if (r.ID == rowid) {
+                            let rowpresent = false;
+                            $.each(o.selectedrows, function(i, v) {
+                                if (v.ID == r.ID) {
+                                    rowpresent = true;
+                                }
+                            });
+                            console.log("rowpresent = " + rowpresent);
+                            if (checkbox.prop("checked") && !rowpresent) {
+                                o.selectedrows.push(r);
+                            } else if (!checkbox.prop("checked") && rowpresent) {
+                                $.each([...o.selectedrows], function(c, s) {
+                                    if (r.ID == s.ID) {
+                                        o.selectedrows.splice(c, 1);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    self.update_status(t);
+                    console.log(o.selectedrows);
+                });
 
                 // Delegate event handler for the checkboxes
                 o.results.off("click", "input[type='checkbox']");
-                o.results.on("click", "input[type='checkbox']", function(e) { 
+                o.results.on("click", "input[type='checkbox']", function(e) {
                     self.update_status(t);
                 });
 
@@ -304,12 +332,12 @@ $.fn.personchoosermulti = asm_widget({
                 o.dialog.find(".personchoosermulti-selectall").click(function(e) {
                     if (!self.select_all_toggle) {
                         self.select_all_toggle = true;
-                        o.dialog.find(".personselect:visible").prop("checked", true);
+                        o.dialog.find(".personselect:visible").prop("checked", true).change();
                         self.update_status(t);
                     }
                     else {
                         self.select_all_toggle = false;
-                        o.dialog.find(".personselect").prop("checked", false);
+                        o.dialog.find(".personselect").prop("checked", false).change();
                         self.update_status(t);
                     }
                     return false;
@@ -351,7 +379,13 @@ $.fn.personchoosermulti = asm_widget({
                 o.rows = people;
                 $.each(people, function(i, p) {
                     h += "<tr class=\"asm-personchoosermulti-result\">";
-                    h += "<td><input type=\"checkbox\" class=\"personselect\" data=\"" + p.ID + "\"><a href=\"#\" data=\"" + p.ID + "\">" + p.OWNERNAME + "</a></td>";
+                    h += "<td><input type=\"checkbox\" class=\"personselect\" data=\"" + p.ID + "\"";
+                    $.each(o.selectedrows, function(i, r) {
+                        if (r.ID == p.ID) {
+                            h += " checked";
+                        }
+                    });
+                    h += "><a href=\"/person?id=" + p.ID + "\" data=\"" + p.ID + "\">" + p.OWNERNAME + "</a></td>";
                     h += "<td>" + p.OWNERCODE + "</td>";
                     h += "<td>" + p.OWNERADDRESS + "</td>";
                     h += "<td>" + p.OWNERPOSTCODE + "</td>";
@@ -413,7 +447,7 @@ $.fn.personchoosermulti = asm_widget({
         o.display.html("");
         $.each(newval.split(","), function(i, v) {
             let rec = self.get_row(t, parseInt(v));
-            let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+            let disp = "<a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a>";
             o.display.append(disp);
             o.display.append("<br />");
         });

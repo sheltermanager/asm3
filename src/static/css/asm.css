@@ -377,12 +377,6 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-personchoosermulti-filter .asmSelect {
     width: 150px;
 }
-/* .asm-personchoosermulti-result {
-    display: inline-block;
-    text-align: center;
-    opacity: 0.5; 
-    zoom: 1;
-} */
 .asm-personchoosermulti-selected {
     opacity: 1.0; 
     zoom: 1;
