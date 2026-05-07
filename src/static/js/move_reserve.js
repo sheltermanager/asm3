@@ -17,7 +17,7 @@ $(function() {
                 html.textbar(_("This animal is not on the shelter."), { id: "notonshelter", state: "error", icon: "alert", maxwidth: "600px" }),
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
-                    { post_field: "person", label: _("Reservation For"), type: "personmulti" },
+                    { post_field: "person", label: _("Reservation For"), type: "person" },
                     { post_field: "source", label: _("Adoption Source"), type: "select",
                         options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources, prepend: '<option value="0"></option>' }
                     },
@@ -86,7 +86,7 @@ $(function() {
             $("#person").on("change", async function(event, rec) {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
-
+                
                 $("#ownerwarn").hide();
          
                 // Default giftaid if the person is registered
