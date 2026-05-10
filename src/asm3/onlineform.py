@@ -113,7 +113,7 @@ FORM_FIELDS = [
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "animalname2", "animalname3", "reserveanimalname", "reserveanimalname2", "reserveanimalname3",
     "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", "healthproblems", 
-    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", "commentsanimal", 
+    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", "datebroughtin", "commentsanimal", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime",
@@ -1457,7 +1457,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
     "comments", "commentsanimal", "hiddencomments", "type", "species", "breed1", "breed2", 
-    "color", "sex", "neutered", "weight"
+    "color", "sex", "neutered", "weight", "datebroughtin"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1501,6 +1501,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
         if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
         if f.FIELDNAME == "weight" and asm3.utils.is_numeric(f.VALUE): d["weight"] = f.VALUE
+        if f.FIELDNAME == "datebroughtin": d["datebroughtin"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     # If the form has a breed, but no species, use the species from that breed
     # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
