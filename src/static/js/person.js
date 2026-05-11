@@ -525,9 +525,10 @@ $(function() {
                 if (email2) { email += ", " + email2; }
                 $("#emailform").emailform("show", {
                     post: "person",
-                    formdata: "mode=email&personid=" + $("#personid").val(),
+                    formdata: "personid=" + $("#personid").val(),
                     name: $("#forenames").val() + " " + $("#surname").val(),
                     email: email,
+                    mobiletelephone: $("#mobiletelephone").val(),
                     logtypes: controller.logtypes,
                     personid: controller.person.ID,
                     templates: controller.templatesemail

@@ -206,6 +206,12 @@ $.fn.emailform = asm_widget({
             '<div id="dialog-email" style="display: none" title="' + html.title(_("Email person"))  + '">',
             '<table width="100%">',
             '<tr>',
+            '<td colspan="2">',
+            '<button id="em-email">' + _("Email") + '</button>',
+            '<button id="em-whatsapp">' + _("WhatsApp") + '</button>',
+            '</td>',
+            '</tr>',
+            '<tr class="em-emailrow">',
             '<td><label for="em-from">' + _("From") + '</label></td>',
             '<td><input id="em-from" data="from" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
@@ -213,23 +219,23 @@ $.fn.emailform = asm_widget({
             '<td><label for="em-to">' + _("To") + '</label></td>',
             '<td><input id="em-to" data="to" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="em-emailrow">',
             '<td><label for="em-cc">' + _("CC") + '</label></td>',
             '<td><input id="em-cc" data="cc" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="em-emailrow">',
             '<td><label for="em-bcc">' + _("BCC") + '</label></td>',
             '<td><input id="em-bcc" data="bcc" type="text" class="asm-doubletextbox" autocomplete="new-password" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="em-emailrow">',
             '<td><label for="em-subject">' + _("Subject") + '</label></td>',
             '<td><input id="em-subject" data="subject" type="text" class="asm-doubletextbox" /></td>',
             '</tr>',
-            '<tr id="em-attachmentrow">',
+            '<tr id="em-attachmentrow" class="em-emailrow">',
             '<td><label for="em-attachments">' + _("Attachments") + '</label></td>',
             '<td><span id="em-attachments" data="attachments" type="text" class="strong"></span></td>',
             '</tr>',
-            '<tr id="em-docreporow">',
+            '<tr id="em-docreporow" class="em-emailrow">',
             '<td><label for="em-docrepo">' + _("Document Repository") + '</label></td>',
             '<td>',
             '<select id="em-docrepo" data="docrepo" multiple="multiple" class="asm-selectmulti" title="' + _("Select") + '">',
@@ -246,8 +252,9 @@ $.fn.emailform = asm_widget({
             '</td>',
             '</tr>',
             '</table>',
-            '<div id="em-body" data="body" data-margin-top="24px" data-height="300px" class="asm-richtextarea"></div>',
-            '<p>',
+            '<div id="em-body" data="body" data-margin-top="24px" data-height="300px" class="asm-richtextarea em-emailrow"></div>',
+            '<textarea id="em-messagebody" data="messagebody" data-margin-top="24px" data-height="300px" class="em-whatsapprow asm-field asm-textarea asm-textareafixed asm-widget" style="display: none;"></textarea>',
+            '<p class="em-emailrow">',
             '<label for="em-template">' + _("Template") + '</label>',
             '<select id="em-template" class="asm-selectbox">',
             '<option value=""></option>',
@@ -272,21 +279,40 @@ $.fn.emailform = asm_widget({
             text: _("Send"),
             "class": "asm-dialog-actionbutton",
             click: function() {
-                validate.reset("dialog-email");
-                if (!validate.notblank(["em-from", "em-to"])) { return; }
-                if (!validate.validemail(["em-from", "em-to"])) { return; }
-                if ($("#em-cc").val() != "" && !validate.validemail(["em-cc"])) { return; }
-                if ($("#em-bcc").val() != "" && !validate.validemail(["em-bcc"])) { return; }
+                console.log("Sending");
+                console.log(t);
                 let o = t.data("o");
-                if (o.formdata) { o.formdata += "&"; }
-                o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
-                header.show_loading(_("Sending..."));
-                common.ajax_post(o.post, o.formdata, function() {
-                    let recipients = $("#em-to").val();
-                    if ($("#em-cc").val() != "") { recipients += ", " + $("#em-cc").val(); }
-                    header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
-                    $("#dialog-email").dialog("close");
-                });
+                // console.log(o);
+                validate.reset("dialog-email");
+                if (o.sendmethod == "email") {
+                    o.formdata += "&mode=email";
+                    if (!validate.notblank(["em-from", "em-to"])) { return; }
+                    if (!validate.validemail(["em-from", "em-to"])) { return; }
+                    if ($("#em-cc").val() != "" && !validate.validemail(["em-cc"])) { return; }
+                    if ($("#em-bcc").val() != "" && !validate.validemail(["em-bcc"])) { return; }
+                    if (o.formdata) { o.formdata += "&"; }
+                    o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
+                    header.show_loading(_("Sending..."));
+                    common.ajax_post(o.post, o.formdata, function() {
+                        let recipients = $("#em-to").val();
+                        if ($("#em-cc").val() != "") { recipients += ", " + $("#em-cc").val(); }
+                        header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
+                        $("#dialog-email").dialog("close");
+                    });
+                } else {
+                    o.formdata += "&mode=whatsapp";
+                    if (!validate.notblank(["em-to"])) { return; }
+                    if (!validate.notblank(["em-messagebody"])) { return; }
+                    o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-textarea").toPOST();
+                    header.show_loading(_("Sending..."));
+                    common.ajax_post(o.post, o.formdata, function() {
+                        let recipients = $("#em-to").val();
+                        header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
+                        $("#dialog-email").dialog("close");
+                    });
+                }
+                
+                
             }
         };
         b[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -348,6 +374,8 @@ $.fn.emailform = asm_widget({
      */
     show: function(t, o) {
         t.data("o", o);
+        $("#dialog-email").find("button").button();
+        $("#em-email").addClass("ui-state-disabled").addClass("ui-button-disabled");
         $("#dialog-email").dialog("option", "title", o.title || _("Email person"));
         $("#dialog-email").dialog("open");
         if (o.logtypes) {
@@ -463,6 +491,27 @@ $.fn.emailform = asm_widget({
             $("#em-logtype").val(config.integer("EmailLogType"));
         }
         $("#em-subject").focus();
+
+        o.sendmethod = "email";
+
+        $("#em-whatsapp").on("click", function() {
+            $("#em-whatsapp").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#em-email").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
+            $("#em-to").val(o.mobiletelephone);
+            $(".em-emailrow").hide();
+            $(".em-whatsapprow").show();
+            o.sendmethod = "whatsapp";
+        });
+
+        $("#em-email").on("click", function() {
+            $("#em-email").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#em-whatsapp").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
+            console.log(o);
+            $("#em-to").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">");
+            $(".em-emailrow").show();
+            $(".em-whatsapprow").hide();
+            o.sendmethod = "email";
+        });
     }
 });
 

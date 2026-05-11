@@ -6936,6 +6936,10 @@ class person(JSONEndpoint):
     def post_merge(self, o):
         self.check(asm3.users.MERGE_PERSON)
         asm3.person.merge_person(o.dbo, o.user, o.post.integer("personid"), o.post.integer("mergepersonid"))
+    
+    def post_whatsapp(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        asm3.person.send_whatsapp_from_form(o.dbo, o.user, o.post)
 
 class person_boarding(JSONEndpoint):
     url = "person_boarding"

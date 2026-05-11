@@ -1136,6 +1136,11 @@ select:disabled, input:disabled, textarea:disabled {
     display: none;
 }
 
+#em-messagebody {
+    width: calc(100% - 10px);
+    min-height: 200px;
+}
+
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-width:480px) {
 
