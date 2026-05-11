@@ -4,19 +4,12 @@
   roles:
     - "City-of-Bloomington.apache"
   vars:
-    archive_name: "asm3-{{ asm_version }}"
-    archive_path: "archives/asm3-{{ asm_version }}.tar.gz"
+    asm_version: "{{ lookup('ansible.builtin.file', '../../VERSION') }}"
+    archive_name: "sheltermanager3-{{ asm_version }}-src"
+    archive_path: "../../build/{{ archive_name }}.tar.gz"
   tasks:
-    - name: "Mysql setup"
-      include_tasks: "tasks/mysql.yml"
-      when: "asm_db.type == 'MYSQL'"
-
-    - name: "Postgres setup"
-      include_tasks: "tasks/postgresql.yml"
-      when: "asm_db.type == 'POSTGRESQL'"
-
     - name: "Install Animal Shelter Manger dependencies"
-      apt:
+      ansible.builtin.apt:
         name: "{{ packages }}"
         state: "present"
       vars:
@@ -24,7 +17,6 @@
           - "libapache2-mod-wsgi-py3"
           - "make"
           - "imagemagick"
-          - "wkhtmltopdf"
           - "memcached"
           - "curl"
           - "python3-lxml"
@@ -45,6 +37,7 @@
         group: "staff"
         mode: "u=rwx,g=rwxs,o=rx"
       with_items:
+        - "{{ asm_path | dirname }}/{{ archive_name }}"
         - "{{ asm_data }}"
         - "{{ asm_data }}/cache"
         - "{{ asm_data }}/media"
@@ -55,7 +48,7 @@
     - name: "Extract release"
       ansible.builtin.unarchive:
         src:  "{{ archive_path }}"
-        dest: "{{ asm_path | dirname }}"
+        dest: "{{ asm_path | dirname }}/{{ archive_name }}"
         owner: 'www-data'
         group: 'staff'
 
@@ -66,11 +59,6 @@
         state: 'link'
         owner: 'www-data'
         group: 'staff'
-
-    - name: "Create Version File"
-      ansible.builtin.template:
-        src: "__version__.py"
-        dest: "{{ asm_path }}/src/asm3/__version__.py"
 
     - name: "Update apache configuration"
       template:
