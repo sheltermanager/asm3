@@ -418,12 +418,12 @@ class PetFinderPublisher(FTPPublisher):
             urls = self.getPhotoUrls(an.ID)
             videolinkincluded = False
             for a in range(0, 6):
-                url = self.pfImageUrl(an.ID, urls, 0, cikeys)
+                url = self.pfImageUrl(an.ID, urls, a, cikeys)
                 if an.WEBSITEVIDEOURL and not videolinkincluded and (not url or a == 5):
                     line.append(an.WEBSITEVIDEOURL)
                     videolinkincluded = True
                 else:
-                    line.append(self.pfImageUrl(an.ID, urls, 0, cikeys))
+                    line.append(url)
         # Arrival Date
         line.append(self.pfDate(an.MOSTRECENTENTRYDATE))
         # Birth Date
