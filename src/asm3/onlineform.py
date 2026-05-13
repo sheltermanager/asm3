@@ -1964,8 +1964,7 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
     animalid = 0
     animalname, dummy, dumy = get_onlineformincoming_animalperson(dbo, collationid)
     if animalname:
-        sheltercode = animalname.split("::")[1]
-        animalid = dbo.query_int("SELECT ID FROM animal WHERE ShelterCode = ?", [sheltercode])
+        animalid = get_animal_id_from_field(dbo, animalname)
     logcontent = []
     fields = get_onlineformincoming_detail(dbo, collationid)
     for f in fields:
@@ -1975,7 +1974,7 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
             logtypename = f.VALUE
             logtypeid = dbo.query_int("SELECT ID FROM logtype WHERE LogTypeName = ?", [logtypename])
     if not logtypeid:
-        logtypeid = asm3.configuration.default_onlineformlogtype(dbo)
+        logtypeid = asm3.configuration.default_log_type(dbo)
     if animalid:
         data = {
             "type":     logtypeid,

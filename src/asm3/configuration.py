@@ -1029,14 +1029,14 @@ def default_location(dbo: Database) -> int:
 def default_log_filter(dbo: Database) -> int:
     return cint(dbo, "AFDefaultLogFilter", 0)
 
+def default_log_type(dbo: Database) -> int:
+    return cint(dbo, "AFDefaultLogType", 0)
+
 def default_media_notes_from_file(dbo: Database) -> bool:
     return cboolean(dbo, "DefaultMediaNotesFromFile", DEFAULTS["DefaultMediaNotesFromFile"] == "Yes")
 
 def default_nonsheltertype(dbo: Database) -> int:
     return cint(dbo, "AFNonShelterType", 40)
-
-def default_onlineformlogtype(dbo: Database) -> int:
-    return cint(dbo, "OnlineFormDefaultLogType", 3)
 
 def default_payment_method(dbo: Database) -> int:
     return cint(dbo, "AFDefaultPaymentMethod", int(DEFAULTS["AFDefaultPaymentMethod"]))
