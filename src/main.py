@@ -7465,6 +7465,7 @@ class postcode_lookup(ASMEndpoint):
 
     def post_getaddress(self, o):
         self.content_type("application/json")
+        self.header("Access-Control-Allow-Origin", "*") # CORS
         self.cache_control(120)
         return asm3.geo.get_address(o.dbo, o.post["postcode"], o.post["country"])
 

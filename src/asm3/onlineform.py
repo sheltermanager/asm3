@@ -197,7 +197,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     shelteranimals = None
     adoptableanimals = None
     fosteranimals = None
-    extraclass = ""
     for f in formfields:
         fname = "%s_%s" % (f.FIELDNAME, f.ID)
         cname = asm3.html.escape(fname)
@@ -210,6 +209,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         requiredtext = ""
         requiredspan = ""
         autocomplete = ""
+        extraclass = ""
         if f.FIELDNAME in AUTOCOMPLETE_MAP:
             autocomplete = "autocomplete=\"%s\"" % AUTOCOMPLETE_MAP[f.FIELDNAME]
         if f.MANDATORY == 1: 
@@ -244,7 +244,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' % \
                 (fid, cname, required))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            extraclass = ""
             if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
             elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
             elif f.FIELDNAME == "town": extraclass = "asm-onlineform-town"
