@@ -238,9 +238,9 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                         pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
                         prjson = asm3.utils.json_parse(pr["response"])
                         if "id" in prjson.keys():
-                            self.log(f"Successfully processed {str(photourls)} {len(photourls)} x photo")
+                            self.log(f"Successfully processed {str(imagepayload["photos"])} {len(photourls)} x photo")
                         else:
-                            self.log(f"Error processing photo(s): {str(photourls)} {prjson["message"]}")
+                            self.log(f"Error processing photo(s): {str(imagepayload["photos"])} {prjson["message"]}")
                     else:
                         self.log("No photos found")
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))

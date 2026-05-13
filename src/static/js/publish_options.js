@@ -474,7 +474,7 @@ $(function() {
         },
 
         bind: function() {
-            this.bind_petcolovelost();
+            publish_options.bind_petcolovelost();
             
             const change_checkbox = function() {
                 $(".enablecheck").each(function() {
