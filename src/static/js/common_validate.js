@@ -80,7 +80,7 @@ const validate = {
     a_click_handler: function(event, href) {
         // If the URL starts with a hash, don't do anything as it wouldn't
         // be navigating away from the page.
-        if (!href) { href = $(this).attr("href"); }
+        if (!href) { href = $(this).attr("href") || ""; }
         if (href.indexOf("#") != 0) {
             if (validate.unsaved) {
                 event.preventDefault();
