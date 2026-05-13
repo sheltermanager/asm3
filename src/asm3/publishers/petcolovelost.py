@@ -228,11 +228,6 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                     if len(photourls):
                         imagepayload = {"photos": []}
                         for photourl in photourls:
-                            # Tweak to allow photos through to Petco Love Lost on dev server
-                            # if PETCO_LOVELOST_BASE_URL == "https://api-dev.petcolove.org":
-                            #     # imagepayload["photos"].append({"url": photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")}) 
-                            #     photourl = photourl.replace("sheltermanager.com/service", "sheltermanager.com/dev/service")
-                            # else:
                             imagepayload["photos"].append({"url": photourl})
 
                         pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
