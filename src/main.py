@@ -7459,16 +7459,6 @@ class person_vouchers(JSONEndpoint):
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
-class postcode_lookup(ASMEndpoint):
-    url = "postcode_lookup"
-    check_logged_in = False
-
-    def post_getaddress(self, o):
-        self.content_type("application/json")
-        self.header("Access-Control-Allow-Origin", "*") # CORS
-        self.cache_control(120)
-        return asm3.geo.get_address(o.dbo, o.post["postcode"], o.post["country"])
-
 class product(JSONEndpoint):
     url = "product"
     js_module = "product"

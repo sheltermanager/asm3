@@ -217,10 +217,10 @@ def get_address(dbo: Database, postcode: str, country: str = "") -> str:
     """
     Looks up an address from a postcode and country.
     Currently smcom only as it requires on our postcode lookup service smcom_geo.
-    Returns None if an error occurs during the lookup, otherwise returns a list of dictionaries of addresses for the postcode.
+    Returns JSON containing a list of dictionaries of addresses for the postcode.
     """
     try:
-        if GEO_SMCOM_ADDRESS_URL == "": return None
+        if GEO_SMCOM_ADDRESS_URL == "": return asm3.utils.json([ { "error": "not configured" } ])
 
         # Check the cache in case we already requested this postcode
         cachekey = "addr:p=%sc=%s" % (postcode, country)
@@ -246,7 +246,7 @@ def get_address(dbo: Database, postcode: str, country: str = "") -> str:
 
     except Exception as err:
         asm3.al.error(str(err), "geo.get_postcode", dbo)
-        return None
+        return asm3.utils.json([ { "error": str(err) } ])
 
 def get_postcode_lookup_available(l: str) -> bool:
     """ Returns True if postcode lookup is available for locale l. 
