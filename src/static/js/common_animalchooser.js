@@ -85,6 +85,11 @@ $.fn.animalchooser = asm_widget({
             '<td><label>' + _("Owner") + '</label><span class="asm-has-validation">*</span></td>', 
             '<td><input type="hidden" class="asm-field asm-personchooser chooser" class="owner chooser" data="nsowner" /></td>', 
             '</tr>', 
+            '<tr class="coderow">',
+            '<td><label>' + _("Code") + '</label><span class="asm-has-validation">*</span></td>', 
+            '<td><input data="sheltercode" type="text" class="asm-textbox chooser" /></td>',
+            '</tr>', 
+            '<tr>',
             '<tr>',
             '<td><label>' + _("Name") + '</label><span class="asm-has-validation">*</span></td>', 
             '<td><input data="animalname" type="text" class="asm-textbox chooser" /></td>',
@@ -268,6 +273,9 @@ $.fn.animalchooser = asm_widget({
                 dialogadd.find(".ownerrow").fadeOut();
             }
         });
+
+        // If manual codes are turned on, show the field to manually enter a code
+        dialogadd.find(".coderow").toggle(config.bool("ManualCodes"));
         
         // Bind the find button
         node.find(".animalchooser-link-find")
@@ -481,8 +489,8 @@ $.fn.animalchooser = asm_widget({
                 t.trigger("change", [ rec ]);
             },
             error: function(jqxhr, textstatus, response) {
-                dialogadd.dialog("close");
                 log.error(response);
+                header.show_error(response);
             }
         });
     },
