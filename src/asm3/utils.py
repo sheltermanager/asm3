@@ -2339,4 +2339,47 @@ def send_user_email(dbo: Database, sendinguser: str, user: str, subject: str, bo
         elif nulltostr(u["ROLES"]).find(user) != -1:
             send_email(dbo, replyadd, u["EMAILADDRESS"], "", "", subject, body, exceptions=False)
 
+def send_whatsapp(dbo: Database, to: str, body: str = "") -> bool:
+    token = "EAANufnBQAW8BRfUrZBVTlQHUMwg6tdiw9pjOId3qjqeSskuTEOmXvqZAoYXCd2IoZC0ZBUaw0lZAtYZBxCnanfkYZBGXzx5ZB24H9yVZALP80AeOkzJGxG0ZC1Ko9RkZAWgyvnZB0j17pNpytu7n6FaPZBnmv3RAiaFwP1Uq1BlR3XXLJ4lAaiCvwc9XPXZCGzQPcdNC2Mrpxkyob8yUGnBvC6rn9iGiYuFXb2OZAvPZBujJYTl1DSJbSPS4b1NNt8FTkQuYqPiZAZCbBmiLr2sTfhi6xCEngf2LuTaoRoQOEZD"
+    headers = {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+    }
+    parameters = [
+        {
+            "type": "text",
+            "text": "John Doe",
+        },
+        {
+            "type": "text",
+            "text": "123456",
+        },
+        {
+            "type": "text",
+            "text": "May 15, 2026",
+        }
+    ]
+    components = [
+            {
+            "type": "body",
+            "parameters": parameters
+        }
+    ]
+    template = {
+        "name" : "jaspers_market_order_confirmation_v1",
+        "language": {"code": "en_US"},
+        "components": components,
 
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "template",
+        "template": template,
+
+    }
+
+    url = "https://graph.facebook.com/v25.0/1097048180156934/messages"
+    response = asm3.utils.post_json(url, asm3.utils.json(payload), headers)
+
+    return response

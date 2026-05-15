@@ -6939,7 +6939,7 @@ class person(JSONEndpoint):
     
     def post_whatsapp(self, o):
         self.check(asm3.users.EMAIL_PERSON)
-        asm3.person.send_whatsapp_from_form(o.dbo, o.user, o.post)
+        return asm3.person.send_whatsapp_from_form(o.dbo, o.user, o.post)
 
 class person_boarding(JSONEndpoint):
     url = "person_boarding"

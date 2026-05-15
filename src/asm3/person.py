@@ -1844,6 +1844,21 @@ def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool
         asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, subject, body)
     return rv
 
+def send_whatsapp_from_form(dbo: Database, username: str, post: PostedData) -> bool:
+    """
+    Sends a whatsapp message to a person from a posted form. Attaches it as
+    a log entry if specified.
+    Passes the return value from send_email (a bool for success)
+    """
+    to = post["to"]
+    addtolog = post.boolean("addtolog")
+    logtype = post.integer("logtype")
+    body = post["body"]
+    rv = asm3.utils.send_whatsapp(dbo, to, body)
+    # if addtolog == 1:
+    #     asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, subject, body)
+    return rv
+
 def lookingfor_summary(dbo: Database, personid: int, p: ResultRow = None) -> str:
     """
     Generates the summary text for the type of animal a person is looking for. 

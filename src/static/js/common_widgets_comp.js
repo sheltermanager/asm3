@@ -282,7 +282,7 @@ $.fn.emailform = asm_widget({
                 console.log("Sending");
                 console.log(t);
                 let o = t.data("o");
-                // console.log(o);
+                console.log(o);
                 validate.reset("dialog-email");
                 if (o.sendmethod == "email") {
                     o.formdata += "&mode=email";
@@ -300,14 +300,15 @@ $.fn.emailform = asm_widget({
                         $("#dialog-email").dialog("close");
                     });
                 } else {
-                    o.formdata += "&mode=whatsapp";
+                    o.formdata += "&mode=whatsapp&";
                     if (!validate.notblank(["em-to"])) { return; }
                     if (!validate.notblank(["em-messagebody"])) { return; }
                     o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-textarea").toPOST();
                     header.show_loading(_("Sending..."));
-                    common.ajax_post(o.post, o.formdata, function() {
+                    common.ajax_post(o.post, o.formdata, function(response) {
                         let recipients = $("#em-to").val();
-                        header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
+                        // header.show_info(_("Message successfully sent to {0}").replace("{0}", recipients));
+                        header.show_info(response);
                         $("#dialog-email").dialog("close");
                     });
                 }
