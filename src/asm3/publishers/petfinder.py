@@ -408,13 +408,22 @@ class PetFinderPublisher(FTPPublisher):
             line.append("")
         else:
             # Adoptable - include all available upto a max of 6 photos
+            validvideourl = False
+            for marker in [ "youtube.com/", "youtu.be/", "vimeo.com/"]:
+                if marker in an.WEBSITEVIDEOURL:
+                    validvideourl = True
+                    break
+            if not validvideourl:
+                an.WEBSITEVIDEOURL = ""
             urls = self.getPhotoUrls(an.ID)
-            line.append(self.pfImageUrl(an.ID, urls, 0, cikeys)) # photo1
-            line.append(self.pfImageUrl(an.ID, urls, 1, cikeys)) # photo2
-            line.append(self.pfImageUrl(an.ID, urls, 2, cikeys)) # photo3
-            line.append(self.pfImageUrl(an.ID, urls, 3, cikeys)) # photo4
-            line.append(self.pfImageUrl(an.ID, urls, 4, cikeys)) # photo5
-            line.append(self.pfImageUrl(an.ID, urls, 5, cikeys)) # photo6
+            videolinkincluded = False
+            for a in range(0, 6):
+                url = self.pfImageUrl(an.ID, urls, a, cikeys)
+                if an.WEBSITEVIDEOURL and not videolinkincluded and (not url or a == 5):
+                    line.append(an.WEBSITEVIDEOURL)
+                    videolinkincluded = True
+                else:
+                    line.append(url)
         # Arrival Date
         line.append(self.pfDate(an.MOSTRECENTENTRYDATE))
         # Birth Date
