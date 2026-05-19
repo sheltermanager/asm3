@@ -1082,6 +1082,7 @@ const common = {
         $(".asm-animalchooser").animalchooser();
         $(".asm-animalchoosermulti").animalchoosermulti();
         $(".asm-personchooser").personchooser();
+        $(".asm-personchoosermulti").personchoosermulti();
         $(".asm-callout").callout();
         $(".asm-datebox").date();
         $(".asm-alphanumberbox").alphanumber();
