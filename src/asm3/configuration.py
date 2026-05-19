@@ -349,6 +349,7 @@ DEFAULTS = {
     "MoveAdoptGeneratePaperwork": "Yes",
     "MoveAdoptDonationsEnabled": "No",
     "JSWindowPrint": "Yes",
+    "OnlineFormDefaultLogType": "3",
     "OnlineFormSpamHoneyTrap": "Yes",
     "OnlineFormSpamUACheck": "No",
     "OnlineFormSpamFirstnameMixCase": "Yes",
@@ -1027,6 +1028,9 @@ def default_location(dbo: Database) -> int:
 
 def default_log_filter(dbo: Database) -> int:
     return cint(dbo, "AFDefaultLogFilter", 0)
+
+def default_log_type(dbo: Database) -> int:
+    return cint(dbo, "AFDefaultLogType", 0)
 
 def default_media_notes_from_file(dbo: Database) -> bool:
     return cboolean(dbo, "DefaultMediaNotesFromFile", DEFAULTS["DefaultMediaNotesFromFile"] == "Yes")

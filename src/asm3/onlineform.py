@@ -659,7 +659,7 @@ def get_onlineformincoming_html_print(dbo: Database, ids: List[int],
             h.append('<div style="page-break-before: always;"></div>')
     h.append("</body></html>")
     s = "\n".join(h)
-    if strip_bgimages: s= asm3.utils.strip_background_images(s)
+    if strip_bgimages: s = asm3.utils.strip_background_images(s)
     if strip_script: s = asm3.utils.strip_script_tags(s)
     if strip_style: s = asm3.utils.strip_style_tags(s)
     return s
@@ -1957,3 +1957,32 @@ def auto_remove_old_incoming_forms(dbo: Database) -> None:
     for r in rows:
         delete_onlineformincoming(dbo, "system", r.COLLATIONID)
     asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
+
+def create_animal_log(dbo: Database, username: str, collationid: int):
+    logtypeid = 0
+    animalid = 0
+    animalname, dummy, dumy = get_onlineformincoming_animalperson(dbo, collationid)
+    if animalname:
+        animalid = get_animal_id_from_field(dbo, animalname)
+    logcontent = []
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    for f in fields:
+        if f.FIELDNAME != "logtype" and f.FIELDNAME not in SYSTEM_FIELDS:
+            logcontent.append(f"{f.FIELDNAME}={f.VALUE}")
+        if not logtypeid and f.FIELDNAME == "logtype":
+            logtypename = f.VALUE
+            logtypeid = dbo.query_int("SELECT ID FROM logtype WHERE LogTypeName = ?", [logtypename])
+    if not logtypeid:
+        logtypeid = asm3.configuration.default_log_type(dbo)
+    if animalid:
+        data = {
+            "type":     logtypeid,
+            "logdate":  asm3.i18n.format_date(asm3.i18n.today()),
+            "logtime":  asm3.i18n.format_time(asm3.i18n.now()),
+            "entry":    ", ".join(logcontent)
+        }
+        logpost = asm3.utils.PostedData(data, dbo.locale)
+        asm3.log.insert_log_from_form(dbo, username, asm3.log.ANIMAL, animalid, logpost)
+    else:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Unable to match to an animal record (need animalname).", dbo.locale))
+    return (collationid, animalid, animalname, 1)
