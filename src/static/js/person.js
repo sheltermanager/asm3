@@ -67,12 +67,12 @@ $(function() {
                 { type: "nextcol" },
 
                 { post_field: "address", json_field: "OWNERADDRESS", type: "textarea", label: _("Address"), classes: "asm-textareafixed", rows: 5},
-                { post_field: "town", json_field: "OWNERTOWN", type: "autotext", label: _("City"), rowclasses: "towncounty", 
+                { post_field: "town", json_field: "OWNERTOWN", type: "autotext", label: _("City"), rowclasses: "town",
                     maxlength: 100, options: controller.towns, minlength: 4 },
                 common.iif(config.bool("USStateCodes"),
-                    { post_field: "county", json_field: "OWNERCOUNTY", type: "select", label: _("State"), rowclasses: "towncounty", 
+                    { post_field: "county", json_field: "OWNERCOUNTY", type: "select", label: _("State"), rowclasses: "county",
                         options: html.states_us_options(config.str("OrganisationCounty")) },
-                    { post_field: "county", json_field: "OWNERCOUNTY", type: "autotext", label: _("State"), rowclasses: "towncounty", 
+                    { post_field: "county", json_field: "OWNERCOUNTY", type: "autotext", label: _("State"), rowclasses: "county",
                         minlength: 2, options: controller.counties }),
                 { post_field: "postcode", json_field: "OWNERPOSTCODE", type: "text", label: _("Zipcode") },
                 { post_field: "country", json_field: "OWNERCOUNTRY", type: "text", label: _("Country") }, 
@@ -354,7 +354,8 @@ $(function() {
             $("#asm-details-accordion").asmaccordion("hideNoInput", 2);
 
             // CONFIG ===========================
-            $(".towncounty").toggle( !config.bool("HideTownCounty") );
+            $(".town").toggle( !config.bool("HideTown") );
+            $(".county").toggle( !config.bool("HideCounty") );
             $(".homeworkphone").toggle( !config.bool("HideHomeWorkPhone") );
             $("#countryrow").toggle( !config.bool("HideCountry") );
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
