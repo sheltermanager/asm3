@@ -49,7 +49,7 @@ $(function() {
             }
         },
         routes: {
-            "recent_incident_map": function() { common.module_loadandstart("incident_map", "incident_map"); },
+            "recent_incident_map": function() { common.module_loadandstart("incident_map", "recent_incident_map"); },
             "incident_map": function() { common.module_loadandstart("incident_map", "incident_map"); }
         }
 

@@ -19,12 +19,14 @@ const mapping = {
     draw_map: function(divid, zoom, latlong, markers) {
         var _draw_map = function(latlong) {
             if (asm.mapprovider == "osm") {
+                console.log("Drawing");
                 mapping._leaflet_draw_map(divid, zoom, latlong, markers);
             }
             else if (asm.mapprovider == "google") {
                 mapping._google_draw_map(divid, zoom, latlong, markers);
             }
         };
+        console.log("Drawing");
         var first_valid = this._first_valid_latlong(markers);
         // A center point has been specified, use that
         if (latlong != "") {
@@ -75,6 +77,7 @@ const mapping = {
     },
 
     _leaflet_draw_map: function(divid, zoom, latlong, markers) {
+        console.log("Drawing");
         $("head").append('<link rel="stylesheet" href="' + asm.leafletcss + '" />');
         mapping._get_script(asm.leafletjs, function() {
             var ll = latlong.split(",");
@@ -87,12 +90,21 @@ const mapping = {
                     '<a target="_blank" href="https://www.openstreetmap.org/fixthemap">Improve this map</a>'
             }).addTo(map);
             L.control.scale().addTo(map);
+            console.log("Drawing");
             $.each(markers, function(i, v) {
                 if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                 ll = v.latlong.split(",");
                 var marker = L.marker([ll[0], ll[1]]).addTo(map);
+                // if (v.INCIDENTTYPE == 1) {
+                //     marker._icon.classList.add("asm-reclaimedpin");
+                // } else if (v.INCIDENTTYPE == 2) {
+                //     marker._icon.classList.add("asm-nonshelterpin");
+                // } else {
+                //      marker._icon.classList.add("asm-incidentpin");
+                // }
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
                 if (v.popupactive) { marker.openPopup(); }
+                console.log(marker);
             });
             if (config.bool("ShowLatLong")) {
                 map.on("contextmenu", function (event) {
