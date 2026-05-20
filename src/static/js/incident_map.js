@@ -8,8 +8,13 @@ $(function() {
 
         render: function() {
             let headerheight = $("body").outerHeight() + 50;
+            let title = _("Active Incidents");
+            if (controller.name == "recent_incident_map") {
+                title = _("Recent Incidents");
+            }
+            console.log(title);
             return [
-                html.content_header(_("Active Incidents")),
+                html.content_header(title),
                 '<div id="embeddedmap" style="position: absolute;z-index: 1; width: 100%; height: calc(100% - ' + headerheight + 'px); color: #000"></div>',
                 html.content_footer()
             ].join("\n");
@@ -47,7 +52,7 @@ $(function() {
         name: "incident_map",
         animation: "results",
         title: function() {
-            if (controller.name == "incident_map") {
+            if (controller.name == "active_incident_map") {
                 return _("Active Incidents");
             } else {
                 return _("Recent Incidents");
