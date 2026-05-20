@@ -7,9 +7,10 @@ $(function() {
     const incident_map = {
 
         render: function() {
+            let headerheight = $("body").outerHeight() + 50;
             return [
                 html.content_header(_("Active Incidents")),
-                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000"></div>',
+                '<div id="embeddedmap" style="position: absolute;z-index: 1; width: 100%; height: calc(100% - ' + headerheight + 'px); color: #000"></div>',
                 html.content_footer()
             ].join("\n");
         },
@@ -23,7 +24,11 @@ $(function() {
         delay: function() {
             let first_valid = "";
             $.each(controller.rows, function(i, v) {
-                v.latlong = v.LATLONG;
+                if (v.DISPATCHLATLONG) {
+                    v.latlong = v.DISPATCHLATLONG;
+                } else {
+                    v.latlong = v.LATLONG;
+                }
                 if (v.INCIDENTTYPE == 1) {
                     v.popuptext = "<b>" + v.ADDRESS + "</b><br /><a target='_blank' href='animal?id=" + v.ID + "'>" + 
                         v.INCIDENTNAME + " " + _("Reclaimed") + "</a>";
