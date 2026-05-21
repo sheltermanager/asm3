@@ -23,6 +23,20 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
+def get_active_animals(dbo: Database, personid: int):
+    return dbo.query(
+        "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
+        "FROM adoption ad " \
+        "INNER JOIN animal an ON ad.AnimalID = an.ID " \
+        "WHERE ad.OwnerID = ? AND an.DeceasedDate IS NULL AND ad.ReturnDate IS NULL " \
+        "AND ad.MovementType IN (?, ?) " \
+        "UNION SELECT an.ID AS AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, 3 AS LinkType, an.CreatedDate AS SortDate " \
+        "FROM animal an " \
+        "WHERE an.DeceasedDate IS NULL AND an.NonShelterAnimal = 1 AND an.OwnerID = ? " \
+        "ORDER BY SortDate DESC",
+        (personid, asm3.movement.ADOPTION, asm3.movement.FOSTER, personid)
+    )
+
 def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting

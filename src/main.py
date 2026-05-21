@@ -6889,6 +6889,7 @@ class person(JSONEndpoint):
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "owner", p.ID, p.OWNERNAME)
         asm3.al.debug("opened person '%s'" % p.OWNERNAME, "main.person", dbo)
         return {
+            "activeanimals": asm3.person.get_active_animals(dbo, p.id),
             "additional": asm3.additional.get_additional_fields(dbo, p.id, "person"),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
