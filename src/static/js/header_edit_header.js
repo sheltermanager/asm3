@@ -588,13 +588,6 @@ edit_header = {
             return html.icon("blank");
         };
         let flags = this.person_flags(p);
-        let latestmove = "", latestmovedeceased = "";
-        if (p.LATESTMOVEANIMALID) { 
-            if (p.LATESTMOVEDECEASEDDATE) { latestmovedeceased = html.icon("death"); }
-            latestmove = "<tr><td>" + _("Last Movement") + ":</td>";
-            latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
-            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b> ' + latestmovedeceased + '</td></tr>';
-        }
         let fosters = [];
         let ownedanimals = [];
         $.each(controller.activeanimals, function(i, v) {
@@ -654,7 +647,6 @@ edit_header = {
             '</div>',
             '<div class="col-sm">',
             '<table>',
-            latestmove,
             fostershtml,
             ownedanimalshtml,
             '<tr>',
