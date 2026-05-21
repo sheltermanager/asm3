@@ -595,6 +595,45 @@ edit_header = {
             latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
             latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b> ' + latestmovedeceased + '</td></tr>';
         }
+        let fosters = [];
+        let ownedanimals = [];
+        $.each(controller.activeanimals, function(i, v) {
+            if (v.LINKTYPE == 2) {
+                fosters.push(v);
+            } else {
+                ownedanimals.push(v);
+            }
+        });
+        let fostershtml = "";
+        let ownedanimalshtml = "";
+        if (fosters.length) {
+            fostershtml = '<tr><td>' + _("Active Fosters") + ':</td>';
+        }
+        if (fosters.length > 5) {
+            fostershtml += '<td><b><a href="animal?id=' + fosters[0].ANIMALID + '">' + fosters[0].ANIMALNAME + '</a> plus <a href="person_movements?id=' + controller.person.ID + '">' + (fosters.length - 1) + ' more...</a></b></td></tr>';
+        } else {
+            fostershtml += '<td>';
+            let fosterlinks = [];
+            $.each(fosters, function(i, v) {
+                fosterlinks.push('<b><a href="animal?id=' + v.ANIMALID + '">' + v.ANIMALNAME + '</a></b>');
+            });
+            fostershtml += fosterlinks.join(", ");
+            fostershtml += '</td></tr>';
+        }
+        if (ownedanimals.length) {
+            ownedanimalshtml = '<tr><td>' + _("Owned Animals") + ':</td>';
+        }
+        if (ownedanimals.length > 5) {
+            ownedanimalshtml += '<td><b><a href="animal?id=' + ownedanimals[0].ANIMALID + '">' + ownedanimals[0].ANIMALNAME + '</a> plus <a href="person_movements?id=' + controller.person.ID + '">' + (ownedanimals.length - 1) + ' more...</a></b></td></tr>';
+        } else {
+            ownedanimalshtml += '<td>';
+            let ownedanimallinks = [];
+            $.each(ownedanimals, function(i, v) {
+                ownedanimallinks.push('<b><a href="animal?id=' + v.ANIMALID + '">' + v.ANIMALNAME + '</a></b>');
+            });
+            ownedanimalshtml += ownedanimallinks.join(", ");
+            ownedanimalshtml += '</td></tr>';
+        }
         let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="personid" value="' + p.ID + '" />',
@@ -616,6 +655,8 @@ edit_header = {
             '<div class="col-sm">',
             '<table>',
             latestmove,
+            fostershtml,
+            ownedanimalshtml,
             '<tr>',
             '<td></td><td>' + p.OWNERADDRESS + '<br />',
             p.OWNERTOWN + ' ' + p.OWNERCOUNTY + ' ' + p.OWNERPOSTCODE + '<br />',
