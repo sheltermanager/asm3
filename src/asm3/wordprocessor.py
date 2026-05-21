@@ -1302,8 +1302,9 @@ def donation_tags(dbo: Database, donations: Results) -> Tags:
         if i == "": return # Don't add a total for the compatibility row
         if p["VATRATE"] is not None and p["VATRATE"] > totals["taxrate"]:
             totals["taxrate"] = p["VATRATE"]
-        if p["DATE"] is not None: 
+        if p["VATAMOUNT"] > 0:
             totals["vat"] += asm3.utils.cint(p["VATAMOUNT"])
+        if p["DATE"] is not None: 
             totals["net"] += asm3.utils.cint(p["NET"])
             totals["gross"] += asm3.utils.cint(p["GROSS"])
         if p["DATE"] is None: 
