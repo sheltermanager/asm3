@@ -92,7 +92,6 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     """
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = ?", [personid]) )
     if p is None: return None
-    p = embellish_latest_movement(dbo, p)
     p = asm3.users.embellish_vieweditroles(dbo, "ownerrole", "OwnerID", personid, p)
     return p
 
@@ -127,27 +126,6 @@ def embellish_adoption_warnings(dbo: Database, p: ResultRow) -> ResultRow:
     for r in dbo.query("SELECT AnimalID FROM adoption WHERE OwnerID=? AND MovementType=0 AND ReservationCancelledDate Is Null", [p.ID]):
         reserves.append(str(r.ANIMALID))
     p.RESERVEDANIMALIDS = ",".join(reserves)
-    return p
-
-def embellish_latest_movement(dbo: Database, p: ResultRow) -> ResultRow:
-    """ Adds the latest movement info to a person record p and returns it.
-        The query already does this and 99% of the time it will work fine and makes these columns available
-        in v_person for the query builder. BUT if we have a data import where the movements were created out of
-        order, MAX(ID) will fail and return the wrong movement. """
-    if p is None: return p
-    lm = dbo.first_row(dbo.query("SELECT m.ID AS LatestMoveAnimalID, a.ID AS LatestMoveAnimalID, a.AnimalName AS LatestMoveAnimalName, " \
-        "a.ShelterCode AS LatestMoveShelterCode, a.DeceasedDate AS LatestMoveDeceasedDate, mt.MovementType AS LatestMoveTypeName " \
-        "FROM adoption m "
-        "INNER JOIN animal a ON m.AnimalID = a.ID " \
-        "INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
-        "WHERE m.MovementType > 0 AND m.OwnerID = ? AND (ReturnDate Is Null OR ReturnDate > ?)" \
-        "ORDER BY m.MovementDate DESC", [p.ID, dbo.today()]))
-    if lm is not None:
-        p.LATESTMOVEANIMALID = lm.LATESTMOVEANIMALID
-        p.LATESTMOVEANIMALNAME = lm.LATESTMOVEANIMALNAME
-        p.LATESTMOVESHELTERCODE = lm.LATESTMOVESHELTERCODE
-        p.LATESTMOVEDECEASEDDATE = lm.LATESTMOVEDECEASEDDATE
-        p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
 def get_homechecked(dbo: Database, personid: int) -> Results:
