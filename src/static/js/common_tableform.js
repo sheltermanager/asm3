@@ -1193,7 +1193,6 @@ const tableform = {
         $.each(fields, function(i, v) {
             if (v.type == "animal") { d += tableform.render_animal(v); }
             else if (v.type == "animalmulti") { d += tableform.render_animalmulti(v); }
-            else if (v.type == "personmulti") { d += tableform.render_personmulti(v); }
             else if (v.type == "autotext") { d += tableform.render_autotext(v); }
             else if (v.type == "check") { d += tableform.render_check(v); }
             else if (v.type == "currency") { d += tableform.render_currency(v); }
@@ -1207,6 +1206,7 @@ const tableform = {
             else if (v.type == "number") { d += tableform.render_number(v); }
             else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
+            else if (v.type == "personmulti") { d += tableform.render_personmulti(v); }
             else if (v.type == "phone") { d += tableform.render_phone(v); }
             else if (v.type == "product") { d += tableform.render_product(v); }
             else if (v.type == "raw") { d += tableform.render_markup(v); }
@@ -2053,9 +2053,9 @@ const tableform = {
                 else if (v.type == "currency") { $("#" + v.post_field).currency("value", 0); return; }
                 else if (v.type == "animal") { $("#" + v.post_field).animalchooser("clear"); return; }
                 else if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
-                else if (v.type == "personmulti") { $("#" + v.post_field).personchoosermulti("clear"); return; }
                 else if (v.type == "datetime") { $("#" + v.post_field + "date, #" + v.post_field + "time").val(""); return; }
                 else if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
+                else if (v.type == "personmulti") { $("#" + v.post_field).personchoosermulti("clear"); return; }
                 else if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
                 else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
                 else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
@@ -2063,7 +2063,7 @@ const tableform = {
                 else if (v.type == "select") {  $("#" + v.post_field).select("firstvalue"); return; }
                 else if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
                 else if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
-                else if ([ "phone", "number", "intnumber", "date", "time", "text" ].includes(v.type)) { $("#" + v.post_field).val(""); return; }
+                else if ([ "phone", "number", "intnumber", "date", "time", "text", "autotext" ].includes(v.type)) { $("#" + v.post_field).val(""); return; }
             }
             else {
                 // Is the default value a function? If so, run it 
@@ -2109,13 +2109,13 @@ const tableform = {
                 n.animalchoosermulti("clear");
                 n.animalchoosermulti("selectbyids", row[v.json_field]);
             }
-            else if (v.type == "personmulti") {
-                n.personchoosermulti("clear");
-                n.personchoosermulti("selectbyids", row[v.json_field]);
-            }
             else if (v.type == "person") {
                 n.personchooser("clear", false);
                 n.personchooser("loadbyid", row[v.json_field]);
+            }
+            else if (v.type == "personmulti") {
+                n.personchoosermulti("clear");
+                n.personchoosermulti("selectbyids", row[v.json_field]);
             }
             else if (v.type == "currency") {
                 n.currency("value", row[v.json_field]);
