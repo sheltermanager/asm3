@@ -20,7 +20,7 @@ $(function() {
                 html.info('<span id="warntext"></span>', "ownerwarn"),
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
-                    { post_field: "person", label: _("New Owner"), type: "personmulti" },
+                    { post_field: "person", label: _("New Owner"), type: "person" },
                     { post_field: "source", label: _("Adoption Source"), type: "select",
                         options: { displayfield: "SOURCENAME", valuefield: "ID", rows: controller.adoptionsources, prepend: '<option value="0"></option>' }
                     },
