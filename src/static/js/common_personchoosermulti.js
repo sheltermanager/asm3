@@ -316,15 +316,17 @@ $.fn.personchoosermulti = asm_widget({
                     let rowid = checkbox.attr("data");
                     $.each(o.rows, function(i, r) {
                         if (r.ID == rowid) {
-                            let rowpresent = false;
-                            $.each(o.selectedrows, function(i, v) {
-                                if (v.ID == r.ID) {
-                                    rowpresent = true;
-                                }
-                            });
+                            // let rowpresent = false;
+                            // $.each(o.selectedrows, function(i, v) {
+                            //     if (v.ID == r.ID) {
+                            //         rowpresent = true;
+                            //     }
+                            // });
+                            let rowpresent = common.get_row(o.selectedrows, r.ID) != null;
                             if (checkbox.prop("checked") && !rowpresent) {
                                 o.selectedrows.push(r);
                             } else if (!checkbox.prop("checked") && rowpresent) {
+                                // Iterating through a copy of selected rows so changes can be made
                                 $.each([...o.selectedrows], function(c, s) {
                                     if (r.ID == s.ID) {
                                         o.selectedrows.splice(c, 1);
