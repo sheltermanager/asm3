@@ -1976,14 +1976,8 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
     if not logtypeid:
         logtypeid = asm3.configuration.default_log_type(dbo)
     if animalid:
-        data = {
-            "type":     logtypeid,
-            "logdate":  asm3.i18n.format_date(asm3.i18n.today()),
-            "logtime":  asm3.i18n.format_time(asm3.i18n.now()),
-            "entry":    ", ".join(logcontent)
-        }
-        logpost = asm3.utils.PostedData(data, dbo.locale)
-        asm3.log.insert_log_from_form(dbo, username, asm3.log.ANIMAL, animalid, logpost)
+        logtext = ", ".join(logcontent)
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, logtypeid, logtext)
     else:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Unable to match to an animal record (need animalname).", dbo.locale))
     return (collationid, animalid, animalname, 1)

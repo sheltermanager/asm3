@@ -349,7 +349,6 @@ DEFAULTS = {
     "MoveAdoptGeneratePaperwork": "Yes",
     "MoveAdoptDonationsEnabled": "No",
     "JSWindowPrint": "Yes",
-    "OnlineFormDefaultLogType": "3",
     "OnlineFormSpamHoneyTrap": "Yes",
     "OnlineFormSpamUACheck": "No",
     "OnlineFormSpamFirstnameMixCase": "Yes",
