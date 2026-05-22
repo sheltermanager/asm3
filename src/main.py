@@ -4580,14 +4580,12 @@ class incident_map(JSONEndpoint):
 class recent_incident_map(JSONEndpoint):
     url = "recent_incident_map"
     js_module = "incident_map"
-    get_permissions = asm3.users.VIEW_INCIDENT
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_MOVEMENT )
 
     def controller(self, o):
         dbo = o.dbo
-        incidentrows = asm3.animalcontrol.get_recent_incidents(dbo)
-
-        rows = incidentrows
-        asm3.al.debug("incident map, %d active" % (len(rows)), "main.incident_map", dbo)
+        rows = asm3.animalcontrol.get_recent_incidents(dbo)
+        asm3.al.debug("recent_incident map, %d active" % (len(rows)), "main.recent_incident_map", dbo)
         return {
             "rows": rows,
             "name": "recent_incident_map"

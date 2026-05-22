@@ -245,18 +245,22 @@ def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
 def get_recent_incidents(dbo: Database):
+    """
+    Returns rows of animalcontrol incidents and animals reclaimed in the last 3 months plus any 
+    non-shelter animals created in last year
+    """
     now = dbo.now()
-    sql = "SELECT ac.ID, t.IncidentName, ac.DispatchLatLong AS LatLong, ac.DispatchAddress AS Address, o.OwnerName, 0 AS IncidentType FROM " \
-    "animalcontrol ac " \
+    sql = "SELECT ac.ID, t.IncidentName, ac.DispatchLatLong AS LatLong, ac.DispatchAddress AS Address, o.OwnerName, 'asm-incidentpin' AS PinStyle " \
+    "FROM animalcontrol ac " \
     "LEFT JOIN owner o ON ac.OwnerID = o.ID " \
     "LEFT JOIN incidenttype t ON ac.IncidentTypeID = t.ID " \
     "WHERE ac.IncidentDateTime BETWEEN ? AND ? " \
-    f"UNION SELECT a.ID, {dbo.sql_concat(("a.ShelterCode", "' '", "a.AnimalName"))} AS IncidentName, o.LatLong, o.OwnerAddress AS Address, o.OwnerName, 1 AS IncidentType " \
+    f"UNION SELECT a.ID, {dbo.sql_concat(("a.ShelterCode", "' '", "a.AnimalName"))} AS IncidentName, o.LatLong, o.OwnerAddress AS Address, o.OwnerName, 'asm-reclaimedpin' AS PinStyle " \
     "FROM animal a " \
     "INNER JOIN adoption m ON a.ID = m.AnimalID AND m.MovementType = ? " \
     "INNER JOIN owner o ON m.OwnerID = o.ID " \
     "WHERE m.MovementDate BETWEEN ? AND ? " \
-    f"UNION SELECT a.ID, {dbo.sql_concat(("a.ShelterCode", "' '", "a.AnimalName"))} AS IncidentName, o.LatLong, o.OwnerAddress AS Address, o.OwnerName, 2 AS IncidentType " \
+    f"UNION SELECT a.ID, {dbo.sql_concat(("a.ShelterCode", "' '", "a.AnimalName"))} AS IncidentName, o.LatLong, o.OwnerAddress AS Address, o.OwnerName, 'asm-nonshelterpin' AS PinStyle " \
     "FROM animal a " \
     "INNER JOIN owner o ON a.OwnerID = o.ID " \
     "WHERE a.NonShelterAnimal = 1 AND a.DateBroughtIn BETWEEN ? AND ? " \

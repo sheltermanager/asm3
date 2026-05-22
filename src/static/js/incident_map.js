@@ -12,7 +12,6 @@ $(function() {
             if (controller.name == "recent_incident_map") {
                 title = _("Recent Incidents");
             }
-            console.log(title);
             return [
                 html.content_header(title),
                 '<div id="embeddedmap" style="position: absolute;z-index: 1; width: 100%; height: calc(100% - ' + headerheight + 'px); color: #000"></div>',
