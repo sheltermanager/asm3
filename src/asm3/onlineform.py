@@ -87,6 +87,7 @@ AP_CREATEWAITINGLIST = 8
 AP_ATTACHANIMAL_CREATEPERSON = 9 
 AP_CREATEANIMAL_BROUGHTIN = 10
 AP_CREATEANIMAL_NONSHELTER = 11
+AP_CREATEANIMALLOG = 12
 
 # The name of an extra text field inserted to trap spambots
 SPAMBOT_TXT = 'a_emailaddress'
@@ -1247,6 +1248,8 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             create_transport(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATEWAITINGLIST:
             create_waitinglist(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEANIMALLOG:
+            create_animal_log(dbo, "autoprocess", collationid)
         # We only get here if there were no issues processing the form and it's safe to delete it
         delete_onlineformincoming(dbo, "autoprocess", collationid)
     except asm3.utils.ASMValidationError as verr:
