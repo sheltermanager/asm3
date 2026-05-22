@@ -127,7 +127,7 @@ $(function() {
             }
             if (alerts.LOSTWEIGHT > 0 && common.has_permission("va") && config.bool("AlertWeightLoss")) {
                 totalalerts += alerts.LOSTWEIGHT;
-                oa("search?q=lostweight", "medical", 
+                oa("search?q=lostweight", "health", 
                     common.ntranslate(alerts.LOSTWEIGHT, [
                         _("{plural0} animal is losing weight"),
                         _("{plural1} animals are losing weight"),
