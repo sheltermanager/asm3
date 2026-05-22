@@ -101,7 +101,7 @@ IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "file
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
 FORM_FIELDS = [
-    "emailsubmissionto",
+    "emailsubmissionto", "logtype", 
     "title", "initials", "title2", "initials2", 
     "firstname", "forenames", "surname", "lastname", "address",
     "firstname2", "forenames2", "lastname2", "surname2",
@@ -1965,13 +1965,13 @@ def auto_remove_old_incoming_forms(dbo: Database) -> None:
 def create_animal_log(dbo: Database, username: str, collationid: int):
     logtypeid = 0
     animalid = 0
-    animalname, dummy, dumy = get_onlineformincoming_animalperson(dbo, collationid)
+    animalname, dummy, dummy = get_onlineformincoming_animalperson(dbo, collationid)
     if animalname:
         animalid = get_animal_id_from_field(dbo, animalname)
     logcontent = []
     fields = get_onlineformincoming_detail(dbo, collationid)
     for f in fields:
-        if f.FIELDNAME != "logtype" and f.FIELDNAME not in SYSTEM_FIELDS:
+        if f.FIELDNAME != "logtype" and f.FIELDNAME != "" and f.FIELDNAME not in SYSTEM_FIELDS and not f.FIELDNAME.startswith("animalname") and not f.FIELDNAME.startswith("reserveanimalname"):
             logcontent.append(f"{f.FIELDNAME}={f.VALUE}")
         if not logtypeid and f.FIELDNAME == "logtype":
             logtypename = f.VALUE
