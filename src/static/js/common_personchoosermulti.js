@@ -189,7 +189,7 @@ $.fn.personchoosermulti = asm_widget({
         let self = this, o = t.data("o"), selval = [];
         let summaryfloor = 5;
         o.display.html("");
-        let h = []
+        let h = [];
         if (o.selectedrows.length > 0) {
             if (o.selectedrows.length > summaryfloor) {
                 h = [
