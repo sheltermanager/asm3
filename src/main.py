@@ -7104,6 +7104,13 @@ class person_embed(ASMEndpoint):
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "main.person_embed", o.dbo)
         return asm3.utils.json(rows)
 
+    def post_multiselect(self, o):
+        self.content_type("application/json")
+        dbo = o.dbo
+        flags = asm3.lookups.get_person_flags(dbo)
+        rv = { "rows": [], "flags": flags }
+        return asm3.utils.json(rv)
+
     def post_id(self, o):
         self.check(asm3.users.VIEW_PERSON)
         self.content_type("application/json")

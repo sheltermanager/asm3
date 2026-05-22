@@ -369,6 +369,18 @@ select:disabled, input:disabled, textarea:disabled {
     opacity: 1.0; 
     zoom: 1;
 }
+.asm-personchoosermulti-filter {
+    padding-top: 5px;
+    display: inline-block;
+    vertical-align: top;
+}
+.asm-personchoosermulti-filter .asmSelect {
+    width: 150px;
+}
+.asm-personchoosermulti-selected {
+    opacity: 1.0; 
+    zoom: 1;
+}
 
 /** SEARCH SCREENS ================= */
 .asm-search-selector {
