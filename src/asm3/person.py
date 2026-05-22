@@ -23,7 +23,7 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
-def get_active_animals(dbo: Database, personid: int):
+def get_owned_animals(dbo: Database, personid: int):
     return dbo.query(
         "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
         "FROM adoption ad " \

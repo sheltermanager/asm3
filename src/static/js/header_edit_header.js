@@ -603,7 +603,7 @@ edit_header = {
             fostershtml = '<tr><td>' + _("Active Fosters") + ':</td>';
         }
         if (fosters.length > 5) {
-            fostershtml += '<td><b><a href="animal?id=' + fosters[0].ANIMALID + '">' + fosters[0].ANIMALNAME + '</a> plus <a href="person_movements?id=' + controller.person.ID + '">' + (fosters.length - 1) + ' more...</a></b></td></tr>';
+            fostershtml += '<td><b><a href="animal?id=' + fosters[0].ANIMALID + '">' + fosters[0].ANIMALNAME + '</a> plus <a href="person_movements?id=' + controller.person.ID + '">' + (fosters.length - 1) + ' ' + _("more...") + '</a></b></td></tr>';
         } else {
             fostershtml += '<td>';
             let fosterlinks = [];
@@ -617,7 +617,7 @@ edit_header = {
             ownedanimalshtml = '<tr><td>' + _("Owned Animals") + ':</td>';
         }
         if (ownedanimals.length > 5) {
-            ownedanimalshtml += '<td><b><a href="animal?id=' + ownedanimals[0].ANIMALID + '">' + ownedanimals[0].ANIMALNAME + '</a> plus <a href="person_movements?id=' + controller.person.ID + '">' + (ownedanimals.length - 1) + ' more...</a></b></td></tr>';
+            ownedanimalshtml += '<td><b><a href="animal?id=' + ownedanimals[0].ANIMALID + '">' + ownedanimals[0].ANIMALNAME + '</a> plus <a href="person_movements?id=' + controller.person.ID + '">' + (ownedanimals.length - 1) + ' ' + _("more...") + '</a></b></td></tr>';
         } else {
             ownedanimalshtml += '<td>';
             let ownedanimallinks = [];
