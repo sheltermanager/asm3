@@ -7,6 +7,11 @@ from asm3.typehints import Database
 
 ERROR_VALUES = ( "FAIL", "DISABLED", "WRONGSERVER" )
 
+def _get_database_credential(config_value, env_var):
+    """Retrieve a database credential from environment variable or config value."""
+    import os
+    return os.environ.get(env_var, config_value)
+
 def get_dbo(t: str = None) -> Database:
     """ Returns a dbo object for the current database backend, or type t if supplied """
     m = {
@@ -50,6 +55,8 @@ def _get_multiple_database_info(alias: str) -> Database:
     dbo.username = mapinfo["username"]
     dbo.password = mapinfo["password"]
     dbo.database = mapinfo["database"]
+    # Use environment variables for credentials if available
+    dbo.password = _get_database_credential(mapinfo.get("password", ""), "ASM_DB_PASSWORD_%s" % alias.upper())
     return dbo
 
 
