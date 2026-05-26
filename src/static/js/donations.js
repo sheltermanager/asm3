@@ -111,17 +111,23 @@ $(function() {
                                 $("#vatamountrow").hide();
                             }
                             $("#isfundingsource").change();
+                            $("#funding").change();
                         }
                     });
-                },
-                complete: function(row) {
-                    return row.FUNDEDBYOWNERDONATIONID != 0;
                 },
                 overdue: function(row) {
                     return !row.DATE && format.date_js(row.DATEDUE) < common.today_no_time();
                 },
                 columns: [
-                    { field: "DONATIONNAME", display: _("Type") },
+                    { field: "DONATIONNAME", display: _("Type"),
+                        formatter: function(row) {
+                            if (row.FUNDEDBYOWNERDONATIONID) {
+                                return tableform.table_render_edit_link(row.ID, row.DONATIONNAME, " " + html.icon("donation", _("This payment was funded")));
+                            } else {
+                                return tableform.table_render_edit_link(row.ID, row.DONATIONNAME);
+                            }
+                        }
+                    },
                     { field: "PAYMENTNAME", display: _("Method") },
                     { field: "FREQUENCYNAME", display: _("Frequency") },
                     { field: "DATEDUE", display: _("Due"), formatter: tableform.format_date },
@@ -528,10 +534,12 @@ $(function() {
                     $("#paymentrow").show();
                     $("#chequenumberrow").show();
                     $("#frequencyrow").show();
+                    $("#duerow").show();
                 } else {
                     $("#paymentrow").hide();
                     $("#chequenumberrow").hide();
                     $("#frequencyrow").hide();
+                    $("#duerow").hide();
                 }
             });
 
