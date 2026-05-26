@@ -603,7 +603,6 @@ edit_header = {
             fostershtml = '<tr><td>' + _("Active Fosters") + ':</td>';
         }
         if (fosters.length > 5) {
-            // fostershtml += '<td><a href="person_movements?id=' + controller.person.ID + '">' + _("{0} plus {1} more...").replace("{0}", fosters[0].ANIMALNAME).replace("{1}",  (fosters.length - 1)) + '</a></td></tr>';
             fostershtml += '<td><b><a href="animal?id=' + fosters[0].ANIMALID + '">' + fosters[0].ANIMALNAME + '</a> <a href="person_movements?id=' + controller.person.ID + '">' + _("plus {0} more...").replace("{0}",  (fosters.length - 1)) + '</a></b></td></tr>';
         } else {
             fostershtml += '<td>';
