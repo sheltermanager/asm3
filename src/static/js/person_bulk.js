@@ -111,7 +111,7 @@ $(function() {
                     let response = await common.ajax_post("person_bulk", formdata);
                     header.hide_loading();
                     header.show_info(_("{0} people successfully deleted.").replace("{0}", response));
-                    $("#people").animalchoosermulti("clear");
+                    $("#people").personchoosermulti("clear");
                 }
                 finally {
                     $("#button-delete").button("enable");
@@ -161,16 +161,11 @@ $(function() {
         },
 
         destroy: function() {
-            // common.widget_destroy("#animals");
-            // common.widget_destroy("#coordinator", "personchooser");
-            // common.widget_destroy("#currentvet", "personchooser");
-            // common.widget_destroy("#ownersvet", "personchooser");
-            // common.widget_destroy("#moveto", "personchooser");
+            common.widget_destroy("#people");
         },
 
         name: "person_bulk",
-        // animation: "newdata",
-        // autofocus: "#litterid", 
+        animation: "newdata",
         title: function() { return _("Bulk change people"); },
 
         routes: {
