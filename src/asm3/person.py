@@ -23,6 +23,38 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
+def built_in_flag_columns() -> Dict:
+    return {
+        1: "IsACO",
+        2: "IsAdopter",
+        3: "IsAdoptionCoordinator",
+        4: "IsBanned",
+        5: "IsDangerous",
+        6: "IsDeceased",
+        7: "IsDonor",
+        8: "IsDriver",
+        9: "ExcludeFromBulkEmail",
+        10: "IsFosterer",
+        11: "IsHomechecked",
+        12: "IsHomeChecker",
+        13: "IsMember",
+        14: "IsShelter",
+        15: "IsSponsor",
+        16: "IsStaff",
+        17: "IsSupplier",
+        18: "IsVet",
+        19: "IsVolunteer"
+    }
+
+def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Batch deletes people from the bulk form.
+    Returns the number of affected records.
+    """
+    for personid in post.integer_list("people"):
+        delete_person(dbo, username, personid, remove_movements=True)
+    return len(post.integer_list("people"))
+
 def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting
@@ -2264,3 +2296,38 @@ def update_anonymise_personal_data(dbo: Database, years: int = None, username: s
     asm3.al.debug("anonymised %s expired person records outside of retention period (%s years)." % (len(people), retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % len(people)
 
+def update_people_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Batch updates multiple person records from the bulk form.
+    Returns number of people affected.
+    """
+    if len(post.integer_list("people")) == 0: return 0
+    pud = []
+
+    if post["addflag"] != "":
+        people = dbo.query("SELECT ID, AdditionalFlags FROM owner WHERE ID IN (%s)" % post["people"])
+        for p in people:
+            asm3.person.update_add_flag(dbo, username, p.ID, post["addflag"])
+
+    if post["removeflag"] != "":
+        people = dbo.query("SELECT ID, AdditionalFlags FROM owner WHERE ID IN (%s)" % post["people"])
+        for p in people:
+            asm3.person.update_remove_flag(dbo, username, p.ID, post["removeflag"])
+    
+    if post["diaryfor"] != "" and post.date("diarydate") is not None and post["diarysubject"] != "":
+        for personid in post.integer_list("people"):
+            asm3.diary.insert_diary(dbo, username, asm3.diary.PERSON, personid, post.datetime("diarydate", "diarytime"), 
+                post["diaryfor"], post["diarysubject"], post["diarynotes"], colourschemeid=post.integer("diarycolourscheme"), diaryenddate=post.datetime("diaryenddate", "diaryendtime"))
+    if post.integer("logtype") != -1:
+        for personid in post.integer_list("people"):
+            asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
+    if post.boolean("updateadditional"):
+        for personid in post.integer_list("people"):
+            asm3.additional.save_values_for_link(dbo, post, username, personid, "person", setdefaults=False, removeallforlink=False, skipblanks=True)
+    
+    # Record the user as making the last change to this record and create audit records for the changes
+    dbo.execute("UPDATE owner SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["people"]))
+    if len(pud) > 0:
+        for personid in post.integer_list("people"):
+            asm3.audit.edit(dbo, username, "person", personid, "", ", ".join(pud))
+    return len(post.integer_list("people"))
