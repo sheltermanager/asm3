@@ -108,6 +108,10 @@ select:disabled, input:disabled, textarea:disabled {
     text-decoration: underline; 
 }
 
+.bottompadding {
+    padding-bottom: 10px;
+}
+
 /** LOGIN SCREEN ============= */
 #asm-login-window {
     padding: 0px;
@@ -362,6 +366,18 @@ select:disabled, input:disabled, textarea:disabled {
     zoom: 1;
 }
 .asm-animalchoosermulti-selected {
+    opacity: 1.0; 
+    zoom: 1;
+}
+.asm-personchoosermulti-filter {
+    padding-top: 5px;
+    display: inline-block;
+    vertical-align: top;
+}
+.asm-personchoosermulti-filter .asmSelect {
+    width: 150px;
+}
+.asm-personchoosermulti-selected {
     opacity: 1.0; 
     zoom: 1;
 }

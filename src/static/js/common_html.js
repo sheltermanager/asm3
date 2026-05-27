@@ -322,7 +322,7 @@ const html = {
             if (a.FLVRESULT == 2) { p.push(_("FLV+")); }
             s.push(html.icon("positivetest", p.join(" ")));
         }
-        if (config.bool("EmblemRabies") && !a.RABIESTAG && 
+        if (config.bool("EmblemRabies") && !a.RABIESTAG && !a.ANIMALRABIESTAG && 
             config.str("AlertSpeciesRabies").split(",").indexOf(String(a.SPECIESID)) != -1) {
             s.push(html.icon("rabies", _("Rabies not given")));
         }

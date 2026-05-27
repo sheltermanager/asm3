@@ -227,9 +227,9 @@ DEFAULTS = {
     "EmailAdopterFollowupDays": "14",
     "EmailAdopterFollowupTemplate": "0",
     "EmailAdopterFollowupSpecies": "1,2",
-    "EmailVaccinationFollowup": "No",
-    "EmailVaccinationFollowupDays": "14",
-    "EmailVaccinationFollowupTemplate": "0",
+    "EmailVaccinationReminder": "No",
+    "EmailVaccinationReminderDays": "14",
+    "EmailVaccinationReminderTemplate": "0",
     "EmailClinicReminder": "No",
     "EmailClinicReminderDays": "2",
     "EmailClinicReminderTemplate": "0",
@@ -1118,14 +1118,14 @@ def email_adopter_followup_template(dbo: Database) -> int:
 def email_adoptioncoordinator_on_document_signed(dbo: Database) -> bool:
     return cboolean(dbo, "DocumentSignedNotifyCoordinator", DEFAULTS["DocumentSignedNotifyCoordinator"])
 
-def email_vaccination_followup(dbo: Database) -> bool:
-    return cboolean(dbo, "EmailVaccinationFollowup", DEFAULTS["EmailVaccinationFollowup"] == "Yes")
+def email_vaccination_reminder(dbo: Database) -> bool:
+    return cboolean(dbo, "EmailVaccinationReminder", DEFAULTS["EmailVaccinationReminder"] == "Yes")
 
-def email_vaccination_followup_days(dbo: Database) -> int:
-    return cint(dbo, "EmailVaccinationFollowupDays", DEFAULTS["EmailVaccinationFollowupDays"])
+def email_vaccination_reminder_days(dbo: Database) -> int:
+    return cint(dbo, "EmailVaccinationReminderDays", DEFAULTS["EmailVaccinationReminderDays"])
 
-def email_vaccination_followup_template(dbo: Database) -> int:
-    return cint(dbo, "EmailVaccinationFollowupTemplate", DEFAULTS["EmailVaccinationFollowupTemplate"])
+def email_vaccination_reminder_template(dbo: Database) -> int:
+    return cint(dbo, "EmailVaccinationReminderTemplate", DEFAULTS["EmailVaccinationReminderTemplate"])
 
 def email_clinic_reminder(dbo: Database) -> bool:
     return cboolean(dbo, "EmailClinicReminder", DEFAULTS["EmailClinicReminder"] == "Yes")

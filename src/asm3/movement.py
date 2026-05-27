@@ -423,10 +423,10 @@ def validate_movement_form_data(dbo: Database, username: str, post: PostedData) 
     if reservationdate is not None and reservationcancelled is not None and reservationcancelled < reservationdate:
         asm3.al.debug("reserve date is after cancelled date.", "movement.validate_movement_form_data", dbo)
         raise asm3.utils.ASMValidationError(asm3.i18n._("Reservation date cannot be after cancellation date.", l))
-    # If this is a new reservation, make sure there's no open movement (fosters do not count)
+    # If this is a new reservation, make sure there's no open movement (fosters, retailers and trial adoptions/releases do not count)
     if movementid == 0 and movementtype == 0 and movementdate is None and reservationdate is not None:
         om = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE AnimalID = ? AND " \
-            "MovementDate Is Not Null AND ReturnDate Is Null AND MovementType <> 2 AND MovementType <> 8", [animalid])
+            "MovementDate Is Not Null AND ReturnDate Is Null AND IsTrial=0 AND MovementType NOT IN (2, 8)", [animalid])
         if om > 0:
             asm3.al.debug("movement is a reservation but animal has active movement.", "movement.validate_movement_form_data", dbo)
             raise asm3.utils.ASMValidationError(asm3.i18n._("Can't reserve an animal that has an active movement.", l))

@@ -5085,10 +5085,10 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
-        count = len(rows)
+        count = len(self.recipients(rows))
         if asm3.utils.is_smcom_smtp(dbo):
             asm3.smcom.check_bulk_email(dbo, count)
-        elif len(rows) > asm3.configuration.mail_merge_max_emails(dbo):
+        elif count > asm3.configuration.mail_merge_max_emails(dbo):
             raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
         fromadd = post["from"]
         subject = post["subject"]
@@ -5273,8 +5273,8 @@ class maint_find_replace(JSONEndpoint):
         dbo = o.dbo
         return {
             "manufacturers": asm3.medical.get_vacc_manufacturers(dbo),
-            "towns": asm3.person.get_towns(dbo, excludeblanks=True),
-            "counties": asm3.person.get_counties(dbo, excludeblanks=True),
+            "towns": asm3.person.get_towns(dbo),
+            "counties": asm3.person.get_counties(dbo),
             "towncounties": asm3.person.get_town_to_county(dbo)
         }
     
@@ -7107,6 +7107,13 @@ class person_embed(ASMEndpoint):
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "main.person_embed", o.dbo)
         return asm3.utils.json(rows)
 
+    def post_multiselect(self, o):
+        self.content_type("application/json")
+        dbo = o.dbo
+        flags = asm3.lookups.get_person_flags(dbo)
+        rv = { "rows": [], "flags": flags }
+        return asm3.utils.json(rv)
+
     def post_id(self, o):
         self.check(asm3.users.VIEW_PERSON)
         self.content_type("application/json")
@@ -7462,15 +7469,6 @@ class person_vouchers(JSONEndpoint):
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
-class postcode_lookup(ASMEndpoint):
-    url = "postcode_lookup"
-    check_logged_in = False
-
-    def post_getaddress(self, o):
-        self.content_type("application/json")
-        self.cache_control(120)
-        return asm3.geo.get_address(o.dbo, o.post["postcode"], o.post["country"])
-
 class product(JSONEndpoint):
     url = "product"
     js_module = "product"
@@ -7591,6 +7589,7 @@ class publish_options(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
+            "authmethods": asm3.service.AUTH_METHODS,
             "breeds": asm3.lookups.get_breeds(dbo),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),

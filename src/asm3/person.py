@@ -254,15 +254,12 @@ def get_staff_volunteers(dbo: Database, siteid: int = 0) -> Results:
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
     return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 %s ORDER BY o.IsStaff DESC, o.OwnerSurname, o.OwnerForeNames" % sitefilter)
 
-def get_towns(dbo: Database, excludeblanks: bool = False) -> List[str]:
+def get_towns(dbo: Database) -> List[str]:
     """
     Returns a list of all towns
     """
-    if excludeblanks:
-        rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner WHERE OwnerTown <> '' ORDER BY OwnerTown")
-    else:
-        rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner ORDER BY OwnerTown")
-    if rows is None: return []
+    rows = dbo.query("SELECT DISTINCT OwnerTown FROM owner WHERE OwnerTown Is Not Null AND OwnerTown <> '' ORDER BY OwnerTown")
+    if len(rows) == 0: return []
     towns = []
     for r in rows:
         towns.append(str(r.OWNERTOWN))
@@ -272,22 +269,22 @@ def get_town_to_county(dbo: Database) -> List[str]:
     """
     Returns a lookup of which county towns belong in
     """
-    rows = dbo.query("SELECT DISTINCT OwnerTown, OwnerCounty FROM owner ORDER BY OwnerCounty")
+    rows = dbo.query("SELECT DISTINCT OwnerTown, OwnerCounty FROM owner " \
+        "WHERE OwnerTown Is Not Null AND OwnerTown <> '' " \
+        "AND OwnerCounty Is Not Null AND OwnerCounty <> '' " \
+        "ORDER BY OwnerCounty, OwnerTown")
     if rows is None: return []
     tc = {}
     for r in rows:
         tc[r.OWNERTOWN] = r.OWNERCOUNTY
     return tc
 
-def get_counties(dbo: Database, excludeblanks: bool = False) -> List[str]:
+def get_counties(dbo: Database) -> List[str]:
     """
     Returns a list of counties
     """
-    if excludeblanks:
-        rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner WHERE OwnerCounty <> '' ORDER BY OwnerCounty")
-    else:
-        rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner ORDER BY OwnerCounty")
-    if rows is None: return []
+    rows = dbo.query("SELECT DISTINCT OwnerCounty FROM owner WHERE OwnerCounty Is Not Null AND OwnerCounty <> '' ORDER BY OwnerCounty")
+    if len(rows) == 0: return []
     counties = []
     for r in rows:
         counties.append("%s" % r.OWNERCOUNTY)
