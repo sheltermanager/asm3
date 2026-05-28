@@ -6689,8 +6689,6 @@ class person_bulk(JSONEndpoint):
 
         return {
             "additional": asm3.additional.get_field_definitions(dbo, "person"),
-            "ynun": asm3.lookups.get_ynun(dbo),
-            "ynunk": asm3.lookups.get_ynunk(dbo),
             "flags": asm3.lookups.get_person_flags(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo)
@@ -6700,7 +6698,8 @@ class person_bulk(JSONEndpoint):
         return asm3.person.update_people_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
-        return asm3.person.delete_people_from_form(o.dbo, o.user, o.post)
+        rows = asm3.person.delete_people_from_form(o.dbo, o.user, o.post)
+        return asm3.utils.json(rows)
 
 class pos(JSONEndpoint):
     url = "pos"

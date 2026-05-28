@@ -2399,14 +2399,15 @@ const tableform = {
         // If this dialog has already been created, destroy it first
         common.widget_destroy(selector, "dialog", false);
 
-        if (!o) { o = { notblank: [], notzero: [], okclick: null, redbutton: null, redclick: null, cancelclick: null }; }
+        if (!o) { o = { notblank: [], notzero: [], okclick: null, redbutton: null, redclick: null, cancelclick: null, width: "auto" }; }
         $.extend(o, {
             autoOpen: false,
             modal: true,
             dialogClass: "dialogshadow",
             show: dlgfx.delete_show,
             hide: dlgfx.delete_hide,
-            buttons: b
+            buttons: b,
+            width: o.width
         });
 
         if (o.redbutton) {

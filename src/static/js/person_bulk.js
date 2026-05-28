@@ -53,6 +53,7 @@ $(function() {
         }, 
         render: function() {
             return [
+                '<div id="dialog-deletion-breakdown" style="display: none;" title="' + html.title(_("Deletion Breakdown")) + '"></div>',
                 html.content_header(_("Bulk change people")),
                 tableform.buttons_render([
                     { id: "update", icon: "save", text: _("Update")  }, 
@@ -63,7 +64,6 @@ $(function() {
                    { title: _("Details"), fields: person_bulk.render_details(), full_width: false },
                    { title: _("Diary"), fields: person_bulk.render_diary(), full_width: false },
                    { title: _("Log"), fields: person_bulk.render_log(), full_width: false },
-                //    { title: _("Movements"), fields: person_bulk.render_movement(), full_width: false },
                    { title: _("Additional"), fields: person_bulk.render_additional(), full_width: false }
                 ]}),
                  html.content_footer()
@@ -108,10 +108,34 @@ $(function() {
                     $("#button-delete").button("disable");
                     header.show_loading(_("Deleting..."));
                     let formdata = "mode=delete&" + $("input, select, textarea").toPOST();
-                    let response = await common.ajax_post("person_bulk", formdata);
-                    header.hide_loading();
-                    header.show_info(_("{0} people successfully deleted.").replace("{0}", response));
-                    $("#people").personchoosermulti("clear");
+                    $.ajax({
+                        type: "POST",
+                        url:  "person_bulk",
+                        data: formdata,
+                        dataType: "text",
+                        success: async function(data, textStatus, jqXHR) {
+                            let people = jQuery.parseJSON(data);
+                            let selected = $("#people").val().split(",").length;
+                            let successful = selected - people.length;
+                            let feedback = '<div>' + _("{0} records successfully deleted.").replace("{0}", successful) + '</div>';
+                            if (people.length) {
+                                feedback += '<div>' + _("Unable to delete the following {0} records.").replace("{0}", people.length) + '</div>';
+                                feedback += '<hr>';
+                                $.each(people, function(i, p) {
+                                    feedback += '<div style="margin-bottom: 5px;"><b><a href="person?id=' + p.ID + '">' + p.OWNERNAME + '</a></b> ' + p.ERROR + '</div>';
+                                });
+                            }
+                            $("#dialog-deletion-breakdown").html(feedback);
+                            header.hide_loading();
+                            await tableform.show_okcancel_dialog("#dialog-deletion-breakdown", _("Ok"), { hidecancel: true, width: "calc(100% - 100px)" });
+                            // $("#dialog-deletion-breakdown").closest(".dialogshadow").css("max-width", "100%");
+                            $("#people").personchoosermulti("clear");
+                        },
+                        error: function(jqxhr, textstatus, response) {
+                            log.error(response);
+                            header.hide_loading();
+                        }
+                    });
                 }
                 finally {
                     $("#button-delete").button("enable");
@@ -162,6 +186,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#people");
+            common.widget_destroy("#dialog-deletion-breakdown");
         },
 
         name: "person_bulk",

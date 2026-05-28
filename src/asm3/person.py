@@ -23,37 +23,31 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
-def built_in_flag_columns() -> Dict:
-    return {
-        1: "IsACO",
-        2: "IsAdopter",
-        3: "IsAdoptionCoordinator",
-        4: "IsBanned",
-        5: "IsDangerous",
-        6: "IsDeceased",
-        7: "IsDonor",
-        8: "IsDriver",
-        9: "ExcludeFromBulkEmail",
-        10: "IsFosterer",
-        11: "IsHomechecked",
-        12: "IsHomeChecker",
-        13: "IsMember",
-        14: "IsShelter",
-        15: "IsSponsor",
-        16: "IsStaff",
-        17: "IsSupplier",
-        18: "IsVet",
-        19: "IsVolunteer"
-    }
-
-def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> int:
+def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> Results:
     """
     Batch deletes people from the bulk form.
-    Returns the number of affected records.
+    Returns the number of successful deletions
+    plus the number skipped.
     """
+    deleted = []
+    skippedids = []
+    skippeddict = {}
     for personid in post.integer_list("people"):
-        delete_person(dbo, username, personid, remove_movements=True)
-    return len(post.integer_list("people"))
+        try:
+            delete_person(dbo, username, personid, remove_movements=True)
+            deleted.append(personid)
+        except asm3.utils.ASMValidationError as error:
+            skippedids.append(personid)
+            skippeddict[personid] = error.msg
+            asm3.utils.web_context().status = "200 OK"
+    if len(skippedids):
+        skippedids = tuple(skippedids)
+        skipped = dbo.query(
+            f"SELECT ID, OwnerName FROM owner WHERE ID IN {str(skippedids)}"
+        )
+    for row in skipped:
+        row.ERROR = skippeddict[row.ID]
+    return skipped
 
 def get_person_query(dbo: Database) -> str:
     """
