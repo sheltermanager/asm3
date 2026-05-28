@@ -33,10 +33,13 @@ $(function() {
                 } else {
                     v.latlong = v.LATLONG;
                 }
-                if (v.INCIDENTTYPE == 1) {
+                if (v.DISPATCHADDRESS) {
+                    v.ADDRESS = v.DISPATCHADDRESS;
+                }
+                if (v.PINSTYLE == "asm-reclaimedpin") {
                     v.popuptext = "<b>" + v.ADDRESS + "</b><br /><a target='_blank' href='animal?id=" + v.ID + "'>" + 
                         v.INCIDENTNAME + " " + _("Reclaimed") + "</a>";
-                } else if (v.INCIDENTTYPE == 2) {
+                } else if (v.PINSTYLE == "asm-nonshelterpin") {
                     v.popuptext = "<b>" + v.ADDRESS + "</b><br /><a target='_blank' href='animal?id=" + v.ID + "'>" + 
                         v.INCIDENTNAME + " " + _("Non-Shelter") + "</a>";
                 } else {

@@ -263,8 +263,8 @@ def get_recent_incidents(dbo: Database):
     f"UNION SELECT a.ID, {dbo.sql_concat(("a.ShelterCode", "' '", "a.AnimalName"))} AS IncidentName, o.LatLong, o.OwnerAddress AS Address, o.OwnerName, 'asm-nonshelterpin' AS PinStyle " \
     "FROM animal a " \
     "INNER JOIN owner o ON a.OwnerID = o.ID " \
-    "WHERE a.NonShelterAnimal = 1 AND a.DateBroughtIn BETWEEN ? AND ? " \
-    "AND o.OwnerTown = ? "
+    "WHERE a.NonShelterAnimal = 1 AND a.DateBroughtIn BETWEEN ? AND ? "
+    # "AND o.OwnerTown = ? "
     return dbo.query(sql,
         (
             dbo.sql_date(dbo.today(offset=-90)),
@@ -273,8 +273,8 @@ def get_recent_incidents(dbo: Database):
             dbo.sql_date(dbo.today(offset=-90)),
             now,
             dbo.sql_date(dbo.today(offset=-365)),
-            now,
-            asm3.configuration.organisation_town(dbo)
+            now
+            # asm3.configuration.organisation_town(dbo)
         )
     )
 
