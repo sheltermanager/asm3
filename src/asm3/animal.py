@@ -3338,12 +3338,14 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         notforregistration = post.integer("notforregistration")
 
     # Handle deceased date and doa being set via entry type
+    diedoffshelter = 0
     deceaseddate = post.date("deceaseddate")
     deadonarrival = post.integer("deadonarrival")
     deathcategory = post.integer("deathcategory")
     if post.integer("entrytype") == 9:
         deceaseddate = dbo.today()
         deadonarrival = 1
+        diedoffshelter = 1
         deathcategory = asm3.configuration.default_death_reason(dbo)
 
     # If this user is in a site, make sure that the location
@@ -3458,7 +3460,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "PTSReasonID":      deathcategory,
         "PutToSleep":       post.boolean("puttosleep"),
         "IsDOA":            deadonarrival, 
-        "DiedOffShelter":   0,
+        "DiedOffShelter":   diedoffshelter,
         "PTSReason":        post["ptsreason"],
         "IsNotAvailableForAdoption": notforadoption,
         "IsNotForRegistration": notforregistration,
@@ -5625,6 +5627,10 @@ def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, move
 
     # Non-shelter animals who are deceased have by definition died off the shelter
     if a.nonshelteranimal == 1 and a.deceaseddate:
+        diedoffshelter = True
+    
+    # DOA animals have by definition died off the shelter
+    if a.isdoa == 1:
         diedoffshelter = True
 
     # Override the onshelter flag if the animal is actively boarding right now and not dead
