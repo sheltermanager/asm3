@@ -103,6 +103,7 @@ def get_events_html(dbo: Database, count: int = 10, template: str = "events"):
     for evt in get_events(dbo, count):
         b = body
         b = b.replace("$$NAME$$", evt.EVENTNAME)
+        b = b.replace("$$LINK$$", evt.EVENTLINK)
         b = b.replace("$$DESCRIPTION$$", evt.EVENTDESCRIPTION)
         b = b.replace("$$STARTDATE$$", asm3.i18n.python2displaytime(l, evt.STARTDATETIME))
         b = b.replace("$$ENDDATE$$", asm3.i18n.python2displaytime(l, evt.ENDDATETIME))
@@ -129,12 +130,12 @@ def insert_event_from_form(dbo: Database, post: PostedData, username: str) -> in
         raise asm3.utils.ASMValidationError(_("Event must have an end date.", l))
     if post["address"].strip() == "":
         raise asm3.utils.ASMValidationError(_("Event must have an address.", l))
-    if post.date("startdate") > post.date("enddate"):
-        raise asm3.utils.ASMValidationError(_("End date must be equal to or later than start date.", l))
+    if post.datetime("startdate", "starttime") > post.datetime("enddate", "endtime"):
+        raise asm3.utils.ASMValidationError(_("End must be equal to or later than start.", l))
 
     eid = dbo.insert("event", {
-        "StartDateTime": post.date("startdate"),
-        "EndDateTime": post.date("enddate"),
+        "StartDateTime": post.datetime("startdate", "starttime"),
+        "EndDateTime": post.datetime("enddate", "endtime"),
         "EventLink": post["link"],
         "EventName": post["eventname"],
         "*EventDescription": post["description"],
