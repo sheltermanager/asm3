@@ -224,7 +224,7 @@ $(function(){
             s += event_animals.render_endactivefosterdialog();
             s += event_animals.render_addanimaldialog();
             s += event_animals.render_addanimalsdialog();
-            s += edit_header.event_edit_header(controller.event, "animals", []);
+            s += edit_header.event_edit_header(controller.event, "animals", controller.tabcounts);
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();

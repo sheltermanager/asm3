@@ -332,7 +332,7 @@ edit_header = {
      * counts:   A count of the number of records for each tab (in uppercase). If it's
      *           non-zero, an icon is shown on some tabs.
      */
-    event_edit_header: function(e, selected, counts){
+    event_edit_header: function(e, selected, counts) {
         var check_display_icon = function(key, iconname) {
             if (key == "event") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
@@ -383,11 +383,13 @@ edit_header = {
             '<ul class="asm-tablist">'
         ];
         var tabs = [[ "event", "event", _("Event"), "", "ve" ],
-            [ "animals", "event_animals", _("Animals"), "", "vea" ]
+            [ "animals", "event_animals", _("Animals"), "animal", "vea" ],
+            [ "media", "event_media", _("Media"), "media", "vam"]
             ];
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            console.log(key);
             if (key == selected) {
                 h.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
             }

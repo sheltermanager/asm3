@@ -19,6 +19,7 @@ $(function() {
                 tableform.fields_render([
                     { post_field: "eventname", label: _("Event Name"), type: "text", maxlength: 50 },
                     { post_field: "description", label: _("Description"), type: "richtextarea", height: "100px", width: "195px" },
+                    { post_field: "link", label: _("URL"), type: "text" },
                     { post_field: "startdate", label: _("Start Date"), type: "date" },
                     { post_field: "enddate", label: _("End Date"), type: "date" },
                     { post_field: "location", label: _("Location"), type: "person", persontype: "organization" },

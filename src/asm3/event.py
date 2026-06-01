@@ -135,6 +135,7 @@ def insert_event_from_form(dbo: Database, post: PostedData, username: str) -> in
     eid = dbo.insert("event", {
         "StartDateTime": post.date("startdate"),
         "EndDateTime": post.date("enddate"),
+        "EventLink": post["link"],
         "EventName": post["eventname"],
         "*EventDescription": post["description"],
         "EventOwnerID": ownerid,
@@ -164,14 +165,15 @@ def update_event_from_form(dbo: Database, post: PostedData, username: str) -> No
         raise asm3.utils.ASMValidationError(_("Event must have an end date.", l))
     if post["address"].strip() == "":
         raise asm3.utils.ASMValidationError(_("Event must have an address.", l))
-    if post.date("startdate") > post.date("enddate"):
-        raise asm3.utils.ASMValidationError(_("End date must be equal to or later than start date.", l))
+    if post.datetime("startdate", "starttime") > post.datetime("enddate", "endtime"):
+        raise asm3.utils.ASMValidationError(_("End must be equal to or later than start.", l))
 
     eid = post.integer("id")
 
     dbo.update("event", eid, {
-        "StartDateTime": post.date("startdate"),
-        "EndDateTime": post.date("enddate"),
+        "StartDateTime": post.datetime("startdate", "starttime"),
+        "EndDateTime": post.datetime("enddate", "endtime"),
+        "EventLink": post["link"],
         "EventName": post["eventname"],
         "*EventDescription": post["description"],
         "EventOwnerID": post.integer("ownerid"),
@@ -226,6 +228,16 @@ def get_event_find_advanced(dbo: Database, criteria: str, limit: int = 0, siteid
     sql = "%s WHERE %s ORDER BY ev.startdatetime " % (get_event_query(dbo), " AND ".join(ss.ands))
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return rows
+
+def get_satellite_counts(dbo: Database, eid: int) -> Results:
+    """
+    Returns a resultset containing the number of each type of satellite
+    record that an event entry has.
+    """
+    return dbo.query("SELECT e.ID, " \
+        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = e.ID AND me.LinkTypeID = ?) AS media, " \
+        "(SELECT COUNT(*) FROM eventanimal ea WHERE ea.EventID = e.ID) AS animals " \
+        "FROM event e WHERE e.ID = ?", (asm3.media.EVENT, eid))
 
 def insert_event_animal(dbo: Database, username: str, post: PostedData) -> int:
     """
