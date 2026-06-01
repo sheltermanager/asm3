@@ -6125,16 +6125,23 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         # Died
         died = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "SpeciesID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (speciesid, firstofmonth, lastofmonth))
         add_row(119, "SP_DIED", 0, speciesid, daysinmonth, _("Died", l), 0, True, died)
 
         # PTS
         pts = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "SpeciesID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (speciesid, firstofmonth, lastofmonth))
         add_row(120, "SP_PTS", 0, speciesid, daysinmonth, _("Euthanized", l), 0, True, pts)
+
+        # DOA
+        doa = sql_days("SELECT DateBroughtIn AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
+            "SpeciesID = %d AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+            "AND NonShelterAnimal = 0 AND IsDOA = 1 " \
+            "GROUP BY DateBroughtIn" % (speciesid, firstofmonth, lastofmonth))
+        add_row(121, "SP_DOA", 0, speciesid, daysinmonth, _("DOA", l), 0, True, doa)
 
         # Other
         toother = sql_days("SELECT MovementDate AS TheDate, COUNT(adoption.ID) AS Total FROM adoption " \
@@ -6142,11 +6149,11 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
             "SpeciesID = %d AND MovementType NOT IN (1, 2, 3, 4, 5, 6, 7, 8) " \
             "AND MovementDate >= %s AND MovementDate <= %s " \
             "GROUP BY MovementDate" % (speciesid, firstofmonth, lastofmonth))
-        add_row(121, "SP_OUTOTHER", 0, speciesid, daysinmonth, _("To Other", l), 0, True, toother)
+        add_row(122, "SP_OUTOTHER", 0, speciesid, daysinmonth, _("To Other", l), 0, True, toother)
 
         # Out subtotal
         outsubtotal = add_days((adopted, reclaimed, escaped, stolen, released, transferred, fostered, retailer, died, pts, toother))
-        add_row(122, "SP_OUTTOTAL", 0, speciesid, daysinmonth, _("Out SubTotal", l), 1, False, outsubtotal)
+        add_row(123, "SP_OUTTOTAL", 0, speciesid, daysinmonth, _("Out SubTotal", l), 1, False, outsubtotal)
 
         # Start of day total
         starttotal = sub_days(sheltertotal, insubtotal)
@@ -6154,7 +6161,7 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         add_row(4, "SP_STARTTOTAL", 0, speciesid, daysinmonth, _("Start Of Day", l), 1, False, starttotal)
 
         # End of day
-        add_row(123, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
+        add_row(124, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
 
     asm3.asynctask.set_progress_value(dbo, 1)
 
@@ -6314,16 +6321,23 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         # Died
         died = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "AnimalTypeID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (typeid, firstofmonth, lastofmonth))
         add_row(19, "AT_DIED", typeid, 0, daysinmonth, _("Died", l), 0, True, died)
 
         # PTS
         pts = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "AnimalTypeID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (typeid, firstofmonth, lastofmonth))
         add_row(20, "AT_PTS", typeid, 0, daysinmonth, _("Euthanized", l), 0, True, pts)
+
+        # DOA
+        doa = sql_days("SELECT DateBroughtIn AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
+            "AnimalTypeID = %d AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+            "AND IsDOA = 1 AND NonShelterAnimal = 0 " \
+            "GROUP BY DateBroughtIn" % (typeid, firstofmonth, lastofmonth))
+        add_row(21, "AT_DOA", typeid, 0, daysinmonth, _("DOA", l), 0, True, doa)
 
         # Other
         toother = sql_days("SELECT MovementDate AS TheDate, COUNT(adoption.ID) AS Total FROM adoption " \
@@ -6331,11 +6345,11 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
             "AnimalTypeID = %d AND MovementType NOT IN (1, 2, 3, 4, 5, 6, 7, 8) " \
             "AND MovementDate >= %s AND MovementDate <= %s " \
             "GROUP BY MovementDate" % (typeid, firstofmonth, lastofmonth))
-        add_row(21, "AT_OUTOTHER", typeid, 0, daysinmonth, _("To Other", l), 0, True, toother)
+        add_row(22, "AT_OUTOTHER", typeid, 0, daysinmonth, _("To Other", l), 0, True, toother)
 
         # Out subtotal
         outsubtotal = add_days((adopted, reclaimed, escaped, stolen, released, transferred, fostered, retailer, died, pts, toother))
-        add_row(22, "AT_OUTTOTAL", typeid, 0, daysinmonth, _("SubTotal", l), 1, False, outsubtotal)
+        add_row(23, "AT_OUTTOTAL", typeid, 0, daysinmonth, _("SubTotal", l), 1, False, outsubtotal)
 
         # Start of day total
         starttotal = sub_days(sheltertotal, insubtotal)
@@ -6588,11 +6602,11 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
 
     group = _("DOA {0}", l).format(year)
     for sp in allspecies:
-        species_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
+        species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
-            "a.SpeciesID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
+            "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND a.DiedOffShelter = 0 AND a.PutToSleep = 0 AND a.IsDOA = 1 AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_DOA", group, 80, showbabies, babymonths)
 
     group = _("Returned to Owner {0}", l).format(year)
