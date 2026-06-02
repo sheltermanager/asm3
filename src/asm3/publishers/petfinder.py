@@ -409,12 +409,11 @@ class PetFinderPublisher(FTPPublisher):
         else:
             # Adoptable - include all available upto a max of 6 photos
             validvideourl = False
+            if an.WEBSITEVIDEOURL is None: an.WEBSITEVIDEOURL = ""
             for marker in [ "youtube.com/", "youtu.be/", "vimeo.com/"]:
-                if marker in an.WEBSITEVIDEOURL:
+                if an.WEBSITEVIDEOURL.find(marker) != -1:
                     validvideourl = True
                     break
-            if not validvideourl:
-                an.WEBSITEVIDEOURL = ""
             urls = self.getPhotoUrls(an.ID)
             line.append(self.pfImageUrl(an.ID, urls, 0, cikeys)) # photo1
             line.append(self.pfImageUrl(an.ID, urls, 1, cikeys)) # photo2
