@@ -41,9 +41,9 @@ def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> R
             skippeddict[personid] = error.msg
             asm3.utils.web_context().status = "200 OK"
     if len(skippedids):
-        skippedids = tuple(skippedids)
         skipped = dbo.query(
-            f"SELECT ID, OwnerName FROM owner WHERE ID IN {str(skippedids)}"
+            f"SELECT ID, OwnerName FROM owner WHERE ID IN ({dbo.sql_placeholders(skippedids)})",
+            skippedids
         )
     for row in skipped:
         row.ERROR = skippeddict[row.ID]

@@ -128,6 +128,7 @@ $(function() {
                             $("#dialog-deletion-breakdown").html(feedback);
                             header.hide_loading();
                             await tableform.show_okcancel_dialog("#dialog-deletion-breakdown", _("Ok"), { hidecancel: true, width: "calc(100% - 100px)" });
+                            // await tableform.show_okcancel_dialog("#dialog-deletion-breakdown", _("Ok"), { hidecancel: true });
                             $("#people").personchoosermulti("clear");
                         },
                         error: function(jqxhr, textstatus, response) {
