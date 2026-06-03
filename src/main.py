@@ -6363,6 +6363,16 @@ class onlineform_incoming(JSONEndpoint):
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
+    def post_animallog(self, o):
+        self.check(asm3.users.ADD_LOG)
+        user = "form/%s" % o.user
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal_log(o.dbo, user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, pid)
+        return "^$".join(rv)
+
     def post_animalbroughtin(self, o):
         self.check(asm3.users.ADD_ANIMAL)
         self.check(asm3.users.ADD_PERSON)

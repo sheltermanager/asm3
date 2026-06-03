@@ -87,6 +87,7 @@ AP_CREATEWAITINGLIST = 8
 AP_ATTACHANIMAL_CREATEPERSON = 9 
 AP_CREATEANIMAL_BROUGHTIN = 10
 AP_CREATEANIMAL_NONSHELTER = 11
+AP_CREATEANIMALLOG = 12
 
 # The name of an extra text field inserted to trap spambots
 SPAMBOT_TXT = 'a_emailaddress'
@@ -100,7 +101,7 @@ IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "file
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
 FORM_FIELDS = [
-    "emailsubmissionto",
+    "emailsubmissionto", "logtype", 
     "title", "initials", "title2", "initials2", 
     "firstname", "forenames", "surname", "lastname", "address",
     "firstname2", "forenames2", "lastname2", "surname2",
@@ -659,7 +660,7 @@ def get_onlineformincoming_html_print(dbo: Database, ids: List[int],
             h.append('<div style="page-break-before: always;"></div>')
     h.append("</body></html>")
     s = "\n".join(h)
-    if strip_bgimages: s= asm3.utils.strip_background_images(s)
+    if strip_bgimages: s = asm3.utils.strip_background_images(s)
     if strip_script: s = asm3.utils.strip_script_tags(s)
     if strip_style: s = asm3.utils.strip_style_tags(s)
     return s
@@ -1246,6 +1247,8 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             create_transport(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATEWAITINGLIST:
             create_waitinglist(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEANIMALLOG:
+            create_animal_log(dbo, "autoprocess", collationid)
         # We only get here if there were no issues processing the form and it's safe to delete it
         delete_onlineformincoming(dbo, "autoprocess", collationid)
     except asm3.utils.ASMValidationError as verr:
@@ -1958,3 +1961,26 @@ def auto_remove_old_incoming_forms(dbo: Database) -> None:
     for r in rows:
         delete_onlineformincoming(dbo, "system", r.COLLATIONID)
     asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
+
+def create_animal_log(dbo: Database, username: str, collationid: int):
+    logtypeid = 0
+    animalid = 0
+    animalname, dummy, dummy = get_onlineformincoming_animalperson(dbo, collationid)
+    if animalname:
+        animalid = get_animal_id_from_field(dbo, animalname)
+    logcontent = []
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    for f in fields:
+        if f.FIELDNAME != "logtype" and f.FIELDNAME != "" and f.FIELDNAME not in SYSTEM_FIELDS and not f.FIELDNAME.startswith("animalname") and not f.FIELDNAME.startswith("reserveanimalname"):
+            logcontent.append(f"{f.FIELDNAME}={f.VALUE}")
+        if not logtypeid and f.FIELDNAME == "logtype":
+            logtypename = f.VALUE
+            logtypeid = dbo.query_int("SELECT ID FROM logtype WHERE LogTypeName = ?", [logtypename])
+    if not logtypeid:
+        logtypeid = asm3.configuration.default_log_type(dbo)
+    if animalid:
+        logtext = ", ".join(logcontent)
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, logtypeid, logtext)
+    else:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Unable to match to an animal record (need animalname).", dbo.locale))
+    return (collationid, animalid, animalname, 1)
