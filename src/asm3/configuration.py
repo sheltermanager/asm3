@@ -1171,6 +1171,12 @@ def email_licence_reminder_days(dbo: Database) -> int:
 def email_licence_reminder_template(dbo: Database) -> int:
     return cint(dbo, "EmailLicenceReminderTemplate", DEFAULTS["EmailLicenceReminderTemplate"])
 
+def email_log(dbo: Database) -> bool:
+    return cboolean(dbo, "LogEmailByDefault")
+
+def email_log_type(dbo: Database) -> int:
+    return cint(dbo, "EmailLogType", DEFAULTS["EmailLogType"])
+
 def email_messages(dbo: Database) -> bool:
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
 
