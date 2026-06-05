@@ -64,6 +64,10 @@ $(function() {
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
                         options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.auto_process_options } },
+                    { json_field: "EMAILSUBMISSIONLIMITDAYS", post_field: "emailsubmissionlimitdays", label: _("Email submission limit (days)"),
+                        type: "number", min: 0, max: 30,
+                        callout: "Do not allow multiple submissions of this form the same email address within this number of days (0 removes any limit)"
+                    },
                     { json_field: "RETAINFOR", post_field: "retainfor", label: _("Retain for"),
                         type: "select",
                         callout: _("Retain processed form submissions on the media tab for a number of years"),

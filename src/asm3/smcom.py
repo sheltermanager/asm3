@@ -3,7 +3,7 @@ import asm3.al
 import asm3.cachedisk
 import asm3.db
 
-from asm3.sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
+from asm3.sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, EMAIL_SERVER_IP_WHITELIST
 from asm3.typehints import Database, Dict
 
 from datetime import datetime
@@ -183,6 +183,9 @@ def iptables_rules() -> str:
 def vacuum_full(dbo: Database) -> None:
     """ Performs a full vacuum on the database via command line (transaction problems via db.py) """
     os.system("psql -U %s -c \"VACUUM FULL;\"" % dbo.database)
+
+def validate_mail_server_ip(ipaddress):
+    return (ipaddress in EMAIL_SERVER_IP_WHITELIST)
 
 class SmcomError(web.HTTPError):
     """

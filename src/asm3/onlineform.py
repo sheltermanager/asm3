@@ -3,6 +3,7 @@ import asm3.al
 import asm3.animal
 import asm3.animalcontrol
 import asm3.configuration
+import asm3.cachedisk
 import asm3.geo
 import asm3.i18n
 import asm3.html
@@ -95,7 +96,7 @@ AP_CREATEANIMALLOG = 12
 SPAMBOT_TXT = 'a_emailaddress'
 
 # Fields that are added to forms by the system and are not user enterable
-SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
+SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed", "emailsubmissionlimitdays" ]
 
 # Hidden fields that are sent with forms, but are not part of the form data
 IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method", "mediaflags", "submitterreplyto" ]
@@ -143,6 +144,10 @@ AUTOCOMPLETE_MAP = {
     "celltelephone":    "tel",
     "emailaddress":     "email"
 }
+
+def check_submission_limit(dbo: Database, formid: int) -> int:
+    """ Returns how many days must elapse between form submissions with the same email address. If the value is 0 then there is no limit. """
+    return dbo.query_int("SELECT EmailSubmissionLimitDays FROM onlineform FORM WHERE ID = ?", [formid])
 
 def get_collationid(dbo: Database) -> int:
     """ Returns the next collation ID value for online forms. """
@@ -195,6 +200,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
     h.append('<input type="hidden" name="mediaflags" value="%s" />' % form.SETMEDIAFLAGS)
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
+    h.append('<input type="hidden" name="emailsubmissionlimit" value="%s" />' % form.EMAILSUBMISSIONLIMITDAYS)
     h.append('<input type="hidden" name="submitterreplyto" value="%s" />' % asm3.html.escape(form.SUBMITTERREPLYADDRESS))
     h.append('<table class="asm-onlineform-table">')
     shelteranimals = None
@@ -732,6 +738,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
         "RetainFor":            post.integer("retainfor"),
+        "EmailSubmissionLimitDays": post.integer("emailsubmissionlimitdays"),
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
@@ -755,6 +762,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
         "RetainFor":            post.integer("retainfor"),
+        "EmailSubmissionLimitDays": post.integer("emailsubmissionlimitdays"),
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
@@ -888,10 +896,28 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     firstname = ""
     lastname = ""
     postcode = ""
+    emailaddress = ""
+    emailsubmissionlimit = 0
     for k, v in post.data.items():
         if k.startswith("firstname") or k.startswith("forenames"): firstname = v
         if k.startswith("lastname") or k.startswith("surname"): lastname = v
         if k.startswith("zipcode") or k.startswith("postcode"): postcode = v
+        if k.startswith("emailaddress"): emailaddress = v
+        if k == "emailsubmissionlimit": emailsubmissionlimit = int(v)
+
+    if emailsubmissionlimit:
+        if not asm3.utils.is_valid_email_address(emailaddress):
+            pass
+        else:
+            formid = dbo.query_int("SELECT ID FROM onlineform WHERE Name = ?", [post["formname"]])
+            key = f"formemail_{str(formid)}_{emailaddress}"
+            if asm3.cachedisk.exists(key, dbo.name()):
+                lastreceived = asm3.cachedisk.get(key, dbo.name())
+                if lastreceived and (dbo.now() - lastreceived).days < check_submission_limit(dbo, formid):
+                    raise asm3.utils.ASMValidationError("Form already submitted recently from %s" % emailaddress)
+            else:
+                ttl = 3600 * check_submission_limit(dbo, formid)
+                asm3.cachedisk.put(key, dbo.name(), dbo.now(), ttl)
 
     # Check our spambot checkbox/honey trap
     if asm3.configuration.onlineform_spam_honeytrap(dbo):
