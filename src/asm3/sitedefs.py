@@ -348,6 +348,9 @@ EMERGENCY_NOTICE = get_string("emergency_notice", "")
 # SMTP_SERVER = { "sendmail": False, "host": "mail.yourdomain.com", "port": 25, "username": "", "password": "", "usetls": False }
 SMTP_SERVER = get_dict("smtp_server", { "sendmail": True })
 
+#Whitelist of mail server IPs that are allowed to call the email_received_log method of the service API
+EMAIL_SERVER_IP_WHITELIST = get_string("email_server_ip_whitelist", "127.0.0.1 localhost")
+
 # The from address for all outgoing emails. The email address configured
 # in the database will be used as the Reply-To header to avoid
 # any issues with DKIM/SPF/DMARC spoofing
@@ -413,4 +416,3 @@ AMQP_ENABLED = get_boolean("amqp_enabled", False)
 VIDEO_ENABLED = get_boolean("video_enabled", False)
 VIDEO_SIZE_LIMIT = get_integer("video_size_limit", 10485760)
 VIDEO_THUMBNAIL_CMD = get_string("video_thumbnail_cmd", "ffmpeg -v 0 -y -an -i %(input)s -ss 00:00:2.000 -vframes 1 %(output)s")
-EMAIL_SERVER_IP_WHITELIST = get_string("email_server_ip_whitelist", "")

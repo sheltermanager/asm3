@@ -185,7 +185,7 @@ def vacuum_full(dbo: Database) -> None:
     os.system("psql -U %s -c \"VACUUM FULL;\"" % dbo.database)
 
 def validate_mail_server_ip(ipaddress):
-    return (ipaddress in EMAIL_SERVER_IP_WHITELIST)
+    return ipaddress in EMAIL_SERVER_IP_WHITELIST.split()
 
 class SmcomError(web.HTTPError):
     """

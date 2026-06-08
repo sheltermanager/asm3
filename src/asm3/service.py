@@ -978,7 +978,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         emailaddress = post["emailaddress"]
         logtypeid = asm3.configuration.email_log_type(dbo)
         logtext = post["logtext"]
-        linktype = 1
+        linktype = asm3.log.PERSON
         pids = asm3.person.get_person_ids_for_email(dbo, emailaddress)
         if not asm3.smcom.validate_mail_server_ip(remoteip):
             return ("text/plain", 0, 0, "ERROR - Invalid IP Address")
