@@ -4156,6 +4156,8 @@ class foundanimal(JSONEndpoint):
         a = asm3.lostfound.get_foundanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
+        if (a.LATLONG is None or a.LATLONG == "") and a.AREAFOUND != "":
+            a.LATLONG = asm3.lostfound.update_geocode(dbo, a.ID, "found", a.LATLONG, a.AREAFOUND, a.AREAPOSTCODE)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalfound", a["ID"], recname)
         asm3.al.debug("open found animal %s" % recname, "main.foundanimal", dbo)
         return {
@@ -4843,6 +4845,8 @@ class lostanimal(JSONEndpoint):
         a = asm3.lostfound.get_lostanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
+        if (a.LATLONG is None or a.LATLONG == "") and a.AREALOST != "":
+            a.LATLONG = asm3.lostfound.update_geocode(dbo, a.ID, "lost", a.LATLONG, a.AREALOST, a.AREAPOSTCODE)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animallost", a["ID"], recname)
         asm3.al.debug("open lost animal %s" % recname, "main.foundanimal", dbo)
         return {

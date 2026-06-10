@@ -16,6 +16,7 @@ const mapping = {
      * latlong: A lat,long string to mark the center of the map (or empty string for current location)
      * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
      */
+    markers: [],
     draw_map: function(divid, zoom, latlong, markers) {
         var _draw_map = function(latlong) {
             if (asm.mapprovider == "osm") {
@@ -91,13 +92,19 @@ const mapping = {
                 if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                 ll = v.latlong.split(",");
                 var marker = L.marker([ll[0], ll[1]]).addTo(map);
+                mapping.markers.push(marker);
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
                 if (v.popupactive) { marker.openPopup(); }
             });
             if (config.bool("ShowLatLong")) {
                 map.on("contextmenu", function (event) {
                     if ($(".asm-latlong").length == 0) { return; }
+                    $.each(mapping.markers, function(i, v) {
+                        map.removeLayer(v);
+                    });
+                    mapping.markers = [];
                     var marker = L.marker(event.latlng).addTo(map);
+                    mapping.markers.push(marker);
                     $(".latlong-lat").val(event.latlng.lat);
                     $(".latlong-long").val(event.latlng.lng);
                     $(".asm-latlong").latlong("save");

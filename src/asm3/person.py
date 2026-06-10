@@ -1697,7 +1697,9 @@ def update_geocode(dbo: Database, personid: int, latlon: str = "", address: str 
     # If someone has deleted the values, a latlon of ,,HASH is returned so
     # we allow the geocode to be regenerated in that case.
     if asm3.configuration.show_lat_long(dbo) and latlon is not None and latlon != "" and not latlon.startswith(",,"):
-        return latlon
+        # Has the address changed? If so do nothing
+        if latlon.find(asm3.geo.address_hash(address, town, county, postcode, country)) != -1:
+            return latlon
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":

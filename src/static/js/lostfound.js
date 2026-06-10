@@ -59,6 +59,10 @@ $(function() {
                             hideif: function() { return mode != "found"; }},
                         { type: "nextcol" },
                         { post_field: "areapostcode", json_field: "AREAPOSTCODE", type: "text", label: _("Zipcode") },
+                        { post_field: "latlong", json_field: "LATLONG", type: "latlong", 
+                            label: _("Latitude/Longitude"), 
+                            callout: _("Right-click on the map to change the marker location")
+                        },
                         { post_field: "datefound", json_field: "DATEFOUND", type: "date", label: _("Date Found"), 
                             hideif: function() { return mode != "lost"; }},
                         { post_field: "returntoownerdate", json_field: "RETURNTOOWNERDATE", type: "date", label: _("Returned"), 
@@ -68,7 +72,10 @@ $(function() {
                         { post_field: "comments", json_field: "COMMENTS", type: "textarea", label: _("Comments"), rows: 5 },
                         { post_field: "owner", json_field: "OWNERID", type: "person", label: _("Contact") },
                         { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 10), hideif: function() { return mode != "lost"; }},
-                        { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 12), hideif: function() { return mode != "found"; }}
+                        { type: "additional", markup: additional.additional_fields_linktype(controller.additional, 12), hideif: function() { return mode != "found"; }},
+                        { type: "nextcol" },
+                        { type: "raw", fullrow: true, markup: '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>' }
+
                     ]},
                     { title: _("Additional"), markup: additional.additional_fields(controller.additional) },
                     html.audit_trail_accordion_obj(controller)
@@ -100,7 +107,9 @@ $(function() {
             if (lostfound.mode == "found") {
                 if (!common.has_permission("cfa")) { $("#button-save").hide(); }
                 if (!common.has_permission("dfa")) { $("#button-delete").hide(); }
-            } 
+            }
+            // CONFIG ===========================
+            $("#latlongrow").toggle( config.bool("ShowLatLong") );
         },
 
         validation: function() {
@@ -257,6 +266,9 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
+            // Update the lat/long
+            $(".asm-latlong").latlong("load");
+
             // Update on-screen fields from the data and display the screen
             lostfound.enable_widgets();
 
@@ -268,6 +280,21 @@ $(function() {
             validate.bind_dirty([ "lostanimal_", "foundanimal_" ]);
             if (this.mode == "lost") { validate.indicator([ "datelost", "datereported", "owner" ]); }
             if (this.mode == "found") { validate.indicator([ "datefound", "datereported", "owner" ]); }
+        },
+
+        delay: function() {
+            let arealostfound = "";
+            if (controller.animal.AREALOST) {
+                arealostfound = controller.animal.AREALOST;
+            } else {
+                arealostfound = controller.animal.AREAFOUND;
+            }
+            this.marker = { 
+                latlong: controller.animal.LATLONG, popuptext: arealostfound, popupactive: true
+            };
+            if (config.bool("ShowPersonMiniMap")) {
+                mapping.draw_map("embeddedmap", 15, controller.animal.LATLONG, [this.marker]);
+            }
         },
 
         destroy: function() {

@@ -622,6 +622,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaFound"),
         fstr("AreaPostcode"),
+        fstr("LatLong"),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         fdate("ReturnToOwnerDate", True),
@@ -674,6 +675,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaLost"),
         fstr("AreaPostcode"),
+        fstr("LatLong"),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         flongstr("Comments") ))
