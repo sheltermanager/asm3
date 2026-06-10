@@ -7,9 +7,14 @@ $(function() {
     const incident_map = {
 
         render: function() {
+            let headerheight = $("body").outerHeight() + 50;
+            let title = _("Active Incidents");
+            if (controller.name == "recent_incident_map") {
+                title = _("Recent Incidents");
+            }
             return [
-                html.content_header(_("Active Incidents")),
-                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000"></div>',
+                html.content_header(title),
+                '<div id="embeddedmap" style="position: absolute;z-index: 1; width: 100%; height: calc(100% - ' + headerheight + 'px); color: #000"></div>',
                 html.content_footer()
             ].join("\n");
         },
@@ -23,9 +28,24 @@ $(function() {
         delay: function() {
             let first_valid = "";
             $.each(controller.rows, function(i, v) {
-                v.latlong = v.DISPATCHLATLONG;
-                v.popuptext = "<b>" + v.DISPATCHADDRESS + "</b><br /><a target='_blank' href='incident?id=" + v.ACID + "'>" + 
-                    v.INCIDENTNAME + " " + common.nulltostr(v.OWNERNAME) + "</a>";
+                if (v.DISPATCHLATLONG) {
+                    v.latlong = v.DISPATCHLATLONG;
+                } else {
+                    v.latlong = v.LATLONG;
+                }
+                if (v.DISPATCHADDRESS) {
+                    v.ADDRESS = v.DISPATCHADDRESS;
+                }
+                if (v.PINSTYLE == "asm-reclaimedpin") {
+                    v.popuptext = "<b>" + v.ADDRESS + "</b><br /><a target='_blank' href='animal?id=" + v.ID + "'>" + 
+                        v.INCIDENTNAME + " " + _("Reclaimed") + "</a>";
+                } else if (v.PINSTYLE == "asm-nonshelterpin") {
+                    v.popuptext = "<b>" + v.ADDRESS + "</b><br /><a target='_blank' href='animal?id=" + v.ID + "'>" + 
+                        v.INCIDENTNAME + " " + _("Non-Shelter") + "</a>";
+                } else {
+                    v.popuptext = "<b>" + v.ADDRESS + "</b><br /><a target='_blank' href='incident?id=" + v.ID + "'>" + 
+                        v.INCIDENTNAME + " " + common.nulltostr(v.OWNERNAME) + "</a>";
+                }
                 if (v.latlong && v.latlong.indexOf("0,0") == -1) { first_valid = v.latlong; }
             });
             mapping.draw_map("embeddedmap", 10, first_valid, controller.rows); 
@@ -33,8 +53,15 @@ $(function() {
 
         name: "incident_map",
         animation: "results",
-        title: function() { return _("Active Incidents"); },
+        title: function() {
+            if (controller.name == "active_incident_map") {
+                return _("Active Incidents");
+            } else {
+                return _("Recent Incidents");
+            }
+        },
         routes: {
+            "recent_incident_map": function() { common.module_loadandstart("incident_map", "recent_incident_map"); },
             "incident_map": function() { common.module_loadandstart("incident_map", "incident_map"); }
         }
 
