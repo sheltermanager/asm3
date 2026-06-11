@@ -666,6 +666,17 @@ def get_found_person_name(dbo: Database, aid: int) -> str:
     """
     return dbo.query_string("SELECT o.OwnerName FROM animalfound a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = ?", [aid])
 
+def get_recent_animals(dbo: Database, offset: int = -30) -> Results:
+    """
+    Returns rows of unresolved lost/found animal data 
+    """
+    fromdate = dbo.sql_date(dbo.today(offset=offset))
+    return dbo.query(
+        "SELECT al.ID, 'lost' AS LostOrFound, DateLost AS LFDate, s.SpeciesName, s.ID AS SpeciesID, al.LatLong, al.AreaLost AS Area, 'asm-lostanimalpin' AS PinStyle FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? " \
+        "UNION SELECT af.ID, 'found' AS LostOrFound, DateFound AS LFDate, s.SpeciesName, s.ID AS SpeciesID, af.LatLong, af.AreaFound AS Area, 'asm-foundanimalpin' AS PinStyle FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID WHERE af.DateFound >= ? ",
+        [fromdate, fromdate]
+    )
+
 def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:
     """
     Updates a lost animal record from the screen

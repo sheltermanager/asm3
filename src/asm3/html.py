@@ -540,6 +540,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.ADD_LOST_ANIMAL, "", "taglostfound", "lostanimal_new", "asm-icon-animal-lost-add", _("Add a lost animal", l) ),
             ( asm3.users.ADD_FOUND_ANIMAL, "", "taglostfound", "foundanimal_new", "asm-icon-animal-found-add", _("Add a found animal", l) ),
             ( asm3.users.MATCH_LOST_FOUND, "", "taglostfound", "lostfound_match", "asm-icon-match", _("Match lost and found animals", l) ),
+            ( asm3.users.MATCH_LOST_FOUND, "", "taglostfound", "lostfound_map", "asm-icon-map", _("Map of lost and found animals", l) ),
             ( "", "", "", "--cat", "asm-icon-person", _("People", l) ),
             ( asm3.users.VIEW_PERSON, "alt+shift+p", "", "person_find", "asm-icon-person-find", _("Find person", l) ),
             ( asm3.users.ADD_PERSON, "", "", "person_new", "asm-icon-person-add", _("Add a new person", l) ),

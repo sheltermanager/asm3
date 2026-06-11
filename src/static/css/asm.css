@@ -1143,6 +1143,14 @@ select:disabled, input:disabled, textarea:disabled {
     width: 113px;
 }
 
+.asm-lostanimalpin {
+    filter: hue-rotate(0deg); /* Blue */
+}
+
+.asm-foundanimalpin {
+    filter: hue-rotate(90deg); /* Purple */
+}
+
 /** Don't display the menu burger button when >480px */
 #asm-menu-burger {
     display: none;

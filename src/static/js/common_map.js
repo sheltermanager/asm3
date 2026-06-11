@@ -79,31 +79,36 @@ const mapping = {
         $("head").append('<link rel="stylesheet" href="' + asm.leafletcss + '" />');
         mapping._get_script(asm.leafletjs, function() {
             var ll = latlong.split(",");
-            var map = L.map(divid).setView([ll[0], ll[1]], 15);
+            mapping.map = L.map(divid).setView([ll[0], ll[1]], 15);
             L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images/";
             L.tileLayer(asm.osmmaptiles, {
                 referrerPolicy: 'strict-origin-when-cross-origin', // causes referer header to be sent to osm
                 attribution: '<a target="_blank" href="http://osm.org/copyright">&copy; OpenStreetMap contributors</a> | ' + 
                     '<a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a> | ' + 
                     '<a target="_blank" href="https://www.openstreetmap.org/fixthemap">Improve this map</a>'
-            }).addTo(map);
-            L.control.scale().addTo(map);
+            }).addTo(mapping.map);
+            L.control.scale().addTo(mapping.map);
             $.each(markers, function(i, v) {
                 if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                 ll = v.latlong.split(",");
-                var marker = L.marker([ll[0], ll[1]]).addTo(map);
+                var marker = L.marker([ll[0], ll[1]]).addTo(mapping.map);
                 mapping.markers.push(marker);
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
+                if (v.PINSTYLE) {
+                    marker._icon.classList.add(v.PINSTYLE);
+                    marker.PINSTYLE = v.PINSTYLE;
+                }
+                if (v.SPECIESID) { marker.SPECIESID = v.SPECIESID; }
                 if (v.popupactive) { marker.openPopup(); }
             });
             if (config.bool("ShowLatLong")) {
-                map.on("contextmenu", function (event) {
+                mapping.map.on("contextmenu", function (event) {
                     if ($(".asm-latlong").length == 0) { return; }
                     $.each(mapping.markers, function(i, v) {
-                        map.removeLayer(v);
+                        mapping.map.removeLayer(v);
                     });
                     mapping.markers = [];
-                    var marker = L.marker(event.latlng).addTo(map);
+                    var marker = L.marker(event.latlng).addTo(mapping.map);
                     mapping.markers.push(marker);
                     $(".latlong-lat").val(event.latlng.lat);
                     $(".latlong-long").val(event.latlng.lng);
