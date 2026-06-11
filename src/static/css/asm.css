@@ -1143,6 +1143,17 @@ select:disabled, input:disabled, textarea:disabled {
     width: 113px;
 }
 
+/** Leaflet pins */
+.asm-incidentpin {
+    filter: hue-rotate(0deg); /* Blue */
+}
+.asm-nonshelterpin {
+    filter: hue-rotate(180deg); /* Orange */
+}
+.asm-reclaimedpin {
+    filter: hue-rotate(90deg); /* Purple */
+}
+
 /** Don't display the menu burger button when >480px */
 #asm-menu-burger {
     display: none;

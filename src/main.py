@@ -4573,7 +4573,22 @@ class incident_map(JSONEndpoint):
         rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user)
         asm3.al.debug("incident map, %d active" % (len(rows)), "main.incident_map", dbo)
         return {
-            "rows": rows
+            "rows": rows,
+            "name": "active_incident_map"
+        }
+
+class recent_incident_map(JSONEndpoint):
+    url = "recent_incident_map"
+    js_module = "incident_map"
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_MOVEMENT )
+
+    def controller(self, o):
+        dbo = o.dbo
+        rows = asm3.animalcontrol.get_recent_incidents(dbo)
+        asm3.al.debug("recent_incident map, %d active" % (len(rows)), "main.recent_incident_map", dbo)
+        return {
+            "rows": rows,
+            "name": "recent_incident_map"
         }
 
 class incident_media(JSONEndpoint):

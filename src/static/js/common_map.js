@@ -92,6 +92,7 @@ const mapping = {
                 ll = v.latlong.split(",");
                 var marker = L.marker([ll[0], ll[1]]).addTo(map);
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
+                if (v.PINSTYLE) { marker._icon.classList.add(v.PINSTYLE); }
                 if (v.popupactive) { marker.openPopup(); }
             });
             if (config.bool("ShowLatLong")) {
