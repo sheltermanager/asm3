@@ -66,7 +66,7 @@ $(function() {
                         options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.auto_process_options } },
                     { json_field: "EMAILSUBMISSIONLIMITDAYS", post_field: "emailsubmissionlimitdays", label: _("Email submission limit (days)"),
                         type: "number", min: 0, max: 30, validation: "notblank",
-                        callout: "Do not allow multiple submissions of this form the same email address within this number of days (0 removes any limit)"
+                        callout: "Do not allow multiple submissions of this form from the same email address within this number of days (0 removes any limit)"
                     },
                     { json_field: "RETAINFOR", post_field: "retainfor", label: _("Retain for"),
                         type: "select",
