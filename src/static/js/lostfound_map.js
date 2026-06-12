@@ -59,7 +59,7 @@ $(function() {
         delay: function() {
             let first_valid = "";
             $.each(controller.rows, function(i, v) {
-                v.latlong = v.LATLONG;
+                v.latlong = v.AREALATLONG;
                 if (v.LOSTORFOUND == "lost") {
                     v.popuptext = "<b>" + v.AREA + "</b><br /><a target='_blank' href='lostanimal?id=" + v.ID + "'>" + 
                         v.SPECIESNAME + " " + _("lost {0}").replace("{0}", format.date(v.LFDATE)) + "</a>";
@@ -69,6 +69,7 @@ $(function() {
                 }
                 if (v.latlong && v.latlong.indexOf("0,0") == -1) { first_valid = v.latlong; }
             });
+            console.log(controller.rows);
             mapping.draw_map("embeddedmap", 10, first_valid, controller.rows);
         },
 

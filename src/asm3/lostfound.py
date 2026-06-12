@@ -672,8 +672,8 @@ def get_recent_animals(dbo: Database, offset: int = -30) -> Results:
     """
     fromdate = dbo.sql_date(dbo.today(offset=offset))
     return dbo.query(
-        "SELECT al.ID, 'lost' AS LostOrFound, DateLost AS LFDate, s.SpeciesName, s.ID AS SpeciesID, al.LatLong, al.AreaLost AS Area, 'asm-lostanimalpin' AS PinStyle FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? " \
-        "UNION SELECT af.ID, 'found' AS LostOrFound, DateFound AS LFDate, s.SpeciesName, s.ID AS SpeciesID, af.LatLong, af.AreaFound AS Area, 'asm-foundanimalpin' AS PinStyle FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID WHERE af.DateFound >= ? ",
+        "SELECT al.ID, 'lost' AS LostOrFound, DateLost AS LFDate, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost AS Area, 'asm-lostanimalpin' AS PinStyle FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? " \
+        "UNION SELECT af.ID, 'found' AS LostOrFound, DateFound AS LFDate, s.SpeciesName, s.ID AS SpeciesID, af.AreaLatLong, af.AreaFound AS Area, 'asm-foundanimalpin' AS PinStyle FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID WHERE af.DateFound >= ? ",
         [fromdate, fromdate]
     )
 
@@ -707,7 +707,7 @@ def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str, 
         "DistFeat":         post["markings"],
         "AreaLost":         post["arealost"],
         "AreaPostcode":     post["areapostcode"],
-        "LatLong":          post["latlong"],
+        "AreaLatLong":      post["arealatlong"],
         "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
@@ -716,7 +716,7 @@ def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str, 
     asm3.diary.update_link_info(dbo, username, asm3.diary.LOSTANIMAL, lfid)
 
     # Look up a geocode for this animal
-    if geocode: update_geocode(dbo, lfid, "lost", post["latlong"], post["arealost"], post["areapostcode"])
+    if geocode: update_geocode(dbo, lfid, "lost", post["arealatlong"], post["arealost"], post["areapostcode"])
 
 def insert_lostanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
@@ -752,7 +752,7 @@ def insert_lostanimal_from_form(dbo: Database, post: PostedData, username: str, 
     asm3.additional.save_values_for_link(dbo, post, username, nid, "lostanimal", True)
 
     # Look up a geocode for this animal
-    if geocode: update_geocode(dbo, nid, "lost", post["latlong"], post["arealost"], post["areapostcode"])
+    if geocode: update_geocode(dbo, nid, "lost", post["arealatlong"], post["arealost"], post["areapostcode"])
 
     return nid
 
@@ -786,7 +786,7 @@ def update_foundanimal_from_form(dbo: Database, post: PostedData, username: str,
         "DistFeat":         post["markings"],
         "AreaFound":        post["areafound"],
         "AreaPostcode":     post["areapostcode"],
-        "LatLong":          post["latlong"],
+        "AreaLatLong":      post["arealatlong"],
         "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
@@ -795,7 +795,7 @@ def update_foundanimal_from_form(dbo: Database, post: PostedData, username: str,
     asm3.diary.update_link_info(dbo, username, asm3.diary.FOUNDANIMAL, lfid)
 
     # Look up a geocode for this animal
-    if geocode: update_geocode(dbo, lfid, "found", post["latlong"], post["areafound"], post["areapostcode"])
+    if geocode: update_geocode(dbo, lfid, "found", post["arealatlong"], post["areafound"], post["areapostcode"])
 
 def insert_foundanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
@@ -831,7 +831,7 @@ def insert_foundanimal_from_form(dbo: Database, post: PostedData, username: str,
     asm3.additional.save_values_for_link(dbo, post, username, nid, "foundanimal", True)
 
     # Look up a geocode for this animal
-    if geocode: update_geocode(dbo, nid, "found", post["latlong"], post["areafound"], post["areapostcode"])
+    if geocode: update_geocode(dbo, nid, "found", post["arealatlong"], post["areafound"], post["areapostcode"])
 
     return nid
 
@@ -960,4 +960,4 @@ def update_latlong(dbo: Database, aid: int, mode: str, latlong: str) -> None:
         tablename = "animallost"
     else:
         tablename = "animalfound"
-    dbo.update(tablename, aid, { "LatLong": latlong })
+    dbo.update(tablename, aid, { "AreaLatLong": latlong })

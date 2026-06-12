@@ -290,10 +290,10 @@ $(function() {
                 arealostfound = controller.animal.AREAFOUND;
             }
             this.marker = { 
-                latlong: controller.animal.LATLONG, popuptext: arealostfound, popupactive: true
+                latlong: controller.animal.AREALATLONG, popuptext: arealostfound, popupactive: true
             };
             if (config.bool("ShowPersonMiniMap")) {
-                mapping.draw_map("embeddedmap", 15, controller.animal.LATLONG, [this.marker]);
+                mapping.draw_map("embeddedmap", 15, controller.animal.AREALATLONG, [this.marker]);
             }
         },
 
