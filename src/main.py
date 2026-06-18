@@ -5460,6 +5460,119 @@ class maint_update_reports(ASMEndpoint):
         self.cache_control(0)
         return "%s reports updated" % asm3.reports.update_smcom_reports(o.dbo, o.user)
 
+class map_view(JSONEndpoint):
+    url = "map_view"
+    js_module = "mapview"
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_FOUND_ANIMAL )
+
+    def controller(self, o):
+        dbo = o.dbo
+        rows = asm3.lostfound.get_recent_animals(dbo)
+        asm3.al.debug("lostfound map, %d active" % (len(rows)), "main.lostfound_map", dbo)
+        return {
+            "rows": rows,
+            "species": asm3.lookups.get_species(dbo),
+            "name": "lostfound_map"
+        }
+    
+class map_markers(ASMEndpoint):
+    url = "map_markers"
+
+    def post_getmarkers(self, o):
+        markers = []
+        mk = o.post["mk"]
+        dbo = o.dbo
+        floor = o.post.date("floor")
+        if "l" in mk and self.checkb(asm3.users.VIEW_LOST_ANIMAL):
+            for m in asm3.lostfound.get_recent_lost_animals(dbo, floor):
+                popuptext = f'<a href="lostanimal?id={str(m.ID)}">' \
+                    f'{_("Lost {0} {1}").replace("{0}", m.SPECIESNAME.lower()).replace("{1}", str(m.ID))}<br />' \
+                    '</a>' \
+                    f'{python2display(o.locale, m.DATELOST)}<br />' \
+                    f'{m.AREALOST}<br />'
+                markers.append({
+                    "MARKERTYPE": "lost",
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.AREALATLONG,
+                    "PINURL": "static/images/icons/animal-lost.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "f" in mk and self.checkb(asm3.users.VIEW_FOUND_ANIMAL):
+            for m in asm3.lostfound.get_recent_found_animals(dbo, floor):
+                popuptext = f'<a href="foundanimal?id={str(m.ID)}">' \
+                    f'{_("Found {0} {1}").replace("{0}", m.SPECIESNAME.lower()).replace("{1}", str(m.ID))}<br />' \
+                    '</a>' \
+                    f'{python2display(o.locale, m.DATEFOUND)}<br />' \
+                    f'{m.AREAFOUND}<br />'
+                markers.append({
+                    "ID": m.ID,
+                    "MARKERTYPE": "found",
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.AREALATLONG,
+                    "PINURL": "static/images/icons/animal-found.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "a" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
+            for m in asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user):
+                popuptext = f'<a href="incident?id={str(m.ID)}">' \
+                    f'{_("{0} incident {1}").replace("{0}", m.SPECIESNAME).replace("{1}", str(m.INCIDENTCODE))}<br />' \
+                    '</a>' \
+                    f'{python2display(o.locale, m.INCIDENTDATETIME)}<br />' \
+                    f'{m.DISPATCHADDRESS}<br />'
+                markers.append({
+                    "ID": m.ID,
+                    "MARKERTYPE": "activeincident",
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.DISPATCHLATLONG,
+                    "PINURL": "static/images/icons/call.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "i" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
+            for m in asm3.animalcontrol.get_recent_incidents(dbo, floor):
+                popuptext = f'<a href="incident?id={str(m.ID)}">' \
+                    f'{_("{0} incident {1}").replace("{0}", m.SPECIESNAME).replace("{1}", str(m.INCIDENTCODE))}<br />' \
+                    '</a>' \
+                    f'{python2display(o.locale, m.INCIDENTDATETIME)}<br />' \
+                    f'{m.DISPATCHADDRESS}<br />'
+                markers.append({
+                    "ID": m.ID,
+                    "MARKERTYPE": "recentincident",
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.DISPATCHLATLONG,
+                    "PINURL": "static/images/icons/call.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "n" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
+            for m in asm3.animal.get_recent_nonshelter_animals(dbo, floor):
+                popuptext = f'<a href="animal?id={str(m.ID)}">' \
+                    f'{m.SHELTERCODE} {m.ANIMALNAME}<br />' \
+                    '</a>' \
+                    f'{python2display(o.locale, m.CREATEDDATE)}<br />' \
+                    f'{m.OWNERADDRESS}<br />'
+                markers.append({
+                    "ID": m.ID,
+                    "MARKERTYPE": "nonshelter",
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.LATLONG,
+                    "PINURL": "static/images/icons/nonshelter.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "r" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
+            for m in asm3.animal.get_recent_reclaimed_animals(dbo, floor):
+                popuptext = f'<a href="animal?id={str(m.ID)}">' \
+                    f'{m.SHELTERCODE} {m.ANIMALNAME}<br />' \
+                    '</a>' \
+                    f'{python2display(o.locale, m.MOVEMENTDATE)}<br />' \
+                    f'{m.OWNERADDRESS}<br />'
+                markers.append({
+                    "ID": m.ID,
+                    "MARKERTYPE": "reclaim",
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.LATLONG,
+                    "PINURL": "static/images/icons/location.png",
+                    "POPUPTEXT": popuptext
+                })
+        return asm3.utils.json(markers)
 
 class medical(JSONEndpoint):
     url = "medical"

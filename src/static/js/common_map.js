@@ -31,6 +31,10 @@ const mapping = {
         if (latlong != "") {
             _draw_map(latlong);
         }
+        // No https connection - assuming test environment, providing fallback location
+        else if (!document.location.href.startsWith("https://")) {
+            _draw_map("38.536777,-90.4471,415AxminsterDriveFentonMO63026");
+        }
         // No center point specified, use the device location
         else if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -47,6 +51,33 @@ const mapping = {
         else if (first_valid) {
             // Geolocation is not supported - use the first marker pin
             _draw_map(first_valid);
+        }
+        //  mapping.redraw_markers(markers);
+    },
+
+    redraw_markers: function(markers) {
+        if (asm.mapprovider == "osm") {
+            $.each(mapping.markers, function(i, v) {
+                    mapping.map.removeLayer(v);
+            });
+            mapping.markers = [];
+            $.each(markers, function(i, v) {
+                    if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
+                    let ll = v.latlong.split(",");
+                    let markerIcon = L.icon({
+                        iconUrl: v.PINURL,
+                        shadowUrl: 'static/images/ui/marker-shadow.png',
+                        iconSize:     [30, 30], // size of the icon
+                        shadowSize:   [80, 80], // size of the shadow
+                        iconAnchor:   [15, 15], // point of the icon which will correspond to marker's location
+                        shadowAnchor: [30, 70], // the same for the shadow
+                        popupAnchor:  [0, -15]  // point from which the popup should open relative to the iconAnchor
+                    });
+                    let marker = L.marker([ll[0], ll[1]], {icon: markerIcon}).addTo(mapping.map).bindPopup(v.POPUPTEXT);
+                    mapping.markers.push(marker);
+            });
+        } else if (asm.mapprovider == "google") {
+            // To do - insert google code here
         }
     },
 

@@ -446,6 +446,13 @@ def get_active_traploans(dbo: Database) -> Results:
         "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > ? " \
         "ORDER BY ot.LoanDate DESC", [dbo.today()])
 
+def get_recent_incidents(dbo: Database, floor: datetime):
+    return dbo.query(
+        get_animalcontrol_query(dbo) +
+        "WHERE ac.INCIDENTDATETIME >= ? ",
+        [floor]
+    )
+
 def get_returned_traploans(dbo: Database, offset: str = "m31") -> Results:
     """
     Returns returned traploan records

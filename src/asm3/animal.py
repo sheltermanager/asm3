@@ -3138,6 +3138,27 @@ def get_recent_changes(dbo: Database, months: int = 1, include_additional_fields
         rows = asm3.additional.append_to_results(dbo, rows, "animal")
     return rows
 
+def get_recent_nonshelter_animals(dbo: Database, floor: datetime):
+    return dbo.query(
+        "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.SpeciesID, s.SpeciesName, o.LatLong, o.OwnerAddress, a.CreatedDate " \
+        "FROM animal a " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID " \
+        "INNER JOIN owner o ON a.OwnerID = o.ID " \
+        "WHERE a.NonShelterAnimal = 1 AND a.CreatedDate >= ?",
+        [floor]
+    )
+
+def get_recent_reclaimed_animals(dbo: Database, floor: datetime):
+    return dbo.query(
+        "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.SpeciesID, s.SpeciesName, o.LatLong, o.OwnerAddress, m.MovementDate " \
+        "FROM adoption m " \
+        "INNER JOIN animal a ON m.AnimalID = a.ID " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID " \
+        "INNER JOIN owner o ON m.OwnerID = o.ID " \
+        "WHERE m.MovementType = 5 AND m.MovementDate >= ?",
+        [floor]
+    )
+
 def get_shelter_animals(dbo: Database, include_additional_fields: bool = True) -> Results:
     """ Return full animal records for all shelter animals """
     rows = dbo.query(get_animal_query(dbo) + \
