@@ -5008,21 +5008,6 @@ class lostanimal_new(JSONEndpoint):
     def post_all(self, o):
         return str(asm3.lostfound.insert_lostanimal_from_form(o.dbo, o.post, o.user))
 
-class lostfound_map(JSONEndpoint):
-    url = "lostfound_map"
-    js_module = "lostfound_map"
-    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_FOUND_ANIMAL )
-
-    def controller(self, o):
-        dbo = o.dbo
-        rows = asm3.lostfound.get_recent_animals(dbo)
-        asm3.al.debug("lostfound map, %d active" % (len(rows)), "main.lostfound_map", dbo)
-        return {
-            "rows": rows,
-            "species": asm3.lookups.get_species(dbo),
-            "name": "lostfound_map"
-        }
-
 class lostfound_match(ASMEndpoint):
     url = "lostfound_match"
     get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_FOUND_ANIMAL, asm3.users.VIEW_PERSON )
@@ -5468,8 +5453,7 @@ class map_view(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "species": asm3.lookups.get_species(dbo),
-            "name": "lostfound_map"
+            "species": asm3.lookups.get_species(dbo)
         }
     
 class map_markers(ASMEndpoint):

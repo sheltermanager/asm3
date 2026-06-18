@@ -52,7 +52,6 @@ const mapping = {
             // Geolocation is not supported - use the first marker pin
             _draw_map(first_valid);
         }
-        //  mapping.redraw_markers(markers);
     },
 
     redraw_markers: function(markers) {
@@ -76,8 +75,10 @@ const mapping = {
                     let marker = L.marker([ll[0], ll[1]], {icon: markerIcon}).addTo(mapping.map).bindPopup(v.POPUPTEXT);
                     mapping.markers.push(marker);
             });
-            let group = L.featureGroup(mapping.markers);
-            mapping.map.fitBounds(group.getBounds()); 
+            if (markers.length) {
+                let group = L.featureGroup(mapping.markers);
+                mapping.map.fitBounds(group.getBounds());
+            }
         } else if (asm.mapprovider == "google") {
             // To do - insert google code here
             console.log(markers);
@@ -108,7 +109,9 @@ const mapping = {
                     if (infowindow) { infowindow.open(map, marker); }
                 }
             });
-            mapping.map.fitBounds(latlngbounds);
+            if (markers.length) {
+                mapping.map.fitBounds(latlngbounds);
+            }
         }
     },
 
@@ -193,24 +196,6 @@ const mapping = {
                 center: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]))
             };
             mapping.map = new google.maps.Map(document.getElementById(divid), mapOptions);
-            // $.each(markers, function(i, v) {
-            //     if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
-            //     ll = v.latlong.split(",");
-            //     var marker = new google.maps.Marker({
-            //         position: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1])),
-            //         map: map
-            //     });
-            //     var infowindow;
-            //     if (v.popuptext) { 
-            //         infowindow = new google.maps.InfoWindow({ content: v.popuptext }); 
-            //         google.maps.event.addListener(marker, 'click', function() {
-            //             infowindow.open(map, marker);
-            //         });
-            //     }
-            //     if (v.popupactive) { 
-            //         if (infowindow) { infowindow.open(map, marker); }
-            //     }
-            // });
             if (config.bool("ShowLatLong")) {
                 google.maps.event.addListener(mapping.map, 'click', function(event) {
                     if ($(".asm-latlong").length == 0) { return; }
