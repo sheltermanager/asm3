@@ -544,6 +544,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.VIEW_PERSON, "alt+shift+p", "", "person_find", "asm-icon-person-find", _("Find person", l) ),
             ( asm3.users.ADD_PERSON, "", "", "person_new", "asm-icon-person-add", _("Add a new person", l) ),
             ( asm3.users.ADD_LOG, "", "", "log_new?mode=person", "asm-icon-log", _("Add a log entry", l) ),
+            ( asm3.users.CHANGE_PERSON, "", "", "person_bulk", "asm-icon-blank", _("Bulk change people", l) ),
             ( asm3.users.VIEW_PERSON, "", "", "person_lookingfor", "asm-icon-animal-find", _("Person looking for report", l) ),
             ( asm3.users.VIEW_STAFF_ROTA, "", "tagrota", "staff_rota", "asm-icon-rota", _("Staff rota", l) ),
             ("", "", "tagevent", "--cat", "asm-icon-event", _("Events", l)),
