@@ -58,7 +58,7 @@ const mapping = {
     redraw_markers: function(markers) {
         if (asm.mapprovider == "osm") {
             $.each(mapping.markers, function(i, v) {
-                    mapping.map.removeLayer(v);
+                mapping.map.removeLayer(v);
             });
             mapping.markers = [];
             $.each(markers, function(i, v) {
@@ -66,18 +66,49 @@ const mapping = {
                     let ll = v.latlong.split(",");
                     let markerIcon = L.icon({
                         iconUrl: v.PINURL,
-                        shadowUrl: 'static/images/ui/marker-shadow.png',
-                        iconSize:     [30, 30], // size of the icon
-                        shadowSize:   [80, 80], // size of the shadow
-                        iconAnchor:   [15, 15], // point of the icon which will correspond to marker's location
-                        shadowAnchor: [30, 70], // the same for the shadow
+                        shadowUrl: 'static/images/mapping/marker-shadow.png',
+                        iconSize:     [50, 82], // size of the icon
+                        shadowSize:   [100, 164], // size of the shadow
+                        iconAnchor:   [25, 80], // point of the icon which will correspond to marker's location
+                        shadowAnchor: [30, 164], // the same for the shadow
                         popupAnchor:  [0, -15]  // point from which the popup should open relative to the iconAnchor
                     });
                     let marker = L.marker([ll[0], ll[1]], {icon: markerIcon}).addTo(mapping.map).bindPopup(v.POPUPTEXT);
                     mapping.markers.push(marker);
             });
+            let group = L.featureGroup(mapping.markers);
+            mapping.map.fitBounds(group.getBounds()); 
         } else if (asm.mapprovider == "google") {
             // To do - insert google code here
+            console.log(markers);
+            $.each(mapping.markers, function(i, v) {
+                v.setMap(null);
+            });
+            mapping.markers = [];
+            let latlngbounds = new google.maps.LatLngBounds();
+            $.each(markers, function(i, v) {
+                if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
+                let ll = v.latlong.split(",");
+                let gll = new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]));
+                var marker = new google.maps.Marker({
+                    position: gll,
+                    map: mapping.map,
+                    icon: v.PINURL
+                });
+                latlngbounds.extend(gll);
+                mapping.markers.push(marker);
+                var infowindow;
+                if (v.POPUPTEXT) { 
+                    infowindow = new google.maps.InfoWindow({ content: v.POPUPTEXT }); 
+                    google.maps.event.addListener(marker, 'click', function() {
+                        infowindow.open(mapping.map, marker);
+                    });
+                }
+                if (v.popupactive) { 
+                    if (infowindow) { infowindow.open(map, marker); }
+                }
+            });
+            mapping.map.fitBounds(latlngbounds);
         }
     },
 
@@ -161,31 +192,31 @@ const mapping = {
                 zoom: zoom,
                 center: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]))
             };
-            var map = new google.maps.Map(document.getElementById(divid), mapOptions);
-            $.each(markers, function(i, v) {
-                if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
-                ll = v.latlong.split(",");
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1])),
-                    map: map
-                });
-                var infowindow;
-                if (v.popuptext) { 
-                    infowindow = new google.maps.InfoWindow({ content: v.popuptext }); 
-                    google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.open(map, marker);
-                    });
-                }
-                if (v.popupactive) { 
-                    if (infowindow) { infowindow.open(map, marker); }
-                }
-            });
+            mapping.map = new google.maps.Map(document.getElementById(divid), mapOptions);
+            // $.each(markers, function(i, v) {
+            //     if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
+            //     ll = v.latlong.split(",");
+            //     var marker = new google.maps.Marker({
+            //         position: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1])),
+            //         map: map
+            //     });
+            //     var infowindow;
+            //     if (v.popuptext) { 
+            //         infowindow = new google.maps.InfoWindow({ content: v.popuptext }); 
+            //         google.maps.event.addListener(marker, 'click', function() {
+            //             infowindow.open(map, marker);
+            //         });
+            //     }
+            //     if (v.popupactive) { 
+            //         if (infowindow) { infowindow.open(map, marker); }
+            //     }
+            // });
             if (config.bool("ShowLatLong")) {
-                google.maps.event.addListener(map, 'click', function(event) {
+                google.maps.event.addListener(mapping.map, 'click', function(event) {
                     if ($(".asm-latlong").length == 0) { return; }
                     var marker = new google.maps.Marker({
                         position: event.latLng,
-                        map: map
+                        map: mapping.map
                     });
                     $(".latlong-lat").val(event.latLng.lat());
                     $(".latlong-long").val(event.latLng.lng());

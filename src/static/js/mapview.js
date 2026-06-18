@@ -91,7 +91,7 @@ $(function() {
             if (mk.includes("a")) {
                 mk = mk.replace("i", "");
             }
-            if (!mk) { mk = "lfainr"; }
+            if (!mk) { mk = "lfinr"; }
             $("#toggles input").each(function() {
                 if (mk.indexOf( $(this).attr("data") ) != -1) {
                     $(this).prop("checked", true);
@@ -110,43 +110,15 @@ $(function() {
             // If there's a floor parameter, sync the floor input
             let fl = common.querystring_param("fl");
             if (fl) {
-                // let year = parseInt(fl.split("-")[0])
-                // let month = parseInt(fl.split("-")[1])
-                // let day = parseInt(fl.split("-")[2])
-                // let datefloor = new Date(year, month - 1, day);
-                let datefloor = format.date(fl);
-                $("#datefloor").datepicker("setDate", datefloor);
+                $("#datefloor").datepicker("setDate", fl);
             } else {
                 let datefloor = new Date();
                 datefloor.setDate(datefloor.getDate() - 90);
                 $("#datefloor").datepicker("setDate", datefloor);
             }
-
-            // mapview.update_markers_from_checkboxes();
-
-            // if (config.bool("DisableAnimalControl")) { $(".taganimalcontrol").hide(); }
-            // if (config.bool("DisableBoarding")) { $(".tagboarding").hide(); }
-            // if (config.bool("DisableClinic")) { $(".tagclinic").hide(); }
-            // if (config.bool("DisableTransport")) { $(".tagtransport").hide(); }
-            // if (config.bool("DisableTrapLoan")) { $(".tagtraploan").hide(); }
-            // if (config.bool("DisableEvents")) { $(".tagevent").hide(); }
         },
 
         delay: function() {
-            // let first_valid = "";
-            // $.each(controller.rows, function(i, v) {
-            //     v.latlong = v.AREALATLONG;
-            //     if (v.LOSTORFOUND == "lost") {
-            //         v.popuptext = "<b>" + v.AREA + "</b><br /><a target='_blank' href='lostanimal?id=" + v.ID + "'>" + 
-            //             v.SPECIESNAME + " " + _("lost {0}").replace("{0}", format.date(v.LFDATE)) + "</a>";
-            //     } else {
-            //         v.popuptext = "<b>" + v.AREA + "</b><br /><a target='_blank' href='foundanimal?id=" + v.ID + "'>" + 
-            //             v.SPECIESNAME + " " + _("found {0}").replace("{0}", format.date(v.LFDATE)) + "</a>";
-            //     }
-            //     if (v.latlong && v.latlong.indexOf("0,0") == -1) { first_valid = v.latlong; }
-            // });
-
-            // mapping.draw_map("embeddedmap", 10, first_valid, controller.rows);
             mapping.draw_map("embeddedmap", 10, false, []);
             mapview.update_markers_from_checkboxes();
         },

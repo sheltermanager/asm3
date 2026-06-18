@@ -5467,10 +5467,7 @@ class map_view(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        rows = asm3.lostfound.get_recent_animals(dbo)
-        asm3.al.debug("lostfound map, %d active" % (len(rows)), "main.lostfound_map", dbo)
         return {
-            "rows": rows,
             "species": asm3.lookups.get_species(dbo),
             "name": "lostfound_map"
         }
@@ -5494,7 +5491,7 @@ class map_markers(ASMEndpoint):
                     "MARKERTYPE": "lost",
                     "SPECIESID": m.SPECIESID,
                     "latlong": m.AREALATLONG,
-                    "PINURL": "static/images/icons/animal-lost.png",
+                    "PINURL": "static/images/mapping/lost-animal.png",
                     "POPUPTEXT": popuptext
                 })
         if "f" in mk and self.checkb(asm3.users.VIEW_FOUND_ANIMAL):
@@ -5509,7 +5506,7 @@ class map_markers(ASMEndpoint):
                     "MARKERTYPE": "found",
                     "SPECIESID": m.SPECIESID,
                     "latlong": m.AREALATLONG,
-                    "PINURL": "static/images/icons/animal-found.png",
+                    "PINURL": "static/images/mapping/found-animal.png",
                     "POPUPTEXT": popuptext
                 })
         if "a" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
@@ -5524,7 +5521,7 @@ class map_markers(ASMEndpoint):
                     "MARKERTYPE": "activeincident",
                     "SPECIESID": m.SPECIESID,
                     "latlong": m.DISPATCHLATLONG,
-                    "PINURL": "static/images/icons/call.png",
+                    "PINURL": "static/images/mapping/incident.png",
                     "POPUPTEXT": popuptext
                 })
         if "i" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
@@ -5539,7 +5536,7 @@ class map_markers(ASMEndpoint):
                     "MARKERTYPE": "recentincident",
                     "SPECIESID": m.SPECIESID,
                     "latlong": m.DISPATCHLATLONG,
-                    "PINURL": "static/images/icons/call.png",
+                    "PINURL": "static/images/mapping/incident.png",
                     "POPUPTEXT": popuptext
                 })
         if "n" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
@@ -5554,7 +5551,7 @@ class map_markers(ASMEndpoint):
                     "MARKERTYPE": "nonshelter",
                     "SPECIESID": m.SPECIESID,
                     "latlong": m.LATLONG,
-                    "PINURL": "static/images/icons/nonshelter.png",
+                    "PINURL": "static/images/mapping/nonshelter.png",
                     "POPUPTEXT": popuptext
                 })
         if "r" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
@@ -5569,7 +5566,7 @@ class map_markers(ASMEndpoint):
                     "MARKERTYPE": "reclaim",
                     "SPECIESID": m.SPECIESID,
                     "latlong": m.LATLONG,
-                    "PINURL": "static/images/icons/location.png",
+                    "PINURL": "static/images/mapping/reclaim.png",
                     "POPUPTEXT": popuptext
                 })
         return asm3.utils.json(markers)
