@@ -214,16 +214,20 @@ const mapping = {
             if (config.bool("ShowLatLong")) {
                 google.maps.event.addListener(mapping.map, 'click', function(event) {
                     if ($(".asm-latlong").length == 0) { return; }
+                    $.each(mapping.markers, function(i, v) {
+                        v.setMap(null);
+                    });
                     var marker = new google.maps.Marker({
                         position: event.latLng,
                         map: mapping.map
                     });
+                    mapping.markers.push(marker);
                     $(".latlong-lat").val(event.latLng.lat());
                     $(".latlong-long").val(event.latLng.lng());
                     $(".asm-latlong").latlong("save");
                     var infowindow = new google.maps.InfoWindow({ content: event.latLng.lat() + ", " + event.latLng.lng() }); 
                     google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.open(map, marker);
+                        infowindow.open(mapping.map, marker);
                     });
                     validate.dirty(true);
                 });
