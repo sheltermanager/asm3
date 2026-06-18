@@ -6914,6 +6914,7 @@ class person(JSONEndpoint):
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "owner", p.ID, p.OWNERNAME)
         asm3.al.debug("opened person '%s'" % p.OWNERNAME, "main.person", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "additional": asm3.additional.get_additional_fields(dbo, p.id, "person"),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
@@ -6974,6 +6975,7 @@ class person_boarding(JSONEndpoint):
         rows = asm3.financial.get_person_boarding(dbo, p.ID)
         asm3.al.debug("got %d person boarding records" % (len(rows)), "main.person_boarding", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_boarding",
             "person": p,
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
@@ -6998,6 +7000,7 @@ class person_citations(JSONEndpoint):
         citations = asm3.financial.get_person_citations(dbo, o.post.integer("id"))
         asm3.al.debug("got %d citations" % len(citations), "main.person_citations", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_citations",
             "rows": citations,
             "person": p,
@@ -7021,6 +7024,7 @@ class person_clinic(JSONEndpoint):
         rows = asm3.clinic.get_person_appointments(dbo, personid)
         asm3.al.debug("got %d appointments for person %s" % (len(rows), p.OWNERNAME), "main.person_clinic", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": self.url,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, personid)[0],
@@ -7046,6 +7050,7 @@ class person_diary(JSONEndpoint):
         diaries = asm3.diary.get_diaries(dbo, asm3.diary.PERSON, o.post.integer("id"))
         asm3.al.debug("got %d diaries" % len(diaries), "main.person_diary", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "rows": diaries,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
@@ -7067,6 +7072,7 @@ class person_donations(JSONEndpoint):
         if p is None: self.notfound()
         donations = asm3.financial.get_person_donations(dbo, o.post.integer("id"))
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "name": "person_donations",
@@ -7093,6 +7099,7 @@ class person_costs(JSONEndpoint):
         costs = asm3.animal.get_costs_for_payee(dbo, personid)
         asm3.al.debug("got %d costs for person %s" % (len(costs), p["OWNERNAME"]), "main.person_costs", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_costs",
             "rows": costs,
             "person": p,
@@ -7250,6 +7257,7 @@ class person_investigation(JSONEndpoint):
         investigation = asm3.person.get_investigation(dbo, o.post.integer("id"))
         asm3.al.debug("got %d investigation records for person %s" % (len(investigation), p["OWNERNAME"]), "main.person_investigation", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "rows": investigation,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0]
@@ -7280,6 +7288,7 @@ class person_licence(JSONEndpoint):
         licences = asm3.financial.get_person_licences(dbo, o.post.integer("id"))
         asm3.al.debug("got %d licences" % len(licences), "main.person_licence", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_licence",
             "rows": licences,
             "person": p,
@@ -7302,6 +7311,7 @@ class person_log(JSONEndpoint):
         if p is None: self.notfound()
         logs = asm3.log.get_logs(dbo, asm3.log.PERSON, o.post.integer("id"), logfilter)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_log",
             "linkid": o.post.integer("id"),
             "linktypeid": asm3.log.PERSON,
@@ -7334,6 +7344,7 @@ class person_links(JSONEndpoint):
         if p is None: self.notfound()
         asm3.al.debug("got %d person links" % len(links), "main.person_links", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "links": links,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0]
@@ -7351,6 +7362,7 @@ class person_media(JSONEndpoint):
         m = asm3.media.get_media(dbo, asm3.media.PERSON, o.post.integer("id"))
         asm3.al.debug("got %d media" % len(m), "main.person_media", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "media": m,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
@@ -7382,6 +7394,7 @@ class person_movements(JSONEndpoint):
         movements = asm3.person.reduce_find_results(dbo, o.user, movements, idcol="OWNERID", sitecol="OWNERSITEID")
         asm3.al.debug("got %d movements" % len(movements), "main.person_movements", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_movements",
             "rows": movements,
             "person": p,
@@ -7431,6 +7444,7 @@ class person_rota(JSONEndpoint):
         rota = asm3.person.get_person_rota(dbo, o.post.integer("id"))
         asm3.al.debug("got %d rota items" % len(rota), "main.person_rota", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_rota",
             "rows": rota,
             "person": p,
@@ -7464,6 +7478,7 @@ class person_traploan(JSONEndpoint):
         traploans = asm3.animalcontrol.get_person_traploans(dbo, o.post.integer("id"))
         asm3.al.debug("got %d trap loans" % len(traploans), "main.person_traploan", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_traploan",
             "rows": traploans,
             "person": p,
@@ -7483,6 +7498,7 @@ class person_vouchers(JSONEndpoint):
         vouchers = asm3.financial.get_person_vouchers(dbo, o.post.integer("id"))
         asm3.al.debug("got %d person vouchers" % len(vouchers), "main.person_vouchers", dbo)
         return {
+            "activeanimals": asm3.person.get_owned_animals(dbo, p.id),
             "name": "person_vouchers",
             "rows": vouchers,
             "person": p,
