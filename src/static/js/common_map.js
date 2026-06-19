@@ -80,8 +80,6 @@ const mapping = {
                 mapping.map.fitBounds(group.getBounds());
             }
         } else if (asm.mapprovider == "google") {
-            // To do - insert google code here
-            console.log(markers);
             $.each(mapping._markers, function(i, v) {
                 v.setMap(null);
             });
@@ -106,7 +104,7 @@ const mapping = {
                     });
                 }
                 if (v.popupactive) { 
-                    if (infowindow) { infowindow.open(map, marker); }
+                    if (infowindow) { infowindow.open(mapping.map, marker); }
                 }
             });
             if (markers.length) {
