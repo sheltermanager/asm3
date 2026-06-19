@@ -249,6 +249,9 @@ def get_recent_incidents(dbo: Database):
     Returns rows of animalcontrol incidents and animals reclaimed in the last 3 months plus any 
     non-shelter animals created in last year
     """
+    # TODO: Disabled due to breakage
+    return []
+    """
     now = dbo.now()
     sql = "SELECT ac.ID, t.IncidentName, ac.DispatchLatLong AS LatLong, ac.DispatchAddress AS Address, o.OwnerName, 'asm-incidentpin' AS PinStyle " \
     "FROM animalcontrol ac " \
@@ -277,6 +280,7 @@ def get_recent_incidents(dbo: Database):
             # asm3.configuration.organisation_town(dbo)
         )
     )
+    """
 
 def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
     """
