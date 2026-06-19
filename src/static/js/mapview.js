@@ -54,7 +54,7 @@ $(function() {
                     chk("toggle-lost", "l", "animal-lost", _("Lost")),
                     chk("toggle-found", "f", "animal-found", _("Found")),
                     chk("toggle-activeincident", "a", "call", _("Active Incidents")),
-                    chk("toggle-recentincident", "i", "call", _("Recent Incidents")),
+                    chk("toggle-recentincident", "i", "call-complete", _("Recent Incidents")),
                     chk("toggle-nonshelter", "n", "nonshelter", _("Non-Shelter")),
                     chk("toggle-reclaim", "r", "location", _("Reclaims")),
                     '<span class="asm-map-legend" style="padding: 5px;">', 
@@ -75,12 +75,6 @@ $(function() {
                 mapview.update_markers_from_checkboxes();
             });
             $("#toggles input").change(function() {
-                if ($(this).attr("data") == "a" && $(this).prop("checked")) {
-                    $("#toggle-recentincident").prop("checked", false);
-                }
-                if ($(this).attr("data") == "i" && $(this).prop("checked")) {
-                    $("#toggle-activeincident").prop("checked", false);
-                }
                 mapview.update_markers_from_checkboxes();
             });
         },
@@ -91,7 +85,7 @@ $(function() {
             if (mk.includes("a")) {
                 mk = mk.replace("i", "");
             }
-            if (!mk) { mk = "lfinr"; }
+            if (!mk) { mk = "lfianr"; }
             $("#toggles input").each(function() {
                 if (mk.indexOf( $(this).attr("data") ) != -1) {
                     $(this).prop("checked", true);

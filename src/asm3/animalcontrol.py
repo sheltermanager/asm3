@@ -449,7 +449,7 @@ def get_active_traploans(dbo: Database) -> Results:
 def get_recent_incidents(dbo: Database, floor: datetime):
     return dbo.query(
         get_animalcontrol_query(dbo) +
-        "WHERE ac.INCIDENTDATETIME >= ? ",
+        "WHERE ac.CompletedDate >= ? ",
         [floor]
     )
 

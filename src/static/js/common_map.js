@@ -16,7 +16,7 @@ const mapping = {
      * latlong: A lat,long string to mark the center of the map (or empty string for current location)
      * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
      */
-    markers: [],
+    _markers: [],
     draw_map: function(divid, zoom, latlong, markers) {
         var _draw_map = function(latlong) {
             if (asm.mapprovider == "osm") {
@@ -56,10 +56,10 @@ const mapping = {
 
     redraw_markers: function(markers) {
         if (asm.mapprovider == "osm") {
-            $.each(mapping.markers, function(i, v) {
+            $.each(mapping._markers, function(i, v) {
                 mapping.map.removeLayer(v);
             });
-            mapping.markers = [];
+            mapping._markers = [];
             $.each(markers, function(i, v) {
                     if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                     let ll = v.latlong.split(",");
@@ -70,22 +70,22 @@ const mapping = {
                         shadowSize:   [100, 164], // size of the shadow
                         iconAnchor:   [25, 80], // point of the icon which will correspond to marker's location
                         shadowAnchor: [30, 164], // the same for the shadow
-                        popupAnchor:  [0, -15]  // point from which the popup should open relative to the iconAnchor
+                        popupAnchor:  [0, -82]  // point from which the popup should open relative to the iconAnchor
                     });
                     let marker = L.marker([ll[0], ll[1]], {icon: markerIcon}).addTo(mapping.map).bindPopup(v.POPUPTEXT);
-                    mapping.markers.push(marker);
+                    mapping._markers.push(marker);
             });
             if (markers.length) {
-                let group = L.featureGroup(mapping.markers);
+                let group = L.featureGroup(mapping._markers);
                 mapping.map.fitBounds(group.getBounds());
             }
         } else if (asm.mapprovider == "google") {
             // To do - insert google code here
             console.log(markers);
-            $.each(mapping.markers, function(i, v) {
+            $.each(mapping._markers, function(i, v) {
                 v.setMap(null);
             });
-            mapping.markers = [];
+            mapping._markers = [];
             let latlngbounds = new google.maps.LatLngBounds();
             $.each(markers, function(i, v) {
                 if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
@@ -97,7 +97,7 @@ const mapping = {
                     icon: v.PINURL
                 });
                 latlngbounds.extend(gll);
-                mapping.markers.push(marker);
+                mapping._markers.push(marker);
                 var infowindow;
                 if (v.POPUPTEXT) { 
                     infowindow = new google.maps.InfoWindow({ content: v.POPUPTEXT }); 
@@ -157,7 +157,7 @@ const mapping = {
                 if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                 ll = v.latlong.split(",");
                 var marker = L.marker([ll[0], ll[1]]).addTo(mapping.map);
-                mapping.markers.push(marker);
+                mapping._markers.push(marker);
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
                 if (v.PINSTYLE) {
                     marker._icon.classList.add(v.PINSTYLE);
@@ -169,12 +169,12 @@ const mapping = {
             if (config.bool("ShowLatLong")) {
                 mapping.map.on("contextmenu", function (event) {
                     if ($(".asm-latlong").length == 0) { return; }
-                    $.each(mapping.markers, function(i, v) {
+                    $.each(mapping._markers, function(i, v) {
                         mapping.map.removeLayer(v);
                     });
-                    mapping.markers = [];
+                    mapping._markers = [];
                     var marker = L.marker(event.latlng).addTo(mapping.map);
-                    mapping.markers.push(marker);
+                    mapping._markers.push(marker);
                     $(".latlong-lat").val(event.latlng.lat);
                     $(".latlong-long").val(event.latlng.lng);
                     $(".asm-latlong").latlong("save");
@@ -199,14 +199,14 @@ const mapping = {
             if (config.bool("ShowLatLong")) {
                 google.maps.event.addListener(mapping.map, 'click', function(event) {
                     if ($(".asm-latlong").length == 0) { return; }
-                    $.each(mapping.markers, function(i, v) {
+                    $.each(mapping._markers, function(i, v) {
                         v.setMap(null);
                     });
                     var marker = new google.maps.Marker({
                         position: event.latLng,
                         map: mapping.map
                     });
-                    mapping.markers.push(marker);
+                    mapping._markers.push(marker);
                     $(".latlong-lat").val(event.latLng.lat());
                     $(".latlong-long").val(event.latLng.lng());
                     $(".asm-latlong").latlong("save");
