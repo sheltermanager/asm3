@@ -3679,16 +3679,18 @@ class document_gen(ASMEndpoint):
     def post_emailtemplate(self, o):
         self.content_type("text/html")
         content = ""
-        if o.post["donationids"] != "":
+        if o.post.integer("animalcontrolid") != 0:
+            content = asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
+        elif o.post["donationids"] != "":
             content = asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("dtid"), o.post.integer_list("donationids"), o.user)
+        elif o.post.integer("licenceid") != 0:
+            content = asm3.wordprocessor.generate_licence_doc(o.dbo, o.post.integer("dtid"), o.post.integer("licenceid"), o.user)
+        elif o.post.integer("movementid") != 0:
+            content = asm3.wordprocessor.generate_movement_doc(o.dbo, o.post.integer("dtid"), o.post.integer("movementid"), o.user)
         elif o.post.integer("personid") != 0:
             content = asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
         elif o.post.integer("animalid") != 0:
             content = asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
-        elif o.post.integer("animalcontrolid") != 0:
-            content = asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
-        elif o.post.integer("licenceid") != 0:
-            content = asm3.wordprocessor.generate_licence_doc(o.dbo, o.post.integer("dtid"), o.post.integer("licenceid"), o.user)
         else:
             content = asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
         tokens = asm3.wordprocessor.extract_mail_tokens(content)
