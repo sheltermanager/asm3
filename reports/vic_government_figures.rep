@@ -2,7 +2,7 @@ VIC Government Figures
 ###
 Figures
 ###
-33600/Any rev02
+33600/Any rev03
 ###
 Victoria government figures report.
 ###
@@ -39,13 +39,13 @@ WHERE MostRecentEntryDate >= '$@from$' AND MostRecentEntryDate <= '$@to$'
 AND SpeciesID = 2
 AND NonShelterAnimal = 0) AS CatAdmissions,
 
-(SELECT COUNT(*) 
+(SELECT COUNT(DISTINCT animalID) 
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 WHERE SpeciesID = 1 
 AND MovementType = 2 AND MovementDate > '$@from$' AND MovementDate <= '$@to$') AS DogsInFoster,
 
-(SELECT COUNT(*) 
+(SELECT COUNT(DISTINCT animalID) 
 FROM adoption
 LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
 WHERE SpeciesID = 2 
