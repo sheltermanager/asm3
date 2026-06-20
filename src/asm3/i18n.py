@@ -84,6 +84,7 @@ locale_maps = {
     "en_CR":    ( "English", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_CY":    ( "English", "Cyprus", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "en_EG":    ( "English", "Egypt", DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_EG ),
+    "en_EL":    ( "English", "Greece", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "en_ES":    ( "English", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK ),
     "en_HK":    ( "English", "Hong Kong", HDMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_HU":    ( "English", "Hungary", DYMD, "Ft",  PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK), 
