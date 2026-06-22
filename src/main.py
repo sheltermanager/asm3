@@ -4789,6 +4789,7 @@ class lookups(JSONEndpoint):
         l = o.locale
         tablename = o.post["tablename"]
         if tablename == "": tablename = "animaltype"
+        if tablename not in asm3.lookups.LOOKUP_TABLES: raise asm3.utils.ASMError(f"invalid table {tablename}")
         table = list(asm3.lookups.LOOKUP_TABLES[tablename])
         table[0] = translate(table[0], l)
         table[2] = translate(table[2], l)
