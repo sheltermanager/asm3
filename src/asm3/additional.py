@@ -31,6 +31,7 @@ MOVEMENT_STOLEN = 27
 MOVEMENT_RELEASED = 28
 MOVEMENT_RETAILER = 29
 MOVEMENT_RESERVATION = 30
+EVENT_ANIMAL = 32
 PERSON = 1
 PERSON_NAME = 7
 PERSON_TYPE = 8
@@ -51,6 +52,7 @@ FOUNDANIMAL_IN = "11, 12"
 INCIDENT_IN = "16, 17, 18, 20"
 LOSTANIMAL_IN = "9, 10"
 MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30'
+EVENT_ANIMAL_IN = "32"
 PERSON_IN = "1, 7, 8, 31"
 WAITINGLIST_IN = "13, 14, 15"
 
@@ -103,6 +105,8 @@ def clause_for_linktype(linktype: str) -> str:
         inclause = WAITINGLIST_IN
     elif linktype == "movement":
         inclause = MOVEMENT_IN
+    elif linktype == "eventanimal":
+        inclause = EVENT_ANIMAL_IN
     elif linktype == "citation":
         inclause = CITATION_IN
     return inclause
@@ -117,6 +121,8 @@ def table_for_linktype(linktype: str) -> str:
         return "animalfound"
     elif linktype == "movement":
         return "adoption"
+    elif linktype == "eventanimal":
+        return "eventanimal"
     return linktype
 
 def is_person_fieldtype(fieldtype: int) -> bool:

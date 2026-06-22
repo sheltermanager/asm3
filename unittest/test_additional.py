@@ -28,6 +28,7 @@ class TestAdditional(unittest.TestCase):
  
     def test_clause_for_linktype(self):
         self.assertIn("0", asm3.additional.clause_for_linktype("animal"))
+        self.assertIn("32", asm3.additional.clause_for_linktype("eventanimal"))
 
     def test_get_additional_fields(self):
         asm3.additional.get_additional_fields(base.get_dbo(), 1, "animal")

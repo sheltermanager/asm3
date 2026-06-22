@@ -270,6 +270,7 @@ DEFAULTS = {
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
+    "EventAnimalViewColumns": "ArrivalDate,IMAGE,ANIMAL,DISPLAYLOCATION,AGEGROUP,SPECIESNAME,BASECOLOURNAME,LITTERID,COMMENTS,LASTFOSTERER,ADOPTED",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "AnimalFlagChangeLog": "Yes",
@@ -1554,6 +1555,9 @@ def product_movement_usage_type(dbo: Database) -> int:
 
 def event_search_columns(dbo: Database) -> str:
     return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])
+
+def event_animal_view_columns(dbo: Database) -> str:
+    return cstring(dbo, "EventAnimalViewColumns", DEFAULTS["EventAnimalViewColumns"])
 
 def incident_search_columns(dbo: Database) -> str:
     return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
