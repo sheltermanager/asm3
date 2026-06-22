@@ -990,9 +990,11 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         if asm3.cachedisk.exists(key, dbo.name()):
             lastreceived = asm3.cachedisk.get(key, dbo.name())
             if lastreceived and (dbo.now() - lastreceived).days < formdata.EMAILSUBMISSIONLIMITDAYS:
-                raise asm3.utils.ASMValidationError("Form already submitted recently from %s" % emailaddress)
+                raise asm3.utils.ASMValidationError(
+                    asm3.i18n._("Form recently submitted by {0}, please wait {1} days between submissions.").format(emailaddress, formdata.EMAILSUBMISSIONLIMITDAYS)
+                )
         else:
-            ttl = 3600 * formdata.EMAILSUBMISSIONLIMITDAYS
+            ttl = 86400 * formdata.EMAILSUBMISSIONLIMITDAYS
             asm3.cachedisk.put(key, dbo.name(), dbo.now(), ttl)
     
     collationid = get_collationid(dbo)
