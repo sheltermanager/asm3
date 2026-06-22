@@ -138,7 +138,7 @@ const mapping = {
         return fv;
     },
 
-    _leaflet_draw_map: function(divid, zoom, latlong, markers) {
+    _leaflet_draw_map: async function(divid, zoom, latlong, markers) {
         $("head").append('<link rel="stylesheet" href="' + asm.leafletcss + '" />');
         mapping._get_script(asm.leafletjs, function() {
             var ll = latlong.split(",");
