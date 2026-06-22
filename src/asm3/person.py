@@ -653,6 +653,8 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
     }
+    if classfilter not in classfilter: raise asm3.utils.ASMError("invalid classfilter")
+    if typefilter not in typefilters: raise asm3.utils.ASMError("invalid typefilter")
     cf = classfilters[classfilter]
     dt = typefilters[typefilter]
     if not includeStaff: cf += " AND o.IsStaff = 0"
