@@ -136,6 +136,9 @@ $(function() {
                                     controller.rows.push(row);
                                     tableform.table_update(table);
                                     tableform.dialog_close();
+                                    if (!common.current_url().includes("/licence")) {
+                                        common.route_reload();
+                                    }
                                 }
                                 finally {
                                     tableform.dialog_enable_buttons();
@@ -173,9 +176,13 @@ $(function() {
                                     controller.rows.push(row);
                                     tableform.table_update(table);
                                     tableform.dialog_close();
+                                    if (!common.current_url().includes("/licence")) {
+                                        common.route_reload();
+                                    }
                                 }
                                 finally {
                                     tableform.dialog_enable_buttons();
+                                    
                                 }
                             },
                             onload: function() {
@@ -199,6 +206,9 @@ $(function() {
                         tableform.buttons_default_state(buttons);
                         let ids = tableform.table_ids(table);
                         await common.ajax_post("licence", "mode=delete&ids=" + ids);
+                        if (!common.current_url().includes("/licence")) {
+                            common.route_reload();
+                        }
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
                     }
