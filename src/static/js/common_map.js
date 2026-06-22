@@ -29,11 +29,11 @@ const mapping = {
         var first_valid = this._first_valid_latlong(markers);
         // A center point has been specified, use that
         if (latlong != "") {
-            _draw_map(latlong);
+            await _draw_map(latlong);
         }
         // No https connection - assuming test environment, providing fallback location
         else if (!document.location.href.startsWith("https://")) {
-            _draw_map("0,0");
+            await _draw_map("0,0");
         }
         // No center point specified, use the device location
         else if (navigator.geolocation) {
@@ -42,16 +42,17 @@ const mapping = {
                         // We got a position from the browser
                         await _draw_map(position.coords.latitude + "," + position.coords.longitude);
                     },
-                    function() {
+                    async function() {
                         // The user refused or an error occurred - use the first marker pin
-                        if (first_valid) { _draw_map(first_valid); }
+                        if (first_valid) { await _draw_map(first_valid); }
                     }
                 );
         }
         else if (first_valid) {
             // Geolocation is not supported - use the first marker pin
-            _draw_map(first_valid);
+            await _draw_map(first_valid);
         }
+        console.log("Map drawn");
     },
 
     redraw_markers: function(markers) {
