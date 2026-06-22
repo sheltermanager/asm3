@@ -18,7 +18,7 @@ const mapping = {
      */
     _markers: [],
     draw_map: function(divid, zoom, latlong, markers) {
-        var _draw_map = function(latlong) {
+        var _draw_map = async function(latlong) {
             if (asm.mapprovider == "osm") {
                 mapping._leaflet_draw_map(divid, zoom, latlong, markers);
             }
@@ -138,7 +138,7 @@ const mapping = {
         return fv;
     },
 
-    _leaflet_draw_map: async function(divid, zoom, latlong, markers) {
+    _leaflet_draw_map: function(divid, zoom, latlong, markers) {
         $("head").append('<link rel="stylesheet" href="' + asm.leafletcss + '" />');
         mapping._get_script(asm.leafletjs, function() {
             var ll = latlong.split(",");
