@@ -397,6 +397,9 @@ $(function() {
                          { id: "duplicatechip", post_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check", fullrow: true },
                          { id: "uniquelicence", post_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check", fullrow: true }
                     ]},
+                    { id: "tab-animalcontrol", title: _("Animal Control"), fields: [
+                          { id: "restrictlicenserenewal", post_field: "RestrictLicenseRenewal", label: _("Only allow licenses to renew licenses of the same type"), type: "check" }
+                    ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
                         { type: "raw", markup: html.textbar(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results."), {maxwidth: "470px"}) },
                         { id: "alwaysshowlocation", post_field: "EmblemAlwaysLocation", type: "check", 
