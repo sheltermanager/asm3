@@ -38,9 +38,9 @@ const mapping = {
         // No center point specified, use the device location
         else if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    function(position) {
+                    async function(position) {
                         // We got a position from the browser
-                        _draw_map(position.coords.latitude + "," + position.coords.longitude);
+                        await _draw_map(position.coords.latitude + "," + position.coords.longitude);
                     },
                     function() {
                         // The user refused or an error occurred - use the first marker pin

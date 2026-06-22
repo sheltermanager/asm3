@@ -112,8 +112,8 @@ $(function() {
             }
         },
 
-        delay: async function() {
-            await mapping.draw_map("embeddedmap", 10, false, []);
+        delay: function() {
+            mapping.draw_map("embeddedmap", 10, false, []);
             mapview.update_markers_from_checkboxes();
         },
 
