@@ -394,11 +394,12 @@ $(function() {
                          { id: "disableshortcodes", post_field: "DisableShortCodesControl", label: _("Remove short shelter code box from the animal details screen"), type: "check", fullrow: true },
                          { id: "shelterviewshowcodes", post_field: "ShelterViewShowCodes", label: _("Show codes on the shelter view screen"), type: "check", fullrow: true },
                          { id: "lockcodes", post_field: "LockCodes", label: _("Once assigned, codes cannot be changed"), type: "check", fullrow: true },
-                         { id: "duplicatechip", post_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check", fullrow: true },
-                         { id: "uniquelicence", post_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check", fullrow: true }
+                         { id: "duplicatechip", post_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check", fullrow: true }
                     ]},
                     { id: "tab-animalcontrol", title: _("Animal Control"), fields: [
-                          { id: "restrictlicenserenewal", post_field: "RestrictLicenseRenewal", label: _("Only allow licenses to renew licenses of the same type"), type: "check" }
+                        { id: "uniquelicence", post_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check", fullrow: true },
+                        { id: "restrictlicenserenewal", post_field: "RestrictLicenseRenewal", label: _("Only allow licenses to renew licenses of the same type"), type: "check", fullrow: true }
+                          
                     ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
                         { type: "raw", markup: html.textbar(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results."), {maxwidth: "470px"}) },
