@@ -33,7 +33,7 @@ const mapping = {
         }
         // No https connection - assuming test environment, providing fallback location
         else if (!document.location.href.startsWith("https://")) {
-            _draw_map("38.536777,-90.4471,415AxminsterDriveFentonMO63026");
+            _draw_map("0,0");
         }
         // No center point specified, use the device location
         else if (navigator.geolocation) {

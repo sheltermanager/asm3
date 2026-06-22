@@ -677,22 +677,22 @@ def get_recent_animals(dbo: Database, offset: int = -30) -> Results:
         [fromdate, fromdate]
     )
 
-def get_recent_found_animals(dbo: Database, floor: datetime) -> Results:
+def get_recent_found_animals(dbo: Database, fromdate: datetime) -> Results:
     """
     Returns rows of unresolved found animal data that were found on or after floor
     """
     return dbo.query(
         "SELECT af.ID, DateFound, s.SpeciesName, s.ID AS SpeciesID, AreaLatLong, AreaFound FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID WHERE DateFound >= ? AND af.AreaLatLong != ''",
-        [floor]
+        [fromdate]
     )
 
-def get_recent_lost_animals(dbo: Database, floor: datetime) -> Results:
+def get_recent_lost_animals(dbo: Database, fromdate: datetime) -> Results:
     """
     Returns rows of unresolved lost animal data that were lost on or after floor
     """
     return dbo.query(
         "SELECT al.ID, DateLost, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? AND al.AreaLatLong != ''",
-        [floor]
+        [fromdate]
     )
 
 def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:

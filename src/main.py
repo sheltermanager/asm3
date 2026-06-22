@@ -5467,9 +5467,12 @@ class map_markers(ASMEndpoint):
         shortcodes = asm3.configuration.use_short_shelter_codes(dbo)
         if "l" in mk and self.checkb(asm3.users.VIEW_LOST_ANIMAL):
             for m in asm3.lostfound.get_recent_lost_animals(dbo, floor):
-                popuptext = f'<a href="lostanimal?id={str(m.ID)}">{_("Lost {0} {1}").replace("{0}", m.SPECIESNAME.lower()).replace("{1}", str(m.ID))}</a>' \
-                    f'<br />{_("Lost {0}").replace("{0}", python2display(o.locale, m.DATELOST))}' \
-                    f'<br />{m.AREALOST}<br />'
+                speciesname = m.SPECIESNAME.lower()
+                typedescription = _("Lost {0} {1}").format(speciesname, m.ID)
+                datedescription = _("Lost {0}").format(python2display(o.locale, m.DATELOST))
+                popuptext = f'<a href="lostanimal?id={m.ID}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.AREALOST}'
                 markers.append({
                     "SPECIESID": m.SPECIESID,
                     "latlong": m.AREALATLONG,
@@ -5478,9 +5481,12 @@ class map_markers(ASMEndpoint):
                 })
         if "f" in mk and self.checkb(asm3.users.VIEW_FOUND_ANIMAL):
             for m in asm3.lostfound.get_recent_found_animals(dbo, floor):
-                popuptext = f'<a href="foundanimal?id={str(m.ID)}">{_("Found {0} {1}").replace("{0}", m.SPECIESNAME.lower()).replace("{1}", str(m.ID))}</a>' \
-                    f'<br />{_("Found {0}").replace("{0}", python2display(o.locale, m.DATEFOUND))}' \
-                    f'<br />{m.AREAFOUND}<br />'
+                speciesname = m.SPECIESNAME.lower()
+                typedescription = _("Found {0} {1}").format(speciesname, m.ID)
+                datedescription = _("Found {0}").format(python2display(o.locale, m.DATEFOUND))
+                popuptext = f'<a href="foundanimal?id={m.ID}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.AREAFOUND}'
                 markers.append({
                     "ID": m.ID,
                     "SPECIESID": m.SPECIESID,
@@ -5490,9 +5496,11 @@ class map_markers(ASMEndpoint):
                 })
         if "a" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
             for m in asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user):
-                popuptext = f'<a href="incident?id={str(m.ID)}">{_("{0} incident {1}").replace("{0}", m.SPECIESNAME).replace("{1}", str(m.INCIDENTCODE))}</a>' \
-                    f'<br />{_("Occurred {0}").replace("{0}", python2display(o.locale, m.INCIDENTDATETIME))}' \
-                    f'<br />{m.DISPATCHADDRESS}<br />'
+                typedescription = _("{0} incident {1}").format(m.SPECIESNAME, m.INCIDENTCODE)
+                datedescription = _("Occurred {0}").format(python2display(o.locale, m.INCIDENTDATETIME))
+                popuptext = f'<a href="incident?id={m.ID}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.DISPATCHADDRESS}'
                 markers.append({
                     "ID": m.ID,
                     "SPECIESID": m.SPECIESID,
@@ -5502,9 +5510,11 @@ class map_markers(ASMEndpoint):
                 })
         if "i" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
             for m in asm3.animalcontrol.get_recent_incidents(dbo, floor):
-                popuptext = f'<a href="incident?id={str(m.ID)}">{_("{0} incident {1}").replace("{0}", m.SPECIESNAME).replace("{1}", str(m.INCIDENTCODE))}</a>' \
-                    f'<br />{_("Completed {0}").replace("{0}", python2display(o.locale, m.COMPLETEDDATE))}' \
-                    f'<br />{m.DISPATCHADDRESS}<br />'
+                typedescription = _("{0} incident {1}").format(m.SPECIESNAME, m.INCIDENTCODE)
+                datedescription = _("Completed {0}").format(python2display(o.locale, m.COMPLETEDDATE))
+                popuptext = f'<a href="incident?id={str(m.ID)}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.DISPATCHADDRESS}'
                 markers.append({
                     "ID": m.ID,
                     "SPECIESID": m.SPECIESID,
@@ -5518,9 +5528,10 @@ class map_markers(ASMEndpoint):
                     sheltercode = m.SHORTCODE
                 else:
                     sheltercode = m.SHELTERCODE
+                datedescription = _("Created {0}").format(python2display(o.locale, m.CREATEDDATE))
                 popuptext = f'<a href="animal?id={str(m.ID)}">{m.SPECIESNAME} {sheltercode} {m.ANIMALNAME}</a>' \
-                    f'<br />{_("Created {0}").replace("{0}", python2display(o.locale, m.CREATEDDATE))}' \
-                    f'<br />{m.OWNERADDRESS}<br />'
+                    f'<br />{datedescription}' \
+                    f'<br />{m.OWNERADDRESS}'
                 markers.append({
                     "ID": m.ID,
                     "SPECIESID": m.SPECIESID,
@@ -5534,9 +5545,10 @@ class map_markers(ASMEndpoint):
                     sheltercode = m.SHORTCODE
                 else:
                     sheltercode = m.SHELTERCODE
+                datedescription = _("Reclaimed {0}").format(python2display(o.locale, m.MOVEMENTDATE))
                 popuptext = f'<a href="animal?id={str(m.ID)}">{m.SPECIESNAME} {sheltercode} {m.ANIMALNAME}</a>' \
-                    f'<br />{_("Reclaimed {0}").replace("{0}", python2display(o.locale, m.MOVEMENTDATE))}' \
-                    f'<br />{m.OWNERADDRESS}<br />'
+                    f'<br />{datedescription}' \
+                    f'<br />{m.OWNERADDRESS}'
                 markers.append({
                     "ID": m.ID,
                     "SPECIESID": m.SPECIESID,

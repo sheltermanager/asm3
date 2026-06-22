@@ -284,7 +284,7 @@ $(function() {
 
         delay: function() {
             let arealostfound = "";
-            if (controller.animal.AREALOST) {
+            if (lostfound.mode == "lost") {
                 arealostfound = controller.animal.AREALOST;
             } else {
                 arealostfound = controller.animal.AREAFOUND;
