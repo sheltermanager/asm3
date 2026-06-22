@@ -17,7 +17,7 @@ const mapping = {
      * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
      */
     _markers: [],
-    draw_map: function(divid, zoom, latlong, markers) {
+    draw_map: async function(divid, zoom, latlong, markers) {
         var _draw_map = async function(latlong) {
             if (asm.mapprovider == "osm") {
                 mapping._leaflet_draw_map(divid, zoom, latlong, markers);
