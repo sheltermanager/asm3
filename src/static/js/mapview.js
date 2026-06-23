@@ -7,6 +7,24 @@ $(function() {
     const mapview = {
 
         update_markers_from_checkboxes: async function() {
+            let leafletloaded = await mapview._check_leaflet_loaded();
+            if (leafletloaded) {
+                mapview._update_markers_from_checkboxes();
+            } else {
+                window.setTimeout(async function() {
+                    console.log("Checking leaflet availability");
+                    leafletloaded = await mapview._check_leaflet_loaded();
+                    if (leafletloaded) {
+                        mapview._update_markers_from_checkboxes();
+                    } else {
+                        console.log("Leaflet not available yet");
+                        mapview.update_markers_from_checkboxes();
+                    }
+                }, 500);
+            }
+        },
+
+        _update_markers_from_checkboxes: async function() {
             try {
                 console.log(L);
             } catch(error) {
@@ -129,16 +147,6 @@ $(function() {
 
         delay: async function() {
             await mapping.draw_map("embeddedmap", 10, false, []);
-            // window.setTimeout(async function() {
-            //     console.log("Checking leaflet availability");
-            //     let leafletloaded = await mapview._check_leaflet_loaded();
-            //     if (leafletloaded) {
-            //         mapview.update_markers_from_checkboxes();
-            //     } else {
-            //         console.log("Leaflet not available");
-            //         mapview.delay();
-            //     }
-            // }, 3000);
             mapview.update_markers_from_checkboxes();
         },
 
