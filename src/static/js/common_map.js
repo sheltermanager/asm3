@@ -52,7 +52,6 @@ const mapping = {
             // Geolocation is not supported - use the first marker pin
             await _draw_map(first_valid);
         }
-        console.log("Map drawn");
     },
 
     redraw_markers: function(markers) {
@@ -195,6 +194,15 @@ const mapping = {
                 center: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]))
             };
             mapping.map = new google.maps.Map(document.getElementById(divid), mapOptions);
+            $.each(markers, function(i, v) {
+                let ll = v.latlong.split(",");
+                let gll = new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]));
+                let marker = new google.maps.Marker({
+                    position: gll,
+                    map: mapping.map
+                });
+                mapping._markers.push(marker);
+            });
             if (config.bool("ShowLatLong")) {
                 google.maps.event.addListener(mapping.map, 'click', function(event) {
                     if ($(".asm-latlong").length == 0) { return; }

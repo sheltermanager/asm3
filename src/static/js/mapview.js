@@ -7,30 +7,38 @@ $(function() {
     const mapview = {
 
         update_markers_from_checkboxes: async function() {
-            let leafletloaded = await mapview._check_leaflet_loaded();
-            if (leafletloaded) {
-                console.log("Leaflet already loaded going straight ahead.");
-                mapview._update_markers_from_checkboxes();
-            } else {
-                window.setTimeout(async function() {
-                    console.log("Checking leaflet availability");
-                    leafletloaded = await mapview._check_leaflet_loaded();
-                    if (leafletloaded) {
-                        mapview._update_markers_from_checkboxes();
-                    } else {
-                        console.log("Leaflet not available yet");
-                        mapview.update_markers_from_checkboxes();
-                    }
-                }, 500);
+            if (asm.mapprovider == "osm") {
+                let leafletloaded = await mapview._check_leaflet_loaded();
+                if (leafletloaded) {
+                    mapview._update_markers_from_checkboxes();
+                } else {
+                    window.setTimeout(async function() {
+                        leafletloaded = await mapview._check_leaflet_loaded();
+                        if (leafletloaded) {
+                            mapview._update_markers_from_checkboxes();
+                        } else {
+                            mapview.update_markers_from_checkboxes();
+                        }
+                    }, 500);
+                }
+            } else if (asm.mapprovider == "google") {
+                let googlemapsloaded = await mapview._check_googlemaps_loaded();
+                if (googlemapsloaded) {
+                    mapview._update_markers_from_checkboxes();
+                } else {
+                    window.setTimeout(async function() {
+                        googlemapsloaded = await mapview._check_googlemaps_loaded();
+                        if (googlemapsloaded) {
+                            mapview._update_markers_from_checkboxes();
+                        } else {
+                            mapview.update_markers_from_checkboxes();
+                        }
+                    }, 500);
+                }
             }
         },
 
         _update_markers_from_checkboxes: async function() {
-            try {
-                console.log(L);
-            } catch(error) {
-                return false;
-            }
             let mk = "";
             $("#toggles input:checked").each(function() {
                 mk += $(this).attr("data");
@@ -138,10 +146,18 @@ $(function() {
 
         _check_leaflet_loaded: function() {
             try {
-                console.log(L);
+                let leafletlibrary = L;
                 return true
             } catch(error) {
-                console.log("Leaflet not available");
+                return false
+            }
+        },
+
+        _check_googlemaps_loaded: function() {
+            try {
+                let googlelibrary = google;
+                return true
+            } catch(error) {
                 return false
             }
         },
