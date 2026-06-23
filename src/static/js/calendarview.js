@@ -15,6 +15,7 @@ $(function() {
             $("#calendar").fullCalendar("removeEvents");
             $("#calendar").fullCalendar("removeEventSource", calendarview.calendar_events);
             $("#calendar").fullCalendar("addEventSource", calendarview.calendar_events);
+            window.history.pushState({}, '', '/calendarview?ev=' + ev);
         },
 
         calendar_events: {
