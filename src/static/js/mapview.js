@@ -7,19 +7,22 @@ $(function() {
     const mapview = {
 
         update_markers_from_checkboxes: async function() {
+            let ticklength = 500;
+            let tickmessage = "Mapping library unavailable, waiting " + ticklength + " milliseconds";
             if (asm.mapprovider == "osm") {
                 let leafletloaded = await mapview._check_leaflet_loaded();
                 if (leafletloaded) {
                     mapview._update_markers_from_checkboxes();
                 } else {
                     window.setTimeout(async function() {
+                        log.info(tickmessage);
                         leafletloaded = await mapview._check_leaflet_loaded();
                         if (leafletloaded) {
                             mapview._update_markers_from_checkboxes();
                         } else {
                             mapview.update_markers_from_checkboxes();
                         }
-                    }, 500);
+                    }, ticklength);
                 }
             } else if (asm.mapprovider == "google") {
                 let googlemapsloaded = await mapview._check_googlemaps_loaded();
@@ -27,13 +30,14 @@ $(function() {
                     mapview._update_markers_from_checkboxes();
                 } else {
                     window.setTimeout(async function() {
+                        log.info(tickmessage);
                         googlemapsloaded = await mapview._check_googlemaps_loaded();
                         if (googlemapsloaded) {
                             mapview._update_markers_from_checkboxes();
                         } else {
                             mapview.update_markers_from_checkboxes();
                         }
-                    }, 500);
+                    }, ticklength);
                 }
             }
         },
