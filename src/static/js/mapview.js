@@ -163,9 +163,10 @@ $(function() {
         },
 
         delay: async function() {
-            $("#embeddedmap").html('<img id="adam" src=/static/images/wait/rolling_3a87cd.svg style="margin-left: auto;margin-right: auto;">');
+            // $("#embeddedmap").html('<img id="adam" src=/static/images/wait/rolling_3a87cd.svg style="margin-left: auto;margin-right: auto;">');
+            header.show_loading(_("Waiting for map..."));
             await mapping.draw_map("embeddedmap", 10, false, []);
-            $("#adam").remove();
+            header.hide_loading();
             mapview.update_markers_from_checkboxes();
         },
 
