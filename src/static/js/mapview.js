@@ -9,6 +9,7 @@ $(function() {
         update_markers_from_checkboxes: async function() {
             let leafletloaded = await mapview._check_leaflet_loaded();
             if (leafletloaded) {
+                console.log("Leaflet already loaded going straight ahead.");
                 mapview._update_markers_from_checkboxes();
             } else {
                 window.setTimeout(async function() {
