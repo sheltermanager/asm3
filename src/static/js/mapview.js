@@ -147,18 +147,18 @@ $(function() {
         _check_leaflet_loaded: function() {
             try {
                 let leafletlibrary = L;
-                return true
+                return true;
             } catch(error) {
-                return false
+                return false;
             }
         },
 
         _check_googlemaps_loaded: function() {
             try {
                 let googlelibrary = google;
-                return true
+                return true;
             } catch(error) {
-                return false
+                return false;
             }
         },
 
