@@ -62,7 +62,7 @@ $(function() {
                 markers = rawmarkers;
             }
             mapping.redraw_markers(markers);
-            window.history.pushState({}, '', '/map_view?mk=' + mk + '&fl=' + format.date(floorjsdate) + '&sid=' + speciesid);
+            window.history.pushState({}, '', 'map_view?mk=' + mk + '&fl=' + format.date(floorjsdate) + '&sid=' + speciesid);
         },
 
         map_markers: [],

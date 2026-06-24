@@ -17,8 +17,8 @@ const mapping = {
      * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
      */
     _markers: [],
-    draw_map: async function(divid, zoom, latlong, markers) {
-        var _draw_map = async function(latlong) {
+    draw_map: function(divid, zoom, latlong, markers) {
+        var _draw_map = function(latlong) {
             if (asm.mapprovider == "osm") {
                 mapping._leaflet_draw_map(divid, zoom, latlong, markers);
             }
@@ -29,28 +29,28 @@ const mapping = {
         var first_valid = this._first_valid_latlong(markers);
         // A center point has been specified, use that
         if (latlong != "") {
-            await _draw_map(latlong);
+            _draw_map(latlong);
         }
         // No https connection - assuming test environment, providing fallback location
         else if (!document.location.href.startsWith("https://")) {
-            await _draw_map("0,0");
+            _draw_map("0,0");
         }
         // No center point specified, use the device location
         else if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    async function(position) {
+                    function(position) {
                         // We got a position from the browser
-                        await _draw_map(position.coords.latitude + "," + position.coords.longitude);
+                        _draw_map(position.coords.latitude + "," + position.coords.longitude);
                     },
-                    async function() {
+                    function() {
                         // The user refused or an error occurred - use the first marker pin
-                        if (first_valid) { await _draw_map(first_valid); }
+                        if (first_valid) { _draw_map(first_valid); }
                     }
                 );
         }
         else if (first_valid) {
             // Geolocation is not supported - use the first marker pin
-            await _draw_map(first_valid);
+            _draw_map(first_valid);
         }
     },
 
@@ -138,7 +138,7 @@ const mapping = {
         return fv;
     },
 
-    _leaflet_draw_map: async function(divid, zoom, latlong, markers) {
+    _leaflet_draw_map: function(divid, zoom, latlong, markers) {
         $("head").append('<link rel="stylesheet" href="' + asm.leafletcss + '" />');
         mapping._get_script(asm.leafletjs, function() {
             var ll = latlong.split(",");
