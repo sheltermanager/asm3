@@ -81,12 +81,11 @@ $(function() {
             return [
                 html.content_header(_("Map View")),
                 '<p id="toggles" class="asm-map-legends centered" style="top: ' + overlayheight + 'px;">',
-                    '<span class="asm-map-legend" style="padding: 5px;">', 
-                    html.icon("animal"),
+                    '<span class="asm-map-legend" style="padding: 5px;">',
+                    '<label for="speciesfilter">' + _("Species") + '</label>',
                     tableform.render_select(
                         { post_field: "speciesfilter", label: _("Species"), justwidget: true, options: '<option value="0">' + _("(all)") + '</option>' + html.list_to_options(controller.species, "ID", "SPECIESNAME") }
                     ),
-                    '<label for="speciesfilter">' + _("Species") + '</label>',
                     '</span>',
                     chk("toggle-lost", "l", "animal-lost", _("Lost")),
                     chk("toggle-found", "f", "animal-found", _("Found")),
@@ -94,12 +93,11 @@ $(function() {
                     chk("toggle-recentincident", "i", "call-complete", _("Recent Incidents")),
                     chk("toggle-nonshelter", "n", "nonshelter", _("Non-Shelter")),
                     chk("toggle-reclaim", "r", "location", _("Reclaims")),
-                    '<span class="asm-map-legend" style="padding: 5px;">', 
-                    html.icon("diary"),
+                    '<span class="asm-map-legend" style="padding: 5px;">',
+                    '<label for="datefloor">' + _("From") + '</label>',
                     tableform.render_date(
                         { post_field: "datefloor", justwidget: true }
                     ),
-                    '<label for="datefloor">' + _("Floor") + '</label>',
                     '</span>',
                 '</p>',
                 '<div id="embeddedmap" style="z-index: 1; width: 100%; height: calc(100vh - ' + headerheight + 'px); color: #000;"></div>',
@@ -167,10 +165,9 @@ $(function() {
             }
         },
 
-        delay: async function() {
-            // $("#embeddedmap").html('<img id="adam" src=/static/images/wait/rolling_3a87cd.svg style="margin-left: auto;margin-right: auto;">');
+        delay: function() {
             header.show_loading(_("Waiting for map..."));
-            await mapping.draw_map("embeddedmap", 10, false, []);
+            mapping.draw_map("embeddedmap", 10, false, []);
             // header.hide_loading();
             mapview.update_markers_from_checkboxes();
         },
