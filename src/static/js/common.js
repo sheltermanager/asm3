@@ -559,6 +559,11 @@ const common = {
         return isclient;
     },
 
+    /** Replace the URL in the address bar, but bypass the path/route mechanism */
+    route_push: function(path) {
+        window.history.pushState({}, '', path);
+    },
+
     /** Reload the current route */
     route_reload: function(forceserver) {
 
