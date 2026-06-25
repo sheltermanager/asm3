@@ -2,7 +2,7 @@ Payment Breakdown By Date (with Quantities)
 ###
 Financial
 ###
-33900/Any rev02
+33900/Any rev03
 ###
 All payments by type for a given date period, with quantities and totals.
 ###
@@ -18,7 +18,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -67,7 +68,7 @@ Payment Breakdown By Method (with Quantities)
 ###
 Financial
 ###
-33900/Any rev02
+33900/Any rev03
 ###
 All payments by method for a given date period, with quantities and totals.
 ###
@@ -83,7 +84,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationpayment.PaymentName, ownerdonation.Date
 ###
 $$HEADER
@@ -132,7 +134,7 @@ Payment Breakdown By Type and Method (with Quantities)
 ###
 Financial
 ###
-33900/Any rev03
+33900/Any rev04
 ###
 All payments by method for a given date period, with quantities totals.
 ###
@@ -148,7 +150,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY donationtype.DonationName, donationpayment.PaymentName, ownerdonation.Date
 ###
 $$HEADER
@@ -202,7 +205,7 @@ Payment Breakdown By Date (Surname and Quantities)
 ###
 Financial
 ###
-33900/Any rev02
+33900/Any rev03
 ###
 All payments for a given date period, with total, ordered by person surname.
 ###
@@ -218,7 +221,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
+AND ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
 ORDER BY owner.OwnerSurname, ownerdonation.Date
 ###
 $$HEADER
@@ -262,7 +266,7 @@ Payment Breakdown By Date with Addresses (with Quantities)
 ###
 Financial
 ###
-33900/Any rev02
+33900/Any rev03
 ###
 Produces a list of all payments by type for a given date period, with quantities, totals and addresses.
 ###
@@ -278,7 +282,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
+AND ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
