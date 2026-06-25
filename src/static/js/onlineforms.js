@@ -97,7 +97,12 @@ $(function() {
                         callout: _("The confirmation email message to send to the form submitter.") }, 
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", height: "100px", width: "600px" },
-                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" }
+                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" },
+                    { json_field: "BOOTSTRAPSTYLE", post_field: "bootstrapstyle", 
+                        label: _("Use Bootstrap styled form"), 
+                        type: "check",
+                        callout: _("If your header/footer is not expecting Bootstrap style, the results may be poor")
+                    }
                 ]
             };
 
@@ -281,11 +286,18 @@ $(function() {
             if (u && u.indexOf("http") != 0) { $("#redirect").val( "https://" + u ); }
         },
 
+        render_insert_bootstrap_style: function() {
+            return ['<div id="dialog-bootstrapstyle" style="display: none" title="' + html.title(_("Add Bootstrap style overide")) + '">',
+                '<p>' + _("Add a header that overides the default header/footer") + '</p>',
+                '</div>'].join("\n");
+        },
+
         render: function() {
             let s = "";
             this.model();
             s += this.render_headfoot();
             s += this.render_import();
+            s += this.render_insert_bootstrap_style();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Online Forms"));
             s += html.info(_("Online forms can be linked to from your website and used to take information from visitors for applications, etc."));
@@ -315,6 +327,37 @@ $(function() {
                 } else {
                     $("#submitterreplyaddressrow").show();
                 }
+            });
+            $("#bootstrapstyle").on("change", async function() {
+                if ($("#bootstrapstyle").prop("checked")) {
+                    if (tableform.show_okcancel_dialog) {
+                        await tableform.show_okcancel_dialog("#dialog-bootstrapstyle", _("Style"), {});
+                        let defaultbootstrapheader = [
+                            '<style>',
+                            '    input:not([type="submit"]):not([type="checkbox"]) {',
+                            '        width: 100% !important',
+                            '    }',
+                            '    #page {',
+                            '        box-shadow: none !important;',
+                            '        margin-left: auto !important;',
+                            '        margin-right: auto !important;',
+                            '        width: 100%;',
+                            '        max-width: 800px;',
+                            '        padding: 10px !important;',
+                            '    }',
+                            '    .asmformadditional {',
+                            '        font-style: italic;',
+                            '    }',
+                            '    .form-floating {',
+                            '        margin-bottom: 10px;',
+                            '    }',
+                            '</style>'
+                        ].join("\n");
+                        $("#header").htmleditor("value", defaultbootstrapheader);
+                        $("#footer").htmleditor("value", "");
+                    }
+                }
+
             });
         },
 

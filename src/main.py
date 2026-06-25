@@ -6620,7 +6620,7 @@ class onlineform_view(ASMEndpoint):
     def content(self, o):
         self.content_type("text/html")
         self.cache_control(0)
-        return asm3.onlineform.get_onlineform_html(o.dbo, o.post.integer("formid"), bootstrapstyle=True)
+        return asm3.onlineform.get_onlineform_html(o.dbo, o.post.integer("formid"))
 
 class options(JSONEndpoint):
     url = "options"
