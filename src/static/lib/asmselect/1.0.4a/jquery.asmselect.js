@@ -61,9 +61,11 @@
                 while($("#" + options.containerClass + index).length > 0) { index++; }
 
                 $select = $("<select></select>")
-                    .addClass(options.selectClass)
+                    // .addClass(options.selectClass) // To do - address any issues caused by removing this
+                    .addClass("form-select")
                     .attr('name', options.selectClass + index)
-                    .attr('id', options.selectClass + index); 
+                    .attr('id', options.selectClass + index)
+                    .attr('placeholder', "Select"); 
 
                 $selectRemoved = $("<select></select>"); 
 
@@ -80,8 +82,10 @@
                 $select.change(selectChangeEvent)
                     .click(selectClickEvent); 
 
-                $original.change(originalChangeEvent)
-                    .wrap($container).before($select).before($ol);
+                // $original.change(originalChangeEvent)
+                //     .wrap($container).before($select).before($ol);
+                
+                $original.change(originalChangeEvent).before($select).before($ol); // To do - Check that removing the container is acceptable
 
                 if(options.sortable) makeSortable();
 

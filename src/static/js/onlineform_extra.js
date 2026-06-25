@@ -666,6 +666,7 @@ $(document).ready(function() {
             if (typeof asm3_onlineform_submit !== 'undefined') { asm3_onlineform_submit(); }
             $("form").submit();
         }
+        $("form").addClass("was-validated");
     });
 
     // This is used to handle resizing the form when it is embedded in an iframe
