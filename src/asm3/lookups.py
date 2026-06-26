@@ -9,6 +9,85 @@ from asm3.typehints import datetime, Database, Dict, List, LocationFilter, Resul
 
 import re
 
+ANIMAL_FLAGS = {
+    "ACO": {
+        "label": _("ACO"),
+        "value": 0
+    },
+    "ADOPTER": {
+        "label": _("Adopter"),
+        "value": 0
+    },
+    "ADOPTION_COORDINATOR": {
+        "label": _("Adoption Coordinator"),
+        "value": 0
+    },
+    "BANNED": {
+        "label": _("Banned"),
+        "value": 0
+    },
+    "DANGEROUS": {
+        "label": _("Dangerous"),
+        "value": 0
+    },
+    "DECEASED": {
+        "label": _("Deceased"),
+        "value": 0
+    },
+    "DONOR": {
+        "label": _("Donor"),
+        "value": 0
+    },
+    "DRIVER": {
+        "label": _("Driver"),
+        "value": 0
+    },
+    "EXCLUDE_FROM_BULK_EMAIL": {
+        "label": _("Exclude from bulk email "),
+        "value": 0
+    },
+    "FOSTERER": {
+        "label": _("Fosterer"),
+        "value": 0
+    },
+    "HOMECHECKED": {
+        "label": _("Homechecked"),
+        "value": 0
+    },
+    "HOMECHECKER": {
+        "label": _("Homechecker"),
+        "value": 0
+    },
+    "MEMBER": {
+        "label": _("Member"),
+        "value": 0
+    },
+    "OTHER_SHELTER": {
+        "label": _("Other Shelter"),
+        "value": 0
+    },
+    "SPONSOR": {
+        "label": _("Sponsor"),
+        "value": 0
+    },
+    "STAFF": {
+        "label": _("Staff"),
+        "value": 0
+    },
+    "SUPPLIER": {
+        "label": _("Supplier"),
+        "value": 0
+    },
+    "VET": {
+        "label": _("Vet"),
+        "value": 0
+    },
+    "VOLUNTEER": {
+        "label": _("Volunteer"),
+        "value": 0
+    },
+}
+
 # Look up tables map
 # tablename : ( tablelabel, namefield, namelabel, descfield, modifiers, (foreignkeys), defaultconfig )
 # modifiers: 
