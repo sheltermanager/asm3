@@ -168,7 +168,6 @@ $(function() {
         delay: function() {
             header.show_loading(_("Waiting for map..."));
             mapping.draw_map("embeddedmap", 10, false, []);
-            // header.hide_loading();
             mapview.update_markers_from_checkboxes();
         },
 
