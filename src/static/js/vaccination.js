@@ -344,7 +344,7 @@ $(function() {
         },
 
         new_bulk_vacc: function() {
-            let dialog = vaccination.dialog;
+            let dialog = vaccination.dialog, table = vaccination.table;
             tableform.dialog_show_add(dialog, {
                 onvalidate: function() {
                     return validate.notblank([ "animals" ]);
@@ -352,20 +352,33 @@ $(function() {
                 onadd: async function() {
                     try {
                         await tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination");
-                        tableform.dialog_close();
-                        common.route_reload();
+                        let chosenanimalsstring = sessionStorage.getItem("last_multi_animals");
+                        let chosenanimals = JSON.parse(chosenanimalsstring);
+                        let chosentype = $("#type option:selected").text() 
+                        chosenanimals.forEach(animal => {
+                            animal.VACCINATIONTYPE = chosentype;
+                            tableform.fields_update_row(dialog.fields, animal);
+                            controller.rows.push(animal);
+                        })
+                        tableform.table_update(table);
+                        tableform.dialog_enable_buttons();
+                        // tableform.dialog_close();
                     }
                     catch(err) {
                         log.error(err, err);
                         tableform.dialog_enable_buttons();   
                     }
                 },
+                oncancel: async function() {
+                    sessionStorage.removeItem("last_multi_animals");
+                },
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    $("#animals").animalchoosermulti("clear");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
+                    $("#animals").animalchoosermulti("clear");
+                    sessionStorage.removeItem("last_multi_animals");
                     vaccination.enable_default_cost = true;
                     vaccination.set_default_cost();
                 }
@@ -602,6 +615,8 @@ $(function() {
                 row.SHELTERCODE = vaccination.lastanimal.SHELTERCODE;
                 row.SHORTCODE = vaccination.lastanimal.SHORTCODE;
                 row.WEBSITEMEDIANAME = vaccination.lastanimal.WEBSITEMEDIANAME;
+                row.SPECIESNAME = vaccination.lastanimal.SPECIESNAME;
+                row.GIVENBY = vaccination.lastanimal.GIVENBY;
             }
             row.ADMINISTERINGVETNAME = "";
             if (row.ADMINISTERINGVETID && vaccination.lastvet) { row.ADMINISTERINGVETNAME = vaccination.lastvet.OWNERNAME; }

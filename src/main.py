@@ -8708,9 +8708,12 @@ class vaccination(JSONEndpoint):
 
     def post_createbulk(self, o):
         self.check(asm3.users.ADD_VACCINATION)
+        resultlist = []
         for animalid in o.post.integer_list("animals"):
             o.post.data["animal"] = str(animalid)
-            asm3.medical.insert_vaccination_from_form(o.dbo, o.user, o.post)
+            result = asm3.medical.insert_vaccination_from_form(o.dbo, o.user, o.post)
+            resultlist.append(result)
+        return resultlist
 
     def post_update(self, o):
         self.check(asm3.users.CHANGE_VACCINATION)

@@ -193,13 +193,16 @@ $.fn.animalchoosermulti = asm_widget({
     select: function(t) {
         let self = this, o = t.data("o"), selval = [];
         o.display.html("");
+        let animals = [];
         o.results.find(":checked").each(function() {
             let aid = $(this).attr("data"), rec = self.get_row(t, aid);
             selval.push(aid);
             let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
+            animals.push(rec);
             o.display.append(disp);
             o.display.append("<br />");
         });
+        sessionStorage.setItem("last_multi_animals", JSON.stringify(animals));
         t.val(selval.join(","));
         t.trigger("change", [ t.val() ]);
         o.dialog.dialog("close");
