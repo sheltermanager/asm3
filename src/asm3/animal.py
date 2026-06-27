@@ -2433,6 +2433,18 @@ def get_extra_id(dbo: Database, a: ResultRow, idtype: str) -> str:
                     return v
     return ""
 
+def remove_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str):
+    if a.EXTRAIDS:
+        ids = []
+        for x in a.EXTRAIDS.split("|"):
+            if x.find("=") != -1:
+                k, v = x.split("=")
+                if k != idtype: ids.append( "%s=%s" % (k, v))
+        extraids = "|".join(ids)
+        a.EXTRAIDS = extraids
+        dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user, setLastChanged=False)
+
+
 def set_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str, idvalue: str) -> str:
     """
     Stores a value in the ExtraIDs field for an animal, which is stored
@@ -2451,7 +2463,7 @@ def set_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str, idvalue: s
             if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
     a.EXTRAIDS = extraids
-    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
+    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user, setLastChanged=False)
     return extraids
 
 def get_animal_id_and_bonds(dbo: Database, animalid: int) -> List[int]:
