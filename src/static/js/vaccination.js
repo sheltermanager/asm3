@@ -362,7 +362,6 @@ $(function() {
                         })
                         tableform.table_update(table);
                         tableform.dialog_enable_buttons();
-                        // tableform.dialog_close();
                     }
                     catch(err) {
                         log.error(err, err);
