@@ -348,6 +348,9 @@ EMERGENCY_NOTICE = get_string("emergency_notice", "")
 # SMTP_SERVER = { "sendmail": False, "host": "mail.yourdomain.com", "port": 25, "username": "", "password": "", "usetls": False }
 SMTP_SERVER = get_dict("smtp_server", { "sendmail": True })
 
+#Whitelist of mail server IPs that are allowed to call the email_received_log method of the service API
+EMAIL_SERVER_IP_WHITELIST = get_string("email_server_ip_whitelist", "127.0.0.1 localhost")
+
 # The from address for all outgoing emails. The email address configured
 # in the database will be used as the Reply-To header to avoid
 # any issues with DKIM/SPF/DMARC spoofing
