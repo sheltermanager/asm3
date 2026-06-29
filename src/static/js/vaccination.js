@@ -354,7 +354,6 @@ $(function() {
                 onadd: async function() {
                     vaccination.lastanimals = $("#animals").animalchoosermulti("value");
                     vaccination.lastanimalsrows = $("#animals").animalchoosermulti("get_rows");
-                    console.log(vaccination.lastanimalsrows);
                     try {
                         await tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination");
                         tableform.dialog_close();
@@ -368,7 +367,7 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    if (vaccination.lastanimalsrows != null) {
+                    if (vaccination.lastanimalsrows != null && vaccination.lastanimals != null) {
                         $("#animals").animalchoosermulti("set_rows", vaccination.lastanimalsrows);
                         $("#animals").animalchoosermulti("value", vaccination.lastanimals);
                     }
@@ -500,6 +499,11 @@ $(function() {
             // Same for the vet
             $("#administeringvet").on("change loaded", function(event, rec) { vaccination.lastvet = rec; });
             $("#givenvet").on("change loaded", function(event, rec) { vaccination.lastvet = rec; });
+
+            $("#animals").on("bulk_clear", function(event, rec) {
+                vaccination.lastanimals = null;
+                vaccination.lastanimalsrows = null;
+            });
 
             if (controller.newvacc == 1) {
                 this.new_vacc();

@@ -289,7 +289,7 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    if (test.lastanimalsrows != null) {
+                    if (test.lastanimalsrows != null && test.lastanimals != null) {
                         $("#animals").animalchoosermulti("set_rows", test.lastanimalsrows);
                         $("#animals").animalchoosermulti("value", test.lastanimals);
                     }
@@ -398,6 +398,11 @@ $(function() {
             // Same for the vet
             $("#administeringvet").on("change loaded", function(event, rec) { test.lastvet = rec; });
             $("#givenvet").on("change loaded", function(event, rec) { test.lastvet = rec; });
+
+            $("#animals").on("bulk_clear", function(event, rec) {
+                test.lastanimals = null;
+                test.lastanimalsrows = null;
+            });
 
             if (controller.newtest == 1) {
                 this.new_test();

@@ -131,6 +131,7 @@ $.fn.animalchoosermulti = asm_widget({
         o.results.find(":checked").prop("checked", false);
         this.update_status(t);
         if (fireclearedevent) { t.trigger("cleared"); }
+        t.trigger("bulk_clear");
     },
 
     is_empty: function(t) {
@@ -196,7 +197,6 @@ $.fn.animalchoosermulti = asm_widget({
      */
     select: function(t) {
         let self = this, o = t.data("o"), selval = [];
-        console.log(self.get_rows(t));
         o.display.html("");
         o.results.find(":checked").each(function() {
             let aid = $(this).attr("data"), rec = self.get_row(t, aid);
@@ -383,7 +383,6 @@ $.fn.animalchoosermulti = asm_widget({
         let o = t.data("o");
         o.display.html("");
         $.each(newval.split(","), function(i, v) {
-            console.log(v);
             let rec = self.get_row(t, parseInt(v));
             let disp = "<a class=\"asm-embed-name\" href=\"animal?id=" + rec.ID + "\">" + rec.CODE + " - " + rec.ANIMALNAME + "</a>";
             o.display.append(disp);

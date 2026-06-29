@@ -620,14 +620,14 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    if (medical.lastanimalsrows != null) {
+                    if (medical.lastanimalsrows != null && medical.lastanimals != null) {
                         $("#animals").animalchoosermulti("set_rows", medical.lastanimalsrows);
                         $("#animals").animalchoosermulti("value", medical.lastanimals);
                     }
                     $("#profileidrow").show();
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
-                }
+                },
             });
         },
 
@@ -936,6 +936,11 @@ $(function() {
             $("#timingrulenofrequencies").change(medical.change_values);
             $("#treatmentrule").change(medical.change_values);
             $("#totalnumberoftreatments").change(medical.change_values);
+
+            $("#animals").on("bulk_clear", function(event, rec) {
+                medical.lastanimals = null;
+                medical.lastanimalsrows = null;
+            });
 
             // Add click handlers to templates
             $(".templatelink").click(function() {
