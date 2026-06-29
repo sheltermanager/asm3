@@ -131,6 +131,8 @@ $.fn.animalchoosermulti = asm_widget({
         o.results.find(":checked").prop("checked", false);
         this.update_status(t);
         if (fireclearedevent) { t.trigger("cleared"); }
+
+        // Used by bulk-selection persistence regardless of fireclearedevent
         t.trigger("bulk_clear");
     },
 

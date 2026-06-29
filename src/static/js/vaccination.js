@@ -502,7 +502,7 @@ $(function() {
 
             $("#animals").on("bulk_clear", function(event, rec) {
                 vaccination.lastanimals = null;
-                vaccination.lastanimalsrows = null;
+                vaccination.lastanimalsrows = null
             });
 
             if (controller.newvacc == 1) {

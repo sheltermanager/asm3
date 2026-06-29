@@ -87,6 +87,7 @@ $(function() {
                 edit_title: _("Edit medical regimen"),
                 edit_perm: 'mcam',
                 close_on_ok: false,
+                use_default_values: false,
                 hide_read_only: true,
                 columns: 1,
                 width: 800,
