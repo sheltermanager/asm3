@@ -628,7 +628,7 @@ $(function() {
                     $("#profileidrow").show();
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
-                },
+                }
             });
         },
 
