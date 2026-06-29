@@ -7,6 +7,8 @@ $(function() {
     const test = {
 
         lastanimal: null,
+        lastanimals: null,
+        lastanimalsrows: null,
         lastvet: null,
 
         model: function() {
@@ -272,6 +274,8 @@ $(function() {
                     return validate.notblank([ "animals" ]);
                 },
                 onadd: async function() {
+                    test.lastanimals = $("#animals").animalchoosermulti("value");
+                    test.lastanimalsrows = $("#animals").animalchoosermulti("get_rows");
                     try {
                         await tableform.fields_post(dialog.fields, "mode=createbulk", "test");
                         tableform.dialog_close();
@@ -285,7 +289,10 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    $("#animals").animalchoosermulti("clear");
+                    if (test.lastanimalsrows != null) {
+                        $("#animals").animalchoosermulti("set_rows", test.lastanimalsrows);
+                        $("#animals").animalchoosermulti("value", test.lastanimals);
+                    }
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultTestType"));
                     test.enable_default_cost = true;

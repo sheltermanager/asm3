@@ -7,6 +7,8 @@ $(function() {
     const medical = {
 
         lastanimal: null,
+        lastanimals: null,
+        lastanimalsrows: null,
         TREATMENT_SINGLE: 0,
         TREATMENT_MULTI: 1,
         TREATMENT_CUSTOM: 2,
@@ -603,6 +605,8 @@ $(function() {
                     return validate.notblank([ "animals" ]);
                 },
                 onadd: async function() {
+                    medical.lastanimals = $("#animals").animalchoosermulti("value");
+                    medical.lastanimalsrows = $("#animals").animalchoosermulti("get_rows");
                     try {
                         await tableform.fields_post(medical.dialog.fields, "mode=createbulk", "medical");
                         tableform.dialog_close();
@@ -616,7 +620,10 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    $("#animals").animalchoosermulti("clear");
+                    if (medical.lastanimalsrows != null) {
+                        $("#animals").animalchoosermulti("set_rows", medical.lastanimalsrows);
+                        $("#animals").animalchoosermulti("value", medical.lastanimals);
+                    }
                     $("#profileidrow").show();
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");

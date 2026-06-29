@@ -372,7 +372,6 @@ $(function() {
                         $("#animals").animalchoosermulti("set_rows", vaccination.lastanimalsrows);
                         $("#animals").animalchoosermulti("value", vaccination.lastanimals);
                     }
-                    // $("#animals").animalchoosermulti("select");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
                     vaccination.enable_default_cost = true;
