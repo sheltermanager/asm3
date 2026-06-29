@@ -7,6 +7,8 @@ $(function() {
     const vaccination = {
 
         lastanimal: null, 
+        lastanimals: null,
+        lastanimalsrows: null,
         lastvet: null, 
 
         model: function() {
@@ -350,6 +352,9 @@ $(function() {
                     return validate.notblank([ "animals" ]);
                 },
                 onadd: async function() {
+                    vaccination.lastanimals = $("#animals").animalchoosermulti("value");
+                    vaccination.lastanimalsrows = $("#animals").animalchoosermulti("get_rows");
+                    console.log(vaccination.lastanimalsrows);
                     try {
                         await tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination");
                         tableform.dialog_close();
@@ -363,7 +368,11 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    $("#animals").animalchoosermulti("clear");
+                    if (vaccination.lastanimalsrows != null) {
+                        $("#animals").animalchoosermulti("set_rows", vaccination.lastanimalsrows);
+                        $("#animals").animalchoosermulti("value", vaccination.lastanimals);
+                    }
+                    // $("#animals").animalchoosermulti("select");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
                     vaccination.enable_default_cost = true;
