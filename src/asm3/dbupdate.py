@@ -1406,6 +1406,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("Header", True),
         flongstr("Footer", True),
         flongstr("Description", True),
+        fint("BootstrapStyle", True),
         fint("InternalUse", True)), False)
 
     sql += index("onlineform_Name", "onlineform", "Name")

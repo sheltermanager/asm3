@@ -328,37 +328,6 @@ $(function() {
                     $("#submitterreplyaddressrow").show();
                 }
             });
-            $("#bootstrapstyle").on("change", async function() {
-                if ($("#bootstrapstyle").prop("checked")) {
-                    if (tableform.show_okcancel_dialog) {
-                        await tableform.show_okcancel_dialog("#dialog-bootstrapstyle", _("Style"), {});
-                        let defaultbootstrapheader = [
-                            '<style>',
-                            '    input:not([type="submit"]):not([type="checkbox"]) {',
-                            '        width: 100% !important',
-                            '    }',
-                            '    #page {',
-                            '        box-shadow: none !important;',
-                            '        margin-left: auto !important;',
-                            '        margin-right: auto !important;',
-                            '        width: 100%;',
-                            '        max-width: 800px;',
-                            '        padding: 10px !important;',
-                            '    }',
-                            '    .asmformadditional {',
-                            '        font-style: italic;',
-                            '    }',
-                            '    .form-floating {',
-                            '        margin-bottom: 10px;',
-                            '    }',
-                            '</style>'
-                        ].join("\n");
-                        $("#header").htmleditor("value", defaultbootstrapheader);
-                        $("#footer").htmleditor("value", "");
-                    }
-                }
-
-            });
         },
 
         destroy: function() {
