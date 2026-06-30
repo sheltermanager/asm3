@@ -188,6 +188,9 @@ def get_onlineform_bootstrap_html(dbo: Database, formid: int, completedocument: 
         if '<!--bootstrapstyle--><!--' in header:
             header = header.replace('<!--bootstrapstyle--><!--', '')
             header = header.replace('--><!--bootstrapstyle-->', '')
+        if '<!--defaultstyle-->' in header:
+            defaultstyle = header.split('<!--defaultstyle-->')[1]
+            header = header.replace(defaultstyle, "")
         header = header.replace("</head>", extra)
         h.append(header.replace("$$TITLE$$", form.NAME))
         h.append('<h2 class="asm-onlineform-title">%s</h2>' % form.NAME)
