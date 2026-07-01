@@ -35,10 +35,10 @@ $(function() {
         render_dispatch: function() {
             return [
                 { post_field: "dispatchaddress", json_field: "DISPATCHADDRESS", type: "textarea", label: _("Address"), rows: 5, classes: "asm-textareafixed" },
-                { post_field: "dispatchtown", json_field: "DISPATCHTOWN", type: "text", label: _("City"), maxlength: 100, rowclasses: "towncounty" },
+                { post_field: "dispatchtown", json_field: "DISPATCHTOWN", type: "text", label: _("City"), maxlength: 100, rowclasses: "town" },
                 common.iif(config.bool("USStateCodes"),
-                    { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "select", label: _("State"), options: html.states_us_options(), rowclasses: "towncounty" },
-                    { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "text", label: _("State"), maxlength: 100, rowclasses: "towncounty" }),
+                    { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "select", label: _("State"), options: html.states_us_options(), rowclasses: "county" },
+                    { post_field: "dispatchcounty", json_field: "DISPATCHCOUNTY", type: "text", label: _("State"), maxlength: 100, rowclasses: "county" }),
                 { post_field: "dispatchpostcode", json_field: "DISPATCHPOSTCODE", type: "text", label: _("Zipcode") },
                 { post_field: "dispatchlatlong", json_field: "DISPATCHLATLONG", type: "latlong", label: _("Latitude/Longitude"), 
                     callout: _("Right-click on the map to change the marker location") },
@@ -162,6 +162,9 @@ $(function() {
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             
             $("#dispatchlatlongrow").toggle( config.bool("ShowLatLong") );
+
+            $(".town").toggle( !config.bool("HideTown") );
+            $(".county").toggle( !config.bool("HideCounty") );
 
             // Hide the view roles controls if incident permissions are off
             if (!config.bool("IncidentPermissions")) {
