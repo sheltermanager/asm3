@@ -286,18 +286,11 @@ $(function() {
             if (u && u.indexOf("http") != 0) { $("#redirect").val( "https://" + u ); }
         },
 
-        render_insert_bootstrap_style: function() {
-            return ['<div id="dialog-bootstrapstyle" style="display: none" title="' + html.title(_("Add Bootstrap style overide")) + '">',
-                '<p>' + _("Add a header that overides the default header/footer") + '</p>',
-                '</div>'].join("\n");
-        },
-
         render: function() {
             let s = "";
             this.model();
             s += this.render_headfoot();
             s += this.render_import();
-            s += this.render_insert_bootstrap_style();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Online Forms"));
             s += html.info(_("Online forms can be linked to from your website and used to take information from visitors for applications, etc."));
