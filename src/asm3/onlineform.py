@@ -987,12 +987,11 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         )
         formid = formdata.ID
         key = f"formemail_{str(formid)}_{emailaddress}"
-        if asm3.cachedisk.exists(key, dbo.name()):
-            lastreceived = asm3.cachedisk.get(key, dbo.name())
-            if lastreceived and (dbo.now() - lastreceived).days < formdata.EMAILSUBMISSIONLIMITDAYS:
-                raise asm3.utils.ASMValidationError(
-                    asm3.i18n._("Form recently submitted by {0}, please wait {1} days between submissions.").format(emailaddress, formdata.EMAILSUBMISSIONLIMITDAYS)
-                )
+        lastreceived = asm3.cachedisk.get(key, dbo.name())
+        if lastreceived and (dbo.now() - lastreceived).days < formdata.EMAILSUBMISSIONLIMITDAYS:
+            raise asm3.utils.ASMValidationError(
+                asm3.i18n._("Form recently submitted by {0}, please wait {1} days between submissions.").format(emailaddress, formdata.EMAILSUBMISSIONLIMITDAYS)
+            )
         else:
             ttl = 86400 * formdata.EMAILSUBMISSIONLIMITDAYS
             asm3.cachedisk.put(key, dbo.name(), dbo.now(), ttl)
