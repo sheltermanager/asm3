@@ -1398,6 +1398,7 @@ def sql_structure(dbo: Database) -> str:
         fint("AutoProcess", True),
         flongstr("SubmitterReplyAddress", True),
         fint("RetainFor", True),
+        fint("EmailSubmissionLimitDays", True),
         fint("EmailSubmitter", True),
         fint("EmailCoordinator", True),
         fint("EmailFosterer", True),
@@ -1408,6 +1409,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("Description", True),
         fint("InternalUse", True)), False)
 
+    sql += index("onlineform_EmailSubmissionLimitDays", "onlineform", "EmailSubmissionLimitDays")
     sql += index("onlineform_Name", "onlineform", "Name")
     sql += index("onlineform_InternalUse", "onlineform", "InternalUse")
 

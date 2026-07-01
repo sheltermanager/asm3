@@ -413,3 +413,4 @@ AMQP_ENABLED = get_boolean("amqp_enabled", False)
 VIDEO_ENABLED = get_boolean("video_enabled", False)
 VIDEO_SIZE_LIMIT = get_integer("video_size_limit", 10485760)
 VIDEO_THUMBNAIL_CMD = get_string("video_thumbnail_cmd", "ffmpeg -v 0 -y -an -i %(input)s -ss 00:00:2.000 -vframes 1 %(output)s")
+
