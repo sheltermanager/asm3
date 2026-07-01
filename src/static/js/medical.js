@@ -7,6 +7,8 @@ $(function() {
     const medical = {
 
         lastanimal: null,
+        lastanimals: null,
+        lastanimalsrows: null,
         TREATMENT_SINGLE: 0,
         TREATMENT_MULTI: 1,
         TREATMENT_CUSTOM: 2,
@@ -85,6 +87,7 @@ $(function() {
                 edit_title: _("Edit medical regimen"),
                 edit_perm: 'mcam',
                 close_on_ok: false,
+                use_default_values: false,
                 hide_read_only: true,
                 columns: 1,
                 width: 800,
@@ -603,6 +606,8 @@ $(function() {
                     return validate.notblank([ "animals" ]);
                 },
                 onadd: async function() {
+                    medical.lastanimals = $("#animals").animalchoosermulti("value");
+                    medical.lastanimalsrows = $("#animals").animalchoosermulti("get_rows");
                     try {
                         await tableform.fields_post(medical.dialog.fields, "mode=createbulk", "medical");
                         tableform.dialog_close();
@@ -616,7 +621,10 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    $("#animals").animalchoosermulti("clear");
+                    if (medical.lastanimalsrows != null && medical.lastanimals != null) {
+                        $("#animals").animalchoosermulti("set_rows", medical.lastanimalsrows);
+                        $("#animals").animalchoosermulti("value", medical.lastanimals);
+                    }
                     $("#profileidrow").show();
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
@@ -929,6 +937,11 @@ $(function() {
             $("#timingrulenofrequencies").change(medical.change_values);
             $("#treatmentrule").change(medical.change_values);
             $("#totalnumberoftreatments").change(medical.change_values);
+
+            $("#animals").on("bulk_clear", function(event, rec) {
+                medical.lastanimals = null;
+                medical.lastanimalsrows = null;
+            });
 
             // Add click handlers to templates
             $(".templatelink").click(function() {
