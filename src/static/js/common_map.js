@@ -16,7 +16,40 @@ const mapping = {
      * latlong: A lat,long string to mark the center of the map (or empty string for current location)
      * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
      */
+
     _markers: [],
+
+    ready: function() {
+        let rp = new Promise(async function(resolve, reject) {
+            let maploaded = await mapping.check_map_loaded();
+            if (maploaded) {
+                resolve(true);
+            } else {
+                mapping._ready(1);
+            }
+            resolve(true)
+        });
+        return rp;
+    },
+
+    _ready: async function(attemptno) {
+        let attemptlimit = 10;
+        let ticklength = 500;
+        let maploaded = await mapping.check_map_loaded();
+        let tickmessage = "Attempt " + attemptno + ". Mapping library unavailable, waiting " + ticklength + " milliseconds";
+        if (maploaded) { return true; }
+        window.setTimeout(async function() {
+            log.info(tickmessage);
+            maploaded = await mapping.check_map_loaded();
+            if (maploaded) { return true; }
+            if (attemptno < attemptlimit) {
+                mapping._ready(attemptno + 1);
+            } else {
+                log.info("Reached attempt limit");
+            }
+        }, ticklength);
+    },
+
     draw_map: function(divid, zoom, latlong, markers) {
         var _draw_map = function(latlong) {
             if (asm.mapprovider == "osm") {
@@ -136,6 +169,20 @@ const mapping = {
             }
         });
         return fv;
+    },
+
+    check_map_loaded: function() {
+        try {
+            if (asm.mapprovider == "osm") {
+                let leafletlibrary = L;
+                return true;
+            } else {
+                let googlelibrary = google;
+                return true;
+            }
+        } catch(error) {
+            return false;
+        }
     },
 
     _leaflet_draw_map: function(divid, zoom, latlong, markers) {

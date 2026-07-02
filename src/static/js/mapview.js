@@ -6,63 +6,29 @@ $(function() {
 
     const mapview = {
 
-        update_markers_from_checkboxes: async function() {
-            let ticklength = 500;
-            let tickmessage = "Mapping library unavailable, waiting " + ticklength + " milliseconds";
-            if (asm.mapprovider == "osm") {
-                let leafletloaded = await mapview._check_leaflet_loaded();
-                if (leafletloaded) {
-                    mapview._update_markers_from_checkboxes();
-                } else {
-                    window.setTimeout(async function() {
-                        log.info(tickmessage);
-                        leafletloaded = await mapview._check_leaflet_loaded();
-                        if (leafletloaded) {
-                            mapview._update_markers_from_checkboxes();
-                        } else {
-                            mapview.update_markers_from_checkboxes();
-                        }
-                    }, ticklength);
-                }
-            } else if (asm.mapprovider == "google") {
-                let googlemapsloaded = await mapview._check_googlemaps_loaded();
-                if (googlemapsloaded) {
-                    mapview._update_markers_from_checkboxes();
-                } else {
-                    window.setTimeout(async function() {
-                        log.info(tickmessage);
-                        googlemapsloaded = await mapview._check_googlemaps_loaded();
-                        if (googlemapsloaded) {
-                            mapview._update_markers_from_checkboxes();
-                        } else {
-                            mapview.update_markers_from_checkboxes();
-                        }
-                    }, ticklength);
-                }
-            }
-        },
-
-        _update_markers_from_checkboxes: async function() {
-            let mk = "";
-            $("#toggles input:checked").each(function() {
-                mk += $(this).attr("data");
-            });
-            let floorjsdate = $("#datefloor").datepicker("getDate");
-            let rawmarkers = await common.ajax_post("map_markers", "mode=getmarkers&mk=" + mk + "&floor=" + format.date(floorjsdate));
-            rawmarkers = jQuery.parseJSON(rawmarkers);
-            let markers = [];
-            let speciesid = parseInt($("#speciesfilter").val());
-            if (rawmarkers.length && speciesid) {
-                $.each(rawmarkers, function(i, v) {
-                    if (speciesid == v.SPECIESID) {
-                        markers.push(v);
-                    }
+        update_markers_from_checkboxes: function() {
+            mapping.ready().then(async function() {
+                let mk = "";
+                $("#toggles input:checked").each(function() {
+                    mk += $(this).attr("data");
                 });
-            } else {
-                markers = rawmarkers;
-            }
-            mapping.redraw_markers(markers);
-            common.route_push('map_view?mk=' + mk + '&fl=' + format.date(floorjsdate) + '&sid=' + speciesid);
+                let floorjsdate = $("#datefloor").datepicker("getDate");
+                let rawmarkers = await common.ajax_post("map_markers", "mode=getmarkers&mk=" + mk + "&floor=" + format.date(floorjsdate));
+                rawmarkers = jQuery.parseJSON(rawmarkers);
+                let markers = [];
+                let speciesid = parseInt($("#speciesfilter").val());
+                if (rawmarkers.length && speciesid) {
+                    $.each(rawmarkers, function(i, v) {
+                        if (speciesid == v.SPECIESID) {
+                            markers.push(v);
+                        }
+                    });
+                } else {
+                    markers = rawmarkers;
+                }
+                mapping.redraw_markers(markers);
+                common.route_push('map_view?mk=' + mk + '&fl=' + format.date(floorjsdate) + '&sid=' + speciesid);
+            });
         },
 
         map_markers: [],
@@ -144,24 +110,6 @@ $(function() {
                 let datefloor = new Date();
                 datefloor.setDate(datefloor.getDate() - 90);
                 $("#datefloor").datepicker("setDate", datefloor);
-            }
-        },
-
-        _check_leaflet_loaded: function() {
-            try {
-                let leafletlibrary = L;
-                return true;
-            } catch(error) {
-                return false;
-            }
-        },
-
-        _check_googlemaps_loaded: function() {
-            try {
-                let googlelibrary = google;
-                return true;
-            } catch(error) {
-                return false;
             }
         },
 
