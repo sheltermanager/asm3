@@ -16,7 +16,7 @@ install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these and will
 install them for you.
 
-* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-memcache
+* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-memcache python3-lxml
 
 Extra, non-mandatory packages:
 
