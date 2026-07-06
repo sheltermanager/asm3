@@ -46,7 +46,7 @@ $(function() {
                 },
                 { id: "bulk", type: "dropdownfilter", 
                     options: [ "(select)", "animal", "animalcontrol", "animallost", "animalfound", "customreport", 
-                        "dbfs", "onlineform", "onlineformfield", "onlineformincoming", "owner", 
+                        "dbfs", "medicalprofile", "onlineform", "onlineformfield", "onlineformincoming", "owner", 
                         "templatedocument", "templatehtml", "waitinglist" ],
                     click: function(selval) {
                         $("#tableform input[type='checkbox']").each(function() {
