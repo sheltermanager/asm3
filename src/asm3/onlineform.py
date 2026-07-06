@@ -170,7 +170,7 @@ def get_onlineform_bootstrap_html(dbo: Database, formid: int, completedocument: 
         # references into the header block
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
-        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
+        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;RENDERER='bootstrap';\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
         extra += "<base href=\"%s\" />\n" % BASE_URL
         extra += asm3.html.css_tag(BOOTSTRAP_CSS) + \
             asm3.html.script_tag(BOOTSTRAP_JS) + \
@@ -185,9 +185,6 @@ def get_onlineform_bootstrap_html(dbo: Database, formid: int, completedocument: 
             asm3.html.asm_script_tag("onlineform_extra.js") + \
             "</head>"
         header = header.replace("</head>", extra)
-        if '<!--bootstrapstyle--><!--' in header:
-            header = header.replace('<!--bootstrapstyle--><!--', '')
-            header = header.replace('--><!--bootstrapstyle-->', '')
         if '<!--defaultstyle-->' in header:
             defaultstyle = header.split('<!--defaultstyle-->')[1]
             header = header.replace(defaultstyle, "")
@@ -462,7 +459,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         # references into the header block
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
-        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
+        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;RENDERER='legacy';\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
         extra += "<base href=\"%s\" />\n" % BASE_URL
         extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
             asm3.html.css_tag(ASMSELECT_CSS) + \
@@ -474,6 +471,9 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             asm3.html.script_tag(TIMEPICKER_JS) + \
             asm3.html.asm_script_tag("onlineform_extra.js") + \
             "</head>"
+        if '<!--bootstrapstyle-->' in header:
+            bootstrapstyle = header.split('<!--bootstrapstyle-->')[1]
+            header = header.replace(bootstrapstyle, "")
         header = header.replace("</head>", extra)
         h.append(header.replace("$$TITLE$$", form.NAME))
         h.append('<h2 class="asm-onlineform-title">%s</h2>' % form.NAME)

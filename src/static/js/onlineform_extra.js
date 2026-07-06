@@ -554,7 +554,9 @@ $(document).ready(function() {
         listClass: 'bsmList-custom',  
         listItemClass: 'bsmListItem-custom',
         listItemLabelClass: 'bsmListItemLabel-custom',
-        removeClass: 'bsmListItemRemove-custom'
+        noWrapLabel: RENDERER=='bootstrap', 
+        removeClass: 'bsmListItemRemove-custom',
+        selectClass: RENDERER=='bootstrap' ? 'form-select' : 'asmSelect'
     });
 
     // Attach event handlers to load images when they are selected
