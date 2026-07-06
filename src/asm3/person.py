@@ -653,6 +653,8 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
     }
+    if classfilter not in classfilter: raise asm3.utils.ASMError("invalid classfilter")
+    if typefilter not in typefilters: raise asm3.utils.ASMError("invalid typefilter")
     cf = classfilters[classfilter]
     dt = typefilters[typefilter]
     if not includeStaff: cf += " AND o.IsStaff = 0"
@@ -2037,7 +2039,7 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
             h.append( td(a.ISHOUSETRAINEDNAME))
             if not asm3.configuration.dont_show_declawed(dbo): 
                 h.append( td(a.DECLAWEDNAME))
-            h.append( td(a.ANIMALCOMMENTS + " " + a.HIDDENANIMALDETAILS))
+            h.append( td(a.HIDDENANIMALDETAILS + " " + asm3.utils.truncate(a.ANIMALCOMMENTS, 50)) )
             h.append( "</tr>")
 
             # Add an entry to ownerlookingfor for other reports
