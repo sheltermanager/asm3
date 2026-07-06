@@ -255,6 +255,7 @@ $(function() {
                 '<option value="animalmedicalcombined">' + _("Medical") + '</option>',
                 '<option value="ownerdonation">' + _("Payment") + '</option>',
                 '<option value="owner">' + _("Person") + '</option>',
+                '<option value="ownerlookingfor">' + _("Person Looking For") + '</option>',
                 '<option value="animalwaitinglist">' + _("Waiting List") + '</option>',
                 '</select>',
                 '</td>',
