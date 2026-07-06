@@ -2,11 +2,11 @@ PetRescue Animal Intake Data
 ###
 Figures
 ###
-34801/Any rev02
+34801/Any rev01
 ###
 Intake figures for PetRescue
 ###
-en
+en_AU
 ###
 SELECT
 a.AnimalName, s.SpeciesName, a.BreedName, atp.AnimalType, a.DateOfBirth, 
