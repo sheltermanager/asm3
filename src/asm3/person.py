@@ -23,6 +23,20 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
+def get_person_lookingfor_query() -> str:
+    """
+    Returns the SELECT and JOIN commands necessary for selecting
+    personlookingfor rows with resolved lookups.
+    """
+    return "SELECT o.ID AS PersonID, o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.OwnerTown, o.OwnerCounty, o.OwnerCountry, o.HomeTelephone, " \
+        "o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, o.MobileTelephone, o.WorkTelephone, o.EmailAddress, o.DateOfBirth, o.IdentificationNumber, " \
+        "o.OwnerTitle2, o.OwnerInitials2, o.OwnerForeNames2, o.OwnerSurname2, o.MobileTelephone2, o.WorkTelephone2, o.EmailAddress2, o.DateOfBirth2, o.IdentificationNumber2, " \
+        "a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.AgeGroup " \
+        "FROM ownerlookingfor olf " \
+        "INNER JOIN owner o ON olf.OwnerID = o.ID " \
+        "INNER JOIN animal a ON olf.AnimalID = a.ID " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID "
+
 def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting

@@ -219,6 +219,31 @@ $(function() {
             [ _("Volunteer"), "volunteer", "IsVolunteer=1" ]
         ];
 
+        const QB_PERSONLOOKINGFOR_CRITERIA = [
+            [ _("Adopter"), "adopter", "IsAdopter=1" ],
+            [ _("Ask the user for a city"), "askcity", "OwnerTown LIKE '%$ASK STRING {0}$%'"
+                .replace("{0}", _("Enter a city")) ],
+            [ _("Banned"), "banned", "IsBanned=1" ],
+            [ _("Deceased"), "deceased", "IsDeceased=1" ],
+            [ _("Donor"), "donor", "IsDonor=1" ],
+            [ _("Fosterer"), "fosterer", "IsFosterer=1" ],
+            [ _("GiftAid"), "giftaid", "IsGiftAid=1" ],
+            [ _("Homechecked"), "homechecked", "IDCheck=1" ],
+            [ _("Homechecked between two dates"), "homechecktwo", 
+                "DateLastHomeChecked>='$ASK DATE {0}$' AND DateLastHomeChecked<='$ASK DATE {1}$'"
+                .replace("{0}", _("Homechecked between"))
+                .replace("{1}", _("and")) ],
+            [ _("Homechecked by"), "homecheckedby", "IDCheck=1 AND HomeCheckedBy=$ASK PERSON$" ],
+            [ _("Member"), "member", "IsMember=1" ],
+            [ _("No active license held"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
+                "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
+            [ _("Not homechecked"), "nothomechecked", "IDCheck=0" ],
+            [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
+            [ _("Staff"), "staff", "IsStaff=1" ],
+            [ _("Vet"), "vet", "IsVet=1" ],
+            [ _("Volunteer"), "volunteer", "IsVolunteer=1" ]
+        ];
+
         const QB_WAITINGLIST_CRITERIA = [
             [ _("Put on the list between two dates"), "onlisttwodates", 
                 "DatePutOnList >='$ASK DATE {0}$' AND DatePutOnList <= '$ASK DATE {1}$'"
@@ -238,6 +263,7 @@ $(function() {
         qb_medical_criteria: null,
         qb_payment_criteria: null,
         qb_person_criteria: null,
+        qb_personlookingfor_criteria: null,
         qb_waitinglist_criteria: null,
 
         render: function() {
@@ -426,6 +452,7 @@ $(function() {
             reports_querybuilder.qb_medical_criteria = Array.from(QB_MEDICAL_CRITERIA);
             reports_querybuilder.qb_payment_criteria = Array.from(QB_PAYMENT_CRITERIA);
             reports_querybuilder.qb_person_criteria = Array.from(QB_PERSON_CRITERIA);
+            reports_querybuilder.qb_personlookingfor_criteria = Array.from(QB_PERSONLOOKINGFOR_CRITERIA);
             reports_querybuilder.qb_waitinglist_criteria = Array.from(QB_WAITINGLIST_CRITERIA);
             $.each(controller.additionalfields, function(i, v) {
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { 
@@ -750,6 +777,15 @@ $(function() {
                 $("#qbsort").change();
                 $("#qbcriteria").change();
                 reports_querybuilder.qb_active_criteria = reports_querybuilder.qb_payment_criteria;
+            }
+            else if (type == "ownerlookingfor") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_ownerlookingfor")));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_ownerlookingfor")));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports_querybuilder.qb_person_criteria)));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                $("#qbcriteria").change();
+                reports_querybuilder.qb_active_criteria = reports_querybuilder.qb_personlookingfor_criteria;
             }
         },
 
