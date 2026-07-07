@@ -7131,6 +7131,7 @@ class publish_options(JSONEndpoint):
             "hasfindpet": FINDPET_BASE_URL != "",
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
             "haspetcolovelost": PETCO_LOVELOST_BASE_URL != "",
+            "haspetcolovelostdebug": PETCO_LOVELOST_EXTRAS,
             "hashomeagain": HOMEAGAIN_BASE_URL != "",
             "hashtmlftp": HTMLFTP_PUBLISHER_ENABLED,
             "hasmaddiesfund": MADDIES_FUND_TOKEN_URL != "",
@@ -7144,7 +7145,6 @@ class publish_options(JSONEndpoint):
             "hassavourlife": SAVOURLIFE_URL != "",
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
-            "pcllextras": PETCO_LOVELOST_EXTRAS,
             "styles": asm3.template.get_html_template_names(dbo),
             "users": asm3.users.get_users(dbo)
         }

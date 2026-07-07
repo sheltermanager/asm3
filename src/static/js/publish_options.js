@@ -419,16 +419,16 @@ $(function() {
                             { id: "pcllemail", post_field: "PetCoLoveLostEmail", label: "Email Address", type: "text", doublesize: true }, 
                             { id: "pcllpassword", post_field: "PetCoLoveLostPassword", label: "Password", type: "text", doublesize: true },
                             { id: "pcllshelterid", post_field: "PetCoLoveLostShelterID", label: "Shelter ID", type: "text", doublesize: true, readonly: true, 
-                                callout: _("The information from Options > Shelter Details and the email address from Options > Email will be used. Once committed, the Shelter ID cannot be changed."),
-                                xmarkup: ' <button id="button-pcllgetshelterid">' + _("Generate a Petco Love Lost shelter ID. Once committed, this cannot be changed.") + '</button>' +
+                                callout: "The information from Options > Shelter Details and the email address from Options > Email will be used. Once committed, the Shelter ID cannot be changed.",
+                                xmarkup: ' <button id="button-pcllgetshelterid">Generate a Petco Love Lost shelter ID. Once committed, this cannot be changed.</button>' +
                                 '<img id="pcllgetshelteridwait" src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;display: none;"/>'
                             },
                             { type: "raw", markup: '<button id="button-pcllpublished" class="pcllbutton">Show Published</button> ' +
                                 '<button id="button-pcllpurge" class="pcllbutton">Purge</button>',
-                                hideif: function() { return !controller.pcllextras; }
+                                hideif: function() { return !controller.haspetcolovelostdebug; }
                             },
                             { type: "raw", markup: '<div id="pclldata" style="padding-top: 3px;"></div>',
-                                hideif: function() { return !controller.pcllextras; }
+                                hideif: function() { return !controller.haspetcolovelostdebug; }
                             }
                         ]}, 
                     { id: "tab-petlink", title: "PetLink Microchips", classes: 'localeus localeca localemx haspetlink',
