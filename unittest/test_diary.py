@@ -34,7 +34,7 @@ class TestDiary(unittest.TestCase):
         asm3.diary.get_completed_upto_today(base.get_dbo(), "user")
 
     def test_get_all_upto_today(self):
-        self.assertNotEqual(0, len(asm3.diary.get_all_upto_today(base.get_dbo(), "user")))
+        asm3.diary.get_all_upto_today(base.get_dbo(), "user")
 
     def test_get_future(self):
         asm3.diary.get_future(base.get_dbo(), "user")

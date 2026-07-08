@@ -268,7 +268,7 @@ const mobile_ui_animal = {
             $("#content-dailyobs .list-group").empty();
             controller.animals.sort(common.sort_single("SHELTERLOCATIONUNIT"));
             $.each(controller.animals, function(i, v) {
-                if (v.SHELTERLOCATION == $("#dailyobslocation").val()) {
+                if (v.SHELTERLOCATION == $("#dailyobslocation").val() && !v.ACTIVEMOVEMENTTYPE) {
                     let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
                         '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
                         '<h5 class="mb-1"><input type=checkbox class="dailyobsselector">&nbsp;' + v.ANIMALNAME + ' - ' + v.CODE + ' - ' + v.SHELTERLOCATIONUNIT + '</h5>';
