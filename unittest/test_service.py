@@ -95,6 +95,51 @@ class TestService(unittest.TestCase):
             asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", False, dbo)
             asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", True, dbo)
     
+    def test_handler_log_email(self):
+        dbo = base.get_dbo()
+        # Create an owner record
+        data = {
+            "title": "Mr",
+            "forenames": "Test",
+            "surname": "Ickle",
+            "ownertype": "1",
+            "address": "123 test street",
+            "emailaddress": "test@test.com"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        pid = asm3.person.insert_person_from_form(dbo, post, "test", geocode=False)
+        
+        # Create email received post data
+        data = {
+            "method": "email_received_log",
+            "emailaddress": "test@test.com",
+            "logtext": "Just testing."
+        }
+        
+        # Check if email logging is disabled
+        emailloginenabled = "No"
+        if asm3.configuration.email_log(dbo):
+            emailloginenabled = "Yes"
+        
+        # Switch email logging on
+        asm3.configuration.cset(dbo, "LogEmailByDefault", "Yes")
+
+        serverip = asm3.sitedefs.EMAIL_SERVER_IP_WHITELIST.split()[0]
+        
+        # Send the post data to the service handler
+        asm3.service.handler(asm3.utils.PostedData(data, dbo.locale), dbo.installpath, serverip, "", "Mozilla", "", True, dbo)
+        
+        asm3.configuration.cset(dbo, "LogEmailByDefault", emailloginenabled)
+        logsfound = dbo.query("SELECT ID FROM log WHERE Comments = 'Just testing.'")
+
+        # Clean up
+        asm3.person.delete_person(dbo, "test", pid)
+        dbo.execute(
+            "DELETE FROM log WHERE Comments = 'Just testing.'"
+        )
+        self.assertEqual(1, len(logsfound))
+
+    
     def test_handler_sign_document(self):
 
         # Set email adoption coordinator on form signature to on
