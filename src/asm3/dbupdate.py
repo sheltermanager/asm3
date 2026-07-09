@@ -96,7 +96,7 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
     "v_animalmedicalcombined", "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", 
     "v_animalwaitinglist", "v_owner", "v_ownercitation", "v_ownerdonation", "v_ownerlicence", 
-    "v_ownertraploan", "v_ownervoucher" )
+    "v_ownerlookingfor", "v_ownertraploan", "v_ownervoucher" )
 
 def sql_structure(dbo: Database) -> str:
     """
@@ -2959,6 +2959,7 @@ def install_db_views(dbo: Database) -> int:
     create_view("v_ownercitation", asm3.financial.get_citation_query(dbo))
     create_view("v_ownerdonation", asm3.financial.get_donation_query(dbo))
     create_view("v_ownerlicence", asm3.financial.get_licence_query(dbo))
+    create_view("v_ownerlookingfor", asm3.person.get_person_lookingfor_query(dbo))
     create_view("v_ownertraploan", asm3.animalcontrol.get_traploan_query(dbo))
     create_view("v_ownervoucher", asm3.financial.get_voucher_query(dbo))
     create_view("v_product", asm3.stock.get_product_query(dbo))

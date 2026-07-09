@@ -15,7 +15,7 @@ db = web.database( dbn = "sqlite", db = "scripts/schema/schema.db" )
 VIEWS = [ "adoption", "animal", "animalcontrol", "animalfound", "animallost", 
     "animalmedicalcombined", "animalmedicaltreatment", "animaltest", "animalvaccination", 
     "animalwaitinglist", "owner", "ownercitation", "ownerdonation", 
-    "ownerlicence", "ownertraploan", "ownervoucher" ]
+    "ownerlicence", "ownerlookingfor", "ownertraploan", "ownervoucher" ]
 
 tables = {}
 for table in db.query("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"):
