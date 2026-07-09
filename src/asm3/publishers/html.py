@@ -349,6 +349,12 @@ def embellish_media_urls(dbo: Database, a: ResultRow, tags: Dict[str, str]) -> N
             'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen'
         a.WEBSITEVIDEOTAG = f'<iframe class="asm-video" src="{youtubeurl}" {youtubeattrs}></iframe>'
     tags["WEBSITEVIDEOTAG"] = a.WEBSITEVIDEOTAG
+
+    # Add extra tags for websitevideoname2-10 if they exist
+    for x in range(2, 11):
+        if a.WEBSITEVIDEOCOUNT > x-1:
+            tags[f"WEBSITEVIDEOURL{x}"] = f"{a.WEBSITEMEDIANAME}&seq={x}"
+    
     return a
 
 def get_animal_view_adoptable_html(dbo: Database, style: str = "animalviewadoptable") -> str:
