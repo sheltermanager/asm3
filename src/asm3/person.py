@@ -32,7 +32,7 @@ def get_person_lookingfor_query(dbo: Database) -> str:
         "o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, o.MobileTelephone, o.WorkTelephone, o.EmailAddress, o.DateOfBirth, o.IdentificationNumber, " \
         "o.OwnerTitle2, o.OwnerInitials2, o.OwnerForeNames2, o.OwnerSurname2, o.MobileTelephone2, o.WorkTelephone2, o.EmailAddress2, o.DateOfBirth2, o.IdentificationNumber2, " \
         "o.IsAdopter, o.IsBanned, o.IsDonor,o.IsFosterer, o.IDCheck, o.DateLastHomeChecked, o.IsMember, o.IsVolunteer, o.IsDeceased, " \
-        "a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.AgeGroup, " \
+        "a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.AgeGroup, a.SpeciesID, " \
         "olf.MatchSummary " \
         "FROM ownerlookingfor olf " \
         "INNER JOIN owner o ON olf.OwnerID = o.ID " \

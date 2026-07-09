@@ -220,20 +220,7 @@ $(function() {
         ];
 
         const QB_PERSONLOOKINGFOR_CRITERIA = [
-            [ _("Adopter"), "adopter", "IsAdopter=1" ],
-            [ _("Ask the user for a city"), "askcity", "OwnerTown LIKE '%$ASK STRING {0}$%'"
-                .replace("{0}", _("Enter a city")) ],
-            [ _("Banned"), "banned", "IsBanned=1" ],
-            [ _("Deceased"), "deceased", "IsDeceased=1" ],
-            [ _("Donor"), "donor", "IsDonor=1" ],
-            [ _("Fosterer"), "fosterer", "IsFosterer=1" ],
-            [ _("Homechecked"), "homechecked", "IDCheck=1" ],
-            [ _("Homechecked between two dates"), "homechecktwo", 
-                "DateLastHomeChecked>='$ASK DATE {0}$' AND DateLastHomeChecked<='$ASK DATE {1}$'"
-                .replace("{0}", _("Homechecked between"))
-                .replace("{1}", _("and")) ],
-            [ _("Member"), "member", "IsMember=1" ],
-            [ _("Volunteer"), "volunteer", "IsVolunteer=1" ]
+            [ _("Species"), "species", "SpeciesID='$ASK SPECIES$'"]
         ];
 
         const QB_WAITINGLIST_CRITERIA = [
