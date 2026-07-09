@@ -227,20 +227,12 @@ $(function() {
             [ _("Deceased"), "deceased", "IsDeceased=1" ],
             [ _("Donor"), "donor", "IsDonor=1" ],
             [ _("Fosterer"), "fosterer", "IsFosterer=1" ],
-            [ _("GiftAid"), "giftaid", "IsGiftAid=1" ],
             [ _("Homechecked"), "homechecked", "IDCheck=1" ],
             [ _("Homechecked between two dates"), "homechecktwo", 
                 "DateLastHomeChecked>='$ASK DATE {0}$' AND DateLastHomeChecked<='$ASK DATE {1}$'"
                 .replace("{0}", _("Homechecked between"))
                 .replace("{1}", _("and")) ],
-            [ _("Homechecked by"), "homecheckedby", "IDCheck=1 AND HomeCheckedBy=$ASK PERSON$" ],
             [ _("Member"), "member", "IsMember=1" ],
-            [ _("No active license held"), "nolicense", "NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
-                "AND IssueDate<='$CURRENT_DATE$' AND (ExpiryDate Is Null OR ExpiryDate>'$CURRENT_DATE$'))" ],
-            [ _("Not homechecked"), "nothomechecked", "IDCheck=0" ],
-            [ _("Site matches current user"), "site", "SiteID=$SITE$" ],
-            [ _("Staff"), "staff", "IsStaff=1" ],
-            [ _("Vet"), "vet", "IsVet=1" ],
             [ _("Volunteer"), "volunteer", "IsVolunteer=1" ]
         ];
 
@@ -781,7 +773,7 @@ $(function() {
             else if (type == "ownerlookingfor") {
                 $("#qbfields").html(html.list_to_options(common.get_table_columns("v_ownerlookingfor")));
                 $("#qbsort").html(html.list_to_options(common.get_table_columns("v_ownerlookingfor")));
-                $("#qbcriteria").html(html.list_to_options(build_criteria(reports_querybuilder.qb_person_criteria)));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports_querybuilder.qb_personlookingfor_criteria)));
                 $("#qbfields").change();
                 $("#qbsort").change();
                 $("#qbcriteria").change();

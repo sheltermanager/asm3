@@ -28,15 +28,12 @@ def get_person_lookingfor_query(dbo: Database) -> str:
     Returns the SELECT and JOIN commands necessary for selecting
     personlookingfor rows with resolved lookups.
     """
-    animalsummary = dbo.sql_concat(("a.ShelterCode", "' '", "a.AnimalName", "' - '", "a.AgeGroup", "' '", "s.SpeciesName"))
-    personsummary = dbo.sql_concat(("o.OwnerName", "' '", "o.OwnerPostcode"))
     return "SELECT o.ID AS PersonID, o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.OwnerTown, o.OwnerCounty, o.OwnerCountry, o.HomeTelephone, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, o.MobileTelephone, o.WorkTelephone, o.EmailAddress, o.DateOfBirth, o.IdentificationNumber, " \
         "o.OwnerTitle2, o.OwnerInitials2, o.OwnerForeNames2, o.OwnerSurname2, o.MobileTelephone2, o.WorkTelephone2, o.EmailAddress2, o.DateOfBirth2, o.IdentificationNumber2, " \
+        "o.IsAdopter, o.IsBanned, o.IsDonor,o.IsFosterer, o.IDCheck, o.DateLastHomeChecked, o.IsMember, o.IsVolunteer, o.IsDeceased, " \
         "a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.AgeGroup, " \
-        "olf.MatchSummary, " \
-        f"{animalsummary} AS AnimalSummary, " \
-        f"{personsummary} AS PersonSummary " \
+        "olf.MatchSummary " \
         "FROM ownerlookingfor olf " \
         "INNER JOIN owner o ON olf.OwnerID = o.ID " \
         "INNER JOIN animal a ON olf.AnimalID = a.ID " \
