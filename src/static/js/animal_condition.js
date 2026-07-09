@@ -45,7 +45,7 @@ $(function() {
                 columns: [
                     { field: "CONDITIONNAME", display: _("Condition"),
                         formatter: function(row) {
-                            let cdname = row.CONDITIONNAME, extras = [], spacer = '<input type="checkbox" style="visibility: hidden" />';
+                            let cdname = row.CONDITIONNAME, spacer = '<input type="checkbox" style="visibility: hidden" />';
                             if (row.DESCRIPTION) {
                                 cdname += '<div class="asm-smallertext">' + spacer + row.DESCRIPTION + '</div>';
                             }
