@@ -145,6 +145,9 @@ AUTOCOMPLETE_MAP = {
     "emailaddress":     "email"
 }
 
+RENDERER_LEGACY = 0
+RENDERER_BOOTSTRAP = 1
+
 def get_collationid(dbo: Database) -> int:
     """ Returns the next collation ID value for online forms. """
     return dbo.get_id_cache_pk("collationid", "SELECT MAX(CollationID) FROM onlineformincoming")
@@ -157,7 +160,14 @@ def get_onlineforms(dbo: Database) -> Results:
     """ Return all online forms """
     return dbo.query("SELECT *, (SELECT COUNT(*) FROM onlineformfield WHERE OnlineFormID = onlineform.ID) AS NumberOfFields FROM onlineform ORDER BY Name")
 
-def get_onlineform_bootstrap_html(dbo: Database, formid: int, completedocument: bool = True) -> str:
+def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True):
+    form = get_onlineform(dbo, formid)
+    if form.FORMRENDERER == RENDERER_BOOTSTRAP:
+        return _get_onlineform_html_bootstrap(dbo, formid, completedocument)
+    else:
+        return _get_onlineform_html_legacy(dbo, formid, completedocument)
+
+def _get_onlineform_html_bootstrap(dbo: Database, formid: int, completedocument: bool = True) -> str:
     """ Get the selected online form as HTML """
     h = []
     l = dbo.locale
@@ -444,12 +454,10 @@ def get_onlineform_bootstrap_html(dbo: Database, formid: int, completedocument: 
         h.append(footer.replace("$$TITLE$$", form.NAME))
     return "\n".join(h)
 
-def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True) -> str:
+def _get_onlineform_html_legacy(dbo: Database, formid: int, completedocument: bool = True) -> str:
     """ Get the selected online form as HTML """
     form = get_onlineform(dbo, formid)
     if form is None: raise asm3.utils.ASMValidationError("Online form %s does not exist" % formid)
-    if form.BOOTSTRAPSTYLE:
-        return get_onlineform_bootstrap_html(dbo, formid, completedocument)
     h = []
     l = dbo.locale
     formfields = get_onlineformfields(dbo, formid)
@@ -1034,7 +1042,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "InternalUse":          post.boolean("internaluse"),
-        "BootstrapStyle":       post.boolean("bootstrapstyle"),
+        "FormRenderer":         post.integer("formrenderer"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -1058,7 +1066,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "InternalUse":          post.boolean("internaluse"),
-        "BootstrapStyle":       post.boolean("bootstrapstyle"),
+        "FormRenderer":         post.integer("formrenderer"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
