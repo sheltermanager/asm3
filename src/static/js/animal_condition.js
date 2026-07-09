@@ -43,7 +43,15 @@ $(function() {
                     tableform.dialog_close();
                 },
                 columns: [
-                    { field: "CONDITIONNAME", display: _("Condition") },
+                    { field: "CONDITIONNAME", display: _("Condition"),
+                        formatter: function(row) {
+                            let cdname = row.CONDITIONNAME, extras = [], spacer = '<input type="checkbox" style="visibility: hidden" />';
+                            if (row.DESCRIPTION) {
+                                cdname += '<div class="asm-smallertext">' + spacer + row.DESCRIPTION + '</div>';
+                            }
+                            return tableform.table_render_edit_link(row.ID, cdname);
+                        }
+                    },
                     { field: "STARTDATETIME", display: _("Start"), 
                         formatter: function(row, v) {
                             return format.date(v) + " " + format.time(v, "%H:%M:%S", true);
