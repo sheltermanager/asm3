@@ -105,7 +105,7 @@ $(function() {
             this.model();
             let s = "";
             s += tableform.dialog_render(this.dialog);
-            s += edit_header.animal_edit_header(controller.animal, "condition", controller.tabcounts);
+            s += edit_header.animal_edit_header(controller.animal, "conditions", controller.tabcounts);
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
