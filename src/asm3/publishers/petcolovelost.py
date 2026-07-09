@@ -15,7 +15,7 @@ import sys
 # ID type keys used in the ExtraIDs column
 IDTYPE_PETCOLOVELOST = "petcolovelost"
 
-def create_shelter(dbo: Database, username: str, password: str) -> int:
+def create_shelter(dbo: Database, username: str, password: str, taxid: str) -> int:
     auth = getAuthDetails(dbo, username, password)
     headers = {
         'x-api-key': auth["apikey"],
@@ -35,7 +35,8 @@ def create_shelter(dbo: Database, username: str, password: str) -> int:
             "phone": asm3.configuration.organisation_telephone(dbo)
         },
         "name": asm3.configuration.organisation(dbo),
-        "website": asm3.configuration.organisation_website(dbo)
+        "website": asm3.configuration.organisation_website(dbo),
+        "taxId": taxid
     }
     response = asm3.utils.post_json(f"{auth["url"]}/v2/shelters", asm3.utils.json(payload), headers)
     return response["response"]
@@ -125,6 +126,7 @@ def purgeImages(auth: Dict, pcllaid: str):
 
 def purgeRecordedPublished(publisher: AbstractPublisher):
     """ Remove all animal records that are marked as published to Petco on ASM """
+    recordedpublished = getRecordedPublishedAnimals(publisher.dbo)
     for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
         publisher.markAnimalUnpublished(publishedanimal["ID"])
     for an in publisher.dbo.query(getAnimalDataQuery(publisher.dbo) + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
@@ -149,8 +151,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
     
     def getAnimalData(self, lastpublished: datetime = None) -> str:
         return self.dbo.query(
-            getAnimalDataQuery(self.dbo, lastpublished) +
-            "WHERE a.Archived = 0 AND ( a.SpeciesID = 1 OR a.SpeciesID = 2 ) AND et.ID = 2 AND a.CrueltyCase = 0" # Include only archived, non case stray, cats and dogs
+            getAnimalDataQuery(self.dbo, lastpublished) + "WHERE a.Archived = 0 AND ( a.SpeciesID = 1 OR a.SpeciesID = 2 ) AND et.ID = 2 AND a.CrueltyCase = 0" # Include only archived, non case stray, cats and dogs
         )
     
     def run(self) -> None:

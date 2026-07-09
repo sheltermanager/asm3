@@ -418,6 +418,7 @@ $(function() {
                             { id: "enabledll", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "pcllemail", post_field: "PetCoLoveLostEmail", label: "Email Address", type: "text", doublesize: true }, 
                             { id: "pcllpassword", post_field: "PetCoLoveLostPassword", label: "Password", type: "text", doublesize: true },
+                            { id: "taxid", post_field: "ShelterTaxID", label: "Tax ID", type: "text", doublesize: true },
                             { id: "pcllshelterid", post_field: "PetCoLoveLostShelterID", label: "Shelter ID", type: "text", doublesize: true, readonly: true, 
                                 callout: "The information from Options > Shelter Details and the email address from Options > Email will be used. Once committed, the Shelter ID cannot be changed.",
                                 xmarkup: ' <button id="button-pcllgetshelterid">Generate a Petco Love Lost shelter ID. Once committed, this cannot be changed.</button>' +
@@ -724,14 +725,11 @@ $(function() {
             $("#button-pcllpurge")
                 .button()
                 .click(async function() {
-                    // $(".pcllbutton").hide();
-                    // $("#pclldata").html('<p><img src="/static/images/wait/rolling_3a87cd.svg" style="height: 15px;vertical-align: middle;"/> Waiting for Petco Love Lost..</p>');
                     header.show_loading(_("Waiting for Petco Love Lost"));
                     let formdata = "mode=pcllpurge";
                     await common.ajax_post("publish_options", formdata);
                     $("#pclldata").html("");
                     header.show_info("Petco Love Lost purged");
-                    // $(".pcllbutton").show();
                     header.hide_loading();
                 });
         },

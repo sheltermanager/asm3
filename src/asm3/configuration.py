@@ -1793,6 +1793,9 @@ def system_log_type(dbo: Database) -> int:
 def use_short_shelter_codes(dbo: Database) -> bool:
     return cboolean(dbo, "UseShortShelterCodes")
 
+def tax_id(dbo: Database) -> str:
+    return cstring(dbo, "ShelterTaxID")
+
 def third_party_publisher_sig(dbo: Database) -> str:
     return cstring(dbo, "TPPublisherSig")
 

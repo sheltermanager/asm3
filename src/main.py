@@ -7154,7 +7154,8 @@ class publish_options(JSONEndpoint):
     def post_pcllshelterid(self, o):
         emailaddress = o.post["PetCoLoveLostEmail"]
         password = o.post["PetCoLoveLostPassword"]
-        return asm3.publishers.petcolovelost.create_shelter(o.dbo, emailaddress, password)
+        taxid = o.post["ShelterTaxID"]
+        return asm3.publishers.petcolovelost.create_shelter(o.dbo, emailaddress, password, taxid)
     
     def post_pcllpublished(self, o):
         auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
