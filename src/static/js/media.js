@@ -68,7 +68,7 @@ $(function() {
                         });
                         return rv;
                     };
-                    $("#button-video").button("option", "disabled", true); 
+                    $("#button-video").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
                     $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
@@ -77,7 +77,7 @@ $(function() {
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
                     if (rows.length == 1 && (rows[0].MEDIATYPE == 2 || rows[0].MEDIAMIMETYPE == "video/mp4")) {
-                        $("#button-video").button("option", "disabled", false);
+                        $("#button-video").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                     // Only allow the image buttons to be pressed if the
                     // selection only contains images and the user has the permission to change media
@@ -170,7 +170,7 @@ $(function() {
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
-                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
+                { id: "video", text: _("Video"), type: "buttonmenu", icon: "video", perm: "cam" },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "move", text: _("Move/Copy"), type: "buttonmenu", icon: "copy" },
                 { id: "zip", text: _("Download"), icon: "save", enabled: "multi" },
@@ -296,6 +296,18 @@ $(function() {
                         + ' href="#">' + html.icon("document") + ' ' + _("Make this the default image when creating documents") + '</a></li>',
                     '<li id="button-jpgpdf" class="asm-menu-item"><a '
                         + ' href="#">' + html.icon("pdf") + ' ' + _("Create a PDF of this image") + '</a></li>',
+
+                '</ul>',
+                '</div>',
+
+                '<div id="button-video-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-include-video" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("tick") + ' ' + _("Include this video when publishing") + '</a></li>',
+                    '<li id="button-exclude-video" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("cross") + ' ' + _("Exclude this video when publishing") + '</a></li>',
+                    '<li id="button-web-video" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("web") + ' ' + _("Make this the default video for the record") + '</a></li>',
 
                 '</ul>',
                 '</div>',
@@ -867,6 +879,7 @@ $(function() {
             // If we aren't including preferred, hide the buttons
             if (!controller.showpreferred) {
                 $("#button-web").hide();
+                $("#button-web-video").hide();
                 $("#button-doc").hide();
                 $("#button-video").hide();
             }
@@ -880,6 +893,8 @@ $(function() {
             if (controller.name != "animal_media") {
                 $("#button-include").hide();
                 $("#button-exclude").hide();
+                $("#button-include-video").hide();
+                $("#button-exclude-video").hide();
             }
 
             $("#button-web").click(function() {
@@ -887,11 +902,16 @@ $(function() {
                 media.ajax(formdata);
             });
 
-            $("#button-video").button().click(function() {
-                $("#button-video").button("disable");
-                let formdata = "mode=video&ids=" + tableform.table_ids(media.table);
+            $("#button-web-video").click(function() {
+                let formdata = "mode=web&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
+
+            // $("#button-video").button().click(function() {
+            //     $("#button-video").button("disable");
+            //     let formdata = "mode=video&ids=" + tableform.table_ids(media.table);
+            //     media.ajax(formdata);
+            // });
 
             $("#button-rotateanti").click(function() {
                 let formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
@@ -923,7 +943,12 @@ $(function() {
                 media.ajax(formdata);
             });
 
-            $("#button-exclude").click(function() {
+            $("#button-include-video").click(function() {
+                let formdata = "mode=include&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-exclude-video").click(function() {
                 let formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
@@ -1011,6 +1036,7 @@ $(function() {
             });
 
             $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-video").addClass("ui-state-disabled").addClass("ui-button-disabled");
             $("#button-move").addClass("ui-state-disabled").addClass("ui-button-disabled");
             $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
 
