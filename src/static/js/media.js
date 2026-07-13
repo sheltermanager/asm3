@@ -145,7 +145,7 @@ $(function() {
                         h.push("<div class=\"centered\">");
                         h.push(media.render_preview_thumbnail(m, true, false, true));
                         h.push("<br/>");
-                        if (m.MEDIAMIMETYPE != "image/jpeg" && m.MEDIAMIMETYPE != "video/mp4") { 
+                        if (m.MEDIAMIMETYPE != "image/jpeg" && m.MEDIAMIMETYPE != "video/mp4" && m.MEDIANOTES) { 
                             h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); 
                         }
                         h.push(tableform.table_render_edit_link(m.ID, format.date(m.DATE)));
@@ -444,8 +444,20 @@ $(function() {
             if (m.MEDIAMIMETYPE == "image/jpeg" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                 mod_out("tick", _('Include this image when publishing'));
             }
+            if (m.MEDIAMIMETYPE == "video/mp4" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("tick", _('Include this video when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "text/url" && m.MEDIATYPE == 2 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("tick", _('Include this video when publishing'));
+            }
             if (m.MEDIAMIMETYPE == "image/jpeg" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                 mod_out("cross", _('Exclude this image when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "video/mp4" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("cross", _('Exclude this video when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "text/url" && m.MEDIATYPE == 2 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("cross", _('Exclude this video when publishing'));
             }
             if (m.RETAINUNTIL) {
                 let ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
@@ -903,15 +915,9 @@ $(function() {
             });
 
             $("#button-web-video").click(function() {
-                let formdata = "mode=web&ids=" + tableform.table_ids(media.table);
+                let formdata = "mode=video&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
-
-            // $("#button-video").button().click(function() {
-            //     $("#button-video").button("disable");
-            //     let formdata = "mode=video&ids=" + tableform.table_ids(media.table);
-            //     media.ajax(formdata);
-            // });
 
             $("#button-rotateanti").click(function() {
                 let formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
@@ -945,6 +951,11 @@ $(function() {
 
             $("#button-include-video").click(function() {
                 let formdata = "mode=include&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-exclude").click(function() {
+                let formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
@@ -1230,6 +1241,7 @@ $(function() {
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
+            media.check_preferred_video();
 
             html.media_flag_options(controller.flags, $("#mediaflags"));
             html.media_flag_options(controller.flags, $("#filter"));
