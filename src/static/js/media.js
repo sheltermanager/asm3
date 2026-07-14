@@ -666,18 +666,13 @@ $(function() {
             let newweb = false;
             let hasweb = false;
             let webcount = 0;
-            console.log("hasweb " + hasweb + ", newweb " + newweb + ", webcount " + webcount);
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
                 if (media.is_video(v) && v.EXCLUDEFROMPUBLISH == 0) {
-                    console.log(v.ID + " is a public video");
                     if (!newweb) { newweb = v.ID; }
                     if (v.WEBSITEVIDEO) { hasweb = true; webcount += 1; }
-                } else {
-                    console.log(v.ID + " is not a public video");
                 }
             });
-            console.log("hasweb " + hasweb + ", newweb " + newweb + ", webcount " + webcount);
             if (!hasweb && newweb) {
                 media.ajax("mode=video&ids=" + newweb);
             }
@@ -762,7 +757,6 @@ $(function() {
         },
 
         is_video: function(s) {
-            console.log(s.MEDIAMIMETYPE);
             return (s.MEDIAMIMETYPE == "video/mp4" || (s.MEDIAMIMETYPE == "text/url" && s.MEDIATYPE == 2));
         },
 
