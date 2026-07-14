@@ -61,6 +61,14 @@ $(function() {
                         });
                         return rv;
                     };
+                    const all_videos = function() {
+                        // Returns true if all rows are videos
+                        let rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIAMIMETYPE != "video/mp4" && !(v.MEDIAMIMETYPE == "text/url" && v.MEDIATYPE == 2)) { rv = false; }
+                        });
+                        return rv;
+                    };
                     const no_links = function() {
                         let rv = true;
                         $.each(rows, function(i, v) {
@@ -76,7 +84,7 @@ $(function() {
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
-                    if (rows.length == 1 && (rows[0].MEDIATYPE == 2 || rows[0].MEDIAMIMETYPE == "video/mp4")) {
+                    if (rows.length > 0 && all_videos() && common.has_permission("cam")) {
                         $("#button-video").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                     // Only allow the image buttons to be pressed if the
