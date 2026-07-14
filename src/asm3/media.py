@@ -85,6 +85,21 @@ def get_media_by_seq(dbo: Database, linktype: int, linkid: int, seq: int) -> Res
     else:
         return None
 
+def get_video_media_by_seq(dbo: Database, linktype: int, linkid: int, seq: int) -> ResultRow:
+    """ Returns video media by a one-based sequence number. 
+        Element 1 is always the preferred.
+        None is returned if the item doesn't exist
+    """
+    rows = dbo.query("SELECT * FROM media " \
+        "WHERE LinkTypeID = ? AND LinkID = ? " \
+        "AND MediaMimeType = 'video/mp4' " \
+        "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+        "ORDER BY WebsiteVideo DESC, Date DESC", (linktype, linkid))
+    if len(rows) >= seq:
+        return rows[seq - 1]
+    else:
+        return None
+
 def get_total_seq(dbo: Database, linktype: int, linkid: int) -> int:
     return dbo.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
         "AND MediaMimeType = 'image/jpeg' " \
@@ -311,7 +326,8 @@ def get_video_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, j
         if seq == 0:
             return mrec( get_web_preferred_video(dbo, ANIMAL, iid) )
         else:
-            return mrec( get_media_by_seq(dbo, ANIMAL, iid, seq) )
+            videodata = get_video_media_by_seq(dbo, ANIMAL, iid, seq)
+            return mrec(videodata)
     elif mode == "person":
         if seq == 0:
             return mrec( get_web_preferred_video(dbo, PERSON, iid) )

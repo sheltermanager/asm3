@@ -662,7 +662,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         else:
             dummy, data = asm3.media.get_video_file_data(dbo, "animal", asm3.utils.cint(animalid), seq)
             if data == "NOVID": dummy, data = asm3.media.get_image_file_data(dbo, "nopic", 0)
-            return set_cached_response(cache_key, account, "image/jpeg", 86400, 3600, data)
+            return set_cached_response(cache_key, account, "video/mp4", 86400, 3600, data)
 
     elif method =="animal_thumbnail":
         if asm3.utils.cint(animalid) == 0:

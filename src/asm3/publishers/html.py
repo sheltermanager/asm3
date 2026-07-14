@@ -331,13 +331,16 @@ def embellish_media_urls(dbo: Database, a: ResultRow, tags: Dict[str, str]) -> N
     # Add extra tags for websitemedianame2-10 if they exist
     for x in range(2, 11):
         if a.WEBSITEIMAGECOUNT > x-1: tags[f"WEBMEDIAFILENAME{x}"] = f"{a.WEBSITEMEDIANAME}&seq={x}"
+    
     # Set WebsiteVideoURL if the preferred video is an uploaded file rather than a link
-    if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
+    if a.WEBSITEVIDEOMIMETYPE == "video/mp4":# or (a.WEBSITEVIDEOMIMETYPE == "text/url" and a.MEDIATYPE == asm3.media.MEDIATYPE_VIDEO_LINK):
         if asm3.smcom.active():
             a.WEBSITEVIDEOURL = f"{SERVICE_URL}?account={dbo.name()}&method=animal_video&animalid={a.ID}"
         else:
             a.WEBSITEVIDEOURL = f"{SERVICE_URL}?method=animal_video&animalid={a.ID}"
         tags["WEBSITEVIDEOURL"] = a.WEBSITEVIDEOURL
+
+    
     # If we have a video URL, Add a tag for WEBSITEVIDEOTAG to embed that video in the page
     a.WEBSITEVIDEOTAG = ""
     if a.WEBSITEVIDEOMIMETYPE == "video/mp4":
@@ -351,9 +354,49 @@ def embellish_media_urls(dbo: Database, a: ResultRow, tags: Dict[str, str]) -> N
     tags["WEBSITEVIDEOTAG"] = a.WEBSITEVIDEOTAG
 
     # Add extra tags for websitevideoname2-10 if they exist
-    for x in range(2, 11):
-        if a.WEBSITEVIDEOCOUNT > x-1:
-            tags[f"WEBSITEVIDEOURL{x}"] = f"{a.WEBSITEMEDIANAME}&seq={x}"
+    extravideomedia = dbo.query(
+        "SELECT ID, MediaName, MediaType, MediaMimeType FROM media WHERE ExcludeFromPublish = 0 AND (MediaMimeType = 'video/mp4' OR MediaMimeType = 'text/url') AND LinkTypeID = ? AND media.LinkID = ? LIMIT 10",
+        (asm3.media.ANIMAL, a.ID)
+    )
+    youtubeattrs = 'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen'
+    videoseqcount = 1
+    for v in enumerate(extravideomedia):
+        extravideocount = v[0] + 1
+        tags[f"WEBSITEVIDEOTAG{extravideocount}"] = ""
+        if v[1].MEDIAMIMETYPE == "text/url":
+            videourl = v[1].MEDIANAME
+            if "youtube" in v[1].MediaName:
+                youtubeurl = videourl.replace("watch?v=", "embed/") + "?showinfo=0"
+                tags[f"WEBSITEVIDEOTAG{extravideocount}"] = f'<iframe class="asm-video" src="{youtubeurl}" {youtubeattrs}></iframe>'
+        else:
+            if asm3.smcom.active():
+                videourl = f"{SERVICE_URL}?account={dbo.name()}&method=animal_video&animalid={a.ID}&seq={videoseqcount}"
+            else:
+                videourl = f"{SERVICE_URL}?method=animal_video&animalid={a.ID}&seq={videoseqcount}"
+            videoseqcount += 1
+            tags[f"WEBSITEVIDEOTAG{extravideocount}"] = f'<video class="asm-video" controls style="background-color: yellow;max-height: none !important;height: auto !important;"><source src="{videourl}" type="video/mp4"></video>'
+        tags[f"WEBSITEVIDEOURL{extravideocount}"] = videourl
+
+        # if v[1].WEBSITEVIDEOMIMETYPE == "text/url" and tags[f"WEBSITEVIDEOURL{extravideocount}"].find("watch?") != -1:
+
+    # for x in range(2, 11):
+    #     if a.WEBSITEVIDEOCOUNT > x-1:
+    #         if a.WEBSITEVIDEOMIMETYPE == "text/url":
+    #             videourl = a.MEDIANAME
+    #         elif asm3.smcom.active():
+    #             videourl = f"{SERVICE_URL}?account={dbo.name()}&method=animal_video&animalid={a.ID}&seq={x}"
+    #         else:
+    #             videourl = f"{SERVICE_URL}?method=animal_video&animalid={a.ID}&seq={x}"
+    #         tags[f"WEBSITEVIDEOURL{x}"] = videourl
+
+    #         if a.WEBSITEVIDEOMIMETYPE == "text/url" and tags[f"WEBSITEVIDEOURL{x}"].find("watch?") != -1:
+    #             youtubeurl = f"{a.WEBSITEVIDEOURL}&seq={x}".replace("watch?v=", "embed/") + "?showinfo=0"
+    #             youtubeattrs = 'frameborder="0" ' \
+    #                 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' \
+    #                 'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen'
+    #             tags[f"WEBSITEVIDEOTAG{x}"] = f'<iframe class="asm-video" src="{youtubeurl}" {youtubeattrs}></iframe>'
+    #         else:
+    #             tags[f"WEBSITEVIDEOTAG{x}"] = f'<video class="asm-video" controls><source src=f"{a.WEBSITEVIDEOURL}&seq={x}" type="video/mp4"></video>'
     
     return a
 

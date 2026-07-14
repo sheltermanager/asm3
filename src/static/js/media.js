@@ -1241,7 +1241,6 @@ $(function() {
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
-            media.check_preferred_video();
 
             html.media_flag_options(controller.flags, $("#mediaflags"));
             html.media_flag_options(controller.flags, $("#filter"));
