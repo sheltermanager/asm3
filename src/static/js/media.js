@@ -662,6 +662,33 @@ $(function() {
             }
         },
 
+        check_preferred_videos: function(forcereload) {
+            let newweb = false;
+            let hasweb = false;
+            let webcount = 0;
+            console.log("hasweb " + hasweb + ", newweb " + newweb + ", webcount " + webcount);
+            if (!controller.showpreferred) { return false; }
+            $.each(controller.media, function(i, v) {
+                if (media.is_video(v) && v.EXCLUDEFROMPUBLISH == 0) {
+                    console.log(v.ID + " is a public video");
+                    if (!newweb) { newweb = v.ID; }
+                    if (v.WEBSITEVIDEO) { hasweb = true; webcount += 1; }
+                } else {
+                    console.log(v.ID + " is not a public video");
+                }
+            });
+            console.log("hasweb " + hasweb + ", newweb " + newweb + ", webcount " + webcount);
+            if (!hasweb && newweb) {
+                media.ajax("mode=video&ids=" + newweb);
+            }
+            else if (webcount > 1 && newweb) {
+                media.ajax("mode=video&ids=" + newweb);
+            }
+            else if (forcereload) {
+                common.route_reload();
+            }
+        },
+
         /** Posts the file back to the server. If the option is on and we have the
          *  relevant HTML5 APIs and this is a jpeg image, scales it first */
         post_file: function() {
@@ -732,6 +759,11 @@ $(function() {
 
         is_jpeg: function(s) {
             return media.is_extension(s, "jpg") || media.is_extension(s, "jpeg");
+        },
+
+        is_video: function(s) {
+            console.log(s.MEDIAMIMETYPE);
+            return (s.MEDIAMIMETYPE == "video/mp4" || (s.MEDIAMIMETYPE == "text/url" && s.MEDIATYPE == 2));
         },
 
         /**
@@ -1249,6 +1281,9 @@ $(function() {
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
+
+            // Check if we have videos but no preferred set and choose one if we don't
+            media.check_preferred_videos();
 
             html.media_flag_options(controller.flags, $("#mediaflags"));
             html.media_flag_options(controller.flags, $("#filter"));
