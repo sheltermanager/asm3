@@ -355,7 +355,7 @@ def embellish_media_urls(dbo: Database, a: ResultRow, tags: Dict[str, str]) -> N
 
     # Add extra tags for websitevideoname2-10 if they exist
     extravideomedia = dbo.query(
-        "SELECT ID, MediaName, MediaType, MediaMimeType FROM media WHERE ExcludeFromPublish = 0 AND (MediaMimeType = 'video/mp4' OR MediaMimeType = 'text/url') AND LinkTypeID = ? AND media.LinkID = ? LIMIT 10",
+        "SELECT ID, MediaName, MediaType, MediaMimeType FROM media WHERE ExcludeFromPublish = 0 AND (MediaMimeType = 'video/mp4' OR MediaMimeType = 'text/url') AND LinkTypeID = ? AND media.LinkID = ? ORDER BY WebsiteVideo desc, Date desc LIMIT 10",
         (asm3.media.ANIMAL, a.ID)
     )
     youtubeattrs = 'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen'
@@ -374,7 +374,7 @@ def embellish_media_urls(dbo: Database, a: ResultRow, tags: Dict[str, str]) -> N
             else:
                 videourl = f"{SERVICE_URL}?method=animal_video&animalid={a.ID}&seq={videoseqcount}"
             videoseqcount += 1
-            tags[f"WEBSITEVIDEOTAG{extravideocount}"] = f'<video class="asm-video" controls style="background-color: yellow;max-height: none !important;height: auto !important;"><source src="{videourl}" type="video/mp4"></video>'
+            tags[f"WEBSITEVIDEOTAG{extravideocount}"] = f'<video class="asm-video" controls style="max-height: none !important;height: auto !important;"><source src="{videourl}" type="video/mp4"></video>'
         tags[f"WEBSITEVIDEOURL{extravideocount}"] = videourl
 
         # if v[1].WEBSITEVIDEOMIMETYPE == "text/url" and tags[f"WEBSITEVIDEOURL{extravideocount}"].find("watch?") != -1:
