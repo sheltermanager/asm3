@@ -98,9 +98,9 @@ $(function() {
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" },
-                    { json_field: "FORMRENDERER", post_field: "formrenderer", label: _("Use Bootstrap styled form"), type: "select", 
+                    { json_field: "RENDERER", post_field: "renderer", label: _("Use Bootstrap styled form"), type: "select", defaultval: "1", 
                         options: '<option value="0">' + _("Legacy") + '</option><option value="1">' + _("Bootstrap") + '</option>', 
-                        callout: _("If your header/footer is not expecting this style, the results may be poor. The default header/footer is compatible")
+                        callout: _("The form renderer to use. Some renderers require specific styles to be set in the header. If you have issues use the Header/Footer button to revert to the default")
                     }
                 ]
             };

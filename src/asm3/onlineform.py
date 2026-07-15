@@ -162,7 +162,7 @@ def get_onlineforms(dbo: Database) -> Results:
 
 def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True):
     form = get_onlineform(dbo, formid)
-    if form.FORMRENDERER == RENDERER_BOOTSTRAP:
+    if form.RENDERER == RENDERER_BOOTSTRAP:
         return _get_onlineform_html_bootstrap(dbo, formid, completedocument)
     else:
         return _get_onlineform_html_legacy(dbo, formid, completedocument)
@@ -1042,7 +1042,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "InternalUse":          post.boolean("internaluse"),
-        "FormRenderer":         post.integer("formrenderer"),
+        "Renderer":             post.integer("renderer"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -1066,7 +1066,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "InternalUse":          post.boolean("internaluse"),
-        "FormRenderer":         post.integer("formrenderer"),
+        "Renderer":             post.integer("renderer"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
