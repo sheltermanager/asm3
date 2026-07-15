@@ -130,7 +130,7 @@ def purgeRecordedPublished(publisher: AbstractPublisher):
     for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
         publisher.markAnimalUnpublished(publishedanimal["ID"])
     for an in publisher.dbo.query(getAnimalDataQuery(publisher.dbo) + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
-        asm3.animal.remove_extra_id(publisher.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST)
+        asm3.animal.set_extra_id(publisher.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, "")
 
 def removeAnimal(auth: Dict, pcllaid: str) -> Dict:
     headers = {
@@ -256,7 +256,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
             pcllid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_PETCOLOVELOST)
             if pcllid:
                 removeAnimal(auth, pcllid)
-            asm3.animal.remove_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST)
+            asm3.animal.set_extra_id(self.dbo, "pub::petcolovelost", an, IDTYPE_PETCOLOVELOST, "")
             removalcount += 1
         self.log("Removed %s obsolete animals" % ( str(removalcount)))
         self.saveLog()
