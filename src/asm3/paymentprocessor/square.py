@@ -130,7 +130,10 @@ class Square(PaymentProcessor):
             asm3.al.error("Square payment status is not 'Completed' ('%s')" % status, "square.receive", self.dbo)
             raise IncompleteStatusError("payment status is not 'Completed'")
 
-        # Check the payref is valid  
+        # Check the payref is valid
+        # we have to strip the database from the front of the payref before validating
+        # as we include the db in square - {db}-{personcode}-{paymentid}
+        if payref.count("-") == 2: payref = payref[payref.find("-")+1:]
         if not self.validatePaymentReference(payref):
             asm3.al.error("payref '%s' failed validation" % payref, "paypal.receive", self.dbo)
             raise PayRefError("payref '%s' is invalid" % payref)
