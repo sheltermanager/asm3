@@ -403,6 +403,11 @@ $(function() {
                         'Contact clientcare@pethealthinc.com to get a folder for automatic batch registrations of microchips.', 
                         fields: [
                             { id: "enabledfa", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "fafolder", post_field: "FoundAnimalsFolder", label: "Folder name", type: "text", doublesize: true }, 
+                            { id: "faemail", post_field: "FoundAnimalsEmail", label: "Rescue group email", type: "text", doublesize: true, 
+                                callout: 'To stay on record for every pet you register as the permanent rescue contact, enter your group\'s registry ' + 
+                                'account email in this field.'
+                            }
                         ]}, 
                     { id: "tab-homeagain", title: "HomeAgain Microchips", classes: 'localeus hashomeagain',
                         info: 'Signup at <a target="_blank" href="http://homeagain.4act.com">http://homeagain.4act.com</a> or ' + 
