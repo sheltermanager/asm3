@@ -1460,9 +1460,7 @@ class mobile_report_criteria(ASMEndpoint):
             "crid":         crid,
             "criteria":     crit,
             "title":        title,
-            "user":         o.user,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items())
+            "user":         o.user
         }
         # Only load lookup items for criteria that need them to save bandwidth
         if has_criteria("ANIMAL") or has_criteria("FSANIMAL") or has_criteria("ALLANIMAL") or has_criteria("ANIMALS"):
@@ -1860,8 +1858,7 @@ class accounts_trx(JSONEndpoint):
             "accountcode": accountcode,
             "accounteditroles": "|".join(accounteditroles),
             "fromdate": python2display(o.locale, fromdate),
-            "todate": python2display(o.locale, todate),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "todate": python2display(o.locale, todate)
         }
 
     def post_create(self, o):
@@ -1944,7 +1941,6 @@ class animal(JSONEndpoint):
             "entrytypes": asm3.lookups.get_entry_types(dbo),
             "events": asm3.event.get_events_by_animal(dbo, a.ID),
             "flags": asm3.lookups.get_animal_flags(dbo, a.ADDITIONALFLAGS),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.user, a.ID),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
@@ -2048,8 +2044,7 @@ class animal_boarding(JSONEndpoint):
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
-            "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class animal_bulk(JSONEndpoint):
@@ -2066,7 +2061,6 @@ class animal_bulk(JSONEndpoint):
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "autolitters": asm3.animal.get_active_litters_brief(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
@@ -2104,8 +2098,7 @@ class animal_clinic(JSONEndpoint):
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
-            "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class animal_costs(JSONEndpoint):
@@ -2126,8 +2119,7 @@ class animal_costs(JSONEndpoint):
             "animal": a,
             "costtypes": asm3.lookups.get_costtypes(dbo),
             "costtotals": asm3.animal.get_cost_totals(dbo, animalid),
-            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0],
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
         }
 
     def post_create(self, o):
@@ -2264,8 +2256,7 @@ class animal_donations(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo, "payment"),
-            "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class animal_embed(ASMEndpoint):
@@ -2344,7 +2335,6 @@ class animal_find(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
             "diettypes": asm3.lookups.get_diets(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
@@ -2378,8 +2368,7 @@ class animal_find_results(JSONEndpoint):
         return {
             "rows": results,
             "additional": add,
-            "wasonshelter": q == "" and mode == "SIMPLE",
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items())
+            "wasonshelter": q == "" and mode == "SIMPLE"
         }
 
 class animal_licence(JSONEndpoint):
@@ -2401,8 +2390,7 @@ class animal_licence(JSONEndpoint):
             "baselink": f"{SERVICE_URL}?account={dbo.name()}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
-            "licencetypes": asm3.lookups.get_licence_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
 
 class animal_log(JSONEndpoint):
@@ -2487,8 +2475,7 @@ class animal_medical(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "medical"),
             "users": asm3.users.get_users(dbo),
             "animal": a,
-            "medicaltypes": asm3.lookups.get_medical_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "medicaltypes": asm3.lookups.get_medical_types(dbo)
         }
 
 class animal_movements(JSONEndpoint):
@@ -2517,8 +2504,7 @@ class animal_movements(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "adoptionsources": asm3.lookups.get_adoption_sources(dbo),
-            "name": self.url,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "name": self.url
         }
 
 class animal_new(JSONEndpoint):
@@ -2536,7 +2522,6 @@ class animal_new(JSONEndpoint):
             "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
             "sexes": asm3.lookups.get_sexes(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "entrytypes": asm3.lookups.get_entry_types(dbo),
@@ -2605,8 +2590,7 @@ class animal_test(JSONEndpoint):
             "stockitems": asm3.stock.get_stock_items(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "testtypes": asm3.lookups.get_test_types(dbo),
-            "testresults": asm3.lookups.get_test_results(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "testresults": asm3.lookups.get_test_results(dbo)
         }
 
 class animal_transport(JSONEndpoint):
@@ -2629,8 +2613,7 @@ class animal_transport(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports,
-            "routemapurl": asm3.sitedefs.ROUTE_LINK,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "routemapurl": asm3.sitedefs.ROUTE_LINK
         }
 
 class animal_vaccination(JSONEndpoint):
@@ -2655,8 +2638,7 @@ class animal_vaccination(JSONEndpoint):
             "stockitems": asm3.stock.get_stock_items(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "users": asm3.users.get_users(dbo),
-            "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo)
         }
 
 class batch(JSONEndpoint):
@@ -2746,8 +2728,7 @@ class boarding(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
-            "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
     def post_create(self, o):
@@ -2782,8 +2763,7 @@ class boarding_availability(JSONEndpoint):
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "rows": rows,
-            "templates": asm3.template.get_document_templates(dbo, "boarding"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "boarding")
         }
     
 class calendarview(JSONEndpoint):
@@ -3116,8 +3096,7 @@ class citations(JSONEndpoint):
             "templates": asm3.template.get_document_templates(o.dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(o.dbo),
             "additional": asm3.additional.get_field_definitions(o.dbo, "citation"),
-            "nextid": o.dbo.get_id_max("ownercitation"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "nextid": o.dbo.get_id_max("ownercitation")
         }
 
     def post_create(self, o):
@@ -3230,8 +3209,7 @@ class clinic_consultingroom(JSONEndpoint):
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "rows": rows,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "rows": rows
         }
 
 class clinic_waitingroom(JSONEndpoint):
@@ -3255,8 +3233,7 @@ class clinic_waitingroom(JSONEndpoint):
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "rows": rows,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "rows": rows
         }
 
 class csvexport_animals(JSONEndpoint):
@@ -3269,8 +3246,7 @@ class csvexport_people(JSONEndpoint):
 
     def controller(self, o):
         return {
-            "flags": asm3.lookups.get_person_flags(o.dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "flags": asm3.lookups.get_person_flags(o.dbo)
         }
 
 class csvexport_animals_ex(ASMEndpoint):
@@ -3341,8 +3317,7 @@ class csvimport_paypal(JSONEndpoint):
         return { 
             "donationtypes": asm3.lookups.get_donation_types(o.dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(o.dbo),
-            "flags": asm3.lookups.get_person_flags(o.dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "flags": asm3.lookups.get_person_flags(o.dbo)
         }
 
     def post_all(self, o):
@@ -3360,8 +3335,7 @@ class csvimport_stripe(JSONEndpoint):
         return { 
             "donationtypes": asm3.lookups.get_donation_types(o.dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(o.dbo),
-            "flags": asm3.lookups.get_person_flags(o.dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "flags": asm3.lookups.get_person_flags(o.dbo)
         }
 
     def post_all(self, o):
@@ -3961,8 +3935,7 @@ class donation(JSONEndpoint):
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo, "payment"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "rows": donations,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "rows": donations
         }
 
     def post_create(self, o):
@@ -4108,8 +4081,7 @@ class event_animals(JSONEndpoint):
             "rows": ea,
             "name": "event_animals",
             "event": e,
-            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event"),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items())
+            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
         }
 
     def post_create(self, o):
@@ -4173,8 +4145,7 @@ class event_new(JSONEndpoint):
         dbo = o.dbo
         asm3.al.debug("add event", "main.event_new", dbo)
         return {
-            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "event")),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "additional": asm3.additional.set_next_id(dbo, asm3.additional.get_additional_fields(dbo, 0, "event"))
         }
 
     def post_all(self, o):
@@ -4205,8 +4176,7 @@ class foundanimal(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "templates": asm3.template.get_document_templates(dbo, "foundanimal"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "tabcounts": asm3.lostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0],
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "tabcounts": asm3.lostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
     def post_save(self, o):
@@ -4517,8 +4487,7 @@ class incident_citations(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
-            "nextid": dbo.get_id_max("ownercitation"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "nextid": dbo.get_id_max("ownercitation")
         }
 
 class incident_find(JSONEndpoint):
@@ -4676,8 +4645,7 @@ class incident_new(JSONEndpoint):
             "towncounties": asm3.person.get_town_to_county(dbo),
             "roles": asm3.users.get_roles(dbo),
             "sites": asm3.lookups.get_sites(dbo),
-            "users": asm3.users.get_users(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "users": asm3.users.get_users(dbo)
         }
 
     def post_all(self, o):
@@ -4699,8 +4667,7 @@ class licence(JSONEndpoint):
             "rows": licences,
             "baselink": f"{SERVICE_URL}?account={dbo.name()}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
-            "licencetypes": asm3.lookups.get_licence_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
 
     def post_create(self, o):
@@ -4912,8 +4879,7 @@ class lostanimal(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "templates": asm3.template.get_document_templates(dbo, "lostanimal"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "tabcounts": asm3.lostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0],
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "tabcounts": asm3.lostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
     def post_save(self, o):
@@ -5518,9 +5484,7 @@ class medical(JSONEndpoint):
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "templates": asm3.template.get_document_templates(dbo, "medical"),
             "users": asm3.users.get_users(dbo),
-            "medicaltypes": asm3.lookups.get_medical_types(dbo),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "medicaltypes": asm3.lookups.get_medical_types(dbo)
         }
 
     def post_create(self, o):
@@ -5707,8 +5671,7 @@ class move_adopt_multi(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "movement"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "mode": "adopt",
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items())
+            "mode": "adopt"
         }
 
 class move_book_foster(JSONEndpoint):
@@ -5731,8 +5694,7 @@ class move_book_foster(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_adoption(JSONEndpoint):
@@ -5755,8 +5717,7 @@ class move_book_recent_adoption(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_other(JSONEndpoint):
@@ -5778,8 +5739,7 @@ class move_book_recent_other(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_transfer(JSONEndpoint):
@@ -5801,8 +5761,7 @@ class move_book_recent_transfer(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_reservation(JSONEndpoint):
@@ -5826,8 +5785,7 @@ class move_book_reservation(JSONEndpoint):
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
 class move_book_retailer(JSONEndpoint):
@@ -5850,8 +5808,7 @@ class move_book_retailer(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_soft_release(JSONEndpoint):
@@ -5872,8 +5829,7 @@ class move_book_soft_release(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_trial_adoption(JSONEndpoint):
@@ -5896,8 +5852,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_unneutered(JSONEndpoint):
@@ -5920,8 +5875,7 @@ class move_book_unneutered(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_deceased(JSONEndpoint):
@@ -6614,7 +6568,6 @@ class onlineforms(JSONEndpoint):
         return {
             "rows": onlineforms,
             "flags": asm3.lookups.get_person_flags(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
             "mediaflags": asm3.lookups.get_media_flags(dbo),
             "header": asm3.onlineform.get_onlineform_header(dbo),
             "footer": asm3.onlineform.get_onlineform_footer(dbo)
@@ -6718,7 +6671,6 @@ class options(JSONEndpoint):
             "medicaltypes": asm3.lookups.get_medical_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
             "personflags": asm3.lookups.get_person_flags(dbo),
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
@@ -6976,7 +6928,6 @@ class person(JSONEndpoint):
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "flags": asm3.lookups.get_person_flags(dbo, p.ADDITIONALFLAGS),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo),
             "yesno": asm3.lookups.get_yesno(dbo),
@@ -7038,8 +6989,7 @@ class person_boarding(JSONEndpoint):
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
-            "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "taxrates": asm3.lookups.get_tax_rates(dbo)
         }
 
 class person_citations(JSONEndpoint):
@@ -7061,8 +7011,7 @@ class person_citations(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "citation"),
             "citationtypes": asm3.lookups.get_citation_types(dbo),
             "additional": asm3.additional.get_field_definitions(dbo, "citation"),
-            "nextid": dbo.get_id_max("ownercitation"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "nextid": dbo.get_id_max("ownercitation")
         }
 
 class person_clinic(JSONEndpoint):
@@ -7088,8 +7037,7 @@ class person_clinic(JSONEndpoint):
             "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "rows": rows,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "rows": rows
         }
 
 class person_diary(JSONEndpoint):
@@ -7135,8 +7083,7 @@ class person_donations(JSONEndpoint):
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo, "payment"),
             "taxrates": asm3.lookups.get_tax_rates(dbo),
-            "rows": donations,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "rows": donations
         }
 
 class person_costs(JSONEndpoint):
@@ -7267,7 +7214,6 @@ class person_find(JSONEndpoint):
         return {
             "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "flags": flags,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "users": asm3.users.get_users(dbo)
@@ -7296,8 +7242,7 @@ class person_find_results(JSONEndpoint):
         asm3.al.debug("found %d results for %s" % (len(results), self.query()), "main.person_find_results", dbo)
         return {
             "rows": results,
-            "additional": add,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "additional": add
         }
 
 class person_investigation(JSONEndpoint):
@@ -7347,8 +7292,7 @@ class person_licence(JSONEndpoint):
             "baselink": f"{SERVICE_URL}?account={dbo.name()}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
-            "licencetypes": asm3.lookups.get_licence_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
 
 class person_log(JSONEndpoint):
@@ -7456,8 +7400,7 @@ class person_movements(JSONEndpoint):
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
-            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
 class person_new(JSONEndpoint):
@@ -7476,7 +7419,6 @@ class person_new(JSONEndpoint):
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "postcodelookup": asm3.geo.get_postcode_lookup_available(o.locale),
             "flags": asm3.lookups.get_person_flags(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
             "sites": asm3.lookups.get_sites(dbo)
         }
 
@@ -7500,8 +7442,7 @@ class person_rota(JSONEndpoint):
             "person": p,
             "rotatypes": asm3.lookups.get_rota_types(dbo),
             "worktypes": asm3.lookups.get_work_types(dbo),
-            "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0]
         }
 
     def post_create(self, o):
@@ -7533,8 +7474,7 @@ class person_traploan(JSONEndpoint):
             "rows": traploans,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
-            "traptypes": asm3.lookups.get_trap_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "traptypes": asm3.lookups.get_trap_types(dbo)
         }
 
 class person_vouchers(JSONEndpoint):
@@ -7554,8 +7494,7 @@ class person_vouchers(JSONEndpoint):
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "templates": asm3.template.get_document_templates(dbo, "voucher"),
-            "vouchertypes": asm3.lookups.get_voucher_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
 class product(JSONEndpoint):
@@ -7862,9 +7801,7 @@ class report_criteria(JSONEndpoint):
             "id":           post.integer("id"),
             "title":        title,
             "target":       post["target"],
-            "criteria":     crit,
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "criteria":     crit
         }
         if has_criteria("ANIMALFLAG"): c["animalflags"] = asm3.lookups.get_animal_flags(dbo)
         if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
@@ -8117,9 +8054,7 @@ class search(JSONEndpoint):
             "results": results,
             "timetaken": str(round(timetaken, 2)),
             "explain": explain,
-            "sortname": sortname,
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items())
+            "sortname": sortname
         }
 
 class service(ASMEndpoint):
@@ -8449,7 +8384,6 @@ class staff_rota(JSONEndpoint):
             "name": "staff_rota",
             "rows": rota,
             "flags": asm3.lookups.get_person_flags(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items()),
             "flagsel": o.post["flags"],
             "startdate": startdate,
             "prevdate": subtract_days(startdate, 7),
@@ -8627,9 +8561,7 @@ class test(JSONEndpoint):
             "stockitems": asm3.stock.get_stock_items(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "testtypes": asm3.lookups.get_test_types(dbo),
-            "testresults": asm3.lookups.get_test_results(dbo),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "testresults": asm3.lookups.get_test_results(dbo)
         }
 
     def post_create(self, o):
@@ -8693,9 +8625,7 @@ class transport(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports,
-            "routemapurl": asm3.sitedefs.ROUTE_LINK,
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "routemapurl": asm3.sitedefs.ROUTE_LINK
         }
 
     def post_create(self, o):
@@ -8737,8 +8667,7 @@ class traploan(JSONEndpoint):
         return {
             "name": "traploan",
             "rows": traploans,
-            "traptypes": asm3.lookups.get_trap_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "traptypes": asm3.lookups.get_trap_types(dbo)
         }
 
     def post_create(self, o):
@@ -8773,9 +8702,7 @@ class vaccination(JSONEndpoint):
             "stockitems": asm3.stock.get_stock_items(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
             "users": asm3.users.get_users(dbo),
-            "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
-            "animalflagsbuiltin": list(asm3.lookups.ANIMAL_FLAGS.items()),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo)
         }
 
     def post_create(self, o):
@@ -8839,8 +8766,7 @@ class voucher(JSONEndpoint):
             "name": "voucher",
             "rows": vouchers,
             "templates": asm3.template.get_document_templates(dbo, "voucher"),
-            "vouchertypes": asm3.lookups.get_voucher_types(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
     def post_create(self, o):
@@ -8993,8 +8919,7 @@ class waitinglist_new(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
-            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo),
-            "personflagsbuiltin": list(asm3.lookups.PERSON_FLAGS.items())
+            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo)
         }
 
     def post_all(self, o):

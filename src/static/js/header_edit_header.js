@@ -715,13 +715,10 @@ edit_header = {
      * Eg: Volunteer, member, donor, etc.
      */
     person_flags: function(p) {
-        console.log("Getting person flags");
         var flags = [];
         var stock = [];
         $.each(asm.personflags, function(i, v) {
-            console.log(p["ISADOPTER"]);
             if (p[v[1].FIELD] == 1) {
-                console.log("Adding " + v[1].LABEL);
                 flags.push(v[1].LABEL);
             }
             stock.push(v[0])
