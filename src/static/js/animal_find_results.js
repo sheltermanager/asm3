@@ -257,7 +257,6 @@ $(function() {
                 }
             }
             else if ( name == "AdditionalFlags") {
-                console.log("Adding animal flags");
                 rv = edit_header.animal_flags(row);
             }
             else if ( name == "Size") { rv = row.SIZENAME; }

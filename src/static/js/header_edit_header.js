@@ -696,7 +696,7 @@ edit_header = {
             if (a[v[1].FIELD] == 1) {
                 flags.push(v[1].LABEL);
             }
-            stock.push(v[0])
+            stock.push(v[0]);
         });
 
         if (a.ADDITIONALFLAGS != null) {
@@ -721,7 +721,7 @@ edit_header = {
             if (p[v[1].FIELD] == 1) {
                 flags.push(v[1].LABEL);
             }
-            stock.push(v[0])
+            stock.push(v[0]);
         });
 
         if (p.ADDITIONALFLAGS != null) {
