@@ -347,18 +347,22 @@ $(function() {
                             { id: "prtoken", post_field: "PetRescueToken", label: 'PetRescue Token', type: "text", doublesize: true }, 
                             { id: "prdesex", post_field: "PetRescueAllDesexed", label: 'Send all animals as desexed', type: "select", options: yesnocfgoptions, 
                                 callout: 'PetRescue will not accept listings for non-desexed animals. Setting this to "Yes" will send all animals as if they are desexed.' }, 
-                            { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", 
-                                callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. ' + 
-                                'Mandatory for dog listings in South Australia where "bredincareofgroup" is selected.' }, 
-                            { id: "daconumber", post_field: "PetRescueSADACONumber", label: 'DACO Number', type: "text", 
-                                callout: 'Your organisation "Dog and Cat Online" registration number if applicable. ' +
-                                'Mandatory for cat and dog listings in South Australia. ' }, 
-                            { id: "nswrehomingorgid", post_field: "PetRescueNSWRehomingOrgID", label: 'NSW Rehoming Organisation ID', type: "text", 
-                                callout: 'For cats and dogs being rehomed in NSW, a rehoming organisation ID is required OR microchip number OR breeder id' }, 
+                            { id: "nswsupplynumber", post_field: "NSWSupplyNumber", label: 'New South Wales Supply Number', type: "text", callout: 'Must start with R or B . Must end with exactly 5 digits. Can have up to 14 letters/numbers between the first letter and final 5 digits. Examples: RABCDE12345, B12345.' }, 
+                            { id: "vicsupplynumber", post_field: "VICSupplyNumber", label: 'Victoria Supply Number', type: "text", callout: 'Must be exactly 2 letters followed by exactly 6 digits. Example: RE123456.' }, 
+                            { id: "qldsupplynumber", post_field: "QLDSupplyNumber", label: 'Queensland Supply Number', type: "text", callout: 'Must start with BIN or BEN , followed by exactly 13 digits. Example: BIN1234567890123.' }, 
+                            { id: "sasupplynumber", post_field: "SASupplyNumber", label: 'South Australia Number', type: "text", callout: 'Must start with DACO , followed by at least 1 digit. Example: DACO123456.' }, 
+                            // { id: "breederid", post_field: "PetRescueBreederID", label: 'Breeder ID', type: "text", 
+                            //     callout: 'Your organisation breeder number if applicable. Mandatory for dog listings in QLD. ' + 
+                            //     'Mandatory for dog listings in South Australia where "bredincareofgroup" is selected.' }, 
+                            // { id: "daconumber", post_field: "PetRescueSADACONumber", label: 'DACO Number', type: "text", 
+                            //     callout: 'Your organisation "Dog and Cat Online" registration number if applicable. ' +
+                            //     'Mandatory for cat and dog listings in South Australia. ' }, 
+                            // { id: "nswrehomingorgid", post_field: "PetRescueNSWRehomingOrgID", label: 'NSW Rehoming Organisation ID', type: "text", 
+                            //     callout: 'For cats and dogs being rehomed in NSW, a rehoming organisation ID is required OR microchip number OR breeder id' }, 
                             { id: "vicpicnumber", post_field: "PetRescueVICPICNumber", label: 'VIC PIC Number', type: "text", 
                                 callout: 'Property Identification Code for livestock listings in Victoria' }, 
-                            { id: "vicsourcenumber", post_field: "PetRescueVICSourceNumber", label: 'VIC Source Number', type: "text", 
-                                callout: 'Source Number for the Victoria Pet Exchange Register. Mandatory for cat and dog listings in VIC.' }, 
+                            // { id: "vicsourcenumber", post_field: "PetRescueVICSourceNumber", label: 'VIC Source Number', type: "text", 
+                            //     callout: 'Source Number for the Victoria Pet Exchange Register. Mandatory for cat and dog listings in VIC.' }, 
                             { id: "pradoptablein", post_field: "PetRescueAdoptableIn", label: 'Adoptable in states', type: "selectmulti", 
                                 options: '<option value="ACT">Australian Capital Territory</option>' + 
                                 '<option value="NSW">New South Wales</option>' + 

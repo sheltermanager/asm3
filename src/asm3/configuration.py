@@ -1522,8 +1522,20 @@ def petrescue_nsw_rehoming_org_id(dbo: Database) -> str:
 def petrescue_breederid(dbo: Database) -> str:
     return cstring(dbo, "PetRescueBreederID")
 
+def petrescue_nswsupplynumber(dbo: Database) -> str:
+    return cstring(dbo, "NSWSupplyNumber")
+
+def petrescue_qldsupplynumber(dbo: Database) -> str:
+    return cstring(dbo, "QLDSupplyNumber")
+
+def petrescue_sasupplynumber(dbo: Database) -> str:
+    return cstring(dbo, "SASupplyNumber")
+
 def petrescue_vic_sourcenumber(dbo: Database) -> str:
     return cstring(dbo, "PetRescueVICSourceNumber")
+
+def petrescue_vicsupplynumber(dbo: Database) -> str:
+    return cstring(dbo, "VICSupplyNumber")
 
 def petrescue_vic_picnumber(dbo: Database) -> str:
     return cstring(dbo, "PetRescueVICPICNumber")
