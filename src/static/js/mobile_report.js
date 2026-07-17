@@ -171,6 +171,8 @@ $(document).ready(function() {
     html.media_flag_options(controller.mediaflags, $(".mediaflags"));
     html.person_flag_options(null, controller.personflags, $(".personflags"));
 
+    console.log(controller);
+
     // Set date inputs to today in the local timezone
     let today = new Date();
     today.setMinutes(today.getMinutes() - today.getTimezoneOffset());

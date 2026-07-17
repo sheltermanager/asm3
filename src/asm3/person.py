@@ -1314,30 +1314,11 @@ def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) 
     """
     def bi(b): 
         return b and 1 or 0
+    
+    def fb(v, flags):
+        return bi(v in flags)
 
     l = dbo.locale
-
-    homechecked = bi("homechecked" in flags)
-    banned = bi("banned" in flags)
-    dangerous = bi("dangerous" in flags)
-    adopter = bi("adopter" in flags)
-    coordinator = bi("coordinator" in flags)
-    volunteer = bi("volunteer" in flags)
-    member = bi("member" in flags)
-    homechecker = bi("homechecker" in flags)
-    donor = bi("donor" in flags)
-    driver = bi("driver" in flags)
-    deceased = bi("deceased" in flags)
-    shelter = bi("shelter" in flags)
-    aco = bi("aco" in flags)
-    staff = bi("staff" in flags)
-    fosterer = bi("fosterer" in flags)
-    retailer = bi("retailer" in flags)
-    vet = bi("vet" in flags)
-    giftaid = bi("giftaid" in flags)
-    supplier = bi("supplier" in flags)
-    excludefrombulkemail = bi("excludefrombulkemail" in flags)
-    sponsor = bi("sponsor" in flags)
     flagstr = "|".join(sorted(flags)) + "|"
 
     # If the option is on and the flags have changed, log it
@@ -1348,27 +1329,26 @@ def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) 
                 _("Flags changed from '{0}' to '{1}'", l).format(oldflags, flagstr))
 
     dbo.update("owner", personid, {
-        "IDCheck":                  homechecked,
-        "ExcludeFromBulkEmail":     excludefrombulkemail,
-        "IsAdopter":                adopter,
-        "IsAdoptionCoordinator":    coordinator,
-        "IsBanned":                 banned,
-        "IsDangerous":              dangerous,
-        "IsVolunteer":              volunteer,
-        "IsMember":                 member,
-        "IsHomeChecker":            homechecker,
-        "IsDeceased":               deceased,
-        "IsDonor":                  donor,
-        "IsDriver":                 driver,
-        "IsShelter":                shelter,
-        "IsACO":                    aco,
-        "IsStaff":                  staff,
-        "IsFosterer":               fosterer,
-        "IsRetailer":               retailer,
-        "IsVet":                    vet,
-        "IsSponsor":                sponsor,
-        "IsGiftAid":                giftaid,
-        "IsSupplier":               supplier,
+        "ExcludeFromBulkEmail":     fb("excludefrombulkemail", flags),
+        "IsAdopter":                fb("adopter", flags),
+        "IsAdoptionCoordinator":    fb("coordinator", flags),
+        "IsBanned":                 fb("banned", flags),
+        "IsDangerous":              fb("dangerous", flags),
+        "IsVolunteer":              fb("volunteer", flags),
+        "IsMember":                 fb("member", flags),
+        "IsHomeChecker":            fb("homechecker", flags),
+        "IsDeceased":               fb("deceased", flags),
+        "IsDonor":                  fb("donor", flags),
+        "IsDriver":                 fb("driver", flags),
+        "IsShelter":                fb("shelter", flags),
+        "IsACO":                    fb("aco", flags),
+        "IsStaff":                  fb("staff", flags),
+        "IsFosterer":               fb("fosterer", flags),
+        "IsRetailer":               fb("retailer", flags),
+        "IsVet":                    fb("vet", flags),
+        "IsSponsor":                fb("sponsor", flags),
+        "IsGiftAid":                fb("giftaid", flags),
+        "IsSupplier":               fb("supplier", flags),
         "AdditionalFlags":          flagstr
     }, username)
 
