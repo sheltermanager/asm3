@@ -6862,12 +6862,13 @@ class pp_square(ASMEndpoint):
             if "note" not in j["data"]["object"]["payment"]:
                 asm3.al.error("'note' parameter missing, this is not an ASM requested payment", "main.pp_square")
                 return # OK 200, this payment notification is not for us
+
             note = j["data"]["object"]["payment"]["note"]
             if note == "" or len(note.split("-")) < 2:
-                asm3.al.error("'note' parameter invlaid, this is not an ASM requested payment", "main.pp_square")
+                asm3.al.error("'note' parameter invalid, this is not an ASM requested payment", "main.pp_square")
                 return # OK 200, this payment notification is not for us
             
-            dbname = note[-2:note.find("-")]
+            dbname = note.split("-")[0]
             dbo = asm3.db.get_database(dbname)
             if dbo.database in asm3.db.ERROR_VALUES:
                 asm3.al.error("invalid database '%s'" % dbname, "main.pp_square")
