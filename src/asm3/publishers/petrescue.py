@@ -81,13 +81,13 @@ class PetRescuePublisher(AbstractPublisher):
         contact_email = asm3.configuration.petrescue_email(self.dbo)
         if contact_email == "": contact_email = asm3.configuration.email(self.dbo)
         use_coordinator = asm3.configuration.petrescue_use_coordinator(self.dbo)
-        breederid = asm3.configuration.petrescue_breederid(self.dbo)
-        daconumber = asm3.configuration.petrescue_sa_daconumber(self.dbo)
-        nswrehomingorganisationid = asm3.configuration.petrescue_nsw_rehoming_org_id(self.dbo)
-        vicsourcenumber = asm3.configuration.petrescue_vic_sourcenumber(self.dbo)
         vicpicnumber = asm3.configuration.petrescue_vic_picnumber(self.dbo)
         phone_type = asm3.configuration.petrescue_phone_type(self.dbo)
         contact_number = asm3.configuration.petrescue_phone_number(self.dbo)
+        nswsupplynumber = asm3.configuration.petrescue_nswsupplynumber(self.dbo)
+        qldsupplynumber = asm3.configuration.petrescue_qldsupplynumber(self.dbo)
+        sasupplynumber = asm3.configuration.petrescue_sasupplynumber(self.dbo)
+        vicsupplynumber = asm3.configuration.petrescue_vicsupplynumber(self.dbo)
         if phone_type == "" or phone_type == "org": contact_number = asm3.configuration.organisation_telephone(self.dbo)
         elif phone_type == "none": contact_number = ""
 
@@ -132,8 +132,8 @@ class PetRescuePublisher(AbstractPublisher):
                     return
       
                 data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, 
-                                          contact_name, contact_number, contact_email, all_microchips, use_coordinator,
-                                          nswrehomingorganisationid, breederid, daconumber, vicpicnumber, vicsourcenumber)
+                    contact_name, contact_number, contact_email, all_microchips, use_coordinator,
+                    vicpicnumber, nswsupplynumber, qldsupplynumber, sasupplynumber, vicsupplynumber)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -215,8 +215,8 @@ class PetRescuePublisher(AbstractPublisher):
 
     def processAnimal(self, an: ResultRow, all_desexed=False, adoptable_in="", 
                       suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", 
-                      all_microchips=False, use_coordinator=0,
-                      nswrehomingorganisationid="", breederid="", daconumber="", vicpicnumber="", vicsourcenumber="") -> Dict:
+                      all_microchips=False, use_coordinator=0, vicpicnumber="",
+                      nswsupplynumber="", qldsupplynumber="", sasupplynumber="", vicsupplynumber="") -> Dict:
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         isdog = an.SPECIESID == 1
         iscat = an.SPECIESID == 2
@@ -321,11 +321,7 @@ class PetRescuePublisher(AbstractPublisher):
             "adoption_fee":             asm3.i18n.format_currency_no_symbol(self.locale, an.FEE),
             "species_name":             an.SPECIESNAME,
             "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
-            "breeder_id":               breederid, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
-            "daco_number":              daconumber, # mandatory for SA cats and dogs
             "pic_number":               vicpicnumber, # mandatory for Victoria livestock (horses etc)
-            "source_number":            vicsourcenumber, # mandatory for Victoria cats and dogs
-            "rehoming_organisation_id": nswrehomingorganisationid, # required for NSW, this OR microchip or breeder_id is mandatory
             "bred_in_care_of_group":    bred_in_care_of_group, 
             "mix":                      self.isCrossBreed(an), # true | false
             "date_of_birth":            asm3.i18n.format_date(an.DATEOFBIRTH, "%Y-%m-%d"), # iso
@@ -361,7 +357,11 @@ class PetRescuePublisher(AbstractPublisher):
             "medical_notes":            "", # DISABLED an.HEALTHPROBLEMS, # 4,000 characters medical notes
             "multiple_animals":         an.BONDEDANIMALID > 0 or an.BONDEDANIMAL2ID > 0, # More than one animal included in listing true | false
             "photo_urls":               photourls,
-            "status":                   "active" # active | removed | on_hold | rehomed 
+            "status":                   "active", # active | removed | on_hold | rehomed 
+            "nsw_supply_number":        nswsupplynumber, # Must start with R or B . Must end with exactly 5 digits. Can have up to 14 letters/numbers between the first letter and final 5 digits. Examples: RABCDE12345 , B12345.
+            "vic_supply_number":        vicsupplynumber, # Must be exactly 2 letters followed by exactly 6 digits. Example: RE123456.
+            "qld_supply_number":        qldsupplynumber, # Must start with BIN or BEN , followed by exactly 13 digits. Example: BIN1234567890123.
+            "sa_supply_number":         sasupplynumber # Must start with DACO , followed by at least 1 digit. Example: DACO123456.
         }
 
 
