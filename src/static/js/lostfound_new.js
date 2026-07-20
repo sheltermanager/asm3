@@ -116,7 +116,7 @@ $(function() {
                             header.show_info(_("Lost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
                         }
                         else {
-                            header.show_info(_("FoundLost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
+                            header.show_info(_("Found animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
                         }
                     }
                     else {

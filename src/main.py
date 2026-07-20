@@ -4204,6 +4204,8 @@ class foundanimal(JSONEndpoint):
         a = asm3.lostfound.get_foundanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
+        if (a.AREALATLONG is None or a.AREALATLONG == "") and a.AREAFOUND != "":
+            a.AREALATLONG = asm3.lostfound.update_geocode(dbo, a.ID, "found", a.AREALATLONG, a.AREAFOUND, a.AREAPOSTCODE)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalfound", a["ID"], recname)
         asm3.al.debug("open found animal %s" % recname, "main.foundanimal", dbo)
         return {
@@ -4907,6 +4909,8 @@ class lostanimal(JSONEndpoint):
         a = asm3.lostfound.get_lostanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
+        if (a.AREALATLONG is None or a.AREALATLONG == "") and a.AREALOST != "":
+            a.AREALATLONG = asm3.lostfound.update_geocode(dbo, a.ID, "lost", a.AREALATLONG, a.AREALOST, a.AREAPOSTCODE)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animallost", a["ID"], recname)
         asm3.al.debug("open lost animal %s" % recname, "main.foundanimal", dbo)
         return {
@@ -5508,6 +5512,118 @@ class maint_update_reports(ASMEndpoint):
         self.cache_control(0)
         return "%s reports updated" % asm3.reports.update_smcom_reports(o.dbo, o.user)
 
+class map_view(JSONEndpoint):
+    url = "map_view"
+    js_module = "mapview"
+    get_permissions = ( asm3.users.VIEW_LOST_ANIMAL, asm3.users.VIEW_FOUND_ANIMAL )
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "species": asm3.lookups.get_species(dbo)
+        }
+    
+class map_markers(ASMEndpoint):
+    url = "map_markers"
+
+    def post_getmarkers(self, o):
+        markers = []
+        mk = o.post["mk"]
+        dbo = o.dbo
+        floor = o.post.date("floor")
+        shortcodes = asm3.configuration.use_short_shelter_codes(dbo)
+        if "l" in mk and self.checkb(asm3.users.VIEW_LOST_ANIMAL):
+            for m in asm3.lostfound.get_recent_lost_animals(dbo, floor):
+                speciesname = m.SPECIESNAME.lower()
+                typedescription = _("Lost {0} {1}").format(speciesname, m.ID)
+                datedescription = _("Lost {0}").format(python2display(o.locale, m.DATELOST))
+                popuptext = f'<a href="lostanimal?id={m.ID}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.AREALOST}'
+                markers.append({
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.AREALATLONG,
+                    "PINURL": "static/images/mapping/lost-animal.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "f" in mk and self.checkb(asm3.users.VIEW_FOUND_ANIMAL):
+            for m in asm3.lostfound.get_recent_found_animals(dbo, floor):
+                speciesname = m.SPECIESNAME.lower()
+                typedescription = _("Found {0} {1}").format(speciesname, m.ID)
+                datedescription = _("Found {0}").format(python2display(o.locale, m.DATEFOUND))
+                popuptext = f'<a href="foundanimal?id={m.ID}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.AREAFOUND}'
+                markers.append({
+                    "ID": m.ID,
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.AREALATLONG,
+                    "PINURL": "static/images/mapping/found-animal.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "a" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
+            for m in asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user):
+                typedescription = _("{0} incident {1}").format(m.SPECIESNAME, m.INCIDENTCODE)
+                datedescription = _("Occurred {0}").format(python2display(o.locale, m.INCIDENTDATETIME))
+                popuptext = f'<a href="incident?id={m.ID}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.DISPATCHADDRESS}'
+                markers.append({
+                    "ID": m.ID,
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.DISPATCHLATLONG,
+                    "PINURL": "static/images/mapping/incident.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "i" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
+            for m in asm3.animalcontrol.get_recent_incidents(dbo, floor):
+                typedescription = _("{0} incident {1}").format(m.SPECIESNAME, m.INCIDENTCODE)
+                datedescription = _("Completed {0}").format(python2display(o.locale, m.COMPLETEDDATE))
+                popuptext = f'<a href="incident?id={str(m.ID)}">{typedescription}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.DISPATCHADDRESS}'
+                markers.append({
+                    "ID": m.ID,
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.DISPATCHLATLONG,
+                    "PINURL": "static/images/mapping/recentincident.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "n" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
+            for m in asm3.animal.get_recent_nonshelter_animals(dbo, floor):
+                if shortcodes:
+                    sheltercode = m.SHORTCODE
+                else:
+                    sheltercode = m.SHELTERCODE
+                datedescription = _("Created {0}").format(python2display(o.locale, m.CREATEDDATE))
+                popuptext = f'<a href="animal?id={str(m.ID)}">{m.SPECIESNAME} {sheltercode} {m.ANIMALNAME}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.OWNERADDRESS}'
+                markers.append({
+                    "ID": m.ID,
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.LATLONG,
+                    "PINURL": "static/images/mapping/nonshelter.png",
+                    "POPUPTEXT": popuptext
+                })
+        if "r" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
+            for m in asm3.animal.get_recent_reclaimed_animals(dbo, floor):
+                if shortcodes:
+                    sheltercode = m.SHORTCODE
+                else:
+                    sheltercode = m.SHELTERCODE
+                datedescription = _("Reclaimed {0}").format(python2display(o.locale, m.MOVEMENTDATE))
+                popuptext = f'<a href="animal?id={str(m.ID)}">{m.SPECIESNAME} {sheltercode} {m.ANIMALNAME}</a>' \
+                    f'<br />{datedescription}' \
+                    f'<br />{m.OWNERADDRESS}'
+                markers.append({
+                    "ID": m.ID,
+                    "SPECIESID": m.SPECIESID,
+                    "latlong": m.LATLONG,
+                    "PINURL": "static/images/mapping/reclaim.png",
+                    "POPUPTEXT": popuptext
+                })
+        return asm3.utils.json(markers)
 
 class medical(JSONEndpoint):
     url = "medical"
