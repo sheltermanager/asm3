@@ -29,16 +29,17 @@ edit_header = {
      *           non-zero, an icon is shown on some tabs.
      */
     animal_edit_header: function(a, selected, counts) {
-        let check_display_icon = function(key, iconname) {
+        const check_display_icon = function(key, iconname) {
             if (key == "animal") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
                 let icon = html.icon(iconname);
-                if (counts[key.toUpperCase() + "DUE"]) {
-                    icon += " " + html.icon("warning");
-                }
                 return icon;
             }
             return html.icon("blank");
+        };
+        const check_display_alert = function(key) {
+            if (counts[key.toUpperCase() + "DUE"]) { return '<span class="ui-icon ui-icon-alert"></span>'; }
+            return "";
         };
         let mediaprompt = "";
         if (a.WEBSITEMEDIANAME == null) {
@@ -279,10 +280,10 @@ edit_header = {
             if ((key == "movements") && a.NONSHELTERANIMAL == 1) { return; }
             if ((key == "transport") && config.bool("DisableTransport")) { return; }
             if (key == selected) {
-                s += "<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>";
+                s += "<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>";
             }
             else {
-                s += "<li><a href=\"" + url + "?id=" + a.ID + "\">" + display + " " + check_display_icon(key, iconname) + "</a></li>";
+                s += "<li><a href=\"" + url + "?id=" + a.ID + "\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>";
             }
         });
         s += "</ul>";
@@ -588,12 +589,13 @@ edit_header = {
             if (key == "person") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
                 let icon = html.icon(iconname);
-                if (counts[key.toUpperCase() + "DUE"]) {
-                    icon += " " + html.icon("warning");
-                }
                 return icon;
             }
             return html.icon("blank");
+        };
+        const check_display_alert = function(key) {
+            if (counts[key.toUpperCase() + "DUE"]) { return '<span class="ui-icon ui-icon-alert"></span>'; }
+            return "";
         };
         let flags = this.person_flags(p);
         let latestmove = "", latestmovedeceased = "";
@@ -669,10 +671,10 @@ edit_header = {
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
             if ((key == "rota") && ((!p.ISVOLUNTEER && !p.ISSTAFF) || config.bool("DisableRota"))) { return; }
             if (key == selected) {
-                s.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+                s.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>");
             }
             else {
-                s.push("<li><a href=\"" + url + "?id=" + p.ID + "\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+                s.push("<li><a href=\"" + url + "?id=" + p.ID + "\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>");
             }
         });
         s.push("</ul>");
