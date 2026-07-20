@@ -6725,6 +6725,28 @@ class options_font_preview(ASMEndpoint):
         self.cache_control(CACHE_ONE_YEAR)
         return asm3.media.watermark_font_preview(o.post["fontfile"])
 
+class person_bulk(JSONEndpoint):
+    url = "person_bulk"
+    get_permissions = asm3.users.CHANGE_PERSON
+    post_permissions = asm3.users.CHANGE_PERSON
+
+    def controller(self, o):
+        dbo = o.dbo
+
+        return {
+            "additional": asm3.additional.get_field_definitions(dbo, "person"),
+            "flags": asm3.lookups.get_person_flags(dbo),
+            "forlist": asm3.users.get_diary_forlist(dbo),
+            "logtypes": asm3.lookups.get_log_types(dbo)
+        }
+
+    def post_update(self, o):
+        return asm3.person.update_people_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        rows = asm3.person.delete_people_from_form(o.dbo, o.user, o.post)
+        return asm3.utils.json(rows)
+
 class pos(JSONEndpoint):
     url = "pos"
 
