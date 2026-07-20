@@ -1596,8 +1596,29 @@ const html = {
         });
         node.html(opt.join("\n"));
         node.change();
-    }
+    },
 
+    substitute_person_flag_names: function(flagstring) {
+        let flags = [];
+        let stock = [];
+        let labels = {};
+        $.each(asm.personflags, function(i, v) {
+            stock.push(v[0]);
+            labels[v[0]] = v[1].LABEL;
+        });
+
+        if (flags != null) {
+            $.each(flagstring.split(","), function(i, v) {
+                if ($.inArray(v, stock) > 0) {
+                    flags.push(labels[v]);
+                } else {
+                    flags.push(v);
+                }
+            });
+        }
+        flags.sort();
+        return flags.join(", ");
+    }
 };
 
 

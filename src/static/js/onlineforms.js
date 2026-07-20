@@ -167,28 +167,7 @@ $(function() {
                     { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {
                         return common.replace_all(row.EMAILADDRESS, ",", "<br/>");
                     }},
-                    { field: "SETOWNERFLAGS", display: _("Person Flags"), formatter: function(row) {
-                        let flags = [];
-                        let stock = [];
-                        let labels = {};
-                        $.each(asm.personflags, function(i, v) {
-                            stock.push(v[0]);
-                            labels[v[0]] = v[1].LABEL;
-                        });
-
-                        if (row.SETOWNERFLAGS != null) {
-                            $.each(row.SETOWNERFLAGS.split(","), function(i, v) {
-                                if ($.inArray(v, stock) > 0) {
-                                    flags.push(labels[v]);
-                                } else {
-                                    flags.push(v);
-                                }
-                            });
-                        }
-                        flags.sort();
-                        return flags.join(", ");
-                    }
-                    },
+                    { field: "SETOWNERFLAGS", display: _("Person Flags"), formatter: function(row) { return html.substitute_person_flag_names(row.SETOWNERFLAGS); } },
                     { field: "NUMBEROFFIELDS", display: _("Number of fields") },
                     { field: "DESCRIPTION", display: _("Description"), formatter: function(row) { return html.truncate(row.DESCRIPTION); } }
                 ]
