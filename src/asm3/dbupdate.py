@@ -337,6 +337,8 @@ def sql_structure(dbo: Database) -> str:
         fint("DiedOffShelter"),
         fint("Size"),
         ffloat("Weight", True),
+        ffloat("Weight1", True),
+        ffloat("Weight2", True),
         fstr("RabiesTag", True),
         fint("Archived"),
         fint("Adoptable", True),
@@ -412,6 +414,8 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animal_TattooNumber", "animal", "TattooNumber")
     sql += index("animal_UniqueCodeID", "animal", "UniqueCodeID")
     sql += index("animal_Weight", "animal", "Weight")
+    sql += index("animal_Weight1", "animal", "Weight1")
+    sql += index("animal_Weight2", "animal", "Weight2")
     sql += index("animal_YearCodeID", "animal", "YearCodeID")
     sql += index("animal_IdentichipStatus", "animal", "IdentichipStatus")
     sql += index("animal_Identichip2Status", "animal", "Identichip2Status")
