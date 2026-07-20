@@ -61,6 +61,14 @@ $(function() {
                         });
                         return rv;
                     };
+                    const all_videos = function() {
+                        // Returns true if all rows are videos
+                        let rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIAMIMETYPE != "video/mp4" && !(v.MEDIAMIMETYPE == "text/url" && v.MEDIATYPE == 2)) { rv = false; }
+                        });
+                        return rv;
+                    };
                     const no_links = function() {
                         let rv = true;
                         $.each(rows, function(i, v) {
@@ -68,7 +76,7 @@ $(function() {
                         });
                         return rv;
                     };
-                    $("#button-video").button("option", "disabled", true); 
+                    $("#button-video").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
                     $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
@@ -76,8 +84,8 @@ $(function() {
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
-                    if (rows.length == 1 && (rows[0].MEDIATYPE == 2 || rows[0].MEDIAMIMETYPE == "video/mp4")) {
-                        $("#button-video").button("option", "disabled", false);
+                    if (rows.length > 0 && all_videos() && common.has_permission("cam")) {
+                        $("#button-video").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                     // Only allow the image buttons to be pressed if the
                     // selection only contains images and the user has the permission to change media
@@ -145,7 +153,7 @@ $(function() {
                         h.push("<div class=\"centered\">");
                         h.push(media.render_preview_thumbnail(m, true, false, true));
                         h.push("<br/>");
-                        if (m.MEDIAMIMETYPE != "image/jpeg" && m.MEDIAMIMETYPE != "video/mp4") { 
+                        if (m.MEDIAMIMETYPE != "image/jpeg" && m.MEDIAMIMETYPE != "video/mp4" && m.MEDIANOTES) { 
                             h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); 
                         }
                         h.push(tableform.table_render_edit_link(m.ID, format.date(m.DATE)));
@@ -170,7 +178,7 @@ $(function() {
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
-                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
+                { id: "video", text: _("Video"), type: "buttonmenu", icon: "video", perm: "cam" },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "move", text: _("Move/Copy"), type: "buttonmenu", icon: "copy" },
                 { id: "zip", text: _("Download"), icon: "save", enabled: "multi" },
@@ -296,6 +304,18 @@ $(function() {
                         + ' href="#">' + html.icon("document") + ' ' + _("Make this the default image when creating documents") + '</a></li>',
                     '<li id="button-jpgpdf" class="asm-menu-item"><a '
                         + ' href="#">' + html.icon("pdf") + ' ' + _("Create a PDF of this image") + '</a></li>',
+
+                '</ul>',
+                '</div>',
+
+                '<div id="button-video-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-include-video" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("tick") + ' ' + _("Include this video when publishing") + '</a></li>',
+                    '<li id="button-exclude-video" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("cross") + ' ' + _("Exclude this video when publishing") + '</a></li>',
+                    '<li id="button-web-video" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("web") + ' ' + _("Make this the default video for the record") + '</a></li>',
 
                 '</ul>',
                 '</div>',
@@ -435,8 +455,20 @@ $(function() {
             if (m.MEDIAMIMETYPE == "image/jpeg" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                 mod_out("tick", _('Include this image when publishing'));
             }
+            if (m.MEDIAMIMETYPE == "video/mp4" && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("tick", _('Include this video when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "text/url" && m.MEDIATYPE == 2 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("tick", _('Include this video when publishing'));
+            }
             if (m.MEDIAMIMETYPE == "image/jpeg" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                 mod_out("cross", _('Exclude this image when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "video/mp4" && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("cross", _('Exclude this video when publishing'));
+            }
+            if (m.MEDIAMIMETYPE == "text/url" && m.MEDIATYPE == 2 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                mod_out("cross", _('Exclude this video when publishing'));
             }
             if (m.RETAINUNTIL) {
                 let ru = _("Retain until {0}").replace("{0}", format.date(m.RETAINUNTIL));
@@ -633,6 +665,28 @@ $(function() {
             }
         },
 
+        check_preferred_videos: function(forcereload) {
+            let newweb = false;
+            let hasweb = false;
+            let webcount = 0;
+            if (!controller.showpreferred) { return false; }
+            $.each(controller.media, function(i, v) {
+                if (media.is_video(v) && v.EXCLUDEFROMPUBLISH == 0) {
+                    if (!newweb) { newweb = v.ID; }
+                    if (v.WEBSITEVIDEO) { hasweb = true; webcount += 1; }
+                }
+            });
+            if (!hasweb && newweb) {
+                media.ajax("mode=video&ids=" + newweb);
+            }
+            else if (webcount > 1 && newweb) {
+                media.ajax("mode=video&ids=" + newweb);
+            }
+            else if (forcereload) {
+                common.route_reload();
+            }
+        },
+
         /** Posts the file back to the server. If the option is on and we have the
          *  relevant HTML5 APIs and this is a jpeg image, scales it first */
         post_file: function() {
@@ -703,6 +757,10 @@ $(function() {
 
         is_jpeg: function(s) {
             return media.is_extension(s, "jpg") || media.is_extension(s, "jpeg");
+        },
+
+        is_video: function(s) {
+            return (s.MEDIAMIMETYPE == "video/mp4" || (s.MEDIAMIMETYPE == "text/url" && s.MEDIATYPE == 2));
         },
 
         /**
@@ -870,6 +928,7 @@ $(function() {
             // If we aren't including preferred, hide the buttons
             if (!controller.showpreferred) {
                 $("#button-web").hide();
+                $("#button-web-video").hide();
                 $("#button-doc").hide();
                 $("#button-video").hide();
             }
@@ -883,6 +942,8 @@ $(function() {
             if (controller.name != "animal_media") {
                 $("#button-include").hide();
                 $("#button-exclude").hide();
+                $("#button-include-video").hide();
+                $("#button-exclude-video").hide();
             }
 
             $("#button-web").click(function() {
@@ -890,8 +951,7 @@ $(function() {
                 media.ajax(formdata);
             });
 
-            $("#button-video").button().click(function() {
-                $("#button-video").button("disable");
+            $("#button-web-video").click(function() {
                 let formdata = "mode=video&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
@@ -926,7 +986,17 @@ $(function() {
                 media.ajax(formdata);
             });
 
+            $("#button-include-video").click(function() {
+                let formdata = "mode=include&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
             $("#button-exclude").click(function() {
+                let formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-exclude-video").click(function() {
                 let formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
@@ -1014,6 +1084,7 @@ $(function() {
             });
 
             $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-video").addClass("ui-state-disabled").addClass("ui-button-disabled");
             $("#button-move").addClass("ui-state-disabled").addClass("ui-button-disabled");
             $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
 
@@ -1207,6 +1278,9 @@ $(function() {
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
+
+            // Check if we have videos but no preferred set and choose one if we don't
+            media.check_preferred_videos();
 
             html.media_flag_options(controller.flags, $("#mediaflags"));
             html.media_flag_options(controller.flags, $("#filter"));
