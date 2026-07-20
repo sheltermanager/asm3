@@ -321,19 +321,22 @@ def get_satellite_counts(dbo: Database, personid: int) -> Results:
     record that a person has.
     """
     return dbo.query("SELECT o.ID, " \
-        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = ?) AS media, " \
-        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = ?) AS diary, " \
+        f"(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = {asm3.media.PERSON}) AS media, " \
+        f"(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = {asm3.diary.PERSON}) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.OwnerID = o.ID) AS movements, " \
         "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.OwnerID = o.ID) AS boarding, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
-        "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
+        f"(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = {asm3.log.PERSON}) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
+        f"(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID AND od.DateDue < {dbo.sql_today()} AND od.Date IS NULL) AS donationsdue, " \
         "(SELECT COUNT(*) FROM animalcost ac WHERE ac.OwnerID = o.ID) AS costs, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
+        f"(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID AND oc.FineDueDate < {dbo.sql_today()} AND oc.FinePaidDate IS NULL) AS citationdue, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.OwnerID = o.ID) AS licence, " \
         "(SELECT COUNT(*) FROM ownerrota r WHERE r.OwnerID = o.ID) AS rota, " \
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
+        f"(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID AND ot.ReturnDueDate < {dbo.sql_today()} AND ot.ReturnDate IS NULL) AS traploandue, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
         "((SELECT COUNT(*) FROM animal WHERE AdoptionCoordinatorID = o.ID OR BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID OR NeuteredByVetID = o.ID) + " \
         "(SELECT COUNT(*) FROM animal INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID WHERE animal.OwnerID = o.ID AND animal.OwnerID <> adoption.OwnerID) + " \
@@ -346,9 +349,9 @@ def get_satellite_counts(dbo: Database, personid: int) -> Results:
         "(SELECT COUNT(*) FROM animalcontrol WHERE CallerID = o.ID OR VictimID = o.ID " \
         "OR OwnerID = o.ID OR Owner2ID = o.ID or Owner3ID = o.ID) + " \
         "(SELECT COUNT(*) FROM additional af INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
-        "WHERE aff.FieldType = ? AND af.Value = ?) " \
+        f"WHERE aff.FieldType = {asm3.additional.PERSON_LOOKUP} AND af.Value = ?) " \
         ") AS links " \
-        "FROM owner o WHERE o.ID = ?", (asm3.media.PERSON, asm3.diary.PERSON, asm3.log.PERSON, asm3.additional.PERSON_LOOKUP, str(personid), personid))
+        "FROM owner o WHERE o.ID = ?", (str(personid), personid))
 
 def get_reserves_without_homechecks(dbo: Database) -> Results:
     """
