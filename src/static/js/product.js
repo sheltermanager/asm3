@@ -60,7 +60,6 @@ $(function() {
                     { json_field: "GLOBALMINIMUM", post_field: "globalminimum", label: _("Low"), type: "number", defaultval: "0",
                         callout: _("Show an alert if the total balance of all stock levels for this product falls below this amount"),
                     }
-
                 ]
             };
 
