@@ -1,68 +1,67 @@
-# Ansible Playbooks
+# Ansible Playbook
+This playbook deploys a pre-built copy of ASM, instead of a source tarball.
+You will likely need to build the tarball yourself.  The Makefile contains commands for the various build tasks.
 
-Ansible is a configuration management system. For more information about ansible, see:
+To do a build you will need to have the dependencies installed:
+https://github.com/sheltermanager/asm3#dependencies
 
-http://www.ansible.com/how-ansible-works
-http://docs.ansible.com/ansible/glossary.html
+Then run:
 
-This playbook requires Ansible 2.4 or newer.
+```bash
+make dist
+```
 
-## TLDR
-* Copy the compressed archive for the version you want to deploy into `archives/`
-* Update the ansible variables in your inventory
-* Run the playbook to deploy to all hosts
-
-    ansible-playbook asm_install.yml -i /path/to/inventory
-
-Sometimes it is convenient to limit the deployment to a particular host
-    ansible-playbook asm_install.yml -i /path/to/inventory --limit=some_host
-
-## Configure host machines
-
-Currently, this playbook relies on roles from City of Bloomington, that only support Ubuntu.  Contributions to the ansible roles are welcome!
-
-https://github.com/City-of-Bloomington/ansible-role-linux
-https://github.com/City-of-Bloomington/ansible-role-apache
-https://github.com/City-of-Bloomington/ansible-role-postgresql
-
+## Deploy
+```bash
+cd asm3/scripts/ansible
+ansible-playbook asm_install.yml -i /path/to/inventory --limit=shelter.domain.org
+```
 
 ## Ansible Configuration
+In your ansible inventory, you must create the asm variables used in this playbook.
 
-### Tell ansible about your hosts
-When you start having many hosts, keeping track of all the variables can get out of hand.  It's best to use an inventory directory, rather than just a single hosts file.  The inventory_example gives an idea of how we organize our inventory for City of Bloomington.
+```yml
+apache_serveradmin: 'someone@domain.org'
 
-You will pass your own inventory directory as a parameter ("-i") on the command line.
+asm_path: "/srv/sites/asm"
+asm_data: "/srv/data/asm"
 
-Make sure to use ansible-vault to encrypt files that include passwords.
+asm_base_uri: "/asm"
+asm_base_url: "https://{{ ansible_host }}/asm"
 
-http://docs.ansible.com/ansible/playbooks_vault.html
+asm_db:
+  type: "POSTGRESQL" # MYSQL POSTGRESQL
+  port: 5432         # 3306    5432
+  host: "localhost"
+  name: "asm"
+  user: "asm"
+  pass: "{{ vault_asm_db.password }}"
 
-To encrypt an already existing, unencrypted file:
+asm_smtp:
+  host: 'smtp.domain.org'
+  port: 25
+  user: ''
+  pass: ''
+  tls:  'false'
 
-    ansible-vault encrypt something_secret.yml
+asm_sitedefs:
+    timezone: "-5"
+    log_location: "stderr"
+    # Where to store media files.
+    # database - media files are base64 encoded in the dbfs.content db column
+    # file - media files are stored in a folder
+    # s3 - media files are stored in amazon s3
+    dbfs_store: "file"
+    admin_email: "asm@domain.org"
+    # Map provider for rendering maps on the client, can be "osm" or "google"
+    map_provider: "google"
+    map_provider_key: ""
+    # Client side geocode provider for mapping address to lat/lng in the browser
+    # can be "mapquest", "nominatim" or "google"
+    geo_provider:     "google"
+    geo_provider_key: ""
+    # FTP hosts and URLs for third party publishing services
+    petlink_base_url: "https://www.petlink.net/us/"
+```
 
-### Ansible configuration defaults
 
-Ansible expects playbooks, roles, etc (e.g. this repository) to be in /etc/ansible by default.
-However, we typically use a local ansible.cfg for running playbooks.  The ansible.cfg included in this repository should allow for running the playbooks directory from this directory.
-
-
-## Using ansible
-
-### External Roles
-
-This playbook utilized roles from Ansible Galaxy. These require using ansible-galaxy to pull them down and make them available locally.
-
-To grab them all, in the main directory of this system-playbooks project, run the following:
-
-    ansible-galaxy install -r roles.yml
-
-These roles are then available for use by playbooks.
-
-### Applying system configurations
-
-Give it a go:
-
-    ansible-playbook asm_install.yml -i /path/to/inventory
-
-If the playbook completes successfully, *congratulations!* The servers you specified in your inventory should be set up correctly.

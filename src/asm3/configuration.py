@@ -270,6 +270,7 @@ DEFAULTS = {
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
+    "EventAnimalViewColumns": "ArrivalDate,IMAGE,ANIMAL,DISPLAYLOCATION,AGEGROUP,SPECIESNAME,BASECOLOURNAME,LITTERID,COMMENTS,LASTFOSTERER,ADOPTED",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "AnimalFlagChangeLog": "Yes",
@@ -359,6 +360,7 @@ DEFAULTS = {
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
+    "OrganisationWebsite": "Website",
     "OwnerAddressCheck": "Yes",
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
@@ -1028,6 +1030,9 @@ def default_location(dbo: Database) -> int:
 def default_log_filter(dbo: Database) -> int:
     return cint(dbo, "AFDefaultLogFilter", 0)
 
+def default_log_type(dbo: Database) -> int:
+    return cint(dbo, "AFDefaultLogType", 0)
+
 def default_media_notes_from_file(dbo: Database) -> bool:
     return cboolean(dbo, "DefaultMediaNotesFromFile", DEFAULTS["DefaultMediaNotesFromFile"] == "Yes")
 
@@ -1471,6 +1476,9 @@ def organisation_latlong(dbo: Database, newvalue: str = "") -> str:
 def organisation_telephone(dbo: Database) -> str:
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
+def organisation_website(dbo: Database) -> str:
+    return cstring(dbo, "OrganisationWebsite", DEFAULTS["OrganisationWebsite"])
+
 def osm_map_tiles_override(dbo: Database) -> str:
     return cstring(dbo, "OSMMapTilesOverride")
 
@@ -1494,6 +1502,15 @@ def person_flag_change_log(dbo: Database) -> bool:
 
 def person_flag_change_log_type(dbo: Database) -> int:
     return cint(dbo, "PersonFlagChangeLogType", DEFAULTS["PersonFlagChangeLogType"])
+
+def petcolovelost_email(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostEmail")
+
+def petcolovelost_password(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostPassword")
+
+def petcolovelost_shelterid(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostShelterID")
 
 def petrescue_adoptable_in(dbo: Database) -> str:
     return cstring(dbo, "PetRescueAdoptableIn")
@@ -1557,6 +1574,9 @@ def product_movement_usage_type(dbo: Database) -> int:
 
 def event_search_columns(dbo: Database) -> str:
     return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])
+
+def event_animal_view_columns(dbo: Database) -> str:
+    return cstring(dbo, "EventAnimalViewColumns", DEFAULTS["EventAnimalViewColumns"])
 
 def incident_search_columns(dbo: Database) -> str:
     return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
@@ -1827,6 +1847,9 @@ def system_log_type(dbo: Database) -> int:
 
 def use_short_shelter_codes(dbo: Database) -> bool:
     return cboolean(dbo, "UseShortShelterCodes")
+
+def tax_id(dbo: Database) -> str:
+    return cstring(dbo, "ShelterTaxID")
 
 def third_party_publisher_sig(dbo: Database) -> str:
     return cstring(dbo, "TPPublisherSig")

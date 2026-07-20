@@ -369,6 +369,18 @@ select:disabled, input:disabled, textarea:disabled {
     opacity: 1.0; 
     zoom: 1;
 }
+.asm-personchoosermulti-filter {
+    padding-top: 5px;
+    display: inline-block;
+    vertical-align: top;
+}
+.asm-personchoosermulti-filter .asmSelect {
+    width: 150px;
+}
+.asm-personchoosermulti-selected {
+    opacity: 1.0; 
+    zoom: 1;
+}
 
 /** SEARCH SCREENS ================= */
 .asm-search-selector {
@@ -1129,6 +1141,17 @@ select:disabled, input:disabled, textarea:disabled {
     top: 0;
     left: 200px;
     width: 113px;
+}
+
+/** Leaflet pins */
+.asm-incidentpin {
+    filter: hue-rotate(0deg); /* Blue */
+}
+.asm-nonshelterpin {
+    filter: hue-rotate(180deg); /* Orange */
+}
+.asm-reclaimedpin {
+    filter: hue-rotate(90deg); /* Purple */
 }
 
 /** Don't display the menu burger button when >480px */

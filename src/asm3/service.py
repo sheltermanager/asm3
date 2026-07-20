@@ -125,7 +125,8 @@ CACHE_PROTECT_METHODS = {
     "rss_timeline": [],
     "online_form_html": [ "formid" ],
     "online_form_json": [ "formid" ],
-    "online_form_js": [ "formid" ]
+    "online_form_js": [ "formid" ],
+    "postcode_lookup": [ "postcode", "country" ]
     # "online_form_post" - write method
     # "sign_document" - write method
     # "upload_animal_image" - write method
@@ -1007,7 +1008,12 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         if redirect == "":
             redirect = BASE_URL + "/static/pages/form_submitted.html"
         return ("redirect", 0, 0, redirect)
-
+    
+    elif method == "postcode_lookup":
+        if post["country"] == "" or post["postcode"] == "":
+            raise asm3.utils.ASMError("method postcode_lookup requires country and postcode")
+        return set_cached_response(cache_key, account, "application/json; charset=utf-8", 86400, 86400, asm3.geo.get_address(dbo, post["postcode"], post["country"]))
+    
     elif method == "sign_document":
         if formid == 0:
             raise asm3.utils.ASMError("method sign_document requires a valid formid")

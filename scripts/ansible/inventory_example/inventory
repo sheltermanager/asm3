@@ -1,16 +1,11 @@
 [linux]
 [linux:children]
 apache
-mysql
 asm
 
 [apache]
 [apache:children]
 asm
 
-[mysql]
-[mysql:children]
-asm
-
 [asm]
-shelter-prod
+shelter.domain.org

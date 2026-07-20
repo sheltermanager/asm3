@@ -282,6 +282,8 @@ BroughtInByCounty
     (BroughtInByState for US users) 
 BroughtInByPostcode 
     (BroughtInByZipcode for US users) 
+BroughtInByCountry 
+    The country of the person who brought the animal in
 BroughtInByHomePhone
     The home phone number of the person who brought the animal in
 BroughtInByWorkPhone 
@@ -306,6 +308,8 @@ OriginalOwnerCounty (OriginalOwnerState for US users)
     The county of the animal's original owner 
 OriginalOwnerPostcode (OriginalOwnerZipcode for US users)
     The original owner's post/zipcode 
+OriginalOwnerCountry
+    The country of the animal's original owner 
 OriginalOwnerHomePhone
     The original owner's home phone number 
 OriginalOwnerWorkPhone
@@ -336,6 +340,8 @@ CurrentOwnerCounty
     (CurrentOwnerState for US users) 
 CurrentOwnerPostcode 
     (CurrentOwnerZipcode for US users) 
+CurrentOwnerCountry 
+    Current owner's country
 CurrentOwnerHomePhone 
     Current owner's home phone number
 CurrentOwnerWorkPhone 
@@ -1273,7 +1279,7 @@ Voucher Keys
 
 Voucher keys are only available for documents generated for a single voucher
 under the voucher tab or the voucher book. Keys for the person the voucher
-has been issued to are also present and if the licence is linked to an animal,
+has been issued to are also present and if the voucher is linked to an animal,
 animal keys are also present.
 
 VoucherTypeName

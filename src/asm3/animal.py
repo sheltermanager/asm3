@@ -270,6 +270,7 @@ def get_animal_query(dbo: Database) -> str:
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
         "bo.OwnerTown AS BroughtInByOwnerTown, " \
+        "bo.OwnerCountry AS BroughtInByOwnerCountry, " \
         "bo.OwnerCounty AS BroughtInByOwnerCounty, " \
         "bo.OwnerPostcode AS BroughtInByOwnerPostcode, " \
         "bo.HomeTelephone AS BroughtInByHomeTelephone, " \
@@ -953,10 +954,11 @@ def get_animal_movement_status_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID "
 
 def get_animal_emblem_query(dbo: Database) ->str:
-    """ These are the fields that other queries can include when they want animal data with working emblems """
+    """ These are the fields that other queries can include when they want animal data with working emblems.
+        NOTE: RabiesTag is aliased as AnimalRabiesTag so that it doesn't override the column in animalvaccination """
     return "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
         "a.AnimalName, a.BreedName, a.Sex, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \
-        "a.HasTrialAdoption, a.RabiesTag, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
+        "a.HasTrialAdoption, a.RabiesTag AS AnimalRabiesTag, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, a.Adoptable, a.HasSpecialNeeds, " \
         "a.ActiveMovementID, a.ActiveMovementType, a.Archived, a.DaysOnShelter, a.IsNotAvailableForAdoption, " \
         "a.AdditionalFlags AS AnimalFlags, " \
@@ -1659,11 +1661,12 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
+        "(SELECT COUNT(*) FROM animal WHERE Weight1 IS NOT NULL AND Weight2 IS NOT NULL AND Weight < Weight1 AND Weight1 < Weight2 AND Archived = 0) AS lostweight, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
                 "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
-                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, 
+                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter,
                 "alertchip": alertchip, "longterm": longterm, "alertneuter": alertneuter, 
                 "alertnevervacc": alertnevervacc, "alertrabies": alertrabies,
                 "alertrsvhck": alertrsvhck, "alertlngterm": alertlngterm }
@@ -2403,6 +2406,12 @@ def get_code(dbo: Database, animalid: int) -> str:
         rv = get_shelter_code(dbo, animalid)
     return rv
 
+def get_lost_weight(dbo: Database) -> Results:
+    """
+    Returns shelter animals that have lost weight at 2 consecutive weighings.
+    """
+    return dbo.query(f"{get_animal_brief_query(dbo)} WHERE a.Weight2 > a.Weight1 AND a.Weight1 > a.Weight AND a.Archived = 0")
+
 def get_short_code(dbo: Database, animalid: int) -> str:
     """
     Returns the short code for animalid
@@ -2449,7 +2458,7 @@ def set_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str, idvalue: s
             if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
     a.EXTRAIDS = extraids
-    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
+    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user, setLastChanged=False)
     return extraids
 
 def get_animal_id_and_bonds(dbo: Database, animalid: int) -> List[int]:
@@ -3546,7 +3555,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, Weight1, Weight2, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
 
     # Record the location if it has changed
     insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
@@ -3565,6 +3574,12 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
 
     # If the option is on and the weight has changed, log it
     insert_weight_log(dbo, username, aid, post.floating("weight"), prerow.WEIGHT)
+    if post.floating("weight") != prerow.WEIGHT:
+        weight2 = prerow.WEIGHT1
+        weight1 = prerow.WEIGHT
+    else:
+        weight2 = prerow.WEIGHT2
+        weight1 = prerow.WEIGHT1
 
     # If the animal is newly deceased, mark any diary notes completed
     if post.date("deceaseddate") is not None and asm3.configuration.diary_complete_on_death(dbo):
@@ -3617,6 +3632,8 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "CoatType":             post.integer("coattype"),
         "Size":                 post.integer("size"),
         "Weight":               post.floating("weight"),
+        "Weight1":              weight1,
+        "Weight2":              weight2,
         "SpeciesID":            post.integer("species"),
         "BreedID":              post.integer("breed1"),
         "Breed2ID":             post.integer("breed2"),
@@ -6123,16 +6140,23 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         # Died
         died = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "SpeciesID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (speciesid, firstofmonth, lastofmonth))
         add_row(119, "SP_DIED", 0, speciesid, daysinmonth, _("Died", l), 0, True, died)
 
         # PTS
         pts = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "SpeciesID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (speciesid, firstofmonth, lastofmonth))
         add_row(120, "SP_PTS", 0, speciesid, daysinmonth, _("Euthanized", l), 0, True, pts)
+
+        # DOA
+        doa = sql_days("SELECT DateBroughtIn AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
+            "SpeciesID = %d AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+            "AND NonShelterAnimal = 0 AND IsDOA = 1 " \
+            "GROUP BY DateBroughtIn" % (speciesid, firstofmonth, lastofmonth))
+        add_row(121, "SP_DOA", 0, speciesid, daysinmonth, _("DOA", l), 0, True, doa)
 
         # Other
         toother = sql_days("SELECT MovementDate AS TheDate, COUNT(adoption.ID) AS Total FROM adoption " \
@@ -6140,11 +6164,11 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
             "SpeciesID = %d AND MovementType NOT IN (1, 2, 3, 4, 5, 6, 7, 8) " \
             "AND MovementDate >= %s AND MovementDate <= %s " \
             "GROUP BY MovementDate" % (speciesid, firstofmonth, lastofmonth))
-        add_row(121, "SP_OUTOTHER", 0, speciesid, daysinmonth, _("To Other", l), 0, True, toother)
+        add_row(122, "SP_OUTOTHER", 0, speciesid, daysinmonth, _("To Other", l), 0, True, toother)
 
         # Out subtotal
         outsubtotal = add_days((adopted, reclaimed, escaped, stolen, released, transferred, fostered, retailer, died, pts, toother))
-        add_row(122, "SP_OUTTOTAL", 0, speciesid, daysinmonth, _("Out SubTotal", l), 1, False, outsubtotal)
+        add_row(123, "SP_OUTTOTAL", 0, speciesid, daysinmonth, _("Out SubTotal", l), 1, False, outsubtotal)
 
         # Start of day total
         starttotal = sub_days(sheltertotal, insubtotal)
@@ -6152,7 +6176,7 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         add_row(4, "SP_STARTTOTAL", 0, speciesid, daysinmonth, _("Start Of Day", l), 1, False, starttotal)
 
         # End of day
-        add_row(123, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
+        add_row(124, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
 
     asm3.asynctask.set_progress_value(dbo, 1)
 
@@ -6312,16 +6336,23 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         # Died
         died = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "AnimalTypeID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (typeid, firstofmonth, lastofmonth))
         add_row(19, "AT_DIED", typeid, 0, daysinmonth, _("Died", l), 0, True, died)
 
         # PTS
         pts = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "AnimalTypeID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (typeid, firstofmonth, lastofmonth))
         add_row(20, "AT_PTS", typeid, 0, daysinmonth, _("Euthanized", l), 0, True, pts)
+
+        # DOA
+        doa = sql_days("SELECT DateBroughtIn AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
+            "AnimalTypeID = %d AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+            "AND IsDOA = 1 AND NonShelterAnimal = 0 " \
+            "GROUP BY DateBroughtIn" % (typeid, firstofmonth, lastofmonth))
+        add_row(21, "AT_DOA", typeid, 0, daysinmonth, _("DOA", l), 0, True, doa)
 
         # Other
         toother = sql_days("SELECT MovementDate AS TheDate, COUNT(adoption.ID) AS Total FROM adoption " \
@@ -6329,11 +6360,11 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
             "AnimalTypeID = %d AND MovementType NOT IN (1, 2, 3, 4, 5, 6, 7, 8) " \
             "AND MovementDate >= %s AND MovementDate <= %s " \
             "GROUP BY MovementDate" % (typeid, firstofmonth, lastofmonth))
-        add_row(21, "AT_OUTOTHER", typeid, 0, daysinmonth, _("To Other", l), 0, True, toother)
+        add_row(22, "AT_OUTOTHER", typeid, 0, daysinmonth, _("To Other", l), 0, True, toother)
 
         # Out subtotal
         outsubtotal = add_days((adopted, reclaimed, escaped, stolen, released, transferred, fostered, retailer, died, pts, toother))
-        add_row(22, "AT_OUTTOTAL", typeid, 0, daysinmonth, _("SubTotal", l), 1, False, outsubtotal)
+        add_row(23, "AT_OUTTOTAL", typeid, 0, daysinmonth, _("SubTotal", l), 1, False, outsubtotal)
 
         # Start of day total
         starttotal = sub_days(sheltertotal, insubtotal)
@@ -6586,11 +6617,11 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
 
     group = _("DOA {0}", l).format(year)
     for sp in allspecies:
-        species_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
+        species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
-            "a.SpeciesID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
+            "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND a.DiedOffShelter = 0 AND a.PutToSleep = 0 AND a.IsDOA = 1 AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_DOA", group, 80, showbabies, babymonths)
 
     group = _("Returned to Owner {0}", l).format(year)

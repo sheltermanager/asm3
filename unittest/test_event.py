@@ -2,6 +2,7 @@
 import unittest
 import base
 
+import asm3.additional
 import asm3.event
 
 import datetime
@@ -10,6 +11,7 @@ class TestEvent(unittest.TestCase):
    
     nid = 0
     eaid = 0
+    afid = 0
 
     def setUp(self):
         data = {
@@ -31,10 +33,23 @@ class TestEvent(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         self.eaid = asm3.event.insert_event_animal(base.get_dbo(), "test", post)
+        afpost = asm3.utils.PostedData({
+            "name": "eventanimaltest",
+            "label": "Event Animal Test",
+            "tooltip": "",
+            "lookupvalues": "",
+            "mandatory": "off",
+            "type": "1",
+            "link": str(asm3.additional.EVENT_ANIMAL),
+            "displayindex": "1"
+        }, "en")
+        self.afid = asm3.additional.insert_field_from_form(base.get_dbo(), "test", afpost)
 
     def tearDown(self):
-        asm3.event.delete_event(base.get_dbo(), "test", self.nid)
+        if self.afid:
+            asm3.additional.delete_field(base.get_dbo(), "test", self.afid)
         asm3.event.delete_event_animal(base.get_dbo(), "test", self.eaid)
+        asm3.event.delete_event(base.get_dbo(), "test", self.nid)
 
     def test_update_event_from_form(self):
         data = {
@@ -84,5 +99,24 @@ class TestEvent(unittest.TestCase):
 
     def test_end_active_foster(self):
         asm3.event.end_active_foster(base.get_dbo(), "test", self.eaid)
+
+    def test_event_animal_additional_fields(self):
+        dbo = base.get_dbo()
+        data = {
+            "eventanimalid": str(self.eaid),
+            "animal":        "1",
+            "arrivaldate":   "01/01/2023",
+            "arrivaltime":   "00:00:00",
+            "comments":      "",
+            "a.0.%s" % self.afid: "test value"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.event.update_event_animal(dbo, "test", post)
+        af = asm3.additional.get_additional_fields(dbo, self.eaid, "eventanimal")
+        self.assertEqual("test value", af[0].VALUE)
+        eaid = self.eaid
+        asm3.event.delete_event_animal(dbo, "test", eaid)
+        self.eaid = 0
+        self.assertEqual(0, dbo.query_int("SELECT COUNT(*) FROM additional WHERE LinkID=? AND AdditionalFieldID=?", [eaid, self.afid]))
 
 

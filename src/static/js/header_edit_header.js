@@ -332,7 +332,7 @@ edit_header = {
      * counts:   A count of the number of records for each tab (in uppercase). If it's
      *           non-zero, an icon is shown on some tabs.
      */
-    event_edit_header: function(e, selected, counts){
+    event_edit_header: function(e, selected, counts) {
         var check_display_icon = function(key, iconname) {
             if (key == "event") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
@@ -383,11 +383,13 @@ edit_header = {
             '<ul class="asm-tablist">'
         ];
         var tabs = [[ "event", "event", _("Event"), "", "ve" ],
-            [ "animals", "event_animals", _("Animals"), "", "vea" ]
+            [ "animals", "event_animals", _("Animals"), "animal", "vea" ],
+            [ "media", "event_media", _("Media"), "media", "vam"]
             ];
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            console.log(key);
             if (key == selected) {
                 h.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
             }
@@ -588,12 +590,46 @@ edit_header = {
             return html.icon("blank");
         };
         let flags = this.person_flags(p);
-        let latestmove = "", latestmovedeceased = "";
-        if (p.LATESTMOVEANIMALID) { 
-            if (p.LATESTMOVEDECEASEDDATE) { latestmovedeceased = html.icon("death"); }
-            latestmove = "<tr><td>" + _("Last Movement") + ":</td>";
-            latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
-            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b> ' + latestmovedeceased + '</td></tr>';
+        let fosters = [];
+        let ownedanimals = [];
+        $.each(controller.activeanimals, function(i, v) {
+            if (v.LINKTYPE == 2) {
+                fosters.push(v);
+            } else {
+                ownedanimals.push(v);
+            }
+        });
+        let fostershtml = "";
+        let ownedanimalshtml = "";
+        if (fosters.length) {
+            fostershtml = '<tr><td>' + _("Active Fosters") + ':</td>';
+        }
+        if (fosters.length > 5) {
+            // fostershtml += '<td><b><a href="animal?id=' + fosters[0].ANIMALID + '">' + fosters[0].ANIMALNAME + '</a> <a href="person_movements?id=' + controller.person.ID + '">' + _("plus {0} more...").replace("{0}",  (fosters.length - 1)) + '</a></b></td></tr>';
+            fostershtml += '<td><a href="person_movements?id=' + controller.person.ID + '">' + _("{0} plus {1} more...").replace("{0}", fosters[0].ANIMALNAME).replace("{1}",  (fosters.length - 1)) + '</a></td></tr>';
+        } else {
+            fostershtml += '<td>';
+            let fosterlinks = [];
+            $.each(fosters, function(i, v) {
+                fosterlinks.push('<a href="animal?id=' + v.ANIMALID + '">' + v.ANIMALNAME + '</a>');
+            });
+            fostershtml += fosterlinks.join(", ");
+            fostershtml += '</td></tr>';
+        }
+        if (ownedanimals.length) {
+            ownedanimalshtml = '<tr><td>' + _("Owned Animals") + ':</td>';
+        }
+        if (ownedanimals.length > 5) {
+            // ownedanimalshtml += '<td><b><a href="animal?id=' + ownedanimals[0].ANIMALID + '">' + ownedanimals[0].ANIMALNAME + '</a> <a href="person_movements?id=' + controller.person.ID + '">' + _("plus {0} more...").replace("{0}",  (ownedanimals.length - 1)) + '</a></b></td></tr>';
+            ownedanimalshtml += '<td><a href="person_movements?id=' + controller.person.ID + '">' + _("{0} plus {1} more...").replace("{0}", ownedanimals[0].ANIMALNAME).replace("{1}",  (ownedanimals.length - 1)) + '</a></td></tr>';
+        } else {
+            ownedanimalshtml += '<td>';
+            let ownedanimallinks = [];
+            $.each(ownedanimals, function(i, v) {
+                ownedanimallinks.push('<a href="animal?id=' + v.ANIMALID + '">' + v.ANIMALNAME + '</a>');
+            });
+            ownedanimalshtml += ownedanimallinks.join(", ");
+            ownedanimalshtml += '</td></tr>';
         }
         let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
@@ -615,7 +651,8 @@ edit_header = {
             '</div>',
             '<div class="col-sm">',
             '<table>',
-            latestmove,
+            fostershtml,
+            ownedanimalshtml,
             '<tr>',
             '<td></td><td>' + p.OWNERADDRESS + '<br />',
             p.OWNERTOWN + ' ' + p.OWNERCOUNTY + ' ' + p.OWNERPOSTCODE + '<br />',

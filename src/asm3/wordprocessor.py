@@ -417,6 +417,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "NAMEOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERNAME"],
         "ADDRESSOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERADDRESS"],
         "TOWNOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERTOWN"],
+        "COUNTRYOFPERSONBROUGHTANIMALIN": a["BROUGHTINBYOWNERCOUNTRY"],
         "COUNTYOFPERSONBROUGHTANIMALIN": a["BROUGHTINBYOWNERCOUNTY"],
         "POSTCODEOFPERSONBROUGHTIN": a["BROUGHTINBYOWNERPOSTCODE"],
         "CITYOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERTOWN"],
@@ -425,6 +426,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "BROUGHTINBYNAME"     : a["BROUGHTINBYOWNERNAME"],
         "BROUGHTINBYADDRESS"  : a["BROUGHTINBYOWNERADDRESS"],
         "BROUGHTINBYTOWN"     : a["BROUGHTINBYOWNERTOWN"],
+        "BROUGHTINBYCOUNTRY"  : a["BROUGHTINBYOWNERCOUNTRY"],
         "BROUGHTINBYCOUNTY"   : a["BROUGHTINBYOWNERCOUNTY"],
         "BROUGHTINBYPOSTCODE" : a["BROUGHTINBYOWNERPOSTCODE"],
         "BROUGHTINBYCITY"     : a["BROUGHTINBYOWNERTOWN"],
@@ -483,6 +485,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "ORIGINALOWNERSURNAME"  : a["ORIGINALOWNERSURNAME"],
         "ORIGINALOWNERADDRESS"  : a["ORIGINALOWNERADDRESS"],
         "ORIGINALOWNERTOWN"     : a["ORIGINALOWNERTOWN"],
+        "ORIGINALOWNERCOUNTRY"  : a["ORIGINALOWNERCOUNTRY"],
         "ORIGINALOWNERCOUNTY"   : a["ORIGINALOWNERCOUNTY"],
         "ORIGINALOWNERPOSTCODE" : a["ORIGINALOWNERPOSTCODE"],
         "ORIGINALOWNERCITY"     : a["ORIGINALOWNERTOWN"],
@@ -504,6 +507,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "CURRENTOWNERSURNAME"  : a["CURRENTOWNERSURNAME"],
         "CURRENTOWNERADDRESS"  : a["CURRENTOWNERADDRESS"],
         "CURRENTOWNERTOWN"     : a["CURRENTOWNERTOWN"],
+        "CURRENTOWNERCOUNTRY"   : a["CURRENTOWNERCOUNTRY"],
         "CURRENTOWNERCOUNTY"   : a["CURRENTOWNERCOUNTY"],
         "CURRENTOWNERPOSTCODE" : a["CURRENTOWNERPOSTCODE"],
         "CURRENTOWNERCITY"     : a["CURRENTOWNERTOWN"],
@@ -1298,8 +1302,9 @@ def donation_tags(dbo: Database, donations: Results) -> Tags:
         if i == "": return # Don't add a total for the compatibility row
         if p["VATRATE"] is not None and p["VATRATE"] > totals["taxrate"]:
             totals["taxrate"] = p["VATRATE"]
-        if p["DATE"] is not None: 
+        if p["VATAMOUNT"] > 0:
             totals["vat"] += asm3.utils.cint(p["VATAMOUNT"])
+        if p["DATE"] is not None: 
             totals["net"] += asm3.utils.cint(p["NET"])
             totals["gross"] += asm3.utils.cint(p["GROSS"])
         if p["DATE"] is None: 
@@ -1948,6 +1953,7 @@ def event_tags(dbo: Database, e: ResultRow) -> Tags:
         "EVENTSTARTDATE":        python2display(l, e["STARTDATETIME"]),
         "EVENTENDDATE":          python2display(l, e["ENDDATETIME"]),
         "EVENTNAME":            e["EVENTNAME"],
+        "EVENTLINK":            e["EVENTLINK"],
         "EVENTDESCRIPTION":     e["EVENTDESCRIPTION"],
         "EVENTRECORDVERSION":   e["RECORDVERSION"],
         "EVENTCREATEDBY":       e["CREATEDBY"],

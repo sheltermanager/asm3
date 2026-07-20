@@ -67,7 +67,7 @@ def asm_script_tags(path: str) -> str:
     Returns separate script tags for all ASM javascript files.
     """
     jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_widgets_comp.js", 
-        "common_animalchooser.js", "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_barcode.js", 
+        "common_animalchooser.js", "common_animalchoosermulti.js", "common_personchooser.js", "common_personchoosermulti.js", "common_tableform.js", "common_barcode.js", 
         "common_microchip.js", "header.js", "header_additional.js", "header_edit_header.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
@@ -544,6 +544,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.VIEW_PERSON, "alt+shift+p", "", "person_find", "asm-icon-person-find", _("Find person", l) ),
             ( asm3.users.ADD_PERSON, "", "", "person_new", "asm-icon-person-add", _("Add a new person", l) ),
             ( asm3.users.ADD_LOG, "", "", "log_new?mode=person", "asm-icon-log", _("Add a log entry", l) ),
+            ( asm3.users.CHANGE_PERSON, "", "", "person_bulk", "asm-icon-blank", _("Bulk change people", l) ),
             ( asm3.users.VIEW_PERSON, "", "", "person_lookingfor", "asm-icon-animal-find", _("Person looking for report", l) ),
             ( asm3.users.VIEW_STAFF_ROTA, "", "tagrota", "staff_rota", "asm-icon-rota", _("Staff rota", l) ),
             ("", "", "tagevent", "--cat", "asm-icon-event", _("Events", l)),
@@ -842,7 +843,29 @@ def json_eventfindcolumns(dbo: Database) -> ColumnList:
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.event_search_columns(dbo))
     return cols
-    
+
+def json_eventanimalcolumns(dbo: Database) -> ColumnList:
+    l = dbo.locale
+    cols = [
+        ( "ArrivalDate", _("Arrived", l) ),
+        ( "IMAGE", _("Image", l) ),
+        ( "ANIMAL", _("Animal", l) ),
+        ( "DISPLAYLOCATION", _("Location", l) ),
+        ( "AGEGROUP", _("Age Group", l) ),
+        ( "SPECIESNAME", _("Species", l) ),
+        ( "BASECOLOURNAME", _("Color", l) ),
+        ( "LITTERID", _("Litter", l) ),
+        ( "COMMENTS", _("Comments", l) ),
+        ( "LASTFOSTERER", _("Last Fosterer", l) ),
+        ( "ADOPTED", _("Adopted", l) ),
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "eventanimal")
+    for f in fd:
+        cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.event_animal_view_columns(dbo))
+    return cols
+
 def json_incidentfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
