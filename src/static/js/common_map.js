@@ -204,11 +204,7 @@ const mapping = {
                 var marker = L.marker([ll[0], ll[1]]).addTo(mapping.map);
                 mapping._markers.push(marker);
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
-                if (v.PINSTYLE) {
-                    marker._icon.classList.add(v.PINSTYLE);
-                    marker.PINSTYLE = v.PINSTYLE;
-                }
-                if (v.SPECIESID) { marker.SPECIESID = v.SPECIESID; }
+                if (v.PINSTYLE) { marker._icon.classList.add(v.PINSTYLE); }
                 if (v.popupactive) { marker.openPopup(); }
             });
             if (config.bool("ShowLatLong")) {

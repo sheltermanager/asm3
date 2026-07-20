@@ -33,12 +33,12 @@ $(function() {
                         xlabel: '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "surname2", classes: "tag-couple newform", maxlength: 100 }) },
                     { post_field: "address", type: "textarea", label: _("Address"), classes: "asm-textareafixed newform", rows: 3},
-                    { post_field: "town", type: "autotext", label: _("City"), classes: "newform", rowclasses: "towncounty", 
+                    { post_field: "town", type: "autotext", label: _("City"), classes: "newform", rowclasses: "town",
                         maxlength: 100, options: controller.towns, minlength: 3 },
                     common.iif(config.bool("USStateCodes"),
-                        { post_field: "county", type: "select", label: _("State"), classes: "newform", rowclasses: "towncounty", 
+                        { post_field: "county", type: "select", label: _("State"), classes: "newform", rowclasses: "county",
                             options: html.states_us_options(config.str("OrganisationCounty")) },
-                        { post_field: "county", type: "autotext", label: _("State"), classes: "newform", rowclasses: "towncounty", 
+                        { post_field: "county", type: "autotext", label: _("State"), classes: "newform", rowclasses: "county",
                             maxlength: 100, options: controller.counties, minlength: 3 }),
                     { post_field: "postcode", type: "text", label: _("Zipcode"), classes: "newform",  
                         xmarkup: '<button id="button-postcodelookup">' + _("Lookup Address") + '</button>' },
@@ -197,7 +197,8 @@ $(function() {
             // Load the person flag options
             html.person_flag_options(null, controller.flags, $("#flags"));
 
-            $(".towncounty").toggle( !config.bool("HideTownCounty")); 
+            $(".town").toggle( !config.bool("HideTown"));
+            $(".county").toggle( !config.bool("HideCounty"));
             $(".homeworkphone").toggle( !config.bool("HideHomeWorkPhone"));
             $("#countryrow").toggle( !config.bool("HideCountry") );
             $("#dateofbirthrow").toggle( !config.bool("HidePersonDateOfBirth") );

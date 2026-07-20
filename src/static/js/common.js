@@ -1549,11 +1549,14 @@ const format = {
         if (d instanceof Date) {
             d = format.date_iso(d);
         }
-        if (t.length <= 8) {
-            t += ":00";
+        if (t == "") {
+            t = "00:00:00";
         }
-        if (t.length <= 5) {
+        else if (t.length < 5) {
             t += ":00:00";
+        }
+        else if (t.length < 8) {
+            t += ":00";
         }
         return d.substring(0, d.indexOf("T")+1) + t;
     },
