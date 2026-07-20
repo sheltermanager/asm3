@@ -81,10 +81,6 @@ class PetRescuePublisher(AbstractPublisher):
         contact_email = asm3.configuration.petrescue_email(self.dbo)
         if contact_email == "": contact_email = asm3.configuration.email(self.dbo)
         use_coordinator = asm3.configuration.petrescue_use_coordinator(self.dbo)
-        breederid = asm3.configuration.petrescue_breederid(self.dbo)
-        daconumber = asm3.configuration.petrescue_sa_daconumber(self.dbo)
-        nswrehomingorganisationid = asm3.configuration.petrescue_nsw_rehoming_org_id(self.dbo)
-        vicsourcenumber = asm3.configuration.petrescue_vic_sourcenumber(self.dbo)
         vicpicnumber = asm3.configuration.petrescue_vic_picnumber(self.dbo)
         phone_type = asm3.configuration.petrescue_phone_type(self.dbo)
         contact_number = asm3.configuration.petrescue_phone_number(self.dbo)
@@ -136,9 +132,8 @@ class PetRescuePublisher(AbstractPublisher):
                     return
       
                 data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, 
-                                          contact_name, contact_number, contact_email, all_microchips, use_coordinator,
-                                          nswrehomingorganisationid, breederid, daconumber, vicpicnumber, vicsourcenumber,
-                                          nswsupplynumber, qldsupplynumber, sasupplynumber, vicsupplynumber)
+                    contact_name, contact_number, contact_email, all_microchips, use_coordinator,
+                    vicpicnumber, nswsupplynumber, qldsupplynumber, sasupplynumber, vicsupplynumber)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -220,8 +215,7 @@ class PetRescuePublisher(AbstractPublisher):
 
     def processAnimal(self, an: ResultRow, all_desexed=False, adoptable_in="", 
                       suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", 
-                      all_microchips=False, use_coordinator=0,
-                      nswrehomingorganisationid="", breederid="", daconumber="", vicpicnumber="", vicsourcenumber="",
+                      all_microchips=False, use_coordinator=0, vicpicnumber="",
                       nswsupplynumber="", qldsupplynumber="", sasupplynumber="", vicsupplynumber="") -> Dict:
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         isdog = an.SPECIESID == 1
