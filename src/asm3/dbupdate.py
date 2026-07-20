@@ -1413,6 +1413,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("Header", True),
         flongstr("Footer", True),
         flongstr("Description", True),
+        fint("Renderer", True),
         fint("InternalUse", True)), False)
 
     sql += index("onlineform_EmailSubmissionLimitDays", "onlineform", "EmailSubmissionLimitDays")

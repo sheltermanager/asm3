@@ -36,6 +36,7 @@
             listSortableClass: 'asmListSortable',            // Another class given to the list when it is sortable
             listItemClass: 'asmListItem',                // Class for the <li> list items
             listItemLabelClass: 'asmListItemLabel',            // Class for the label text that appears in list items
+            noWrapLabel: false,                          
             removeClass: 'asmListItemRemove',            // Class given to the "remove" link
             highlightClass: 'asmHighlight'                // Class given to the highlight <span>
 
@@ -63,7 +64,8 @@
                 $select = $("<select></select>")
                     .addClass(options.selectClass)
                     .attr('name', options.selectClass + index)
-                    .attr('id', options.selectClass + index); 
+                    .attr('id', options.selectClass + index)
+                    .attr('placeholder', "Select"); 
 
                 $selectRemoved = $("<select></select>"); 
 
@@ -80,8 +82,12 @@
                 $select.change(selectChangeEvent)
                     .click(selectClickEvent); 
 
-                $original.change(originalChangeEvent)
-                    .wrap($container).before($select).before($ol);
+                if (!options.noWrapLabel) {
+                    $original.change(originalChangeEvent)
+                       .wrap($container).before($select).before($ol);
+                }
+                
+                $original.change(originalChangeEvent).before($select).before($ol); // To do - Check that removing the container is acceptable
 
                 if(options.sortable) makeSortable();
 

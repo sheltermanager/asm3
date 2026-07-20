@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 <link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+<!--defaultstyle-->
 <style>
 input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }
 .asm-onlineform-title, .asm-onlineform-description { text-align: center; }
@@ -39,6 +40,33 @@ input[type='submit'] { padding: 10px; cursor: pointer; }
     td { padding-bottom: 10px; }
 }
 </style>
+<!--defaultstyle-->
+<!--bootstrapstyle-->
+<style>
+    input:not([type="submit"]):not([type="checkbox"]) {
+        width: 100% !important
+    }
+    label {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    #page {
+        box-shadow: none !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100%;
+        max-width: 800px;
+        padding: 10px !important;
+    }
+    .asmformadditional {
+        font-style: italic;
+    }
+    .form-floating {
+        margin-bottom: 10px;
+    }
+</style>
+<!--bootstrapstyle-->
 <script>
     function logohide() { document.getElementById('logo').style.display = 'none'; }
 </script>

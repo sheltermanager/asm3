@@ -19,6 +19,7 @@ import asm3.waitinglist
 
 from asm3.sitedefs import BASE_URL, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
+from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS
 from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Tuple
 
 FIELDTYPE_YESNO = 0
@@ -77,6 +78,9 @@ FIELDTYPE_MAP = {
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
+
+RENDERER_LEGACY = 0
+RENDERER_BOOTSTRAP = 1
 
 AP_NO = 0
 AP_ATTACHANIMAL = 1
@@ -161,7 +165,14 @@ def get_onlineforms(dbo: Database) -> Results:
     """ Return all online forms """
     return dbo.query("SELECT *, (SELECT COUNT(*) FROM onlineformfield WHERE OnlineFormID = onlineform.ID) AS NumberOfFields FROM onlineform ORDER BY Name")
 
-def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True) -> str:
+def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True):
+    form = get_onlineform(dbo, formid)
+    if form.RENDERER == RENDERER_BOOTSTRAP:
+        return _get_onlineform_html_bootstrap(dbo, formid, completedocument)
+    else:
+        return _get_onlineform_html_legacy(dbo, formid, completedocument)
+
+def _get_onlineform_html_bootstrap(dbo: Database, formid: int, completedocument: bool = True) -> str:
     """ Get the selected online form as HTML """
     h = []
     l = dbo.locale
@@ -174,7 +185,294 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         # references into the header block
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
-        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
+        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;RENDERER='bootstrap';\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
+        extra += "<base href=\"%s\" />\n" % BASE_URL
+        extra += asm3.html.css_tag(BOOTSTRAP_CSS) + \
+            asm3.html.script_tag(BOOTSTRAP_JS) + \
+            asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
+            asm3.html.css_tag(ASMSELECT_CSS) + \
+            asm3.html.css_tag(TIMEPICKER_CSS) + \
+            asm3.html.script_tag(JQUERY_JS) + \
+            asm3.html.script_tag(JQUERY_UI_JS) + \
+            asm3.html.script_tag(SIGNATURE_JS) + \
+            asm3.html.script_tag(ASMSELECT_JS) + \
+            asm3.html.script_tag(TIMEPICKER_JS) + \
+            asm3.html.asm_script_tag("onlineform_extra.js") + \
+            "</head>"
+        header = header.replace("</head>", extra)
+        if '<!--defaultstyle-->' in header:
+            defaultstyle = header.split('<!--defaultstyle-->')[1]
+            header = header.replace(defaultstyle, "")
+        header = header.replace("</head>", extra)
+        h.append(header.replace("$$TITLE$$", form.NAME))
+        h.append('<h2 class="asm-onlineform-title">%s</h2>' % form.NAME)
+        if form.DESCRIPTION is not None and form.DESCRIPTION != "":
+            h.append('<p class="asm-onlineform-description">%s</p>' % form.DESCRIPTION)
+        h.append(asm3.utils.nulltostr(form.HEADER))
+    h.append('<form action="%s/service" method="post" accept-charset="utf-8" >' % BASE_URL)
+    h.append('<input type="hidden" name="method" value="online_form_post" />')
+    h.append('<input type="hidden" name="account" value="%s" />' % dbo.alias)
+    h.append('<input type="hidden" name="redirect" value="%s" />' % form.REDIRECTURLAFTERPOST)
+    h.append('<input type="hidden" name="retainfor" value="%s" />' % form.RETAINFOR)
+    h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
+    h.append('<input type="hidden" name="mediaflags" value="%s" />' % form.SETMEDIAFLAGS)
+    h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
+    h.append('<input type="hidden" name="submitterreplyto" value="%s" />' % asm3.html.escape(form.SUBMITTERREPLYADDRESS))
+    h.append('<table class="asm-onlineform-table">')
+    shelteranimals = None
+    adoptableanimals = None
+    fosteranimals = None
+    for f in formfields:
+        fname = "%s_%s" % (f.FIELDNAME, f.ID)
+        cname = asm3.html.escape(fname)
+        fid = "f%d" % f.ID
+        visibleif = ""
+        if f.VISIBLEIF:
+            visibleif = 'data-visibleif="%s"' % f.VISIBLEIF
+        required = ""
+        requiredtext = ""
+        requiredspan = ""
+        autocomplete = ""
+        extraclass = ""
+        if f.FIELDNAME in AUTOCOMPLETE_MAP:
+            autocomplete = "autocomplete=\"%s\"" % AUTOCOMPLETE_MAP[f.FIELDNAME]
+        if f.MANDATORY == 1: 
+            required = "required=\"required\""
+            requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
+            requiredspan = '<span class="asm-onlineform-required" style="color: #ff0000;">*</span>'
+        
+        if f.FIELDTYPE != FIELDTYPE_CHECKBOX and f.FIELDTYPE != FIELDTYPE_CHECKBOX_AL and f.FIELDTYPE != FIELDTYPE_LOOKUP_MULTI \
+            and f.FIELDTYPE != FIELDTYPE_RADIOGROUP and f.FIELDTYPE != FIELDTYPE_CHECKBOXGROUP and f.FIELDTYPE != FIELDTYPE_RAWMARKUP \
+            and f.FIELDTYPE != FIELDTYPE_SIGNATURE and f.FIELDTYPE != FIELDTYPE_IMAGE and f.FIELDTYPE != FIELDTYPE_PDF:
+            h.append('<div class="form-floating" %s>' % visibleif)
+        
+        if f.FIELDTYPE == FIELDTYPE_YESNO:
+            h.append('<select class="form-select" placeholder="%s" id="%s" name="%s" %s>' \
+            '<option value=""></option><option>%s</option><option>%s</option></select>' % \
+            ( f.LABEL, fid, cname, asm3.utils.iif(required != "", required, ""), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
+            h.append('<div class="form-check">')
+            h.append('<input class="form-check-input" type="checkbox" id="%s" name="%s" %s /> ' % \
+                (fid, cname, required))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('</div>')
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
+            h.append('<div class="form-check">')
+            h.append('<input class="form-check-input" type="checkbox" id="%s" name="%s" %s /> ' % \
+                (fid, cname, required))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('</div>')
+        elif f.FIELDTYPE == FIELDTYPE_TEXT:
+            if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
+            elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
+            elif f.FIELDNAME == "town": extraclass = "asm-onlineform-town"
+            elif f.FIELDNAME == "county": extraclass = "asm-onlineform-county"
+            elif f.FIELDNAME == "country": extraclass = "asm-onlineform-country"
+            h.append(f'<input class="form-control {extraclass}" type="text" placeholder="%s" id="%s" name="%s" %s %s />' % ( f.LABEL, fid, cname, autocomplete, requiredtext))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_NUMBER:
+            if f.FIELDNAME == "zipcode":
+                extraclass = "asm-onlineform-postcode"
+                inputtype = "text"
+            else:
+                inputtype = "number"
+            h.append(f'<input class="form-control {extraclass}" type="{inputtype}" placeholder="%s" id="%s" name="%s" %s %s />' % ( f.LABEL, fid, cname, autocomplete, requiredtext))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_EMAIL:
+            h.append('<input class="asm-onlineform-email form-control" placeholder="%s" type="email" id="%s" name="%s" %s %s />' % ( f.LABEL, fid, cname, autocomplete, requiredtext))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            if f.FIELDNAME == "emailaddress":
+                confirmlabel = f.LOOKUPS 
+                if confirmlabel is None or confirmlabel == "": confirmlabel = asm3.i18n._("Confirm email", l)
+                h.append('</div>')
+                h.append('<div class="form-floating">')
+                h.append('<input class="asm-onlineform-email form-control" placeholder="%s" type="email" id="%s" name="%s" %s %s />' % ( confirmlabel, fid + "verify", cname, autocomplete, requiredtext))
+                h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid + "verify", confirmlabel, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_DATE:
+            firstday = asm3.configuration.default_first_day(dbo)
+            today = dbo.sql_today(includeTime=False)
+            if f.VALIDATIONRULE == 1:
+                h.append('<input class="form-control" type="date" min=%s placeholder="%s" id="%s" data-firstday="%s" name="%s" %s />' % ( today, f.LABEL, fid, firstday, cname, requiredtext))
+            elif f.VALIDATIONRULE == 2:
+                h.append('<input class="form-control" type="date" max=%s placeholder="%s" id="%s" data-firstday="%s" name="%s" %s />' % ( today, f.LABEL, fid, firstday, cname, requiredtext))
+            else:
+                h.append('<input class="form-control" type="date" placeholder="%s" id="%s" data-firstday="%s" name="%s" %s />' % ( f.LABEL, fid, firstday, cname, requiredtext))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_TIME:
+            h.append('<input class="form-control" type="time" placeholder="%s" id="%s" name="%s" %s />' % ( f.LABEL, fid, cname, requiredtext))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_NOTES:
+            if f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
+            h.append(f'<textarea placeholder="%s" class="form-control {extraclass}" id="%s" name="%s" %s style="height: 200px;"></textarea>' % ( f.LABEL, fid, cname, requiredtext))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_LOOKUP:
+            h.append('<select placeholder="%s" class="form-select" id="%s" name="%s" %s>' % ( f.LABEL, fid, cname, required))
+            for lv in asm3.utils.nulltostr(f["LOOKUPS"]).split("|"):
+                h.append('<option>%s</option>' % lv)
+            h.append('</select>')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_LOOKUP_MULTI:
+            h.append('<div class="form-floating" %s>' % visibleif)
+            h.append('<select placeholder="%s" class="asm-onlineform-lookupmulti form-select" multiple="multiple" data-name="%s" data-required="%s" title="" >' % ( f.LABEL, cname, asm3.utils.iif(required != "", "required", "")))
+            for lv in asm3.utils.nulltostr(f.LOOKUPS).split("|"):
+                h.append('<option>%s</option>' % lv)
+            h.append('</select>')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('<input type="hidden" name="%s" value="" />' % cname)
+            h.append('</div>')
+        elif f.FIELDTYPE == FIELDTYPE_RADIOGROUP:
+            h.append('<label class="form-label">' + f.LABEL + '</label>')
+            for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
+                h.append('<div id="%s" class="form-check">' % (fid))
+                rid = "%s_%s" % (fid, i)
+                h.append('<input type="radio" class="form-check-input" id="%s" name="%s" value="%s" %s /> ' \
+                    '<label class="form-check-label" for="%s">%s %s</label>' % (rid, cname, lv, required, rid, lv, requiredspan))
+                h.append('</div>')
+        elif f.FIELDTYPE == FIELDTYPE_CHECKBOXGROUP:
+            h.append('<label class="form-label">' + f.LABEL + '</label>')
+            for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
+                h.append('<div id="%s" class="form-check">' % (fid))
+                rid = "%s_%s" % (fid, i)
+                h.append('<input type="checkbox" class="form-check-input" id="%s" name="%s" value="%s" %s /> ' \
+                    '<label class="form-check-label" for="%s">%s %s</label>' % (rid, cname, lv, required, rid, lv, requiredspan))
+                h.append('</div>')
+        elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
+            h.append('<select class="form-select" placeholder="%s" id="%s" name="%s" %s>' % ( f.LABEL, fid, cname, required))
+            h.append('<option value=""></option>')
+            if shelteranimals is None:
+                shelteranimals = asm3.animal.get_animals_on_shelter_namecode(dbo)
+                shelteranimals = sorted(shelteranimals, key=lambda k: k["ANIMALNAME"])
+            for a in shelteranimals:
+                if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
+                h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
+            h.append('</select>')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_ADOPTABLEANIMAL:
+            h.append('<select class="asm-onlineform-adoptableanimal form-select" placeholder="%s" id="%s" name="%s" %s>' % ( f.LABEL, fid, cname, required))
+            h.append('<option data-id="" value=""></option>')
+            if adoptableanimals is None:
+                adoptableanimals = asm3.animal.get_animals_adoptable_namecode(dbo)
+                adoptableanimals = sorted(adoptableanimals, key=lambda k: k["ANIMALNAME"])
+            for a in adoptableanimals:
+                if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
+                h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
+            h.append('</select>')
+            h.append('<img class="asm-onlineform-thumbnail" ' \
+                ' style="vertical-align: middle; height: 150px; width: 150px; object-fit: contain; display: block; display: none; margin-top: 10px;">')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_FOSTERANIMAL:
+            h.append('<select class="asm-onlineform-fosteranimal form-select" placeholder="%s" id="%s" name="%s" %s>' % ( f.LABEL, fid, cname, required))
+            h.append('<option data-id="" value=""></option>')
+            if fosteranimals is None:
+                fosteranimals = asm3.animal.get_animals_on_foster_namecode(dbo)
+                fosteranimals = sorted(fosteranimals, key=lambda k: k["ANIMALNAME"])
+            for a in fosteranimals:
+                if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
+                h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
+            h.append('</select>')
+            h.append('<img class="asm-onlineform-thumbnail" ' \
+                ' style="vertical-align: middle; height: 150px; width: 150px; object-fit: contain; display: block; display: none">')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_GDPR_CONTACT_OPTIN:
+            h.append('<input type="hidden" name="%s" value="" />' % cname)
+            h.append('<select class="asm-onlineform-lookupmulti form-select" placeholder="%s" multiple="multiple" id="%s" data-name="%s" data-required="%s" title="">' % ( f.LABEL, fid, cname, asm3.utils.iif(required != "", "required", "")))
+            h.append('<option value="declined">%s</option>' % asm3.i18n._("Declined", l))
+            h.append('<option value="email">%s</option>' % asm3.i18n._("Email", l))
+            h.append('<option value="post">%s</option>' % asm3.i18n._("Post", l))
+            h.append('<option value="sms">%s</option>' % asm3.i18n._("SMS", l))
+            h.append('<option value="phone">%s</option>' % asm3.i18n._("Phone", l))
+            h.append('</select>')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_COLOUR:
+            h.append('<select class="form-select" placeholder="%s" id="%s" name="%s" %s>' % ( f.LABEL, fid, cname, required))
+            h.append('<option value=""></option>')
+            for l in asm3.lookups.get_basecolours(dbo):
+                if l.ISRETIRED != 1:
+                    h.append('<option>%s</option>' % l.BASECOLOUR)
+            h.append('</select>')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_BREED:
+            h.append('<select class="form-select" placecholder="%s" id="%s" name="%s" %s>' % ( f.LABEL, fid, cname, required))
+            h.append('<option value=""></option>')
+            if f.SPECIESID and f.SPECIESID > 0:
+                breeds = asm3.lookups.get_breeds_by_species(dbo)
+            else:
+                breeds = asm3.lookups.get_breeds(dbo)
+            for l in breeds:
+                if f.SPECIESID and f.SPECIESID > 0 and l.SPECIESID != f.SPECIESID:
+                    continue
+                if l.ISRETIRED != 1:
+                    h.append('<option>%s</option>' % l.BREEDNAME)
+            h.append('</select>')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_SPECIES:
+            h.append('<select class="form-select" placeholder="%s" id="%s" name="%s" %s>' % ( f.LABEL, fid, cname, required))
+            h.append('<option value=""></option>')
+            for l in asm3.lookups.get_species(dbo):
+                if l.ISRETIRED != 1:
+                    h.append('<option>%s</option>' % l.SPECIESNAME)
+            h.append('</select>')
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        elif f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
+            h.append('<input type="hidden" name="%s" value="raw" />' % cname)
+            h.append(asm3.utils.nulltostr(f.TOOLTIP))
+        elif f.FIELDTYPE == FIELDTYPE_SIGNATURE:
+            h.append('<label class="form-label">%s</label>' % ( f.LABEL, ))
+            h.append('<input type="hidden" name="%s" value="" />' % cname)
+            h.append('<div class="asm-onlineform-signature" data-name="%s" data-required="%s"></div>' % ( cname, asm3.utils.iif(required != "", "required", "") ))
+            h.append('<br/><button type="button" class="asm-onlineform-signature-clear" data-clear="%s">%s</button>' % ( cname, asm3.i18n._("Clear", l) ))
+        elif f.FIELDTYPE == FIELDTYPE_IMAGE:
+            h.append('<input type="hidden" name="%s" value="" />' % cname)
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('<input class="asm-onlineform-image form-control" type="file" id="%s" data-name="%s" data-required="%s" style="margin-bottom: 10px;" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
+        elif f.FIELDTYPE == FIELDTYPE_PDF:
+            h.append('<input type="hidden" name="%s" value="" />' % cname)
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            h.append('<input class="asm-onlineform-pdf form-control" type="file" id="%s" data-name="%s" data-required="%s" style="margin-bottom: 10px;" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
+        elif f.FIELDTYPE == FIELDTYPE_TELEPHONE:
+            h.append('<input class="asm-onlineform-phone" type="text" placeholder="%s" data-locale="%s" id="%s" name="%s" %s %s />' % ( f.LABEL, dbo.locale, fid, cname, autocomplete, requiredtext))
+            h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+        
+        if f.FIELDTYPE != FIELDTYPE_CHECKBOX and f.FIELDTYPE != FIELDTYPE_CHECKBOX_AL and f.FIELDTYPE != FIELDTYPE_LOOKUP_MULTI \
+            and f.FIELDTYPE != FIELDTYPE_RADIOGROUP and f.FIELDTYPE != FIELDTYPE_CHECKBOXGROUP and f.FIELDTYPE != FIELDTYPE_RAWMARKUP \
+            and f.FIELDTYPE != FIELDTYPE_SIGNATURE and f.FIELDTYPE != FIELDTYPE_IMAGE and f.FIELDTYPE != FIELDTYPE_PDF:
+            if f.TOOLTIP:
+                h.append('<div class="asmformadditional">')
+                h.append(f.TOOLTIP)
+                h.append('</div>')
+            h.append('</div>')
+        elif f.TOOLTIP and f.FIELDTYPE != FIELDTYPE_RAWMARKUP:
+            h.append('<div class="asmformadditional">')
+            h.append(f.TOOLTIP)
+            h.append('</div>')
+    h.append('</table>')
+    h.append('<style>')
+    h.append('.scb { display: none; }')
+    h.append('</style>')
+    h.append(f'<p class="scb"><label for="{SPAMBOT_TXT}"></label><input type="text" id="{SPAMBOT_TXT}" name="{SPAMBOT_TXT}" autocomplete="off" /></p>')
+    h.append('<p style="text-align: center"><input type="submit" value="%s" /></p>' % asm3.i18n._("Submit", l))
+    h.append('</form>')
+    if completedocument:
+        h.append(asm3.utils.nulltostr(form.FOOTER))
+        footer = get_onlineform_footer(dbo)
+        h.append(footer.replace("$$TITLE$$", form.NAME))
+    return "\n".join(h)
+
+def _get_onlineform_html_legacy(dbo: Database, formid: int, completedocument: bool = True) -> str:
+    """ Get the selected online form as HTML """
+    form = get_onlineform(dbo, formid)
+    if form is None: raise asm3.utils.ASMValidationError("Online form %s does not exist" % formid)
+    h = []
+    l = dbo.locale
+    formfields = get_onlineformfields(dbo, formid)
+    if completedocument:
+        header = get_onlineform_header(dbo)
+        # Calculate the date format and add our extra script
+        # references into the header block
+        df = asm3.i18n.get_display_date_format(l)
+        df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
+        extra = "<script>\nDATE_FORMAT = '%s';LOCALE = '%s';USERACCOUNT = '%s';SMCOM = %s;RENDERER='legacy';\n</script>\n" % (df, l, dbo.name(), str(asm3.smcom.active()).lower())
         extra += "<base href=\"%s\" />\n" % BASE_URL
         extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
             asm3.html.css_tag(ASMSELECT_CSS) + \
@@ -186,13 +484,16 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             asm3.html.script_tag(TIMEPICKER_JS) + \
             asm3.html.asm_script_tag("onlineform_extra.js") + \
             "</head>"
+        if '<!--bootstrapstyle-->' in header:
+            bootstrapstyle = header.split('<!--bootstrapstyle-->')[1]
+            header = header.replace(bootstrapstyle, "")
         header = header.replace("</head>", extra)
         h.append(header.replace("$$TITLE$$", form.NAME))
         h.append('<h2 class="asm-onlineform-title">%s</h2>' % form.NAME)
         if form.DESCRIPTION is not None and form.DESCRIPTION != "":
             h.append('<p class="asm-onlineform-description">%s</p>' % form.DESCRIPTION)
         h.append(asm3.utils.nulltostr(form.HEADER))
-    h.append('<form action="%s/service" method="post" accept-charset="utf-8">' % BASE_URL)
+    h.append('<form action="%s/service" method="post" accept-charset="utf-8" >' % BASE_URL)
     h.append('<input type="hidden" name="method" value="online_form_post" />')
     h.append('<input type="hidden" name="account" value="%s" />' % dbo.alias)
     h.append('<input type="hidden" name="redirect" value="%s" />' % form.REDIRECTURLAFTERPOST)
@@ -211,7 +512,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         visibleif = ""
         if f.VISIBLEIF:
             visibleif = 'data-visibleif="%s"' % f.VISIBLEIF
-        h.append('<tr class="asm-onlineform-tr" %s>' % visibleif)
         required = ""
         requiredtext = ""
         requiredspan = ""
@@ -223,6 +523,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             required = "required=\"required\""
             requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
             requiredspan = '<span class="asm-onlineform-required" style="color: #ff0000;">*</span>'
+        h.append('<tr class="asm-onlineform-tr" %s>' % visibleif)
         if f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
             h.append('<td class="asm-onlineform-td asm-onlineform-raw" colspan="2">')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
@@ -239,17 +540,18 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             if f.TOOLTIP: h.append('<span class="asm-onlineform-tooltip">%s</span>' % f.TOOLTIP)
             h.append('</td>')
             h.append('<td class="asm-onlineform-td">')
+        
         if f.FIELDTYPE == FIELDTYPE_YESNO:
             h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" %s>' \
-                '<option value=""></option><option>%s</option><option>%s</option></select>' % \
-                ( fid, cname, asm3.utils.iif(required != "", required, ""), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
+            '<option value=""></option><option>%s</option><option>%s</option></select>' % \
+            ( fid, cname, asm3.utils.iif(required != "", required, ""), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX_AL:
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' % \
-                (fid, cname, required))
+            (fid, cname, required))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
             if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
             elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
@@ -258,7 +560,8 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             elif f.FIELDNAME == "country": extraclass = "asm-onlineform-country"
             h.append(f'<input class="asm-onlineform-text {extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NUMBER:
-            if f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
+            if f.FIELDNAME == "zipcode":
+                extraclass = "asm-onlineform-postcode"
             h.append(f'<input class="asm-onlineform-number {extraclass}" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
             h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
@@ -301,7 +604,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                 rid = "%s_%s" % (fid, i)
                 h.append('<input type="radio" class="asm-onlineform-radio" id="%s" name="%s" value="%s" %s /> ' \
                     '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label><br />' % (rid, cname, lv, required, rid, lv))
-            h.append('</div>')
+                h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOXGROUP:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<div id="%s" class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
@@ -345,7 +648,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('</select>')
             h.append('<img class="asm-onlineform-thumbnail" ' \
                 ' style="vertical-align: middle; height: 150px; width: 150px; object-fit: contain; display: block; display: none">')
-            
         elif f.FIELDTYPE == FIELDTYPE_GDPR_CONTACT_OPTIN:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" id="%s" data-name="%s" data-required="%s" title="">' % ( fid, cname, asm3.utils.iif(required != "", "required", "")))
@@ -745,6 +1047,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "InternalUse":          post.boolean("internaluse"),
+        "Renderer":             post.integer("renderer"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
@@ -769,6 +1072,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "InternalUse":          post.boolean("internaluse"),
+        "Renderer":             post.integer("renderer"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
         "*Footer":              post["footer"],
