@@ -34,7 +34,7 @@ import asm3.utils
 from asm3.i18n import _, now, add_seconds, format_currency, format_time, python2display, subtract_seconds
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
 from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, JQUERY_UI_CSS, MOUSETRAP_JS
-from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
+from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN, EMAIL_SERVER_IP_WHITELIST
 from asm3.typehints import Database, PostedData, Results, ResultRow, ServiceResponse
 
 # Service methods that require authentication
@@ -971,6 +971,20 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
     elif method == "upload_animal_image":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.ADD_MEDIA)
         asm3.media.attach_file_from_form(dbo, username, asm3.media.ANIMAL, int(animalid), asm3.media.MEDIASOURCE_SERVICEUPLOAD, post)
+        return ("text/plain", 0, 0, "OK")
+
+    elif method == "email_received_log":
+        if not asm3.configuration.email_log(dbo):
+            return ("text/plain", 0, 0, "ERROR - Email logging disabled")
+        emailaddress = post["emailaddress"]
+        logtypeid = asm3.configuration.email_log_type(dbo)
+        logtext = post["logtext"]
+        linktype = asm3.log.PERSON
+        pids = asm3.person.get_person_ids_for_email(dbo, emailaddress)
+        if not asm3.smcom.validate_mail_server_ip(remoteip):
+            return ("text/plain", 0, 0, "ERROR - Invalid IP Address")
+        for pid in pids:
+            asm3.log.add_log(dbo, "system", linktype, pid, logtypeid, logtext)
         return ("text/plain", 0, 0, "OK")
 
     elif method == "online_form_html":
