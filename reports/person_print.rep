@@ -2,7 +2,7 @@ Print Person Record
 ###
 Auditing
 ###
-34702/Any rev08
+35100/Any rev09
 ###
 A complete printout of a person record.
 ###
@@ -28,7 +28,7 @@ HEADER$$
 
 $$BODY
 <h2><a target="_blank" href="person?id=$PersonID">$OWNERNAME</a></h2>
-<table>
+<table class="nosort">
 <tr>
 <td>Address</td><td><b>$OWNERADDRESS</b></td><td>Home</td><td>$HOMETELEPHONE</td>
 </tr><tr>
@@ -239,9 +239,12 @@ FOOTER$$
 +++
 SUBREPORT_PersonPrintLog
 +++
-SELECT lo.*, lt.LogTypeName FROM log lo
+SELECT lo.Date, lt.LogTypeName, lo.Comments FROM log lo
 INNER JOIN logtype lt ON lt.ID = lo.LogTypeID
 WHERE lo.LinkType = 1 AND lo.LinkID = $PARENTKEY$
+UNION SELECT lm.Date, lt.LogTypeName, lm.Comments FROM logmulti lm
+INNER JOIN logtype lt ON lt.ID = lm.LogTypeID
+WHERE lm.LinkType = 1 AND ',' || lm.LinkIDs || ',' LIKE '%,$PARENTKEY$,%' 
 +++
 $$HEADER
 <table>

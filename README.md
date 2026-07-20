@@ -16,7 +16,7 @@ install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these and will
 install them for you.
 
-* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-memcache
+* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-memcache python3-lxml
 
 Extra, non-mandatory packages:
 
@@ -69,12 +69,12 @@ If you did not, copy scripts/asm3.conf.example to /etc/asm3.conf and then edit i
 Set the following values:
 
 ```
-asm3_dbtype = (POSTGRESQL, MYSQL or SQLITE)
-asm3_dbhost = (hostname of your server)
-asm3_dbport = (port of your server if using tcp)
-asm3_dbusername = 
-asm3_dbpassword = 
-asm3_dbname = (name of the database, can be file path if type is SQLITE)
+db_type = (POSTGRESQL, MYSQL or SQLITE)
+db_host = (hostname of your server)
+db_port = (port of your server if using tcp)
+db_username = 
+db_password = 
+db_name = (name of the database, can be file path if type is SQLITE)
 ```
 
 If you are using MySQL or POSTGRESQL, make sure you have issued a CREATE DATABASE

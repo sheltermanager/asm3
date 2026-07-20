@@ -92,7 +92,7 @@ class PETtracUKPublisher(AbstractPublisher):
             self.setLastError("authorised user '%s' does not have an electronic signature on file" % authuser)
             return
 
-        chipprefix = ["977%"] # AVID Europe
+        chipprefix = ["977", "953"] # AVID Europe
         if registeroverseas: 
             chipprefix = ["0","1","2","3","4","5","6","7","8","9"] # If overseas registration is on, send all chips to AVID
 

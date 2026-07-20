@@ -280,6 +280,16 @@ class PetRescuePublisher(AbstractPublisher):
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
+        # If this animal is a courtesy listing, use the owner address if available.
+        # The one linked to animal.OwnerID should work for either non-shelter or
+        # those with active movements.
+        if an.ISCOURTESY == 1:
+            fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM owner " \
+                "WHERE ID=?", [ an.OWNERID ]))
+            if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
+            if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
+            if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
+
         # If the option is on to use the adoption coordinator contact info, and this animal
         # has an adoption coordinator, set them. 0 = do not use, 1 = use email and phone, 2 = use email only
         if use_coordinator > 0 and an.ADOPTIONCOORDINATORNAME and an.ADOPTIONCOORDINATOREMAILADDRESS:

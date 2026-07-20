@@ -227,9 +227,9 @@ DEFAULTS = {
     "EmailAdopterFollowupDays": "14",
     "EmailAdopterFollowupTemplate": "0",
     "EmailAdopterFollowupSpecies": "1,2",
-    "EmailVaccinationFollowup": "No",
-    "EmailVaccinationFollowupDays": "14",
-    "EmailVaccinationFollowupTemplate": "0",
+    "EmailVaccinationReminder": "No",
+    "EmailVaccinationReminderDays": "14",
+    "EmailVaccinationReminderTemplate": "0",
     "EmailClinicReminder": "No",
     "EmailClinicReminderDays": "2",
     "EmailClinicReminderTemplate": "0",
@@ -270,6 +270,7 @@ DEFAULTS = {
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
+    "EventAnimalViewColumns": "ArrivalDate,IMAGE,ANIMAL,DISPLAYLOCATION,AGEGROUP,SPECIESNAME,BASECOLOURNAME,LITTERID,COMMENTS,LASTFOSTERER,ADOPTED",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "AnimalFlagChangeLog": "Yes",
@@ -359,6 +360,7 @@ DEFAULTS = {
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
+    "OrganisationWebsite": "Website",
     "OwnerAddressCheck": "Yes",
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
@@ -1028,6 +1030,9 @@ def default_location(dbo: Database) -> int:
 def default_log_filter(dbo: Database) -> int:
     return cint(dbo, "AFDefaultLogFilter", 0)
 
+def default_log_type(dbo: Database) -> int:
+    return cint(dbo, "AFDefaultLogType", 0)
+
 def default_media_notes_from_file(dbo: Database) -> bool:
     return cboolean(dbo, "DefaultMediaNotesFromFile", DEFAULTS["DefaultMediaNotesFromFile"] == "Yes")
 
@@ -1117,14 +1122,14 @@ def email_adopter_followup_template(dbo: Database) -> int:
 def email_adoptioncoordinator_on_document_signed(dbo: Database) -> bool:
     return cboolean(dbo, "DocumentSignedNotifyCoordinator", DEFAULTS["DocumentSignedNotifyCoordinator"])
 
-def email_vaccination_followup(dbo: Database) -> bool:
-    return cboolean(dbo, "EmailVaccinationFollowup", DEFAULTS["EmailVaccinationFollowup"] == "Yes")
+def email_vaccination_reminder(dbo: Database) -> bool:
+    return cboolean(dbo, "EmailVaccinationReminder", DEFAULTS["EmailVaccinationReminder"] == "Yes")
 
-def email_vaccination_followup_days(dbo: Database) -> int:
-    return cint(dbo, "EmailVaccinationFollowupDays", DEFAULTS["EmailVaccinationFollowupDays"])
+def email_vaccination_reminder_days(dbo: Database) -> int:
+    return cint(dbo, "EmailVaccinationReminderDays", DEFAULTS["EmailVaccinationReminderDays"])
 
-def email_vaccination_followup_template(dbo: Database) -> int:
-    return cint(dbo, "EmailVaccinationFollowupTemplate", DEFAULTS["EmailVaccinationFollowupTemplate"])
+def email_vaccination_reminder_template(dbo: Database) -> int:
+    return cint(dbo, "EmailVaccinationReminderTemplate", DEFAULTS["EmailVaccinationReminderTemplate"])
 
 def email_clinic_reminder(dbo: Database) -> bool:
     return cboolean(dbo, "EmailClinicReminder", DEFAULTS["EmailClinicReminder"] == "Yes")
@@ -1465,6 +1470,9 @@ def organisation_latlong(dbo: Database, newvalue: str = "") -> str:
 def organisation_telephone(dbo: Database) -> str:
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
+def organisation_website(dbo: Database) -> str:
+    return cstring(dbo, "OrganisationWebsite", DEFAULTS["OrganisationWebsite"])
+
 def osm_map_tiles_override(dbo: Database) -> str:
     return cstring(dbo, "OSMMapTilesOverride")
 
@@ -1488,6 +1496,15 @@ def person_flag_change_log(dbo: Database) -> bool:
 
 def person_flag_change_log_type(dbo: Database) -> int:
     return cint(dbo, "PersonFlagChangeLogType", DEFAULTS["PersonFlagChangeLogType"])
+
+def petcolovelost_email(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostEmail")
+
+def petcolovelost_password(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostPassword")
+
+def petcolovelost_shelterid(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostShelterID")
 
 def petrescue_adoptable_in(dbo: Database) -> str:
     return cstring(dbo, "PetRescueAdoptableIn")
@@ -1551,6 +1568,9 @@ def product_movement_usage_type(dbo: Database) -> int:
 
 def event_search_columns(dbo: Database) -> str:
     return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])
+
+def event_animal_view_columns(dbo: Database) -> str:
+    return cstring(dbo, "EventAnimalViewColumns", DEFAULTS["EventAnimalViewColumns"])
 
 def incident_search_columns(dbo: Database) -> str:
     return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
@@ -1821,6 +1841,9 @@ def system_log_type(dbo: Database) -> int:
 
 def use_short_shelter_codes(dbo: Database) -> bool:
     return cboolean(dbo, "UseShortShelterCodes")
+
+def tax_id(dbo: Database) -> str:
+    return cstring(dbo, "ShelterTaxID")
 
 def third_party_publisher_sig(dbo: Database) -> str:
     return cstring(dbo, "TPPublisherSig")

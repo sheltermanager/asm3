@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Appendix: Wordkeys &mdash; ASM 51u documentation</title>
+  <title>Appendix: Wordkeys &mdash; ASM 52u documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
 
@@ -12,7 +12,7 @@
   
         <script src="_static/jquery.js?v=8dae8fb0"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=feabbe39"></script>
+        <script src="_static/documentation_options.js?v=53fbcef5"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -33,7 +33,7 @@
             ASM
           </a>
               <div class="version">
-                51u
+                52u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -419,6 +419,8 @@ BondedAnimal2Code</p>
 </dd>
 <dt>BroughtInByPostcode</dt><dd><p>(BroughtInByZipcode for US users)</p>
 </dd>
+<dt>BroughtInByCountry</dt><dd><p>The country of the person who brought the animal in</p>
+</dd>
 <dt>BroughtInByHomePhone</dt><dd><p>The home phone number of the person who brought the animal in</p>
 </dd>
 <dt>BroughtInByWorkPhone</dt><dd><p>The work phone number of the person who brought the animal in</p>
@@ -442,6 +444,8 @@ BondedAnimal2Code</p>
 <dt>OriginalOwnerCounty (OriginalOwnerState for US users)</dt><dd><p>The county of the animal’s original owner</p>
 </dd>
 <dt>OriginalOwnerPostcode (OriginalOwnerZipcode for US users)</dt><dd><p>The original owner’s post/zipcode</p>
+</dd>
+<dt>OriginalOwnerCountry</dt><dd><p>The country of the animal’s original owner</p>
 </dd>
 <dt>OriginalOwnerHomePhone</dt><dd><p>The original owner’s home phone number</p>
 </dd>
@@ -472,6 +476,8 @@ BondedAnimal2Code</p>
 <dt>CurrentOwnerCounty</dt><dd><p>(CurrentOwnerState for US users)</p>
 </dd>
 <dt>CurrentOwnerPostcode</dt><dd><p>(CurrentOwnerZipcode for US users)</p>
+</dd>
+<dt>CurrentOwnerCountry</dt><dd><p>Current owner’s country</p>
 </dd>
 <dt>CurrentOwnerHomePhone</dt><dd><p>Current owner’s home phone number</p>
 </dd>
@@ -678,7 +684,11 @@ due before today that have not been given</p>
 </dd>
 <dt>MedicalType[type]Due</dt><dd><p>The date that the animal’s next medical treatment of type is due. type is one from the fixed dropdown list of medical types, eg: MedicalTypeParasite:FleaTreatmentDue</p>
 </dd>
+<dt>MedicalType[type]DueName</dt><dd><p>The name of the animal’s next medical treatment of type. type is one from the fixed dropdown list of medical types, eg: MedicalTypeParasite:FleaTreatmentDue</p>
+</dd>
 <dt>MedicalType[type]Given</dt><dd><p>The date that the animal’s last treatment of type was given</p>
+</dd>
+<dt>MedicalType[type]GivenName</dt><dd><p>The name of the animal’s last treatment of type</p>
 </dd>
 <dt>OutcomeDate</dt><dd><p>If the animal has left the care of the shelter, the date it left</p>
 </dd>
@@ -1410,7 +1420,7 @@ is linked to an animal, animal keys are also present.</p>
 <h2>Voucher Keys<a class="headerlink" href="#voucher-keys" title="Link to this heading">¶</a></h2>
 <p>Voucher keys are only available for documents generated for a single voucher
 under the voucher tab or the voucher book. Keys for the person the voucher
-has been issued to are also present and if the licence is linked to an animal,
+has been issued to are also present and if the voucher is linked to an animal,
 animal keys are also present.</p>
 <dl class="simple">
 <dt>VoucherTypeName</dt><dd><p>The type of voucher</p>
@@ -1809,7 +1819,7 @@ the person, animal or movement the document is being generated for</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Sheltermanager, Ltd.</p>
+    <p>&#169; Copyright 2026, Sheltermanager, Ltd.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

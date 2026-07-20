@@ -81,6 +81,7 @@ const mapping = {
             var map = L.map(divid).setView([ll[0], ll[1]], 15);
             L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images/";
             L.tileLayer(asm.osmmaptiles, {
+                referrerPolicy: 'strict-origin-when-cross-origin', // causes referer header to be sent to osm
                 attribution: '<a target="_blank" href="http://osm.org/copyright">&copy; OpenStreetMap contributors</a> | ' + 
                     '<a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a> | ' + 
                     '<a target="_blank" href="https://www.openstreetmap.org/fixthemap">Improve this map</a>'
@@ -91,6 +92,7 @@ const mapping = {
                 ll = v.latlong.split(",");
                 var marker = L.marker([ll[0], ll[1]]).addTo(map);
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
+                if (v.PINSTYLE) { marker._icon.classList.add(v.PINSTYLE); }
                 if (v.popupactive) { marker.openPopup(); }
             });
             if (config.bool("ShowLatLong")) {

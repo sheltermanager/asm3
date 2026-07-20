@@ -603,6 +603,7 @@ $(function() {
                             subject: _("Adoption checkout for {0}").replace("{0}", row.ANIMALNAME),
                             animalid: row.ANIMALID,
                             personid: row.OWNERID,
+                            movementid: row.ID,
                             templates: controller.templatesemail,
                             logtypes: controller.logtypes,
                             url: paymentlink, 

@@ -48,6 +48,7 @@ import asm3.publish
 import asm3.publishers.base
 import asm3.publishers.html
 import asm3.publishers.vetenvoy
+import asm3.publishers.petcolovelost
 import asm3.reports
 import asm3.search
 import asm3.service
@@ -72,7 +73,8 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, HTML_TO_PDF, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
-    MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
+    MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, \
+    PETCO_LOVELOST_BASE_URL, PETCO_LOVELOST_DEBUG, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
     RESIZE_IMAGES_DURING_ATTACH, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_HOST, \
@@ -3686,16 +3688,18 @@ class document_gen(ASMEndpoint):
     def post_emailtemplate(self, o):
         self.content_type("text/html")
         content = ""
-        if o.post["donationids"] != "":
+        if o.post.integer("animalcontrolid") != 0:
+            content = asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
+        elif o.post["donationids"] != "":
             content = asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("dtid"), o.post.integer_list("donationids"), o.user)
+        elif o.post.integer("licenceid") != 0:
+            content = asm3.wordprocessor.generate_licence_doc(o.dbo, o.post.integer("dtid"), o.post.integer("licenceid"), o.user)
+        elif o.post.integer("movementid") != 0:
+            content = asm3.wordprocessor.generate_movement_doc(o.dbo, o.post.integer("dtid"), o.post.integer("movementid"), o.user)
         elif o.post.integer("personid") != 0:
             content = asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
         elif o.post.integer("animalid") != 0:
             content = asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
-        elif o.post.integer("animalcontrolid") != 0:
-            content = asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
-        elif o.post.integer("licenceid") != 0:
-            content = asm3.wordprocessor.generate_licence_doc(o.dbo, o.post.integer("dtid"), o.post.integer("licenceid"), o.user)
         else:
             content = asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
         tokens = asm3.wordprocessor.extract_mail_tokens(content)
@@ -4079,11 +4083,16 @@ class event_animals(JSONEndpoint):
         queryfilter = o.post["filter"]
         ea = asm3.event.get_animals_by_event(dbo, event_id, queryfilter)
         asm3.al.debug("opened event animals %s" % event_id, "main.event_animals", dbo)
+        add = None
+        if len(ea) > 0:
+            add = asm3.additional.get_additional_fields_ids(dbo, ea, "eventanimal")
         return {
             "rows": ea,
             "name": "event_animals",
             "event": e,
-            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
+            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event"),
+            "eventanimaladditional": asm3.additional.get_field_definitions(dbo, "eventanimal"),
+            "eventanimaladditionalvalues": add
         }
 
     def post_create(self, o):
@@ -4580,7 +4589,22 @@ class incident_map(JSONEndpoint):
         rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user)
         asm3.al.debug("incident map, %d active" % (len(rows)), "main.incident_map", dbo)
         return {
-            "rows": rows
+            "rows": rows,
+            "name": "active_incident_map"
+        }
+
+class recent_incident_map(JSONEndpoint):
+    url = "recent_incident_map"
+    js_module = "incident_map"
+    get_permissions = ( asm3.users.VIEW_INCIDENT, asm3.users.VIEW_MOVEMENT )
+
+    def controller(self, o):
+        dbo = o.dbo
+        rows = asm3.animalcontrol.get_recent_incidents(dbo)
+        asm3.al.debug("recent_incident map, %d active" % (len(rows)), "main.recent_incident_map", dbo)
+        return {
+            "rows": rows,
+            "name": "recent_incident_map"
         }
 
 class incident_media(JSONEndpoint):
@@ -4779,6 +4803,7 @@ class lookups(JSONEndpoint):
         l = o.locale
         tablename = o.post["tablename"]
         if tablename == "": tablename = "animaltype"
+        if tablename not in asm3.lookups.LOOKUP_TABLES: raise asm3.utils.ASMError(f"invalid table {tablename}")
         table = list(asm3.lookups.LOOKUP_TABLES[tablename])
         table[0] = translate(table[0], l)
         table[2] = translate(table[2], l)
@@ -5091,10 +5116,10 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
-        count = len(rows)
+        count = len(self.recipients(rows))
         if asm3.utils.is_smcom_smtp(dbo):
             asm3.smcom.check_bulk_email(dbo, count)
-        elif len(rows) > asm3.configuration.mail_merge_max_emails(dbo):
+        elif count > asm3.configuration.mail_merge_max_emails(dbo):
             raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
         fromadd = post["from"]
         subject = post["subject"]
@@ -5246,6 +5271,9 @@ class maint_db_update(ASMEndpoint):
         self.content_type("text/plain")
         self.cache_control(0)
         dbo = o.dbo
+        if dbo is None:
+            dbo = asm3.db.get_database(o.post["smaccount"])
+            dbo.connection = dbo.connect()
         # Run any outstanding database updates
         update_ver, err_db = asm3.dbupdate.perform_updates(dbo)
         err_view = asm3.dbupdate.install_db_views(dbo)
@@ -5279,8 +5307,8 @@ class maint_find_replace(JSONEndpoint):
         dbo = o.dbo
         return {
             "manufacturers": asm3.medical.get_vacc_manufacturers(dbo),
-            "towns": asm3.person.get_towns(dbo, excludeblanks=True),
-            "counties": asm3.person.get_counties(dbo, excludeblanks=True),
+            "towns": asm3.person.get_towns(dbo),
+            "counties": asm3.person.get_counties(dbo),
             "towncounties": asm3.person.get_town_to_county(dbo)
         }
     
@@ -6370,6 +6398,16 @@ class onlineform_incoming(JSONEndpoint):
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
+    def post_animallog(self, o):
+        self.check(asm3.users.ADD_LOG)
+        user = "form/%s" % o.user
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal_log(o.dbo, user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, pid)
+        return "^$".join(rv)
+
     def post_animalbroughtin(self, o):
         self.check(asm3.users.ADD_ANIMAL)
         self.check(asm3.users.ADD_PERSON)
@@ -6631,6 +6669,7 @@ class options(JSONEndpoint):
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "eventfindcolumns": asm3.html.json_eventfindcolumns(dbo),
+            "eventanimalcolumns": asm3.html.json_eventanimalcolumns(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "entrytypes": asm3.lookups.get_entry_types(dbo),
             "foundanimalfindcolumns": asm3.html.json_foundanimalfindcolumns(dbo),
@@ -6841,12 +6880,13 @@ class pp_square(ASMEndpoint):
             if "note" not in j["data"]["object"]["payment"]:
                 asm3.al.error("'note' parameter missing, this is not an ASM requested payment", "main.pp_square")
                 return # OK 200, this payment notification is not for us
+
             note = j["data"]["object"]["payment"]["note"]
             if note == "" or len(note.split("-")) < 2:
-                asm3.al.error("'note' parameter invlaid, this is not an ASM requested payment", "main.pp_square")
+                asm3.al.error("'note' parameter invalid, this is not an ASM requested payment", "main.pp_square")
                 return # OK 200, this payment notification is not for us
             
-            dbname = note[-2:note.find("-")]
+            dbname = note.split("-")[0]
             dbo = asm3.db.get_database(dbname)
             if dbo.database in asm3.db.ERROR_VALUES:
                 asm3.al.error("invalid database '%s'" % dbname, "main.pp_square")
@@ -7110,6 +7150,13 @@ class person_embed(ASMEndpoint):
             includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "main.person_embed", o.dbo)
         return asm3.utils.json(rows)
+
+    def post_multiselect(self, o):
+        self.content_type("application/json")
+        dbo = o.dbo
+        flags = asm3.lookups.get_person_flags(dbo)
+        rv = { "rows": [], "flags": flags }
+        return asm3.utils.json(rv)
 
     def post_id(self, o):
         self.check(asm3.users.VIEW_PERSON)
@@ -7466,15 +7513,6 @@ class person_vouchers(JSONEndpoint):
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
-class postcode_lookup(ASMEndpoint):
-    url = "postcode_lookup"
-    check_logged_in = False
-
-    def post_getaddress(self, o):
-        self.content_type("application/json")
-        self.cache_control(120)
-        return asm3.geo.get_address(o.dbo, o.post["postcode"], o.post["country"])
-
 class product(JSONEndpoint):
     url = "product"
     js_module = "product"
@@ -7597,6 +7635,7 @@ class publish_options(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
+            "authmethods": asm3.service.AUTH_METHODS,
             "breeds": asm3.lookups.get_breeds(dbo),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
@@ -7605,6 +7644,8 @@ class publish_options(JSONEndpoint):
             "hasbuddyid": BUDDYID_BASE_URL != "",
             "hasfindpet": FINDPET_BASE_URL != "",
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
+            "haspetcolovelost": PETCO_LOVELOST_BASE_URL != "",
+            "haspetcolovelostdebug": PETCO_LOVELOST_DEBUG,
             "hashomeagain": HOMEAGAIN_BASE_URL != "",
             "hashtmlftp": HTMLFTP_PUBLISHER_ENABLED,
             "hasmaddiesfund": MADDIES_FUND_TOKEN_URL != "",
@@ -7623,6 +7664,23 @@ class publish_options(JSONEndpoint):
         }
         asm3.al.debug("loaded lookups", "main.publish_options", dbo)
         return c
+    
+    def post_pcllshelterid(self, o):
+        emailaddress = o.post["PetCoLoveLostEmail"]
+        password = o.post["PetCoLoveLostPassword"]
+        taxid = o.post["ShelterTaxID"]
+        return asm3.publishers.petcolovelost.create_shelter(o.dbo, emailaddress, password, taxid)
+    
+    def post_pcllpublished(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        return asm3.publishers.petcolovelost.getActualPublishedAnimals(auth)
+    
+    def post_pcllpurge(self, o):
+        auth = asm3.publishers.petcolovelost.getAuthDetails(o.dbo)
+        asm3.publishers.petcolovelost.purgeActualPublished(auth)
+        dummypc = asm3.publishers.base.PublishCriteria() # Publish criteria not relevant but required by Abstract Publisher
+        publisher = asm3.publishers.petcolovelost.PetcoLoveLostPublisher(o.dbo, dummypc)
+        asm3.publishers.petcolovelost.purgeRecordedPublished(publisher)
 
     def post_save(self, o):
         asm3.configuration.csave(o.dbo, o.user, o.post)
@@ -8049,6 +8107,7 @@ class service(ASMEndpoint):
             self.content_type(contenttype)
             self.cache_control(client_ttl, cache_ttl) 
             self.header("Access-Control-Allow-Origin", "*") # CORS
+            self.header("Content-Length", str(len(response)))
             return response
 
     def content(self, o):

@@ -307,6 +307,10 @@ class AdoptAPetPublisher(FTPPublisher):
         # Remove old unreferenced images before we start
         self.clearUnusedFTPImages(animals)
 
+        uom = "kg"
+        if asm3.configuration.show_weight_in_lbs(self.dbo) or asm3.configuration.show_weight_in_lbs_fraction(self.dbo):
+            uom = "lbs"
+
         csv = []
 
         anCount = 0
@@ -325,7 +329,7 @@ class AdoptAPetPublisher(FTPPublisher):
                 self.uploadImages(an)
 
                 # Add the CSV line
-                csv.append( self.processAnimal(an) )
+                csv.append( self.processAnimal(an, uom) )
 
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -355,9 +359,11 @@ class AdoptAPetPublisher(FTPPublisher):
         self.log(mapfile)
         self.cleanup()
 
-    def processAnimal(self, an: ResultRow) -> str:
+    def processAnimal(self, an: ResultRow, uom = "lbs") -> str:
         """
         Builds a line for the CSV file from an animal and returns it.
+        uom: The weight unit of measurement. Will be lbs for most shelters, but we have
+             Mexican shelters who use kg
         """
         line = []
         # Id
@@ -427,7 +433,7 @@ class AdoptAPetPublisher(FTPPublisher):
         # Sizecurrent
         line.append(str(asm3.utils.cint(an.WEIGHT)))
         # SizeUOM
-        line.append("lbs")
+        line.append(uom)
         # AdoptionFee
         if an.FEE == 0:
             line.append("")
