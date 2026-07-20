@@ -1501,9 +1501,6 @@ def petrescue_all_desexed(dbo: Database) -> bool:
 def petrescue_all_microchips(dbo: Database) -> bool:
     return cboolean(dbo, "PetRescueAllMicrochips")
 
-def petrescue_sa_daconumber(dbo: Database) -> bool:
-    return cstring(dbo, "PetRescueSADACONumber")
-
 def petrescue_email(dbo: Database) -> str:
     return cstring(dbo, "PetRescueEmail")
 
@@ -1516,12 +1513,6 @@ def petrescue_phone_type(dbo: Database) -> str:
 def petrescue_token(dbo: Database) -> str:
     return cstring(dbo, "PetRescueToken")
 
-def petrescue_nsw_rehoming_org_id(dbo: Database) -> str:
-    return cstring(dbo, "PetRescueNSWRehomingOrgID")
-
-def petrescue_breederid(dbo: Database) -> str:
-    return cstring(dbo, "PetRescueBreederID")
-
 def petrescue_nswsupplynumber(dbo: Database) -> str:
     return cstring(dbo, "NSWSupplyNumber")
 
@@ -1530,9 +1521,6 @@ def petrescue_qldsupplynumber(dbo: Database) -> str:
 
 def petrescue_sasupplynumber(dbo: Database) -> str:
     return cstring(dbo, "SASupplyNumber")
-
-def petrescue_vic_sourcenumber(dbo: Database) -> str:
-    return cstring(dbo, "PetRescueVICSourceNumber")
 
 def petrescue_vicsupplynumber(dbo: Database) -> str:
     return cstring(dbo, "VICSupplyNumber")
