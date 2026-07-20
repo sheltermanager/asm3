@@ -34,7 +34,7 @@ import asm3.utils
 from asm3.i18n import _, now, add_seconds, format_currency, format_time, python2display, subtract_seconds
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
 from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, JQUERY_UI_CSS, MOUSETRAP_JS
-from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN, EMAIL_SERVER_IP_WHITELIST
+from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 from asm3.typehints import Database, PostedData, Results, ResultRow, ServiceResponse
 
 # Service methods that require authentication

@@ -1,4 +1,4 @@
-/*global $, google, asm, config, validate, L */
+/*global $, google, asm, config, log, validate, L */
 /*global mapping: true */
 
 "use strict";
@@ -27,7 +27,7 @@ const mapping = {
             } else {
                 mapping._ready(1);
             }
-            resolve(true)
+            resolve(true);
         });
         return rp;
     },

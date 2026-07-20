@@ -244,44 +244,6 @@ def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str
     sql = "%s WHERE %s ORDER BY ac.ID DESC" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def get_recent_incidents(dbo: Database):
-    """
-    Returns rows of animalcontrol incidents and animals reclaimed in the last 3 months plus any 
-    non-shelter animals created in last year
-    """
-    # TODO: Disabled due to breakage
-    return []
-    """
-    now = dbo.now()
-    sql = "SELECT ac.ID, t.IncidentName, ac.DispatchLatLong AS LatLong, ac.DispatchAddress AS Address, o.OwnerName, 'asm-incidentpin' AS PinStyle " \
-    "FROM animalcontrol ac " \
-    "LEFT JOIN owner o ON ac.OwnerID = o.ID " \
-    "LEFT JOIN incidenttype t ON ac.IncidentTypeID = t.ID " \
-    "WHERE ac.IncidentDateTime BETWEEN ? AND ? " \
-    f'UNION SELECT a.ID, {dbo.sql_concat("a.ShelterCode", "' '", "a.AnimalName")} AS IncidentName, o.LatLong, o.OwnerAddress AS Address, o.OwnerName, \'asm-reclaimedpin\' AS PinStyle ' \
-    "FROM animal a " \
-    "INNER JOIN adoption m ON a.ID = m.AnimalID AND m.MovementType = ? " \
-    "INNER JOIN owner o ON m.OwnerID = o.ID " \
-    "WHERE m.MovementDate BETWEEN ? AND ? " \
-    f'UNION SELECT a.ID, {dbo.sql_concat("a.ShelterCode", "' '", "a.AnimalName")} AS IncidentName, o.LatLong, o.OwnerAddress AS Address, o.OwnerName, \'asm-nonshelterpin\' AS PinStyle ' \
-    "FROM animal a " \
-    "INNER JOIN owner o ON a.OwnerID = o.ID " \
-    "WHERE a.NonShelterAnimal = 1 AND a.DateBroughtIn BETWEEN ? AND ? "
-    # "AND o.OwnerTown = ? "
-    return dbo.query(sql,
-        (
-            dbo.sql_date(dbo.today(offset=-90)),
-            now,
-            asm3.movement.RECLAIMED,
-            dbo.sql_date(dbo.today(offset=-90)),
-            now,
-            dbo.sql_date(dbo.today(offset=-365)),
-            now
-            # asm3.configuration.organisation_town(dbo)
-        )
-    )
-    """
-
 def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
     """
     Given the results of a find operation, goes through the results and removes 
@@ -485,11 +447,8 @@ def get_active_traploans(dbo: Database) -> Results:
         "ORDER BY ot.LoanDate DESC", [dbo.today()])
 
 def get_recent_incidents(dbo: Database, floor: datetime):
-    return dbo.query(
-        get_animalcontrol_query(dbo) +
-        "WHERE ac.CompletedDate >= ? ",
-        [floor]
-    )
+    """ Returns recent completed incidents later than floor """
+    return dbo.query(get_animalcontrol_query(dbo) + " WHERE ac.CompletedDate >= ? ", [floor])
 
 def get_returned_traploans(dbo: Database, offset: str = "m31") -> Results:
     """
