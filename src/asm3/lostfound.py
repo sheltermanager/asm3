@@ -672,28 +672,27 @@ def get_recent_animals(dbo: Database, offset: int = -30) -> Results:
     """
     fromdate = dbo.sql_date(dbo.today(offset=offset))
     return dbo.query(
-        "SELECT al.ID, 'lost' AS LostOrFound, DateLost, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost, 'asm-lostanimalpin' AS PinStyle FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? " \
-        "UNION SELECT af.ID, 'found' AS LostOrFound, DateFound AS LFDate, s.SpeciesName, s.ID AS SpeciesID, af.AreaLatLong, af.AreaFound AS Area, 'asm-foundanimalpin' AS PinStyle FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID WHERE af.DateFound >= ? ",
-        [fromdate, fromdate]
-    )
+        "SELECT al.ID, 'lost' AS LostOrFound, DateLost, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost, " \
+        "'asm-lostanimalpin' AS PinStyle FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? " \
+        "UNION SELECT af.ID, 'found' AS LostOrFound, DateFound AS LFDate, s.SpeciesName, s.ID AS SpeciesID, af.AreaLatLong, " \
+        "af.AreaFound AS Area, 'asm-foundanimalpin' AS PinStyle FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID " \
+        "WHERE af.DateFound >= ? ", [fromdate, fromdate])
 
 def get_recent_found_animals(dbo: Database, fromdate: datetime) -> Results:
     """
     Returns rows of unresolved found animal data that were found on or after floor
     """
-    return dbo.query(
-        "SELECT af.ID, DateFound, s.SpeciesName, s.ID AS SpeciesID, AreaLatLong, AreaFound FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID WHERE DateFound >= ? AND af.AreaLatLong != ''",
-        [fromdate]
-    )
+    return dbo.query("SELECT af.ID, DateFound, s.SpeciesName, s.ID AS SpeciesID, AreaLatLong, AreaFound " \
+        "FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID " \
+        "WHERE DateFound >= ? AND af.AreaLatLong != ''", [fromdate])
 
 def get_recent_lost_animals(dbo: Database, fromdate: datetime) -> Results:
     """
     Returns rows of unresolved lost animal data that were lost on or after floor
     """
-    return dbo.query(
-        "SELECT al.ID, DateLost, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? AND al.AreaLatLong != ''",
-        [fromdate]
-    )
+    return dbo.query("SELECT al.ID, DateLost, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost " \
+        "FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID " \
+        "WHERE al.DateLost >= ? AND al.AreaLatLong != ''", [fromdate])
 
 def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:
     """
