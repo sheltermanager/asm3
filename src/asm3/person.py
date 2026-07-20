@@ -230,6 +230,13 @@ def get_person_id_for_code(dbo: Database, personcode: str) -> ResultRow:
     pid = dbo.query_int("SELECT ID FROM owner WHERE OwnerCode = ?", [personcode])
     return pid
 
+def get_person_ids_for_email(dbo: Database, emailaddress: str) -> ResultRow:
+    """
+    Returns the person id(s) for the email address given
+    """
+    pids = dbo.query_list("SELECT ID FROM owner WHERE EmailAddress = ? OR EmailAddress2 = ?", [emailaddress, emailaddress])
+    return pids
+
 def get_person_name(dbo: Database, personid: int) -> str:
     """
     Returns the full person name for an id

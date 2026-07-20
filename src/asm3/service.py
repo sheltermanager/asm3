@@ -20,6 +20,7 @@ import asm3.event
 import asm3.financial
 import asm3.html
 import asm3.media
+import asm3.log
 import asm3.lostfound
 import asm3.movement
 import asm3.onlineform
@@ -27,6 +28,7 @@ import asm3.person
 import asm3.publishers.base
 import asm3.publishers.html
 import asm3.reports
+import asm3.smcom
 import asm3.users
 import asm3.utils
 from asm3.i18n import _, now, add_seconds, format_currency, format_time, python2display, subtract_seconds
