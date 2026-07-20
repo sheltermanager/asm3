@@ -225,7 +225,7 @@ $(function() {
                             if (controller.animal) { return true; }
                         }
                     },
-                    { field: "ACCEPTANCENUMBER", display: _("Litter"),
+                    { field: "LITTERID", display: _("Litter"),
                         hideif: function(row) {
                             if (controller.animal) { return true; }
                             return config.bool("DontShowLitterID");
@@ -550,6 +550,7 @@ $(function() {
                                 SHORTCODE: a.SHORTCODE,
                                 SHELTERCODE: a.SHELTERCODE,
                                 ACCEPTANCENUMBER: a.ACCEPTANCENUMBER,
+                                LITTERID: a.LITTERID,
                                 SPECIESNAME: a.SPECIESNAME,
                                 LOCATIONNAME: a.LOCATIONNAME,
                                 WEBSITEMEDIANAME: a.WEBSITEMEDIANAME,
@@ -669,7 +670,7 @@ $(function() {
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.COMPOSITEID)) {
                                 let d = $("#newdate").val(), t = $("#newtime").val();
-                                v.DATEGIVEN = d + (t ? (" " + t) : "");
+                                v.DATEGIVEN = format.date_iso(d + (t ? (" " + t) : ""));
                                 if (!v.GIVENBY) { v.GIVENBY = asm.user; }
                                 v.TREATMENTCOMMENTS = $("#treatmentcomments").val();
                             }

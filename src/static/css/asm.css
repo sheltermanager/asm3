@@ -831,6 +831,31 @@ select:disabled, input:disabled, textarea:disabled {
     font-weight: normal;
 }
 
+/** MAPS =========================== */
+.asm-map-legends {
+    position: absolute;
+    z-index: 2;
+    width: calc(100% - 200px);
+    left: 100px;
+}
+
+.asm-map-legend {
+    display: inline-block;
+    white-space: nowrap;
+	border-radius: 3px;
+    box-shadow: 0 1px 3px #ddd;
+    border: 1px solid #555;
+    padding: 8px;
+    margin: 1px;
+    font-weight: normal;
+    background-color: white;
+}
+
+.asm-map-legend .asm-icon {
+    position: relative;
+    top: -2px;
+}
+
 /** FORM LAYOUTS ============================= */
 .asm-row {
     display: block;

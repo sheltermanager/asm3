@@ -7,13 +7,14 @@ import asm3.cachedisk
 import asm3.configuration
 import asm3.dbfs
 import asm3.diary
+import asm3.geo
 import asm3.log
 import asm3.media
 import asm3.reports
 import asm3.utils
 import asm3.waitinglist
 from asm3.i18n import _, date_diff_days, now, subtract_years, python2display
-from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results
+from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results, datetime
 
 class LostFoundMatch:
     dbo = None
@@ -665,7 +666,35 @@ def get_found_person_name(dbo: Database, aid: int) -> str:
     """
     return dbo.query_string("SELECT o.OwnerName FROM animalfound a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = ?", [aid])
 
-def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str) -> None:
+def get_recent_animals(dbo: Database, offset: int = -30) -> Results:
+    """
+    Returns rows of unresolved lost/found animal data 
+    """
+    fromdate = dbo.sql_date(dbo.today(offset=offset))
+    return dbo.query(
+        "SELECT al.ID, 'lost' AS LostOrFound, DateLost, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost, " \
+        "'asm-lostanimalpin' AS PinStyle FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID WHERE al.DateLost >= ? " \
+        "UNION SELECT af.ID, 'found' AS LostOrFound, DateFound AS LFDate, s.SpeciesName, s.ID AS SpeciesID, af.AreaLatLong, " \
+        "af.AreaFound AS Area, 'asm-foundanimalpin' AS PinStyle FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID " \
+        "WHERE af.DateFound >= ? ", [fromdate, fromdate])
+
+def get_recent_found_animals(dbo: Database, fromdate: datetime) -> Results:
+    """
+    Returns rows of unresolved found animal data that were found on or after floor
+    """
+    return dbo.query("SELECT af.ID, DateFound, s.SpeciesName, s.ID AS SpeciesID, AreaLatLong, AreaFound " \
+        "FROM animalfound af INNER JOIN species s ON af.AnimalTypeID = s.ID " \
+        "WHERE DateFound >= ? AND af.AreaLatLong != ''", [fromdate])
+
+def get_recent_lost_animals(dbo: Database, fromdate: datetime) -> Results:
+    """
+    Returns rows of unresolved lost animal data that were lost on or after floor
+    """
+    return dbo.query("SELECT al.ID, DateLost, s.SpeciesName, s.ID AS SpeciesID, al.AreaLatLong, al.AreaLost " \
+        "FROM animallost al INNER JOIN species s ON al.AnimalTypeID = s.ID " \
+        "WHERE al.DateLost >= ? AND al.AreaLatLong != ''", [fromdate])
+
+def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:
     """
     Updates a lost animal record from the screen
     data: The webpy data object containing form parameters
@@ -695,6 +724,7 @@ def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str) 
         "DistFeat":         post["markings"],
         "AreaLost":         post["arealost"],
         "AreaPostcode":     post["areapostcode"],
+        "AreaLatLong":      post["arealatlong"],
         "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
@@ -702,7 +732,10 @@ def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str) 
     asm3.additional.save_values_for_link(dbo, post, username, lfid, "lostanimal")
     asm3.diary.update_link_info(dbo, username, asm3.diary.LOSTANIMAL, lfid)
 
-def insert_lostanimal_from_form(dbo: Database, post: PostedData, username: str) -> int:
+    # Look up a geocode for this animal
+    if geocode: update_geocode(dbo, lfid, "lost", post["arealatlong"], post["arealost"], post["areapostcode"])
+
+def insert_lostanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
     Inserts a new lost animal record from the screen
     data: The webpy data object containing form parameters
@@ -735,9 +768,12 @@ def insert_lostanimal_from_form(dbo: Database, post: PostedData, username: str) 
     # Save any additional field values given
     asm3.additional.save_values_for_link(dbo, post, username, nid, "lostanimal", True)
 
+    # Look up a geocode for this animal
+    if geocode: update_geocode(dbo, nid, "lost", post["arealatlong"], post["arealost"], post["areapostcode"])
+
     return nid
 
-def update_foundanimal_from_form(dbo: Database, post: PostedData, username: str) -> None:
+def update_foundanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:
     """
     Updates a found animal record from the screen
     post: The webpy data object containing form parameters
@@ -767,6 +803,7 @@ def update_foundanimal_from_form(dbo: Database, post: PostedData, username: str)
         "DistFeat":         post["markings"],
         "AreaFound":        post["areafound"],
         "AreaPostcode":     post["areapostcode"],
+        "AreaLatLong":      post["arealatlong"],
         "MicrochipNumber":  post["microchip"],
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
@@ -774,7 +811,10 @@ def update_foundanimal_from_form(dbo: Database, post: PostedData, username: str)
     asm3.additional.save_values_for_link(dbo, post, username, lfid, "foundanimal")
     asm3.diary.update_link_info(dbo, username, asm3.diary.FOUNDANIMAL, lfid)
 
-def insert_foundanimal_from_form(dbo: Database, post: PostedData, username: str) -> int:
+    # Look up a geocode for this animal
+    if geocode: update_geocode(dbo, lfid, "found", post["arealatlong"], post["areafound"], post["areapostcode"])
+
+def insert_foundanimal_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
     Inserts a new found animal record from the screen
     data: The webpy data object containing form parameters
@@ -806,6 +846,9 @@ def insert_foundanimal_from_form(dbo: Database, post: PostedData, username: str)
 
     # Save any additional field values given
     asm3.additional.save_values_for_link(dbo, post, username, nid, "foundanimal", True)
+
+    # Look up a geocode for this animal
+    if geocode: update_geocode(dbo, nid, "found", post["arealatlong"], post["areafound"], post["areapostcode"])
 
     return nid
 
@@ -883,3 +926,55 @@ def delete_foundanimal(dbo: Database, username: str, aid: int) -> None:
     dbo.delete("animalfound", aid, username)
     # asm3.dbfs.delete_path(dbo, "/foundanimal/%d" % aid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
+def update_geocode(dbo: Database, aid: int, mode: str, latlon: str = "", area: str = "", postcode: str = "") -> str:
+    """
+    Looks up the geocode for where this animal was lost/found using the area/postcode given.
+    If latlon is already set to a value, checks the address hash to see if it
+    matches and does not do the geocode if it does.
+    Returns the latlon.
+    """
+    if mode == "lost":
+        addresscolumn = "AreaLost"
+        tablename = "animallost"
+    else:
+        addresscolumn = "AreaFound"
+        tablename = "animalfound"
+    # If an address hasn't been specified, look it up from the aid given
+    if area == "":
+        row = dbo.first_row(dbo.query(
+            "SELECT ?, AreaPostcode FROM ? WHERE ID = ?", 
+            [addresscolumn, tablename, aid]
+        ))
+        if row is not None:
+            if mode == "lost":
+                area = row.AREALOST
+            else:
+                area = row.AREAFOUND
+            postcode = row.AREAPOSTCODE
+    # If we're allowing manual entry of latlon values and we have a non-empty
+    # value, do nothing so that changes to address don't overwrite it
+    # If someone has deleted the values, a latlon of ,,HASH is returned so
+    # we allow the geocode to be regenerated in that case.
+    if asm3.configuration.show_lat_long(dbo) and latlon is not None and latlon != "" and not latlon.startswith(",,"):
+        # Has the address changed? If so do nothing
+        if latlon.find(asm3.geo.address_hash(address=area, town="", county="", postcode=postcode, country="")) != -1:
+            return latlon
+    # If a latlon has been passed and it contains a hash of the address elements,
+    # then the address hasn't changed since the last geocode was done - do nothing
+    if latlon is not None and latlon != "":
+        if latlon.find(asm3.geo.address_hash(address=area, town="", county="", postcode=postcode, country="")) != -1:
+            return latlon
+    # Do the geocode
+    latlon = asm3.geo.get_lat_long(dbo, address=area, town="", county="", postcode=postcode)
+    update_latlong(dbo, aid, mode, latlon)
+    return latlon
+
+def update_latlong(dbo: Database, aid: int, mode: str, latlong: str) -> None:
+    """
+    Updates the latlong field.
+    """
+    if mode == "lost":
+        tablename = "animallost"
+    else:
+        tablename = "animalfound"
+    dbo.update(tablename, aid, { "AreaLatLong": latlong })

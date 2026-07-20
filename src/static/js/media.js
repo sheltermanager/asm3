@@ -319,6 +319,9 @@ $(function() {
             if (controller.name == "animal_media") {
                 h.push(edit_header.animal_edit_header(controller.animal, "media", controller.tabcounts));
             }
+            else if (controller.name == "event_media") {
+                h.push(edit_header.event_edit_header(controller.event, "media", controller.tabcounts));
+            }
             else if (controller.name == "person_media") {
                 h.push(edit_header.person_edit_header(controller.person, "media", controller.tabcounts));
             }
@@ -1262,6 +1265,7 @@ $(function() {
 
         routes: {
             "animal_media": function() { common.module_loadandstart("media", "animal_media?" + this.rawqs); },
+            "event_media": function() { common.module_loadandstart("media", "event_media?" + this.rawqs); },
             "foundanimal_media": function() { common.module_loadandstart("media", "foundanimal_media?" + this.rawqs); },
             "incident_media": function() { common.module_loadandstart("media", "incident_media?" + this.rawqs); },
             "lostanimal_media": function() { common.module_loadandstart("media", "lostanimal_media?" + this.rawqs); },

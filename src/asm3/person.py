@@ -23,6 +23,46 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
+def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> Results:
+    """
+    Batch deletes people from the bulk form.
+    Returns the number of successful deletions
+    plus the number skipped.
+    """
+    deleted = []
+    skippedids = []
+    skippeddict = {}
+    for personid in post.integer_list("people"):
+        try:
+            delete_person(dbo, username, personid, remove_movements=True)
+            deleted.append(personid)
+        except asm3.utils.ASMValidationError as error:
+            skippedids.append(personid)
+            skippeddict[personid] = error.msg
+            asm3.utils.web_context().status = "200 OK"
+    if len(skippedids):
+        skipped = dbo.query(
+            f"SELECT ID, OwnerName FROM owner WHERE ID IN ({dbo.sql_placeholders(skippedids)})",
+            skippedids
+        )
+    for row in skipped:
+        row.ERROR = skippeddict[row.ID]
+    return skipped
+  
+def get_owned_animals(dbo: Database, personid: int):
+    return dbo.query(
+        "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
+        "FROM adoption ad " \
+        "INNER JOIN animal an ON ad.AnimalID = an.ID " \
+        "WHERE ad.OwnerID = ? AND an.DeceasedDate IS NULL AND ad.ReturnDate IS NULL " \
+        "AND ad.MovementType IN (?, ?) " \
+        "UNION SELECT an.ID AS AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, 3 AS LinkType, an.CreatedDate AS SortDate " \
+        "FROM animal an " \
+        "WHERE an.DeceasedDate IS NULL AND an.NonShelterAnimal = 1 AND an.OwnerID = ? " \
+        "ORDER BY SortDate DESC",
+        (personid, asm3.movement.ADOPTION, asm3.movement.FOSTER, personid)
+    )
+
 def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting
@@ -78,7 +118,6 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     """
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = ?", [personid]) )
     if p is None: return None
-    p = embellish_latest_movement(dbo, p)
     p = asm3.users.embellish_vieweditroles(dbo, "ownerrole", "OwnerID", personid, p)
     return p
 
@@ -113,27 +152,6 @@ def embellish_adoption_warnings(dbo: Database, p: ResultRow) -> ResultRow:
     for r in dbo.query("SELECT AnimalID FROM adoption WHERE OwnerID=? AND MovementType=0 AND ReservationCancelledDate Is Null", [p.ID]):
         reserves.append(str(r.ANIMALID))
     p.RESERVEDANIMALIDS = ",".join(reserves)
-    return p
-
-def embellish_latest_movement(dbo: Database, p: ResultRow) -> ResultRow:
-    """ Adds the latest movement info to a person record p and returns it.
-        The query already does this and 99% of the time it will work fine and makes these columns available
-        in v_person for the query builder. BUT if we have a data import where the movements were created out of
-        order, MAX(ID) will fail and return the wrong movement. """
-    if p is None: return p
-    lm = dbo.first_row(dbo.query("SELECT m.ID AS LatestMoveAnimalID, a.ID AS LatestMoveAnimalID, a.AnimalName AS LatestMoveAnimalName, " \
-        "a.ShelterCode AS LatestMoveShelterCode, a.DeceasedDate AS LatestMoveDeceasedDate, mt.MovementType AS LatestMoveTypeName " \
-        "FROM adoption m "
-        "INNER JOIN animal a ON m.AnimalID = a.ID " \
-        "INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
-        "WHERE m.MovementType > 0 AND m.OwnerID = ? AND (ReturnDate Is Null OR ReturnDate > ?)" \
-        "ORDER BY m.MovementDate DESC", [p.ID, dbo.today()]))
-    if lm is not None:
-        p.LATESTMOVEANIMALID = lm.LATESTMOVEANIMALID
-        p.LATESTMOVEANIMALNAME = lm.LATESTMOVEANIMALNAME
-        p.LATESTMOVESHELTERCODE = lm.LATESTMOVESHELTERCODE
-        p.LATESTMOVEDECEASEDDATE = lm.LATESTMOVEDECEASEDDATE
-        p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
 def get_homechecked(dbo: Database, personid: int) -> Results:
@@ -211,6 +229,13 @@ def get_person_id_for_code(dbo: Database, personcode: str) -> ResultRow:
     """
     pid = dbo.query_int("SELECT ID FROM owner WHERE OwnerCode = ?", [personcode])
     return pid
+
+def get_person_ids_for_email(dbo: Database, emailaddress: str) -> ResultRow:
+    """
+    Returns the person id(s) for the email address given
+    """
+    pids = dbo.query_list("SELECT ID FROM owner WHERE EmailAddress = ? OR EmailAddress2 = ?", [emailaddress, emailaddress])
+    return pids
 
 def get_person_name(dbo: Database, personid: int) -> str:
     """
@@ -1699,7 +1724,9 @@ def update_geocode(dbo: Database, personid: int, latlon: str = "", address: str 
     # If someone has deleted the values, a latlon of ,,HASH is returned so
     # we allow the geocode to be regenerated in that case.
     if asm3.configuration.show_lat_long(dbo) and latlon is not None and latlon != "" and not latlon.startswith(",,"):
-        return latlon
+        # Has the address changed? If so do nothing
+        if latlon.find(asm3.geo.address_hash(address, town, county, postcode, country)) != -1:
+            return latlon
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":
@@ -2266,3 +2293,38 @@ def update_anonymise_personal_data(dbo: Database, years: int = None, username: s
     asm3.al.debug("anonymised %s expired person records outside of retention period (%s years)." % (len(people), retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % len(people)
 
+def update_people_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Batch updates multiple person records from the bulk form.
+    Returns number of people affected.
+    """
+    if len(post.integer_list("people")) == 0: return 0
+    pud = []
+
+    if post["addflag"] != "":
+        people = dbo.query("SELECT ID, AdditionalFlags FROM owner WHERE ID IN (%s)" % post["people"])
+        for p in people:
+            asm3.person.update_add_flag(dbo, username, p.ID, post["addflag"])
+
+    if post["removeflag"] != "":
+        people = dbo.query("SELECT ID, AdditionalFlags FROM owner WHERE ID IN (%s)" % post["people"])
+        for p in people:
+            asm3.person.update_remove_flag(dbo, username, p.ID, post["removeflag"])
+    
+    if post["diaryfor"] != "" and post.date("diarydate") is not None and post["diarysubject"] != "":
+        for personid in post.integer_list("people"):
+            asm3.diary.insert_diary(dbo, username, asm3.diary.PERSON, personid, post.datetime("diarydate", "diarytime"), 
+                post["diaryfor"], post["diarysubject"], post["diarynotes"], colourschemeid=post.integer("diarycolourscheme"), diaryenddate=post.datetime("diaryenddate", "diaryendtime"))
+    if post.integer("logtype") != -1:
+        for personid in post.integer_list("people"):
+            asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
+    if post.boolean("updateadditional"):
+        for personid in post.integer_list("people"):
+            asm3.additional.save_values_for_link(dbo, post, username, personid, "person", setdefaults=False, removeallforlink=False, skipblanks=True)
+    
+    # Record the user as making the last change to this record and create audit records for the changes
+    dbo.execute("UPDATE owner SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["people"]))
+    if len(pud) > 0:
+        for personid in post.integer_list("people"):
+            asm3.audit.edit(dbo, username, "person", personid, "", ", ".join(pud))
+    return len(post.integer_list("people"))

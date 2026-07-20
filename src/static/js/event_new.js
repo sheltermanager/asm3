@@ -19,8 +19,9 @@ $(function() {
                 tableform.fields_render([
                     { post_field: "eventname", label: _("Event Name"), type: "text", maxlength: 50 },
                     { post_field: "description", label: _("Description"), type: "richtextarea", height: "100px", width: "195px" },
-                    { post_field: "startdate", label: _("Start Date"), type: "date" },
-                    { post_field: "enddate", label: _("End Date"), type: "date" },
+                    { post_field: "link", label: _("URL"), type: "text" },
+                    { post_field: "start", label: _("Start Date"), type: "datetime" },
+                    { post_field: "end", label: _("End Date"), type: "datetime" },
                     { post_field: "location", label: _("Location"), type: "person", persontype: "organization" },
                     { post_field: "address", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },
                     { post_field: "town", label: _("City"), type: "text", maxlength: 100 },
@@ -98,7 +99,8 @@ $(function() {
 
             // CONFIG
             $("#countryrow").toggle( !config.bool("HideCountry") );
-            $("#statecounty").toggle( !config.bool("HideTownCounty") );
+            $("#townrow").toggle( !config.bool("HideTown") );
+            $("#countyrow").toggle( !config.bool("HideCounty") );
 
         },
 

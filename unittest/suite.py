@@ -113,7 +113,7 @@ fullsuite = [
 ]
 
 # Running a single suite of tests
-# fullsuite = [ lt(test_financial) ]
+# fullsuite = [ lt(test_service) ]
 
 if __name__ == "__main__":
     emailerrors = False

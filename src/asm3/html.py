@@ -540,10 +540,12 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( asm3.users.ADD_LOST_ANIMAL, "", "taglostfound", "lostanimal_new", "asm-icon-animal-lost-add", _("Add a lost animal", l) ),
             ( asm3.users.ADD_FOUND_ANIMAL, "", "taglostfound", "foundanimal_new", "asm-icon-animal-found-add", _("Add a found animal", l) ),
             ( asm3.users.MATCH_LOST_FOUND, "", "taglostfound", "lostfound_match", "asm-icon-match", _("Match lost and found animals", l) ),
+            ( asm3.users.MATCH_LOST_FOUND, "", "taglostfound", "map_view?mk=lf", "asm-icon-map", _("Map of recent lost and found animals", l) ),
             ( "", "", "", "--cat", "asm-icon-person", _("People", l) ),
             ( asm3.users.VIEW_PERSON, "alt+shift+p", "", "person_find", "asm-icon-person-find", _("Find person", l) ),
             ( asm3.users.ADD_PERSON, "", "", "person_new", "asm-icon-person-add", _("Add a new person", l) ),
             ( asm3.users.ADD_LOG, "", "", "log_new?mode=person", "asm-icon-log", _("Add a log entry", l) ),
+            ( asm3.users.CHANGE_PERSON, "", "", "person_bulk", "asm-icon-blank", _("Bulk change people", l) ),
             ( asm3.users.VIEW_PERSON, "", "", "person_lookingfor", "asm-icon-animal-find", _("Person looking for report", l) ),
             ( asm3.users.VIEW_STAFF_ROTA, "", "tagrota", "staff_rota", "asm-icon-rota", _("Staff rota", l) ),
             ("", "", "tagevent", "--cat", "asm-icon-event", _("Events", l)),
@@ -553,7 +555,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( "", "", "taganimalcontrolheader", "--cat", "asm-icon-call", _("Animal Control", l) ),
             ( asm3.users.ADD_INCIDENT, "alt+shift+i", "taganimalcontrol", "incident_new", "asm-icon-blank", _("Report a new incident", l) ),
             ( asm3.users.VIEW_INCIDENT, "", "taganimalcontrol", "incident_find", "asm-icon-blank", _("Find incident", l) ),
-            ( asm3.users.VIEW_INCIDENT, "", "taganimalcontrol", "incident_map", "asm-icon-map", _("Map of active incidents", l) ),
+            ( asm3.users.VIEW_INCIDENT, "", "taganimalcontrol", "map_view?mk=a", "asm-icon-map", _("Map view", l) ),
             ( asm3.users.VIEW_TRAPLOAN, "", "tagtraploan", "traploan?filter=active", "asm-icon-traploan", _("Equipment loans", l) ),
             ( asm3.users.VIEW_LICENCE, "", "taganimalcontrol", "licence?offset=i31", "asm-icon-licence", _("Licensing", l) ),
             ( asm3.users.ADD_LICENCE, "", "taganimalcontrol", "licence_renewal", "asm-icon-blank", _("Renew license", l) ),
@@ -842,7 +844,29 @@ def json_eventfindcolumns(dbo: Database) -> ColumnList:
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.event_search_columns(dbo))
     return cols
-    
+
+def json_eventanimalcolumns(dbo: Database) -> ColumnList:
+    l = dbo.locale
+    cols = [
+        ( "ArrivalDate", _("Arrived", l) ),
+        ( "IMAGE", _("Image", l) ),
+        ( "ANIMAL", _("Animal", l) ),
+        ( "DISPLAYLOCATION", _("Location", l) ),
+        ( "AGEGROUP", _("Age Group", l) ),
+        ( "SPECIESNAME", _("Species", l) ),
+        ( "BASECOLOURNAME", _("Color", l) ),
+        ( "LITTERID", _("Litter", l) ),
+        ( "COMMENTS", _("Comments", l) ),
+        ( "LASTFOSTERER", _("Last Fosterer", l) ),
+        ( "ADOPTED", _("Adopted", l) ),
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "eventanimal")
+    for f in fd:
+        cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.event_animal_view_columns(dbo))
+    return cols
+
 def json_incidentfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 

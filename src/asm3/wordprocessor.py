@@ -1953,6 +1953,7 @@ def event_tags(dbo: Database, e: ResultRow) -> Tags:
         "EVENTSTARTDATE":        python2display(l, e["STARTDATETIME"]),
         "EVENTENDDATE":          python2display(l, e["ENDDATETIME"]),
         "EVENTNAME":            e["EVENTNAME"],
+        "EVENTLINK":            e["EVENTLINK"],
         "EVENTDESCRIPTION":     e["EVENTDESCRIPTION"],
         "EVENTRECORDVERSION":   e["RECORDVERSION"],
         "EVENTCREATEDBY":       e["CREATEDBY"],

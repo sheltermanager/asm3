@@ -3,6 +3,7 @@ import asm3.al
 import asm3.animal
 import asm3.animalcontrol
 import asm3.configuration
+import asm3.cachedisk
 import asm3.geo
 import asm3.i18n
 import asm3.html
@@ -78,6 +79,9 @@ FIELDTYPE_MAP = {
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
 
+RENDERER_LEGACY = 0
+RENDERER_BOOTSTRAP = 1
+
 AP_NO = 0
 AP_ATTACHANIMAL = 1
 AP_CREATEANIMAL = 2
@@ -145,8 +149,9 @@ AUTOCOMPLETE_MAP = {
     "emailaddress":     "email"
 }
 
-RENDERER_LEGACY = 0
-RENDERER_BOOTSTRAP = 1
+def check_submission_limit(dbo: Database, formid: int) -> int:
+    """ Returns how many days must elapse between form submissions with the same email address. If the value is 0 then there is no limit. """
+    return dbo.query_int("SELECT EmailSubmissionLimitDays FROM onlineform FORM WHERE ID = ?", [formid])
 
 def get_collationid(dbo: Database) -> int:
     """ Returns the next collation ID value for online forms. """
@@ -492,7 +497,6 @@ def _get_onlineform_html_legacy(dbo: Database, formid: int, completedocument: bo
     h.append('<input type="hidden" name="method" value="online_form_post" />')
     h.append('<input type="hidden" name="account" value="%s" />' % dbo.alias)
     h.append('<input type="hidden" name="redirect" value="%s" />' % form.REDIRECTURLAFTERPOST)
-    h.append('<input type="hidden" name="retainfor" value="%s" />' % form.RETAINFOR)
     h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
     h.append('<input type="hidden" name="mediaflags" value="%s" />' % form.SETMEDIAFLAGS)
     h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
@@ -1000,9 +1004,9 @@ def get_onlineformincoming_animalperson(dbo: Database, collationid: int) -> Tupl
         if f.startswith("reserveanimalname"): animalname = r.VALUE
     return (animalname, firstname, lastname)
 
-def get_onlineformincoming_retainfor(dbo: Database, collationid: int) -> int:
-    """ Returns the retain for period for a collation id """
-    return dbo.query_int("SELECT Value FROM onlineformincoming WHERE CollationID = ? AND FieldName = 'retainfor' %s" % dbo.sql_limit(1), [collationid])
+def get_onlineformincoming_retainfor(dbo: Database, formname: str) -> int:
+    """ Returns the retain for period for a form name """
+    return dbo.query_int("SELECT RetainFor FROM onlineform WHERE Name = ?", [formname])
 
 def get_animal_id_from_field(dbo: Database, name: str) -> int:
     """ Used for ADOPTABLE/SHELTER animal fields, gets the ID from the value """
@@ -1034,6 +1038,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
         "RetainFor":            post.integer("retainfor"),
+        "EmailSubmissionLimitDays": post.integer("emailsubmissionlimitdays"),
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
@@ -1058,6 +1063,7 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
         "RetainFor":            post.integer("retainfor"),
+        "EmailSubmissionLimitDays": post.integer("emailsubmissionlimitdays"),
         "SetOwnerFlags":        post["flags"],
         "SetMediaFlags":        post["mediaflags"],
         "EmailAddress":         post["email"],
@@ -1192,10 +1198,12 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     firstname = ""
     lastname = ""
     postcode = ""
+    emailaddress = ""
     for k, v in post.data.items():
         if k.startswith("firstname") or k.startswith("forenames"): firstname = v
         if k.startswith("lastname") or k.startswith("surname"): lastname = v
         if k.startswith("zipcode") or k.startswith("postcode"): postcode = v
+        if k.startswith("emailaddress"): emailaddress = v
 
     # Check our spambot checkbox/honey trap
     if asm3.configuration.onlineform_spam_honeytrap(dbo):
@@ -1273,7 +1281,25 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     spamreason = f"http URL found in field '{k}'"
                     spam = True
                     break
-
+    
+    if asm3.utils.is_valid_email_address(emailaddress):
+        # Check if a limit has been set for days between submissions for this form
+        formdata = dbo.first_row(
+            dbo.query("SELECT ID, EmailSubmissionLimitDays FROM onlineform WHERE Name = ?", 
+            [post["formname"]]
+            )
+        )
+        formid = formdata.ID
+        key = f"formemail_{str(formid)}_{emailaddress}"
+        lastreceived = asm3.cachedisk.get(key, dbo.name())
+        if lastreceived and (dbo.now() - lastreceived).days < formdata.EMAILSUBMISSIONLIMITDAYS:
+            raise asm3.utils.ASMValidationError(
+                asm3.i18n._("Form recently submitted by {0}, please wait {1} days between submissions.").format(emailaddress, formdata.EMAILSUBMISSIONLIMITDAYS)
+            )
+        else:
+            ttl = 86400 * formdata.EMAILSUBMISSIONLIMITDAYS
+            asm3.cachedisk.put(key, dbo.name(), dbo.now(), ttl)
+    
     collationid = get_collationid(dbo)
 
     l = dbo.locale
@@ -1683,6 +1709,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
         formname = fo.FORMNAME
         mediaflags = fo.MEDIAFLAGS
     animalname, firstname, lastname = get_onlineformincoming_animalperson(dbo, collationid)
+    rawformname = formname
     if linktype == asm3.media.ANIMAL and firstname != "":
         formname = "%s - %s %s" % (formname, firstname, lastname)
     elif linktype == asm3.media.PERSON and animalname != "":
@@ -1708,7 +1735,7 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
         asm3.al.warn("failed creating processed field, cid=%s, value=%s: %s" % (collationid, pval, err), 
             "onlineform.attach_form", dbo)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    retainfor = get_onlineformincoming_retainfor(dbo, collationid)
+    retainfor = get_onlineformincoming_retainfor(dbo, rawformname)
     mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor, mediaflags=mediaflags)
     if asm3.configuration.auto_hash_processed_forms(dbo):
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
