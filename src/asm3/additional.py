@@ -48,11 +48,11 @@ WAITINGLIST_REMOVAL = 15
 ANIMAL_IN = "0, 2, 3, 4, 5, 6"
 CITATION_IN = "19"
 EVENT_IN = "21"
+EVENT_ANIMAL_IN = "32"
 FOUNDANIMAL_IN = "11, 12"
 INCIDENT_IN = "16, 17, 18, 20"
 LOSTANIMAL_IN = "9, 10"
 MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30'
-EVENT_ANIMAL_IN = "32"
 PERSON_IN = "1, 7, 8, 31"
 WAITINGLIST_IN = "13, 14, 15"
 
@@ -97,6 +97,8 @@ def clause_for_linktype(linktype: str) -> str:
         inclause = INCIDENT_IN
     elif linktype == "event":
         inclause = EVENT_IN
+    elif linktype == "eventanimal":
+        inclause = EVENT_ANIMAL_IN
     elif linktype == "lostanimal":
         inclause = LOSTANIMAL_IN
     elif linktype == "foundanimal":
@@ -105,8 +107,6 @@ def clause_for_linktype(linktype: str) -> str:
         inclause = WAITINGLIST_IN
     elif linktype == "movement":
         inclause = MOVEMENT_IN
-    elif linktype == "eventanimal":
-        inclause = EVENT_ANIMAL_IN
     elif linktype == "citation":
         inclause = CITATION_IN
     return inclause
