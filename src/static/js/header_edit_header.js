@@ -32,7 +32,11 @@ edit_header = {
         let check_display_icon = function(key, iconname) {
             if (key == "animal") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
-                return html.icon(iconname);
+                let icon = html.icon(iconname);
+                if (counts[key.toUpperCase() + "DUE"]) {
+                    icon += " " + html.icon("warning");
+                }
+                return icon;
             }
             return html.icon("blank");
         };
@@ -583,7 +587,11 @@ edit_header = {
         const check_display_icon = function(key, iconname) {
             if (key == "person") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
-                return html.icon(iconname);
+                let icon = html.icon(iconname);
+                if (counts[key.toUpperCase() + "DUE"]) {
+                    icon += " " + html.icon("warning");
+                }
+                return icon;
             }
             return html.icon("blank");
         };

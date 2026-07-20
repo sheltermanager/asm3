@@ -303,12 +303,15 @@ def get_satellite_counts(dbo: Database, personid: int) -> Results:
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
+        "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID AND od.DateDue >= CURRENT_DATE AND od.Date IS NULL) AS donationsdue, " \
         "(SELECT COUNT(*) FROM animalcost ac WHERE ac.OwnerID = o.ID) AS costs, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
+        "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID AND oc.FineDueDate >= CURRENT_DATE AND oc.FinePaidDate IS NULL) AS citationdue, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.OwnerID = o.ID) AS licence, " \
         "(SELECT COUNT(*) FROM ownerrota r WHERE r.OwnerID = o.ID) AS rota, " \
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
+        "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID AND ot.ReturnDueDate >= CURRENT_DATE AND ot.ReturnDate IS NULL) AS traploandue, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
         "((SELECT COUNT(*) FROM animal WHERE AdoptionCoordinatorID = o.ID OR BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID OR NeuteredByVetID = o.ID) + " \
         "(SELECT COUNT(*) FROM animal INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID WHERE animal.OwnerID = o.ID AND animal.OwnerID <> adoption.OwnerID) + " \
