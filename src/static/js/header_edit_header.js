@@ -274,7 +274,7 @@ edit_header = {
             if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "boarding") && a.HASACTIVEBOARDING == 0 && a.ARCHIVED == 0) { return; } // don't show boarding tab for non-owned shelter animals
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
-            if ((key == "condition") && config.bool("DisableConditions")) { return; }
+            if ((key == "conditions") && config.bool("DisableConditions")) { return; }
             if ((key == "licence") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
             if ((key == "movements") && a.NONSHELTERANIMAL == 1) { return; }
