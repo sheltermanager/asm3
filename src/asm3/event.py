@@ -77,6 +77,7 @@ def get_animals_by_event(dbo: Database, eventid: int, queryfilter: str = "all") 
     rows = dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
     for ae in rows:
         ae["AGEGROUP"] = asm3.animal.calc_age_group(dbo, ae["ANIMALID"])
+    asm3.additional.append_to_results(dbo, rows, "eventanimal")
     return rows
 
 def get_events_by_date(dbo: Database, date: datetime) -> Results:
@@ -240,6 +241,7 @@ def insert_event_animal(dbo: Database, username: str, post: PostedData) -> int:
             "EventID":              eventid,
             "AnimalID":             animalid,
         }, username)
+        asm3.additional.save_values_for_link(dbo, post, username, eventanimalid, "eventanimal", True)
     return eventanimalid
 
 def update_event_animal(dbo: Database, username: str, post: PostedData) -> None:
@@ -252,6 +254,7 @@ def update_event_animal(dbo: Database, username: str, post: PostedData) -> None:
     if "arrivaldate" in post and "arrivaltime" in post: kvp["ArrivalDate"] = post.datetime("arrivaldate", "arrivaltime")
     if "comments" in post: kvp["Comments"] = post["comments"]
     dbo.update("eventanimal", eventanimalid, kvp, username)
+    asm3.additional.save_values_for_link(dbo, post, username, eventanimalid, "eventanimal")
 
 def update_event_animal_arrived(dbo: Database, username: str, eaid: int) -> None:
     sql = "SELECT id FROM eventanimal WHERE id = ? AND ArrivalDate IS NULL"
@@ -263,6 +266,7 @@ def delete_event_animal(dbo: Database, username: str, id: int) -> None:
     """
     Deletes an eventanimal record
     """
+    dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (id, asm3.additional.EVENT_ANIMAL_IN))
     dbo.delete("eventanimal", id, username)
 
 def end_active_foster(dbo: Database, username: str, eventanimalid: int) -> None:

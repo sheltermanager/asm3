@@ -4076,11 +4076,16 @@ class event_animals(JSONEndpoint):
         queryfilter = o.post["filter"]
         ea = asm3.event.get_animals_by_event(dbo, event_id, queryfilter)
         asm3.al.debug("opened event animals %s" % event_id, "main.event_animals", dbo)
+        add = None
+        if len(ea) > 0:
+            add = asm3.additional.get_additional_fields_ids(dbo, ea, "eventanimal")
         return {
             "rows": ea,
             "name": "event_animals",
             "event": e,
-            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
+            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event"),
+            "eventanimaladditional": asm3.additional.get_field_definitions(dbo, "eventanimal"),
+            "eventanimaladditionalvalues": add
         }
 
     def post_create(self, o):
@@ -5259,6 +5264,9 @@ class maint_db_update(ASMEndpoint):
         self.content_type("text/plain")
         self.cache_control(0)
         dbo = o.dbo
+        if dbo is None:
+            dbo = asm3.db.get_database(o.post["smaccount"])
+            dbo.connection = dbo.connect()
         # Run any outstanding database updates
         update_ver, err_db = asm3.dbupdate.perform_updates(dbo)
         err_view = asm3.dbupdate.install_db_views(dbo)
@@ -6654,6 +6662,7 @@ class options(JSONEndpoint):
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "eventfindcolumns": asm3.html.json_eventfindcolumns(dbo),
+            "eventanimalcolumns": asm3.html.json_eventanimalcolumns(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "entrytypes": asm3.lookups.get_entry_types(dbo),
             "foundanimalfindcolumns": asm3.html.json_foundanimalfindcolumns(dbo),
