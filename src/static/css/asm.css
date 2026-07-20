@@ -416,7 +416,7 @@ select:disabled, input:disabled, textarea:disabled {
     white-space: nowrap;
 }
 
-.asm-flag-banned, .asm-flag-deceased, .asm-flag-incident, .asm-flag-investigation, .asm-flag-notavailableforadoption {
+.asm-flag-banned, .asm-flag-deceased, .asm-flag-incident, .asm-flag-investigation, .asm-flag-notforadoption {
     color: red;
 }
 
