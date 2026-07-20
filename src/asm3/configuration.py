@@ -396,6 +396,7 @@ DEFAULTS = {
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",
     "ReservesOverdueDays": "7",
+    "RestrictLicenseRenewal": "No",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
     "ReturnFostersOnTransfer": "Yes",
@@ -1718,6 +1719,9 @@ def rescuegroups_password(dbo: Database) -> str:
 
 def resize_images_spec(dbo: Database) -> str:
     return cstring(dbo, "ResizeImagesSpec")
+
+def restrict_license_renewal(dbo: Database) -> bool:
+    return cboolean(dbo, "RestrictLicenseRenewal", DEFAULTS["RestrictLicenseRenewal"] == "Yes")
 
 def retailer_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")

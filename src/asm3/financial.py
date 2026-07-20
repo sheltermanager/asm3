@@ -1723,14 +1723,22 @@ def update_licence_renewed(dbo: Database, username: str, typeid: int, personid: 
     """
     Finds all licences that match the given triplet of typeid, personid and animalid 
     and marks all but the one with the latest issuedate as renewed.
+    If the RestrictLicenseRenewal option is enabled, typeid is ignored.
     Returns the number of affected rows.
     If the animalid or personid is 0 does nothing. By doing this, records that are 
     not linked to animal allow their renewed flag to be edited.
     """
     if animalid == 0 or personid == 0: return 0
-    rows = dbo.query("SELECT ID, AnimalID, OwnerID, IssueDate, Renewed FROM ownerlicence " \
-        "WHERE LicenceTypeID=? AND OwnerID=? AND AnimalID=? ORDER BY IssueDate DESC", \
+
+    if asm3.configuration.restrict_license_renewal(dbo):
+        rows = dbo.query("SELECT ID, AnimalID, OwnerID, IssueDate, Renewed FROM ownerlicence " \
+        "WHERE LicenceTypeID=? AND OwnerID=? AND AnimalID=? ORDER BY IssueDate DESC",
         [ typeid, personid, animalid ])
+    else:
+        rows = dbo.query("SELECT ID, AnimalID, OwnerID, IssueDate, Renewed FROM ownerlicence " \
+        "WHERE OwnerID=? AND AnimalID=? ORDER BY IssueDate DESC",
+        [ personid, animalid ])
+    
     if len(rows) == 0: return 0
     for i, r in enumerate(rows):
         renewed = 1
