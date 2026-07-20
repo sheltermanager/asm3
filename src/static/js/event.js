@@ -8,7 +8,7 @@ $(function(){
 
         render: function() {
             return [
-                edit_header.event_edit_header(controller.event, "event", []),
+                edit_header.event_edit_header(controller.event, "event", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this event") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this event") },
@@ -23,8 +23,9 @@ $(function(){
         render_details: function(){
             return [
                 { post_field: "eventname", json_field: "EVENTNAME", type: "text", label: _("Event Name") },
-                { post_field: "startdate", json_field: "STARTDATETIME", type: "date", label: _("Start Date") },
-                { post_field: "enddate", json_field: "ENDDATETIME", type: "date", label: _("End Date") },
+                { post_field: "link", json_field: "EVENTLINK", label: _("URL"), type: "text" },
+                { post_field: "start", json_field: "STARTDATETIME", type: "datetime", label: _("Start Date") },
+                { post_field: "end", json_field: "ENDDATETIME", type: "datetime", label: _("End Date") },
                 { post_field: "location", json_field: "EVENTOWNERID", label: _("Location"), type: "person", persontype: "organization" },
                 { post_field: "address", json_field: "EVENTADDRESS", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },
                 { post_field: "town", json_field: "EVENTTOWN", label: _("City"), type: "text", maxlength: 100 },

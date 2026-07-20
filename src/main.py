@@ -4060,6 +4060,7 @@ class event(JSONEndpoint):
         asm3.al.debug("opened event %s" % "recname", "main.event", dbo)
         return {
             "event": e,
+            "tabcounts": asm3.event.get_satellite_counts(dbo, e["ID"])[0],
             "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
         }
 
@@ -4088,6 +4089,7 @@ class event_animals(JSONEndpoint):
             add = asm3.additional.get_additional_fields_ids(dbo, ea, "eventanimal")
         return {
             "rows": ea,
+            "tabcounts": asm3.event.get_satellite_counts(dbo, e["ID"])[0],
             "name": "event_animals",
             "event": e,
             "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event"),
@@ -4145,6 +4147,36 @@ class event_find_results(JSONEndpoint):
         return {
             "additional": add,
             "rows": results
+        }
+
+class event_media(JSONEndpoint):
+    url = "event_media"
+    js_module = "media"
+    get_permissions = ( asm3.users.VIEW_EVENT, asm3.users.VIEW_MEDIA )
+
+    def controller(self, o):
+        dbo = o.dbo
+        e = asm3.event.get_event(dbo, o.post.integer("id"))
+        if e is None: self.notfound()
+        m = asm3.media.get_media(dbo, asm3.media.EVENT, o.post.integer("id"))
+        asm3.al.debug("got %d media" % len(m), "main.event_media", dbo)
+        return {
+            "media": m,
+            "event": e,
+            "tabcounts": asm3.event.get_satellite_counts(dbo, e["ID"])[0],
+            "showpreferred": True,
+            "canwatermark": False,
+            "documentrepository": asm3.dbfs.get_document_repository(o.dbo),
+            "linkid": o.post.integer("id"),
+            "linktypeid": asm3.media.EVENT,
+            "logtypes": asm3.lookups.get_log_types(dbo),
+            "name": self.url,
+            "flags": asm3.lookups.get_media_flags(dbo),
+            "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, asm3.media.get_resize_images_spec(dbo), ""),
+            "videoenabled": asm3.sitedefs.VIDEO_ENABLED,
+            "videosizelimit": asm3.sitedefs.VIDEO_SIZE_LIMIT,
+            "templates": asm3.template.get_document_templates(dbo, "email"),
+            "sigtype": ELECTRONIC_SIGNATURES
         }
 
 class event_new(JSONEndpoint):
