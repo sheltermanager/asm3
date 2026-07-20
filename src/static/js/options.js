@@ -183,6 +183,7 @@ $(function() {
                         { id: "country", post_field: "OrganisationCountry", label: _("Country"), type: "text" },
                         { id: "telephone", post_field: "OrganisationTelephone", label: _("Telephone"), type: "phone" },
                         { id: "telephone2", post_field: "OrganisationTelephone2", label: _("Telephone"), type: "phone" },
+                        { id: "website", post_field: "OrganisationWebsite", label: _("Website"), type: "text" },
                         { id: "timezone", post_field: "Timezone", label: _("Server clock adjustment"), type: "select",
                             options: [
                                 "-12|-12:00",
