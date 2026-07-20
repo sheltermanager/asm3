@@ -138,7 +138,7 @@ smcomreports:
 
 test: version
 	@echo "[test] ========================="
-	cd src && python3 main.py 5001
+	cd src && python3 main.py 5000
 
 scripts/unittestdb/base.db:
 	# Updates the base.db sqlite database used for running unit tests against. 

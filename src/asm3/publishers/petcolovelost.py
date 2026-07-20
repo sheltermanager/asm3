@@ -126,7 +126,6 @@ def purgeImages(auth: Dict, pcllaid: str):
 
 def purgeRecordedPublished(publisher: AbstractPublisher):
     """ Remove all animal records that are marked as published to Petco on ASM """
-    recordedpublished = getRecordedPublishedAnimals(publisher.dbo)
     for publishedanimal in getRecordedPublishedAnimals(publisher.dbo):
         publisher.markAnimalUnpublished(publishedanimal["ID"])
     for an in publisher.dbo.query(getAnimalDataQuery(publisher.dbo) + f"WHERE a.ExtraIDs LIKE '%{IDTYPE_PETCOLOVELOST}%'"):
