@@ -843,7 +843,29 @@ def json_eventfindcolumns(dbo: Database) -> ColumnList:
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.event_search_columns(dbo))
     return cols
-    
+
+def json_eventanimalcolumns(dbo: Database) -> ColumnList:
+    l = dbo.locale
+    cols = [
+        ( "ArrivalDate", _("Arrived", l) ),
+        ( "IMAGE", _("Image", l) ),
+        ( "ANIMAL", _("Animal", l) ),
+        ( "DISPLAYLOCATION", _("Location", l) ),
+        ( "AGEGROUP", _("Age Group", l) ),
+        ( "SPECIESNAME", _("Species", l) ),
+        ( "BASECOLOURNAME", _("Color", l) ),
+        ( "LITTERID", _("Litter", l) ),
+        ( "COMMENTS", _("Comments", l) ),
+        ( "LASTFOSTERER", _("Last Fosterer", l) ),
+        ( "ADOPTED", _("Adopted", l) ),
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "eventanimal")
+    for f in fd:
+        cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.event_animal_view_columns(dbo))
+    return cols
+
 def json_incidentfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 

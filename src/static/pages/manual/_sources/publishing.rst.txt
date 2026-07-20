@@ -564,8 +564,8 @@ ASM can register animals with the AVID PETtrac database for shelters in the
 United Kingdom.
 
 When you publish to PETtrac, ASM finds all animals with a PETtrac microchip
-(they are 15 digits and start with 977) that have been adopted and sends their
-information and new owner info to PETtrac to update their records. ASM tracks
+(they are 15 digits and start with 977 or 953) that have been adopted and sends
+their information and new owner info to PETtrac to update their records. ASM tracks
 the date PETtrac was last updated, so if the animal is returned and adopted
 again, another update will be done automatically.
 

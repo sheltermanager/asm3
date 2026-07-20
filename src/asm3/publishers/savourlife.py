@@ -387,6 +387,16 @@ class SavourLifePublisher(AbstractPublisher):
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
+        # If this animal is a courtesy listing, use the owner address if available.
+        # The one linked to animal.OwnerID should work for either non-shelter or
+        # those with active movements.
+        if an.ISCOURTESY == 1:
+            fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM owner " \
+                "WHERE ID=?", [ an.OWNERID ]))
+            if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
+            if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
+            if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
+
         # MicrochipDetails should be "No" if we don't have one, 
         # the actual number if all_microchips is set or we're in VIC or NSW (2XXX or 3XXX postcode)
         # or "Yes" for others.

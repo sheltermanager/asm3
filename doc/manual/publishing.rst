@@ -299,6 +299,29 @@ ASM can send data to Maddie's Fund/MPA - an application to provide information
 and interactive help to fosterers, adopters and other caregivers. Basic data on
 the animal and contact information for the adopter/fosterer is sent.
 
+petcolove.org
+-------------
+
+ASM can send data to petcolove.org, a website that
+publishes lost and found animals. On shelter, non cruelty case animals 
+will be added to their database.
+
+.. note:: Where a pickup address is not provided, the shelter address will be used as the area found.
+
+You will need to register an email address with petcolove.org and make a note of 
+the password that they provide.
+
+Before you are able to publish you must generate a petcolove.org Shelter ID. 
+The button next to the Shelter ID field in :menuselection:`Publishing --> Set Publishing Options` 
+will attempt to obtain a Shelter ID from petcolove.org using the Shelter Details 
+defined in :menuselection:`Setting --> Options`.
+
+If successful, the Shelter ID field will populate. If not, the feedback from 
+petcolove.org will be shown so that you can make adjustments and retry. Without 
+a valid contact number, website and address a Shelter ID will not be assigned.
+
+petcolove.org works with shelters in the US and Mexico.
+
 petfbi.org
 -------------------
 
@@ -564,8 +587,8 @@ ASM can register animals with the AVID PETtrac database for shelters in the
 United Kingdom.
 
 When you publish to PETtrac, ASM finds all animals with a PETtrac microchip
-(they are 15 digits and start with 977) that have been adopted and sends their
-information and new owner info to PETtrac to update their records. ASM tracks
+(they are 15 digits and start with 977 or 953) that have been adopted and sends
+their information and new owner info to PETtrac to update their records. ASM tracks
 the date PETtrac was last updated, so if the animal is returned and adopted
 again, another update will be done automatically.
 

@@ -559,6 +559,11 @@ const common = {
         return isclient;
     },
 
+    /** Replace the URL in the address bar, but bypass the path/route mechanism */
+    route_push: function(path) {
+        window.history.pushState({}, '', path);
+    },
+
     /** Reload the current route */
     route_reload: function(forceserver) {
 
@@ -1544,11 +1549,14 @@ const format = {
         if (d instanceof Date) {
             d = format.date_iso(d);
         }
-        if (t.length <= 8) {
-            t += ":00";
+        if (t == "") {
+            t = "00:00:00";
         }
-        if (t.length <= 5) {
+        else if (t.length < 5) {
             t += ":00:00";
+        }
+        else if (t.length < 8) {
+            t += ":00";
         }
         return d.substring(0, d.indexOf("T")+1) + t;
     },

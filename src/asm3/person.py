@@ -48,6 +48,20 @@ def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> R
     for row in skipped:
         row.ERROR = skippeddict[row.ID]
     return skipped
+  
+def get_owned_animals(dbo: Database, personid: int):
+    return dbo.query(
+        "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
+        "FROM adoption ad " \
+        "INNER JOIN animal an ON ad.AnimalID = an.ID " \
+        "WHERE ad.OwnerID = ? AND an.DeceasedDate IS NULL AND ad.ReturnDate IS NULL " \
+        "AND ad.MovementType IN (?, ?) " \
+        "UNION SELECT an.ID AS AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, 3 AS LinkType, an.CreatedDate AS SortDate " \
+        "FROM animal an " \
+        "WHERE an.DeceasedDate IS NULL AND an.NonShelterAnimal = 1 AND an.OwnerID = ? " \
+        "ORDER BY SortDate DESC",
+        (personid, asm3.movement.ADOPTION, asm3.movement.FOSTER, personid)
+    )
 
 def get_person_query(dbo: Database) -> str:
     """
@@ -104,7 +118,6 @@ def get_person(dbo: Database, personid: int) -> ResultRow:
     """
     p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = ?", [personid]) )
     if p is None: return None
-    p = embellish_latest_movement(dbo, p)
     p = asm3.users.embellish_vieweditroles(dbo, "ownerrole", "OwnerID", personid, p)
     return p
 
@@ -139,27 +152,6 @@ def embellish_adoption_warnings(dbo: Database, p: ResultRow) -> ResultRow:
     for r in dbo.query("SELECT AnimalID FROM adoption WHERE OwnerID=? AND MovementType=0 AND ReservationCancelledDate Is Null", [p.ID]):
         reserves.append(str(r.ANIMALID))
     p.RESERVEDANIMALIDS = ",".join(reserves)
-    return p
-
-def embellish_latest_movement(dbo: Database, p: ResultRow) -> ResultRow:
-    """ Adds the latest movement info to a person record p and returns it.
-        The query already does this and 99% of the time it will work fine and makes these columns available
-        in v_person for the query builder. BUT if we have a data import where the movements were created out of
-        order, MAX(ID) will fail and return the wrong movement. """
-    if p is None: return p
-    lm = dbo.first_row(dbo.query("SELECT m.ID AS LatestMoveAnimalID, a.ID AS LatestMoveAnimalID, a.AnimalName AS LatestMoveAnimalName, " \
-        "a.ShelterCode AS LatestMoveShelterCode, a.DeceasedDate AS LatestMoveDeceasedDate, mt.MovementType AS LatestMoveTypeName " \
-        "FROM adoption m "
-        "INNER JOIN animal a ON m.AnimalID = a.ID " \
-        "INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
-        "WHERE m.MovementType > 0 AND m.OwnerID = ? AND (ReturnDate Is Null OR ReturnDate > ?)" \
-        "ORDER BY m.MovementDate DESC", [p.ID, dbo.today()]))
-    if lm is not None:
-        p.LATESTMOVEANIMALID = lm.LATESTMOVEANIMALID
-        p.LATESTMOVEANIMALNAME = lm.LATESTMOVEANIMALNAME
-        p.LATESTMOVESHELTERCODE = lm.LATESTMOVESHELTERCODE
-        p.LATESTMOVEDECEASEDDATE = lm.LATESTMOVEDECEASEDDATE
-        p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
 def get_homechecked(dbo: Database, personid: int) -> Results:
@@ -679,6 +671,8 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
     }
+    if classfilter not in classfilter: raise asm3.utils.ASMError("invalid classfilter")
+    if typefilter not in typefilters: raise asm3.utils.ASMError("invalid typefilter")
     cf = classfilters[classfilter]
     dt = typefilters[typefilter]
     if not includeStaff: cf += " AND o.IsStaff = 0"
@@ -2063,7 +2057,7 @@ def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0
             h.append( td(a.ISHOUSETRAINEDNAME))
             if not asm3.configuration.dont_show_declawed(dbo): 
                 h.append( td(a.DECLAWEDNAME))
-            h.append( td(a.ANIMALCOMMENTS + " " + a.HIDDENANIMALDETAILS))
+            h.append( td(a.HIDDENANIMALDETAILS + " " + asm3.utils.truncate(a.ANIMALCOMMENTS, 50)) )
             h.append( "</tr>")
 
             # Add an entry to ownerlookingfor for other reports

@@ -1,0 +1,96 @@
+Orphan Kitten Club Grant
+###
+Figures
+###
+34801/Any rev01
+###
+Figures needed to complete the Orphan Kitten Club gran application
+###
+en
+###
+$VAR year NUMBER Enter the year, eg: 2025$
+
+SELECT
+
+'$@year$' AS year,
+
+ (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND DateOfBirth > $SQL INTERVAL DateBroughtIn,-,6,months$
+ AND NonShelterAnimal = 0) AS KittensIntake,
+ 
+  (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,6,months$
+ AND NonShelterAnimal = 0) AS CatsIntake,
+ 
+  (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND DateOfBirth > $SQL INTERVAL DateBroughtIn,-,8,weeks$
+ AND NonShelterAnimal = 0) AS Under8WeekIntake,
+ 
+  (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND DateOfBirth > $SQL INTERVAL DateBroughtIn,-,8,weeks$
+ AND EntryTypeID = 5  
+ AND NonShelterAnimal = 0) AS BornInCare,
+ 
+   (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND DateOfBirth > $SQL INTERVAL DateBroughtIn,-,4,weeks$
+ AND NonShelterAnimal = 0) AS Under4WeekIntake,
+ 
+    (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND DateOfBirth < $SQL INTERVAL DateBroughtIn,-,4,weeks$
+ AND DateOfBirth > $SQL INTERVAL DateBroughtIn,-,8,weeks$    
+ AND NonShelterAnimal = 0) AS Between4And8week,
+ 
+   (SELECT COUNT(*) FROM animal
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND DateOfBirth > $SQL INTERVAL DateBroughtIn,-,8,weeks$
+ AND EntryTypeID = 5  
+ AND NonShelterAnimal = 0) AS BornInCare,
+ 
+ (SELECT COUNT(*) FROM animal
+INNER JOIN deathreason ON deathreason.ID = animal.PTSReasonID
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND DateOfBirth > $SQL INTERVAL DeceasedDate,-,8,weeks$ 
+AND DiedOffShelter = 0 AND IsDOA = 0 AND PutToSleep = 1 AND NonShelterAnimal = 0) AS Euthanised,
+
+ (SELECT COUNT(*) FROM animal
+INNER JOIN deathreason ON deathreason.ID = animal.PTSReasonID
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND DateOfBirth > $SQL INTERVAL DeceasedDate,-,8,weeks$ 
+AND DiedOffShelter = 0 AND IsDOA = 0 AND PutToSleep = 0 AND NonShelterAnimal = 0) AS DiedInCare
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h3>Animal Statistics</h3>
+<p></p>
+<p>Please provide your intake numbers for kittens (less than 6 months) and cats (more than 6 months) for the previous year:  Kittens: <b>$KittensIntake</b> Cats: <b>$CatsIntake</b> </p>
+<p></p>
+<p>Please provide your total intake numbers for kittens aged 0 - 8 weeks for previous year: <b>$Under8WeekIntake</b></p>
+<p></p>
+<p>How many of the 0-8 week old kittens were born in care during the previous year: <b>$BornInCare</b></p>
+<p></p>
+<p>Please provide your intake numbers for kittens aged 0 - 4 weeks for previous year: <b>$Under4WeekIntake</b></p>
+<p></p>
+<p>Please provide your intake numbers for kittens aged 4 - 8 weeks for previous year: <b>$Between4And8week</b></p> 
+<p></p>
+<p>How many kittens  0 - 8 weeks old were euthanized in the previous year: <b>$Euthanised</b></p>
+<p></p>
+<p>How many kittens  0 - 8 weeks old died in care in the previous year: <b>$DiedInCare</b></p>
+BODY$$
+
+$$FOOTER
+FOOTER$$

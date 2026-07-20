@@ -1279,7 +1279,7 @@ Voucher Keys
 
 Voucher keys are only available for documents generated for a single voucher
 under the voucher tab or the voucher book. Keys for the person the voucher
-has been issued to are also present and if the licence is linked to an animal,
+has been issued to are also present and if the voucher is linked to an animal,
 animal keys are also present.
 
 VoucherTypeName

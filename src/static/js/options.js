@@ -183,6 +183,7 @@ $(function() {
                         { id: "country", post_field: "OrganisationCountry", label: _("Country"), type: "text" },
                         { id: "telephone", post_field: "OrganisationTelephone", label: _("Telephone"), type: "phone" },
                         { id: "telephone2", post_field: "OrganisationTelephone2", label: _("Telephone"), type: "phone" },
+                        { id: "website", post_field: "OrganisationWebsite", label: _("Website"), type: "text" },
                         { id: "timezone", post_field: "Timezone", label: _("Server clock adjustment"), type: "select",
                             options: [
                                 "-12|-12:00",
@@ -714,7 +715,8 @@ $(function() {
                         { id: "findlostanimalcols", post_field: "LostAnimalSearchColumns", label: _("Find lost animal columns"), type: "selectmulti", options: this.two_pair_options(controller.lostanimalfindcolumns) }, 
                         { id: "findincidentcols", post_field: "IncidentSearchColumns", label: _("Find incident columns"), type: "selectmulti", options: this.two_pair_options(controller.incidentfindcolumns) }, 
                         { id: "findpersoncols", post_field: "OwnerSearchColumns", label: _("Find person columns"), type: "selectmulti", options: this.two_pair_options(controller.personfindcolumns) }, 
-                        { id: "findeventcols", post_field: "EventSearchColumns", label: _("Find event columns"), type: "selectmulti", options: this.two_pair_options(controller.eventfindcolumns) }, 
+                        { id: "findeventcols", post_field: "EventSearchColumns", label: _("Find event columns"), type: "selectmulti", options: this.two_pair_options(controller.eventfindcolumns) },
+                        { id: "eventanimalcols", post_field: "EventAnimalViewColumns", label: _("Event animal columns"), type: "selectmulti", options: this.two_pair_options(controller.eventanimalcolumns) }, 
                         { id: "advancedfindanimal", post_field: "AdvancedFindAnimal", label: _("Default to advanced find animal screen"), type: "check", fullrow: true }, 
                         { id: "advancedfindanimalos", post_field: "AdvancedFindAnimalOnShelter", label: _("Advanced find animal screen defaults to on shelter"), type: "check", fullrow: true }, 
                         { id: "advancedfindperson", post_field: "AdvancedFindOwner", label: _("Default to advanced find person screen"), type: "check", fullrow: true }, 
@@ -804,7 +806,8 @@ $(function() {
                         
                         { id: "alerttlover", post_field: "AlertTLOver", label: _("Show an alert when items of equipment are overdue for return"), type: "check", fullrow: true },
                         
-                        { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true }
+                        { id: "alertpublish", post_field: "AlertPublish", label: _("Show an alert when a publisher has generated an alert"), type: "check", fullrow: true },
+                        { id: "alertweightloss", post_field: "AlertWeightLoss", label: _("Show an alert when an animal has lost weight on 2 consecutive weighings"), type: "check", fullrow: true }
                         
                         
                     ]}, 
@@ -898,6 +901,9 @@ $(function() {
                     ]}, 
                     { id: "tab-onlineforms", title: _("Online Forms"), fields: [
                         { id: "autoremoveforms", post_field: "AutoRemoveIncomingFormsDays", label: _("Remove incoming forms after"), type: "number", min: 1, max: 56, prelabel: "hcb", halfsize: true, xmarkup: _(" days.") }, 
+                        { id: "defaultonlineformlogtype", post_field: "OnlineFormDefaultLogType", label: _("If no logtype can be determined, use this type"), type: "select", 
+                            options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"), prelabel: "hcb"
+                        }, 
                         { id: "deleteonprocess", post_field: "OnlineFormDeleteOnProcess", label: _("Remove forms immediately when I process them"), type: "check", fullrow: true }, 
                         { id: "removeprocessedforms", post_field: "rc:DontRemoveProcessedForms", label: _("Remove processed forms when I leave the incoming forms screens"), type: "check", fullrow: true }, 
                         { id: "hashprocessedforms", post_field: "AutoHashProcessedForms", label: _("When storing processed forms as media, apply tamper proofing and make them read only"), type: "check", fullrow: true }, 
@@ -973,7 +979,8 @@ $(function() {
                         { id: "disabletransport", post_field: "DisableTransport", label: _("Remove the transport functionality from menus and screens"), type: "check" }, 
                         { id: "disablediaryenddatetime", post_field: "DisableDiaryEndDatetime", label: _("Remove the end date and time fields when displaying and editing diary notes"), type: "check" }, 
                         { type: "raw", markup: '<p class="asm-header">' + _("People") + '</p>' }, 
-                        { id: "towncounty", post_field: "HideTownCounty", label: _("Remove the city/state fields from person details"), type: "check" }, 
+                        { id: "town", post_field: "HideTown", label: _("Remove the city field from person/incident details"), type: "check" },
+                        { id: "county", post_field: "HideCounty", label: _("Remove the state field from person/incident details"), type: "check" },
                         { id: "hcountry", post_field: "HideCountry", label: _("Remove the country field from person details"), type: "check" }, 
                         { id: "hcouhpdobntry", post_field: "HidePersonDateOfBirth", label: _("Remove the date of birth field from person details"), type: "check" }, 
                         { id: "hidehwphone", post_field: "HideHomeWorkPhone", label: _("Remove the home and work telephone number fields from person details"), type: "check" }, 
