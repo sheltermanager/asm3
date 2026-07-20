@@ -327,11 +327,7 @@ class PetRescuePublisher(AbstractPublisher):
             "adoption_fee":             asm3.i18n.format_currency_no_symbol(self.locale, an.FEE),
             "species_name":             an.SPECIESNAME,
             "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
-            "breeder_id":               breederid, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
-            "daco_number":              daconumber, # mandatory for SA cats and dogs
             "pic_number":               vicpicnumber, # mandatory for Victoria livestock (horses etc)
-            "source_number":            vicsourcenumber, # mandatory for Victoria cats and dogs
-            "rehoming_organisation_id": nswrehomingorganisationid, # required for NSW, this OR microchip or breeder_id is mandatory
             "bred_in_care_of_group":    bred_in_care_of_group, 
             "mix":                      self.isCrossBreed(an), # true | false
             "date_of_birth":            asm3.i18n.format_date(an.DATEOFBIRTH, "%Y-%m-%d"), # iso
