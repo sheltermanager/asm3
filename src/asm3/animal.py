@@ -7282,3 +7282,72 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
     }
     return asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(data, l), username)
 
+def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str):
+    # Delete existing animalfiguresonshelter rows with this animalid
+    dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
+
+    # Get animals movement history
+    date = get_date_brought_in(dbo, animalid).replace(hour=0, minute=0, second=0, microsecond=0)
+    movements = dbo.query("SELECT MovementDate, ReturnDate, MovementType FROM adoption WHERE AnimalID = ? ORDER BY MovementDate", (animalid,))
+
+    # Get deceased date if died on shelter
+    deceaseddate = dbo.query_date("SELECT DeceasedDate FROM animal WHERE ID = ? AND DiedOffShelter = 0", [animalid])
+
+    outboundmovements = []
+    inboundmovements = []
+    for movement in movements:
+        if asm3.movement.is_exit_movement(dbo, movement.MOVEMENTTYPE):
+            outboundmovements.append(movement.MOVEMENTDATE)
+            if movement.RETURNDATE:
+                inboundmovements.append(movement.RETURNDATE)
+    
+    onshelterdates = []
+    onshelter = True
+    while date <= dbo.today():
+        if onshelter:
+            onshelterdates.append(date)
+            if date == deceaseddate:
+                onshelter = False
+                break
+            nextoutboundmovement = None
+            if outboundmovements:
+                nextoutboundmovement = outboundmovements[0]
+                if date == nextoutboundmovement:
+                    onshelter = False
+                    outboundmovements.pop(0)
+                    if not inboundmovements:
+                        break
+        else:
+            nextinboundmovement = None
+            if inboundmovements:
+                nextinboundmovement = inboundmovements[0]
+                if date == nextinboundmovement:
+                    onshelterdates.append(date)
+                    onshelter = True
+                    inboundmovements.pop(0)
+        date = asm3.i18n.add_days(date, 1)
+    
+    month = 0
+    year = 0
+    figures = {}
+    for osdate in onshelterdates:
+        if osdate.month != month or osdate.year != year:
+            figureskey = f"{osdate.month}-{osdate.year}"
+            figures[figureskey] = 0
+            month = osdate.month
+            year = osdate.year
+        figures[figureskey] += 1
+
+    for f in figures.items():
+        month = int(f[0].split("-")[0])
+        year = int(f[0].split("-")[1])
+        values = {
+            "AnimalID": animalid,
+            "MonthMidPoint": datetime(year, month, 15),
+            "Month": month,
+            "Year": year,
+            "DaysOnShelter": f[1]
+        }
+        dbo.insert("animalfiguresonshelter", values, username, False)
+    
+    return figures

@@ -1159,3 +1159,19 @@ def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool
         for pid in post.integer_list("personids"):
             asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, logtype, emailto, subject, body)
     return rv
+
+def is_exit_movement(dbo: Database, movemementtypeid: int) -> bool:    
+    if movemementtypeid in (0, 9, 10): # None, Reservation, Cancelled Reservation
+        return False
+    if movemementtypeid in (2, 12): # Foster, Permanent Foster
+        if asm3.configuration.foster_on_shelter(dbo):
+            return True
+        else:
+            return False
+    if movemementtypeid == 8: # Retailer
+        if asm3.configuration.retailer_on_shelter(dbo):
+            return True
+        else:
+            return False
+    return True
+    
