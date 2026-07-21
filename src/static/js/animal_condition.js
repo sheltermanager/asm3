@@ -88,6 +88,7 @@ $(function() {
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
                         row.CONDITIONNAME = common.get_field(controller.conditions, row.CONDITIONID, "CONDITIONNAME");
+                        row.DESCRIPTION = common.get_field(controller.conditions, row.CONDITIONID, "DESCRIPTION");
                         controller.rows.push(row);
                         tableform.table_update(table);
                         tableform.dialog_close();
