@@ -27,7 +27,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    if (log.is_system_message(row)) { return; } // Don't allow editing of system log messages
+                    if (!row.CANEDIT) { return; }
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -42,10 +42,34 @@ $(function() {
                     }
                 },
                 complete: function(row) {
-                    return log.is_system_message(row);
+                    return row.CANEDIT != 1;
+                },
+                overdue: function(row) {
+                    return row.CANDELETE != 1;
+                },
+                change: function(rows) {
+                    let deleteenabled = false;
+                    if (rows.length) {
+                        deleteenabled = true;
+                    }
+                    $.each(rows, function(i, v) {
+                        if (!v.CANDELETE) {
+                            deleteenabled = false;
+                            return false;
+                        }
+                    });
+                    $("#button-delete").button("option", "disabled", deleteenabled == false);
                 },
                 columns: [
-                    { field: "LOGTYPENAME", display: _("Type") },
+                    { field: "LOGTYPENAME", display: _("Type"),
+                        formatter: function(row, v) {
+                            if (row.ID > 0) {
+                                return tableform.table_render_edit_link(row.ID, v);
+                            } else {
+                                return v;
+                            }
+                        }
+                    },
                     { field: "LASTCHANGEDBY", display: _("By") },
                     { field: "DATE", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "COMMENTS", display: _("Note"), formatter: tableform.format_comments }
@@ -66,6 +90,8 @@ $(function() {
                                     let response = await tableform.fields_post(dialog.fields, formdata , "log");
                                     let row = {};
                                     row.ID = response;
+                                    row.CANEDIT = 1;
+                                    row.CANDELETE = 1;
                                     tableform.fields_update_row(dialog.fields, row);
                                     log.set_extra_fields(row);
                                     controller.rows.push(row);
@@ -98,18 +124,6 @@ $(function() {
             this.dialog = dialog;
             this.buttons = buttons;
             this.table = table;
-        },
-
-        /** Returns true if this is a system log message */
-        is_system_message: function(row) {
-            let prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0", "AD0"], rv = false;
-            $.each(prefixes, function(i, p) {
-                if (row.COMMENTS.indexOf(p) == 0 && row.COMMENTS.indexOf(":") == 4) {
-                    rv = true;
-                    return false;
-                }
-            });
-            return rv;
         },
 
         set_extra_fields: function(row) {

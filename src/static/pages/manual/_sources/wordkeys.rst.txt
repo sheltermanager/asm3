@@ -537,8 +537,12 @@ AnimalIsVaccinated
     due before today that have not been given
 MedicalType[type]Due
     The date that the animal's next medical treatment of type is due. type is one from the fixed dropdown list of medical types, eg: MedicalTypeParasite:FleaTreatmentDue
+MedicalType[type]DueName
+    The name of the animal's next medical treatment of type. type is one from the fixed dropdown list of medical types, eg: MedicalTypeParasite:FleaTreatmentDue
 MedicalType[type]Given
     The date that the animal's last treatment of type was given
+MedicalType[type]GivenName
+    The name of the animal's last treatment of type
 OutcomeDate
     If the animal has left the care of the shelter, the date it left
 OutcomeType

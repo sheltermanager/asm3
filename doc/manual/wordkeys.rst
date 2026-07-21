@@ -282,6 +282,8 @@ BroughtInByCounty
     (BroughtInByState for US users) 
 BroughtInByPostcode 
     (BroughtInByZipcode for US users) 
+BroughtInByCountry 
+    The country of the person who brought the animal in
 BroughtInByHomePhone
     The home phone number of the person who brought the animal in
 BroughtInByWorkPhone 
@@ -306,6 +308,8 @@ OriginalOwnerCounty (OriginalOwnerState for US users)
     The county of the animal's original owner 
 OriginalOwnerPostcode (OriginalOwnerZipcode for US users)
     The original owner's post/zipcode 
+OriginalOwnerCountry
+    The country of the animal's original owner 
 OriginalOwnerHomePhone
     The original owner's home phone number 
 OriginalOwnerWorkPhone
@@ -336,6 +340,8 @@ CurrentOwnerCounty
     (CurrentOwnerState for US users) 
 CurrentOwnerPostcode 
     (CurrentOwnerZipcode for US users) 
+CurrentOwnerCountry 
+    Current owner's country
 CurrentOwnerHomePhone 
     Current owner's home phone number
 CurrentOwnerWorkPhone 
@@ -537,8 +543,12 @@ AnimalIsVaccinated
     due before today that have not been given
 MedicalType[type]Due
     The date that the animal's next medical treatment of type is due. type is one from the fixed dropdown list of medical types, eg: MedicalTypeParasite:FleaTreatmentDue
+MedicalType[type]DueName
+    The name of the animal's next medical treatment of type. type is one from the fixed dropdown list of medical types, eg: MedicalTypeParasite:FleaTreatmentDue
 MedicalType[type]Given
     The date that the animal's last treatment of type was given
+MedicalType[type]GivenName
+    The name of the animal's last treatment of type
 OutcomeDate
     If the animal has left the care of the shelter, the date it left
 OutcomeType

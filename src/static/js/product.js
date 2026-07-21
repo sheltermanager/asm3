@@ -345,6 +345,7 @@ $(function() {
                 movementquantity: quantity,
                 unitratio: activeproduct.UNITRATIO,
                 costprice: activeproduct.COSTPRICE,
+                retailprice: activeproduct.RETAILPRICE,
                 movementunit: $("#movementunit option").last().text(),
                 movementfrom: fromid,
                 movementfromtype: fromtype,

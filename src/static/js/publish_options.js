@@ -87,6 +87,80 @@ $(function() {
                         { id: "tppublishersig", post_field: "TPPublisherSig", label: _("Add this text to all animal descriptions"), type: "textarea", doublesize: true, 
                             callout: _("When publishing to third party services, add this extra text to the bottom of all animal descriptions") }
                     ]}, 
+
+                    { id: "tab-apikeys", title: _("API Keys"), fields: [
+                        { id: "apikey1", post_field: "APIKey1", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods1", post_field: "APIMethods1", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey2", post_field: "APIKey2", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods2", post_field: "APIMethods2", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey3", post_field: "APIKey3", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods3", post_field: "APIMethods3", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey4", post_field: "APIKey4", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods4", post_field: "APIMethods4", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey5", post_field: "APIKey5", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods5", post_field: "APIMethods5", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey6", post_field: "APIKey6", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods6", post_field: "APIMethods6", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey7", post_field: "APIKey7", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods7", post_field: "APIMethods7", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey8", post_field: "APIKey8", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods8", post_field: "APIMethods8", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey9", post_field: "APIKey9", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods9", post_field: "APIMethods9", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottomborder"
+                        },
+                        { id: "apikey10", post_field: "APIKey10", label: _("Key"), type: "text", doublesize: true,
+                            xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
+                            '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
+                        },
+                        { id: "apimethods10", post_field: "APIMethods10", label: _("Methods"), type: "selectmulti",
+                            options: controller.authmethods, colclasses: "bottompadding"
+                        },
+                    ]}, 
+                        
                     { id: "tab-htmlftp", title: _("HTML/FTP Publisher"), classes: "hashtmlftp", fields: [
                         { id: "enabledhtml", label: _("Enabled"), type: "check", fullrow: true, classes: 'enablecheck' }, 
                         { id: "generatejavascript", post_field: "generatejavascriptdb", label: _("Generate a javascript database for the search page"), type: "select", 
@@ -520,6 +594,17 @@ $(function() {
                     common.route_reload(true); // Needs full reload to get config.js to update
                 }); 
             });
+
+            $(".asm-apikeygenbutton").button({ icons: { primary: "ui-icon-arrowrefresh-1-s" }, text: false })
+                .click(function() {
+                    $(this).parent().find("input").val( common.generate_uuid() );
+                });
+
+            $(".asm-copyapikeybutton").button({ icons: { primary: " ui-icon-clipboard" }, text: false })
+                .click(async function() {
+                    common.copy_to_clipboard($(this).parent().find("input").val());
+                    header.show_info(_("Successfully copied to the clipboard."));
+                });
 
             // Enable services that are only present in certain locales
             $(".localeau").hide();

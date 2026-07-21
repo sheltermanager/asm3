@@ -1564,7 +1564,8 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
     
     ids = dbo.query(q)
 
-    keys = [ "ANIMALID", "ANIMALCODE", "ANIMALLITTER", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
+    keys = [
+        "ANIMALID", "ANIMALCODE", "ANIMALLITTER", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALDESCRIPTION", "ANIMALWARNING", 
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", 
@@ -1584,11 +1585,19 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         "MOVEMENTTYPE", "MOVEMENTDATE", 
         "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONADDRESS", "PERSONCITY",
         "PERSONSTATE", "PERSONZIPCODE", "PERSONFOSTERER", "PERSONHOMEPHONE", "PERSONWORKPHONE", "PERSONCELLPHONE", "PERSONEMAIL",
-        "PERSONCOMMENTS", "PERSONWARNING", 
+        "PERSONCOMMENTS", "PERSONWARNING"
+    ]
+
+    afd = asm3.additional.get_field_definitions(dbo)
+    for af in afd:
+        keys.append(f"ANIMALADDITIONAL{af.FIELDNAME.upper()}")
+
+    keys += [
         "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS",
         "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
         "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
-        "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS", "MEDICALTYPE" ]
+        "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS", "MEDICALTYPE"
+    ]
     
     def tocsv(row: Dict) -> str:
         r = []
@@ -1616,6 +1625,8 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
 
         row = {}
         a = asm3.animal.get_animal(dbo, aid.ID)
+        aa = asm3.additional.get_additional_fields(dbo, aid.ID)
+
         if a is None: continue
 
         asm3.asynctask.increment_progress_value(dbo)
@@ -1708,6 +1719,8 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
             # dummy, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
             # row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
             row["ANIMALIMAGE"] = "%s?account=%s&method=animal_image&animalid=%s" % (SERVICE_URL, dbo.name(), a["ID"])
+        for aar in aa:
+            row["ANIMALADDITIONAL" + aar.FIELDNAME.upper()] = nn(aar.VALUE)
         out.write(tocsv(row))
 
         if includemedia == "photos":
@@ -1831,7 +1844,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
     
     pids = dbo.query(q)
 
-    keys = [ "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
+    keys = [
+        "PERSONCODE", "PERSONDATEOFBIRTH", "PERSONIDNUMBER",
         "PERSONDATEOFBIRTH2", "PERSONIDNUMBER2",
         "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME",
         "PERSONTITLE2", "PERSONINITIALS2", "PERSONFIRSTNAME2", "PERSONLASTNAME2",
@@ -1847,7 +1861,14 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2", 
         "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHGOODWITHELDERLY", 
         "PERSONMATCHHOUSETRAINED", "PERSONMATCHCRATETRAINED", "PERSONMATCHGOODTRAVELLER", "PERSONMATCHGOODONLEAD", "PERSONMATCHENERGYLEVEL", "PERSONMATCHDECLAWED",
-        "PERSONMATCHCOMMENTSCONTAIN",
+        "PERSONMATCHCOMMENTSCONTAIN"
+    ]
+
+    afd = asm3.additional.get_field_definitions(dbo, "person")
+    for af in afd:
+        keys.append(f"PERSONADDITIONAL{af.FIELDNAME.upper()}")
+
+    keys += [
         "PERSONIMAGE", "PERSONPDFNAME", "PERSONPDFDATA", "PERSONHTMLNAME", "PERSONHTMLDATA",
         "LOGDATE", "LOGTIME", "LOGTYPE", "LOGCOMMENTS",
         "ANIMALCODE", "ANIMALNAME", 
@@ -1890,6 +1911,7 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row = {}
         #p = asm3.person.get_person(dbo, pid["ID"])
         p = dbo.query("SELECT * FROM owner WHERE ID = %s" % (pid["ID"]) )
+        pa = asm3.additional.get_additional_fields(dbo, pid.ID, "person")
         if p is None: continue
         p = p[0]
         asm3.asynctask.increment_progress_value(dbo)
@@ -1946,6 +1968,8 @@ def csvexport_people(dbo: Database, dataset: str, flags: str = "", where: str = 
         row["PERSONMATCHCOMMENTSCONTAIN"] = nn(p["MATCHCOMMENTSCONTAIN"])
         row["PERSONCOMMENTS"] = nn(p["COMMENTS"])
         row["PERSONWARNING"] = nn(p["POPUPWARNING"])
+        for par in pa:
+            row["PERSONADDITIONAL" + par.FIELDNAME.upper()] = nn(par.VALUE)
         out.write(tocsv(row))
 
         if includemedia != "none":

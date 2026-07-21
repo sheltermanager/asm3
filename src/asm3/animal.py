@@ -270,6 +270,7 @@ def get_animal_query(dbo: Database) -> str:
         "bo.OwnerName AS BroughtInByOwnerName, " \
         "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
         "bo.OwnerTown AS BroughtInByOwnerTown, " \
+        "bo.OwnerCountry AS BroughtInByOwnerCountry, " \
         "bo.OwnerCounty AS BroughtInByOwnerCounty, " \
         "bo.OwnerPostcode AS BroughtInByOwnerPostcode, " \
         "bo.HomeTelephone AS BroughtInByHomeTelephone, " \
@@ -953,10 +954,11 @@ def get_animal_movement_status_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID "
 
 def get_animal_emblem_query(dbo: Database) ->str:
-    """ These are the fields that other queries can include when they want animal data with working emblems """
+    """ These are the fields that other queries can include when they want animal data with working emblems.
+        NOTE: RabiesTag is aliased as AnimalRabiesTag so that it doesn't override the column in animalvaccination """
     return "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
         "a.AnimalName, a.BreedName, a.Sex, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \
-        "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
+        "a.HasTrialAdoption, a.RabiesTag AS AnimalRabiesTag, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, a.Adoptable, a.HasSpecialNeeds, " \
         "a.ActiveMovementID, a.ActiveMovementType, a.Archived, a.DaysOnShelter, a.IsNotAvailableForAdoption, " \
         "a.AdditionalFlags AS AnimalFlags, " \
@@ -1416,6 +1418,19 @@ def get_animals_adoptable(dbo: Database) -> Results:
     query = get_animal_brief_query(dbo)
     sql = f"{query} WHERE a.Adoptable=1 ORDER BY AnimalName"
     return dbo.query(sql)
+
+def get_animals_adopted_two_dates(dbo: Database, fromdate: datetime, todate: datetime) -> Results:
+    """
+    Returns all animals who were adopted between the two dates given.
+    NOTE: Uses the full query rather than brief as this called by the service host.
+    Does not honour location filters for the same reason.
+    """
+    query = get_animal_query(dbo)
+    sql = f"{query} WHERE a.ActiveMovementType=1 AND a.DeceasedDate Is Null " \
+        f"AND a.ActiveMovementDate >= {dbo.sql_value(fromdate)} " \
+        f"AND a.ActiveMovementDate <= {dbo.sql_value(todate)} " \
+        "ORDER BY ActiveMovementDate"
+    return dbo.query(sql, limit=asm3.configuration.record_search_limit(dbo))
 
 def get_animals_never_vacc(dbo: Database, lf: LocationFilter = None) -> Results:
     """
@@ -3050,7 +3065,7 @@ def get_satellite_counts(dbo: Database, animalid: int) -> Results:
     """
     return dbo.query("SELECT a.ID, " \
         "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID) AS vaccination, " \
-        "(SELECT COUNT(*) FROM animalcondition aco WHERE aco.AnimalID = a.ID) AS condition, " \
+        "(SELECT COUNT(*) FROM animalcondition aco WHERE aco.AnimalID = a.ID) AS conditions, " \
         "(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID) AS test, " \
         "(SELECT COUNT(*) FROM animalmedical am WHERE am.AnimalID = a.ID) AS medical, " \
         "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.AnimalID = a.ID) AS boarding, " \
@@ -6687,9 +6702,10 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null " \
+            "AND DateOfVaccination >= %s AND DateOfVaccination <= %s) " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_VACCSA", group, 200, showbabies, babymonths)
 
     group = _("Vaccinated Non-Shelter Animals In {0}", l).format(year)
@@ -6697,9 +6713,10 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null " \
+            "AND DateOfVaccination >= %s AND DateOfVaccination <= %s) " \
             "AND a.NonShelterAnimal = 1 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_VACCNS", group, 210, showbabies, babymonths)
 
     asm3.asynctask.set_progress_value(dbo, 1)
@@ -6822,7 +6839,7 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, asm3.movement.RECLAIMED),
             at["ID"], at["ANIMALTYPE"], "AT_RECLAIMED", group, 90, at["SHOWSPLIT"], babymonths)
 
@@ -6924,9 +6941,10 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
         type_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null " \
+            "AND DateOfVaccination >= %s AND DateOfVaccination <= %s) " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_VACCSA", group, 200, at["SHOWSPLIT"], babymonths)
 
     group = _("Vaccinated Non-Shelter Animals In {0}", l).format(year)
@@ -6934,9 +6952,10 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
         type_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
+            "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null " \
+            "AND DateOfVaccination >= %s AND DateOfVaccination <= %s) " \
             "AND a.NonShelterAnimal = 1 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_VACCNS", group, 210, at["SHOWSPLIT"], babymonths)
 
     asm3.asynctask.set_progress_value(dbo, 2)

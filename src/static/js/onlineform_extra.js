@@ -643,12 +643,14 @@ $(document).ready(function() {
             let country = AL_COUNTRIES[LOCALE];
             let postcode = $(".asm-onlineform-postcode").val();
             if (!postcode) { return; }
-            let formdata = "mode=getaddress&country=" + country + "&postcode=" + postcode + "&locale=" + LOCALE + "&account=" + USERACCOUNT;
+            let url = $("form").attr("action") + "?method=postcode_lookup" +
+                "&account=" + encodeURIComponent($("input[name='account']").val()) + 
+                "&postcode=" + encodeURIComponent(postcode) + 
+                "&country=" + encodeURIComponent(country);
             $("#postcodelookup img").attr("src", "/static/images/wait/rolling_black.svg");
             $.ajax({
-                type: "POST",
-                url:  "postcode_lookup",
-                data: formdata,
+                type: "GET",
+                url:  url,
                 dataType: "text",
                 success: function(response) {
                     let rows = jQuery.parseJSON(response);

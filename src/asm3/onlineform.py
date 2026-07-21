@@ -113,7 +113,7 @@ FORM_FIELDS = [
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "animalname2", "animalname3", "reserveanimalname", "reserveanimalname2", "reserveanimalname3",
     "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", "healthproblems", 
-    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", "commentsanimal", 
+    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", "datebroughtin", "commentsanimal", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime",
@@ -197,7 +197,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     shelteranimals = None
     adoptableanimals = None
     fosteranimals = None
-    extraclass = ""
     for f in formfields:
         fname = "%s_%s" % (f.FIELDNAME, f.ID)
         cname = asm3.html.escape(fname)
@@ -210,6 +209,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         requiredtext = ""
         requiredspan = ""
         autocomplete = ""
+        extraclass = ""
         if f.FIELDNAME in AUTOCOMPLETE_MAP:
             autocomplete = "autocomplete=\"%s\"" % AUTOCOMPLETE_MAP[f.FIELDNAME]
         if f.MANDATORY == 1: 
@@ -244,7 +244,6 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' % \
                 (fid, cname, required))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            extraclass = ""
             if f.FIELDNAME == "postcode" or f.FIELDNAME == "zipcode": extraclass = "asm-onlineform-postcode"
             elif f.FIELDNAME == "address": extraclass = "asm-onlineform-address"
             elif f.FIELDNAME == "town": extraclass = "asm-onlineform-town"
@@ -680,10 +679,10 @@ def get_onlineformincoming_animalperson(dbo: Database, collationid: int) -> Tupl
     lastname = ""
     for r in dbo.query("SELECT FieldName, Value FROM onlineformincoming WHERE CollationID = ?", [collationid]):
         f = r.FIELDNAME.lower()
-        if f.startswith("firstname"): firstname = r.VALUE
-        if f.startswith("forenames"): firstname = r.VALUE
-        if f.startswith("lastname"): lastname = r.VALUE
-        if f.startswith("surname"): lastname = r.VALUE
+        if f == "firstname": firstname = r.VALUE
+        if f == "forenames": firstname = r.VALUE
+        if f == "lastname": lastname = r.VALUE
+        if f == "surname": lastname = r.VALUE
         if f.startswith("animalname"): animalname = r.VALUE
         if f.startswith("reserveanimalname"): animalname = r.VALUE
     return (animalname, firstname, lastname)
@@ -1457,7 +1456,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
     "comments", "commentsanimal", "hiddencomments", "type", "species", "breed1", "breed2", 
-    "color", "sex", "neutered", "weight"
+    "color", "sex", "neutered", "weight", "datebroughtin"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1501,6 +1500,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
         if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
         if f.FIELDNAME == "weight" and asm3.utils.is_numeric(f.VALUE): d["weight"] = f.VALUE
+        if f.FIELDNAME == "datebroughtin": d["datebroughtin"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     # If the form has a breed, but no species, use the species from that breed
     # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
