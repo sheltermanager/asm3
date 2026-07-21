@@ -1925,7 +1925,6 @@ class animal(JSONEndpoint):
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animal", a["ID"], recname)
         asm3.al.debug("opened animal %s" % recname, "main.animal", dbo)
         return {
-            "test": asm3.animal.update_animal_figures_onshelter(dbo, a.ID, o.user),
             "animal": a,
             "activelitters": asm3.animal.get_active_litters_brief(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, a.ID, "animal"),

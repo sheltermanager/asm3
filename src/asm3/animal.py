@@ -3533,6 +3533,8 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     
     update_animallocation(dbo, nextid, username)
 
+    update_animal_figures_onshelter(dbo, nextid, username)
+
     return (nextid, get_code(dbo, nextid))
 
 def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> None:
@@ -3756,6 +3758,8 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         update_litter_count(dbo, post["litterid"])
     
     update_animallocation(dbo, aid, username)
+
+    update_animal_figures_onshelter(dbo, aid, username)
 
 def update_flags(dbo: Database, username: str, animalid: int, flags: List[str]) -> None:
     """
@@ -7332,15 +7336,15 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str)
     figures = {}
     for osdate in onshelterdates:
         if osdate.month != month or osdate.year != year:
-            figureskey = f"{osdate.month}-{osdate.year}"
+            figureskey = (osdate.month, osdate.year)
             figures[figureskey] = 0
             month = osdate.month
             year = osdate.year
         figures[figureskey] += 1
 
     for f in figures.items():
-        month = int(f[0].split("-")[0])
-        year = int(f[0].split("-")[1])
+        month = int(f[0][0])
+        year = int(f[0][1])
         values = {
             "AnimalID": animalid,
             "MonthMidPoint": datetime(year, month, 15),
@@ -7349,5 +7353,3 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str)
             "DaysOnShelter": f[1]
         }
         dbo.insert("animalfiguresonshelter", values, username, False)
-    
-    return figures
