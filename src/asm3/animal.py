@@ -7286,6 +7286,14 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
     }
     return asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(data, l), username)
 
+def update_all_animal_figures_onshelter(dbo: Database, username: str) -> str:
+    animals = dbo.query_list("SELECT ID FROM animal")
+    asm3.asynctask.set_progress_max(dbo, len(animals))
+    for a in enumerate(animals):
+        update_animal_figures_onshelter(dbo, a[1], username)
+        asm3.asynctask.set_progress_value(dbo, a[0])
+    return "OK"
+
 def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str):
     # Delete existing animalfiguresonshelter rows with this animalid
     dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
