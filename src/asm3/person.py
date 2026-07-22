@@ -1315,7 +1315,7 @@ def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) 
     def bi(b): 
         return b and 1 or 0
     
-    def fb(v, flags):
+    def fb(v):
         return bi(v in flags)
 
     l = dbo.locale
@@ -1329,26 +1329,26 @@ def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) 
                 _("Flags changed from '{0}' to '{1}'", l).format(oldflags, flagstr))
 
     dbo.update("owner", personid, {
-        "ExcludeFromBulkEmail":     fb("excludefrombulkemail", flags),
-        "IsAdopter":                fb("adopter", flags),
-        "IsAdoptionCoordinator":    fb("coordinator", flags),
-        "IsBanned":                 fb("banned", flags),
-        "IsDangerous":              fb("dangerous", flags),
-        "IsVolunteer":              fb("volunteer", flags),
-        "IsMember":                 fb("member", flags),
-        "IsHomeChecker":            fb("homechecker", flags),
-        "IsDeceased":               fb("deceased", flags),
-        "IsDonor":                  fb("donor", flags),
-        "IsDriver":                 fb("driver", flags),
-        "IsShelter":                fb("shelter", flags),
-        "IsACO":                    fb("aco", flags),
-        "IsStaff":                  fb("staff", flags),
-        "IsFosterer":               fb("fosterer", flags),
-        "IsRetailer":               fb("retailer", flags),
-        "IsVet":                    fb("vet", flags),
-        "IsSponsor":                fb("sponsor", flags),
-        "IsGiftAid":                fb("giftaid", flags),
-        "IsSupplier":               fb("supplier", flags),
+        "ExcludeFromBulkEmail":     fb("excludefrombulkemail"),
+        "IsAdopter":                fb("adopter"),
+        "IsAdoptionCoordinator":    fb("coordinator"),
+        "IsBanned":                 fb("banned"),
+        "IsDangerous":              fb("dangerous"),
+        "IsVolunteer":              fb("volunteer"),
+        "IsMember":                 fb("member"),
+        "IsHomeChecker":            fb("homechecker"),
+        "IsDeceased":               fb("deceased"),
+        "IsDonor":                  fb("donor"),
+        "IsDriver":                 fb("driver"),
+        "IsShelter":                fb("shelter"),
+        "IsACO":                    fb("aco"),
+        "IsStaff":                  fb("staff"),
+        "IsFosterer":               fb("fosterer"),
+        "IsRetailer":               fb("retailer"),
+        "IsVet":                    fb("vet"),
+        "IsSponsor":                fb("sponsor"),
+        "IsGiftAid":                fb("giftaid"),
+        "IsSupplier":               fb("supplier"),
         "AdditionalFlags":          flagstr
     }, username)
 
