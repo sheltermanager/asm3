@@ -1826,17 +1826,23 @@ class Report:
         """
         l = self.dbo.locale
 
-        # htmlheader = self._ReadHeader()
-        htmlheader = '<!DOCTYPE html>' \
-            '<html>' \
-            '<meta charset="utf-8">' \
-            '<meta name="viewport" content="width=device-width, initial-scale=1.0"> ' \
-            '<head></head>' \
-            '<body style="margin: 0;">' \
-            '<h1 align="center" style="margin-left: auto;margin-right: auto;position: absolute;left: 100px; right: 100px;z-index: 10"><span style="border-radius: 2px;background-color: white;padding: 10px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">$$TITLE$$</span></h1>'
-        # htmlfooter = self._ReadFooter()
-        htmlfooter = '</body></html>'
+        htmlheader = "\n".join([
+            '<!DOCTYPE html>',
+            '<html>',
+            '<head>',
+            '<meta charset="utf-8">',
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0"> ',
+            '<style>',
+            'h1 {margin-left: auto;margin-right: auto;position: absolute;left: 100px; right: 100px;z-index: 10}',
+            'h1 span {border-radius: 2px;background-color: white;padding: 10px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);}',
+            '</style>',
+            '</head>',
+            '<body style="margin: 0;">',
+            '<h1 align="center"><span>$$TITLE$$</span></h1>'
+        ])
+        htmlfooter = '</body>\n</html>'
         htmlheader = self._SubstituteTemplateHeaderFooter(htmlheader)
+
         # Inject the script tags needed into the header and set the title
         htmlheader = htmlheader.replace("</head>", asm3.html.map_js() + "\n</head>")
 
