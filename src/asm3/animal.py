@@ -3610,16 +3610,13 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             asm3.diary.complete_diary_notes_for_animal(dbo, username, aid)
 
     # Sort out any flags
-    def bi(b): 
+    def bi(b):
         return b and 1 or 0
 
+    def fb(v):
+        return bi(v in flags)
+
     flags = post["flags"].split(",")
-    courtesy = bi("courtesy" in flags)
-    crueltycase = bi("crueltycase" in flags)
-    notforadoption = bi("notforadoption" in flags)
-    notforregistration = bi("notforregistration" in flags)
-    nonshelter = bi("nonshelter" in flags)
-    quarantine = bi("quarantine" in flags)
     flagstr = "|".join(flags) + "|"
 
     # If the option is on and the flags have changed, log it
@@ -3632,16 +3629,16 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # day. Non shelter animals don't have visible movements and this prevents a bug where
     # an open foster/retailer movement on a non-shelter animal can make it publish for adoption
     # when the "include fosters/retailers" publishing options are on.
-    if nonshelter == 1:
+    if fb("nonshelter"):
         dbo.execute("UPDATE adoption SET ReturnDate = MovementDate WHERE MovementType IN (2,8) AND AnimalID = ?", [aid])
 
     dbo.update("animal", aid, {
-        "NonShelterAnimal":     nonshelter,
-        "IsNotAvailableForAdoption": notforadoption,
-        "IsNotForRegistration": notforregistration,
-        "IsQuarantine":         quarantine,
-        "IsCourtesy":           courtesy,
-        "CrueltyCase":          crueltycase,
+        "NonShelterAnimal":     fb("nonshelter"),
+        "IsNotAvailableForAdoption": fb("notforadoption"),
+        "IsNotForRegistration": fb("notforregistration"),
+        "IsQuarantine":         fb("quarantine"),
+        "IsCourtesy":           fb("courtesy"),
+        "CrueltyCase":          fb("crueltycase"),
         "AdditionalFlags":      flagstr,
         "ShelterCode":          post["sheltercode"],
         "ShortCode":            post["shortcode"],

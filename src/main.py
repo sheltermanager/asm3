@@ -784,7 +784,10 @@ class configjs(ASMEndpoint):
                 asm3.reports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
                 asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser),
                 asm3.reports.get_internalforms_menu(dbo)),
-            "publishers": asm3.publish.PUBLISHER_LIST
+            "publishers": asm3.publish.PUBLISHER_LIST,
+            "animalflags": list(asm3.lookups.ANIMAL_FLAGS.items()),
+            "personflags": list(asm3.lookups.PERSON_FLAGS.items()),
+            
         }
         return "const asm = %s;" % asm3.utils.json(c)
 
@@ -2762,7 +2765,7 @@ class boarding_availability(JSONEndpoint):
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "rows": rows,
-            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+            "templates": asm3.template.get_document_templates(dbo, "boarding")
         }
     
 class calendarview(JSONEndpoint):
@@ -9143,7 +9146,7 @@ class waitinglist_new(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
-            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo),
+            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo)
         }
 
     def post_all(self, o):

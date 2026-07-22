@@ -738,23 +738,15 @@ edit_header = {
      */
     animal_flags: function(a) {
         var flags = [];
-        if (a.ISCOURTESY == 1) {
-            flags.push(_("Courtesy Listing"));
-        }
-        if (a.CRUELTYCASE == 1) {
-            flags.push(_("Cruelty Case"));
-        }
-        if (a.NONSHELTERANIMAL == 1) {
-            flags.push(_("Non-Shelter"));
-        }
-        if (a.ISNOTAVAILABLEFORADOPTION == 1) {
-            flags.push("<span style=\"color: red\">" + _("Not For Adoption") + "</span>");
-        }
-        if (a.ISQUARANTINE == 1) {
-            flags.push(_("Quarantine"));
-        }
+        var stock = [];
+        $.each(asm.animalflags, function(i, v) {
+            if (a[v[1].FIELD] == 1) {
+                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + v[1].LABEL + "</span>");
+            }
+            stock.push(v[0]);
+        });
+
         if (a.ADDITIONALFLAGS != null) {
-            var stock = [ "courtesy", "crueltycase", "nonshelter", "notforadoption", "notforregistration", "quarantine" ];
             $.each(a.ADDITIONALFLAGS.split("|"), function(i, v) {
                 if (v != "" && $.inArray(v, stock) == -1) {
                     flags.push(v);
@@ -771,79 +763,15 @@ edit_header = {
      */
     person_flags: function(p) {
         var flags = [];
-        if (p.ISACO == 1) {
-            flags.push(_("ACO"));
-        }
-        if (p.ISBANNED == 1) {
-            flags.push("<span class=\"asm-flag-banned\">" + _("Banned") + "</span>");
-        }
-        if (p.ISDANGEROUS == 1) {
-            flags.push("<span class=\"asm-flag-dangerous\">" + _("Dangerous") + "</span>");
-        }
-        if (p.INVESTIGATION > 0) {
-            flags.push("<span class=\"asm-flag-investigation\">" + _("Investigation") + "</span>");
-        }
-        if (p.INCIDENT > 0) {
-            flags.push("<span class=\"asm-flag-incident\">" + _("Incident") + "</span>");
-        }
-        if (p.ISDECEASED == 1) {
-            flags.push("<span class=\"asm-flag-deceased\">" + _("Deceased") + "</span>");
-        }
-        if (p.ISADOPTER == 1) {
-            flags.push(_("Adopter"));
-        }
-        if (p.ISADOPTIONCOORDINATOR == 1) {
-            flags.push(_("Adoption Coordinator"));
-        }
-        if (p.ISDONOR == 1) {
-            flags.push(_("Donor"));
-        }
-        if (p.ISDRIVER == 1) {
-            flags.push(_("Driver"));
-        }
-        if (p.ISFOSTERER == 1) {
-            flags.push(_("Fosterer"));
-        }
-        if (p.IDCHECK == 1) {
-            flags.push(_("Homechecked"));
-        }
-        if (p.ISHOMECHECKER == 1) {
-            flags.push(_("Homechecker"));
-        }
-        if (p.ISMEMBER == 1) {
-            flags.push(_("Member"));
-        }
-        if (p.ISRETAILER == 1) {
-            flags.push(_("Retailer"));
-        }
-        if (p.ISSHELTER == 1) {
-            flags.push(_("Shelter"));
-        }
-        if (p.ISSPONSOR == 1){
-            flags.push(_("Sponsor"));
-        }
-        if (p.ISSTAFF == 1) {
-            flags.push(_("Staff"));
-        }
-        if (p.ISSUPPLIER == 1) {
-            flags.push(_("Supplier"));
-        }
-        if (p.ISGIFTAID == 1) {
-            flags.push(_("UK Giftaid"));
-        }
-        if (p.ISVET == 1) {
-            flags.push(_("Vet"));
-        }
-        if (p.ISVOLUNTEER == 1) {
-            flags.push(_("Volunteer"));
-        }
-        if (p.EXCLUDEFROMBULKEMAIL == 1) {
-            flags.push(_("Exclude from bulk email"));
-        }
+        var stock = [];
+        $.each(asm.personflags, function(i, v) {
+            if (p[v[1].FIELD] == 1) {
+                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + v[1].LABEL + "</span>");
+            }
+            stock.push(v[0]);
+        });
+
         if (p.ADDITIONALFLAGS != null) {
-            var stock = [ "aco", "adopter", "banned", "dangerous", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
-                "fosterer", "giftaid", "homechecked", "homechecker", "member", "retailer", "shelter", "sponsor", "supplier", "staff", 
-                "vet", "volunteer"];
             $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
                 if (v != "" && $.inArray(v, stock) == -1) {
                     flags.push(v);
