@@ -333,18 +333,21 @@ def get_string(dbo: Database, name: str, path: str = "") -> bytes:
     else:
         r = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
     if len(r) == 0:
-        raise DBFSError("No element found for path=%s, name=%s" % (path, name))
+        raise DBFSError(f"No element found for path={path}, name={name}")
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(r.id, r.url)
 
-def get_string_id(dbo: Database, dbfsid: int) -> bytes:
+def get_string_id(dbo: Database, dbfsid: int, path: str = "") -> bytes:
     """
     Gets DBFS file contents as a bytes string.
     """
-    r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
+    if path != "":
+        r = dbo.query("SELECT URL FROM dbfs WHERE ID=? AND Path=?", [dbfsid, path])
+    else:
+        r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
     if len(r) == 0:
-        raise DBFSError("No row found with ID %s" % dbfsid)
+        raise DBFSError(f"No row found for {path}/{dbfsid}")
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(dbfsid, r.url)
@@ -420,7 +423,7 @@ def replace_string(dbo: Database, content: bytes, name: str, path: str = "") -> 
     else:
         r = dbo.query("SELECT ID, URL, Name FROM dbfs WHERE Name=?", [name])
     if len(r) == 0:
-        raise DBFSError("No item found for path=%s, name=%s" % (path, name))
+        raise DBFSError(f"No item found for path={path}, name={name}")
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     o.put(r.id, r.name, content)

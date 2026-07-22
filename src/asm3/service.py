@@ -742,7 +742,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     elif method == "document_repository":
         return set_cached_response(cache_key, account, asm3.utils.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, 
-            asm3.dbfs.get_string_id(dbo, mediaid))
+            asm3.dbfs.get_string_id(dbo, mediaid, "/document_repository"))
     
     elif method == "extra_image":
         hotlink_protect("extra_image", referer)
