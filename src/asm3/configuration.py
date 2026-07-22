@@ -273,6 +273,7 @@ DEFAULTS = {
     "EventAnimalViewColumns": "ArrivalDate,IMAGE,ANIMAL,DISPLAYLOCATION,AGEGROUP,SPECIESNAME,BASECOLOURNAME,LITTERID,COMMENTS,LASTFOSTERER,ADOPTED",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FundedPaymentsEnabled": "No",
     "AnimalFlagChangeLog": "Yes",
     "AnimalFlagChangeLogType": "3",
     "PersonFlagChangeLog": "Yes",
