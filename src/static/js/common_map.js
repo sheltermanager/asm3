@@ -21,13 +21,9 @@ const mapping = {
 
     ready: function() {
         let rp = new Promise(async function(resolve, reject) {
-            let maploaded = await mapping.check_map_loaded();
-            if (maploaded) {
+            $(document).ready(function() {
                 resolve(true);
-            } else {
-                mapping._ready(1);
-            }
-            resolve(true);
+            });
         });
         return rp;
     },
@@ -37,7 +33,9 @@ const mapping = {
         let ticklength = 500;
         let maploaded = await mapping.check_map_loaded();
         let tickmessage = "Attempt " + attemptno + ". Mapping library unavailable, waiting " + ticklength + " milliseconds";
-        if (maploaded) { return true; }
+        if (maploaded) {
+            return true;
+        }
         window.setTimeout(async function() {
             log.info(tickmessage);
             maploaded = await mapping.check_map_loaded();
@@ -70,16 +68,16 @@ const mapping = {
         }
         // No center point specified, use the device location
         else if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        // We got a position from the browser
-                        _draw_map(position.coords.latitude + "," + position.coords.longitude);
-                    },
-                    function() {
-                        // The user refused or an error occurred - use the first marker pin
-                        if (first_valid) { _draw_map(first_valid); }
-                    }
-                );
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // We got a position from the browser
+                    _draw_map(position.coords.latitude + "," + position.coords.longitude);
+                },
+                function() {
+                    // The user refused or an error occurred - use the first marker pin
+                    if (first_valid) { _draw_map(first_valid); }
+                }
+            );
         }
         else if (first_valid) {
             // Geolocation is not supported - use the first marker pin
@@ -94,19 +92,20 @@ const mapping = {
             });
             mapping._markers = [];
             $.each(markers, function(i, v) {
-                    if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
-                    let ll = v.latlong.split(",");
-                    let markerIcon = L.icon({
-                        iconUrl: v.PINURL,
-                        shadowUrl: 'static/images/mapping/marker-shadow.png',
-                        iconSize:     [50, 82], // size of the icon
-                        shadowSize:   [100, 164], // size of the shadow
-                        iconAnchor:   [25, 80], // point of the icon which will correspond to marker's location
-                        shadowAnchor: [30, 164], // the same for the shadow
-                        popupAnchor:  [0, -82]  // point from which the popup should open relative to the iconAnchor
-                    });
-                    let marker = L.marker([ll[0], ll[1]], {icon: markerIcon}).addTo(mapping.map).bindPopup(v.POPUPTEXT);
-                    mapping._markers.push(marker);
+                if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
+                if (!v.PINURL) { v.PINURL = 'static/images/mapping/marker-icon-2x.png'; } // Use default pin if no pinurl supplied
+                let ll = v.latlong.split(",");
+                let markerIcon = L.icon({
+                    iconUrl: v.PINURL,
+                    shadowUrl: 'static/images/mapping/marker-shadow.png',
+                    iconSize:     [50, 82], // size of the icon
+                    shadowSize:   [100, 164], // size of the shadow
+                    iconAnchor:   [25, 80], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [30, 164], // the same for the shadow
+                    popupAnchor:  [0, -82]  // point from which the popup should open relative to the iconAnchor
+                });
+                let marker = L.marker([ll[0], ll[1]], {icon: markerIcon}).addTo(mapping.map).bindPopup(v.POPUPTEXT);
+                mapping._markers.push(marker);
             });
             if (markers.length) {
                 let group = L.featureGroup(mapping._markers);
@@ -120,6 +119,7 @@ const mapping = {
             let latlngbounds = new google.maps.LatLngBounds();
             $.each(markers, function(i, v) {
                 if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
+                if (!v.PINURL) { v.PINURL = 'static/images/mapping/marker-icon-2x.png'; } // Use default pin if no pinurl supplied
                 let ll = v.latlong.split(",");
                 let gll = new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]));
                 var marker = new google.maps.Marker({
@@ -171,7 +171,7 @@ const mapping = {
         return fv;
     },
 
-    check_map_loaded: function() {
+        check_map_loaded: function() {
         try {
             if (asm.mapprovider == "osm") {
                 let leafletlibrary = L;
