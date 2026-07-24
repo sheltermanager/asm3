@@ -1167,14 +1167,8 @@ def is_exit_movement(dbo: Database, movemementtypeid: int) -> bool:
     if movemementtypeid in (0, 9, 10): # None, Reservation, Cancelled Reservation
         return False
     if movemementtypeid in (2, 12): # Foster, Permanent Foster
-        if asm3.configuration.foster_on_shelter(dbo):
-            return True
-        else:
-            return False
+        return asm3.configuration.foster_on_shelter(dbo)
     if movemementtypeid == 8: # Retailer
-        if asm3.configuration.retailer_on_shelter(dbo):
-            return True
-        else:
-            return False
+        return asm3.configuration.retailer_on_shelter(dbo)
     return True
     

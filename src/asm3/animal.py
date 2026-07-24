@@ -7289,10 +7289,10 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
 def update_all_animal_figures_onshelter(dbo: Database, username: str) -> str:
     animals = dbo.query_list("SELECT ID FROM animal")
     asm3.asynctask.set_progress_max(dbo, len(animals))
-    for a in enumerate(animals):
-        update_animal_figures_onshelter(dbo, a[1], username)
-        asm3.asynctask.set_progress_value(dbo, a[0])
-    return "OK"
+    for i, a in enumerate(animals):
+        update_animal_figures_onshelter(dbo, a, username)
+        asm3.asynctask.set_progress_value(dbo, i)
+    return f"OK {len(animals)}"
 
 def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str):
     # Delete existing animalfiguresonshelter rows with this animalid
@@ -7312,12 +7312,27 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str)
             outboundmovements.append(movement.MOVEMENTDATE)
             if movement.RETURNDATE:
                 inboundmovements.append(movement.RETURNDATE)
-    
-    onshelterdates = []
+
     onshelter = True
+    month = 0
+    year = 0
+    figures = {}
+
+    def update_figures():
+        nonlocal month
+        nonlocal year
+        nonlocal date
+        nonlocal figures
+        figureskey = (date.month, date.year)
+        if date.month != month or date.year != year:
+            figures[figureskey] = 0
+            month = date.month
+            year = date.year
+        figures[figureskey] += 1
+    
     while date <= dbo.today():
         if onshelter:
-            onshelterdates.append(date)
+            update_figures()
             if date == deceaseddate:
                 onshelter = False
                 break
@@ -7334,21 +7349,10 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str)
             if inboundmovements:
                 nextinboundmovement = inboundmovements[0]
                 if date == nextinboundmovement:
-                    onshelterdates.append(date)
+                    update_figures()
                     onshelter = True
                     inboundmovements.pop(0)
         date = asm3.i18n.add_days(date, 1)
-    
-    month = 0
-    year = 0
-    figures = {}
-    for osdate in onshelterdates:
-        if osdate.month != month or osdate.year != year:
-            figureskey = (osdate.month, osdate.year)
-            figures[figureskey] = 0
-            month = osdate.month
-            year = osdate.year
-        figures[figureskey] += 1
 
     for f in figures.items():
         month = int(f[0][0])
