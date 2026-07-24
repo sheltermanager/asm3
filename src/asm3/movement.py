@@ -506,6 +506,7 @@ def insert_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
         asm3.animal.update_animallocation(dbo, animalid, username)
+        asm3.animal.update_animal_figures_onshelter(dbo, animalid, username)
     return movementid
 
 def update_movement_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -554,6 +555,7 @@ def update_movement_from_form(dbo: Database, username: str, post: PostedData) ->
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
         asm3.animal.update_animallocation(dbo, post.integer("animal"), username)
+        asm3.animal.update_animal_figures_onshelter(dbo, post.integer("animal"), username)
 
 def delete_movement(dbo: Database, username: str, mid: int) -> None:
     """
@@ -570,6 +572,7 @@ def delete_movement(dbo: Database, username: str, mid: int) -> None:
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
         asm3.animal.update_animallocation(dbo, m.ANIMALID, username)
+        asm3.animal.update_animal_figures_onshelter(dbo, m.ANIMALID, username)
 
 def cancel_reservation(dbo: Database, username: str, movementid: int) -> None:
     """
@@ -1159,3 +1162,13 @@ def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool
         for pid in post.integer_list("personids"):
             asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, logtype, emailto, subject, body)
     return rv
+
+def is_exit_movement(dbo: Database, movemementtypeid: int) -> bool:    
+    if movemementtypeid in (0, 9, 10): # None, Reservation, Cancelled Reservation
+        return False
+    if movemementtypeid in (2, 12): # Foster, Permanent Foster
+        return asm3.configuration.foster_on_shelter(dbo)
+    if movemementtypeid == 8: # Retailer
+        return asm3.configuration.retailer_on_shelter(dbo)
+    return True
+    
