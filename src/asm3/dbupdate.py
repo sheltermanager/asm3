@@ -967,6 +967,7 @@ def sql_structure(dbo: Database) -> str:
         fid(),
         fint("ClinicAppointmentID"),
         flongstr("Description"),
+        fstr("StockUsageIDs", True),
         fint("Amount") ))
     sql += index("clinicinvoiceitem_ClinicAppointmentID", "clinicinvoiceitem", "ClinicAppointmentID")
 
@@ -1096,6 +1097,7 @@ def sql_structure(dbo: Database) -> str:
         fdate("EndDateTime"),
         fstr("EventName"),
         flongstr("EventDescription", True),
+        fstr("EventLink", True),
         fint("EventOwnerID", True),
         fstr("EventAddress", True),
         fstr("EventTown", True),
