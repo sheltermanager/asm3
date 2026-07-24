@@ -22,30 +22,12 @@ const mapping = {
     ready: function() {
         let rp = new Promise(async function(resolve, reject) {
             $(document).ready(function() {
-                resolve(true);
+                window.setTimeout(async function() {
+                    resolve(true);
+                }, 500);
             });
         });
         return rp;
-    },
-
-    _ready: async function(attemptno) {
-        let attemptlimit = 10;
-        let ticklength = 500;
-        let maploaded = await mapping.check_map_loaded();
-        let tickmessage = "Attempt " + attemptno + ". Mapping library unavailable, waiting " + ticklength + " milliseconds";
-        if (maploaded) {
-            return true;
-        }
-        window.setTimeout(async function() {
-            log.info(tickmessage);
-            maploaded = await mapping.check_map_loaded();
-            if (maploaded) { return true; }
-            if (attemptno < attemptlimit) {
-                mapping._ready(attemptno + 1);
-            } else {
-                log.info("Reached attempt limit");
-            }
-        }, ticklength);
     },
 
     draw_map: function(divid, zoom, latlong, markers) {

@@ -1892,14 +1892,9 @@ class Report:
             p.append({ "latlong": values[0], "POPUPTEXT": "".join(concat), "PINURL": f"static/images/mapping/{pincolour.lower()}.png" })
 
         self._Append("<script type='text/javascript'>\n")
+        self._Append(f"  var points = {asm3.utils.json(p)};\n")
         self._Append("  mapping.draw_map(\"embeddedmap\", 10, \"\", []);\n")
-        self._Append("  let ready = mapping.ready();\n")
-        self._Append("  ready.then(function() {\n")
-        self._Append("      window.setTimeout(async function() {\n")
-        self._Append(f"         var points = {asm3.utils.json(p)};\n")
-        self._Append("          mapping.redraw_markers(points);\n")
-        self._Append("      }, 500);\n")
-        self._Append("  });\n")
+        self._Append("  mapping.ready().then( () => { mapping.redraw_markers(points); } );\n")
         self._Append("</script>\n")
         self._Append(htmlfooter)
         return self.output
