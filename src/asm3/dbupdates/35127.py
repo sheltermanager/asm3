@@ -6,7 +6,7 @@ fields = ",".join([
     dbo.ddl_add_table_column("Month", dbo.type_integer, False),
     dbo.ddl_add_table_column("Year", dbo.type_integer, False),
     dbo.ddl_add_table_column("DaysOnShelter", dbo.type_integer, False)
-]) + dbo.ddl_audit_table_columns()
+])
 execute(dbo, dbo.ddl_add_table("animalfiguresonshelter", fields) )
 
 add_index(dbo, "animalfiguresonshelter_AnimalID", "animalfiguresonshelter", "AnimalID")

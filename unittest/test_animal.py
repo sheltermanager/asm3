@@ -6,6 +6,7 @@ import asm3.utils
 import asm3.lookups
 import asm3.movement
 import asm3.al
+import datetime
 
 class TestAnimal(unittest.TestCase):
    
@@ -454,6 +455,162 @@ class TestAnimal(unittest.TestCase):
     def test_update_all_variable_animal_data(self):
         base.execute("DELETE FROM configuration WHERE ItemName LIKE 'VariableAnimalDataUpdated'")
         asm3.animal.update_all_variable_animal_data(base.get_dbo())
+
+    def test_update_animal_figures_onshelter(self):
+        dbo = base.get_dbo()
+        currentdate = dbo.today()
+        entrydate = datetime.datetime(2025, 1, 1)
+        predicteddos = (currentdate - entrydate).days + 1
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+        
+        # Animal with no movements or death
+        self.assertEqual(predicteddos, reporteddos)
+
+        deceaseddate = datetime.datetime(2026, 1, 1)
+        dbo.update("animal", self.nid, {"DeceasedDate": deceaseddate})
+        asm3.animal.update_animal_figures_onshelter(dbo, self.nid)
+        predicteddos = (deceaseddate - entrydate).days + 1
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+
+        # Animal with deathdate and no movements
+        self.assertEqual(predicteddos, reporteddos)
+
+        dbo.update("animal", self.nid, {"DeceasedDate": None})
+        data = {
+            "animal": str(self.nid),
+            "person": "1",
+            "movementdate": "12/12/2025",
+            "type": "1",
+            "comments": "Created by unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        mid = asm3.movement.insert_movement_from_form(dbo, "test", post)
+        movementdate = datetime.datetime(2025, 12, 12)
+        predicteddos = (movementdate - entrydate).days + 1
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+
+        # Animal with a single adoption movement
+        self.assertEqual(predicteddos, reporteddos)
+
+        movementdate = datetime.datetime(2025, 2, 2)
+        returndate = datetime.datetime(2025, 3, 3)
+        data = {
+            "movementid": str(mid),
+            "animal": str(self.nid),
+            "person": "1",
+            "movementdate": "02/02/2025",
+            "type": "1",
+            "returndate": "03/03/2025",
+            "comments": "Created by unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.movement.update_movement_from_form(dbo, "test", post)
+        preadoptiondays = (movementdate - entrydate).days + 1
+        postadoptiondays = (currentdate - returndate).days + 1
+        predicteddos = preadoptiondays + postadoptiondays
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+
+        # Animal with a single adoption movement with a return date
+        self.assertEqual(predicteddos, reporteddos)
+
+        data = {
+            "animal": str(self.nid),
+            "adoptionno": "utm2",
+            "person": "1",
+            "movementdate": "04/04/2025",
+            "type": "1",
+            "comments": "Created by unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        mid2 = asm3.movement.insert_movement_from_form(dbo, "test", post)
+        movement2date = datetime.datetime(2025, 4, 4)
+        preadoptiondays = (movementdate - entrydate).days + 1
+        postadoptiondays = (movement2date - returndate).days + 1
+        predicteddos = preadoptiondays + postadoptiondays
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+
+        # Animal with an adoption with a return and second adoption with no return date
+        self.assertEqual(predicteddos, reporteddos)
+
+        return2date = datetime.datetime(2025, 6, 6)
+        data = {
+            "movementid": str(mid2),
+            "animal": str(self.nid),
+            "adoptionno": "utm2",
+            "person": "1",
+            "movementdate": "04/04/2025",
+            "type": "1",
+            "returndate": "06/06/2025",
+            "comments": "Created by unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.movement.update_movement_from_form(dbo, "test", post)
+        preadoptiondays = (movementdate - entrydate).days + 1
+        betweenadoptiondays = (movement2date - returndate).days + 1
+        postadoption2days = (currentdate - return2date).days + 1
+        predicteddos = preadoptiondays + betweenadoptiondays + postadoption2days
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+
+        # Animal with two returned adoptions
+        self.assertEqual(predicteddos, reporteddos)
+
+        deceaseddate = datetime.datetime(2025, 7, 7)
+        dbo.update("animal", self.nid, {"DeceasedDate": deceaseddate})
+        asm3.animal.update_animal_figures_onshelter(dbo, self.nid)
+        preadoptiondays = (movementdate - entrydate).days + 1
+        betweenadoptiondays = (movement2date - returndate).days + 1
+        postadoption2days = (deceaseddate - return2date).days + 1
+        predicteddos = preadoptiondays + betweenadoptiondays + postadoption2days
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+
+        # Animal with two returned adoptions followed by death
+        self.assertEqual(predicteddos, reporteddos)
+
+        data = {
+            "movementid": str(mid2),
+            "animal": str(self.nid),
+            "adoptionno": "utm2",
+            "person": "1",
+            "movementdate": "04/04/2025",
+            "type": "1",
+            "returndate": "",
+            "comments": "Created by unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.movement.update_movement_from_form(dbo, "test", post)
+        dbo.update("animal", self.nid, {"DeceasedDate": deceaseddate, "DiedOffShelter": "1"})
+        preadoptiondays = (movementdate - entrydate).days + 1
+        betweenadoptiondays = (movement2date - returndate).days + 1
+        predicteddos = preadoptiondays + betweenadoptiondays
+        reporteddos = dbo.query_int(
+            "SELECT SUM(DaysOnShelter) FROM animalfiguresonshelter WHERE AnimalID = ?",
+            (self.nid,)
+        )
+    
+        # Animal with returned adoptions followed by second non returned adoption with death while off shelter
+        self.assertEqual(predicteddos, reporteddos)
+
 
     def test_update_foster_variable_animal_data(self):
         asm3.animal.update_foster_variable_animal_data(base.get_dbo())

@@ -614,6 +614,14 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animalfiguresannual_EntryReasonID", "animalfiguresannual", "EntryReasonID")
     sql += index("animalfiguresannual_Year", "animalfiguresannual", "Year")
 
+    sql += table("animalfiguresonshelter", (
+        fint("AnimalID"),
+        fdate("MonthMidPoint"),
+        fint("Month"),
+        fint("Year"),
+        fint("DaysOnShelter")), False)
+    sql += index("animalfiguresonshelter_AnimalID", "animalfiguresonshelter", "AnimalID")
+
     sql += table("animalfound", (
         fid(),
         fint("AnimalTypeID"),

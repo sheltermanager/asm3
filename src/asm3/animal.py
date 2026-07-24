@@ -3533,7 +3533,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     
     update_animallocation(dbo, nextid, username)
 
-    update_animal_figures_onshelter(dbo, nextid, username)
+    update_animal_figures_onshelter(dbo, nextid)
 
     return (nextid, get_code(dbo, nextid))
 
@@ -3759,7 +3759,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     
     update_animallocation(dbo, aid, username)
 
-    update_animal_figures_onshelter(dbo, aid, username)
+    update_animal_figures_onshelter(dbo, aid)
 
 def update_flags(dbo: Database, username: str, animalid: int, flags: List[str]) -> None:
     """
@@ -4746,7 +4746,7 @@ def delete_animal(dbo: Database, username: str, animalid: int, ignore_movements:
     for t in [ "adoption", "animalentry", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
-    update_animal_figures_onshelter(dbo, animalid, username)
+    update_animal_figures_onshelter(dbo, animalid)
     # asm3.dbfs.delete_path(dbo, "/animal/%d" % animalid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def delete_animals_from_form(dbo: Database, username: str, post: PostedData) -> int:
@@ -7287,15 +7287,15 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
     }
     return asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(data, l), username)
 
-def update_all_animal_figures_onshelter(dbo: Database, username: str) -> str:
+def update_all_animal_figures_onshelter(dbo: Database) -> str:
     animals = dbo.query_list("SELECT ID FROM animal")
     asm3.asynctask.set_progress_max(dbo, len(animals))
     for i, a in enumerate(animals):
-        update_animal_figures_onshelter(dbo, a, username)
+        update_animal_figures_onshelter(dbo, a)
         asm3.asynctask.set_progress_value(dbo, i)
     return f"OK {len(animals)}"
 
-def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str):
+def update_animal_figures_onshelter(dbo: Database, animalid: int):
     # Delete existing animalfiguresonshelter rows with this animalid
     dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
 
@@ -7368,4 +7368,4 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str)
             "Year": year,
             "DaysOnShelter": f[1]
         }
-        dbo.insert("animalfiguresonshelter", values, username, False)
+        dbo.insert("animalfiguresonshelter", values, generateID=False, setCreated=False, writeAudit=False)
