@@ -4746,6 +4746,7 @@ def delete_animal(dbo: Database, username: str, animalid: int, ignore_movements:
     for t in [ "adoption", "animalentry", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
+    update_animal_figures_onshelter(dbo, animalid, username)
     # asm3.dbfs.delete_path(dbo, "/animal/%d" % animalid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def delete_animals_from_form(dbo: Database, username: str, post: PostedData) -> int:
@@ -7299,7 +7300,10 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int, username: str)
     dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
 
     # Get animals movement history
-    date = get_date_brought_in(dbo, animalid).replace(hour=0, minute=0, second=0, microsecond=0)
+    date = get_date_brought_in(dbo, animalid)
+    if not date:
+        return
+    date = date.replace(hour=0, minute=0, second=0, microsecond=0)
     movements = dbo.query("SELECT MovementDate, ReturnDate, MovementType FROM adoption WHERE AnimalID = ? ORDER BY MovementDate", (animalid,))
 
     # Get deceased date if died on shelter
