@@ -1817,6 +1817,7 @@ class Report:
         Does the work of generating a map. Map queries have to return rows that
         have two columns:
         ( LATLONG, POPUP )
+        An optional PINSTYLE column may be included to choose a colour/style for your pins.
         The html can just be the word MAP.
         Optionally, you can include where you would like the map centering,
         FIRST for the first value in the dataset, USER for the user's current location
@@ -1825,8 +1826,22 @@ class Report:
         """
         l = self.dbo.locale
 
-        htmlheader = self._ReadHeader()
-        htmlfooter = self._ReadFooter()
+        htmlheader = "\n".join([
+            '<!DOCTYPE html>',
+            '<html>',
+            '<head>',
+            '<meta charset="utf-8">',
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0"> ',
+            '<style>',
+            'h1 {margin-left: auto;margin-right: auto;position: absolute;left: 100px; right: 100px;z-index: 10}',
+            'h1 span {border-radius: 2px;background-color: white;padding: 10px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);}',
+            '</style>',
+            '</head>',
+            '<body style="margin: 0;">',
+            '<h1 align="center"><span>$$TITLE$$</span></h1>'
+        ])
+        htmlfooter = '</body>\n</html>'
+        htmlheader = self._SubstituteTemplateHeaderFooter(htmlheader)
 
         # Inject the script tags needed into the header and set the title
         htmlheader = htmlheader.replace("</head>", asm3.html.map_js() + "\n</head>")
@@ -1858,41 +1873,29 @@ class Report:
             self._Append(htmlfooter)
             return self.output
 
-        # Choose the center location for the map 
-        mapcenter = ""
-        if self.html.find("FIRST") != -1 or self.html == "MAP":
-            # First valid geocode in the dataset
-            for r in rs:
-                if r[0] is not None and r[0] != "" and not r[0].startswith("0,0"):
-                    mapcenter = r[0]
-                    break
-        elif self.html.find("USER") != -1: 
-            # User's location
-            mapcenter = "" 
-        elif len(self.html) > 3 and self.html[3] == " " and self.html.find(",") != -1:
-            # Actual latlong specified
-            mapcenter = self.html[self.html.find(" ")+1:] 
-
-        self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000"></div>\n')
-        self._Append("<script type='text/javascript'>\n" \
-            "setTimeout(function() {\n" \
-            "var points = \n")
+        self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%; height: calc(100vh); color: #000;"></div>\n')
 
         p = []
         for values in rs:
             concat = []
+            pincolour = "blue"
             for i, s in enumerate(values):
                 if i == 0: continue # skip lat/long
+                if cols[i] == "PINSTYLE":
+                    pincolour = s
+                    continue
                 if asm3.utils.is_date(s): 
                     concat.append(asm3.i18n.python2display(l, s))
                 else:
                     concat.append(str(s))
-            p.append({ "latlong": values[0], "popuptext": "".join(concat) })
+                
+            p.append({ "latlong": values[0], "POPUPTEXT": "".join(concat), "PINURL": f"static/images/mapping/{pincolour.lower()}.png" })
 
-        self._Append( asm3.utils.json(p) + ";\n" )
-        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % mapcenter )
-        self._Append( "}, 50);\n" )
-        self._Append("</script>")
+        self._Append("<script type='text/javascript'>\n")
+        self._Append(f"  var points = {asm3.utils.json(p)};\n")
+        self._Append("  mapping.draw_map(\"embeddedmap\", 10, \"\", []);\n")
+        self._Append("  mapping.ready().then( () => { mapping.redraw_markers(points); } );\n")
+        self._Append("</script>\n")
         self._Append(htmlfooter)
         return self.output
 

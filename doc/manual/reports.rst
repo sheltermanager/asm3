@@ -493,8 +493,30 @@ person on file, with their address when the marker is clicked::
 
     SELECT LatLong, OwnerAddress FROM owner
 
+If a column named "PinStyle" is included, it's value will affect the style of pin used
+to represent that row. The currently available pin styles are:
+
+* red
+* pink
+* orange
+* yellow
+* green
+* blue
+* purple
+* grey
+
+For example, this SQL will produce a map that shows the location of every
+person on file, with their address when the marker is clicked, banned people
+are assigned red pins but non-banned people are assigned green pins::
+
+    SELECT LatLong, OwnerAddress, 
+    CASE
+    WHEN IsBanned = 1 THEN 'red'
+    ELSE 'green'
+    END AS 'PinStyle' FROM owner
+
 If there are more than two columns in the query results, the report engine will
-concatenate together the values of each subsequent column. 
+concatenate together the values of each subsequent column (unless the column is named "PinStyle", see above). 
 
 This SQL will produce a map with every person on file, but includes a clickable
 link to the person record when the marker is clicked::
