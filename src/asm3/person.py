@@ -1329,6 +1329,7 @@ def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) 
                 _("Flags changed from '{0}' to '{1}'", l).format(oldflags, flagstr))
 
     dbo.update("owner", personid, {
+        "IDCheck":                  fb("homechecked"),
         "ExcludeFromBulkEmail":     fb("excludefrombulkemail"),
         "IsAdopter":                fb("adopter"),
         "IsAdoptionCoordinator":    fb("coordinator"),
