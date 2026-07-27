@@ -7296,9 +7296,6 @@ def update_all_animal_figures_onshelter(dbo: Database) -> str:
     return f"OK {len(animals)}"
 
 def update_animal_figures_onshelter(dbo: Database, animalid: int):
-    # Delete existing animalfiguresonshelter rows with this animalid
-    dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
-
     # Get animals movement history
     date = get_date_brought_in(dbo, animalid)
     if not date:
@@ -7358,6 +7355,9 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int):
                     inboundmovements.pop(0)
         date = asm3.i18n.add_days(date, 1)
 
+    # Delete existing animalfiguresonshelter rows with this animalid
+    dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
+    
     for f in figures.items():
         month = int(f[0][0])
         year = int(f[0][1])
