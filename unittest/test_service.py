@@ -33,6 +33,22 @@ class TestService(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         aid = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")[0]
+        data = {
+            "name": "Test Form",
+            "header": "HEADER",
+            "footer": "FOOTER"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        nformid = asm3.onlineform.insert_onlineform_from_form(base.get_dbo(), "test", post)
+        data = {
+            "fieldname": "testfield",
+            "formid":    str(nformid),
+            "fieldtype": "1", # TEXT
+            "label":     "Test Field",
+            "displayindex": "1"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        nfieldid = asm3.onlineform.insert_onlineformfield_from_form(base.get_dbo(), "test", post)
 
         TESTS = [
             f"?method=animal_image&animalid={aid}",
@@ -82,8 +98,8 @@ class TestService(unittest.TestCase):
             "?method=json_stray_animals&username=user&password=letmein",
             "?method=xml_stray_animals&username=user&password=letmein",
             "?method=rss_timeline&username=user&password=letmein",
-            "?method=online_form_html&formid=1&username=user&password=letmein",
-            "?method=online_form_json&formid=1&username=user&password=letmein"
+            f"?method=online_form_html&formid={nformid}&username=user&password=letmein",
+            f"?method=online_form_json&formid={nformid}&username=user&password=letmein"
         ]
         dbo = base.get_dbo()
         for q in TESTS:
