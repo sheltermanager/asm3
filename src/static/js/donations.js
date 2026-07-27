@@ -25,6 +25,11 @@ $(function() {
                 fields: [
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
+                    { json_field: "FUNDEDBYOWNERDONATIONID", post_field: "funding", label: _("Fund"), type: "select", options: { displayfield: "FUNDNAME", valuefield: "ID",
+                        rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' },
+                        callout: _("Mark this payment as funded by a specific donation"),
+                        hideif: function() { return !config.bool("FundedPaymentsEnabled") }
+                    },
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
                     { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
@@ -56,7 +61,11 @@ $(function() {
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
-                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { json_field: "ISFUNDINGSOURCE", post_field: "isfundingsource", label: _("Funding Source"), type: "check",
+                        callout: _("This payment can be used as a source of funds for other payments"),
+                        hideif: function() { return !config.bool("FundedPaymentsEnabled") }
+                    }
                 ]
             };
 
@@ -101,16 +110,24 @@ $(function() {
                                 $("#vatraterow").hide();
                                 $("#vatamountrow").hide();
                             }
+                            $("#isfundingsource").change();
+                            $("#funding").change();
                         }
                     });
-                },
-                complete: function(row) {
                 },
                 overdue: function(row) {
                     return !row.DATE && format.date_js(row.DATEDUE) < common.today_no_time();
                 },
                 columns: [
-                    { field: "DONATIONNAME", display: _("Type") },
+                    { field: "DONATIONNAME", display: _("Type"),
+                        formatter: function(row) {
+                            if (row.FUNDEDBYOWNERDONATIONID) {
+                                return tableform.table_render_edit_link(row.ID, row.DONATIONNAME, " " + html.icon("donation", _("This payment was funded")));
+                            } else {
+                                return tableform.table_render_edit_link(row.ID, row.DONATIONNAME);
+                            }
+                        }
+                    },
                     { field: "PAYMENTNAME", display: _("Method") },
                     { field: "FREQUENCYNAME", display: _("Frequency") },
                     { field: "DATEDUE", display: _("Due"), formatter: tableform.format_date },
@@ -198,6 +215,7 @@ $(function() {
                                 $("#vat").prop("checked", false); 
                                 $("#vat").change();
                                 donations.type_change(); // this will re-enable vat box if the type has it
+                                $("#isfundingsource").change();
                             }
                         });
                     } 
@@ -509,6 +527,29 @@ $(function() {
 
             $("#animal").on("change loaded", function(event, rec) {
                 donations.lastanimal = rec;
+            });
+
+            $("#funding").on("change", function() {
+                if ($("#funding").val() == "0") {
+                    $("#paymentrow").show();
+                    $("#chequenumberrow").show();
+                    $("#frequencyrow").show();
+                    $("#duerow").show();
+                } else {
+                    $("#paymentrow").hide();
+                    $("#chequenumberrow").hide();
+                    $("#frequencyrow").hide();
+                    $("#duerow").hide();
+                }
+            });
+
+            $("#isfundingsource").on("change", function() {
+                if ( $("#isfundingsource").prop("checked") ) {
+                    $("#funding").val(0);
+                    $("#fundingrow").hide();
+                } else if (config.bool("FundedPaymentsEnabled")) {
+                    $("#fundingrow").show();
+                }
             });
 
             $("#person").on("change", function(event, rec) {
