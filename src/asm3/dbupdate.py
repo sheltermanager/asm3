@@ -626,7 +626,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaFound"),
         fstr("AreaPostcode"),
-        fstr("AreaLatLong"),
+        fstr("AreaLatLong", True),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         fdate("ReturnToOwnerDate", True),
@@ -679,7 +679,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaLost"),
         fstr("AreaPostcode"),
-        fstr("AreaLatLong"),
+        fstr("AreaLatLong", True),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         flongstr("Comments") ))
@@ -1622,7 +1622,7 @@ def sql_structure(dbo: Database) -> str:
         ffloat("VATRate", True),
         fint("VATAmount", True),
         fint("Frequency"),
-        fint("FundedByOwnerDonationID"),
+        fint("FundedByOwnerDonationID", True),
         fint("NextCreated", True),
         flongstr("Comments") ))
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")

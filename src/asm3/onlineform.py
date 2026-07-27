@@ -167,6 +167,7 @@ def get_onlineforms(dbo: Database) -> Results:
 
 def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True):
     form = get_onlineform(dbo, formid)
+    if form is None: raise asm3.utils.ASMValidationError(f"{formid} does not exist")
     if form.RENDERER == RENDERER_BOOTSTRAP:
         return _get_onlineform_html_bootstrap(dbo, formid, completedocument)
     else:

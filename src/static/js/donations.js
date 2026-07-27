@@ -28,7 +28,7 @@ $(function() {
                     { json_field: "FUNDEDBYOWNERDONATIONID", post_field: "funding", label: _("Fund"), type: "select", options: { displayfield: "FUNDNAME", valuefield: "ID",
                         rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' },
                         callout: _("Mark this payment as funded by a specific donation"),
-                        hideif: function() { return !config.bool("FundedPaymentsEnabled") }
+                        hideif: function() { return !config.bool("FundedPaymentsEnabled"); }
                     },
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
@@ -64,7 +64,7 @@ $(function() {
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
                     { json_field: "ISFUNDINGSOURCE", post_field: "isfundingsource", label: _("Funding Source"), type: "check",
                         callout: _("This payment can be used as a source of funds for other payments"),
-                        hideif: function() { return !config.bool("FundedPaymentsEnabled") }
+                        hideif: function() { return !config.bool("FundedPaymentsEnabled"); }
                     }
                 ]
             };
