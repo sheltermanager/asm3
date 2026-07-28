@@ -42,7 +42,7 @@ $(function() {
                 let filterkey = $("#timelinefilter").val();
                 let filteredcount = 0;
                 $.each($(".asm-timeline-item a"), function(i, v) {
-                    if (!$(v).text().includes(filterkey)) {
+                    if (!$(v).text().toLowerCase().includes(filterkey.toLowerCase())) {
                         $(v).parents(".asm-timeline-item").hide();
                     } else {
                         $(v).parents(".asm-timeline-item").show();
