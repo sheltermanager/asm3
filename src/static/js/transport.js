@@ -156,8 +156,8 @@ $(function() {
                     { field: "DROPOFF", display: _("Dropoff"), formatter: function(row) {
                             if (row.DROPOFFOWNERID && common.has_permission("vo")) {
                                 return html.person_link(row.DROPOFFOWNERID, row.DROPOFFOWNERNAME) + '<br />' +
-                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + 
-                                    "<br/>" + row.DROPOFFPOSTCODE + 
+                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + " " + 
+                                    row.DROPOFFPOSTCODE + 
                                     (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
                             }
                             else {
