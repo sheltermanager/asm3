@@ -626,7 +626,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaFound"),
         fstr("AreaPostcode"),
-        fstr("AreaLatLong"),
+        fstr("AreaLatLong", True),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         fdate("ReturnToOwnerDate", True),
@@ -679,7 +679,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaLost"),
         fstr("AreaPostcode"),
-        fstr("AreaLatLong"),
+        fstr("AreaLatLong", True),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         flongstr("Comments") ))
@@ -967,6 +967,7 @@ def sql_structure(dbo: Database) -> str:
         fid(),
         fint("ClinicAppointmentID"),
         flongstr("Description"),
+        fstr("StockUsageIDs", True),
         fint("Amount") ))
     sql += index("clinicinvoiceitem_ClinicAppointmentID", "clinicinvoiceitem", "ClinicAppointmentID")
 
@@ -1096,6 +1097,7 @@ def sql_structure(dbo: Database) -> str:
         fdate("EndDateTime"),
         fstr("EventName"),
         flongstr("EventDescription", True),
+        fstr("EventLink", True),
         fint("EventOwnerID", True),
         fstr("EventAddress", True),
         fstr("EventTown", True),
@@ -1613,12 +1615,14 @@ def sql_structure(dbo: Database) -> str:
         fint("Donation"),
         fint("Quantity", True),
         fint("UnitPrice", True),
+        fint("IsFundingSource"),
         fint("IsGiftAid"),
         fint("Fee", True), 
         fint("IsVAT", True),
         ffloat("VATRate", True),
         fint("VATAmount", True),
         fint("Frequency"),
+        fint("FundedByOwnerDonationID", True),
         fint("NextCreated", True),
         flongstr("Comments") ))
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")
@@ -1626,6 +1630,8 @@ def sql_structure(dbo: Database) -> str:
     sql += index("ownerdonation_ChequeNumber", "ownerdonation", "ChequeNumber")
     sql += index("ownerdonation_Date", "ownerdonation", "Date")
     sql += index("ownerdonation_DateDue", "ownerdonation", "DateDue")
+    sql += index("ownerdonation_FundedByOwnerDonationID", "ownerdonation", "FundedByOwnerDonationID")
+    sql += index("ownerdonation_IsFundingSource", "ownerdonation", "IsFundingSource")
     sql += index("ownerdonation_IsVAT", "ownerdonation", "IsVAT")
 
     sql += table("ownerlookingfor", (
