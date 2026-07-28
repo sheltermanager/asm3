@@ -118,7 +118,7 @@ $(function() {
 
             // If there's an ev parameter, sync our checkboxes
             let ev = common.querystring_param("ev");
-            if (!ev) { ev = "dvmtbcrolp"; }
+            if (!ev) { ev = "dvmtbcrolpe"; }
             $("#toggles input").each(function() {
                 if (ev.indexOf( $(this).attr("data") ) != -1) {
                     $(this).prop("checked", true);
