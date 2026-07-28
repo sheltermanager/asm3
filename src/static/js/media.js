@@ -497,7 +497,8 @@ $(function() {
 
             if ( media.is_extension(file.name, "mp4") && file.size > controller.videosizelimit ) {
                 let videosizelimit = controller.videosizelimit / 1024 / 1024;
-                header.show_error(_("Video files over " + videosizelimit + "MB may not be uploaded."));
+                header.show_error(common.substitute(_("Video files over {0} MB may not be uploaded."), { 
+                    0: videosizelimit}));
                 deferred.resolve();
                 return deferred.promise();
             }
@@ -654,7 +655,8 @@ $(function() {
 
             if ( media.is_extension(fname, "mp4") && $("#filechooser")[0].files[0].size > controller.videosizelimit ) {
                 let videosizelimit = controller.videosizelimit / 1024 / 1024;
-                header.show_error(_("Video files over " + videosizelimit + "MB may not be uploaded."));
+                header.show_error(common.substitute(_("Video files over {0} MB may not be uploaded."), { 
+                    0: videosizelimit}));
                 return;
             }
 
