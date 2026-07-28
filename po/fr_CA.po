@@ -11183,7 +11183,7 @@ msgid "Owners Vet"
 msgstr "Vétérinaire des propriétaires"
 
 #: report_toolbar.js
-msgid "PDF (Landscape"
+msgid "PDF (Landscape)"
 msgstr "PDF (paysage)"
 
 #: report_toolbar.js

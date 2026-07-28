@@ -5697,6 +5697,10 @@ msgid "Enable authenticated methods of the Service API"
 msgstr ""
 
 #: options.js
+msgid "Enable funded payments"
+msgstr ""
+
+#: options.js
 msgid "Enable location filters"
 msgstr ""
 
@@ -7056,6 +7060,14 @@ msgstr ""
 
 #: movements.js
 msgid "Full Adoption"
+msgstr ""
+
+#: donations.js
+msgid "Fund"
+msgstr ""
+
+#: donations.js
+msgid "Funding Source"
 msgstr ""
 
 #: common_html.js options.js
@@ -9405,6 +9417,10 @@ msgstr ""
 msgid "Mark this owner homechecked"
 msgstr ""
 
+#: donations.js
+msgid "Mark this payment as funded by a specific donation"
+msgstr ""
+
 #: move_workflow.js
 msgid "Mark this person homechecked"
 msgstr ""
@@ -10412,7 +10428,7 @@ msgstr ""
 msgid "Non-shelter Animals"
 msgstr ""
 
-#: dbupdate.py onlineform.js
+#: dbupdate.py onlineform.js donations.js
 msgid "None"
 msgstr ""
 
@@ -11022,7 +11038,7 @@ msgid "PDF"
 msgstr ""
 
 #: report_toolbar.js
-msgid "PDF (Landscape"
+msgid "PDF (Landscape)"
 msgstr ""
 
 #: report_toolbar.js
@@ -12698,6 +12714,10 @@ msgstr ""
 
 #: document_templates.js document_repository.js report_images.js
 msgid "Rename"
+msgstr ""
+
+#: onlineforms.js
+msgid "Renderer"
 msgstr ""
 
 #: service_checkout_licence.js
@@ -15764,7 +15784,15 @@ msgid ""
 msgstr ""
 
 #: donations.js
+msgid "This payment can be used as a source of funds for other payments"
+msgstr ""
+
+#: donations.js
 msgid "This payment has already been received"
+msgstr ""
+
+#: donations.js
+msgid "This payment was funded"
 msgstr ""
 
 #: movements.js move_adopt.js
@@ -16741,10 +16769,6 @@ msgstr ""
 msgid "Use Automatic Insurance Numbers"
 msgstr ""
 
-#: onlineforms.js
-msgid "Use Bootstrap styled form"
-msgstr ""
-
 #: options.js
 msgid ""
 "Use HTML5 client side image scaling where available to speed up image "
@@ -16971,7 +16995,7 @@ msgid "Video Link"
 msgstr ""
 
 #: media.js
-msgid "Video files over " + videosizelimit + "MB may not be uploaded."
+msgid "Video files over {0} MB may not be uploaded."
 msgstr ""
 
 #: media.js
