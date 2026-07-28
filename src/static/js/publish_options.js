@@ -89,74 +89,84 @@ $(function() {
                     ]}, 
 
                     { id: "tab-apikeys", title: _("API Keys"), fields: [
-                        { id: "apikey1", post_field: "APIKey1", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey1", post_field: "APIKey1", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods1", post_field: "APIMethods1", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods1", post_field: "APIMethods1", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey2", post_field: "APIKey2", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey2", post_field: "APIKey2", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods2", post_field: "APIMethods2", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods2", post_field: "APIMethods2", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey3", post_field: "APIKey3", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey3", post_field: "APIKey3", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods3", post_field: "APIMethods3", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods3", post_field: "APIMethods3", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey4", post_field: "APIKey4", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey4", post_field: "APIKey4", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods4", post_field: "APIMethods4", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods4", post_field: "APIMethods4", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey5", post_field: "APIKey5", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey5", post_field: "APIKey5", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods5", post_field: "APIMethods5", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods5", post_field: "APIMethods5", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey6", post_field: "APIKey6", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey6", post_field: "APIKey6", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods6", post_field: "APIMethods6", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods6", post_field: "APIMethods6", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey7", post_field: "APIKey7", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey7", post_field: "APIKey7", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods7", post_field: "APIMethods7", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods7", post_field: "APIMethods7", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey8", post_field: "APIKey8", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey8", post_field: "APIKey8", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods8", post_field: "APIMethods8", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods8", post_field: "APIMethods8", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey9", post_field: "APIKey9", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey9", post_field: "APIKey9", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods9", post_field: "APIMethods9", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods9", post_field: "APIMethods9", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottomborder"
                         },
-                        { id: "apikey10", post_field: "APIKey10", label: _("Key"), type: "text", doublesize: true,
+                        { id: "apikey10", post_field: "APIKey10", label: "", type: "text", doublesize: true,
                             xmarkup: ' <button class="asm-apikeygenbutton">' + _("Generate an API Key") + '</button>' +
                             '<button class="asm-copyapikeybutton">' + _("Copy API Key to the clipboard") + '</button>'
                         },
-                        { id: "apimethods10", post_field: "APIMethods10", label: _("Methods"), type: "selectmulti",
+                        { id: "apimethods10", post_field: "APIMethods10", label: "", type: "selectmulti",
+                            callout: _("List of API methods this key is allowed to call"),
                             options: controller.authmethods, colclasses: "bottompadding"
                         },
                     ]}, 
