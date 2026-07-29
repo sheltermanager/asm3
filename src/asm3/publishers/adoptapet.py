@@ -214,7 +214,14 @@ class AdoptAPetPublisher(FTPPublisher):
             "#22:Birthdate=Birthdate\n" \
             "#23:Sizecurrent=Sizecurrent\n" \
             "#24:SizeUOM=SizeUOM\n" \
-            "#25:AdoptionFee=AdoptionFee"
+            "#25:AdoptionFee=AdoptionFee\n" \
+            "#26:Cratetrained=Cratetrained\n" \
+            "#27:HeartwormNegative=HeartwormNegative\n" \
+            "#28:HeartwormPositive=HeartwormPositive\n" \
+            "#29:Leashtrained=Leashtrained\n" \
+            "#30:IndoorOnly=IndoorOnly\n" \
+            "#31:FIVPositive=FIVPositive\n" \
+            "#32:SpecialDietaryNeeds=SpecialDietaryNeeds"
         else:
             defmap += "#10:Color=Color\n" \
             "#11:Description=Description\n" \
@@ -232,7 +239,14 @@ class AdoptAPetPublisher(FTPPublisher):
             "#23:Birthdate=Birthdate\n" \
             "#24:Sizecurrent=Sizecurrent\n" \
             "#25:SizeUOM=SizeUOM\n" \
-            "#26:AdoptionFee=AdoptionFee"
+            "#26:AdoptionFee=AdoptionFee\n" \
+            "#27:Cratetrained=Cratetrained\n" \
+            "#28:HeartwormNegative=HeartwormNegative\n" \
+            "#29:HeartwormPositive=HeartwormPositive\n" \
+            "#30:Leashtrained=Leashtrained\n" \
+            "#31:IndoorOnly=IndoorOnly\n" \
+            "#32:FIVPositive=FIVPositive\n" \
+            "#33:SpecialDietaryNeeds=SpecialDietaryNeeds"
 
         return defmap
 
@@ -288,7 +302,7 @@ class AdoptAPetPublisher(FTPPublisher):
         # NOTE: We still publish even if there are no animals. This prevents situations
         # where the last animal can't be removed from AdoptAPet because the shelter
         # has no animals to send.
-        animals = self.getMatchingAnimals()
+        animals = self.getMatchingAnimals(includeAdditionalFields=True)
         if len(animals) == 0:
             self.log("No animals found to publish, sending empty file.")
 
@@ -439,6 +453,35 @@ class AdoptAPetPublisher(FTPPublisher):
             line.append("")
         else:
             line.append(str(int(asm3.utils.cint(an.FEE) / 100)))
+        # Cratetrained
+        line.append(self.apYesNoUnknown(an.ISCRATETRAINED))
+        heartwormnegative = ""
+        heartwormpositive = ""
+        if an.HEARTWORMTESTRESULT == 1:
+            heartwormnegative = "1"
+            heartwormpositive = "0"
+        elif an.HEARTWORMTESTRESULT == 2:
+            heartwormnegative = "0"
+            heartwormpositive = "1"
+        # HeartwormNegative
+        line.append(heartwormnegative)
+        # HeartwormPositive
+        line.append(heartwormpositive)
+        # Leashtrained
+        line.append(self.apYesNoUnknown(an.ISGOODONLEAD))
+        # IndoorOnly
+        if "INDOORONLY" in an:
+            line.append(self.apYesNoUnknown(an.INDOORONLY))
+        else:
+            line.append("")
+        # FIVPositive
+        line.append(self.apYesNoUnknown(an.COMBITESTRESULT))
+        # SpecialDietaryNeeds
+        if "SPECIALDIETARYNEEDS" in an:
+            line.append(self.apYesNoUnknown(an.SPECIALDIETARYNEEDS))
+        else:
+            line.append("")
+
         return self.csvLine(line)
     
     def removeAllImages(self) -> str:

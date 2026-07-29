@@ -292,6 +292,19 @@ This means you can then grab it from their FTP server and edit it yourself if
 you wish to change any mappings, then put it back again. This is generally only
 necessary for users who want to send colour information.
 
+Extra fields
+^^^^^^^^^^^^
+
+AdoptAPet.com have a number of extra fields that you can set by creating additional
+animal fields with certain names in your database. The system responds to the
+field names, you can label them anything you want, they must be linked to
+animal records.
+
+* indooronly (Yes/No): Must the pet be denied access to outdoors?
+
+* specialdietaryneeds (Yes/No): Does the pet require a special diet?
+
+
 maddiesfund.org / Maddie's Pet Assistant
 ----------------------------------------
 
