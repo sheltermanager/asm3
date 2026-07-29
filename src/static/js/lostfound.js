@@ -59,7 +59,7 @@ $(function() {
                             hideif: function() { return mode != "found"; }},
                         { type: "nextcol" },
                         { post_field: "areapostcode", json_field: "AREAPOSTCODE", type: "text", label: _("Zipcode") },
-                        { post_field: "latlong", json_field: "LATLONG", type: "latlong", 
+                        { post_field: "arealatlong", json_field: "AREALATLONG", type: "latlong", 
                             label: _("Latitude/Longitude"), 
                             callout: _("Right-click on the map to change the marker location")
                         },
@@ -109,7 +109,7 @@ $(function() {
                 if (!common.has_permission("dfa")) { $("#button-delete").hide(); }
             }
             // CONFIG ===========================
-            $("#latlongrow").toggle( config.bool("ShowLatLong") );
+            $("#arealatlongrow").toggle( config.bool("ShowLatLong") );
         },
 
         validation: function() {
@@ -132,10 +132,24 @@ $(function() {
                 return false;
             }
 
+            // area lost
+            if (lostfound.mode == "lost" && common.trim($("#arealost").val()) == "") {
+                header.show_error(_("Area lost cannot be blank"));
+                validate.highlight("arealost");
+                return false;
+            }
+
             // date found
             if (lostfound.mode == "found" && common.trim($("#datefound").val()) == "") {
                 header.show_error(_("Date found cannot be blank"));
                 validate.highlight("datefound");
+                return false;
+            }
+
+            // area found
+            if (lostfound.mode == "found" && common.trim($("#areafound").val()) == "") {
+                header.show_error(_("Area found cannot be blank"));
+                validate.highlight("areafound");
                 return false;
             }
 
@@ -278,8 +292,8 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "lostanimal_", "foundanimal_" ]);
-            if (this.mode == "lost") { validate.indicator([ "datelost", "datereported", "owner" ]); }
-            if (this.mode == "found") { validate.indicator([ "datefound", "datereported", "owner" ]); }
+            if (this.mode == "lost") { validate.indicator([ "datelost", "arealost", "datereported", "owner" ]); }
+            if (this.mode == "found") { validate.indicator([ "datefound", "areafound", "datereported", "owner" ]); }
         },
 
         delay: function() {
