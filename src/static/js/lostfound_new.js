@@ -80,10 +80,24 @@ $(function() {
                     return false;
                 }
 
+                // area lost
+                if (lostfound_new.mode == "lost" && common.trim($("#arealost").val()) == "") {
+                    header.show_error(_("Area lost cannot be blank"));
+                    validate.highlight("arealost");
+                    return false;
+                }
+
                 // date found
                 if (lostfound_new.mode == "found" && common.trim($("#datefound").val()) == "") {
                     header.show_error(_("Date found cannot be blank."));
                     validate.highlight("datefound");
+                    return false;
+                }
+
+                // area found
+                if (lostfound_new.mode == "found" && common.trim($("#areafound").val()) == "") {
+                    header.show_error(_("Area found cannot be blank"));
+                    validate.highlight("areafound");
                     return false;
                 }
 
@@ -101,7 +115,7 @@ $(function() {
 
             };
 
-            validate.indicator([ "datelost", "datefound", "datereported", "owner" ]);
+            validate.indicator([ "datelost", "datefound", "arealost", "areafound", "datereported", "owner" ]);
 
             const add_lf_animal = async function(addmode) {
                 if (!validation()) { return; }

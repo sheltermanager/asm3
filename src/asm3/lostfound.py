@@ -933,17 +933,15 @@ def update_geocode(dbo: Database, aid: int, mode: str, latlon: str = "", area: s
     matches and does not do the geocode if it does.
     Returns the latlon.
     """
-    if mode == "lost":
-        addresscolumn = "AreaLost"
-        tablename = "animallost"
-    else:
-        addresscolumn = "AreaFound"
-        tablename = "animalfound"
     # If an address hasn't been specified, look it up from the aid given
     if area == "":
+        if mode == "lost":
+            sql = "SELECT AreaLost, AreaPostcode FROM animallost WHERE ID = ?"
+        else:
+            sql = "SELECT AreaFound, AreaPostcode FROM animalfound WHERE ID = ?"
         row = dbo.first_row(dbo.query(
-            "SELECT ?, AreaPostcode FROM ? WHERE ID = ?", 
-            [addresscolumn, tablename, aid]
+            sql,
+            [aid]
         ))
         if row is not None:
             if mode == "lost":
