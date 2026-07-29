@@ -7358,14 +7358,12 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int):
     # Delete existing animalfiguresonshelter rows with this animalid
     dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
     
+    values = []
     for f in figures.items():
         month = int(f[0][0])
         year = int(f[0][1])
-        values = {
-            "AnimalID": animalid,
-            "MonthMidPoint": datetime(year, month, 15),
-            "Month": month,
-            "Year": year,
-            "DaysOnShelter": f[1]
-        }
-        dbo.insert("animalfiguresonshelter", values, generateID=False, setCreated=False, writeAudit=False)
+        values.append( (animalid, datetime(year, month, 15), month, year, f[1]) )
+    dbo.execute_many(
+        "INSERT INTO animalfiguresonshelter (AnimalID, MonthMidPoint, Month, Year, DaysOnShelter) VALUES (?, ?, ?, ?, ?)",
+        values
+    )
