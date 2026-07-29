@@ -29,7 +29,7 @@ $(function() {
                         rowclasses: "tag-individual", classes: "newform", 
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "forenames2", classes: "tag-couple newform", maxlength: 50 }) },
                     { post_field: "surname", type: "text", label: _("Last name"), maxlength: 100,
-                        labelclasses: "tag-individual", classes: "newform", 
+                        labelclasses: "tag-individual", classes: "newform", validation: "notblank", 
                         xlabel: '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
                         xmarkup: tableform.render_text({ justwidget: true, post_field: "surname2", classes: "tag-couple newform", maxlength: 100 }) },
                     { post_field: "address", type: "textarea", label: _("Address"), classes: "asm-textareafixed newform", rows: 3},

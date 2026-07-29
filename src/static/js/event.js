@@ -24,7 +24,7 @@ $(function(){
             return [
                 { post_field: "eventname", json_field: "EVENTNAME", type: "text", label: _("Event Name") },
                 { post_field: "link", json_field: "EVENTLINK", label: _("URL"), type: "text" },
-                { post_field: "start", json_field: "STARTDATETIME", type: "datetime", label: _("Start Date") },
+                { post_field: "start", json_field: "STARTDATETIME", type: "datetime", label: _("Start Date"), validation: "notblank" },
                 { post_field: "end", json_field: "ENDDATETIME", type: "datetime", label: _("End Date") },
                 { post_field: "location", json_field: "EVENTOWNERID", label: _("Location"), type: "person", persontype: "organization" },
                 { post_field: "address", json_field: "EVENTADDRESS", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },
