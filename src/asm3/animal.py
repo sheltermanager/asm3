@@ -7365,7 +7365,6 @@ def update_animal_figures_onshelter(dbo: Database, animalid: int):
         month = int(f[0][0])
         year = int(f[0][1])
         values.append( (animalid, datetime(year, month, 15), month, year, f[1]) )
-    dbo.execute_many(
-        "INSERT INTO animalfiguresonshelter (AnimalID, MonthMidPoint, Month, Year, DaysOnShelter) VALUES (?, ?, ?, ?, ?)",
-        values
-    )
+    if len(values) > 0:
+        dbo.execute_many("INSERT INTO animalfiguresonshelter (AnimalID, MonthMidPoint, Month, Year, DaysOnShelter) VALUES (?, ?, ?, ?, ?)", values)
+
