@@ -161,8 +161,8 @@ def get_lat_long(dbo: Database, address: str, town: str, county: str, postcode: 
     we know not to try and look this up again until the address hash changes.
     """
 
-    if address.strip() == "":
-        return None
+    if asm3.utils.nulltostr(address).strip() == "":
+        return "0,0,"
 
     try:
         # Synchronise this process to a single thread to prevent

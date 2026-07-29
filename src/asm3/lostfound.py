@@ -939,10 +939,7 @@ def update_geocode(dbo: Database, aid: int, mode: str, latlon: str = "", area: s
             sql = "SELECT AreaLost, AreaPostcode FROM animallost WHERE ID = ?"
         else:
             sql = "SELECT AreaFound, AreaPostcode FROM animalfound WHERE ID = ?"
-        row = dbo.first_row(dbo.query(
-            sql,
-            [aid]
-        ))
+        row = dbo.first_row(dbo.query(sql, [aid]))
         if row is not None:
             if mode == "lost":
                 area = row.AREALOST
