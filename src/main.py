@@ -2648,6 +2648,10 @@ class batch(JSONEndpoint):
 
     def controller(self, o):
         return {}
+    
+    def post_genanos(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Regenerate ALL animal days on shelter", l), asm3.animal.update_all_animal_figures_onshelter, o.dbo)
 
     def post_genfigyear(self, o):
         l = o.locale
