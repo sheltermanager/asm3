@@ -42,7 +42,7 @@ $(function() {
                     rowclasses: "tag-individual",  colclasses: "nowrap",
                     xmarkup: tableform.render_text({ justwidget: true, post_field: "forenames2", json_field: "OWNERFORENAMES2", classes: "tag-couple", maxlength: 50 }) },
                 { post_field: "surname", json_field: "OWNERSURNAME", type: "text", label: _("Last name"), maxlength: 100,
-                    labelclasses: "tag-individual", colclasses: "nowrap",
+                    labelclasses: "tag-individual", colclasses: "nowrap", validation: "notblank", 
                     xlabel: '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
                     xmarkup: tableform.render_text({ justwidget: true, post_field: "surname2", json_field: "OWNERSURNAME2", classes: "tag-couple", maxlength: 100 }) },
                 { post_field: "hometelephone", json_field: "HOMETELEPHONE", type: "phone", label: _("Home Phone"), rowclasses: "homeworkphone" },

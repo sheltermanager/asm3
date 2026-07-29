@@ -20,7 +20,7 @@ $(function() {
                     { post_field: "eventname", label: _("Event Name"), type: "text", maxlength: 50 },
                     { post_field: "description", label: _("Description"), type: "richtextarea", height: "100px", width: "195px" },
                     { post_field: "link", label: _("URL"), type: "text" },
-                    { post_field: "start", label: _("Start Date"), type: "datetime" },
+                    { post_field: "start", label: _("Start Date"), type: "datetime", validation: "notblank" },
                     { post_field: "end", label: _("End Date"), type: "datetime" },
                     { post_field: "location", label: _("Location"), type: "person", persontype: "organization" },
                     { post_field: "address", label: _("Address"), type: "textarea", rows: 3, classes: "asm-textareafixed" },

@@ -85,6 +85,10 @@ $(function() {
             });
         },
 
+        sync: function() {
+            validate.indicator(["animal", "person"]);
+        },
+
         name: "log_new",
         animation: "newdata",
         autofocus: "#asm-content button:first",
