@@ -36,7 +36,7 @@ $(function() {
         render: function() {
             const chk = function(id, data, icon, label, tag="") {
                 if (tag) {tag = " " + tag;}
-                return '<span class="asm-map-legend' + tag + '">' + 
+                return '<span class="asm-map-legend ui-widget-content' + tag + '">' + 
                     html.icon(icon) + 
                     '<input id="' + id + '" data="' + data + '" type="checkbox" class="asm-checkbox" /> ' +
                     '<label for="' + id + '">' + label + '</label>' +
@@ -47,7 +47,7 @@ $(function() {
             return [
                 html.content_header(_("Map View")),
                 '<p id="toggles" class="asm-map-legends centered" style="top: ' + overlayheight + 'px;">',
-                    '<span class="asm-map-legend" style="padding: 5px;">',
+                    '<span class="asm-map-legend ui-widget-content" style="padding: 5px;">',
                     '<label for="speciesfilter">' + _("Species") + '</label>',
                     tableform.render_select(
                         { post_field: "speciesfilter", label: _("Species"), justwidget: true, options: '<option value="0">' + _("(all)") + '</option>' + html.list_to_options(controller.species, "ID", "SPECIESNAME") }
@@ -59,7 +59,7 @@ $(function() {
                     chk("toggle-recentincident", "i", "call-complete", _("Recent Incidents")),
                     chk("toggle-nonshelter", "n", "nonshelter", _("Non-Shelter")),
                     chk("toggle-reclaim", "r", "location", _("Reclaims")),
-                    '<span class="asm-map-legend" style="padding: 5px;">',
+                    '<span class="asm-map-legend ui-widget-content" style="padding: 5px;">',
                     '<label for="datefloor">' + _("From") + '</label>',
                     tableform.render_date(
                         { post_field: "datefloor", justwidget: true }
