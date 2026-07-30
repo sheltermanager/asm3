@@ -30,7 +30,7 @@ VALID_FIELDS = [
     "ANIMALENTRYDATE", "ANIMALENTRYTIME", "ANIMALENTRYCATEGORY", "ANIMALENTRYTYPE", "ANIMALFLAGS", "ANIMALWARNING",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALGOODWITHELDERLY", "ANIMALGOODONLEAD",
-    "ANIMALHOUSETRAINED", "ANIMALCRATETRAINED", "ANIMALENERGYLEVEL", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
+    "ANIMALHOUSETRAINED", "ANIMALCRATETRAINED", "ANIMALENERGYLEVEL", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE", "ANIMALVIDEO", "ANIMALLINK", "ANIMALLINKNOTES", "ANIMALMEDIATYPE", 
     "CLINICAPPOINTMENTFOR", "CLINICAPPOINTMENTTYPE", "CLINICAPPOINTMENTSTATUS", 
     "CLINICAPPOINTMENTDATE", "CLINICAPPOINTMENTTIME", "CLINICARRIVEDDATE", "CLINICARRIVEDTIME", 
     "CLINICWITHVETDATE", "CLINICWITHVETTIME", "CLINICCOMPLETEDDATE", "CLINICCOMPLETEDDATE", 
@@ -579,6 +579,25 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                     # We don't know what it is, don't try and do anything with it
                     row_error(errors, "animal", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
                     imagedata = ""
+            # video data if any was supplied
+            videodata = gks(row, "ANIMALVIDEO")
+            if videodata != "":
+                if videodata.startswith("http"):
+                    # It's a URL, get the video from the remote server
+                    r = asm3.utils.get_url_bytes(videodata, timeout=5000, exceptions=False)
+                    if r["status"] == 200:
+                        asm3.al.debug("retrieved video from %s (%s bytes)" % (videodata, len(r["response"])), "csvimport.csvimport", dbo)
+                        videodata = "data:video/mp4;base64,%s" % asm3.utils.base64encode(r["response"])
+                    else:
+                        row_error(errors, "animal", rowno, row, "error reading video from '%s': %s" % (videodata, r), dbo, sys.exc_info())
+                        continue
+                elif videodata.startswith("data:video"):
+                    # It's a base64 encoded data URI - do nothing as attach_file requires it
+                    pass
+                else:
+                    # We don't know what it is, don't try and do anything with it
+                    row_error(errors, "animal", rowno, row, "WARN: unrecognised video content, ignoring", dbo, sys.exc_info())
+                    videodata = ""
             # pdf data if any was supplied
             pdfdata = gks(row, "ANIMALPDFDATA")
             pdfname = gks(row, "ANIMALPDFNAME")
@@ -626,6 +645,10 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 if htmldata != "" and htmlname == "":
                     row_error(errors, "animal", rowno, row, "ANIMALHTMLNAME must be set for data", dbo, sys.exc_info())
                     continue
+            # link data if any was supplied
+            linkdata = gks(row, "ANIMALLINK")
+            linktype = gks(row, "ANIMALMEDIATYPE")
+            linkcomments = gks(row, "ANIMALLINKNOTES")
 
             # If an original owner is specified, create a person record
             # for them and attach it to the animal as original owner
@@ -744,8 +767,13 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 if not dryrun: create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                 # If we have some image data, add it to the animal
                 if len(imagedata) > 0 and not dryrun:
-                    imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
+                    imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata, 
+                    "excludefrompublish": asm3.configuration.auto_new_images_not_for_publish(dbo) }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
+                # If we have some video data, add it to the animal
+                if len(videodata) > 0 and not dryrun:
+                    videopost = asm3.utils.PostedData({ "filename": "video.mp4", "filetype": "video/mp4", "filedata": videodata }, dbo.locale)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, videopost)
                 # If we have some PDF data, add that to the animal
                 if len(pdfdata) > 0 and not dryrun:
                     pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
@@ -754,6 +782,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 if len(htmldata) > 0 and not dryrun:
                     htmlpost = asm3.utils.PostedData({ "filename": htmlname, "filetype": "text/html", "filedata": htmldata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, htmlpost)
+                # If we have some media links, add them to the animal
+                if len(linkdata) > 0 and not dryrun:
+                    linkpost = asm3.utils.PostedData({ "linktarget": linkdata, "linktype": linktype, "linkcomments": linkcomments }, dbo.locale)
+                    # asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, htmlpost)
+                    asm3.media.attach_link_from_form(dbo, user, asm3.media.ANIMAL, animalid, linkpost)
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
@@ -1573,7 +1606,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         "ANIMALJURISDICTION", "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALENTRYCATEGORY",
         "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
         "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALHOUSETRAINED", 
-        "ANIMALIMAGE", "ANIMALPDFNAME", "ANIMALPDFDATA", "ANIMALHTMLNAME", "ANIMALHTMLDATA", 
+        "ANIMALIMAGE", "ANIMALPDFNAME", "ANIMALPDFDATA", "ANIMALHTMLNAME", "ANIMALHTMLDATA", "ANIMALVIDEO", "ANIMALLINK", "ANIMALLINKNOTES", "ANIMALMEDIATYPE",
         "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
         "CURRENTVETTITLE", "CURRENTVETINITIALS", "CURRENTVETFIRSTNAME",
         "CURRENTVETLASTNAME", "CURRENTVETADDRESS", "CURRENTVETCITY", "CURRENTVETSTATE", "CURRENTVETZIPCODE",
@@ -1735,13 +1768,17 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
 
         if includemedia == "all":
             for m in asm3.media.get_media(dbo, asm3.media.ANIMAL, a["ID"]):
-                if m["MEDIANAME"].endswith(".jpg") or m["MEDIANAME"].endswith(".pdf") or m["MEDIANAME"].endswith(".html"):
+                if m["MEDIANAME"].endswith(".jpg") or m["MEDIANAME"].endswith(".pdf") or m["MEDIANAME"].endswith(".html") or m["MEDIANAME"].endswith(".mp4") or m["MEDIAMIMETYPE"] == "text/url":
                     row = {}
                     row["ANIMALCODE"] = a["SHELTERCODE"]
                     row["ANIMALNAME"] = a["ANIMALNAME"]
+                    row["ANIMALMEDIATYPE"] = m["MEDIATYPE"]
                     if m["MEDIANAME"].endswith(".jpg"):
                         #row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
                         row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                    elif m["MEDIANAME"].endswith(".mp4"):
+                        #row["ANIMALIMAGE"] = "data:video/mp4;base64,%s" % asm3.utils.base64encode(mdata)
+                        row["ANIMALVIDEO"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
                     elif m["MEDIANAME"].endswith(".pdf"):
                         row["ANIMALPDFNAME"] = m["MEDIANOTES"]
                         if row["ANIMALPDFNAME"].strip() == "": row["ANIMALPDFNAME"] = "doc.pdf"
@@ -1752,6 +1789,9 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
                         if row["ANIMALHTMLNAME"].strip() == "": row["ANIMALHTMLNAME"] = "doc.html"
                         #row["ANIMALHTMLDATA"] = "data:text/html;base64,%s" % asm3.utils.base64encode(mdata)
                         row["ANIMALHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.name(), m["ID"])
+                    elif m["MEDIAMIMETYPE"] == "text/url":
+                        row["ANIMALLINK"] = m["MEDIANAME"]
+                        row["ANIMALLINKNOTES"] = m["MEDIANOTES"]
                     out.write(tocsv(row))
 
         for v in asm3.medical.get_vaccinations(dbo, a["ID"]):
