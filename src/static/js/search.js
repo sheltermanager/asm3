@@ -49,9 +49,9 @@ $(function() {
                     if (controller.results.length == 1) {
                         common.route("animal?id=" + r.ID);
                     }
-                    h.push('<p class="asm-search-result">' +
-                        '<span class="asm-search-name">' + 
+                    h.push('<p class="asm-search-result" style="line-height: 1.5;">' +
                         html.animal_link_thumb_bare(r) +
+                        '<span class="asm-search-name">' + 
                         html.icon("animal", _("Animal")));
                     h.push(html.animal_emblems(r));
                     h.push('<a href="animal?id=' + r.ID + '">' + r.ANIMALNAME + ' - ' + r.CODE + '</a> ');
@@ -89,8 +89,9 @@ $(function() {
                         }
                     }
                     h.push('<span style="margin-left: 15px;" class="asm-search-personflags">' + edit_header.animal_flags(r) + '</span>');
-                    h.push('<br/>');
+                    h.push('<br />');
                     h.push(html.truncate(search.description(r)));
+                    h.push('<br style="clear: right;" />');
                     h.push('</p>');
                 }
                 if (r.RESULTTYPE == "COST") {
@@ -164,6 +165,7 @@ $(function() {
                     h.push(r.OWNERTOWN + ", " + r.OWNERCOUNTY + " " + r.OWNERPOSTCODE);
                     h.push('<br />');
                     h.push(html.truncate(r.COMMENTS));
+                    h.push('<br style="clear: right;" />');
                     h.push('</p>');
                 }
                 if (r.RESULTTYPE == "VOUCHER") {
