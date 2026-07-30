@@ -286,10 +286,12 @@ def get_animal_data(dbo: Database, pc: PublishCriteria = None, animalid: int = 0
         rows = [ r for r in sorted(rows, key=lambda k: k.ID) if check_bonding(r) ]
 
     # If animalid was set, only return that row or an empty set if it wasn't present
+    # or that animal isn't actually adoptable right now
     if animalid != 0:
         for r in rows:
             if r.ID == animalid:
-                return [ r ]
+                if is_animal_adoptable(dbo, r):
+                    return [ r ]
         return []
 
     # Ordering
