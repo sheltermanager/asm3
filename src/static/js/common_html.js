@@ -835,7 +835,7 @@ const html = {
             warn.push(_("This person has previously surrendered an animal."));
         }
         // Person at this address previously banned?
-        if (p.BANNEDADDRESS > 0 && config.bool("WarnBannedAddress")) {
+        if (p.BANNEDADDRESS > 0 && p.ISBANNED == 0 && config.bool("WarnBannedAddress")) {
             warn.push(_("This person lives at the same address as someone who was previously banned."));
         }
         // Is this owner not homechecked?
