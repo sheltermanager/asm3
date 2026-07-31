@@ -1285,21 +1285,18 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     
     if asm3.utils.is_valid_email_address(emailaddress):
         # Check if a limit has been set for days between submissions for this form
-        formdata = dbo.first_row(
-            dbo.query("SELECT ID, EmailSubmissionLimitDays FROM onlineform WHERE Name = ?", 
-            [post["formname"]]
-            )
-        )
-        formid = formdata.ID
-        key = f"formemail_{str(formid)}_{emailaddress}"
-        lastreceived = asm3.cachedisk.get(key, dbo.name())
-        if lastreceived and (dbo.now() - lastreceived).days < formdata.EMAILSUBMISSIONLIMITDAYS:
-            raise asm3.utils.ASMValidationError(
-                asm3.i18n._("Form recently submitted by {0}, please wait {1} days between submissions.").format(emailaddress, formdata.EMAILSUBMISSIONLIMITDAYS)
-            )
-        else:
-            ttl = 86400 * formdata.EMAILSUBMISSIONLIMITDAYS
-            asm3.cachedisk.put(key, dbo.name(), dbo.now(), ttl)
+        formdata = dbo.first_row(dbo.query("SELECT ID, EmailSubmissionLimitDays FROM onlineform WHERE Name = ?", [post["formname"]]))
+        if formdata is not None:
+            formid = formdata.ID
+            key = f"formemail_{str(formid)}_{emailaddress}"
+            lastreceived = asm3.cachedisk.get(key, dbo.name())
+            if lastreceived and (dbo.now() - lastreceived).days < formdata.EMAILSUBMISSIONLIMITDAYS:
+                raise asm3.utils.ASMValidationError(
+                    asm3.i18n._("Form recently submitted by {0}, please wait {1} days between submissions.").format(emailaddress, formdata.EMAILSUBMISSIONLIMITDAYS)
+                )
+            else:
+                ttl = 86400 * formdata.EMAILSUBMISSIONLIMITDAYS
+                asm3.cachedisk.put(key, dbo.name(), dbo.now(), ttl)
     
     collationid = get_collationid(dbo)
 
