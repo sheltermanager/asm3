@@ -297,8 +297,8 @@ def get_balance_fromto_date(dbo: Database, accountid: int, fromdate: datetime, t
     elif reconciled == NONRECONCILED:
         recfilter = " AND Reconciled = 0"
     r = dbo.first_row( dbo.query("SELECT a.AccountType, " \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate < ? %s) AS withdrawal," \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate < ? %s) AS deposit " \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate <= ? %s) AS withdrawal," \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate <= ? %s) AS deposit " \
         "FROM accounts a " \
         "WHERE a.ID = ?" % (recfilter, recfilter), (fromdate, todate, fromdate, todate, aid)) )
     deposit = r.deposit
