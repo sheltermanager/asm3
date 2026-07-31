@@ -852,7 +852,6 @@ select:disabled, input:disabled, textarea:disabled {
     padding: 8px;
     margin: 1px;
     font-weight: normal;
-    background-color: white;
 }
 
 .asm-map-legend .asm-icon {
