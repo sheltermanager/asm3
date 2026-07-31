@@ -102,6 +102,10 @@ $(function() {
         
         },
 
+        sync: function() {
+            validate.indicator(["person", "received"]);
+        },
+
         update_movements: async function(personid) {
             let formdata = "mode=personmovements&personid=" + personid;
             let result = await common.ajax_post("donation", "mode=personmovements&personid=" + personid);
