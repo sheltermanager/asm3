@@ -27,9 +27,7 @@ $(function() {
             let h = [];
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
             if (controller.explain != "") {
-                h.push('<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">' +
-                    '<p><span class="ui-icon ui-icon-search"></span>' +
-                    controller.explain + "</p></div>");
+                h.push(html.textbar(controller.explain, { icon: "search", marginleft: "0px" }));
             }
             if (controller.results.length == 0) {
                 h.push('<p class="asm-search-result">' + _("No results found.") + '</p>');
@@ -49,9 +47,9 @@ $(function() {
                     if (controller.results.length == 1) {
                         common.route("animal?id=" + r.ID);
                     }
-                    h.push('<p class="asm-search-result">' +
-                        '<span class="asm-search-name">' + 
+                    h.push('<p class="asm-search-result asm-search-result-animal">' +
                         html.animal_link_thumb_bare(r) +
+                        '<span class="asm-search-name">' + 
                         html.icon("animal", _("Animal")));
                     h.push(html.animal_emblems(r));
                     h.push('<a href="animal?id=' + r.ID + '">' + r.ANIMALNAME + ' - ' + r.CODE + '</a> ');
@@ -89,8 +87,9 @@ $(function() {
                         }
                     }
                     h.push('<span style="margin-left: 15px;" class="asm-search-personflags">' + edit_header.animal_flags(r) + '</span>');
-                    h.push('<br/>');
+                    h.push('<br />');
                     h.push(html.truncate(search.description(r)));
+                    h.push('<br style="clear: right;" />');
                     h.push('</p>');
                 }
                 if (r.RESULTTYPE == "COST") {
@@ -164,6 +163,7 @@ $(function() {
                     h.push(r.OWNERTOWN + ", " + r.OWNERCOUNTY + " " + r.OWNERPOSTCODE);
                     h.push('<br />');
                     h.push(html.truncate(r.COMMENTS));
+                    h.push('<br style="clear: right;" />');
                     h.push('</p>');
                 }
                 if (r.RESULTTYPE == "VOUCHER") {

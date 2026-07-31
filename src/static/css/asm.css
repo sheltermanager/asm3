@@ -477,6 +477,10 @@ select:disabled, input:disabled, textarea:disabled {
     min-height: 85px;
 }
 
+.asm-search-result-animal {
+    line-height: 1.5;
+}
+
 .asm-search-result .asm-thumbnail {
     float: right;
 }

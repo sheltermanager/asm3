@@ -1116,22 +1116,27 @@ const html = {
      * state: highlight (default) | error 
      * icon: info (default, jquery ui icon)
      * padding: (default 5px)
+     * marginleft: (default auto)
+     * marginright: (default auto)
      * margintop: (default not set)
      * maxwidth: (default 900px)
      */
     textbar: function(s, o) {
-        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", maxwidth = "max-width: 900px;";
+        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", 
+            marginleft = "auto", marginright = "auto", centered = true, maxwidth = "max-width: 900px;";
         if (!o) { o = {}; }
         if (!o.padding) { o.padding = "5px"; }
         if (o.id) { containerid = 'id="' + o.id + '"'; }
         if (o.display) { display = "display: " + o.display + ";"; }
         if (o.state) { state = o.state; }
         if (o.icon) { icon = o.icon; }
-        if (o.padding) { padding = "padding: " + o.padding + ";"; }
+        if (o.padding) { padding = "padding: " + o.padding + "; "; }
         if (o.margintop) { margintop = "margin-top: " + o.margintop + ";"; }
+        if (o.marginleft) { marginleft = "margin-left: " + o.marginleft + ";"; }
+        if (o.marginright) { marginright = "margin-right: " + o.marginright + ";"; }
         if (o.maxwidth) { maxwidth = "max-width: " + o.maxwidth + ";"; }
         return [
-            '<div class="ui-widget" ' + containerid + ' style="margin-left: auto; margin-right: auto; ' + margintop + display + maxwidth + '">',
+            '<div class="ui-widget" ' + containerid + ' style="' + margintop + marginleft + marginright + display + maxwidth + '">',
             '<div class="ui-state-' + state + ' ui-corner-all" style="' + padding + '"><p>',
             '<span class="ui-icon ui-icon-' + icon + '"></span>',
             s,
