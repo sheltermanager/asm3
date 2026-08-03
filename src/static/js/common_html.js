@@ -1123,7 +1123,7 @@ const html = {
      */
     textbar: function(s, o) {
         let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", 
-            marginleft = "auto", marginright = "auto", centered = true, maxwidth = "max-width: 900px;";
+            marginleft = "margin-left: auto;", marginright = "margin-right: auto;", maxwidth = "max-width: 900px;";
         if (!o) { o = {}; }
         if (!o.padding) { o.padding = "5px"; }
         if (o.id) { containerid = 'id="' + o.id + '"'; }
