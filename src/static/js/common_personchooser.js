@@ -487,8 +487,10 @@ $.fn.personchooser = asm_widget({
                 }
                 // Hide retired options from the lookups
                 dialogadd.find(".asm-selectbox").select("removeRetiredOptions", "all");
+                // Is value blank? If so change to zero
+                if (t.val() == "")  { t.val("0"); }
                 // Was there a value already set by the markup? If so, use it
-                if (t.val() != "" && t.val() != "0") {
+                if (t.val() != "0") {
                     self.loadbyid.call(self, t, t.val());
                 }
             },
