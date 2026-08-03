@@ -879,7 +879,7 @@ def get_onlineformincoming_html(dbo: Database, collationid: int,
         if f.FIELDNAME == "submitterreplyto": continue
         if f.FIELDNAME in SYSTEM_FIELDS and not include_system: continue
         if v.startswith("RAW::") and not include_raw: continue
-        if v.startswith("data:") and not include_images: continue
+        if v.startswith("data:image/jpeg") and not include_images: continue # deliberately only exclude jpeg because signatures are png
         if v.startswith("RAW::"): 
             h.append('<tr>')
             h.append('<td colspan="2">%s</td>' % v[5:])
