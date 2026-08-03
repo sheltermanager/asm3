@@ -683,7 +683,7 @@ $(document).ready(function() {
     
     // If address/postcode fields are present, offer an address lookup button to complete the address
     if (SMCOM && AL_COUNTRIES.hasOwnProperty(LOCALE) && $(".asm-onlineform-postcode").length > 0 && $(".asm-onlineform-address").length > 0) {
-        $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
+        $(".asm-onlineform-postcode").after('<span id="postcodelookup" type="button" class="btn btn-light">&nbsp;<img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
         $("#postcodelookup").click(function() {
             let country = AL_COUNTRIES[LOCALE];
             let postcode = $(".asm-onlineform-postcode").val();

@@ -200,7 +200,7 @@ def _get_onlineform_html_bootstrap(dbo: Database, formid: int, completedocument:
             asm3.html.script_tag(TIMEPICKER_JS) + \
             asm3.html.asm_script_tag("onlineform_extra.js") + \
             "</head>"
-        header = header.replace("</head>", extra)
+        # header = header.replace("</head>", extra)
         if '<!--defaultstyle-->' in header:
             defaultstyle = header.split('<!--defaultstyle-->')[1]
             header = header.replace(defaultstyle, "")
