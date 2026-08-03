@@ -2,28 +2,25 @@ Hills Science Diet Adopter List
 ###
 Figures
 ###
-3000/Any rev04
+3000/Any rev05
 ###
 The Hills Science Diet adopter list for exporting as a CSV file.
 ###
 en
 ###
 SELECT
-'' AS SAP,
-m.MovementDate AS AdoptionDate,
-o.OwnerTitle AS Prefix,
 replace(o.OwnerForeNames, '&', 'and') AS FirstName,
 replace(o.OwnerSurname, '&', 'and') AS LastName,
+o.EmailAddress AS Email,
+o.HomeTelephone AS Phone,
 o.OwnerAddress AS Address,
 o.OwnerTown AS City,
 o.OwnerCounty AS State,
 o.OwnerPostcode AS Zip,
-o.HomeTelephone AS Phone,
-o.EmailAddress AS Email,
-CASE WHEN o.ExcludeFromBulkEmail = 1 THEN 'N' ELSE 'Y' END AS EmailOptin,
-s.SpeciesName AS Species,
-a.DateOfBirth AS PetBirthDate,
 replace(replace(a.AnimalName, '(', ''), ')', '') AS PetName,
+s.SpeciesName AS Species,
+a.DateOfBirth AS PetEstimatedBirthDate,
+m.MovementDate AS AdoptionDate,
 o.OwnerTown AS AdoptionLocation,
 r.OwnerName AS RetailPartner
 FROM adoption m
@@ -41,21 +38,18 @@ $$HEADER
 <table border="1">
 <thead>
 <tr>
-<th>SAP</th>
-<th>ADOPTIONDATE</th>
-<th>PREFIX</th>
 <th>FIRSTNAME</th>
 <th>LASTNAME</th>
+<th>EMAIL</th>  
+<th>PHONE</th>  
 <th>ADDRESS</th>
 <th>CITY</th>
 <th>STATE</th>
 <th>ZIP</th>
-<th>PHONE</th>
-<th>EMAIL</th>
-<th>EMAILOPTIN</th>
-<th>SPECIES</th>
-<th>PETBIRTHDATE</th>
 <th>PETNAME</th>
+<th>SPECIES</th>
+<th>PETESTIMATEDBIRTHDATE</th>
+<th>ADOPTIONDATE</th>  
 <th>ADOPTIONLOCATION</th>
 <th>RETAILPARTNER</th>
 </tr>
@@ -65,21 +59,18 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$SAP</td>
-<td>$ADOPTIONDATE</td>
-<td>$PREFIX</td>
 <td>$FIRSTNAME</td>
 <td>$LASTNAME</td>
+<td>$EMAIL</td>  
+<td>$PHONE</td>  
 <td>$ADDRESS</td>
 <td>$CITY</td>
 <td>$STATE</td>
 <td>$ZIP</td>
-<td>$PHONE</td>
-<td>$EMAIL</td>
-<td>$EMAILOPTIN</td>
+<td>$PETNAME</td>  
 <td>$SPECIES</td>
-<td>$PETBIRTHDATE</td>
-<td>$PETNAME</td>
+<td>$PETESTIMATEDBIRTHDATE</td>
+<td>$ADOPTIONDATE</td>  
 <td>$ADOPTIONLOCATION</td>
 <td>$RETAILPARTNER</td>
 </tr>
