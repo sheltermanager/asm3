@@ -6,14 +6,18 @@ $(function() {
 
     const animal_find = {
 
-        options_filter: [ '<option value="goodwithchildren">' + _("Good with children") + '</option>',
+        options_filter: [ '<option value="cratetrained">' + _("Crate trained") + '</option>',
+                '<option value="goodwithchildren">' + _("Good with children") + '</option>',
                 '<option value="goodwithcats">' + _("Good with cats") + '</option>',
                 '<option value="goodwithdogs">' + _("Good with dogs") + '</option>',
+                '<option value="goodwithelderly">' + _("Good with elderly") + '</option>',
+                '<option value="goodtraveller">' + _("Good traveller") + '</option>',
                 '<option value="housetrained">' + _("Housetrained") + '</option>',
                 '<option value="fivplus">' + _("FIV+") + '</option>',
                 '<option value="flvplus">' + _("FLV+") + '</option>',
                 '<option value="heartwormplus">' + _("Heartworm+") + '</option>',
                 '<option value="heartwormneg">' + _("Heartworm-") + '</option>',
+                '<option value="unmicrochipped">' + _("Not microhipped") + '</option>',
                 '<option value="unaltered">' + _("Unaltered") + '</option>',
                 '<option value="includedeceased">' + _("Include deceased animals") + '</option>',
                 '<option value="includenonshelter">' + _("Include non-shelter animals") + '</option>',
