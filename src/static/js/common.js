@@ -1211,6 +1211,7 @@ const common = {
             "#emailbody": "richtextarea",
             "#owner": "personchooser",
             "#person": "personchooser",
+            "#people": "personchoosermulti",
             "#retailer": "personchooser",
             "#createpayment": "createpayment",
             "#dialog-": "dialog",
