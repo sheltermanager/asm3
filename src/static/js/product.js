@@ -180,7 +180,10 @@ $(function() {
                     click: function() {
                         product.move_product_init();
                         tableform.show_okcancel_dialog("#dialog-moveproduct", _("Move"), { 
-                            width: 500, okclick: product.move_product, notblank: [ "movementfrom", "movementto" ] });
+                            width: 500, okclick: product.move_product, 
+                            notblank: [ "movementquantity", "movementfrom", "movementto" ],
+                            notzero: [ "movementquantity", ]
+                         });
                     }
                 },
                 { id: "showusage", text: _("Usage"), icon: "stock-usage", enabled: "one", perm: "asl", 
@@ -222,7 +225,7 @@ $(function() {
                 html.info(_("Adjust stock levels of this product in bulk.")),
                 tableform.fields_render([
                 { type: "raw", markup: '<span class="strong" id="moveproductname"></span>' },
-                { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true, validation: "notzero" },
+                { post_field: "movementquantity", json_field: "MOVEMENTQUANTITY", label: _("Quantity"), type: "intnumber", xmarkup: ' &times; ', rowclose: false, halfsize: true },
                 { post_field: "movementunit", json_field: "MOVEMENTUNIT", type: "select", justwidget: true, halfsize: true },
                 { type: "rowclose" },
                 { post_field: "movementdate", json_field: "MOVEMENTDATE", label: _("Date"), type: "date" },
