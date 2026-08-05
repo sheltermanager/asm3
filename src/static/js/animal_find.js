@@ -17,7 +17,7 @@ $(function() {
                 '<option value="flvplus">' + _("FLV+") + '</option>',
                 '<option value="heartwormplus">' + _("Heartworm+") + '</option>',
                 '<option value="heartwormneg">' + _("Heartworm-") + '</option>',
-                '<option value="unmicrochipped">' + _("Not microhipped") + '</option>',
+                '<option value="unmicrochipped">' + _("Not microchipped") + '</option>',
                 '<option value="unaltered">' + _("Unaltered") + '</option>',
                 '<option value="includedeceased">' + _("Include deceased animals") + '</option>',
                 '<option value="includenonshelter">' + _("Include non-shelter animals") + '</option>',
