@@ -3077,7 +3077,8 @@ def get_satellite_counts(dbo: Database, animalid: int) -> Results:
         "(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID) AS test, " \
         f"(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID AND at.DateRequired < {dbo.sql_today()} AND at.DateOfTest IS NULL) AS testdue, " \
         "(SELECT COUNT(*) FROM animalmedical am WHERE am.AnimalID = a.ID) AS medical, " \
-        f"(SELECT COUNT(*) FROM animalmedicaltreatment amt WHERE amt.AnimalID = a.ID AND amt.DateRequired < {dbo.sql_today()} AND amt.DateGiven IS NULL) AS medicaldue, " \
+        "(SELECT COUNT(*) FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON amt.AnimalMedicalID = am.ID " \
+        f"WHERE amt.AnimalID = a.ID AND amt.DateRequired < {dbo.sql_today()} AND amt.DateGiven IS NULL AND am.Status = 0) AS medicaldue, " \
         "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.AnimalID = a.ID) AS boarding, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.AnimalID = a.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM animaldiet ad WHERE ad.AnimalID = a.ID) AS diet, " \
