@@ -187,7 +187,7 @@ $.fn.animalchoosermulti = asm_widget({
     },
 
     /**
-     * Removes selected animal from the list. This can be used to avoid deleted animals being reselected
+     * Removes selected animals from the list. This can be used to avoid deleted animals being reselected
      */
     remove_selected: function(t) {
         $.each(t.val().split(","), function(i, v) {
