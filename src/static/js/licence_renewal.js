@@ -57,7 +57,12 @@ $(function() {
                 // date
                 if (common.trim($("#issuedate").val()) == "" || common.trim($("#expirydate").val()) == "") {
                     header.show_error(_("License requires issued and expiry dates"));
-                    validate.highlight("issuedate");
+                    if ( !common.trim($("#issuedate").val()) ) {
+                        validate.highlight("issuedate");
+                    }
+                    if (!common.trim($("#expirydate").val()) ) {
+                        validate.highlight("expirydate");
+                    }
                     return false;
                 }
                 return true;
@@ -117,7 +122,7 @@ $(function() {
             $("#issuedate").date("today");
             licence_renewal.type_change();
 
-            validate.indicator([ "person", "number", "issuedate" ]);
+            validate.indicator([ "person", "number", "issuedate", "expirydate" ]);
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
