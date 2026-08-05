@@ -187,6 +187,15 @@ $.fn.animalchoosermulti = asm_widget({
     },
 
     /**
+     * Removes selected animal from the list. This can be used to avoid deleted animals being reselected
+     */
+    remove_selected: function(t) {
+        $.each(t.val().split(","), function(i, v) {
+            $(".asm-animalchoosermulti-result a[href='animal?id=" + v + "']").parent().remove();
+        });
+    },
+
+    /**
      * Converts the selected items into a list of ids, sets it as the
      * element value and puts links in the display area
      */
@@ -204,6 +213,7 @@ $.fn.animalchoosermulti = asm_widget({
         t.trigger("change", [ t.val() ]);
         o.dialog.dialog("close");
     },
+
 
     /**
      * Update the visible list of animals according to what's selected in the filters

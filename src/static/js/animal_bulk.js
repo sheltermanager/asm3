@@ -191,12 +191,7 @@ $(function() {
                     let response = await common.ajax_post("animal_bulk", formdata);
                     header.hide_loading();
                     header.show_info(_("{0} animals successfully deleted.").replace("{0}", response));
-
-                    // Remove deleted animals from animalchooser-multi to avoid them being reselected
-                    $.each($("#animals").val().split(","), function(i, v) {
-                        $(".asm-animalchoosermulti-result a[href='animal?id=" + v + "']").parent().remove();
-                    });
-                    
+                    $("#animals").animalchoosermulti("remove_selected");
                     $("#animals").animalchoosermulti("clear");
                 }
                 finally {
