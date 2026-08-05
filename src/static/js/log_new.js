@@ -42,7 +42,7 @@ $(function() {
                 }
                 if (controller.mode == "person") {
                     // person
-                    if ($("#person").val() == "" || $("#person").val() == "0") {
+                    if ($("#person").val() == "0") {
                         header.show_error(_("Log requires a person."));
                         validate.highlight("person");
                         return false;
