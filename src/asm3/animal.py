@@ -2641,7 +2641,7 @@ def get_animalconditions(dbo: Database, animalid: int, sort: int = ASCENDING) ->
     """
     Returns animalcondition records for the given animal:
     """
-    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, " \
+    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, c.Description, " \
         "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate " \
         "FROM animalcondition ac INNER JOIN lkcondition c ON ac.ConditionID = c.ID " \
         "INNER JOIN lksconditiontype ct ON c.ConditionTypeID = ct.ID " \
