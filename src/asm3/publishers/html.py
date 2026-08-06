@@ -127,6 +127,8 @@ def get_html_template_tags(dbo: Database, rows: Results) -> Dict[str, str]:
     for the animalviewadoptable template to work.
     """
     l = dbo.locale
+    count = 0
+    if rows is not None: count = len(rows)
     tags = {
         "ORGNAME":      asm3.configuration.organisation(dbo),
         "ORGADDRESS":   asm3.configuration.organisation_address(dbo),
@@ -139,7 +141,7 @@ def get_html_template_tags(dbo: Database, rows: Results) -> Dict[str, str]:
         "VERSION":      asm3.i18n.get_version(),
         "NAV":          "",
         "TITLE":        asm3.i18n._("Available for adoption", l),
-        "TOTAL":        len(rows),
+        "TOTAL":        count,
         "ADOPTABLEJSURL": "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.name())
     }
     return tags
@@ -302,17 +304,20 @@ def get_animal_view(dbo: Database, animalid: int, style: str = "", ustyle: str =
         # If there is no animalviewnotadoptable template, produce an error
         head, body, foot = asm3.template.get_html_template(dbo, ustyle)
         if head == "": raise asm3.utils.ASMPermissionError("animal is not adoptable")
+        a = asm3.animal.get_animal(dbo, animalid) # need to reload the animal record to populate the template (will be None above)
     s = head + body + foot
-    tags = asm3.wordprocessor.animal_tags_publisher(dbo, a)
+    tags = {}
+    if a is not None: tags = asm3.wordprocessor.animal_tags_publisher(dbo, a)
     tags = asm3.wordprocessor.append_tags(tags, asm3.wordprocessor.org_tags(dbo, "system"))
     tags = asm3.wordprocessor.append_tags(tags, get_html_template_tags(dbo, [a]))
-    # Add WebsiteMedia/Video columns/tags
-    embellish_media_urls(dbo, a, tags)
-    # Add extra publishing text
-    notes = asm3.utils.nulltostr(a.WEBSITEMEDIANOTES)
-    notes += asm3.configuration.third_party_publisher_sig(dbo)
-    tags["WEBMEDIANOTES"] = notes 
-    tags["WEBSITEMEDIANOTES"] = notes
+    if a is not None:
+        # Add WebsiteMedia/Video columns/tags
+        embellish_media_urls(dbo, a, tags)
+        # Add extra publishing text
+        notes = asm3.utils.nulltostr(a.WEBSITEMEDIANOTES)
+        notes += asm3.configuration.third_party_publisher_sig(dbo)
+        tags["WEBMEDIANOTES"] = notes 
+        tags["WEBSITEMEDIANOTES"] = notes
     s = asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     return s
 
