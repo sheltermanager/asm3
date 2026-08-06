@@ -17,6 +17,7 @@ IDTYPE_PETCOLOVELOST = "petcolovelost"
 
 def create_shelter(dbo: Database, username: str, password: str, taxid: str) -> int:
     auth = getAuthDetails(dbo, username, password)
+    url = auth["url"]
     headers = {
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
@@ -38,7 +39,7 @@ def create_shelter(dbo: Database, username: str, password: str, taxid: str) -> i
         "website": asm3.configuration.organisation_website(dbo),
         "taxId": taxid
     }
-    response = asm3.utils.post_json(f"{auth["url"]}/v2/shelters", asm3.utils.json(payload), headers)
+    response = asm3.utils.post_json(f"{url}/v2/shelters", asm3.utils.json(payload), headers)
     return response["response"]
 
 def getAnimalDataQuery(dbo: Database, lastpublished: datetime = None) -> str:
@@ -163,6 +164,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
         self.setStartPublishing()
         
         auth = getAuthDetails(self.dbo)
+        url = auth["url"]
 
         lastpublished = asm3.publish.get_last_published(self.dbo, "petcolovelost")
         
@@ -208,11 +210,11 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                     # shelterId and species removed as petco API returns an error if these are included when updating
                     del payload["shelterId"]
                     del payload["species"]
-                    r = asm3.utils.patch_json(f"{auth["url"]}/v2/animals/{pcllid}", asm3.utils.json(payload), headers)
+                    r = asm3.utils.patch_json(f"{url}/v2/animals/{pcllid}", asm3.utils.json(payload), headers)
                 else:
                     # Create new post
                     self.log("Creating: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                    r = asm3.utils.post_json(f"{auth["url"]}/v2/animals", asm3.utils.json(payload), headers)
+                    r = asm3.utils.post_json(f"{url}/v2/animals", asm3.utils.json(payload), headers)
 
                 if anchanged or an.RECENTLYCHANGEDIMAGES:
                     if anchanged:
@@ -230,7 +232,7 @@ class PetcoLoveLostPublisher(AbstractPublisher):
                         for photourl in photourls:
                             imagepayload["photos"].append({"url": photourl})
 
-                        pr = asm3.utils.post_json(f"{auth["url"]}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
+                        pr = asm3.utils.post_json(f"{url}/v2/animals/{pcllid}/photos", asm3.utils.json(imagepayload), headers)
                         prjson = asm3.utils.json_parse(pr["response"])
                         if "id" in prjson.keys():
                             self.log(f"Successfully processed {str(imagepayload["photos"])} {len(photourls)} x photo")
