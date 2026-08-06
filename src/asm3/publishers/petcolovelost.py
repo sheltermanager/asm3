@@ -99,7 +99,8 @@ def getActualPublishedAnimals(auth: Dict) -> Dict:
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
     }
-    response = asm3.utils.get_url(f'{auth["url"]}/v2/animals/?limit=100&offset=0', headers)
+    url = auth["url"]
+    response = asm3.utils.get_url(f'{url}/v2/animals/?limit=100&offset=0', headers)
     return response["response"]
 
 def getRecordedPublishedAnimals(dbo: Database) -> Results:
@@ -123,7 +124,8 @@ def purgeImages(auth: Dict, pcllaid: str):
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
     }
-    asm3.utils.post_data(f"{auth["url"]}/v2/animals/{pcllaid}/photos", "", httpmethod="DELETE", headers=headers)
+    url = auth["url"]
+    asm3.utils.post_data(f"{url}/v2/animals/{pcllaid}/photos", "", httpmethod="DELETE", headers=headers)
 
 def purgeRecordedPublished(publisher: AbstractPublisher):
     """ Remove all animal records that are marked as published to Petco on ASM """
@@ -137,7 +139,8 @@ def removeAnimal(auth: Dict, pcllaid: str) -> Dict:
         'x-api-key': auth["apikey"],
         'Authorization': 'Bearer ' + auth["accesstoken"]
     }
-    response = asm3.utils.post_data(f"{auth["url"]}/v2/animals/" + pcllaid, "", httpmethod="DELETE", headers=headers)
+    url = auth["url"]
+    response = asm3.utils.post_data(f"{url}/v2/animals/" + pcllaid, "", httpmethod="DELETE", headers=headers)
     return response
 
 class PetcoLoveLostPublisher(AbstractPublisher):
