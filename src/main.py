@@ -4883,15 +4883,9 @@ class lookups(JSONEndpoint):
         }
 
     def post_create(self, o):
-        post = o.post
-        # return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-        #     post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
         return asm3.lookups.upsert_lookup_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
-        post = o.post
-        # asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-        #     post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
         asm3.lookups.upsert_lookup_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
