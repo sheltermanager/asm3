@@ -5,7 +5,7 @@ import asm3.financial
 import asm3.utils
 from asm3.i18n import _
 from asm3.sitedefs import URL_MICROCHIP_PREFIXES
-from asm3.typehints import datetime, Database, Dict, List, LocationFilter, Results, Tuple
+from asm3.typehints import datetime, Database, Dict, List, LocationFilter, PostedData, Results, Tuple
 
 import re
 
@@ -1019,223 +1019,6 @@ def get_lookup(dbo: Database, tablename: str, namefield: str) -> Results:
         return dbo.query("SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return dbo.query("SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: str = "", 
-                  speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", 
-                  units: str = "", site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, iszoonotic: int = 0) -> int:
-    t = LOOKUP_TABLES[lookup]
-    nid = 0
-    if lookup == "basecolour":
-        return dbo.insert("basecolour", {
-            "BaseColour":               name,
-            "BaseColourDescription":    desc,
-            "AdoptAPetColour":          apcolour,
-            "IsRetired":                retired
-        }, username, setCreated=False)
-    elif lookup == "breed":
-        return dbo.insert("breed", {
-            "BreedName":        name,
-            "BreedDescription": desc,
-            "PetFinderBreed":   pfbreed,
-            "SpeciesID":        speciesid,
-            "IsRetired":        retired
-        }, username, setCreated=False)
-    elif lookup == "internallocation":
-        return dbo.insert("internallocation", {
-            "LocationName":         name,
-            "LocationDescription":  desc,
-            "Units":                units,
-            "SiteID":               site,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-    elif lookup == "species":
-        return dbo.insert("species", {
-            "SpeciesName":          name,
-            "SpeciesDescription":   desc,
-            "PetFinderSpecies":     pfspecies,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-    elif lookup == "lkcondition":
-        return dbo.insert("lkcondition", {
-            "ConditionName":    name,
-            "ConditionTypeID":  conditiontypeid,
-            "IsZoonotic":       iszoonotic,
-            "Description":      desc,
-            "IsRetired":        retired
-        }, username, setCreated=False)
-    elif lookup == "costtype":
-        # Create a matching account if the option is on and link it
-        if asm3.configuration.create_cost_trx(dbo):
-            accountid = asm3.financial.insert_account_from_costtype(dbo, name, desc)
-        nid = dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "DefaultCost":          defaultcost,
-            "AccountID":            accountid,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-        return nid
-    elif lookup == "donationtype":
-        if accountid == 0 and asm3.configuration.create_donation_trx(dbo):
-            accountid = asm3.financial.insert_account_from_donationtype(dbo, name, desc)
-        nid = dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "DefaultCost":          defaultcost,
-            "AccountID":            accountid,
-            "IsVAT":                vat,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-        return nid
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype" or lookup == "lkclinicinvoiceitems":
-        nid = dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "DefaultCost":          defaultcost,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-        return nid
-    elif lookup == "licencetype" or lookup == "testtype" or lookup == "vaccinationtype":
-        nid = dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "DefaultCost":          defaultcost,
-            "RescheduleDays":       rescheduledays,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-        return nid
-    elif lookup == "lkownerflags" or lookup == "lkanimalflags":
-        name = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
-        name = asm3.utils.strip_duplicate_spaces(name) # Strip dup spaces Bad   Flag->Bad Flag
-        return dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-    elif lookup == "lktaxrate":
-        return dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "TaxRate":              taxrate,
-            "IsRetired":            retired
-        }, username, setCreated=False)
-    elif t[LOOKUP_DESCFIELD] == "":
-        # No description
-        if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired }, username, setCreated=False)    
-        else:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name }, username, setCreated=False)    
-    else:
-        # Name/Description
-        if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired }, username, setCreated=False)
-        else:
-            return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setCreated=False)
-
-def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str, desc: str = "", 
-                  speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", units: str = "", 
-                  site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
-                  defaultcost: int = 0, vat: int = 0, retired: int = 0, taxrate: float = 0, conditiontypeid: int = 0, iszoonotic: int = 0) -> None:
-    t = LOOKUP_TABLES[lookup]
-    if lookup == "basecolour":
-        dbo.update("basecolour", iid, { 
-            "BaseColour":               name,
-            "BaseColourDescription":    desc,
-            "AdoptAPetColour":          apcolour,
-            "IsRetired":                retired
-        }, username, setLastChanged=False)
-    elif lookup == "breed":
-        dbo.update("breed", iid, {
-            "BreedName":            name,
-            "BreedDescription":     desc,
-            "PetFinderBreed":       pfbreed,
-            "SpeciesID":            speciesid,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif lookup == "internallocation":
-        dbo.update("internallocation", iid, {
-            "LocationName":         name,
-            "LocationDescription":  desc,
-            "Units":                units,
-            "SiteID":               site,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif lookup == "species":
-        dbo.update("species", iid, {
-            "SpeciesName":          name,
-            "SpeciesDescription":   desc,
-            "PetFinderSpecies":     pfspecies,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif lookup == "lkcondition":
-        return dbo.update("lkcondition", iid, {
-            "ConditionName":    name,
-            "Description":      desc,
-            "ConditionTypeID":  conditiontypeid,
-            "IsZoonotic":       iszoonotic,
-            "IsRetired":        retired
-        }, username, setLastChanged=False)
-    elif lookup == "costtype":
-        dbo.update(lookup, iid, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "DefaultCost":          defaultcost,
-            "AccountID":            accountid,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif lookup == "donationtype":
-        dbo.update(lookup, iid, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "DefaultCost":          defaultcost,
-            "AccountID":            accountid,
-            "IsVAT":                vat,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype" or lookup == "lkclinicinvoiceitems":
-        dbo.update(lookup, iid, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "DefaultCost":          defaultcost,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif lookup == "licencetype" or lookup == "testtype" or lookup == "vaccinationtype":
-        dbo.update(lookup, iid, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "RescheduleDays":       rescheduledays,
-            "DefaultCost":          defaultcost,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif lookup == "lkownerflags" or lookup == "lkanimalflags":
-        oldflag = dbo.query_string("SELECT Flag FROM %s WHERE ID = ?" % lookup, [iid])
-        newflag = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
-        newflag = asm3.utils.strip_duplicate_spaces(newflag) # Strip dup spaces Bad   Flag->Bad Flag
-        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag, "IsRetired": retired }, username, setLastChanged=False)
-        # Update the text in flags fields where appropriate
-        if lookup == "lkownerflags":
-            dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (f"{oldflag}|", f"{newflag}|", f"%{oldflag}|%"))
-        elif lookup == "lkanimalflags":
-            dbo.execute("UPDATE animal SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (f"{oldflag}|", f"{newflag}|", f"%{oldflag}|%"))
-    elif lookup == "lktaxrate":
-        dbo.update(lookup, iid, {
-            t[LOOKUP_NAMEFIELD]:    name,
-            t[LOOKUP_DESCFIELD]:    desc,
-            "TaxRate":              taxrate,
-            "IsRetired":            retired
-        }, username, setLastChanged=False)
-    elif t[LOOKUP_DESCFIELD] == "":
-        # No description
-        if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, "IsRetired": retired }, username, setLastChanged=False)
-        else:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name }, username, setLastChanged=False)
-    else:
-        # Name/Description
-        if t[LOOKUP_MODIFIERS].find("ret") != -1:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc, "IsRetired": retired }, username, setLastChanged=False)
-        else:
-            dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setLastChanged=False)
-
 def update_lookup_retired(dbo: Database, username: str, lookup: str, iid: int, retired: int) -> None:
     """ Updates lookup item with ID=iid, setting IsRetired=retired """
     dbo.update(lookup, iid, { "IsRetired": retired }, username, setLastChanged=False)
@@ -1424,6 +1207,50 @@ def get_transport_statuses(dbo: Database) -> Results:
 
 def get_transport_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM transporttype ORDER BY TransportTypeName")
+
+def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    lookup = post["lookup"]
+    name = post["lookupname"]
+    desc = post["lookupdesc"]
+    retired = post.integer("retired")
+    t = LOOKUP_TABLES[lookup]
+    namecol = t[1]
+    desccol = t[3]
+
+    data = { "IsRetired": retired }
+
+    modifiers = t[4].split(" ")
+    if "pubcol" in modifiers: data["AdoptAPetColour"] = post["apcolour"]
+    if "pubbreed" in modifiers: data["PetFinderBreed"] = post["pfbreed"]
+    if "species" in modifiers: data["SpeciesID"] = post.integer("species")
+    if "units" in modifiers: data["Units"] = post["units"]
+    if "site" in modifiers: data["SiteID"] = post.integer("site")
+    if "pubspec" in modifiers: data["PetFinderSpecies"] = post["pfspecies"]
+    if "haszoonotic" in modifiers: data["IsZoonotic"] = post.integer("iszoonotic")
+    if "cost" in modifiers: data["DefaultCost"] = post.integer("defaultcost")
+    if "acc" in modifiers:
+        # Create a matching account if there is no lookupid and option is on and link it
+        accountid = post.integer("account")
+        if not post.integer("id") and asm3.configuration.create_cost_trx(dbo):
+            accountid = asm3.financial.insert_account_from_costtype(dbo, name, desc)
+        data["AccountID"] = accountid
+    if "vat" in modifiers: data["IsVat"] = post.integer("vat")
+    if "sched" in modifiers: data["RescheduleDays"] = post.integer("rescheduledays")
+    if "taxrate" in modifiers: data["TaxRate"] = post.floating("taxrate")
+
+    if lookup in ("lkownerflags", "lkanimalflags"):
+        name = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
+        name = asm3.utils.strip_duplicate_spaces(name) # Strip dup spaces Bad   Flag->Bad Flag
+    else:
+        # Only provide description in not owner or animal flags
+        data[desccol] = desc
+
+    data[namecol] = name
+    
+    if post.integer("id"):
+        dbo.update(lookup, post.integer("id"), data, username, setLastChanged=False)
+    else:
+        return dbo.insert(lookup, data, username, setCreated=False)
 
 def get_vaccination_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM vaccinationtype ORDER BY VaccinationType")
