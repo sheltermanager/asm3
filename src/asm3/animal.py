@@ -389,6 +389,9 @@ def get_animal_query(dbo: Database) -> str:
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaMimeType AS WebsiteVideoMimeType, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
+        "vid.MediaType, " \
+        f"(SELECT COUNT(*) FROM media mtc WHERE (MediaMimeType = 'video/mp4' OR (MediaMimeType == 'text/url' AND MediaType == {asm3.media.MEDIATYPE_VIDEO_LINK})) AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID " \
+            "AND ExcludeFromPublish = 0) AS WebsiteVideoCount, " \
         f"CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > {today}) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "fo.OwnerName AS FutureOwnerName, " \
         "fo.EmailAddress AS FutureOwnerEmailAddress, " \
