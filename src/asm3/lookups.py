@@ -1209,6 +1209,10 @@ def get_transport_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM transporttype ORDER BY TransportTypeName")
 
 def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> int:
+    """
+    Insert or update a lookup using posted data, if the posted data contains a non-zero id, 
+    the row belonging to that ID is updated, otherwise a new row is inserted
+    """
     lookup = post["lookup"]
     name = post["lookupname"]
     desc = post["lookupdesc"]
@@ -1247,7 +1251,7 @@ def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> i
 
     data[namecol] = name
     
-    if post.integer("id"):
+    if post.integer("id") != 0:
         dbo.update(lookup, post.integer("id"), data, username, setLastChanged=False)
     else:
         return dbo.insert(lookup, data, username, setCreated=False)
