@@ -555,7 +555,7 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
     """
     def valid_code(s: str) -> bool:
         """
-        Returns True if s has a valid code portion in it
+        Returns True if s has a valid numeric code portion token in it
         """
         VALID_CODES = ("OO", "XX", "NN", "UUUU", "PP")
         for v in VALID_CODES:
@@ -581,18 +581,10 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
             if k not in cmap or cmap[k] != v:
                 address_changed = True
                 put(k ,v)
-        elif k == "CodingFormat":
-            # If there's no valid N, X, O or U tokens in there, it's not valid so reset to
-            # the default.
+        elif k in ( "CodingFormat", "ShortCodingFormat", "IncidentCodingFormat" ):
+            # Make sure that coding formats contain valid tokens to make the code unique, otherwise reset to the default
             if not valid_code(v):
-                put(k, "TYYYYNNN")
-            else:
-                put(k, v)
-        elif k == "ShortCodingFormat":
-            # If there's no N, X, O or U in there, it's not valid so reset to
-            # the default.
-            if not valid_code(v):
-                put(k, "NNT")
+                put(k, DEFAULTS[k])
             else:
                 put(k, v)
         elif k == "DefaultDailyBoardingCost":

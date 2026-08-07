@@ -381,7 +381,12 @@ def calc_incident_code(dbo: Database, acid: int, incidentdate: datetime) -> str:
 
     unique = False
     code = ""
+
     while not unique:
+        # NOTE: This routine can cause an endless loop if the coding format is incapable
+        # of generating codes (eg: If it's blank).
+        # To defend against this, configuration.csave validates all CodingFormat elements to make
+        # sure they contain tokens that will be substituted for numbers.
 
         # Generate the codes
         code = substitute_tokens(codeformat, highestyear, highestmonth)

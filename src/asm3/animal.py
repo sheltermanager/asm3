@@ -2327,7 +2327,12 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     unique = False
     code = ""
     shortcode = ""
+
     while not unique:
+        # NOTE: This routine can cause an endless loop if the coding format is incapable
+        # of generating codes (eg: If it's blank). 
+        # To defend against this, configuration.csave validates all CodingFormat elements to make
+        # sure they contain tokens that will be substituted for numbers.
 
         # Generate the codes
         code = substitute_tokens(codeformat, highestyear, highestmonth, highestsyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
