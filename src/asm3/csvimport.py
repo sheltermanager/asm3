@@ -421,6 +421,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
     rowno = 1
     animalcodes = {}
     asm3.asynctask.set_progress_max(dbo, len(rows))
+    pseudoanimals = {}
+    pseudopeople = {}
     for row in rows:
 
         asm3.al.debug("import csv: row %d of %d" % (rowno, len(rows)), "csvimport.csvimport", dbo)
@@ -730,7 +732,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
                 if animalid == 0 and dryrun:
-                    asm3.animal.validate_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), True)
+                    if asm3.animal.validate_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), True):
+                        psuedoanimals[animalcode] = rowno
                 elif animalid == 0:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Add any flags that were set
@@ -897,6 +900,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                             asm3.person.merge_person_details(dbo, user, personid, p, force=force)
                     if personid == 0 and dryrun:
                         asm3.person.validate_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale))
+                        pseudopeople[p["ownercode"]] = rowno
                     elif personid == 0:
                         personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                     # Identify any PERSONADDITIONAL additional fields and create/merge them
@@ -916,8 +920,12 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
         movementid = 0
         if hasmovement and animalid != 0 and gks(row, "MOVEMENTDATE") != "":
             m = {}
-            m["person"] = str(personid)
-            m["animal"] = str(animalid)
+            if dryrun:
+                m["person"] = rowno
+                m["animal"] = rowno
+            else:
+                m["person"] = str(personid)
+                m["animal"] = str(animalid)
             movetype = gks(row, "MOVEMENTTYPE")
             if movetype == "": movetype = "1" # Default to adoption if not supplied
             m["type"] = str(movetype)

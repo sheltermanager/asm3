@@ -269,7 +269,7 @@ def get_person_movements(dbo: Database, pid: int) -> Results:
     rows = dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid])
     return asm3.additional.append_to_results(dbo, rows, "movement")
 
-def validate_movement_form_data(dbo: Database, username: str, post: PostedData) -> None:
+def validate_movement_form_data(dbo: Database, username: str, post: PostedData, pseudoanimal: Dict = None, pseudoperson: Dict = None) -> None:
     """
     Verifies that form data is valid for a movement. 
     Throws an appropriate Exception with message if not. Returns no value.

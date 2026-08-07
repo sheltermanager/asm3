@@ -3228,6 +3228,7 @@ def validate_animal_from_form(dbo: Database, post: PostedData, insert: bool = Fa
         datebroughtin = post.date("datebroughtin")
         if deceaseddate is not None and datebroughtin is not None and deceaseddate < datebroughtin:
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
+    return True
 
 def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
