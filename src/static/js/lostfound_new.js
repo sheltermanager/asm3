@@ -168,12 +168,12 @@ $(function() {
             
             // Auto fill area and postcode if not set
             $("#owner").on("change", async function(event, rec) {
-                let $areainput = $("#arealost");
+                let areainput = $("#arealost");
                 if ( lostfound_new.mode == "found" ) {
-                    $areainput = $("#areafound");
+                    areainput = $("#areafound");
                 }
-                if ( !$areainput.val() && !$("#areapostcode").val() ) {
-                    $areainput.val(rec.OWNERADDRESS);
+                if ( !areainput.val() && !$("#areapostcode").val() ) {
+                    areainput.val(rec.OWNERADDRESS);
                     $("#areapostcode").val(rec.OWNERPOSTCODE);
                 }
             });
