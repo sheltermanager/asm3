@@ -25,6 +25,20 @@ class AdoptAPetPublisher(FTPPublisher):
             asm3.configuration.adoptapet_password(dbo))
         self.initLog("adoptapet", "AdoptAPet Publisher")
 
+    def apPosNeg(self, ourval: int) -> str:
+        """
+        Returns a CSV entry for positive or negative based on our positive/negative values.
+        0 = unknown (empty string)
+        1 = negative (0)
+        2 = positive (1)
+        """
+        if ourval == 0:
+            return "\"\""
+        elif ourval == 1:
+            return "\"0\""
+        else:
+            return "\"1\""
+
     def apYesNo(self, condition: bool) -> str:
         """
         Returns a CSV entry for yes or no based on the condition
@@ -475,7 +489,7 @@ class AdoptAPetPublisher(FTPPublisher):
         else:
             line.append("")
         # FIVPositive
-        line.append(self.apYesNoUnknown(an.COMBITESTRESULT))
+        line.append(self.apPosNeg(an.COMBITESTRESULT))
         # SpecialDietaryNeeds
         if "SPECIALDIETARYNEEDS" in an:
             line.append(self.apYesNoUnknown(an.SPECIALDIETARYNEEDS))
