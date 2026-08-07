@@ -175,15 +175,14 @@ $(function() {
             $("#dispatchaddress, #dispatchtown, #dispatchcounty, #dispatchpostcode, #callnotes").val("").change();
             if (config.bool("USStateCodes")) { $("#dispatchcounty").select("value", config.str("OrganisationCounty")); }
             $(".asm-checkbox").prop("checked", false).change();
-            $(".asm-personchooser").personchooser("clear");
+            $("#caller, #victim, #owner").personchooser("clear");
             $(".asm-selectmulti").selectmulti("clear");
             $("#incidentdate").val(format.date(new Date()));
             $("#incidenttime").val(format.time(new Date()));
             $("#calldate").val(format.date(new Date()));
             $("#calltime").val(format.time(new Date()));
             $("#calltaker").select("value", asm.user);
-            $("#dispatchdate").val(format.date(new Date()));
-            $("#dispatchtime").val(format.time(new Date()));
+            $("#dispatchdate, #dispatchtime").val("");
             $("#incidenttype").select("value", config.str("DefaultIncidentType"));
             $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
             $("#pickuplocation").val("0");
