@@ -24,18 +24,32 @@ def extract_strings(fname, s):
             strings[x] = fname
 
 def output_msgid(s):
+    def escape(value):
+        escaped = []
+        backslashes = 0
+        for char in value:
+            if char == "\\":
+                escaped.append(char)
+                backslashes += 1
+                continue
+            if char == '"' and backslashes % 2 == 0:
+                escaped.append("\\")
+            escaped.append(char)
+            backslashes = 0
+        return "".join(escaped)
+
     m = "msgid \""
     if len(s) <= 76:
-        m += s + "\"\n"
+        m += escape(s) + "\"\n"
         return m
     else:
         m += "\"\n"
         bits = textwrap.wrap(s, width=76)
         for i in range(0, len(bits)):
             if i == len(bits) -1:
-                m += "\"%s\"\n" % bits[i]
+                m += "\"%s\"\n" % escape(bits[i])
             else:
-                m += "\"%s \"\n" % bits[i]
+                m += "\"%s \"\n" % escape(bits[i])
         return m
 
 for folder in src:
