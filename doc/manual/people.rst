@@ -137,6 +137,22 @@ payment in the sequence when you mark the current payment as received. If a
 payment has a due date of today or older, an alert will be shown on the main
 screen.
 
+Funded Payments
+^^^^^^^^^^^^^^^
+Payments made by one person can be used as a funding source for other payments 
+recorded in the system. To make a payment available as a funding source, simply 
+check the "Funding Source" box in that payment record.
+
+.. image:: images/funded_payment.png
+
+In new or existing payment records, the receipt number and persons name will 
+now be availble to select in the "Fund" field to link that payment to the 
+funding source.  
+
+
+.. image:: images/funding_source.png
+
+
 Vouchers
 ^^^^^^^^
 
