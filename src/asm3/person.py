@@ -637,7 +637,7 @@ def get_investigation(dbo: Database, personid: int, sort: int = ASCENDING) -> Re
     return dbo.query(sql, [personid])
 
 def get_person_find_simple(dbo: Database, query: str, username: str = "", classfilter: str = "all", typefilter: str = "all", 
-                           includeStaff: bool = False, includeVolunteers: bool = False, limit: int = 0, siteid: int = 0) -> Results:
+        includeStaff: bool = False, includeVolunteers: bool = False, limit: int = 0, siteid: int = 0, flags: List[str] = []) -> Results:
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -681,6 +681,16 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
     }
+    flagfilterssql = ""
+    if flags:
+        flagfilterssql += " AND ("
+        flagfilters = []
+        for flag in flags:
+            colconcat = dbo.sql_concat(("'|'", "o.AdditionalFlags", "'|'"))
+            flagconcat = f"%|{flag}|%"
+            flagfilters.append("%s LIKE '%s'" % (colconcat, flagconcat))
+        flagfilterssql += " OR ".join(flagfilters)
+        flagfilterssql += ")"
     if classfilter not in classfilter: raise asm3.utils.ASMError("invalid classfilter")
     if typefilter not in typefilters: raise asm3.utils.ASMError("invalid typefilter")
     cf = classfilters[classfilter]
@@ -688,7 +698,7 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
     if not includeStaff: cf += " AND o.IsStaff = 0"
     if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
     if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
-    sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + dt + " ORDER BY o.OwnerName"
+    sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + dt + flagfilterssql + " ORDER BY o.OwnerName"
     #return dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
