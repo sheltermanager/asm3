@@ -264,9 +264,6 @@ $.fn.personchoosermulti = asm_widget({
 
                 // Flags list
                 html.person_flag_options(null, rv.flags, o.flags);
-                // o.flags.on("change", function(e) {
-                //     self.find.call(self, t);
-                // });
                 o.search.on("click", function(e) {
                     self.find.call(self, t);
                 });
