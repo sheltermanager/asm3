@@ -351,7 +351,6 @@ $.fn.personchoosermulti = asm_widget({
         dialog.find("button").button("disable");
         let q = encodeURIComponent(dialog.find("input").val());
         let flags = o.flags.val();
-        console.log(flags);
         let formdata = "mode=find&filter=all&type=all&q=" + q + "&flags=" + flags;
         $.ajax({
             type: "POST",
@@ -381,7 +380,6 @@ $.fn.personchoosermulti = asm_widget({
                 dialog.find("img").hide();
                 dialog.find("button").button("enable");
                 common.inject_target(); 
-                // self.update_filters(t);
             },
             error: function(jqxhr, textstatus, response) {
                 // dialog.dialog("close");
