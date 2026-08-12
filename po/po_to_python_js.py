@@ -13,7 +13,7 @@ for pofile in dirlist:
     if pofile.endswith(".po"):
 
         print("Processing: %s" % pofile)
-        with open(pofile, "r") as f:
+        with open(pofile, "r", encoding="utf-8") as f:
             lines = f.readlines()
        
         # Parse the po file into a dictionary
@@ -40,6 +40,10 @@ for pofile in dirlist:
                 k += chopvalue(l)
             elif mode == "v":
                 v += chopvalue(l)
+
+        # store the last entry if the file does not end with a blank line
+        if k:
+            strings[k] = v
         
         # Build up the python representation of it and write it out
         s = "# " + pofile + "\n\n"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2026-07-28 08:47+0000\n"
+"POT-Creation-Date: 2026-08-07 17:13+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1923,6 +1923,14 @@ msgstr ""
 
 #: lostfound.py
 msgid "Area Postcode"
+msgstr ""
+
+#: lostfound.js lostfound_new.js
+msgid "Area found cannot be blank"
+msgstr ""
+
+#: lostfound.js lostfound_new.js
+msgid "Area lost cannot be blank"
 msgstr ""
 
 #: person_find_results.js
@@ -10839,7 +10847,7 @@ msgstr ""
 
 #: vaccination.js
 msgid ""
-"Optional, the date the vaccination "wears off" and needs to be administered "
+"Optional, the date the vaccination \"wears off\" and needs to be administered "
 "again"
 msgstr ""
 
@@ -12124,6 +12132,10 @@ msgstr ""
 msgid "Recalculate ALL animal breed names"
 msgstr ""
 
+#: batch.js
+msgid "Recalculate ALL animal days on shelter"
+msgstr ""
+
 #: main.py batch.js
 msgid "Recalculate ALL animal locations"
 msgstr ""
@@ -12338,6 +12350,10 @@ msgstr ""
 
 #: main.py batch.js
 msgid "Regenerate 'Person looking for' report"
+msgstr ""
+
+#: main.py
+msgid "Regenerate ALL animal days on shelter"
 msgstr ""
 
 #: main.py batch.js
@@ -17942,6 +17958,10 @@ msgstr ""
 
 #: common_validate.js header.js
 msgid "You have unsaved changes, are you sure you want to leave this page?"
+msgstr ""
+
+#: move_deceased.js
+msgid "You must specify a quantity of the item you wish to deduct"
 msgstr ""
 
 #: animal.py
