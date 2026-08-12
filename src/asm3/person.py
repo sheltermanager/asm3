@@ -681,16 +681,14 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
     }
-    flagfilterssql = ""
     if flags:
-        flagfilterssql += " AND ("
         flagfilters = []
-        colconcat = dbo.sql_concat(("'|'", "o.AdditionalFlags", "'|'"))
         for flag in flags:
-            pipedflag = f"%|{flag}|%"
-            flagfilters.append("%s LIKE '%s'" % (colconcat, pipedflag))
-        flagfilterssql += " OR ".join(flagfilters)
-        flagfilterssql += ")"
+            flagfilters.append(f"(o.AdditionalFlags LIKE '{flag}|%' OR o.AdditionalFlags LIKE '%|{flag}|%')")
+        flagfilterssql = " OR ".join(flagfilters)
+        flagfilterssql = f" AND ( {flagfilterssql} )"
+    else:
+        flagfilterssql = ""
     if classfilter not in classfilter: raise asm3.utils.ASMError("invalid classfilter")
     if typefilter not in typefilters: raise asm3.utils.ASMError("invalid typefilter")
     cf = classfilters[classfilter]
