@@ -43,13 +43,13 @@ $.fn.personchoosermulti = asm_widget({
                         '</div>',
                         '<div style="display: inline-block;vertical-align: top;">',
                             '<input class="asm-textbox personchoosermulti-searchinput" type="text" />',
+                            '<div class="personchoosermulti-flags-container" style="display: inline-block;max-width: 400px;vertical-align: top;">',
+                                '<select style="display: inline-block;" multiple="multiple" title="' + _("Filter") + '" class="personchoosermulti-flags asm-selectmulti"></select>', 
+                            '</div>',
                             '<button class="personchoosermulti-searchbutton">' + _("Search") + '</button>',
                             '<img style="height: 16px" class="spinner" src="static/images/wait/rolling_3a87cd.svg" />',
                         '</div>',
-                        '<div class="personchoosermulti-flags-container" style="display: inline-block;float: right;max-width: 400px;">',
-                            '<div style="vertical-align: top;padding-top: 3px;">' + _("Flags") + ':&nbsp;</div>',
-                            '<select style="display: inline-block;" multiple="multiple" title="' + _("Filter") + '" class="personchoosermulti-flags asm-selectmulti"></select>', 
-                        '</div>',
+
                         '<div style="clear: right;"></div>',
                     '</div>',
                     '<div>',
@@ -220,33 +220,6 @@ $.fn.personchoosermulti = asm_widget({
     },
 
     /**
-     * Update the visible list of people according to what's selected in the filters
-     */
-    update_filters: function(t) {
-        let o = t.data("o");
-        $.each(o.rows, function(i, p) {
-            let show = true;
-            let selflag = String(o.flags.val()).trim().split(",");
-            if (String(o.flags.val()).trim() && selflag.length > 0 && !common.array_overlap_all(selflag, p.ADDITIONALFLAGS.split("|"))) {
-                show = false;
-            } else {
-                show = false;
-                let searchkey = o.dialog.find(".personchoosermulti-searchinput").val();
-                if (p.OWNERNAME.toLowerCase().includes(searchkey.toLowerCase())) {
-                    show = true;
-                } else if (p.OWNERADDRESS.toLowerCase().includes(searchkey.toLowerCase())) {
-                    show = true;
-                } else if (p.OWNERPOSTCODE.toLowerCase().replace(/ /g, "").includes(searchkey.toLowerCase().replace(/ /g, ""))) {
-                    show = true;
-                } else if (p.OWNERCODE.toLowerCase() == searchkey.toLowerCase()) {
-                    show = true;
-                }
-            }
-            o.dialog.find(".personselect[data='" + p.ID + "']").closest(".asm-personchoosermulti-result").toggle(show);
-        });
-    },
-
-    /**
      * Updates the info strip at the top to show how many people selected
      */
     update_status: function(t) {
@@ -291,9 +264,6 @@ $.fn.personchoosermulti = asm_widget({
 
                 // Flags list
                 html.person_flag_options(null, rv.flags, o.flags);
-                o.flags.on("change", function(e) {
-                    self.find.call(self, t);
-                });
                 o.search.on("click", function(e) {
                     self.find.call(self, t);
                 });
@@ -380,7 +350,8 @@ $.fn.personchoosermulti = asm_widget({
         dialog.find("img").show();
         dialog.find("button").button("disable");
         let q = encodeURIComponent(dialog.find("input").val());
-        let formdata = "mode=find&filter=all&type=all&q=" + q;
+        let flags = o.flags.val();
+        let formdata = "mode=find&filter=all&type=all&q=" + q + "&flags=" + flags;
         $.ajax({
             type: "POST",
             url:  "person_embed",
@@ -409,7 +380,6 @@ $.fn.personchoosermulti = asm_widget({
                 dialog.find("img").hide();
                 dialog.find("button").button("enable");
                 common.inject_target(); 
-                self.update_filters(t);
             },
             error: function(jqxhr, textstatus, response) {
                 // dialog.dialog("close");
