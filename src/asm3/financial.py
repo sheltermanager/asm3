@@ -368,13 +368,13 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
     the BALANCE column and WITHDRAWAL and DEPOSIT.
     """
     l = dbo.locale
-    period = asm3.configuration.accounting_period(dbo)
-    if not asm3.configuration.account_period_totals(dbo):
-        period = ""
-    # If we have an accounting period set and it's after the from date,
-    # use that instead
-    if period != "" and asm3.i18n.after(asm3.i18n.display2python(l, period), datefrom):
-        datefrom = asm3.i18n.display2python(l, period)
+    # If we have an accounting period set and it's after our from date,
+    # use that instead of the from date
+    period = None
+    if asm3.configuration.account_period_totals(dbo):
+        period = asm3.i18n.display2python(l, asm3.configuration.accounting_period(dbo))
+        if period is not None and asm3.i18n.after(period, datefrom):
+            datefrom = period
     recfilter = ""
     if reconciled == RECONCILED:
         recfilter = " AND Reconciled = 1"
@@ -419,8 +419,8 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \
         "ORDER BY t.TrxDate, t.ID" % ( dbo.sql_date(datefrom, includeTime=False), dbo.sql_date(dateto, includeTime=False), recfilter, accountid, accountid))
     balance = 0
-    if period != "":
-        balance = get_balance_fromto_date(dbo, accountid, asm3.i18n.display2python(l, period), datefrom, reconciled)
+    if period is not None:
+        balance = get_balance_fromto_date(dbo, accountid, period, datefrom, reconciled)
     else:
         balance = get_balance_to_date(dbo, accountid, datefrom, reconciled)
     for r in rows:
