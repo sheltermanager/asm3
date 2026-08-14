@@ -681,14 +681,14 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
     }
-    if flags:
+    flagfilterssql = ""
+    if flags and len(flags) > 0:
         flagfilters = []
         for flag in flags:
-            flagfilters.append(f"(o.AdditionalFlags LIKE '{flag}|%' OR o.AdditionalFlags LIKE '%|{flag}|%')")
+            flagfilters.append(f"o.AdditionalFlags LIKE '{flag}|%%'")
+            flagfilters.append(f"o.AdditionalFlags LIKE '%%|{flag}|%%'")
         flagfilterssql = " OR ".join(flagfilters)
-        flagfilterssql = f" AND ( {flagfilterssql} )"
-    else:
-        flagfilterssql = ""
+        flagfilterssql = f" AND ({flagfilterssql}) "
     if classfilter not in classfilter: raise asm3.utils.ASMError("invalid classfilter")
     if typefilter not in typefilters: raise asm3.utils.ASMError("invalid typefilter")
     cf = classfilters[classfilter]
@@ -697,7 +697,6 @@ def get_person_find_simple(dbo: Database, query: str, username: str = "", classf
     if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
     if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
     sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + dt + flagfilterssql + " ORDER BY o.OwnerName"
-    #return dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
 def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], username: str = "", includeStaff: bool = False, includeVolunteers: bool = False, 
