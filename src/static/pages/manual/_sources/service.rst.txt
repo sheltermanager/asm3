@@ -940,6 +940,8 @@ used if the template does not exist. The template can include the following toke
 
 $$NAME$$ 
     The name of the event.
+$$LINK$$ 
+    An external URL related to the event.
 $$DESCRIPTION$$
     The event description. Note that this value is editable HTML from the screen.
 $$STARTDATE$$

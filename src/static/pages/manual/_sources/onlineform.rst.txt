@@ -326,6 +326,10 @@ Form files can be in a structured JSON format that ASM recognises, eg::
               "tooltip": "", "label": "Applicant's Last Name", "type": "TEXT" }
         ]
     }
+Fields must be one of the following types: YESNO, TEXT, NOTES, LOOKUP, SHELTERANIMAL,
+ADOPTABLEANIMAL, COLOUR, BREED, SPECIES, RAWMARKUP, DATE, CHECKBOX, RADIOGROUP,
+SIGNATURE, LOOKUP_MULTI, GDPR_CONTACT_OPTIN, TIME, IMAGE, CHECKBOXGROUP, EMAIL,
+NUMBER, FOSTERANIMAL, TELEPHONE, CHECKBOX_AL, PDF. 
 
 Files can also be HTML, where the import mechanism will extract all of the
 input, select and textarea elements. It will use the name attribute to set the

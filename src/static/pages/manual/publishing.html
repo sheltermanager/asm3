@@ -75,23 +75,27 @@
 <li class="toctree-l3"><a class="reference internal" href="#included-templates">Included templates</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#adoptapet-com">adoptapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adoptapet-com">adoptapet.com</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#extra-fields">Extra fields</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#maddiesfund-org-maddie-s-pet-assistant">maddiesfund.org / Maddie’s Pet Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#petcolove-org">petcolove.org</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petfbi-org">petfbi.org</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#extra-fields">Extra fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Extra fields</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#determing-whether-an-animal-is-vaccinated">Determing whether an animal is vaccinated</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#contact-info">Contact Info</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Extra fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Extra fields</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#rescuegroups-org">rescuegroups.org</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#savour-life-com-au">savour-life.com.au</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">Determing whether an animal is vaccinated</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">Extra fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Determing whether an animal is vaccinated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Extra fields</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#shelteranimalscount-org">shelteranimalscount.org</a></li>
@@ -382,12 +386,43 @@ publishing options.</p>
 This means you can then grab it from their FTP server and edit it yourself if
 you wish to change any mappings, then put it back again. This is generally only
 necessary for users who want to send colour information.</p>
+<section id="extra-fields">
+<h3>Extra fields<a class="headerlink" href="#extra-fields" title="Link to this heading">¶</a></h3>
+<p>AdoptAPet.com have a number of extra fields that you can set by creating additional
+animal fields with certain names in your database. The system responds to the
+field names, you can label them anything you want, they must be linked to
+animal records.</p>
+<ul class="simple">
+<li><p>indooronly (Yes/No): Must the pet be denied access to outdoors?</p></li>
+<li><p>specialdietaryneeds (Yes/No): Does the pet require a special diet?</p></li>
+</ul>
+</section>
 </section>
 <section id="maddiesfund-org-maddie-s-pet-assistant">
 <h2>maddiesfund.org / Maddie’s Pet Assistant<a class="headerlink" href="#maddiesfund-org-maddie-s-pet-assistant" title="Link to this heading">¶</a></h2>
 <p>ASM can send data to Maddie’s Fund/MPA - an application to provide information
 and interactive help to fosterers, adopters and other caregivers. Basic data on
 the animal and contact information for the adopter/fosterer is sent.</p>
+</section>
+<section id="petcolove-org">
+<h2>petcolove.org<a class="headerlink" href="#petcolove-org" title="Link to this heading">¶</a></h2>
+<p>ASM can send data to petcolove.org, a website that
+publishes lost and found animals. On shelter, non cruelty case animals
+will be added to their database.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Where a pickup address is not provided, the shelter address will be used as the area found.</p>
+</div>
+<p>You will need to register an email address with petcolove.org and make a note of
+the password that they provide.</p>
+<p>Before you are able to publish you must generate a petcolove.org Shelter ID.
+The button next to the Shelter ID field in <span class="menuselection">Publishing ‣ Set Publishing Options</span>
+will attempt to obtain a Shelter ID from petcolove.org using the Shelter Details
+defined in <span class="menuselection">Setting ‣ Options</span>.</p>
+<p>If successful, the Shelter ID field will populate. If not, the feedback from
+petcolove.org will be shown so that you can make adjustments and retry. Without
+a valid contact number, website and address a Shelter ID will not be assigned.</p>
+<p>petcolove.org works with shelters in the US and Mexico.</p>
 </section>
 <section id="petfbi-org">
 <h2>petfbi.org<a class="headerlink" href="#petfbi-org" title="Link to this heading">¶</a></h2>
@@ -431,8 +466,8 @@ triggered by setting your second breed to “Crossbreed”, “Unknown” or “
 <p class="admonition-title">Warning</p>
 <p>You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.</p>
 </div>
-<section id="extra-fields">
-<h3>Extra fields<a class="headerlink" href="#extra-fields" title="Link to this heading">¶</a></h3>
+<section id="id1">
+<h3>Extra fields<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>PetFinder have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to
@@ -486,8 +521,8 @@ this overrides the contact email and contact phone number options and will
 supply the phone number and email address of the adoption coordinator for
 each pet.</p>
 </section>
-<section id="id1">
-<h3>Extra fields<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<section id="id2">
+<h3>Extra fields<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to
@@ -544,8 +579,8 @@ SavourLife will not accept listings for other species of animals.</p>
 <p>Note that regardless of whether you have set the publishing option to
 “Include animals who don’t have a picture”, SavourLife will not accept listings
 without a photo, so we will not send animals who do not have a photo.</p>
-<section id="id2">
-<h3>Determing whether an animal is vaccinated<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<section id="id3">
+<h3>Determing whether an animal is vaccinated<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>ASM will determined if your dogs are vaccinated, wormed or heartworm treated
 and indicate this to SavourLife via the following rules:</p>
 <ul class="simple">
@@ -557,8 +592,8 @@ the word “heart” in the last 6 months, the wormed flag is set.</p></li>
 “worm” in the last 6 months, the heartworm treated flag is set.</p></li>
 </ul>
 </section>
-<section id="id3">
-<h3>Extra fields<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<section id="id4">
+<h3>Extra fields<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>SavourLife have extra fields that you can set by creating additional
 fields with certain names in your database. The system responds to the field
 names, you can label them anything you want, they must be linked to animal

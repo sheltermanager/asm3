@@ -137,6 +137,22 @@ payment in the sequence when you mark the current payment as received. If a
 payment has a due date of today or older, an alert will be shown on the main
 screen.
 
+Funded Payments
+^^^^^^^^^^^^^^^
+Payments made by one person can be used as a funding source for other payments 
+recorded in the system. To make a payment available as a funding source, simply 
+check the "Funding Source" box in that payment record.
+
+.. image:: images/funded_payment.png
+
+In new or existing payment records, the receipt number and persons name will 
+now be availble to select in the "Fund" field to link that payment to the 
+funding source.  
+
+
+.. image:: images/funding_source.png
+
+
 Vouchers
 ^^^^^^^^
 
@@ -176,3 +192,15 @@ If the target person has any blank contact fields that are present on the
 duplicate person (address, telephone or email fields), they will be copied
 from the duplicate before it is deleted.
 
+Bulk Change People
+------------------
+.. image:: images/person_bulkchange.png
+
+The bulk change people screen allows you to select one or more person records
+and add or remove flags from the selected records in one go.
+
+The screen also allows a log or diary note to be added to all the selected people 
+and changes to be made to additional fields. 
+
+Finally, the delete button on this screen allows you to bulk delete all of
+the selected people. Use this option with caution. 
