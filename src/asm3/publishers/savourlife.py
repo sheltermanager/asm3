@@ -371,10 +371,6 @@ class SavourLifePublisher(AbstractPublisher):
             "AND LOWER(TreatmentName) LIKE ? AND StartDate>? AND AnimalID=?", ("%heart%", "%worm%", sixmonths, an.ID)) > 0
         wormed = self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
             "AND LOWER(TreatmentName) NOT LIKE ? AND StartDate>? AND AnimalID=?", ("%worm%", "%heart%", sixmonths, an.ID)) > 0
-        # PR want a null value to hide never-treated animals, so we
-        # turn False into a null.
-        if not hwtreated: hwtreated = None
-        if not wormed: wormed = None
 
         # Use the fosterer or retailer postcode, state and suburb if available
         location_postcode = postcode
