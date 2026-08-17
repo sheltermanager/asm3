@@ -4,7 +4,7 @@ fields = ",".join([
     dbo.ddl_add_table_column("OnlineFormID", dbo.type_integer, False),
     dbo.ddl_add_table_column("RoleID", dbo.type_integer, False),
     dbo.ddl_add_table_column("CanView", dbo.type_integer, False),
-    dbo.ddl_add_table_column("CanEdit", dbo.type_integer, True)
+    dbo.ddl_add_table_column("CanEdit", dbo.type_integer, False)
 ])
 execute(dbo, dbo.ddl_add_table("onlineformrole", fields))
 
