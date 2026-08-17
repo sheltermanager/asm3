@@ -1631,7 +1631,7 @@ def sql_structure(dbo: Database) -> str:
         fint("Donation"),
         fint("Quantity", True),
         fint("UnitPrice", True),
-        fint("IsFundingSource"),
+        fint("IsFundingSource", True),
         fint("IsGiftAid"),
         fint("Fee", True), 
         fint("IsVAT", True),
