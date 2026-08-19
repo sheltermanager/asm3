@@ -855,7 +855,7 @@ def get_onlineformincoming_formfooter(dbo: Database, collationid: int) -> str:
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
-def get_onlineformincoming_headers(dbo: Database, username: str) -> Results:
+def get_onlineformincoming_headers(dbo: Database, username: str, superuser: int = 0) -> Results:
     """ Returns all incoming form posts """
     rows = dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
         "(SELECT MAX(Value) FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
@@ -864,7 +864,10 @@ def get_onlineformincoming_headers(dbo: Database, username: str) -> Results:
         "FROM onlineformincoming f " \
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
         "ORDER BY f.PostedDate")
-    return reduce_incoming_results(dbo, username, rows)
+    if superuser:
+        return rows
+    else:
+        return reduce_incoming_results(dbo, username, rows)
 
 def get_onlineformincoming_detail(dbo: Database, collationid: int) -> Results:
     """ Returns the detail lines for an incoming post """
@@ -2356,12 +2359,29 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
 
 def reduce_incoming_results(dbo: Database, username: str, rows: Results) -> Results:
     if len(rows) == 0: return rows
+    forms = dbo.query("SELECT ID, Name FROM onlineform")
+    formroles = dbo.query("SELECT OnlineFormID, RoleID FROM onlineformrole")
     roles = asm3.users.get_roles_ids_for_user(dbo, username)
+
     for r in rows.copy():
-        formid = dbo.query_int("SELECT ID FROM onlineform WHERE Name = ?", (r["FORMNAME"],))
-        viewroles = dbo.query_list("SELECT RoleID FROM onlineformrole WHERE OnlineFormID = ?", (formid,))
+        formid = 0
+        formname = r["FORMNAME"]
+        for form in forms:
+            if form["NAME"] == formname:
+                formid = form["ID"]
+                break
+        viewroles = []
+        for formrole in formroles:
+            if formrole["ONLINEFORMID"] == formid:
+                viewroles.append(formrole["ROLEID"])
+
+        # formid = dbo.query_int("SELECT ID FROM onlineform WHERE Name = ?", (r["FORMNAME"],))
+        # viewroles = dbo.query_list("SELECT RoleID FROM onlineformrole WHERE OnlineFormID = ?", (formid,))
         if not viewroles: continue
+        haspermission = False
         for role in roles:
-            if role not in viewroles:
-                rows.remove(r)
+            if role in viewroles:
+                haspermission = True
+        if not haspermission:
+            rows.remove(r)
     return rows
