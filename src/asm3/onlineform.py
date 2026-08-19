@@ -163,7 +163,10 @@ def get_onlineform(dbo: Database, formid: int) -> ResultRow:
 
 def get_onlineforms(dbo: Database) -> Results:
     """ Return all online forms """
-    return dbo.query("SELECT *, (SELECT COUNT(*) FROM onlineformfield WHERE OnlineFormID = onlineform.ID) AS NumberOfFields FROM onlineform ORDER BY Name")
+    rows = dbo.query("SELECT *, (SELECT COUNT(*) FROM onlineformfield WHERE OnlineFormID = onlineform.ID) AS NumberOfFields FROM onlineform ORDER BY Name")
+    for row in rows:
+        row = asm3.users.embellish_vieweditroles(dbo, "onlineformrole", "OnlineFormID", row.ID, row)
+    return rows
 
 def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True):
     form = get_onlineform(dbo, formid)
@@ -852,15 +855,19 @@ def get_onlineformincoming_formfooter(dbo: Database, collationid: int) -> str:
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
-def get_onlineformincoming_headers(dbo: Database) -> Results:
+def get_onlineformincoming_headers(dbo: Database, username: str, superuser: int = 0) -> Results:
     """ Returns all incoming form posts """
-    return dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
+    rows = dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
         "(SELECT MAX(Value) FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
         "CASE WHEN EXISTS(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='processed') THEN 1 ELSE 0 END AS Processed, " \
         "CASE WHEN EXISTS(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='spam') THEN 1 ELSE 0 END AS Spam " \
         "FROM onlineformincoming f " \
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
         "ORDER BY f.PostedDate")
+    if superuser:
+        return rows
+    else:
+        return reduce_incoming_results(dbo, username, rows)
 
 def get_onlineformincoming_detail(dbo: Database, collationid: int) -> Results:
     """ Returns the detail lines for an incoming post """
@@ -1033,7 +1040,7 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
     """
     Create an onlineform record from posted data
     """
-    return dbo.insert("onlineform", {
+    fid = dbo.insert("onlineform", {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
@@ -1054,11 +1061,21 @@ def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "*Description":         post["description"]
     }, username, setCreated=False)
 
+    # Update roles needed to view
+    update_onlineform_roles(dbo, fid, post.integer_list("viewroles"))
+
+    return fid
+
 def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Update an onlineform record from posted data
     """
-    return dbo.update("onlineform", post.integer("formid"), {
+    fid = post.integer("formid")
+
+    # Update roles needed to view
+    update_onlineform_roles(dbo, fid, post.integer_list("viewroles"))
+
+    return dbo.update("onlineform", fid, {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
@@ -1078,6 +1095,9 @@ def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) 
         "*Footer":              post["footer"],
         "*Description":         post["description"]
     }, username, setLastChanged=False)
+
+def update_onlineform_roles(dbo: Database, fid: int, viewroles: List[int]) -> None:
+    asm3.users.update_role_table(dbo, 'onlineformrole', 'OnlineFormID', fid, viewroles, editroles=[])
 
 def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
     """
@@ -2336,3 +2356,32 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
     else:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Unable to match to an animal record (need animalname).", dbo.locale))
     return (collationid, animalid, animalname, 1)
+
+def reduce_incoming_results(dbo: Database, username: str, rows: Results) -> Results:
+    if len(rows) == 0: return rows
+    forms = dbo.query("SELECT ID, Name FROM onlineform")
+    formroles = dbo.query("SELECT OnlineFormID, RoleID FROM onlineformrole")
+    roles = asm3.users.get_roles_ids_for_user(dbo, username)
+
+    for r in rows.copy():
+        formid = 0
+        formname = r["FORMNAME"]
+        for form in forms:
+            if form["NAME"] == formname:
+                formid = form["ID"]
+                break
+        viewroles = []
+        for formrole in formroles:
+            if formrole["ONLINEFORMID"] == formid:
+                viewroles.append(formrole["ROLEID"])
+
+        # formid = dbo.query_int("SELECT ID FROM onlineform WHERE Name = ?", (r["FORMNAME"],))
+        # viewroles = dbo.query_list("SELECT RoleID FROM onlineformrole WHERE OnlineFormID = ?", (formid,))
+        if not viewroles: continue
+        haspermission = False
+        for role in roles:
+            if role in viewroles:
+                haspermission = True
+        if not haspermission:
+            rows.remove(r)
+    return rows
