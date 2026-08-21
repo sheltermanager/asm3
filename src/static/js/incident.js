@@ -303,14 +303,33 @@ $(function() {
                     }
                 });
                 let i = controller.incident;
-                let msg = [ 
-                    _("Type") + ": " + i.INCIDENTNAME,
-                    _("Date/Time") + ": " + format.date(i.INCIDENTDATETIME) + " " + format.time(i.INCIDENTDATETIME),
-                    _("Address") + ": " + i.DISPATCHADDRESS + ' ' + i.DISPATCHTOWN + ' ' + i.DISPATCHCOUNTY + ' ' + i.DISPATCHPOSTCODE,
-                    _("Notes") + ": " + common.nulltostr(i.CALLNOTES),
-                    _("Caller") + ": " + common.nulltostr(i.CALLERNAME),
-                    _("Victim") + ": " + common.nulltostr(i.VICTIMNAME),
-                    _("Suspect") + ": " + common.nulltostr(i.OWNERNAME1)
+
+                let formatcontact = function(data) {
+                    let output = "";
+                    $.each(data, function(i, v) {
+                        if (v) {
+                            output += v + "<br />";
+                        }
+                    });
+                    return output.trim();
+                }
+                let dispatchaddress = formatcontact([i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE]);
+                let callerdetails = formatcontact([i.CALLERNAME, common.replace_all(i.CALLERADDRESS, "\n", "<br />"), i.CALLERTOWN, i.CALLERCOUNTY, i.CALLERPOSTCODE, i.CALLERMOBILETELEPHONE, i.CALLERHOMETELEPHONE, i.CALLERWORKTELEPHONE]);
+                let victimdetails = formatcontact([i.VICTIMNAME, common.replace_all(i.VICTIMADDRESS, "\n", "<br />"), i.VICTIMTOWN, i.VICTIMCOUNTY, i.VICTIMPOSTCODE, i.VICTIMMOBILETELEPHONE, i.VICTIMHOMETELEPHONE, i.VICTIMWORKTELEPHONE]);
+                let suspectdetails = formatcontact([i.SUSPECTNAME, common.replace_all(i.SUSPECTADDRESS, "\n", "<br />"), i.SUSPECTTOWN, i.SUSPECTCOUNTY, i.SUSPECTPOSTCODE, i.SUSPECTMOBILETELEPHONE, i.SUSPECTHOMETELEPHONE, i.SUSPECTWORKTELEPHONE]);
+                let msg = [
+                    '<div style="padding: 10px;">',
+                        '<h1>' + format.padleft(controller.incident.ACID, 6) + '</h1>',
+                        '<table border="0" cellpadding="10" style="border-collapse: collapse;width: 100%;">',
+                            '<tr style="border-bottom: 1px solid black;border-top: 1px solid black;"><td style="vertical-align: top;">' + _("Type") + '</td><td style="vertical-align: top;">' + i.INCIDENTNAME + '</td></tr>',
+                            '<tr style="border-bottom: 1px solid black;border-top: 1px solid black;"><td style="vertical-align: top;">' + _("Date/Time") + '</td><td style="vertical-align: top;">' + format.date(i.INCIDENTDATETIME) + " " + format.time(i.INCIDENTDATETIME) + '</td></tr>',
+                            '<tr style="border-bottom: 1px solid black;border-top: 1px solid black;"><td style="vertical-align: top;">' + _("Address") + '</td><td style="vertical-align: top;">' + dispatchaddress + '</td></tr>',
+                            '<tr style="border-bottom: 1px solid black;border-top: 1px solid black;"><td style="vertical-align: top;">' + _("Notes") + '</td><td style="vertical-align: top;">' + common.nulltostr(i.CALLNOTES) + '</td></tr>',
+                            '<tr style="border-bottom: 1px solid black;border-top: 1px solid black;"><td style="vertical-align: top;">' + _("Caller") + '</td><td style="vertical-align: top;">' + callerdetails + '</td></tr>',
+                            '<tr style="border-bottom: 1px solid black;border-top: 1px solid black;"><td style="vertical-align: top;">' + _("Victim") + '</td><td style="vertical-align: top;">' + victimdetails + '</td></tr>',
+                            '<tr style="border-bottom: 1px solid black;border-top: 1px solid black;"><td style="vertical-align: top;">' + _("Suspect") + '</td><td style="vertical-align: top;">' + suspectdetails + '</td></tr>',
+                        '</table>',
+                    '</div>'
                 ].join("\n");
                 let subject = html.decode(_("Dispatch {0}: {1}")
                         .replace("{0}", format.padleft(controller.incident.ACID, 6))
@@ -323,7 +342,7 @@ $(function() {
                     name: common.iif(emailaddress.indexOf(",") == -1, emailname, ""),
                     email: emailaddress,
                     logtypes: controller.logtypes,
-                    message: "<p>" + common.replace_all(html.decode(msg), "\n", "<br/>") + "</p>",
+                    message: msg,
                     subject: subject,
                     templates: controller.templatesemail
                 });
