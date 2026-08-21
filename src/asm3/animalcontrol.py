@@ -25,6 +25,10 @@ def get_animalcontrol_query(dbo: Database) -> str:
         "o1.OwnerName AS OwnerName, o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, " \
         "o1.OwnerName AS SuspectName, o1.OwnerAddress AS SuspectAddress, o1.OwnerTown AS SuspectTown, o1.OwnerCounty AS SuspectCounty, o1.OwnerPostcode AS SuspectPostcode, " \
         "o1.HomeTelephone AS SuspectHomeTelephone, o1.WorkTelephone AS SuspectWorkTelephone, o1.MobileTelephone AS SuspectMobileTelephone, " \
+        "o2.OwnerName AS Suspect2Name, o2.OwnerAddress AS Suspect2Address, o2.OwnerTown AS Suspect2Town, o2.OwnerCounty AS Suspect2County, o2.OwnerPostcode AS Suspect2Postcode, " \
+        "o2.HomeTelephone AS Suspect2HomeTelephone, o2.WorkTelephone AS Suspect2WorkTelephone, o2.MobileTelephone AS Suspect2MobileTelephone, " \
+        "o3.OwnerName AS Suspect3Name, o3.OwnerAddress AS Suspect3Address, o3.OwnerTown AS Suspect3Town, o3.OwnerCounty AS Suspect3County, o3.OwnerPostcode AS Suspect3Postcode, " \
+        "o3.HomeTelephone AS Suspect3HomeTelephone, o3.WorkTelephone AS Suspect3WorkTelephone, o3.MobileTelephone AS Suspect3MobileTelephone, " \
         "vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress, vo.OwnerTown AS VictimTown, vo.OwnerCounty AS VictimCounty, vo.OwnerPostcode AS VictimPostcode," \
         "vo.HomeTelephone AS VictimHomeTelephone, vo.WorkTelephone AS VictimWorkTelephone, vo.MobileTelephone AS VictimMobileTelephone, " \
         "ti.IncidentName, ci.CompletedName, pl.LocationName, j.JurisdictionName, " \
