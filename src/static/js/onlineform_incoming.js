@@ -474,6 +474,7 @@ $(function() {
             $.each(controller.rows, function(i, v) {
                 if (v.LINK || v.PROCESSED) {  ids.push(v.COLLATIONID); }
             });
+            console.log(ids);
             common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids.join(","));
         },
 
@@ -523,7 +524,7 @@ $(function() {
             common.widget_destroy("#dialog-attach-person");
             common.widget_destroy("#attachanimal", "animalchooser");
             common.widget_destroy("#attachperson", "personchooser");
-            onlineform_incoming.remove_processed(); 
+            onlineform_incoming.remove_processed();
         },
 
         name: "onlineform_incoming",

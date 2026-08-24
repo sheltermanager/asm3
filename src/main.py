@@ -6480,7 +6480,7 @@ class onlineform_incoming(JSONEndpoint):
     get_permissions = asm3.users.VIEW_INCOMING_FORMS
 
     def controller(self, o):
-        headers = asm3.onlineform.get_onlineformincoming_headers(o.dbo, o.user, o.session.superuser)
+        headers = asm3.onlineform.get_onlineformincoming_headers(o.dbo, o.session)
         total = len(headers)
         totalham = 0
         totalspam = 0

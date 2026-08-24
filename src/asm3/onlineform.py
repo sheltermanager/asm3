@@ -20,7 +20,7 @@ import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS
-from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Tuple
+from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Session, Tuple
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
@@ -855,7 +855,7 @@ def get_onlineformincoming_formfooter(dbo: Database, collationid: int) -> str:
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
-def get_onlineformincoming_headers(dbo: Database, username: str, superuser: int = 0) -> Results:
+def get_onlineformincoming_headers(dbo: Database, session: Session) -> Results:
     """ Returns all incoming form posts """
     rows = dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
         "(SELECT MAX(Value) FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
@@ -864,10 +864,10 @@ def get_onlineformincoming_headers(dbo: Database, username: str, superuser: int 
         "FROM onlineformincoming f " \
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
         "ORDER BY f.PostedDate")
-    if superuser:
+    if session.superuser:
         return rows
     else:
-        return reduce_incoming_results(dbo, username, rows)
+        return reduce_incoming_results(dbo, session, rows)
 
 def get_onlineformincoming_detail(dbo: Database, collationid: int) -> Results:
     """ Returns the detail lines for an incoming post """
@@ -2357,12 +2357,11 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Unable to match to an animal record (need animalname).", dbo.locale))
     return (collationid, animalid, animalname, 1)
 
-def reduce_incoming_results(dbo: Database, username: str, rows: Results) -> Results:
+def reduce_incoming_results(dbo: Database, session: Session, rows: Results) -> Results:
     if len(rows) == 0: return rows
+    roles = [int(roleid) for roleid in session.roleids.split("|")]
     forms = dbo.query("SELECT ID, Name FROM onlineform")
     formroles = dbo.query("SELECT OnlineFormID, RoleID FROM onlineformrole")
-    roles = asm3.users.get_roles_ids_for_user(dbo, username)
-
     for r in rows.copy():
         formid = 0
         formname = r["FORMNAME"]
@@ -2374,9 +2373,6 @@ def reduce_incoming_results(dbo: Database, username: str, rows: Results) -> Resu
         for formrole in formroles:
             if formrole["ONLINEFORMID"] == formid:
                 viewroles.append(formrole["ROLEID"])
-
-        # formid = dbo.query_int("SELECT ID FROM onlineform WHERE Name = ?", (r["FORMNAME"],))
-        # viewroles = dbo.query_list("SELECT RoleID FROM onlineformrole WHERE OnlineFormID = ?", (formid,))
         if not viewroles: continue
         haspermission = False
         for role in roles:
