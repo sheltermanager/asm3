@@ -864,10 +864,7 @@ def get_onlineformincoming_headers(dbo: Database, session: Session) -> Results:
         "FROM onlineformincoming f " \
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
         "ORDER BY f.PostedDate")
-    if session.superuser:
-        return rows
-    else:
-        return reduce_incoming_results(dbo, session, rows)
+    return reduce_incoming_results(dbo, session, rows)
 
 def get_onlineformincoming_detail(dbo: Database, collationid: int) -> Results:
     """ Returns the detail lines for an incoming post """
@@ -2359,6 +2356,7 @@ def create_animal_log(dbo: Database, username: str, collationid: int):
 
 def reduce_incoming_results(dbo: Database, session: Session, rows: Results) -> Results:
     if len(rows) == 0: return rows
+    if session.superuser: return rows
     roles = [int(roleid) for roleid in session.roleids.split("|")]
     forms = dbo.query("SELECT ID, Name FROM onlineform")
     formroles = dbo.query("SELECT OnlineFormID, RoleID FROM onlineformrole")
