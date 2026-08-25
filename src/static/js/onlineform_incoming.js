@@ -474,7 +474,6 @@ $(function() {
             $.each(controller.rows, function(i, v) {
                 if (v.LINK || v.PROCESSED) {  ids.push(v.COLLATIONID); }
             });
-            console.log(ids);
             common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids.join(","));
         },
 
