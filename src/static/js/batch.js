@@ -23,7 +23,9 @@ $(function() {
                 '<option value="genfigyear">' + _("Regenerate annual animal figures for") + '</option>',
                 '<option value="genfigmonth">' + _("Regenerate monthly animal figures for") + '</option>',
                 '<option value="resetnnncodes">' + _("Reset NNN animal code counts for this year") + '</option>',
-                '<option value="sendfostererweekly">' + _("Send the weekly fosterer email now") + '</option>'
+                '<option value="sendfostererweekly">' + _("Send the weekly fosterer email now") + '</option>',
+                '<option value="translks">' + _("Apply translations to static lookup values") + '</option>',
+                '<option value="translookups">' + _("Apply translations to lookup values") + '</option>'
             ].join("\n");
         },
 
