@@ -333,6 +333,10 @@ const common = {
         return v instanceof String || typeof(v) == "string";
     },
 
+    join_not_falsy: function(array, delimiter="<br />") {
+        return array.filter(v => v).join(delimiter);
+    },
+
     browser_is: {
         android: navigator.userAgent.match(/Android/i) != null,
         ios:     navigator.userAgent.match(/iPod|iPad|iPhone/i) != null,

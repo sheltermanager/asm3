@@ -303,20 +303,10 @@ $(function() {
                     }
                 });
                 let i = controller.incident;
-
-                let formatcontact = function(data) {
-                    let output = "";
-                    $.each(data, function(i, v) {
-                        if (v) {
-                            output += v + "<br />";
-                        }
-                    });
-                    return output.trim();
-                }
-                let dispatchaddress = formatcontact([i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE]);
-                let callerdetails = formatcontact([i.CALLERNAME, common.replace_all(i.CALLERADDRESS, "\n", "<br />"), i.CALLERTOWN, i.CALLERCOUNTY, i.CALLERPOSTCODE, i.CALLERMOBILETELEPHONE, i.CALLERHOMETELEPHONE, i.CALLERWORKTELEPHONE]);
-                let victimdetails = formatcontact([i.VICTIMNAME, common.replace_all(i.VICTIMADDRESS, "\n", "<br />"), i.VICTIMTOWN, i.VICTIMCOUNTY, i.VICTIMPOSTCODE, i.VICTIMMOBILETELEPHONE, i.VICTIMHOMETELEPHONE, i.VICTIMWORKTELEPHONE]);
-                let suspectdetails = formatcontact([i.SUSPECTNAME, common.replace_all(i.SUSPECTADDRESS, "\n", "<br />"), i.SUSPECTTOWN, i.SUSPECTCOUNTY, i.SUSPECTPOSTCODE, i.SUSPECTMOBILETELEPHONE, i.SUSPECTHOMETELEPHONE, i.SUSPECTWORKTELEPHONE]);
+                let dispatchaddress = common.join_not_falsy([i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE]);
+                let callerdetails = common.join_not_falsy([i.CALLERNAME, common.replace_all(i.CALLERADDRESS, "\n", "<br />"), i.CALLERTOWN, i.CALLERCOUNTY, i.CALLERPOSTCODE, i.CALLERMOBILETELEPHONE, i.CALLERHOMETELEPHONE, i.CALLERWORKTELEPHONE]);
+                let victimdetails = common.join_not_falsy([i.VICTIMNAME, common.replace_all(i.VICTIMADDRESS, "\n", "<br />"), i.VICTIMTOWN, i.VICTIMCOUNTY, i.VICTIMPOSTCODE, i.VICTIMMOBILETELEPHONE, i.VICTIMHOMETELEPHONE, i.VICTIMWORKTELEPHONE]);
+                let suspectdetails = common.join_not_falsy([i.SUSPECTNAME, common.replace_all(i.SUSPECTADDRESS, "\n", "<br />"), i.SUSPECTTOWN, i.SUSPECTCOUNTY, i.SUSPECTPOSTCODE, i.SUSPECTMOBILETELEPHONE, i.SUSPECTHOMETELEPHONE, i.SUSPECTWORKTELEPHONE]);
                 let msg = [
                     '<div style="padding: 10px;">',
                         '<h1>' + format.padleft(controller.incident.ACID, 6) + '</h1>',
