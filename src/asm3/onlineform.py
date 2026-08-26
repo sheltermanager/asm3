@@ -2360,6 +2360,12 @@ def reduce_incoming_results(dbo: Database, session: Session, rows: Results) -> R
     roles = [int(roleid) for roleid in session.roleids.split("|")]
     forms = dbo.query("SELECT ID, Name FROM onlineform")
     formroles = dbo.query("SELECT OnlineFormID, RoleID FROM onlineformrole")
+    viewroles = {}
+    for formrole in formroles:
+        if formrole["ONLINEFORMID"] in viewroles.keys():
+            viewroles[formrole["ONLINEFORMID"]].append(formrole["ROLEID"])
+        else:
+            viewroles[formrole["ONLINEFORMID"]] = [formrole["ROLEID"],]
     for r in rows.copy():
         formid = 0
         formname = r["FORMNAME"]
@@ -2367,14 +2373,10 @@ def reduce_incoming_results(dbo: Database, session: Session, rows: Results) -> R
             if form["NAME"] == formname:
                 formid = form["ID"]
                 break
-        viewroles = []
-        for formrole in formroles:
-            if formrole["ONLINEFORMID"] == formid:
-                viewroles.append(formrole["ROLEID"])
-        if not viewroles: continue
+        if formid not in viewroles.keys(): continue
         haspermission = False
         for role in roles:
-            if role in viewroles:
+            if role in viewroles[formid]:
                 haspermission = True
         if not haspermission:
             rows.remove(r)
