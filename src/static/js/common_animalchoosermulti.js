@@ -131,6 +131,9 @@ $.fn.animalchoosermulti = asm_widget({
         o.results.find(":checked").prop("checked", false);
         this.update_status(t);
         if (fireclearedevent) { t.trigger("cleared"); }
+
+        // Used by bulk-selection persistence regardless of fireclearedevent
+        t.trigger("bulk_clear");
     },
 
     is_empty: function(t) {
@@ -163,6 +166,10 @@ $.fn.animalchoosermulti = asm_widget({
     get_rows: function(t) {
         return t.data("o").rows;
     }, 
+
+    set_rows: function(t, newrows) {
+        t.data("o").rows = newrows;
+    },
 
     get_selected_rows: function(t) {
         let rows = [];
