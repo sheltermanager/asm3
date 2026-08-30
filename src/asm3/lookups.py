@@ -1,9 +1,10 @@
 
+import asm3.al
 import asm3.cachedisk
 import asm3.configuration
 import asm3.financial
 import asm3.utils
-from asm3.i18n import _
+from asm3.i18n import _, real_locale
 from asm3.sitedefs import URL_MICROCHIP_PREFIXES
 from asm3.typehints import datetime, Database, Dict, List, LocationFilter, Results, Tuple
 
@@ -93,6 +94,19 @@ LOOKUP_DESCFIELD = 3
 LOOKUP_MODIFIERS = 4
 LOOKUP_FOREIGNKEYS = 5
 LOOKUP_DEFAULTCONFIG = 6
+
+# Extra translatable lookup columns not covered by LOOKUP_TABLES name fields.
+# Add tables/columns here as needed. Primary key is always ID.
+TRANSLATABLE_LOOKUP_COLUMNS = {
+    "lksdiarylink":     ("LinkType",),
+    "lksdonationfreq":  ("Frequency",),
+    "lksfieldlink":     ("LinkType",),
+    "lksfieldtype":     ("FieldType",),
+    "lksloglink":       ("LinkType",),
+    "lksmedialink":     ("LinkType",),
+    "lksmediatype":     ("MediaType",),
+    "lksunittype":      ("UnitName",)
+}
 
 COLOURSCHEMES = [
     { "ID": 1, "FGCOL": "", "BGCOL": "" },
@@ -1239,6 +1253,47 @@ def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str
 def update_lookup_retired(dbo: Database, username: str, lookup: str, iid: int, retired: int) -> None:
     """ Updates lookup item with ID=iid, setting IsRetired=retired """
     dbo.update(lookup, iid, { "IsRetired": retired }, username, setLastChanged=False)
+
+def _lookup_translation_map() -> Dict[str, Tuple[str, ...]]:
+    """ Name fields from LOOKUP_TABLES plus any extra columns in TRANSLATABLE_LOOKUP_COLUMNS. """
+    mapping = {}
+    for table, spec in LOOKUP_TABLES.items():
+        mapping[table] = (spec[LOOKUP_NAMEFIELD],)
+    for table, cols in TRANSLATABLE_LOOKUP_COLUMNS.items():
+        mapping[table] = tuple(dict.fromkeys(mapping.get(table, ()) + cols))
+    return mapping
+
+def translate_stored_lookup_strings(dbo: Database, lks_only: bool) -> str:
+    """
+    Re-applies translations to stored lookup values that were inserted in English
+    because no translation existed at insert time.
+    lks_only: True for static lks* tables, False for all other mapped lookup tables.
+    """
+    l = dbo.locale
+    if real_locale(l) == "en":
+        asm3.al.info("skipping lookup translation for English locale", "lookups.translate_stored_lookup_strings", dbo)
+        return "OK 0"
+    updated = 0
+    for table, columns in _lookup_translation_map().items():
+        if lks_only != table.startswith("lks"):
+            continue
+        rows = dbo.query("SELECT ID, %s FROM %s" % (", ".join(columns), table))
+        for row in rows:
+            values = {}
+            for col in columns:
+                s = row[col.upper()]
+                if not s:
+                    continue
+                translated = _(s, l)
+                if s != translated:
+                    values[col] = translated
+                    asm3.al.info("%s.%s ID=%s '%s' -> '%s'" % (table, col, row.ID, s, translated),
+                        "lookups.translate_stored_lookup_strings", dbo)
+            if values:
+                dbo.update(table, row.ID, values, setLastChanged=False, setRecordVersion=False, writeAudit=False)
+                updated += len(values)
+    asm3.al.info("translated %d lookup values" % updated, "lookups.translate_stored_lookup_strings", dbo)
+    return "OK %d" % updated
 
 def delete_lookup(dbo: Database, username: str, lookup: str, iid: int) -> None:
     l = dbo.locale
