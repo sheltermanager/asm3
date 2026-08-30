@@ -86,6 +86,7 @@ LOOKUP_TABLES = {
     "lkwaitinglistremoval": (_("Waiting List Removal"), "RemovalName", _("Type"), "", "add del", ("animalwaitinglist.WaitingListRemovalID",), ""),
     "lkworktype":           (_("Work Types"), "WorkType", _("Type"), "", "add del ret", ("ownerrota.WorkTypeID",), "")
 }
+
 LOOKUP_TABLELABEL = 0
 LOOKUP_NAMEFIELD = 1
 LOOKUP_NAMELABEL = 2
@@ -93,6 +94,39 @@ LOOKUP_DESCFIELD = 3
 LOOKUP_MODIFIERS = 4
 LOOKUP_FOREIGNKEYS = 5
 LOOKUP_DEFAULTCONFIG = 6
+
+ANIMAL_FLAGS = {
+    "courtesy" : {"FIELD": "ISCOURTESY", "LABEL": _("Courtesy Listing"), "LOCATION": "any"},
+    "crueltycase": {"FIELD": "CRUELTYCASE", "LABEL": _("Cruelty Case"), "LOCATION": "on"},
+    "nonshelter": {"FIELD": "NONSHELTERANIMAL", "LABEL": _("Non-Shelter"), "LOCATION": "any"},
+    "notforadoption": {"FIELD": "ISNOTAVAILABLEFORADOPTION", "LABEL": _("Not For Adoption"), "LOCATION": "on"},
+    "notforregistration": {"FIELD": "ISNOTFORREGISTRATION", "LABEL": _("Do Not Register Microchip"), "LOCATION": "any"},
+    "quarantine": {"FIELD": "ISQUARANTINE", "LABEL": _("Quarantine"), "LOCATION": "on"}
+}
+
+PERSON_FLAGS = {
+    "aco": {"FIELD": "ISACO", "LABEL": _("ACO")},
+    "adopter": {"FIELD": "ISADOPTER", "LABEL": _("Adopter")},
+    "coordinator": {"FIELD": "ISADOPTIONCOORDINATOR", "LABEL": _("Adoption Coordinator")},
+    "banned": {"FIELD": "ISBANNED", "LABEL": _("Banned")},
+    "dangerous": {"FIELD": "ISDANGEROUS", "LABEL": _("Dangerous")},
+    "deceased": {"FIELD": "ISDECEASED", "LABEL": _("Deceased")},
+    "donor": {"FIELD": "ISDONOR", "LABEL": _("Donor")},
+    "driver": {"FIELD": "ISDRIVER", "LABEL": _("Driver")},
+    "excludefrombulkemail": {"FIELD": "EXCLUDEFROMBULKEMAIL", "LABEL": _("Exclude from bulk email")},
+    "fosterer": {"FIELD": "ISFOSTERER", "LABEL": _("Fosterer")},
+    "giftaid": {"FIELD": "ISGIFTAID", "LABEL": _("UK Giftaid")},
+    "homechecked": {"FIELD": "IDCHECK", "LABEL": _("Homechecked")},
+    "homechecker": {"FIELD": "ISHOMECHECKER", "LABEL": _("Homechecker")},
+    "member": {"FIELD": "ISMEMBER", "LABEL": _("Member")},
+    "retailer": {"FIELD": "ISRETAILER", "LABEL": _("Retailer")},
+    "shelter": {"FIELD": "ISSHELTER", "LABEL": _("Other Shelter")},
+    "sponsor": {"FIELD": "ISSPONSOR", "LABEL": _("Sponsor")},
+    "staff": {"FIELD": "ISSTAFF", "LABEL": _("Staff")},
+    "supplier": {"FIELD": "ISSUPPLIER", "LABEL": _("Supplier")},
+    "vet": {"FIELD": "ISVET", "LABEL": _("Vet")},
+    "volunteer": {"FIELD": "ISVOLUNTEER", "LABEL": _("Volunteer")}
+}
 
 COLOURSCHEMES = [
     { "ID": 1, "FGCOL": "", "BGCOL": "" },
@@ -818,10 +852,8 @@ def _merge_db_flags(dbflags: Results, flags: str = "") -> Results:
     the pipe separated list of flags from an ADDITIONALFLAGS column.
     The built in lower-case flags are ignored.
     """
-    BUILTINS = [ "aco", "adopter", "banned", "coordinator", "dangerous", "deceased", "donor", "driver", 
-        "excludefrombulkemail", "fosterer", "giftaid", "homechecked", "homechecker", "member", "padopter", 
-        "retailer", "shelter", "staff", "sponsor", "vet", "volunteer", "supplier",
-        "courtesy", "crueltycase", "nonshelter", "notforadoption", "notforregistration", "quarantine" ]
+    BUILTINS = list(PERSON_FLAGS.keys()) + list(ANIMAL_FLAGS.keys())
+    BUILTINS.append("padopter")
     if flags is None or flags == "" or flags == "|": return dbflags
     out = dbflags.copy()
     for f in flags.split("|"):
