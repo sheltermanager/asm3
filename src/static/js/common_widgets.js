@@ -1026,6 +1026,26 @@ $.fn.selectmulti = asm_widget({
         t.change(); 
     },
 
+    /** Leave widget visible but non-editable */
+    disable: function(t) {
+        t.parent().find(".asmSelect").hide();
+        t.parent().find("ol").hide();
+        let rolenames = [];
+        $.each(t.parent().find("li"), function(i, v) {
+            rolenames.push('<span class="bsmListItem-custom ro" style="cursor: default;">' + $(v).text().slice(0, -1) + '</span>');
+        });
+        t.parent().css("padding", "2px");
+        t.parent().append(rolenames.join(""));
+    },
+
+    /** Make widget editable */
+    enable: function(t) {
+        t.parent().find(".asmSelect").show();
+        t.parent().find("ol").show();
+        t.parent().find(".ro").remove();
+        t.parent().css("padding", "auto");
+    },
+
     /** Get or set the value, which is a pipe delimited list (comma delimited also acceptable for setting) */
     value: function(t, newval) {
         if (newval !== undefined) {

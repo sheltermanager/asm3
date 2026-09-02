@@ -1428,6 +1428,11 @@ $(function() {
             // Share button/links
             animal.set_sharinglinks();
 
+            // Make the role controls read only if user role not set
+            if (!common.has_permission("car")) {
+                $("#viewroles").selectmulti("disable");
+            }
+
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
             validate.indicator(["animalname", "dateofbirth", "datebroughtin" ]);
