@@ -35,7 +35,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "jurisdiction", "licencetype", "lkadoptionsource", "lkanimalflags", "lkboardingtype", "lkclinicinvoiceitems", "lkclinictype", "lkcoattype", "lkmediaflags", 
     "lkcondition", "lksconditiontype", "lkownerflags", "lkproducttype", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lktaxrate", "lksloglink", "lksmedialink", "lksmediatype", "lksmedicaltype", 
-    "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", 
+    "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkwaitinglisttype", 
     "lkstransportstatus", "lkurgency", "lkwaitinglistremoval", "lkworktype", 
     "log", "logmulti", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
@@ -88,7 +88,7 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
     "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", 
     "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", 
     "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
-    "lkwaitinglistremoval", "lkworktype", 
+    "lkwaitinglistremoval", "lkwaitinglisttype", "lkworktype", 
     "logtype", "medicalprofile", "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", 
     "stocklocation", "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
     "transporttype", "traptype", "vaccinationtype", "voucher" )
@@ -880,6 +880,7 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("animalwaitinglist", (
         fid(),
+        fint("WaitingListTypeID"),
         fint("SpeciesID"),
         fint("BreedID", True),
         fint("Neutered", True),
@@ -1302,6 +1303,12 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lkwaitinglistremoval", (
         fid(), fstr("RemovalName") ), False)
+
+    sql += table("lkwaitinglisttype", (
+        fid(),
+        fstr("WaitingListTypeName"),
+        fstr("Description", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("lkworktype", (
         fid(), fstr("WorkType"),

@@ -1922,6 +1922,7 @@ def waitinglist_tags(dbo: Database, a: ResultRow) -> Tags:
         "CANAFFORDDONATION":        asm3.utils.iif(a["CANAFFORDDONATION"] == 1, _("Yes", l), _("No", l)),
         "URGENCY":                  a["URGENCYNAME"],
         "COMMENTS":                 a["COMMENTS"],
+        "WAITINGLISTTYPE":          a["WAITINGLISTTYPENAME"],
         "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + asm3.html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGLINK200"    : "<img height=\"200\" src=\"" + asm3.html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGLINK300"    : "<img height=\"300\" src=\"" + asm3.html.doc_img_src(dbo, a) + "\" >",

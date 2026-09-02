@@ -1574,6 +1574,8 @@ ReasonForRemoval
     The reason this waiting list entry was removed
 CanAffordDonation
     Yes/No - whether the person can afford to make a donation
+WaitingListType
+    The type of this waiting list item
 Urgency
     An urgency rating for this waiting list item
 Comments

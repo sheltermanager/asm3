@@ -6861,7 +6861,8 @@ class options(JSONEndpoint):
             "urgencies": asm3.lookups.get_urgencies(dbo),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
             "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
-            "waitinglistcolumns": asm3.html.json_waitinglistcolumns(dbo)
+            "waitinglistcolumns": asm3.html.json_waitinglistcolumns(dbo),
+            "waitinglisttypes": asm3.lookups.get_waitinglist_types(dbo)
         }
         asm3.al.debug("lookups loaded", "main.options", dbo)
         return c
@@ -9043,7 +9044,8 @@ class waitinglist(JSONEndpoint):
             "templates": asm3.template.get_document_templates(dbo, "waitinglist"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "tabcounts": asm3.waitinglist.get_satellite_counts(dbo, a["ID"])[0],
-            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo)
+            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo),
+            "waitinglisttypes": asm3.lookups.get_waitinglist_types(dbo)
         }
 
     def post_save(self, o):
@@ -9157,6 +9159,7 @@ class waitinglist_new(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
             "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo),
+            "waitinglisttypes": asm3.lookups.get_waitinglist_types(dbo),
         }
 
     def post_all(self, o):
@@ -9172,8 +9175,9 @@ class waitinglist_results(JSONEndpoint):
         priorityfloor = asm3.utils.iif(post["priorityfloor"] == "", dbo.query_int("SELECT MAX(ID) FROM lkurgency"), post.integer("priorityfloor"))
         speciesfilter = asm3.utils.iif(post["species"] == "", -1, post.integer("species"))
         sizefilter = asm3.utils.iif(post["size"] == "", -1, post.integer("size"))
+        typefilter = asm3.utils.iif(post["type"] == "", -1, post.integer("type"))
         rows = asm3.waitinglist.get_waitinglist(dbo, priorityfloor, speciesfilter, sizefilter,
-            post["addresscontains"], post.integer("includeremoved"), post["namecontains"], post["descriptioncontains"])
+            post["addresscontains"], post.integer("includeremoved"), post["namecontains"], post["descriptioncontains"], wltype=typefilter)
         add = None
         if len(rows) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, rows, "waitinglist")
@@ -9184,6 +9188,7 @@ class waitinglist_results(JSONEndpoint):
             "seladdresscontains": post["addresscontains"],
             "seldescriptioncontains": post["descriptioncontains"],
             "selincluderemoved": post.integer("includeremoved"),
+            "seltype": typefilter,
             "selnamecontains": post["namecontains"],
             "selpriorityfloor": priorityfloor,
             "selspecies": speciesfilter,
@@ -9191,6 +9196,7 @@ class waitinglist_results(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
+            "waitinglisttypes": asm3.lookups.get_waitinglist_types(dbo),
             "yesno": asm3.lookups.get_yesno(dbo)
         }
 
