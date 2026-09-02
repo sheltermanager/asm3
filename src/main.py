@@ -9159,7 +9159,7 @@ class waitinglist_new(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
             "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo),
-            "waitinglisttypes": asm3.lookups.get_waitinglist_types(dbo),
+            "waitinglisttypes": asm3.lookups.get_waitinglist_types(dbo)
         }
 
     def post_all(self, o):
