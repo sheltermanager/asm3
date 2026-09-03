@@ -442,6 +442,7 @@ $(function() {
         },
 
         render_animal_links: function() {
+            let hidemorethan = 15;
             let s = [];
             let linknames = { "recentlychanged": _("Recently Changed"), 
                 "recentlyentered": _("Recently Entered Shelter"),
@@ -458,10 +459,23 @@ $(function() {
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
                     if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }
-                    s.push('<div class="asm-shelterview-animal">');
+                    if ( i < hidemorethan ) {
+                        s.push('<div class="asm-shelterview-animal">');
+                    } else {
+                        s.push('<div class="asm-shelterview-animal asm-animal-link-overflow" style="display: none;">');
+                    }
+
                     s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
                 });
+                if (controller.animallinks.length > hidemorethan) {
+                    s.push('<p class="asm-menu-category" style="border-bottom: none;">'),
+                    s.push('<a id="animallinktoggle" href="#">'),
+                    s.push('<span id="animallinknav" class="ui-icon ui-icon-triangle-1-e"></span>'),
+                    s.push(_("Expand")),
+                    s.push('</a>'),
+                    s.push('</p>')
+                }
                 s.push('</div>');
             }
             return s.join("\n");
@@ -1026,6 +1040,19 @@ $(function() {
                     $("#newswrapper").fadeOut();
                 }
                 return false;
+            });
+
+            $("#animallinktoggle").click(function() {
+                if ($("#animallinknav").hasClass("ui-icon-triangle-1-e")) {
+                    $("#animallinknav").removeClass("ui-icon-triangle-1-e");
+                    $("#animallinknav").addClass("ui-icon-triangle-1-s");
+                    $(".asm-animal-link-overflow").fadeIn();
+                }
+                else {
+                    $("#animallinknav").removeClass("ui-icon-triangle-1-s");
+                    $("#animallinknav").addClass("ui-icon-triangle-1-e");
+                    $(".asm-animal-link-overflow").fadeOut();
+                }
             });
 
             // Put a random tip in the box
