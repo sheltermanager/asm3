@@ -551,6 +551,11 @@ $(function() {
             // Load person flags
             html.person_flag_options(controller.person, controller.flags, $("#flags"));
 
+            // Make the role controls read only if user role not set
+            if (!common.has_permission("cor")) {
+                $("#viewroles").selectmulti("disable");
+            }
+
             // Load homecheck history
             let h = [];
             $.each(controller.homecheckhistory, function(i, v) {
