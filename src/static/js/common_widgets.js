@@ -1030,13 +1030,13 @@ $.fn.selectmulti = asm_widget({
     disable: function(t) {
         t.parent().find(".asmSelect").hide();
         t.parent().find("ol").hide();
-        let rolenames = [];
+        let selected = [];
         $.each(t.parent().find("li"), function(i, v) {
-            rolenames.push('<span class="bsmListItem-custom ro" style="cursor: default;">' + $(v).text().slice(0, -1) + '</span>');
+            selected.push('<span class="bsmListItem-custom ro" style="cursor: default;">' + $(v).text().slice(0, -1) + '</span>');
         });
         t.parent().css("padding-bottom", "2px");
         t.parent().css("padding-top", "5px");
-        t.parent().append(rolenames.join(""));
+        t.parent().append(selected.join(""));
     },
 
     /** Make widget editable */
