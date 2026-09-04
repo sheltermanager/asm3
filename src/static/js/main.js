@@ -442,7 +442,7 @@ $(function() {
         },
 
         render_animal_links: function() {
-            let hidemorethan = 15;
+            let hidemorethan = 9;
             let s = [];
             let linknames = { "recentlychanged": _("Recently Changed"), 
                 "recentlyentered": _("Recently Entered Shelter"),
@@ -472,7 +472,7 @@ $(function() {
                     s.push('<p class="asm-menu-category" style="border-bottom: none;">'),
                     s.push('<a id="animallinktoggle" href="#">'),
                     s.push('<span id="animallinknav" class="ui-icon ui-icon-triangle-1-e"></span>'),
-                    s.push(_("Expand")),
+                    s.push('<span id="animallinklabel">' + _("more") + '</span>'),
                     s.push('</a>'),
                     s.push('</p>')
                 }
@@ -1046,11 +1046,13 @@ $(function() {
                 if ($("#animallinknav").hasClass("ui-icon-triangle-1-e")) {
                     $("#animallinknav").removeClass("ui-icon-triangle-1-e");
                     $("#animallinknav").addClass("ui-icon-triangle-1-s");
+                    $("#animallinklabel").text(_("less"))
                     $(".asm-animal-link-overflow").fadeIn();
                 }
                 else {
                     $("#animallinknav").removeClass("ui-icon-triangle-1-s");
                     $("#animallinknav").addClass("ui-icon-triangle-1-e");
+                    $("#animallinklabel").text(_("more"))
                     $(".asm-animal-link-overflow").fadeOut();
                 }
             });
