@@ -10,6 +10,8 @@ $(function() {
             return [
                 html.content_header(_("Add waiting list")),
                 tableform.fields_render([
+                    { post_field: "type", type: "select", label: _("Type"), 
+                        options: { displayfield: "WAITINGLISTTYPENAME", rows: controller.waitinglisttypes }},
                     { post_field: "dateputon", type: "date", label: _("Date put on") },
                     { post_field: "animalname", type: "text", label: _("Name") },
                     { post_field: "species", type: "select", label: _("Species"), 
@@ -27,9 +29,9 @@ $(function() {
                     { post_field: "microchip", type: "text", label: _("Microchip"), maxlength: 15 },
                     { post_field: "description", type: "textarea", label: _("Description"), classes: "asm-textareafixed", rows: 3, 
                         callout: _("A description or other information about the animal") },
+                    { type: "nextcol" },
                     { post_field: "reasonforwantingtopart", type: "textarea", label: _("Entry reason"), classes: "asm-textareafixed", rows: 3, 
                         callout: _("The reason the owner wants to part with the animal") },
-                    { type: "nextcol" },
                     { post_field: "canafforddonation", type: "check", label: _("Can afford donation") },
                     { post_field: "urgency", type: "select", label: _("Urgency"), 
                         options: { displayfield: "URGENCY", rows: controller.urgencies }},
@@ -142,6 +144,7 @@ $(function() {
             $("#description, #reasonforwantingtopart, #comments").val("").change();
 
             // Set select box default values
+            $("#type").val(config.str("WaitingListDefaultType"));
             $("#species").val(config.str("AFDefaultSpecies"));
             waitinglist_new.update_breed_select();
             $("#breed").val(config.str("AFDefaultBreed"));

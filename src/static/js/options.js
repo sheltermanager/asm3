@@ -1059,6 +1059,7 @@ $(function() {
                         { id: "wlupdate", post_field: "WaitingListUrgencyUpdatePeriod", label: _("Waiting list urgency update period in days"), type: "number", min: 0, max: 365, callout: _("Set to 0 to never update urgencies.") }, 
                         { id: "wldu", post_field: "WaitingListDefaultUrgency", label: _("Default urgency"), type: "select", options: html.list_to_options(controller.urgencies, "ID", "URGENCY") }, 
                         { id: "wlremoval", post_field: "WaitingListDefaultRemovalWeeks", label: _("Default removal after weeks without contact"), type: "number", min: 0, max: 52, callout: _("Set to 0 to never auto remove.") }, 
+                        { id: "wltype", post_field: "WaitingListDefaultType", label: _("Default waiting list type"), type: "select", options: html.list_to_options(controller.waitinglisttypes, "ID", "WAITINGLISTTYPENAME") }, 
                         { id: "wlcolumns", post_field: "WaitingListViewColumns", label: _("Columns displayed"), type: "selectmulti", options: this.two_pair_options(controller.waitinglistcolumns) }
                     ]}, 
                     { id: "tab-watermark", title: _("Watermark"), fields: [

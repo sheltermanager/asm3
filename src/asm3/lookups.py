@@ -84,6 +84,7 @@ LOOKUP_TABLES = {
         (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",), "AFDefaultVaccinationType"),
     "voucher":              (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",), ""),
     "lkwaitinglistremoval": (_("Waiting List Removal"), "RemovalName", _("Type"), "", "add del", ("animalwaitinglist.WaitingListRemovalID",), ""),
+    "lkwaitinglisttype":    (_("Waiting List Types"), "WaitingListTypeName", _("Type"), "Description", "add del ret", ("animalwaitinglist.WaitingListTypeID",), ""),
     "lkworktype":           (_("Work Types"), "WorkType", _("Type"), "", "add del ret", ("ownerrota.WorkTypeID",), "")
 }
 LOOKUP_TABLELABEL = 0
@@ -1433,6 +1434,9 @@ def get_voucher_types(dbo: Database) -> Results:
 
 def get_waitinglist_removals(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkwaitinglistremoval ORDER BY RemovalName")
+
+def get_waitinglist_types(dbo: Database):
+    return dbo.query("SELECT * FROM lkwaitinglisttype WHERE IsRetired = 0 ORDER BY WaitingListTypeName")
 
 def get_work_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkworktype ORDER BY WorkType")

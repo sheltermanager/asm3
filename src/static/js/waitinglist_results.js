@@ -18,6 +18,7 @@ $(function() {
                         html.search_field_text("descriptioncontains", _("Description Contains"))
                     ].join("\n")),
                     html.search_column([
+                        html.search_field_select("type", _("Type"), html.list_to_options(controller.waitinglisttypes, "ID", "WAITINGLISTTYPENAME")),
                         html.search_field_select("includeremoved", _("Include Removed"), html.list_to_options(controller.yesno, "ID", "NAME")),
                         html.search_field_select("size", _("Size"), html.list_to_options(controller.sizes, "ID", "SIZE")),
                         html.search_field_text("addresscontains", _("Address Contains")),
@@ -150,6 +151,7 @@ $(function() {
         sync: function() {
             
             $("#priorityfloor").select("value", controller.selpriorityfloor);
+            $("#type").select("value", controller.seltype);
             $("#includeremoved").select("value", controller.selincluderemoved);
             $("#species").select("value", controller.selspecies);
             $("#size").select("value", controller.selsize);
@@ -232,6 +234,7 @@ $(function() {
                 "MicrochipNumber": _("Microchip Number"),
                 "ReasonForWantingToPart": _("Reason"),
                 "WaitingListRemovalID": _("Removal Category"),
+                "WaitingListTypeID": _("Type"),
                 "CanAffordDonation": _("Donation?"),
                 "Urgency": _("Urgency"),
                 "DateRemovedFromList": _("Removed"),
@@ -272,7 +275,10 @@ $(function() {
                 rv = row.BREEDNAME;
             }
             else if (name == "WaitingListRemovalID") {
-                rv = row.WaitingListRemovalName;
+                rv = row.WAITINGLISTREMOVALNAME;
+            }
+            else if (name == "WaitingListTypeID") {
+                rv = row.WAITINGLISTTYPENAME;
             }
             else if (name == "SpeciesID") {
                 rv = row.SPECIESNAME;

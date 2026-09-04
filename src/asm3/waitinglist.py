@@ -29,7 +29,8 @@ def get_waitinglist_query(dbo: Database) -> str:
         "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
-        "web.MediaNotes AS WebsiteMediaNotes " \
+        "web.MediaNotes AS WebsiteMediaNotes, " \
+        "wt.WaitingListTypeName AS WaitingListTypeName " \
         "FROM animalwaitinglist a " \
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
@@ -38,7 +39,8 @@ def get_waitinglist_query(dbo: Database) -> str:
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
         "LEFT OUTER JOIN lkurgency u ON u.ID = a.Urgency " \
-        "LEFT OUTER JOIN lkwaitinglistremoval wr ON wr.ID = a.WaitingListRemovalID "
+        "LEFT OUTER JOIN lkwaitinglistremoval wr ON wr.ID = a.WaitingListRemovalID " \
+        "LEFT OUTER JOIN lkwaitinglisttype wt ON wt.ID = a.WaitingListTypeID "
 
 def get_waitinglist_by_id(dbo: Database, wid: int) -> ResultRow:
     """
@@ -70,12 +72,12 @@ def get_waitinglist_ranks(dbo: Database) -> Dict[int, int]:
         rows = dbo.query("SELECT a.ID, a.SpeciesID FROM animalwaitinglist a " \
             "INNER JOIN owner o ON a.OwnerID = o.ID " \
             "WHERE a.DateRemovedFromList Is Null " \
-            "ORDER BY a.Urgency, a.DatePutOnList")
+            "ORDER BY a.WaitingListTypeID, a.Urgency, a.DatePutOnList")
     else:
         rows = dbo.query("SELECT a.ID, a.SpeciesID FROM animalwaitinglist a " \
             "INNER JOIN owner o ON a.OwnerID = o.ID " \
             "WHERE a.DateRemovedFromList Is Null " \
-            "ORDER BY a.SpeciesID, a.Urgency, a.DatePutOnList")
+            "ORDER BY a.WaitingListTypeID, a.SpeciesID, a.Urgency, a.DatePutOnList")
     ranks = {}
     lastspecies = 0
     rank = 1
@@ -90,7 +92,7 @@ def get_waitinglist_ranks(dbo: Database) -> Dict[int, int]:
 
 def get_waitinglist(dbo: Database, priorityfloor: int = 5, species: int = -1, size: int = -1, 
                     addresscontains: str = "", includeremoved: int = 0, namecontains: str = "", 
-                    descriptioncontains: str = "", siteid: int = 0) -> Results:
+                    descriptioncontains: str = "", siteid: int = 0, wltype: int = -1) -> Results:
     """
     Retrieves the waiting list
     priorityfloor: The lowest urgency to show (1 = urgent, 5 = lowest)
@@ -120,6 +122,7 @@ def get_waitinglist(dbo: Database, priorityfloor: int = 5, species: int = -1, si
         values.append(v)
     if namecontains != "": add(dbo.sql_ilike("OwnerName"), "%%%s%%" % namecontains.lower())
     if descriptioncontains != "": add(dbo.sql_ilike("AnimalDescription"), "%%%s%%" % descriptioncontains.lower())
+    if wltype != -1: add("a.WaitingListTypeID = ?", wltype)
     if siteid != 0: add("(o.SiteID = 0 OR o.SiteID = ?)", siteid)
 
     sql = "%s WHERE %s ORDER BY a.Urgency, a.DatePutOnList" % (get_waitinglist_query(dbo), " AND ".join(ands))
@@ -329,7 +332,8 @@ def update_waitinglist_from_form(dbo: Database, post: PostedData, username: str)
         "AutoRemovePolicy":         post.integer("autoremovepolicy"),
         "DateOfLastOwnerContact":   post.date("dateoflastownercontact"),
         "ReasonForRemoval":         post["reasonforremoval"],
-        "Comments":                 post["comments"]
+        "Comments":                 post["comments"],
+        "WaitingListTypeID":        post.integer("type")
     }, username)
 
     asm3.additional.save_values_for_link(dbo, post, username, wlid, "waitinglist")
@@ -370,7 +374,8 @@ def insert_waitinglist_from_form(dbo: Database, post: PostedData, username: str)
         "ReasonForRemoval":         post["reasonforremoval"],
         "Comments":                 post["comments"],
         "UrgencyLastUpdatedDate":   dbo.today(),
-        "UrgencyUpdateDate":        dbo.today(offset=asm3.configuration.waiting_list_urgency_update_period(dbo))
+        "UrgencyUpdateDate":        dbo.today(offset=asm3.configuration.waiting_list_urgency_update_period(dbo)),
+        "WaitingListTypeID":        post.integer("type")
     }, username)
 
     # Save any additional field values given
@@ -407,7 +412,8 @@ def clone_waitinglist(dbo: Database, username: str, waitinglistid: int) -> int:
         "ReasonForRemoval":         a.reasonforremoval,
         "Comments":                 a.comments,
         "UrgencyLastUpdatedDate":   a.urgencylastupdateddate,
-        "UrgencyUpdateDate":        a.urgencyupdatedate
+        "UrgencyUpdateDate":        a.urgencyupdatedate,
+        "WaitingListTypeID":        a.waitinglisttypeid
     }, username, writeAudit=False)
     # Additional Fields
     for af in dbo.query("SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (waitinglistid, asm3.additional.WAITINGLIST_IN)):
