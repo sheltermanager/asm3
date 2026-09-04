@@ -1,8 +1,16 @@
 #!/bin/sh
-
 TOKEN=$1
-SPECIES="Cat Dog Rabbit Horse"
 
-for i in $SPECIES; do
-    curl -H "Content-Type: application/json"  "https://www.petrescue.com.au/api/v2/breeds?species_name=$i&token=$TOKEN" > $i.json
+for species in Cat Dog Rabbit Horse;
+do
+  curl --fail-with-body --silent --show-error \
+    --get \
+    -H "Authorization: Token token=${TOKEN}" \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json" \
+    --data-urlencode "species_name=${species}" \
+    --output "${species}.json" \
+    --write-out "${species}: HTTP %{http_code}, %{size_download} bytes\n" \
+    "https://www.petrescue.com.au/api/v2/breeds"
 done
+
