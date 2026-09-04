@@ -1034,7 +1034,8 @@ $.fn.selectmulti = asm_widget({
         $.each(t.parent().find("li"), function(i, v) {
             rolenames.push('<span class="bsmListItem-custom ro" style="cursor: default;">' + $(v).text().slice(0, -1) + '</span>');
         });
-        t.parent().css("padding", "2px");
+        t.parent().css("padding-bottom", "2px");
+        t.parent().css("padding-top", "5px");
         t.parent().append(rolenames.join(""));
     },
 

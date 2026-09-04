@@ -449,7 +449,11 @@ $(function() {
 
             // Make the role controls read only if user role not set
             if (!common.has_permission("cacir")) {
-                $("#viewroles").selectmulti("disable");
+                if (controller.incident.VIEWROLEIDS) {
+                    $("#viewroles").selectmulti("disable");
+                } else {
+                    $("#viewrolesrow").hide();
+                }
             }
 
             // Update on-screen fields from the data and display the screen

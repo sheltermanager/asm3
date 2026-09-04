@@ -644,7 +644,7 @@ $(function() {
 
             // DATA ===========================================
 
-            // Hide the view roles controls if incident permissions are off
+            // Hide the view roles controls if permissions are off
             if (!config.bool("AnimalPermissions")) {
                 $("#viewrolesrow").hide();
             }
@@ -1430,7 +1430,11 @@ $(function() {
 
             // Make the role controls read only if user role not set
             if (!common.has_permission("car")) {
-                $("#viewroles").selectmulti("disable");
+                if (controller.animal.VIEWROLEIDS) {
+                    $("#viewroles").selectmulti("disable");
+                } else {
+                    $("#viewrolesrow").hide();
+                }
             }
 
             // Dirty handling

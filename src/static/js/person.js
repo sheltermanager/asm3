@@ -553,7 +553,11 @@ $(function() {
 
             // Make the role controls read only if user role not set
             if (!common.has_permission("cor")) {
-                $("#viewroles").selectmulti("disable");
+                if (controller.person.VIEWROLEIDS) {
+                    $("#viewroles").selectmulti("disable");
+                } else {
+                    $("#viewrolesrow").hide();
+                }
             }
 
             // Load homecheck history
