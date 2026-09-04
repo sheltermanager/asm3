@@ -38,7 +38,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksunittype", "lksyesno", "lksynun", "lksynunk", 
     "lkstransportstatus", "lkurgency", "lkwaitinglistremoval", "lkworktype", 
     "log", "logmulti", "logtype", "media", "medicalprofile", "messages", "onlineform", 
-    "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
+    "onlineformfield", "onlineformincoming", "onlineformrole", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrole", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "product", "publishlog", 
     "regulardebit", "reservationstatus", "role", "salesreceipt", "salesreceiptdetail", "site", "species", 
     "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
@@ -62,7 +62,7 @@ TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
 # Tables that don't have an ID column (we don't create sequences for these tables for supporting dbs like postgres)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
     "animalcontrolrole", "animallostfoundmatch", "animalpublished", "animalrole", 
-    "configuration", "customreportrole", "deletion", "onlineformincoming", 
+    "configuration", "customreportrole", "deletion", "onlineformincoming", "onlineformrole", 
     "ownerlookingfor", "ownerrole", "userrole" )
 
 # Tables that contain data rather than lookups - used by reset_db
@@ -88,8 +88,8 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
     "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", 
     "lksmediatype", "lksmedicaltype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", 
     "lksunittype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
-    "lkwaitinglistremoval", "lkworktype", 
-    "logtype", "medicalprofile", "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", 
+    "lkwaitinglistremoval", "lkworktype", "logtype", "medicalprofile", "onlineform", 
+    "onlineformfield", "onlineformrole", "pickuplocation", "reservationstatus", "site", 
     "stocklocation", "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
     "transporttype", "traptype", "vaccinationtype", "voucher" )
 
@@ -1458,6 +1458,14 @@ def sql_structure(dbo: Database) -> str:
         flongstr("Preview", True),
         flongstr("Value", True)), False)
     sql += index("onlineformincoming_CollationID", "onlineformincoming", "CollationID")
+
+    sql += table("onlineformrole", (
+            fint("OnlineFormID"),
+            fint("RoleID"),
+            fint("CanView"),
+            fint("CanEdit")), False)
+    sql += index("onlineformrole_OnlineFormID", "onlineformrole", "OnlineFormID")
+    sql += index("onlineformrole_RoleID", "onlineformrole", "RoleID")
 
     sql += table("owner", (
         fid(),
@@ -3776,5 +3784,4 @@ def asm2_dbfs_put_file(dbo: Database, name: str, path: str, filename: str):
         "Path": path,
         "Content": asm3.utils.base64encode(asm3.utils.read_binary_file(filename))
     }, generateID=False)
-
 

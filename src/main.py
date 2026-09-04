@@ -6480,7 +6480,7 @@ class onlineform_incoming(JSONEndpoint):
     get_permissions = asm3.users.VIEW_INCOMING_FORMS
 
     def controller(self, o):
-        headers = asm3.onlineform.get_onlineformincoming_headers(o.dbo)
+        headers = asm3.onlineform.get_onlineformincoming_headers(o.dbo, o.session)
         total = len(headers)
         totalham = 0
         totalspam = 0
@@ -6737,6 +6737,7 @@ class onlineforms(JSONEndpoint):
             "rows": onlineforms,
             "flags": asm3.lookups.get_person_flags(dbo),
             "mediaflags": asm3.lookups.get_media_flags(dbo),
+            "roles": asm3.users.get_roles(dbo),
             "header": asm3.onlineform.get_onlineform_header(dbo),
             "footer": asm3.onlineform.get_onlineform_footer(dbo)
         }
