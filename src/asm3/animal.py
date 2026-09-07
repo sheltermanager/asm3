@@ -3143,7 +3143,7 @@ def get_recent_with_name(dbo: Database, name: str) -> Results:
     """
     recentoffset = asm3.configuration.warn_similar_animal_name_period(dbo) * -1
     return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
-        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) LIKE ?", (dbo.today(offset=recentoffset), name.lower()))
+        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) = ?", (dbo.today(offset=recentoffset), name.lower()))
 
 def get_recent_changes(dbo: Database, months: int = 1, include_additional_fields: bool = True) -> Results:
     """ Returns all animal records that were changed in the last months """
