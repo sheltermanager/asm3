@@ -3138,11 +3138,12 @@ def get_random_name(dbo: Database, sex: int = 0) -> str:
 
 def get_recent_with_name(dbo: Database, name: str) -> Results:
     """
-    Returns a list of animals who have a brought in date in the last 3 weeks OR are on shelter
+    Returns a list of animals who have a recent brought in date OR are on shelter
     and have the name given.
     """
+    recentoffset = asm3.configuration.warn_similar_animal_name_period(dbo) * -1
     return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
-        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) LIKE ?", (dbo.today(offset=-21), name.lower()))
+        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) LIKE ?", (dbo.today(offset=recentoffset), name.lower()))
 
 def get_recent_changes(dbo: Database, months: int = 1, include_additional_fields: bool = True) -> Results:
     """ Returns all animal records that were changed in the last months """

@@ -318,7 +318,10 @@ $(function() {
                         { id: "aashoworiginalowner", post_field: "AddAnimalsShowOriginalOwner", label: _("Show the original owner field"), type: "check" },
                         { id: "aashowbroughtinby", post_field: "AddAnimalsShowBroughtInBy", label: _("Show the brought in by field"), type: "check" },
                         { id: "aashowhold", post_field: "AddAnimalsShowHold", label: _("Show the hold fields"), type: "check" },
-                        { id: "warnsimilaranimal", post_field: "WarnSimilarAnimalName", label: _("Warn if the name of the new animal is similar to one entered recently"), type: "check" }
+                        { id: "warnsimilaranimal", post_field: "WarnSimilarAnimalName",
+                            label: _("Warn if the name of the new animal is similar to one entered within the last {0} days").replace("{0}", tableform.render_number({id: "warnsimilaranimalperiod", post_field: "WarnSimilarAnimalNamePeriod", justwidget: true})),
+                            type: "check"
+                        }
                     ]},
                     { id: "tab-ageegroups", title: _("Age Groups"), info: _("Age groups are assigned based on the age of an animal. The figure in the left column is the upper limit in years for that group."), fields: [
                         { id: "agegroup1", post_field: "AgeGroup1", label: "", type: "text", placeholder: _("Upper Age"), 

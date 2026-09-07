@@ -481,6 +481,7 @@ DEFAULTS = {
     "WarnOOPostcode": "Yes",
     "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
+    "WarnSimilarAnimalNamePeriod": "21",
     "WatermarkFontFile": "dejavu/DejaVuSans-Bold.ttf",
     "WatermarkFontFillColor": "white",
     "WatermarkFontMaxSize": "180",
@@ -1955,6 +1956,9 @@ def waiting_list_urgency_update_period(dbo: Database) -> int:
 
 def warn_no_homecheck(dbo: Database) -> bool:
     return cboolean(dbo, "WarnNoHomeCheck", DEFAULTS["WarnNoHomeCheck"] == "Yes")
+
+def warn_similar_animal_name_period(dbo: Database) -> int:
+    return cint(dbo, "WarnSimilarAnimalNamePeriod", 21)
 
 def watermark_x_offset(dbo: Database) -> int:
     return cint(dbo, "WatermarkXOffset", DEFAULTS["WatermarkXOffset"])
