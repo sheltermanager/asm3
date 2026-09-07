@@ -161,6 +161,10 @@ $(function() {
         },
 
         sync: function() {
+            // Make the role controls read only if user role not set
+            if (!common.has_permission("cacir")) {
+                $("#viewrolesrow").hide();
+            }
             incident_new.reset();
             validate.indicator([ "incident", "call" ]);
         },

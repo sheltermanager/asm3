@@ -447,6 +447,15 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
+            // Make the role controls read only if user role not set
+            if (!common.has_permission("cacir")) {
+                if (controller.incident.VIEWROLEIDS) {
+                    $("#viewroles").selectmulti("disable");
+                } else {
+                    $("#viewrolesrow").hide();
+                }
+            }
+
             // Update on-screen fields from the data and display the screen
             incident.enable_widgets();
             incident.load_animallinks();
