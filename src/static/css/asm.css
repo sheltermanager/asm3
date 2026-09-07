@@ -1182,10 +1182,6 @@ select:disabled, input:disabled, textarea:disabled {
     filter: hue-rotate(90deg); /* Purple */
 }
 
-#warnsimilaranimalperiod {
-    width: 100px;
-}
-
 /** Don't display the menu burger button when >480px */
 #asm-menu-burger {
     display: none;
