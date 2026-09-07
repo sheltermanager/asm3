@@ -23,22 +23,6 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
-def get_person_lookingfor_query(dbo: Database) -> str:
-    """
-    Returns the SELECT and JOIN commands necessary for selecting
-    personlookingfor rows with resolved lookups.
-    """
-    return "SELECT o.ID AS PersonID, o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.OwnerTown, o.OwnerCounty, o.OwnerCountry, o.HomeTelephone, " \
-        "o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, o.MobileTelephone, o.WorkTelephone, o.EmailAddress, o.DateOfBirth, o.IdentificationNumber, " \
-        "o.OwnerTitle2, o.OwnerInitials2, o.OwnerForeNames2, o.OwnerSurname2, o.MobileTelephone2, o.WorkTelephone2, o.EmailAddress2, o.DateOfBirth2, o.IdentificationNumber2, " \
-        "o.IsAdopter, o.IsBanned, o.IsDonor,o.IsFosterer, o.IDCheck, o.DateLastHomeChecked, o.IsMember, o.IsVolunteer, o.IsDeceased, " \
-        "a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.AgeGroup, a.SpeciesID, " \
-        "olf.MatchSummary " \
-        "FROM ownerlookingfor olf " \
-        "INNER JOIN owner o ON olf.OwnerID = o.ID " \
-        "INNER JOIN animal a ON olf.AnimalID = a.ID " \
-        "INNER JOIN species s ON a.SpeciesID = s.ID "
-
 def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting
@@ -72,6 +56,22 @@ def get_person_query(dbo: Database) -> str:
         "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = 3 AND doc.DocPhoto = 1 " \
         "LEFT OUTER JOIN site si ON o.SiteID = si.ID " \
         "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % ( dbo.sql_today(), dbo.sql_today() )
+
+def get_person_lookingfor_query(dbo: Database) -> str:
+    """
+    Returns the SELECT and JOIN commands necessary for selecting
+    personlookingfor rows with resolved lookups.
+    """
+    return "SELECT o.ID AS PersonID, o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.OwnerTown, o.OwnerCounty, o.OwnerCountry, o.HomeTelephone, " \
+        "o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, o.MobileTelephone, o.WorkTelephone, o.EmailAddress, o.DateOfBirth, o.IdentificationNumber, " \
+        "o.OwnerTitle2, o.OwnerInitials2, o.OwnerForeNames2, o.OwnerSurname2, o.MobileTelephone2, o.WorkTelephone2, o.EmailAddress2, o.DateOfBirth2, o.IdentificationNumber2, " \
+        "o.IsAdopter, o.IsBanned, o.IsDonor,o.IsFosterer, o.IDCheck, o.DateLastHomeChecked, o.IsMember, o.IsVolunteer, o.IsDeceased, " \
+        "a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.AgeGroup, a.SpeciesID, " \
+        "olf.MatchSummary " \
+        "FROM ownerlookingfor olf " \
+        "INNER JOIN owner o ON olf.OwnerID = o.ID " \
+        "INNER JOIN animal a ON olf.AnimalID = a.ID " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID "
 
 def get_person_export_query(dbo: Database) -> str:
     """ Used by the sql_dump endpoint to export people """
