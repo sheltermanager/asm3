@@ -2715,6 +2715,14 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Send the weekly fosterer email now", l), asm3.automail.fosterer_weekly, o.dbo, o.user, True)
 
+    def post_translks(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Apply translations to static lookup values", l), asm3.lookups.translate_stored_lookup_strings, o.dbo, True)
+
+    def post_translookups(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Apply translations to lookup values", l), asm3.lookups.translate_stored_lookup_strings, o.dbo, False)
+
 class boarding(JSONEndpoint):
     url = "boarding"
     js_module = "boarding"

@@ -62,3 +62,55 @@ class TestLookups(unittest.TestCase):
         asm3.lookups.get_animal_flags(base.get_dbo())
         asm3.lookups.get_person_flags(base.get_dbo())
 
+    def _snapshot_lookup_strings(self, dbo, lks_only):
+        snap = []
+        for table, columns in asm3.lookups._lookup_translation_map().items():
+            if lks_only != table.startswith("lks"):
+                continue
+            for row in dbo.query("SELECT ID, %s FROM %s" % (", ".join(columns), table)):
+                snap.append((table, row.ID, { c: row[c.upper()] for c in columns }))
+        return snap
+
+    def _restore_lookup_strings(self, dbo, snap):
+        for table, iid, values in snap:
+            dbo.update(table, iid, values, setLastChanged=False, setRecordVersion=False, writeAudit=False)
+
+    def test_translate_stored_lookup_strings_english_noop(self):
+        dbo = base.get_dbo()
+        orig_locale = dbo.locale
+        dbo.locale = "en"
+        try:
+            self.assertEqual("OK 0", asm3.lookups.translate_stored_lookup_strings(dbo, True))
+            self.assertEqual("OK 0", asm3.lookups.translate_stored_lookup_strings(dbo, False))
+        finally:
+            dbo.locale = orig_locale
+
+    def test_translate_stored_lks_strings(self):
+        dbo = base.get_dbo()
+        orig_locale = dbo.locale
+        snap = self._snapshot_lookup_strings(dbo, True)
+        dbo.update("lksentrytype", 1, { "EntryTypeName": "Surrender" }, setLastChanged=False, setRecordVersion=False, writeAudit=False)
+        dbo.locale = "he"
+        try:
+            result = asm3.lookups.translate_stored_lookup_strings(dbo, True)
+            self.assertTrue(result.startswith("OK "))
+            self.assertEqual("הבעלים ויתרו על החיה", dbo.query_string("SELECT EntryTypeName FROM lksentrytype WHERE ID = 1"))
+            self.assertEqual("OK 0", asm3.lookups.translate_stored_lookup_strings(dbo, True))
+        finally:
+            dbo.locale = orig_locale
+            self._restore_lookup_strings(dbo, snap)
+
+    def test_translate_stored_lookup_strings(self):
+        dbo = base.get_dbo()
+        orig_locale = dbo.locale
+        snap = self._snapshot_lookup_strings(dbo, False)
+        dbo.update("animaltype", 2, { "AnimalType": "D (Dog)" }, setLastChanged=False, setRecordVersion=False, writeAudit=False)
+        dbo.locale = "he"
+        try:
+            result = asm3.lookups.translate_stored_lookup_strings(dbo, False)
+            self.assertTrue(result.startswith("OK "))
+            self.assertEqual("D (כלב)", dbo.query_string("SELECT AnimalType FROM animaltype WHERE ID = 2"))
+        finally:
+            dbo.locale = orig_locale
+            self._restore_lookup_strings(dbo, snap)
+
