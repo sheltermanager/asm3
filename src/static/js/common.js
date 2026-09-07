@@ -938,6 +938,7 @@ const common = {
     /*Returns a sorted array of column names that are in tablename
       uses the global schema object. */
     get_table_columns(tablename) {
+        console.log(tablename);
         let a = [];
         // Updating codemirror from 5.11 to 5.65 changed the columns from a
         // dictionary to a list, so this is no longer needed.

@@ -219,6 +219,10 @@ $(function() {
             [ _("Volunteer"), "volunteer", "IsVolunteer=1" ]
         ];
 
+        const QB_PERSONLOOKINGFOR_CRITERIA = [
+            [ _("Species"), "species", "SpeciesID='$ASK SPECIES$'"]
+        ];
+
         const QB_WAITINGLIST_CRITERIA = [
             [ _("Put on the list between two dates"), "onlisttwodates", 
                 "DatePutOnList >='$ASK DATE {0}$' AND DatePutOnList <= '$ASK DATE {1}$'"
@@ -238,6 +242,7 @@ $(function() {
         qb_medical_criteria: null,
         qb_payment_criteria: null,
         qb_person_criteria: null,
+        qb_personlookingfor_criteria: null,
         qb_waitinglist_criteria: null,
 
         render: function() {
@@ -255,6 +260,7 @@ $(function() {
                 '<option value="animalmedicalcombined">' + _("Medical") + '</option>',
                 '<option value="ownerdonation">' + _("Payment") + '</option>',
                 '<option value="owner">' + _("Person") + '</option>',
+                '<option value="ownerlookingfor">' + _("Person Looking For") + '</option>',
                 '<option value="animalwaitinglist">' + _("Waiting List") + '</option>',
                 '</select>',
                 '</td>',
@@ -425,6 +431,7 @@ $(function() {
             reports_querybuilder.qb_medical_criteria = Array.from(QB_MEDICAL_CRITERIA);
             reports_querybuilder.qb_payment_criteria = Array.from(QB_PAYMENT_CRITERIA);
             reports_querybuilder.qb_person_criteria = Array.from(QB_PERSON_CRITERIA);
+            reports_querybuilder.qb_personlookingfor_criteria = Array.from(QB_PERSONLOOKINGFOR_CRITERIA);
             reports_querybuilder.qb_waitinglist_criteria = Array.from(QB_WAITINGLIST_CRITERIA);
             $.each(controller.additionalfields, function(i, v) {
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { 
@@ -749,6 +756,15 @@ $(function() {
                 $("#qbsort").change();
                 $("#qbcriteria").change();
                 reports_querybuilder.qb_active_criteria = reports_querybuilder.qb_payment_criteria;
+            }
+            else if (type == "ownerlookingfor") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_ownerlookingfor")));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_ownerlookingfor")));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports_querybuilder.qb_personlookingfor_criteria)));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                $("#qbcriteria").change();
+                reports_querybuilder.qb_active_criteria = reports_querybuilder.qb_personlookingfor_criteria;
             }
         },
 
