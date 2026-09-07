@@ -23,46 +23,6 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
-def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> Results:
-    """
-    Batch deletes people from the bulk form.
-    Returns the number of successful deletions
-    plus the number skipped.
-    """
-    deleted = []
-    skippedids = []
-    skippeddict = {}
-    for personid in post.integer_list("people"):
-        try:
-            delete_person(dbo, username, personid, remove_movements=True)
-            deleted.append(personid)
-        except asm3.utils.ASMValidationError as error:
-            skippedids.append(personid)
-            skippeddict[personid] = error.msg
-            asm3.utils.web_context().status = "200 OK"
-    if len(skippedids):
-        skipped = dbo.query(
-            f"SELECT ID, OwnerName FROM owner WHERE ID IN ({dbo.sql_placeholders(skippedids)})",
-            skippedids
-        )
-    for row in skipped:
-        row.ERROR = skippeddict[row.ID]
-    return skipped
-  
-def get_owned_animals(dbo: Database, personid: int):
-    return dbo.query(
-        "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
-        "FROM adoption ad " \
-        "INNER JOIN animal an ON ad.AnimalID = an.ID " \
-        "WHERE ad.OwnerID = ? AND an.DeceasedDate IS NULL AND ad.ReturnDate IS NULL " \
-        "AND ad.MovementType IN (?, ?) " \
-        "UNION SELECT an.ID AS AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, 3 AS LinkType, an.CreatedDate AS SortDate " \
-        "FROM animal an " \
-        "WHERE an.DeceasedDate IS NULL AND an.NonShelterAnimal = 1 AND an.OwnerID = ? " \
-        "ORDER BY SortDate DESC",
-        (personid, asm3.movement.ADOPTION, asm3.movement.FOSTER, personid)
-    )
-
 def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting
@@ -160,6 +120,24 @@ def get_homechecked(dbo: Database, personid: int) -> Results:
     """
     return dbo.query("SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
         "WHERE HomeCheckedBy = ? ORDER BY DateLastHomeChecked DESC", [personid])
+
+def get_owned_animals(dbo: Database, personid: int):
+    """
+    Return a list of animals who are currently with personid, either via adoption, foster
+    or being the non-shelter owner.
+    This is called by the person tabs endpoints to indicate owned animals in the banner.
+    """
+    return dbo.query(
+        "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
+        "FROM adoption ad " \
+        "INNER JOIN animal an ON ad.AnimalID = an.ID " \
+        "WHERE ad.OwnerID = ? AND an.DeceasedDate IS NULL AND ad.ReturnDate IS NULL " \
+        "AND ad.MovementType IN (?, ?) " \
+        "UNION SELECT an.ID AS AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, 3 AS LinkType, an.CreatedDate AS SortDate " \
+        "FROM animal an " \
+        "WHERE an.DeceasedDate IS NULL AND an.NonShelterAnimal = 1 AND an.OwnerID = ? " \
+        "ORDER BY SortDate DESC",
+        (personid, asm3.movement.ADOPTION, asm3.movement.FOSTER, personid) )
 
 def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname: str = "", forenames: str = "", address: str = "", 
                        siteid: int = 0, checkcouple: bool = False, checkmobilehome: bool = False, checkforenames: bool = True) -> Results:
@@ -1793,6 +1771,32 @@ def delete_person(dbo: Database, username: str, personid: int, remove_movements:
     dbo.delete("owner", personid, username)
     # asm3.dbfs.delete_path(dbo, "/owner/%d" % personid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
+def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> Results:
+    """
+    Batch deletes people from the bulk form.
+    Returns the number of successful deletions
+    plus the number skipped.
+    """
+    deleted = []
+    skippedids = []
+    skippeddict = {}
+    for personid in post.integer_list("people"):
+        try:
+            delete_person(dbo, username, personid, remove_movements=True)
+            deleted.append(personid)
+        except asm3.utils.ASMValidationError as error:
+            skippedids.append(personid)
+            skippeddict[personid] = error.msg
+            asm3.utils.web_context().status = "200 OK"
+    if len(skippedids):
+        skipped = dbo.query(
+            f"SELECT ID, OwnerName FROM owner WHERE ID IN ({dbo.sql_placeholders(skippedids)})",
+            skippedids
+        )
+    for row in skipped:
+        row.ERROR = skippeddict[row.ID]
+    return skipped
+  
 def insert_rota_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a rota record from posted form data
