@@ -1414,6 +1414,40 @@ $.fn.currency = asm_widget({
 
 });
 
+/** Widget that allows you to display data, hiding more related data that can be shown by "expanding" the widget
+ *  classname is the name of the class shared by elements that are subjec to this expander
+ *  where more elements with classname than limit are present, the expander will hide he overflow
+ */
+$.fn.expander = function(classname, limit) {
+    let container = this;
+    container.css("cursor", "pointer");
+    $.each(container.find("." + classname), function(i, v) {
+        if ( i >= limit ) {
+            $(v).addClass("asm-overflow");
+            $(v).hide();
+        }
+    });
+    if ( container.find("." + classname).length > limit ) {
+        container.append('<div class="asm-expand-toggle asm-menu-category" style="border-bottom: none;"><span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">' + _("more") + '</a></div>');
+    }
+    container.on("click", function() {
+        if ( container.hasClass("asm-expanded") ) {
+            container.find(".asm-expand-toggle a").text(_("more"));
+            container.find(".asm-expand-toggle span").addClass(_("ui-icon-triangle-1-e"));
+            container.find(".asm-expand-toggle span").removeClass(_("ui-icon-triangle-1-s"));
+            container.removeClass("asm-expanded");
+            container.find(".asm-overflow").fadeOut();
+        } else {
+            container.find(".asm-expand-toggle a").text(_("less"));
+            container.find(".asm-expand-toggle span").removeClass(_("ui-icon-triangle-1-e"));
+            container.find(".asm-expand-toggle span").addClass(_("ui-icon-triangle-1-s"));
+            container.addClass("asm-expanded");
+            container.find(".asm-overflow").fadeIn();
+        }
+    });
+    
+};
+
 /** This is necessary for the richtextarea below - it allows the tinymce dialogs
  *  to work inside a JQuery UI modal dialog. The class prefix (tox) has
  *  changed between major TinyMCE releases in the past */
