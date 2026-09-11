@@ -1110,6 +1110,7 @@ const common = {
         $(".asm-table").table();
         $(".asm-tabbar").asmtabbar();
         $(".asm-tabs").asmtabs();
+        $(".asm-expander").expander();
         // Add extra control styles
         $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox .asm-selectbox, .asm-richtextarea, .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").each(function() {
             $(this).addClass("controlshadow").addClass("controlborder");

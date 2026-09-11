@@ -453,12 +453,12 @@ $(function() {
             callout +=  _("Some data on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
             callout += '</span>';
             if (controller.linkmode != "none" && controller.animallinks.length > 0) {
-                s = ['<div id="asm-homepage-animals" class="asm-main-section">'];
+                s = ['<div id="asm-homepage-animals" class="asm-main-section>'];
                 s.push('<p class="asm-menu-category">' + linknames[controller.linkmode] + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
                     if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }
-                    s.push('<div class="asm-shelterview-animal">');
+                    s.push('<div class="asm-shelterview-animal asm-expander-item">');
                     s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
                 });
@@ -502,11 +502,11 @@ $(function() {
         },
 
         render_messages: function() {
-            let s = ['<div class="asm-main-section">'];
+            let s = ['<div class="asm-main-section asm-expander"">'];
             s.push('<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>');
             s.push('<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>');
             $.each(controller.mess, function(i, m) {
-                s.push('<tr><td><span style="white-space: nowrap; padding-right: 5px;">');
+                s.push('<tr class="asm-expander-item"><td><span style="white-space: nowrap; padding-right: 5px;">');
                 if (m.CREATEDBY == asm.user || m.FORNAME == asm.user || asm.superuser == 1) {
                     s.push('<button class="messagedelete" data="' + m.ID + '">' + _("Delete") + '</button> ');
                 }
@@ -1069,7 +1069,7 @@ $(function() {
             // Set the total alerts
             $("#totalalerts").text( main.total_alerts );
 
-            $("#asm-homepage-animals").expander("asm-shelterview-animal", 9);
+            $("#asm-homepage-animals").expander({limit: 9});
 
         },
 
