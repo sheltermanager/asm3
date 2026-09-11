@@ -1930,6 +1930,7 @@ const tableform = {
     render_tabs: function(l) {
         let h = [];
         h.push('<div class="asm-tabs">');
+        h.push('<input class="asm-tab-search" type="text">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
             if (v.hideif && v.hideif()) { return; }

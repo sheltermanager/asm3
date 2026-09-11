@@ -1285,6 +1285,33 @@ $.fn.asmtabs = asm_widget({
             t.trigger("changeTab", [ self.active(t) ]);
         };
         t.tabs(options);
+        t.find(".asm-tab-search").on("keyup", function() {
+            let searchkey = $(".asm-tab-search").val();
+            console.log(searchkey);
+            $.each($(".ui-tabs-panel"), function(i, p) {
+                let searchkeyfound = false;
+                $.each($(p).find("label"), function(i, l) {
+                    if ( $(l).text().toLowerCase().includes(searchkey.toLowerCase()) ) {
+                        searchkeyfound = true;
+                        return;
+                    }
+                });
+                let panelid = p.id;
+                let tabid = p.id.replace("tab-", "");
+                console.log(tabid);
+                if (!searchkeyfound) {
+                    t.find('li[aria-controls="' + panelid + '"').hide();
+                    $("#" + panelid).hide();
+                    // $("#" + tabid).hide();
+                } else {
+                    // $("#" + tabid).show();
+                    t.find('li[aria-controls="' + panelid + '"').show();
+                    if (t.find('li[aria-controls="' + panelid + '"').hasClass("ui-state-active")) {
+                        $("#" + panelid).show();
+                    }
+                }
+            });
+        });
     },
 
     /** Makes the pane active that contains node n - a shortcut for active(index()) */
