@@ -1740,7 +1740,7 @@ const tableform = {
     render_number: function(v) {
         let d = "";
         tableform._check_id(v);
-        d += "<input type=\"text\" ";
+        d += "<input type=\"number\" ";
         d += tableform._render_class(v, "asm-textbox asm-numberbox");
         d += tableform._render_style(v, "");
         if (v.id) { d += "id=\"" + v.id + "\" "; }
@@ -1749,6 +1749,7 @@ const tableform = {
         if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
         if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
         if (v.max) { d += "data-max=\"" + v.max + "\" " ;}
+        if (v.step) { d += "step=\"" + v.step + "\" " ;}
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.validation) { d += tableform._render_validation_attr(v); }
         if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
