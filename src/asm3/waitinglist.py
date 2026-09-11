@@ -102,6 +102,7 @@ def get_waitinglist(dbo: Database, priorityfloor: int = 5, species: int = -1, si
     includeremoved: Whether or not to include removed entries
     namecontains: A partial name
     descriptioncontains: A partial description
+    wltype: A waiting list type filter or -1 for all
     """
     l = dbo.locale
 
