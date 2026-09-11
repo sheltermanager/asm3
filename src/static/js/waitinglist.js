@@ -31,6 +31,7 @@ $(function() {
                 tableform.render_accordion({ id: "asm-details-accordion", panes: [
                     { title: _("Details"), fields: [
                         { type: "raw", label: _("Number"), markup: '<span class="asm-waitinglist-number">' + format.padleft(controller.animal.WLID, 6) + '</span>' },
+                        { post_field: "type", json_field: "WAITINGLISTTYPEID", type: "select", label: _("Type"), options: { displayfield: "WAITINGLISTTYPENAME", rows: controller.waitinglisttypes } },
                         { post_field: "dateputon", json_field: "DATEPUTONLIST", type: "date", label: _("Date put on") },
                         { post_field: "animalname", json_field: "ANIMALNAME", type: "text", label: _("Name") },
                         { post_field: "microchip", json_field: "MICROCHIPNUMBER", type: "text", label: _("Microchip"), maxlength: 15, 

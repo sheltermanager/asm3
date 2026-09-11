@@ -469,6 +469,7 @@ DEFAULTS = {
     "WaitingListDefaultRemovalWeeks": "0",
     "WaitingListUrgencyUpdatePeriod": "14",
     "WaitingListUseMultipleHighlights": "No",
+    "WaitingListDefaultType": "1",
     "WarnACTypeChange": "Yes",
     "WarnBroughtIn": "Yes",
     "WarnMultipleReserves": "Yes", 

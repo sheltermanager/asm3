@@ -1910,6 +1910,7 @@ def waitinglist_tags(dbo: Database, a: ResultRow) -> Tags:
     l = dbo.locale
     tags = {
         "ID":                       asm3.utils.padleft(a["ID"], 6),
+        "WAITINGLISTTYPE":          a["WAITINGLISTTYPENAME"],
         "ANIMALNAME":               a["ANIMALNAME"],
         "DATEPUTONLIST":            python2display(l, a["DATEPUTONLIST"]),
         "DATEREMOVEDFROMLIST":      python2display(l, a["DATEREMOVEDFROMLIST"]),

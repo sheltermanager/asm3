@@ -977,6 +977,7 @@ def json_waitinglistcolumns(dbo: Database) -> ColumnList:
         ( "DateRemovedFromList", _("Date Removed", l) ),
         ( "ReasonForRemoval", _("Removal Reason", l) ),
         ( "WaitingListRemovalID", _("Removal Category", l) ),
+        ( "WaitingListTypeID", _("Type", l) ),
         ( "Comments", _("Comments") ),
         ( "Image", _("Image", l) )
         ]
