@@ -1939,7 +1939,6 @@ const tableform = {
         }
         let h = [];
         h.push('<div class="asm-tabs" data-searchable="' + options.searchable + '">');
-        // h.push('<input class="asm-tab-search" type="text" style="display: none;">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
             if (v.hideif && v.hideif()) { return; }
@@ -1947,10 +1946,6 @@ const tableform = {
             if (!v.xmarkup) { v.xmarkup = ''; }
             h.push('<li class="' + v.classes + '"><a href="#tab-' + v.id + '">' + v.title + '</a>' + v.xmarkup + '</li>');
         });
-        // if (options.searchable) {
-        //     h.push('<li class="asm-search-tab"><a href="#"><span class="ui-button-icon ui-icon ui-icon-search"></span></a></li>');
-        // }
-        // h.push('<li class="asm-search-tab"><a href="#"><span class="ui-button-icon ui-icon ui-icon-search"></span></a></li>');
         h.push('</ul>');
         $.each(l, function(i, v) {
             if (v.hideif && v.hideif()) { return; }
@@ -1964,7 +1959,6 @@ const tableform = {
             }
             h.push('</div>');
         });
-        
         return h.join("\n");
     },
 
