@@ -469,12 +469,12 @@ $(function() {
                     s.push("</div>");
                 });
                 if (controller.animallinks.length > hidemorethan) {
-                    s.push('<p class="asm-menu-category" style="border-bottom: none;">'),
-                    s.push('<a id="animallinktoggle" href="#">'),
-                    s.push('<span id="animallinknav" class="ui-icon ui-icon-triangle-1-e"></span>'),
-                    s.push('<span id="animallinklabel">' + _("more") + '</span>'),
-                    s.push('</a>'),
-                    s.push('</p>')
+                    s.push('<p class="asm-menu-category" style="border-bottom: none;">');
+                    s.push('<a id="animallinktoggle" href="#">');
+                    s.push('<span id="animallinknav" class="ui-icon ui-icon-triangle-1-e"></span>');
+                    s.push('<span id="animallinklabel">' + _("more") + '</span>');
+                    s.push('</a>');
+                    s.push('</p>');
                 }
                 s.push('</div>');
             }
@@ -1046,13 +1046,13 @@ $(function() {
                 if ($("#animallinknav").hasClass("ui-icon-triangle-1-e")) {
                     $("#animallinknav").removeClass("ui-icon-triangle-1-e");
                     $("#animallinknav").addClass("ui-icon-triangle-1-s");
-                    $("#animallinklabel").text(_("less"))
+                    $("#animallinklabel").text(_("less"));
                     $(".asm-animal-link-overflow").fadeIn();
                 }
                 else {
                     $("#animallinknav").removeClass("ui-icon-triangle-1-s");
                     $("#animallinknav").addClass("ui-icon-triangle-1-e");
-                    $("#animallinklabel").text(_("more"))
+                    $("#animallinklabel").text(_("more"));
                     $(".asm-animal-link-overflow").fadeOut();
                 }
             });
