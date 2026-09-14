@@ -237,7 +237,7 @@ $(function() {
                         { id: "olocale", post_field: "Locale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true), callout: _("The locale determines the language ASM will use when displaying text, dates and currencies."), classes: "asm-iconselectmenu" },
                         { type: "nextcol" },
                         { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 474px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
-                    ]},
+                    ] },
                     { id: "tab-accounts", title: _("Accounts"), fields: [
                         { id: "disableaccounts", post_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", fullrow: true },
                         { id: "createdonations", post_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check", fullrow: true },
@@ -1075,7 +1075,7 @@ $(function() {
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
                     ]},
-                ], {full_width: false}),
+                ], {full_width: false, searchable: true}),
                 html.content_footer()
             ].join("\n");
         },
@@ -1227,6 +1227,7 @@ $(function() {
         },
 
         sync: function() {
+            $("#asm-options-panel").data("xoptions", {"searchable": true});
         },
 
         delay: function() {

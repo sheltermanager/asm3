@@ -1285,33 +1285,40 @@ $.fn.asmtabs = asm_widget({
             t.trigger("changeTab", [ self.active(t) ]);
         };
         t.tabs(options);
-        t.find(".asm-tab-search").on("keyup", function() {
-            let searchkey = $(".asm-tab-search").val();
-            console.log(searchkey);
-            $.each($(".ui-tabs-panel"), function(i, p) {
-                let searchkeyfound = false;
-                $.each($(p).find("label"), function(i, l) {
-                    if ( $(l).text().toLowerCase().includes(searchkey.toLowerCase()) ) {
-                        searchkeyfound = true;
-                        return;
+        if (t.attr("data-searchable") == "true") {
+            t.find(".asm-tab-search").show();
+            $('li[aria-controls="tab-tab-tabsearch"]').on("click", function() {
+                console.log("Clicked!");
+                $("#tab-tab-tabsearch input").focus();
+            });
+            t.find(".asm-tab-search").on("keyup", function() {
+                let searchkey = $(".asm-tab-search").val();
+                $.each($(".ui-tabs-panel"), function(i, p) {
+                    let searchkeyfound = false;
+                    $.each($(p).find("label"), function(i, l) {
+                        if (!searchkey || l.closest(".ui-tabs-panel").id == "tab-tab-tabsearch") {
+                            searchkeyfound = true;
+                            $(l).removeClass("asm-search-highlight");
+                        } else if ( $(l).text().toLowerCase().includes(searchkey.toLowerCase()) ) {
+                            searchkeyfound = true;
+                            $(l).addClass("asm-search-highlight");
+                        } else {
+                            $(l).removeClass("asm-search-highlight");
+                        }
+                    });
+                    let panelid = p.id;
+                    if (!searchkeyfound && panelid != "tab-tab-tabsearch") {
+                        t.find('li[aria-controls="' + panelid + '"').hide();
+                        $("#" + panelid).hide();
+                    } else {
+                        t.find('li[aria-controls="' + panelid + '"').show();
+                        if (t.find('li[aria-controls="' + panelid + '"').hasClass("ui-state-active")) {
+                            $("#" + panelid).show();
+                        }
                     }
                 });
-                let panelid = p.id;
-                let tabid = p.id.replace("tab-", "");
-                console.log(tabid);
-                if (!searchkeyfound) {
-                    t.find('li[aria-controls="' + panelid + '"').hide();
-                    $("#" + panelid).hide();
-                    // $("#" + tabid).hide();
-                } else {
-                    // $("#" + tabid).show();
-                    t.find('li[aria-controls="' + panelid + '"').show();
-                    if (t.find('li[aria-controls="' + panelid + '"').hasClass("ui-state-active")) {
-                        $("#" + panelid).show();
-                    }
-                }
             });
-        });
+        }
     },
 
     /** Makes the pane active that contains node n - a shortcut for active(index()) */
