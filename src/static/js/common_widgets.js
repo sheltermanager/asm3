@@ -1288,7 +1288,6 @@ $.fn.asmtabs = asm_widget({
         if (t.attr("data-searchable") == "true") {
             t.find(".asm-tab-search").show();
             $('li[aria-controls="tab-tab-tabsearch"]').on("click", function() {
-                console.log("Clicked!");
                 $("#tab-tab-tabsearch input").focus();
             });
             t.find(".asm-tab-search").on("keyup", function() {

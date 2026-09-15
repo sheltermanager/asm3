@@ -1226,9 +1226,7 @@ $(function() {
 
         },
 
-        sync: function() {
-            $("#asm-options-panel").data("xoptions", {"searchable": true});
-        },
+        sync: function() {},
 
         delay: function() {
             // Show the mini map
