@@ -129,7 +129,7 @@
     cursor: pointer;
 }
 
-#currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, #balance, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
+#currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, #numberpad #balance, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
     max-width: 100px;
     min-width: 100px;
 }
@@ -269,7 +269,7 @@
     /* #producttypes, #taxrates {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     } */
-    #currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, #balance, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
+    #currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, #numberpad #balance, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
         max-width: 50px;
         min-width: 50px;
     }
