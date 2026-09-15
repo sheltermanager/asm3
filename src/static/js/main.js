@@ -453,12 +453,12 @@ $(function() {
             callout +=  _("Some data on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
             callout += '</span>';
             if (controller.linkmode != "none" && controller.animallinks.length > 0) {
-                s = ['<div id="asm-homepage-animals" class="asm-main-section>'];
+                s = ['<div id="asm-homepage-animals" class="asm-main-section asm-expander" data-expander-limit="9" data-expander-classname="asm-shelterview-animal">'];
                 s.push('<p class="asm-menu-category">' + linknames[controller.linkmode] + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
                     if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }
-                    s.push('<div class="asm-shelterview-animal asm-expander-item">');
+                    s.push('<div class="asm-shelterview-animal">');
                     s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
                 });
@@ -502,7 +502,7 @@ $(function() {
         },
 
         render_messages: function() {
-            let s = ['<div class="asm-main-section asm-expander"">'];
+            let s = ['<div class="asm-main-section asm-expander" data-expander-limit="2">'];
             s.push('<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>');
             s.push('<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>');
             $.each(controller.mess, function(i, m) {
@@ -1068,8 +1068,6 @@ $(function() {
 
             // Set the total alerts
             $("#totalalerts").text( main.total_alerts );
-
-            $("#asm-homepage-animals").expander({limit: 9});
 
         },
 

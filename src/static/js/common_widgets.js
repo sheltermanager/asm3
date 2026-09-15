@@ -1418,9 +1418,8 @@ $.fn.currency = asm_widget({
  *  classname is the name of the class shared by elements that are subjec to this expander
  *  where more elements with classname than limit are present, the expander will hide the overflow
  * 
- *  If the target element has class "asm-expander" the widget will initialise automatically with the default options. 
- *  To pass custom options, do not include the "asm-expander" class. Instead, initialise manually with your custom options
- *  eg. $("#asm-homepage-animals").expander({limit: 9});
+ *  The default limit and classname may be changed by adding data-expander-limit or data-expander-classname values to t
+ *  eg. '<div class="asm-expander" data-expander-limit="20" data-expander-classname="someclass">'
  */
 $.fn.expander = asm_widget({
     options: {
@@ -1428,9 +1427,15 @@ $.fn.expander = asm_widget({
         classname: "asm-expander-item"
     },
     _create: function(t, options) {
+        let limit = options.limit;
+        if (t.data("expander-limit")) {
+            limit = parseInt(t.data("expander-limit"));
+        }
+        let classname = options.classname;
+        if (t.data("expander-classname")) {
+            classname = t.data("expander-classname");
+        }
         var container = t;
-        var classname = options.classname;
-        var limit = options.limit;
         container.css("cursor", "pointer");
         let elements = container.find("." + classname);
         $.each(elements, function(i, v) {
@@ -1438,7 +1443,6 @@ $.fn.expander = asm_widget({
                 $(v).addClass("asm-overflow");
                 $(v).hide();
             }
-            
         });
         if ( container.find("." + classname).length > limit ) {
             container.append('<div class="asm-expand-toggle asm-menu-category" style="border-bottom: none;"><span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">' + _("more") + '</a></div>');
