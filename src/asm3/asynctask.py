@@ -75,6 +75,9 @@ def get_progress_percent(dbo: Database) -> int:
 
 def set_progress_value(dbo, v: int) -> None:
     """ Set a value for the progress meter """
+    # Reset the ttl on the task name. This is necessary because is_task_running checks
+    # both name and progress value, and without this all tasks will time out after an hour
+    set_task_name(dbo, get_task_name(dbo))
     return put(dbo, "taskval", v)
 
 def increment_progress_value(dbo: Database) -> None:
