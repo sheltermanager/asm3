@@ -956,7 +956,7 @@ $(function() {
                     { id: "tab-quicklinks", title: _("Quick Links"), info: _("Quicklinks are shown on the home page and allow quick access to areas of the system."), fields: [
                         { id: "disablequicklinkshome", post_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check", fullrow: true }, 
                         { id: "disablequicklinksall", post_field: "QuicklinksAllScreens", label: _("Show quick links on all pages"), type: "check", fullrow: true }, 
-                        { id: "quicklinksid", post_field: "QuicklinksID", label: _("Show quick links on all pages"), type: "selectmulti", options: this.quicklink_options() }, 
+                        { id: "quicklinksid", post_field: "QuicklinksID", label: _("Quicklinks"), type: "selectmulti", options: this.quicklink_options() }, 
                     ]}, 
                     { id: "tab-reminders", title: _("Reminder Emails"), info: _("Reminder emails can be automatically sent to groups of people a number of days before or after a key event."), fields: [
                         { type: "raw", markup: '<tr><th colspan="2"></th><th>' + _("Days") + '</th><th>' + _("Template") + '</th></tr>' }, 
