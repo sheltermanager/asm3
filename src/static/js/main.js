@@ -502,7 +502,7 @@ $(function() {
         },
 
         render_messages: function() {
-            let s = ['<div class="asm-main-section asm-expander" data-expander-limit="2" data-expander-classname="asm-expander-message-item">'];
+            let s = ['<div class="asm-main-section asm-expander" data-expander-limit="10" data-expander-classname="asm-expander-message-item">'];
             s.push('<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>');
             s.push('<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>');
             $.each(controller.mess, function(i, m) {
@@ -972,43 +972,6 @@ $(function() {
                     await common.ajax_post("main", formdata);
                     t.closest("tr").fadeOut(); 
                 });
-
-            // $(".messagetoggle").each(function() {
-            //     let data = $(this).attr("data");
-            //     let moretext = " " + _("more");
-            //     let ldv = $("#long" + data).val();
-            //     let sdv = $("#short" + data).val();
-            //     if (ldv.length != sdv.length) {
-            //         $(this).html(moretext);
-            //     }
-            // });
-
-            // $(".messagetoggle").click(function() {
-            //     let data = $(this).attr("data");
-            //     let moretext = " " + _("more");
-            //     let lesstext = " " + _("less");
-            //     let mt = $("#mt" + data + " .mtext");
-            //     let ldv = $("#long" + data).val();
-            //     let sdv = $("#short" + data).val();
-            //     let ar = $(this);
-            //     if (ldv.length != sdv.length) {
-            //         if (ar.text() == moretext) {
-            //             mt.fadeOut(function() {
-            //                 mt.html(ldv);
-            //                 mt.fadeIn();
-            //                 ar.html(lesstext);
-            //             });
-            //         }
-            //         else {
-            //             mt.fadeOut(function() {
-            //                 mt.html(sdv);
-            //                 mt.fadeIn();
-            //                 ar.html(moretext);
-            //             });
-            //         }
-            //     }
-            //     return false;
-            // });
 
             $("#newstoggle").click(function() {
                 if ($("#newsnav").hasClass("ui-icon-triangle-1-e")) {

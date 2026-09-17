@@ -1418,13 +1418,22 @@ $.fn.currency = asm_widget({
  *  classname is the name of the class shared by elements that are subjec to this expander
  *  where more elements with classname than limit are present, the expander will hide the overflow
  * 
- *  The default limit and classname may be changed by adding data-expander-limit or data-expander-classname values to t
- *  eg. '<div class="asm-expander" data-expander-limit="20" data-expander-classname="someclass">'
+ *  The item limit and classname may be set by adding data-expander-limit or data-expander-classname values to t
+ *  
+ *  The expander mode may be select by a adding data-expander-mode to t
+ *  "inline" will place an icon based toggle to the left of the content
+ *  "trailing" will place a text based toggle after the content
+ *  "below" will place both an icon and text based toggle below the content
+ *  
+ *  If no classname is set, raw text is assumed and limit refers to the number of characters before overflow
+ *  
+ *  eg. '<div class="asm-expander" data-expander-mode="inline" data-expander-limit="20" data-expander-classname="someclass">'
+ *  
  */
 $.fn.expander = asm_widget({
     options: {
-        mode: "below", // inline, trailing, below
-        limit: 10,
+        mode: "below", // Accepted modes are inline, trailing, below
+        limit: 50,
         classname: ""
     },
     _create: function(t, options) {
@@ -1444,11 +1453,11 @@ $.fn.expander = asm_widget({
 
         let toggle = "";
         if (mode == "trailing") {
-            toggle = '<span class="asm-expand-toggle"><a href="#">' + _("more") + '</a></span>';
+            toggle = ' <span class="asm-expand-toggle"><a href="#">' + _("more") + '</a></span>';
         } else if (mode == "below") {
             toggle = '<div class="asm-expand-toggle asm-menu-category" style="border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">' + _("more") + '</a></div>';
         } else if (mode == "inline") {
-            toggle = '<div class="asm-expand-toggle asm-menu-category" style="float:left;border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span></div>';
+            toggle = '<div class="asm-expand-toggle asm-menu-category" style="float: left;border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span></div>';
         }
 
         container.css("cursor", "pointer");
@@ -1463,16 +1472,7 @@ $.fn.expander = asm_widget({
         } else {
             let text = container.text();
             if (text.length > limit) {
-                container.html(
-                    [
-                        '<span>',
-                        text.slice(0, limit),
-                        '</span>',
-                        '<span class="asm-overflow" style="display: none;">',
-                        text.slice(limit, -1),
-                        '</span>'
-                    ].join("\n")
-                );
+                container.html('<span>' + text.slice(0, limit) +'</span><span class="asm-overflow" style="display: none;">' + text.slice(limit, -1) + '</span>');
             }
         }
 
