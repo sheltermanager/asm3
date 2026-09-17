@@ -1423,8 +1423,9 @@ $.fn.currency = asm_widget({
  */
 $.fn.expander = asm_widget({
     options: {
+        mode: "below", // inline, trailing, below
         limit: 10,
-        classname: "asm-expander-item"
+        classname: ""
     },
     _create: function(t, options) {
         let limit = options.limit;
@@ -1435,31 +1436,71 @@ $.fn.expander = asm_widget({
         if (t.data("expander-classname")) {
             classname = t.data("expander-classname");
         }
-        var container = t;
-        container.css("cursor", "pointer");
-        let elements = container.find("." + classname);
-        $.each(elements, function(i, v) {
-            if ( i >= limit ) {
-                $(v).addClass("asm-overflow");
-                $(v).hide();
-            }
-        });
-        if ( container.find("." + classname).length > limit ) {
-            container.append('<div class="asm-expand-toggle asm-menu-category" style="border-bottom: none;"><span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">' + _("more") + '</a></div>');
+        let mode = options.mode;
+        if (t.data("expander-mode")) {
+            mode = t.data("expander-mode");
         }
-        container.on("click", function() {
+        var container = t;
+
+        let toggle = "";
+        if (mode == "trailing") {
+            toggle = '<span class="asm-expand-toggle"><a href="#">' + _("more") + '</a></span>';
+        } else if (mode == "below") {
+            toggle = '<div class="asm-expand-toggle asm-menu-category" style="border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">' + _("more") + '</a></div>';
+        } else if (mode == "inline") {
+            toggle = '<div class="asm-expand-toggle asm-menu-category" style="float:left;border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span></div>';
+        }
+
+        container.css("cursor", "pointer");
+        if (classname) {
+            let elements = container.find("." + classname);
+            $.each(elements, function(i, v) {
+                if ( i >= limit ) {
+                    $(v).addClass("asm-overflow");
+                    $(v).hide();
+                }
+            });
+        } else {
+            let text = container.text();
+            if (text.length > limit) {
+                container.html(
+                    [
+                        '<span>',
+                        text.slice(0, limit),
+                        '</span>',
+                        '<span class="asm-overflow" style="display: none;">',
+                        text.slice(limit, -1),
+                        '</span>'
+                    ].join("\n")
+                );
+            }
+        }
+
+        if ( ( !classname && container.text().length > limit ) || ( classname && container.find("." + classname).length > limit ) ) {
+            container.append(toggle);
+        }
+        
+        container.find(".asm-expand-toggle").last().on("click", function() {
             if ( container.hasClass("asm-expanded") ) {
-                container.find(".asm-expand-toggle a").text(_("more"));
-                container.find(".asm-expand-toggle span").addClass(_("ui-icon-triangle-1-e"));
-                container.find(".asm-expand-toggle span").removeClass(_("ui-icon-triangle-1-s"));
+                container.find(".asm-expand-toggle a").last().text(_("more"));
+                container.find(".asm-expand-toggle span").last().addClass(_("ui-icon-triangle-1-e"));
+                container.find(".asm-expand-toggle span").last().removeClass(_("ui-icon-triangle-1-s"));
                 container.removeClass("asm-expanded");
-                container.find(".asm-overflow").fadeOut();
+                if (classname) {
+                    container.find(".asm-overflow." + classname).fadeOut();
+                } else {
+                    container.find(".asm-overflow").fadeOut();
+                }
             } else {
-                container.find(".asm-expand-toggle a").text(_("less"));
-                container.find(".asm-expand-toggle span").removeClass(_("ui-icon-triangle-1-e"));
-                container.find(".asm-expand-toggle span").addClass(_("ui-icon-triangle-1-s"));
+                container.find(".asm-expand-toggle a").last().text(_("less"));
+                container.find(".asm-expand-toggle span").last().removeClass(_("ui-icon-triangle-1-e"));
+                container.find(".asm-expand-toggle span").last().addClass(_("ui-icon-triangle-1-s"));
                 container.addClass("asm-expanded");
-                container.find(".asm-overflow").fadeIn();
+                if (classname) {
+                    container.find(".asm-overflow." + classname).fadeIn();
+                } else {
+                    container.find(".asm-overflow").fadeIn();
+                }
             }
         });
     }
