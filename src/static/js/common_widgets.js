@@ -1432,8 +1432,8 @@ $.fn.currency = asm_widget({
  */
 $.fn.expander = asm_widget({
     options: {
-        mode: "below", // Accepted modes are inline, trailing, below
-        limit: 50,
+        mode: "trailing", // Accepted modes are inline, trailing, below
+        limit: 100,
         classname: ""
     },
     _create: function(t, options) {
@@ -1453,7 +1453,7 @@ $.fn.expander = asm_widget({
 
         let toggle = "";
         if (mode == "trailing") {
-            toggle = ' <span class="asm-expand-toggle"><a href="#">' + _("more") + '</a></span>';
+            toggle = ' <span class="asm-expand-toggle"><a href="#">' + _("more") + '</a></span> ';
         } else if (mode == "below") {
             toggle = '<div class="asm-expand-toggle asm-menu-category" style="border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">' + _("more") + '</a></div>';
         } else if (mode == "inline") {

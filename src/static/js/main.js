@@ -453,7 +453,7 @@ $(function() {
             callout +=  _("Some data on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
             callout += '</span>';
             if (controller.linkmode != "none" && controller.animallinks.length > 0) {
-                s = ['<div id="asm-homepage-animals" class="asm-main-section asm-expander" data-expander-mode="inline" data-expander-limit="9" data-expander-classname="asm-shelterview-animal">'];
+                s = ['<div id="asm-homepage-animals" class="asm-main-section asm-expander" data-expander-mode="below" data-expander-limit="9" data-expander-classname="asm-shelterview-animal">'];
                 s.push('<p class="asm-menu-category">' + linknames[controller.linkmode] + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
@@ -502,11 +502,11 @@ $(function() {
         },
 
         render_messages: function() {
-            let s = ['<div class="asm-main-section asm-expander" data-expander-limit="10" data-expander-classname="asm-expander-message-item">'];
+            let s = ['<div class="asm-main-section">'];
             s.push('<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>');
             s.push('<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>');
             $.each(controller.mess, function(i, m) {
-                s.push('<tr class="asm-expander-message-item"><td><span style="white-space: nowrap; padding-right: 5px;">');
+                s.push('<tr><td><span style="white-space: nowrap; padding-right: 5px;">');
                 if (m.CREATEDBY == asm.user || m.FORNAME == asm.user || asm.superuser == 1) {
                     s.push('<button class="messagedelete" data="' + m.ID + '">' + _("Delete") + '</button> ');
                 }
@@ -525,14 +525,14 @@ $(function() {
                 s.push(format.date(m.ADDED));
                 s.push('</span></td>');
                 if (m.PRIORITY == 1) {
-                    s.push('<td class="asm-expander" id="mt' + m.ID + '">');
+                    s.push('<td id="mt' + m.ID + '">');
                     s.push('<span class="mtext asm-expander" data-expander-limit="50" data-expander-mode="trailing" style="font-weight: bold !important">' + m.MESSAGE + '</span>');
                     s.push('<a class="messagetoggle" href="#" data="' + m.ID + '"></a>');
                     s.push('</td>');
                 }
                 else {
-                    s.push('<td class="asm-expander" data-expander-limit="50" data-expander-mode="trailing" id="mt' + m.ID + '">');
-                    s.push('<span class="mtext">' + m.MESSAGE + '</span>');
+                    s.push('<td id="mt' + m.ID + '">');
+                    s.push('<span class="mtext asm-expander" data-expander-limit="50" data-expander-mode="trailing">' + m.MESSAGE + '</span>');
                     s.push('<a class="messagetoggle" href="#" data="' + m.ID + '"></a>');
                     s.push('</td>');
                 }
