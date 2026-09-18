@@ -1414,6 +1414,98 @@ $.fn.currency = asm_widget({
 
 });
 
+/** Widget that allows you to display data, hiding more related data that can be shown by "expanding" the widget
+ *  classname is the name of the class shared by elements that are subjec to this expander
+ *  where more elements with classname than limit are present, the expander will hide the overflow
+ * 
+ *  The item limit and classname may be set by adding data-expander-limit or data-expander-classname values to t
+ *  
+ *  The expander mode may be select by a adding data-expander-mode to t
+ *  "inline" will place an icon based toggle to the left of the content
+ *  "trailing" will place a text based toggle after the content
+ *  "below" will place both an icon and text based toggle below the content
+ *  
+ *  If no classname is set, raw text is assumed and limit refers to the number of characters before overflow
+ *  
+ *  eg. '<div class="asm-expander" data-expander-mode="inline" data-expander-limit="20" data-expander-classname="someclass">'
+ *  
+ */
+$.fn.expander = asm_widget({
+    options: {
+        mode: "trailing", // Accepted modes are inline, trailing, below
+        limit: 100,
+        classname: ""
+    },
+    _create: function(t, options) {
+        let limit = options.limit;
+        if (t.data("expander-limit")) {
+            limit = parseInt(t.data("expander-limit"));
+        }
+        let classname = options.classname;
+        if (t.data("expander-classname")) {
+            classname = t.data("expander-classname");
+        }
+        let mode = options.mode;
+        if (t.data("expander-mode")) {
+            mode = t.data("expander-mode");
+        }
+        var container = t;
+
+        let toggle = "";
+        if (mode == "trailing") {
+            toggle = ' <span class="asm-expand-toggle"><a href="#">' + _("more") + '</a></span> ';
+        } else if (mode == "below") {
+            toggle = '<div class="asm-expand-toggle asm-menu-category" style="border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">' + _("more") + '</a></div>';
+        } else if (mode == "inline") {
+            toggle = '<div class="asm-expand-toggle asm-menu-category" style="float: left;border-bottom: none;vertical-align: middle;"><span class="ui-icon ui-icon-triangle-1-e"></span></div>';
+        }
+
+        container.css("cursor", "pointer");
+        if (classname) {
+            let elements = container.find("." + classname);
+            $.each(elements, function(i, v) {
+                if ( i >= limit ) {
+                    $(v).addClass("asm-overflow");
+                    $(v).hide();
+                }
+            });
+        } else {
+            let text = container.text();
+            if (text.length > limit) {
+                container.html('<span>' + text.slice(0, limit) +'</span><span class="asm-overflow" style="display: none;">' + text.slice(limit, -1) + '</span>');
+            }
+        }
+
+        if ( ( !classname && container.text().length > limit ) || ( classname && container.find("." + classname).length > limit ) ) {
+            container.append(toggle);
+        }
+        
+        container.find(".asm-expand-toggle").last().on("click", function() {
+            if ( container.hasClass("asm-expanded") ) {
+                container.find(".asm-expand-toggle a").last().text(_("more"));
+                container.find(".asm-expand-toggle span").last().addClass(_("ui-icon-triangle-1-e"));
+                container.find(".asm-expand-toggle span").last().removeClass(_("ui-icon-triangle-1-s"));
+                container.removeClass("asm-expanded");
+                if (classname) {
+                    container.find(".asm-overflow." + classname).fadeOut();
+                } else {
+                    container.find(".asm-overflow").fadeOut();
+                }
+            } else {
+                container.find(".asm-expand-toggle a").last().text(_("less"));
+                container.find(".asm-expand-toggle span").last().removeClass(_("ui-icon-triangle-1-e"));
+                container.find(".asm-expand-toggle span").last().addClass(_("ui-icon-triangle-1-s"));
+                container.addClass("asm-expanded");
+                if (classname) {
+                    container.find(".asm-overflow." + classname).fadeIn();
+                } else {
+                    container.find(".asm-overflow").fadeIn();
+                }
+            }
+        });
+    }
+});
+
 /** This is necessary for the richtextarea below - it allows the tinymce dialogs
  *  to work inside a JQuery UI modal dialog. The class prefix (tox) has
  *  changed between major TinyMCE releases in the past */

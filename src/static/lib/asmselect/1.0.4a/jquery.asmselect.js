@@ -42,7 +42,9 @@
 
             };
 
-        $.extend(options, customOptions); 
+        $.extend(options, customOptions);
+
+        console.log(this);
 
         return this.each(function(index) {
 
