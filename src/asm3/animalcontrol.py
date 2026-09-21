@@ -508,7 +508,7 @@ def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
-        asm3.log.add_log_email(dbo, username, asm3.log.ANIMALCONTROL, post.integer("incidentid"), logtype, emailto, subject, body)
+        asm3.log.add_log_email(dbo, username, asm3.log.ANIMALCONTROL, post.integer("incidentid"), logtype, emailto, subject, body, emailcc, emailbcc)
     return rv
 
 def update_dispatch_geocode(dbo: Database, incidentid: int, latlon: str = "", address: str = "", town: str = "", county: str = "", postcode: str = "", country: str = "") -> str:
