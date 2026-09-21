@@ -448,7 +448,7 @@ TESTPERFORMEDDATE
    The date the test was performed.
 TESTCOMMENTS
    Any comments for the test.
-TESTCOMMENTS
+TESTCOST
    The cost of the test.
 VACCINATIONTYPE
     The type of vaccination on this line. 
