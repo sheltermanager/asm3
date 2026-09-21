@@ -1182,6 +1182,10 @@ select:disabled, input:disabled, textarea:disabled {
     filter: hue-rotate(90deg); /* Purple */
 }
 
+.asm-search-hidden {
+    display: none;
+}
+
 .asm-search-highlight {
     background-color: yellow;
     color: black;

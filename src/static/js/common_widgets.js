@@ -1307,10 +1307,10 @@ $.fn.asmtabs = asm_widget({
                     });
                     let panelid = p.id;
                     if (!searchkeyfound && panelid != "tab-tab-tabsearch") {
-                        t.find('li[aria-controls="' + panelid + '"').hide();
+                        t.find('li[aria-controls="' + panelid + '"').addClass("asm-search-hidden");
                         $("#" + panelid).hide();
                     } else {
-                        t.find('li[aria-controls="' + panelid + '"').show();
+                        t.find('li[aria-controls="' + panelid + '"').removeClass("asm-search-hidden");
                         if (t.find('li[aria-controls="' + panelid + '"').hasClass("ui-state-active")) {
                             $("#" + panelid).show();
                         }

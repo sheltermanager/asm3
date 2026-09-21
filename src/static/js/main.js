@@ -1046,13 +1046,13 @@ $(function() {
                 if ($("#animallinknav").hasClass("ui-icon-triangle-1-e")) {
                     $("#animallinknav").removeClass("ui-icon-triangle-1-e");
                     $("#animallinknav").addClass("ui-icon-triangle-1-s");
-                    $("#animallinklabel").text(_("less"))
+                    $("#animallinklabel").text(_("less"));
                     $(".asm-animal-link-overflow").fadeIn();
                 }
                 else {
                     $("#animallinknav").removeClass("ui-icon-triangle-1-s");
                     $("#animallinknav").addClass("ui-icon-triangle-1-e");
-                    $("#animallinklabel").text(_("more"))
+                    $("#animallinklabel").text(_("more"));
                     $(".asm-animal-link-overflow").fadeOut();
                 }
             });
