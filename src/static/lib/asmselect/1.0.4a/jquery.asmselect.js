@@ -44,8 +44,6 @@
 
         $.extend(options, customOptions);
 
-        console.log(this);
-
         return this.each(function(index) {
 
             var $original = $(this);                // the original select multiple

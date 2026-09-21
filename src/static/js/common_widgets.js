@@ -1427,7 +1427,16 @@ $.fn.currency = asm_widget({
  *  
  *  If no classname is set, raw text is assumed and limit refers to the number of characters before overflow
  *  
- *  eg. '<div class="asm-expander" data-expander-mode="inline" data-expander-limit="20" data-expander-classname="someclass">'
+ *  eg. '<div class="asm-expander">'
+ *      This will show the first 100 characters of the content of this element and include a trailing toggle for the overflow
+ * 
+ *      '<div class="asm-expander" data-expander-mode="inline" data-expander-limit="20" data-expander-classname="someclass">'
+ *      This will show the first 20 elements with class "someclass" within this container and include an inline graphical toggle
+ *      for the overflow
+ *      
+ *      '<div class="asm-expander" data-expander-mode="below" data-expander-classname="someclass">'
+ *      This will show the first 100 elements with class "someclass" within this container and include a toggle below showing both
+ *      icons and text
  *  
  */
 $.fn.expander = asm_widget({

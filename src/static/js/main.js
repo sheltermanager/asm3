@@ -538,11 +538,6 @@ $(function() {
                 }
             });
             s.push('</tr></tbody></table>');
-
-            // $.each(controller.mess, function(i, m) {
-            //     s.push('<input id="long' + m.ID + '" type="hidden" value="' + html.title(common.replace_all(m.MESSAGE, "\n", "<br/>")) + '" />');
-            //     s.push('<input id="short' + m.ID + '" type="hidden" value="' + html.title(html.truncate(m.MESSAGE)) + '" />');
-            // });
             s.push('</div>');
             return s.join("\n");
         },
