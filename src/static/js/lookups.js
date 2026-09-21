@@ -309,38 +309,18 @@ $(function() {
 
         add_builtins: function() {
             if (controller.tablename == "lkanimalflags") {
-                controller.rows = controller.rows.concat([
-                    { ID: -1, FLAG: _("Courtesy Listing") },
-                    { ID: -1, FLAG: _("Cruelty Case") },
-                    { ID: -1, FLAG: _("Non-Shelter") },
-                    { ID: -1, FLAG: _("Not For Adoption") },
-                    { ID: -1, FLAG: _("Do Not Publish") },
-                    { ID: -1, FLAG: _("Do Not Register Microchip") },
-                    { ID: -1, FLAG: _("Quarantine") }
-                ]);
+                $.each(asm.animalflags, function(i, v) {
+                    controller.rows.push(
+                        { ID: -1, FLAG: v[1].LABEL}
+                    );
+                });
             }
             if (controller.tablename == "lkownerflags") {
-                controller.rows = controller.rows.concat([
-                    { ID: -1, FLAG: _("ACO") },
-                    { ID: -1, FLAG: _("Adopter") },
-                    { ID: -1, FLAG: _("Adoption Coordinator") },
-                    { ID: -1, FLAG: _("Banned") },
-                    { ID: -1, FLAG: _("Dangerous") },
-                    { ID: -1, FLAG: _("Deceased") },
-                    { ID: -1, FLAG: _("Donor") },
-                    { ID: -1, FLAG: _("Driver") },
-                    { ID: -1, FLAG: _("Exclude from bulk email") },
-                    { ID: -1, FLAG: _("Fosterer") },
-                    { ID: -1, FLAG: _("Homechecked") },
-                    { ID: -1, FLAG: _("Homechecker") },
-                    { ID: -1, FLAG: _("Member") },
-                    { ID: -1, FLAG: _("Other Shelter") },
-                    { ID: -1, FLAG: _("Sponsor") },
-                    { ID: -1, FLAG: _("Staff") },
-                    { ID: -1, FLAG: _("Supplier") },
-                    { ID: -1, FLAG: _("Vet") },
-                    { ID: -1, FLAG: _("Volunteer") }
-                ]);
+                $.each(asm.personflags, function(i, v) {
+                    controller.rows.push(
+                        { ID: -1, FLAG: v[1].LABEL}
+                    );
+                });
             }
         },
 
