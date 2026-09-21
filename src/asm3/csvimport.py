@@ -38,10 +38,10 @@ VALID_FIELDS = [
     "CITATIONDATE", "CITATIONNUMBER", "CITATIONTYPE", "FINEAMOUNT", "FINEDUEDATE", "FINEPAIDDATE", "CITATIONCOMMENTS",
     "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
-    "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+    "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", "VACCINATIONCOST",
     "VOUCHERNAME", "VOUCHERVETNAME", "VOUCHERVETADDRESS", "VOUCHERVETTOWN", "VOUCHERVETCOUNTY", "VOUCHERVETPOSTCODE", "VOUCHERDATEISSUED", "VOUCHERDATEPRESENTED", "VOUCHERDATEEXPIRED", "VOUCHERVALUE", "VOUCHERCODE", "VOUCHERCOMMENTS", 
-    "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS",
-    "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
+    "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS", "TESTCOST", 
+    "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS", "MEDICALCOST", 
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
@@ -1092,6 +1092,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             v["manufacturer"] = gks(row, "VACCINATIONMANUFACTURER")
             v["rabiestag"] = gks(row, "VACCINATIONRABIESTAG")
             v["comments"] = gks(row, "VACCINATIONCOMMENTS")
+            v["cost"] = gkc(row, "VACCINATIONCOST", dbo.locale)
             try:
                 if not dryrun: asm3.medical.insert_vaccination_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
@@ -1106,6 +1107,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             v["required"] = gkd(dbo, row, "TESTDUEDATE", True)
             v["given"] = gkd(dbo, row, "TESTPERFORMEDDATE")
             v["comments"] = gks(row, "TESTCOMMENTS")
+            v["cost"] = gkc(row, "TESTCOST", dbo.locale)
             try:
                 if not dryrun: asm3.medical.insert_test_from_form(dbo, user, asm3.utils.PostedData(v, dbo.locale))
             except Exception as e:
@@ -1120,6 +1122,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             m["dosage"] = gks(row, "MEDICALDOSAGE")
             m["startdate"] = gkd(dbo, row, "MEDICALGIVENDATE")
             m["comments"] = gks(row, "MEDICALCOMMENTS")
+            m["cost"] = gkc(row, "MEDICALCOST", dbo.locale)
             m["singlemulti"] = "0" # single treatment
             m["status"] = "2" # completed
             try:
@@ -1593,10 +1596,10 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         keys.append(f"ANIMALADDITIONAL{af.FIELDNAME.upper()}")
 
     keys += [
-        "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS",
-        "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
+        "TESTTYPE", "TESTRESULT", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTCOMMENTS", "TESTCOST",
+        "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG", "VACCINATIONCOST",
         "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
-        "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS", "MEDICALTYPE"
+        "MEDICALNAME", "MEDICALCOST", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS", "MEDICALTYPE"
     ]
     
     def tocsv(row: Dict) -> str:
@@ -1764,6 +1767,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
             row["VACCINATIONBATCHNUMBER"] = v["BATCHNUMBER"]
             row["VACCINATIONRABIESTAG"] = v["RABIESTAG"]
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
+            row["VACCINATIONCOST"] = asm3.i18n.format_currency_no_symbol(l, v["COST"])
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))
@@ -1775,6 +1779,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
             row["TESTDUEDATE"] = asm3.i18n.python2display(l, t["DATEREQUIRED"])
             row["TESTPERFORMEDDATE"] = asm3.i18n.python2display(l, t["DATEOFTEST"])
             row["TESTCOMMENTS"] = t["COMMENTS"]
+            row["TESTCOST"] = asm3.i18n.format_currency_no_symbol(l, t["COST"])
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))
@@ -1782,6 +1787,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         for m in asm3.medical.get_regimens(dbo, a["ID"], True):
             row = {}
             row["MEDICALNAME"] = m["TREATMENTNAME"]
+            row["MEDICALCOST"] = asm3.i18n.format_currency_no_symbol(l, m["COST"])
             row["MEDICALDOSAGE"] = m["DOSAGE"]
             row["MEDICALGIVENDATE"] = asm3.i18n.python2display(l, m["STARTDATE"])
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
@@ -1794,7 +1800,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
             row = {} 
             row["COSTDATE"] = asm3.i18n.python2display(l, c["COSTDATE"])
             row["COSTTYPE"] = c["COSTTYPENAME"]
-            row["COSTAMOUNT"] = asm3.utils.cint(c["COSTAMOUNT"]) / 100.0
+            row["COSTAMOUNT"] = asm3.i18n.format_currency_no_symbol(l, c["COSTAMOUNT"])
             row["COSTDESCRIPTION"] = c["DESCRIPTION"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]

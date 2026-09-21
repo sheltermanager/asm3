@@ -288,6 +288,8 @@ MEDICALGIVENDATE
     The date the medical regimen started (only one-off treatment regimens can be created via import).
 MEDICALCOMMENTS
     Any comments on the medical regimen.
+MEDICALCOST
+    The total cost of the medical regimen.
 MOVEMENTTYPE
     The type of movement for this line (0 = Reservation, 1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption. If MOVEMENTTYPE is 0, then MOVEMENTDATE and MOVEMENTRETURNDATE will be used to set the reservation date and reservation cancelled date fields.
 MOVEMENTDATE
@@ -446,6 +448,8 @@ TESTPERFORMEDDATE
    The date the test was performed.
 TESTCOMMENTS
    Any comments for the test.
+TESTCOMMENTS
+   The cost of the test.
 VACCINATIONTYPE
     The type of vaccination on this line. 
 VACCINATIONDUEDATE
@@ -462,4 +466,5 @@ VACCINATIONRABIESTAG
     The rabies tag accompanying the vaccine.
 VACCINATIONCOMMENTS
     Comments on the vaccine.
-
+VACCINATIONCOST
+    The cost of the vaccine.
