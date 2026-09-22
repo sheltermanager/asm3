@@ -1336,9 +1336,10 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     if post["sheltercode"] != "":
         ilike1 = dbo.sql_ilike("a.ShelterCode", "?")
         ilike2 = dbo.sql_ilike("ShelterCode", "?")
-        ss.ands.append(f"({ilike1} OR EXISTS (SELECT ShelterCode FROM animalentry WHERE {ilike2} AND AnimalID = a.ID))")
-        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
-        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
+        ilike3 = dbo.sql_ilike("a.ShortCode", "?")
+        ilike4 = dbo.sql_ilike("ShortCode", "?")
+        ss.ands.append(f"( ( ({ilike1} OR EXISTS (SELECT ShelterCode FROM animalentry WHERE {ilike2} AND AnimalID = a.ID)) ) OR ( ({ilike3} OR EXISTS (SELECT ShortCode FROM animalentry WHERE {ilike4} AND AnimalID = a.ID)) ) )")
+        for a in range(0, 4): ss.values.append("%%%s%%" % post["sheltercode"].lower() )
 
     if post["insuranceno"] != "":
         ilike = dbo.sql_ilike("InsuranceNumber", "?")
