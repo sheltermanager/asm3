@@ -33,12 +33,12 @@ def add_log_email(dbo: Database, username: str, linktype: int, linkid: int, logt
     Adds a log entry for recording a sent email.
     body is converted to plain text if necessary before storing in the log.
     """
-    toemails = to
-    if emailcc: toemails += ", " + emailcc
-    if emailbcc: toemails += ", " + emailbcc
+    toemails = []
+    if emailcc: toemails += [x.strip() for x in emailcc.split(",")]
+    if emailbcc: toemails += [x.strip() for x in emailbcc.split(",")]
     if body.find("<p") != -1: body = asm3.utils.html_to_text(body)
     return add_log(dbo, username, linktype, linkid, logtypeid,
-        "[%s] %s ::\n%s" % ( toemails, subject, body ))
+        "[%s] %s ::\n%s" % ( ", ".join(toemails), subject, body ))
 
 def add_logmulti(dbo: Database, username: str, linktype: int, linkids: list, logtypeid: int, logtext: str, logdatetime: datetime = None) -> int:
     """
