@@ -2177,10 +2177,10 @@ def substitute_template(dbo: Database, templateid: int, tags: Tags, imdata: byte
         except Exception as zderr:
             raise asm3.utils.ASMError("Failed generating odt document: %s" % str(zderr))
 
-def extract_mail_tokens(s: str) -> Dict[str, str]:
+def extract_tokens(s: str) -> Dict[str, str]:
     """
-    Extracts tokens for mail from document content s.
-    Mail tokens are {{FROM x}}, {{SUBJECT x}}
+    Extracts tokens from document content s.
+    Tokens are {{FROM x}}, {{SUBJECT x}}
     {{TO x}} can also be used, but is ignored and stripped by mailmerges
     This process should be run on the output after generating a document so that all
     wordkeys in the mail tokens have been substituted.
@@ -2189,7 +2189,7 @@ def extract_mail_tokens(s: str) -> Dict[str, str]:
     if s is None: s = ""
     if asm3.utils.is_bytes(s): s = asm3.utils.bytes2str(s)
     results = asm3.utils.regex_multi(r"\{\{(.+?) (.+?)\}\}",  s)
-    d = { "TO": None, "FROM": None, "CC": None, "BCC": None, "SUBJECT": None, "BODY": None }
+    d = { "TO": None, "FROM": None, "CC": None, "BCC": None, "SUBJECT": None, "BODY": None, "MEDIAFLAGS": None }
     for k, v in results:
         # TinyMCE can insert spaces as non-breaking, which will end up in headers
         k = k.replace("&nbsp;", "") 

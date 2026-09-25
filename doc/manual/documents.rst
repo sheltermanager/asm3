@@ -105,6 +105,15 @@ More than one email address can be included by adding the address seperated by a
 
   {{BCC example@email.com, example2@email.com}}
 
+Media Flag Tokens in Document Templates
+----------------------------------
+
+When creating document templates it is possible to include media flags that will be assigned 
+to the document when generated and saved by using the {{MEDIAFLAGS}} token with flag names seperated 
+by pipes or commas::
+
+  {{MEDIAFLAGS Application Form, Sensitive Data}}
+
 Electronic Signatures
 ---------------------
 

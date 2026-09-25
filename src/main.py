@@ -3578,13 +3578,16 @@ class document_gen(ASMEndpoint):
         dtid = post.integer("dtid")
         tempname = asm3.template.get_document_template_name(dbo, dtid)
         recid = post.integer("recid")
+        tokens = asm3.wordprocessor.extract_tokens(post["document"])
+        mediaflags = tokens["MEDIAFLAGS"]
+        if mediaflags: post["document"] = tokens["BODY"]
         if linktype == "ANIMAL":
             tempname += " - " + asm3.animal.get_animal_namecode(dbo, recid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, recid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("animal_media?id=%d" % recid)
         elif linktype == "ANIMALCONTROL":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMALCONTROL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMALCONTROL, recid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("incident_media?id=%d" % recid)
         elif linktype == "BOARDING":
             m = asm3.movement.get_movement(dbo, recid)
@@ -3594,11 +3597,11 @@ class document_gen(ASMEndpoint):
             ownerid = m["OWNERID"]
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
             if animalid and ownerid: 
-                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"], mediaflags=mediaflags)
             elif ownerid: 
-                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"], mediaflags=mediaflags)
             elif animalid: 
-                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "CLINIC":
             c = asm3.clinic.get_appointment(dbo, recid)
@@ -3608,11 +3611,11 @@ class document_gen(ASMEndpoint):
             ownerid = c["OWNERID"]
             if ownerid: 
                 tempname = "%s - %s" % (tempname, asm3.person.get_person_name(dbo, ownerid))
-                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"], mediaflags=mediaflags)
                 self.redirect("person_media?id=%d" % ownerid)
             else:
                 tempname = "%s - %s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid))
-                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"], mediaflags=mediaflags)
                 self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "DONATION":
             d = asm3.financial.get_donations_by_ids(dbo, post.integer_list("recid"))
@@ -3620,15 +3623,15 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
             ownerid = d[0]["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "FOUNDANIMAL":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.FOUNDANIMAL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.FOUNDANIMAL, recid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("foundanimal_media?id=%d" % recid)
         elif linktype == "LOSTANIMAL":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.LOSTANIMAL, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.LOSTANIMAL, recid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("lostanimal_media?id=%d" % recid)
         elif linktype == "MEDICAL":
             d = asm3.medical.get_regimens_ids(dbo, post.integer_list("recid"))
@@ -3636,15 +3639,15 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
             animalid = d[0]["ANIMALID"]
             tempname += " - " + asm3.animal.get_animal_name(dbo, animalid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "PERSON":
             tempname += " - " + asm3.person.get_person_name(dbo, recid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, recid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("person_media?id=%d" % recid)
         elif linktype == "WAITINGLIST":
             tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.WAITINGLIST, recid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.WAITINGLIST, recid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("waitinglist_media?id=%d" % recid)
         elif linktype == "TRANSPORT":
             t = asm3.movement.get_transports_by_ids(dbo, post.integer_list("recid"))
@@ -3652,7 +3655,7 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
             animalid = t[0]["ANIMALID"]
             tempname += " - " + asm3.animal.get_animal_namecode(dbo, animalid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "VOUCHER":
             v = asm3.financial.get_voucher(dbo, recid)
@@ -3660,7 +3663,7 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("%d is not a valid voucher id" % recid)
             ownerid = v["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "LICENCE":
             l = asm3.financial.get_licence(dbo, recid)
@@ -3670,11 +3673,11 @@ class document_gen(ASMEndpoint):
             ownerid = l["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
             if animalid and ownerid: 
-                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"], mediaflags=mediaflags)
             elif ownerid: 
-                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"], mediaflags=mediaflags)
             elif animalid: 
-                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = asm3.movement.get_movement(dbo, recid)
@@ -3684,11 +3687,11 @@ class document_gen(ASMEndpoint):
             ownerid = m["OWNERID"]
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
             if animalid and ownerid: 
-                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"], mediaflags=mediaflags)
             elif ownerid: 
-                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"], mediaflags=mediaflags)
             elif animalid: 
-                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"], mediaflags=mediaflags)
             self.redirect("animal_media?id=%d" % animalid)
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
@@ -3710,7 +3713,7 @@ class document_gen(ASMEndpoint):
             content = asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
         else:
             content = asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
-        tokens = asm3.wordprocessor.extract_mail_tokens(content)
+        tokens = asm3.wordprocessor.extract_tokens(content)
         return asm3.utils.json(tokens)
 
     def post_pdf(self, o):
@@ -5771,7 +5774,7 @@ class move_adopt(JSONEndpoint):
         if checkout:
             l = o.dbo.locale
             body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
-            tokens = asm3.wordprocessor.extract_mail_tokens(body)
+            tokens = asm3.wordprocessor.extract_tokens(body)
             d = {
                 "id":           str(movementid),
                 "animalid":     post["animal"],
@@ -5796,7 +5799,7 @@ class move_adopt(JSONEndpoint):
             amid, pmid = asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
             # Generate the email body from the email template
             sigbody = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("sigemailtemplateid"), movementid, o.user)
-            tokens = asm3.wordprocessor.extract_mail_tokens(sigbody)
+            tokens = asm3.wordprocessor.extract_tokens(sigbody)
             d = {
                 "addtolog": "on",
                 "logtype":  str(asm3.configuration.system_log_type(dbo)),
@@ -6362,7 +6365,7 @@ class move_workflow(ASMEndpoint):
             if checkout:
                 l = o.dbo.locale
                 body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
-                tokens = asm3.wordprocessor.extract_mail_tokens(body)
+                tokens = asm3.wordprocessor.extract_tokens(body)
                 d = {
                     "id":           str(movementid),
                     "animalid":     post["animal"],
@@ -6388,7 +6391,7 @@ class move_workflow(ASMEndpoint):
                 createdocuments.append([pmid, tempname])
                 # Generate the email body from the email template
                 sigbody = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("sigemailtemplateid"), movementid, o.user)
-                tokens = asm3.wordprocessor.extract_mail_tokens(sigbody)
+                tokens = asm3.wordprocessor.extract_tokens(sigbody)
                 d = {
                     "addtolog": "on",
                     "logtype":  str(asm3.configuration.system_log_type(dbo)),
@@ -7954,7 +7957,7 @@ class receipt_bulk(JSONEndpoint):
             raise asm3.utils.ASMError(f"{count} exceeds configured limit of {asm3.configuration.mail_merge_max_emails(dbo)} emails via mail merge")
         for to in emailaddresses.keys():
             body = asm3.wordprocessor.generate_donation_doc(dbo, o.post.integer("tid"), emailaddresses[to], user)
-            mt = asm3.wordprocessor.extract_mail_tokens(body)
+            mt = asm3.wordprocessor.extract_tokens(body)
             cc = mt["CC"] or ""
             bcc = mt["BCC"] or ""
             subject = mt["SUBJECT"] or _("Thank you")
