@@ -948,7 +948,7 @@ class media(ASMEndpoint):
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(linktypeid), linkid, post.integer("logtype"), 
-                emailadd, ", ".join(subject), post["body"])
+                emailadd, post["cc"], post["bcc"], ", ".join(subject), post["body"])
         return emailadd
 
     def post_emailpdf(self, o):
@@ -987,7 +987,7 @@ class media(ASMEndpoint):
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(linktypeid), linkid, post.integer("logtype"), 
-                emailadd, ", ".join(subject), post["body"])
+                emailadd, post["cc"], post["bcc"], ", ".join(subject), post["body"])
         return emailadd
 
     def post_emailsign(self, o):
@@ -4020,7 +4020,7 @@ class donation(JSONEndpoint):
         body = asm3.utils.fix_tinymce_uris(post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
-                emailadd, post["subject"], body)
+                emailadd, post["cc"], post["bcc"], post["subject"], body)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body, "html")
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)

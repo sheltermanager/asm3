@@ -28,14 +28,18 @@ def add_log(dbo: Database, username: str, linktype: int, linkid: int, logtypeid:
         "Comments":         logtext
     }, username)
 
-def add_log_email(dbo: Database, username: str, linktype: int, linkid: int, logtypeid: int, to: str, subject: str, body: str) -> int:
+def add_log_email(dbo: Database, username: str, linktype: int, linkid: int, logtypeid: int, emailto: str, emailcc: str, emailbcc: str, subject: str, body: str) -> int:
     """
     Adds a log entry for recording a sent email.
     body is converted to plain text if necessary before storing in the log.
     """
+    toemails = []
+    if emailto: toemails += [x.strip() for x in emailto.split(",")]
+    if emailcc: toemails += [x.strip() for x in emailcc.split(",")]
+    if emailbcc: toemails += [x.strip() for x in emailbcc.split(",")]
     if body.find("<p") != -1: body = asm3.utils.html_to_text(body)
     return add_log(dbo, username, linktype, linkid, logtypeid,
-        "[%s] %s ::\n%s" % ( to, subject, body ))
+        "[%s] %s ::\n%s" % ( ", ".join(toemails), subject, body ))
 
 def add_logmulti(dbo: Database, username: str, linktype: int, linkids: list, logtypeid: int, logtext: str, logdatetime: datetime = None) -> int:
     """
