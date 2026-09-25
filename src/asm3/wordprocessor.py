@@ -2180,8 +2180,10 @@ def substitute_template(dbo: Database, templateid: int, tags: Tags, imdata: byte
 def extract_tokens(s: str) -> Dict[str, str]:
     """
     Extracts tokens from document content s.
-    Tokens are {{FROM x}}, {{SUBJECT x}}
+    Tokens are {{FROM x}}, {{SUBJECT x}}, {{CC x}}, {{BCC x}}, {{MEDIAFLAGS x}}
     {{TO x}} can also be used, but is ignored and stripped by mailmerges
+    When {{MEDIAFLAGS x}} is used, the provided media flags will be applied to the 
+    generated document when saved.
     This process should be run on the output after generating a document so that all
     wordkeys in the mail tokens have been substituted.
     Returns a dictionary containing any found tokens and the body with the tokens removed.
