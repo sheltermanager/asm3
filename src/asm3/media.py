@@ -867,7 +867,7 @@ def send_signature_request(dbo: Database, username: str, mid: int, post: PostedD
     body = asm3.utils.replace_url_token(body, url, m.MEDIANOTES)
     if post.boolean("addtolog"):
         asm3.log.add_log_email(dbo, username, get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
-            emailadd, _("Document signing request", l), body, post["cc"], post["bcc"])
+            emailadd, post["cc"], post["bcc"], _("Document signing request", l), body)
     create_log(dbo, username, mid, "ES01", _("Document signing request", l))
     asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body, "html")
     if asm3.configuration.audit_on_send_email(dbo): 

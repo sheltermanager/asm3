@@ -1878,7 +1878,7 @@ def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
-        asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, subject, body, emailcc, emailbcc)
+        asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, emailcc, emailbcc, subject, body)
     return rv
 
 def lookingfor_summary(dbo: Database, personid: int, p: ResultRow = None) -> str:

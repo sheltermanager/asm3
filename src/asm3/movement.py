@@ -1137,7 +1137,7 @@ def send_adoption_checkout(dbo: Database, username: str, post: PostedData, subst
     # (this is if checkout was initiated from the movement tab with a custom email)
     if post.boolean("addtolog"):
         asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, post.integer("logtype"), 
-            post["to"], post["subject"], body, post["cc"], post["bcc"])
+            post["to"], post["cc"], post["bcc"], post["subject"], body)
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
     return key
@@ -1160,7 +1160,7 @@ def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool
         asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
         for pid in post.integer_list("personids"):
-            asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, logtype, emailto, subject, body, emailcc, emailbcc)
+            asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, logtype, emailto, emailcc, emailbcc, subject, body)
     return rv
 
 def is_exit_movement(dbo: Database, movemementtypeid: int) -> bool:    
