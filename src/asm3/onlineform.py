@@ -431,7 +431,7 @@ def _get_onlineform_html_bootstrap(dbo: Database, formid: int, completedocument:
             h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
             h.append('<input class="asm-onlineform-pdf form-control" type="file" id="%s" data-name="%s" data-required="%s" style="margin-bottom: 10px;" />' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
         elif f.FIELDTYPE == FIELDTYPE_TELEPHONE:
-            h.append('<input class="asm-onlineform-phone" type="text" placeholder="%s" data-locale="%s" id="%s" name="%s" %s %s />' % ( f.LABEL, dbo.locale, fid, cname, autocomplete, requiredtext))
+            h.append('<input class="asm-onlineform-phone form-control" type="text" placeholder="%s" data-locale="%s" id="%s" name="%s" %s %s />' % ( f.LABEL, dbo.locale, fid, cname, autocomplete, requiredtext))
             h.append('<label class="form-label" for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
         
         if f.FIELDTYPE != FIELDTYPE_CHECKBOX and f.FIELDTYPE != FIELDTYPE_CHECKBOX_AL and f.FIELDTYPE != FIELDTYPE_LOOKUP_MULTI \
