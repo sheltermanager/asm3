@@ -53,10 +53,16 @@ ANIMALNAME
     The animal's name.
 ANIMALIMAGE
     A photo for the animal, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI.
+ANIMALLINK
+    A URL to associate with the animal.
+ANIMALMEDIATYPE
+    An integer representing the type of link, 2 for a link to a video, 1 for a link to a document and 0 for all other media.
 ANIMALPDFDATA
     A PDF file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI.
 ANIMALPDFNAME
     The filename associated with the PDF data.
+ANIMALVIDEO
+    An MP4 video file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI.
 ANIMALNONSHELTER
     Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal.
 ANIMALNOTFORADOPTION
