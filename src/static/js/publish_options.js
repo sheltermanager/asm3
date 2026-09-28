@@ -548,7 +548,7 @@ $(function() {
                             { id: "enabledst", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
                             { id: "stapikey", post_field: "SmartTagAPIKey", label: "API Key", type: "text" }
                         ]}
-                ], {full_width: false}),
+                ], {full_width: false, searchable: true}),
                 html.content_footer()
             ].join("\n");
         },

@@ -333,6 +333,10 @@ const common = {
         return v instanceof String || typeof(v) == "string";
     },
 
+    join_not_falsy: function(array, delimiter="<br />") {
+        return array.filter(v => v).join(delimiter);
+    },
+
     browser_is: {
         android: navigator.userAgent.match(/Android/i) != null,
         ios:     navigator.userAgent.match(/iPod|iPad|iPhone/i) != null,
@@ -938,6 +942,7 @@ const common = {
     /*Returns a sorted array of column names that are in tablename
       uses the global schema object. */
     get_table_columns(tablename) {
+        console.log(tablename);
         let a = [];
         // Updating codemirror from 5.11 to 5.65 changed the columns from a
         // dictionary to a list, so this is no longer needed.

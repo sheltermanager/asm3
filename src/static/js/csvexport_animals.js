@@ -26,7 +26,7 @@ $(function() {
                         options: [ '<option value="none" selected="selected">' + _("Do not include media") + '</option>',
                         '<option value="photo">' + _("Include primary photo") + '</option>',
                         '<option value="photos">' + _("Include all photos") + '</option>',
-                        '<option value="all">' + _("Include all photos, documents and PDFs") + '</option>' ].join("\n") },
+                        '<option value="all">' + _("Include all media") + '</option>' ].join("\n") }
                 ], { full_width: false }),
                 tableform.buttons_render([
                    { id: "submit", icon: "save", text: _("Export") }

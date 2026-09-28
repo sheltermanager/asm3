@@ -237,7 +237,7 @@ $(function() {
                         { id: "olocale", post_field: "Locale", label: _("Locale"), type: "select", options: this.two_pair_options(controller.locales, true), callout: _("The locale determines the language ASM will use when displaying text, dates and currencies."), classes: "asm-iconselectmenu" },
                         { type: "nextcol" },
                         { type: "raw", justwidget: true, markup: '<tr><td colspan="2" style="min-width: 474px;"><div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div></td></tr>'},
-                    ]},
+                    ] },
                     { id: "tab-accounts", title: _("Accounts"), fields: [
                         { id: "disableaccounts", post_field: "rc:DisableAccounts", label: _("Enable accounts functionality"), type: "check", fullrow: true },
                         { id: "createdonations", post_field: "CreateDonationTrx", label: _("Creating payments and payments types creates matching accounts and transactions"), type: "check", fullrow: true },
@@ -318,7 +318,10 @@ $(function() {
                         { id: "aashoworiginalowner", post_field: "AddAnimalsShowOriginalOwner", label: _("Show the original owner field"), type: "check" },
                         { id: "aashowbroughtinby", post_field: "AddAnimalsShowBroughtInBy", label: _("Show the brought in by field"), type: "check" },
                         { id: "aashowhold", post_field: "AddAnimalsShowHold", label: _("Show the hold fields"), type: "check" },
-                        { id: "warnsimilaranimal", post_field: "WarnSimilarAnimalName", label: _("Warn if the name of the new animal is similar to one entered recently"), type: "check" }
+                        { id: "warnsimilaranimal", post_field: "WarnSimilarAnimalName",
+                            label: _("Warn if the name of the new animal is similar to one entered within the last {0} days").replace("{0}", tableform.render_number({id: "warnsimilaranimalperiod", post_field: "WarnSimilarAnimalNamePeriod", justwidget: true})),
+                            type: "check"
+                        }
                     ]},
                     { id: "tab-ageegroups", title: _("Age Groups"), info: _("Age groups are assigned based on the age of an animal. The figure in the left column is the upper limit in years for that group."), fields: [
                         { id: "agegroup1", post_field: "AgeGroup1", label: "", type: "text", placeholder: _("Upper Age"), 
@@ -396,8 +399,12 @@ $(function() {
                          { id: "disableshortcodes", post_field: "DisableShortCodesControl", label: _("Remove short shelter code box from the animal details screen"), type: "check", fullrow: true },
                          { id: "shelterviewshowcodes", post_field: "ShelterViewShowCodes", label: _("Show codes on the shelter view screen"), type: "check", fullrow: true },
                          { id: "lockcodes", post_field: "LockCodes", label: _("Once assigned, codes cannot be changed"), type: "check", fullrow: true },
-                         { id: "duplicatechip", post_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check", fullrow: true },
-                         { id: "uniquelicence", post_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check", fullrow: true }
+                         { id: "duplicatechip", post_field: "AllowDuplicateMicrochip", label: _("Allow duplicate microchip numbers"), type: "check", fullrow: true }
+                    ]},
+                    { id: "tab-animalcontrol", title: _("Animal Control"), fields: [
+                        { id: "uniquelicence", post_field: "rc:UniqueLicenceNumbers", label: _("Allow duplicate license numbers"), type: "check", fullrow: true },
+                        { id: "restrictlicenserenewal", post_field: "RestrictLicenseRenewal", label: _("Only allow licenses to renew licenses of the same type"), type: "check", fullrow: true }
+                          
                     ]},
                     { id: "tab-animalemblems", title: _("Animal Emblems"), fields: [
                         { type: "raw", markup: html.textbar(_("Animal emblems are the little icons that appear next to animal names in shelter view, the home page and search results."), {maxwidth: "470px"}) },
@@ -952,7 +959,7 @@ $(function() {
                     { id: "tab-quicklinks", title: _("Quick Links"), info: _("Quicklinks are shown on the home page and allow quick access to areas of the system."), fields: [
                         { id: "disablequicklinkshome", post_field: "QuicklinksHomeScreen", label: _("Show quick links on the home page"), type: "check", fullrow: true }, 
                         { id: "disablequicklinksall", post_field: "QuicklinksAllScreens", label: _("Show quick links on all pages"), type: "check", fullrow: true }, 
-                        { id: "quicklinksid", post_field: "QuicklinksID", label: _("Show quick links on all pages"), type: "selectmulti", options: this.quicklink_options() }, 
+                        { id: "quicklinksid", post_field: "QuicklinksID", label: _("Quicklinks"), type: "selectmulti", options: this.quicklink_options() }, 
                     ]}, 
                     { id: "tab-reminders", title: _("Reminder Emails"), info: _("Reminder emails can be automatically sent to groups of people a number of days before or after a key event."), fields: [
                         { type: "raw", markup: '<tr><th colspan="2"></th><th>' + _("Days") + '</th><th>' + _("Template") + '</th></tr>' }, 
@@ -1071,7 +1078,7 @@ $(function() {
                         { id: "watermarkfontoffset", post_field: "WatermarkFontOffset", label: _("Watermark name offset"), type: "number", min: 0, max: 100, callout: _("Offset from left edge of the image") }, 
                         { id: "watermarkfontmaxsize", post_field: "WatermarkFontMaxSize", label: _("Watermark name max font size"), type: "number", min: 0, max: 999 }
                     ]},
-                ], {full_width: false}),
+                ], {full_width: false, searchable: true}),
                 html.content_footer()
             ].join("\n");
         },
@@ -1222,8 +1229,7 @@ $(function() {
 
         },
 
-        sync: function() {
-        },
+        sync: function() {},
 
         delay: function() {
             // Show the mini map

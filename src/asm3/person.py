@@ -23,46 +23,6 @@ from datetime import datetime
 ASCENDING = 0
 DESCENDING = 1
 
-def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> Results:
-    """
-    Batch deletes people from the bulk form.
-    Returns the number of successful deletions
-    plus the number skipped.
-    """
-    deleted = []
-    skippedids = []
-    skippeddict = {}
-    for personid in post.integer_list("people"):
-        try:
-            delete_person(dbo, username, personid, remove_movements=True)
-            deleted.append(personid)
-        except asm3.utils.ASMValidationError as error:
-            skippedids.append(personid)
-            skippeddict[personid] = error.msg
-            asm3.utils.web_context().status = "200 OK"
-    if len(skippedids):
-        skipped = dbo.query(
-            f"SELECT ID, OwnerName FROM owner WHERE ID IN ({dbo.sql_placeholders(skippedids)})",
-            skippedids
-        )
-    for row in skipped:
-        row.ERROR = skippeddict[row.ID]
-    return skipped
-  
-def get_owned_animals(dbo: Database, personid: int):
-    return dbo.query(
-        "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
-        "FROM adoption ad " \
-        "INNER JOIN animal an ON ad.AnimalID = an.ID " \
-        "WHERE ad.OwnerID = ? AND an.DeceasedDate IS NULL AND ad.ReturnDate IS NULL " \
-        "AND ad.MovementType IN (?, ?) " \
-        "UNION SELECT an.ID AS AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, 3 AS LinkType, an.CreatedDate AS SortDate " \
-        "FROM animal an " \
-        "WHERE an.DeceasedDate IS NULL AND an.NonShelterAnimal = 1 AND an.OwnerID = ? " \
-        "ORDER BY SortDate DESC",
-        (personid, asm3.movement.ADOPTION, asm3.movement.FOSTER, personid)
-    )
-
 def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting
@@ -96,6 +56,22 @@ def get_person_query(dbo: Database) -> str:
         "LEFT OUTER JOIN media doc ON doc.LinkID = o.ID AND doc.LinkTypeID = 3 AND doc.DocPhoto = 1 " \
         "LEFT OUTER JOIN site si ON o.SiteID = si.ID " \
         "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % ( dbo.sql_today(), dbo.sql_today() )
+
+def get_person_lookingfor_query(dbo: Database) -> str:
+    """
+    Returns the SELECT and JOIN commands necessary for selecting
+    personlookingfor rows with resolved lookups.
+    """
+    return "SELECT o.ID AS PersonID, o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.OwnerTown, o.OwnerCounty, o.OwnerCountry, o.HomeTelephone, " \
+        "o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, o.MobileTelephone, o.WorkTelephone, o.EmailAddress, o.DateOfBirth, o.IdentificationNumber, " \
+        "o.OwnerTitle2, o.OwnerInitials2, o.OwnerForeNames2, o.OwnerSurname2, o.MobileTelephone2, o.WorkTelephone2, o.EmailAddress2, o.DateOfBirth2, o.IdentificationNumber2, " \
+        "o.IsAdopter, o.IsBanned, o.IsDonor,o.IsFosterer, o.IDCheck, o.DateLastHomeChecked, o.IsMember, o.IsVolunteer, o.IsDeceased, " \
+        "a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.AgeGroup, a.SpeciesID, " \
+        "olf.MatchSummary " \
+        "FROM ownerlookingfor olf " \
+        "INNER JOIN owner o ON olf.OwnerID = o.ID " \
+        "INNER JOIN animal a ON olf.AnimalID = a.ID " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID "
 
 def get_person_export_query(dbo: Database) -> str:
     """ Used by the sql_dump endpoint to export people """
@@ -160,6 +136,24 @@ def get_homechecked(dbo: Database, personid: int) -> Results:
     """
     return dbo.query("SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
         "WHERE HomeCheckedBy = ? ORDER BY DateLastHomeChecked DESC", [personid])
+
+def get_owned_animals(dbo: Database, personid: int):
+    """
+    Return a list of animals who are currently with personid, either via adoption, foster
+    or being the non-shelter owner.
+    This is called by the person tabs endpoints to indicate owned animals in the banner.
+    """
+    return dbo.query(
+        "SELECT ad.AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, ad.MovementType AS LinkType, ad.MovementDate AS SortDate " \
+        "FROM adoption ad " \
+        "INNER JOIN animal an ON ad.AnimalID = an.ID " \
+        "WHERE ad.OwnerID = ? AND an.DeceasedDate IS NULL AND ad.ReturnDate IS NULL " \
+        "AND ad.MovementType IN (?, ?) " \
+        "UNION SELECT an.ID AS AnimalID, an.ShelterCode, an.ShortCode, an.AnimalName, 3 AS LinkType, an.CreatedDate AS SortDate " \
+        "FROM animal an " \
+        "WHERE an.DeceasedDate IS NULL AND an.NonShelterAnimal = 1 AND an.OwnerID = ? " \
+        "ORDER BY SortDate DESC",
+        (personid, asm3.movement.ADOPTION, asm3.movement.FOSTER, personid) )
 
 def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname: str = "", forenames: str = "", address: str = "", 
                        siteid: int = 0, checkcouple: bool = False, checkmobilehome: bool = False, checkforenames: bool = True) -> Results:
@@ -1349,30 +1343,11 @@ def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) 
     """
     def bi(b): 
         return b and 1 or 0
+    
+    def fb(v):
+        return bi(v in flags)
 
     l = dbo.locale
-
-    homechecked = bi("homechecked" in flags)
-    banned = bi("banned" in flags)
-    dangerous = bi("dangerous" in flags)
-    adopter = bi("adopter" in flags)
-    coordinator = bi("coordinator" in flags)
-    volunteer = bi("volunteer" in flags)
-    member = bi("member" in flags)
-    homechecker = bi("homechecker" in flags)
-    donor = bi("donor" in flags)
-    driver = bi("driver" in flags)
-    deceased = bi("deceased" in flags)
-    shelter = bi("shelter" in flags)
-    aco = bi("aco" in flags)
-    staff = bi("staff" in flags)
-    fosterer = bi("fosterer" in flags)
-    retailer = bi("retailer" in flags)
-    vet = bi("vet" in flags)
-    giftaid = bi("giftaid" in flags)
-    supplier = bi("supplier" in flags)
-    excludefrombulkemail = bi("excludefrombulkemail" in flags)
-    sponsor = bi("sponsor" in flags)
     flagstr = "|".join(sorted(flags)) + "|"
 
     # If the option is on and the flags have changed, log it
@@ -1383,27 +1358,27 @@ def update_flags(dbo: Database, username: str, personid: int, flags: List[str]) 
                 _("Flags changed from '{0}' to '{1}'", l).format(oldflags, flagstr))
 
     dbo.update("owner", personid, {
-        "IDCheck":                  homechecked,
-        "ExcludeFromBulkEmail":     excludefrombulkemail,
-        "IsAdopter":                adopter,
-        "IsAdoptionCoordinator":    coordinator,
-        "IsBanned":                 banned,
-        "IsDangerous":              dangerous,
-        "IsVolunteer":              volunteer,
-        "IsMember":                 member,
-        "IsHomeChecker":            homechecker,
-        "IsDeceased":               deceased,
-        "IsDonor":                  donor,
-        "IsDriver":                 driver,
-        "IsShelter":                shelter,
-        "IsACO":                    aco,
-        "IsStaff":                  staff,
-        "IsFosterer":               fosterer,
-        "IsRetailer":               retailer,
-        "IsVet":                    vet,
-        "IsSponsor":                sponsor,
-        "IsGiftAid":                giftaid,
-        "IsSupplier":               supplier,
+        "IDCheck":                  fb("homechecked"),
+        "ExcludeFromBulkEmail":     fb("excludefrombulkemail"),
+        "IsAdopter":                fb("adopter"),
+        "IsAdoptionCoordinator":    fb("coordinator"),
+        "IsBanned":                 fb("banned"),
+        "IsDangerous":              fb("dangerous"),
+        "IsVolunteer":              fb("volunteer"),
+        "IsMember":                 fb("member"),
+        "IsHomeChecker":            fb("homechecker"),
+        "IsDeceased":               fb("deceased"),
+        "IsDonor":                  fb("donor"),
+        "IsDriver":                 fb("driver"),
+        "IsShelter":                fb("shelter"),
+        "IsACO":                    fb("aco"),
+        "IsStaff":                  fb("staff"),
+        "IsFosterer":               fb("fosterer"),
+        "IsRetailer":               fb("retailer"),
+        "IsVet":                    fb("vet"),
+        "IsSponsor":                fb("sponsor"),
+        "IsGiftAid":                fb("giftaid"),
+        "IsSupplier":               fb("supplier"),
         "AdditionalFlags":          flagstr
     }, username)
 
@@ -1793,6 +1768,32 @@ def delete_person(dbo: Database, username: str, personid: int, remove_movements:
     dbo.delete("owner", personid, username)
     # asm3.dbfs.delete_path(dbo, "/owner/%d" % personid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
+def delete_people_from_form(dbo: Database, username: str, post: PostedData) -> Results:
+    """
+    Batch deletes people from the bulk form.
+    Returns the number of successful deletions
+    plus the number skipped.
+    """
+    deleted = []
+    skippedids = []
+    skippeddict = {}
+    for personid in post.integer_list("people"):
+        try:
+            delete_person(dbo, username, personid, remove_movements=True)
+            deleted.append(personid)
+        except asm3.utils.ASMValidationError as error:
+            skippedids.append(personid)
+            skippeddict[personid] = error.msg
+            asm3.utils.web_context().status = "200 OK"
+    if len(skippedids):
+        skipped = dbo.query(
+            f"SELECT ID, OwnerName FROM owner WHERE ID IN ({dbo.sql_placeholders(skippedids)})",
+            skippedids
+        )
+    for row in skipped:
+        row.ERROR = skippeddict[row.ID]
+    return skipped
+  
 def insert_rota_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a rota record from posted form data

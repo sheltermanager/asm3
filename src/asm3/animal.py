@@ -1294,6 +1294,9 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_filter("goodwithchildren", "a.IsGoodWithChildren = 0")
     ss.add_filter("goodwithdogs", "a.IsGoodWithDogs = 0")
     ss.add_filter("goodwithcats", "a.IsGoodWithCats = 0")
+    ss.add_filter("goodwithelderly", "a.IsGoodWithElderly = 0")
+    ss.add_filter("goodtraveller", "a.IsGoodTraveller = 0")
+    ss.add_filter("cratetrained", "a.IsCrateTrained = 0")
     ss.add_filter("housetrained", "a.IsHouseTrained = 0")
     ss.add_filter("showtransfersonly", "a.IsTransfer = 1")
     ss.add_filter("showpickupsonly", "a.IsPickup = 1")
@@ -1304,6 +1307,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_filter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
     ss.add_filter("heartwormneg", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 1")
     ss.add_filter("unaltered", "a.Neutered = 0")
+    ss.add_filter("unmicrochipped", "a.Identichipped = 0")
     ss.add_words("comments", "a.AnimalComments")
     ss.add_words("hiddencomments", "a.HiddenAnimalDetails")
     ss.add_words("features", "a.Markings")
@@ -1332,9 +1336,13 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     if post["sheltercode"] != "":
         ilike1 = dbo.sql_ilike("a.ShelterCode", "?")
         ilike2 = dbo.sql_ilike("ShelterCode", "?")
-        ss.ands.append(f"({ilike1} OR EXISTS (SELECT ShelterCode FROM animalentry WHERE {ilike2} AND AnimalID = a.ID))")
-        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
-        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
+        ss.ands.append(f"( ( ({ilike1} OR EXISTS (SELECT ShelterCode FROM animalentry WHERE {ilike2} AND AnimalID = a.ID)) ) OR ( (LOWER(a.ShortCode) = ? OR EXISTS (SELECT ShortCode FROM animalentry WHERE LOWER(ShortCode) = ? AND AnimalID = a.ID)) ) )")
+        ss.values += [
+            "%%%s%%" % post["sheltercode"].lower(),
+            "%%%s%%" % post["sheltercode"].lower(),
+            post["sheltercode"].lower(),
+            post["sheltercode"].lower()
+        ]
 
     if post["insuranceno"] != "":
         ilike = dbo.sql_ilike("InsuranceNumber", "?")
@@ -2646,7 +2654,7 @@ def get_animalconditions(dbo: Database, animalid: int, sort: int = ASCENDING) ->
     """
     Returns animalcondition records for the given animal:
     """
-    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, " \
+    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, c.Description, " \
         "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate " \
         "FROM animalcondition ac INNER JOIN lkcondition c ON ac.ConditionID = c.ID " \
         "INNER JOIN lksconditiontype ct ON c.ConditionTypeID = ct.ID " \
@@ -3138,11 +3146,12 @@ def get_random_name(dbo: Database, sex: int = 0) -> str:
 
 def get_recent_with_name(dbo: Database, name: str) -> Results:
     """
-    Returns a list of animals who have a brought in date in the last 3 weeks OR are on shelter
+    Returns a list of animals who have a recent brought in date OR are on shelter
     and have the name given.
     """
+    recentoffset = asm3.configuration.warn_similar_animal_name_period(dbo) * -1
     return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
-        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) LIKE ?", (dbo.today(offset=-21), name.lower()))
+        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) = ?", (dbo.today(offset=recentoffset), name.lower()))
 
 def get_recent_changes(dbo: Database, months: int = 1, include_additional_fields: bool = True) -> Results:
     """ Returns all animal records that were changed in the last months """
@@ -3618,16 +3627,13 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             asm3.diary.complete_diary_notes_for_animal(dbo, username, aid)
 
     # Sort out any flags
-    def bi(b): 
+    def bi(b):
         return b and 1 or 0
 
+    def fb(v):
+        return bi(v in flags)
+
     flags = post["flags"].split(",")
-    courtesy = bi("courtesy" in flags)
-    crueltycase = bi("crueltycase" in flags)
-    notforadoption = bi("notforadoption" in flags)
-    notforregistration = bi("notforregistration" in flags)
-    nonshelter = bi("nonshelter" in flags)
-    quarantine = bi("quarantine" in flags)
     flagstr = "|".join(flags) + "|"
 
     # If the option is on and the flags have changed, log it
@@ -3640,16 +3646,16 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # day. Non shelter animals don't have visible movements and this prevents a bug where
     # an open foster/retailer movement on a non-shelter animal can make it publish for adoption
     # when the "include fosters/retailers" publishing options are on.
-    if nonshelter == 1:
+    if fb("nonshelter"):
         dbo.execute("UPDATE adoption SET ReturnDate = MovementDate WHERE MovementType IN (2,8) AND AnimalID = ?", [aid])
 
     dbo.update("animal", aid, {
-        "NonShelterAnimal":     nonshelter,
-        "IsNotAvailableForAdoption": notforadoption,
-        "IsNotForRegistration": notforregistration,
-        "IsQuarantine":         quarantine,
-        "IsCourtesy":           courtesy,
-        "CrueltyCase":          crueltycase,
+        "NonShelterAnimal":     fb("nonshelter"),
+        "IsNotAvailableForAdoption": fb("notforadoption"),
+        "IsNotForRegistration": fb("notforregistration"),
+        "IsQuarantine":         fb("quarantine"),
+        "IsCourtesy":           fb("courtesy"),
+        "CrueltyCase":          fb("crueltycase"),
         "AdditionalFlags":      flagstr,
         "ShelterCode":          post["sheltercode"],
         "ShortCode":            post["shortcode"],

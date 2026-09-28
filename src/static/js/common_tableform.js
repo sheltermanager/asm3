@@ -1927,9 +1927,18 @@ const tableform = {
         return tableform._render_formfield(v, d);
     },
 
-    render_tabs: function(l) {
+    render_tabs: function(l, options) {
+        if (options.searchable) {
+            l.push({
+                id: "tab-tabsearch",
+                title: '<span class="ui-button-icon ui-icon ui-icon-search"></span>',
+                fields: [
+                    { label: _("Search tabs"), type: "text", classes: "asm-tab-search" },
+                ]
+            });
+        }
         let h = [];
-        h.push('<div class="asm-tabs">');
+        h.push('<div class="asm-tabs" data-searchable="' + options.searchable + '">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
             if (v.hideif && v.hideif()) { return; }

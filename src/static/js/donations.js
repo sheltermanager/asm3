@@ -26,7 +26,7 @@ $(function() {
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymentmethods }},
                     { json_field: "FUNDEDBYOWNERDONATIONID", post_field: "funding", label: _("Fund"), type: "select", options: { displayfield: "FUNDNAME", valuefield: "ID",
-                        rows: controller.fundablepayments, prepend: '<option value="0">' + _("None") + '</option>' },
+                        rows: controller.fundablepayments, prepend: '<option value="0"></option>' },
                         callout: _("Mark this payment as funded by a specific donation"),
                         hideif: function() { return !config.bool("FundedPaymentsEnabled"); }
                     },
@@ -121,7 +121,7 @@ $(function() {
                 columns: [
                     { field: "DONATIONNAME", display: _("Type"),
                         formatter: function(row) {
-                            if (row.FUNDEDBYOWNERDONATIONID) {
+                            if (row.FUNDEDBYOWNERDONATIONID && row.FUNDEDBYOWNERDONATIONID != 0) {
                                 return tableform.table_render_edit_link(row.ID, row.DONATIONNAME, " " + html.icon("donation", _("This payment was funded")));
                             } else {
                                 return tableform.table_render_edit_link(row.ID, row.DONATIONNAME);

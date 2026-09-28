@@ -416,7 +416,7 @@ select:disabled, input:disabled, textarea:disabled {
     white-space: nowrap;
 }
 
-.asm-flag-banned, .asm-flag-deceased, .asm-flag-incident, .asm-flag-investigation {
+.asm-flag-banned, .asm-flag-deceased, .asm-flag-incident, .asm-flag-investigation, .asm-flag-notforadoption {
     color: red;
 }
 
@@ -1180,6 +1180,15 @@ select:disabled, input:disabled, textarea:disabled {
 }
 .asm-reclaimedpin {
     filter: hue-rotate(90deg); /* Purple */
+}
+
+.asm-search-hidden {
+    display: none;
+}
+
+.asm-search-highlight {
+    background-color: yellow;
+    color: black;
 }
 
 /** Don't display the menu burger button when >480px */

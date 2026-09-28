@@ -1026,6 +1026,27 @@ $.fn.selectmulti = asm_widget({
         t.change(); 
     },
 
+    /** Leave widget visible but non-editable */
+    disable: function(t) {
+        t.parent().find(".asmSelect").hide();
+        t.parent().find("ol").hide();
+        let selected = [];
+        $.each(t.parent().find("li"), function(i, v) {
+            selected.push('<span class="bsmListItem-custom ro" style="cursor: default;">' + $(v).text().slice(0, -1) + '</span>');
+        });
+        t.parent().css("padding-bottom", "2px");
+        t.parent().css("padding-top", "5px");
+        t.parent().append(selected.join(""));
+    },
+
+    /** Make widget editable */
+    enable: function(t) {
+        t.parent().find(".asmSelect").show();
+        t.parent().find("ol").show();
+        t.parent().find(".ro").remove();
+        t.parent().css("padding", "auto");
+    },
+
     /** Get or set the value, which is a pipe delimited list (comma delimited also acceptable for setting) */
     value: function(t, newval) {
         if (newval !== undefined) {
@@ -1285,6 +1306,39 @@ $.fn.asmtabs = asm_widget({
             t.trigger("changeTab", [ self.active(t) ]);
         };
         t.tabs(options);
+        if (t.attr("data-searchable") == "true") {
+            t.find(".asm-tab-search").show();
+            $('li[aria-controls="tab-tab-tabsearch"]').on("click", function() {
+                $("#tab-tab-tabsearch input").focus();
+            });
+            t.find(".asm-tab-search").on("keyup", function() {
+                let searchkey = $(".asm-tab-search").val();
+                $.each($(".ui-tabs-panel"), function(i, p) {
+                    let searchkeyfound = false;
+                    $.each($(p).find("label"), function(i, l) {
+                        if (!searchkey || l.closest(".ui-tabs-panel").id == "tab-tab-tabsearch") {
+                            searchkeyfound = true;
+                            $(l).removeClass("asm-search-highlight");
+                        } else if ( $(l).text().toLowerCase().includes(searchkey.toLowerCase()) ) {
+                            searchkeyfound = true;
+                            $(l).addClass("asm-search-highlight");
+                        } else {
+                            $(l).removeClass("asm-search-highlight");
+                        }
+                    });
+                    let panelid = p.id;
+                    if (!searchkeyfound && panelid != "tab-tab-tabsearch") {
+                        t.find('li[aria-controls="' + panelid + '"').addClass("asm-search-hidden");
+                        $("#" + panelid).hide();
+                    } else {
+                        t.find('li[aria-controls="' + panelid + '"').removeClass("asm-search-hidden");
+                        if (t.find('li[aria-controls="' + panelid + '"').hasClass("ui-state-active")) {
+                            $("#" + panelid).show();
+                        }
+                    }
+                });
+            });
+        }
     },
 
     /** Makes the pane active that contains node n - a shortcut for active(index()) */

@@ -784,7 +784,10 @@ class configjs(ASMEndpoint):
                 asm3.reports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
                 asm3.reports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser),
                 asm3.reports.get_internalforms_menu(dbo)),
-            "publishers": asm3.publish.PUBLISHER_LIST
+            "publishers": asm3.publish.PUBLISHER_LIST,
+            "animalflags": list(asm3.lookups.ANIMAL_FLAGS.items()),
+            "personflags": list(asm3.lookups.PERSON_FLAGS.items()),
+            
         }
         return "const asm = %s;" % asm3.utils.json(c)
 
@@ -2775,7 +2778,7 @@ class boarding_availability(JSONEndpoint):
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "rows": rows,
-            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+            "templates": asm3.template.get_document_templates(dbo, "boarding")
         }
     
 class calendarview(JSONEndpoint):
@@ -4891,14 +4894,10 @@ class lookups(JSONEndpoint):
         }
 
     def post_create(self, o):
-        post = o.post
-        return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
+        return asm3.lookups.upsert_lookup_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
-        post = o.post
-        asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"), post.floating("taxrate"), post.integer("conditiontype"), post.integer("iszoonotic"))
+        asm3.lookups.upsert_lookup_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
@@ -9164,7 +9163,7 @@ class waitinglist_new(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
-            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo),
+            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo)
         }
 
     def post_all(self, o):

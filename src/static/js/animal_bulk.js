@@ -191,6 +191,7 @@ $(function() {
                     let response = await common.ajax_post("animal_bulk", formdata);
                     header.hide_loading();
                     header.show_info(_("{0} animals successfully deleted.").replace("{0}", response));
+                    $("#animals").animalchoosermulti("remove_selected");
                     $("#animals").animalchoosermulti("clear");
                 }
                 finally {

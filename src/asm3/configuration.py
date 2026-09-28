@@ -397,6 +397,7 @@ DEFAULTS = {
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",
     "ReservesOverdueDays": "7",
+    "RestrictLicenseRenewal": "No",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
     "ReturnFostersOnTransfer": "Yes",
@@ -481,6 +482,7 @@ DEFAULTS = {
     "WarnOOPostcode": "Yes",
     "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
+    "WarnSimilarAnimalNamePeriod": "21",
     "WatermarkFontFile": "dejavu/DejaVuSans-Bold.ttf",
     "WatermarkFontFillColor": "white",
     "WatermarkFontMaxSize": "180",
@@ -1712,6 +1714,9 @@ def rescuegroups_password(dbo: Database) -> str:
 def resize_images_spec(dbo: Database) -> str:
     return cstring(dbo, "ResizeImagesSpec")
 
+def restrict_license_renewal(dbo: Database) -> bool:
+    return cboolean(dbo, "RestrictLicenseRenewal", DEFAULTS["RestrictLicenseRenewal"] == "Yes")
+
 def retailer_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
@@ -1955,6 +1960,9 @@ def waiting_list_urgency_update_period(dbo: Database) -> int:
 
 def warn_no_homecheck(dbo: Database) -> bool:
     return cboolean(dbo, "WarnNoHomeCheck", DEFAULTS["WarnNoHomeCheck"] == "Yes")
+
+def warn_similar_animal_name_period(dbo: Database) -> int:
+    return cint(dbo, "WarnSimilarAnimalNamePeriod", 21)
 
 def watermark_x_offset(dbo: Database) -> int:
     return cint(dbo, "WatermarkXOffset", DEFAULTS["WatermarkXOffset"])

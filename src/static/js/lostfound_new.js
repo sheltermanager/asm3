@@ -165,6 +165,18 @@ $(function() {
                 lostfound_new.update_breed_select();
                 additional.toggle_elements_by_species("additional", $("#species").val());
             });
+            
+            // Auto fill area and postcode if not set
+            $("#owner").on("change", async function(event, rec) {
+                let areainput = $("#arealost");
+                if ( lostfound_new.mode == "found" ) {
+                    areainput = $("#areafound");
+                }
+                if ( !areainput.val() && !$("#areapostcode").val() ) {
+                    areainput.val(rec.OWNERADDRESS);
+                    $("#areapostcode").val(rec.OWNERPOSTCODE);
+                }
+            });
         },
 
         sync: function() {
