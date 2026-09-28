@@ -1123,7 +1123,7 @@ const tableform = {
      *        id: "name", // id attribute for the widget - if not supplied, post_field is used
      *        label: "label", // if label contains <label markup, overrides generation and uses supplied value instead
      *        labelpos: "before|after|above", (only valid for textarea (before|above) and check (before|after))
-     *        labelclasses: "exraclass", extra classes to apply to the label
+     *        labelclasses: "extraclass", extra classes to apply to the label
      *        type: "check|text|textarea|richtextarea|date|time|currency|number|intnumber|select|animal|person|raw|nextcol", 
      *        rowid: "thisrow", (id for the row containing the label/field)
      *        readonly: false, (shown in dialog_show_add, hidden in dialog_show_edit)
