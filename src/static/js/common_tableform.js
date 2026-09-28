@@ -1368,13 +1368,7 @@ const tableform = {
                     v.type == "htmleditor" || 
                     v.type == "sqleditor") && 
                     v.labelpos && v.labelpos == "above") {
-            return tr + '<td colspan="2" title="' + _("F11 to toggle fullscreen") + '">' + label + (v.label ? '<br>' : '') + h + closer;
-        }
-        else if (v.type == "textarea" || 
-                    v.type == "richtextarea" || 
-                    v.type == "htmleditor" || 
-                    v.type == "sqleditor") {
-            return tr + td + label + '</td>' + td + '<div title="' + _("F11 to toggle fullscreen") + '">' + h + '</div>' + closer;
+            return tr + '<td colspan="2">' + label + (v.label ? '<br>' : '') + h + closer;
         }
         else {
             return tr + td + label + '</td>' + td + h + closer;
