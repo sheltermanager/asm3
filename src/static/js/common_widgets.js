@@ -1306,6 +1306,39 @@ $.fn.asmtabs = asm_widget({
             t.trigger("changeTab", [ self.active(t) ]);
         };
         t.tabs(options);
+        if (t.attr("data-searchable") == "true") {
+            t.find(".asm-tab-search").show();
+            $('li[aria-controls="tab-tab-tabsearch"]').on("click", function() {
+                $("#tab-tab-tabsearch input").focus();
+            });
+            t.find(".asm-tab-search").on("keyup", function() {
+                let searchkey = $(".asm-tab-search").val();
+                $.each($(".ui-tabs-panel"), function(i, p) {
+                    let searchkeyfound = false;
+                    $.each($(p).find("label"), function(i, l) {
+                        if (!searchkey || l.closest(".ui-tabs-panel").id == "tab-tab-tabsearch") {
+                            searchkeyfound = true;
+                            $(l).removeClass("asm-search-highlight");
+                        } else if ( $(l).text().toLowerCase().includes(searchkey.toLowerCase()) ) {
+                            searchkeyfound = true;
+                            $(l).addClass("asm-search-highlight");
+                        } else {
+                            $(l).removeClass("asm-search-highlight");
+                        }
+                    });
+                    let panelid = p.id;
+                    if (!searchkeyfound && panelid != "tab-tab-tabsearch") {
+                        t.find('li[aria-controls="' + panelid + '"').addClass("asm-search-hidden");
+                        $("#" + panelid).hide();
+                    } else {
+                        t.find('li[aria-controls="' + panelid + '"').removeClass("asm-search-hidden");
+                        if (t.find('li[aria-controls="' + panelid + '"').hasClass("ui-state-active")) {
+                            $("#" + panelid).show();
+                        }
+                    }
+                });
+            });
+        }
     },
 
     /** Makes the pane active that contains node n - a shortcut for active(index()) */

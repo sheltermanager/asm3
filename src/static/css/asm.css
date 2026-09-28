@@ -1182,6 +1182,15 @@ select:disabled, input:disabled, textarea:disabled {
     filter: hue-rotate(90deg); /* Purple */
 }
 
+.asm-search-hidden {
+    display: none;
+}
+
+.asm-search-highlight {
+    background-color: yellow;
+    color: black;
+}
+
 /** Don't display the menu burger button when >480px */
 #asm-menu-burger {
     display: none;

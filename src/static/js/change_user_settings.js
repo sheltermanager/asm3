@@ -110,7 +110,7 @@ $(function() {
                         { rowclasses: "enable2fa", post_field: "twofavalidcode", type: "text", label: _("Enter the code from your app") },
                         { rowclasses: "disable2fa", post_field: "twofavalidpassword", type: "password", label: _("Confirm Password") }
                     ]}
-                ], { full_width: false }),
+                ], { full_width: false, searchable: false }),
                 html.content_footer()
             ].join("\n");
         },
