@@ -40,7 +40,7 @@ def _send_email_from_template(dbo: Database, to: str, subject: str, body: str,
     loglinkid: The link id to use for the log.
     logmsg: The log message
     """
-    mt = asm3.wordprocessor.extract_mail_tokens(body)
+    mt = asm3.wordprocessor.extract_tokens(body)
     fromadd = mt["FROM"] or asm3.configuration.email(dbo)
     cc = mt["CC"] or ""
     bcc = mt["BCC"] or ""
