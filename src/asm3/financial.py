@@ -1191,6 +1191,11 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
     if d.VATAMOUNT is not None and d.VATAMOUNT > 0 and not isrefund:
         amount -= d.VATAMOUNT
 
+    # Is there a fee portion? If so, remove it from the amount before creating
+    # the transaction as we're going to do a separate transaction for the fee
+    if d.FEE is not None and d.FEE > 0 and not isrefund:
+        amount -= d.FEE
+
     # Create the transaction
     tid = dbo.insert("accountstrx", {
         "TrxDate":              d.DATE,
