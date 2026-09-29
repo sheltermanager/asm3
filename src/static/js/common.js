@@ -1133,13 +1133,16 @@ const common = {
      * record gets its own browser tab, but links within it still work.
      */
     inject_target: function() {
+        console.log("Inject target");
         var recpages = [ "animal", "incident", "person", "waitinglist", "lostanimal", "foundanimal" ];
         var href, anchor, targetname, r, url = common.current_url();
         if (config.bool("RecordNewBrowserTab")) {
-            $("a").each(function() {
+            $("a").each(function(i, a) {
                 // We're only interested in links that have an href and no target
+                if ($(a).text() == "U2023006 - Bisto") { console.log(a); }
                 if ($(this).attr("href") && !$(this).attr("target")) {
                     href = String($(this).attr("href"));
+                    if ($(a).text() == "U2023006 - Bisto") { console.log("href = " + href); }
                     anchor = $(this);
                     $.each(recpages, function(i, v) {
                         // If the URL target begins with one of our recpages, it's a candidate
@@ -1148,8 +1151,17 @@ const common = {
                             // If this is not a find page and the current url we're looking at 
                             // begins with this base page, don't do anything - we don't want 
                             // it to open in a new tab as it's a satellite tab
+                            if ($(a).text() == "U2023006 - Bisto") {
+                                console.log("Processing URL = " + url);
+                            }
                             if (url.indexOf("/" + v + "_find") == -1 && url.indexOf("/" + v) != -1) {
+                                if ($(a).text() == "U2023006 - Bisto") {
+                                    console.log("Skipping processing - " + url.indexOf("/" + v + "_find") + ", " + url.indexOf("/" + v));
+                                }
                                 return;
+                            }
+                            if ($(a).text() == "U2023006 - Bisto") {
+                                console.log("Continuing");
                             }
                             // Create targetname from URL, throwing away any
                             // portion after an underscore to get animal52, etc.
@@ -1162,6 +1174,13 @@ const common = {
                             }
                             targetname += href.substring(href.lastIndexOf("?")+1);
                             anchor.attr("target", targetname);
+                            if ($(a).text() == "U2023006 - Bisto") {
+                                console.log("Processed - href.indexOf(v) = " + href.indexOf(v) + ", href.indexOf(\"?\") = " + href.indexOf("?"));
+                            }
+                        } else {
+                            if ($(a).text() == "U2023006 - Bisto") {
+                                console.log("Skipped - href.indexOf(\"" + v + "\") = " + href.indexOf(v) + ", href.indexOf(\"?\") = " + href.indexOf("?"));
+                            }
                         }
                     });
                 }
