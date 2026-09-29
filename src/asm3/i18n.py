@@ -369,12 +369,12 @@ def format_currency(locale: str, value: int, includeSymbol: bool = True) -> str:
         f = float(i)
     except:
         pass
-    dp = str(get_currency_dp(locale))
+    dp = get_currency_dp(locale)
     symbol = get_currency_symbol(locale)
     f = f / (pow(10, dp))
     # Start with a basic currency format with comma groupings every 3 digits
     # and the right number of decimal places for the locale
-    fstr = "{:,." + dp + "f}"
+    fstr = "{:,." + str(dp) + "f}"
     # Add the currency symbol to the format in the correct spot
     if includeSymbol:
         if get_currency_prefix(locale) == CURRENCY_PREFIX:
