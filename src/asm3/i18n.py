@@ -369,9 +369,9 @@ def format_currency(locale: str, value: int, includeSymbol: bool = True) -> str:
         f = float(i)
     except:
         pass
-    f = f / 100
     dp = str(get_currency_dp(locale))
     symbol = get_currency_symbol(locale)
+    f = f / (pow(10, dp))
     # Start with a basic currency format with comma groupings every 3 digits
     # and the right number of decimal places for the locale
     fstr = "{:,." + dp + "f}"
