@@ -63,7 +63,7 @@ def send_email(body):
     
 def execute(fullsuite, emailerrors = False):
     s = unittest.TestSuite(fullsuite)
-    runner = unittest.TextTestRunner()
+    runner = unittest.TextTestRunner(failfast=True)
     result = runner.run(s)
     if not result.wasSuccessful():
         body = []

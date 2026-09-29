@@ -1295,6 +1295,20 @@ def get_transport_statuses(dbo: Database) -> Results:
 def get_transport_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM transporttype ORDER BY TransportTypeName")
 
+def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: str = "") -> int:
+    """
+    Inserts a row to a lookup table. 
+    """
+    d = { "lookup": lookup, "lookupname": name, "lookupdesc": desc }
+    return upsert_lookup_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
+
+def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str, desc: str = "") -> int:
+    """
+    Updates the name and description value of the row with ID=iid in a lookup table. 
+    """
+    d = { "lookup": lookup, "id": str(iid), "lookupname": name, "lookupdesc": desc }
+    return upsert_lookup_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
+
 def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Insert or update a lookup using posted data, if the posted data contains a non-zero id, 
@@ -1332,11 +1346,9 @@ def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> i
     if lookup in ("lkownerflags", "lkanimalflags"):
         name = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
         name = asm3.utils.strip_duplicate_spaces(name) # Strip dup spaces Bad   Flag->Bad Flag
-    else:
-        # Only provide description in not owner or animal flags
-        data[desccol] = desc
 
     data[namecol] = name
+    if desccol != "" and desc != "": data[desccol] = desc # Only update description if exists and supplied
     
     if post.integer("id") != 0:
         dbo.update(lookup, post.integer("id"), data, username, setLastChanged=False)
