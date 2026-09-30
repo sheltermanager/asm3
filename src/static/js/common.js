@@ -1141,25 +1141,20 @@ const common = {
         if (config.bool("RecordNewBrowserTab")) {
             container.find("a").each(function(i, a) {
                 // We're only interested in links that have an href and no target
-                if ($(a).text() == "U2023006 - Bisto") { console.log(a); }
                 if ($(this).attr("href") && !$(this).attr("target")) {
                     href = String($(this).attr("href"));
-                    if ($(a).text() == "U2023006 - Bisto") { console.log("href = " + href); }
                     anchor = $(this);
                     $.each(recpages, function(i, v) {
-                        // If the URL target begins with one of our recpages, it's a candidate
-                        // for adding a target attribute for a new tab.
+                        // If the URL target begins with one of our recpages and contains a question mark, 
+                        // it's a candidate for adding a target attribute for a new tab. 
                         if (href.indexOf(v) == 0 && href.indexOf("?") != -1) {
-                            // If this is not a find page and the current url we're looking at 
-                            // begins with this base page, don't do anything - we don't want 
-                            // it to open in a new tab as it's a satellite tab
                             let currentargs = document.location.href.split("?").slice(-1);
                             if (url.indexOf("/" + v + "_find") != -1) {
-                                // Source page is a find screen, skip
+                                // Source page is a find screen - skip
                                 return;
                             }
-                            if (url.indexOf("/" + v) != -1 && href.indexOf(currentargs) != -1) {
-                                // Target is a satellite tab - skip
+                            if (url.indexOf("/" + v) != -1 && href.indexOf("/" + v) != -1 && href.indexOf(currentargs) != -1) {
+                                // Target is a satellite tab of source tab - skip
                                 return;
                             }
                             // Create targetname from URL, throwing away any
@@ -1173,13 +1168,6 @@ const common = {
                             }
                             targetname += href.substring(href.lastIndexOf("?")+1);
                             anchor.attr("target", targetname);
-                            if ($(a).text() == "U2023006 - Bisto") {
-                                console.log("Processed - href.indexOf(v) = " + href.indexOf(v) + ", href.indexOf(\"?\") = " + href.indexOf("?"));
-                            }
-                        } else {
-                            if ($(a).text() == "U2023006 - Bisto") {
-                                console.log("Skipped - href.indexOf(\"" + v + "\") = " + href.indexOf(v) + ", href.indexOf(\"?\") = " + href.indexOf("?"));
-                            }
                         }
                     });
                 }
