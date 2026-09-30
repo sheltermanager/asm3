@@ -1132,12 +1132,14 @@ const common = {
      * new record pages, creates a named target from the url so that the
      * record gets its own browser tab, but links within it still work.
      */
-    inject_target: function() {
-        console.log("Inject target");
+    inject_target: function(container=false) {
+        if (!container) {
+            container = $("html");
+        }
         var recpages = [ "animal", "incident", "person", "waitinglist", "lostanimal", "foundanimal" ];
         var href, anchor, targetname, r, url = common.current_url();
         if (config.bool("RecordNewBrowserTab")) {
-            $("a").each(function(i, a) {
+            container.find("a").each(function(i, a) {
                 // We're only interested in links that have an href and no target
                 if ($(a).text() == "U2023006 - Bisto") { console.log(a); }
                 if ($(this).attr("href") && !$(this).attr("target")) {
@@ -1151,17 +1153,14 @@ const common = {
                             // If this is not a find page and the current url we're looking at 
                             // begins with this base page, don't do anything - we don't want 
                             // it to open in a new tab as it's a satellite tab
-                            if ($(a).text() == "U2023006 - Bisto") {
-                                console.log("Processing URL = " + url);
-                            }
-                            if (url.indexOf("/" + v + "_find") == -1 && url.indexOf("/" + v) != -1) {
-                                if ($(a).text() == "U2023006 - Bisto") {
-                                    console.log("Skipping processing - " + url.indexOf("/" + v + "_find") + ", " + url.indexOf("/" + v));
-                                }
+                            let currentargs = document.location.href.split("?").slice(-1);
+                            if (url.indexOf("/" + v + "_find") != -1) {
+                                // Source page is a find screen, skip
                                 return;
                             }
-                            if ($(a).text() == "U2023006 - Bisto") {
-                                console.log("Continuing");
+                            if (url.indexOf("/" + v) != -1 && href.indexOf(currentargs) != -1) {
+                                // Target is a satellite tab - skip
+                                return;
                             }
                             // Create targetname from URL, throwing away any
                             // portion after an underscore to get animal52, etc.
