@@ -70,6 +70,13 @@
 </div>
 
 $$WEBSITEVIDEOTAG$$
+<span id="morevideosbutton" onclick="showAllVideos()" style="display: none;">more</span>
+<div id="morevideos" style="display: none;">
+$$WEBSITEVIDEOTAG2$$
+$$WEBSITEVIDEOTAG3$$
+$$WEBSITEVIDEOTAG4$$
+$$WEBSITEVIDEOTAG5$$
+</div>
 
 <p>
 <script>
@@ -90,6 +97,10 @@ document.write('<a target="_blank" href="https://twitter.com/share?url=' + u + '
     document.getElementById("additionalanimalcomments").style.display = 'block';
     document.getElementById("morebutton").style.display = 'none';
   }
+  function showAllVideos() {
+    document.getElementById("morevideos").style.display = 'block';
+    document.getElementById("morevideosbutton").style.display = 'none';
+  }
   var rawanimalcomments = document.getElementById("animalcommentsraw").innerHTML.split("<br>");
   var additionalcomments = '';
   var initialanimalcomments = '';
@@ -100,6 +111,16 @@ document.write('<a target="_blank" href="https://twitter.com/share?url=' + u + '
     }
   } else {
     initialanimalcomments = "<p>" + rawanimalcomments[0] + "</p>";
+  }
+
+  let videocount = document.getElementsByClassName("asm-video").length;
+  if (videocount > 1) {
+    let morevideoslabel = (videocount - 1) + " more videos";
+    if (videocount == 2) {
+      morevideoslabel = "1 more video";
+    }
+    document.getElementById("morevideosbutton").innerText = (morevideoslabel) ;
+    document.getElementById("morevideosbutton").style.display = "block";
   }
   
   document.getElementById("animalcomments").innerHTML = initialanimalcomments;
