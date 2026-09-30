@@ -77,6 +77,21 @@ class PetszelPublisher(AbstractPublisher):
 
     def processAnimal(self, an: ResultRow) -> Dict:
         """ Processes an animal record and returns a data dictionary to upload as JSON """
-        return True
+        p = {
+            "animal": {
+                "animalId": "A123456",
+                "animalName": an.ANIMALNAME.title(),
+                "animalType": an.SPECIESNAME,
+                "sourceReference": {
+                    "sourceId": "A123456",
+                    "dateUpdated": "2026-09-17T12:00:00Z"
+                }
+            },
+            "event": {
+                "type": "Adoption",
+                "date": "2026-09-17T12:00:00Z"
+            }
+        }
+        return p
 
 
