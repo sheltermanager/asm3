@@ -31,7 +31,7 @@ def is_task_running(dbo: Database) -> bool:
     v = get(dbo, "taskval")
     if v is not None and v == mx:
         return False
-    if name is not None and name != "":
+    if name is not None and name != "" and name != "NONE":
         return True
     return False
 
