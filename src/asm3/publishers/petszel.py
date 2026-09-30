@@ -79,11 +79,11 @@ class PetszelPublisher(AbstractPublisher):
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         p = {
             "animal": {
-                "animalId": "A123456",
+                "animalId": an.SHELTERCODE,
                 "animalName": an.ANIMALNAME.title(),
                 "animalType": an.SPECIESNAME,
                 "sourceReference": {
-                    "sourceId": "A123456",
+                    "sourceId": an.SHELTERCODE,
                     "dateUpdated": "2026-09-17T12:00:00Z"
                 }
             },
