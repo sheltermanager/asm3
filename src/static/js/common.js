@@ -1132,14 +1132,11 @@ const common = {
      * new record pages, creates a named target from the url so that the
      * record gets its own browser tab, but links within it still work.
      */
-    inject_target: function(container=false) {
-        if (!container) {
-            container = $("html");
-        }
+    inject_target: function() {
         var recpages = [ "animal", "incident", "person", "waitinglist", "lostanimal", "foundanimal" ];
         var href, anchor, targetname, r, url = common.current_url();
         if (config.bool("RecordNewBrowserTab")) {
-            container.find("a").each(function(i, a) {
+            $("a").each(function(i, a) {
                 // We're only interested in links that have an href and no target
                 if ($(this).attr("href") && !$(this).attr("target")) {
                     href = String($(this).attr("href"));
