@@ -102,7 +102,7 @@ const mapping = {
                 let gll = new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]));
                 let markeropts = { position: gll, map: mapping.map };
                 if (v.pinurl) {
-                    markeropts["icon"] = v.pinurl;
+                    markeropts.icon = v.pinurl;
                 }
                 var marker = new google.maps.Marker(markeropts);
                 latlngbounds.extend(gll);
