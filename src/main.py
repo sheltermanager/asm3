@@ -5553,10 +5553,10 @@ class map_markers(ASMEndpoint):
                     f'<br />{datedescription}' \
                     f'<br />{m.AREALOST}'
                 markers.append({
-                    "SPECIESID": m.SPECIESID,
+                    "speciesid": m.SPECIESID,
                     "latlong": m.AREALATLONG,
-                    "PINURL": "static/images/mapping/lost-animal.png",
-                    "POPUPTEXT": popuptext
+                    "pinurl": "static/images/mapping/lost-animal.png",
+                    "popuptext": popuptext
                 })
         if "f" in mk and self.checkb(asm3.users.VIEW_FOUND_ANIMAL):
             for m in asm3.lostfound.get_recent_found_animals(dbo, floor):
@@ -5567,11 +5567,11 @@ class map_markers(ASMEndpoint):
                     f'<br />{datedescription}' \
                     f'<br />{m.AREAFOUND}'
                 markers.append({
-                    "ID": m.ID,
-                    "SPECIESID": m.SPECIESID,
+                    "id": m.ID,
+                    "speciesid": m.SPECIESID,
                     "latlong": m.AREALATLONG,
-                    "PINURL": "static/images/mapping/found-animal.png",
-                    "POPUPTEXT": popuptext
+                    "pinurl": "static/images/mapping/found-animal.png",
+                    "popuptext": popuptext
                 })
         if "a" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
             for m in asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user):
@@ -5581,11 +5581,11 @@ class map_markers(ASMEndpoint):
                     f'<br />{datedescription}' \
                     f'<br />{m.DISPATCHADDRESS}'
                 markers.append({
-                    "ID": m.ID,
-                    "SPECIESID": m.SPECIESID,
+                    "id": m.ID,
+                    "speciesid": m.SPECIESID,
                     "latlong": m.DISPATCHLATLONG,
-                    "PINURL": "static/images/mapping/incident.png",
-                    "POPUPTEXT": popuptext
+                    "pinurl": "static/images/mapping/incident.png",
+                    "popuptext": popuptext
                 })
         if "i" in mk and self.checkb(asm3.users.VIEW_INCIDENT):
             for m in asm3.animalcontrol.get_recent_incidents(dbo, floor):
@@ -5595,11 +5595,11 @@ class map_markers(ASMEndpoint):
                     f'<br />{datedescription}' \
                     f'<br />{m.DISPATCHADDRESS}'
                 markers.append({
-                    "ID": m.ID,
-                    "SPECIESID": m.SPECIESID,
+                    "id": m.ID,
+                    "speciesid": m.SPECIESID,
                     "latlong": m.DISPATCHLATLONG,
-                    "PINURL": "static/images/mapping/recentincident.png",
-                    "POPUPTEXT": popuptext
+                    "pinurl": "static/images/mapping/recentincident.png",
+                    "popuptext": popuptext
                 })
         if "n" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
             for m in asm3.animal.get_recent_nonshelter_animals(dbo, floor):
@@ -5612,11 +5612,11 @@ class map_markers(ASMEndpoint):
                     f'<br />{datedescription}' \
                     f'<br />{m.OWNERADDRESS}'
                 markers.append({
-                    "ID": m.ID,
-                    "SPECIESID": m.SPECIESID,
+                    "id": m.ID,
+                    "speciesid": m.SPECIESID,
                     "latlong": m.LATLONG,
-                    "PINURL": "static/images/mapping/nonshelter.png",
-                    "POPUPTEXT": popuptext
+                    "pinurl": "static/images/mapping/nonshelter.png",
+                    "popuptext": popuptext
                 })
         if "r" in mk and self.checkb(asm3.users.VIEW_ANIMAL):
             for m in asm3.animal.get_recent_reclaimed_animals(dbo, floor):
@@ -5629,11 +5629,11 @@ class map_markers(ASMEndpoint):
                     f'<br />{datedescription}' \
                     f'<br />{m.OWNERADDRESS}'
                 markers.append({
-                    "ID": m.ID,
-                    "SPECIESID": m.SPECIESID,
+                    "id": m.ID,
+                    "speciesid": m.SPECIESID,
                     "latlong": m.LATLONG,
-                    "PINURL": "static/images/mapping/reclaim.png",
-                    "POPUPTEXT": popuptext
+                    "pinurl": "static/images/mapping/reclaim.png",
+                    "popuptext": popuptext
                 })
         return asm3.utils.json(markers)
 

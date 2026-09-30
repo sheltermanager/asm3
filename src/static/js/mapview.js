@@ -6,29 +6,27 @@ $(function() {
 
     const mapview = {
 
-        update_markers_from_checkboxes: function() {
-            mapping.ready().then(async function() {
-                let mk = "";
-                $("#toggles input:checked").each(function() {
-                    mk += $(this).attr("data");
-                });
-                let floorjsdate = $("#datefloor").datepicker("getDate");
-                let rawmarkers = await common.ajax_post("map_markers", "mode=getmarkers&mk=" + mk + "&floor=" + format.date(floorjsdate));
-                rawmarkers = jQuery.parseJSON(rawmarkers);
-                let markers = [];
-                let speciesid = parseInt($("#speciesfilter").val());
-                if (rawmarkers.length && speciesid) {
-                    $.each(rawmarkers, function(i, v) {
-                        if (speciesid == v.SPECIESID) {
-                            markers.push(v);
-                        }
-                    });
-                } else {
-                    markers = rawmarkers;
-                }
-                mapping.redraw_markers(markers);
-                common.route_push('map_view?mk=' + mk + '&fl=' + format.date(floorjsdate) + '&sid=' + speciesid);
+        update_markers_from_checkboxes: async function() {
+            let mk = "";
+            $("#toggles input:checked").each(function() {
+                mk += $(this).attr("data");
             });
+            let floorjsdate = $("#datefloor").datepicker("getDate");
+            let rawmarkers = await common.ajax_post("map_markers", "mode=getmarkers&mk=" + mk + "&floor=" + format.date(floorjsdate));
+            rawmarkers = jQuery.parseJSON(rawmarkers);
+            let markers = [];
+            let speciesid = parseInt($("#speciesfilter").val());
+            if (rawmarkers.length && speciesid) {
+                $.each(rawmarkers, function(i, v) {
+                    if (speciesid == v.speciesid) {
+                        markers.push(v);
+                    }
+                });
+            } else {
+                markers = rawmarkers;
+            }
+            mapping.redraw_markers(markers);
+            common.route_push('map_view?mk=' + mk + '&fl=' + format.date(floorjsdate) + '&sid=' + speciesid);
         },
 
         map_markers: [],
