@@ -227,6 +227,8 @@ def get_criteria_params(dbo: Database, customreportid: int, post: PostedData) ->
             p.append( ( name, asm3.i18n._("Payment Type", l), post[name], asm3.lookups.get_donationtype_name(dbo, post.integer(name) )) )
         elif rtype == "ENTRYCATEGORY":
             p.append( ( name, asm3.i18n._("Entry Category", l), post[name], asm3.lookups.get_entryreason_name(dbo, post.integer(name) )) )
+        elif rtype == "LICENSETYPE":
+            p.append( ( name, asm3.i18n._("License Type", l), post[name], asm3.lookups.get_licencetype_name(dbo, post.integer(name) )) )
         elif rtype == "LITTER":
             p.append( ( name, asm3.i18n._("Litter", l), post[name], post[name]) )
         elif rtype == "LOCATION":
