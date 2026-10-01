@@ -200,6 +200,8 @@ The types are outlined below:
 
 * $ASK ENTRYCATEGORY - requests an entry reason/category from the user.
 
+* $ASK LICENSETYPE - requests a license type from the user.
+
 * $ASK LITTER$ - requests a litter identifier. A popup displays a list of the
   recent, active litters on the system. The value returned is the litter ID as
   a string. 
