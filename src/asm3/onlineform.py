@@ -1483,7 +1483,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # Submission option 1 = include a copy of the form submission
         if formdef.emailsubmitter == 1: 
             body += "\n" + formdata
-            attachments = images
+            attachments = images + pdfs
         # Send
         replyto = submitterreplyto
         if replyto == "": replyto = asm3.configuration.email(dbo)
@@ -1512,7 +1512,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # NOTE: Since the reply address will be the submitter, we do not allow it
         # to ever override the FROM header
         asm3.utils.send_email(dbo, replyto, formdef.emailaddress, "", "", 
-            subject, formdata, "html", images, exceptions=False, bulk=True, fromoverride=False)
+            subject, formdata, "html", images + pdfs, exceptions=False, bulk=True, fromoverride=False)
 
     # Was the option set to email the adoption coordinator linked to animalname?
     if formdef.emailcoordinator == 1 and animalname != "":
@@ -1525,7 +1525,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                 "WHERE animal.ID = ?", [animalid])
             if coordinatoremail != "":
                 asm3.utils.send_email(dbo, "", coordinatoremail, "", "", 
-                    subject, formdata, "html", images, exceptions=False)
+                    subject, formdata, "html", images + pdfs, exceptions=False)
 
     # Was the option set to email the fosterer linked to animalname?
     if formdef.emailfosterer == 1 and animalname != "":
@@ -1539,7 +1539,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                 "WHERE animal.ID = ?", [animalid])
             if fostereremail != "":
                 asm3.utils.send_email(dbo, "", fostereremail, "", "", 
-                    subject, formdata, "html", images, exceptions=False)
+                    subject, formdata, "html", images + pdfs, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
@@ -1549,7 +1549,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # Remove any line breaks from the list of addresses, this has caused malformed headers before
         emailsubmissionto = emailsubmissionto.replace("\n", "")
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
-            subject, formdata, "html", images, exceptions=False, fromoverride=False)
+            subject, formdata, "html", images + pdfs, exceptions=False, fromoverride=False)
 
     # Does this form have an option set to autoprocess it? 
     # Stop now if it doesn't.
