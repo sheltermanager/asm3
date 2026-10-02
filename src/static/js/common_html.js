@@ -553,7 +553,7 @@ const html = {
         let h = [];
 
         $.each(asm.animalflags, function(i, v) {
-            h.push({ label: v[1].LABEL, html: field_option(v[1].FIELD, v[0], v[1].LABEL), loc: v[1].LOCATION });
+            h.push({ label: _(v[1].LABEL), html: field_option(v[1].FIELD, v[0], _(v[1].LABEL)), loc: v[1].LOCATION });
         });
 
         $.each(flags, function(i, v) {
@@ -734,7 +734,7 @@ const html = {
             } else if (asm.locale != "en_GB" && v[0] == "giftaid") {
                 // Pass
             } else {
-                h.push({ label: v[1].LABEL, html: field_option(v[1].FIELD, v[0], v[1].LABEL)});
+                h.push({ label: _(v[1].LABEL), html: field_option(v[1].FIELD, v[0], _(v[1].LABEL))});
             }
         });
 
@@ -1609,7 +1609,7 @@ const html = {
         let labels = {};
         $.each(asm.personflags, function(i, v) {
             stock.push(v[0]);
-            labels[v[0]] = v[1].LABEL;
+            labels[v[0]] = _(v[1].LABEL);
         });
 
         if (flags != null) {

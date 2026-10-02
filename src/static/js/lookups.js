@@ -311,14 +311,14 @@ $(function() {
             if (controller.tablename == "lkanimalflags") {
                 $.each(asm.animalflags, function(i, v) {
                     controller.rows.push(
-                        { ID: -1, FLAG: v[1].LABEL}
+                        { ID: -1, FLAG: _(v[1].LABEL) }
                     );
                 });
             }
             if (controller.tablename == "lkownerflags") {
                 $.each(asm.personflags, function(i, v) {
                     controller.rows.push(
-                        { ID: -1, FLAG: v[1].LABEL}
+                        { ID: -1, FLAG: _(v[1].LABEL) }
                     );
                 });
             }

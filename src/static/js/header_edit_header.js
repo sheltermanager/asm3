@@ -741,7 +741,7 @@ edit_header = {
         var stock = [];
         $.each(asm.animalflags, function(i, v) {
             if (a[v[1].FIELD] == 1) {
-                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + v[1].LABEL + "</span>");
+                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + _(v[1].LABEL) + "</span>");
             }
             stock.push(v[0]);
         });
@@ -766,7 +766,7 @@ edit_header = {
         var stock = [];
         $.each(asm.personflags, function(i, v) {
             if (p[v[1].FIELD] == 1) {
-                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + v[1].LABEL + "</span>");
+                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + _(v[1].LABEL) + "</span>");
             }
             stock.push(v[0]);
         });
