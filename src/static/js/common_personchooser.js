@@ -446,26 +446,10 @@ $.fn.personchooser = asm_widget({
                 });
                 // Setup person flag select widget
                 dialogadd.find(".personchooser-flags").attr("title", _("Select"));
-                dialogadd.find(".personchooser-flags").asmSelect({
-                    animate: true,
-                    sortable: true,
-                    removeLabel: '<strong>X</strong>',
-                    listClass: 'bsmList-custom',  
-                    listItemClass: 'bsmListItem-custom',
-                    listItemLabelClass: 'bsmListItemLabel-custom',
-                    removeClass: 'bsmListItemRemove-custom'
-                });
+                dialogadd.find(".personchooser-flags").selectmulti();
                 // Setup GDPR select widget
                 dialogadd.find(".personchooser-gdpr").attr("title", _("Select"));
-                dialogadd.find(".personchooser-gdpr").asmSelect({
-                    animate: true,
-                    sortable: true,
-                    removeLabel: '<strong>X</strong>',
-                    listClass: 'bsmList-custom',  
-                    listItemClass: 'bsmListItem-custom',
-                    listItemLabelClass: 'bsmListItemLabel-custom',
-                    removeClass: 'bsmListItemRemove-custom'
-                });
+                dialogadd.find(".personchooser-gdpr").selectmulti();
                 // Setup phone number widgets
                 dialogadd.find(".asm-phone").phone();
                 // Add sites

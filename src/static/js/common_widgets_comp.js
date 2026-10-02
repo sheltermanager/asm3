@@ -258,15 +258,7 @@ $.fn.emailform = asm_widget({
         if ( config.bool("AuditOnSendEmail"))
         $("#em-body").richtextarea();
         $("#em-logtype, #em-template").select();
-        $("#em-docrepo").asmSelect({
-            animate: true,
-            sortable: true,
-            removeLabel: '<strong>&times;</strong>',
-            listClass: 'bsmList-custom',  
-            listItemClass: 'bsmListItem-custom',
-            listItemLabelClass: 'bsmListItemLabel-custom',
-            removeClass: 'bsmListItemRemove-custom'
-        });
+        $("#em-docrepo").selectmulti();
         let b = {}; 
         b[_("Send")] = {
             text: _("Send"),

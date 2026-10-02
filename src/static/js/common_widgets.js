@@ -1013,6 +1013,8 @@ $.fn.selectmulti = asm_widget({
             animate: true,
             sortable: true,
             removeLabel: '<strong>&times;</strong>',
+            addItemTarget: "inplace", // leave selected items where they were in the list
+            hideWhenAdded: false, 
             listClass: 'bsmList-custom',  
             listItemClass: 'bsmListItem-custom',
             listItemLabelClass: 'bsmListItemLabel-custom',
