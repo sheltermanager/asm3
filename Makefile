@@ -150,8 +150,8 @@ tests: scripts/unittestdb/base.db
 	@echo "[tests] ========================"
 	rm -rf /tmp/asm_disk_cache/*
 	cp scripts/unittestdb/base.db scripts/unittestdb/test.db
-	cd unittest && python3 suite.py
-	rm -f unittest/*.pyc && rm -rf unittest/__pycache__
+	python3 unittests/suite.py
+	rm -f unittests/*.pyc && rm -rf unittests/__pycache__
 
 tests_emailerrors: scripts/unittestdb/base.db
 	@echo "[tests] ========================"
