@@ -166,18 +166,12 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
     """
     siteclause = ""
     if siteid != 0: siteclause = "o.SiteID=%s AND " % siteid
-    # Consider the first word rather than first address line - typically house
-    # number/name and unlikely to be the same for different people
-    if address.find(" ") != -1: address = address[0:address.find(" ")]
-    if address.find("\n") != -1: address = address[0:address.find("\n")]
-    if address.find(",") != -1: address = address[0:address.find(",")]
-    address = address.replace("'", "`").lower().strip()
-    # If the first word contains a number, then we should be looking for a space
-    # after it, so things like house number 5 doesn't match house number 50
-    # (we actually had a customer get this where two people with the same name
-    # collided because one lived at 5 and the other at 50 on different roads)
-    if asm3.utils.is_numeric(address): address += " "
-    address += "%"
+    # For address comparisons, consider the first two words rather than the whole address line.
+    # This tries to make sure the number and street name match while attempting
+    # to avoid typos and whitespace elsewhere throwing matches out.
+    addrbits = address.split() # split with no args effectively removes all whitespace
+    if len(addrbits) >= 2: address = f"{addrbits[0]} {addrbits[1]}"
+    address = address.replace("'", "`").lower().strip() + "%"
     forenames = forenames.replace("'", "`").lower().strip()
     if forenames.find(" ") != -1: forenames = forenames[0:forenames.find(" ")]
     forenames += "%%"

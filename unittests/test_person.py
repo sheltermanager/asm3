@@ -15,7 +15,7 @@ class TestPerson(unittest.TestCase):
             "forenames": "Test",
             "surname": "Testing",
             "ownertype": "1",
-            "address": "123 test street"
+            "address": "123 street test"
         }
         post = asm3.utils.PostedData(data, "en")
         self.nid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
