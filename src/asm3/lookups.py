@@ -1331,6 +1331,7 @@ def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> i
     if "units" in modifiers: data["Units"] = post["units"]
     if "site" in modifiers: data["SiteID"] = post.integer("site")
     if "pubspec" in modifiers: data["PetFinderSpecies"] = post["pfspecies"]
+    if "conditiontype" in modifiers: data["ConditionTypeID"] = post.integer("conditiontype")
     if "haszoonotic" in modifiers: data["IsZoonotic"] = post.integer("iszoonotic")
     if "cost" in modifiers: data["DefaultCost"] = post.integer("defaultcost")
     if "acc" in modifiers:
@@ -1348,7 +1349,7 @@ def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> i
         name = asm3.utils.strip_duplicate_spaces(name) # Strip dup spaces Bad   Flag->Bad Flag
 
     data[namecol] = name
-    if desccol != "" and desc != "": data[desccol] = desc # Only update description if exists and supplied
+    if desccol != "": data[desccol] = desc # Only update description if exists 
     
     if post.integer("id") != 0:
         dbo.update(lookup, post.integer("id"), data, username, setLastChanged=False)
