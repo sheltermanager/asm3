@@ -8048,6 +8048,7 @@ class report_criteria(JSONEndpoint):
         if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
         if has_criteria("ENTRYCATEGORY"): c["entryreasons"] = asm3.lookups.get_entryreasons(dbo)
         if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
+        if has_criteria("LICENSETYPE"): c["licencetypes"] = asm3.lookups.get_licence_types(dbo)
         if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.lf)
         if has_criteria("LOGTYPE"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
         if has_criteria("MEDIAFLAG"): c["mediaflags"] = asm3.lookups.get_media_flags(dbo)
