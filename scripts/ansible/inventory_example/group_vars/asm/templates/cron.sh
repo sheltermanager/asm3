@@ -15,7 +15,7 @@ DB_NAME={{ asm_db.name }}
 num_days_to_keep=5
 
 #----------------------------------------------------------
-# ASM configured cron activies
+# ASM configured cron activities
 #----------------------------------------------------------
 ASM3_CONF=$ASM_DATA/asm3.conf python3 $ASM_PATH/src/cron.py daily &> /var/log/cron/asm
 ASM3_CONF=$ASM_DATA/asm3.conf python3 $ASM_PATH/src/cron.py publish_3pty &>> /var/log/cron/asm

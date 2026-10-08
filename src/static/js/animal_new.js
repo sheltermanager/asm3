@@ -137,7 +137,7 @@ $(function() {
         },
 
         /**
-         * Updates widget enabled/visable after changes
+         * Updates widget enabled/visible after changes
          */
         enable_widgets: function() {
 

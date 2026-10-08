@@ -8,7 +8,7 @@
     archive_name: "sheltermanager3-{{ asm_version }}-src"
     archive_path: "../../build/{{ archive_name }}.tar.gz"
   tasks:
-    - name: "Install Animal Shelter Manger dependencies"
+    - name: "Install Animal Shelter Manager dependencies"
       ansible.builtin.apt:
         name: "{{ packages }}"
         state: "present"

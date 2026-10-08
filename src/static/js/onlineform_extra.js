@@ -396,7 +396,7 @@ $(document).ready(function() {
                 $("input, select").each(function() {
                     if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
                         let v = $(this).val();
-                        // Calcluate a numeric version of this value for < > comparisons, since 
+                        // Calculate a numeric version of this value for < > comparisons, since 
                         // no-one cares about alpha/ascii comparison
                         let nv = parseFloat(v);
                         // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked

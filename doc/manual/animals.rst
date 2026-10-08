@@ -161,7 +161,7 @@ the details. If you have created additional fields for animals under
 will appear.
 
 The “Share” button can be used to publish the animal to various social media
-sites. A link to a publically viewable version of the animal record will be
+sites. A link to a publicly viewable version of the animal record will be
 posted. How that viewable page looks can be tailored by editing the "animalview"
 template under :menuselection:`Publishing --> Edit HTML publishing templates`
 

@@ -34,7 +34,7 @@ $(function() {
                     click: async function() { 
                         let response = await common.ajax_post("maint_undelete", "mode=undelete&ids=" + tableform.table_ids(table));
                         let [success,errors] = response.split(",");
-                        header.show_info(success + " sucessfully restored, " + errors + " errors.");
+                        header.show_info(success + " successfully restored, " + errors + " errors.");
                      } 
                 },
                 { id: "offset", type: "dropdownfilter",

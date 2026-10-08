@@ -117,7 +117,7 @@ $CONST COUNTRY='USA'$ -- Enter Country.  USA for United States, UK for United Ki
 $CONST STATE_ABBREVIATION='AR'$ -- If USA, enter your state abbreviation (owner.ownercounty field), otherwise 
 $CONST ZIPCODE_STARTING_DIGIT='7'$ -- If USA, enter the first digit/character of your area's zipcode/postcode (owner.ownerpostcode).
 $CONST PHONE_DIGITS=10$ -- How many digits are in your phone numbers?
-$CONST DOMAINS='biz','com','edu','gov','info','me','mil','net','org','tv','uk','us'$ -- Enter email domans seen in your country.
+$CONST DOMAINS='biz','com','edu','gov','info','me','mil','net','org','tv','uk','us'$ -- Enter email domains seen in your country.
 $CONST CITATION_NUMBERS='No'$ -- Do you record your citation/code numbers in the comments field of Citation Entries?  Yes or No.
 $CONST MEMBERSHIP_EXPIRATION='No'$ -- Do you record a Membership Expiration date on people flagged as Members?
 $CONST COUPLE_WARN='No'$ -- Do you want to provide a 1 day warning when a person type of "Couple" is selected?  Organizations who assign citations/incidents might not want to use this due to needing to assign citations/incidents to individual people not as a Couple.
@@ -1143,7 +1143,7 @@ AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
 AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --#P008. This alert shows if North, South, East, West, etc.
---It is important to stardardized entry of addresses so that this script can detect possible address duplications.    Added 11/18/2021
+--It is important to standardize entry of addresses so that this script can detect possible address duplications.    Added 11/18/2021
 UNION SELECT
   '<a href="'||$SERVER_URL$||'/person?id='||owner.ID||'" target="_'||$OPEN_IN_TAB$||'">'||owner.OwnerName||'</a>' AS name,
   owner.ownercode as code,

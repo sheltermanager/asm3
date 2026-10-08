@@ -110,7 +110,7 @@ Service API Data Calls
 ----------------------
 
 Finally, you can use ASM's Service API to retrieve the adoptable animal
-information and images programatically yourself and use that information to
+information and images programmatically yourself and use that information to
 construct a site in any way you wish. 
 
 More information can be found in the section on the :ref:`serviceapi`

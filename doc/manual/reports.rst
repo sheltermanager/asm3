@@ -120,7 +120,7 @@ information, or information requested from the user at report generation time.
   Note that the user's timezone is applied to the date/time.
 
 * $CURRENT_DATE_TIME$ - Substitutes the date and time now in an appropriate
-  string SQL format for the current datbase. Note that the user's timezone
+  string SQL format for the current database. Note that the user's timezone
   is applied to the date/time.
 
 * $CURRENT_DATE-X$ - The same as CURRENT_DATE, but subtracts X days.

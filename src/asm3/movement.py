@@ -620,7 +620,7 @@ def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, cr
     for bonded animals or we'll double up all the payments.
     """
     l = dbo.locale
-    # Validate that we have a movement date before doing anthing
+    # Validate that we have a movement date before doing anything
     if None is post.date("movementdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Adoption movements must have a valid adoption date.", l))
     # Get the animal record for this adoption
@@ -726,7 +726,7 @@ def insert_foster_from_form(dbo: Database, username: str, post: PostedData) -> i
     Inserts a movement from the workflow foster an animal screen.
     Returns the new movement id
     """
-    # Validate that we have a movement date before doing anthing
+    # Validate that we have a movement date before doing anything
     l = dbo.locale
     if None is post.date("fosterdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Foster movements must have a valid foster date.", l))
@@ -762,7 +762,7 @@ def insert_reclaim_from_form(dbo: Database, username: str, post: PostedData) -> 
     Returns the new movement id
     """
     l = dbo.locale
-    # Validate that we have a movement date before doing anthing
+    # Validate that we have a movement date before doing anything
     if None is post.date("movementdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Reclaim movements must have a valid reclaim date.", l))
     # Get the animal record for this reclaim
@@ -824,7 +824,7 @@ def insert_transfer_from_form(dbo: Database, username: str, post: PostedData) ->
     Inserts a movement from the workflow transfer an animal screen.
     Returns the new movement id
     """
-    # Validate that we have a movement date before doing anthing
+    # Validate that we have a movement date before doing anything
     l = dbo.locale
     if None is post.date("transferdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Transfers must have a valid transfer date.", l))
@@ -886,7 +886,7 @@ def insert_reserve_from_form(dbo: Database, username: str, post: PostedData) -> 
     Inserts a movement from the workflow reserve an animal screen.
     Returns the new movement id
     """
-    # Validate that we have a date before doing anthing
+    # Validate that we have a date before doing anything
     l = dbo.locale
     if None is post.date("reservationdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Reservations must have a valid reservation date.", l))
@@ -916,7 +916,7 @@ def insert_retailer_from_form(dbo: Database, username: str, post: PostedData) ->
     Inserts a retailer from the workflow move to retailer screen.
     Returns the new movement id
     """
-    # Validate that we have a movement date before doing anthing
+    # Validate that we have a movement date before doing anything
     l = dbo.locale
     if None is post.date("retailerdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Retailer movements must have a valid movement date.", l))
