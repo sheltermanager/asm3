@@ -406,6 +406,14 @@ class PetFinderPublisher(FTPPublisher):
             line.append("")
             line.append("")
             line.append("")
+        elif status == "X":
+            # Don't send any photos for adopted animals
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
         else:
             # Adoptable - include all available upto a max of 6 photos
             validvideourl = False
