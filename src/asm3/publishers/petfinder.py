@@ -407,7 +407,7 @@ class PetFinderPublisher(FTPPublisher):
             line.append("")
             line.append("")
         elif status == "X":
-            # Don't send any photos for adopted animals
+            # Don't send any photos for adopted animals when the option is off
             line.append("")
             line.append("")
             line.append("")
