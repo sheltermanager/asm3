@@ -3876,7 +3876,8 @@ class document_repository(JSONEndpoint):
         return post["to"]
 
     def post_rename(self, o):
-        asm3.dbfs.rename_file(o.dbo, o.post["path"], o.post["oldname"], o.post["newname"])
+        self.check(asm3.users.ADD_REPO_DOCUMENT)
+        asm3.dbfs.rename_document_repository(o.dbo, o.post["path"], o.post["oldname"], o.post["newname"])
 
 class document_repository_file(ASMEndpoint):
     url = "document_repository_file"
